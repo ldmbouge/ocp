@@ -1,0 +1,41 @@
+import cotfd;
+
+range R = 1..8;
+range D = 0..9;
+
+Solver<CP> m();
+FVar x[R](0,9);
+Integer cnt(0);
+
+solveall<m> {
+} using {
+   forall(i in R) {
+      tryall<m>(v in D) {
+         x[i].setValue(v);
+      } onFailure {
+         x[i].reset();
+      }
+   }
+   cnt := cnt + 1;
+}
+
+cout << "CNT:" << cnt << endl;
+
+
+class FVar {
+   int _imin;
+   int _imax;
+   int _min;
+   int _max;
+   FVar(int l,int u) { _imin = l;_imax = u;_min=l;_max=u;}
+   void setValue(int v) {
+      _min = v;
+      _max = v;
+   }
+   void reset() {
+      _min = _imin;
+      _max = _imax;
+   }
+   bool bound() { return _min == _max;}
+   int get() { return _min;}
+}

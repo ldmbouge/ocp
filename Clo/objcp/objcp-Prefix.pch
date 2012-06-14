@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'objcp' target in the 'objcp' project
+//
+
+#ifdef __OBJC__
+   #import <Cocoa/Cocoa.h>
+#endif

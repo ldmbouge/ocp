@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'knapsack' target in the 'knapsack' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

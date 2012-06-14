@@ -1,0 +1,8 @@
+//
+// Prefix header for all source files of the 'Clo' target in the 'Clo' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+   #import <CoreData/CoreData.h>
+#endif

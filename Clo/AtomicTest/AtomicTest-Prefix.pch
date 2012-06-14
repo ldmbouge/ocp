@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'AtomicTest' target in the 'AtomicTest' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

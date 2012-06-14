@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'objcpTests' target in the 'objcpTests' project
+//
+
+#ifdef __OBJC__
+   #import <Cocoa/Cocoa.h>
+#endif
