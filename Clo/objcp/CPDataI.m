@@ -61,6 +61,18 @@
 {
     return _value;
 }
+-(CPInt) max
+{
+   return _value;
+}
+-(BOOL) isConstant
+{
+   return YES;
+}
+-(BOOL) isVariable
+{
+   return NO;
+}
 -(id<CP>) cp
 {
     return nil;

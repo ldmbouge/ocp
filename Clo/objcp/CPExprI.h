@@ -36,18 +36,29 @@
 -(id<CP>) cp;
 -(CPExprI*) left;
 -(CPExprI*) right;
+-(BOOL) isConstant;
 @end
 
 @interface CPExprPlusI : CPExprBinaryI<CPExpr> 
 -(id<CPExpr>) initCPExprPlusI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
+-(CPInt) max;
 -(NSString *)description;
 -(void) visit:(id<CPExprVisitor>)v;
+@end
+
+@interface CPExprMulI : CPExprBinaryI<CPExpr> 
+-(id<CPExpr>) initCPExprMulI: (id<CPExpr>) left and: (id<CPExpr>) right;
+-(CPInt) min;
+-(CPInt) max;
+-(NSString *)description;
+-(void) visit: (id<CPExprVisitor>)v;
 @end
 
 @interface CPExprMinusI : CPExprBinaryI<CPExpr> 
 -(id<CPExpr>) initCPExprMinusI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
+-(CPInt) max;
 -(NSString *)description;
 -(void) visit: (id<CPExprVisitor>)v;
 @end
@@ -55,6 +66,7 @@
 @interface CPExprEqualI : CPExprBinaryI<CPExpr> 
 -(id<CPExpr>) initCPExprEqualI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
+-(CPInt) max;
 -(NSString *)description;
 -(void) visit: (id<CPExprVisitor>)v;
 @end
@@ -66,8 +78,10 @@
 -(id<CPExpr>) initCPExprSumI: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e;
 -(void) dealloc;
 -(CPInt) min;
+-(CPInt) max;
 -(id<CP>) cp;
 -(CPExprI*) expr;
+-(BOOL) isConstant;
 -(NSString *) description;
 -(void) visit: CPExprVisitorI;
 @end
@@ -78,6 +92,7 @@
 -(void) visitIntegerI: (CPIntegerI*) e;
 -(void) visitExprPlusI: (CPExprPlusI*) e;
 -(void) visitExprMinusI: (CPExprMinusI*) e;
+-(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 @end
@@ -89,6 +104,7 @@
 -(void) visitIntegerI: (CPIntegerI*) e;
 -(void) visitExprPlusI: (CPExprPlusI*) e;
 -(void) visitExprMinusI: (CPExprMinusI*) e;
+-(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 @end;

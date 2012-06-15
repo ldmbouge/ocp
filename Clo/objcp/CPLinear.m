@@ -26,6 +26,8 @@
 #import "CPLinear.h"
 #import "CPExprI.h"
 #import "CPIntVarI.h"
+#import "CPSolverI.h"
+#import <objcp/CPData.h>
 
 @interface CPLinearFlip : NSObject<CPLinear> {
    id<CPLinear> _real;   
@@ -57,23 +59,27 @@
 }
 @end
 
+
 @interface CPLinearizer : NSObject<CPExprVisitor> {
    id<CPLinear> _terms;
+   CPRewriter     _sub;
 }
--(id)initCPLinearizer:(id<CPLinear>)t;
+-(id)initCPLinearizer:(id<CPLinear>)t rewriteWith:(CPRewriter)sub;
 -(void) visitIntVarI: (CPIntVarI*) e;
 -(void) visitIntegerI: (CPIntegerI*) e;
 -(void) visitExprPlusI: (CPExprPlusI*) e;
 -(void) visitExprMinusI: (CPExprMinusI*) e;
+-(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 @end
 
 @implementation CPLinearizer
--(id)initCPLinearizer:(id<CPLinear>)t
+-(id)initCPLinearizer:(id<CPLinear>)t  rewriteWith:(CPRewriter)sub
 {
    self = [super init];
    _terms = t;
+   _sub   = sub;
    return self;
 }
 -(void) visitIntVarI: (CPIntVarI*) e 
@@ -98,6 +104,19 @@
    [_terms release];
    _terms = old;
 }
+-(void) visitExprMulI: (CPExprMulI*) e
+{
+   BOOL cv = [[e left] isConstant] && [[e right] isVariable];
+   BOOL vc = [[e left] isVariable] && [[e right] isConstant];
+   if (cv || vc) {      
+      CPInt coef = cv ? [[e left] min] : [[e right] min];
+      id       x = cv ? [e right] : [e left];
+      [_terms addTerm:x by:coef];
+   } else {
+      id<CPIntVar> alpha = _sub(e);
+      [_terms addTerm:alpha by:1];
+   }
+}
 -(void) visitExprEqualI:(CPExprEqualI*)e
 {
    [[e left] visit:self];
@@ -112,7 +131,6 @@
 
 }
 @end
-
 
 @implementation CPLinear
 -(CPLinear*)initCPLinear:(CPInt)mxs
@@ -181,14 +199,193 @@
    [buf appendFormat:@" (%d)",_indep];
    return buf;
 }
-
-+(CPLinear*)linearFrom:(CPExprI*)e
+-(id<CPIntVarArray>)scaledViews
+{
+   id<CP> cp = [_terms[0]._var cp];
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp 
+                                          range:(CPRange){0,_nb-1}
+                                           with:^id<CPIntVar>(CPInt i) {
+                                              return _terms[i]._var;
+                                           }];
+   CPInt* coefs = alloca(sizeof(CPInt)*_nb);
+   for(int k=0;k<_nb;k++)
+      coefs[k] = _terms[k]._coef;
+   id<CPIntVarArray> sx = [CPFactory pointwiseProduct:x by:coefs];
+   [x release];
+   return sx;
+}
+-(id<CPIntVar>)oneView
+{
+   id<CPIntVar> rv = [CPFactory intVar:_terms[0]._var
+                                 scale:_terms[0]._coef
+                                 shift:_indep];
+   return rv;
+}
+-(CPInt)size
+{ 
+   return _nb;
+}
+-(CPInt)min
+{
+   CPLong lb = MAXINT;
+   for(CPInt k=0;k < _nb;k++) {
+      CPInt c = _terms[k]._coef;
+      CPLong vlb = [_terms[k]._var min];
+      CPLong vub = [_terms[k]._var max];
+      CPLong svlb = c > 0 ? vlb * c : vub * c;
+      lb += svlb;
+   }
+   return max(MININT,lb);
+}
+-(CPInt)max
+{
+   CPLong ub = MININT;
+   for(CPInt k=0;k < _nb;k++) {
+      CPInt c = _terms[k]._coef;
+      CPLong vlb = [_terms[k]._var min];
+      CPLong vub = [_terms[k]._var max];
+      CPLong svub = c > 0 ? vub * c : vlb * c;
+      ub += svub;
+   }
+   return min(MAXINT,ub);   
+}
++(CPLinear*)linearFrom:(CPExprI*)e sub:(CPRewriter) sub
 {
    CPLinear* rv = [[CPLinear alloc] initCPLinear:4];
-   CPLinearizer* v = [[CPLinearizer alloc] initCPLinearizer:rv];
+   CPLinearizer* v = [[CPLinearizer alloc] initCPLinearizer:rv rewriteWith:sub];
    [e visit:v];
    [v release];
    return rv;
 }
 
+@end
+
+@interface CPSubst   : NSObject<CPExprVisitor> {
+   id<CPIntVar>    _rv;
+   id<CPSolver>   _fdm;
+}
+-(id)initCPSubst:(id<CPSolver>)fdm;
+-(id<CPIntVar>)result;
+-(void) visitIntVarI: (CPIntVarI*) e;
+-(void) visitIntegerI: (CPIntegerI*) e;
+-(void) visitExprPlusI: (CPExprPlusI*) e;
+-(void) visitExprMinusI: (CPExprMinusI*) e;
+-(void) visitExprMulI: (CPExprMulI*) e;
+-(void) visitExprEqualI:(CPExprEqualI*)e;
+-(void) visitExprSumI: (CPExprSumI*) e;
+@end
+
+@implementation CPSubst
+-(id)initCPSubst:(id<CPSolver>)fdm
+{
+   self = [super init];
+   _rv = nil;
+   _fdm = fdm;
+   return self;
+}
+-(id<CPIntVar>)result
+{
+   return _rv;
+}
+-(id<CPIntVar>)normSide:(CPLinear*)e for:(id<CP>)cp
+{
+   if ([e size] == 1) {
+      return [e oneView];
+   } else {
+      id<CPIntVar> xv = [CPFactory intVar:cp domain:(CPRange){[e min],[e max]}];
+      [e addTerm:xv by:-1];
+      id<CPIntVarArray> sx = [e scaledViews];
+      [_fdm post:[CPFactory sum:sx  eq:0]];
+      return xv;
+   }
+}
+-(void) visitIntVarI: (CPIntVarI*) e
+{
+   _rv = e;
+}
+-(void) visitIntegerI: (CPIntegerI*) e
+{
+   id<CP> cp = [e cp];
+   _rv = [CPFactory intVar:cp domain:(CPRange){[e value],[e value]}];   
+   [_fdm post:[CPFactory equalc:_rv to:[e value]]];
+}
+-(void) visitExprPlusI: (CPExprPlusI*) e
+{}
+-(void) visitExprMinusI: (CPExprMinusI*) e
+{}
+-(void) visitExprMulI: (CPExprMulI*) e
+{
+   CPRewriter sub = ^id<CPIntVar>(CPExprI* e) {
+      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];
+      [e visit:subst];
+      id<CPIntVar> theVar = [subst result];
+      [subst release];
+      return theVar;
+   };
+   id<CP> cp = [e cp];
+   CPLinear* lT = [CPLinear linearFrom:[e left] sub:sub];
+   CPLinear* rT = [CPLinear linearFrom:[e right] sub:sub];
+   id<CPIntVar> lV = [self normSide:lT for:cp];
+   id<CPIntVar> rV = [self normSide:rT for:cp];
+   CPLong llb = [lV min];
+   CPLong lub = [lV max];
+   CPLong rlb = [rV min];
+   CPLong rub = [rV max];
+   CPLong a = min(llb * rlb,llb * rub);
+   CPLong b = min(lub * rlb,lub * rub);
+   CPLong lb = min(a,b);
+   CPLong c = max(llb * rlb,llb * rub);
+   CPLong d = max(lub * rlb,lub * rub);
+   CPLong ub = max(c,d);
+   id<CPIntVar> theVar = [CPFactory intVar:cp 
+                                    domain:(CPRange){max(lb,MININT),min(ub,MAXINT)}];
+   [_fdm post: [CPFactory mul:lV by:rV into:theVar]];
+   _rv = theVar;
+   [lT release];
+   [rT release];
+}
+-(void) visitExprEqualI:(CPExprEqualI*)e
+{
+   assert(NO);
+}
+-(void) visitExprSumI: (CPExprSumI*) e
+{}
+@end
+
+@implementation CPExprConstraintI
+-(id) initCPExprConstraintI:(id<CPExpr>)x
+{
+   id<CP> cp = [x cp];
+   self = [super initCPActiveConstraint:[cp solver]];
+   _fdm = (CPSolverI*)[cp solver];
+   _expr = x;
+   return self;
+}
+-(void) dealloc
+{
+   [_expr release];
+   [super dealloc];
+}
+-(CPStatus)post
+{
+   CPLinear* terms = [CPLinear linearFrom:_expr sub:^id<CPIntVar>(CPExprI* e) {
+      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];
+      [e visit:subst];
+      id<CPIntVar> theVar = [subst result];
+      [subst release];
+      return theVar;
+   }];
+   id<CPIntVarArray> sx = [terms scaledViews];
+   CPStatus st = [_fdm post:[CPFactory sum:sx eq:0]];
+   [terms release];
+   return st;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] init];
+}
+-(CPUInt)nbUVars
+{
+   return 0;
+}
 @end

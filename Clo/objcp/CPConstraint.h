@@ -55,12 +55,15 @@ typedef enum {
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (int) c;
++(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c;
 +(id<CPConstraint>) notEqual: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (int) c;
 +(id<CPConstraint>) notEqual: (id<CPIntVar>) x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (CPInt) c;
 +(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<CPIntVarArray>) x;
++(id<CPConstraint>) expr: (id<CPExpr>)e;
 @end
 
 

@@ -225,6 +225,11 @@
    id<CPExpr> o = [[CPExprMinusI alloc] initCPExprMinusI: left and: right]; 
    return [self validate:o onError:"No CP Solver in Sub Expression"];
 }
++(id<CPExpr>) expr: (id<CPExpr>) left mul: (id<CPExpr>) right
+{
+   id<CPExpr> o = [[CPExprMulI alloc] initCPExprMulI: left and: right]; 
+   return [self validate:o onError:"No CP Solver in Mul Expression"];
+}
 +(id<CPExpr>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right
 {
    id<CPExpr> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
@@ -237,5 +242,19 @@
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o; 
 }
+
++(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
+{
+   id<CP> cp = [vars[0] cp];
+   id<CPExpr> rv = nil;
+   CPInt i = 0;
+   while(vars[i]!=nil) {
+      id<CPExpr> term = [self expr:vars[i] mul:[CPFactory integer:cp value:coefs[i]]];
+      rv = rv==nil ? term : [CPFactory expr:rv add:term];
+      ++i;
+   }
+   return rv;
+}
+
 @end
 

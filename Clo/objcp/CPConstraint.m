@@ -34,6 +34,7 @@
 #import "CPEquationBC.h"
 #import "CPCircuitI.h"
 #import "CPTableI.h"
+#import "CPLinear.h"
 
 @implementation CPFactory (Constraint)
 
@@ -149,6 +150,18 @@
     [[[x cp] solver] trackObject: o];
     return o;
 }
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c
+{
+   id<CPConstraint> o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
++(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c
+{
+   id<CPConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
+   [[[x cp] solver] trackObject:o];
+   return o;      
+}
 +(id<CPConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y plus:(int)c
 {
    id<CPConstraint> o = [[CPNotEqual alloc] initCPNotEqual:x and:y and:c];
@@ -184,7 +197,12 @@
     id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
     [[[x cp] solver] trackObject:o];
     return o;
-    
+}
++(id<CPConstraint>) expr: (id<CPExpr>)e 
+{
+   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e];
+   [[[e cp] solver] trackObject:o];
+   return o;
 }
 @end
 

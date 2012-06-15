@@ -59,6 +59,11 @@
 			<key>orderHint</key>
 			<integer>10</integer>
 		</dict>
+		<key>fdmul2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
+		</dict>
 		<key>gurobiwrapper.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -243,6 +248,11 @@
 			<true/>
 		</dict>
 		<key>5BCCC4021417F8CE0079E833</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BE5A7E9158A838F006703CB</key>
 		<dict>
 			<key>primary</key>
 			<true/>

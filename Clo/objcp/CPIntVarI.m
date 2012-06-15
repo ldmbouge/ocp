@@ -225,6 +225,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         _recv = [d retain];
     }
 }
+-(BOOL) isConstant
+{
+   return NO;
+}
+-(BOOL) isVariable
+{
+   return YES;
+}
 -(bool)bound
 {
     return [_dom bound];

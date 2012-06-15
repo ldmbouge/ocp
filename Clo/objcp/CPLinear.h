@@ -25,8 +25,11 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPData.h>
+#import "CPConstraintI.h"
 
 @protocol CPIntVar;
+@protocol CPIntVarArray;
+typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 
 @protocol CPLinear<NSObject>
 -(void)setIndependent:(CPInt)idp;
@@ -44,11 +47,27 @@
    CPInt            _max;
    CPInt          _indep;
 }
-+(CPLinear*)linearFrom:(id<CPExpr>)e;
++(CPLinear*)linearFrom:(id<CPExpr>)e  sub:(CPRewriter) sub;
 -(CPLinear*)initCPLinear:(CPInt)mxs;
 -(void)dealloc;
 -(void)setIndependent:(CPInt)idp;
 -(void)addIndependent:(CPInt)idp;
 -(void)addTerm:(id<CPIntVar>)x by:(CPInt)c;
 -(NSString*)description;
+-(id<CPIntVarArray>)scaledViews;
+-(id<CPIntVar>)oneView;
+-(CPInt)size;
+-(CPInt)min;
+-(CPInt)max;
+@end
+
+@interface CPExprConstraintI : CPActiveConstraint {
+   CPSolverI* _fdm;
+   id<CPExpr> _expr;
+}
+-(id) initCPExprConstraintI:(id<CPExpr>)x;
+-(void) dealloc;
+-(CPStatus)post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
 @end
