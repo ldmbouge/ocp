@@ -74,6 +74,7 @@
    CPTrail*                 _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
+   NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
    CPAC3Queue*              _ac3[NBPRIORITIES];
    CPAC5Queue*              _ac5;
@@ -108,6 +109,7 @@
 -(CPInt)virtualOffset:(id)obj;
 -(NSMutableArray*)allVars;
 -(NSMutableArray*)allConstraints;
+-(NSMutableArray*)allModelConstraints;
 -(void)      saveSolution;
 -(void)      restoreSolution;
 -(CPStatus)  close;

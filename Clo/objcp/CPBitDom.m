@@ -86,12 +86,18 @@
 {
    return _min._val <= v && v <= _max._val;
 }
-
 -(bool)member:(CPInt)v
 {
    return _min._val <= v && v <= _max._val;
 }
-
+-(CPInt)findMin:(CPInt)from // smallest value larger or equal to from
+{
+   return from;
+}
+-(CPInt)findMax:(CPInt)from // largest value smaller or equal to from
+{
+   return from;
+}
 -(CPInt)countFrom:(CPInt)from to:(CPInt)to
 {
    from = max(_min._val,from);

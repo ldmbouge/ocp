@@ -412,6 +412,329 @@
 }
 @end
 
+
+@implementation CPMultBC
+-(id) initCPMultBC:(id)x times:(id)y equal:(id)z
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+static inline CPInt bindUp(CPLong a)   { return (a < (CPLong)MAXINT) ? (CPInt)a : MAXINT;}
+static inline CPInt bindDown(CPLong a) { return (a > (CPLong)MININT) ? (CPInt)a : MININT;}
+static inline CPInt minDiv(CPLong c,CPLong d1,CPLong d2)  {
+   const CPLong rd1 = c % d1,rd2 = c % d2;
+   const CPLong q1 = c / d1 + (rd1 && d1*c>0); 
+   const CPLong q2 = c / d2 + (rd2 && d2*c>0);
+   return bindDown(q1 < q2 ? q1 : q2);
+}
+static inline CPInt maxDiv(CPLong c,CPLong d1,CPLong d2)  { 
+   const CPLong rd1 = c % d1,rd2 = c % d2;
+   const CPLong q1 = c / d1 - (rd1 && d1*c<0); 
+   const CPLong q2 = c / d2 - (rd2 && d2*c<0); 
+   return bindUp(q1 > q2 ? q1 : q2);
+}
+static inline CPLong minSeq(CPLong v[4])  {
+   CPLong min = MAXINT;
+   for(int i=0;i<4;i++)
+      min = min > v[i] ? v[i] : min;
+   return min;
+}
+static inline CPLong maxSeq(CPLong v[4])  {
+   CPLong mx = MININT;
+   for(int i=0;i<4;i++)
+      mx = mx < v[i] ? v[i] : mx;
+   return mx;
+}
+static inline int minDiv4(CPLong a,CPLong b,CPLong c,CPLong d) { 
+   const CPLong acr = a%c && a*c>0;
+   const CPLong adr = a%d && a*d>0;
+   const CPLong bcr = b%c && b*c>0;
+   const CPLong bdr = b%d && b*d>0;
+   return bindDown(minSeq((CPLong[4]){a/c+acr,a/d+adr,b/c+bcr,b/d+bdr}));
+}
+static inline int maxDiv4(CPLong a,CPLong b,CPLong c,CPLong d) { 
+   const CPLong acr = a%c && a*c<0;
+   const CPLong adr = a%d && a*d<0;
+   const CPLong bcr = b%c && b*c<0;
+   const CPLong bdr = b%d && b*d<0;
+   return bindUp(maxSeq((CPLong[4]){a/c-acr,a/d-adr,b/c-bcr,b/d-bdr}));
+}
+
+static inline CPBounds bounds(CPIntVarI* x)
+{
+   CPBounds b;
+   [x bounds:&b];
+   return b;
+}
+static inline CPBounds negBounds(CPIntVarI* x)
+{
+   CPBounds b;
+   [x bounds:&b];
+   return (CPBounds){- b.max, -b.min};
+}
+// RXC:  Range | Variable | Constant
+-(CPStatus) propagateRXC:(CPBounds)r mult:(CPIntVarI*)x equal:(CPInt)c
+{
+   CPInt a = r.min,b = r.max;
+   CPStatus suc = CPSuspend;
+   if (a > 0 || b < 0) {
+      if (suc) suc = [x updateMin:minDiv(c,a,b)];
+      if (suc) suc = [x updateMax:maxDiv(c,a,b)];
+   } else if (a==0 || b == 0) {
+      CPRange az = [_x around:0];
+      int s = a==0 ? az.up  : az.low;
+      int l = a==0 ? b : a;
+      if (suc) suc = [x updateMin:minDiv(c,s,l)];
+      if (suc) suc = [x updateMax:maxDiv(c,s,l)];
+   } else {
+      CPRange az = [_x around:0];
+      CPInt xm1 = minDiv(c,az.low,az.up);
+      CPInt xM1 = maxDiv(c,az.low,az.up);
+      CPInt xm2 = minDiv(c,a,b);
+      CPInt xM2 = maxDiv(c,a,b);
+      CPInt xm = xm1 < xm2 ? xm1 : xm2;
+      CPInt xM = xM1 > xM2 ? xM1 : xM2;
+      if (suc) suc = [x updateMin:xm];
+      if (suc) suc = [x updateMax:xM];
+   }
+   return suc ? CPSuspend : CPFailure;
+}
+-(CPStatus)propagateCXZ:(CPLong)c mult:(CPIntVarI*)x equal:(CPBounds)zb
+{
+   CPStatus suc = CPSuspend;
+   int nz = ![_z member:0];
+   int newMin = zb.min/c + (nz && zb.min >= 0 && zb.min % c);
+   int newMax = zb.max/c - (nz && zb.max <  0 && zb.max % c);
+   if (suc) suc = [x updateMin:newMin];
+   if (suc) suc = [x updateMax:newMax];
+   return suc ? CPSuspend : CPFailure;
+}
+-(CPStatus) postCX:(CPLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z 
+{
+   if ([x bound])
+      return [z bind:bindDown(c * [x min])];
+   else {
+      CPStatus suc = CPSuspend;
+      if (c > 0) {
+         CPInt newMax  = bindUp(c * [x max]);
+         CPInt newMin  = bindDown(c * [x min]);
+         if (suc) suc = [z updateMin:newMin];
+         if (suc) suc = [z updateMax:newMax];
+         if (suc) suc = [self propagateCXZ:c mult:x equal:bounds(z)];
+         if (suc) {
+            [z whenChangeBoundsPropagate:self];
+            [x whenChangeBoundsPropagate:self];
+         }
+      } else if (c == 0) {
+         if (suc) suc = [z bind:0];
+      } else {
+         int newMin = bindDown(c * [x max]);
+         int newMax = bindUp(c * [x min]);
+         if (suc) suc = [z updateMin:newMin];
+         if (suc) suc = [z updateMax:newMax];
+         if (suc) suc = [self propagateCXZ:-c mult:x equal:negBounds(z)];
+         if (suc) {
+            [z whenChangeBoundsPropagate:self];
+            [x whenChangeBoundsPropagate:self];
+         }
+      }
+      return suc;
+   }
+}
+-(CPStatus)propagateCX:(CPLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z
+{
+   if ([x bound]) {
+      return [z bind:c * [x min]];
+   } else {
+      CPStatus suc = CPSuspend;
+      if (c > 0) {
+         CPInt newMax  = bindUp(c * [x max]);
+         CPInt newMin  = bindDown(c * [x min]);
+         if (suc) suc = [z updateMin:newMin];
+         if (suc) suc = [z updateMax:newMax];
+         if (suc) suc = [self propagateCXZ:c mult:x equal:bounds(z)];
+         return suc;
+      } else if (c == 0) {
+         return [z bind:0];
+      } else {
+         if (suc) suc = [z updateMin:c * [x max]];
+         if (suc) suc = [z updateMax:c * [x min]];
+         if (suc) suc = [self propagateCXZ:-c mult:x equal:negBounds(z)]; 
+         return suc;
+      }
+   }
+}
+-(CPStatus)propagateXCR:(CPIntVarI*)x mult:(CPIntVarI*)y equal:(CPBounds)r
+{
+   CPInt a = r.min,b=r.max;
+   CPInt c = [y min],d = [y max];
+   CPStatus suc = CPSuspend;
+   if (c==0 && d==0)  {
+      return [_z bind:0];
+   } else if (c>0) {
+      if (suc) suc = [x updateMin:minDiv4(a,b,c,d)];
+      if (suc) suc = [x updateMax:maxDiv4(a,b,c,d)];
+   } else if (d<0) {
+      if (suc) suc = [x updateMin:minDiv4(a,b,c,d)];
+      if (suc) suc = [x updateMax:maxDiv4(a,b,c,d)];
+   } else {
+      if (a <= 0 && b >= 0)
+         return CPSuspend;
+      else {
+         if (c==0 || d == 0) {
+            if (a <= 0 && b >= 0) return CPSuspend;
+            CPRange az = [y around:0]; // around zero            
+            int s = c==0 ? az.up : az.low;
+            int l = c==0 ? d : c;
+            if (suc) suc = [x updateMin:minDiv4(a,b,s,l)];
+            if (suc) suc = [x updateMax:maxDiv4(a,b,s,l)];
+         } else {
+            CPRange az = [y around:0]; // around zero
+            CPInt xm1 = minDiv4(a,b,az.low,az.up);
+            CPInt xM1 = maxDiv4(a,b,az.low,az.up);
+            CPInt xm2 = minDiv4(a,b,c,d);
+            CPInt xM2 = maxDiv4(a,b,c,d);
+            CPInt xm = xm1 < xm2 ? xm1 : xm2;
+            CPInt xM = xM1 > xM2 ? xM1 : xM2;
+            if (suc) suc = [x updateMin:xm];
+            if (suc) suc = [x updateMax:xM];
+         }
+      }
+   }
+   return suc ? CPSuspend : CPFailure;
+}
+-(CPStatus)propagateXYZ
+{
+   CPStatus suc = CPSuspend;
+   if (![_z member:0]) {
+      if (suc) suc = [_x remove:0];
+      if (suc) suc = [_y remove:0];
+   }
+   CPBounds xb,yb,zb;
+   [_x bounds:&xb];
+   [_y bounds:&yb];
+   CPLong t[4] = {xb.min*yb.min,xb.min*yb.max,xb.max*yb.min,xb.max*yb.max};
+   if (suc) suc = [_z updateMin:bindDown(minSeq(t))];
+   if (suc) suc = [_z updateMax:bindUp(maxSeq(t))];
+   [_z bounds:&zb];
+   if (suc) suc = [self propagateXCR:_x mult:_y equal:zb];
+   if (suc) suc = [self propagateXCR:_y mult:_x equal:zb];
+   return suc ? CPSuspend : CPFailure;
+}
+-(CPStatus) post
+{   
+   if ([_x bound])
+      return [self postCX:[_x min] mult:_y equal:_z];
+   else if ([_y bound])
+      return [self postCX:[_y min] mult:_x equal:_z];
+   else if ([_z bound]) {
+      CPStatus suc = CPSuspend;
+      if ([_z min] == 0) {
+         BOOL xZero = [_x member:0];
+         BOOL yZero = [_y member:0];
+         if (xZero || yZero) {   
+            if (xZero ^ yZero) { 
+               if (xZero) suc = [_x bind:0];
+               if (yZero) suc = [_y bind:0];
+            } else {  
+               [_x whenChangePropagate:self];
+               [_y whenChangePropagate:self];
+            }
+         } else return CPFailure;
+      } else { 
+         CPStatus suc = [self propagateRXC:bounds(_x) mult:_y equal:[_z min]];
+         if (suc) suc = [self propagateRXC:bounds(_y) mult:_x equal:[_z min]];
+         if (suc) {
+            if (![_x bound]) [_x whenChangeBoundsPropagate:self];
+            if (![_y bound]) [_y whenChangeBoundsPropagate:self];
+         }
+      }
+      return suc;
+   } else { 
+      CPStatus suc = [self propagateXYZ];
+      if (suc) {
+         [_x whenChangeBoundsPropagate:self];
+         [_y whenChangeBoundsPropagate:self];
+         [_z whenChangeBoundsPropagate:self];
+         [_x whenChangePropagate:self];
+         [_y whenChangePropagate:self];
+      }
+      return suc;
+   }   
+}
+-(CPStatus)propagate
+{
+   if ([_x bound]) {
+      CPStatus oc =  [self propagateCX:[_x min] mult:_y equal:_z];
+      if (oc && [_y bound] && [_z  bound])
+         return CPSuccess;
+      else return oc;
+   } else if ([_y bound]) {
+      CPStatus oc = [self propagateCX:[_y min] mult:_x equal:_z];
+      if (oc && [_x bound] && [_z bound])
+         return CPSuccess;
+      else return oc;      
+   } else if ([_z bound]) {
+      CPStatus suc = CPSuspend;
+      if ([_z min] == 0) {
+         BOOL xZero = [_x member:0],yZero = [_y member:0];
+         if (xZero || yZero) {   
+            if (xZero ^ yZero) { 
+               if (xZero)
+                  suc = [_x bind:0];
+               else suc = [_y bind:0];
+            } else suc = CPSuspend;
+         } else suc = CPFailure;
+      } else { 
+         CPStatus suc = [self propagateRXC:bounds(_x) mult:_y equal:[_z min]];
+         if (suc) suc = [self propagateRXC:bounds(_y) mult:_x equal:[_z min]];
+      }
+      if (suc && [_x bound] && [_y bound])
+         return CPSuccess; 
+      else return suc ? CPSuspend : CPFailure;
+   } else { 
+      return [self propagateXYZ];
+   }
+}
+
+
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];      
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_z bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<%02ld> %@ == %@ * %@",_name,_z,_x,_y];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 @implementation CPAllDifferenceVC
 -(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(CPInt) n
 {

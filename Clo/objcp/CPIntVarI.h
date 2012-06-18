@@ -190,6 +190,7 @@ typedef struct  {
 -(void) bounds:(CPBounds*)bnd;
 -(CPInt) domsize;
 -(bool) member:(CPInt)v;
+-(CPRange)around:(CPInt)v;
 -(id<CPDom>) domain;
 -(CPInt) shift;
 -(CPInt) scale;
@@ -225,6 +226,7 @@ typedef struct  {
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
 -(bool)member:(CPInt)v;
+-(CPRange)around:(CPInt)v;
 -(CPInt) shift;
 -(CPInt) scale;
 -(CPStatus)updateMin:(CPInt)newMin;
@@ -245,6 +247,7 @@ typedef struct  {
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
 -(bool)member:(CPInt)v;
+-(CPRange)around:(CPInt)v;
 -(CPInt) shift;
 -(CPInt) scale;
 -(CPStatus)updateMin:(CPInt)newMin;

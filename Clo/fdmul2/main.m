@@ -36,10 +36,11 @@ int main(int argc, const char * argv[])
       CPRange D = (CPRange){0,9};
       id<CP> cp = [CPFactory createSolver];      
       id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];         
-      id<CPHeuristic> h = [CPFactory createIBS:cp];
+      id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solve: ^{
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
-         [cp add:[CPFactory cardinality:x low:lb up:lb consistency:DomainConsistency]];
+         [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
+         
          id<CPExpr> lhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:0],[x at:1],[x at:2],nil} by:(int[]){1,10,100}];
          id<CPExpr> e1 = [CPFactory expr:lhs1 mul:[x at:3]];
          id<CPExpr> e2 = [CPFactory expr:lhs1 mul:[x at:4]];
@@ -55,6 +56,7 @@ int main(int argc, const char * argv[])
          id<CPExpr> rhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],[x at:9],[x at:10],[x at:11],[x at:12],[x at:13],[x at:14],nil}
                                               by:(int[]){1,10,100,10,100,1000,100,1000,10000}];
          [cp add:[CPFactory expr:[CPFactory expr:lhs4 equal:rhs4]]];
+         
       } using:^{
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@",x);

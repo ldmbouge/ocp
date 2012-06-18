@@ -212,9 +212,10 @@ static void computeCardinalities(CPIntVarArrayI* ax,
         else if ([_x[i] member: val]) {
             if ([_x[i] remove: val] == CPFailure)
                 return CPFailure;
-        }
+        }/** [ldm] I do not understand this count++.  This causes a bug in fdmul2 and certainly makes no sense in the cardinality 
         else
             count++;
+          */
     }
     if (count != _up[val])
         return CPFailure;

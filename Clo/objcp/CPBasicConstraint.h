@@ -117,6 +117,17 @@ typedef int (^intgetter) (void) ;
 -(CPUInt)nbUVars;
 @end
 
+@interface CPMultBC : CPActiveConstraint<NSCoding> { // z == x * y
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   CPIntVarI* _z;
+}
+-(id) initCPMultBC:(id)x times:(id)y equal:(id)z;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
 @interface CPAllDifferenceVC : CPActiveConstraint<NSCoding> {
    CPIntVarI**   _x;
    CPInt    _nb;   

@@ -50,6 +50,8 @@
 -(bool)bound;
 -(CPInt)domsize;
 -(bool)member:(CPInt)v;
+-(CPInt)findMin:(CPInt)from;
+-(CPInt)findMax:(CPInt)from;
 -(int(^)())getMin;
 -(NSString*)description;
 -(id)copyWithZone:(NSZone *)zone;

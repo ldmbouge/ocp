@@ -157,7 +157,7 @@
 }
 -(void)addTerm:(id<CPIntVar>)x by:(CPInt)c
 {
-   CPInt low = 0,up=_nb-1,mid,kid;
+   CPInt low = 0,up=_nb-1,mid=-1,kid;
    CPInt xid = [x  getId];
    BOOL found = NO;
    while (low <= up) {
@@ -168,7 +168,7 @@
          break;
       else if (xid < kid)
          up = mid - 1;
-      else up = mid + 1;
+      else low = mid + 1;
    }
    if (found) {
       _terms[mid]._coef += c;
@@ -187,7 +187,6 @@
          _terms[mid] = (struct CPTerm){x,c};
          _nb += 1;
       }
-      _terms[_nb++] = (struct CPTerm){x,c};      
    }
 }
 -(NSString*)description
@@ -211,7 +210,6 @@
    for(int k=0;k<_nb;k++)
       coefs[k] = _terms[k]._coef;
    id<CPIntVarArray> sx = [CPFactory pointwiseProduct:x by:coefs];
-   [x release];
    return sx;
 }
 -(id<CPIntVar>)oneView
@@ -227,7 +225,7 @@
 }
 -(CPInt)min
 {
-   CPLong lb = MAXINT;
+   CPLong lb = 0;
    for(CPInt k=0;k < _nb;k++) {
       CPInt c = _terms[k]._coef;
       CPLong vlb = [_terms[k]._var min];
@@ -239,7 +237,7 @@
 }
 -(CPInt)max
 {
-   CPLong ub = MININT;
+   CPLong ub = 0;
    for(CPInt k=0;k < _nb;k++) {
       CPInt c = _terms[k]._coef;
       CPLong vlb = [_terms[k]._var min];
@@ -339,7 +337,7 @@
    CPLong ub = max(c,d);
    id<CPIntVar> theVar = [CPFactory intVar:cp 
                                     domain:(CPRange){max(lb,MININT),min(ub,MAXINT)}];
-   [_fdm post: [CPFactory mul:lV by:rV into:theVar]];
+   [_fdm post: [CPFactory mult:lV by:rV equal:theVar]];
    _rv = theVar;
    [lT release];
    [rT release];
@@ -358,7 +356,7 @@
    id<CP> cp = [x cp];
    self = [super initCPActiveConstraint:[cp solver]];
    _fdm = (CPSolverI*)[cp solver];
-   _expr = x;
+   _expr = [x retain];
    return self;
 }
 -(void) dealloc

@@ -191,6 +191,13 @@
    id<CPIntVar> yp = [self intVar:y shift:-1];
    return [self lEqual:x to:yp];
 }
++(id<CPConstraint>) mult: (id<CPIntVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+   id<CPConstraint> o = [[CPMultBC alloc] initCPMultBC:x times:y equal:z];
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
+
 
 +(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarArrayI*) x
 {

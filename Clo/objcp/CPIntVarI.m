@@ -261,6 +261,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom member:v];
 }
+-(CPRange)around:(CPInt)v
+{
+   CPInt low = [_dom findMax:v-1];
+   CPInt up  = [_dom findMin:v+1];
+   return (CPRange){low,up};
+}
 -(CPInt) shift
 {
     return 0;
@@ -716,6 +722,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom member:v-_b];
 }
+-(CPRange)around:(CPInt)v
+{
+   CPInt low = [_dom findMax:v - _b - 1];
+   CPInt up  = [_dom findMin:v - _b + 1];
+   return (CPRange){low + _b,up + _b};
+}
 -(CPInt) shift
 {
     return _b;
@@ -853,6 +865,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     CPInt dv = (v - _b) / _a;
     return [_dom member:dv];
 }
+-(CPRange)around:(CPInt)v
+{
+   CPInt low = [_dom findMax:(v - _b - 1) / _a];
+   CPInt up  = [_dom findMin:(v - _b + 1) / _a];
+   return (CPRange){low * _a + _b,up * _a  + _b};
+}
+
 -(CPInt) shift
 {
     return _b;

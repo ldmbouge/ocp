@@ -152,7 +152,10 @@ typedef struct AC3Entry {
 inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,CPCoreConstraint* cstr)
 {
    if (q->_csz == q->_mxs-1) 
-      [q resize];   
+      [q resize];  
+   CPInt last = q->_enter == 0 ? q->_mxs -1 : q->_enter - 1;
+   if (q->_csz > 0 && q->_tab[last].cb == cb && q->_tab[last].cstr == cstr)
+      return;                                                         
    q->_tab[q->_enter] = (AC3Entry){cb,cstr};
    q->_enter = (q->_enter+1) & (q->_mxs - 1); // q->_mask;
    ++q->_csz;
@@ -266,6 +269,7 @@ typedef struct {
    _closed = false;
    _vars  = [[NSMutableArray alloc] init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    for(CPInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
@@ -285,6 +289,7 @@ typedef struct {
    NSLog(@"Solver [%p] dealloc called...\n",self);
    [_vars release];
    [_cStore release];
+   [_mStore release];
    [_oStore release];
    [_ac5 release];
    [_propagFail release];
@@ -298,7 +303,6 @@ typedef struct {
 {
    return self;
 }
-
 -(NSMutableArray*)allVars
 {
    return _vars;
@@ -307,7 +311,10 @@ typedef struct {
 {
    return _cStore;
 }
-
+-(NSMutableArray*)allModelConstraints
+{
+   return _mStore;
+}
 -(CPUInt) nbPropagation
 {
    return _nbpropag;
@@ -490,8 +497,8 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    else {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId:[_cStore count]];
-      [_cStore addObject:c]; 
+      [cstr setId:[_mStore count]];
+      [_mStore addObject:c]; 
       return CPSuspend;
    }
 }
@@ -541,10 +548,8 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 {
    if (!_closed) {
       _closed = true;
-      for(id<CPConstraint> c in _cStore) {
-         CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-         CPStatus status = [cstr post];    
-         _status = internalPropagate(self,status);
+      for(id<CPConstraint> c in _mStore) {
+         [self post:c];
          if (_status == CPFailure)
             return CPFailure;
       }
@@ -571,13 +576,14 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_closed];
    [aCoder encodeObject:_vars];
    [aCoder encodeObject:_trail];
-   [aCoder encodeObject:_cStore];
+   [aCoder encodeObject:_mStore];
    [aCoder encodeObject:_oStore];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_closed];
    _vars = [[aDecoder decodeObject] retain];
    _trail = [[aDecoder decodeObject] retain];
@@ -592,7 +598,8 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    _propagSEL = @selector(propagate);
    _propagIMP = [self methodForSelector:_propagSEL];
    for(id<CPConstraint> c in originalStore) {
-      [self post:[c retain]];  // The retain is necessary given that the post will release it after storing in cStore.
+      // The retain is necessary given that the post will release it after storing in cStore.
+      [self add:[c retain]];  
    }
    return self;
 }

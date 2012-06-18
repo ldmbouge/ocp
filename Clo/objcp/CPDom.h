@@ -46,6 +46,8 @@
 -(CPInt)countFrom:(CPInt)from to:(CPInt)to;
 -(bool)get:(CPInt)b;
 -(bool)member:(CPInt)v;
+-(CPInt)findMin:(CPInt)from;
+-(CPInt)findMax:(CPInt)from;
 -(id)copy;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(CPInt)toRestore;
