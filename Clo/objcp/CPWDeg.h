@@ -29,6 +29,7 @@
 
 @interface CPWDeg : CPBaseHeuristic<CPHeuristic> {
    NSMutableArray* _vars;
+   CPUInt*          _map; 
    id<CP>            _cp;
    CPSolverI*    _solver;
    CPUInt       _nbc;

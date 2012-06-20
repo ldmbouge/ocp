@@ -28,7 +28,7 @@
 #import "CPIntVarI.h"
 @protocol CPExprVisitor;
 
-@interface CPExprBinaryI : CPExprI<CPExpr> {
+@interface CPExprBinaryI : CPExprI<CPExpr,NSCoding> {
    CPExprI* _left;
    CPExprI* _right;
 }
@@ -39,7 +39,7 @@
 -(BOOL) isConstant;
 @end
 
-@interface CPExprPlusI : CPExprBinaryI<CPExpr> 
+@interface CPExprPlusI : CPExprBinaryI<CPExpr,NSCoding> 
 -(id<CPExpr>) initCPExprPlusI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
 -(CPInt) max;
@@ -47,7 +47,7 @@
 -(void) visit:(id<CPExprVisitor>)v;
 @end
 
-@interface CPExprMulI : CPExprBinaryI<CPExpr> 
+@interface CPExprMulI : CPExprBinaryI<CPExpr,NSCoding> 
 -(id<CPExpr>) initCPExprMulI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
 -(CPInt) max;
@@ -55,7 +55,7 @@
 -(void) visit: (id<CPExprVisitor>)v;
 @end
 
-@interface CPExprMinusI : CPExprBinaryI<CPExpr> 
+@interface CPExprMinusI : CPExprBinaryI<CPExpr,NSCoding> 
 -(id<CPExpr>) initCPExprMinusI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
 -(CPInt) max;
@@ -63,7 +63,7 @@
 -(void) visit: (id<CPExprVisitor>)v;
 @end
 
-@interface CPExprEqualI : CPExprBinaryI<CPExpr> 
+@interface CPExprEqualI : CPExprBinaryI<CPExpr,NSCoding> 
 -(id<CPExpr>) initCPExprEqualI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
 -(CPInt) max;
@@ -72,7 +72,7 @@
 @end
 
 
-@interface CPExprSumI : CPExprI<CPExpr> {
+@interface CPExprSumI : CPExprI<CPExpr,NSCoding> {
     id<CPExpr> _e;
 }
 -(id<CPExpr>) initCPExprSumI: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e;

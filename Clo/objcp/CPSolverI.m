@@ -57,30 +57,6 @@
 }
 @end
 
-/*****************************************************************************************/
-/*                        VarAC5EventNode                                                */
-/*****************************************************************************************/
-
-@implementation VarAC5EventNode
-
--(VarAC5EventNode*) initVarAC5EventNode: (VarAC5EventNode*)next trigger:(id)t at:(CPInt)prio
-{
-    self = [super init];
-    _node = [next retain];
-    _trigger = [t copy]; 
-    _priority = prio;
-    return self;
-}
-
--(void) dealloc
-{
-    //NSLog(@"VarEventNode::dealloc] %p\n",self);
-    [_trigger release];
-    [super dealloc];
-}
-
-@end
-
 typedef struct AC3Entry {
    ConstraintCallback   cb;
    CPCoreConstraint*    cstr;
@@ -183,7 +159,7 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 
 // PVH: This may need to be generalized to cope with different types of events
 typedef struct {
-    VarAC5EventNode* _list;
+    VarEventNode* _list;
     CPInt        _value;
 } AC5Event;
 
@@ -199,7 +175,7 @@ typedef struct {
 -(id) initAC5Queue: (CPInt) sz;
 -(void) dealloc;
 -(AC5Event) deQueue;
--(void) enQueue: (VarAC5EventNode*) cb with: (CPInt) val;
+-(void) enQueue: (VarEventNode*) cb with: (CPInt) val;
 -(void) reset;
 -(bool) loaded;
 @end
@@ -229,7 +205,7 @@ typedef struct {
    CPInt nb = (_mxs + _enter - _exit)  & _mask;
    return nb > 0;
 }
--(void)enQueue:(VarAC5EventNode*)cb with:(CPInt)val
+-(void)enQueue:(VarEventNode*)cb with:(CPInt)val
 {
    CPInt nb = (_mxs + _enter - _exit)  & _mask;
    if (nb == _mxs-1) {
@@ -382,7 +358,7 @@ typedef struct {
 
 // PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses varEventNode; AC3 works with the trigger directly
 
--(void) scheduleAC5: (VarAC5EventNode*) list  with: (CPInt) val
+-(void) scheduleAC5: (VarEventNode*) list  with: (CPInt) val
 {
    [_ac5 enQueue: list with: val];
 }
@@ -420,7 +396,7 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
        // AC5 manipulates the list
        while (status != CPFailure && AC5LOADED(_ac5)) {
            AC5Event evt = [_ac5 deQueue];
-           VarAC5EventNode* list = evt._list;
+           VarEventNode* list = evt._list;
            while (status != CPFailure && list) {
                // PVH: this may need to be generalized for more general events
                status = ((ConstraintIntCallBack)(list->_trigger))(evt._value);

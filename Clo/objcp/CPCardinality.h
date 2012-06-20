@@ -32,7 +32,7 @@
 #import "CPCardinality.h"
 
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)
-@interface CPCardinalityCst : CPActiveConstraint {  
+@interface CPCardinalityCst : CPActiveConstraint<NSCoding> {  
     CPSolverI*        _fdm;
     CPRange       _values;
     CPIntVarI**         _x;  // CPIntVar[_lx .. _ux] 

@@ -31,6 +31,8 @@
 
 @interface CPExprI: NSObject<CPExpr>
 -(id<CPExpr>) add: (id<CPExpr>) e; 
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface CPIntegerI : CPExprI<NSCoding,CPInteger> {

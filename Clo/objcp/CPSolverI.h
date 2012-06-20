@@ -48,24 +48,13 @@
 @interface VarEventNode : NSObject {
     @package
     VarEventNode*         _node;
-    id                    _trigger;  // type is {ConstraintCallback}
+    id                 _trigger;  // type is {ConstraintCallback}
     CPCoreConstraint*     _cstr;
     CPInt             _priority;
 }
 -(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (CPInt) prio;
 -(void)dealloc;
 @end
-
-@interface VarAC5EventNode : NSObject {
-    @package
-    VarAC5EventNode*      _node;
-    id                    _trigger;  // Type is {ConstraintIntCallBack}
-    CPInt             _priority;
-}
--(VarAC5EventNode*) initVarAC5EventNode: (VarEventNode*) next trigger: (id) t at: (CPInt) prio;
--(void)dealloc;
-@end
-
 
 // We have all kinds of arrays. 
 
@@ -96,7 +85,7 @@
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c;
 -(void)      scheduleAC3:(VarEventNode*)list;
--(void)      scheduleAC5:(VarAC5EventNode*)list with:(CPInt)val;
+-(void)      scheduleAC5:(VarEventNode*)list with:(CPInt)val;
 -(CPStatus)  propagate;
 -(CPStatus)  add:(id<CPConstraint>)c;
 -(CPStatus)  post:(id<CPConstraint>)c;

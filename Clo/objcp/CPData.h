@@ -59,7 +59,7 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 @end
 
 
-@protocol CPExpr <NSObject>
+@protocol CPExpr <NSObject,NSCoding>
 -(id<CP>) cp;
 -(CPInt) min;
 -(CPInt) max;

@@ -386,4 +386,18 @@
 {
    return 0;
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_fdm];
+   [aCoder encodeObject:_expr];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _fdm  = [aDecoder decodeObject];
+   _expr = [[aDecoder decodeObject] retain];
+   return self;
+}
 @end

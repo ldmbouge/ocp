@@ -441,9 +441,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo 
 {
     [_recv setTracksLoseEvt];
-    id evt = [[VarAC5EventNode alloc] initVarAC5EventNode:_net._ac5._val
-                                                  trigger:todo
-                                                       at:HIGHEST_PRIO];
+id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
+                                        trigger:todo
+                                           cstr: c
+                                             at:HIGHEST_PRIO];
     assignTRId(&_net._ac5, evt, [_fdm trail]);
     [evt release];   
 }

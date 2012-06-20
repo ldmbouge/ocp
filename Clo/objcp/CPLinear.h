@@ -61,7 +61,7 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 -(CPInt)max;
 @end
 
-@interface CPExprConstraintI : CPActiveConstraint {
+@interface CPExprConstraintI : CPActiveConstraint<NSCoding> {
    CPSolverI* _fdm;
    id<CPExpr> _expr;
 }

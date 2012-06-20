@@ -56,6 +56,10 @@ int main(int argc, const char * argv[])
          id<CPExpr> rhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],[x at:9],[x at:10],[x at:11],[x at:12],[x at:13],[x at:14],nil}
                                               by:(int[]){1,10,100,10,100,1000,100,1000,10000}];
          [cp add:[CPFactory expr:[CPFactory expr:lhs4 equal:rhs4]]];
+
+         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+         BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
+         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
          [CPLabel heuristic:h];

@@ -86,7 +86,10 @@
    CPI* cpi = (CPI*) cp;
    CPSelect* select = [cpi selectInRange: (CPRange){[av low],[av up]}
                               filteredBy: ^bool(CPInt i)      { return [[av at: i] bound]; }
-                               orderedBy: ^CPInt(CPInt i) { return [h varOrdering:[av at: i]];}];
+                               orderedBy: ^CPInt(CPInt i) { 
+                                  id<CPIntVar> avi = [av at: i];
+                                  return [h varOrdering:avi];
+                               }];
    CPInt low = [av low];
    do {      
       CPInt i = [select max];

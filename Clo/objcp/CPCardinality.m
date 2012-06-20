@@ -296,5 +296,51 @@ static void computeCardinalities(CPIntVarArrayI* ax,
         t += ![_x[i] bound];
     return t;
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_fdm];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_values.low];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_values.up];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_lo];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_uo];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_lx];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_ux];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_so];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_sx];
+   [aCoder encodeArrayOfObjCType:@encode(CPInt)
+                           count:_so
+                              at:_low + _lo];
+   [aCoder encodeArrayOfObjCType:@encode(CPInt)
+                           count:_so
+                              at:_up + _lo];
+   for(int k=_lx;k<=_ux;k++)
+      [aCoder encodeObject:_x[k]];
+}
 
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _fdm = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_values.low];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_values.up];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_lo];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_uo];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_lx];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_ux];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_so];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_sx];
+   _x = malloc(sizeof(CPIntVarI*)*_sx) - _lx;
+   _low = malloc(sizeof(CPInt)*_so) - _lo;
+   _up  = malloc(sizeof(CPInt)*_so) - _lo;
+   [aDecoder decodeArrayOfObjCType:@encode(CPInt)
+                             count:_so 
+                                at:_low + _lo];
+   [aDecoder decodeArrayOfObjCType:@encode(CPInt)
+                             count:_so 
+                                at:_up + _lo];
+   for(int k=_lx;k<=_ux;k++)
+      _x[k] = [aDecoder decodeObject];
+   return self;
+}
 @end

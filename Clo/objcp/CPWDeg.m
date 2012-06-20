@@ -54,6 +54,7 @@
      free(_cv);
    }
    [_vars release];
+   free(_map);
    [super dealloc];
 }
 -(id<CPIntVarArray>)allIntVars
@@ -67,7 +68,7 @@
 -(float)varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
-   NSSet* theConstraints = _cv[[x getId]];   
+   NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
       h += ([obj nbUVars] - 1 > 0) * _w[[obj getId]];
    }
@@ -80,8 +81,14 @@
 -(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
 {
    _cv = malloc(sizeof(NSSet*)*len);
+   CPUInt maxID = 0;
+   for(int k=0;k<len;k++) 
+      maxID = max(maxID,[t[k] getId]);   
+   _map = malloc(sizeof(CPUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
    for(int k=0;k<len;k++) {
+      //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
+      _map[[t[k] getId]] = k;
       [_vars addObject:t[k]];
       _cv[k] = [t[k] constraints];
    }

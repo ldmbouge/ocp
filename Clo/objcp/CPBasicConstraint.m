@@ -663,8 +663,6 @@ static inline CPBounds negBounds(CPIntVarI* x)
          [_x whenChangeBoundsPropagate:self];
          [_y whenChangeBoundsPropagate:self];
          [_z whenChangeBoundsPropagate:self];
-         [_x whenChangePropagate:self];
-         [_y whenChangePropagate:self];
       }
       return suc;
    }   

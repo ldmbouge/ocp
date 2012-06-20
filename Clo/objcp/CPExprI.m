@@ -55,6 +55,13 @@
 {
     return [CPFactory expr: self add: e];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{}
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super init];
+   return self;
+}
 @end
 
 @implementation CPExprBinaryI
@@ -88,6 +95,18 @@
 {
    return [_left isConstant] && [_right isConstant];
 }
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_left];
+   [aCoder encodeObject:_right];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _left  = [[aDecoder decodeObject] retain];
+   _right = [[aDecoder decodeObject] retain];
+   return self;
+}
 @end
 
 @implementation CPExprPlusI 
@@ -119,6 +138,15 @@
    [rv appendFormat:@"%@ + %@",[_left description],[_right description]];
    return rv;
 }
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
 @end
 
 @implementation CPExprMinusI 
@@ -149,6 +177,15 @@
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"(%@ - %@)",[_left description],[_right description]];
    return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
 }
 @end
 
@@ -185,6 +222,15 @@
    [rv appendFormat:@"(%@ * %@)",[_left description],[_right description]];
    return rv;
 }
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
 @end
 
 @implementation CPExprEqualI 
@@ -214,6 +260,15 @@
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"%@ == %@",[_left description],[_right description]];
    return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
 }
 @end
 
@@ -262,6 +317,16 @@
 -(NSString *) description
 {
     return [_e description];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_e];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _e = [[aDecoder decodeObject] retain];
+   return self;
 }
 @end
 
