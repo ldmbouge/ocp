@@ -90,10 +90,10 @@ typedef struct CPTrigger {
 @protocol CPIntVarExtendedItf <CPIntVar,CPIntVarSubscriber>
 -(CPStatus) updateMin: (CPInt) newMin;
 -(CPStatus) updateMax: (CPInt) newMax;
+-(CPStatus) updateMin: (CPInt) newMin andMax:(CPInt)newMax;
 -(CPStatus) bind: (CPInt) val;
 -(CPStatus) remove: (CPInt) val;
 @end
-
 
 typedef struct  {
     TRId         _boundsEvt;
@@ -103,7 +103,6 @@ typedef struct  {
     TRId            _maxEvt;
     TRId               _ac5;
 } CPEventNetwork;
-
 
 @class CPIntVarI;
 @class CPTriggerMap;
@@ -200,6 +199,7 @@ typedef struct  {
 // update
 -(CPStatus)     updateMin: (CPInt) newMin;
 -(CPStatus)     updateMax: (CPInt) newMax;
+-(CPStatus)     updateMin: (CPInt) newMin andMax:(CPInt)newMax;
 -(CPStatus)     bind:(CPInt) val;
 -(CPStatus)     remove:(CPInt) val;
 -(CPStatus)     inside:(CPIntSetI*) S;
@@ -231,6 +231,7 @@ typedef struct  {
 -(CPInt) scale;
 -(CPStatus)updateMin:(CPInt)newMin;
 -(CPStatus)updateMax:(CPInt)newMax;
+-(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax;
 -(CPStatus)bind:(CPInt)val;
 -(CPStatus)remove:(CPInt)val;
 -(void) loseValEvt:(CPInt)val;
@@ -252,22 +253,25 @@ typedef struct  {
 -(CPInt) scale;
 -(CPStatus)updateMin:(CPInt)newMin;
 -(CPStatus)updateMax:(CPInt)newMax;
+-(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax;
 -(CPStatus)bind:(CPInt)val;
 -(CPStatus)remove:(CPInt)val;
 -(void) loseValEvt:(CPInt)val;
 -(id)           snapshot;
 @end
 
-
+BOOL bound(CPIntVarI* x);
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
 @interface CPIntVarMultiCast : NSObject<CPIntVarNotifier,NSCoding> {
-    CPIntVarI**       _tab;
-    BOOL        _tracksLoseEvt;
-    CPInt              _nb;
-    CPInt              _mx;
+   CPIntVarI**           _tab;
+   BOOL        _tracksLoseEvt;
+   CPInt                  _nb;
+   CPInt                  _mx;
+   IMP*         _loseRangeIMP;  
+   IMP*           _loseValIMP;
 }
 -(id)initVarMC:(CPInt)n;
 -(void) dealloc;

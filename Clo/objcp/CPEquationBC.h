@@ -27,14 +27,16 @@
 #import "CPConstraintI.h"
 #import "CPTrail.h"
 
+typedef CPStatus(*UBType)(id,SEL,...);
+
 @class CPIntVarI;
 @interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c
 @private
    CPIntVarI** _x;  // array of vars
    CPInt _nb;  // size
    CPInt _c;  // constant c in:: sum(i in S) x_i == c
-   SEL   _bndSEL;
-   IMP*  _bndIMP;
+   IMP*  _bndIMP;   
+   UBType* _updateBounds;
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(CPInt) c;
 -(CPStatus) post;

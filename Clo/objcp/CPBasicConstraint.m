@@ -171,13 +171,9 @@
         return [_x bind:[_y min] + _c];
     } 
     else {
-         ok = [_x updateMin:[_y min] + _c];
-         if (ok) 
-             ok = [_x updateMax:[_y max] + _c];
-         if (ok) 
-             ok = [_y updateMax:[_x max] - _c];
-         if (ok) 
-             ok = [_y updateMin:[_x min] - _c];
+       ok = [_x updateMin:[_y min] + _c andMax:[_y max] + _c];
+       if (ok) 
+          ok = [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
     }
     return ok;
 }
@@ -480,29 +476,26 @@ static inline CPBounds negBounds(CPIntVarI* x)
    return (CPBounds){- b.max, -b.min};
 }
 // RXC:  Range | Variable | Constant
--(CPStatus) propagateRXC:(CPBounds)r mult:(CPIntVarI*)x equal:(CPInt)c
+static CPStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
 {
    CPInt a = r.min,b = r.max;
    CPStatus suc = CPSuspend;
    if (a > 0 || b < 0) {
-      if (suc) suc = [x updateMin:minDiv(c,a,b)];
-      if (suc) suc = [x updateMax:maxDiv(c,a,b)];
+      if (suc) suc = [x updateMin:minDiv(c,a,b) andMax:maxDiv(c,a,b)];
    } else if (a==0 || b == 0) {
-      CPRange az = [_x around:0];
+      CPRange az = [x around:0];
       int s = a==0 ? az.up  : az.low;
       int l = a==0 ? b : a;
-      if (suc) suc = [x updateMin:minDiv(c,s,l)];
-      if (suc) suc = [x updateMax:maxDiv(c,s,l)];
+      if (suc) suc = [x updateMin:minDiv(c,s,l) andMax:maxDiv(c,s,l)];
    } else {
-      CPRange az = [_x around:0];
+      CPRange az = [x around:0];
       CPInt xm1 = minDiv(c,az.low,az.up);
       CPInt xM1 = maxDiv(c,az.low,az.up);
       CPInt xm2 = minDiv(c,a,b);
       CPInt xM2 = maxDiv(c,a,b);
       CPInt xm = xm1 < xm2 ? xm1 : xm2;
       CPInt xM = xM1 > xM2 ? xM1 : xM2;
-      if (suc) suc = [x updateMin:xm];
-      if (suc) suc = [x updateMax:xM];
+      if (suc) suc = [x updateMin:xm andMax:xM];
    }
    return suc ? CPSuspend : CPFailure;
 }
@@ -512,8 +505,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
    int nz = ![_z member:0];
    int newMin = zb.min/c + (nz && zb.min >= 0 && zb.min % c);
    int newMax = zb.max/c - (nz && zb.max <  0 && zb.max % c);
-   if (suc) suc = [x updateMin:newMin];
-   if (suc) suc = [x updateMax:newMax];
+   if (suc) suc = [x updateMin:newMin andMax:newMax];
    return suc ? CPSuspend : CPFailure;
 }
 -(CPStatus) postCX:(CPLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z 
@@ -525,8 +517,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
       if (c > 0) {
          CPInt newMax  = bindUp(c * [x max]);
          CPInt newMin  = bindDown(c * [x min]);
-         if (suc) suc = [z updateMin:newMin];
-         if (suc) suc = [z updateMax:newMax];
+         if (suc) suc = [z updateMin:newMin andMax:newMax];
          if (suc) suc = [self propagateCXZ:c mult:x equal:bounds(z)];
          if (suc) {
             [z whenChangeBoundsPropagate:self];
@@ -537,8 +528,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
       } else {
          int newMin = bindDown(c * [x max]);
          int newMax = bindUp(c * [x min]);
-         if (suc) suc = [z updateMin:newMin];
-         if (suc) suc = [z updateMax:newMax];
+         if (suc) suc = [z updateMin:newMin andMax:newMax];
          if (suc) suc = [self propagateCXZ:-c mult:x equal:negBounds(z)];
          if (suc) {
             [z whenChangeBoundsPropagate:self];
@@ -548,7 +538,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
       return suc;
    }
 }
--(CPStatus)propagateCX:(CPLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z
+static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 {
    if ([x bound]) {
       return [z bind:c * [x min]];
@@ -557,20 +547,19 @@ static inline CPBounds negBounds(CPIntVarI* x)
       if (c > 0) {
          CPInt newMax  = bindUp(c * [x max]);
          CPInt newMin  = bindDown(c * [x min]);
-         if (suc) suc = [z updateMin:newMin];
-         if (suc) suc = [z updateMax:newMax];
-         if (suc) suc = [self propagateCXZ:c mult:x equal:bounds(z)];
+         if (suc) suc = [z updateMin:newMin andMax:newMax];
+         if (suc) suc = [mc propagateCXZ:c mult:x equal:bounds(z)];
          return suc;
       } else if (c == 0) {
          return [z bind:0];
       } else {
-         if (suc) suc = [z updateMin:c * [x max]];
-         if (suc) suc = [z updateMax:c * [x min]];
-         if (suc) suc = [self propagateCXZ:-c mult:x equal:negBounds(z)]; 
+         if (suc) suc = [z updateMin:c * [x max] andMax: c * [x min]];
+         if (suc) suc = [mc propagateCXZ:-c mult:x equal:negBounds(z)]; 
          return suc;
       }
    }
 }
+
 -(CPStatus)propagateXCR:(CPIntVarI*)x mult:(CPIntVarI*)y equal:(CPBounds)r
 {
    CPInt a = r.min,b=r.max;
@@ -579,11 +568,9 @@ static inline CPBounds negBounds(CPIntVarI* x)
    if (c==0 && d==0)  {
       return [_z bind:0];
    } else if (c>0) {
-      if (suc) suc = [x updateMin:minDiv4(a,b,c,d)];
-      if (suc) suc = [x updateMax:maxDiv4(a,b,c,d)];
+      if (suc) suc = [x updateMin:minDiv4(a,b,c,d) andMax:maxDiv4(a,b,c,d)];
    } else if (d<0) {
-      if (suc) suc = [x updateMin:minDiv4(a,b,c,d)];
-      if (suc) suc = [x updateMax:maxDiv4(a,b,c,d)];
+      if (suc) suc = [x updateMin:minDiv4(a,b,c,d) andMax:maxDiv4(a,b,c,d)];
    } else {
       if (a <= 0 && b >= 0)
          return CPSuspend;
@@ -593,8 +580,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
             CPRange az = [y around:0]; // around zero            
             int s = c==0 ? az.up : az.low;
             int l = c==0 ? d : c;
-            if (suc) suc = [x updateMin:minDiv4(a,b,s,l)];
-            if (suc) suc = [x updateMax:maxDiv4(a,b,s,l)];
+            if (suc) suc = [x updateMin:minDiv4(a,b,s,l) andMax:maxDiv4(a,b,s,l)];
          } else {
             CPRange az = [y around:0]; // around zero
             CPInt xm1 = minDiv4(a,b,az.low,az.up);
@@ -603,8 +589,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
             CPInt xM2 = maxDiv4(a,b,c,d);
             CPInt xm = xm1 < xm2 ? xm1 : xm2;
             CPInt xM = xM1 > xM2 ? xM1 : xM2;
-            if (suc) suc = [x updateMin:xm];
-            if (suc) suc = [x updateMax:xM];
+            if (suc) suc = [x updateMin:xm andMax:xM];
          }
       }
    }
@@ -621,8 +606,7 @@ static inline CPBounds negBounds(CPIntVarI* x)
    [_x bounds:&xb];
    [_y bounds:&yb];
    CPLong t[4] = {xb.min*yb.min,xb.min*yb.max,xb.max*yb.min,xb.max*yb.max};
-   if (suc) suc = [_z updateMin:bindDown(minSeq(t))];
-   if (suc) suc = [_z updateMax:bindUp(maxSeq(t))];
+   if (suc) suc = [_z updateMin:bindDown(minSeq(t)) andMax:bindUp(maxSeq(t))];
    [_z bounds:&zb];
    if (suc) suc = [self propagateXCR:_x mult:_y equal:zb];
    if (suc) suc = [self propagateXCR:_y mult:_x equal:zb];
@@ -649,8 +633,8 @@ static inline CPBounds negBounds(CPIntVarI* x)
             }
          } else return CPFailure;
       } else { 
-         CPStatus suc = [self propagateRXC:bounds(_x) mult:_y equal:[_z min]];
-         if (suc) suc = [self propagateRXC:bounds(_y) mult:_x equal:[_z min]];
+         CPStatus suc = propagateRXC(self,bounds(_x),_y,[_z min]);
+         if (suc) suc = propagateRXC(self,bounds(_y),_x,[_z min]);
          if (suc) {
             if (![_x bound]) [_x whenChangeBoundsPropagate:self];
             if (![_y bound]) [_y whenChangeBoundsPropagate:self];
@@ -670,12 +654,12 @@ static inline CPBounds negBounds(CPIntVarI* x)
 -(CPStatus)propagate
 {
    if ([_x bound]) {
-      CPStatus oc =  [self propagateCX:[_x min] mult:_y equal:_z];
+      CPStatus oc =  propagateCX(self,[_x min],_y,_z);
       if (oc && [_y bound] && [_z  bound])
          return CPSuccess;
       else return oc;
    } else if ([_y bound]) {
-      CPStatus oc = [self propagateCX:[_y min] mult:_x equal:_z];
+      CPStatus oc = propagateCX(self,[_y min],_x,_z);
       if (oc && [_x bound] && [_z bound])
          return CPSuccess;
       else return oc;      
@@ -691,8 +675,8 @@ static inline CPBounds negBounds(CPIntVarI* x)
             } else suc = CPSuspend;
          } else suc = CPFailure;
       } else { 
-         CPStatus suc = [self propagateRXC:bounds(_x) mult:_y equal:[_z min]];
-         if (suc) suc = [self propagateRXC:bounds(_y) mult:_x equal:[_z min]];
+         CPStatus suc = propagateRXC(self,bounds(_x),_y,[_z min]);
+         if (suc) suc = propagateRXC(self,bounds(_y),_x,[_z min]);
       }
       if (suc && [_x bound] && [_y bound])
          return CPSuccess; 

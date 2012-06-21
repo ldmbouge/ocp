@@ -165,6 +165,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 @implementation CPIntVarI
 
+#define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
+
+BOOL bound(CPIntVarI* x)
+{
+   return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
+}
+
 -(CPIntVarI*) initCPIntVarCore:(id<CP>)cp low: (CPInt) low up: (CPInt)up
 {
     self = [super init];
@@ -440,13 +447,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // AC5 Events
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo 
 {
-    [_recv setTracksLoseEvt];
-id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
-                                        trigger:todo
-                                           cstr: c
-                                             at:HIGHEST_PRIO];
-    assignTRId(&_net._ac5, evt, [_fdm trail]);
-    [evt release];   
+   [_recv setTracksLoseEvt];
+   id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
+                                           trigger:todo
+                                              cstr: c
+                                                at:HIGHEST_PRIO];
+   assignTRId(&_net._ac5, evt, [_fdm trail]);
+   [evt release];   
 }
 
 
@@ -536,8 +543,8 @@ id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
 }
 -(void) loseRangeEvt:(CPClosure) clo
 {
-    if( [self tracksLoseEvt])   
-        clo();    
+    if (TRACKLOSSES)   
+      clo();    
 }
 
 -(CPStatus) updateMin: (CPInt) newMin
@@ -549,6 +556,13 @@ id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
 {
     return [_dom updateMax:newMax for:_recv];
 }
+-(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+{
+   CPStatus s = [_dom updateMin:newMin for:_recv];
+   if (s)   s = [_dom updateMax:newMax for:_recv];
+   return s;
+}
+
 -(CPStatus) bind: (CPInt) val
 {
     return [_dom bind:val for:_recv];
@@ -745,6 +759,13 @@ id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
 {
     return [_dom updateMax: newMax-_b for: _recv];
 }
+-(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+{
+   CPStatus s = [_dom updateMin:newMin-_b for:_recv];
+   if (s)   s = [_dom updateMax:newMax-_b for:_recv];
+   return s;
+}
+
 -(CPStatus)bind: (CPInt) val
 {
     return [_dom bind: val-_b for: _recv];
@@ -899,6 +920,23 @@ id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
     else 
         return [_dom updateMin:om + (r!=0) for:_recv]; 
 }
+-(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+{
+   CPStatus s;
+   CPInt tMin = (newMin - _b) / _a;
+   CPInt tMax = (newMax - _b) / _a;
+   if (_a > 0) {      
+      CPInt rMin = (newMin - _b) % _a;
+      s = [_dom updateMin:tMin + (rMin != 0) for:_recv];
+      if (s) s = [_dom updateMax:tMax for:_recv];
+   } else {
+      CPInt rMax = (newMax - _b) % _a;
+      s = [_dom updateMax:tMin for:_recv];
+      if (s) s = [_dom updateMin:tMax + (rMax!=0) for:_recv];      
+   }
+   return s;
+}
+
 -(CPStatus)bind: (CPInt) val
 {
     CPInt r = (val - _b) % _a;
@@ -994,29 +1032,35 @@ id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
 
 -(id)initVarMC:(CPInt)n 
 {
-    self = [super init];
-    _mx  = n;
-    _tab = malloc(sizeof(CPIntVarI*)*_mx);
-    _tracksLoseEvt = false;
-    _nb  = 0;
-    return self;
+   self = [super init];
+   _mx  = n;
+   _tab = malloc(sizeof(CPIntVarI*)*_mx);
+   _loseRangeIMP = malloc(sizeof(IMP)*_mx);
+   _loseValIMP   = malloc(sizeof(IMP)*_mx);
+   _tracksLoseEvt = false;
+   _nb  = 0;
+   return self;
 }
 -(void) dealloc
 {
-    //NSLog(@"multicast object %p dealloc'd\n",self);
-    free(_tab);
-    [super dealloc];
+   //NSLog(@"multicast object %p dealloc'd\n",self);
+   free(_tab);
+   [super dealloc];
 }
 -(void) addVar:(CPIntVarI*)v
 {
-    if (_nb >= _mx) {
-        _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-        _mx <<= 1;
-    }
-    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-    [_tab[_nb] setDelegate:self];
-    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
-    _nb++;
+   if (_nb >= _mx) {
+      _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
+      _loseRangeIMP = realloc(_loseRangeIMP,sizeof(IMP)*(_mx << 1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
+      _mx <<= 1;
+   }
+   _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
+   [_tab[_nb] setDelegate:self];
+   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
+   _loseRangeIMP[_nb] = [v methodForSelector:@selector(loseRangeEvt:)];
+   _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
+   _nb++;
 }
 -(void) setTracksLoseEvt
 {
@@ -1045,13 +1089,15 @@ id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
 {
     if (!_tracksLoseEvt) return;
     for(CPInt i=0;i<_nb;i++)
-        [_tab[i] loseValEvt:val];
+        //[_tab[i] loseValEvt:val];
+       _loseValIMP[i](_tab[i],@selector(loseValEvt:),val);
 }
 -(void) loseRangeEvt:(CPClosure)doIt
 {
     if (!_tracksLoseEvt) return;
     for(CPInt i=0;i<_nb;i++)
-        [_tab[i] loseRangeEvt:doIt];
+        //[_tab[i] loseRangeEvt:doIt];
+       _loseRangeIMP[i](_tab[i],@selector(loseRangeEvt:),doIt);
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {

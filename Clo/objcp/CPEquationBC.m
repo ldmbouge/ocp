@@ -58,6 +58,8 @@
 -(void) dealloc
 {
    free(_x);
+   free(_bndIMP);
+   free(_updateBounds);
    [super dealloc];
 }
 
@@ -83,10 +85,11 @@ struct Bounds {
 };
 
 struct CPTerm {
+   UBType  update;
    CPIntVarI* var;
-   long long low;
-   long long up;
-   bool      updated;
+   CPLong     low;
+   CPLong      up;
+   BOOL   updated;
 };
 
 static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
@@ -114,11 +117,12 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
 
 -(CPStatus) post
 {
-   _bndSEL = @selector(bounds:);
    _bndIMP = malloc(sizeof(IMP)*_nb);
-   for(CPInt k=0;k<_nb;k++) 
-      _bndIMP[k] = [_x[k] methodForSelector:_bndSEL];
-   
+   _updateBounds = malloc(sizeof(UBType)*_nb);
+   for(CPInt k=0;k<_nb;k++) {
+      _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
+      _bndIMP[k] = [_x[k] methodForSelector:@selector(bounds:)];
+   }
    CPStatus ok = [self propagate];
    if (ok) {
       for(CPInt k=0;k<_nb;k++) {
@@ -134,9 +138,8 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
     struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
     for(CPInt k=0;k<_nb;k++) {
         CPBounds b;
-        //[_x[k] bounds:&b];
-        _bndIMP[k](_x[k],_bndSEL,&b);
-        terms[k] = (struct CPTerm){_x[k],b.min,b.max,NO};
+        _bndIMP[k](_x[k],@selector(bounds:),&b);
+        terms[k] = (struct CPTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
     }
     struct Bounds b;
     b._bndLow = b._bndUp = - _c;
@@ -144,12 +147,10 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
     
     bool changed;   
     bool feasible = true;
-    do {
-        
+    do {        
         sumBounds(terms, b._nb, &b);
         if (b._sumLow > 0 || b._sumUp < 0) 
-            return CPFailure;
-        
+            return CPFailure;        
         changed=false;
         for (int i=0; i < b._nb && feasible; i++) {
             
@@ -162,22 +163,18 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
             terms[i].updated |= updateNow;
             terms[i].low = maxOf(terms[i].low,nLowi);
             terms[i].up  = minOf(terms[i].up,nSupi);
-            feasible = terms[i].low <= terms[i].up;
-            
-        }
-        
+            feasible = terms[i].low <= terms[i].up;            
+        }        
     } while (changed && feasible);
     
     if (!feasible)
         return CPFailure;
     
     for(CPUInt i=0;i<_nb;i++) {
-        if (terms[i].updated) {
-            if ([terms[i].var updateMin:(CPInt)terms[i].low] == CPFailure)
-                return CPFailure;
-            if ([terms[i].var updateMax:(CPInt)terms[i].up] == CPFailure)
-                return CPFailure;
-        }
+       if (terms[i].updated && terms[i].update(terms[i].var,@selector(updateMin:andMax:),
+                                               (CPInt)terms[i].low,
+                                               (CPInt)terms[i].up) == CPFailure)
+          return CPFailure;        
     }
     return CPSuspend; 
 }

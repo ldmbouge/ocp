@@ -104,15 +104,22 @@
 }
 +(CPIntVarI*) intVar: (CPIntVarI*) x shift: (CPInt) b
 {
-    return [CPIntVarI initCPIntView: x withShift: b];
+   if (b!=0)
+      return [CPIntVarI initCPIntView: x withShift: b];
+   else return x;
 }
 +(CPIntVarI*) intVar: (CPIntVarI*) x scale: (CPInt) a
 {
+   if (a!=1)
     return [CPIntVarI initCPIntView: x withScale: a]; 
+   else return x;
 }
 +(CPIntVarI*) intVar: (CPIntVarI *)x scale: (CPInt) a shift:(CPInt) b
 {
-    return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
+   if (a==1 && b==0)
+      return x;
+   else 
+      return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
