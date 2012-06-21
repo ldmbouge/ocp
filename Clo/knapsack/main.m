@@ -40,7 +40,7 @@ int main(int argc, const char * argv[])
                             "mknap1-5.txt",
                             "mknap1-6.txt"};
       char buf[512];
-      sprintf(buf,"%s/%s",src,afn[3]);
+      sprintf(buf,"%s/%s",src,afn[4]);
       FILE* dta = fopen(buf,"r");
       int n,m,opt;
       fscanf(dta, "%d %d %d",&n,&m,&opt);
@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
       id<CPIntVarArray> x = [CPFactory intVarArray: cp 
                                              range: N
                                             domain: (CPRange){0,1}];
-      id<CPHeuristic> h = [CPFactory createWDeg:cp];
+      id<CPHeuristic> h = [CPFactory createIBS:cp];
       [cp solve: ^{
          [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];
          for(int i=0;i<m;i++) {

@@ -224,9 +224,9 @@
 -(CPStatus) post // x != y + c
 {
    if ([_x bound])
-      return [_y remove:[_x min] - _c];
+      return [_y remove:minDom(_x) - _c];
    else if ([_y bound])
-      return [_x remove:[_y min] + _c];
+      return [_x remove:minDom(_y) + _c];
    else {
        [_x whenBindPropagate: self]; 
        [_y whenBindPropagate: self];
@@ -288,12 +288,12 @@
       [_x whenBindDo:^CPStatus{
          if (!_active._val) return CPSkip;
          assignTRInt(&_active, NO, _trail);
-         return [_y remove:[_x min]];
+         return [_y remove:minDom(_x)];
       } priority:HIGHEST_PRIO onBehalf:self];
       [_y whenBindDo:^CPStatus{
          if (!_active._val) return CPSkip;
          assignTRInt(&_active, NO, _trail);
-         return [_x remove:[_y min]];
+         return [_x remove:minDom(_y)];
       } priority:HIGHEST_PRIO onBehalf:self];
       return CPSuspend;
    }

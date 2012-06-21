@@ -166,12 +166,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntVarI
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
-
+/*
 BOOL bound(CPIntVarI* x)
 {
    return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
 }
-
+*/
 -(CPIntVarI*) initCPIntVarCore:(id<CP>)cp low: (CPInt) low up: (CPInt)up
 {
     self = [super init];
@@ -254,7 +254,7 @@ BOOL bound(CPIntVarI* x)
 }
 -(void) bounds:(CPBounds*) bnd
 {
-    *bnd = (CPBounds){[_dom min],[_dom max]};
+   *bnd = domBounds((CPBoundsDom*)_dom);
 }
 -(CPInt)domsize
 {
@@ -728,10 +728,9 @@ BOOL bound(CPIntVarI* x)
 }
 -(void)bounds: (CPBounds*) bnd
 {
-    CPBounds b = [_dom bounds];
-    b.min += _b;
-    b.max += _b;
-    *bnd = b;
+   *bnd = domBounds((CPBitDom*)_dom);
+   bnd->min += _b;
+   bnd->max += _b;
 }
 -(bool)member: (CPInt) v
 {
@@ -874,9 +873,9 @@ BOOL bound(CPIntVarI* x)
 }
 -(void)bounds: (CPBounds*) bnd
 {
-    CPBounds b = [_dom bounds];
+   CPBounds b = domBounds((CPBoundsDom*)_dom);
     *bnd = (CPBounds){
-        _a > 0 ? b.min * _a + _b : b.max *  _a + _b,
+        _a > 0 ? b.min * _a + _b : b.max * _a + _b,
         _a > 0 ? b.max * _a + _b : b.min * _a + _b
     };
 }

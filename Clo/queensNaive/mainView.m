@@ -33,7 +33,7 @@
 
 int main (int argc, const char * argv[])
 {
-   int n = 10;
+   int n = 13;
    CPRange R = (CPRange){0,n-1};
    long startTime = [CPRuntimeMonitor cputime];
    id<CP> cp = [CPFactory createSolver];
@@ -46,7 +46,7 @@ int main (int argc, const char * argv[])
 //   id<CPHeuristic> h2  = [CPFactory createWDeg:cp];
    id<CPHeuristic> h2 = [CPFactory createIBS:cp];
 //   id<CPHeuristic> h2 = [CPFactory createFF:cp];
-   [cp solve: //All: 
+   [cp solveAll: 
     ^() {
        for(CPUInt i =0;i < n; i++) {
           for(CPUInt j=i+1;j< n;j++) {

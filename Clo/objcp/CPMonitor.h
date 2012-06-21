@@ -32,7 +32,8 @@
    CPVarInfo**          _varInfo;
    CPInt                   _nbVI;
    CPSolverI*               _fdm;
-   NSMutableSet*      _curActive;
+   CPVarInfo**        _curActive;
+   CPUInt              _nbActive;
    NSArray*              _monVar;
 }
 -(id)initCPMonitor:(CPSolverI*)fdm vars:(NSArray*)allVars;
@@ -55,5 +56,4 @@
 }
 -(CPVarInfo*)initCPVarInfo:(id)v trail:(CPTrail*)trail;
 -(void)makeActive;
--(BOOL)refresh;
 @end
