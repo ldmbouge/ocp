@@ -940,7 +940,7 @@ BOOL bound(CPIntVarI* x)
 -(CPStatus)bind: (CPInt) val
 {
     CPInt r = (val - _b) % _a;
-    if (r != 0) return CPFailure;
+    if (r != 0) failNow(_fdm);
     CPInt ov = (val - _b) / _a; 
     return [_dom bind:ov for:_recv];
 }

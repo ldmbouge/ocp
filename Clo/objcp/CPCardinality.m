@@ -104,6 +104,7 @@ static void computeCardinalities(CPIntVarArrayI* ax,
 -(id)initCardinalityCst:(CPSolverI*)m values:(CPRange) r low:(CPInt*)low array:(id)ax up:(CPInt*)up
 {
     self = [super initCPActiveConstraint: m];
+    _fdm = m;
     _values = r;
     _low = low;
     _up  = up;
@@ -139,7 +140,8 @@ static void computeCardinalities(CPIntVarArrayI* ax,
 -(id) initCardinalityCst: (CPIntVarArrayI*) ax low: (CPIntArrayI*) low up: (CPIntArrayI*) up
 {
     self = [super initCPActiveConstraint: [ax solver]];
-    _required = _possible = 0;
+    _required = _possible = 0;   
+    _fdm = (CPSolverI*)[ax solver];
 
     _sx = [ax count];
     _x  = malloc(sizeof(CPIntVarI*)*_sx);
@@ -193,13 +195,12 @@ static void computeCardinalities(CPIntVarArrayI* ax,
         if (bound(_x[i]))
             count += ([_x[i] min] == val);
         else if ([_x[i] member: val]) {
-            if ([_x[i] bind: val] == CPFailure) 
-                return CPFailure;
+            [_x[i] bind: val];
             count++;
         }
     }
     if (count != _low[val])
-        return CPFailure;
+       failNow(_fdm);
     return CPSuspend;
 }
 
@@ -211,15 +212,11 @@ static CPStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
         if (bound(cc->_x[i]))
             count += ([cc->_x[i] min] == val);
         else if ([cc->_x[i] member: val]) {
-            if ([cc->_x[i] remove: val] == CPFailure)
-                return CPFailure;
-        }/** [ldm] I do not understand this count++.  This causes a bug in fdmul2 and certainly makes no sense in the cardinality 
-        else
-            count++;
-          */
+            [cc->_x[i] remove: val];
+        }
     }
     if (count != cc->_up[val])
-        return CPFailure;
+       failNow(cc->_fdm);
     return CPSuspend;     
 }
 
@@ -228,10 +225,9 @@ static CPStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
    CPInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
    if (cc->_required[val]._val > cc->_up[val])
-      return CPFailure;
+      failNow(cc->_fdm);
    if (cc->_required[val]._val == cc->_up[val])
-      if (removeFromRemaining(cc,val) == CPFailure)
-         return CPFailure;
+      removeFromRemaining(cc,val);
    return CPSuspend;
 }
 
@@ -239,10 +235,9 @@ static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
-      return CPFailure;
+      failNow(cc->_fdm);
    if (cc->_low[val] > 0 && cc->_possible[val]._val == cc->_low[val])
-      if ([cc bindRemainingTo: val] == CPFailure)
-         return CPFailure;    
+      [cc bindRemainingTo: val];    
    return CPSuspend;
 }
 
@@ -279,13 +274,11 @@ static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
     // Need to test the condition at least once
     for(CPInt i=_lo;i<=_uo;i++) {
         if (_required[i]._val > _up[i] || _possible[i]._val < _low[i])
-            return CPFailure;
+            failNow(_fdm);
         if (_required[i]._val == _up[i])
-            if (removeFromRemaining(self,i) == CPFailure) 
-                return CPFailure;
+           removeFromRemaining(self,i);
         if (_low[i] > 0 && _possible[i]._val == _low[i])
-            if ([self bindRemainingTo: i] == CPFailure) 
-                return CPFailure;
+           [self bindRemainingTo: i];
     }   
     return CPSuspend;
 }

@@ -58,6 +58,10 @@
 
 // We have all kinds of arrays. 
 
+@interface CPFailException : NSObject
+-(CPFailException*)init;
+@end
+
 @interface CPSolverI : NSObject <CPSolver,NSCoding> {
    BOOL                     _closed;
    CPTrail*                 _trail;
@@ -76,6 +80,7 @@
    id<CPIntInformer>        _propagFail;
    id<CPVoidInformer>       _propagDone;
    id<CPSolution>           _aSol;
+   CPFailException*         _fex;
 }
 -(CPSolverI*) initSolver: (CPTrail*) trail;
 -(void)      dealloc;
@@ -107,5 +112,7 @@
 -(CPUInt) nbVars;
 -(id<CPInformer>) propagateFail;
 -(id<CPInformer>) propagateDone;
+-(void)raiseFailure;
 @end
 
+void failNow(CPSolverI* fdm);

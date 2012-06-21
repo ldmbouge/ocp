@@ -35,6 +35,18 @@
 #define AC5LOADED(q) ((((q)->_mxs + (q)->_enter - (q)->_exit)  & (q)->_mask) > 0)
 #define ISLOADED(q) (((q)->_csz) > 0)
 
+@implementation CPFailException
+-(CPFailException*)init
+{
+   self = [super init];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+@end
+
 /*****************************************************************************************/
 /*                        VarEventNode                                                   */
 /*****************************************************************************************/
@@ -257,6 +269,7 @@ typedef struct {
    _propagIMP = [self methodForSelector:_propagSEL];
    _propagFail = [CPConcurrency  intInformer];
    _propagDone = [CPConcurrency voidInformer];
+   _fex = [CPFailException new];
    return self;
 }
 
@@ -272,6 +285,7 @@ typedef struct {
    [_propagDone release];
    for(CPInt i=0;i<NBPRIORITIES;i++)
       [_ac3[i] release];
+   [_fex release];
    [super dealloc];
 }
 
@@ -392,47 +406,49 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    ++_propagating;
    CPStatus status = CPSuspend;
    bool done = false;
-   while (status != CPFailure && !done) {
-       // AC5 manipulates the list
-       while (status != CPFailure && AC5LOADED(_ac5)) {
-           AC5Event evt = [_ac5 deQueue];
-           VarEventNode* list = evt._list;
-           while (status != CPFailure && list) {
+   @try {
+      while (!done) {
+         // AC5 manipulates the list
+         while (AC5LOADED(_ac5)) {
+            AC5Event evt = [_ac5 deQueue];
+            VarEventNode* list = evt._list;
+            while (list) {
                // PVH: this may need to be generalized for more general events
                status = ((ConstraintIntCallBack)(list->_trigger))(evt._value);
                list = list->_node;
-           }
-       }
-       if (status == CPFailure) 
-           break;
-      // Processing AC3
-       int p = HIGHEST_PRIO;
-       while (p>=LOWEST_PRIO && !ISLOADED(_ac3[p]))
-           --p;
-       done = p < LOWEST_PRIO;
-       while (status != CPFailure && !done) {      
-           status = executeAC3(AC3deQueue(_ac3[p]),&_last);
-           _nbpropag += status !=CPSkip;
-           if (status == CPFailure|| AC5LOADED(_ac5)) 
+            }
+         }
+         // Processing AC3
+         int p = HIGHEST_PRIO;
+         while (p>=LOWEST_PRIO && !ISLOADED(_ac3[p]))
+            --p;
+         done = p < LOWEST_PRIO;
+         while (!done) {      
+            status = executeAC3(AC3deQueue(_ac3[p]),&_last);
+            _nbpropag += status !=CPSkip;
+            if (AC5LOADED(_ac5)) 
                break;
-           p = HIGHEST_PRIO;
-           while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p])) 
+            p = HIGHEST_PRIO;
+            while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p])) 
                --p;
-           done = p < LOWEST_PRIO;
-       }
-       
-    }
-    --_propagating;
-    
-    if (status==CPFailure) {
-       for(CPInt p=NBPRIORITIES-1;p>=0;--p)
-          [_ac3[p] reset];
-       [_ac5 reset];
-       [_propagFail notifyWith:[_last getId]];
-    } else {
-       [_propagDone notify];
-    }
-    return status==CPFailure ? status : CPSuspend;
+            done = p < LOWEST_PRIO;
+         }         
+      }
+      [_propagDone notify];
+      _status = status;
+   }
+   @catch (CPFailException *exception) {
+      for(CPInt p=NBPRIORITIES-1;p>=0;--p)
+         [_ac3[p] reset];
+      [_ac5 reset];
+      [_propagFail notifyWith:[_last getId]];
+      [exception release];
+      _status = CPFailure;
+   }
+   @finally {
+      --_propagating;
+      return _status;
+   }
 }
 
 static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
@@ -545,6 +561,16 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 -(id<CPInformer>) propagateDone
 {
    return _propagDone;
+}
+
+-(void)raiseFailure
+{
+   @throw [_fex retain];
+}
+
+void failNow(CPSolverI* fdm)
+{
+   @throw [fdm->_fex retain];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

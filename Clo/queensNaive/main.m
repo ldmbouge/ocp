@@ -33,7 +33,7 @@
 
 int main (int argc, const char * argv[])
 {
-   int n = 13;
+   int n = 8;
    CPRange R = (CPRange){0,n-1};
    id<CP> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
@@ -41,7 +41,7 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
 //   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
 //   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   id<CPHeuristic> h = [CPFactory createWDeg:cp];
+   id<CPHeuristic> h = [CPFactory createFF:cp];
    [cp solveAll: 
     ^() {
        for(CPUInt i =0;i < n; i++) {
@@ -58,7 +58,7 @@ int main (int argc, const char * argv[])
     ^() {
        //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
       [CPLabel heuristic:h];
-       //printf("sol [%ld]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
+       printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];
     }
     ];
