@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'fdmul' target in the 'fdmul' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

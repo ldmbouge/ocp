@@ -293,6 +293,10 @@
 		5BE64317139D49610056F448 /* CPTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64312139D49610056F448 /* CPTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BE64318139D49610056F448 /* DFSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64313139D49610056F448 /* DFSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BE64319139D49610056F448 /* DFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE64314139D49610056F448 /* DFSController.m */; };
+		5BE777421594C9E500ADE34E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5BE777451594C9E500ADE34E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777441594C9E500ADE34E /* main.m */; };
+		5BE777491594C9E500ADE34E /* fdmul.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE777481594C9E500ADE34E /* fdmul.1 */; };
+		5BE7774D1594CD1200ADE34E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BEC4A6A156E5F3A0085F2B0 /* CPIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BEC4A68156E5F3A0085F2B0 /* CPIBS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BEC4A6B156E5F3A0085F2B0 /* CPIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEC4A69156E5F3A0085F2B0 /* CPIBS.m */; };
 		5BEEF61213970B6F002ADBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -520,6 +524,13 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5BE7774E1594CD1C00ADE34E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 		B103534C13BBD81900627058 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -720,6 +731,16 @@
 			dstSubfolderSpec = 0;
 			files = (
 				5BE5A7F3158A8390006703CB /* fdmul2.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5BE7773E1594C9E500ADE34E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5BE777491594C9E500ADE34E /* fdmul.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -989,6 +1010,10 @@
 		5BE64312139D49610056F448 /* CPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTypes.h; sourceTree = "<group>"; };
 		5BE64313139D49610056F448 /* DFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DFSController.h; sourceTree = "<group>"; };
 		5BE64314139D49610056F448 /* DFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DFSController.m; sourceTree = "<group>"; };
+		5BE777401594C9E500ADE34E /* fdmul */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fdmul; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BE777441594C9E500ADE34E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BE777471594C9E500ADE34E /* fdmul-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "fdmul-Prefix.pch"; sourceTree = "<group>"; };
+		5BE777481594C9E500ADE34E /* fdmul.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = fdmul.1; sourceTree = "<group>"; };
 		5BEC4A68156E5F3A0085F2B0 /* CPIBS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPIBS.h; sourceTree = "<group>"; };
 		5BEC4A69156E5F3A0085F2B0 /* CPIBS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPIBS.m; sourceTree = "<group>"; };
 		5BEEF61013970B6F002ADBD4 /* queens2 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queens2; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1257,6 +1282,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BE7773D1594C9E500ADE34E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BE7774D1594CD1200ADE34E /* objcp.framework in Frameworks */,
+				5BE777421594C9E500ADE34E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5BEEF60D13970B6F002ADBD4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1478,6 +1512,7 @@
 				B1672FEC1584A7A500EFE5C3 /* CardinalityTest */,
 				5B6A960015879F1600019903 /* knapsack */,
 				5BE5A7EA158A838F006703CB /* fdmul2 */,
+				5BE777401594C9E500ADE34E /* fdmul */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1532,6 +1567,7 @@
 		5B7408AC1562828000C05277 /* Objective-CP Examples */ = {
 			isa = PBXGroup;
 			children = (
+				5BE777431594C9E500ADE34E /* fdmul */,
 				5BE5A7ED158A8390006703CB /* fdmul2 */,
 				5B6A960315879F1600019903 /* knapsack */,
 				5B8C7DE5158674D1007042CA /* queensGui */,
@@ -1914,6 +1950,24 @@
 			isa = PBXGroup;
 			children = (
 				5BE5A7F1158A8390006703CB /* fdmul2-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5BE777431594C9E500ADE34E /* fdmul */ = {
+			isa = PBXGroup;
+			children = (
+				5BE777441594C9E500ADE34E /* main.m */,
+				5BE777481594C9E500ADE34E /* fdmul.1 */,
+				5BE777461594C9E500ADE34E /* Supporting Files */,
+			);
+			path = fdmul;
+			sourceTree = "<group>";
+		};
+		5BE777461594C9E500ADE34E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5BE777471594C9E500ADE34E /* fdmul-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2625,6 +2679,24 @@
 			productReference = 5BE5A7EA158A838F006703CB /* fdmul2 */;
 			productType = "com.apple.product-type.tool";
 		};
+		5BE7773F1594C9E500ADE34E /* fdmul */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BE7774C1594C9E600ADE34E /* Build configuration list for PBXNativeTarget "fdmul" */;
+			buildPhases = (
+				5BE7773C1594C9E500ADE34E /* Sources */,
+				5BE7773D1594C9E500ADE34E /* Frameworks */,
+				5BE7773E1594C9E500ADE34E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BE7774F1594CD1C00ADE34E /* PBXTargetDependency */,
+			);
+			name = fdmul;
+			productName = fdmul;
+			productReference = 5BE777401594C9E500ADE34E /* fdmul */;
+			productType = "com.apple.product-type.tool";
+		};
 		5BEEF60F13970B6F002ADBD4 /* queens2 */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BEEF61913970B6F002ADBD4 /* Build configuration list for PBXNativeTarget "queens2" */;
@@ -2918,6 +2990,7 @@
 				B1672FEB1584A7A500EFE5C3 /* CardinalityTest */,
 				5B6A95FF15879F1500019903 /* knapsack */,
 				5BE5A7E9158A838F006703CB /* fdmul2 */,
+				5BE7773F1594C9E500ADE34E /* fdmul */,
 			);
 		};
 /* End PBXProject section */
@@ -3277,6 +3350,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BE7773C1594C9E500ADE34E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BE777451594C9E500ADE34E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5BEEF60C13970B6F002ADBD4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3458,6 +3539,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BE5A7F7158A839A006703CB /* PBXContainerItemProxy */;
+		};
+		5BE7774F1594CD1C00ADE34E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5BE7774E1594CD1C00ADE34E /* PBXContainerItemProxy */;
 		};
 		B103534D13BBD81900627058 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4333,6 +4419,42 @@
 			};
 			name = Release;
 		};
+		5BE7774A1594C9E500ADE34E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "fdmul/fdmul-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5BE7774B1594C9E500ADE34E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "fdmul/fdmul-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5BEEF61A13970B6F002ADBD4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -4993,6 +5115,15 @@
 			buildConfigurations = (
 				5BE5A7F4158A8390006703CB /* Debug */,
 				5BE5A7F5158A8390006703CB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5BE7774C1594C9E600ADE34E /* Build configuration list for PBXNativeTarget "fdmul" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BE7774A1594C9E500ADE34E /* Debug */,
+				5BE7774B1594C9E500ADE34E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 		};
