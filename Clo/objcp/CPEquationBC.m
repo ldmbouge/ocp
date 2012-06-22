@@ -150,7 +150,7 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
     do {        
         sumBounds(terms, b._nb, &b);
         if (b._sumLow > 0 || b._sumUp < 0) 
-           @throw [CPFailException new];        
+           failNow();        
         changed=false;
         for (int i=0; i < b._nb && feasible; i++) {
             
@@ -168,7 +168,7 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
     } while (changed && feasible);
     
     if (!feasible)
-       @throw [CPFailException new];    
+       failNow();    
     for(CPUInt i=0;i<_nb;i++) {
        if (terms[i].updated)
           terms[i].update(terms[i].var,@selector(updateMin:andMax:),
@@ -297,7 +297,7 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
    do {      
       sumLowerBound(terms, b._nb, &b);
       if (b._sumLow > 0) 
-         @throw [CPFailException new];      
+         failNow();      
       changed=false;
       for (int i=0; i < b._nb && feasible; i++) {         
          CPLong slowi = b._sumLow - terms[i].low;
@@ -311,7 +311,7 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
    } while (changed && feasible);
    
    if (!feasible)
-      @throw [CPFailException new];
+      failNow();
    
    for(CPUInt i=0;i<_nb;i++) {
       if (terms[i].updated) 

@@ -268,7 +268,6 @@ typedef struct {
    _propagIMP = [self methodForSelector:_propagSEL];
    _propagFail = nil;
    _propagDone = nil;
-   _fex = [CPFailException new];
    return self;
 }
 
@@ -284,7 +283,6 @@ typedef struct {
    [_propagDone release];
    for(CPInt i=0;i<NBPRIORITIES;i++)
       [_ac3[i] release];
-   [_fex release];
    [super dealloc];
 }
 
@@ -442,8 +440,8 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
          [_ac3[p] reset];
       [_ac5 reset];
       if (_propagFail)
-	 [_propagFail notifyWith:[_last getId]];
-      [exception release];
+         [_propagFail notifyWith:[_last getId]];
+      CFRelease(exception);
       _status = CPFailure;
    }
    @finally {
@@ -566,16 +564,6 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    if (_propagDone == nil)
       _propagDone = [CPConcurrency  voidInformer];
    return _propagDone;
-}
-
--(void)raiseFailure
-{
-   @throw [_fex retain];
-}
-
-void failNow(CPSolverI* fdm)
-{
-   @throw [fdm->_fex retain];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

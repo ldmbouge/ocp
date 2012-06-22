@@ -260,15 +260,14 @@
    [super dealloc];
 }
 
-
 -(void) label: (CPIntVarI*) var with: (CPInt) val
 {
    CPStatus status = [_solver label: var with: val];  
    if (status == CPFailure) {
-      [[self failLabel] notifyWith:var andInt:val];
+      [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   [[self retLabel] notifyWith:var andInt:val];
+   [_retLabel notifyWith:var andInt:val];
    [CPConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val

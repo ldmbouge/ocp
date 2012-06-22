@@ -31,6 +31,7 @@
 #import "CPTable.h"
 #import "CPConcurrency.h"
 #import "CPHeuristic.h"
+#import "CPSolverI.h"
 
 @interface CPFactory : NSObject
 +(id<CP>) createSolver;
@@ -44,6 +45,8 @@
 +(id<CPHeuristic>) createIBS:(id<CP>)cp;
 +(id<CPHeuristic>)createFF:(id<CP>)cp;
 @end;
+
+void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;

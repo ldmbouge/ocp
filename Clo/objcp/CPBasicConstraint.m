@@ -619,7 +619,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
                [_x whenChangePropagate:self];
                [_y whenChangePropagate:self];
             }
-         } else @throw [CPFailException new];
+         } else failNow();
       } else { 
          propagateRXC(self,bounds(_x),_y,[_z min]);
          propagateRXC(self,bounds(_y),_x,[_z min]);
@@ -656,7 +656,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
                   [_x bind:0];
                else [_y bind:0];
             } 
-         } else @throw [CPFailException new];
+         } else failNow();
       } else { 
          propagateRXC(self,bounds(_x),_y,[_z min]);
          propagateRXC(self,bounds(_y),_x,[_z min]);
@@ -772,7 +772,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
          vUse[nbBoundVal++] = to;
       }
    }
-   if (!ok) @throw [CPFailException new];
+   if (!ok) failNow();
    
    for(CPInt k=low;k<=up && ok;k++) {
       if ([_x[k] bound])

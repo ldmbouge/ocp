@@ -120,7 +120,7 @@
 -(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
 {
    if (newMin <= _min._val) return CPSuspend;
-   if (newMin > _max._val)  @throw [CPFailException new];
+   if (newMin > _max._val) failNow();
    CPInt nbr = newMin - _min._val;
    CPInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
@@ -131,7 +131,7 @@
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
    if (newMax >= _max._val) return CPSuspend;
-   if (newMax < _min._val) @throw [CPFailException new];
+   if (newMax < _min._val) failNow();
    CPInt nbr = _max._val - newMax;
    CPInt nsz = _sz._val - nbr;
    assignTRInt(&_max, newMax, _trail);
@@ -141,7 +141,7 @@
 }
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-   if (val < _min._val || val > _max._val) @throw [CPFailException new];
+   if (val < _min._val || val > _max._val) failNow();
    if (_sz._val == 1 && val == _min._val) return CPSuccess;
    
    assignTRInt(&_min, val, _trail);
@@ -441,12 +441,12 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus) updateMin: (CPInt) newMin for: (id<CPIntVarNotifier>)x
 {
     if (newMin <= _min._val) return CPSuspend;
-    if (newMin > _max._val)  @throw [CPFailException new];
+   if (newMin > _max._val)  failNow();
     int nbr = countFrom(self,_min._val,newMin-1);
     [x loseRangeEvt: ^() {
-            for(CPInt k=_min._val;k< newMin;k++) 
-                if (GETBIT(k)) 
-                    [x loseValEvt:k];         
+       for(CPInt k=_min._val;k< newMin;k++) 
+          if (GETBIT(k)) 
+             [x loseValEvt:k];         
     }];
     // need to send AC5 notifications still
     CPInt nsz = _sz._val - nbr;
@@ -460,12 +460,12 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
     if (newMax >= _max._val) return CPSuspend;
-    if (newMax < _min._val) @throw [CPFailException new];
+    if (newMax < _min._val) failNow();
     CPInt nbr = countFrom(self,newMax+1,_max._val);
     [x loseRangeEvt: ^() {
-        for(CPInt k=newMax+1;k<= _max._val;k++) 
-            if (GETBIT(k)) 
-                [x loseValEvt:k];         
+       for(CPInt k=newMax+1;k<= _max._val;k++) 
+          if (GETBIT(k)) 
+             [x loseValEvt:k];         
     }];
     CPInt nsz = _sz._val - nbr;
     assignTRInt(&_sz, nsz, _trail);
@@ -477,7 +477,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-    if (val < _min._val || val > _max._val) @throw [CPFailException new];
+    if (val < _min._val || val > _max._val) failNow();
     if (_sz._val == 1 && val == _min._val) return CPSuccess;
     [x loseRangeEvt: ^() {
         for(CPInt k=_min._val;k<=_max._val;k++) 

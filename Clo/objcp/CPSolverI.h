@@ -112,7 +112,4 @@
 -(CPUInt) nbVars;
 -(id<CPInformer>) propagateFail;
 -(id<CPInformer>) propagateDone;
--(void)raiseFailure;
 @end
-
-void failNow(CPSolverI* fdm);

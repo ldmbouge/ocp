@@ -52,7 +52,7 @@
    CPInt _cSeg;       // current segment
    CPInt _mxSeg;      // maximum # of segments
    @package
-   CPUInt _magic;     // magic is 32/64 depending on compilation mode
+   CPUInt _magic;     // magic is always 32-bit wide
 }
 -(CPTrail*) init;
 -(void) dealloc;

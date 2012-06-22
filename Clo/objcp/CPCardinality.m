@@ -200,7 +200,7 @@ static void computeCardinalities(CPIntVarArrayI* ax,
         }
     }
     if (count != _low[val])
-       failNow(_fdm);
+       failNow();
     return CPSuspend;
 }
 
@@ -216,7 +216,7 @@ static CPStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
         }
     }
     if (count != cc->_up[val])
-       failNow(cc->_fdm);
+       failNow();
     return CPSuspend;     
 }
 
@@ -225,7 +225,7 @@ static CPStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
    CPInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
    if (cc->_required[val]._val > cc->_up[val])
-      failNow(cc->_fdm);
+      failNow();
    if (cc->_required[val]._val == cc->_up[val])
       removeFromRemaining(cc,val);
    return CPSuspend;
@@ -235,7 +235,7 @@ static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
-      failNow(cc->_fdm);
+      failNow();
    if (cc->_low[val] > 0 && cc->_possible[val]._val == cc->_low[val])
       [cc bindRemainingTo: val];    
    return CPSuspend;
@@ -274,7 +274,7 @@ static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
     // Need to test the condition at least once
     for(CPInt i=_lo;i<=_uo;i++) {
         if (_required[i]._val > _up[i] || _possible[i]._val < _low[i])
-            failNow(_fdm);
+            failNow();
         if (_required[i]._val == _up[i])
            removeFromRemaining(self,i);
         if (_low[i] > 0 && _possible[i]._val == _low[i])
