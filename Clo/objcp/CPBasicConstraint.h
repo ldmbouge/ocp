@@ -128,6 +128,16 @@ typedef int (^intgetter) (void) ;
 -(CPUInt)nbUVars;
 @end
 
+@interface CPAbsBC : CPActiveConstraint<NSCoding> { // abs(x)==y
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id)initCPAbsBC:(id)x equal:(id)y;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
 @interface CPAllDifferenceVC : CPActiveConstraint<NSCoding> {
    CPIntVarI**   _x;
    CPInt    _nb;   

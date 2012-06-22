@@ -203,8 +203,12 @@
    [[[x cp] solver] trackObject:o];
    return o;   
 }
-
-
++(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y
+{
+   id<CPConstraint> o = [[CPAbsBC alloc] initCPAbsBC:x equal:y];
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
 +(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarArrayI*) x
 {
     id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];

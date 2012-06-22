@@ -256,7 +256,7 @@
       }
       [key release];
    } else {
-      CPInt mid = (low + up)/2;
+      CPInt mid = low + (up - low)/2;
       id<CPTracer> tracer = [_cp tracer];
       [tracer pushNode];
       CPStatus s1 = [_solver lthen:x with:mid+1];

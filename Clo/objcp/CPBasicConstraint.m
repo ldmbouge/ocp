@@ -332,17 +332,17 @@
 }
 -(CPStatus) post  // x <= y
 {
-   if (![_x bound] || ![_y bound]) {
-      [_x whenChangeMinPropagate: self];
-      [_y whenChangeMaxPropagate: self];
+   CPStatus ok = [self propagate];
+   if (ok) {
+      if (!bound(_x))
+         [_x whenChangeMinPropagate: self];
+      if (!bound(_y))
+         [_y whenChangeMaxPropagate: self];
    }
    return [self propagate];   
 }
 -(CPStatus) propagate
 {
-   if (!_active._val) 
-      return CPSkip;
-   assignTRInt(&_active, NO, _trail);
    CPStatus s = [_x updateMax:[_y max]];
    if (s != CPFailure)
       s = [_y updateMin:[_x min]];
@@ -713,6 +713,76 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
    _z = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPAbsBC
+-(id)initCPAbsBC:(id)x equal:(id)y
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   _idempotent = YES;
+   return self;
+}
+-(CPStatus) post
+{
+   CPStatus ok = [self propagate];
+   if (ok && !bound(_x)) [_x whenChangeBoundsPropagate:self];
+   if (ok && !bound(_y)) [_y whenChangeBoundsPropagate:self];
+   return ok;
+}
+-(CPStatus) propagate
+{
+   CPStatus ok = CPSuspend;
+   do {
+      _todo = CPChecked;
+      CPBounds xb = bounds(_x);
+      CPInt  ub = - xb.min > xb.max ? -xb.min  : xb.max;
+      BOOL  cZ = xb.min < 0 && xb.max > 0;
+      if (cZ) {
+         CPRange aZ = [_x around:0];
+         CPInt lb = minOf(-aZ.low,aZ.up);
+         ok = [_y updateMin:lb andMax:ub];
+      } else if (xb.min >= 0) {
+         ok = [_y updateMin:xb.min andMax:xb.max];
+         if (ok) ok = [_x updateMin:minDom(_y)];
+      } else {
+         ok = [_y updateMin:-xb.max andMax:-xb.min];
+         if (ok) ok = [_x updateMax:-minDom(_y)];
+      }
+      if (ok) {
+         CPBounds yb = bounds(_y);
+         ok = [_x updateMin:-yb.max andMax:yb.max];
+      }
+   } while(ok && _todo == CPTocheck);
+   return ok;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y, nil];
+}
+-(CPUInt)nbUVars
+{
+   return !bound(_x) + !bound(_y);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<%02ld> %@ == abs(%@,BoundConsistency)",_name,_y,_x];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
    return self;
 }
 @end

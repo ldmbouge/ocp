@@ -72,6 +72,7 @@
 -(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
+-(void) visitExprAbsI:(CPExprAbsI*) e;
 @end
 
 @implementation CPLinearizer
@@ -116,6 +117,11 @@
       id<CPIntVar> alpha = _sub(e);
       [_terms addTerm:alpha by:1];
    }
+}
+-(void) visitExprAbsI:(CPExprAbsI*) e
+{
+   id<CPIntVar> alpha = _sub(e);
+   [_terms addTerm:alpha by:1];   
 }
 -(void) visitExprEqualI:(CPExprEqualI*)e
 {
@@ -271,6 +277,7 @@
 -(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
+-(void) visitExprAbsI:(CPExprAbsI *)e;
 @end
 
 @implementation CPSubst
@@ -345,6 +352,25 @@
 -(void) visitExprEqualI:(CPExprEqualI*)e
 {
    assert(NO);
+}
+-(void) visitExprAbsI:(CPExprAbsI *)e  
+{
+   CPRewriter sub = ^id<CPIntVar>(CPExprI* e) {
+      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];
+      [e visit:subst];
+      id<CPIntVar> theVar = [subst result];
+      [subst release];
+      return theVar;
+   };
+   id<CP> cp = [e cp];
+   CPLinear* lT = [CPLinear linearFrom:[e operand] sub:sub];   
+   id<CPIntVar> oV = [self normSide:lT for:cp];
+   CPInt lb = [lT min];
+   CPInt ub = [lT max];
+   id<CPIntVar> aV = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
+   [_fdm post:[CPFactory abs:oV equal:aV]];
+    _rv = aV;
+    [lT release];
 }
 -(void) visitExprSumI: (CPExprSumI*) e
 {}

@@ -109,6 +109,64 @@
 }
 @end
 
+@implementation CPExprAbsI
+-(id<CPExpr>) initCPExprAbsI: (id<CPExpr>) op
+{
+   self = [super init];
+   _op = op;
+   return self;
+}
+-(id<CP>) cp
+{
+   return [_op cp];
+}
+-(CPInt) min
+{
+   return 0;
+}
+-(CPInt) max
+{
+   CPInt opMax = [_op max];
+   CPInt opMin = [_op min];
+   if (opMin >=0)
+      return opMax;
+   else if (opMax < 0)
+      return -opMax;
+   else 
+      return max(-opMin,opMax);
+}
+-(CPExprI*) operand
+{
+   return _op;
+}
+-(BOOL) isConstant
+{
+   return [_op isConstant];
+}
+
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"abs(%@)",[_op description]];
+   return rv;   
+}
+-(void) visit:(id<CPExprVisitor>)visitor
+{
+   [visitor visitExprAbsI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_op];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _op = [[aDecoder decodeObject] retain];
+   return self;
+}
+@end
+
 @implementation CPExprPlusI 
 -(id<CPExpr>) initCPExprPlusI: (id<CPExpr>) left and: (id<CPExpr>) right
 {
@@ -372,12 +430,17 @@
    printf(" == ");
    [[e right] visit: self];         
 }
+-(void) visitExprAbsI:(CPExprAbsI*) e
+{
+   printf("abs(");
+   [[e operand] visit:self];
+   printf(")");
+}
 -(void) visitExprSumI: (CPExprSumI*) e
 {
     [[e expr] visit: self];
 }
 @end
-
 
 @implementation CPExprI (visitor)
 -(void) visit: (id<CPExprVisitor>) visitor

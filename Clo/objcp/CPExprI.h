@@ -39,6 +39,19 @@
 -(BOOL) isConstant;
 @end
 
+@interface CPExprAbsI : CPExprI<CPExpr,NSCoding> {
+   CPExprI* _op;
+}
+-(id<CPExpr>) initCPExprAbsI: (id<CPExpr>) op;
+-(id<CP>) cp;
+-(CPInt) min;
+-(CPInt) max;
+-(NSString *)description;
+-(CPExprI*) operand;
+-(BOOL) isConstant;
+-(void) visit:(id<CPExprVisitor>)v;
+@end
+
 @interface CPExprPlusI : CPExprBinaryI<CPExpr,NSCoding> 
 -(id<CPExpr>) initCPExprPlusI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
@@ -95,7 +108,9 @@
 -(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
+-(void) visitExprAbsI:(CPExprAbsI*) e;
 @end
+
 
 @interface CPExprPrintI : NSObject<CPExprVisitor>
 -(CPExprPrintI*) initCPExprPrintI;
@@ -107,6 +122,7 @@
 -(void) visitExprMulI: (CPExprMulI*) e;
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
+-(void) visitExprAbsI:(CPExprAbsI*) e;
 @end;
 
 @interface CPExprI (visitor)

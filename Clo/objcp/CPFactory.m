@@ -242,6 +242,11 @@
    id<CPExpr> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
    return [self validate:o onError:"No CP Solver in == Expression"];
 }
++(id<CPExpr>) exprAbs: (id<CPExpr>) op
+{
+   id<CPExpr> o = [[CPExprAbsI alloc] initCPExprAbsI:op];
+   return [self validate:o onError:"No CP Solver in Abs Expression"];
+}
 
 +(id<CPExpr>) sum: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e
 {

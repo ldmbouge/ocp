@@ -80,6 +80,7 @@
 +(id<CPExpr>) expr: (id<CPExpr>) left sub: (id<CPExpr>) right;
 +(id<CPExpr>) expr: (id<CPExpr>) left mul: (id<CPExpr>) right;
 +(id<CPExpr>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right;
++(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
 +(id<CPExpr>) sum: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e;
 
