@@ -54,6 +54,11 @@
 			<key>orderHint</key>
 			<integer>7</integer>
 		</dict>
+		<key>costas.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>32</integer>
+		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -273,6 +278,11 @@
 			<true/>
 		</dict>
 		<key>5BE7773F1594C9E500ADE34E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BE777531594D27C00ADE34E</key>
 		<dict>
 			<key>primary</key>
 			<true/>

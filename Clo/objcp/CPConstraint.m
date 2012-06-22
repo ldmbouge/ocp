@@ -174,6 +174,12 @@
    [[[x cp] solver] trackObject:o];
    return o;
 }
++(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(CPInt)c 
+{
+   id<CPConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
+   [[[x cp] solver] trackObject:o];
+   return o;
+}
 +(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y
 {
    id<CPConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y];

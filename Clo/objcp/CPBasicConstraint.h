@@ -47,7 +47,7 @@
 @interface CPDiffc : CPActiveConstraint<NSCoding> {
 @private
    CPIntVarI* _x;
-   CPInt       _c;
+   CPInt      _c;
 }
 -(id) initCPDiffc:(id)x and:(CPInt)c;
 -(void) dealloc;
