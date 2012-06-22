@@ -264,11 +264,12 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
 
 -(CPStatus) post
 {
-   _bndSEL = @selector(bounds:);
    _bndIMP = malloc(sizeof(IMP)*_nb);
-   for(CPInt k=0;k<_nb;k++) 
-      _bndIMP[k] = [_x[k] methodForSelector:_bndSEL];
-   
+   _updateMax = malloc(sizeof(UBType)*_nb);
+   for(CPInt k=0;k<_nb;k++) {
+      _bndIMP[k] = [_x[k] methodForSelector:@selector(bounds:)];
+      _updateMax[k] = (UBType)[_x[k] methodForSelector:@selector(updateMax:)];
+   }
    CPStatus ok = [self propagate];
    if (ok) {
       for(CPInt k=0;k<_nb;k++) {
@@ -284,8 +285,8 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
    struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
    for(CPInt k=0;k<_nb;k++) {
       CPBounds b;
-      _bndIMP[k](_x[k],_bndSEL,&b);
-      terms[k] = (struct CPTerm){_x[k],b.min,b.max,NO};
+      _bndIMP[k](_x[k],@selector(bounds:),&b);
+      terms[k] = (struct CPTerm){_updateMax[k],_x[k],b.min,b.max,NO};
    }
    struct Bounds b;
    b._bndLow = - _c;
@@ -314,7 +315,7 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
    
    for(CPUInt i=0;i<_nb;i++) {
       if (terms[i].updated) 
-         [terms[i].var updateMax:(CPInt)terms[i].up];      
+         terms[i].update(terms[i].var,@selector(updateMax:),(CPInt)terms[i].up);
    }
    return CPSuspend; 
 }

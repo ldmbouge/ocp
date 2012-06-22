@@ -30,6 +30,8 @@
 #import "CPConstraint.h"
 #import "CPDataI.h"
 #import "CPSetI.h"
+#import "CPBitDom.h"
+#import "objc/runtime.h"
 
 // PVH: I am not sure that I like the fact that it is a struct
 // In any case, this should be hidden evenfrom those with access to extended interface.
@@ -127,8 +129,8 @@ typedef struct  {
 
 
 @interface CPIntVarI : CPExprI<CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
-@protected
-    CPUInt                         _name;
+@package
+    CPUInt                             _name;
     id<CP>                               _cp;
     CPSolverI*                          _fdm;
     id<CPDom>                           _dom;
@@ -218,6 +220,7 @@ typedef struct  {
 // Views
 
 @interface CPIntShiftView : CPIntVarI {
+   @package
     CPInt _b;
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(CPInt)b;
@@ -239,6 +242,7 @@ typedef struct  {
 @end
 
 @interface CPIntView : CPIntVarI { // Affine View
+   @package
     CPInt _a;
     CPInt _b;
 }
@@ -260,7 +264,30 @@ typedef struct  {
 -(id)           snapshot;
 @end
 
-BOOL bound(CPIntVarI* x);
+static inline BOOL bound(CPIntVarI* x)
+{
+   return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
+}
+
+static inline CPInt minDom(CPIntVarI* x)
+{
+   static id irvc = nil,isvc = nil;
+   if (irvc==nil) {
+      irvc = objc_getClass("CPIntVarI");
+      isvc = objc_getClass("CPIntShiftView");
+   }
+   id cx = object_getClass(x);
+   if (cx == irvc) {
+      return ((CPBoundsDom*)x->_dom)->_min._val;
+   } else if (cx == isvc) {
+      return ((CPBoundsDom*)x->_dom)->_min._val + ((CPIntShiftView*)x)->_b;      
+   } else {
+      if (((CPIntView*)x)->_a > 0)
+         return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+      else 
+         return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+   }
+}
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/

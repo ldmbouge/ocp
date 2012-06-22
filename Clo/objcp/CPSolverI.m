@@ -78,10 +78,10 @@ typedef struct AC3Entry {
    @package
    CPInt      _mxs;
    CPInt      _csz;
-   AC3Entry*      _tab;
+   AC3Entry*  _tab;
    CPInt    _enter;
    CPInt     _exit;
-   //CPInt     _mask;
+   CPInt     _mask;
 }
 -(id)initAC3Queue:(CPInt)sz;
 -(void)dealloc;
@@ -99,7 +99,7 @@ typedef struct AC3Entry {
    self = [super init];
    _mxs = sz;
    _csz = 0;
-   //_mask = _mxs - 1;
+   _mask = _mxs - 1;
    _tab = malloc(sizeof(AC3Entry)*_mxs);
    _enter = _exit = 0;
    return self;
@@ -121,13 +121,12 @@ typedef struct AC3Entry {
 }
 -(void) resize
 {
-   CPInt mask = _mxs - 1;
    AC3Entry* nt = malloc(sizeof(AC3Entry)*_mxs*2);
    AC3Entry* ptr = nt;
    CPInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
-      cur = (cur+1) & mask;
+      cur = (cur+1) & _mask;
    } 
     while (cur != _enter);
    free(_tab);
@@ -135,24 +134,24 @@ typedef struct AC3Entry {
    _exit = 0;
    _enter = _mxs-1;
    _mxs <<= 1;
-//   _mask = _mxs - 1;
+   _mask = _mxs - 1;
 }
 inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,CPCoreConstraint* cstr)
 {
    if (q->_csz == q->_mxs-1) 
       [q resize];  
-   CPInt last = q->_enter == 0 ? q->_mxs -1 : q->_enter - 1;
-   if (q->_csz > 0 && q->_tab[last].cb == cb && q->_tab[last].cstr == cstr)
+   AC3Entry* last = q->_tab+ (q->_enter == 0 ? q->_mxs -1 : q->_enter - 1);
+   if (q->_csz > 0 && last->cb == cb && last->cstr == cstr)
       return;                                                         
    q->_tab[q->_enter] = (AC3Entry){cb,cstr};
-   q->_enter = (q->_enter+1) & (q->_mxs - 1); // q->_mask;
+   q->_enter = (q->_enter+1) & q->_mask;
    ++q->_csz;
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
    if (q->_enter != q->_exit) {
       AC3Entry cb = q->_tab[q->_exit];
-      q->_exit = (q->_exit+1) & (q->_mxs - 1);
+      q->_exit = (q->_exit+1) & q->_mask;
       --q->_csz;
       return cb;
    } 
@@ -267,8 +266,8 @@ typedef struct {
    _nbpropag = 0;
    _propagSEL = @selector(propagate);
    _propagIMP = [self methodForSelector:_propagSEL];
-   _propagFail = [CPConcurrency  intInformer];
-   _propagDone = [CPConcurrency voidInformer];
+   _propagFail = nil;
+   _propagDone = nil;
    _fex = [CPFailException new];
    return self;
 }
@@ -434,14 +433,16 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
             done = p < LOWEST_PRIO;
          }         
       }
-      [_propagDone notify];
+      if (_propagDone)
+	 [_propagDone notify];
       _status = status;
    }
    @catch (CPFailException *exception) {
       for(CPInt p=NBPRIORITIES-1;p>=0;--p)
          [_ac3[p] reset];
       [_ac5 reset];
-      [_propagFail notifyWith:[_last getId]];
+      if (_propagFail)
+	 [_propagFail notifyWith:[_last getId]];
       [exception release];
       _status = CPFailure;
    }
@@ -556,10 +557,14 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 
 -(id<CPInformer>) propagateFail
 {
+   if (_propagFail == nil)
+      _propagFail = [CPConcurrency  intInformer];
    return _propagFail;
 }
 -(id<CPInformer>) propagateDone
 {
+   if (_propagDone == nil)
+      _propagDone = [CPConcurrency  voidInformer];
    return _propagDone;
 }
 

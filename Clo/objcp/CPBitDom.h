@@ -59,6 +59,11 @@
 -(void)restoreValue:(CPInt)toRestore;
 @end
 
+static inline CPBounds domBounds(CPBoundsDom* dom)
+{
+   return (CPBounds){dom->_min._val,dom->_max._val};
+}
+
 @interface CPBitDom : CPBoundsDom {
 @protected
    unsigned*   _bits;

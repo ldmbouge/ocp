@@ -499,11 +499,11 @@
 {
    CPStatus status = [_solver label: var with: val];  
    if (status == CPFailure) {
-      [[self failLabel] notifyWith:var andInt:val];
+      [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
    [_tracer addCommand:[[CPEqualc alloc] initCPEqualc:var and:val]];    // add after the fail (so if we fail, we don't bother adding it!]
-   [[self retLabel] notifyWith:var andInt:val];
+   [_retLabel notifyWith:var andInt:val];
    [CPConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
