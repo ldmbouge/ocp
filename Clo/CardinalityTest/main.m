@@ -44,7 +44,7 @@ int main (int argc, const char * argv[])
     CPRange DV = (CPRange){1,3};
     id<CP> cp = [CPFactory createSolver];
     id<CPIntArray> lb = [CPFactory intArray:cp range:D with: ^CPInt(CPInt i) { return 4; }]; 
-    id<CPIntArray> ub = [CPFactory intArray:cp range:D with: ^CPInt(CPInt i) { return 4; }]; 
+    id<CPIntArray> ub = [CPFactory intArray:cp range:D with: ^CPInt(CPInt i) { return 6; }]; 
     id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: DV];
     [cp solve: 
      ^() {
@@ -52,6 +52,7 @@ int main (int argc, const char * argv[])
      }   
         using: 
      ^() {
+         [cp label:[x at: 1] with: 2];
          printf("lb: %s\n",[[lb description] cStringUsingEncoding:NSASCIIStringEncoding]);
          printf("x: %s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 //         [CPLabel array: x];

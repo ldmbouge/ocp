@@ -36,23 +36,29 @@
     CPIntArrayI*    _lb;
     CPIntArrayI*    _ub;
     
-    CPIntVarI** _var;
-    CPInt   _varSize;
+    CPIntVarI** _var;         
+    CPInt       _varSize;
     
-    CPInt*  _low;
-    CPInt*  _up;
+    CPInt   _valMin;           // smallest value
+    CPInt   _valMax;           // largest value
+    CPInt   _valSize;          // number of values
+    CPInt*  _low;              // _low[i] = lower bound on value i
+    CPInt*  _up;               // _up[i]  = upper bound on value i
+ 
+    CPInt*    _flow;           // the flow for a value
+    CPInt     _nbAssigned;     // number of variable assigned
     
-
-    CPInt*  _match;
-    CPInt*  _varSeen;
+    CPInt*    _varMatch;       // the value of a variable
+    CPInt*    _valFirstMatch;  // The first variable matched to a value
+    CPInt*    _nextMatch;      // The next variable matched to a value; indexed by variable id
+    CPInt*    _prevMatch;      // The previous variable matched to a value; indexed by variable id
     
-    CPInt   _valMin;
-    CPInt   _valMax;
-    CPInt   _valSize;
-    CPInt*  _valMatch;
-    CPInt   _sizeMatching;
-    CPInt*  _valSeen;
-    CPInt   _magic;
+    CPULong   _magic;
+    CPULong*  _varMagic;
+    CPULong*  _valueMagic;
+    
+    CPInt     _sizeMatching;
+    CPInt*    _valSeen;
     
     CPInt   _dfs;
     CPInt   _component;
