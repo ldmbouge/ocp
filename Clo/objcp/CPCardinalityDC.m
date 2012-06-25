@@ -7,11 +7,11 @@
 
 @implementation CPCardinalityDC
 
-//static void initSCC(CPAllDifferentDC* ad);
-//static void findSCC(CPAllDifferentDC* ad);
-//static void findSCCvar(CPAllDifferentDC* ad,CPInt k);
-//static void findSCCval(CPAllDifferentDC* ad,CPInt k);
-//static void prune(CPAllDifferentDC* ad);
+static void initSCC(CPCardinalityDC* ad);
+static void findSCC(CPCardinalityDC* ad);
+static void findSCCvar(CPCardinalityDC* ad,CPInt k);
+static void findSCCval(CPCardinalityDC* ad,CPInt k);
+static void findSCCsink(CPCardinalityDC* ad,CPInt k);
 
 -(void) initInstanceVariables 
 {
@@ -46,6 +46,18 @@
         free(_valFirstMatch);
         free(_nextMatch);
         free(_prevMatch);
+        
+        _valComponent += _valMin;
+        free(_valComponent);
+        _valDfs += _valMin;
+        free(_valDfs);
+        _valHigh += _valMin;
+        free(_valHigh);
+        free(_varComponent);
+        free(_varDfs);
+        free(_varHigh);
+        free(_stack);
+        free(_type);
     }
     [super dealloc]; 
 }
@@ -294,6 +306,180 @@ static BOOL findFeasibleFlow(CPCardinalityDC* card)
     return TRUE;
 }
 
+-(void) initializeSCCArrays
+{
+    _varComponent = malloc(sizeof(CPInt)*_varSize);
+    _varDfs = malloc(sizeof(CPInt)*_varSize);
+    _varHigh = malloc(sizeof(CPInt)*_varSize);    
+    _valComponent = malloc(sizeof(CPInt)*_valSize);
+    _valComponent -= _valMin;
+    _valDfs = malloc(sizeof(CPInt)*_valSize*2);
+    _valDfs -= _valMin;
+    _valHigh = malloc(sizeof(CPInt)*_valSize*2);
+    _valHigh -= _valMin;
+        
+    _stack = malloc(sizeof(CPInt)*(_varSize + _valSize + 1));
+    _type = malloc(sizeof(CPInt)*(_varSize + _valSize + 1));   
+}
+    
+static void initSCC(CPCardinalityDC* card)
+{
+    for(CPInt i = 0 ; i < card->_varSize; i++) {
+        card->_varComponent[i] = 0;
+        card->_varDfs[i] = 0;
+        card->_varHigh[i] = 0;
+    }
+    
+    for(CPInt v = card->_valMin; v <= card->_valMax; v++) {
+        card->_valComponent[v] = 0;
+        card->_valDfs[v] = 0;
+        card->_valHigh[v] = 0;
+    }
+    
+    card->_sinkComponent = 0;
+    card->_sinkDfs = 0;
+    card->_sinkHigh = 0;
+    
+    card->_top = 0;
+    card->_dfs = card->_varSize + card->_valSize + 1;
+    card->_component = 0; 
+    
+}
+static void findSCC(CPCardinalityDC* card)
+{
+    initSCC(card);
+    for(CPInt i = 0; i < card->_varSize; i++) 
+        if (!card->_varDfs[i])
+            findSCCvar(card,i);
+}
+static void findSCCvar(CPCardinalityDC* card,CPInt k)
+{
+    CPInt* _varDfs = card->_varDfs;
+    CPInt* _varHigh = card->_varHigh;
+    CPInt* _stack = card->_stack;
+    CPInt* _type = card->_type;
+    CPInt* _varMatch = card->_varMatch;
+    CPInt* _valDfs = card->_valDfs;
+    CPInt* _valHigh = card->_valHigh;
+    CPInt* _valComponent = card->_valComponent;
+    CPInt* _varComponent = card->_varComponent;
+    
+    _varDfs[k] = card->_dfs--;
+    _varHigh[k] = _varDfs[k];
+    _stack[card->_top] = k;
+    _type[card->_top] = 0;
+    card->_top++;
+    
+    CPIntVarI* x = card->_var[k];
+    CPBounds bx;
+    [x bounds:&bx];
+    for(CPInt w = bx.min; w <= bx.max; w++) {
+        if (_varMatch[k] != w) {
+            if ([x member:w]) {
+                CPInt valDfs = _valDfs[w];
+                if (!valDfs) {
+                    findSCCval(card,w);
+                    if (_valHigh[w] > _varHigh[k])
+                        _varHigh[k] = _valHigh[w];
+                }
+                else if ( (valDfs > _varDfs[k]) && (!_valComponent[w])) {
+                    if (valDfs > _varHigh[k])
+                        _varHigh[k] = _valDfs[w];
+                }
+            }
+        }
+    }
+    
+    if (_varHigh[k] == _varDfs[k]) {
+        card->_component++;
+        do {
+            CPInt v = _stack[--card->_top];
+            CPInt t = _type[card->_top];
+            if (t == 0)
+                _varComponent[v] = card->_component;
+            else if (t == 1)
+                _valComponent[v] = card->_component;
+            else 
+                card->_sinkComponent = card->_component;
+            if (t == 0 && v == k)
+                break;
+        } while (true);
+    }    
+    
+}
+
+// not finished yet
+static void findSCCval(CPCardinalityDC* card,CPInt k)
+{
+    int i;
+    
+    CPInt* _varDfs = card->_varDfs;
+    CPInt* _varHigh = card->_varHigh;
+    CPInt* _stack = card->_stack;
+    CPInt* _type = card->_type;
+    CPInt* _varMatch = card->_varMatch;
+    CPInt* _valDfs = card->_valDfs;
+    CPInt* _valHigh = card->_valHigh;
+    CPInt* _valComponent = card->_valComponent;
+    CPInt* _varComponent = card->_varComponent;
+    CPInt* _valFirstMatch = card->_valFirstMatch;
+    
+    _valDfs[k] = card->_dfs--;
+    _valHigh[k] = _valDfs[k];
+    _stack[card->_top] = k;
+    _type[card->_top] = 1;
+    card->_top++;
+    
+    if (_valFirstMatch[k] != MAXINT) {
+        CPInt w = _valFirstMatch[k];
+        if (!_varDfs[w]) {
+            findSCCvar(card,w);
+            if (_varHigh[w] > _valHigh[k])
+                _valHigh[k] = _varHigh[w];
+        }
+        else if ( (_varDfs[w] > _valDfs[k]) && (!_varComponent[w])) {
+            if (_varDfs[w] > _valHigh[k])
+                _valHigh[k] = _varDfs[w];
+        }
+    }
+    else {
+        for(i = 0; i < card->_varSize; i++) {
+            CPInt w = _varMatch[i];
+            if (_valDfs[w]==0) {
+                findSCCval(card,w);
+                
+                if (_valHigh[w] > _valHigh[k])
+                    _valHigh[k] = _valHigh[w];
+            }
+            else if ( (_valDfs[w] > _valDfs[k]) && (!_valComponent[w])) {
+                if (_valDfs[w] > _valHigh[k])
+                    _valHigh[k] = _valDfs[w];
+            }
+        }
+    }
+    
+    if (_valHigh[k] == _valDfs[k]) {
+        card->_component++;
+        do {
+            CPInt v = _stack[--card->_top];
+            CPInt t = _type[card->_top];
+            if (t == 0)
+                _varComponent[v] = card->_component;
+            else if (t == 1)
+                _valComponent[v] = card->_component;
+            else 
+               card->_sinkComponent = card->_component; 
+            if (t == 1 && v == k)
+                break;
+        } while (true);
+    }    
+    
+}
+static void findSCCsink(CPCardinalityDC* ad,CPInt k)
+{
+    
+}
+
 -(CPStatus) post
 {
     if (!_posted) {
@@ -301,6 +487,7 @@ static BOOL findFeasibleFlow(CPCardinalityDC* card)
         [self createVariableArray];
         [self initializeCardinalityArrays];
         [self initializeFlow];
+        [self initializeSCCArrays];
         [self greedyFlow];
         if ([self propagate] == CPFailure)
             return CPFailure;
