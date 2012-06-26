@@ -39,7 +39,7 @@
 {
    return 0;
 }
--(id) var 
+-(id<CPIntVar>) var 
 {
    return nil;
 }

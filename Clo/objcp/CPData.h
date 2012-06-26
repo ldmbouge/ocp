@@ -57,13 +57,13 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(bool) more;
 -(CPInt) next;
 @end
-
+@protocol CPIntVar;
 
 @protocol CPExpr <NSObject,NSCoding>
 -(id<CP>) cp;
 -(CPInt) min;
 -(CPInt) max;
--(id)    var;
+-(id<CPIntVar>)var;
 -(BOOL) isConstant;
 -(BOOL) isVariable;
 -(id<CPExpr>) add: (id<CPExpr>) e;

@@ -49,12 +49,14 @@ typedef enum {
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (CPInt) i;
 
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (CPInt) c;
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c;
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons;
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (int) c;
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c;
 +(id<CPConstraint>) notEqual: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (int) c;
@@ -64,8 +66,9 @@ typedef enum {
 +(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (CPInt) c;
 +(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) mult: (id<CPIntVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
-+(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y;
++(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y consistency:(CPConsistency)c;
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<CPIntVarArray>) x;
++(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c;
 +(id<CPConstraint>) expr: (id<CPExpr>)e;
 @end
 

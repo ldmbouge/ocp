@@ -166,12 +166,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntVarI
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
-/*
-BOOL bound(CPIntVarI* x)
-{
-   return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
-}
-*/
 -(CPIntVarI*) initCPIntVarCore:(id<CP>)cp low: (CPInt) low up: (CPInt)up
 {
     self = [super init];
@@ -216,7 +210,10 @@ BOOL bound(CPIntVarI* x)
    NSSet* rv = collectConstraints(&_net);
    return rv;
 }
-
+-(CPDomain*)flatDomain
+{
+   return [[CPDomain alloc] initCPDomain:(CPBitDom*)_dom scaleBy:1 shift:0];
+}
 -(id<CPIntVarNotifier>) delegate
 {
     return _recv;
@@ -231,6 +228,10 @@ BOOL bound(CPIntVarI* x)
         }
         _recv = [d retain];
     }
+}
+-(CPIntVarI*)findOriginal
+{
+   return self;
 }
 -(BOOL) isConstant
 {
@@ -651,10 +652,15 @@ BOOL bound(CPIntVarI* x)
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a
 {
-    CPInt scale = [x scale];
-    CPInt shift = [x shift];
-    CPIntView* view = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift];
-    return view;
+   CPInt scale = [x scale];
+   CPInt shift = [x shift];
+   CPInt nScale = a * scale;
+   CPInt nShift = a * shift;   
+   CPIntVarI* rv = nil;
+   if (nScale == 1 && nShift == 0)
+      rv = [x findOriginal];
+   else rv = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift];
+   return rv;
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a andShift: (CPInt) b
 {
@@ -718,6 +724,10 @@ BOOL bound(CPIntVarI* x)
 {
     [super dealloc];  // CPIntVar will already release the domain. We do _NOT_ have to do it again.
 }
+-(CPDomain*)flatDomain
+{
+   return [[CPDomain alloc] initCPDomain:(CPBitDom*)_dom scaleBy:1 shift:_b];
+}
 -(CPInt)min
 {
     return [_dom min]+_b;
@@ -777,6 +787,10 @@ BOOL bound(CPIntVarI* x)
 -(void) loseValEvt: (CPInt)  val
 {
     [super loseValEvt: val+_b];
+}
+-(CPIntVarI*)findOriginal
+{
+   return [_recv findOriginal];
 }
 -(NSString*) description
 {
@@ -857,6 +871,10 @@ BOOL bound(CPIntVarI* x)
 -(void)dealloc
 {
     [super dealloc];
+}
+-(CPDomain*)flatDomain
+{
+   return [[CPDomain alloc] initCPDomain:(CPBitDom*)_dom scaleBy:_a shift:_b];
 }
 
 -(CPInt) min
@@ -953,6 +971,10 @@ BOOL bound(CPIntVarI* x)
 -(void) loseValEvt: (CPInt) val
 {
     [super loseValEvt:_a * val+_b];
+}
+-(CPIntVarI*)findOriginal
+{
+   return [_recv findOriginal];
 }
 -(NSString*)description
 {
@@ -1060,6 +1082,15 @@ BOOL bound(CPIntVarI* x)
    _loseRangeIMP[_nb] = [v methodForSelector:@selector(loseRangeEvt:)];
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
    _nb++;
+}
+-(CPIntVarI*)findOriginal
+{
+   Class core = [CPIntVarI class];
+   for(CPUInt i=0;i < _nb;i++) {
+      if ([_tab[i] isKindOfClass:core])
+         return _tab[i];
+   }
+   return nil;
 }
 -(void) setTracksLoseEvt
 {

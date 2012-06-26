@@ -88,3 +88,18 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(CPInt)toRestore;
 @end
+
+@interface CPDomain : NSObject {
+   CPBitDom*    _dom;
+   CPInt      _scale;
+   CPInt      _shift;
+}
+-(CPDomain*)initCPDomain:(CPBitDom*)bd scaleBy:(CPInt)a shift:(CPInt)b;
+-(BOOL)member:(CPInt)v;
+-(CPInt)min;
+-(CPInt)max;
+-(BOOL)get:(CPInt)b;
+-(void)set:(CPInt)b at:(BOOL)v;
+-(CPInt)domsize;
+-(CPStatus)scanWith:(CPStatus(^)(CPInt))block;
+@end

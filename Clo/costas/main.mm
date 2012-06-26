@@ -56,6 +56,14 @@ public:
    }
 };
 
+H operator-(id<CPIntVar> x,H y)
+{
+   return [CPFactory expr:x sub:y];
+}
+H operator==(id<CPIntVar> x,H y)
+{
+   return [CPFactory expr:x equal:y];
+}
 
 int main(int argc, const char * argv[])
 {
@@ -72,7 +80,7 @@ int main(int argc, const char * argv[])
          for(CPUInt i=R.low;i<=R.up;i++) {
             for(CPUInt j=R.low;j<=R.up;j++) {
                if (i < j)
-                  [cp add:[CPFactory expr:H([diff atRow:i col:j]) == H([costas at:j]) - H([costas at:j-i])]];
+                  [cp add:[CPFactory expr:[diff atRow:i col:j] == [costas at:j] - H([costas at:j-i])]];
                else [cp add:[CPFactory equalc:[diff atRow:i col:j] to:0]];
             }            
          }

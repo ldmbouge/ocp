@@ -267,8 +267,9 @@
 @interface CPSubst   : NSObject<CPExprVisitor> {
    id<CPIntVar>    _rv;
    id<CPSolver>   _fdm;
+   CPConsistency    _c;
 }
--(id)initCPSubst:(id<CPSolver>)fdm;
+-(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c;
 -(id<CPIntVar>)result;
 -(void) visitIntVarI: (CPIntVarI*) e;
 -(void) visitIntegerI: (CPIntegerI*) e;
@@ -281,11 +282,12 @@
 @end
 
 @implementation CPSubst
--(id)initCPSubst:(id<CPSolver>)fdm
+-(id)initCPSubst:(id<CPSolver>)fdm consistency: (CPConsistency) c
 {
    self = [super init];
    _rv = nil;
    _fdm = fdm;
+   _c = c;
    return self;
 }
 -(id<CPIntVar>)result
@@ -300,7 +302,7 @@
       id<CPIntVar> xv = [CPFactory intVar:cp domain:(CPRange){[e min],[e max]}];
       [e addTerm:xv by:-1];
       id<CPIntVarArray> sx = [e scaledViews];
-      [_fdm post:[CPFactory sum:sx  eq:0]];
+      [_fdm post:[CPFactory sum:sx  eq:0 consistency:_c]];
       return xv;
    }
 }
@@ -321,7 +323,7 @@
 -(void) visitExprMulI: (CPExprMulI*) e
 {
    CPRewriter sub = ^id<CPIntVar>(CPExprI* e) {
-      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];
+      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm consistency:_c];
       [e visit:subst];
       id<CPIntVar> theVar = [subst result];
       [subst release];
@@ -356,7 +358,7 @@
 -(void) visitExprAbsI:(CPExprAbsI *)e  
 {
    CPRewriter sub = ^id<CPIntVar>(CPExprI* e) {
-      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];
+      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm consistency:_c];
       [e visit:subst];
       id<CPIntVar> theVar = [subst result];
       [subst release];
@@ -368,7 +370,7 @@
    CPInt lb = [lT min];
    CPInt ub = [lT max];
    id<CPIntVar> aV = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
-   [_fdm post:[CPFactory abs:oV equal:aV]];
+   [_fdm post:[CPFactory abs:oV equal:aV consistency:_c]];
     _rv = aV;
     [lT release];
 }
@@ -377,12 +379,13 @@
 @end
 
 @implementation CPExprConstraintI
--(id) initCPExprConstraintI:(id<CPExpr>)x
+-(id) initCPExprConstraintI:(id<CPExpr>)x consistency: (CPConsistency) c
 {
    id<CP> cp = [x cp];
-   self = [super initCPActiveConstraint:[cp solver]];
-   _fdm = (CPSolverI*)[cp solver];
+   self  = [super initCPActiveConstraint:[cp solver]];
+   _fdm  = (CPSolverI*)[cp solver];
    _expr = [x retain];
+   _c    = c;
    return self;
 }
 -(void) dealloc
@@ -393,16 +396,16 @@
 -(CPStatus)post
 {
    CPLinear* terms = [CPLinear linearFrom:_expr sub:^id<CPIntVar>(CPExprI* e) {
-      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];
+      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm consistency:_c];
       [e visit:subst];
       id<CPIntVar> theVar = [subst result];
       [subst release];
       return theVar;
    }];
    id<CPIntVarArray> sx = [terms scaledViews];
-   CPStatus st = [_fdm post:[CPFactory sum:sx eq:0]];
+   CPStatus st = [_fdm post:[CPFactory sum:sx eq:0 consistency:_c]];
    [terms release];
-   return st;
+   return st ? CPSkip : CPFailure;
 }
 -(NSSet*)allVars
 {
@@ -412,6 +415,13 @@
 {
    return 0;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [NSMutableString stringWithCapacity:64];
+   [buf appendFormat:@"<CPExprConstraintI:[%@] CL=%d>",_expr,_c];
+   return buf;
+}
+
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];

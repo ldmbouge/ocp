@@ -123,11 +123,24 @@
     return o;
 }
 
-+(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c 
 {
-    id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
-    [[[x cp] solver] trackObject: o];
-    return o;
+   return [self sum:x eq:c consistency:RangeConsistency];
+}
+
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons
+{
+   NSUInteger sz = [x count];
+   switch(sz) {
+      case 0: assert(NO);return nil;
+      case 1: return [self equalc:[x at:0] to:c];
+      case 2: return [self equal:[x at:0] to:[self intVar:[x at:1] scale:-1] plus:-c consistency:cons];
+      default: {
+         id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
+         [[[x cp] solver] trackObject: o];
+         return o;
+      }
+   }
 }
 
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c
@@ -153,6 +166,18 @@
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c
 {
    id<CPConstraint> o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons
+{
+   id<CPConstraint> o = nil;
+   switch(cons) {
+      case DomainConsistency:
+         o = [[CPEqualDC alloc] initCPEqualDC:x and:y and:c];break;
+      default: 
+         o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];break;
+   }
    [[[x cp] solver] trackObject:o];
    return o;   
 }
@@ -203,9 +228,17 @@
    [[[x cp] solver] trackObject:o];
    return o;   
 }
-+(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y
++(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y consistency:(CPConsistency)c
 {
-   id<CPConstraint> o = [[CPAbsBC alloc] initCPAbsBC:x equal:y];
+   id<CPConstraint> o = nil;
+   switch (c) {
+      case DomainConsistency:
+         o = [[CPAbsDC alloc] initCPAbsDC:x equal:y];
+         break;
+      default: 
+         o = [[CPAbsBC alloc] initCPAbsBC:x equal:y];
+         break;
+   }
    [[[x cp] solver] trackObject:o];
    return o;   
 }
@@ -217,7 +250,13 @@
 }
 +(id<CPConstraint>) expr: (id<CPExpr>)e 
 {
-   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e];
+   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:ValueConsistency];
+   [[[e cp] solver] trackObject:o];
+   return o;
+}
++(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c
+{
+   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:c];
    [[[e cp] solver] trackObject:o];
    return o;
 }

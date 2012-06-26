@@ -461,7 +461,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    CPCoreConstraint* cstr = (CPCoreConstraint*) c;
    CPStatus status = [cstr post];
    _status = internalPropagate(self,status);
-   if (_status) {
+   if (_status && _status != CPSkip) {
       [cstr setId:[_cStore count]];
       [_cStore addObject:c]; // only add when no failure
    }

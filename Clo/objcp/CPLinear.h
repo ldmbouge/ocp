@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPData.h>
 #import "CPConstraintI.h"
+#import "CPConstraint.h"
 
 @protocol CPIntVar;
 @protocol CPIntVarArray;
@@ -62,10 +63,11 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 @end
 
 @interface CPExprConstraintI : CPActiveConstraint<NSCoding> {
-   CPSolverI* _fdm;
-   id<CPExpr> _expr;
+   CPSolverI*     _fdm;
+   id<CPExpr>    _expr;
+   CPConsistency    _c;
 }
--(id) initCPExprConstraintI:(id<CPExpr>)x;
+-(id) initCPExprConstraintI:(id<CPExpr>)x  consistency: (CPConsistency) c;
 -(void) dealloc;
 -(CPStatus)post;
 -(NSSet*)allVars;

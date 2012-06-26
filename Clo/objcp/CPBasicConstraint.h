@@ -29,7 +29,7 @@
 @class CPIntVarI;
 @class CPSolver;
 @class CPIntVarArrayI;
-
+@class CPDomain;
 
 // PVH: where is _active being used
 @interface CPEqualc : CPActiveConstraint<NSCoding> {
@@ -66,6 +66,36 @@
 -(void) dealloc;
 -(CPStatus) post;
 -(CPStatus) propagate;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPEqualDC : CPActiveConstraint<NSCoding> {
+@private
+   CPIntVarI*  _x;
+   CPIntVarI*  _y;
+   CPInt _c;
+}
+-(id) initCPEqualDC: (id) x and: (id) y  and: (CPInt) c;
+-(void) dealloc;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPEqual3DC : CPActiveConstraint<NSCoding> {
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   CPIntVarI* _z;   
+   CPDomain*  _fx;
+   CPDomain*  _fy;
+   CPDomain*  _fz;
+   TRIntArray _xs;
+   TRIntArray _ys;
+   TRIntArray _zs;
+}
+-(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z;
+-(CPStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -133,6 +163,16 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPAbsBC:(id)x equal:(id)y;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPAbsDC : CPActiveConstraint<NSCoding> { // abs(x)==y
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id)initCPAbsDC:(id)x equal:(id)y;
 -(CPStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;

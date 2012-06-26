@@ -125,6 +125,7 @@ typedef struct  {
 
 //-(void) loseRangeEvt:(CPDoRange) clo;
 -(void) loseRangeEvt:(CPClosure) clo;
+-(CPIntVarI*)findOriginal;
 @end
 
 
@@ -147,6 +148,7 @@ typedef struct  {
 -(CPSolverI*) solver;
 -(id<CP>) cp;
 -(NSSet*)constraints;
+-(CPDomain*)flatDomain;
 
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
@@ -225,6 +227,7 @@ typedef struct  {
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
+-(CPDomain*)flatDomain;
 -(CPInt) min;
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
@@ -248,6 +251,7 @@ typedef struct  {
 }
 -(CPIntView*)initIVarAViewFor: (CPInt) a  x:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
+-(CPDomain*)flatDomain;
 -(CPInt) min;
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
@@ -288,6 +292,27 @@ static inline CPInt minDom(CPIntVarI* x)
          return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
    }
 }
+
+static inline CPInt maxDom(CPIntVarI* x)
+{
+   static id irvc = nil,isvc = nil;
+   if (irvc==nil) {
+      irvc = objc_getClass("CPIntVarI");
+      isvc = objc_getClass("CPIntShiftView");
+   }
+   id cx = object_getClass(x);
+   if (cx == irvc) {
+      return ((CPBoundsDom*)x->_dom)->_max._val;
+   } else if (cx == isvc) {
+      return ((CPBoundsDom*)x->_dom)->_max._val + ((CPIntShiftView*)x)->_b;      
+   } else {
+      if (((CPIntView*)x)->_a > 0)
+         return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+      else 
+         return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+   }
+}
+
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
