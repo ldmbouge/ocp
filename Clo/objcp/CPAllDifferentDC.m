@@ -295,10 +295,9 @@ static void initSCC(CPAllDifferentDC* ad)
 static void findSCC(CPAllDifferentDC* ad)
 {
     initSCC(ad);
-    for(CPInt k = 0; k < ad->_varSize; k++) {
+    for(CPInt k = 0; k < ad->_varSize; k++) 
         if (!ad->_varDfs[k])
             findSCCvar(ad,k);
-    }    
 }
 
 static void findSCCvar(CPAllDifferentDC* ad,CPInt k)

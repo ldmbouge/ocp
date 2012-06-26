@@ -217,6 +217,20 @@
         _array[i] = [[CPFactory intVar: cp domain: domain] retain];
     return self;
 }
+-(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range
+{
+    self = [super init];
+    _cp = cp;   
+    _low = range.low;
+    _up = range.up;
+    _nb = _up - _low + 1;
+    _array = malloc(_nb * sizeof(CPIntVarI*));
+    _array -= _low;
+    for (CPInt i=_low ; i <= _up; i++) 
+        _array[i] = 0;
+    return self;
+}
+
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo
 {
     self = [super init];
@@ -263,7 +277,12 @@
         @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPIntArrayElement"];
     return _array[value];
 }
-
+-(void) set: (id<CPIntVar>) x at: (CPInt) value
+{
+    if (value < _low || value > _up)
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPIntArrayElement"];  
+    _array[value] = [x retain];
+}
 -(CPInt) low
 {
     return _low;
@@ -453,3 +472,138 @@
 }
 
 @end
+
+/*********************************************************************************/
+/*             Multi-Dimensional Array                                           */
+/*********************************************************************************/
+
+@implementation CPIntVarMultiArrayI
+
+-(CPIntVarMultiArrayI*) initCPIntVarMultiArray:(id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain
+{
+    self = [super init];
+    _cp = cp;  
+    _arity = 3;
+    _range = malloc(sizeof(CPRange) * _arity);
+    _low = malloc(sizeof(CPInt) * _arity);
+    _up = malloc(sizeof(CPInt) * _arity);
+    _size = malloc(sizeof(CPInt) * _arity);
+    _i = malloc(sizeof(CPRange) * _arity);
+    _range[0] = r0;
+    _range[1] = r1;
+    _range[2] = r2;
+    _low[0] = r0.low;
+    _low[1] = r1.low;
+    _low[2] = r2.low;
+    _up[0] = r0.up;
+    _up[1] = r1.up;
+    _up[2] = r2.up;
+    _size[0] = (r0.up - r0.low + 1);
+    _size[1] = (r1.up - r1.low + 1);
+    _size[2] = (r2.up - r2.low + 1);
+    _nb = _size[0] * _size[1] * _size[2];
+    _flat = malloc(sizeof(id<CPIntVar>) * _nb);
+    for (CPInt i=0 ; i < _nb; i++) 
+        _flat[i] = [CPFactory intVar: cp domain: domain];   
+    return self;
+}
+-(void) dealloc 
+{
+    NSLog(@"CPIntVarMultiArray dealloc called...\n");
+    free(_range);
+    free(_low);
+    free(_up);
+    free(_size);
+    free(_flat);
+    [super dealloc];
+}
+-(CPInt) getIndex
+{
+    for(CPInt k = 0; k < _arity; k++)
+        if (_i[k] < _low[k] || _i[k] > _up[k])
+            @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMultiArray"];
+    int idx = _i[0] - _low[0];
+    for(CPInt k = 1; k < _arity; k++)
+        idx = idx * _size[k] + (_i[k] - _low[k]);
+    return idx;
+}
+-(CPRange) range: (CPInt) i
+{
+    if (i < 0 || i >= _arity)
+       @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMultiArray"]; 
+    return _range[i];
+}
+-(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+{
+    if (_arity != 3) 
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMultiArray"];
+    _i[0] = i0;
+    _i[1] = i1;
+    _i[2] = i2;
+    return _flat[[self getIndex]];
+}
+-(NSUInteger)count
+{
+    return _nb;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendString:@"["];
+    /*
+    for(CPInt i = _lowr; i <= _upr; ++i) {
+        for (CPInt j = _lowc; j <= _upc; ++j) {
+            [rv appendFormat:@"<%d,%d> = %@",i,j,[_flat[(i-_lowr)*_nbCols+(j-_lowc)] description]];
+            [rv appendString:@"\n"];         
+        }
+    }
+     */
+    [rv appendString:@"]"];
+    return rv;   
+}
+-(id<CP>) cp
+{
+    return _cp;
+}
+-(id<CPSolver>) solver
+{
+    return [_cp solver];
+}
+-(CPInt) virtualOffset
+{
+    return [[_cp solver] virtualOffset:self];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    /*
+    [aCoder encodeObject:_cp];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_lowr];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_upr];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_lowc];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_upc];
+    CPInt sz = _nbRows * _nbCols;
+    for(CPInt i=0 ; i < sz ;i++)
+        [aCoder encodeObject:_flat[i]];
+     */
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    /*
+    _cp = [[aDecoder decodeObject] retain];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_lowr];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_upr];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_lowc];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_upc];
+    _nbRows = (_upr - _lowr + 1);
+    _nbCols = (_upc - _lowc + 1);
+    CPInt sz = _nbRows * _nbCols;
+    _flat = malloc(sizeof(CPIntVarI*) * sz);
+    for(CPInt i=0 ; i < sz ;i++)
+        _flat[i] = [[aDecoder decodeObject] retain];
+     */
+    return self;
+}
+
+@end
+

@@ -26,8 +26,17 @@
 
 @protocol CPIntVarArray <NSObject> 
 -(id<CPIntVar>) at: (CPInt) value;
+-(void) set: (id<CPIntVar>) x at: (CPInt) value;
 -(CPInt) low;
 -(CPInt) up;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
+
+@protocol CPIntVarMultiArray <NSObject> 
+-(id<CPIntVar>) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(CPRange) range: (CPInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<CP>) cp;

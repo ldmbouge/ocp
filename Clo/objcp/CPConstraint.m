@@ -248,6 +248,12 @@
     [[[x cp] solver] trackObject:o];
     return o;
 }
++(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
+{
+    id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: table on: x : y : z];
+    [[[x cp] solver] trackObject:o];
+    return o;    
+}
 +(id<CPConstraint>) expr: (id<CPExpr>)e 
 {
    id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:ValueConsistency];
