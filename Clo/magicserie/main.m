@@ -35,14 +35,14 @@ int main (int argc, const char * argv[])
    const CPInt n = 20;  // 128 -> 494 fails
    id<CP> cp = [CPFactory createSolver]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:(CPRange){0,n-1} domain: (CPRange){0,n-1}];
-   id<CPIntVarMatrix> b = [CPFactory intVarMatrix:cp rows:(CPRange){0,n-1} columns: (CPRange){0,n-1} domain: (CPRange){0,1}];
+   id<CPIntVarMatrix> b = [CPFactory intVarMatrix:cp range:(CPRange){0,n-1} : (CPRange){0,n-1} domain: (CPRange){0,1}];
    [cp solve: 
     ^() {
         for(CPInt i=0;i<n;i++) {
             for(CPInt j=0;j<n;j++) 
-                [cp add: [CPFactory reify: [b atRow:i col:j] with: [x at:j] eq: i]];
+                [cp add: [CPFactory reify: [b at:i :j] with: [x at:j] eq: i]];
             id<CPIntVar> nxi = [CPFactory intVar:[x at:i] scale: -1 shift:0];
-            id<CPIntVarArray> rowi = [CPFactory intVarArray: cp range: (CPRange){0,n} with: ^id<CPIntVar>(CPInt j) { if (j == n) return nxi; else return [b atRow: i col: j]; }];
+            id<CPIntVarArray> rowi = [CPFactory intVarArray: cp range: (CPRange){0,n} with: ^id<CPIntVar>(CPInt j) { if (j == n) return nxi; else return [b at: i : j]; }];
             [cp add:[CPFactory sum: rowi eq: 0]];
         }
      }   

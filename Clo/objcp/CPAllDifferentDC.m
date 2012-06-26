@@ -57,7 +57,7 @@ static void prune(CPAllDifferentDC* ad);
 }
 -(void) dealloc 
 {
-   NSLog(@"AllDifferent dealloc called ...");
+//   NSLog(@"AllDifferent dealloc called ...");
    free(_var);
    _valMatch += _min;
    free(_match);

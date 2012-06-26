@@ -32,7 +32,6 @@
 +(void) var: (id<CPIntVar>) x;
 +(void) array: (id<CPIntVarArray>) x;
 +(void) array: (id<CPIntVarArray>) x orderedBy: (CPInt2Int) orderedBy;
-+(void) matrix: (id<CPIntVarMatrix>) x orderedBy: (CPIntxInt2Int) orderedBy;
 +(void) heuristic:(id<CPHeuristic>)h;
 @end;
 

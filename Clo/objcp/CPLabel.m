@@ -73,10 +73,7 @@
         [CPLabel var: [x at: i]];
     } while (true);    
 }
-+(void) matrix: (id<CPIntVarMatrix>) x orderedBy: (CPIntxInt2Int) orderedBy
-{
-    @throw [[CPInternalError alloc] initCPInternalError: "NYI"];
-}
+
 
 +(void) heuristic:(id<CPHeuristic>)h
 {

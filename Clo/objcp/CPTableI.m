@@ -49,7 +49,7 @@
 
 -(void) dealloc
 {
-    NSLog(@"Circuit dealloc called ...");
+//    NSLog(@"CPTableI dealloc called ...");
     for(CPInt i = 0; i < _arity; i++) 
         free(_column[i]);
     free(_column);
@@ -180,7 +180,6 @@
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
-    // do I need to retain; what about the constructor
     id<CP> cp = [[aDecoder decodeObject] retain];
     CPInt arity;
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&arity];
@@ -232,7 +231,7 @@
 }
 -(void) dealloc
 {
-    NSLog(@"TableCstr dealloc called ...");
+//    NSLog(@"TableCstr dealloc called ...");
     free(_var);
     [_table release];
     for(CPInt i = 0; i < _arity; i++)
@@ -308,7 +307,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
         }
         else 
             assignTRIntArray(_currentSupport[i],v,tuple);
-        printf("Support of value %d for column %d is %d \n",v,i,getTRIntArray(_currentSupport[i],v));
+//        printf("Support of value %d for column %d is %d \n",v,i,getTRIntArray(_currentSupport[i],v));
     }
     return CPSuspend;
 }
