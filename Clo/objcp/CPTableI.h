@@ -59,12 +59,13 @@
 
 @interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
     CPIntVarI** _var;
-    CPInt   _arity;  
+    CPInt       _arity;  
     CPTableI*   _table;
     TRIntArray* _currentSupport;
     bool        _posted;
 }
 -(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table;
+-(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 -(void) dealloc;
 -(CPStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;

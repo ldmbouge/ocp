@@ -216,7 +216,20 @@
     _posted = false;
     return self;    
 }
-
+-(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z
+{
+    self = [super initCPActiveConstraint: [[x cp] solver]];
+    _idempotent = YES;
+    _priority = HIGHEST_PRIO;
+    _arity = 3;
+    _var = malloc(_arity * sizeof(CPIntVarI*));
+    _var[0] = x;
+    _var[1] = y;
+    _var[2] = z;
+    _table = [table retain];
+    _posted = false;
+    return self;        
+}
 -(void) dealloc
 {
     NSLog(@"TableCstr dealloc called ...");

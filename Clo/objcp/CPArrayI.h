@@ -66,10 +66,12 @@
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp size: (CPInt) nb domain: (CPRange) domain;
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp size: (CPInt) nb with:(CPIntVarI*(^)(CPInt)) clo;
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain;
+-(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range;
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
 -(void) dealloc;
 -(id<CPIntVar>) at: (CPInt) value;
+-(void) set: (id<CPIntVar>) x at: (CPInt) value;
 -(CPInt) low;
 -(CPInt) up;
 -(NSUInteger)count;
@@ -106,3 +108,28 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
+
+@interface CPIntVarMultiArrayI : NSObject<CPVirtual,NSCoding> {
+@private
+    id<CP>         _cp;
+    id<CPIntVar>*  _flat;
+    CPInt          _arity;
+    CPRange*       _range;
+    CPInt*         _low;
+    CPInt*         _up;
+    CPInt*         _size;
+     CPInt*        _i;
+    CPInt          _nb;
+}
+-(CPIntVarMultiArrayI*) initCPIntVarMultiArray: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
+-(void) dealloc;  
+-(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
+-(CPRange) range: (CPInt) i;
+-(NSUInteger)count;
+-(id<CP>) cp;
+-(id<CPSolver>) solver;
+-(CPInt) virtualOffset;   
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (id)initWithCoder:(NSCoder *)aDecoder;
+@end
+

@@ -150,6 +150,12 @@
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
++(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range 
+{
+    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range];
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;
+}
 +(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo
 {
     CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range with:clo];
@@ -165,6 +171,12 @@
 +(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp rows: (CPRange) rr columns: (CPRange) cr domain: (CPRange) domain
 {
     CPIntVarMatrixI* o = [[CPIntVarMatrixI alloc] initCPIntVarMatrix: cp rowRange: rr colRange: cr domain:domain]; 
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;
+}
++(CPIntVarMultiArrayI*) intVarMultiArray: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain
+{
+    CPIntVarMultiArrayI* o = [[CPIntVarMultiArrayI alloc] initCPIntVarMultiArray: cp range: r0 : r1 : r2 domain:domain]; 
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
