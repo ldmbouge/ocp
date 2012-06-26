@@ -65,33 +65,33 @@ int main(int argc, const char * argv[])
       CPRange D = (CPRange){-n+1,n-1};
       id<CP> cp = [CPFactory createSolver];      
       id<CPIntVarArray> costas = [CPFactory intVarArray: cp range:R domain: R];         
-      id<CPIntVarMatrix>  diff = [CPFactory intVarMatrix:cp rows:R columns:R domain:D];
+      id<CPIntVarMatrix>  diff = [CPFactory intVarMatrix:cp range:R :R domain:D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solve: ^{
          [cp add:[CPFactory alldifferent:costas]];
          for(CPUInt i=R.low;i<=R.up;i++) {
             for(CPUInt j=R.low;j<=R.up;j++) {
                if (i < j)
-                  [cp add:[CPFactory expr:H([diff atRow:i col:j]) == H([costas at:j]) - H([costas at:j-i])]];
-               else [cp add:[CPFactory equalc:[diff atRow:i col:j] to:0]];
+                  [cp add:[CPFactory expr:H([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])]];
+               else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
             }            
          }
          for(CPUInt i=1;i<=n-1;i++) {
             id<CPIntVarArray> slice = [CPFactory intVarArray:cp range:(CPRange){i+1,n} with:^id<CPIntVar>(CPInt j) {
-               return [diff atRow:i col:j];
+               return [diff at:i :j];
             }];
             [cp add:[CPFactory alldifferent:slice]];
          }
          [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
          for(CPUInt i=R.low;i<=R.up;i++) {
             for(CPUInt j=R.low;j<=R.up;j++) {
-               [cp add:[CPFactory notEqualc:[diff atRow:i col:j] to:0]];
+               [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
             }
          }
          for (CPInt k=3; k<=n; k++) {
             for (CPInt l=k+1; l<=n; l++) {
-               [cp add:[CPFactory expr:H([diff atRow:k-2 col:l-1]) + H([diff atRow:k col:l]) ==
-                                       H([diff atRow:k-1 col:l-1]) + H([diff atRow:k-1 col:l])]];
+               [cp add:[CPFactory expr:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
+                                       H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])]];
             }
          }
                   

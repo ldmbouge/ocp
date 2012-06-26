@@ -32,44 +32,7 @@
 #import "objcp/CPLabel.h"
 #import "objcp/CPHeuristic.h"
 
-//345 choices
-//254 fail
-//5027 propagations
-
-// First solution
-// 22 choices 20 fail 277 propagations
-
-/*
-int main (int argc, const char * argv[])
-{
-    CPInt n = 8;
-    CPRange R = (CPRange){1,n};
-    CPRange D = (CPRange){1,2};
-    CPRange DV = (CPRange){1,3};
-    id<CP> cp = [CPFactory createSolver];
-    id<CPIntArray> lb = [CPFactory intArray:cp range:D with: ^CPInt(CPInt i) { return 4; }]; 
-    id<CPIntArray> ub = [CPFactory intArray:cp range:D with: ^CPInt(CPInt i) { return 6; }]; 
-    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: DV];
-    [cp solve: 
-     ^() {
-         [cp add: [CPFactory cardinality: x low: lb up: ub consistency:DomainConsistency]];
-     }   
-        using: 
-     ^() {
-//         [cp label:[x at: 1] with: 2];
-         printf("lb: %s\n",[[lb description] cStringUsingEncoding:NSASCIIStringEncoding]);
-         printf("x: %s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
-//         [CPLabel array: x];
-     }
-     ];
-    NSLog(@"Solver status: %@\n",cp);
-    NSLog(@"Quitting");
-    [cp release];
-    [CPFactory shutdown];
-    return 0;
-}
- */
-
+ 
 int main(int argc, const char * argv[])
 {
     CPInt n = 14;
@@ -82,10 +45,10 @@ int main(int argc, const char * argv[])
     
     id<CP> cp = [CPFactory createSolver];
     id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }]; 
-    id<CPIntVarMultiArray> team = [CPFactory intVarMultiArray:cp range: Periods : EWeeks : HomeAway domain:Teams];
-    id<CPIntVarMatrix> game =     [CPFactory intVarMatrix:cp rows: Periods columns: Weeks domain:Games];
+    id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
+    id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
     id<CPIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods range: Weeks 
-                                                    with: ^id<CPIntVar>(CPInt p,CPInt w) { return [game atRow: p col: w]; }];
+                                                    with: ^id<CPIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
     id<CPTable> table = [CPFactory table: cp arity: 3];
     for(CPInt i = 1; i <= n; i++)
         for(CPInt j = i+1; j <= n; j++)
@@ -96,13 +59,16 @@ int main(int argc, const char * argv[])
      ^() {
          for(CPInt w = 1; w < n; w++)
              for(CPInt p = 1; p <= n/2; p++) 
-                 [cp add: [CPFactory table: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game atRow: p col: w]]];
+                 [cp add: [CPFactory table: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
          [cp add: [CPFactory alldifferent:allgames]];
          for(CPInt w = 1; w <= n; w++) 
              [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods range: HomeAway   
                                                                  with: ^id<CPIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
          for(CPInt p = 1; p <= n/2; p++) 
-             [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp range: EWeeks range: HomeAway with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
+             [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp 
+                                                               range: EWeeks 
+                                                               range: HomeAway 
+                                                                with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
                                          low: c 
                                           up: c
                                  consistency:DomainConsistency]];
@@ -112,7 +78,7 @@ int main(int argc, const char * argv[])
          [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
          for(CPInt p = 1; p <= n/2; p++) {
              for(CPInt w = 1; w < n; w++) 
-                 printf("%d-%d [%2d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game atRow: p col: w] min]);
+                 printf("%2d-%2d [%3d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game at: p : w] min]);
              printf("\n");
          }
          //         [cp label:[x at: 1] with: 2];

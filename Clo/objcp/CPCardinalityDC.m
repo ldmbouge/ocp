@@ -32,7 +32,7 @@ static void findSCCsink(CPCardinalityDC* card);
 
 -(void) dealloc
 {
-    NSLog(@"CPCardinalityDC dealloc called ...");
+//    NSLog(@"CPCardinalityDC dealloc called ...");
     if (_posted) {
         free(_var);
         _low += _valMin;

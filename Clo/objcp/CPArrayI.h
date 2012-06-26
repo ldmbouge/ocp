@@ -83,33 +83,8 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface CPIntVarMatrixI : NSObject<CPVirtual,NSCoding> {
-@private
-    id<CP>         _cp;
-    id<CPIntVar>*  _flat;
-    CPInt      _lowr;
-    CPInt      _upr;
-    CPInt      _lowc;
-    CPInt      _upc;
-    CPInt      _nbRows;
-    CPInt      _nbCols;
-}
--(CPIntVarMatrixI*) initCPIntVarMatrix: (id<CP>) cp rows:(CPInt) r cols:(CPInt)c domain:(CPRange)domain;
--(CPIntVarMatrixI*) initCPIntVarMatrix: (id<CP>) cp rowRange:(CPRange) r colRange:(CPRange)c domain:(CPRange)domain;
--(void) dealloc;
--(id<CPIntVar>) atRow:(CPInt)r col:(CPInt)c;
--(CPRange) rowRange;
--(CPRange) columnRange;
--(NSMutableArray*) row:(CPInt)r;
--(NSUInteger)count;
--(id<CP>) cp;
--(id<CPSolver>) solver;
--(CPInt)virtualOffset;   
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
 
-@interface CPIntVarMultiArrayI : NSObject<CPVirtual,NSCoding> {
+@interface CPIntVarMatrixI : NSObject<CPVirtual,NSCoding> {
 @private
     id<CP>         _cp;
     id<CPIntVar>*  _flat;
@@ -121,8 +96,10 @@
      CPInt*        _i;
     CPInt          _nb;
 }
--(CPIntVarMultiArrayI*) initCPIntVarMultiArray: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
+-(CPIntVarMatrixI*) initCPIntVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;
+-(CPIntVarMatrixI*) initCPIntVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
 -(void) dealloc;  
+-(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1; 
 -(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
 -(CPRange) range: (CPInt) i;
 -(NSUInteger)count;

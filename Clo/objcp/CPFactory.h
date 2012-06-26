@@ -62,8 +62,8 @@
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c;
 
-+(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp rows: (CPRange) rr columns: (CPRange) cr domain: (CPRange) domain;
-+(id<CPIntVarMultiArray>) intVarMultiArray: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
++(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;
++(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
 
 +(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) range value: (CPInt) value;
 +(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) range with:(CPInt(^)(CPInt)) clo;
