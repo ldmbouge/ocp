@@ -151,7 +151,6 @@
 {
    if ([[e left] isVariable]) {
       id<CPIntVar> lV = (id<CPIntVar>)[e left];
-      //CPLinear* terms = [CPLinearizer linearFrom:[e right] solver:_fdm consistency:_cons];   
       [CPSubst substituteIn:_fdm expr:[e right] by:lV consistency:_cons];
    } else {
       [[e left] visit:self];
@@ -197,6 +196,10 @@
 -(void)addIndependent:(CPInt)idp
 {
    _indep += idp;
+}
+-(CPInt)independent
+{
+   return _indep;
 }
 -(void)addTerm:(id<CPIntVar>)x by:(CPInt)c
 {
@@ -361,7 +364,11 @@
 }
 -(void) visitExprMinusI: (CPExprMinusI*) e
 {
-   assert(NO);
+   CPLinear* terms = [CPLinearizer linearFrom:e solver:_fdm consistency:_c];
+   if (_rv==nil)
+      _rv = [CPFactory intVar:[e cp] domain:(CPRange){MININT,MAXINT}];
+   [terms addTerm:_rv by:-1];
+   [_fdm post:[CPFactory sum:[terms scaledViews] eq:-[terms independent]]];
 }
 -(void) visitExprMulI: (CPExprMulI*) e
 {

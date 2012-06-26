@@ -53,6 +53,7 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 -(void)setIndependent:(CPInt)idp;
 -(void)addIndependent:(CPInt)idp;
 -(void)addTerm:(id<CPIntVar>)x by:(CPInt)c;
+-(CPInt)independent;
 -(NSString*)description;
 -(id<CPIntVarArray>)scaledViews;
 -(id<CPIntVar>)oneView;

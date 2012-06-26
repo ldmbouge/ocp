@@ -189,7 +189,8 @@
       case DomainConsistency:
          o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
       default: 
-         assert(NO);
+         // TOFIX
+         o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
          //o = [[CPEqualBC alloc] initCPEqualBC:y and:z and:x];break;
    }
    [[[x cp] solver] trackObject:o];
