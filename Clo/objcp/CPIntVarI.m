@@ -285,9 +285,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(NSString*)description
 {
-    NSString* dom = [_dom description];
-//   return [NSString stringWithFormat:@"var(%d)=%@",_name,dom];
-    return [NSString stringWithFormat:@"%@",dom];
+   NSString* dom = [_dom description];
+   //return [NSString stringWithFormat:@"var<%d>=%@",_name,dom];
+   return [NSString stringWithFormat:@"%@",dom];
 }
 -(id<CPDom>)domain
 {
@@ -542,12 +542,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     if (_triggers != nil)
         [_triggers loseValEvt:val solver:_fdm];
 }
--(void) loseRangeEvt:(CPClosure) clo
-{
-    if (TRACKLOSSES)   
-      clo();    
-}
-
 -(CPStatus) updateMin: (CPInt) newMin
 {
     return [_dom updateMin:newMin for:_recv];
@@ -794,8 +788,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(NSString*) description
 {
+   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+   //[s appendFormat:@"var<%d>=",_name];
     CPInt min = [_dom min] + _b;
-    NSMutableString* s = [[NSMutableString stringWithCapacity:80] autorelease];
     if ([_dom domsize]==1)
         [s appendFormat:@"%d",min];
     else {
@@ -978,8 +973,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(NSString*)description
 {
-    CPInt min = _a > 0 ? _a * [_dom min] + _b : _a * [_dom max] + _b;
-    NSMutableString* s = [[NSMutableString stringWithCapacity:80] autorelease];
+   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+   //[s appendFormat:@"var<%d>=",_name];
+   CPInt min = _a > 0 ? _a * [_dom min] + _b : _a * [_dom max] + _b;
     if ([_dom domsize]==1)
         [s appendFormat:@"%d",min];
     else {
@@ -1121,13 +1117,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     for(CPInt i=0;i<_nb;i++)
         //[_tab[i] loseValEvt:val];
        _loseValIMP[i](_tab[i],@selector(loseValEvt:),val);
-}
--(void) loseRangeEvt:(CPClosure)doIt
-{
-    if (!_tracksLoseEvt) return;
-    for(CPInt i=0;i<_nb;i++)
-        //[_tab[i] loseRangeEvt:doIt];
-       _loseRangeIMP[i](_tab[i],@selector(loseRangeEvt:),doIt);
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {

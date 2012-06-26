@@ -30,7 +30,19 @@
 
 @implementation CPBoundsDom
 
--(id<CPDom>)initBoundsDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up
+-(id<CPDom>)initBoundsDomFor:(CPBoundsDom*)dom
+{
+   self = [super init];
+   _trail = dom->_trail;
+   _min = dom->_min;
+   _max = dom->_max;
+   _sz  = dom->_sz;
+   _imin = dom->_imin;
+   _imax = dom->_imax;
+   return self;
+}
+
+-(id<CPDom>)initBoundsDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up 
 {
    self = [super init];
    _trail = trail;
@@ -193,6 +205,19 @@
 
 @implementation CPBitDom
 
+-(CPBitDom*)initBitDomFor:(CPBitDom*)dom
+{
+   self = [super initBoundsDomFor:dom];
+   const CPInt sz = _imax - _imin + 1;
+   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   _bits  = malloc(sizeof(CPUInt)*nb);
+   _magic = malloc(sizeof(CPInt)*nb);
+   for(CPInt k=0;k<nb;k++) {
+      _bits[k]  = 0xffffffff;
+      _magic[k] = [_trail magic]-1;
+   }
+   return self;   
+}
 -(CPBitDom*) initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up
 {
    self = [super initBoundsDomFor:trail low:low up:up];
@@ -208,9 +233,7 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   CPBitDom* copy = [[CPBitDom alloc] initBitDomFor:_trail
-                                                low:_imin 
-                                                 up:_imax];
+   CPBitDom* copy = [[CPBitDom alloc] initBitDomFor:self];
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    for(CPUInt k=0;k<nb;k++) {
@@ -443,11 +466,11 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
     if (newMin <= _min._val) return CPSuspend;
     if (newMin > _max._val)  return CPFailure;
     int nbr = countFrom(self,_min._val,newMin-1);
-    [x loseRangeEvt: ^() {
-            for(CPInt k=_min._val;k< newMin;k++) 
-                if (GETBIT(k)) 
-                    [x loseValEvt:k];         
-    }];
+   if ([x tracksLoseEvt]) {
+      for(CPInt k=_min._val;k< newMin;k++) 
+         if (GETBIT(k)) 
+            [x loseValEvt:k];         
+   }
     // need to send AC5 notifications still
     CPInt nsz = _sz._val - nbr;
     assignTRInt(&_sz, nsz, _trail);
@@ -462,11 +485,11 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
     if (newMax >= _max._val) return CPSuspend;
     if (newMax < _min._val) return CPFailure;
     CPInt nbr = countFrom(self,newMax+1,_max._val);
-    [x loseRangeEvt: ^() {
-        for(CPInt k=newMax+1;k<= _max._val;k++) 
-            if (GETBIT(k)) 
-                [x loseValEvt:k];         
-    }];
+   if ([x tracksLoseEvt]) {
+      for(CPInt k=newMax+1;k<= _max._val;k++) 
+         if (GETBIT(k)) 
+            [x loseValEvt:k];         
+   }
     CPInt nsz = _sz._val - nbr;
     assignTRInt(&_sz, nsz, _trail);
     newMax = findMax(self,newMax);
@@ -479,11 +502,11 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 {
     if (val < _min._val || val > _max._val) return CPFailure;
     if (_sz._val == 1 && val == _min._val) return CPSuccess;
-    [x loseRangeEvt: ^() {
+    if ([x tracksLoseEvt]) {
         for(CPInt k=_min._val;k<=_max._val;k++) 
             if (GETBIT(k) && k != val) 
                 [x loseValEvt:k];         
-    }];
+    };
     assignTRInt(&_min, val, _trail);
     assignTRInt(&_max, val, _trail);
     assignTRInt(&_sz, 1, _trail);

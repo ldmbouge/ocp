@@ -62,7 +62,7 @@
    [m solveAll: ^() {
       [m add:[CPFactory cardinality:x low:lb up:ub]];      
    } using: ^() {
-      [CPLabel array:x orderedBy:^NSInteger(NSInteger i) {
+      [CPLabel array:x orderedBy:^CPInt(CPInt i) {
          return i;
       }];
       /*for(NSInteger k=0;k<s;k++)
@@ -77,7 +77,7 @@
       [nbSolutions incr];
    }
     ];
-   printf("GOT %ld solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[nbSolutions value]);   
    NSInteger rv =  [nbSolutions value];
    [m release];
    [CPFactory shutdown];

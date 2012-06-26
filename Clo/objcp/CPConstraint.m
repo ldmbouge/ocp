@@ -135,6 +135,7 @@
       case 0: assert(NO);return nil;
       case 1: return [self equalc:[x at:0] to:c];
       case 2: return [self equal:[x at:0] to:[self intVar:[x at:1] scale:-1] plus:-c consistency:cons];
+      case 3: return [self equal3:[self intVar:[x at:0] scale:-1] to:[x at:1] plus:[x at:2] consistency:cons];
       default: {
          id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
          [[[x cp] solver] trackObject: o];
@@ -177,6 +178,19 @@
          o = [[CPEqualDC alloc] initCPEqualDC:x and:y and:c];break;
       default: 
          o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];break;
+   }
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
++(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons
+{
+   id<CPConstraint> o = nil;
+   switch(cons) {
+      case DomainConsistency:
+         o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
+      default: 
+         assert(NO);
+         //o = [[CPEqualBC alloc] initCPEqualBC:y and:z and:x];break;
    }
    [[[x cp] solver] trackObject:o];
    return o;   

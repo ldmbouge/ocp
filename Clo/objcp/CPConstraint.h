@@ -56,6 +56,7 @@ typedef enum {
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 
++(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons;
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons;
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (int) c;
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c;

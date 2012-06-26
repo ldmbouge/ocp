@@ -178,8 +178,6 @@ typedef struct  {
 -(void) changeMinEvt:(CPInt)dsz;
 -(void) changeMaxEvt:(CPInt)dsz;
 -(void) loseValEvt:(CPInt)val;
--(void) loseRangeEvt:(CPClosure) clo;
-
 // delegation
 
 -(id<CPIntVarNotifier>) delegate;
@@ -332,6 +330,5 @@ static inline CPInt maxDom(CPIntVarI* x)
 -(void) changeMinEvt:(CPInt)dsz;
 -(void) changeMaxEvt:(CPInt)dsz;
 -(void) loseValEvt:(CPInt)val;
--(void) loseRangeEvt:(CPClosure)clo;
 @end
 

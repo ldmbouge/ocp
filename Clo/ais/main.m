@@ -68,6 +68,7 @@ int main(int argc, const char * argv[])
          NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
+         NSLog(@"Start...");
          labelFF(cp,sx);
          //[CPLabel heuristic:h];
          //[CPLabel array:sx];

@@ -38,6 +38,27 @@
 -(void)addTerm:(id<CPIntVar>)x by:(CPInt)c;
 @end
 
+
+@interface CPSubst   : NSObject<CPExprVisitor> {
+   id<CPIntVar>    _rv;
+   id<CPSolver>   _fdm;
+   CPConsistency    _c;
+}
+-(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c;
+-(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c by:(id<CPIntVar>)x;
+-(id<CPIntVar>)result;
+-(void) visitIntVarI: (CPIntVarI*) e;
+-(void) visitIntegerI: (CPIntegerI*) e;
+-(void) visitExprPlusI: (CPExprPlusI*) e;
+-(void) visitExprMinusI: (CPExprMinusI*) e;
+-(void) visitExprMulI: (CPExprMulI*) e;
+-(void) visitExprEqualI:(CPExprEqualI*)e;
+-(void) visitExprSumI: (CPExprSumI*) e;
+-(void) visitExprAbsI:(CPExprAbsI *)e;
++(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(CPExprI*)expr consistency:(CPConsistency)c;
++(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(CPExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c;
+@end
+
 @implementation CPLinearFlip
 -(CPLinearFlip*)initCPLinearFlip:(id<CPLinear>)r
 {
@@ -62,9 +83,11 @@
 
 @interface CPLinearizer : NSObject<CPExprVisitor> {
    id<CPLinear> _terms;
-   CPRewriter     _sub;
+   id<CPSolver>   _fdm;
+   CPConsistency _cons;
 }
--(id)initCPLinearizer:(id<CPLinear>)t rewriteWith:(CPRewriter)sub;
++(CPLinear*)linearFrom:(id<CPExpr>)e  solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
+-(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
 -(void) visitIntVarI: (CPIntVarI*) e;
 -(void) visitIntegerI: (CPIntegerI*) e;
 -(void) visitExprPlusI: (CPExprPlusI*) e;
@@ -76,11 +99,12 @@
 @end
 
 @implementation CPLinearizer
--(id)initCPLinearizer:(id<CPLinear>)t  rewriteWith:(CPRewriter)sub
+-(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
    self = [super init];
    _terms = t;
-   _sub   = sub;
+   _fdm   = fdm;
+   _cons  = cons;
    return self;
 }
 -(void) visitIntVarI: (CPIntVarI*) e 
@@ -114,27 +138,40 @@
       id       x = cv ? [e right] : [e left];
       [_terms addTerm:x by:coef];
    } else {
-      id<CPIntVar> alpha = _sub(e);
+      id<CPIntVar> alpha =  [CPSubst substituteIn:_fdm expr:e consistency:_cons];
       [_terms addTerm:alpha by:1];
    }
 }
 -(void) visitExprAbsI:(CPExprAbsI*) e
 {
-   id<CPIntVar> alpha = _sub(e);
+   id<CPIntVar> alpha = [CPSubst substituteIn:_fdm expr:e consistency:_cons];
    [_terms addTerm:alpha by:1];   
 }
 -(void) visitExprEqualI:(CPExprEqualI*)e
 {
-   [[e left] visit:self];
-   id<CPLinear> old = _terms;
-   _terms = [[CPLinearFlip alloc] initCPLinearFlip: _terms];
-   [[e right] visit:self];
-   [_terms release];
-   _terms = old;
+   if ([[e left] isVariable]) {
+      id<CPIntVar> lV = (id<CPIntVar>)[e left];
+      //CPLinear* terms = [CPLinearizer linearFrom:[e right] solver:_fdm consistency:_cons];   
+      [CPSubst substituteIn:_fdm expr:[e right] by:lV consistency:_cons];
+   } else {
+      [[e left] visit:self];
+      id<CPLinear> old = _terms;
+      _terms = [[CPLinearFlip alloc] initCPLinearFlip: _terms];
+      [[e right] visit:self];
+      [_terms release];
+      _terms = old;
+   }
 }
 -(void) visitExprSumI: (CPExprSumI*) e 
-{
+{}
 
++(CPLinear*)linearFrom:(CPExprI*)e solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+{
+   CPLinear* rv = [[CPLinear alloc] initCPLinear:4];
+   CPLinearizer* v = [[CPLinearizer alloc] initCPLinearizer:rv solver:fdm consistency:cons];
+   [e visit:v];
+   [v release];
+   return rv;
 }
 @end
 
@@ -253,39 +290,38 @@
    }
    return min(MAXINT,ub);   
 }
-+(CPLinear*)linearFrom:(CPExprI*)e sub:(CPRewriter) sub
-{
-   CPLinear* rv = [[CPLinear alloc] initCPLinear:4];
-   CPLinearizer* v = [[CPLinearizer alloc] initCPLinearizer:rv rewriteWith:sub];
-   [e visit:v];
-   [v release];
-   return rv;
-}
-
-@end
-
-@interface CPSubst   : NSObject<CPExprVisitor> {
-   id<CPIntVar>    _rv;
-   id<CPSolver>   _fdm;
-   CPConsistency    _c;
-}
--(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c;
--(id<CPIntVar>)result;
--(void) visitIntVarI: (CPIntVarI*) e;
--(void) visitIntegerI: (CPIntegerI*) e;
--(void) visitExprPlusI: (CPExprPlusI*) e;
--(void) visitExprMinusI: (CPExprMinusI*) e;
--(void) visitExprMulI: (CPExprMulI*) e;
--(void) visitExprEqualI:(CPExprEqualI*)e;
--(void) visitExprSumI: (CPExprSumI*) e;
--(void) visitExprAbsI:(CPExprAbsI *)e;
 @end
 
 @implementation CPSubst
++(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(CPExprI*)expr consistency:(CPConsistency)c
+{
+   CPSubst* subst = [[CPSubst alloc] initCPSubst:fdm consistency:c];
+   [expr visit:subst];
+   id<CPIntVar> theVar = [subst result];
+   [subst release];
+   return theVar;   
+}
++(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(CPExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c
+{
+   CPSubst* subst = [[CPSubst alloc] initCPSubst:fdm consistency:c by:x];
+   [expr visit:subst];
+   id<CPIntVar> theVar = [subst result];
+   [subst release];
+   return theVar;      
+}
+
 -(id)initCPSubst:(id<CPSolver>)fdm consistency: (CPConsistency) c
 {
    self = [super init];
    _rv = nil;
+   _fdm = fdm;
+   _c = c;
+   return self;
+}
+-(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c by:(id<CPIntVar>)x
+{
+   self = [super init];
+   _rv  = x;
    _fdm = fdm;
    _c = c;
    return self;
@@ -308,30 +344,30 @@
 }
 -(void) visitIntVarI: (CPIntVarI*) e
 {
-   _rv = e;
+   if (_rv)
+      [_fdm post:[CPFactory equal:_rv to:e plus:0]];
+   else _rv = e;
 }
 -(void) visitIntegerI: (CPIntegerI*) e
 {
    id<CP> cp = [e cp];
-   _rv = [CPFactory intVar:cp domain:(CPRange){[e value],[e value]}];   
+   if (!_rv)
+      _rv = [CPFactory intVar:cp domain:(CPRange){[e value],[e value]}];   
    [_fdm post:[CPFactory equalc:_rv to:[e value]]];
 }
 -(void) visitExprPlusI: (CPExprPlusI*) e
-{}
+{
+   assert(NO);
+}
 -(void) visitExprMinusI: (CPExprMinusI*) e
-{}
+{
+   assert(NO);
+}
 -(void) visitExprMulI: (CPExprMulI*) e
 {
-   CPRewriter sub = ^id<CPIntVar>(CPExprI* e) {
-      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm consistency:_c];
-      [e visit:subst];
-      id<CPIntVar> theVar = [subst result];
-      [subst release];
-      return theVar;
-   };
    id<CP> cp = [e cp];
-   CPLinear* lT = [CPLinear linearFrom:[e left] sub:sub];
-   CPLinear* rT = [CPLinear linearFrom:[e right] sub:sub];
+   CPLinear* lT = [CPLinearizer linearFrom:[e left] solver:_fdm consistency:_c];
+   CPLinear* rT = [CPLinearizer linearFrom:[e right] solver:_fdm consistency:_c];
    id<CPIntVar> lV = [self normSide:lT for:cp];
    id<CPIntVar> rV = [self normSide:rT for:cp];
    CPLong llb = [lV min];
@@ -344,10 +380,9 @@
    CPLong c = max(llb * rlb,llb * rub);
    CPLong d = max(lub * rlb,lub * rub);
    CPLong ub = max(c,d);
-   id<CPIntVar> theVar = [CPFactory intVar:cp 
-                                    domain:(CPRange){max(lb,MININT),min(ub,MAXINT)}];
-   [_fdm post: [CPFactory mult:lV by:rV equal:theVar]];
-   _rv = theVar;
+   if (_rv==nil)
+      _rv = [CPFactory intVar:cp domain:(CPRange){max(lb,MININT),min(ub,MAXINT)}];
+   [_fdm post: [CPFactory mult:lV by:rV equal:_rv]];
    [lT release];
    [rT release];
 }
@@ -357,22 +392,15 @@
 }
 -(void) visitExprAbsI:(CPExprAbsI *)e  
 {
-   CPRewriter sub = ^id<CPIntVar>(CPExprI* e) {
-      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm consistency:_c];
-      [e visit:subst];
-      id<CPIntVar> theVar = [subst result];
-      [subst release];
-      return theVar;
-   };
    id<CP> cp = [e cp];
-   CPLinear* lT = [CPLinear linearFrom:[e operand] sub:sub];   
+   CPLinear* lT = [CPLinearizer linearFrom:[e operand] solver:_fdm consistency:_c];   
    id<CPIntVar> oV = [self normSide:lT for:cp];
    CPInt lb = [lT min];
    CPInt ub = [lT max];
-   id<CPIntVar> aV = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
-   [_fdm post:[CPFactory abs:oV equal:aV consistency:_c]];
-    _rv = aV;
-    [lT release];
+   if (_rv == nil)
+      _rv = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
+   [_fdm post:[CPFactory abs:oV equal:_rv consistency:_c]];
+   [lT release];
 }
 -(void) visitExprSumI: (CPExprSumI*) e
 {}
@@ -395,17 +423,14 @@
 }
 -(CPStatus)post
 {
-   CPLinear* terms = [CPLinear linearFrom:_expr sub:^id<CPIntVar>(CPExprI* e) {
-      CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm consistency:_c];
-      [e visit:subst];
-      id<CPIntVar> theVar = [subst result];
-      [subst release];
-      return theVar;
-   }];
-   id<CPIntVarArray> sx = [terms scaledViews];
-   CPStatus st = [_fdm post:[CPFactory sum:sx eq:0 consistency:_c]];
+   CPLinear* terms = [CPLinearizer linearFrom:_expr solver:_fdm consistency:_c];
+   CPStatus status = CPSuspend;
+   if ([terms size] != 0) {
+      id<CPIntVarArray> sx = [terms scaledViews];
+      status = [_fdm post:[CPFactory sum:sx eq:0 consistency:_c]];
+   }
    [terms release];
-   return st ? CPSkip : CPFailure;
+   return status ? CPSkip : CPFailure;
 }
 -(NSSet*)allVars
 {

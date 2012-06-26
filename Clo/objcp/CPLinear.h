@@ -48,7 +48,6 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
    CPInt            _max;
    CPInt          _indep;
 }
-+(CPLinear*)linearFrom:(id<CPExpr>)e  sub:(CPRewriter) sub;
 -(CPLinear*)initCPLinear:(CPInt)mxs;
 -(void)dealloc;
 -(void)setIndependent:(CPInt)idp;

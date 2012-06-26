@@ -58,8 +58,8 @@
    id<CP> m = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    id<CPIntVarArray> x  = [CPFactory intVarArray:m range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:m range:R with: ^id<CPIntVar>(NSInteger i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:m range:R with: ^id<CPIntVar>(NSInteger i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<CPIntVarArray> xp = [CPFactory intVarArray:m range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<CPIntVarArray> xn = [CPFactory intVarArray:m range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
 
    [m solveAll: 
     ^() {
@@ -69,11 +69,11 @@
     } 
          using:
     ^() {
-       [CPLabel array: x orderedBy: ^NSInteger(NSInteger i) { return [[x at:i] domsize];}];
+       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
        [nbSolutions incr];
    }
     ];
-   NSLog(@"Got %ld solutions\n",[nbSolutions value]);
+   NSLog(@"Got %@ solutions\n",nbSolutions);
    STAssertTrue([nbSolutions value]==92, @"queens-8 has 92 solutions"); 
    [m release];
    [CPFactory shutdown];
@@ -91,7 +91,7 @@
    [m solveAll: ^() {
       [m add: [CPFactory sumbool:x geq:2]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^NSInteger(NSInteger i) { return i;}];
+      [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       int nbOne = 0;
       for(NSInteger k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -102,7 +102,7 @@
       STAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
    }
     ];
-   printf("GOT %ld solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[nbSolutions value]);   
    [m release];
    [CPFactory shutdown];
 }
@@ -118,7 +118,7 @@
    [m solveAll: ^() {
       [m add: [CPFactory sumbool:x geq:8]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^NSInteger(NSInteger i) { return i;}];
+      [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       int nbOne = 0;
       for(NSInteger k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -129,7 +129,7 @@
       STAssertTrue(nbOne>=8, @"Each solution must have at least 2 ones");
    }
     ];
-   printf("GOT %ld solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[nbSolutions value]);   
    [m release];
    [CPFactory shutdown];
 }
@@ -141,7 +141,7 @@
    CPRange R = (CPRange){0,s-1};
    id<CP> m = [CPFactory createSolver];
    id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
-   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<CPIntVar>(NSInteger i) {
+   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<CPIntVar>(CPInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
@@ -151,7 +151,7 @@
       [m add:[CPFactory sumbool:x geq:2]];
       [m add:[CPFactory sumbool:nx geq:8]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^NSInteger(NSInteger i) { return i;}];
+      [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       int nbOne = 0;
       int nbZero = 0;
       for(NSInteger k=0;k<s;k++) {
@@ -169,7 +169,7 @@
       STAssertTrue(nbZero>=8, @"Each solution must have at least 8 zeroes");
    }
     ];
-   printf("GOT %ld solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[nbSolutions value]);   
    [m release];
    [CPFactory shutdown];
 }
@@ -180,20 +180,20 @@
    CPRange R = (CPRange){0,s-1};
    id<CP> m = [CPFactory createSolver];
    id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
-   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<CPIntVar>(NSInteger i) {
+   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<CPIntVar>(CPInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
-      [CPLabel array: x orderedBy: ^NSInteger(NSInteger i) { return i;}];
+      [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       for(NSInteger k=0;k<s;k++) {
          STAssertTrue([[x at:k] min] == ![[nx at:k] min], @"x and nx should be negations of each other");
       }
       [nbSolutions  incr];
    }
     ];
-   printf("GOT %ld solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[nbSolutions value]);   
    [m release];
    [CPFactory shutdown];
 }
@@ -242,6 +242,30 @@
    }
    NSLog(@"content: %@\n",tree);
    [pool release];
+}
+
+-(void)testEQ3
+{
+   int s = 2;
+   CPRange R = (CPRange){0,s-1};
+   id<CP> m = [CPFactory createSolver];
+   id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,10}];  
+   id<CPIntVar> zn = [CPFactory intVar:m domain:(CPRange){-10,0}];
+   id<CPIntVar> z = [CPFactory intVar:zn scale:-1];
+   id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
+   [m solveAll: ^() {
+      [m add: [CPFactory lEqualc:z to:5]];
+      [m add: [CPFactory equal3:[x at:0] to:[x at: 1] plus:z consistency:DomainConsistency]];
+   }
+         using:^{
+            [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
+            NSLog(@"Solution: %@ = %@",x,z);
+            [nbSolutions  incr];
+         }
+    ];
+   printf("GOT %d solutions\n",[nbSolutions value]);   
+   [m release];
+   [CPFactory shutdown]; 
 }
 
 -(void)testCoder
