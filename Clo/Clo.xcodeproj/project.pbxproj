@@ -5029,7 +5029,9 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CardinalityTest/CardinalityTest-Prefix.pch";
+				GCC_UNROLL_LOOPS = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				LLVM_LTO = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -5352,6 +5354,7 @@
 				5BC116AB1595067900E0F5C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BCCC40F1417F8CE0079E833 /* Build configuration list for PBXNativeTarget "queensACSem" */ = {
 			isa = XCConfigurationList;

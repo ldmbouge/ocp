@@ -251,8 +251,6 @@
    [super dealloc];
 }
 
-#define GETBIT(b) ((_bits[((b) - _imin)>>5] & (0x1 << (((b)-_imin) & 0x1f)))!=0)
-
 static inline int countFrom(CPBitDom* dom,CPInt from,CPInt to)
 {
    from -= dom->_imin;
@@ -583,81 +581,5 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    }
    _trail = [aDecoder decodeObject] ;
    return self;
-}
-
-@end
-
-@implementation CPDomain
--(CPDomain*)initCPDomain:(CPBitDom*)bd scaleBy:(CPInt)a shift:(CPInt)b
-{
-   self = [super init];
-   _dom = [bd copyWithZone:NULL];
-   _scale = a;
-   _shift = b;
-   return self;
-}
--(void)dealloc 
-{
-   [_dom release];
-   [super dealloc];
-}
--(BOOL)member:(CPInt)v
-{
-   CPInt r = (v - _shift) % _scale;
-   if (r != 0) return NO;
-   CPInt vp = (v - _shift) / _scale;
-   return [_dom member:vp];
-}
--(CPInt)min
-{
-   if (_scale > 0) 
-      return [_dom min] * _scale + _shift;
-   else return [_dom max] * _scale + _shift;
-}
--(CPInt)max
-{
-   if (_scale > 0) 
-      return [_dom max] * _scale + _shift;
-   else return [_dom min] * _scale + _shift;
-   
-}
--(BOOL)get:(CPInt)b
-{
-   return [_dom get:(b - _shift) / _scale];
-}
--(void)set:(CPInt)b at:(BOOL)v
-{
-   [_dom set:(b - _shift) / _scale at:v];
-}
--(CPInt)domsize
-{
-   return [_dom domsize];
-}
--(CPStatus)scanWith:(CPStatus(^)(CPInt))block
-{
-   CPStatus ok = CPSuspend;
-   CPBounds b = [_dom bounds];
-   if (_scale >= 0) {
-      for(CPInt i = b.min;i <= b.max && ok;i++) {
-         if ([_dom member:i]) {
-            CPInt k = i * _scale + _shift;
-            ok = block(k);
-         }
-      }
-   } else {
-      for(CPInt i = b.max;i >= b.min && ok;i--) {
-         if ([_dom member:i]) {
-            CPInt k = i * _scale + _shift;
-            ok = block(k);
-         }
-      }      
-   }
-   return ok;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [NSMutableString stringWithCapacity:64];
-   [buf appendFormat:@"<CPDomain: %p - [%d * x + %d] over %@>",self,_scale,_shift,[_dom description]];
-   return buf;
 }
 @end

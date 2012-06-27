@@ -295,7 +295,62 @@
 }
 -(CPStatus)post:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
-   return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
+   switch (_nb) {
+      case 0: 
+         assert(NO);
+         return CPFailure;
+         break;
+      case 1: {
+         if (_terms[0]._coef == 1) {
+            return [fdm post:[CPFactory equalc:_terms[0]._var to:-_indep]];
+         } else if (_terms[0]._coef == -1) {
+            return [fdm post:[CPFactory equalc:_terms[0]._var to:_indep]];
+         } else {
+            assert(_terms[0]._coef != 0);
+            CPInt nc = - _indep / _terms[0]._coef;   
+            CPInt cr = - _indep % _terms[0]._coef;
+            if (cr != 0)
+               return CPFailure;
+            else
+               return [fdm post:[CPFactory equalc:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            return [fdm post:[CPFactory equal:_terms[0]._var to:_terms[1]._var plus:-_indep consistency:cons]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
+            return [fdm post:[CPFactory equal:_terms[1]._var to:_terms[0]._var plus:-_indep consistency:cons]];            
+         } else {
+            id<CPIntVar> xp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef];
+            id<CPIntVar> yp = [CPFactory intVar:_terms[1]._var scale:- _terms[1]._coef];
+            return [fdm post:[CPFactory equal:xp to:yp plus:- _indep consistency:cons]];
+         }
+      }break;
+      case 3: {
+         if (_terms[0]._coef * _terms[1]._coef * _terms[2]._coef == -1) { // odd number of negative coefs (4 cases)
+            if (_terms[0]._coef + _terms[1]._coef + _terms[2]._coef == -3) { // all 3 negative
+               id<CPIntVar> zp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef shift: _indep];
+               return [fdm post:[CPFactory equal3:zp to:_terms[1]._var plus:_terms[2]._var consistency:cons]];
+            } else { // exactly 1 negative coef
+               CPInt nc = _terms[0]._coef == -1 ? 0 : (_terms[1]._coef == -1 ? 1 : 2);
+               CPInt pc[3] = {0,1,2};
+               for(CPUInt i=0;i<3;i++)
+                  if (pc[i] == nc)
+                     pc[i] = pc[2];
+               id<CPIntVar> zp = [CPFactory intVar:_terms[nc]._var scale:-1 shift:-_indep];
+               return [fdm post:[CPFactory equal3:zp to:_terms[pc[0]]._var plus:_terms[pc[1]]._var consistency:cons]];
+            }
+         } else {
+            id<CPIntVar> xp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef];
+            id<CPIntVar> yp = [CPFactory intVar:_terms[1]._var scale:_terms[1]._coef];
+            id<CPIntVar> zp = [CPFactory intVar:_terms[2]._var scale:- _terms[2]._coef shift:-_indep];
+            return [fdm post:[CPFactory equal3:zp to:xp plus:yp consistency:cons]];            
+         }
+      }break;
+      default:
+         return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
+         break;
+   }
 }
 @end
 

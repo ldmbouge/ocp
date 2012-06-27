@@ -148,7 +148,7 @@ typedef struct  {
 -(CPSolverI*) solver;
 -(id<CP>) cp;
 -(NSSet*)constraints;
--(CPDomain*)flatDomain;
+-(CPDomain)flatDomain;
 
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
@@ -225,7 +225,7 @@ typedef struct  {
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
--(CPDomain*)flatDomain;
+-(CPDomain)flatDomain;
 -(CPInt) min;
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
@@ -249,7 +249,7 @@ typedef struct  {
 }
 -(CPIntView*)initIVarAViewFor: (CPInt) a  x:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
--(CPDomain*)flatDomain;
+-(CPDomain)flatDomain;
 -(CPInt) min;
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;

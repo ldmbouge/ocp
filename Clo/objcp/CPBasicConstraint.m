@@ -318,15 +318,14 @@ static inline CPBounds negBounds(CPIntVarI* x)
    _x = x;
    _y = y;
    _z = z;
-   _fx = _fy = _fz = nil;
    _xs = _ys = _zs = (TRIntArray){nil,0,0,NULL};
    return self;
 }
 -(void)dealloc
 {
-   [_fx release];
-   [_fy release];
-   [_fz release];
+   freeDomain(&_fx);
+   freeDomain(&_fy);
+   freeDomain(&_fz);
    freeTRIntArray(_xs);
    freeTRIntArray(_ys);
    freeTRIntArray(_zs);
@@ -345,84 +344,87 @@ static inline TRIntArray createSupport(CPIntVarI* v)
    return makeTRIntArray([[[v cp] solver] trail], [v max] - [v min] + 1, [v min]);
 }
 static CPStatus constAddScanB(CPInt a,CPDomain* bd,CPDomain* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
-{
-   CPStatus ok = [bd scanWith:^CPStatus(CPInt j) {
+{   
+   CPInt min = minCPDom(bd),max = maxCPDom(bd);
+   CPStatus rv = CPSuspend;
+   for(CPInt j=min;j<=max;j++) {
       CPInt t = a + j;
-      if ([cd member:t]) {
-         assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
-         if (getTRIntArray(cs, t) == 0) {
-            CPStatus rv = [c remove:t];
-            return rv;
-         }
+      if (getCPDom(bd, j) && memberCPDom(cd, t)) {
+         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         if (cv == 0) {
+            rv = [c remove:t];
+            if (rv==CPFailure) return rv;
+         }         
       }
-      return CPSuspend; 
-   }];
-   return ok;
+   }
+   return rv;
 }
 static CPStatus constSubScanB(CPInt a,CPDomain* bd,CPDomain* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
 {
-   CPStatus ok = [bd scanWith:^CPStatus(CPInt j) {
+   CPInt min = minCPDom(bd),max = maxCPDom(bd);
+   CPStatus rv = CPSuspend;
+   for(CPInt j=min;j<=max;j++) {
       CPInt t = a - j;
-      if ([cd member:t]) {
-         assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
-         if (getTRIntArray(cs, t) == 0) {
-            CPStatus rv = [c remove:t];
-            return rv;
-         }
+      if (getCPDom(bd, j) && memberCPDom(cd, t)) {
+         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         if (cv == 0) { 
+            rv = [c remove:t];
+            if (rv==CPFailure) return rv;
+         }         
       }
-      return CPSuspend;
-   }];
-   return ok;
+   }
+   return rv;
 }
 static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
 {
-   CPStatus ok = [ad scanWith:^CPStatus(CPInt j) {
+   CPInt min = minCPDom(ad),max = maxCPDom(ad);
+   CPStatus rv = CPSuspend;
+   for(CPInt j=min;j<=max;j++) {
       CPInt t = j - b;
-      if ([cd member:t]) {
-         assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
-         if (getTRIntArray(cs, t) == 0) {
-            CPStatus rv = [c remove:t];
-            return rv;
-         }
+      if (getCPDom(ad, j) && memberCPDom(cd, t)) {
+         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         if (cv == 0) {
+            rv = [c remove:t];
+            if (rv==CPFailure) return rv;
+         }         
       }
-      return CPSuspend;
-   }];
-   return ok;
+   }
+   return rv;
 }
 
 -(CPStatus)pruneVar:(CPIntVarI*) v flat:(CPDomain*) vd support:(TRIntArray) vs
 {
-   CPStatus ok = [vd scanWith:^CPStatus(CPInt i) {
-      CPStatus ok = CPSuspend;
-      if (getTRIntArray(vs, i) ==0) {
-         [vd set:i at:NO];
+   CPInt min = minCPDom(vd),max = maxCPDom(vd);
+   CPStatus ok = CPSuspend;
+   for(CPInt i = min;i <= max && ok;i++) {
+      if (memberCPDom(vd, i) && getTRIntArray(vs, i) == 0) {
+         setCPDom(vd, i, NO);
          ok = [v remove:i];
       }
-      return ok;
-   }];
+   }
    if (ok) {
       if (v == _x) {
          [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-            [_fx set:val at:NO];
+            setCPDom(&_fx, val, NO);
             assignTRIntArray(_xs, val, 0);            
-            CPStatus ok = constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
-            if (ok) ok = scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
+            CPStatus ok = constAddScanB(val,&_fy,&_fz,_z,_zs);   // xc + D(y) in D(z)
+            if (ok) ok = scanASubConstB(&_fz,val,&_fy,_y,_ys);   // D(z) - xc in D(y)
             return ok;
          }];      
       } else if (v == _y) {
          [_y whenLoseValue:self do:^CPStatus(CPInt val) {
-            [_fy set:val at:NO];
+            setCPDom(&_fy, val, NO);
             assignTRIntArray(_ys, val, 0);            
-            CPStatus ok = constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
-            if (ok) ok = scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
+            CPStatus ok = constAddScanB(val,&_fx,&_fz,_z,_zs);  // yc + D(x) in D(z)
+            if (ok) ok = scanASubConstB(&_fz,val,&_fx,_x,_xs);  // D(z) - yc in D(x)
             return ok;         
          }];
       } else {
          [_z whenLoseValue:self do:^CPStatus(CPInt val) {
-            [_fz set:val at:NO];
+            setCPDom(&_fz, val, NO);
             assignTRIntArray(_zs, val, 0);            
-            CPStatus ok = constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
-            if (ok) ok = constSubScanB(val,_fy,_fx,_x,_xs);   // zc - D(y) in D(x)
+            CPStatus ok = constSubScanB(val,&_fx,&_fy,_y,_ys);  // zc - D(x) in D(y)
+            if (ok) ok = constSubScanB(val,&_fy,&_fx,_x,_xs);   // zc - D(y) in D(x)
             return ok;
          }];
       }
@@ -440,36 +442,41 @@ static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TR
    _xs = createSupport(_x);
    _ys = createSupport(_y);
    _zs = createSupport(_z);
-   [_fx scanWith:^CPStatus(CPInt i) {
-      [_fy scanWith:^CPStatus(CPInt j) {
-         CPInt v = i + j;
-         if ([_fz member:v])
-            assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1);
-         return  CPSuspend;
-      }];
-      return CPSuspend;
-   }];
-   [_fz scanWith:^CPStatus(CPInt i) {
-      [_fx scanWith:^CPStatus(CPInt j) {
-         CPInt v = i - j;
-         if ([_fy member:v])
-            assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1);
-         return CPSuspend;
-      }];
-      return CPSuspend;
-   }];
-   [_fz scanWith:^CPStatus(CPInt i) {
-      [_fy scanWith:^CPStatus(CPInt j) {
-         CPInt v = i - j;
-         if ([_fx member:v])
-            assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1);
-         return CPSuspend;
-      }];
-      return CPSuspend;
-   }];
-   if (ok) ok = [self pruneVar:_x flat:_fx support:_xs];
-   if (ok) ok = [self pruneVar:_y flat:_fy support:_ys];
-   if (ok) ok = [self pruneVar:_z flat:_fz support:_zs];
+   CPInt minX = minCPDom(&_fx),maxX = maxCPDom(&_fx);
+   CPInt minY = minCPDom(&_fy),maxY = maxCPDom(&_fy);
+   CPInt minZ = minCPDom(&_fz),maxZ = maxCPDom(&_fz);
+   for(CPInt i = minX;i <= maxX;i++) {
+      if (memberCPDom(&_fx, i)) {
+         for(CPInt j=minY;j <= maxY;j++) {
+            if (memberCPDom(&_fy, j)) {
+               CPInt v = i + j;
+               if (memberCPDom(&_fz, v)) 
+                  assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1);
+            }
+         }
+      }
+   }   
+   for(CPInt i = minZ;i <= maxZ;i++) {
+      if (memberCPDom(&_fz, i)) {
+         for(CPInt j=minX;j <= maxX;j++) {
+            if (memberCPDom(&_fx, j)) {
+               CPInt v = i - j;
+               if (memberCPDom(&_fy, v)) 
+                  assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1);
+            }
+         }
+         for(CPInt j=minY;j <= maxY;j++) {
+            if (memberCPDom(&_fy, j)) {
+               CPInt v = i - j;
+               if (memberCPDom(&_fx, v)) 
+                  assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1);
+            }
+         }
+      }
+   }
+   if (ok) ok = [self pruneVar:_x flat:&_fx support:_xs];
+   if (ok) ok = [self pruneVar:_y flat:&_fy support:_ys];
+   if (ok) ok = [self pruneVar:_z flat:&_fz support:_zs];
    return ok;   
 }
 

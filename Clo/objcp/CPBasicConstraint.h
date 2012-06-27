@@ -25,11 +25,11 @@
 
 #import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
+#import "CPBitDom.h"
 
 @class CPIntVarI;
 @class CPSolver;
 @class CPIntVarArrayI;
-@class CPDomain;
 
 // PVH: where is _active being used
 @interface CPEqualc : CPActiveConstraint<NSCoding> {
@@ -87,9 +87,9 @@
    CPIntVarI* _x;
    CPIntVarI* _y;
    CPIntVarI* _z;   
-   CPDomain*  _fx;
-   CPDomain*  _fy;
-   CPDomain*  _fz;
+   CPDomain  _fx;
+   CPDomain  _fy;
+   CPDomain  _fz;
    TRIntArray _xs;
    TRIntArray _ys;
    TRIntArray _zs;

@@ -210,9 +210,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    NSSet* rv = collectConstraints(&_net);
    return rv;
 }
--(CPDomain*)flatDomain
+-(CPDomain)flatDomain
 {
-   return [[CPDomain alloc] initCPDomain:(CPBitDom*)_dom scaleBy:1 shift:0];
+   return newDomain((CPBitDom*)_dom, 1, 0);
 }
 -(id<CPIntVarNotifier>) delegate
 {
@@ -721,9 +721,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     [super dealloc];  // CPIntVar will already release the domain. We do _NOT_ have to do it again.
 }
--(CPDomain*)flatDomain
+-(CPDomain)flatDomain
 {
-   return [[CPDomain alloc] initCPDomain:(CPBitDom*)_dom scaleBy:1 shift:_b];
+   return newDomain((CPBitDom*)_dom, 1, _b);
 }
 -(CPInt)min
 {
@@ -872,9 +872,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     [super dealloc];
 }
--(CPDomain*)flatDomain
+-(CPDomain)flatDomain
 {
-   return [[CPDomain alloc] initCPDomain:(CPBitDom*)_dom scaleBy:_a shift:_b];
+   return newDomain((CPBitDom*)_dom, _a, _b);
 }
 
 -(CPInt) min
