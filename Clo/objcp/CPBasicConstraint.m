@@ -323,9 +323,9 @@ static inline CPBounds negBounds(CPIntVarI* x)
 }
 -(void)dealloc
 {
-   freeDomain(&_fx);
-   freeDomain(&_fy);
-   freeDomain(&_fz);
+   [_fx release];
+   [_fy release];
+   [_fz release];
    freeTRIntArray(_xs);
    freeTRIntArray(_ys);
    freeTRIntArray(_zs);
@@ -343,7 +343,7 @@ static inline TRIntArray createSupport(CPIntVarI* v)
 {
    return makeTRIntArray([[[v cp] solver] trail], [v max] - [v min] + 1, [v min]);
 }
-static CPStatus constAddScanB(CPInt a,CPDomain* bd,CPDomain* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
+static CPStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
 {   
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
    CPStatus rv = CPSuspend;
@@ -359,7 +359,7 @@ static CPStatus constAddScanB(CPInt a,CPDomain* bd,CPDomain* cd,CPIntVarI* c,TRI
    }
    return rv;
 }
-static CPStatus constSubScanB(CPInt a,CPDomain* bd,CPDomain* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
+static CPStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
 {
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
    CPStatus rv = CPSuspend;
@@ -375,7 +375,7 @@ static CPStatus constSubScanB(CPInt a,CPDomain* bd,CPDomain* cd,CPIntVarI* c,TRI
    }
    return rv;
 }
-static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
+static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
 {
    CPInt min = minCPDom(ad),max = maxCPDom(ad);
    CPStatus rv = CPSuspend;
@@ -392,7 +392,7 @@ static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TR
    return rv;
 }
 
--(CPStatus)pruneVar:(CPIntVarI*) v flat:(CPDomain*) vd support:(TRIntArray) vs
+-(CPStatus)pruneVar:(CPIntVarI*) v flat:(CPBitDom*) vd support:(TRIntArray) vs
 {
    CPInt min = minCPDom(vd),max = maxCPDom(vd);
    CPStatus ok = CPSuspend;
@@ -405,26 +405,26 @@ static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TR
    if (ok) {
       if (v == _x) {
          [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-            setCPDom(&_fx, val, NO);
+            setCPDom(_fx, val, NO);
             assignTRIntArray(_xs, val, 0);            
-            CPStatus ok = constAddScanB(val,&_fy,&_fz,_z,_zs);   // xc + D(y) in D(z)
-            if (ok) ok = scanASubConstB(&_fz,val,&_fy,_y,_ys);   // D(z) - xc in D(y)
+            CPStatus ok = constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
+            if (ok) ok = scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
             return ok;
          }];      
       } else if (v == _y) {
          [_y whenLoseValue:self do:^CPStatus(CPInt val) {
-            setCPDom(&_fy, val, NO);
+            setCPDom(_fy, val, NO);
             assignTRIntArray(_ys, val, 0);            
-            CPStatus ok = constAddScanB(val,&_fx,&_fz,_z,_zs);  // yc + D(x) in D(z)
-            if (ok) ok = scanASubConstB(&_fz,val,&_fx,_x,_xs);  // D(z) - yc in D(x)
+            CPStatus ok = constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
+            if (ok) ok = scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
             return ok;         
          }];
       } else {
          [_z whenLoseValue:self do:^CPStatus(CPInt val) {
-            setCPDom(&_fz, val, NO);
+            setCPDom(_fz, val, NO);
             assignTRIntArray(_zs, val, 0);            
-            CPStatus ok = constSubScanB(val,&_fx,&_fy,_y,_ys);  // zc - D(x) in D(y)
-            if (ok) ok = constSubScanB(val,&_fy,&_fx,_x,_xs);   // zc - D(y) in D(x)
+            CPStatus ok = constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
+            if (ok) ok = constSubScanB(val,_fy,_fx,_x,_xs);   // zc - D(y) in D(x)
             return ok;
          }];
       }
@@ -442,41 +442,41 @@ static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TR
    _xs = createSupport(_x);
    _ys = createSupport(_y);
    _zs = createSupport(_z);
-   CPInt minX = minCPDom(&_fx),maxX = maxCPDom(&_fx);
-   CPInt minY = minCPDom(&_fy),maxY = maxCPDom(&_fy);
-   CPInt minZ = minCPDom(&_fz),maxZ = maxCPDom(&_fz);
+   CPInt minX = minCPDom(_fx),maxX = maxCPDom(_fx);
+   CPInt minY = minCPDom(_fy),maxY = maxCPDom(_fy);
+   CPInt minZ = minCPDom(_fz),maxZ = maxCPDom(_fz);
    for(CPInt i = minX;i <= maxX;i++) {
-      if (memberCPDom(&_fx, i)) {
+      if (memberCPDom(_fx, i)) {
          for(CPInt j=minY;j <= maxY;j++) {
-            if (memberCPDom(&_fy, j)) {
+            if (memberCPDom(_fy, j)) {
                CPInt v = i + j;
-               if (memberCPDom(&_fz, v)) 
+               if (memberCPDom(_fz, v)) 
                   assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1);
             }
          }
       }
    }   
    for(CPInt i = minZ;i <= maxZ;i++) {
-      if (memberCPDom(&_fz, i)) {
+      if (memberCPDom(_fz, i)) {
          for(CPInt j=minX;j <= maxX;j++) {
-            if (memberCPDom(&_fx, j)) {
+            if (memberCPDom(_fx, j)) {
                CPInt v = i - j;
-               if (memberCPDom(&_fy, v)) 
+               if (memberCPDom(_fy, v)) 
                   assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1);
             }
          }
          for(CPInt j=minY;j <= maxY;j++) {
-            if (memberCPDom(&_fy, j)) {
+            if (memberCPDom(_fy, j)) {
                CPInt v = i - j;
-               if (memberCPDom(&_fx, v)) 
+               if (memberCPDom(_fx, v)) 
                   assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1);
             }
          }
       }
    }
-   if (ok) ok = [self pruneVar:_x flat:&_fx support:_xs];
-   if (ok) ok = [self pruneVar:_y flat:&_fy support:_ys];
-   if (ok) ok = [self pruneVar:_z flat:&_fz support:_zs];
+   if (ok) ok = [self pruneVar:_x flat:_fx support:_xs];
+   if (ok) ok = [self pruneVar:_y flat:_fy support:_ys];
+   if (ok) ok = [self pruneVar:_z flat:_fz support:_zs];
    return ok;   
 }
 
@@ -775,7 +775,7 @@ static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TR
       if (ok) {
          if (!bound(_x)) {
             [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-               if (![_x member:-val]) {
+               if (!memberDom(_x, -val)) { 
                   return [_y remove:abs(val)];
                } else return CPSuspend;
             }];
@@ -791,10 +791,10 @@ static CPStatus scanASubConstB(CPDomain* ad,CPInt b,CPDomain* cd,CPIntVarI* c,TR
             }];
             [_y whenBindDo:^CPStatus{
                CPInt val = minDom(_y);
-               if (![_x member:val] && ![_x member:-val])
+               if (!memberDom(_x, val) && !memberDom(_x, -val)) 
                   return CPFailure;
-               else if ([_x member:val] ^ [_x member:-val]) {
-                  return [_x bind:[_x member:val] ? val : -val];
+               else if (memberDom(_x, val) ^ memberDom(_x, -val)) {
+                  return [_x bind:memberDom(_x, val) ? val : -val];
                } else {
                   CPStatus ok = CPSuspend;
                   CPBounds xb = bounds(_x);

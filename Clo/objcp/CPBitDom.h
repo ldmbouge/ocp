@@ -69,8 +69,10 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 
 @interface CPBitDom : CPBoundsDom {
 @package
-   unsigned*   _bits;
-   CPInt* _magic;
+   unsigned*    _bits;
+   CPInt*      _magic;
+   UBType  _updateMin;
+   UBType  _updateMax;   
 }
 //-(CPBitDom*)initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
 -(CPBitDom*)initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
@@ -91,12 +93,17 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(CPInt)toRestore;
+-(void)translate:(CPInt)shift;
 @end
+
+static const CPUInt __bitmasks[32] = {1,2,4,8,16,32,64,128,256,512,1024,2048,0x1000,0x2000,0x4000,0x8000,
+   0x10000,0x20000,0x40000,0x80000,0x100000,0x200000,0x400000,0x8000000,0x1000000,0x2000000,
+   0x4000000,0x8000000,0x10000000,0x20000000,0x40000000,0x80000000};
 
 #define GETBIT(b) ((_bits[((b) - _imin)>>5] & (0x1 << (((b)-_imin) & 0x1f)))!=0)
 #define GETBITPTR(x,b) ((((CPBitDom*)x)->_bits[((b) - ((CPBitDom*)x)->_imin)>>5] & (0x1 << (((b)-((CPBitDom*)x)->_imin) & 0x1f)))!=0)
 
-static inline BOOL domMember(CPBoundsDom* x,CPInt value)
+static inline CPInt domMember(CPBoundsDom* x,CPInt value)
 {
    static id ibnd = nil;
    if (ibnd==nil) {
@@ -104,72 +111,36 @@ static inline BOOL domMember(CPBoundsDom* x,CPInt value)
    }
    id cx = object_getClass(x);
    if (cx == ibnd) {
-      return ((CPBoundsDom*)x)->_min._val <= value && value <= ((CPBoundsDom*)x)->_max._val;
+      return x->_min._val <= value && value <= x->_max._val;
    } else {
-      return ((CPBoundsDom*)x)->_min._val <= value && value <= ((CPBoundsDom*)x)->_max._val && GETBITPTR(x,value);
+      const CPInt ofs = value - x->_imin;
+      return x->_min._val <= value && value <= x->_max._val && (((CPBitDom*)x)->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
    }
 }
 
-typedef struct CPDomainTag {
-   CPBitDom*    _dom;
-   CPInt      _scale;
-   CPInt      _shift;
-} CPDomain;
-
-static inline CPDomain newDomain(CPBitDom* bd,CPInt a,CPInt b)
+CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b);
+static inline CPInt memberCPDom(CPBitDom* d,CPInt v) 
 {
-   return (CPDomain){[bd copyWithZone:NULL],a,b};
+   return domMember(d, v);
 }
-static inline void freeDomain(CPDomain* d)
+static inline CPInt minCPDom(CPBitDom* d)
 {
-   [d->_dom release];
+   return d->_min._val;
 }
-static inline BOOL memberCPDom(CPDomain* d,CPInt v) 
+static inline CPInt maxCPDom(CPBitDom* d)
 {
-   CPInt vp;
-   if (d->_scale == 1)
-      vp = v - d->_shift;
-   else if (d->_scale == -1) 
-      vp = d->_shift - v;
-   else {
-      CPInt r = (v - d->_shift) % d->_scale;
-      if (r != 0) return NO;
-      vp = (v - d->_shift) / d->_scale;
-   } 
-   return domMember(d->_dom, vp);
+   return d->_max._val;
 }
-static inline CPInt minCPDom(CPDomain* d)
+static inline CPInt getCPDom(CPBitDom* d,CPInt v)
 {
-   if (d->_scale > 0) 
-      return d->_dom->_min._val * d->_scale + d->_shift;
-   else return d->_dom->_max._val * d->_scale + d->_shift;
+   const CPInt ofs = v - d->_imin;
+   return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
 }
-static inline CPInt maxCPDom(CPDomain* d)
+static inline void setCPDom(CPBitDom* d,CPInt b,BOOL v)
 {
-   if (d->_scale > 0) 
-      return d->_dom->_max._val * d->_scale + d->_shift;
-   else return d->_dom->_min._val * d->_scale + d->_shift;
+   return [d set:b at:v];
 }
-static inline BOOL getCPDom(CPDomain* d,CPInt v)
+static inline CPInt sizeCPDom(CPBitDom* d)
 {
-   CPInt vp;
-   if (d->_scale == 1)
-      vp = v - d->_shift;
-   else if (d->_scale == -1) 
-      vp = d->_shift - v;
-   else {   
-      CPInt r = (v - d->_shift) % d->_scale;
-      if (r != 0) return NO;      
-      vp = (v - d->_shift) / d->_scale;
-   } 
-   return GETBITPTR(d->_dom,vp);
-}
-static inline void setCPDom(CPDomain* d,CPInt b,BOOL v)
-{
-   CPInt nb = (b - d->_shift) / d->_scale;
-   return [d->_dom set:nb at:v];
-}
-static inline CPInt sizeCPDom(CPDomain* d)
-{
-   return d->_dom->_sz._val;
+   return d->_sz._val;
 }

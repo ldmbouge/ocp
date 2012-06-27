@@ -32,6 +32,7 @@
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding> {
     CPIntVarI** _var;
+    UBType*     _member;
     CPInt   _varSize;
     CPInt*  _match;
     CPInt*  _varSeen;

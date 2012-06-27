@@ -87,9 +87,9 @@
    CPIntVarI* _x;
    CPIntVarI* _y;
    CPIntVarI* _z;   
-   CPDomain  _fx;
-   CPDomain  _fy;
-   CPDomain  _fz;
+   CPBitDom*  _fx;
+   CPBitDom*  _fy;
+   CPBitDom*  _fz;
    TRIntArray _xs;
    TRIntArray _ys;
    TRIntArray _zs;

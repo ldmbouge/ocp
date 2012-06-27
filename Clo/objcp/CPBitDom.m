@@ -216,6 +216,8 @@
       _bits[k]  = 0xffffffff;
       _magic[k] = [_trail magic]-1;
    }
+   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
+   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
 }
 -(CPBitDom*) initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up
@@ -229,6 +231,8 @@
       _bits[k]  = 0xffffffff;
       _magic[k] = [trail magic]-1;
    }
+   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
+   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -515,8 +519,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val) return CPSuspend;
-   if (val == _min._val) return [self updateMin:val+1 for:x];
-   if (val == _max._val) return [self updateMax:val-1 for:x];   
+   if (val == _min._val) return _updateMin(self,@selector(updateMin:for:),val+1,x);
+   if (val == _max._val) return _updateMax(self,@selector(updateMax:for:),val-1,x);   
    if (GETBIT(val)) {
        resetBit(self,val);
        assignTRInt(&_sz, _sz._val -  1, _trail);
@@ -544,6 +548,15 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    _max._val = toRestore;
    _sz._val  = 1;
 }
+
+-(void)translate:(CPInt)shift
+{
+   _imin = _imin + shift;
+   _imax = _imax + shift;
+   _min._val = _min._val + shift;
+   _max._val = _max._val + shift;
+}
+
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -583,3 +596,57 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    return self;
 }
 @end
+
+CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
+{
+   if (a == 1 && b == 0)
+      return [bd copyWithZone:NULL];
+   else if (a==1) {
+      CPBitDom* clone = [bd copyWithZone:NULL];
+      [clone translate: b];
+      return clone;      
+   } else if (a== -1 && b == 0) {
+      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
+      const CPInt sz = bd->_imax - bd->_imin + 1;
+      const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0); // # words in array
+      for(CPUInt i=0;i < nb; i++) {
+         nDom->_magic[nb - 1 - i] = bd->_magic[i];    
+         CPUInt v = bd->_bits[i];
+         // http://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
+         v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1); // swap odd and even bits         
+         v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2); // swap consecutive pairs         
+         v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4); // swap nibbles ...           
+         v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8); // swap bytes          
+         v = ( v >> 16             ) | ( v               << 16); // swap 2-byte long pairs
+         nDom->_bits[nb - 1 - i] = v;
+      }      
+      return nDom;
+   } else if (a == -1) {
+      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
+      const CPInt sz = bd->_imax - bd->_imin + 1;
+      const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0); // # words in array
+      for(CPUInt i=0;i < nb; i++) {
+         nDom->_magic[nb - 1 - i] = bd->_magic[i];    
+         CPUInt v = bd->_bits[i];
+         // http://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
+         v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1); // swap odd and even bits         
+         v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2); // swap consecutive pairs         
+         v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4); // swap nibbles ...           
+         v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8); // swap bytes          
+         v = ( v >> 16             ) | ( v               << 16); // swap 2-byte long pairs
+         nDom->_bits[nb - 1 - i] = v;
+      }      
+      [nDom translate:b];
+      return nDom;
+   } else {
+      CPInt newLow = (a > 0 ? [bd min] : [bd max]) * a + b;
+      CPInt newUp  = (a > 0 ? [bd max] : [bd min]) * a + b;
+      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:newLow up:newUp];
+      [nDom setAllZeroFrom:newLow to:newUp];
+      for(CPInt i = [bd min];i  <= [bd max];i++) {
+         CPInt k = a * i + b;
+         [nDom set:k at:YES];
+      }
+      return nDom;
+   }
+}

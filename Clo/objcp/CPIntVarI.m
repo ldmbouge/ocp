@@ -210,7 +210,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    NSSet* rv = collectConstraints(&_net);
    return rv;
 }
--(CPDomain)flatDomain
+-(CPBitDom*)flatDomain
 {
    return newDomain((CPBitDom*)_dom, 1, 0);
 }
@@ -721,7 +721,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     [super dealloc];  // CPIntVar will already release the domain. We do _NOT_ have to do it again.
 }
--(CPDomain)flatDomain
+-(CPBitDom*)flatDomain
 {
    return newDomain((CPBitDom*)_dom, 1, _b);
 }
@@ -872,7 +872,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     [super dealloc];
 }
--(CPDomain)flatDomain
+-(CPBitDom*)flatDomain
 {
    return newDomain((CPBitDom*)_dom, _a, _b);
 }
@@ -1059,7 +1059,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    self = [super init];
    _mx  = n;
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
-   _loseRangeIMP = malloc(sizeof(IMP)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
    _tracksLoseEvt = false;
    _nb  = 0;
@@ -1075,14 +1074,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-      _loseRangeIMP = realloc(_loseRangeIMP,sizeof(IMP)*(_mx << 1));
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
    [_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
-   _loseRangeIMP[_nb] = [v methodForSelector:@selector(loseRangeEvt:)];
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
    _nb++;
 }

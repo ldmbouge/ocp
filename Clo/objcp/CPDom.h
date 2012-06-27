@@ -29,6 +29,8 @@
 
 @protocol CPIntVarNotifier;
 
+typedef CPStatus(*UBType)(id,SEL,...);
+
 @protocol CPDom <NSObject,NSCopying>
 -(void)dealloc;
 -(CPStatus) updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
