@@ -286,8 +286,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(NSString*)description
 {
    NSString* dom = [_dom description];
-   //return [NSString stringWithFormat:@"var<%d>=%@",_name,dom];
+#if !defined(_NDEBUG)
+   return [NSString stringWithFormat:@"var<%d>=%@",_name,dom];
+#else
    return [NSString stringWithFormat:@"%@",dom];
+#endif
 }
 -(id<CPDom>)domain
 {
@@ -789,7 +792,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(NSString*) description
 {
    NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
-   //[s appendFormat:@"var<%d>=",_name];
+#if !defined(_NDEBUG)
+   [s appendFormat:@"var<%d>=",_name];
+#endif
     CPInt min = [_dom min] + _b;
     if ([_dom domsize]==1)
         [s appendFormat:@"%d",min];
@@ -974,7 +979,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(NSString*)description
 {
    NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
-   //[s appendFormat:@"var<%d>=",_name];
+#if !defined(_NDEBUG)
+   [s appendFormat:@"var<%d>=",_name];
+#endif
    CPInt min = _a > 0 ? _a * [_dom min] + _b : _a * [_dom max] + _b;
     if ([_dom domsize]==1)
         [s appendFormat:@"%d",min];

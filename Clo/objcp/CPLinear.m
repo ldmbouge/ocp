@@ -293,6 +293,10 @@
    }
    return min(MAXINT,ub);   
 }
+-(CPStatus)post:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+{
+   return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
+}
 @end
 
 @implementation CPSubst
@@ -340,8 +344,7 @@
    } else {
       id<CPIntVar> xv = [CPFactory intVar:cp domain:(CPRange){[e min],[e max]}];
       [e addTerm:xv by:-1];
-      id<CPIntVarArray> sx = [e scaledViews];
-      [_fdm post:[CPFactory sum:sx  eq:0 consistency:_c]];
+      [e post:_fdm consistency:_c];
       return xv;
    }
 }
@@ -360,15 +363,19 @@
 }
 -(void) visitExprPlusI: (CPExprPlusI*) e
 {
-   assert(NO);
+   CPLinear* terms = [CPLinearizer linearFrom:e solver:_fdm consistency:_c];
+   if (_rv==nil)
+      _rv = [CPFactory intVar:[e cp] domain:(CPRange){max([terms min],MININT),min([terms max],MAXINT)}];
+   [terms addTerm:_rv by:-1];
+   [terms post:_fdm consistency:_c];
 }
 -(void) visitExprMinusI: (CPExprMinusI*) e
 {
    CPLinear* terms = [CPLinearizer linearFrom:e solver:_fdm consistency:_c];
    if (_rv==nil)
-      _rv = [CPFactory intVar:[e cp] domain:(CPRange){MININT,MAXINT}];
+      _rv = [CPFactory intVar:[e cp] domain:(CPRange){max([terms min],MININT),min([terms max],MAXINT)}];
    [terms addTerm:_rv by:-1];
-   [_fdm post:[CPFactory sum:[terms scaledViews] eq:-[terms independent]]];
+   [terms post:_fdm consistency:_c];
 }
 -(void) visitExprMulI: (CPExprMulI*) e
 {
@@ -410,7 +417,9 @@
    [lT release];
 }
 -(void) visitExprSumI: (CPExprSumI*) e
-{}
+{
+   assert(NO);
+}
 @end
 
 @implementation CPExprConstraintI
@@ -433,8 +442,7 @@
    CPLinear* terms = [CPLinearizer linearFrom:_expr solver:_fdm consistency:_c];
    CPStatus status = CPSuspend;
    if ([terms size] != 0) {
-      id<CPIntVarArray> sx = [terms scaledViews];
-      status = [_fdm post:[CPFactory sum:sx eq:0 consistency:_c]];
+      status = [terms post:_fdm consistency:_c];
    }
    [terms release];
    return status ? CPSkip : CPFailure;

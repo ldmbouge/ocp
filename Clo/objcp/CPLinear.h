@@ -60,6 +60,7 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 -(CPInt)size;
 -(CPInt)min;
 -(CPInt)max;
+-(CPStatus)post:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
 @end
 
 @interface CPExprConstraintI : CPActiveConstraint<NSCoding> {
