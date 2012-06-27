@@ -135,7 +135,7 @@
       case 0: assert(NO);return nil;
       case 1: return [self equalc:[x at:0] to:c];
       case 2: return [self equal:[x at:0] to:[self intVar:[x at:1] scale:-1] plus:-c consistency:cons];
-      case 3: return [self equal3:[self intVar:[x at:0] scale:-1] to:[x at:1] plus:[x at:2] consistency:cons];
+      case 3: return [self equal3:[self intVar:[x at:0] scale:-1 shift:-c] to:[x at:1] plus:[x at:2] consistency:cons];
       default: {
          id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
          [[[x cp] solver] trackObject: o];
