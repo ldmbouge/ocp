@@ -390,7 +390,7 @@
    [_expr release];
    [super dealloc];
 }
--(CPStatus)post
+-(CPStatus) post
 {
    CPLinear* terms = [CPLinear linearFrom:_expr sub:^id<CPIntVar>(CPExprI* e) {
       CPSubst* subst = [[CPSubst alloc] initCPSubst:_fdm];

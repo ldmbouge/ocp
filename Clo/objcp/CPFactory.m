@@ -226,6 +226,8 @@
 }
 @end
 
+
+// Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
 +(id<CPExpr>) validate:(id<CPExpr>)e onError:(const char*)str
 {

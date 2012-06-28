@@ -412,6 +412,7 @@
     free(_low);
     free(_up);
     free(_size);
+    free(_i);
     free(_flat);
     [super dealloc];
 }
@@ -486,28 +487,32 @@
     [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
     for(CPInt i = 0; i < _arity; i++) {
         [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].low];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].up];
-    CPInt sz = _nbRows * _nbCols;
-    for(CPInt i=0 ; i < sz ;i++)
+        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].up];
+    }
+    for (CPInt i=0 ; i < _nb; i++) 
         [aCoder encodeObject:_flat[i]];
-     */
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
-    /*
     _cp = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_lowr];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_upr];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_lowc];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_upc];
-    _nbRows = (_upr - _lowr + 1);
-    _nbCols = (_upc - _lowc + 1);
-    CPInt sz = _nbRows * _nbCols;
-    _flat = malloc(sizeof(CPIntVarI*) * sz);
-    for(CPInt i=0 ; i < sz ;i++)
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    _range = malloc(sizeof(CPRange) * _arity);
+    _low = malloc(sizeof(CPInt) * _arity);
+    _up = malloc(sizeof(CPInt) * _arity);
+    _size = malloc(sizeof(CPInt) * _arity);
+    _i = malloc(sizeof(CPRange) * _arity);    
+    _nb = 1;
+    for(CPInt i = 0; i < _arity; i++) {
+        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
+        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
+        _range[i] = (CPRange){_low[i],_up[i]};
+        _size[i] = (_up[i] - _low[i] + 1);
+        _nb *= _size[i];
+    }
+    _flat = malloc(sizeof(CPIntVarI*) * _nb);
+    for(CPInt i=0 ; i < _nb ;i++)
         _flat[i] = [[aDecoder decodeObject] retain];
-     */
     return self;
 }
 

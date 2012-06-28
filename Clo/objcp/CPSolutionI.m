@@ -26,6 +26,8 @@
 #import "CPSolutionI.h"
 #import "CPSolver.h"
 
+
+// Not sure why this works if shot is null
 @implementation CPSolutionI
 -(CPSolutionI*)initCPSolution:(id<CPSolver>)solver
 {
