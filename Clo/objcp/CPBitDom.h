@@ -96,9 +96,15 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 -(void)translate:(CPInt)shift;
 @end
 
-static const CPUInt __bitmasks[32] = {1,2,4,8,16,32,64,128,256,512,1024,2048,0x1000,0x2000,0x4000,0x8000,
-   0x10000,0x20000,0x40000,0x80000,0x100000,0x200000,0x400000,0x8000000,0x1000000,0x2000000,
-   0x4000000,0x8000000,0x10000000,0x20000000,0x40000000,0x80000000};
+static const CPUInt __bitmasks[32] = {
+      0x00000001,0x00000002,0x00000004,0x00000008,
+      0x00000010,0x00000020,0x00000040,0x00000080,
+      0x00000100,0x00000200,0x00000400,0x00000800,
+      0x00001000,0x00002000,0x00004000,0x00008000,
+      0x00010000,0x00020000,0x00040000,0x00080000,
+      0x00100000,0x00200000,0x00400000,0x00800000,
+      0x01000000,0x02000000,0x04000000,0x08000000,
+      0x10000000,0x20000000,0x40000000,0x80000000};
 
 #define GETBIT(b) ((_bits[((b) - _imin)>>5] & (0x1 << (((b)-_imin) & 0x1f)))!=0)
 #define GETBITPTR(x,b) ((((CPBitDom*)x)->_bits[((b) - ((CPBitDom*)x)->_imin)>>5] & (0x1 << (((b)-((CPBitDom*)x)->_imin) & 0x1f)))!=0)
@@ -113,7 +119,7 @@ static inline CPInt domMember(CPBoundsDom* x,CPInt value)
    if (cx == ibnd) {
       return x->_min._val <= value && value <= x->_max._val;
    } else {
-      const CPInt ofs = value - x->_imin;
+      const CPUInt ofs = value - x->_imin;
       return x->_min._val <= value && value <= x->_max._val && (((CPBitDom*)x)->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
    }
 }
@@ -133,8 +139,8 @@ static inline CPInt maxCPDom(CPBitDom* d)
 }
 static inline CPInt getCPDom(CPBitDom* d,CPInt v)
 {
-   const CPInt ofs = v - d->_imin;
-   return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
+   const CPUInt ofs = v - d->_imin;
+   return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]) != 0;
 }
 static inline void setCPDom(CPBitDom* d,CPInt b,BOOL v)
 {
