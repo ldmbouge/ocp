@@ -492,7 +492,7 @@
    [_expr release];
    [super dealloc];
 }
--(CPStatus)post
+-(CPStatus) post
 {
    CPLinear* terms = [CPLinearizer linearFrom:_expr solver:_fdm consistency:_c];
    CPStatus status = CPSuspend;
