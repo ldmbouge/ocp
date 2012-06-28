@@ -498,49 +498,65 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(void) bindEvt
 {
-    if (_net._boundsEvt._val) 
-        [_fdm scheduleAC3:_net._boundsEvt._val];
-    if (_net._minEvt._val) 
-        [_fdm scheduleAC3:_net._minEvt._val];
-    if (_net._maxEvt._val) 
-        [_fdm scheduleAC3:_net._maxEvt._val];
-    if (_net._domEvt._val) 
-        [_fdm scheduleAC3:_net._domEvt._val];
-    if (_net._bindEvt._val) 
-        [_fdm scheduleAC3:_net._bindEvt._val];
-    if (_triggers != nil)
-        [_triggers bindEvt:_fdm];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._minEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._maxEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._bindEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
+   if (_triggers != nil)
+      [_triggers bindEvt:_fdm];
 }
 -(void) changeMinEvt: (CPInt) dsz
 {
-    if (_net._boundsEvt._val) 
-        [_fdm scheduleAC3:_net._boundsEvt._val];
-    if (_net._minEvt._val) 
-        [_fdm scheduleAC3:_net._minEvt._val];
-    if (_net._domEvt._val) 
-        [_fdm scheduleAC3:_net._domEvt._val];
-    if (dsz==1 && _net._bindEvt._val) 
-        [_fdm scheduleAC3:_net._bindEvt._val];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._minEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = dsz==1 ? _net._bindEvt._val : NULL;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_fdm];
 }
 -(void) changeMaxEvt: (CPInt) dsz
 {
-    if (_net._boundsEvt._val) 
-        [_fdm scheduleAC3:_net._boundsEvt._val];
-    if (_net._maxEvt._val) 
-        [_fdm scheduleAC3:_net._maxEvt._val];
-    if (_net._domEvt._val) 
-        [_fdm scheduleAC3:_net._domEvt._val];
-    if (dsz==1 && _net._bindEvt._val) 
-        [_fdm scheduleAC3:_net._bindEvt._val];
-    if (dsz==1 && _triggers != nil)
-        [_triggers bindEvt:_fdm];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._maxEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._domEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = dsz==1 ? _net._bindEvt._val : NULL;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
+   if (dsz==1 && _triggers != nil)
+      [_triggers bindEvt:_fdm];
 }
 -(void) loseValEvt: (CPInt) val
 {
-    if (_net._domEvt._val) 
-        [_fdm scheduleAC3:_net._domEvt._val];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._domEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
     if (_net._ac5._val)
         [_fdm scheduleAC5:_net._ac5._val with:val];
     if (_triggers != nil)
@@ -594,7 +610,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    [_dom restoreValue:toRestore];
 }
-
 
 -(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp low: (CPInt) low up: (CPInt) up
 {

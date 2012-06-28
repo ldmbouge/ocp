@@ -352,7 +352,7 @@ static CPStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRI
       if (getCPDom(bd, j) && memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
-            rv = [c remove:t];
+            rv = removeDom(c, t);
             if (rv==CPFailure) return rv;
          }         
       }
@@ -368,7 +368,7 @@ static CPStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRI
       if (getCPDom(bd, j) && memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) { 
-            rv = [c remove:t];
+            rv = removeDom(c, t);
             if (rv==CPFailure) return rv;
          }         
       }
@@ -384,7 +384,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
       if (getCPDom(ad, j) && memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
-            rv = [c remove:t];
+            rv = removeDom(c, t);
             if (rv==CPFailure) return rv;
          }         
       }

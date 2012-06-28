@@ -211,31 +211,43 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) bindEvt
 {
-    if (_net._boundsEvt._val) 
-        [_fdm scheduleAC3:_net._boundsEvt._val];
-    if (_net._minEvt._val) 
-        [_fdm scheduleAC3:_net._minEvt._val];
-    if (_net._maxEvt._val) 
-        [_fdm scheduleAC3:_net._maxEvt._val];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._minEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._maxEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
     if (_triggers != nil)
         [_triggers bindEvt:_fdm];
 }
 
 -(void) changeMinEvt: (int) dsz
 {
-    if (_net._boundsEvt._val) 
-        [_fdm scheduleAC3:_net._boundsEvt._val];
-    if (_net._minEvt._val) 
-        [_fdm scheduleAC3:_net._minEvt._val];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._minEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_fdm];
 }
 -(void) changeMaxEvt: (int) dsz
 {
-    if (_net._boundsEvt._val) 
-        [_fdm scheduleAC3:_net._boundsEvt._val];
-    if (_net._maxEvt._val) 
-        [_fdm scheduleAC3:_net._maxEvt._val];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._maxEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_fdm];
 }
@@ -243,8 +255,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) bitFixedEvt:(int)idx
 {
     //Empty implementation
-    if (_net._bitFixedEvt._val)
-        [_fdm scheduleAC3:_net._bitFixedEvt._val];
+   VarEventNode* mList[5];
+   CPUInt k = 0;
+   mList[k] = _net._bitFixedEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = NULL;
+   [_fdm scheduleAC3:mList];
 }
 
 -(CPStatus) updateMin: (uint64) newMin

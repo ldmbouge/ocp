@@ -360,13 +360,17 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
 }
 
--(void) scheduleAC3: (VarEventNode*) list
+-(void) scheduleAC3: (VarEventNode**) mlist
 {
-   while (list) {
-       if (list->_cstr) 
-           list->_cstr->_todo = CPTocheck;
-       AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);        
-       list = list->_node;
+   while (*mlist) {
+      VarEventNode* list = *mlist; 
+      while (list) {
+         if (list->_cstr) 
+            list->_cstr->_todo = CPTocheck;
+         AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);        
+         list = list->_node;
+      }
+      ++mlist;
    }
 }
 

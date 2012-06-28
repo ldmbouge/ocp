@@ -331,6 +331,29 @@ static inline CPInt memberDom(CPIntVarI* x,CPInt value)
    return domMember((CPBoundsDom*)x->_dom, target);
 }
 
+static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
+{
+   CPInt target;
+   switch (x->_vc) {
+      case CPVCBare:  target = v;break;
+      case CPVCShift: target = v - ((CPIntShiftView*)x)->_b;break;
+      case CPVCAffine: {
+         CPInt a = ((CPIntView*)x)->_a;
+         CPInt b = ((CPIntView*)x)->_b;
+         if (a == -1)
+            target = b - v;
+         else if (a== 1)
+            target = v - b;
+         else {
+            CPInt r = (v - b) % a;
+            if (r != 0) return CPSuspend;
+            target = (v - b) / a; 
+         }
+      }
+   }
+   return [x->_dom remove:target for:x->_recv];
+}
+
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
