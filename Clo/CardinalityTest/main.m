@@ -32,7 +32,10 @@
 #import "objcp/CPLabel.h"
 #import "objcp/CPHeuristic.h"
 
- 
+//20632 choices
+//20579 fail
+//622248 propagations
+
 int main(int argc, const char * argv[])
 {
     CPInt n = 14;
@@ -76,6 +79,7 @@ int main(int argc, const char * argv[])
         using: 
      ^() {
          [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
+         printf("Solution \n");
          for(CPInt p = 1; p <= n/2; p++) {
              for(CPInt w = 1; w < n; w++) 
                  printf("%2d-%2d [%3d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game at: p : w] min]);

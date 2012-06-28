@@ -34,12 +34,12 @@
 
 @interface CPTableI : NSObject<CPTable,NSCoding> {
     @package
-    id<CP>      _cp;
+    id<CP>  _cp;
     CPInt   _arity; 
     CPInt   _nb;
     CPInt   _size;
     CPInt** _column;
-    bool        _closed;
+    bool    _closed;
     CPInt*  _min;          // _min[j] is the minimum value in column[j]
     CPInt*  _max;          // _max[j] is the maximun value in column[j]
     CPInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
@@ -58,11 +58,11 @@
 
 
 @interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
-    CPIntVarI** _var;
-    CPInt       _arity;  
-    CPTableI*   _table;
-    TRIntArray* _currentSupport;
-    bool        _posted;
+    CPIntVarI**     _var;
+    CPInt           _arity;  
+    CPTableI*       _table;
+    TRIntArray*     _currentSupport;
+    bool            _posted;
 }
 -(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table;
 -(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
