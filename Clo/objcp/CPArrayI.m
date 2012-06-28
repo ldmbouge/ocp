@@ -489,7 +489,7 @@
         [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].low];
         [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].up];
     }
-    for (CPInt i=0 ; i < _nb; i++) 
+    for(CPInt i=0 ; i < _nb ;i++)
         [aCoder encodeObject:_flat[i]];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder

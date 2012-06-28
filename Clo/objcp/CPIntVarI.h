@@ -125,6 +125,7 @@ typedef struct  {
 
 //-(void) loseRangeEvt:(CPDoRange) clo;
 -(void) loseRangeEvt:(CPClosure) clo;
+-(CPIntVarI*)findOriginal;
 @end
 
 
@@ -147,6 +148,7 @@ typedef struct  {
 -(CPSolverI*) solver;
 -(id<CP>) cp;
 -(NSSet*)constraints;
+-(CPBitDom*)flatDomain;
 
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
@@ -176,8 +178,6 @@ typedef struct  {
 -(void) changeMinEvt:(CPInt)dsz;
 -(void) changeMaxEvt:(CPInt)dsz;
 -(void) loseValEvt:(CPInt)val;
--(void) loseRangeEvt:(CPClosure) clo;
-
 // delegation
 
 -(id<CPIntVarNotifier>) delegate;
@@ -225,6 +225,7 @@ typedef struct  {
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
+-(CPBitDom*)flatDomain;
 -(CPInt) min;
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
@@ -248,6 +249,7 @@ typedef struct  {
 }
 -(CPIntView*)initIVarAViewFor: (CPInt) a  x:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
+-(CPBitDom*)flatDomain;
 -(CPInt) min;
 -(CPInt) max;
 -(void)bounds:(CPBounds*)bnd;
@@ -288,6 +290,50 @@ static inline CPInt minDom(CPIntVarI* x)
          return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
    }
 }
+
+static inline CPInt maxDom(CPIntVarI* x)
+{
+   static id irvc = nil,isvc = nil;
+   if (irvc==nil) {
+      irvc = objc_getClass("CPIntVarI");
+      isvc = objc_getClass("CPIntShiftView");
+   }
+   id cx = object_getClass(x);
+   if (cx == irvc) {
+      return ((CPBoundsDom*)x->_dom)->_max._val;
+   } else if (cx == isvc) {
+      return ((CPBoundsDom*)x->_dom)->_max._val + ((CPIntShiftView*)x)->_b;      
+   } else {
+      if (((CPIntView*)x)->_a > 0)
+         return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+      else 
+         return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+   }
+}
+
+static inline CPInt memberDom(CPIntVarI* x,CPInt value)
+{
+   static id irvc = nil,isvc = nil;
+   if (irvc==nil) {
+      irvc = objc_getClass("CPIntVarI");
+      isvc = objc_getClass("CPIntShiftView");
+   }
+   id cx = object_getClass(x);
+   CPInt target;
+   if (cx == irvc) {
+      target = value;
+   } else if (cx == isvc) {
+      target = value - ((CPIntShiftView*)x)->_b;
+   } else {
+      const CPInt a = ((CPIntView*)x)->_a;
+      const CPInt b = ((CPIntView*)x)->_b;
+      const CPInt r = (value - b) % a;
+      if (r != 0) return NO;
+      target = (value - b) / a;
+   }   
+   return domMember((CPBoundsDom*)x->_dom, target);
+}
+
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
@@ -297,7 +343,6 @@ static inline CPInt minDom(CPIntVarI* x)
    BOOL        _tracksLoseEvt;
    CPInt                  _nb;
    CPInt                  _mx;
-   IMP*         _loseRangeIMP;  
    IMP*           _loseValIMP;
 }
 -(id)initVarMC:(CPInt)n;
@@ -307,6 +352,5 @@ static inline CPInt minDom(CPIntVarI* x)
 -(void) changeMinEvt:(CPInt)dsz;
 -(void) changeMaxEvt:(CPInt)dsz;
 -(void) loseValEvt:(CPInt)val;
--(void) loseRangeEvt:(CPClosure)clo;
 @end
 

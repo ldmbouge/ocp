@@ -43,17 +43,18 @@ static void prune(CPAllDifferentDC* ad);
 
 -(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x
 {
-    self = [super initCPActiveConstraint: [[x cp] solver]];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO-2;
-    CPInt low = [x low];
-    CPInt up = [x up];
-    _varSize = (up - low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(CPInt i = 0; i < _varSize; i++)
-        _var[i] = (CPIntVarI*) [x at: low + i];
-    _posted = false;
-    return self;
+   self = [super initCPActiveConstraint: [[x cp] solver]];
+   _idempotent = YES;
+   _priority = HIGHEST_PRIO-2;
+   CPInt low = [x low];
+   CPInt up = [x up];
+   _varSize = (up - low + 1);
+   _var = malloc(_varSize * sizeof(CPIntVarI*));
+   for(CPInt i = 0; i < _varSize; i++) {
+      _var[i] = (CPIntVarI*) [x at: low + i];
+   }
+   _posted = false;
+   return self;
 }
 -(void) dealloc 
 {
@@ -218,7 +219,7 @@ static bool findAlternatingPath(CPAllDifferentDC* ad,CPInt i)
         CPInt Mx = [x max];
         for(CPInt v = mx; v <= Mx; v++) {
             if (_match[i] != v) {
-                if ([x member: v]) {
+               if (memberDom(x, v)) {
                     if (findAlternatingPathValue(ad,v)) {
                         _match[i] = v;
                         _valMatch[v] = i;
@@ -302,55 +303,55 @@ static void findSCC(CPAllDifferentDC* ad)
 
 static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
 {
-    CPInt*_varDfs = ad->_varDfs;
-    CPInt*_varHigh = ad->_varHigh;
-    CPInt*_stack = ad->_stack;
-    CPInt*_type = ad->_type;
-    CPInt*_match = ad->_match;
-    CPInt*_valDfs = ad->_valDfs;
-    CPInt*_valHigh = ad->_valHigh;
-    CPInt*_valComponent = ad->_valComponent;
-    CPInt*_varComponent = ad->_varComponent;
-    
-    _varDfs[k] = ad->_dfs--;
-    _varHigh[k] = _varDfs[k];
-    _stack[ad->_top] = k;
-    _type[ad->_top] = 0;
-    ad->_top++;
-    
-    CPIntVarI* x = ad->_var[k];
-    CPBounds bx;
-    [x bounds:&bx];
-    for(CPInt w = bx.min; w <= bx.max; w++) {
-        if (_match[k] != w) {
-            if ([x member:w]) {
-                CPInt valDfs = _valDfs[w];
-                if (!valDfs) {
-                    findSCCval(ad,w);
-                    if (_valHigh[w] > _varHigh[k])
-                        _varHigh[k] = _valHigh[w];
-                }
-                else if ( (valDfs > _varDfs[k]) && (!_valComponent[w])) {
-                    if (valDfs > _varHigh[k])
-                        _varHigh[k] = _valDfs[w];
-                }
+   CPInt*_varDfs = ad->_varDfs;
+   CPInt*_varHigh = ad->_varHigh;
+   CPInt*_stack = ad->_stack;
+   CPInt*_type = ad->_type;
+   CPInt*_match = ad->_match;
+   CPInt*_valDfs = ad->_valDfs;
+   CPInt*_valHigh = ad->_valHigh;
+   CPInt*_valComponent = ad->_valComponent;
+   CPInt*_varComponent = ad->_varComponent;
+   
+   _varDfs[k] = ad->_dfs--;
+   _varHigh[k] = _varDfs[k];
+   _stack[ad->_top] = k;
+   _type[ad->_top] = 0;
+   ad->_top++;
+   
+   CPIntVarI* x = ad->_var[k];
+   CPBounds bx;
+   [x bounds:&bx];
+   for(CPInt w = bx.min; w <= bx.max; w++) {
+      if (_match[k] != w) {
+         if (memberDom(x, w)) {
+            CPInt valDfs = _valDfs[w];
+            if (!valDfs) {
+               findSCCval(ad,w);
+               if (_valHigh[w] > _varHigh[k])
+                  _varHigh[k] = _valHigh[w];
             }
-        }
-    }
-    
-    if (_varHigh[k] == _varDfs[k]) {
-        ad->_component++;
-        do {
-            CPInt v = _stack[--ad->_top];
-            CPInt t = _type[ad->_top];
-            if (t == 0)
-                _varComponent[v] = ad->_component;
-            else
-                _valComponent[v] = ad->_component;
-            if (t == 0 && v == k)
-                break;
-        } while (true);
-    }    
+            else if ( (valDfs > _varDfs[k]) && (!_valComponent[w])) {
+               if (valDfs > _varHigh[k])
+                  _varHigh[k] = _valDfs[w];
+            }
+         }
+      }
+   }
+   
+   if (_varHigh[k] == _varDfs[k]) {
+      ad->_component++;
+      do {
+         CPInt v = _stack[--ad->_top];
+         CPInt t = _type[ad->_top];
+         if (t == 0)
+            _varComponent[v] = ad->_component;
+         else
+            _valComponent[v] = ad->_component;
+         if (t == 0 && v == k)
+            break;
+      } while (true);
+   }    
 }
 
 static void findSCCval(CPAllDifferentDC* ad,CPInt k)
@@ -429,7 +430,7 @@ static void prune(CPAllDifferentDC* ad)
         [x bounds:&bx];
         for(CPInt w = bx.min; w <= bx.max; w++) {
             if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
-                if ([x member: w]) {
+               if (memberDom(x,w)) {
                     if ([x remove: w] == CPFailure) {
                         @throw [[CPInternalError alloc] initCPInternalError: "AllDifferent: Unexpected failure"];
                     }
@@ -443,7 +444,7 @@ static void prune(CPAllDifferentDC* ad)
 {   
     for(CPInt k = 0; k < _varSize; k++) {
         if (_match[k] != MAXINT) {
-            if (![_var[k] member: _match[k]]) {
+           if (!memberDom(_var[k], _match[k])) {
                 _valMatch[_match[k]] = -1;
                 _match[k] = MAXINT;
                 _sizeMatching--;

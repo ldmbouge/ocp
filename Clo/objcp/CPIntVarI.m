@@ -166,12 +166,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntVarI
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
-/*
-BOOL bound(CPIntVarI* x)
-{
-   return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
-}
-*/
 -(CPIntVarI*) initCPIntVarCore:(id<CP>)cp low: (CPInt) low up: (CPInt)up
 {
     self = [super init];
@@ -216,7 +210,10 @@ BOOL bound(CPIntVarI* x)
    NSSet* rv = collectConstraints(&_net);
    return rv;
 }
-
+-(CPBitDom*)flatDomain
+{
+   return newDomain((CPBitDom*)_dom, 1, 0);
+}
 -(id<CPIntVarNotifier>) delegate
 {
     return _recv;
@@ -231,6 +228,10 @@ BOOL bound(CPIntVarI* x)
         }
         _recv = [d retain];
     }
+}
+-(CPIntVarI*)findOriginal
+{
+   return self;
 }
 -(BOOL) isConstant
 {
@@ -284,9 +285,12 @@ BOOL bound(CPIntVarI* x)
 }
 -(NSString*)description
 {
-    NSString* dom = [_dom description];
-//   return [NSString stringWithFormat:@"var(%d)=%@",_name,dom];
-    return [NSString stringWithFormat:@"%@",dom];
+   NSString* dom = [_dom description];
+#if !defined(_NDEBUG)
+   return [NSString stringWithFormat:@"var<%d>=%@",_name,dom];
+#else
+   return [NSString stringWithFormat:@"%@",dom];
+#endif
 }
 -(id<CPDom>)domain
 {
@@ -541,12 +545,6 @@ BOOL bound(CPIntVarI* x)
     if (_triggers != nil)
         [_triggers loseValEvt:val solver:_fdm];
 }
--(void) loseRangeEvt:(CPClosure) clo
-{
-    if (TRACKLOSSES)   
-      clo();    
-}
-
 -(CPStatus) updateMin: (CPInt) newMin
 {
     return [_dom updateMin:newMin for:_recv];
@@ -651,10 +649,15 @@ BOOL bound(CPIntVarI* x)
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a
 {
-    CPInt scale = [x scale];
-    CPInt shift = [x shift];
-    CPIntView* view = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift];
-    return view;
+   CPInt scale = [x scale];
+   CPInt shift = [x shift];
+   CPInt nScale = a * scale;
+   CPInt nShift = a * shift;   
+   CPIntVarI* rv = nil;
+   if (nScale == 1 && nShift == 0)
+      rv = [x findOriginal];
+   else rv = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift];
+   return rv;
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a andShift: (CPInt) b
 {
@@ -718,6 +721,10 @@ BOOL bound(CPIntVarI* x)
 {
     [super dealloc];  // CPIntVar will already release the domain. We do _NOT_ have to do it again.
 }
+-(CPBitDom*)flatDomain
+{
+   return newDomain((CPBitDom*)_dom, 1, _b);
+}
 -(CPInt)min
 {
     return [_dom min]+_b;
@@ -778,10 +785,17 @@ BOOL bound(CPIntVarI* x)
 {
     [super loseValEvt: val+_b];
 }
+-(CPIntVarI*)findOriginal
+{
+   return [_recv findOriginal];
+}
 -(NSString*) description
 {
+   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+#if !defined(_NDEBUG)
+   [s appendFormat:@"var<%d>=",_name];
+#endif
     CPInt min = [_dom min] + _b;
-    NSMutableString* s = [[NSMutableString stringWithCapacity:80] autorelease];
     if ([_dom domsize]==1)
         [s appendFormat:@"%d",min];
     else {
@@ -857,6 +871,10 @@ BOOL bound(CPIntVarI* x)
 -(void)dealloc
 {
     [super dealloc];
+}
+-(CPBitDom*)flatDomain
+{
+   return newDomain((CPBitDom*)_dom, _a, _b);
 }
 
 -(CPInt) min
@@ -954,10 +972,17 @@ BOOL bound(CPIntVarI* x)
 {
     [super loseValEvt:_a * val+_b];
 }
+-(CPIntVarI*)findOriginal
+{
+   return [_recv findOriginal];
+}
 -(NSString*)description
 {
-    CPInt min = _a > 0 ? _a * [_dom min] + _b : _a * [_dom max] + _b;
-    NSMutableString* s = [[NSMutableString stringWithCapacity:80] autorelease];
+   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+#if !defined(_NDEBUG)
+   [s appendFormat:@"var<%d>=",_name];
+#endif
+   CPInt min = _a > 0 ? _a * [_dom min] + _b : _a * [_dom max] + _b;
     if ([_dom domsize]==1)
         [s appendFormat:@"%d",min];
     else {
@@ -1034,7 +1059,6 @@ BOOL bound(CPIntVarI* x)
    self = [super init];
    _mx  = n;
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
-   _loseRangeIMP = malloc(sizeof(IMP)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
    _tracksLoseEvt = false;
    _nb  = 0;
@@ -1050,16 +1074,23 @@ BOOL bound(CPIntVarI* x)
 {
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-      _loseRangeIMP = realloc(_loseRangeIMP,sizeof(IMP)*(_mx << 1));
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
    [_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
-   _loseRangeIMP[_nb] = [v methodForSelector:@selector(loseRangeEvt:)];
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
    _nb++;
+}
+-(CPIntVarI*)findOriginal
+{
+   Class core = [CPIntVarI class];
+   for(CPUInt i=0;i < _nb;i++) {
+      if ([_tab[i] isKindOfClass:core])
+         return _tab[i];
+   }
+   return nil;
 }
 -(void) setTracksLoseEvt
 {
@@ -1090,13 +1121,6 @@ BOOL bound(CPIntVarI* x)
     for(CPInt i=0;i<_nb;i++)
         //[_tab[i] loseValEvt:val];
        _loseValIMP[i](_tab[i],@selector(loseValEvt:),val);
-}
--(void) loseRangeEvt:(CPClosure)doIt
-{
-    if (!_tracksLoseEvt) return;
-    for(CPInt i=0;i<_nb;i++)
-        //[_tab[i] loseRangeEvt:doIt];
-       _loseRangeIMP[i](_tab[i],@selector(loseRangeEvt:),doIt);
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {

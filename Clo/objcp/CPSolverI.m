@@ -32,8 +32,8 @@
 #import "CPSetI.h"
 #import "CPSolutionI.h"
 
-#define AC5LOADED(q) ((((q)->_mxs + (q)->_enter - (q)->_exit)  & (q)->_mask) > 0)
-#define ISLOADED(q) (((q)->_csz) > 0)
+#define AC5LOADED(q) ((q)->_csz)
+#define ISLOADED(q)  ((q)->_csz)
 
 /*****************************************************************************************/
 /*                        VarEventNode                                                   */
@@ -164,12 +164,13 @@ typedef struct {
 
 
 @interface CPAC5Queue : NSObject {
-    @package
-    CPInt      _mxs;
-    AC5Event*      _tab;
-    CPInt      _enter;
-    CPInt      _exit;
-    CPInt      _mask;
+   @package
+   CPInt      _mxs;
+   CPInt      _csz;
+   AC5Event*  _tab;
+   CPInt    _enter;
+   CPInt     _exit;
+   CPInt     _mask;
 }
 -(id) initAC5Queue: (CPInt) sz;
 -(void) dealloc;
@@ -185,6 +186,7 @@ typedef struct {
 {
    self = [super init];
    _mxs = sz;
+   _csz = 0;
    _mask = _mxs - 1;
    _tab = malloc(sizeof(AC5Event)*_mxs);
    _enter = _exit = 0;
@@ -198,41 +200,54 @@ typedef struct {
 -(void)reset
 {
    _enter = _exit = 0;
+   _csz = 0;
 }
 -(bool)loaded
 {
-   CPInt nb = (_mxs + _enter - _exit)  & _mask;
-   return nb > 0;
+   return _csz > 0;
 }
+-(void)resize
+{
+   AC5Event* nt = malloc(sizeof(AC5Event)*_mxs*2);
+   AC5Event* ptr = nt;
+   CPInt cur = _exit;
+   do {
+      *ptr++ = _tab[cur];
+      cur = (cur+1) & _mask;
+   } while (cur != _enter);
+   free(_tab);
+   _tab = nt;
+   _exit = 0;
+   _enter = _mxs-1;
+   _mxs <<= 1;
+   _mask = _mxs - 1;   
+}
+inline static void enQueueAC5(CPAC5Queue* q,VarEventNode* cb,CPInt val)
+{
+   if (q->_csz == q->_mxs-1) 
+      [q resize];      
+   CPInt enter = q->_enter;
+   q->_tab[enter]  = (AC5Event){cb,val};
+   q->_enter = (enter+1) & q->_mask;   
+   ++q->_csz;
+}
+inline static AC5Event deQueueAC5(CPAC5Queue* q)
+{
+   if (q->_enter != q->_exit) {
+      CPInt oe = q->_exit;
+      q->_exit = (oe+1) & q->_mask;
+      --q->_csz;
+      return q->_tab[oe];
+   } else return (AC5Event){0,0};   
+}
+                                  
 -(void)enQueue:(VarEventNode*)cb with:(CPInt)val
 {
-   CPInt nb = (_mxs + _enter - _exit)  & _mask;
-   if (nb == _mxs-1) {
-      AC5Event* nt = malloc(sizeof(AC5Event)*_mxs*2);
-      AC5Event* ptr = nt;
-      CPInt cur = _exit;
-      do {
-         *ptr++ = _tab[cur];
-         cur = (cur+1) & _mask;
-      } while (cur != _enter);
-      free(_tab);
-      _tab = nt;
-      _exit = 0;
-      _enter = _mxs-1;
-      _mxs <<= 1;
-      _mask = _mxs - 1;
-   }
-   _tab[_enter]._list  = cb;
-   _tab[_enter]._value = val;
-   _enter = (_enter+1) & _mask;
+   enQueueAC5(self, cb, val);
 }
 -(AC5Event)deQueue
 {
-   if (_enter != _exit) {
-      CPInt oe = _exit;
-      _exit = (_exit+1) & _mask;
-      return _tab[oe];
-   } else return (AC5Event){0,0};
+   return deQueueAC5(self);
 }
 @end
 
@@ -359,7 +374,7 @@ typedef struct {
 
 -(void) scheduleAC5: (VarEventNode*) list  with: (CPInt) val
 {
-   [_ac5 enQueue: list with: val];
+   enQueueAC5(_ac5, list, val);
 }
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
@@ -394,7 +409,7 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    while (status != CPFailure && !done) {
        // AC5 manipulates the list
        while (status != CPFailure && AC5LOADED(_ac5)) {
-           AC5Event evt = [_ac5 deQueue];
+           AC5Event evt = deQueueAC5(_ac5);
            VarEventNode* list = evt._list;
            while (status != CPFailure && list) {
                // PVH: this may need to be generalized for more general events
@@ -461,7 +476,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    CPCoreConstraint* cstr = (CPCoreConstraint*) c;
    CPStatus status = [cstr post];
    _status = internalPropagate(self,status);
-   if (_status) {
+   if (_status && _status != CPSkip) {
       [cstr setId:[_cStore count]];
       [_cStore addObject:c]; // only add when no failure
    }

@@ -29,10 +29,20 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
+void labelFF(id<CP> m,id<CPIntVarArray> x)
+{
+   CPRange R = {[x low],[x up]};
+   [m forrange: R
+    filteredBy: ^bool(int i) { return ![[x at:i] bound];}
+     orderedBy: ^int(int i)  { return [[x at:i] domsize];}
+            do: ^(int i)     { [CPLabel var: [x at:i]]; }
+    ];
+}
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 10;
+      int n = 14;
       CPRange R = (CPRange){1,n};
       CPRange D = (CPRange){0,n-1};
       CPRange SD = (CPRange){1,n-1};
@@ -41,11 +51,13 @@ int main(int argc, const char * argv[])
       id<CPIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
       id<CPIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
       //id<CPHeuristic> h = [CPFactory createWDeg:cp];
+      //id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solveAll: ^{
          [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
          for(CPUInt i=SD.low;i<=SD.up;i++) {
             [cp add:[CPFactory expr:[CPFactory expr:[dx at:i]
-                                              equal:[CPFactory exprAbs:[CPFactory expr:[sx at:i+1] sub:[sx at:i]]]]]];
+                                              equal:[CPFactory exprAbs:[CPFactory expr:[sx at:i+1] sub:[sx at:i]]]]
+                        consistency: DomainConsistency]];
          }
          [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
          [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
@@ -56,8 +68,10 @@ int main(int argc, const char * argv[])
          NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
+         NSLog(@"Start...");
+         labelFF(cp,sx);
          //[CPLabel heuristic:h];
-         [CPLabel array:sx];
+         //[CPLabel array:sx];
          [nbSolutions incr];
          NSLog(@"Solution: %@",sx);
       }];

@@ -56,6 +56,14 @@ public:
    }
 };
 
+H operator-(id<CPIntVar> x,H y)
+{
+   return [CPFactory expr:x sub:y];
+}
+H operator==(id<CPIntVar> x,H y)
+{
+   return [CPFactory expr:x equal:y];
+}
 
 int main(int argc, const char * argv[])
 {
