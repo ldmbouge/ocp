@@ -169,6 +169,11 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
+		<key>sport.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>17</integer>
+		</dict>
 		<key>testLPWrapper.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -303,6 +308,11 @@
 			<true/>
 		</dict>
 		<key>B111FBFE13CF3D10003C5119</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B12ED8BF159E0C2200713C8E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
