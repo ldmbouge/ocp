@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
          //[CPLabel heuristic:h];
          //[CPLabel array:sx];
          [nbSolutions incr];
-         NSLog(@"Solution: %@",sx);
+         //NSLog(@"Solution: %@",sx);
       }];
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);

@@ -33,6 +33,7 @@
 -(id<CPDom>)initBoundsDomFor:(CPBoundsDom*)dom
 {
    self = [super init];
+   _dc = DCBounds;
    _trail = dom->_trail;
    _min = dom->_min;
    _max = dom->_max;
@@ -45,6 +46,7 @@
 -(id<CPDom>)initBoundsDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up 
 {
    self = [super init];
+   _dc = DCBounds;
    _trail = trail;
    _min = makeTRInt(_trail,low);
    _max = makeTRInt(_trail,up);
@@ -184,6 +186,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_dc];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_min._val];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_max._val];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
@@ -194,6 +197,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_dc];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_min._val];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_max._val];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
@@ -208,6 +212,7 @@
 -(CPBitDom*)initBitDomFor:(CPBitDom*)dom
 {
    self = [super initBoundsDomFor:dom];
+   _dc = DCBits;
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(CPUInt)*nb);
@@ -223,6 +228,7 @@
 -(CPBitDom*) initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up
 {
    self = [super initBoundsDomFor:trail low:low up:up];
+   _dc = DCBits;
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(CPUInt)*nb);
@@ -345,7 +351,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       const CPUInt magic = _trail->_magic;
       if (_magic[bw] != magic) {
          _magic[bw] = magic;
-         [_trail trailUnsigned:(_bits + bw)];
+         trailUIntFun(_trail,_bits+bw);
       }     
       if (v) 
          _bits[bw] |= (0x1 << (b & 0x1f));
@@ -560,6 +566,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_dc];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_min._val];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_max._val];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
@@ -577,6 +584,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_dc];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_min._val];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_max._val];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_sz._val];

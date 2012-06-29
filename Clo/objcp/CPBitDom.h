@@ -30,14 +30,21 @@
 
 @class CPSolverI;
 
+enum CPDomClass {
+   DCBounds = 0,
+   DCBits = 1,
+   DCLRanges = 2
+};
+
 @interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
 @package
-   CPTrail* _trail;
-   TRInt      _min;
-   TRInt      _max;
-   TRInt       _sz;
-   CPInt       _imin;
-   CPInt       _imax;
+   enum CPDomClass    _dc;
+   CPTrail*        _trail;
+   TRInt             _min;
+   TRInt             _max;
+   TRInt              _sz;
+   CPInt            _imin;
+   CPInt            _imax;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
 -(CPBoundsDom*)initBoundsDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
@@ -111,16 +118,16 @@ static const CPUInt __bitmasks[32] = {
 
 static inline CPInt domMember(CPBoundsDom* x,CPInt value)
 {
-   static id ibnd = nil;
-   if (ibnd==nil) {
-      ibnd = objc_getClass("CPBoundsDom");
-   }
-   id cx = object_getClass(x);
-   if (cx == ibnd) {
-      return x->_min._val <= value && value <= x->_max._val;
-   } else {
-      const CPUInt ofs = value - x->_imin;
-      return x->_min._val <= value && value <= x->_max._val && (((CPBitDom*)x)->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
+   switch(x->_dc) {
+      case DCBounds:
+         return x->_min._val <= value && value <= x->_max._val;
+      case DCBits: {
+         if (x->_min._val <= value && value <= x->_max._val) {
+            const CPUInt ofs = value - x->_imin;
+            return (((CPBitDom*)x)->_bits[ofs>>5] & (0x1 << (ofs & 0x1f)));
+         } else return NO;
+      }
+      default: return 0;
    }
 }
 
@@ -140,7 +147,8 @@ static inline CPInt maxCPDom(CPBitDom* d)
 static inline CPInt getCPDom(CPBitDom* d,CPInt v)
 {
    const CPUInt ofs = v - d->_imin;
-   return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]) != 0;
+   //return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
+   return (d->_bits[ofs>>5] & (0x1 << (ofs & 0x1f)));
 }
 static inline void setCPDom(CPBitDom* d,CPInt b,BOOL v)
 {

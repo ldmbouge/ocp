@@ -84,7 +84,7 @@
 -(void)      trackObject:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c;
--(void)      scheduleAC3:(VarEventNode*)list;
+-(void)      scheduleAC3:(VarEventNode**)mlist;
 -(void)      scheduleAC5:(VarEventNode*)list with:(CPInt)val;
 -(CPStatus)  propagate;
 -(CPStatus)  add:(id<CPConstraint>)c;

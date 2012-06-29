@@ -325,7 +325,7 @@
             id<CPIntVar> yp = [CPFactory intVar:_terms[1]._var scale:- _terms[1]._coef];
             return [fdm post:[CPFactory equal:xp to:yp plus:- _indep consistency:cons]];
          }
-      }break;
+      }break;   
       case 3: {
          if (_terms[0]._coef * _terms[1]._coef * _terms[2]._coef == -1) { // odd number of negative coefs (4 cases)
             if (_terms[0]._coef + _terms[1]._coef + _terms[2]._coef == -3) { // all 3 negative
@@ -337,7 +337,7 @@
                for(CPUInt i=0;i<3;i++)
                   if (pc[i] == nc)
                      pc[i] = pc[2];
-               id<CPIntVar> zp = [CPFactory intVar:_terms[nc]._var scale:-1 shift:-_indep];
+               id<CPIntVar> zp = [CPFactory intVar:_terms[nc]._var scale:1 shift:-_indep];
                return [fdm post:[CPFactory equal3:zp to:_terms[pc[0]]._var plus:_terms[pc[1]]._var consistency:cons]];
             }
          } else {

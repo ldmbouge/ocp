@@ -128,16 +128,22 @@ typedef struct  {
 -(CPIntVarI*)findOriginal;
 @end
 
+enum CPVarClass {
+   CPVCBare = 0,
+   CPVCShift = 1,
+   CPVCAffine = 2
+};
 
 @interface CPIntVarI : CPExprI<CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
-    CPUInt                             _name;
-    id<CP>                               _cp;
-    CPSolverI*                          _fdm;
-    id<CPDom>                           _dom;
-    CPEventNetwork                      _net;
-    CPTriggerMap*                  _triggers;
-    id<CPIntVarNotifier,NSCoding>      _recv;
+   enum CPVarClass                      _vc;
+   CPUInt                             _name;
+   id<CP>                               _cp;
+   CPSolverI*                          _fdm;
+   id<CPDom>                           _dom;
+   CPEventNetwork                      _net;
+   CPTriggerMap*                  _triggers;
+   id<CPIntVarNotifier,NSCoding>      _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CP>) cp low:(CPInt)low up:(CPInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CP>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x;
@@ -221,7 +227,7 @@ typedef struct  {
 
 @interface CPIntShiftView : CPIntVarI {
    @package
-    CPInt _b;
+   CPInt _b;
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(CPInt)b;
 -(void)dealloc;
@@ -273,65 +279,105 @@ static inline BOOL bound(CPIntVarI* x)
 
 static inline CPInt minDom(CPIntVarI* x)
 {
-   static id irvc = nil,isvc = nil;
-   if (irvc==nil) {
-      irvc = objc_getClass("CPIntVarI");
-      isvc = objc_getClass("CPIntShiftView");
-   }
-   id cx = object_getClass(x);
-   if (cx == irvc) {
-      return ((CPBoundsDom*)x->_dom)->_min._val;
-   } else if (cx == isvc) {
-      return ((CPBoundsDom*)x->_dom)->_min._val + ((CPIntShiftView*)x)->_b;      
-   } else {
-      if (((CPIntView*)x)->_a > 0)
-         return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
-      else 
-         return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+   switch (x->_vc) {
+      case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_min._val;
+      case CPVCShift: return ((CPBoundsDom*)x->_dom)->_min._val + ((CPIntShiftView*)x)->_b;
+      case CPVCAffine: {
+         if (((CPIntView*)x)->_a > 0)
+            return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+         else 
+            return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
+      }
    }
 }
 
 static inline CPInt maxDom(CPIntVarI* x)
 {
-   static id irvc = nil,isvc = nil;
-   if (irvc==nil) {
-      irvc = objc_getClass("CPIntVarI");
-      isvc = objc_getClass("CPIntShiftView");
-   }
-   id cx = object_getClass(x);
-   if (cx == irvc) {
-      return ((CPBoundsDom*)x->_dom)->_max._val;
-   } else if (cx == isvc) {
-      return ((CPBoundsDom*)x->_dom)->_max._val + ((CPIntShiftView*)x)->_b;      
-   } else {
-      if (((CPIntView*)x)->_a > 0)
-         return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
-      else 
-         return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+   switch (x->_vc) {
+      case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_max._val;
+      case CPVCShift: return ((CPBoundsDom*)x->_dom)->_max._val + ((CPIntShiftView*)x)->_b;
+      case CPVCAffine: {
+         if (((CPIntView*)x)->_a > 0)
+            return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
+         else 
+            return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
+      }
    }
 }
 
 static inline CPInt memberDom(CPIntVarI* x,CPInt value)
 {
-   static id irvc = nil,isvc = nil;
-   if (irvc==nil) {
-      irvc = objc_getClass("CPIntVarI");
-      isvc = objc_getClass("CPIntShiftView");
-   }
-   id cx = object_getClass(x);
    CPInt target;
-   if (cx == irvc) {
-      target = value;
-   } else if (cx == isvc) {
-      target = value - ((CPIntShiftView*)x)->_b;
-   } else {
-      const CPInt a = ((CPIntView*)x)->_a;
-      const CPInt b = ((CPIntView*)x)->_b;
-      const CPInt r = (value - b) % a;
-      if (r != 0) return NO;
-      target = (value - b) / a;
-   }   
+   switch (x->_vc) {
+      case CPVCBare: target = value;
+         break;
+      case CPVCShift:
+         target = value - ((CPIntShiftView*)x)->_b;
+         break;
+      case CPVCAffine: {
+         const CPInt a = ((CPIntView*)x)->_a;
+         const CPInt b = ((CPIntView*)x)->_b;
+         if (a == 1) 
+            target = value - b;
+         else if (a== -1)
+            target = b - value;
+         else {
+            const CPInt r = (value - b) % a;
+            if (r != 0) return NO;
+            target = (value - b) / a;
+         }
+      }break;
+   }
    return domMember((CPBoundsDom*)x->_dom, target);
+}
+
+static inline CPInt memberBitDom(CPIntVarI* x,CPInt value)
+{
+   CPInt target;
+   switch (x->_vc) {
+      case CPVCBare: target = value;
+         break;
+      case CPVCShift:
+         target = value - ((CPIntShiftView*)x)->_b;
+         break;
+      case CPVCAffine: {
+         const CPInt a = ((CPIntView*)x)->_a;
+         const CPInt b = ((CPIntView*)x)->_b;
+         if (a == 1) 
+            target = value - b;
+         else if (a== -1)
+            target = b - value;
+         else {
+            const CPInt r = (value - b) % a;
+            if (r != 0) return NO;
+            target = (value - b) / a;
+         }
+      }break;
+   }
+   return getCPDom((CPBitDom*)x->_dom, target);   
+}
+
+static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
+{
+   CPInt target;
+   switch (x->_vc) {
+      case CPVCBare:  target = v;break;
+      case CPVCShift: target = v - ((CPIntShiftView*)x)->_b;break;
+      case CPVCAffine: {
+         CPInt a = ((CPIntView*)x)->_a;
+         CPInt b = ((CPIntView*)x)->_b;
+         if (a == -1)
+            target = b - v;
+         else if (a== 1)
+            target = v - b;
+         else {
+            CPInt r = (v - b) % a;
+            if (r != 0) return CPSuspend;
+            target = (v - b) / a; 
+         }
+      }
+   }
+   return [x->_dom remove:target for:x->_recv];
 }
 
 /*****************************************************************************************/
