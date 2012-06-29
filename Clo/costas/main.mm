@@ -73,7 +73,7 @@ int main(int argc, const char * argv[])
       CPRange D = (CPRange){-n+1,n-1};
       id<CP> cp = [CPFactory createSolver];      
       id<CPIntVarArray> costas = [CPFactory intVarArray: cp range:R domain: R];         
-      id<CPIntVarMatrix>  diff = [CPFactory intVarMatrix:cp range:R :R domain:D];
+      id<CPIntVarMatrix>  diff = [CPFactory intVarMatrix:cp range:R : R domain:D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solve: ^{
          [cp add:[CPFactory alldifferent:costas]];

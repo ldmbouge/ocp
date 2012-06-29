@@ -43,15 +43,6 @@
 -(id<CP>) cp;
 @end
 
-//@protocol CPIntVarMatrix <NSObject>
-//-(id<CPIntVar>) atRow:(CPInt)r col:(CPInt)c;
-//-(CPRange) rowRange;
-//-(CPRange) columnRange;
-//-(NSMutableArray*) row: (CPInt) r;
-//-(NSUInteger)count;
-//-(id<CP>) cp;
-//@end
-
 @protocol CPIntArray <NSObject> 
 -(CPInt) at: (CPInt) value;
 -(CPInt) low;

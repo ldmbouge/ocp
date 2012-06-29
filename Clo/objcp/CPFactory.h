@@ -55,11 +55,11 @@
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a shift:(CPInt) b;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
-
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;
-+(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 : (CPRange) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c;
 
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;

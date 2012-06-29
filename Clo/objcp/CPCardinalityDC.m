@@ -571,22 +571,31 @@ static void findSCCsink(CPCardinalityDC* card)
     for(CPInt i = 0; i < _varSize; i++)
         if (_varMatch[i] != MAXINT && ![_var[i] member: _varMatch[i]])
             unmatchVariable(self,i);
-//    [self printFlows];
     if (!findMaxFlow(self))
         return CPFailure;
-//    [self printFlows];
     if (!findFeasibleFlow(self))
         return CPFailure;
     [self prune];
-//    [self printFlows];
     return CPSuspend;
 }
 -(NSSet*) allVars
 {
+    if (_posted)
+        return [[NSSet alloc] initWithObjects:_var count:_varSize];
+    else
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Cardinality: allVars called before the constraints is posted"];
     return NULL;
 }
 -(CPUInt) nbUVars
 {
+    if (_posted) {
+        CPUInt nb=0;
+        for(CPUInt k=0;k<_varSize;k++)
+            nb += ![_var[k] bound];
+        return nb;
+    }
+    else 
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Cardinality: nbUVars called before the constraints is posted"];
     return 0;
 }
 -(void) encodeWithCoder: (NSCoder*) aCoder
@@ -596,7 +605,6 @@ static void findSCCsink(CPCardinalityDC* card)
     [aCoder encodeObject:_lb];
     [aCoder encodeObject:_ub];
 }
-
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super initWithCoder:aDecoder];

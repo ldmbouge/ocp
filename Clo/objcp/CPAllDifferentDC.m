@@ -40,78 +40,80 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k);
 static void findSCCval(CPAllDifferentDC* ad,CPInt k);
 static void prune(CPAllDifferentDC* ad);
 
+-(void) initInstanceVariables 
+{
+    _idempotent = YES;
+    _priority = HIGHEST_PRIO-3;
+    _posted = false;
+}
 
 -(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x
 {
-   self = [super initCPActiveConstraint: [[x cp] solver]];
-   _idempotent = YES;
-   _priority = HIGHEST_PRIO-2;
-   CPInt low = [x low];
-   CPInt up = [x up];
-   _varSize = (up - low + 1);
-   _var = malloc(_varSize * sizeof(CPIntVarI*));
-   for(CPInt i = 0; i < _varSize; i++) {
-      _var[i] = (CPIntVarI*) [x at: low + i];
-   }
-   _posted = false;
-   return self;
+    self = [super initCPActiveConstraint: [[x cp] solver]];
+    _x = x;
+    [self initInstanceVariables];
+    return self;
 }
+
 -(void) dealloc 
 {
 //   NSLog(@"AllDifferent dealloc called ...");
-   free(_var);
-   _valMatch += _min;
-   free(_match);
-   free(_valMatch);
-   free(_varSeen);
-   _valSeen += _min;
-   free(_valSeen);
-   _valComponent += _min;
-   _valDfs += _min;
-   _valHigh += _min;
-   free(_valComponent);
-   free(_valDfs);
-   free(_valHigh);
-   free(_varComponent);
-   free(_varDfs);
-   free(_varHigh);
-   free(_stack);
-   free(_type);
-   [super dealloc];
+    if (_posted) {
+        free(_var);
+        _valMatch += _min;
+        free(_match);
+        free(_valMatch);
+        free(_varSeen);
+        _valSeen += _min;
+        free(_valSeen);
+        _valComponent += _min;
+        _valDfs += _min;
+        _valHigh += _min;
+        free(_valComponent);
+        free(_valDfs);
+        free(_valHigh);
+        free(_varComponent);
+        free(_varDfs);
+        free(_varHigh);
+        free(_stack);
+        free(_type);
+        [super dealloc];
+    }
 }
 
--(NSSet*)allVars
+-(NSSet*) allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_var count:_varSize];
-   return theSet;
-}
--(CPUInt)nbUVars
-{
-   CPUInt nb=0;
-   for(CPUInt k=0;k<_varSize;k++)
-      nb += ![_var[k] bound];
-   return nb;
+    if (_posted)
+        return [[NSSet alloc] initWithObjects:_var count:_varSize];
+    else
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: allVars called before the constraints is posted"];
+    return NULL;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+-(CPUInt) nbUVars
 {
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_varSize];
-   for(CPInt i=0;i<_varSize;i++)
-      [aCoder encodeObject:_var[i]];
+    if (_posted) {
+        CPUInt nb=0;
+        for(CPUInt k=0;k<_varSize;k++)
+            nb += ![_var[k] bound];
+        return nb;
+    }
+    else 
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
+    return 0;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (void) encodeWithCoder:(NSCoder *)aCoder
 {
-   self = [super initWithCoder:aDecoder];
-   _idempotent = YES;
-   _priority = HIGHEST_PRIO-2;
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_varSize];
-   _var = malloc(_varSize * sizeof(CPIntVarI*));
-   for(CPInt i=0;i<_varSize;i++)
-      _var[i] = [aDecoder decodeObject];
-   _valMatch = _varSeen = _valSeen = NULL;
-   _valComponent = _valDfs = _valHigh = NULL;
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:_x];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    _x = [aDecoder decodeObject];
+    [self initInstanceVariables];
    return self;
 }
 
@@ -133,14 +135,22 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
     if (_posted)
         return CPSuspend;
     _posted = true;
+    
+    CPInt low = [_x low];
+    CPInt up = [_x up];
+    _varSize = (up - low + 1);
+    _var = malloc(_varSize * sizeof(CPIntVarI*));
+    for(CPInt i = 0; i < _varSize; i++) 
+        _var[i] = (CPIntVarI*) [_x at: low + i];
+
     for(CPInt i = 0; i < _varSize; i++) 
         if ([_var[i] domsize] == 1) {
             if (removeOnBind(self,i) == CPFailure)
                 return CPFailure;
         }
-        else {
+        else 
            [_var[i] whenBindDo: ^CPStatus() { return removeOnBind(self,i);} onBehalf:self];
-        }
+        
     
     [self findValueRange];
     [self initMatching];

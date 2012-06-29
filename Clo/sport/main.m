@@ -59,7 +59,7 @@ int main(int argc, const char * argv[])
         for(CPInt j = i+1; j <= n; j++)
             [table insert: i : j : (i-1)*n + j-1];
     [table close];
-
+    
     [cp solve: 
      ^() {
          for(CPInt w = 1; w < n; w++)
@@ -79,16 +79,13 @@ int main(int argc, const char * argv[])
         using: 
      ^() {
          [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
+         [CPLabel array: allteams orderedBy: ^CPInt(CPInt i) { return [[allteams at:i] domsize];}];
          printf("Solution \n");
          for(CPInt p = 1; p <= n/2; p++) {
              for(CPInt w = 1; w < n; w++) 
                  printf("%2d-%2d [%3d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game at: p : w] min]);
              printf("\n");
          }
-         [CPLabel array: allteams orderedBy: ^CPInt(CPInt i) { return [[allteams at:i] domsize];}];
-         //         [cp label:[x at: 1] with: 2];
-         printf("matrix: %s\n",[[team description] cStringUsingEncoding:NSASCIIStringEncoding]);
-         //         [CPLabel array: x];
      }
      ];
     NSLog(@"Solver status: %@\n",cp);
@@ -98,15 +95,3 @@ int main(int argc, const char * argv[])
     return 0;
 }
 
-/*
-id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
-id<CPTable> table = [CPFactory table: cp arity: 3];
-for(CPInt i = 0; i < 5; i++)
-for(CPInt j = i+1; j < 5; j++)
-[table insert: i : j : i*5 + j];
-[table close];
-[table print];
-[cp solveAll: 
- ^() {
-     [cp add: [CPFactory table: table on: x]];
-*/

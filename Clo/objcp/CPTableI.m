@@ -199,44 +199,49 @@
 
 @implementation CPTableCstrI
 
+-(void) initInstanceVariables 
+{
+    _idempotent = YES;
+    _priority = HIGHEST_PRIO;
+    _posted = false;
+}
+
 -(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table  
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO;
+    [self initInstanceVariables];
+    _table = table;
+    
     CPInt low = [x low];
     CPInt up = [x up];
     _arity = (up - low + 1);
-    // Need a convention for all these memory stuff; Talk to LDM
     _var = malloc(_arity * sizeof(CPIntVarI*));
     for(CPInt i = 0; i < _arity; i++)
         _var[i] = (CPIntVarI*) [x at: low + i];
-    _table = [table retain];
-    _posted = false;
     return self;    
 }
 -(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO;
+    [self initInstanceVariables];    
+    _table = table;
+
     _arity = 3;
     _var = malloc(_arity * sizeof(CPIntVarI*));
     _var[0] = x;
     _var[1] = y;
     _var[2] = z;
-    _table = [table retain];
-    _posted = false;
     return self;        
 }
 -(void) dealloc
 {
 //    NSLog(@"TableCstr dealloc called ...");
     free(_var);
-    [_table release];
-    for(CPInt i = 0; i < _arity; i++)
-        freeTRIntArray(_currentSupport[i]);
-    free(_currentSupport);
+    if (_posted) {
+        for(CPInt i = 0; i < _arity; i++)
+            freeTRIntArray(_currentSupport[i]);
+        free(_currentSupport);
+    }
     [super dealloc];
 }
 
@@ -346,13 +351,12 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    _table = [[aDecoder decodeObject] retain];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO;
+    _table = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
     _var = malloc(_arity * sizeof(CPIntVarI*));
     for(CPInt i=0;i<_arity;i++)
         _var[i] = [aDecoder decodeObject];
+    [self initInstanceVariables];
     return self;
 }
 
