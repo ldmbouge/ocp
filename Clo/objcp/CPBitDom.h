@@ -122,15 +122,10 @@ static inline CPInt domMember(CPBoundsDom* x,CPInt value)
       case DCBounds:
          return x->_min._val <= value && value <= x->_max._val;
       case DCBits: {
-         
-         const CPUInt ofs = value - x->_imin;
-         return x->_min._val <= value && value <= x->_max._val && (((CPBitDom*)x)->_bits[ofs>>5] & (0x1 << (ofs & 0x1f)));
-         /*
          if (x->_min._val <= value && value <= x->_max._val) {
-            const CPUInt ofs = value - x->_imin;
-            return (((CPBitDom*)x)->_bits[ofs>>5] & (0x1 << (ofs & 0x1f)));
-         } else return NO;
-          */
+            const CPInt ofs = value - x->_imin;
+            return (((CPBitDom*)x)->_bits[ofs>>5] & (0x1 << (ofs & 0x1f))) != 0;
+         } else return 0;         
       }
       default: return 0;
    }
