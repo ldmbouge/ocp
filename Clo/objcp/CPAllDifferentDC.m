@@ -119,10 +119,10 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
 {
    CPIntVarI** var = ad->_var;
    CPInt nb = ad->_varSize;
-   CPInt val = [var[k] min];
+   CPInt val = minDom(var[k]);
    for(CPInt i = 0; i < nb; i++)
       if (i != k) 
-         if ([var[i] remove: val] == CPFailure)
+         if (removeDom(var[i], val) == CPFailure)
             return CPFailure;
    return CPSuspend;
 }
@@ -215,11 +215,11 @@ static bool findAlternatingPath(CPAllDifferentDC* ad,CPInt i)
     if (_varSeen[i] != ad->_magic) {
         _varSeen[i] = ad->_magic;
         CPIntVarI* x = _var[i];
-        CPInt mx = [x min];
-        CPInt Mx = [x max];
+       CPInt mx = minDom(x);
+       CPInt Mx = maxDom(x);
         for(CPInt v = mx; v <= Mx; v++) {
             if (_match[i] != v) {
-               if (memberDom(x, v)) {
+               if (memberBitDom(x, v)) {
                     if (findAlternatingPathValue(ad,v)) {
                         _match[i] = v;
                         _valMatch[v] = i;
@@ -324,7 +324,7 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
    [x bounds:&bx];
    for(CPInt w = bx.min; w <= bx.max; w++) {
       if (_match[k] != w) {
-         if (memberDom(x, w)) {
+         if (memberBitDom(x, w)) {
             CPInt valDfs = _valDfs[w];
             if (!valDfs) {
                findSCCval(ad,w);

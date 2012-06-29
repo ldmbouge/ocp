@@ -331,6 +331,32 @@ static inline CPInt memberDom(CPIntVarI* x,CPInt value)
    return domMember((CPBoundsDom*)x->_dom, target);
 }
 
+static inline CPInt memberBitDom(CPIntVarI* x,CPInt value)
+{
+   CPInt target;
+   switch (x->_vc) {
+      case CPVCBare: target = value;
+         break;
+      case CPVCShift:
+         target = value - ((CPIntShiftView*)x)->_b;
+         break;
+      case CPVCAffine: {
+         const CPInt a = ((CPIntView*)x)->_a;
+         const CPInt b = ((CPIntView*)x)->_b;
+         if (a == 1) 
+            target = value - b;
+         else if (a== -1)
+            target = b - value;
+         else {
+            const CPInt r = (value - b) % a;
+            if (r != 0) return NO;
+            target = (value - b) / a;
+         }
+      }break;
+   }
+   return getCPDom((CPBitDom*)x->_dom, target);   
+}
+
 static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
 {
    CPInt target;

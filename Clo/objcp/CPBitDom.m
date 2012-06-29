@@ -351,7 +351,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       const CPUInt magic = _trail->_magic;
       if (_magic[bw] != magic) {
          _magic[bw] = magic;
-         [_trail trailUnsigned:(_bits + bw)];
+         trailUIntFun(_trail,_bits+bw);
       }     
       if (v) 
          _bits[bw] |= (0x1 << (b & 0x1f));
