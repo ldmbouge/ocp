@@ -351,7 +351,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    _table = [[aDecoder decodeObject] retain];
+    _table = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
     _var = malloc(_arity * sizeof(CPIntVarI*));
     for(CPInt i=0;i<_arity;i++)

@@ -112,7 +112,7 @@ static void prune(CPAllDifferentDC* ad);
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    _x = [[aDecoder decodeObject] retain];
+    _x = [aDecoder decodeObject];
     [self initInstanceVariables];
    return self;
 }

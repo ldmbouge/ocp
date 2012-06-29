@@ -335,6 +335,10 @@
 		B12B178C151DC9CB008AB289 /* CPConcurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178B151DC9CB008AB289 /* CPConcurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B12B178F151DCA16008AB289 /* CPConcurrencyI.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178D151DCA16008AB289 /* CPConcurrencyI.h */; };
 		B12B1790151DCA16008AB289 /* CPConcurrencyI.m in Sources */ = {isa = PBXBuildFile; fileRef = B12B178E151DCA16008AB289 /* CPConcurrencyI.m */; };
+		B12ED8C2159E0C2200713C8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		B12ED8C5159E0C2200713C8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B12ED8C4159E0C2200713C8E /* main.m */; };
+		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
+		B12ED8CF159E0CAD00713C8E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1357F7A14AE73EE007AD73C /* libgurobi.so.4.6.1 in Frameworks */ = {isa = PBXBuildFile; fileRef = B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */; };
 		B1357F7C14AE746C007AD73C /* gurobi_c.h in Headers */ = {isa = PBXBuildFile; fileRef = B1357F7B14AE746C007AD73C /* gurobi_c.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B149BF5D151E759600FC5887 /* CPCrFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B149BF5B151E759600FC5887 /* CPCrFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -554,6 +558,13 @@
 			remoteInfo = objcp;
 		};
 		B103534C13BBD81900627058 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		B12ED8CD159E0CA500713C8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -810,6 +821,16 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		B12ED8BE159E0C2200713C8E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -1094,6 +1115,10 @@
 		B12B178B151DC9CB008AB289 /* CPConcurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConcurrency.h; sourceTree = "<group>"; };
 		B12B178D151DCA16008AB289 /* CPConcurrencyI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConcurrencyI.h; sourceTree = "<group>"; };
 		B12B178E151DCA16008AB289 /* CPConcurrencyI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConcurrencyI.m; sourceTree = "<group>"; };
+		B12ED8C0159E0C2200713C8E /* sport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = sport; sourceTree = BUILT_PRODUCTS_DIR; };
+		B12ED8C4159E0C2200713C8E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B12ED8C7159E0C2200713C8E /* sport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sport-Prefix.pch"; sourceTree = "<group>"; };
+		B12ED8C8159E0C2200713C8E /* sport.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = sport.1; sourceTree = "<group>"; };
 		B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = libgurobi.so.4.6.1; path = ../../../../../Library/gurobi461/mac64/lib/libgurobi.so.4.6.1; sourceTree = "<group>"; };
 		B1357F7B14AE746C007AD73C /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = ../../../../../Library/gurobi461/mac64/include/gurobi_c.h; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* CPCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCrFactory.h; sourceTree = "<group>"; };
@@ -1386,6 +1411,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B12ED8BD159E0C2200713C8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B12ED8CF159E0CAD00713C8E /* objcp.framework in Frameworks */,
+				B12ED8C2159E0C2200713C8E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B1571E9E13EDF10E007B5E88 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1545,6 +1579,7 @@
 				5B7408AB1562825E00C05277 /* iOS */,
 				5B778BB4154F1D030078EB07 /* bitArrayTest */,
 				5BB170111582820500D4791A /* driver */,
+				B12ED8C3159E0C2200713C8E /* sport */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -1583,6 +1618,7 @@
 				5BE777401594C9E500ADE34E /* fdmul */,
 				5BE777541594D27C00ADE34E /* costas */,
 				5BC116A01595067900E0F5C8 /* ais */,
+				B12ED8C0159E0C2200713C8E /* sport */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2130,6 +2166,24 @@
 			isa = PBXGroup;
 			children = (
 				B111FC0613CF3D10003C5119 /* testLPWrapper-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B12ED8C3159E0C2200713C8E /* sport */ = {
+			isa = PBXGroup;
+			children = (
+				B12ED8C4159E0C2200713C8E /* main.m */,
+				B12ED8C8159E0C2200713C8E /* sport.1 */,
+				B12ED8C6159E0C2200713C8E /* Supporting Files */,
+			);
+			path = sport;
+			sourceTree = "<group>";
+		};
+		B12ED8C6159E0C2200713C8E /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B12ED8C7159E0C2200713C8E /* sport-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -2896,6 +2950,24 @@
 			productReference = B111FBFF13CF3D10003C5119 /* testLPWrapper */;
 			productType = "com.apple.product-type.tool";
 		};
+		B12ED8BF159E0C2200713C8E /* sport */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B12ED8CA159E0C2200713C8E /* Build configuration list for PBXNativeTarget "sport" */;
+			buildPhases = (
+				B12ED8BC159E0C2200713C8E /* Sources */,
+				B12ED8BD159E0C2200713C8E /* Frameworks */,
+				B12ED8BE159E0C2200713C8E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B12ED8CE159E0CA500713C8E /* PBXTargetDependency */,
+			);
+			name = sport;
+			productName = sport;
+			productReference = B12ED8C0159E0C2200713C8E /* sport */;
+			productType = "com.apple.product-type.tool";
+		};
 		B1571EA113EDF10E007B5E88 /* mpinterface */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B1571EB013EDF10E007B5E88 /* Build configuration list for PBXNativeTarget "mpinterface" */;
@@ -3137,6 +3209,7 @@
 				5BE7773F1594C9E500ADE34E /* fdmul */,
 				5BE777531594D27C00ADE34E /* costas */,
 				5BC1169F1595067900E0F5C8 /* ais */,
+				B12ED8BF159E0C2200713C8E /* sport */,
 			);
 		};
 /* End PBXProject section */
@@ -3544,6 +3617,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B12ED8BC159E0C2200713C8E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B12ED8C5159E0C2200713C8E /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B1571E9D13EDF10E007B5E88 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3721,6 +3802,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B103534C13BBD81900627058 /* PBXContainerItemProxy */;
+		};
+		B12ED8CE159E0CA500713C8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = B12ED8CD159E0CA500713C8E /* PBXContainerItemProxy */;
 		};
 		B1571EB313EDF249007B5E88 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -4793,6 +4879,44 @@
 			};
 			name = Release;
 		};
+		B12ED8CB159E0C2200713C8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "sport/sport-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B12ED8CC159E0C2200713C8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "sport/sport-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		B1571EAE13EDF10E007B5E88 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -5418,6 +5542,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B12ED8CA159E0C2200713C8E /* Build configuration list for PBXNativeTarget "sport" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B12ED8CB159E0C2200713C8E /* Debug */,
+				B12ED8CC159E0C2200713C8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		B1571EB013EDF10E007B5E88 /* Build configuration list for PBXNativeTarget "mpinterface" */ = {
 			isa = XCConfigurationList;

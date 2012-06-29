@@ -189,7 +189,7 @@
     _up = nb-1;
     _nb = nb;
     for (CPInt i=0 ; i < _nb; i++) 
-        _array[i] = [[CPFactory intVar: cp domain: domain] retain];
+        _array[i] = [CPFactory intVar: cp domain: domain];
     return self;
 }
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp size: (CPInt) nb with:(CPIntVarI*(^)(CPInt)) clo
@@ -201,7 +201,7 @@
     _up = nb-1;
     _nb = nb;
     for (CPInt i=0 ; i < _nb; i++) 
-        _array[i] = [clo(i) retain];
+        _array[i] = clo(i);
     return self;
 }
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
@@ -214,7 +214,7 @@
     _array = malloc(_nb * sizeof(CPIntVarI*));
     _array -= _low;
     for (CPInt i=_low ; i <= _up; i++) 
-        _array[i] = [[CPFactory intVar: cp domain: domain] retain];
+        _array[i] = [CPFactory intVar: cp domain: domain];
     return self;
 }
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range
@@ -241,10 +241,10 @@
     _array = malloc(_nb * sizeof(CPIntVarI*));
     _array -= _low;
     for (CPInt i=_low ; i <= _up; i++) 
-        _array[i] = [clo(i) retain];
+        _array[i] = clo(i);
     return self;
 }
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo
+-(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo
 {
     self = [super init];
     _cp = cp;   
@@ -255,14 +255,27 @@
     int k = 0;
     for (CPInt i=r1.low ; i <= r1.up; i++) 
         for (CPInt j=r2.low ; j <= r2.up; j++)         
-            _array[k++] = [clo(i,j) retain];
+            _array[k++] = clo(i,j);
+    return self;
+}
+-(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 : (CPRange) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo
+{
+    self = [super init];
+    _cp = cp;   
+    _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1) * (r3.up - r3.low + 1);
+    _low = 0;
+    _up = _nb-1;
+    _array = malloc(_nb * sizeof(CPIntVarI*));
+    int idx = 0;
+    for (CPInt i=r1.low ; i <= r1.up; i++) 
+        for (CPInt j=r2.low ; j <= r2.up; j++) 
+            for (CPInt k=r3.low ; k <= r3.up; k++) 
+                _array[idx++] = clo(i,j,k);
     return self;
 }
 
 -(void) dealloc
 {
-    for (CPInt i=_low ; i <= _up; i++) 
-        [_array[i] release];
     _array += _low;
     free(_array);
     [super dealloc];
@@ -340,7 +353,7 @@
     _array =  malloc(sizeof(id<CPIntVar>)*_nb);
     _array -= _low;
     for(CPInt i=_low;i<=_up;i++)
-        _array[i] = [[aDecoder decodeObject] retain];
+        _array[i] = [aDecoder decodeObject];
     return self;
 }
 @end
@@ -420,7 +433,7 @@
 {
     for(CPInt k = 0; k < _arity; k++)
         if (_i[k] < _low[k] || _i[k] > _up[k])
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMultiArray"];
+            @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMatrix"];
     int idx = _i[0] - _low[0];
     for(CPInt k = 1; k < _arity; k++)
         idx = idx * _size[k] + (_i[k] - _low[k]);
@@ -429,13 +442,13 @@
 -(CPRange) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
-       @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMultiArray"]; 
+       @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMatrix"]; 
     return _range[i];
 }
 -(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMultiArray"];
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     _i[2] = i2;
@@ -444,7 +457,7 @@
 -(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMultiArray"];
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     return _flat[[self getIndex]];
@@ -454,19 +467,26 @@
 {
     return _nb;
 }
+-(void) descriptionAux: (CPInt) i string: (NSMutableString*) rv
+{
+    if (i == _arity) {
+        [rv appendString:@"<"];
+        for(CPInt k = 0; k < _arity; k++) 
+            [rv appendFormat:@"%d,",_i[k]];
+        [rv appendString:@"> ="];
+        [rv appendFormat:@"%@ \n",[_flat[[self getIndex]] description]];
+    }
+    else {
+        for(CPInt k = _low[i]; k <= _up[i]; k++) {
+            _i[i] = k;
+            [self descriptionAux: i+1 string: rv];
+        }
+    }
+}
 -(NSString*)description
 {
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [rv appendString:@"["];
-    /*
-    for(CPInt i = _lowr; i <= _upr; ++i) {
-        for (CPInt j = _lowc; j <= _upc; ++j) {
-            [rv appendFormat:@"<%d,%d> = %@",i,j,[_flat[(i-_lowr)*_nbCols+(j-_lowc)] description]];
-            [rv appendString:@"\n"];         
-        }
-    }
-     */
-    [rv appendString:@"]"];
+    [self descriptionAux: 0 string: rv];
     return rv;   
 }
 -(id<CP>) cp

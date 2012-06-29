@@ -68,7 +68,8 @@
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain;
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range;
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
+-(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2  with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
+-(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2  : (CPRange) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
 -(void) dealloc;
 -(id<CPIntVar>) at: (CPInt) value;
 -(void) set: (id<CPIntVar>) x at: (CPInt) value;
