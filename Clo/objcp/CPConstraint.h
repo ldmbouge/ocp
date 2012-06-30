@@ -68,6 +68,7 @@ typedef enum {
 +(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) mult: (id<CPIntVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
 +(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y consistency:(CPConsistency)c;
++(id<CPConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<CPIntArray>)c equal:(id<CPIntVar>)y;
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<CPIntVar>) x : (id<CPIntVar>) y : (id<CPIntVar>) z;
 +(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c;

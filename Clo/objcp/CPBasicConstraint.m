@@ -30,19 +30,6 @@
 #import "CPArrayI.h"
 #import "CPSolverI.h"
 
-static inline CPBounds bounds(CPIntVarI* x)
-{
-   CPBounds b;
-   [x bounds:&b];
-   return b;
-}
-static inline CPBounds negBounds(CPIntVarI* x)
-{
-   CPBounds b;
-   [x bounds:&b];
-   return (CPBounds){- b.max, -b.min};
-}
-
 @implementation CPEqualc
 -(id) initCPEqualc:(id)x and:(CPInt)c
 {

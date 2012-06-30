@@ -32,6 +32,7 @@
 #import "CPCardinalityDC.h"
 #import "CPValueConstraint.h"
 #import "CPEquationBC.h"
+#import "CPElement.h"
 #import "CPCircuitI.h"
 #import "CPTableI.h"
 #import "CPLinear.h"
@@ -247,6 +248,12 @@
    }
    [[[x cp] solver] trackObject:o];
    return o;   
+}
++(id<CPConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<CPIntArray>)c equal:(id<CPIntVar>)y
+{
+   id<CPConstraint> o = [[CPElementCstBC alloc] initCPElementBC:x indexCstArray:c equal:y];
+   [[[x cp] solver] trackObject:o];
+   return o;
 }
 +(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarArrayI*) x
 {

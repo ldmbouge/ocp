@@ -380,6 +380,20 @@ static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
    return [x->_dom remove:target for:x->_recv];
 }
 
+static inline CPBounds bounds(CPIntVarI* x)
+{
+   CPBounds b;
+   [x bounds:&b];
+   return b;
+}
+static inline CPBounds negBounds(CPIntVarI* x)
+{
+   CPBounds b;
+   [x bounds:&b];
+   return (CPBounds){- b.max, -b.min};
+}
+
+
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
