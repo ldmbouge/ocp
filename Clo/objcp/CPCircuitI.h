@@ -27,20 +27,23 @@
 #import <Foundation/Foundation.h>
 #import "CPTypes.h"
 #import "CPDataI.h"
+#import "CPArray.h"
 #import "CPConstraintI.h"
 #import "CPTrail.h"
 #import "CPBasicConstraint.h"
 
 @interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding> {
-    CPIntVarI** _var;
-    CPInt   _varSize;  
-    CPInt   _low;
-    CPInt   _up;
-    TRIntArray  _pred;
-    TRIntArray  _succ;
-    TRIntArray  _length;
-    bool        _noCycle;
-    bool        _posted;
+    CPIntVarArrayI*  _x;
+    CPIntVarI**      _var;
+    CPInt            _varSize;  
+    CPInt            _low;
+    CPInt            _up;
+//    id<CPTRIntArray> _pred;
+    TRIntArray       _pred;
+    TRIntArray       _succ;
+    TRIntArray       _length;
+    bool             _noCycle;
+    bool             _posted;
 }
 -(CPCircuitI*) initCPCircuitI: (CPIntVarArrayI*) x;
 -(CPCircuitI*) initCPNoCycleI: (CPIntVarArrayI*) x;

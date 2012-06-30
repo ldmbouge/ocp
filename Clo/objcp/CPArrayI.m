@@ -538,3 +538,107 @@
 
 @end
 
+
+/**********************************************************************************************/
+/*                          CPTRIntArray                                                      */
+/**********************************************************************************************/
+
+
+@implementation CPTRIntArrayI 
+-(CPTRIntArrayI*) initCPTRIntArray: (id<CP>) cp size: (CPInt) nb 
+{
+    self = [super init];
+    _cp = cp;
+    _trail = [[cp solver] trail];
+    _array = malloc(nb * sizeof(TRInt));
+    _low = 0;
+    _up = nb-1;
+    _nb = nb;
+    return self;
+}
+-(void) dealloc
+{
+    _array += _low;
+    free(_array);
+    [super dealloc];
+}
+
+-(CPInt) at: (CPInt) value
+{
+    if (value < _low || value > _up)
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPTRIntArrayElement"];
+    return _array[value]._val;
+}
+
+-(void) set: (CPInt) value at: (CPInt) idx
+{
+    if (idx < _low || idx > _up)
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPTRIntArrayElement"];
+    assignTRInt(_array + idx,value,_trail);
+}
+
+-(CPInt) low
+{
+    return _low;
+}
+-(CPInt) up
+{
+    return _up;
+}
+-(NSUInteger)count
+{
+    return _nb;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendString:@"["];
+    for(CPInt i=_low;i<=_up;i++) {
+        [rv appendFormat:@"%d:%d",i,_array[i]._val];
+        if (i < _up)
+            [rv appendString:@","];
+    }
+    [rv appendString:@"]"];
+    return rv;   
+}
+-(id<CP>) cp
+{
+    return _cp;
+}
+-(id<CPSolver>) solver
+{
+    return [_cp solver];
+}
+-(CPInt) virtualOffset
+{
+    return [[_cp solver] virtualOffset:self];
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:_cp];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up];
+    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    for(CPInt i=_low;i<=_up;i++) {
+        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_array[i]._val];
+        [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
+    }
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    _cp = [[aDecoder decodeObject] retain];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up];
+    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    _array =  malloc(sizeof(CPInt)*_nb);
+    _array -= _low;
+    for(CPInt i=_low;i<=_up;i++) {
+        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_array[i]._val];
+         [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
+    }
+    return self;
+}
+@end
+

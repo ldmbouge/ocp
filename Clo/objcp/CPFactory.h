@@ -75,6 +75,8 @@
 +(id<CPBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb;
 
 +(id<CPTable>) table: (id<CP>) cp arity: (int) arity;
+
++(id<CPTRIntArray>) TRIntArray: (id<CP>) cp size: (CPInt) nb;
 @end
 
 @interface CPFactory (expression)

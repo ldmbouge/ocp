@@ -111,3 +111,24 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
+@interface CPTRIntArrayI : NSObject<CPVirtual,NSCoding> {
+    id<CP>       _cp;
+    CPTrail*     _trail;
+    TRInt*       _array;
+    CPInt        _low;
+    CPInt        _up;
+    CPInt        _nb;
+}
+-(CPTRIntArrayI*) initCPTRIntArray: (id<CP>) cp size: (CPInt) nb;
+-(void) dealloc;
+-(CPInt) at: (CPInt) value;
+-(void) set: (CPInt) value at: (CPInt) idx;
+-(CPInt) low;
+-(CPInt) up;
+-(NSUInteger)count;
+-(NSString*)description;
+-(id<CP>) cp;
+-(CPInt)virtualOffset;   
+- (void)encodeWithCoder:(NSCoder *) aCoder;
+- (id)initWithCoder:(NSCoder *) aDecoder;
+@end

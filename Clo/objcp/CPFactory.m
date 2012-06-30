@@ -229,6 +229,13 @@
     [[cp solver] trackObject: o];
     return o;    
 }
+
++(id<CPTRIntArray>) TRIntArray: (id<CP>) cp size: (CPInt) nb
+{
+    id<CPTRIntArray> o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp size: nb];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;    
+}
 @end
 
 

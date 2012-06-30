@@ -104,7 +104,7 @@
 @end
 
 typedef struct {
-   int       _val;   // TRInt should be a 32-bit wide trailable signed integer
+   int    _val;   // TRInt should be a 32-bit wide trailable signed integer
    CPUInt _mgc;
 } TRInt;
 

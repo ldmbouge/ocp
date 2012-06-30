@@ -52,3 +52,14 @@
 -(id<CP>) cp;
 @end
 
+@protocol CPTRIntArray <NSObject> 
+-(CPInt)  at: (CPInt) value;
+-(void)  set: (CPInt) value at: (CPInt) value;  
+-(CPInt) low;
+-(CPInt) up;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
+
+
