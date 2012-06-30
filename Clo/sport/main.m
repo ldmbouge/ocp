@@ -30,14 +30,15 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPCrFactory.h"
 #import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
 
-//20632 choices
+//20639 choices
 //20579 fail
-//622248 propagations
+//622276 propagations
+
 
 int main(int argc, const char * argv[])
 {
+    CPInt startTime = [CPRuntimeMonitor cputime];
     CPInt n = 14;
     CPRange Periods = (CPRange){1,n/2};
     CPRange Teams = (CPRange){1,n};
@@ -58,7 +59,7 @@ int main(int argc, const char * argv[])
     for(CPInt i = 1; i <= n; i++)
         for(CPInt j = i+1; j <= n; j++)
             [table insert: i : j : (i-1)*n + j-1];
-    [table close];
+
     
     [cp solve: 
      ^() {
@@ -80,12 +81,14 @@ int main(int argc, const char * argv[])
      ^() {
          [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
          [CPLabel array: allteams orderedBy: ^CPInt(CPInt i) { return [[allteams at:i] domsize];}];
+         CPInt endTime = [CPRuntimeMonitor cputime];
          printf("Solution \n");
          for(CPInt p = 1; p <= n/2; p++) {
              for(CPInt w = 1; w < n; w++) 
                  printf("%2d-%2d [%3d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game at: p : w] min]);
              printf("\n");
          }
+         printf("Execution Time: %d \n",endTime - startTime);
      }
      ];
     NSLog(@"Solver status: %@\n",cp);

@@ -1579,7 +1579,6 @@
 				5B7408AB1562825E00C05277 /* iOS */,
 				5B778BB4154F1D030078EB07 /* bitArrayTest */,
 				5BB170111582820500D4791A /* driver */,
-				B12ED8C3159E0C2200713C8E /* sport */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -1690,6 +1689,7 @@
 				5BEEF61313970B6F002ADBD4 /* queens2 */,
 				5BCCC4061417F8CE0079E833 /* queensACSem */,
 				B103534213BBD7B200627058 /* queensAC */,
+				B12ED8C3159E0C2200713C8E /* sport */,
 				B1595B4113C11F2A001FCB61 /* Sudoku */,
 			);
 			name = "Objective-CP Examples";
@@ -5550,6 +5550,7 @@
 				B12ED8CC159E0C2200713C8E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B1571EB013EDF10E007B5E88 /* Build configuration list for PBXNativeTarget "mpinterface" */ = {
 			isa = XCConfigurationList;

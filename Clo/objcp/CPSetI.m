@@ -33,7 +33,7 @@
 {
     self = [super init];
     _cp = cp;
-    _avl = [[CPFactory AVLTree: cp] retain];
+    _avl = [[CPInternalFactory AVLTree: cp] retain];
     return self;
 }
 -(void) dealloc 
@@ -67,7 +67,7 @@
 }
 -(id<IntEnumerator>) enumerator
 {
-    return [CPFactory AVLTreeKeyIntEnumerator: _cp for: _avl];
+    return [CPInternalFactory AVLTreeKeyIntEnumerator: _cp for: _avl];
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {   
@@ -84,7 +84,7 @@
 {
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
-    _avl = [[CPFactory AVLTree: _cp] retain];
+    _avl = [[CPInternalFactory AVLTree: _cp] retain];
     CPInt size;
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&size];
     for(CPInt i = 0; i < size; i++) {

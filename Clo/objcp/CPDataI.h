@@ -47,10 +47,7 @@
 -(id<CP>) cp;
 @end
 
-@interface CPRuntimeMonitor : NSObject 
-+(CPInt) cputime;
-+(CPInt) microseconds;
-@end;
+
 
 @interface CPStreamManager : NSObject 
 +(void) initialize;
