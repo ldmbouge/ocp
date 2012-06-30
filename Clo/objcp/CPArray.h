@@ -62,4 +62,15 @@
 -(id<CP>) cp;
 @end
 
+@protocol CPTRIntMatrix <NSObject> 
+-(CPInt) at: (CPInt) i1 : (CPInt) i2;
+-(CPInt) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2;
+-(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(CPRange) range: (CPInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
+
 

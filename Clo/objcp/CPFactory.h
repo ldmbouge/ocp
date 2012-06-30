@@ -76,7 +76,7 @@
 
 +(id<CPTable>) table: (id<CP>) cp arity: (int) arity;
 
-+(id<CPTRIntArray>) TRIntArray: (id<CP>) cp size: (CPInt) nb;
++(id<CPTRIntArray>) TRIntArray: (id<CP>) cp range: (CPRange) R;
 @end
 
 @interface CPFactory (expression)

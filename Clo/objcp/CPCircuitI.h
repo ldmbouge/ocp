@@ -38,10 +38,9 @@
     CPInt            _varSize;  
     CPInt            _low;
     CPInt            _up;
-//    id<CPTRIntArray> _pred;
-    TRIntArray       _pred;
-    TRIntArray       _succ;
-    TRIntArray       _length;
+    id<CPTRIntArray> _pred;
+    id<CPTRIntArray> _succ;
+    id<CPTRIntArray> _length;
     bool             _noCycle;
     bool             _posted;
 }

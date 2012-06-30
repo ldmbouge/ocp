@@ -64,9 +64,6 @@
     if (_posted) {
         _var += _low;
         free(_var);
-        freeTRIntArray(_pred);
-        freeTRIntArray(_succ);
-        freeTRIntArray(_length);
     }
     [super dealloc];
 }
@@ -89,13 +86,13 @@
 
 CPStatus assign(CPCircuitI* cstr,int i)
 {
-    int val = [cstr->_var[i] min];
-    int end = getTRIntArray(cstr->_succ,val);
-    int start = getTRIntArray(cstr->_pred,i);
-    int l = getTRIntArray(cstr->_length,start) + getTRIntArray(cstr->_length,val) + 1;
-    assignTRIntArray(cstr->_pred,end,start);
-    assignTRIntArray(cstr->_succ,start,end);
-    assignTRIntArray(cstr->_length,start,l);
+    CPInt val = [cstr->_var[i] min];
+    CPInt end = [cstr->_succ at: val];
+    CPInt start = [cstr->_pred at: i];
+    CPInt l = [cstr->_length at: start] + [cstr->_length at: val] + 1; 
+    [cstr->_pred set: start at: end];
+    [cstr->_succ set: end at: start];
+    [cstr->_length set: l at: start];
     if (l < cstr->_varSize- 1 || cstr->_noCycle)
         return [cstr->_var[end] remove: start];
     return CPSuspend;
@@ -115,13 +112,14 @@ CPStatus assign(CPCircuitI* cstr,int i)
         _var[i] = (CPIntVarI*) [_x at: _low + i];
     _var -= _low;
     
-    _pred = makeTRIntArray(_trail,_varSize,_low);
-    _succ = makeTRIntArray(_trail,_varSize,_low);
-    _length = makeTRIntArray(_trail,_varSize,_low);
+    CPRange R = (CPRange){_low,_up};
+    _pred = [CPFactory TRIntArray: [_x cp] range: R];
+    _succ = [CPFactory TRIntArray: [_x cp] range: R];
+    _length = [CPFactory TRIntArray: [_x cp] range: R];
     for(int i = _low; i <= _up; i++) {
-        assignTRIntArray(_pred,i,i);
-        assignTRIntArray(_succ,i,i);
-        assignTRIntArray(_length,i,0);
+        [_pred set: i at: i];
+        [_succ set: i at: i];
+        [_length set: 0 at: i];
     }
     for(int i = _low; i <= _up; i++) {
         if ([_var[i] remove: i] == CPFailure)

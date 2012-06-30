@@ -230,9 +230,9 @@
     return o;    
 }
 
-+(id<CPTRIntArray>) TRIntArray: (id<CP>) cp size: (CPInt) nb
++(CPTRIntArrayI*) TRIntArray: (id<CP>) cp range: (CPRange) R
 {
-    id<CPTRIntArray> o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp size: nb];    
+    CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp range: R];    
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;    
 }
