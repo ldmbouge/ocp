@@ -103,8 +103,8 @@
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _left  = [[aDecoder decodeObject] retain];
-   _right = [[aDecoder decodeObject] retain];
+   _left  = [aDecoder decodeObject];
+   _right = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -162,7 +162,7 @@
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];
-   _op = [[aDecoder decodeObject] retain];
+   _op = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -383,7 +383,7 @@
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _e = [[aDecoder decodeObject] retain];
+   _e = [aDecoder decodeObject];
    return self;
 }
 @end
