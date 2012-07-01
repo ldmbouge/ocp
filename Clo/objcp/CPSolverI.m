@@ -486,6 +486,10 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    return _status;
 }
+-(CPStatus)  addRel:(id<CPRelation>)c
+{
+   return [self add:[CPFactory expr:c]];
+}
 -(CPStatus) add: (id<CPConstraint>) c
 {
    if (_closed) {

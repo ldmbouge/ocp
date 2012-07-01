@@ -257,10 +257,11 @@
    id<CPExpr> o = [[CPExprMulI alloc] initCPExprMulI: left and: right]; 
    return [self validate:o onError:"No CP Solver in Mul Expression"];
 }
-+(id<CPExpr>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right
++(id<CPRelation>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right
 {
-   id<CPExpr> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in == Expression"];
+   id<CPRelation> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
+   [self validate:o onError:"No CP Solver in == Expression"];
+   return o;
 }
 +(id<CPExpr>) exprAbs: (id<CPExpr>) op
 {

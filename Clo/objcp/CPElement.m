@@ -47,6 +47,8 @@ typedef struct CPEltRecordTag {
    _x = x;
    _y = y;
    _c = c;
+   _tab = NULL;
+   _sz  = 0;
    return self;
 }
 -(void) dealloc
@@ -150,4 +152,116 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    return !bound(_x) && !bound(_y);
 }
 
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _c = [aDecoder decodeObject];
+   _tab = NULL;
+   _sz  = 0;
+   return self;
+}
+@end
+
+@implementation CPElementVarBC
+-(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(CPStatus) post
+{
+   CPStatus ok = [self propagate];
+   if (!ok) return ok;
+   [_x whenChangePropagate:self];
+   [_y whenChangeBoundsPropagate:self];
+   CPBounds xb = bounds(_x);
+   for(CPInt k=xb.min; k <= xb.max;k++)
+      if (memberDom(_x, k))
+         [(CPIntVarI*)[_z at:k] whenChangeBoundsPropagate:self];
+   return ok;
+}
+-(CPStatus)propagate
+{
+   CPBounds bx = bounds(_x);
+   CPInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
+   for(int k=bx.min; k <= bx.max;k++) {
+      if (memberDom(_x, k)) {
+         CPBounds zk = bounds((CPIntVarI*)[_z at:k]);
+         minZ = minZ < zk.min ? minZ : zk.min;
+         maxZ = maxZ > zk.max ? maxZ : zk.max;
+      }
+   }
+   if ([_y updateMin:minZ andMax:maxZ] == CPFailure) // D(y) <- D(y) INTER [minZ,maxZ]
+      return  CPFailure;
+   CPBounds yb = bounds(_y);
+   for(int k=bx.min; k <= bx.max;k++) {
+      if (memberDom(_x, k)) {
+         CPIntVarI* zk = (CPIntVarI*) [_z at: k];
+         CPBounds zkb = bounds(zk);
+         if (zkb.min > yb.max || zkb.max < yb.min)  // D(z[k]) INTER D(y) = EMPTY -> k NOTIN D(x)
+            if (removeDom(_x, k) == CPFailure)
+               return CPFailure;
+      }
+   }
+   bx = bounds(_x);
+   if (bound(_x)) { 
+      CPIntVarI* zk = (CPIntVarI*)[_z at:bx.min];
+      if ([zk updateMin:yb.min andMax:yb.max] == CPFailure)  //x==c -> D(y) == D(z_c)
+         return CPFailure;
+   }
+   return CPSuspend;
+}
+-(NSSet*)allVars
+{
+   CPUInt sz = [_z count] + 2;
+   id<CPIntVar>* t = alloca(sizeof(id<CPIntVar>)*sz);
+   CPInt i = 0;
+   for(CPInt k=[_z low];k<=[_z up];k++)
+      t[i++] = [_z at: k];
+   t[i++] = _x;
+   t[i++] = _y;
+   return [[NSSet alloc] initWithObjects:t count:sz];
+}
+-(CPUInt)nbUVars
+{
+   CPInt nbuv = 0;
+   for(CPInt k=[_z low];k<=[_z up];k++)
+      nbuv += !bound((CPIntVarI*)[_z at: k]);
+   nbuv += !bound(_x) + !bound(_y);
+   return nbuv;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
+   return self;
+}
 @end

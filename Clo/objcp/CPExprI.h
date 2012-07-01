@@ -52,6 +52,22 @@
 -(void) visit:(id<CPExprVisitor>)v;
 @end
 
+@interface CPExprCstSubI : CPExprI<CPExpr,NSCoding> {
+   id<CPIntArray> _array;
+   CPExprI*       _index;
+}
+-(id<CPExpr>) initCPExprCstSubI: (id<CPIntArray>) array index:(id<CPExpr>) op;
+-(id<CP>) cp;
+-(CPInt) min;
+-(CPInt) max;
+-(NSString *)description;
+-(CPExprI*) index;
+-(id<CPIntArray>)array;
+-(BOOL) isConstant;
+-(void) visit:(id<CPExprVisitor>)v;
+@end
+
+
 @interface CPExprPlusI : CPExprBinaryI<CPExpr,NSCoding> 
 -(id<CPExpr>) initCPExprPlusI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
@@ -76,7 +92,8 @@
 -(void) visit: (id<CPExprVisitor>)v;
 @end
 
-@interface CPExprEqualI : CPExprBinaryI<CPExpr,NSCoding> 
+
+@interface CPExprEqualI : CPExprBinaryI<CPRelation,NSCoding> 
 -(id<CPExpr>) initCPExprEqualI: (id<CPExpr>) left and: (id<CPExpr>) right;
 -(CPInt) min;
 -(CPInt) max;
@@ -109,6 +126,7 @@
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 -(void) visitExprAbsI:(CPExprAbsI*) e;
+-(void) visitExprCstSubI:(CPExprCstSubI*)e;
 @end
 
 
@@ -123,6 +141,7 @@
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 -(void) visitExprAbsI:(CPExprAbsI*) e;
+-(void) visitExprCstSubI:(CPExprCstSubI*)e;
 @end;
 
 @interface CPExprI (visitor)

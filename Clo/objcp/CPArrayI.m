@@ -32,6 +32,7 @@
 #import "CPTypes.h"
 #import "CPDataI.h"
 #import "CPArrayI.h"
+#import "CPExprI.h"
 
 /**********************************************************************************************/
 /*                          CPIntArray                                                        */
@@ -117,7 +118,10 @@
         @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPIntArrayElement"];
     return _array[value];
 }
-
+-(id<CPExpr>)index:(id<CPExpr>)idx
+{
+   return [[CPExprCstSubI alloc] initCPExprCstSubI:self index:idx];
+}
 -(CPInt) low
 {
     return _low;

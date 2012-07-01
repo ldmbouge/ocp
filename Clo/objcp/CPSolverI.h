@@ -31,7 +31,7 @@
 #import "CPTypes.h"
 #import "CPConcurrency.h"
 #import "CPSolution.h"
-
+#import "CPData.h"
 @class CPTrail;
 @class CPTrailStack;
 @class CPAC3Queue;
@@ -87,6 +87,7 @@
 -(void)      scheduleAC3:(VarEventNode**)mlist;
 -(void)      scheduleAC5:(VarEventNode*)list with:(CPInt)val;
 -(CPStatus)  propagate;
+-(CPStatus)  addRel:(id<CPRelation>)c;
 -(CPStatus)  add:(id<CPConstraint>)c;
 -(CPStatus)  post:(id<CPConstraint>)c;
 -(CPStatus)  label:(id)var with:(CPInt)val;

@@ -31,6 +31,7 @@
 #import "CPTable.h"
 #import "CPConcurrency.h"
 #import "CPHeuristic.h"
+#import "CPData.h"
 
 @interface CPFactory : NSObject
 +(id<CP>) createSolver;
@@ -82,7 +83,7 @@
 +(id<CPExpr>) expr: (id<CPExpr>) left add: (id<CPExpr>) right;
 +(id<CPExpr>) expr: (id<CPExpr>) left sub: (id<CPExpr>) right;
 +(id<CPExpr>) expr: (id<CPExpr>) left mul: (id<CPExpr>) right;
-+(id<CPExpr>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right;
++(id<CPRelation>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right;
 +(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
 +(id<CPExpr>) sum: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e;

@@ -54,6 +54,7 @@
 -(void) setController: (id<CPSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
    
+-(void)              addRel: (id<CPRelation>) c;
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                post: (id<CPConstraint>) c;
 -(void)               close;

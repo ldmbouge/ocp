@@ -55,6 +55,7 @@
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 -(void) visitExprAbsI:(CPExprAbsI *)e;
+-(void) visitExprCstSubI:(CPExprCstSubI*)e;
 +(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(CPExprI*)expr consistency:(CPConsistency)c;
 +(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(CPExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c;
 @end
@@ -96,6 +97,7 @@
 -(void) visitExprEqualI:(CPExprEqualI*)e;
 -(void) visitExprSumI: (CPExprSumI*) e;
 -(void) visitExprAbsI:(CPExprAbsI*) e;
+-(void) visitExprCstSubI:(CPExprCstSubI*)e;
 @end
 
 @implementation CPLinearizer
@@ -163,6 +165,12 @@
 }
 -(void) visitExprSumI: (CPExprSumI*) e 
 {}
+
+-(void) visitExprCstSubI:(CPExprCstSubI*)e
+{
+   id<CPIntVar> alpha = [CPSubst substituteIn:_fdm expr:e consistency:_cons];
+   [_terms addTerm:alpha by:1];   
+}
 
 +(CPLinear*)linearFrom:(CPExprI*)e solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
@@ -469,6 +477,18 @@
    if (_rv == nil)
       _rv = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
    [_fdm post:[CPFactory abs:oV equal:_rv consistency:_c]];
+   [lT release];
+}
+-(void) visitExprCstSubI:(CPExprCstSubI*)e
+{
+   id<CP> cp = [e cp];
+   CPLinear* lT = [CPLinearizer linearFrom:[e index] solver:_fdm consistency:_c];   
+   id<CPIntVar> oV = [self normSide:lT for:cp];
+   CPInt lb = [e min];
+   CPInt ub = [e max];
+   if (_rv == nil)
+      _rv = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
+   [_fdm post:[CPFactory element:oV idxCstArray:[e array] equal:_rv]];
    [lT release];
 }
 -(void) visitExprSumI: (CPExprSumI*) e

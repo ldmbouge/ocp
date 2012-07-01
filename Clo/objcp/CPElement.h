@@ -33,7 +33,7 @@
 @class CPSolver;
 @class CPIntVarArrayI;
 
-@interface CPElementCstBC : CPActiveConstraint<NSCoding> { // y = c[x]
+@interface CPElementCstBC : CPActiveConstraint<NSCoding> { // y == c[x]
 @private
    CPIntVarI*     _x;   
    CPIntVarI*     _y;
@@ -45,3 +45,17 @@
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
+
+@interface CPElementVarBC : CPActiveConstraint<NSCoding> { // y == z[x]
+@private
+   CPIntVarI*        _x;
+   CPIntVarI*        _y;
+   id<CPIntVarArray> _z;
+}
+-(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>) c equal:(id)y;
+-(void) dealloc;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+

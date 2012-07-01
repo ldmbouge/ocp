@@ -255,6 +255,12 @@
    [[[x cp] solver] trackObject:o];
    return o;
 }
++(id<CPConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<CPIntVar>)y
+{
+   id<CPConstraint> o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:c equal:y];
+   [[[x cp] solver] trackObject:o];
+   return o;
+}
 +(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarArrayI*) x
 {
     id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];

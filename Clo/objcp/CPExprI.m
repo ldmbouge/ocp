@@ -55,6 +55,22 @@
 {
     return [CPFactory expr: self add: e];
 }
+-(id<CPExpr>) sub: (id<CPExpr>) e
+{
+   return [CPFactory expr:self sub:e];
+}
+-(id<CPExpr>) mul: (id<CPExpr>) e
+{
+   return [CPFactory expr:self mul:e];
+}
+-(id<CPExpr>) muli: (CPInt) e
+{
+   return [CPFactory expr:self mul:[CPFactory integer:[self cp] value:e]];
+}
+-(id<CPRelation>) equal: (id<CPExpr>) e
+{
+   return [CPFactory expr:self equal:e];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -163,6 +179,68 @@
 {
    self = [super initWithCoder:aDecoder];
    _op = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPExprCstSubI
+-(id<CPExpr>) initCPExprCstSubI: (id<CPIntArray>) array index:(id<CPExpr>) op
+{
+   self = [super init];
+   _array = array;
+   _index = op;
+   return self;
+}
+-(id<CP>) cp
+{
+   return [_index cp];
+}
+-(CPInt) min
+{
+   CPInt minOf = MAXINT;
+   for(CPInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf <[_array at:k] ? minOf : [_array at:k];
+   return minOf;
+}
+-(CPInt) max
+{
+   CPInt maxOf = MININT;
+   for(CPInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@]",_array,_index];
+   return rv;   
+}
+-(CPExprI*) index
+{
+   return  _index;
+}
+-(id<CPIntArray>)array
+{
+   return _array;
+}
+-(BOOL) isConstant
+{
+   return [_index isConstant];
+}
+-(void) visit:(id<CPExprVisitor>)visitor
+{
+   [visitor visitExprCstSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_array];
+   [aCoder encodeObject:_index];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _array = [aDecoder decodeObject];
+   _index = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -439,6 +517,12 @@
 -(void) visitExprSumI: (CPExprSumI*) e
 {
     [[e expr] visit: self];
+}
+-(void) visitExprCstSubI:(CPExprCstSubI*)e
+{
+   printf("SUBSCRIPT-CST[");
+   [[e index] visit:self];
+   printf("]");
 }
 @end
 

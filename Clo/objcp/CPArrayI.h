@@ -32,7 +32,7 @@
 #import "CPDataI.h"
 #import "CPIntVarI.h"
 
-@interface CPIntArrayI : NSObject<CPVirtual,NSCoding> {
+@interface CPIntArrayI : NSObject<CPVirtual,NSCoding,CPIntArray> {
     id<CP>       _cp;
     CPInt*   _array;
     CPInt    _low;
@@ -56,7 +56,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface CPIntVarArrayI : NSObject<CPVirtual,NSCoding> {
+@interface CPIntVarArrayI : NSObject<CPVirtual,NSCoding,CPIntVarArray> {
     id<CP>         _cp;
     id<CPIntVar>*  _array;
     CPInt      _low;
