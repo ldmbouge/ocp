@@ -35,6 +35,7 @@
 #import "CPCircuitI.h"
 #import "CPTableI.h"
 #import "CPLinear.h"
+#import "CPAssignmentI.h"
 
 @implementation CPFactory (Constraint)
 
@@ -271,6 +272,13 @@
    id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:c];
    [[[e cp] solver] trackObject:o];
    return o;
+}
++(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix
+{
+    id<CPConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix];
+    [[[x cp] solver] trackObject:o];
+    return o;
+    
 }
 @end
 

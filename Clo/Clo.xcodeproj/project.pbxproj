@@ -421,6 +421,12 @@
 		B19ABA18146D6930004EB77E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B19ABA26146DC7FA004EB77E /* CPCardinality.h in Headers */ = {isa = PBXBuildFile; fileRef = B19ABA24146DC7FA004EB77E /* CPCardinality.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA25146DC7FA004EB77E /* CPCardinality.m */; };
+		B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; };
+		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
+		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		B1B68C79159FC16E008BC463 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C78159FC16E008BC463 /* main.m */; };
+		B1B68C7D159FC16E008BC463 /* TestAssignment.1 in Copy Files */ = {isa = PBXBuildFile; fileRef = B1B68C7C159FC16E008BC463 /* TestAssignment.1 */; };
+		B1B68C83159FC194008BC463 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */; };
 		B1C25AA21557540E009CB8A8 /* CPCircuitI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C25AA01557540E009CB8A8 /* CPCircuitI.m */; };
 		B1C8C5F614BEBE1C000C5486 /* CPFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C8C5F414BEBE1C000C5486 /* CPFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -676,6 +682,13 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		B1B68C81159FC179008BC463 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -881,6 +894,17 @@
 			dstSubfolderSpec = 0;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		B1B68C72159FC16E008BC463 /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				B1B68C7D159FC16E008BC463 /* TestAssignment.1 in Copy Files */,
+			);
+			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -1206,6 +1230,12 @@
 		B19ABA11146D68FE004EB77E /* AtomicTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AtomicTest.1; sourceTree = "<group>"; };
 		B19ABA24146DC7FA004EB77E /* CPCardinality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCardinality.h; sourceTree = "<group>"; };
 		B19ABA25146DC7FA004EB77E /* CPCardinality.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCardinality.m; sourceTree = "<group>"; };
+		B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAssignmentI.h; sourceTree = "<group>"; };
+		B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAssignmentI.m; sourceTree = "<group>"; };
+		B1B68C74159FC16E008BC463 /* TestAssignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAssignment; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1B68C78159FC16E008BC463 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1B68C7B159FC16E008BC463 /* TestAssignment-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestAssignment-Prefix.pch"; sourceTree = "<group>"; };
+		B1B68C7C159FC16E008BC463 /* TestAssignment.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestAssignment.1; sourceTree = "<group>"; };
 		B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCircuitI.h; sourceTree = "<group>"; };
 		B1C25AA01557540E009CB8A8 /* CPCircuitI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCircuitI.m; sourceTree = "<group>"; };
 		B1C8C5F414BEBE1C000C5486 /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFactory.h; sourceTree = "<group>"; };
@@ -1514,6 +1544,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1B68C71159FC16E008BC463 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B68C83159FC194008BC463 /* objcp.framework in Frameworks */,
+				B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -1618,6 +1657,7 @@
 				5BE777541594D27C00ADE34E /* costas */,
 				5BC116A01595067900E0F5C8 /* ais */,
 				B12ED8C0159E0C2200713C8E /* sport */,
+				B1B68C74159FC16E008BC463 /* TestAssignment */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1678,6 +1718,7 @@
 				5BE5A7ED158A8390006703CB /* fdmul2 */,
 				5B6A960315879F1600019903 /* knapsack */,
 				5B8C7DE5158674D1007042CA /* queensGui */,
+				B1B68C77159FC16E008BC463 /* TestAssignment */,
 				B1672FEF1584A7A500EFE5C3 /* CardinalityTest */,
 				B1672FD3158491DE00EFE5C3 /* TableTest */,
 				B1771597155798AA00BA14BF /* Euler */,
@@ -1841,6 +1882,8 @@
 				B10ECF15150C38CB00B82836 /* CPSetI.m */,
 				B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */,
 				B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */,
+				B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */,
+				B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */,
 				5BF3E1D613C3BC6400C3F1A5 /* CPAVLTree.h */,
 				5BF3E1D713C3BC6400C3F1A5 /* CPAVLTree.m */,
 				5BE642EC139D49320056F448 /* CPBasicConstraint.h */,
@@ -2380,6 +2423,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		B1B68C77159FC16E008BC463 /* TestAssignment */ = {
+			isa = PBXGroup;
+			children = (
+				B1B68C78159FC16E008BC463 /* main.m */,
+				B1B68C7C159FC16E008BC463 /* TestAssignment.1 */,
+				B1B68C7A159FC16E008BC463 /* Supporting Files */,
+			);
+			path = TestAssignment;
+			sourceTree = "<group>";
+		};
+		B1B68C7A159FC16E008BC463 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B1B68C7B159FC16E008BC463 /* TestAssignment-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2457,6 +2518,7 @@
 				5BE19F2B15826A28008DF214 /* CPDDeg.h in Headers */,
 				B1672FE215849EA300EFE5C3 /* CPCardinalityDC.h in Headers */,
 				5B896B5A158933B4002E145B /* CPLinear.h in Headers */,
+				B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3156,6 +3218,24 @@
 			productReference = B19ABA09146D68FE004EB77E /* AtomicTest */;
 			productType = "com.apple.product-type.tool";
 		};
+		B1B68C73159FC16E008BC463 /* TestAssignment */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1B68C7E159FC16E008BC463 /* Build configuration list for PBXNativeTarget "TestAssignment" */;
+			buildPhases = (
+				B1B68C70159FC16E008BC463 /* Sources */,
+				B1B68C71159FC16E008BC463 /* Frameworks */,
+				B1B68C72159FC16E008BC463 /* Copy Files */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1B68C82159FC179008BC463 /* PBXTargetDependency */,
+			);
+			name = TestAssignment;
+			productName = TestAssignment;
+			productReference = B1B68C74159FC16E008BC463 /* TestAssignment */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -3210,6 +3290,7 @@
 				5BE777531594D27C00ADE34E /* costas */,
 				5BC1169F1595067900E0F5C8 /* ais */,
 				B12ED8BF159E0C2200713C8E /* sport */,
+				B1B68C73159FC16E008BC463 /* TestAssignment */,
 			);
 		};
 /* End PBXProject section */
@@ -3429,6 +3510,7 @@
 				5BE19F2C15826A28008DF214 /* CPDDeg.m in Sources */,
 				B1672FE315849EA300EFE5C3 /* CPCardinalityDC.m in Sources */,
 				5B896B5B158933B4002E145B /* CPLinear.m in Sources */,
+				B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3705,6 +3787,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1B68C70159FC16E008BC463 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1B68C79159FC16E008BC463 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -3882,6 +3972,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B19ABA16146D691A004EB77E /* PBXContainerItemProxy */;
+		};
+		B1B68C82159FC179008BC463 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = B1B68C81159FC179008BC463 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -5333,6 +5428,44 @@
 			};
 			name = Release;
 		};
+		B1B68C7F159FC16E008BC463 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TestAssignment/TestAssignment-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B1B68C80159FC16E008BC463 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "TestAssignment/TestAssignment-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -5641,6 +5774,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B1B68C7E159FC16E008BC463 /* Build configuration list for PBXNativeTarget "TestAssignment" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1B68C7F159FC16E008BC463 /* Debug */,
+				B1B68C80159FC16E008BC463 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 

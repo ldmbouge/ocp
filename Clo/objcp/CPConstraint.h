@@ -72,6 +72,8 @@ typedef enum {
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<CPIntVar>) x : (id<CPIntVar>) y : (id<CPIntVar>) z;
 +(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c;
 +(id<CPConstraint>) expr: (id<CPExpr>)e;
+
++(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix;
 @end
 
 

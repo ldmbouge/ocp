@@ -23,64 +23,51 @@
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************/
 
+
+#import <Foundation/Foundation.h>
+
 #import <Foundation/Foundation.h>
 #import "objcp/CPConstraint.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPlabel.h"
 #import "objcp/CPCrFactory.h"
+#import "objcp/CPArray.h"
 
-
-id<CPIntSet> knightMoves(id<CP> cp,int i) 
-{
-    id<CPIntSet> S = [CPFactory intSet: cp];
-    if (i % 8 == 1) {
-        [S insert: i-15]; [S insert: i-6]; [S insert: i+10]; [S insert: i+17];
-    }
-    else if (i % 8 == 2) {
-        [S insert: i-17]; [S insert: i-15]; [S insert: i-6]; [S insert: i+10]; [S insert: i+15]; [S insert: i+17];
-    }     
-    else if (i % 8 == 7) {
-        [S insert: i-17];[S insert: i-15];[S insert: i-10];[S insert: i+6];[S insert: i+15];[S insert: i+17];
-    }
-    else if (i % 8 == 0) {
-        [S insert: i-17];[S insert: i-10];[S insert: i+6];[S insert: i+15];
-    }           
-    else {
-        [S insert: i-17];[S insert: i-15];[S insert: i-10];[S insert: i-6];[S insert: i+6];[S insert: i+10];[S insert: i+15];[S insert: i+17];
-    }
-    return S;
-}
-void printCircuit(id<CPIntVarArray> jump)
-{
-    int curr = 1;
-    printf("1");
-    do {
-        curr = [[jump at: curr] min];
-        printf("->%d",curr);
-    } while (curr != 1);
-    printf("\n");
-}
 int main (int argc, const char * argv[])
 {
-    CPRange R = (CPRange){0,2};
-    CPRange D = (CPRange){0,30};
+    CPRange R = (CPRange){1,3};
+    CPRange D = (CPRange){1,3};
     id<CP> cp = [CPFactory createSolver];
     id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
-    id<CPTable> table = [CPFactory table: cp arity: 3];
-    for(CPInt i = 0; i < 5; i++)
-        for(CPInt j = i+1; j < 5; j++)
-            [table insert: i : j : i*5 + j];
-    [table close];
-    [table print];
-    [cp solveAll: 
+    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
+    [cost set: 10 at: 1 : 1];
+    [cost set: 15 at: 1 : 2];
+    [cost set: 11 at: 1 : 3];
+    [cost set: 8  at: 2 : 1];
+    [cost set: 17 at: 2 : 2];
+    [cost set: 7  at: 2 : 3];
+    [cost set: 14 at: 3 : 1];
+    [cost set: 21 at: 3 : 2];
+    [cost set: 16 at: 3 : 3];
+    
+    for(CPInt i = 1; i <= 3; i++) {
+        for(CPInt j = 1; j <= 3; j++)
+            printf("%2d ",[cost at: i : j ]);
+        printf("\n");
+    }
+    
+    [cp solve: 
      ^() {
-         [cp add: [CPFactory table: table on: x]];
+ //        [cp diff: [x at: 2] with: 2];
+         [cp add: [CPFactory assignment: x matrix: cost]];
      }
            using:
      ^() {        
          [CPLabel array: x];
-         printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
+         for(CPInt i = 1; i <= 3; i++)
+             printf("%d ",[[x at: i] min]);
+         printf("\n");
      }
      ];
     NSLog(@"Solver status: %@\n",cp);
