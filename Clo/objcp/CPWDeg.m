@@ -29,7 +29,6 @@
 
 @implementation CPWDeg
 
-
 -(CPWDeg*)initCPWDeg:(id<CP>)cp
 {
    self = [super init];
