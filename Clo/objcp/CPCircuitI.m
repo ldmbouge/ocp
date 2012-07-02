@@ -33,19 +33,18 @@
 
 @implementation CPCircuitI
 
+-(void) initInstanceVariables 
+{
+    _idempotent = YES;
+    _priority = HIGHEST_PRIO;
+    _posted = false;
+}
+
 -(CPCircuitI*) initCPSubtourEliminationI: (CPIntVarArrayI*) x
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO;
-    _low = [x low];
-    _up = [x up];
-    _varSize = (_up - _low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(CPInt i = 0; i < _varSize; i++)
-        _var[i] = (CPIntVarI*) [x at: _low + i];
-    _var -= _low;
-    _posted = false;
+    _x = x;
+    [self initInstanceVariables];
     return self;
 }
 -(CPCircuitI*) initCPNoCycleI: (CPIntVarArrayI*) x
@@ -62,12 +61,9 @@
 -(void) dealloc 
 {
     NSLog(@"Circuit dealloc called ...");
-    _var += _low;
-    free(_var);
     if (_posted) {
-        freeTRIntArray(_pred);
-        freeTRIntArray(_succ);
-        freeTRIntArray(_length);
+        _var += _low;
+        free(_var);
     }
     [super dealloc];
 }
@@ -75,38 +71,28 @@
 -(void) encodeWithCoder:(NSCoder*) aCoder
 {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_varSize];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up];
+    [aCoder encodeObject:_x];
     [aCoder encodeValueOfObjCType:@encode(bool) at:&_noCycle];
-    for(CPInt i=0;i<_varSize;i++)
-        [aCoder encodeObject:_var[i]];
 }
 
 -(id) initWithCoder:(NSCoder*) aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO;
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_varSize];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up];
+    [self initInstanceVariables];
+    _x = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(bool) at:&_noCycle];
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(CPInt i=0;i<_varSize;i++)
-        _var[i] = [aDecoder decodeObject];
     return self;
 }
 
 CPStatus assign(CPCircuitI* cstr,int i)
 {
-    int val = [cstr->_var[i] min];
-    int end = getTRIntArray(cstr->_succ,val);
-    int start = getTRIntArray(cstr->_pred,i);
-    int l = getTRIntArray(cstr->_length,start) + getTRIntArray(cstr->_length,val) + 1;
-    assignTRIntArray(cstr->_pred,end,start);
-    assignTRIntArray(cstr->_succ,start,end);
-    assignTRIntArray(cstr->_length,start,l);
+    CPInt val = [cstr->_var[i] min];
+    CPInt end = [cstr->_succ at: val];
+    CPInt start = [cstr->_pred at: i];
+    CPInt l = [cstr->_length at: start] + [cstr->_length at: val] + 1; 
+    [cstr->_pred set: start at: end];
+    [cstr->_succ set: end at: start];
+    [cstr->_length set: l at: start];
     if (l < cstr->_varSize- 1 || cstr->_noCycle)
         return [cstr->_var[end] remove: start];
     return CPSuspend;
@@ -117,13 +103,23 @@ CPStatus assign(CPCircuitI* cstr,int i)
     if (_posted)
         return CPSuspend;
     _posted = true;
-    _pred = makeTRIntArray(_trail,_varSize,_low);
-    _succ = makeTRIntArray(_trail,_varSize,_low);
-    _length = makeTRIntArray(_trail,_varSize,_low);
+    
+    _low = [_x low];
+    _up = [_x up];
+    _varSize = (_up - _low + 1);
+    _var = malloc(_varSize * sizeof(CPIntVarI*));
+    for(CPInt i = 0; i < _varSize; i++)
+        _var[i] = (CPIntVarI*) [_x at: _low + i];
+    _var -= _low;
+    
+    CPRange R = (CPRange){_low,_up};
+    _pred = [CPFactory TRIntArray: [_x cp] range: R];
+    _succ = [CPFactory TRIntArray: [_x cp] range: R];
+    _length = [CPFactory TRIntArray: [_x cp] range: R];
     for(int i = _low; i <= _up; i++) {
-        assignTRIntArray(_pred,i,i);
-        assignTRIntArray(_succ,i,i);
-        assignTRIntArray(_length,i,0);
+        [_pred set: i at: i];
+        [_succ set: i at: i];
+        [_length set: 0 at: i];
     }
     for(int i = _low; i <= _up; i++) {
         if ([_var[i] remove: i] == CPFailure)

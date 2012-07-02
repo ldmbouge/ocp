@@ -121,6 +121,7 @@
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
+
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
@@ -132,18 +133,28 @@
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
+
 +(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) range with:(CPInt(^)(CPInt)) clo
 {
     CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range:range with:clo];
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
+
 +(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with: (CPInt(^)(CPInt,CPInt)) clo
 {
     CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range: r1 range: r2 with:clo];    
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
+
++(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2
+{
+    CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: cp range: r1 : r2];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;   
+}
+
 +(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
 {
     CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range domain:domain];
@@ -227,6 +238,20 @@
 {
     id<CPBarrier> o = [CPConcurrency barrier: nb];
     [[cp solver] trackObject: o];
+    return o;    
+}
+
++(CPTRIntArrayI*) TRIntArray: (id<CP>) cp range: (CPRange) R
+{
+    CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp range: R];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;    
+}
+
++(id<CPTRIntMatrix>) TRIntMatrix: (id<CP>) cp range: (CPRange) R1 : (CPRange) R2
+{
+    CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: cp range: R1 : R2];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
     return o;    
 }
 @end

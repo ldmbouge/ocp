@@ -61,7 +61,6 @@
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 : (CPRange) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
-+(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c;
 
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
@@ -69,6 +68,9 @@
 +(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) range value: (CPInt) value;
 +(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) range with:(CPInt(^)(CPInt)) clo;
 +(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(CPInt(^)(CPInt,CPInt)) clo;
+
++(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2;
+
 +(id<CPIntSet>) intSet: (id<CP>) cp;
 +(id<CPInformer>) informer: (id<CP>) cp;
 +(id<CPVoidInformer>) voidInformer: (id<CP>) cp;
@@ -76,6 +78,12 @@
 +(id<CPBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb;
 
 +(id<CPTable>) table: (id<CP>) cp arity: (int) arity;
+
++(id<CPTRIntArray>)  TRIntArray: (id<CP>) cp range: (CPRange) R;
++(id<CPTRIntMatrix>) TRIntMatrix: (id<CP>) cp range: (CPRange) R1 : (CPRange) R2;
+
++(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c;
+
 @end
 
 @interface CPFactory (expression)

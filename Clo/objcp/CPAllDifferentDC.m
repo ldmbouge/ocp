@@ -341,7 +341,7 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
                if (_valHigh[w] > _varHigh[k])
                   _varHigh[k] = _valHigh[w];
             }
-            else if ( (valDfs > _varDfs[k]) && (!_valComponent[w])) {
+            else if (valDfs > _varDfs[k] && !_valComponent[w]) {
                if (valDfs > _varHigh[k])
                   _varHigh[k] = _valDfs[w];
             }

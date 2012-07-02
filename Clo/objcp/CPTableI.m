@@ -208,6 +208,8 @@
 
 -(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table  
 {
+    [table close];
+    
     self = [super initCPActiveConstraint: [[x cp] solver]];
     [self initInstanceVariables];
     _table = table;
@@ -222,6 +224,8 @@
 }
 -(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z
 {
+    [table close];
+    
     self = [super initCPActiveConstraint: [[x cp] solver]];
     [self initInstanceVariables];    
     _table = table;

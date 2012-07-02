@@ -27,6 +27,7 @@
 #import "CPData.h"
 #import "CPCreateI.h"
 #import "CPConcurrency.h"
+#import "CPAVLTree.h"
 
 @implementation CPCrFactory
 +(id<CPInteger>) integer: (CPInt) value

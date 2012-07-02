@@ -23,70 +23,47 @@
  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ***********************************************************************/
 
-#import <Foundation/NSObject.h>
-#import "CP.h"
+#import <Foundation/Foundation.h>
+#import "CPTypes.h"
+#import "CPDataI.h"
+#import "CPConstraintI.h"
+#import "CPTrail.h"
+#import "CPBasicConstraint.h"
+#import "CPArrayI.h"
 
-@class CoreCPI;
-@class CP;
-
-@interface CPExprI: NSObject<CPExpr,NSCoding>
--(id<CPExpr>) add: (id<CPExpr>) e; 
--(id<CPExpr>) sub: (id<CPExpr>) e;
--(id<CPExpr>) mul: (id<CPExpr>) e;
--(id<CPExpr>) muli: (CPInt) e;
--(id<CPRelation>) equal: (id<CPExpr>) e;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
-
-@interface CPIntegerI : CPExprI<NSCoding,CPInteger> {
-	CPInt _value;
+@interface CPAssignment : CPActiveConstraint<CPConstraint,NSCoding> {
+    id<CPIntVarArray>  _x;
+    id<CPIntMatrix>    _matrix;
+    CPIntVarI**        _var;
+    CPInt              _varSize;
+    CPInt              _low;
+    CPInt              _up;
+    
+    CPInt              _lowr;
+    CPInt              _upr;
+    CPInt              _lowc;
+    CPInt              _upc;
+    id<CPTRIntMatrix>  _cost;
+    
+    CPInt              _bigM;
+    
+    id<CPTRIntArray>   _lc;
+    id<CPTRIntArray>   _lr;
+    
+    id<CPTRIntArray>   _rowOfColumn;
+    id<CPTRIntArray>   _columnOfRow;
+    
+    CPInt*             _columnIsMarked;
+    CPInt*             _rowIsMarked;
+    CPInt*             _pi;
+    CPInt*             _pathRowOfColumn;
+    
+    bool               _posted;
 }
--(CPIntegerI*) initCPIntegerI: (CPInt) value;
--(CPInt)  value;
--(void) setValue: (CPInt) value;
--(void) incr;
--(void) decr;
--(CPInt)   min;
--(id<CP>) cp;
-@end
-
-
-
-@interface CPStreamManager : NSObject 
-+(void) initialize;
-+(void) setDeterministic;
-+(void) setRandomized;
-+(CPInt) deterministic;
-+(void) initSeed: (unsigned short*) seed;
-@end
-
-  
-@interface CPRandomStream : NSObject {
-  unsigned short _seed[3];
-}
--(CPRandomStream*) init;
+-(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix;
 -(void) dealloc;
--(CPInt) next;
-@end;
-
-@interface CPZeroOneStream : NSObject {
-  unsigned short _seed[3];
-}
--(CPZeroOneStream*) init;
--(void) dealloc;
--(double) next;
-@end;
-
-@interface CPUniformDistribution : NSObject {
-  CPRange         _range;
-  CPRandomStream* _stream;
-  CPInt       _size;
-}
--(CPUniformDistribution*) initCPUniformDistribution: (CPRange) r;
--(void) dealloc;
--(CPInt) next;
-@end;
-
-
-
+-(CPStatus) post;
+-(CPStatus) propagate;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end

@@ -193,8 +193,10 @@ static void assign(CPCardinalityDC* card,CPInt i,CPInt v)
 {
     _nbAssigned = 0;
     for(CPInt i = 0; i < _varSize; i++) {
-        CPInt m = [_var[i] min];
-        CPInt M = [_var[i] max];
+        CPInt m = minDom(_var[i]);
+        CPInt M = maxDom(_var[i]);
+ //       CPInt m = [_var[i] min];
+ //       CPInt M = [_var[i] max];
         for(CPInt v = m; v <= M; v++)
             if (_flow[v] < _up[v] && [_var[i] member: v]) {
                 matchVariable(self,i,v);
@@ -208,8 +210,10 @@ static BOOL augmentPath(CPCardinalityDC* card,CPInt i)
 {
     if (card->_varMagic[i] != card->_magic) {
         card->_varMagic[i] = card->_magic;
-        CPInt m = [card->_var[i] min];
-        CPInt M = [card->_var[i] max];
+        CPInt m = minDom(card->_var[i]);
+        CPInt M = maxDom(card->_var[i]);
+//        CPInt m = [card->_var[i] min];
+//       CPInt M = [card->_var[i] max];
         for(CPInt v = m; v <= M; v++)
             if (card->_varMatch[i] != v && [card->_var[i] member: v]) 
                 if (augmentValuePath(card,v)) {
@@ -256,19 +260,21 @@ static BOOL findFeasibleFlowFromValue(CPCardinalityDC* card,CPInt v,CPInt w);
 static BOOL findFeasibleFlowFromVariable(CPCardinalityDC* card,CPInt v,CPInt i)
 {
     if (card->_varMagic[i] != card->_magic) { // forward
-       card->_varMagic[i] = card->_magic;
-       if (card->_varMatch[i] != v && [card->_var[i] member: v]) { 
-           assign(card,i,v);
-           return TRUE;
-       }
-       CPInt m = [card->_var[i] min];
-       CPInt M = [card->_var[i] max];
-       for(CPInt w = m; w <= M; w++)
-           if (w != v && card->_varMatch[i] != w && [card->_var[i] member: w]) 
-               if (findFeasibleFlowFromValue(card,v,w)) {
-                   assign(card,i,w);
-                   return TRUE;
-               }
+        card->_varMagic[i] = card->_magic;
+        if (card->_varMatch[i] != v && [card->_var[i] member: v]) { 
+            assign(card,i,v);
+            return TRUE;
+        }
+ //     CPInt m = [card->_var[i] min];
+ //      CPInt M = [card->_var[i] max];
+        CPInt m = minDom(card->_var[i]);
+        CPInt M = maxDom(card->_var[i]);
+        for(CPInt w = m; w <= M; w++)
+            if (w != v && card->_varMatch[i] != w && [card->_var[i] member: w]) 
+                if (findFeasibleFlowFromValue(card,v,w)) {
+                    assign(card,i,w);
+                    return TRUE;
+                }
     }
     return FALSE;
 }
@@ -477,6 +483,9 @@ static void findSCCsink(CPCardinalityDC* card)
     CPInt* _valDfs = card->_valDfs;
     CPInt* _valHigh = card->_valHigh;
     CPInt* _valComponent = card->_valComponent;
+    CPInt* _low = card->_low;
+    CPInt* _flow = card->_flow;
+    CPInt* _varMatch = card->_varMatch;
     
     card->_sinkDfs  = card->_dfs--;
     card->_sinkHigh = card->_sinkDfs;
@@ -485,10 +494,10 @@ static void findSCCsink(CPCardinalityDC* card)
     card->_top++;
     // should really iterate over the value
     for(CPInt i = 0; i < card->_varSize; i++) {
-        CPInt v = card->_varMatch[i];
+        CPInt v = _varMatch[i];
         // borrow
-        if (card->_flow[v] > card->_low[v]) {
-            if (!card->_valDfs[v]) {
+        if (_flow[v] > _low[v]) {
+            if (!_valDfs[v]) {
                 findSCCval(card,v);
                 if (_valHigh[v] > card->_sinkHigh)
                     card->_sinkHigh = _valHigh[v];

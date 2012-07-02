@@ -104,6 +104,11 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(CPInt) virtualOffset;   
 @end
 
+@interface CPRuntimeMonitor : NSObject 
++(CPInt) cputime;
++(CPInt) microseconds;
+@end;
+
 typedef void (^CPClosure)(void);
 typedef bool (^CPInt2Bool)(CPInt);
 typedef bool (^CPVoid2Bool)(void);
