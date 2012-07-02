@@ -73,6 +73,7 @@
 -(void)addImpact:(double)i forValue:(CPInt)val;
 -(void)setImpact:(double)i forValue:(CPInt)val;
 -(double)getImpactForValue:(CPInt)val;
+// pvh: variable impact?
 -(double)getImpact;
 @end
 
@@ -186,6 +187,7 @@
    [key release];
    return rv;
 }
+// pvh: this dictionary business seems pretty heavy; lots of memory allocation
 -(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
 {
    _vars = [[NSMutableArray alloc] initWithCapacity:len];
@@ -193,6 +195,7 @@
       [_vars addObject:t[i]];
    _monitor = [[CPMonitor alloc] initCPMonitor:_solver vars:_vars];
    _nbv = len;
+    // pvh: why is it times 3?
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv*3];
    for(CPUInt i=0;i<len;i++) {
       CPValueImpact* assigns = [[CPValueImpact alloc] initCPValueImpact:t[i]];
