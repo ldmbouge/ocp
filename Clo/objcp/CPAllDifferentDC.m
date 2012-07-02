@@ -316,11 +316,7 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
    CPInt*_varHigh = ad->_varHigh;
    CPInt*_stack = ad->_stack;
    CPInt*_type = ad->_type;
-   CPInt*_match = ad->_match;
-   CPInt*_valDfs = ad->_valDfs;
    CPInt*_valHigh = ad->_valHigh;
-   CPInt*_valComponent = ad->_valComponent;
-   CPInt*_varComponent = ad->_varComponent;
    
    _varDfs[k] = ad->_dfs--;
    _varHigh[k] = _varDfs[k];

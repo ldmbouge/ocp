@@ -509,7 +509,6 @@
 }
 -(void) dealloc
 {
-   [_expr release];
    [super dealloc];
 }
 -(CPStatus) post
