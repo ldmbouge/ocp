@@ -723,63 +723,59 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    }
    CPBounds xb = bounds(_x);
    int mxy = maxOf( - xb.min,xb.max);
-   CPStatus ok = [_y updateMin:0 andMax:mxy];
-   if (ok)  ok = [_x updateMin:-mxy andMax:mxy];
-   if (ok) {
-      CPBounds yb = bounds(_y);
-      for(int k=yb.min;ok && k<=yb.max;k++) {
-         if ([_y member:k]) {
-            if (![_x member:k] && ![_y member:k]) 
-               if (ok) ok = [_y remove:k];
+   [_y updateMin:0 andMax:mxy];
+   [_x updateMin:-mxy andMax:mxy];
+   CPBounds yb = bounds(_y);
+   for(int k=yb.min; k<=yb.max;k++) {
+      if ([_y member:k]) {
+         if (![_x member:k] && ![_y member:k]) 
+            [_y remove:k];
+      } else {
+         [_x remove:k];
+         [_x remove:-k];
+      }
+   }
+   yb = bounds(_y);
+   for(int k=0;k<yb.min;k++) {  // ----0----y_min-------------y_max----  kill values between 0..y_min
+      if ([_x member:k])
+         [_x remove:k];
+      if ([_x member:-k])
+         [_x remove:-k];
+   }
+   if (!bound(_x)) {
+      [_x whenLoseValue:self do:^CPStatus(CPInt val) {
+         if (!memberDom(_x, -val)) { 
+            return [_y remove:abs(val)];
+         } else return CPSuspend;
+      }];
+      [_x whenBindDo:^CPStatus{
+         return [_y bind:abs(minDom(_x))];
+      } onBehalf:self];
+   }
+   if (!bound(_y)) {
+      [_y whenLoseValue:self do:^CPStatus(CPInt val) {
+         [_x remove:val];
+         [_x remove:-val];
+         return CPSuspend;
+      }];
+      [_y whenBindDo:^CPStatus{
+         CPInt val = minDom(_y);
+         if (!memberDom(_x, val) && !memberDom(_x, -val)) {
+            failNow();
+            return CPFailure;
+         }
+         else if (memberDom(_x, val) ^ memberDom(_x, -val)) {
+            return [_x bind:memberDom(_x, val) ? val : -val];
          } else {
-            if (ok) ok = [_x remove:k];
-            if (ok) ok = [_x remove:-k];
+            CPBounds xb = bounds(_x);
+            for(int k=xb.min; k <= xb.max;k++)
+               if (k != val && k != - val)
+                  [_x remove:k];
+            return CPSuspend;
          }
-      }
-      yb = bounds(_y);
-      for(int k=0;ok && k<yb.min;k++) {  // ----0----y_min-------------y_max----  kill values between 0..y_min
-         if ([_x member:k])
-            ok = [_x remove:k];
-         if ([_x member:-k])
-            ok = [_x remove:-k];
-      }
-      if (ok) {
-         if (!bound(_x)) {
-            [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-               if (!memberDom(_x, -val)) { 
-                  return [_y remove:abs(val)];
-               } else return CPSuspend;
-            }];
-            [_x whenBindDo:^CPStatus{
-               return [_y bind:abs(minDom(_x))];
-            } onBehalf:self];
-         }
-         if (!bound(_y)) {
-            [_y whenLoseValue:self do:^CPStatus(CPInt val) {
-               [_x remove:val];
-               [_x remove:-val];
-               return CPSuspend;
-            }];
-            [_y whenBindDo:^CPStatus{
-               CPInt val = minDom(_y);
-               if (!memberDom(_x, val) && !memberDom(_x, -val)) {
-                  failNow();
-                  return CPFailure;
-               }
-                else if (memberDom(_x, val) ^ memberDom(_x, -val)) {
-                  return [_x bind:memberDom(_x, val) ? val : -val];
-               } else {
-                  CPBounds xb = bounds(_x);
-                  for(int k=xb.min; k <= xb.max;k++)
-                     if (k != val && k != - val)
-                        [_x remove:k];
-                  return CPSuspend;
-               }
-            }  onBehalf:self];
-         }
-      }
-      return ok;
-   } else return CPFailure;
+      }  onBehalf:self];
+   }
+   return CPSuspend;
 }
 -(NSSet*)allVars
 {

@@ -271,8 +271,7 @@ static CPStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
             else 
                 tuple = table->_nextSupport[col][tuple];
         if (tuple == -1) {
-            if (removeDom(cstr->_var[col],v) == CPFailure)
-                return CPFailure;
+           removeDom(cstr->_var[col],v);
         }
         else {
             assignTRIntArray(cstr->_currentSupport[col],v,tuple);
@@ -290,7 +289,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
         for(CPInt j = 0; j < arity; j++) 
             if (i != j)
                 if (findNewSupport(cstr,tuple,j) == CPFailure) 
-                    return CPFailure;
+                    failNow();
         tuple = cstr->_table->_nextSupport[i][tuple];
     } while (tuple != -1);
     return CPSuspend;
@@ -311,8 +310,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
                 tuple = _table->_nextSupport[i][tuple];
         }
         if (tuple == -1) {
-            if ([_var[i] remove: v] == CPFailure)
-                return CPFailure;
+           [_var[i] remove: v];
         }
         else 
             assignTRIntArray(_currentSupport[i],v,tuple);
@@ -327,15 +325,13 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
         return CPSuspend;
     _posted = true;
     for(CPInt i = 0; i < _arity; i++) {
-        if ([_var[i] updateMin: _table->_min[i]] == CPFailure)
-            return CPFailure;
-        if ([_var[i] updateMax: _table->_max[i]] == CPFailure)
-            return CPFailure;
+       [_var[i] updateMin: _table->_min[i]];
+       [_var[i] updateMax: _table->_max[i]];
     }
     _currentSupport = (TRIntArray*) malloc(sizeof(TRIntArray) * _arity);
     for(CPInt i = 0; i < _arity; i++) {
         if ([self initSupport: i] == CPFailure)
-            return CPFailure;
+           failNow();
     }
     for(CPInt i = 0; i < _arity; i++) 
         if (![_var[i] bound])
