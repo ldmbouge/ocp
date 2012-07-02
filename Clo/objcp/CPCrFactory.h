@@ -25,11 +25,14 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
+#import "CPSolver.h"
+#import "CP.h"
 
 @protocol CPInteger;
 @protocol CPInformer;
 @protocol CPIntInformer;
 @protocol CPVoidInformer;
+@class CPAVLTree;
 
 @interface CPCrFactory : NSObject
 +(id<CPInteger>) integer: (CPInt) value;

@@ -49,7 +49,7 @@
 
 -(void) dealloc
 {
-    NSLog(@"Circuit dealloc called ...");
+//    NSLog(@"CPTableI dealloc called ...");
     for(CPInt i = 0; i < _arity; i++) 
         free(_column[i]);
     free(_column);
@@ -180,7 +180,6 @@
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
-    // do I need to retain; what about the constructor
     id<CP> cp = [[aDecoder decodeObject] retain];
     CPInt arity;
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&arity];
@@ -200,31 +199,53 @@
 
 @implementation CPTableCstrI
 
--(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table  
+-(void) initInstanceVariables 
 {
-    self = [super initCPActiveConstraint: [[x cp] solver]];
     _idempotent = YES;
     _priority = HIGHEST_PRIO;
+    _posted = false;
+}
+
+-(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table  
+{
+    [table close];
+    
+    self = [super initCPActiveConstraint: [[x cp] solver]];
+    [self initInstanceVariables];
+    _table = table;
+    
     CPInt low = [x low];
     CPInt up = [x up];
     _arity = (up - low + 1);
-    // Need a convention for all these memory stuff; Talk to LDM
     _var = malloc(_arity * sizeof(CPIntVarI*));
     for(CPInt i = 0; i < _arity; i++)
         _var[i] = (CPIntVarI*) [x at: low + i];
-    _table = [table retain];
-    _posted = false;
     return self;    
 }
+-(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z
+{
+    [table close];
+    
+    self = [super initCPActiveConstraint: [[x cp] solver]];
+    [self initInstanceVariables];    
+    _table = table;
 
+    _arity = 3;
+    _var = malloc(_arity * sizeof(CPIntVarI*));
+    _var[0] = x;
+    _var[1] = y;
+    _var[2] = z;
+    return self;        
+}
 -(void) dealloc
 {
-    NSLog(@"TableCstr dealloc called ...");
+//    NSLog(@"TableCstr dealloc called ...");
     free(_var);
-    [_table release];
-    for(CPInt i = 0; i < _arity; i++)
-        freeTRIntArray(_currentSupport[i]);
-    free(_currentSupport);
+    if (_posted) {
+        for(CPInt i = 0; i < _arity; i++)
+            freeTRIntArray(_currentSupport[i]);
+        free(_currentSupport);
+    }
     [super dealloc];
 }
 
@@ -233,7 +254,7 @@ static bool isValidTuple(CPTableCstrI* cstr,CPInt tuple)
     int arity = cstr->_arity;
     CPTableI* table = cstr->_table;
     for(CPInt i = 0; i < arity; i++) 
-        if (![cstr->_var[i] member: table->_column[i][tuple]])
+        if (!memberDom(cstr->_var[i],table->_column[i][tuple]))
             return false;
     return true;
 }
@@ -250,7 +271,7 @@ static CPStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
             else 
                 tuple = table->_nextSupport[col][tuple];
         if (tuple == -1) {
-            if ([cstr->_var[col] remove: v] == CPFailure)
+            if (removeDom(cstr->_var[col],v) == CPFailure)
                 return CPFailure;
         }
         else {
@@ -295,7 +316,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
         }
         else 
             assignTRIntArray(_currentSupport[i],v,tuple);
-        printf("Support of value %d for column %d is %d \n",v,i,getTRIntArray(_currentSupport[i],v));
+//        printf("Support of value %d for column %d is %d \n",v,i,getTRIntArray(_currentSupport[i],v));
     }
     return CPSuspend;
 }
@@ -334,13 +355,12 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    _table = [[aDecoder decodeObject] retain];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO;
+    _table = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
     _var = malloc(_arity * sizeof(CPIntVarI*));
     for(CPInt i=0;i<_arity;i++)
         _var[i] = [aDecoder decodeObject];
+    [self initInstanceVariables];
     return self;
 }
 

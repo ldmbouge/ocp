@@ -28,6 +28,8 @@
 
 @class CPVarInfo;
 
+// PVH: Need another name for this baby
+
 @interface CPMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
    CPInt                   _nbVI;

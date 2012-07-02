@@ -39,7 +39,7 @@
 {
    return 0;
 }
--(id) var 
+-(id<CPIntVar>) var 
 {
    return nil;
 }
@@ -54,6 +54,22 @@
 -(id<CPExpr>) add: (id<CPExpr>) e
 {
     return [CPFactory expr: self add: e];
+}
+-(id<CPExpr>) sub: (id<CPExpr>) e
+{
+   return [CPFactory expr:self sub:e];
+}
+-(id<CPExpr>) mul: (id<CPExpr>) e
+{
+   return [CPFactory expr:self mul:e];
+}
+-(id<CPExpr>) muli: (CPInt) e
+{
+   return [CPFactory expr:self mul:[CPFactory integer:[self cp] value:e]];
+}
+-(id<CPRelation>) equal: (id<CPExpr>) e
+{
+   return [CPFactory expr:self equal:e];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
@@ -103,8 +119,128 @@
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _left  = [[aDecoder decodeObject] retain];
-   _right = [[aDecoder decodeObject] retain];
+   _left  = [aDecoder decodeObject];
+   _right = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPExprAbsI
+-(id<CPExpr>) initCPExprAbsI: (id<CPExpr>) op
+{
+   self = [super init];
+   _op = op;
+   return self;
+}
+-(id<CP>) cp
+{
+   return [_op cp];
+}
+-(CPInt) min
+{
+   return 0;
+}
+-(CPInt) max
+{
+   CPInt opMax = [_op max];
+   CPInt opMin = [_op min];
+   if (opMin >=0)
+      return opMax;
+   else if (opMax < 0)
+      return -opMax;
+   else 
+      return max(-opMin,opMax);
+}
+-(CPExprI*) operand
+{
+   return _op;
+}
+-(BOOL) isConstant
+{
+   return [_op isConstant];
+}
+
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"abs(%@)",[_op description]];
+   return rv;   
+}
+-(void) visit:(id<CPExprVisitor>)visitor
+{
+   [visitor visitExprAbsI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_op];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _op = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPExprCstSubI
+-(id<CPExpr>) initCPExprCstSubI: (id<CPIntArray>) array index:(id<CPExpr>) op
+{
+   self = [super init];
+   _array = array;
+   _index = op;
+   return self;
+}
+-(id<CP>) cp
+{
+   return [_index cp];
+}
+-(CPInt) min
+{
+   CPInt minOf = MAXINT;
+   for(CPInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf <[_array at:k] ? minOf : [_array at:k];
+   return minOf;
+}
+-(CPInt) max
+{
+   CPInt maxOf = MININT;
+   for(CPInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@]",_array,_index];
+   return rv;   
+}
+-(CPExprI*) index
+{
+   return  _index;
+}
+-(id<CPIntArray>)array
+{
+   return _array;
+}
+-(BOOL) isConstant
+{
+   return [_index isConstant];
+}
+-(void) visit:(id<CPExprVisitor>)visitor
+{
+   [visitor visitExprCstSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_array];
+   [aCoder encodeObject:_index];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _array = [aDecoder decodeObject];
+   _index = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -325,7 +461,7 @@
 - (id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _e = [[aDecoder decodeObject] retain];
+   _e = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -372,12 +508,23 @@
    printf(" == ");
    [[e right] visit: self];         
 }
+-(void) visitExprAbsI:(CPExprAbsI*) e
+{
+   printf("abs(");
+   [[e operand] visit:self];
+   printf(")");
+}
 -(void) visitExprSumI: (CPExprSumI*) e
 {
     [[e expr] visit: self];
 }
+-(void) visitExprCstSubI:(CPExprCstSubI*)e
+{
+   printf("SUBSCRIPT-CST[");
+   [[e index] visit:self];
+   printf("]");
+}
 @end
-
 
 @implementation CPExprI (visitor)
 -(void) visit: (id<CPExprVisitor>) visitor

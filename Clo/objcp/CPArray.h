@@ -26,6 +26,7 @@
 
 @protocol CPIntVarArray <NSObject> 
 -(id<CPIntVar>) at: (CPInt) value;
+-(void) set: (id<CPIntVar>) x at: (CPInt) value;
 -(CPInt) low;
 -(CPInt) up;
 -(NSUInteger)count;
@@ -33,12 +34,12 @@
 -(id<CP>) cp;
 @end
 
-@protocol CPIntVarMatrix <NSObject>
--(id<CPIntVar>) atRow:(CPInt)r col:(CPInt)c;
--(CPRange) rowRange;
--(CPRange) columnRange;
--(NSMutableArray*) row: (CPInt) r;
+@protocol CPIntVarMatrix <NSObject> 
+-(id<CPIntVar>) at: (CPInt) i1 : (CPInt) i2;
+-(id<CPIntVar>) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(CPRange) range: (CPInt) i;
 -(NSUInteger)count;
+-(NSString*) description;
 -(id<CP>) cp;
 @end
 
@@ -49,5 +50,39 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<CP>) cp;
+-(id<CPExpr>) index: (id<CPExpr>) idx;
 @end
+
+@protocol CPTRIntArray <NSObject> 
+-(CPInt)  at: (CPInt) value;
+-(void)  set: (CPInt) value at: (CPInt) value;  
+-(CPInt) low;
+-(CPInt) up;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
+
+@protocol CPIntMatrix <NSObject> 
+-(CPInt) at: (CPInt) i1 : (CPInt) i2;
+-(CPInt) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2;
+-(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(CPRange) range: (CPInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
+
+@protocol CPTRIntMatrix <NSObject> 
+-(CPInt) at: (CPInt) i1 : (CPInt) i2;
+-(CPInt) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2;
+-(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(CPRange) range: (CPInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
+
 

@@ -127,6 +127,7 @@ void failNow()
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
+
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
@@ -138,21 +139,37 @@ void failNow()
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
+
 +(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) range with:(CPInt(^)(CPInt)) clo
 {
     CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range:range with:clo];
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
+
 +(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with: (CPInt(^)(CPInt,CPInt)) clo
 {
     CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range: r1 range: r2 with:clo];    
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
+
++(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2
+{
+    CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: cp range: r1 : r2];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;   
+}
+
 +(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
 {
     CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range domain:domain];
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;
+}
++(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range 
+{
+    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range];
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
@@ -162,15 +179,27 @@ void failNow()
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
-+(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with: (id<CPIntVar>(^)(CPInt,CPInt)) clo
++(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 with: (id<CPIntVar>(^)(CPInt,CPInt)) clo
 {
-    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range: r1 range: r2 with:clo];    
+    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range: r1 : r2 with:clo];    
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
-+(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp rows: (CPRange) rr columns: (CPRange) cr domain: (CPRange) domain
++(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 : (CPRange) r3 with: (id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo
 {
-    CPIntVarMatrixI* o = [[CPIntVarMatrixI alloc] initCPIntVarMatrix: cp rowRange: rr colRange: cr domain:domain]; 
+    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range: r1 : r2 : r3 with:clo];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;
+}
++(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain
+{
+    CPIntVarMatrixI* o = [[CPIntVarMatrixI alloc] initCPIntVarMatrix: cp range: r0 : r1 domain:domain]; 
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;
+}
++(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain
+{
+    CPIntVarMatrixI* o = [[CPIntVarMatrixI alloc] initCPIntVarMatrix: cp range: r0 : r1 : r2 domain:domain]; 
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
@@ -217,8 +246,24 @@ void failNow()
     [[cp solver] trackObject: o];
     return o;    
 }
+
++(CPTRIntArrayI*) TRIntArray: (id<CP>) cp range: (CPRange) R
+{
+    CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp range: R];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;    
+}
+
++(id<CPTRIntMatrix>) TRIntMatrix: (id<CP>) cp range: (CPRange) R1 : (CPRange) R2
+{
+    CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: cp range: R1 : R2];    
+    [[((CoreCPI*) cp) solver] trackObject: o];
+    return o;    
+}
 @end
 
+
+// Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
 +(id<CPExpr>) validate:(id<CPExpr>)e onError:(const char*)str
 {
@@ -243,10 +288,16 @@ void failNow()
    id<CPExpr> o = [[CPExprMulI alloc] initCPExprMulI: left and: right]; 
    return [self validate:o onError:"No CP Solver in Mul Expression"];
 }
-+(id<CPExpr>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right
++(id<CPRelation>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right
 {
-   id<CPExpr> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in == Expression"];
+   id<CPRelation> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
+   [self validate:o onError:"No CP Solver in == Expression"];
+   return o;
+}
++(id<CPExpr>) exprAbs: (id<CPExpr>) op
+{
+   id<CPExpr> o = [[CPExprAbsI alloc] initCPExprAbsI:op];
+   return [self validate:o onError:"No CP Solver in Abs Expression"];
 }
 
 +(id<CPExpr>) sum: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e

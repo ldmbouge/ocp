@@ -31,8 +31,9 @@
 @class CPSolverI;
 
 typedef enum {
-    CPChecked,
-    CPTocheck
+   CPChecked,
+   CPTocheck,
+   CPOff
 } CPTodo;
 
 

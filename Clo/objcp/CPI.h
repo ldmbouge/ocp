@@ -41,19 +41,20 @@
    id<CPIdxIntInformer>  _retLabel;
    id<CPIdxIntInformer>  _failLabel;   
 }
--(id)                    init;
--(id)                    initFor:(id<CPSolver>) fdm;
--(void)                  dealloc;
--(NSString*)             description;
--(CPInt)             nbChoices;
--(CPInt)             nbFailures;
--(CPUInt)            nbPropagation;
--(CPUInt)            nbVars;
--(CPTrail*)              trail;
+-(id)                     init;
+-(id)                     initFor:(id<CPSolver>) fdm;
+-(void)                   dealloc;
+-(NSString*)              description;
+-(CPInt)                  nbChoices;
+-(CPInt)                  nbFailures;
+-(CPUInt)                 nbPropagation;
+-(CPUInt)                 nbVars;
+-(CPTrail*)               trail;
 -(id<CPSearchController>) controller;
 -(void) setController: (id<CPSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
    
+-(void)              addRel: (id<CPRelation>) c;
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                post: (id<CPConstraint>) c;
 -(void)               close;

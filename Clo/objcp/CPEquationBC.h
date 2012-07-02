@@ -26,8 +26,7 @@
 #import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
 #import "CPTrail.h"
-
-typedef CPStatus(*UBType)(id,SEL,...);
+#import "CPDom.h"
 
 @class CPIntVarI;
 @interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c

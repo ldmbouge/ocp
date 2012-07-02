@@ -177,6 +177,12 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
     }
     return CPSuspend; 
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [NSMutableString stringWithCapacity:64];
+   [buf appendFormat:@"<CPEquationBC:[%d] == %d>",_nb,_c];
+   return buf;
+}
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

@@ -24,7 +24,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <Foundation/Foundation.h>
 #import "objcp/CPConstraint.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"

@@ -29,6 +29,7 @@
 
 @implementation CPWDeg
 
+
 -(CPWDeg*)initCPWDeg:(id<CP>)cp
 {
    self = [super init];
@@ -40,6 +41,7 @@
    _cv = 0;
    return self;
 }
+
 -(void)dealloc
 {
    if (_w) free(_w);
@@ -57,6 +59,9 @@
    free(_map);
    [super dealloc];
 }
+
+// pvh: not sure why this is needed
+// pvh: why do we need vars and t and so on.
 -(id<CPIntVarArray>)allIntVars
 {
    id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,_nbv-1} with:^id<CPIntVar>(CPInt i) {
@@ -65,7 +70,9 @@
    return rv;
 }
 
--(float)varOrdering:(id<CPIntVar>)x
+// pvh: see question below for the importance of _cv
+
+-(float) varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
@@ -74,16 +81,21 @@
    }
    return h / [x domsize];
 }
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
+
+-(float) valOrdering:(int) v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }
+
+// pvh: we should really use our arrays for consistency in the interfaces
+// pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable
+
 -(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
 {
    _cv = malloc(sizeof(NSSet*)*len);
    CPUInt maxID = 0;
    for(int k=0;k<len;k++) 
-      maxID = max(maxID,[t[k] getId]);   
+      maxID = max(maxID,[t[k] getIPVHd]);   
    _map = malloc(sizeof(CPUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
    for(int k=0;k<len;k++) {
@@ -105,4 +117,5 @@
       _w[cID]++;
    }];
 }
+
 @end

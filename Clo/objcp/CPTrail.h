@@ -28,6 +28,17 @@
 
 #define NBSLOT 8192
 
+#define TAGShort        0x1
+#define TAGInt          0x2
+#define TAGUnsigned     0x3
+#define TAGId           0x4
+#define TAGFloat        0x5
+#define TAGDouble       0x6
+#define TAGLong         0x7
+#define TAGUnsignedLong 0x8
+#define TAGClosure      0x9
+#define TAGRelease      0xA
+
 @interface CPTrail : NSObject<NSCoding> {
    @package
    struct Slot {
@@ -93,7 +104,7 @@
 @end
 
 typedef struct {
-   int       _val;   // TRInt should be a 32-bit wide trailable signed integer
+   int    _val;   // TRInt should be a 32-bit wide trailable signed integer
    CPUInt _mgc;
 } TRInt;
 
@@ -124,27 +135,113 @@ typedef struct {
     TRInt*   _entries;
 } TRIntArray;
 
+
 typedef struct {
    int       _val;
    CPUInt _mgc;
 } FXInt;
 
+static inline void trailIntFun(CPTrail* t,int* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGInt;
+   s->intVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);   
+}
+
+static inline void trailUIntFun(CPTrail* t,unsigned* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGUnsigned;
+   s->uintVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);   
+}
+
 TRInt makeTRInt(CPTrail* trail,int val);
-void  assignTRInt(TRInt* v,int val,CPTrail* trail);
 TRUInt makeTRUInt(CPTrail* trail,unsigned val);
-void  assignTRUInt(TRUInt* v,unsigned val,CPTrail* trail);
 TRLong makeTRLong(CPTrail* trail,long long val);
-void  assignTRLong(TRLong* v,long long val,CPTrail* trail);
 TRDouble  makeTRDouble(CPTrail* trail,double val);
-void  assignTRDouble(TRDouble* v,double val,CPTrail* trail);
 TRId  makeTRId(CPTrail* trail,id val);
-void  assignTRId(TRId* v,id val,CPTrail* trail);
-
 TRIntArray makeTRIntArray(CPTrail* trail,int nb,int low);
-void       assignTRIntArray(TRIntArray a,int i,int val);
-int        getTRIntArray(TRIntArray a,int i);
-void       freeTRIntArray(TRIntArray a);
-
+void  freeTRIntArray(TRIntArray a);
 FXInt makeFXInt(CPTrail* trail);
-void  incrFXInt(FXInt* v,CPTrail* trail);
-int   getFXInt(FXInt* v,CPTrail* trail);
+
+static inline void  assignTRInt(TRInt* v,int val,CPTrail* trail)
+{
+   CPInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      trailIntFun(trail, &v->_val);
+   }
+   v->_val = val;      
+}
+static inline void  assignTRUInt(TRUInt* v,unsigned val,CPTrail* trail) 
+{
+   CPInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      trailUIntFun(trail, &v->_val);
+   }
+   v->_val = val;         
+}
+static inline void  assignTRLong(TRLong* v,long long val,CPTrail* trail)
+{
+   CPInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      [trail trailLong:&v->_val];
+   }
+   v->_val = val;      
+}
+static inline void  assignTRDouble(TRDouble* v,double val,CPTrail* trail)
+{
+   if (v->_mgc != [trail magic]) {
+      v->_mgc = [trail magic];
+      [trail trailDouble:&v->_val];
+   }
+   v->_val = val;
+}
+static inline void  assignTRId(TRId* v,id val,CPTrail* trail)
+{
+   if (v->_mgc != [trail magic]) {
+      v->_mgc = [trail magic];
+      [trail trailId:&v->_val];
+   }
+   [v->_val release];
+   v->_val = [val retain];         
+}
+static inline CPInt assignTRIntArray(TRIntArray a,int i,CPInt val)
+{
+   TRInt* ei = a._entries + i;
+   if (ei->_mgc != a._trail->_magic) {
+      trailIntFun(a._trail, & ei->_val);
+      ei->_mgc = a._trail->_magic;
+   }
+   return ei->_val = val;
+}
+static inline CPInt getTRIntArray(TRIntArray a,int i)
+{
+   return a._entries[i]._val;
+}
+static inline void  incrFXInt(FXInt* v,CPTrail* trail)
+{
+   CPInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      v->_val = 0;      
+   }
+   v->_val++;
+}
+static inline int   getFXInt(FXInt* v,CPTrail* trail)
+{
+   CPInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      v->_val = 0;      
+   }   
+   return v->_val;
+}

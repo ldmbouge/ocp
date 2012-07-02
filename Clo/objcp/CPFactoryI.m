@@ -28,18 +28,14 @@
 #import "CPI.h"
 #import "CPAVLTree.h"
 
-@implementation CPFactory (internalDataStructure)
+@implementation CPInternalFactory 
 
 +(CPAVLTree*) AVLTree: (id<CP>) cp
 {
-    CPAVLTree* o = [[CPAVLTree alloc] initEmptyAVL];
-//    [[cp solver] trackObject: o];
-    return o;
+    return [[CPAVLTree alloc] initEmptyAVL];
 }
 +(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (CPAVLTree*) tree
 {
-    CPAVLTreeKeyIntEnumerator* o = [[CPAVLTreeKeyIntEnumerator alloc] initCPAVLTreeKeyIntEnumerator: tree];
-//    [[cp solver] trackObject: o];
-    return o;
+    return [[CPAVLTreeKeyIntEnumerator alloc] initCPAVLTreeKeyIntEnumerator: tree];
 }
 @end;

@@ -55,6 +55,7 @@
 -(void)              tryall: (CPRange) range filteredBy: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
+-(void)              addRel: (id<CPRelation>) r;
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<CPIntSet>) S;

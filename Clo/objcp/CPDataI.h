@@ -29,8 +29,12 @@
 @class CoreCPI;
 @class CP;
 
-@interface CPExprI: NSObject<CPExpr>
+@interface CPExprI: NSObject<CPExpr,NSCoding>
 -(id<CPExpr>) add: (id<CPExpr>) e; 
+-(id<CPExpr>) sub: (id<CPExpr>) e;
+-(id<CPExpr>) mul: (id<CPExpr>) e;
+-(id<CPExpr>) muli: (CPInt) e;
+-(id<CPRelation>) equal: (id<CPExpr>) e;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -47,10 +51,7 @@
 -(id<CP>) cp;
 @end
 
-@interface CPRuntimeMonitor : NSObject 
-+(CPInt) cputime;
-+(CPInt) microseconds;
-@end;
+
 
 @interface CPStreamManager : NSObject 
 +(void) initialize;

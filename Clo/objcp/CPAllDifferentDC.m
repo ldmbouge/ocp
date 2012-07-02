@@ -40,77 +40,80 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k);
 static void findSCCval(CPAllDifferentDC* ad,CPInt k);
 static void prune(CPAllDifferentDC* ad);
 
+-(void) initInstanceVariables 
+{
+    _idempotent = YES;
+    _priority = HIGHEST_PRIO-2;
+    _posted = false;
+}
 
 -(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
-    _idempotent = YES;
-    _priority = HIGHEST_PRIO-2;
-    CPInt low = [x low];
-    CPInt up = [x up];
-    _varSize = (up - low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(CPInt i = 0; i < _varSize; i++)
-        _var[i] = (CPIntVarI*) [x at: low + i];
-    _posted = false;
+    _x = x;
+    [self initInstanceVariables];
     return self;
 }
+
 -(void) dealloc 
 {
-   NSLog(@"AllDifferent dealloc called ...");
-   free(_var);
-   _valMatch += _min;
-   free(_match);
-   free(_valMatch);
-   free(_varSeen);
-   _valSeen += _min;
-   free(_valSeen);
-   _valComponent += _min;
-   _valDfs += _min;
-   _valHigh += _min;
-   free(_valComponent);
-   free(_valDfs);
-   free(_valHigh);
-   free(_varComponent);
-   free(_varDfs);
-   free(_varHigh);
-   free(_stack);
-   free(_type);
-   [super dealloc];
+//   NSLog(@"AllDifferent dealloc called ...");
+    if (_posted) {
+        free(_var);
+        _valMatch += _min;
+        free(_match);
+        free(_valMatch);
+        free(_varSeen);
+        _valSeen += _min;
+        free(_valSeen);
+        _valComponent += _min;
+        _valDfs += _min;
+        _valHigh += _min;
+        free(_valComponent);
+        free(_valDfs);
+        free(_valHigh);
+        free(_varComponent);
+        free(_varDfs);
+        free(_varHigh);
+        free(_stack);
+        free(_type);
+        [super dealloc];
+    }
 }
 
--(NSSet*)allVars
+-(NSSet*) allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_var count:_varSize];
-   return theSet;
-}
--(CPUInt)nbUVars
-{
-   CPUInt nb=0;
-   for(CPUInt k=0;k<_varSize;k++)
-      nb += ![_var[k] bound];
-   return nb;
+    if (_posted)
+        return [[NSSet alloc] initWithObjects:_var count:_varSize];
+    else
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: allVars called before the constraints is posted"];
+    return NULL;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+-(CPUInt) nbUVars
 {
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_varSize];
-   for(CPInt i=0;i<_varSize;i++)
-      [aCoder encodeObject:_var[i]];
+    if (_posted) {
+        CPUInt nb=0;
+        for(CPUInt k=0;k<_varSize;k++)
+            nb += ![_var[k] bound];
+        return nb;
+    }
+    else 
+        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
+    return 0;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (void) encodeWithCoder:(NSCoder *)aCoder
 {
-   self = [super initWithCoder:aDecoder];
-   _idempotent = YES;
-   _priority = HIGHEST_PRIO-2;
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_varSize];
-   _var = malloc(_varSize * sizeof(CPIntVarI*));
-   for(CPInt i=0;i<_varSize;i++)
-      _var[i] = [aDecoder decodeObject];
-   _valMatch = _varSeen = _valSeen = NULL;
-   _valComponent = _valDfs = _valHigh = NULL;
+    [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:_x];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super initWithCoder:aDecoder];
+    _x = [aDecoder decodeObject];
+    [self initInstanceVariables];
    return self;
 }
 
@@ -118,10 +121,10 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
 {
    CPIntVarI** var = ad->_var;
    CPInt nb = ad->_varSize;
-   CPInt val = [var[k] min];
+   CPInt val = minDom(var[k]);
    for(CPInt i = 0; i < nb; i++)
       if (i != k) 
-         if ([var[i] remove: val] == CPFailure)
+         if (removeDom(var[i], val) == CPFailure)
             return CPFailure;
    return CPSuspend;
 }
@@ -132,14 +135,21 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
     if (_posted)
         return CPSuspend;
     _posted = true;
+    
+    CPInt low = [_x low];
+    CPInt up = [_x up];
+    _varSize = (up - low + 1);
+    _var = malloc(_varSize * sizeof(CPIntVarI*));
+    for(CPInt i = 0; i < _varSize; i++) 
+        _var[i] = (CPIntVarI*) [_x at: low + i];
+
     for(CPInt i = 0; i < _varSize; i++) 
         if ([_var[i] domsize] == 1) {
             if (removeOnBind(self,i) == CPFailure)
                 return CPFailure;
         }
-        else {
+        else 
            [_var[i] whenBindDo: ^CPStatus() { return removeOnBind(self,i);} onBehalf:self];
-        }
     
     [self findValueRange];
     [self initMatching];
@@ -214,11 +224,11 @@ static bool findAlternatingPath(CPAllDifferentDC* ad,CPInt i)
     if (_varSeen[i] != ad->_magic) {
         _varSeen[i] = ad->_magic;
         CPIntVarI* x = _var[i];
-        CPInt mx = [x min];
-        CPInt Mx = [x max];
+       CPInt mx = minDom(x);
+       CPInt Mx = maxDom(x);
         for(CPInt v = mx; v <= Mx; v++) {
             if (_match[i] != v) {
-                if ([x member: v]) {
+               if (memberBitDom(x, v)) {
                     if (findAlternatingPathValue(ad,v)) {
                         _match[i] = v;
                         _valMatch[v] = i;
@@ -295,63 +305,62 @@ static void initSCC(CPAllDifferentDC* ad)
 static void findSCC(CPAllDifferentDC* ad)
 {
     initSCC(ad);
-    for(CPInt k = 0; k < ad->_varSize; k++) {
+    for(CPInt k = 0; k < ad->_varSize; k++) 
         if (!ad->_varDfs[k])
             findSCCvar(ad,k);
-    }    
 }
 
 static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
 {
-    CPInt*_varDfs = ad->_varDfs;
-    CPInt*_varHigh = ad->_varHigh;
-    CPInt*_stack = ad->_stack;
-    CPInt*_type = ad->_type;
-    CPInt*_match = ad->_match;
-    CPInt*_valDfs = ad->_valDfs;
-    CPInt*_valHigh = ad->_valHigh;
-    CPInt*_valComponent = ad->_valComponent;
-    CPInt*_varComponent = ad->_varComponent;
-    
-    _varDfs[k] = ad->_dfs--;
-    _varHigh[k] = _varDfs[k];
-    _stack[ad->_top] = k;
-    _type[ad->_top] = 0;
-    ad->_top++;
-    
-    CPIntVarI* x = ad->_var[k];
-    CPBounds bx;
-    [x bounds:&bx];
-    for(CPInt w = bx.min; w <= bx.max; w++) {
-        if (_match[k] != w) {
-            if ([x member:w]) {
-                CPInt valDfs = _valDfs[w];
-                if (!valDfs) {
-                    findSCCval(ad,w);
-                    if (_valHigh[w] > _varHigh[k])
-                        _varHigh[k] = _valHigh[w];
-                }
-                else if ( (valDfs > _varDfs[k]) && (!_valComponent[w])) {
-                    if (valDfs > _varHigh[k])
-                        _varHigh[k] = _valDfs[w];
-                }
+   CPInt*_varDfs = ad->_varDfs;
+   CPInt*_varHigh = ad->_varHigh;
+   CPInt*_stack = ad->_stack;
+   CPInt*_type = ad->_type;
+   CPInt*_match = ad->_match;
+   CPInt*_valDfs = ad->_valDfs;
+   CPInt*_valHigh = ad->_valHigh;
+   CPInt*_valComponent = ad->_valComponent;
+   CPInt*_varComponent = ad->_varComponent;
+   
+   _varDfs[k] = ad->_dfs--;
+   _varHigh[k] = _varDfs[k];
+   _stack[ad->_top] = k;
+   _type[ad->_top] = 0;
+   ad->_top++;
+   
+   CPIntVarI* x = ad->_var[k];
+   CPInt m = minDom(x);
+   CPInt M = maxDom(x);
+   for(CPInt w = m; w <= M; w++) {
+      if (ad->_match[k] != w) {
+         if (memberBitDom(x, w)) {
+            CPInt valDfs = ad->_valDfs[w];
+            if (!valDfs) {
+               findSCCval(ad,w);
+               if (ad->_valHigh[w] > ad->_varHigh[k])
+                  _varHigh[k] = _valHigh[w];
             }
-        }
-    }
-    
-    if (_varHigh[k] == _varDfs[k]) {
-        ad->_component++;
-        do {
-            CPInt v = _stack[--ad->_top];
-            CPInt t = _type[ad->_top];
-            if (t == 0)
-                _varComponent[v] = ad->_component;
-            else
-                _valComponent[v] = ad->_component;
-            if (t == 0 && v == k)
-                break;
-        } while (true);
-    }    
+            else if (valDfs > ad->_varDfs[k] && !ad->_valComponent[w]) {
+               if (valDfs > _varHigh[k])
+                  _varHigh[k] = valDfs;
+            }
+         }
+      }
+   }
+   
+   if (ad->_varHigh[k] == ad->_varDfs[k]) {
+      ad->_component++;
+      do {
+         CPInt v = _stack[--ad->_top];
+         CPInt t = _type[ad->_top];
+         if (t == 0)
+            ad->_varComponent[v] = ad->_component;
+         else
+            ad->_valComponent[v] = ad->_component;
+         if (t == 0 && v == k)
+            break;
+      } while (true);
+   }    
 }
 
 static void findSCCval(CPAllDifferentDC* ad,CPInt k)
@@ -430,7 +439,7 @@ static void prune(CPAllDifferentDC* ad)
         [x bounds:&bx];
         for(CPInt w = bx.min; w <= bx.max; w++) {
             if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
-                if ([x member: w]) {
+               if (memberDom(x,w)) {
                     if ([x remove: w] == CPFailure) {
                         @throw [[CPInternalError alloc] initCPInternalError: "AllDifferent: Unexpected failure"];
                     }
@@ -444,7 +453,7 @@ static void prune(CPAllDifferentDC* ad)
 {   
     for(CPInt k = 0; k < _varSize; k++) {
         if (_match[k] != MAXINT) {
-            if (![_var[k] member: _match[k]]) {
+           if (!memberDom(_var[k], _match[k])) {
                 _valMatch[_match[k]] = -1;
                 _match[k] = MAXINT;
                 _sizeMatching--;

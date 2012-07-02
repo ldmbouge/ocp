@@ -187,6 +187,14 @@
                               filteredBy: filter
                                orderedBy: order];    
 }
+
+-(void) addRel: (id<CPRelation>) c
+{
+   CPStatus status = [_solver addRel: c];
+   if (status == CPFailure)
+      [_search fail];
+}
+
 -(void) add: (id<CPConstraint>) c
 {
     CPStatus status = [_solver add: c];

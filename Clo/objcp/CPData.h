@@ -57,16 +57,24 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(bool) more;
 -(CPInt) next;
 @end
-
+@protocol CPIntVar;
+@protocol CPRelation;
 
 @protocol CPExpr <NSObject,NSCoding>
 -(id<CP>) cp;
 -(CPInt) min;
 -(CPInt) max;
--(id)    var;
+-(id<CPIntVar>)var;
 -(BOOL) isConstant;
 -(BOOL) isVariable;
 -(id<CPExpr>) add: (id<CPExpr>) e;
+-(id<CPExpr>) sub: (id<CPExpr>) e;
+-(id<CPExpr>) mul: (id<CPExpr>) e;
+-(id<CPExpr>) muli: (CPInt) e;
+-(id<CPRelation>) equal: (id<CPExpr>) e;
+@end
+
+@protocol CPRelation <CPExpr>
 @end
 
 @protocol CPInteger <CPExpr>
@@ -95,6 +103,11 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 @protocol CPVirtual 
 -(CPInt) virtualOffset;   
 @end
+
+@interface CPRuntimeMonitor : NSObject 
++(CPInt) cputime;
++(CPInt) microseconds;
+@end;
 
 typedef void (^CPClosure)(void);
 typedef bool (^CPInt2Bool)(CPInt);

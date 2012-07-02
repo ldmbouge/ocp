@@ -26,37 +26,6 @@
 #import "CPTrail.h"
 #import <assert.h>
 
-#define TAGShort        0x1
-#define TAGInt          0x2
-#define TAGUnsigned     0x3
-#define TAGId           0x4
-#define TAGFloat        0x5
-#define TAGDouble       0x6
-#define TAGLong         0x7
-#define TAGUnsignedLong 0x8
-#define TAGClosure      0x9
-#define TAGRelease      0xA
-
-static inline void trailIntFun(CPTrail* t,int* ptr)
-{
-   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
-   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
-   s->ptr = ptr;
-   s->code = TAGInt;
-   s->intVal = *ptr;
-   ++(t->_seg[t->_cSeg]->top);   
-}
-
-static inline void trailUIntFun(CPTrail* t,unsigned* ptr)
-{
-   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
-   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
-   s->ptr = ptr;
-   s->code = TAGUnsigned;
-   s->uintVal = *ptr;
-   ++(t->_seg[t->_cSeg]->top);   
-}
-
 @implementation CPTrail
 -(CPTrail*) init
 {
@@ -264,107 +233,29 @@ static inline void trailUIntFun(CPTrail* t,unsigned* ptr)
 
 TRInt makeTRInt(CPTrail* trail,int val)
 {
-   TRInt x = {val,[trail magic]-1};
-   return x;
-}
-
-void  assignTRInt(TRInt* v,int val,CPTrail* trail)
-{
-   CPInt cmgc = trail->_magic;
-   if (v->_mgc != cmgc) {
-      v->_mgc = cmgc;
-      trailIntFun(trail, &v->_val);
-      //[trail trailInt:&v->_val];
-   }
-   v->_val = val;      
+   return (TRInt){val,[trail magic]-1};
 }
 
 FXInt makeFXInt(CPTrail* trail)
 {
-   FXInt x = {0,[trail magic]-1};
-   return x;
+   return (FXInt){0,[trail magic]-1};
 }
-void  incrFXInt(FXInt* v,CPTrail* trail)
-{
-   CPInt cmgc = trail->_magic;
-   if (v->_mgc != cmgc) {
-      v->_mgc = cmgc;
-      v->_val = 0;      
-   }
-   v->_val++;
-}
-int getFXInt(FXInt* v,CPTrail* trail)
-{
-   CPInt cmgc = trail->_magic;
-   if (v->_mgc != cmgc) {
-      v->_mgc = cmgc;
-      v->_val = 0;      
-   }   
-   return v->_val;
-}
-
-
 TRUInt makeTRUInt(CPTrail* trail,unsigned val)
 {
-   TRUInt x = {val,[trail magic]-1};
-   return x;   
+   return (TRUInt) {val,[trail magic]-1};
 }
-void  assignTRUInt(TRUInt* v,unsigned val,CPTrail* trail)
-{
-   CPInt cmgc = trail->_magic;
-   if (v->_mgc != cmgc) {
-      v->_mgc = cmgc;
-      trailUIntFun(trail, &v->_val);
-   }
-   v->_val = val;         
-}
-
-
 TRLong makeTRLong(CPTrail* trail,long long val)
 {
-   TRLong x = {val,[trail magic]-1};
-   return x;
+   return (TRLong) {val,[trail magic]-1};
 }
-
-void  assignTRLong(TRLong* v,long long val,CPTrail* trail)
-{
-   CPInt cmgc = trail->_magic;
-   if (v->_mgc != cmgc) {
-      v->_mgc = cmgc;
-      [trail trailLong:&v->_val];
-   }
-   v->_val = val;      
-}
-
 TRId  makeTRId(CPTrail* trail,id val)
 {
-  TRId x = {val,[trail magic]-1};
-  return x;   
+   return (TRId) {val,[trail magic]-1};
 }
-void  assignTRId(TRId* v,id val,CPTrail* trail)
-{
-  if (v->_mgc != [trail magic]) {
-    v->_mgc = [trail magic];
-    [trail trailId:&v->_val];
-  }
-  [v->_val release];
-  v->_val = [val retain];         
-}
-
 TRDouble  makeTRDouble(CPTrail* trail,double val)
 {
-   TRDouble x = {val,[trail magic]-1};
-   return x;
+   return (TRDouble){val,[trail magic]-1};
 }
-void  assignTRDouble(TRDouble* v,double val,CPTrail* trail)
-{
-   if (v->_mgc != [trail magic]) {
-      v->_mgc = [trail magic];
-      [trail trailDouble:&v->_val];
-   }
-   v->_val = val;
-}
-
 
 @implementation CPTrailStack 
 -(CPTrailStack*) initTrailStack: (CPTrail*)tr
@@ -424,25 +315,17 @@ void  assignTRDouble(TRDouble* v,double val,CPTrail* trail)
 
 TRIntArray makeTRIntArray(CPTrail* trail,int nb,int low)
 {
-    TRIntArray x = {trail,nb,low,NULL};
-    x._entries = malloc(sizeof(TRInt)*nb);
-    for(int i = 0; i < nb; i++)
-        x._entries[i] = makeTRInt(trail,0); 
-    x._entries -= low;
-    return x;
-}
-void assignTRIntArray(TRIntArray a,int i,int val)
-{
-    assignTRInt(a._entries + i,val,a._trail);
-}
-int getTRIntArray(TRIntArray a,int i)
-{
-    return a._entries[i]._val;
+   TRIntArray x = {trail,nb,low,NULL};
+   x._entries = malloc(sizeof(TRInt)*nb);
+   for(int i = 0; i < nb; i++)
+      x._entries[i] = makeTRInt(trail,0); 
+   x._entries -= low;
+   return x;
 }
 void freeTRIntArray(TRIntArray a)
 {
-    a._entries += a._low;
-    free(a._entries);
+   a._entries += a._low;
+   free(a._entries);
 }
 
 

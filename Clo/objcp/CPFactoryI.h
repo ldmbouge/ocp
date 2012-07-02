@@ -31,7 +31,7 @@
 
 @class CPAVLTree;
 
-@interface CPFactory (internalDataStructure)
+@interface CPInternalFactory : NSObject
 
 +(CPAVLTree*) AVLTree: (id<CP>) cp;
 +(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (CPAVLTree*) tree;

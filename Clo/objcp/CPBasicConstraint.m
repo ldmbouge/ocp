@@ -1,3 +1,5 @@
+
+
 /************************************************************************
  MIT License
  
@@ -27,7 +29,6 @@
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPSolverI.h"
-
 
 @implementation CPEqualc
 -(id) initCPEqualc:(id)x and:(CPInt)c
@@ -59,7 +60,7 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"%@ == %d",_x,_c];
+   return [NSString stringWithFormat:@"<CPEqualc: %@ == %d>",_x,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -109,7 +110,7 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"%@ != %d",_x,_c];
+   return [NSString stringWithFormat:@"<CPDiffc: %@ != %d>",_x,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -177,6 +178,10 @@
     }
     return ok;
 }
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPEqualBC:%02ld %@ == %@ + %d>",_name,_x,_y,_c];
+}
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -192,6 +197,345 @@
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   return self;
+}
+@end
+
+
+@implementation CPEqualDC
+-(id) initCPEqualDC: (id) x and: (id) y  and: (CPInt) c
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];   
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(CPStatus) post
+{
+   CPStatus ok = CPSuspend;
+   if (bound(_x)) {
+      ok = [_y bind:minDom(_x) - _c];
+   } else if (bound(_y)) {
+      ok = [_x bind:minDom(_y) + _c];
+   } else {
+      ok = [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
+      if (ok) [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+      if (ok) {
+         CPBounds bx = bounds(_x);
+         CPBounds by = bounds(_y);
+         for(CPInt i = bx.min; (i <= bx.max) && ok; i++)
+            if (![_x member:i])
+               ok = [_y remove:i - _c];
+         for(CPInt i = by.min; (i <= by.max) && ok; i++)
+            if (![_y member:i])
+               ok = [_x remove:i + _c];
+      }
+      if (ok) {
+         [_x whenLoseValue:self do:^CPStatus(CPInt val) {
+            return [_y remove: val - _c];
+         }];
+         [_y whenLoseValue:self do:^CPStatus(CPInt val) {
+            return [_x remove: val + _c];
+         }];
+         [_x whenBindDo:^CPStatus{
+            return [_y bind:minDom(_x) - _c];
+         } onBehalf:self];
+         [_y whenBindDo:^CPStatus{
+            return [_x bind:minDom(_x) + _c];
+         } onBehalf:self];
+      }
+   }
+   return [self propagate];
+}
+-(CPStatus) propagate
+{
+   CPStatus ok = CPSuspend;
+   do {
+      if (bound(_x)) {
+         ok = [_y bind:minDom(_x) - _c];
+      } else if (bound(_y)) {
+         ok = [_x bind:minDom(_y) + _c];
+      } else {
+         _todo = CPChecked;
+         ok = [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
+         if (ok) [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+      }
+   } while (ok && _todo == CPTocheck);
+   return ok;   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPEqualDC:%02ld %@ == %@ + %d>",_name,_x,_y,_c];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   return self;
+}
+@end
+
+@implementation CPEqual3DC
+-(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   _z = z;
+   _xs = _ys = _zs = (TRIntArray){nil,0,0,NULL};
+   return self;
+}
+-(void)dealloc
+{
+   [_fx release];
+   [_fy release];
+   [_fz release];
+   freeTRIntArray(_xs);
+   freeTRIntArray(_ys);
+   freeTRIntArray(_zs);
+   [super dealloc];
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_z bound];
+}
+static inline TRIntArray createSupport(CPIntVarI* v)
+{
+   return makeTRIntArray([[[v cp] solver] trail], [v max] - [v min] + 1, [v min]);
+}
+static CPStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
+{   
+   CPInt min = minCPDom(bd),max = maxCPDom(bd);
+   CPStatus rv = CPSuspend;
+   for(CPInt j=min;j<=max;j++) {
+      CPInt t = a + j;
+      if (getCPDom(bd, j) && memberCPDom(cd, t)) {
+         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         if (cv == 0) {
+            rv = removeDom(c, t);
+            if (rv==CPFailure) return rv;
+         }         
+      }
+   }
+   return rv;
+}
+static CPStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
+{
+   CPInt min = minCPDom(bd),max = maxCPDom(bd);
+   CPStatus rv = CPSuspend;
+   for(CPInt j=min;j<=max;j++) {
+      CPInt t = a - j;
+      if (getCPDom(bd, j) && memberCPDom(cd, t)) {
+         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         if (cv == 0) { 
+            rv = removeDom(c, t);
+            if (rv==CPFailure) return rv;
+         }         
+      }
+   }
+   return rv;
+}
+static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
+{
+   CPInt min = minCPDom(ad),max = maxCPDom(ad);
+   CPStatus rv = CPSuspend;
+   for(CPInt j=min;j<=max;j++) {
+      CPInt t = j - b;
+      if (getCPDom(ad, j) && memberCPDom(cd, t)) {
+         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         if (cv == 0) {
+            rv = removeDom(c, t);
+            if (rv==CPFailure) return rv;
+         }         
+      }
+   }
+   return rv;
+}
+
+-(CPStatus)pruneVar:(CPIntVarI*) v flat:(CPBitDom*) vd support:(TRIntArray) vs
+{
+   CPInt min = minCPDom(vd),max = maxCPDom(vd);
+   CPStatus ok = CPSuspend;
+   for(CPInt i = min;i <= max && ok;i++) {
+      if (memberCPDom(vd, i) && getTRIntArray(vs, i) == 0) {
+         setCPDom(vd, i, NO);
+         ok = [v remove:i];
+      }
+   }
+   if (ok) {
+      if (v == _x) {
+         [_x whenLoseValue:self do:^CPStatus(CPInt val) {
+            setCPDom(_fx, val, NO);
+            assignTRIntArray(_xs, val, 0);            
+            CPStatus ok = constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
+            if (ok) ok = scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
+            return ok;
+         }];      
+      } else if (v == _y) {
+         [_y whenLoseValue:self do:^CPStatus(CPInt val) {
+            setCPDom(_fy, val, NO);
+            assignTRIntArray(_ys, val, 0);            
+            CPStatus ok = constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
+            if (ok) ok = scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
+            return ok;         
+         }];
+      } else {
+         [_z whenLoseValue:self do:^CPStatus(CPInt val) {
+            setCPDom(_fz, val, NO);
+            assignTRIntArray(_zs, val, 0);            
+            CPStatus ok = constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
+            if (ok) ok = constSubScanB(val,_fy,_fx,_x,_xs);   // zc - D(y) in D(x)
+            return ok;
+         }];
+      }
+   }
+   return ok;
+}
+
+-(CPStatus) post
+{
+   CPStatus ok = [self propagate];
+   if (!ok) return ok;  
+   _fx = [_x flatDomain];
+   _fy = [_y flatDomain];
+   _fz = [_z flatDomain];
+   _xs = createSupport(_x);
+   _ys = createSupport(_y);
+   _zs = createSupport(_z);
+   CPInt minX = minCPDom(_fx),maxX = maxCPDom(_fx);
+   CPInt minY = minCPDom(_fy),maxY = maxCPDom(_fy);
+   CPInt minZ = minCPDom(_fz),maxZ = maxCPDom(_fz);
+   for(CPInt i = minX;i <= maxX;i++) {
+      if (memberCPDom(_fx, i)) {
+         for(CPInt j=minY;j <= maxY;j++) {
+            if (memberCPDom(_fy, j)) {
+               CPInt v = i + j;
+               if (memberCPDom(_fz, v)) 
+                  assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1);
+            }
+         }
+      }
+   }   
+   for(CPInt i = minZ;i <= maxZ;i++) {
+      if (memberCPDom(_fz, i)) {
+         for(CPInt j=minX;j <= maxX;j++) {
+            if (memberCPDom(_fx, j)) {
+               CPInt v = i - j;
+               if (memberCPDom(_fy, v)) 
+                  assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1);
+            }
+         }
+         for(CPInt j=minY;j <= maxY;j++) {
+            if (memberCPDom(_fy, j)) {
+               CPInt v = i - j;
+               if (memberCPDom(_fx, v)) 
+                  assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1);
+            }
+         }
+      }
+   }
+   if (ok) ok = [self pruneVar:_x flat:_fx support:_xs];
+   if (ok) ok = [self pruneVar:_y flat:_fy support:_ys];
+   if (ok) ok = [self pruneVar:_z flat:_fz support:_zs];
+   return ok;   
+}
+
+-(CPStatus) propagate
+{
+   CPStatus ok = CPSuspend;
+   do {
+      if (bound(_x)) {
+         if (bound(_y)) {
+            return [_z bind:minDom(_x) + minDom(_y)];
+         } else if (bound(_z)) {
+            return [_y bind:minDom(_z) - minDom(_x)];
+         } else { 
+            _todo = CPChecked;
+            int c = minDom(_x);
+            ok = [_y updateMin:minDom(_z) - c andMax:[_z max] - c];
+            if (ok) ok = [_z updateMin:minDom(_y)+c andMax:maxDom(_y)+c];
+         }
+      } else if (bound(_y)) { // _x is NOT bound
+         if (bound(_z)) {
+            return [_x bind:minDom(_z) - minDom(_y)];
+         } else { 
+            _todo = CPChecked;
+            int c = minDom(_y);
+            ok = [_x updateMin:minDom(_z) - c andMax:[_z max] - c];
+            if (ok) ok = [_z updateMin:minDom(_x)+c andMax:maxDom(_x)+c];
+         }
+      } else if (bound(_z)) {  // neither _x NOR _y are bound.
+         _todo = CPChecked;
+         int c = minDom(_z);
+         ok = [_x updateMin:c - maxDom(_y) andMax:c - minDom(_y)];
+         if (ok) ok = [_y updateMin:c - maxDom(_x) andMax:c - minDom(_x)];
+      } else { 
+         _todo = CPChecked;
+         CPBounds xb = bounds(_x),yb = bounds(_y),zb = bounds(_z);      
+         CPInt lb = xb.min + yb.min;
+         CPInt ub = xb.max + yb.max;
+         if (lb > zb.min || ub < zb.max)
+            if ([_z updateMin:lb andMax:ub] == CPFailure)
+               return CPFailure;
+         lb = zb.min - yb.max;
+         ub = zb.max - yb.min;         
+         if (lb > xb.min || ub < xb.max)
+            if ([_x updateMin:lb andMax:ub] == CPFailure)
+               return CPFailure;         
+         lb = zb.min - xb.max;
+         ub = zb.max - xb.min;
+         if (lb > yb.min || ub < yb.max)
+            if ([_y updateMin:lb andMax:ub] == CPFailure)
+               return CPFailure;
+      }
+   } while (_todo == CPTocheck);
+   return ok;
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPEqual3DC:%02ld %@ + %@ == %@>",_name,_x,_y,_z];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeObject:_z];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   _z = [aDecoder decodeObject];
    return self;
 }
 @end
@@ -247,7 +591,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<%02ld> %@ != %@ + %d",_name,_x,_y,_c];
+   return [NSMutableString stringWithFormat:@"<CPNotEqual: %02ld %@ != %@ + %d>",_name,_x,_y,_c];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -307,6 +651,10 @@
 {
    return ![_x bound] + ![_y bound];
 }
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPBasicNotEqual: %02ld %@ != %@>",_name,_x,_y];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -333,17 +681,17 @@
 }
 -(CPStatus) post  // x <= y
 {
-   if (![_x bound] || ![_y bound]) {
-      [_x whenChangeMinPropagate: self];
-      [_y whenChangeMaxPropagate: self];
+   CPStatus ok = [self propagate];
+   if (ok) {
+      if (!bound(_x))
+         [_x whenChangeMinPropagate: self];
+      if (!bound(_y))
+         [_y whenChangeMaxPropagate: self];
    }
    return [self propagate];   
 }
 -(CPStatus) propagate
 {
-   if (!_active._val) 
-      return CPSkip;
-   assignTRInt(&_active, NO, _trail);
    [_x updateMax:[_y max]];
    [_y updateMin:[_x min]];
    return CPSuspend;
@@ -355,6 +703,180 @@
 -(CPUInt)nbUVars
 {
    return ![_x bound] + ![_y bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPLEqualBC: %02ld %@ <= %@>",_name,_x,_y];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPAbsDC
+-(id)initCPAbsDC:(id)x equal:(id)y
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(CPStatus) post
+{
+   if (bound(_x)) {
+      return [_y bind:abs(minDom(_x))];
+   }
+   CPBounds xb = bounds(_x);
+   int mxy = maxOf( - xb.min,xb.max);
+   CPStatus ok = [_y updateMin:0 andMax:mxy];
+   if (ok)  ok = [_x updateMin:-mxy andMax:mxy];
+   if (ok) {
+      CPBounds yb = bounds(_y);
+      for(int k=yb.min;ok && k<=yb.max;k++) {
+         if ([_y member:k]) {
+            if (![_x member:k] && ![_y member:k]) 
+               if (ok) ok = [_y remove:k];
+         } else {
+            if (ok) ok = [_x remove:k];
+            if (ok) ok = [_x remove:-k];
+         }
+      }
+      yb = bounds(_y);
+      for(int k=0;ok && k<yb.min;k++) {  // ----0----y_min-------------y_max----  kill values between 0..y_min
+         if ([_x member:k])
+            ok = [_x remove:k];
+         if ([_x member:-k])
+            ok = [_x remove:-k];
+      }
+      if (ok) {
+         if (!bound(_x)) {
+            [_x whenLoseValue:self do:^CPStatus(CPInt val) {
+               if (!memberDom(_x, -val)) { 
+                  return [_y remove:abs(val)];
+               } else return CPSuspend;
+            }];
+            [_x whenBindDo:^CPStatus{
+               return [_y bind:abs(minDom(_x))];
+            } onBehalf:self];
+         }
+         if (!bound(_y)) {
+            [_y whenLoseValue:self do:^CPStatus(CPInt val) {
+               CPStatus ok = [_x remove:val];
+               if (ok)  ok = [_x remove:-val];
+               return ok;
+            }];
+            [_y whenBindDo:^CPStatus{
+               CPInt val = minDom(_y);
+               if (!memberDom(_x, val) && !memberDom(_x, -val)) 
+                  return CPFailure;
+               else if (memberDom(_x, val) ^ memberDom(_x, -val)) {
+                  return [_x bind:memberDom(_x, val) ? val : -val];
+               } else {
+                  CPStatus ok = CPSuspend;
+                  CPBounds xb = bounds(_x);
+                  for(int k=xb.min;ok && k <= xb.max;k++)
+                     if (k != val && k != - val)
+                        ok = [_x remove:k];
+                  return ok ? CPSuccess : CPFailure;
+               }
+            }  onBehalf:self];
+         }
+      }
+      return ok;
+   } else return CPFailure;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPAbsDC: %02ld %@ = abs(%@)>",_name,_y,_x];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPAbsBC
+-(id)initCPAbsBC:(id)x equal:(id)y
+{
+   self = [super initCPActiveConstraint:[x solver]];
+   _x = x;
+   _y = y;
+   _idempotent = YES;
+   return self;
+}
+-(CPStatus) post
+{
+   CPStatus ok = [self propagate];
+   if (ok && !bound(_x)) [_x whenChangeBoundsPropagate:self];
+   if (ok && !bound(_y)) [_y whenChangeBoundsPropagate:self];
+   return ok;
+}
+-(CPStatus) propagate
+{
+   CPStatus ok = CPSuspend;
+   do {
+      _todo = CPChecked;
+      CPBounds xb = bounds(_x);
+      CPInt  ub = - xb.min > xb.max ? -xb.min  : xb.max;
+      BOOL  cZ = xb.min < 0 && xb.max > 0;
+      if (cZ) {
+         CPRange aZ = [_x around:0];
+         CPInt lb = minOf(-aZ.low,aZ.up);
+         ok = [_y updateMin:lb andMax:ub];
+      } else if (xb.min >= 0) {
+         ok = [_y updateMin:xb.min andMax:xb.max];
+         if (ok) ok = [_x updateMin:minDom(_y)];
+      } else {
+         ok = [_y updateMin:-xb.max andMax:-xb.min];
+         if (ok) ok = [_x updateMax:-minDom(_y)];
+      }
+      if (ok) {
+         CPBounds yb = bounds(_y);
+         ok = [_x updateMin:-yb.max andMax:yb.max];
+      }
+   } while(ok && _todo == CPTocheck);
+   return ok;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y, nil];
+}
+-(CPUInt)nbUVars
+{
+   return !bound(_x) + !bound(_y);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPAbsBC: %02ld %@ == abs(%@)>",_name,_y,_x];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -391,6 +913,10 @@
 -(CPUInt)nbUVars
 {
    return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPLEqualc: %02ld %@ <= %d>",_name,_x,_c];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -461,19 +987,6 @@ static inline int maxDiv4(CPLong a,CPLong b,CPLong c,CPLong d) {
    const CPLong bcr = b%c && b*c<0;
    const CPLong bdr = b%d && b*d<0;
    return bindUp(maxSeq((CPLong[4]){a/c-acr,a/d-adr,b/c-bcr,b/d-bdr}));
-}
-
-static inline CPBounds bounds(CPIntVarI* x)
-{
-   CPBounds b;
-   [x bounds:&b];
-   return b;
-}
-static inline CPBounds negBounds(CPIntVarI* x)
-{
-   CPBounds b;
-   [x bounds:&b];
-   return (CPBounds){- b.max, -b.min};
 }
 // RXC:  Range | Variable | Constant
 static CPStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
@@ -680,7 +1193,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<%02ld> %@ == %@ * %@",_name,_z,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPMultBC:%02ld %@ == %@ * %@>",_name,_z,_x,_y];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -699,6 +1212,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    return self;
 }
 @end
+
 
 @implementation CPAllDifferenceVC
 -(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(CPInt) n

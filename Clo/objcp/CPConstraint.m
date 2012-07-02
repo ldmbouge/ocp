@@ -32,9 +32,11 @@
 #import "CPCardinalityDC.h"
 #import "CPValueConstraint.h"
 #import "CPEquationBC.h"
+#import "CPElement.h"
 #import "CPCircuitI.h"
 #import "CPTableI.h"
 #import "CPLinear.h"
+#import "CPAssignmentI.h"
 
 @implementation CPFactory (Constraint)
 
@@ -123,11 +125,16 @@
     return o;
 }
 
-+(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c 
 {
-    id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
-    [[[x cp] solver] trackObject: o];
-    return o;
+   return [self sum:x eq:c consistency:RangeConsistency];
+}
+
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons
+{
+   id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
+   [[[x cp] solver] trackObject: o];
+   return o;
 }
 
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c
@@ -156,6 +163,32 @@
    [[[x cp] solver] trackObject:o];
    return o;   
 }
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons
+{
+   id<CPConstraint> o = nil;
+   switch(cons) {
+      case DomainConsistency:
+         o = [[CPEqualDC alloc] initCPEqualDC:x and:y and:c];break;
+      default: 
+         o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];break;
+   }
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
++(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons
+{
+   id<CPConstraint> o = nil;
+   switch(cons) {
+      case DomainConsistency:
+         o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
+      default: 
+         // TOFIX
+         o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
+         //o = [[CPEqualBC alloc] initCPEqualBC:y and:z and:x];break;
+   }
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c
 {
    id<CPConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
@@ -171,6 +204,12 @@
 +(id<CPConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y 
 {
    id<CPConstraint> o = [[CPBasicNotEqual alloc] initCPBasicNotEqual:x and:y];
+   [[[x cp] solver] trackObject:o];
+   return o;
+}
++(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(CPInt)c 
+{
+   id<CPConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
    [[[x cp] solver] trackObject:o];
    return o;
 }
@@ -197,19 +236,62 @@
    [[[x cp] solver] trackObject:o];
    return o;   
 }
-
-
++(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y consistency:(CPConsistency)c
+{
+   id<CPConstraint> o = nil;
+   switch (c) {
+      case DomainConsistency:
+         o = [[CPAbsDC alloc] initCPAbsDC:x equal:y];
+         break;
+      default: 
+         o = [[CPAbsBC alloc] initCPAbsBC:x equal:y];
+         break;
+   }
+   [[[x cp] solver] trackObject:o];
+   return o;   
+}
++(id<CPConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<CPIntArray>)c equal:(id<CPIntVar>)y
+{
+   id<CPConstraint> o = [[CPElementCstBC alloc] initCPElementBC:x indexCstArray:c equal:y];
+   [[[x cp] solver] trackObject:o];
+   return o;
+}
++(id<CPConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<CPIntVar>)y
+{
+   id<CPConstraint> o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:c equal:y];
+   [[[x cp] solver] trackObject:o];
+   return o;
+}
 +(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarArrayI*) x
 {
     id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
     [[[x cp] solver] trackObject:o];
     return o;
 }
++(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
+{
+    id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: table on: x : y : z];
+    [[[x cp] solver] trackObject:o];
+    return o;    
+}
 +(id<CPConstraint>) expr: (id<CPExpr>)e 
 {
-   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e];
+   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:ValueConsistency];
    [[[e cp] solver] trackObject:o];
    return o;
+}
++(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c
+{
+   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:c];
+   [[[e cp] solver] trackObject:o];
+   return o;
+}
++(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix
+{
+    id<CPConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix];
+    [[[x cp] solver] trackObject:o];
+    return o;
+    
 }
 @end
 

@@ -31,35 +31,37 @@
 #import "CPBasicConstraint.h"
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding> {
-    CPIntVarI** _var;
-    CPInt   _varSize;
-    CPInt*  _match;
-    CPInt*  _varSeen;
+    CPIntVarArrayI* _x;
+    CPIntVarI**     _var;
+    UBType*         _member;
+    CPInt           _varSize;
+    CPInt*          _match;
+    CPInt*          _varSeen;
     
-    CPInt   _min;
-    CPInt   _max;
-    CPInt   _valSize;
-    CPInt*  _valMatch;
-    CPInt   _sizeMatching;
-    CPInt*  _valSeen;
-    CPInt   _magic;
+    CPInt           _min;
+    CPInt           _max;
+    CPInt           _valSize;
+    CPInt*          _valMatch;
+    CPInt           _sizeMatching;
+    CPInt*          _valSeen;
+    CPInt           _magic;
     
-    CPInt   _dfs;
-    CPInt   _component;
+    CPInt          _dfs;
+    CPInt          _component;
     
-    CPInt*  _varComponent;
-    CPInt*  _varDfs;
-    CPInt*  _varHigh;
+    CPInt*         _varComponent;
+    CPInt*         _varDfs;
+    CPInt*         _varHigh;
     
-    CPInt*  _valComponent;
-    CPInt*  _valDfs;
-    CPInt*  _valHigh;
+    CPInt*         _valComponent;
+    CPInt*         _valDfs;
+    CPInt*         _valHigh;
     
-    CPInt*  _stack;
-    CPInt*  _type;
-    CPInt   _top;
+    CPInt*         _stack;
+    CPInt*         _type;
+    CPInt          _top;
     
-    bool       _posted;
+    bool           _posted;
 }
 -(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x;
 -(void) dealloc;
@@ -67,9 +69,4 @@
 -(CPStatus) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
-
--(void) findValueRange;
--(void) initMatching;
--(void) findInitialMatching;
--(void) allocateSCC;
 @end
