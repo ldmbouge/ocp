@@ -29,7 +29,6 @@
 
 @implementation CPWDeg
 
-
 -(CPWDeg*)initCPWDeg:(id<CP>)cp
 {
    self = [super init];
@@ -95,7 +94,7 @@
    _cv = malloc(sizeof(NSSet*)*len);
    CPUInt maxID = 0;
    for(int k=0;k<len;k++) 
-      maxID = max(maxID,[t[k] getIPVHd]);   
+      maxID = max(maxID,[t[k] getId]);   
    _map = malloc(sizeof(CPUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
    for(int k=0;k<len;k++) {
