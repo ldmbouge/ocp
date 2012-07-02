@@ -50,7 +50,7 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<CP>) cp;
--(id<CPExpr>)index:(id<CPExpr>)idx;
+-(id<CPExpr>) index: (id<CPExpr>) idx;
 @end
 
 @protocol CPTRIntArray <NSObject> 

@@ -43,7 +43,7 @@ static void prune(CPAllDifferentDC* ad);
 -(void) initInstanceVariables 
 {
     _idempotent = YES;
-    _priority = HIGHEST_PRIO-3;
+    _priority = HIGHEST_PRIO-2;
     _posted = false;
 }
 
@@ -316,11 +316,7 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
    CPInt*_varHigh = ad->_varHigh;
    CPInt*_stack = ad->_stack;
    CPInt*_type = ad->_type;
-   CPInt*_match = ad->_match;
-   CPInt*_valDfs = ad->_valDfs;
    CPInt*_valHigh = ad->_valHigh;
-   CPInt*_valComponent = ad->_valComponent;
-   CPInt*_varComponent = ad->_varComponent;
    
    _varDfs[k] = ad->_dfs--;
    _varHigh[k] = _varDfs[k];
@@ -329,34 +325,34 @@ static void findSCCvar(CPAllDifferentDC* ad,CPInt k)
    ad->_top++;
    
    CPIntVarI* x = ad->_var[k];
-   CPBounds bx;
-   [x bounds:&bx];
-   for(CPInt w = bx.min; w <= bx.max; w++) {
-      if (_match[k] != w) {
+   CPInt m = minDom(x);
+   CPInt M = maxDom(x);
+   for(CPInt w = m; w <= M; w++) {
+      if (ad->_match[k] != w) {
          if (memberBitDom(x, w)) {
-            CPInt valDfs = _valDfs[w];
+            CPInt valDfs = ad->_valDfs[w];
             if (!valDfs) {
                findSCCval(ad,w);
-               if (_valHigh[w] > _varHigh[k])
+               if (ad->_valHigh[w] > ad->_varHigh[k])
                   _varHigh[k] = _valHigh[w];
             }
-            else if (valDfs > _varDfs[k] && !_valComponent[w]) {
+            else if (valDfs > ad->_varDfs[k] && !ad->_valComponent[w]) {
                if (valDfs > _varHigh[k])
-                  _varHigh[k] = _valDfs[w];
+                  _varHigh[k] = valDfs;
             }
          }
       }
    }
    
-   if (_varHigh[k] == _varDfs[k]) {
+   if (ad->_varHigh[k] == ad->_varDfs[k]) {
       ad->_component++;
       do {
          CPInt v = _stack[--ad->_top];
          CPInt t = _type[ad->_top];
          if (t == 0)
-            _varComponent[v] = ad->_component;
+            ad->_varComponent[v] = ad->_component;
          else
-            _valComponent[v] = ad->_component;
+            ad->_valComponent[v] = ad->_component;
          if (t == 0 && v == k)
             break;
       } while (true);

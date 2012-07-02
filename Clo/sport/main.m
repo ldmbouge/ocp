@@ -36,6 +36,7 @@
 //622276 propagations
 
 
+
 int main(int argc, const char * argv[])
 {
     CPInt startTime = [CPRuntimeMonitor cputime];

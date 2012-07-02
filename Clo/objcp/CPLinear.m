@@ -503,13 +503,12 @@
    id<CP> cp = [x cp];
    self  = [super initCPActiveConstraint:[cp solver]];
    _fdm  = (CPSolverI*)[cp solver];
-   _expr = [x retain];
+   _expr = x;
    _c    = c;
    return self;
 }
 -(void) dealloc
 {
-   [_expr release];
    [super dealloc];
 }
 -(CPStatus) post

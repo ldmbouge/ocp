@@ -92,7 +92,7 @@ int main(int argc, const char * argv[])
          }
          [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
          for(CPUInt i=R.low;i<=R.up;i++) {
-            for(CPUInt j=R.low;j<=R.up;j++) {
+            for(CPUInt j=i+1;j<=R.up;j++) {               
                [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
             }
          }
