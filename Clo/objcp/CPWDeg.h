@@ -27,6 +27,9 @@
 #import <objcp/CPHeuristic.h>
 #import <objcp/CPBaseHeuristic.h>
 
+// pvh: heuristics should use the solver and it should make the informer available
+// pvh: This is too low level
+
 @interface CPWDeg : CPBaseHeuristic<CPHeuristic> {
    NSMutableArray* _vars;
    CPUInt*          _map; 
