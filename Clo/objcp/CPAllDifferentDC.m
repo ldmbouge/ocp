@@ -124,8 +124,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
    CPInt val = minDom(var[k]);
    for(CPInt i = 0; i < nb; i++)
       if (i != k) 
-         if (removeDom(var[i], val) == CPFailure)
-            return CPFailure;
+         removeDom(var[i], val);
    return CPSuspend;
 }
 
@@ -145,8 +144,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
 
     for(CPInt i = 0; i < _varSize; i++) 
         if ([_var[i] domsize] == 1) {
-            if (removeOnBind(self,i) == CPFailure)
-                return CPFailure;
+           removeOnBind(self,i);
         }
         else 
            [_var[i] whenBindDo: ^CPStatus() { return removeOnBind(self,i);} onBehalf:self];
@@ -155,7 +153,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
     [self initMatching];
     [self findInitialMatching];
     if (!findMaximalMatching(self))
-        return CPFailure;
+       failNow();
     [self allocateSCC];
     prune(self);
     for(CPInt k = 0 ; k < _varSize; k++)
@@ -457,7 +455,7 @@ static void prune(CPAllDifferentDC* ad)
         }
     }
     if (!findMaximalMatching(self)) 
-        return CPFailure;
+       failNow();
     prune(self);
     return CPSuspend;   
 }

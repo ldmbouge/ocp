@@ -288,8 +288,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
     do {
         for(CPInt j = 0; j < arity; j++) 
             if (i != j)
-                if (findNewSupport(cstr,tuple,j) == CPFailure) 
-                    failNow();
+               findNewSupport(cstr,tuple,j);
         tuple = cstr->_table->_nextSupport[i][tuple];
     } while (tuple != -1);
     return CPSuspend;
