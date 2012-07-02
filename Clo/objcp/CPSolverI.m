@@ -416,57 +416,57 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 
 -(CPStatus) propagate
 {
-  if (_propagating > 0) 
-    return CPDelay;
-  _last = nil;
-  ++_propagating;
-  CPStatus status = CPSuspend;
-  bool done = false;
-  @try {
-    while (!done) {
-      // AC5 manipulates the list
-      while (AC5LOADED(_ac5)) {
-	AC5Event evt = deQueueAC5(_ac5);
-	VarEventNode* list = evt._list;
-	while (list) {
-	  // PVH: this may need to be generalized for more general events
-	  status = ((ConstraintIntCallBack)(list->_trigger))(evt._value);
-	  list = list->_node;
-	}
+   if (_propagating > 0) 
+      return CPDelay;
+   _last = nil;
+   ++_propagating;
+   CPStatus status = CPSuspend;
+   bool done = false;
+   @try {
+      while (!done) {
+         // AC5 manipulates the list
+         while (AC5LOADED(_ac5)) {
+            AC5Event evt = deQueueAC5(_ac5);
+            VarEventNode* list = evt._list;
+            while (list) {
+               // PVH: this may need to be generalized for more general events
+               status = ((ConstraintIntCallBack)(list->_trigger))(evt._value);
+               list = list->_node;
+            }
+         }
+         // Processing AC3
+         int p = HIGHEST_PRIO;
+         while (p>=LOWEST_PRIO && !ISLOADED(_ac3[p]))
+            --p;
+         done = p < LOWEST_PRIO;
+         while (!done) {      
+            status = executeAC3(AC3deQueue(_ac3[p]),&_last);
+            _nbpropag += status !=CPSkip;
+            if (AC5LOADED(_ac5)) 
+               break;
+            p = HIGHEST_PRIO;
+            while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p])) 
+               --p;
+            done = p < LOWEST_PRIO;
+         }         
       }
-      // Processing AC3
-      int p = HIGHEST_PRIO;
-      while (p>=LOWEST_PRIO && !ISLOADED(_ac3[p]))
-	--p;
-      done = p < LOWEST_PRIO;
-      while (!done) {      
-	status = executeAC3(AC3deQueue(_ac3[p]),&_last);
-	_nbpropag += status !=CPSkip;
-	if (AC5LOADED(_ac5)) 
-	  break;
-	p = HIGHEST_PRIO;
-	while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p])) 
-	  --p;
-	done = p < LOWEST_PRIO;
-      }         
-    }
-    if (_propagDone)
-      [_propagDone notify];
-    _status = status;
-  }
-  @catch (CPFailException *exception) {
-    for(CPInt p=NBPRIORITIES-1;p>=0;--p)
-      [_ac3[p] reset];
-    [_ac5 reset];
-    if (_propagFail)
-      [_propagFail notifyWith:[_last getId]];
-    CFRelease(exception);
-    _status = CPFailure;
-  }
-  @finally {
-    --_propagating;
-    return _status;
-  }
+      if (_propagDone)
+         [_propagDone notify];
+      _status = status;
+   }
+   @catch (CPFailException *exception) {
+      for(CPInt p=NBPRIORITIES-1;p>=0;--p)
+         [_ac3[p] reset];
+      [_ac5 reset];
+      if (_propagFail)
+         [_propagFail notifyWith:[_last getId]];
+      CFRelease(exception);
+      _status = CPFailure;
+   }
+   @finally {
+      --_propagating;
+      return _status;
+   }
 }
 
 static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
@@ -519,34 +519,59 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 
 -(CPStatus) label: (id) var with: (CPInt) val
 {
-   CPStatus status = [var bind:val];
-   _status = internalPropagate(self,status);
+   @try {
+      CPStatus status = [var bind:val];
+      _status = internalPropagate(self,status);
+   } @catch (CPFailException *exception) {
+      CFRelease(exception);
+      _status = CPFailure;
+   }     
    return _status;
 }
 
 -(CPStatus) diff: (CPIntVarI*) var with: (CPInt) val
 {
-    CPStatus status = [var remove:val];
-   _status = internalPropagate(self,status);
+   @try {
+      CPStatus status = [var remove:val];
+      _status = internalPropagate(self,status);
+   } @catch (CPFailException *exception) {
+      CFRelease(exception);
+      _status = CPFailure;
+   }     
    return _status;
 }
 -(CPStatus)  lthen:(id)var with:(CPInt)val
 {
-   CPStatus status = [var updateMax:val-1];
-   _status = internalPropagate(self,status);
+   @try {
+      CPStatus status = [var updateMax:val-1];
+      _status = internalPropagate(self,status);
+   } @catch (CPFailException *exception) {
+      CFRelease(exception);
+      _status = CPFailure;
+   }     
    return _status;
 }
 -(CPStatus)  gthen:(id)var with:(CPInt)val
 {
-   CPStatus status = [var updateMin:val+1];
-   _status = internalPropagate(self,status);
+   @try {
+      CPStatus status = [var updateMin:val+1];
+      _status = internalPropagate(self,status);
+   } @catch (CPFailException *exception) {
+      CFRelease(exception);
+      _status = CPFailure;
+   }     
    return _status;
 }
 -(CPStatus) restrict: (CPIntVarI*) var to: (CPIntSetI*) S
 {
-    CPStatus status = [var inside: S];
-    _status = internalPropagate(self,status);
-    return _status;   
+   @try {
+      CPStatus status = [var inside: S];
+      _status = internalPropagate(self,status);
+   } @catch (CPFailException *exception) {
+      CFRelease(exception);
+      _status = CPFailure;
+   }
+   return _status;   
 }
 -(void) saveSolution
 {
