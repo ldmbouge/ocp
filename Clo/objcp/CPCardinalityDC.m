@@ -565,20 +565,20 @@ static void findSCCsink(CPCardinalityDC* card)
     findSCC(self);
     for(int i = 0; i < _varSize; i++) {
         CPIntVarI* x = _var[i];
-        CPInt m = [x min];
-        CPInt M = [x max];
+        CPInt m = minDom(x);
+        CPInt M = maxDom(x);
         for(CPInt v = m; v <= M; v++) 
             if (_varMatch[i] != v) 
                 if (_varComponent[i] != _valComponent[v]) 
-                    if ([x member: v])
-                        [x remove: v];
+                    if (memberDom(x,v))
+                        removeDom(x,v);
     }
 }
     
 -(CPStatus) propagate
 {
     for(CPInt i = 0; i < _varSize; i++)
-        if (_varMatch[i] != MAXINT && ![_var[i] member: _varMatch[i]])
+        if (_varMatch[i] != MAXINT && !memberDom(_var[i],_varMatch[i]))
             unmatchVariable(self,i);
     if (!findMaxFlow(self))
         return CPFailure;
