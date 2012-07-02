@@ -60,7 +60,6 @@ int main(int argc, const char * argv[])
         for(CPInt j = i+1; j <= n; j++)
             [table insert: i : j : (i-1)*n + j-1];
 
-    
     [cp solve: 
      ^() {
          for(CPInt w = 1; w < n; w++)
@@ -79,6 +78,14 @@ int main(int argc, const char * argv[])
      }   
         using: 
      ^() {
+/*        
+         for(CPInt p = 1; p <= n/2 ; p++) {
+             id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<CPIntVar>(CPInt w) { return [game at: p : w]; }];
+             id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<CPIntVar>(CPInt w) { return [game at: w : p]; }];
+             [CPLabel array: ap orderedBy: ^CPInt(CPInt i) { return [[ap at:i] domsize];}];   
+             [CPLabel array: aw orderedBy: ^CPInt(CPInt i) { return [[aw at:i] domsize];}];   
+         }
+*/        
          [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
          [CPLabel array: allteams orderedBy: ^CPInt(CPInt i) { return [[allteams at:i] domsize];}];
          CPInt endTime = [CPRuntimeMonitor cputime];

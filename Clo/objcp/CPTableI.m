@@ -254,7 +254,7 @@ static bool isValidTuple(CPTableCstrI* cstr,CPInt tuple)
     int arity = cstr->_arity;
     CPTableI* table = cstr->_table;
     for(CPInt i = 0; i < arity; i++) 
-        if (![cstr->_var[i] member: table->_column[i][tuple]])
+        if (!memberDom(cstr->_var[i],table->_column[i][tuple]))
             return false;
     return true;
 }
@@ -271,7 +271,7 @@ static CPStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
             else 
                 tuple = table->_nextSupport[col][tuple];
         if (tuple == -1) {
-            if ([cstr->_var[col] remove: v] == CPFailure)
+            if (removeDom(cstr->_var[col],v) == CPFailure)
                 return CPFailure;
         }
         else {

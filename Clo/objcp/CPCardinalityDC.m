@@ -381,7 +381,7 @@ static void findSCCvar(CPCardinalityDC* card,CPInt k)
     [x bounds:&bx];
     for(CPInt w = bx.min; w <= bx.max; w++) {
         if (_varMatch[k] != w) {
-            if ([x member:w]) {
+            if (memberBitDom(x,w)) {
                 CPInt valDfs = _valDfs[w];
                 if (!valDfs) {
                     findSCCval(card,w);

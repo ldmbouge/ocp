@@ -150,7 +150,6 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
         }
         else 
            [_var[i] whenBindDo: ^CPStatus() { return removeOnBind(self,i);} onBehalf:self];
-        
     
     [self findValueRange];
     [self initMatching];
