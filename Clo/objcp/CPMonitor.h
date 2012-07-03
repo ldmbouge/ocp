@@ -20,12 +20,12 @@
 @interface CPMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
    CPInt                   _nbVI;
-   CPSolverI*               _fdm;
+   id<CP>                    _cp;
    CPVarInfo**        _curActive;
    CPUInt              _nbActive;
    id<CPVarArray>        _monVar;
 }
--(id)initCPMonitor:(CPSolverI*)fdm vars:(id<CPVarArray>)allVars;
+-(id)initCPMonitor:(id<CP>)cp vars:(id<CPVarArray>)allVars;
 -(CPStatus) post;
 -(NSString*)description;
 -(double)reduction;

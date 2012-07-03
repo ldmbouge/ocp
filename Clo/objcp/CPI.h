@@ -24,6 +24,8 @@
    id<CPExplorer>        _search;
    CPTrail*              _trail;
    NSAutoreleasePool*    _pool;  
+   id<CPPortal>          _portal;
+   @package
    id<CPIdxIntInformer>  _returnLabel;
    id<CPIdxIntInformer>  _failLabel;   
 }
@@ -60,8 +62,7 @@
 -(id<CPExplorer>)    explorer;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
--(id<CPIdxIntInformer>) retLabel;
--(id<CPIdxIntInformer>) failLabel;
+-(id<CPPortal>)portal;
 @end
 
 @interface CPI : CoreCPI<CP> {

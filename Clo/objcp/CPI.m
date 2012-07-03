@@ -24,6 +24,16 @@
 #import "CPParallel.h"
 #import "CPConcurrency.h"
 
+@interface CPInformerPortal : NSObject<CPPortal> {
+   CoreCPI*       _cp;
+   CPSolverI* _solver;
+}
+-(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp;
+-(id<CPIdxIntInformer>) retLabel;
+-(id<CPIdxIntInformer>) failLabel;
+-(id<CPInformer>) propagateFail;
+-(id<CPInformer>) propagateDone;
+@end
 
 @implementation CoreCPI
 -(id) init
@@ -33,6 +43,7 @@
    _solver = [[CPSolverI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
    _returnLabel = _failLabel = nil;
+   _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    return self;
 }
 -(id) initFor:(CPSolverI*)fdm
@@ -42,6 +53,7 @@
    _trail = [[fdm trail] retain];
    _pool = [[NSAutoreleasePool alloc] init];
    _returnLabel = _failLabel = nil;
+   _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    return self;
 }
 
@@ -52,6 +64,7 @@
    [_solver release];
    [_search release];
    [_pool release];
+   [_portal release];
    [_returnLabel release];
    [_failLabel release];
    [super dealloc]; 
@@ -227,6 +240,10 @@
    if (_failLabel==nil) 
       _failLabel = [CPConcurrency idxIntInformer];   
    return _failLabel;   
+}
+-(id<CPPortal>)portal
+{
+   return _portal;
 }
 @end
 
@@ -644,6 +661,37 @@
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    _search = [[CPSemExplorerI alloc] initCPSemExplorer: _solver withTracer: _tracer];
    return self;
+}
+@end
+
+
+@implementation CPInformerPortal
+-(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp
+{
+   self = [super init];
+   _cp = cp;
+   _solver = (CPSolverI*)[cp solver];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(id<CPIdxIntInformer>) retLabel
+{
+   return [_cp retLabel];
+}
+-(id<CPIdxIntInformer>) failLabel
+{
+   return [_cp failLabel];
+}
+-(id<CPInformer>) propagateFail
+{
+   return [_solver propagateFail];
+}
+-(id<CPInformer>) propagateDone
+{
+   return [_solver propagateDone];
 }
 @end
 

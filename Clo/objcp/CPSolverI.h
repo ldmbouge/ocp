@@ -63,9 +63,10 @@
    CPCoreConstraint*        _last;               
    IMP                      _propagIMP;
    SEL                      _propagSEL;
+   id<CPSolution>           _aSol;
+   @package
    id<CPIntInformer>        _propagFail;
    id<CPVoidInformer>       _propagDone;
-   id<CPSolution>           _aSol;
    CPFailException*         _fex;
 }
 -(CPSolverI*) initSolver: (CPTrail*) trail;

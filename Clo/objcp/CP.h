@@ -12,9 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/NSObject.h>
 
-#import "CPData.h"
-#import "CPArray.h"
-#import "CPSet.h"
+#import "objcp/CPData.h"
+#import "objcp/CPArray.h"
+#import "objcp/CPSet.h"
+#import "objcp/CPConcurrency.h"
 
 @protocol CPSearchController;
 @protocol CPSolver;
@@ -26,6 +27,13 @@
 @protocol CPSolutionProtocol <NSObject>
 -(void)        saveSolution;
 -(void)     restoreSolution;
+@end
+
+@protocol CPPortal <NSObject>
+-(id<CPIdxIntInformer>) retLabel;
+-(id<CPIdxIntInformer>) failLabel;
+-(id<CPInformer>) propagateFail;
+-(id<CPInformer>) propagateDone;
 @end
 
 @protocol CP <CPSolutionProtocol> 
@@ -67,13 +75,11 @@
 -(void)      limitSolutions: (CPInt) maxSolutions in: (CPClosure) cl;
 -(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)             restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
-
--(id<CPIdxIntInformer>) retLabel;
--(id<CPIdxIntInformer>) failLabel;
--(id<CPTracer>)tracer;
+-(id<CPPortal>) portal;
+-(id<CPTracer>) tracer;
 
 @optional -(void) solveParAll:(CPUInt)nbt subjectTo:(CPClosure)body using:(CPVirtualClosure)body;
--(id<CPSolver>)     solver;
+-(id<CPSolver>)       solver;
 -(id<CPExplorer>)   explorer;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 @optional -(id)virtual:(id)obj;

@@ -55,11 +55,11 @@ BOOL refresh(CPVarInfo* vi)
 @end
 
 @implementation CPMonitor
--(id)initCPMonitor:(CPSolverI*)fdm vars:(id<CPVarArray>)allVars
+-(id)initCPMonitor:(id<CP>)cp vars:(id<CPVarArray>)allVars
 {
    self = [super initCPCoreConstraint];
-   _fdm = fdm;
-   _monVar    = allVars;
+   _cp = cp;
+   _monVar = allVars;
    _nbVI = [_monVar count];
    _nbActive = 0;
    _curActive = malloc(sizeof(CPVarInfo*)*_nbVI);
@@ -76,7 +76,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(CPStatus) post
 {
-   CPTrail* trail = [_fdm trail];
+   CPTrail* trail = [[_cp solver] trail];
    CPUInt nbW = 0;
    for(CPInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];
@@ -86,7 +86,7 @@ BOOL refresh(CPVarInfo* vi)
                priority: LOWEST_PRIO+1
                onBehalf: self]; 
    }
-   [[_fdm propagateDone] wheneverNotifiedDo:^{
+   [[[_cp portal] propagateDone] wheneverNotifiedDo:^{
       _nbActive = 0;
       for(CPUInt i=0;i<_nbVI;i++) {
          CPVarInfo* vInfo = _varInfo[i];

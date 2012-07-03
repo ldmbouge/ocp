@@ -176,7 +176,7 @@
 -(void)initInternal:(id<CPVarArray>)t
 {
    _vars = t;   
-   _monitor = [[CPMonitor alloc] initCPMonitor:_solver vars:_vars];
+   _monitor = [[CPMonitor alloc] initCPMonitor:_cp vars:_vars];
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    CPInt low = [_vars low],up = [_vars up];
@@ -188,12 +188,12 @@
    }
    [_solver post:_monitor];
    [self initImpacts];       // [ldm] init called _after_ adding the monitor so that the reduction is tracked (but before watching label)
-   [[_cp retLabel] wheneverNotifiedDo:^void(id var,CPInt val) {
+   [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,CPInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       [[_impacts objectForKey:key] addImpact:1.0 - [_monitor reduction] forValue:val];
       [key release];      
    }];
-   [[_cp failLabel] wheneverNotifiedDo:^void(id var,CPInt val) {
+   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var,CPInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
       [key release];
