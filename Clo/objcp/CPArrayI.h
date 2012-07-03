@@ -43,6 +43,27 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
+@interface CPVarArrayI : NSObject<CPVirtual,CPVarArray,NSCoding> {
+   id<CP>         _cp;
+   id<CPVar>*  _array;
+   CPInt         _low;
+   CPInt          _up;
+   CPInt          _nb;   
+}
+-(CPVarArrayI*)initCPVarArray: (id<CP>) cp range:(CPRange)range;
+-(id<CPVar>) at: (CPInt) value;
+-(void) set: (id<CPVar>) x at: (CPInt) value;
+-(CPInt) low;
+-(CPInt) up;
+-(NSUInteger)count;
+-(NSString*)description;
+-(id<CP>) cp;
+-(id<CPSolver>) solver;
+-(CPInt) virtualOffset;   
+-(void)encodeWithCoder:(NSCoder*) aCoder;
+-(id)initWithCoder:(NSCoder*) aDecoder;
+@end
+
 @interface CPIntVarArrayI : NSObject<CPVirtual,NSCoding,CPIntVarArray> {
     id<CP>         _cp;
     id<CPIntVar>*  _array;

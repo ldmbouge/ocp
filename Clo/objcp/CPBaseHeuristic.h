@@ -11,9 +11,9 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
-@protocol CPIntVar;
+@protocol CPVarArray;
 
 @interface CPBaseHeuristic : NSObject 
 -(void)initHeuristic:(NSMutableArray*)array;
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len;
+-(void)initInternal:(id<CPVarArray>)t;
 @end

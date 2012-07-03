@@ -21,7 +21,7 @@
    [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPSolverI*)[cp solver];
-   _vars = [[NSMutableArray alloc] initWithCapacity:32];
+   _vars = nil;
    _w = 0;
    _cv = 0;
    return self;
@@ -49,10 +49,7 @@
 // pvh: why do we need vars and t and so on.
 -(id<CPIntVarArray>)allIntVars
 {
-   id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,_nbv-1} with:^id<CPIntVar>(CPInt i) {
-      return (id<CPIntVar>)[_vars objectAtIndex:i];
-   }];
-   return rv;
+   return (id<CPIntVarArray>)_vars;
 }
 
 // pvh: see question below for the importance of _cv
@@ -72,22 +69,24 @@
    return -v;   
 }
 
-// pvh: we should really use our arrays for consistency in the interfaces
-// pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable
+// pvh: we should really use our arrays for consistency in the interfaces [ldm:done]
+// pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable [ldm:caching]
 
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t
 {
+   CPInt len = [t count];
+   _vars = t;
    _cv = malloc(sizeof(NSSet*)*len);
+   memset(_cv,sizeof(NSSet*)*len,0);
    CPUInt maxID = 0;
    for(int k=0;k<len;k++) 
-      maxID = max(maxID,[t[k] getId]);   
+      maxID = max(maxID,[[t at:k] getId]);   
    _map = malloc(sizeof(CPUInt)*(maxID+1));
-   memset(_cv,sizeof(NSSet*)*len,0);
-   for(int k=0;k<len;k++) {
+   CPInt low = [t low],up = [t up];
+   for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
-      _map[[t[k] getId]] = k;
-      [_vars addObject:t[k]];
-      _cv[k] = [t[k] constraints];
+      _map[[[_vars at:k] getId]] = k - low;
+      _cv[k - low] = [[_vars at:k] constraints];
    }
    _nbv = len;
    NSArray* allC = [_solver allConstraints];

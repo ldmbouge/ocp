@@ -17,7 +17,7 @@
 @protocol CPHeuristic <NSObject>
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)l;
+-(void)initInternal:(id<CPVarArray>)t;
 -(void)initHeuristic:(NSMutableArray*)array;
 -(id<CPIntVarArray>)allIntVars;
 @end

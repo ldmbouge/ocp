@@ -45,6 +45,8 @@ void failNow();
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a shift:(CPInt) b;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
++(id<CPVarArray>) varArray: (id<CP>) cp range: (CPRange) range;
+
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;

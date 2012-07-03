@@ -70,7 +70,14 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(void) decr;
 @end
 
-@protocol CPIntVar <CPExpr,CPSavable>
+@protocol CPVar <CPExpr,CPSavable>
+-(CPUInt)getId;
+-(id)snapshot;
+-(NSSet*)constraints;
+-(bool) bound;
+@end
+
+@protocol CPIntVar <CPVar>
 -(CPUInt)getId;
 -(bool) bound;
 -(CPInt)  min;

@@ -147,6 +147,12 @@ void failNow()
     return o;   
 }
 
++(id<CPVarArray>) varArray: (id<CP>) cp range: (CPRange) range
+{
+   CPVarArrayI* o = [[CPVarArrayI alloc] initCPVarArray:cp range:range];
+   [[((CoreCPI*)cp) solver] trackObject:o];
+   return o;
+}
 +(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
 {
     CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range domain:domain];

@@ -32,7 +32,7 @@
    _trail = [[CPTrail alloc] init];
    _solver = [[CPSolverI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
-   _retLabel = _failLabel = nil;
+   _returnLabel = _failLabel = nil;
    return self;
 }
 -(id) initFor:(CPSolverI*)fdm
@@ -41,7 +41,7 @@
    _solver = [fdm retain];
    _trail = [[fdm trail] retain];
    _pool = [[NSAutoreleasePool alloc] init];
-   _retLabel = _failLabel = nil;
+   _returnLabel = _failLabel = nil;
    return self;
 }
 
@@ -52,7 +52,7 @@
    [_solver release];
    [_search release];
    [_pool release];
-   [_retLabel release];
+   [_returnLabel release];
    [_failLabel release];
    [super dealloc]; 
 }
@@ -218,9 +218,9 @@
 }
 -(id<CPIdxIntInformer>) retLabel
 {
-   if (_retLabel==nil) 
-      _retLabel = [CPConcurrency idxIntInformer];   
-   return _retLabel;
+   if (_returnLabel==nil) 
+      _returnLabel = [CPConcurrency idxIntInformer];   
+   return _returnLabel;
 }
 -(id<CPIdxIntInformer>) failLabel
 {
@@ -261,7 +261,7 @@
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   [_retLabel notifyWith:var andInt:val];
+   [_returnLabel notifyWith:var andInt:val];
    [CPConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
@@ -496,7 +496,7 @@
       [_search fail];
    }
    [_tracer addCommand:[[CPEqualc alloc] initCPEqualc:var and:val]];    // add after the fail (so if we fail, we don't bother adding it!]
-   [_retLabel notifyWith:var andInt:val];
+   [_returnLabel notifyWith:var andInt:val];
    [CPConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val

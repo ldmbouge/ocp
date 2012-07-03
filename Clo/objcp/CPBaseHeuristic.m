@@ -21,15 +21,16 @@
       nbViews += ([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]);
    }];
    CPUInt l = [array count] - nbViews;
+   id<CP> cp = [[array objectAtIndex:0] cp];
+   id<CPVarArray> direct = [CPFactory varArray:cp range:(CPRange){0,l-1}];
    __block CPUInt k = 0;
-   id<CPIntVar>* t = alloca(sizeof(id<CPIntVar>)*l);
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       if (!([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]))
-         t[k++] = obj;
+         [direct set:obj at:k++];
    }];
-   [self initHeuristic:t length:l];   
+   [self initInternal:direct];   
 }
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t 
 {
    
 }

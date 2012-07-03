@@ -24,7 +24,7 @@
    id<CPExplorer>        _search;
    CPTrail*              _trail;
    NSAutoreleasePool*    _pool;  
-   id<CPIdxIntInformer>  _retLabel;
+   id<CPIdxIntInformer>  _returnLabel;
    id<CPIdxIntInformer>  _failLabel;   
 }
 -(id)                     init;

@@ -17,7 +17,7 @@
 // pvh: This is too low level
 
 @interface CPWDeg : CPBaseHeuristic<CPHeuristic> {
-   NSMutableArray* _vars;
+   id<CPVarArray>  _vars;
    CPUInt*          _map; 
    id<CP>            _cp;
    CPSolverI*    _solver;
@@ -30,6 +30,6 @@
 -(CPWDeg*)initCPWDeg:(id<CP>)cp;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len;
+-(void)initInternal:(id<CPVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
 @end

@@ -9,6 +9,15 @@
 
  ***********************************************************************/
 
+@protocol CPVarArray <NSObject>
+-(id<CPVar>) at: (CPInt) value;
+-(void) set: (id<CPVar>) x at: (CPInt) value;
+-(CPInt) low;
+-(CPInt) up;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<CP>) cp;
+@end
 
 @protocol CPIntVarArray <NSObject> 
 -(id<CPIntVar>) at: (CPInt) value;

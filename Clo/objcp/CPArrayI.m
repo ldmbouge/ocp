@@ -169,6 +169,105 @@
 }
 @end
 
+// **********************************************************************
+// CPVarArray
+// **********************************************************************
+
+@implementation CPVarArrayI
+-(CPVarArrayI*)initCPVarArray: (id<CP>) cp range:(CPRange)range
+{
+   self = [super init];
+   _cp = cp;
+   _low = range.low;
+   _up  = range.up;
+   _nb  = _up - _low + 1;
+   _array = malloc(_nb * sizeof(id<CPVar>)) - _low;
+   memset(_array,0,sizeof(id<CPVar>)*_nb);
+   return self;
+}
+-(void)dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+-(id<CPVar>) at: (CPInt) value
+{
+   if (value < _low || value > _up)
+      @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPVarArrayElement"];
+   return _array[value];
+}
+-(void) set: (id<CPVar>) x at: (CPInt) value
+{
+   if (value < _low || value > _up)
+      @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPVarArrayElement"];
+   _array[value] = x;
+}
+-(CPInt) low
+{
+   return _low;
+}
+-(CPInt) up 
+{
+   return _up;
+}
+-(NSUInteger)count
+{
+   return _nb;
+}
+-(NSString*)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendString:@"["];
+   for(CPInt i=_low;i<=_up;i++) {
+      [rv appendFormat:@"%d:",i];
+      [rv appendString:[_array[i] description]];
+      if (i < _up)
+         [rv appendString:@","];
+   }
+   [rv appendString:@"]"];
+   return rv;      
+}
+-(id<CP>) cp
+{
+   return _cp;
+}
+-(id<CPSolver>) solver
+{
+   return [_cp solver];
+}
+-(CPInt) virtualOffset
+{
+   return [[_cp solver] virtualOffset:self];   
+}
+-(void)encodeWithCoder:(NSCoder*) aCoder
+{
+   [aCoder encodeObject:_cp];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
+   for(CPInt i=_low;i<=_up;i++)
+      [aCoder encodeObject:_array[i]];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _cp = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
+   _array =  malloc(sizeof(id<CPIntVar>)*_nb);
+   _array -= _low;
+   for(CPInt i=_low;i<=_up;i++)
+      _array[i] = [aDecoder decodeObject];
+   return self;   
+}
+@end
+
+// **********************************************************************
+// CPIntVarArray
+// **********************************************************************
+
 @implementation CPIntVarArrayI 
 -(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp size: (CPInt) nb domain: (CPRange) domain
 {
