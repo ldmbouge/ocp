@@ -93,7 +93,15 @@ BOOL refresh(CPVarInfo* vi)
          if (refresh(vInfo))
             _curActive[_nbActive++] = vInfo;
       }
-      //NSLog(@"Monitor was notified of propagDONE: %@",[_curActive description]);
+      /*
+      NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+      [buf appendString:@"["];
+      for(int k=0;k<_nbActive;k++)
+         [buf appendFormat:@"%d:%@,",k,_curActive[k]];
+      [buf appendString:@"]"];
+      NSLog(@"Monitor was notified of propagDONE: %d - %@",_nbActive,buf);
+      [buf release];
+       */
    }];
    return CPSuspend;
 }

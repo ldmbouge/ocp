@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
 //   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
 //   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   id<CPHeuristic> h = [CPFactory createFF:cp];
+   id<CPHeuristic> h = [CPFactory createIBS:cp];
    [cp solveAll: 
     ^() {
        for(CPUInt i =0;i < n; i++) {

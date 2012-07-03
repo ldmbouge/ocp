@@ -179,7 +179,9 @@
    _monitor = [[CPMonitor alloc] initCPMonitor:_solver vars:_vars];
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
-   for(CPUInt i=0;i<_nbv;i++) {
+   CPInt low = [_vars low],up = [_vars up];
+   for(CPUInt i=low;i<=up;i++) {
+      //NSLog(@"impacting: %@",[_vars at:i]);
       CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<CPIntVar>)[_vars at:i]];
       [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
@@ -196,6 +198,7 @@
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
       [key release];
    }];
+   NSLog(@"IBS ready...");
 }
 
 -(id<CPIntVarArray>)allIntVars
