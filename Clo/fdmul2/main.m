@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
       CPRange D = (CPRange){0,9};
       id<CP> cp = [CPFactory createSolver];      
       id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];         
-      id<CPHeuristic> h = [CPFactory createFF:cp];
+      id<CPHeuristic> h = [CPFactory createWDeg:cp];
       [cp solve: ^{
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
          [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
@@ -48,12 +48,8 @@ int main(int argc, const char * argv[])
          [cp addRel:[[lhs1 mul:[x at:3]] equal:rhs1]];
          [cp addRel:[[lhs1 mul:[x at:4]] equal:rhs2]];
          [cp addRel:[[lhs1 mul:[x at:5]] equal:rhs3]];
-         id<CPExpr> lhs4 = [CPFactory sum:cp range:(CPRange){1,5} filteredBy:nil
-                                       of:^id<CPExpr>(CPInt i) {
-                                          return [[x at:14+i] muli: i * 10];
-                                       }];
-//         id<CPExpr> lhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:15],[x at:16],[x at:17],[x at:18],[x at:19],nil} 
-//                                              by:(int[]){1,10,100,1000,10000}];
+         id<CPExpr> lhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:15],[x at:16],[x at:17],[x at:18],[x at:19],nil} 
+                                              by:(int[]){1,10,100,1000,10000}];
          id<CPExpr> rhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],[x at:9],[x at:10],[x at:11],[x at:12],[x at:13],[x at:14],nil}
                                               by:(int[]){1,10,100,10,100,1000,100,1000,10000}];
          [cp add:[CPFactory expr:[CPFactory expr:lhs4 equal:rhs4]]];
