@@ -50,16 +50,15 @@
 
 -(CPStatus) post
 {
-   [_theVar whenLoseValue:self do:^CPStatus(CPInt val) {
+   [_theVar whenLoseValue:self do:^(CPInt val) {
       if (_lost) _lost(val);
       if (_rec) {
          [_trail trailClosure:^{
             _rec(val);
          }];
       }
-      return CPSuspend;
    }];
-   [_theVar setBindTrigger: ^CPStatus(void) { 
+   [_theVar setBindTrigger: ^ { 
       CPInt val = [_theVar min];
       if (_bind) _bind(val);
       if (_unb) {
@@ -67,7 +66,6 @@
             _unb(val);
          }];
       }
-      return CPSuspend;
    } onBehalf:self];
    return CPSuspend;
 }

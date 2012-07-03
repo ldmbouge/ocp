@@ -315,12 +315,11 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
     }
     _currentSupport = (TRIntArray*) malloc(sizeof(TRIntArray) * _arity);
     for(CPInt i = 0; i < _arity; i++) {
-        if ([self initSupport: i] == CPFailure)
-           failNow();
+        [self initSupport: i];
     }
     for(CPInt i = 0; i < _arity; i++) 
         if (![_var[i] bound])
-            [_var[i] whenLoseValue: self do: ^CPStatus(CPInt v) { return removeValue(self,i,v); }];
+            [_var[i] whenLoseValue: self do: ^(CPInt v) { removeValue(self,i,v); }];
     return CPSuspend;        
 }
 

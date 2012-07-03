@@ -133,7 +133,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
            removeOnBind(self,i);
         }
         else 
-           [_var[i] whenBindDo: ^CPStatus() { return removeOnBind(self,i);} onBehalf:self];
+           [_var[i] whenBindDo: ^{ removeOnBind(self,i);} onBehalf:self];
     
     [self findValueRange];
     [self initMatching];
@@ -409,41 +409,38 @@ static void findSCCval(CPAllDifferentDC* ad,CPInt k)
 
 static void prune(CPAllDifferentDC* ad)
 {
-    CPInt* _match = ad->_match;
-    CPInt* _valComponent = ad->_valComponent;
-    CPInt* _varComponent = ad->_varComponent;
-    findSCC(ad);
-    for(CPInt k = 0; k < ad->_varSize; k++) {
-        CPIntVarI* x = ad->_var[k];
-        CPBounds bx;
-        [x bounds:&bx];
-        for(CPInt w = bx.min; w <= bx.max; w++) {
-            if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
-               if (memberDom(x,w)) {
-                    if ([x remove: w] == CPFailure) {
-                        @throw [[CPInternalError alloc] initCPInternalError: "AllDifferent: Unexpected failure"];
-                    }
-                }
+   CPInt* _match = ad->_match;
+   CPInt* _valComponent = ad->_valComponent;
+   CPInt* _varComponent = ad->_varComponent;
+   findSCC(ad);
+   for(CPInt k = 0; k < ad->_varSize; k++) {
+      CPIntVarI* x = ad->_var[k];
+      CPBounds bx;
+      [x bounds:&bx];
+      for(CPInt w = bx.min; w <= bx.max; w++) {
+         if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
+            if (memberDom(x,w)) {
+               [x remove: w];
             }
-        }
-    }   
+         }
+      }
+   }   
 }
 
--(CPStatus) propagate
+-(void) propagate
 {   
-    for(CPInt k = 0; k < _varSize; k++) {
-        if (_match[k] != MAXINT) {
-           if (!memberDom(_var[k], _match[k])) {
-                _valMatch[_match[k]] = -1;
-                _match[k] = MAXINT;
-                _sizeMatching--;
-            }
-        }
-    }
-    if (!findMaximalMatching(self)) 
-       failNow();
-    prune(self);
-    return CPSuspend;   
+   for(CPInt k = 0; k < _varSize; k++) {
+      if (_match[k] != MAXINT) {
+         if (!memberDom(_var[k], _match[k])) {
+            _valMatch[_match[k]] = -1;
+            _match[k] = MAXINT;
+            _sizeMatching--;
+         }
+      }
+   }
+   if (!findMaximalMatching(self)) 
+      failNow();
+   prune(self);
 }
 
 @end

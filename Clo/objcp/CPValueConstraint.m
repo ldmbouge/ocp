@@ -26,31 +26,25 @@
 }
 -(CPStatus) post
 {
-    if ([_b bound]) {
-        if ([_b min] == true) 
-            return [_x remove:_c];
-        else 
-            return [_x bind:_c];
-    } 
-    else if ([_x bound]) 
-        return [_b bind:[_x min] != _c];
-    else if (![_x member:_c])
-        return [_b remove:false];
-    else {
-        [_b whenBindDo: ^CPStatus(void) 
-         {
-             if ([_b min]==true)
-                 return [_x remove:_c];
-             else 
-                 return [_x bind:_c];
-         } onBehalf:self   
-         ];
-        [_x setLoseTrigger: _c do: ^CPStatus(void) { return [_b bind:true]; } onBehalf:self];
-        [_x whenBindDo: ^CPStatus(void) 
-         {
-             return [_b bind:[_x min] != _c];
-         } onBehalf:self
-         ];
+   if ([_b bound]) {
+      if ([_b min] == true) 
+         return [_x remove:_c];
+      else 
+         return [_x bind:_c];
+   } 
+   else if ([_x bound]) 
+      return [_b bind:[_x min] != _c];
+   else if (![_x member:_c])
+      return [_b remove:false];
+   else {
+      [_b whenBindDo: ^void {
+         if ([_b min]==true)
+            [_x remove:_c];
+         else 
+            [_x bind:_c];
+      } onBehalf:self];
+      [_x setLoseTrigger: _c do: ^(void) { [_b bind:true]; } onBehalf:self];
+      [_x whenBindDo: ^(void) { [_b bind:[_x min] != _c];} onBehalf:self];
       return CPSuspend;
    } 
 }
@@ -104,14 +98,14 @@
     else if (![_x member:_c])
         return [_b bind:false];
     else {
-        [_b setBindTrigger: ^CPStatus(void) {
+        [_b setBindTrigger: ^ {
             if ([_b min] == true)
-                return [_x bind:_c];
+                [_x bind:_c];
             else 
-                return [_x remove:_c];
+                [_x remove:_c];
         } onBehalf:self];
-        [_x setLoseTrigger: _c do: ^CPStatus(void) { return [_b bind:false]; } onBehalf:self];
-        [_x setBindTrigger: ^CPStatus(void) { return [_b bind:[_x min] == _c]; } onBehalf:self];
+        [_x setLoseTrigger: _c do: ^ { [_b bind:false]; } onBehalf:self];
+        [_x setBindTrigger: ^ { [_b bind:[_x min] == _c]; } onBehalf:self];
         return CPSuspend;
     }   
 } 
@@ -185,24 +179,21 @@
     int nbTrue = 0;
     int nbPos  = 0;
     for(CPInt i=0;i<_nb;i++) {
-        if ([_x[i] updateMin:0] == CPFailure)
-            return CPFailure;
-        if ([_x[i] updateMax:1] == CPFailure)
-            return CPFailure;
-        nbTrue += ([_x[i] bound] && [_x[i] min] == true);
-        nbPos  += ![_x[i] bound];
+       [_x[i] updateMin:0];
+       [_x[i] updateMax:1];
+       nbTrue += ([_x[i] bound] && [_x[i] min] == true);
+       nbPos  += ![_x[i] bound];
     }
     if (nbTrue >= _c) 
         return CPSuccess;
     if (nbTrue + nbPos < _c) 
-        return CPFailure;
+       failNow();
     if (nbTrue + nbPos == _c) {
         // We already know that all the possible should be true. Do it.
         for(CPInt i=0;i<_nb;++i) {
             if ([_x[i] bound]) 
                 continue;
-            if ([_x[i] updateMin:true] == CPFailure)
-                return CPFailure;
+           [_x[i] updateMin:true];
         }
         return CPSuccess;      
     }
@@ -211,7 +202,7 @@
     for(CPInt i=_nb-1;i >= 0;--i) {
         if (listen > 0 && [_x[i] max] == true) { // Still in the domain and in need of more watches
             --listen; // the closure must capture the correct value of listen!
-            _at[listen] = [_x[i] setLoseTrigger: true do: ^CPStatus() 
+            _at[listen] = [_x[i] setLoseTrigger: true do: ^ 
                            {
                                // Look for another support among the non-tracked variables.
                                CPInt j = _last;
@@ -240,11 +231,10 @@
                                        if (k != listen) {
                                            CPStatus ok = [_x[_at[k]->_vId] updateMin:true];
                                            if (!ok) 
-                                               return CPFailure;
+                                              failNow();
                                        }
                                    }
                                }
-                               return CPSuspend;
                            }
                            onBehalf:self];                           
             _at[listen]->_vId = i; // local identifier of var being watched.

@@ -150,7 +150,9 @@
    }
 }
 -(void) visitExprSumI: (CPExprSumI*) e 
-{}
+{
+   [[e expr] visit:self];
+}
 
 -(void) visitExprCstSubI:(CPExprCstSubI*)e
 {
@@ -289,11 +291,11 @@
 }
 -(CPStatus)post:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
+   // [ldm] This should *never* raise an exception, but return a CPFailure.
    switch (_nb) {
       case 0: 
          assert(NO);
          return CPFailure;
-         break;
       case 1: {
          if (_terms[0]._coef == 1) {
             return [fdm post:[CPFactory equalc:_terms[0]._var to:-_indep]];
@@ -343,7 +345,6 @@
       }break;
       default:
          return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
-         break;
    }
 }
 @end
@@ -479,7 +480,7 @@
 }
 -(void) visitExprSumI: (CPExprSumI*) e
 {
-   assert(NO);
+   [[e expr] visit:self];
 }
 @end
 

@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
     CPRange R = (CPRange){1,9};
     id<CP> cp = [CPFactory createSolver];
     id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
-    id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R range: R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
+    id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
     [cp solve: 
      ^() {
          for(CPInt i = 0; i < nb; i++) {
@@ -52,7 +52,7 @@ int main (int argc, const char * argv[])
              for(CPInt j = 0; j <= 2; j++)
                  [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp 
                                                                      range: (CPRange){i*3+1,i*3+3}
-                                                                     range: (CPRange){j*3+1,j*3+3}
+                                                                          : (CPRange){j*3+1,j*3+3}
                                                                       with: ^id<CPIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
      }   
         using: 

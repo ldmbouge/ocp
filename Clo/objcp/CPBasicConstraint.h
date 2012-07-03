@@ -51,7 +51,7 @@
 -(id) initCPEqualBC: (id) x and: (id) y  and: (CPInt) c;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -96,7 +96,7 @@ typedef int (^intgetter) (void) ;
 }
 -(id) initCPNotEqual: (id) x and: (id) y  and: (CPInt) c;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

@@ -12,7 +12,7 @@
 #import "CPTracer.h"
 #import "CPCommand.h"
 #import "CPBasicConstraint.h"
-#import "CPSolver.h"
+#import "CPSolverI.h"
 #import "CPI.h"
 
 
@@ -462,10 +462,14 @@
             //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
             return CPFailure;  
          }
-         CPStatus st = [fdm propagate];
-         [_cmds pushCommandList:theList];
-         assert([_cmds size] == [_trStack size]);
-         if (st==CPFailure) return st;
+         @try {
+            [fdm propagate];
+         } @catch(CPFailException* ex) {
+            @throw;
+         } @finally {
+            [_cmds pushCommandList:theList];
+            assert([_cmds size] == [_trStack size]);            
+         }
       }
    }
    return CPSuspend;

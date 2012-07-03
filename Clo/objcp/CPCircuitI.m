@@ -108,23 +108,18 @@ CPStatus assign(CPCircuitI* cstr,int i)
         [_length set: 0 at: i];
     }
     for(int i = _low; i <= _up; i++) {
-        if ([_var[i] remove: i] == CPFailure)
-            return CPFailure;
-        if ([_var[i] updateMin: _low] == CPFailure)
-            return CPFailure;
-        if ([_var[i] updateMax: _up] == CPFailure)
-            return CPFailure;
+        [_var[i] remove: i];
+        [_var[i] updateMin: _low];
+        [_var[i] updateMax: _up];
     }
     for(int i = _low; i <= _up; i++) {
         if ([_var[i] bound]) {
-            if (assign(self,i) == CPFailure)
-                return CPFailure;
+            assign(self,i);
         }
         else 
-            [_var[i] whenBindDo: ^CPStatus() { return assign(self,i); } onBehalf:self];  
+            [_var[i] whenBindDo: ^ { assign(self,i); } onBehalf:self];  
     }
     return CPSuspend;
 }
-
 
 @end

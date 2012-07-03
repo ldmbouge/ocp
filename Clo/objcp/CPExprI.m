@@ -397,14 +397,20 @@
 @implementation CPExprSumI 
 -(id<CPExpr>) initCPExprSumI: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e
 {
-    self = [super init];
-    CPInt low = r.low;
-    CPInt up = r.up;
-    _e = [CPFactory integer: cp value: 0];
-    for(CPInt i = low; i <= up; i++)
-        if (!f(i)) 
+   self = [super init];
+   CPInt low = r.low;
+   CPInt up = r.up;
+   _e = [CPFactory integer: cp value: 0];
+   if (f!=nil) {
+      for(CPInt i = low; i <= up; i++)
+         if (!f(i)) 
             _e = [_e add: e(i)];
-    return self;       
+   } 
+   else {
+      for(CPInt i = low; i <= up; i++)
+         _e = [_e add: e(i)];      
+   }
+   return self;       
 }
 -(void) dealloc
 {   

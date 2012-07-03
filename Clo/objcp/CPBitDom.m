@@ -587,6 +587,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_magic[k]]; 
    }
    _trail = [aDecoder decodeObject] ;
+   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
+   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;
 }
 @end

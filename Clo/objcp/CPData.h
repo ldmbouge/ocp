@@ -35,8 +35,8 @@ typedef enum  {
     CPSkip
 } CPStatus;
 
-typedef CPStatus (^ConstraintCallback)(void);
-typedef CPStatus (^ConstraintIntCallBack)(CPInt);
+typedef void (^ConstraintCallback)(void);
+typedef void (^ConstraintIntCallBack)(CPInt);
 typedef CPStatus (^CPVoid2CPStatus)(void);
 
 @protocol IntEnumerator <NSObject>

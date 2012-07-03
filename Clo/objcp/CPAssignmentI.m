@@ -118,8 +118,7 @@
         }
     _bigM = (_varSize) * (_bigM + 1);
     
-    if ([self preprocess] == CPFailure)
-        return CPFailure;
+   [self preprocess];
         
     _lc = [CPFactory TRIntArray: cp range: Columns];
     _lr = [CPFactory TRIntArray: cp range: Rows];
@@ -155,33 +154,29 @@
     printf("\n");
     [self printAssignment];
        
-    if ([self propagate] == CPFailure)
-        return CPFailure;
+   [self propagate];
     for(CPInt k = 0 ; k < _varSize; k++)
         if (![_var[k] bound])
             [_var[k] whenChangePropagate: self];
     return CPSuspend;
 }
 
--(CPStatus) preprocess
+-(void) preprocess
 {   
     for(CPInt i = _lowr; i <= _upr; i++) {
-        if ([_var[i] updateMin: _lowc] == CPFailure)
-            return CPFailure;
-        if ([_var[i] updateMax: _upc] == CPFailure)
-            return CPFailure;
+       [_var[i] updateMin: _lowc];
+       [_var[i] updateMax: _upc];
     }
     for(CPInt i = _lowr; i <= _upr; i++) 
         for(CPInt v = _lowc; v <= _upc; v++)
             if (![_var[i] member: v])
                 [_cost set: _bigM at: i : v];
-    return CPSuspend;   
 }
 
--(CPStatus) propagate
+-(void) propagate
 {   
     [self findAssignment];
-    return [self prune];
+    [self prune];
 }
 
 -(void) findAssignment

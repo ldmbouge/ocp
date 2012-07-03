@@ -24,7 +24,7 @@
 -(id) initCPBitEqual: (id) x and: (id) y ;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitNOT : CPActiveConstraint<NSCoding>{
@@ -36,7 +36,7 @@
 -(id) initCPBitNOT: (id) x equals: (id) y;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitAND : CPActiveConstraint<NSCoding>{
@@ -49,7 +49,7 @@
 -(id) initCPBitAND: (id) x and: (id) y equals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitOR : CPActiveConstraint<NSCoding>{
@@ -62,7 +62,7 @@
 -(id) initCPBitOR: (id) x or: (id) y equals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitXOR : CPActiveConstraint<NSCoding>{
@@ -75,7 +75,7 @@
 -(id) initCPBitXOR: (id) x xor: (id) y equals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitIF : CPActiveConstraint<NSCoding>{
@@ -89,7 +89,7 @@
 -(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 
@@ -102,7 +102,7 @@
 -(id) initCPBitShiftL: (id) x shiftLBy:(int) places equals:(id) y;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitShiftR : CPActiveConstraint<NSCoding>{
@@ -114,7 +114,7 @@
 }-(id) initCPBitShiftR: (id) x shiftRBy:(int) places equals:(id) y;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitADD: CPActiveConstraint<NSCoding>{
@@ -129,6 +129,6 @@
 -(id) initCPBitAdd: (id) x plus:(id) y equals:(id) z withCarryIn:(id) cin andCarryOut:cout;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 

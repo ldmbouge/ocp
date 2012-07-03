@@ -94,6 +94,7 @@
 -(void)      saveSolution;
 -(void)      restoreSolution;
 -(CPStatus)  close;
+-(CPStatus)  status;
 -(bool)      closed;
 -(CPUInt) nbPropagation;
 -(CPUInt) nbVars;

@@ -383,21 +383,20 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 
 static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 {
-   CPStatus status;
    *last = cb.cstr;
    if (cb.cb) 
-      status = cb.cb();
+      cb.cb();
    else {
       CPCoreConstraint* cstr = cb.cstr;
       if (cstr->_todo == CPChecked) 
          return CPSkip;
       else {
          cstr->_todo = cstr->_idempotent == NO ? CPChecked : cstr->_todo;
-         status = [cstr propagate];
+         [cstr propagate];
          cstr->_todo = cstr->_idempotent == YES ? CPChecked : cstr->_todo;
       }
    }
-   return status;
+   return CPSuspend;
 }
 
 -(CPStatus) propagate
@@ -416,7 +415,7 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
             VarEventNode* list = evt._list;
             while (list) {
                // PVH: this may need to be generalized for more general events
-               status = ((ConstraintIntCallBack)(list->_trigger))(evt._value);
+               ((ConstraintIntCallBack)(list->_trigger))(evt._value);
                list = list->_node;
             }
          }
@@ -477,12 +476,17 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 
 -(CPStatus) post: (id<CPConstraint>) c
 {
-   CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-   CPStatus status = [cstr post];
-   _status = internalPropagate(self,status);
-   if (_status && _status != CPSkip) {
-      [cstr setId:[_cStore count]];
-      [_cStore addObject:c]; // only add when no failure
+   @try {
+      CPCoreConstraint* cstr = (CPCoreConstraint*) c;
+      CPStatus status = [cstr post];
+      _status = internalPropagate(self,status);
+      if (_status && status != CPSkip) {
+         [cstr setId:[_cStore count]];
+         [_cStore addObject:c]; // only add when no failure
+      }
+   } @catch (CPFailException* ex) {
+      CFRelease(ex);
+      _status = CPFailure;
    }
    return _status;
 }
@@ -582,11 +586,14 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    //printf("Closing CPSolver\n");
    return CPSuspend;
 }
+-(CPStatus)  status
+{
+   return _status;
+}
 -(bool) closed
 {
     return _closed;
 }
-
 -(id<CPInformer>) propagateFail
 {
    if (_propagFail == nil)

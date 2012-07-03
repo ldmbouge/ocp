@@ -32,10 +32,8 @@
 {
     return CPSuspend;
 }
--(CPStatus) propagate
-{
-    return CPSuspend;
-}
+-(void) propagate
+{}
 -(void) setId:(CPUInt)name
 {
    _name = name;

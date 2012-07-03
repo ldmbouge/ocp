@@ -33,7 +33,7 @@ typedef enum {
 -(CPCoreConstraint*) initCPCoreConstraint;
 -(CPStatus) doIt;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(void) setId:(CPUInt)name;
 -(CPUInt)getId;
 -(NSSet*)allVars;

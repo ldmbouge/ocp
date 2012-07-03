@@ -25,7 +25,7 @@
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(CPInt) c;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -40,7 +40,7 @@
 }
 -(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(CPInt) c;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

@@ -17,49 +17,6 @@
 
 static int nbSol = 0;
 
-//CPStatus labelStatic(DFSTracer* t,CPSolver* m,NSArray* x,int from,int to) 
-//{
-//   if (from > to) {
-//       nbSol++;
-//      return CPSuccess;
-//   } else {
-//      CPIVar* xk = [x objectAtIndex:from];
-//      if ([xk bound])
-//         return labelStaticREC(t,m, x, from+1, to);
-//      else {
-//         for(CPInt i = [xk min];i <= [xk max];i++) {
-//            if (![xk member:i]) continue;
-//            [t pushNode];
-//            CPStatus s = [m label:xk with:i];
-//            if (s!=CPFailure)
-//               s = labelStaticREC(t,m, x, from+1, to);
-//            [t popNode];
-//            s = [m diff:xk with:i];
-//            if (s == CPFailure)
-//               return s;
-//         }
-//         return CPFailure;
-//      }
-//   }
-//}
-//
-//void search(CPSolver* m,NSArray* x,int from,int to)
-//{
-//   initContinuationLibrary(&to);
-//   solveAll(m, ^() {
-//      //labelStatic([[DFSTracer alloc] initDFSTracer:m], m, x, 0, n-1);
-//      //labelStatic2( m, x, 0, n-1);
-//      labelFF(m, x, from, to);
-//      nbSol++;
-//      /*      [x enumerateObjectsUsingBlock:^(id xi,NSUInteger i,BOOL* stop) {
-//       printf("%s %lu:%s",(i>1 ? "," : " "),i,[[xi description] cStringUsingEncoding:NSASCIIStringEncoding]);
-//       }];
-//       printf("\n");*/   
-//   }, ^() {
-//      NSLog(@"search done..."); 
-//   });
-//}
-
 #define BLOCK ^() {
 #define ENDBLOCK }
 #define bound(a) ^bool(int i) { return ![[a objectAtIndex:i] bound];}

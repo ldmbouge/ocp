@@ -254,8 +254,8 @@ static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
     for(CPInt i=_lx;i<=_ux;i++) {
         if ([_x[i] bound]) 
             continue;
-        [_x[i] whenLoseValue: self do: ^CPStatus(CPInt val) { return valRemoveIdx(self,_x[i],i,val);}];
-        [_x[i] whenBindDo: ^CPStatus() { return valBind(self,_x[i]);} onBehalf:self];
+        [_x[i] whenLoseValue: self do: ^(CPInt val) { valRemoveIdx(self,_x[i],i,val);}];
+        [_x[i] whenBindDo: ^ { valBind(self,_x[i]);} onBehalf:self];
     }  
     // Need to test the condition at least once
     for(CPInt i=_lo;i<=_uo;i++) {

@@ -578,8 +578,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     CPInt M = [self max];
     for(CPInt i = m; i <= M; i++) {
         if ([self member: i] && ![S member: i])
-            if ([self remove: i] == CPFailure)
-                return CPFailure;
+            [self remove: i];
     }
     return CPSuspend;
 }

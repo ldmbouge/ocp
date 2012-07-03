@@ -52,7 +52,7 @@
 -(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

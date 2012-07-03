@@ -109,17 +109,15 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
       _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
       _bndIMP[k] = [_x[k] methodForSelector:@selector(bounds:)];
    }
-   CPStatus ok = [self propagate];
-   if (ok) {
-      for(CPInt k=0;k<_nb;k++) {
-         if (![_x[k] bound])
-             [_x[k] whenChangeBoundsPropagate: self];
-      }
+   [self propagate];
+   for(CPInt k=0;k<_nb;k++) {
+      if (![_x[k] bound])
+         [_x[k] whenChangeBoundsPropagate: self];
    }
-   return ok;
+   return CPSuspend;
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
     struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
     for(CPInt k=0;k<_nb;k++) {
@@ -161,7 +159,6 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
                           (CPInt)terms[i].low,
                           (CPInt)terms[i].up);
     }
-    return CPSuspend; 
 }
 -(NSString*)description
 {
@@ -262,17 +259,15 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
       _bndIMP[k] = [_x[k] methodForSelector:@selector(bounds:)];
       _updateMax[k] = (UBType)[_x[k] methodForSelector:@selector(updateMax:)];
    }
-   CPStatus ok = [self propagate];
-   if (ok) {
-      for(CPInt k=0;k<_nb;k++) {
-         if (![_x[k] bound])
-            [_x[k] whenChangeMinPropagate: self];
-      }
+   [self propagate];
+   for(CPInt k=0;k<_nb;k++) {
+      if (![_x[k] bound])
+         [_x[k] whenChangeMinPropagate: self];
    }
-   return ok;
+   return CPSuspend;
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
    struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
    for(CPInt k=0;k<_nb;k++) {
@@ -309,7 +304,6 @@ static void sumLowerBound(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
       if (terms[i].updated) 
          terms[i].update(terms[i].var,@selector(updateMax:),(CPInt)terms[i].up);
    }
-   return CPSuspend; 
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

@@ -49,7 +49,7 @@
 -(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

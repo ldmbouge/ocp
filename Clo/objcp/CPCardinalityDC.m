@@ -584,7 +584,7 @@ static void findSCCsink(CPCardinalityDC* card)
    }
 }
     
--(CPStatus) propagate
+-(void) propagate
 {
     for(CPInt i = 0; i < _varSize; i++)
        if (_varMatch[i] != MAXINT && !memberDom(_var[i],_varMatch[i]))
@@ -594,7 +594,6 @@ static void findSCCsink(CPCardinalityDC* card)
     if (!findFeasibleFlow(self))
        failNow();
     [self prune];
-    return CPSuspend;
 }
 -(NSSet*) allVars
 {

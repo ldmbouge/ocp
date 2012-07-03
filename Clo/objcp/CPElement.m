@@ -95,38 +95,36 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       return ok;
    }
 }
--(CPStatus) propagate
+-(void) propagate
 {
    if (bound(_x)) {
-      return [_y bind:[_c at:[_x min]]];
+      [_y bind:[_c at:[_x min]]];
    } else {
       CPInt k = _from._val;
-      CPStatus ok = CPSuspend;
       while (k < _sz && !memberDom(_x, _tab[k]._idx))
          ++k;
       if (k < _sz) {
-         ok = [_y updateMin:_tab[k]._val];
+         [_y updateMin:_tab[k]._val];
          assignTRInt(&_from, k, _trail);
       }
-      else return CPFailure;
+      else failNow();
       k = _to._val;
       while(k >= 0 && !memberDom(_x,_tab[k]._idx))
          --k;
       if (k >= 0) {
-         ok = [_y updateMax:_tab[k]._val];
+         [_y updateMax:_tab[k]._val];
          assignTRInt(&_to, k, _trail);
       }
-      else return CPFailure;
+      else failNow();
       CPBounds yb = bounds(_y);
       k = _from._val;
-      while (k < _sz && ok && _tab[k]._val < yb.min) 
-         ok = removeDom(_x, _tab[k++]._idx);
-      if (ok) assignTRInt(&_from, k, _trail);
+      while (k < _sz && _tab[k]._val < yb.min) 
+         removeDom(_x, _tab[k++]._idx);
+      assignTRInt(&_from, k, _trail);
       k = _to._val;
-      while (k >= 0 && ok && _tab[k]._val > yb.max)
-         ok = removeDom(_x,_tab[k--]._idx);
-      if (ok) assignTRInt(&_to,k,_trail);
-      return ok;
+      while (k >= 0 && _tab[k]._val > yb.max)
+         removeDom(_x,_tab[k--]._idx);
+      assignTRInt(&_to,k,_trail);
    }   
 }
 -(NSSet*)allVars
@@ -173,17 +171,16 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(CPStatus) post
 {
-   CPStatus ok = [self propagate];
-   if (!ok) return ok;
+   [self propagate];
    [_x whenChangePropagate:self];
    [_y whenChangeBoundsPropagate:self];
    CPBounds xb = bounds(_x);
    for(CPInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVarI*)[_z at:k] whenChangeBoundsPropagate:self];
-   return ok;
+   return CPSuspend;
 }
--(CPStatus)propagate
+-(void) propagate
 {
    CPBounds bx = bounds(_x);
    CPInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
@@ -194,25 +191,21 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          maxZ = maxZ > zk.max ? maxZ : zk.max;
       }
    }
-   if ([_y updateMin:minZ andMax:maxZ] == CPFailure) // D(y) <- D(y) INTER [minZ,maxZ]
-      return  CPFailure;
+   [_y updateMin:minZ andMax:maxZ]; // D(y) <- D(y) INTER [minZ,maxZ]
    CPBounds yb = bounds(_y);
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
          CPIntVarI* zk = (CPIntVarI*) [_z at: k];
          CPBounds zkb = bounds(zk);
          if (zkb.min > yb.max || zkb.max < yb.min)  // D(z[k]) INTER D(y) = EMPTY -> k NOTIN D(x)
-            if (removeDom(_x, k) == CPFailure)
-               return CPFailure;
+            removeDom(_x, k);
       }
    }
    bx = bounds(_x);
    if (bound(_x)) { 
       CPIntVarI* zk = (CPIntVarI*)[_z at:bx.min];
-      if ([zk updateMin:yb.min andMax:yb.max] == CPFailure)  //x==c -> D(y) == D(z_c)
-         return CPFailure;
+      [zk updateMin:yb.min andMax:yb.max];  //x==c -> D(y) == D(z_c)
    }
-   return CPSuspend;
 }
 -(NSSet*)allVars
 {

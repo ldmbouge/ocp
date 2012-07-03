@@ -82,7 +82,7 @@ BOOL refresh(CPVarInfo* vi)
    for(id obj in _monVar) {
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
       _varInfo[nbW++] = vInfo; // [ldm] vInfo is in the _varInfo dico with refcnt = 1 from here on.
-      [obj whenChangeDo: ^CPStatus{ makeVarActive(vInfo);return CPSuspend;}
+      [obj whenChangeDo: ^ { makeVarActive(vInfo);}
                priority: LOWEST_PRIO+1
                onBehalf: self]; 
    }
