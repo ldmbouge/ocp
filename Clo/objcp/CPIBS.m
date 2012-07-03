@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPIBS.h"
@@ -59,7 +45,7 @@
 }
 @end
 
-@interface CPValueImpact : NSObject {
+@interface CPAssignImpact : NSObject {
    id<CPIntVar>  _var;
    double*      _imps;
    CPUInt _nbVals;
@@ -68,17 +54,16 @@
    double*      _vari;
    CPUInt*   _cnts;
 }
--(CPValueImpact*)initCPValueImpact:(id<CPIntVar>)theVar;
+-(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar;
 -(void)dealloc;
 -(void)addImpact:(double)i forValue:(CPInt)val;
 -(void)setImpact:(double)i forValue:(CPInt)val;
--(double)getImpactForValue:(CPInt)val;
-// pvh: variable impact?
--(double)getImpact;
+-(double)impactForValue:(CPInt)val;
+-(double)impactForVariable;
 @end
 
-@implementation CPValueImpact
--(CPValueImpact*)initCPValueImpact:(id<CPIntVar>)theVar
+@implementation CPAssignImpact
+-(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar
 {
    self = [super init];
    _var = theVar;
@@ -137,11 +122,11 @@
    }
 }
 
--(double)getImpactForValue:(CPInt)val
+-(double)impactForValue:(CPInt)val
 {
    return _imps != NULL ? _imps[val] : 0.0;
 }
--(double)getImpact
+-(double)impactForVariable
 {
    if (_imps) {
       CPBounds cb;
@@ -164,42 +149,39 @@
    _cp = cp;
    _solver = (CPSolverI*)[cp solver];
    _monitor = nil;
+   _vars = nil;
    [cp addHeuristic:self];
    return self;
 }
 -(void)dealloc
 {
-   [_vars release];
    [_impacts release];
    [super dealloc];
 }
 -(float)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-   double rv = [[_impacts objectForKey:key] getImpact];
+   double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-   double rv = [[_impacts objectForKey:key] getImpactForValue:v];
+   double rv = [[_impacts objectForKey:key] impactForValue:v];
    [key release];
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t
 {
-   _vars = [[NSMutableArray alloc] initWithCapacity:len];
-   for(CPUInt i=0;i<len;i++)
-      [_vars addObject:t[i]];
+   _vars = t;   
    _monitor = [[CPMonitor alloc] initCPMonitor:_solver vars:_vars];
-   _nbv = len;
-    // pvh: why is it times 3?
+   _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
-   for(CPUInt i=0;i<len;i++) {
-      CPValueImpact* assigns = [[CPValueImpact alloc] initCPValueImpact:t[i]];
-      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[t[i] getId]]];
+   for(CPUInt i=0;i<_nbv;i++) {
+      CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<CPIntVar>)[_vars at:i]];
+      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
    [_solver post:_monitor];
@@ -218,10 +200,7 @@
 
 -(id<CPIntVarArray>)allIntVars
 {
-   id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,_nbv-1} with:^id<CPIntVar>(CPInt i) {
-      return (id<CPIntVar>)[_vars objectAtIndex:i];
-   }];
-   return rv;   
+   return (id<CPIntVarArray>)_vars;   
 }
 
 -(void)addKillSetFrom:(CPInt)from to:(CPInt)to size:(CPUInt)sz into:(NSMutableSet*)set
@@ -253,7 +232,7 @@
       double ir = 1.0 - [_monitor reductionFromRoot];
       NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
       //NSLog(@"base: %ld - %ld impact (%@) = %lf",low,up,key,ir);
-      CPValueImpact* vImpact = [_impacts objectForKey:key];
+      CPAssignImpact* vImpact = [_impacts objectForKey:key];
       for(CPInt c = low ; c <= up;c++) {
          [vImpact setImpact:ir forValue:c];
       }
@@ -287,7 +266,9 @@
 {
    CPInt blockWidth = 1;
    NSMutableSet* sacs = nil;
-   for(id<CPIntVar> v in _vars) {
+   CPInt low = [_vars low],up = [_vars up];
+   for(CPInt k=low; k <= up;k++) {
+      id<CPIntVar> v = (id<CPIntVar>)[_vars at:k];
       CPBounds vb;
       [v bounds: &vb];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];

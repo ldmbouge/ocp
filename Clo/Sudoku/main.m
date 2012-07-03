@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 
@@ -51,7 +37,7 @@ int main (int argc, const char * argv[])
     CPRange R = (CPRange){1,9};
     id<CP> cp = [CPFactory createSolver];
     id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
-    id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R range: R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
+    id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
     [cp solve: 
      ^() {
          for(CPInt i = 0; i < nb; i++) {
@@ -66,7 +52,7 @@ int main (int argc, const char * argv[])
              for(CPInt j = 0; j <= 2; j++)
                  [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp 
                                                                      range: (CPRange){i*3+1,i*3+3}
-                                                                     range: (CPRange){j*3+1,j*3+3}
+                                                                          : (CPRange){j*3+1,j*3+3}
                                                                       with: ^id<CPIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
      }   
         using: 

@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPDDeg.h"
@@ -34,26 +20,20 @@
    [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPSolverI*)[cp solver];
-   _vars = [[NSMutableArray alloc] initWithCapacity:32];
    return self;
 }
 -(void)dealloc
 {
-   [_vars release];
    [super dealloc];
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,[_vars count]-1} with:^id<CPIntVar>(CPInt i) {
-      return (id<CPIntVar>)[_vars objectAtIndex:i];
-   }];
-   return rv;
+   return (id<CPIntVarArray>)_vars;
 }
-
 -(float)varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
-   NSSet* theConstraints = _cv[[x getId]];   
+   NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
       h += ([obj nbUVars] - 1 > 0);
    }
@@ -63,13 +43,21 @@
 {
    return -v;   
 }
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t
 {
+   _vars = t;
+   CPInt len = [_vars count];   
+   CPUInt maxID = 0;
+   for(int k=0;k<len;k++) 
+      maxID = max(maxID,[[t at:k] getId]);   
    _cv = malloc(sizeof(NSSet*)*len);
+   _map = malloc(sizeof(CPUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
-   for(int k=0;k<len;k++) {
-      [_vars addObject:t[k]];
-      _cv[k] = [t[k] constraints];
+   memset(_map,sizeof(CPUInt)*(maxID+1),0);   
+   CPInt low = [t low],up = [t up];
+   for(int k=low;k <= up;k++) {
+      _map[[[_vars at:k] getId]] = k - low;
+      _cv[k-low] = [[_vars at:k] constraints];
    }
    _nbv = len;
 }

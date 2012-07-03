@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPAllDifferentDC.h"
@@ -124,8 +110,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
    CPInt val = minDom(var[k]);
    for(CPInt i = 0; i < nb; i++)
       if (i != k) 
-         if (removeDom(var[i], val) == CPFailure)
-            return CPFailure;
+         removeDom(var[i], val);
    return CPSuspend;
 }
 
@@ -145,17 +130,16 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
 
     for(CPInt i = 0; i < _varSize; i++) 
         if ([_var[i] domsize] == 1) {
-            if (removeOnBind(self,i) == CPFailure)
-                return CPFailure;
+           removeOnBind(self,i);
         }
         else 
-           [_var[i] whenBindDo: ^CPStatus() { return removeOnBind(self,i);} onBehalf:self];
+           [_var[i] whenBindDo: ^{ removeOnBind(self,i);} onBehalf:self];
     
     [self findValueRange];
     [self initMatching];
     [self findInitialMatching];
     if (!findMaximalMatching(self))
-        return CPFailure;
+       failNow();
     [self allocateSCC];
     prune(self);
     for(CPInt k = 0 ; k < _varSize; k++)
@@ -425,41 +409,38 @@ static void findSCCval(CPAllDifferentDC* ad,CPInt k)
 
 static void prune(CPAllDifferentDC* ad)
 {
-    CPInt* _match = ad->_match;
-    CPInt* _valComponent = ad->_valComponent;
-    CPInt* _varComponent = ad->_varComponent;
-    findSCC(ad);
-    for(CPInt k = 0; k < ad->_varSize; k++) {
-        CPIntVarI* x = ad->_var[k];
-        CPBounds bx;
-        [x bounds:&bx];
-        for(CPInt w = bx.min; w <= bx.max; w++) {
-            if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
-               if (memberDom(x,w)) {
-                    if ([x remove: w] == CPFailure) {
-                        @throw [[CPInternalError alloc] initCPInternalError: "AllDifferent: Unexpected failure"];
-                    }
-                }
+   CPInt* _match = ad->_match;
+   CPInt* _valComponent = ad->_valComponent;
+   CPInt* _varComponent = ad->_varComponent;
+   findSCC(ad);
+   for(CPInt k = 0; k < ad->_varSize; k++) {
+      CPIntVarI* x = ad->_var[k];
+      CPBounds bx;
+      [x bounds:&bx];
+      for(CPInt w = bx.min; w <= bx.max; w++) {
+         if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
+            if (memberDom(x,w)) {
+               [x remove: w];
             }
-        }
-    }   
+         }
+      }
+   }   
 }
 
--(CPStatus) propagate
+-(void) propagate
 {   
-    for(CPInt k = 0; k < _varSize; k++) {
-        if (_match[k] != MAXINT) {
-           if (!memberDom(_var[k], _match[k])) {
-                _valMatch[_match[k]] = -1;
-                _match[k] = MAXINT;
-                _sizeMatching--;
-            }
-        }
-    }
-    if (!findMaximalMatching(self)) 
-        return CPFailure;
-    prune(self);
-    return CPSuspend;   
+   for(CPInt k = 0; k < _varSize; k++) {
+      if (_match[k] != MAXINT) {
+         if (!memberDom(_var[k], _match[k])) {
+            _valMatch[_match[k]] = -1;
+            _match[k] = MAXINT;
+            _sizeMatching--;
+         }
+      }
+   }
+   if (!findMaximalMatching(self)) 
+      failNow();
+   prune(self);
 }
 
 @end

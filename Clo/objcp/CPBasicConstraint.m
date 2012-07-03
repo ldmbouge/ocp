@@ -1,28 +1,12 @@
-
-
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPBasicConstraint.h"
@@ -159,24 +143,22 @@
        [_x whenChangeBoundsPropagate: self];
        [_y whenChangeBoundsPropagate: self];
    }
-   return [self propagate];
+   [self propagate];
+   return CPSuspend;
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
-    CPStatus ok;
     if ([_x bound]) {
-        return [_y bind:[_x min] - _c];
+        [_y bind:[_x min] - _c];
     } 
     else if ([_y bound]) {
-        return [_x bind:[_y min] + _c];
+        [_x bind:[_y min] + _c];
     } 
     else {
-       ok = [_x updateMin:[_y min] + _c andMax:[_y max] + _c];
-       if (ok) 
-          ok = [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+       [_x updateMin:[_y min] + _c andMax:[_y max] + _c];
+       [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
     }
-    return ok;
 }
 -(NSString*)description
 {
@@ -244,37 +226,36 @@
                ok = [_x remove:i + _c];
       }
       if (ok) {
-         [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-            return [_y remove: val - _c];
+         [_x whenLoseValue:self do:^(CPInt val) {
+            [_y remove: val - _c];
          }];
-         [_y whenLoseValue:self do:^CPStatus(CPInt val) {
-            return [_x remove: val + _c];
+         [_y whenLoseValue:self do:^(CPInt val) {
+            [_x remove: val + _c];
          }];
-         [_x whenBindDo:^CPStatus{
-            return [_y bind:minDom(_x) - _c];
+         [_x whenBindDo:^{
+            [_y bind:minDom(_x) - _c];
          } onBehalf:self];
-         [_y whenBindDo:^CPStatus{
-            return [_x bind:minDom(_x) + _c];
+         [_y whenBindDo:^{
+            [_x bind:minDom(_x) + _c];
          } onBehalf:self];
       }
    }
-   return [self propagate];
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {
-   CPStatus ok = CPSuspend;
    do {
       if (bound(_x)) {
-         ok = [_y bind:minDom(_x) - _c];
+         [_y bind:minDom(_x) - _c];
       } else if (bound(_y)) {
-         ok = [_x bind:minDom(_y) + _c];
+         [_x bind:minDom(_y) + _c];
       } else {
          _todo = CPChecked;
-         ok = [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
-         if (ok) [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+         [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
+         [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
       }
-   } while (ok && _todo == CPTocheck);
-   return ok;   
+   } while (_todo == CPTocheck);
 }
 -(NSString*)description
 {
@@ -333,96 +314,83 @@ static inline TRIntArray createSupport(CPIntVarI* v)
 static CPStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
 {   
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
-   CPStatus rv = CPSuspend;
    for(CPInt j=min;j<=max;j++) {
       CPInt t = a + j;
       if (getCPDom(bd, j) && memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
-            rv = removeDom(c, t);
-            if (rv==CPFailure) return rv;
+            removeDom(c, t);            
          }         
       }
    }
-   return rv;
+   return CPSuspend;
 }
 static CPStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
 {
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
-   CPStatus rv = CPSuspend;
    for(CPInt j=min;j<=max;j++) {
       CPInt t = a - j;
       if (getCPDom(bd, j) && memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) { 
-            rv = removeDom(c, t);
-            if (rv==CPFailure) return rv;
+            removeDom(c, t);
          }         
       }
    }
-   return rv;
+   return CPSuspend;
 }
 static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
 {
    CPInt min = minCPDom(ad),max = maxCPDom(ad);
-   CPStatus rv = CPSuspend;
    for(CPInt j=min;j<=max;j++) {
       CPInt t = j - b;
       if (getCPDom(ad, j) && memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
-            rv = removeDom(c, t);
-            if (rv==CPFailure) return rv;
+            removeDom(c, t);
          }         
       }
    }
-   return rv;
+   return CPSuspend;
 }
 
 -(CPStatus)pruneVar:(CPIntVarI*) v flat:(CPBitDom*) vd support:(TRIntArray) vs
 {
    CPInt min = minCPDom(vd),max = maxCPDom(vd);
-   CPStatus ok = CPSuspend;
-   for(CPInt i = min;i <= max && ok;i++) {
+   for(CPInt i = min;i <= max;i++) {
       if (memberCPDom(vd, i) && getTRIntArray(vs, i) == 0) {
          setCPDom(vd, i, NO);
-         ok = [v remove:i];
+         [v remove:i];
       }
    }
-   if (ok) {
-      if (v == _x) {
-         [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-            setCPDom(_fx, val, NO);
-            assignTRIntArray(_xs, val, 0);            
-            CPStatus ok = constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
-            if (ok) ok = scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
-            return ok;
-         }];      
-      } else if (v == _y) {
-         [_y whenLoseValue:self do:^CPStatus(CPInt val) {
-            setCPDom(_fy, val, NO);
-            assignTRIntArray(_ys, val, 0);            
-            CPStatus ok = constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
-            if (ok) ok = scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
-            return ok;         
-         }];
-      } else {
-         [_z whenLoseValue:self do:^CPStatus(CPInt val) {
-            setCPDom(_fz, val, NO);
-            assignTRIntArray(_zs, val, 0);            
-            CPStatus ok = constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
-            if (ok) ok = constSubScanB(val,_fy,_fx,_x,_xs);   // zc - D(y) in D(x)
-            return ok;
-         }];
-      }
+   if (v == _x) {
+      [_x whenLoseValue:self do:^(CPInt val) {
+         setCPDom(_fx, val, NO);
+         assignTRIntArray(_xs, val, 0);            
+         constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
+         scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
+      }];      
+   } else if (v == _y) {
+      [_y whenLoseValue:self do:^(CPInt val) {
+         setCPDom(_fy, val, NO);
+         assignTRIntArray(_ys, val, 0);            
+         constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
+         scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
+      }];
+   } else {
+      [_z whenLoseValue:self do:^(CPInt val) {
+         setCPDom(_fz, val, NO);
+         assignTRIntArray(_zs, val, 0);            
+         constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
+         constSubScanB(val,_fy,_fx,_x,_xs);   // zc - D(y) in D(x)
+      }];
    }
-   return ok;
+   return CPSuspend;
 }
 
 -(CPStatus) post
 {
-   CPStatus ok = [self propagate];
-   if (!ok) return ok;  
+   [self propagate];
    _fx = [_x flatDomain];
    _fy = [_y flatDomain];
    _fz = [_z flatDomain];
@@ -461,62 +429,60 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
          }
       }
    }
-   if (ok) ok = [self pruneVar:_x flat:_fx support:_xs];
-   if (ok) ok = [self pruneVar:_y flat:_fy support:_ys];
-   if (ok) ok = [self pruneVar:_z flat:_fz support:_zs];
-   return ok;   
+   [self pruneVar:_x flat:_fx support:_xs];  
+   [self pruneVar:_y flat:_fy support:_ys];
+   [self pruneVar:_z flat:_fz support:_zs];
+   return CPSuspend;   
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
-   CPStatus ok = CPSuspend;
    do {
       if (bound(_x)) {
          if (bound(_y)) {
-            return [_z bind:minDom(_x) + minDom(_y)];
+            assignTRInt(&_active, NO, _trail);
+            [_z bind:minDom(_x) + minDom(_y)];
          } else if (bound(_z)) {
-            return [_y bind:minDom(_z) - minDom(_x)];
+            assignTRInt(&_active, NO, _trail);
+            [_y bind:minDom(_z) - minDom(_x)];
          } else { 
             _todo = CPChecked;
             int c = minDom(_x);
-            ok = [_y updateMin:minDom(_z) - c andMax:[_z max] - c];
-            if (ok) ok = [_z updateMin:minDom(_y)+c andMax:maxDom(_y)+c];
+            [_y updateMin:minDom(_z) - c andMax:[_z max] - c];
+            [_z updateMin:minDom(_y)+c andMax:maxDom(_y)+c];
          }
       } else if (bound(_y)) { // _x is NOT bound
          if (bound(_z)) {
-            return [_x bind:minDom(_z) - minDom(_y)];
+            assignTRInt(&_active, NO, _trail);
+            [_x bind:minDom(_z) - minDom(_y)];
          } else { 
             _todo = CPChecked;
             int c = minDom(_y);
-            ok = [_x updateMin:minDom(_z) - c andMax:[_z max] - c];
-            if (ok) ok = [_z updateMin:minDom(_x)+c andMax:maxDom(_x)+c];
+            [_x updateMin:minDom(_z) - c andMax:[_z max] - c];
+            [_z updateMin:minDom(_x)+c andMax:maxDom(_x)+c];
          }
       } else if (bound(_z)) {  // neither _x NOR _y are bound.
          _todo = CPChecked;
          int c = minDom(_z);
-         ok = [_x updateMin:c - maxDom(_y) andMax:c - minDom(_y)];
-         if (ok) ok = [_y updateMin:c - maxDom(_x) andMax:c - minDom(_x)];
+         [_x updateMin:c - maxDom(_y) andMax:c - minDom(_y)];
+         [_y updateMin:c - maxDom(_x) andMax:c - minDom(_x)];
       } else { 
          _todo = CPChecked;
          CPBounds xb = bounds(_x),yb = bounds(_y),zb = bounds(_z);      
          CPInt lb = xb.min + yb.min;
          CPInt ub = xb.max + yb.max;
          if (lb > zb.min || ub < zb.max)
-            if ([_z updateMin:lb andMax:ub] == CPFailure)
-               return CPFailure;
+            [_z updateMin:lb andMax:ub];
          lb = zb.min - yb.max;
          ub = zb.max - yb.min;         
          if (lb > xb.min || ub < xb.max)
-            if ([_x updateMin:lb andMax:ub] == CPFailure)
-               return CPFailure;         
+            [_x updateMin:lb andMax:ub];
          lb = zb.min - xb.max;
          ub = zb.max - xb.min;
          if (lb > yb.min || ub < yb.max)
-            if ([_y updateMin:lb andMax:ub] == CPFailure)
-               return CPFailure;
+            [_y updateMin:lb andMax:ub];
       }
    } while (_todo == CPTocheck);
-   return ok;
 }
 -(NSString*)description
 {
@@ -578,15 +544,14 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    return CPSuspend;
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
-   if (!_active._val) 
-       return CPSkip;
+   if (!_active._val) return;
    assignTRInt(&_active, NO, _trail);
    if ([_x bound])
-      return [_y remove:[_x min] - _c] ? CPSuspend : CPFailure;
+      [_y remove:[_x min] - _c];
    else 
-      return [_x remove:[_y min] + _c] ? CPSuspend : CPFailure;
+      [_x remove:[_y min] + _c];
 }
 -(NSString*)description
 {
@@ -629,15 +594,15 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    else if ([_y bound])
       return [_x remove:[_y min]];
    else {
-      [_x whenBindDo:^CPStatus{
-         if (!_active._val) return CPSkip;
+      [_x whenBindDo:^void{
+         if (!_active._val) return;
          assignTRInt(&_active, NO, _trail);
-         return [_y remove:minDom(_x)];
+         [_y remove:minDom(_x)];
       } priority:HIGHEST_PRIO onBehalf:self];
-      [_y whenBindDo:^CPStatus{
-         if (!_active._val) return CPSkip;
+      [_y whenBindDo:^void {
+         if (!_active._val) return;
          assignTRInt(&_active, NO, _trail);
-         return [_x remove:minDom(_y)];
+         [_x remove:minDom(_y)];
       } priority:HIGHEST_PRIO onBehalf:self];
       return CPSuspend;
    }
@@ -680,21 +645,18 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(CPStatus) post  // x <= y
 {
-   CPStatus ok = [self propagate];
-   if (ok) {
-      if (!bound(_x))
-         [_x whenChangeMinPropagate: self];
-      if (!bound(_y))
-         [_y whenChangeMaxPropagate: self];
-   }
-   return [self propagate];   
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeMinPropagate: self];
+   if (!bound(_y))
+      [_y whenChangeMaxPropagate: self];
+   [self propagate];   
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {
-   CPStatus s = [_x updateMax:[_y max]];
-   if (s != CPFailure)
-      s = [_y updateMin:[_x min]];
-   return s;
+   [_x updateMax:[_y max]];
+   [_y updateMin:[_x min]];
 }
 -(NSSet*)allVars
 {
@@ -739,62 +701,56 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    }
    CPBounds xb = bounds(_x);
    int mxy = maxOf( - xb.min,xb.max);
-   CPStatus ok = [_y updateMin:0 andMax:mxy];
-   if (ok)  ok = [_x updateMin:-mxy andMax:mxy];
-   if (ok) {
-      CPBounds yb = bounds(_y);
-      for(int k=yb.min;ok && k<=yb.max;k++) {
-         if ([_y member:k]) {
-            if (![_x member:k] && ![_y member:k]) 
-               if (ok) ok = [_y remove:k];
+   [_y updateMin:0 andMax:mxy];
+   [_x updateMin:-mxy andMax:mxy];
+   CPBounds yb = bounds(_y);
+   for(int k=yb.min; k<=yb.max;k++) {
+      if ([_y member:k]) {
+         if (![_x member:k] && ![_y member:k]) 
+            [_y remove:k];
+      } else {
+         [_x remove:k];
+         [_x remove:-k];
+      }
+   }
+   yb = bounds(_y);
+   for(int k=0;k<yb.min;k++) {  // ----0----y_min-------------y_max----  kill values between 0..y_min
+      if ([_x member:k])
+         [_x remove:k];
+      if ([_x member:-k])
+         [_x remove:-k];
+   }
+   if (!bound(_x)) {
+      [_x whenLoseValue:self do:^(CPInt val) {
+         if (!memberDom(_x, -val)) { 
+            [_y remove:abs(val)];
+         } 
+      }];
+      [_x whenBindDo:^{
+         [_y bind:abs(minDom(_x))];
+      } onBehalf:self];
+   }
+   if (!bound(_y)) {
+      [_y whenLoseValue:self do:^(CPInt val) {
+         [_x remove:val];
+         [_x remove:-val];
+      }];
+      [_y whenBindDo:^{
+         CPInt val = minDom(_y);
+         if (!memberDom(_x, val) && !memberDom(_x, -val)) {
+            failNow();
+         }
+         else if (memberDom(_x, val) ^ memberDom(_x, -val)) {
+            [_x bind:memberDom(_x, val) ? val : -val];
          } else {
-            if (ok) ok = [_x remove:k];
-            if (ok) ok = [_x remove:-k];
+            CPBounds xb = bounds(_x);
+            for(int k=xb.min; k <= xb.max;k++)
+               if (k != val && k != - val)
+                  [_x remove:k];
          }
-      }
-      yb = bounds(_y);
-      for(int k=0;ok && k<yb.min;k++) {  // ----0----y_min-------------y_max----  kill values between 0..y_min
-         if ([_x member:k])
-            ok = [_x remove:k];
-         if ([_x member:-k])
-            ok = [_x remove:-k];
-      }
-      if (ok) {
-         if (!bound(_x)) {
-            [_x whenLoseValue:self do:^CPStatus(CPInt val) {
-               if (!memberDom(_x, -val)) { 
-                  return [_y remove:abs(val)];
-               } else return CPSuspend;
-            }];
-            [_x whenBindDo:^CPStatus{
-               return [_y bind:abs(minDom(_x))];
-            } onBehalf:self];
-         }
-         if (!bound(_y)) {
-            [_y whenLoseValue:self do:^CPStatus(CPInt val) {
-               CPStatus ok = [_x remove:val];
-               if (ok)  ok = [_x remove:-val];
-               return ok;
-            }];
-            [_y whenBindDo:^CPStatus{
-               CPInt val = minDom(_y);
-               if (!memberDom(_x, val) && !memberDom(_x, -val)) 
-                  return CPFailure;
-               else if (memberDom(_x, val) ^ memberDom(_x, -val)) {
-                  return [_x bind:memberDom(_x, val) ? val : -val];
-               } else {
-                  CPStatus ok = CPSuspend;
-                  CPBounds xb = bounds(_x);
-                  for(int k=xb.min;ok && k <= xb.max;k++)
-                     if (k != val && k != - val)
-                        ok = [_x remove:k];
-                  return ok ? CPSuccess : CPFailure;
-               }
-            }  onBehalf:self];
-         }
-      }
-      return ok;
-   } else return CPFailure;
+      }  onBehalf:self];
+   }
+   return CPSuspend;
 }
 -(NSSet*)allVars
 {
@@ -835,14 +791,13 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(CPStatus) post
 {
-   CPStatus ok = [self propagate];
-   if (ok && !bound(_x)) [_x whenChangeBoundsPropagate:self];
-   if (ok && !bound(_y)) [_y whenChangeBoundsPropagate:self];
-   return ok;
+   [self propagate];
+   if (!bound(_x)) [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y)) [_y whenChangeBoundsPropagate:self];
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {
-   CPStatus ok = CPSuspend;
    do {
       _todo = CPChecked;
       CPBounds xb = bounds(_x);
@@ -851,20 +806,17 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
       if (cZ) {
          CPRange aZ = [_x around:0];
          CPInt lb = minOf(-aZ.low,aZ.up);
-         ok = [_y updateMin:lb andMax:ub];
+         [_y updateMin:lb andMax:ub];
       } else if (xb.min >= 0) {
-         ok = [_y updateMin:xb.min andMax:xb.max];
-         if (ok) ok = [_x updateMin:minDom(_y)];
+         [_y updateMin:xb.min andMax:xb.max];
+         [_x updateMin:minDom(_y)];
       } else {
-         ok = [_y updateMin:-xb.max andMax:-xb.min];
-         if (ok) ok = [_x updateMax:-minDom(_y)];
+         [_y updateMin:-xb.max andMax:-xb.min];
+         [_x updateMax:-minDom(_y)];
       }
-      if (ok) {
-         CPBounds yb = bounds(_y);
-         ok = [_x updateMin:-yb.max andMax:yb.max];
-      }
-   } while(ok && _todo == CPTocheck);
-   return ok;
+      CPBounds yb = bounds(_y);
+      [_x updateMin:-yb.max andMax:yb.max];
+   } while(_todo == CPTocheck);
 }
 -(NSSet*)allVars
 {
@@ -992,14 +944,13 @@ static inline int maxDiv4(CPLong a,CPLong b,CPLong c,CPLong d) {
 static CPStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
 {
    CPInt a = r.min,b = r.max;
-   CPStatus suc = CPSuspend;
    if (a > 0 || b < 0) {
-      if (suc) suc = [x updateMin:minDiv(c,a,b) andMax:maxDiv(c,a,b)];
+      [x updateMin:minDiv(c,a,b) andMax:maxDiv(c,a,b)];
    } else if (a==0 || b == 0) {
       CPRange az = [x around:0];
       int s = a==0 ? az.up  : az.low;
       int l = a==0 ? b : a;
-      if (suc) suc = [x updateMin:minDiv(c,s,l) andMax:maxDiv(c,s,l)];
+      [x updateMin:minDiv(c,s,l) andMax:maxDiv(c,s,l)];
    } else {
       CPRange az = [x around:0];
       CPInt xm1 = minDiv(c,az.low,az.up);
@@ -1008,47 +959,40 @@ static CPStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
       CPInt xM2 = maxDiv(c,a,b);
       CPInt xm = xm1 < xm2 ? xm1 : xm2;
       CPInt xM = xM1 > xM2 ? xM1 : xM2;
-      if (suc) suc = [x updateMin:xm andMax:xM];
+      [x updateMin:xm andMax:xM];
    }
-   return suc ? CPSuspend : CPFailure;
+   return CPSuspend;
 }
--(CPStatus)propagateCXZ:(CPLong)c mult:(CPIntVarI*)x equal:(CPBounds)zb
+-(void) propagateCXZ:(CPLong)c mult:(CPIntVarI*)x equal:(CPBounds)zb
 {
-   CPStatus suc = CPSuspend;
    int nz = ![_z member:0];
    int newMin = zb.min/c + (nz && zb.min >= 0 && zb.min % c);
    int newMax = zb.max/c - (nz && zb.max <  0 && zb.max % c);
-   if (suc) suc = [x updateMin:newMin andMax:newMax];
-   return suc ? CPSuspend : CPFailure;
+   [x updateMin:newMin andMax:newMax];
 }
 -(CPStatus) postCX:(CPLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z 
 {
    if ([x bound])
       return [z bind:bindDown(c * [x min])];
    else {
-      CPStatus suc = CPSuspend;
       if (c > 0) {
          CPInt newMax  = bindUp(c * [x max]);
          CPInt newMin  = bindDown(c * [x min]);
-         if (suc) suc = [z updateMin:newMin andMax:newMax];
-         if (suc) suc = [self propagateCXZ:c mult:x equal:bounds(z)];
-         if (suc) {
-            [z whenChangeBoundsPropagate:self];
-            [x whenChangeBoundsPropagate:self];
-         }
+         [z updateMin:newMin andMax:newMax];
+         [self propagateCXZ:c mult:x equal:bounds(z)];
+         [z whenChangeBoundsPropagate:self];
+         [x whenChangeBoundsPropagate:self];
       } else if (c == 0) {
-         if (suc) suc = [z bind:0];
+         [z bind:0];
       } else {
          int newMin = bindDown(c * [x max]);
          int newMax = bindUp(c * [x min]);
-         if (suc) suc = [z updateMin:newMin andMax:newMax];
-         if (suc) suc = [self propagateCXZ:-c mult:x equal:negBounds(z)];
-         if (suc) {
-            [z whenChangeBoundsPropagate:self];
-            [x whenChangeBoundsPropagate:self];
-         }
+         [z updateMin:newMin andMax:newMax];
+         [self propagateCXZ:-c mult:x equal:negBounds(z)];
+         [z whenChangeBoundsPropagate:self];
+         [x whenChangeBoundsPropagate:self];
       }
-      return suc;
+      return CPSuspend;
    }
 }
 static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
@@ -1056,44 +1000,41 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    if ([x bound]) {
       return [z bind:c * [x min]];
    } else {
-      CPStatus suc = CPSuspend;
       if (c > 0) {
          CPInt newMax  = bindUp(c * [x max]);
          CPInt newMin  = bindDown(c * [x min]);
-         if (suc) suc = [z updateMin:newMin andMax:newMax];
-         if (suc) suc = [mc propagateCXZ:c mult:x equal:bounds(z)];
-         return suc;
+         [z updateMin:newMin andMax:newMax];
+         [mc propagateCXZ:c mult:x equal:bounds(z)];
       } else if (c == 0) {
-         return [z bind:0];
+         [z bind:0];
       } else {
-         if (suc) suc = [z updateMin:c * [x max] andMax: c * [x min]];
-         if (suc) suc = [mc propagateCXZ:-c mult:x equal:negBounds(z)]; 
-         return suc;
+         [z updateMin:c * [x max] andMax: c * [x min]];
+         [mc propagateCXZ:-c mult:x equal:negBounds(z)]; 
       }
+      return CPSuspend;
    }
 }
 
--(CPStatus)propagateXCR:(CPIntVarI*)x mult:(CPIntVarI*)y equal:(CPBounds)r
+-(void) propagateXCR:(CPIntVarI*)x mult:(CPIntVarI*)y equal:(CPBounds)r
 {
    CPInt a = r.min,b=r.max;
    CPInt c = [y min],d = [y max];
-   CPStatus suc = CPSuspend;
    if (c==0 && d==0)  {
-      return [_z bind:0];
+      [_z bind:0];
    } else if (c>0) {
-      if (suc) suc = [x updateMin:minDiv4(a,b,c,d) andMax:maxDiv4(a,b,c,d)];
+      [x updateMin:minDiv4(a,b,c,d) andMax:maxDiv4(a,b,c,d)];
    } else if (d<0) {
-      if (suc) suc = [x updateMin:minDiv4(a,b,c,d) andMax:maxDiv4(a,b,c,d)];
+      [x updateMin:minDiv4(a,b,c,d) andMax:maxDiv4(a,b,c,d)];
    } else {
       if (a <= 0 && b >= 0)
-         return CPSuspend;
+         return;
       else {
          if (c==0 || d == 0) {
-            if (a <= 0 && b >= 0) return CPSuspend;
+            if (a <= 0 && b >= 0) return;
             CPRange az = [y around:0]; // around zero            
             int s = c==0 ? az.up : az.low;
             int l = c==0 ? d : c;
-            if (suc) suc = [x updateMin:minDiv4(a,b,s,l) andMax:maxDiv4(a,b,s,l)];
+            [x updateMin:minDiv4(a,b,s,l) andMax:maxDiv4(a,b,s,l)];
          } else {
             CPRange az = [y around:0]; // around zero
             CPInt xm1 = minDiv4(a,b,az.low,az.up);
@@ -1102,28 +1043,25 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
             CPInt xM2 = maxDiv4(a,b,c,d);
             CPInt xm = xm1 < xm2 ? xm1 : xm2;
             CPInt xM = xM1 > xM2 ? xM1 : xM2;
-            if (suc) suc = [x updateMin:xm andMax:xM];
+            [x updateMin:xm andMax:xM];
          }
       }
    }
-   return suc ? CPSuspend : CPFailure;
 }
--(CPStatus)propagateXYZ
+-(void) propagateXYZ
 {
-   CPStatus suc = CPSuspend;
    if (![_z member:0]) {
-      if (suc) suc = [_x remove:0];
-      if (suc) suc = [_y remove:0];
+      [_x remove:0];
+      [_y remove:0];
    }
    CPBounds xb,yb,zb;
    [_x bounds:&xb];
    [_y bounds:&yb];
    CPLong t[4] = {xb.min*yb.min,xb.min*yb.max,xb.max*yb.min,xb.max*yb.max};
-   if (suc) suc = [_z updateMin:bindDown(minSeq(t)) andMax:bindUp(maxSeq(t))];
+   [_z updateMin:bindDown(minSeq(t)) andMax:bindUp(maxSeq(t))];
    [_z bounds:&zb];
-   if (suc) suc = [self propagateXCR:_x mult:_y equal:zb];
-   if (suc) suc = [self propagateXCR:_y mult:_x equal:zb];
-   return suc ? CPSuspend : CPFailure;
+   [self propagateXCR:_x mult:_y equal:zb];
+   [self propagateXCR:_y mult:_x equal:zb];
 }
 -(CPStatus) post
 {   
@@ -1132,73 +1070,64 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    else if ([_y bound])
       return [self postCX:[_y min] mult:_x equal:_z];
    else if ([_z bound]) {
-      CPStatus suc = CPSuspend;
       if ([_z min] == 0) {
          BOOL xZero = [_x member:0];
          BOOL yZero = [_y member:0];
          if (xZero || yZero) {   
             if (xZero ^ yZero) { 
-               if (xZero) suc = [_x bind:0];
-               if (yZero) suc = [_y bind:0];
+               if (xZero) [_x bind:0];
+               if (yZero) [_y bind:0];
             } else {  
                [_x whenChangePropagate:self];
                [_y whenChangePropagate:self];
             }
-         } else return CPFailure;
+         } else failNow();
       } else { 
-         CPStatus suc = propagateRXC(self,bounds(_x),_y,[_z min]);
-         if (suc) suc = propagateRXC(self,bounds(_y),_x,[_z min]);
-         if (suc) {
-            if (![_x bound]) [_x whenChangeBoundsPropagate:self];
-            if (![_y bound]) [_y whenChangeBoundsPropagate:self];
-         }
+         propagateRXC(self,bounds(_x),_y,[_z min]);
+         propagateRXC(self,bounds(_y),_x,[_z min]);
+         if (![_x bound]) [_x whenChangeBoundsPropagate:self];
+         if (![_y bound]) [_y whenChangeBoundsPropagate:self];
       }
-      return suc;
+      return CPSuspend;
    } else { 
-      CPStatus suc = [self propagateXYZ];
-      if (suc) {
-         [_x whenChangeBoundsPropagate:self];
-         [_y whenChangeBoundsPropagate:self];
-         [_z whenChangeBoundsPropagate:self];
-      }
-      return suc;
+      [self propagateXYZ];
+      [_x whenChangeBoundsPropagate:self];
+      [_y whenChangeBoundsPropagate:self];
+      [_z whenChangeBoundsPropagate:self];
+      return CPSuspend;
    }   
 }
--(CPStatus)propagate
+-(void) propagate
 {
+   if (!_active._val) return;
    if ([_x bound]) {
-      CPStatus oc =  propagateCX(self,[_x min],_y,_z);
-      if (oc && [_y bound] && [_z  bound])
-         return CPSuccess;
-      else return oc;
+      propagateCX(self,[_x min],_y,_z);
+      if ([_y bound] && [_z  bound])
+         assignTRInt(&_active, NO, _trail);
    } else if ([_y bound]) {
-      CPStatus oc = propagateCX(self,[_y min],_x,_z);
-      if (oc && [_x bound] && [_z bound])
-         return CPSuccess;
-      else return oc;      
+      propagateCX(self,[_y min],_x,_z);
+      if ([_x bound] && [_z bound])
+         assignTRInt(&_active, NO, _trail);
    } else if ([_z bound]) {
-      CPStatus suc = CPSuspend;
       if ([_z min] == 0) {
          BOOL xZero = [_x member:0],yZero = [_y member:0];
          if (xZero || yZero) {   
             if (xZero ^ yZero) { 
                if (xZero)
-                  suc = [_x bind:0];
-               else suc = [_y bind:0];
-            } else suc = CPSuspend;
-         } else suc = CPFailure;
+                  [_x bind:0];
+               else [_y bind:0];
+            } 
+         } else failNow();
       } else { 
-         CPStatus suc = propagateRXC(self,bounds(_x),_y,[_z min]);
-         if (suc) suc = propagateRXC(self,bounds(_y),_x,[_z min]);
+         propagateRXC(self,bounds(_x),_y,[_z min]);
+         propagateRXC(self,bounds(_y),_x,[_z min]);
       }
-      if (suc && [_x bound] && [_y bound])
-         return CPSuccess; 
-      else return suc ? CPSuspend : CPFailure;
+      if ([_x bound] && [_y bound])
+         assignTRInt(&_active, NO, _trail);
    } else { 
-      return [self propagateXYZ];
+      [self propagateXYZ];
    }
 }
-
 
 -(NSSet*)allVars
 {
@@ -1303,35 +1232,27 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
          vUse[nbBoundVal++] = to;
       }
    }
-   if (ok) {
-      for(CPInt k=low;k<=up && ok;k++) {
-         if ([_x[k] bound])
-             continue;
-         for(CPInt j=0;j<nbBoundVal;j++) {
-            ok = [_x[k] remove: vUse[j]] != CPFailure;
-         }
-         if (ok) {
-            SEL minSEL = @selector(min);
-            IMP minIMP = [_x[k] methodForSelector:minSEL];
-            [_x[k] whenBindDo: ^CPStatus() {
-               //int vk = [_x[k] min];
-               CPInt vk = (CPInt) minIMP(_x[k],minSEL);
-               CPStatus s = CPSuspend;
-               for(CPInt i=up;i;--i) {
-                  if (i == k) 
-                      continue;
-                  s = [_x[i] remove:vk];
-                  if (!s) 
-                      return s;
-               }
-               return s;
-            } onBehalf:self];
-         }
+   if (!ok) failNow();
+   
+   for(CPInt k=low;k<=up && ok;k++) {
+      if ([_x[k] bound])
+         continue;
+      for(CPInt j=0;j<nbBoundVal;j++) {
+         [_x[k] remove: vUse[j]];
       }
-      return ok ? CPSuspend : CPFailure;
-   } 
-   else 
-       return CPFailure;   
+      SEL minSEL = @selector(min);
+      IMP minIMP = [_x[k] methodForSelector:minSEL];
+      [_x[k] whenBindDo: ^ {
+         //int vk = [_x[k] min];
+         CPInt vk = (CPInt) minIMP(_x[k],minSEL);
+         for(CPInt i=up;i;--i) {
+            if (i == k) 
+               continue;
+            [_x[i] remove:vk];
+         }
+      } onBehalf:self];
+   }
+   return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -1372,7 +1293,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 -(CPStatus) post
 {
   if (![_x bound]) 
-    [_x whenChangeMinDo: ^CPStatus() { return [_x updateMax: _primalBound]; } onBehalf:self];
+    [_x whenChangeMinDo: ^ { [_x updateMax: _primalBound]; } onBehalf:self];
   return CPSuspend;
 }
 -(NSSet*)allVars
@@ -1420,7 +1341,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 -(CPStatus) post
 {
   if (![_x bound]) 
-    [_x whenChangeMaxDo: ^CPStatus() { return [_x updateMin: _primalBound]; } onBehalf:self];
+    [_x whenChangeMaxDo: ^ {  [_x updateMin: _primalBound]; } onBehalf:self];
   return CPSuspend;
 }
 

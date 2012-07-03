@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
@@ -38,7 +24,7 @@
 -(id) initCPBitEqual: (id) x and: (id) y ;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitNOT : CPActiveConstraint<NSCoding>{
@@ -50,7 +36,7 @@
 -(id) initCPBitNOT: (id) x equals: (id) y;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitAND : CPActiveConstraint<NSCoding>{
@@ -63,7 +49,7 @@
 -(id) initCPBitAND: (id) x and: (id) y equals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitOR : CPActiveConstraint<NSCoding>{
@@ -76,7 +62,7 @@
 -(id) initCPBitOR: (id) x or: (id) y equals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitXOR : CPActiveConstraint<NSCoding>{
@@ -89,7 +75,7 @@
 -(id) initCPBitXOR: (id) x xor: (id) y equals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitIF : CPActiveConstraint<NSCoding>{
@@ -103,7 +89,7 @@
 -(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 
@@ -116,7 +102,7 @@
 -(id) initCPBitShiftL: (id) x shiftLBy:(int) places equals:(id) y;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitShiftR : CPActiveConstraint<NSCoding>{
@@ -128,7 +114,7 @@
 }-(id) initCPBitShiftR: (id) x shiftRBy:(int) places equals:(id) y;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 
 @interface CPBitADD: CPActiveConstraint<NSCoding>{
@@ -143,6 +129,6 @@
 -(id) initCPBitAdd: (id) x plus:(id) y equals:(id) z withCarryIn:(id) cin andCarryOut:cout;
 -(void) dealloc;
 -(CPStatus) post;
--(CPStatus) propagate;
+-(void) propagate;
 @end
 

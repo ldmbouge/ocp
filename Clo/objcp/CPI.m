@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPTrail.h"
@@ -46,7 +32,7 @@
    _trail = [[CPTrail alloc] init];
    _solver = [[CPSolverI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
-   _retLabel = _failLabel = nil;
+   _returnLabel = _failLabel = nil;
    return self;
 }
 -(id) initFor:(CPSolverI*)fdm
@@ -55,7 +41,7 @@
    _solver = [fdm retain];
    _trail = [[fdm trail] retain];
    _pool = [[NSAutoreleasePool alloc] init];
-   _retLabel = _failLabel = nil;
+   _returnLabel = _failLabel = nil;
    return self;
 }
 
@@ -66,7 +52,7 @@
    [_solver release];
    [_search release];
    [_pool release];
-   [_retLabel release];
+   [_returnLabel release];
    [_failLabel release];
    [super dealloc]; 
 }
@@ -232,9 +218,9 @@
 }
 -(id<CPIdxIntInformer>) retLabel
 {
-   if (_retLabel==nil) 
-      _retLabel = [CPConcurrency idxIntInformer];   
-   return _retLabel;
+   if (_returnLabel==nil) 
+      _returnLabel = [CPConcurrency idxIntInformer];   
+   return _returnLabel;
 }
 -(id<CPIdxIntInformer>) failLabel
 {
@@ -268,7 +254,6 @@
    [super dealloc];
 }
 
-
 -(void) label: (CPIntVarI*) var with: (CPInt) val
 {
    CPStatus status = [_solver label: var with: val];  
@@ -276,7 +261,7 @@
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
-   [_retLabel notifyWith:var andInt:val];
+   [_returnLabel notifyWith:var andInt:val];
    [CPConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
@@ -511,7 +496,7 @@
       [_search fail];
    }
    [_tracer addCommand:[[CPEqualc alloc] initCPEqualc:var and:val]];    // add after the fail (so if we fail, we don't bother adding it!]
-   [_retLabel notifyWith:var andInt:val];
+   [_returnLabel notifyWith:var andInt:val];
    [CPConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val

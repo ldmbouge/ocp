@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPBitDom.h"
@@ -134,7 +120,7 @@
 -(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
 {
    if (newMin <= _min._val) return CPSuspend;
-   if (newMin > _max._val)  return CPFailure;
+   if (newMin > _max._val) failNow();
    CPInt nbr = newMin - _min._val;
    CPInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
@@ -145,7 +131,7 @@
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
    if (newMax >= _max._val) return CPSuspend;
-   if (newMax < _min._val) return CPFailure;
+   if (newMax < _min._val) failNow();
    CPInt nbr = _max._val - newMax;
    CPInt nsz = _sz._val - nbr;
    assignTRInt(&_max, newMax, _trail);
@@ -155,7 +141,7 @@
 }
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-   if (val < _min._val || val > _max._val) return CPFailure;
+   if (val < _min._val || val > _max._val) failNow();
    if (_sz._val == 1 && val == _min._val) return CPSuccess;
    
    assignTRInt(&_min, val, _trail);
@@ -472,7 +458,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus) updateMin: (CPInt) newMin for: (id<CPIntVarNotifier>)x
 {
     if (newMin <= _min._val) return CPSuspend;
-    if (newMin > _max._val)  return CPFailure;
+   if (newMin > _max._val)  failNow();
     int nbr = countFrom(self,_min._val,newMin-1);
    if ([x tracksLoseEvt]) {
       for(CPInt k=_min._val;k< newMin;k++) 
@@ -491,7 +477,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
     if (newMax >= _max._val) return CPSuspend;
-    if (newMax < _min._val) return CPFailure;
+    if (newMax < _min._val) failNow();
     CPInt nbr = countFrom(self,newMax+1,_max._val);
    if ([x tracksLoseEvt]) {
       for(CPInt k=newMax+1;k<= _max._val;k++) 
@@ -508,7 +494,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-    if (val < _min._val || val > _max._val) return CPFailure;
+    if (val < _min._val || val > _max._val) failNow();
     if (_sz._val == 1 && val == _min._val) return CPSuccess;
     if ([x tracksLoseEvt]) {
         for(CPInt k=_min._val;k<=_max._val;k++) 
@@ -601,6 +587,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_magic[k]]; 
    }
    _trail = [aDecoder decodeObject] ;
+   _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
+   _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;
 }
 @end

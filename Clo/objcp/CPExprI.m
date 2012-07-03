@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPExprI.h"
@@ -411,14 +397,20 @@
 @implementation CPExprSumI 
 -(id<CPExpr>) initCPExprSumI: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e
 {
-    self = [super init];
-    CPInt low = r.low;
-    CPInt up = r.up;
-    _e = [CPFactory integer: cp value: 0];
-    for(CPInt i = low; i <= up; i++)
-        if (!f(i)) 
+   self = [super init];
+   CPInt low = r.low;
+   CPInt up = r.up;
+   _e = [CPFactory integer: cp value: 0];
+   if (f!=nil) {
+      for(CPInt i = low; i <= up; i++)
+         if (!f(i)) 
             _e = [_e add: e(i)];
-    return self;       
+   } 
+   else {
+      for(CPInt i = low; i <= up; i++)
+         _e = [_e add: e(i)];      
+   }
+   return self;       
 }
 -(void) dealloc
 {   

@@ -1,10 +1,13 @@
-//
-//  CPHeuristic.h
-//  Clo
-//
-//  Created by Laurent Michel on 5/15/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+ ***********************************************************************/
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPSolver.h>
@@ -14,7 +17,7 @@
 @protocol CPHeuristic <NSObject>
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)l;
+-(void)initInternal:(id<CPVarArray>)t;
 -(void)initHeuristic:(NSMutableArray*)array;
 -(id<CPIntVarArray>)allIntVars;
 @end

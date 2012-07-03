@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPWDeg.h"
@@ -35,7 +21,7 @@
    [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPSolverI*)[cp solver];
-   _vars = [[NSMutableArray alloc] initWithCapacity:32];
+   _vars = nil;
    _w = 0;
    _cv = 0;
    return self;
@@ -54,7 +40,6 @@
        [_cv[k] release];
      free(_cv);
    }
-   [_vars release];
    free(_map);
    [super dealloc];
 }
@@ -63,10 +48,7 @@
 // pvh: why do we need vars and t and so on.
 -(id<CPIntVarArray>)allIntVars
 {
-   id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,_nbv-1} with:^id<CPIntVar>(CPInt i) {
-      return (id<CPIntVar>)[_vars objectAtIndex:i];
-   }];
-   return rv;
+   return (id<CPIntVarArray>)_vars;
 }
 
 // pvh: see question below for the importance of _cv
@@ -76,7 +58,9 @@
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
-      h += ([obj nbUVars] - 1 > 0) * _w[[obj getId]];
+      CPInt cid = [obj getId];
+      assert(cid >=0 && cid < _nbc);
+      h += ([obj nbUVars] - 1 > 0) * _w[cid];
    }
    return h / [x domsize];
 }
@@ -86,22 +70,24 @@
    return -v;   
 }
 
-// pvh: we should really use our arrays for consistency in the interfaces
-// pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable
+// pvh: we should really use our arrays for consistency in the interfaces [ldm:done]
+// pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable [ldm:caching]
 
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t
 {
+   CPInt len = [t count];
+   _vars = t;
    _cv = malloc(sizeof(NSSet*)*len);
+   memset(_cv,sizeof(NSSet*)*len,0);
    CPUInt maxID = 0;
    for(int k=0;k<len;k++) 
-      maxID = max(maxID,[t[k] getId]);   
+      maxID = max(maxID,[[t at:k] getId]);   
    _map = malloc(sizeof(CPUInt)*(maxID+1));
-   memset(_cv,sizeof(NSSet*)*len,0);
-   for(int k=0;k<len;k++) {
+   CPInt low = [t low],up = [t up];
+   for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
-      _map[[t[k] getId]] = k;
-      [_vars addObject:t[k]];
-      _cv[k] = [t[k] constraints];
+      _map[[[_vars at:k] getId]] = k - low;
+      _cv[k - low] = [[_vars at:k] constraints];
    }
    _nbv = len;
    NSArray* allC = [_solver allConstraints];

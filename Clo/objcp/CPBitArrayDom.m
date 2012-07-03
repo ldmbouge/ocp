@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPBitArrayDom.h"
@@ -187,13 +173,12 @@
       if (val)
          SETBITTRUE(idx);
       else SETBITFALSE(idx);
-      return CPSuspend;
    } else {
       bool theBit = _low[WORDIDX(idx)]._val  & ONEAT(idx);
       if (theBit ^ val)
-         return CPFailure;
-      else return CPSuspend;
+         failNow();
    }
+   return CPSuspend;
 }
 -(bool) isFree:(unsigned int)idx
 {
@@ -384,7 +369,7 @@
       uint64 curMin = INTERPRETATION(_low);
       uint64 curMax = INTERPRETATION(_up);
       if ((curMax < newMin) || (curMin > oldMax))
-         return CPFailure;
+         failNow();
       unsigned int freeBits = curMin ^ curMax;
       if ((0x1 << msbIndex) & freeBits) {
          if (curMax - (0x1 << msbIndex) < newMin) {
@@ -410,108 +395,6 @@
    if (finalMax < oldMax)
       [x changeMaxEvt:oldDS];
    return CPSuspend;
-/*
-    bool newMinIsGTMax = false;
-    bool newMinIsGTOld = false;
-    for(int i = 0; i< _wordLength;i++){
-        if(_max[i]._val < newMin[i])
-            newMinIsGTMax = true;
-        if(_min[i]._val < newMin[i])
-            newMinIsGTOld = true;
-        if(_min[i]._val > newMin[i])
-            break;
-    }
-    
-    if (!newMinIsGTOld) return CPSuspend;
-    
-    assignTRInt(&_min[0], newMin[0], _trail);
-    if(_wordLength > 1)
-        assignTRInt(&_min[1], newMin[1], _trail);
-    
-    if (newMinIsGTMax)  return CPFailure;
-    
-    uint64 oldMin = _min[0]._val;
-    if (_wordLength>1) {
-        oldMin <<= 32;
-        oldMin += _min[1]._val;
-    }
-    
-    
-    if(! [self member:newMin]){
-        unsigned int* min = malloc(sizeof(unsigned int)*_wordLength);
-        for(int i =0;i<_wordLength;i++)
-            min[i] = _min[i]._val;
-        unsigned int* pred = [self pred:min];
-        unsigned int rankTrueMin = [self getRank:pred]+1;
-        unsigned int* trueMin = [self atRank:rankTrueMin];
-        free(pred);
-        for(int i =0;i<_wordLength;i++){
-            min[i] = _min[i]._val;
-            assignTRInt(&_min[i], trueMin[i], _trail);
-        }
-    }
-    
-    unsigned int* lowa = malloc(sizeof(unsigned int)*_wordLength);
-    unsigned int* upa = malloc(sizeof(unsigned int)*_wordLength);    
-    unsigned int* mina = malloc(sizeof(unsigned int)*_wordLength);    
-    unsigned int* maxa = malloc(sizeof(unsigned int)*_wordLength);    
-    
-    for (int i = 0; i<_wordLength ; i++){
-        lowa[i] = _low[i]._val;
-        upa[i] = _up[i]._val;
-        mina[i] = _min[i]._val;
-        maxa[i] = _max[i]._val;
-    }
-    
-    uint64 low = lowa[0];
-    uint64 up = upa[0];
-    uint64 min = mina[0];
-    uint64 max = maxa[0];
-
-    if (_wordLength>1) {
-        low <<= 32;
-        low += lowa[1];
-
-        up <<= 32;
-        up += upa[1];
-
-        min <<= 32;
-        min += mina[1];
-
-        max <<= 32;
-        max += maxa[1];
-    }
-
-    free(lowa);
-    free(upa);
-    free(mina);
-    free(maxa);
-    
-    uint64 mask = 1 << (_bitLength - 1);
-    
-    uint64 atLeast = low;
-    
-    unsigned int bit = _bitLength - 1;
-    while(atLeast <= (min & mask)){
-        const bool isFreeBit = [self isFree:bit];
-        if (isFreeBit){
-            if (atLeast + mask > max)
-                [self setBit:bit to:false];
-            else
-                if (atLeast + mask <= min){
-                    [self setBit:bit to:true];
-                    atLeast += mask;
-                }
-                else break;
-        }
-        mask >>= 1;
-        --bit;
-    }
-    if(min > oldMin)
-        [x changeMinEvt:pow(2, _freebits._val)];
-
-    return CPSuspend;
- */
 }
 
 -(CPStatus)updateMax:(uint64)newMax for:(id<CPBitVarNotifier>)x
@@ -536,7 +419,7 @@
         assignTRUInt(&_max[1], ptrMax[1], _trail);
     
     if(newMax64 < min)
-        return CPFailure;
+        failNow();
     
     if (![self member:ptrMax]){
         unsigned int* pred = [self pred:ptrMax];
@@ -646,13 +529,14 @@
         newMax64 <<= 32;
         newMax64 += _max[1]._val;
     }
-
-    return min <= newMax64 ? CPSuspend : CPFailure;   
+   if (min > newMax64)
+      failNow();
+   return CPSuspend;
 }
 
 -(CPStatus)bind:(uint64)val for:(id<CPIntVarNotifier>)x
 {
-    if ((val < [self min]) || (val > [self max])) return CPFailure;
+    if ((val < [self min]) || (val > [self max])) failNow();
     if ((_freebits._val == 0) && (val == [self min])) return CPSuccess;
     //Deal with arrays < 64 bits long
     assignTRUInt(&_min[0], val>>32, _trail);
@@ -672,7 +556,7 @@
       val+= pat[1];
    }
    if (val < [self min] || val > [self max]) 
-      return CPFailure;
+      failNow();
    if (_freebits._val == 0 && val == [self min]) 
       return CPSuccess;
 

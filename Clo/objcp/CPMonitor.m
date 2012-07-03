@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPMonitor.h"
@@ -69,11 +55,11 @@ BOOL refresh(CPVarInfo* vi)
 @end
 
 @implementation CPMonitor
--(id)initCPMonitor:(CPSolverI*)fdm vars:(NSArray*)allVars
+-(id)initCPMonitor:(CPSolverI*)fdm vars:(id<CPVarArray>)allVars
 {
    self = [super initCPCoreConstraint];
    _fdm = fdm;
-   _monVar    = [allVars retain];
+   _monVar    = allVars;
    _nbVI = [_monVar count];
    _nbActive = 0;
    _curActive = malloc(sizeof(CPVarInfo*)*_nbVI);
@@ -86,17 +72,17 @@ BOOL refresh(CPVarInfo* vi)
       [_varInfo[i] release];
    free(_varInfo);
    free(_curActive);
-   [_monVar release];
    [super dealloc];
 }
 -(CPStatus) post
 {
    CPTrail* trail = [_fdm trail];
    CPUInt nbW = 0;
-   for(id obj in _monVar) {
+   for(CPInt k = [_monVar low];k <= [_monVar up];k++) {
+      id obj = [_monVar at:k];
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
       _varInfo[nbW++] = vInfo; // [ldm] vInfo is in the _varInfo dico with refcnt = 1 from here on.
-      [obj whenChangeDo: ^CPStatus{ makeVarActive(vInfo);return CPSuspend;}
+      [obj whenChangeDo: ^ { makeVarActive(vInfo);}
                priority: LOWEST_PRIO+1
                onBehalf: self]; 
    }

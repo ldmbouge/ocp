@@ -1,3 +1,14 @@
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
+ ***********************************************************************/
+
 #import "CPCardinalityDC.h"
 #import "CPBasicConstraint.h"
 #import "CPSolverI.h"
@@ -529,24 +540,22 @@ static void findSCCsink(CPCardinalityDC* card)
 -(CPStatus) post
 {
     if (!_posted) {
-        _posted = true;
-        [self createVariableArray];
-        [self initializeCardinalityArrays];
-        [self initializeFlow];
-        [self initializeSCCArrays];
-        [self greedyFlow];
-        if ([self propagate] == CPFailure)
-            return CPFailure;
-        for(CPInt i = 0; i < _varSize; i++)
-            if (![_var[i] bound])
-                [_var[i] whenChangePropagate: self];
+       _posted = true;
+       [self createVariableArray];
+       [self initializeCardinalityArrays];
+       [self initializeFlow];
+       [self initializeSCCArrays];
+       [self greedyFlow];
+       [self propagate];
+       for(CPInt i = 0; i < _varSize; i++)
+          if (![_var[i] bound])
+             [_var[i] whenChangePropagate: self];
     }
     return CPSuspend;
 }
 
 -(void) printFlows
 {
-
     for(CPInt v = _valMin; v <= _valMax; v++)
         printf("Flow[%d] = %d \n",v,_flow[v]);
     for(CPInt v = _valMin; v <= _valMax; v++)
@@ -562,30 +571,29 @@ static void findSCCsink(CPCardinalityDC* card)
 
 -(void) prune
 {
-    findSCC(self);
-    for(int i = 0; i < _varSize; i++) {
-        CPIntVarI* x = _var[i];
-        CPInt m = minDom(x);
-        CPInt M = maxDom(x);
-        for(CPInt v = m; v <= M; v++) 
-            if (_varMatch[i] != v) 
-                if (_varComponent[i] != _valComponent[v]) 
-                    if (memberDom(x,v))
-                        removeDom(x,v);
-    }
+   findSCC(self);
+   for(int i = 0; i < _varSize; i++) {
+      CPIntVarI* x = _var[i];
+      CPInt m = minDom(x);
+      CPInt M = maxDom(x);
+      for(CPInt v = m; v <= M; v++) 
+         if (_varMatch[i] != v) 
+            if (_varComponent[i] != _valComponent[v]) 
+               if (memberDom(x,v))
+                  removeDom(x,v);
+   }
 }
     
--(CPStatus) propagate
+-(void) propagate
 {
     for(CPInt i = 0; i < _varSize; i++)
-        if (_varMatch[i] != MAXINT && !memberDom(_var[i],_varMatch[i]))
-            unmatchVariable(self,i);
+       if (_varMatch[i] != MAXINT && !memberDom(_var[i],_varMatch[i]))
+          unmatchVariable(self,i);
     if (!findMaxFlow(self))
-        return CPFailure;
+       failNow();
     if (!findFeasibleFlow(self))
-        return CPFailure;
+       failNow();
     [self prune];
-    return CPSuspend;
 }
 -(NSSet*) allVars
 {

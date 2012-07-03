@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
@@ -30,49 +16,6 @@
 
 
 static int nbSol = 0;
-
-//CPStatus labelStatic(DFSTracer* t,CPSolver* m,NSArray* x,int from,int to) 
-//{
-//   if (from > to) {
-//       nbSol++;
-//      return CPSuccess;
-//   } else {
-//      CPIVar* xk = [x objectAtIndex:from];
-//      if ([xk bound])
-//         return labelStaticREC(t,m, x, from+1, to);
-//      else {
-//         for(CPInt i = [xk min];i <= [xk max];i++) {
-//            if (![xk member:i]) continue;
-//            [t pushNode];
-//            CPStatus s = [m label:xk with:i];
-//            if (s!=CPFailure)
-//               s = labelStaticREC(t,m, x, from+1, to);
-//            [t popNode];
-//            s = [m diff:xk with:i];
-//            if (s == CPFailure)
-//               return s;
-//         }
-//         return CPFailure;
-//      }
-//   }
-//}
-//
-//void search(CPSolver* m,NSArray* x,int from,int to)
-//{
-//   initContinuationLibrary(&to);
-//   solveAll(m, ^() {
-//      //labelStatic([[DFSTracer alloc] initDFSTracer:m], m, x, 0, n-1);
-//      //labelStatic2( m, x, 0, n-1);
-//      labelFF(m, x, from, to);
-//      nbSol++;
-//      /*      [x enumerateObjectsUsingBlock:^(id xi,NSUInteger i,BOOL* stop) {
-//       printf("%s %lu:%s",(i>1 ? "," : " "),i,[[xi description] cStringUsingEncoding:NSASCIIStringEncoding]);
-//       }];
-//       printf("\n");*/   
-//   }, ^() {
-//      NSLog(@"search done..."); 
-//   });
-//}
 
 #define BLOCK ^() {
 #define ENDBLOCK }

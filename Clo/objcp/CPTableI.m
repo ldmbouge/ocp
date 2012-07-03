@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 
@@ -271,8 +257,7 @@ static CPStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
             else 
                 tuple = table->_nextSupport[col][tuple];
         if (tuple == -1) {
-            if (removeDom(cstr->_var[col],v) == CPFailure)
-                return CPFailure;
+           removeDom(cstr->_var[col],v);
         }
         else {
             assignTRIntArray(cstr->_currentSupport[col],v,tuple);
@@ -289,8 +274,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
     do {
         for(CPInt j = 0; j < arity; j++) 
             if (i != j)
-                if (findNewSupport(cstr,tuple,j) == CPFailure) 
-                    return CPFailure;
+               findNewSupport(cstr,tuple,j);
         tuple = cstr->_table->_nextSupport[i][tuple];
     } while (tuple != -1);
     return CPSuspend;
@@ -311,8 +295,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
                 tuple = _table->_nextSupport[i][tuple];
         }
         if (tuple == -1) {
-            if ([_var[i] remove: v] == CPFailure)
-                return CPFailure;
+           [_var[i] remove: v];
         }
         else 
             assignTRIntArray(_currentSupport[i],v,tuple);
@@ -327,19 +310,16 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
         return CPSuspend;
     _posted = true;
     for(CPInt i = 0; i < _arity; i++) {
-        if ([_var[i] updateMin: _table->_min[i]] == CPFailure)
-            return CPFailure;
-        if ([_var[i] updateMax: _table->_max[i]] == CPFailure)
-            return CPFailure;
+       [_var[i] updateMin: _table->_min[i]];
+       [_var[i] updateMax: _table->_max[i]];
     }
     _currentSupport = (TRIntArray*) malloc(sizeof(TRIntArray) * _arity);
     for(CPInt i = 0; i < _arity; i++) {
-        if ([self initSupport: i] == CPFailure)
-            return CPFailure;
+        [self initSupport: i];
     }
     for(CPInt i = 0; i < _arity; i++) 
         if (![_var[i] bound])
-            [_var[i] whenLoseValue: self do: ^CPStatus(CPInt v) { return removeValue(self,i,v); }];
+            [_var[i] whenLoseValue: self do: ^(CPInt v) { removeValue(self,i,v); }];
     return CPSuspend;        
 }
 

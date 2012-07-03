@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPBitConstraint.h"
@@ -43,16 +29,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
+    [self propagate];
     if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
+        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
-    return [self propagate];
+    [self propagate];
+   return CPSuspend;
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
     
@@ -70,7 +56,7 @@
         low[i] = xLow[i]._val | yLow[i]._val;
         upXORlow = up[i] ^ low[i];
         if(((upXORlow & (~up[i])) & (upXORlow & low[i])) != 0){
-            return CPFailure;
+            failNow();
         }
     }
 
@@ -78,8 +64,6 @@
     [_y setLow: low];
     [_x setUp: up];
     [_y setUp: up];
-
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -114,16 +98,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
+    [self propagate];
     if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
+        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
-    return [self propagate];
+   [self propagate];
+   return CPSuspend;
 }
 
--(CPStatus) propagate
+-(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
     
@@ -160,7 +144,7 @@
         inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
         
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
 
     }
     
@@ -168,8 +152,6 @@
     [_y setLow: newYLow];
     [_x setUp: newXUp];
     [_y setUp: newYUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -204,16 +186,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
-    if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];}];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];}];
-        [_z whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];}];
-    }
-    return [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+   }
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
     TRUInt* xLow = [_x getLow];
@@ -263,7 +245,7 @@
         upXORlow = newZUp[i] ^ newZLow[i];
         inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
     }
 
     [_x setLow:newXLow];
@@ -272,8 +254,6 @@
     [_y setUp:newYUp];
     [_z setLow:newZLow];
     [_z setUp:newZUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -308,16 +288,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
-    if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_z whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-    }
-    return [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+   }
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
     TRUInt* xLow = [_x getLow];
@@ -363,7 +343,7 @@
         upXORlow = newZUp[i] ^ newZLow[i];
         inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
         if (inconsistencyFound)
-            return CPFailure;
+           failNow();
     }
     
     [_x setLow:newXLow];
@@ -372,8 +352,6 @@
     [_y setUp:newYUp];
     [_z setLow:newZLow];
     [_z setUp:newZUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -410,16 +388,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
-    if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_z whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-    }
-    return [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+   }
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
     TRUInt* xLow = [_x getLow];
@@ -472,7 +450,7 @@
         upXORlow = newZUp[i] ^ newZLow[i];
         inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
     }
     
     [_x setLow:newXLow];
@@ -481,8 +459,6 @@
     [_y setUp:newYUp];
     [_z setLow:newZLow];
     [_z setUp:newZUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -520,16 +496,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
-    if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_z whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-    }
-    return [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+   }
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate
+-(void) propagate
 {    
     unsigned int wordLength = [_x getWordLength];
     
@@ -593,7 +569,7 @@
         upXORlow = newZUp[i] ^ newZLow[i];
         inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
     }
     [_w setLow:newWLow];
     [_w setUp:newWUp];
@@ -603,8 +579,6 @@
     [_y setUp:newYUp];
     [_z setLow:newZLow];
     [_z setUp:newZUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -641,16 +615,16 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
-    if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-    }
-    return [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+   }
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate{
-    
+-(void) propagate
+{
     unsigned int wordLength = [_x getWordLength];
     
     TRUInt* xLow = [_x getLow];
@@ -685,7 +659,7 @@
         inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
         
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
     }
 
     for(int i=0;i<wordLength;i++){
@@ -716,15 +690,13 @@
 //        inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
         
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
         }
     
     [_x setLow:newXLow];
     [_x setUp:newXUp];
     [_y setLow:newYLow];
     [_y setUp:newYUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -761,17 +733,17 @@
 
 -(CPStatus) post
 {
-    CPStatus ok = [self propagate];
-    if (!ok) return ok;
-    if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus() { return [self propagate];} ];
-        [_z whenBitFixed: self at: HIGHEST_PRIO do: ^CPStatus(){return [self propagate];}];
-    }
-    return [self propagate];
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+   }
+   [self propagate];
+   return CPSuspend;
 }
--(CPStatus) propagate{
-    
+-(void) propagate
+{
     unsigned int wordLength = [_x getWordLength];
     
     TRUInt* xLow = [_x getLow];
@@ -809,7 +781,7 @@
         
         
         if (inconsistencyFound)
-            return CPFailure;
+            failNow();
     }
     
     [_x setLow:newXLow];
@@ -822,8 +794,6 @@
     [_cin setUp:newCinUp];
     [_cout setLow:newCoutLow];
     [_cout setUp:newCoutUp];
-    
-    return CPSuspend;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

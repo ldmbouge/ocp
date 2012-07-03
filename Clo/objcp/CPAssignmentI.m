@@ -1,26 +1,12 @@
 /************************************************************************
- MIT License
+ Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
- 
- Permission is hereby granted, free of charge, to any person obtaining
- a copy of this software and associated documentation files (the
- "Software"), to deal in the Software without restriction, including
- without limitation the rights to use, copy, modify, merge, publish,
- distribute, sublicense, and/or sell copies of the Software, and to
- permit persons to whom the Software is furnished to do so, subject to
- the following conditions:
- 
- The above copyright notice and this permission notice shall be
- included in all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
- MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
- LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
- OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
- WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+
  ***********************************************************************/
 
 #import "CPAssignmentI.h"
@@ -132,8 +118,7 @@
         }
     _bigM = (_varSize) * (_bigM + 1);
     
-    if ([self preprocess] == CPFailure)
-        return CPFailure;
+   [self preprocess];
         
     _lc = [CPFactory TRIntArray: cp range: Columns];
     _lr = [CPFactory TRIntArray: cp range: Rows];
@@ -169,33 +154,29 @@
     printf("\n");
     [self printAssignment];
        
-    if ([self propagate] == CPFailure)
-        return CPFailure;
+   [self propagate];
     for(CPInt k = 0 ; k < _varSize; k++)
         if (![_var[k] bound])
             [_var[k] whenChangePropagate: self];
     return CPSuspend;
 }
 
--(CPStatus) preprocess
+-(void) preprocess
 {   
     for(CPInt i = _lowr; i <= _upr; i++) {
-        if ([_var[i] updateMin: _lowc] == CPFailure)
-            return CPFailure;
-        if ([_var[i] updateMax: _upc] == CPFailure)
-            return CPFailure;
+       [_var[i] updateMin: _lowc];
+       [_var[i] updateMax: _upc];
     }
     for(CPInt i = _lowr; i <= _upr; i++) 
         for(CPInt v = _lowc; v <= _upc; v++)
             if (![_var[i] member: v])
                 [_cost set: _bigM at: i : v];
-    return CPSuspend;   
 }
 
--(CPStatus) propagate
+-(void) propagate
 {   
     [self findAssignment];
-    return [self prune];
+    [self prune];
 }
 
 -(void) findAssignment
