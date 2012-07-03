@@ -406,7 +406,7 @@ static void findSCCval(CPAllDifferentDC* ad,CPInt k)
         } while (true);
     }    
 }
-
+// prune
 static void prune(CPAllDifferentDC* ad)
 {
    CPInt* _match = ad->_match;
@@ -426,6 +426,7 @@ static void prune(CPAllDifferentDC* ad)
       }
    }   
 }
+// propagate
 
 -(void) propagate
 {   
