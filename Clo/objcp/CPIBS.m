@@ -45,7 +45,7 @@
 }
 @end
 
-@interface CPValueImpact : NSObject {
+@interface CPAssignImpact : NSObject {
    id<CPIntVar>  _var;
    double*      _imps;
    CPUInt _nbVals;
@@ -54,17 +54,16 @@
    double*      _vari;
    CPUInt*   _cnts;
 }
--(CPValueImpact*)initCPValueImpact:(id<CPIntVar>)theVar;
+-(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar;
 -(void)dealloc;
 -(void)addImpact:(double)i forValue:(CPInt)val;
 -(void)setImpact:(double)i forValue:(CPInt)val;
--(double)getImpactForValue:(CPInt)val;
-// pvh: variable impact?
--(double)getImpact;
+-(double)impactForValue:(CPInt)val;
+-(double)impactForVariable;
 @end
 
-@implementation CPValueImpact
--(CPValueImpact*)initCPValueImpact:(id<CPIntVar>)theVar
+@implementation CPAssignImpact
+-(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar
 {
    self = [super init];
    _var = theVar;
@@ -123,11 +122,11 @@
    }
 }
 
--(double)getImpactForValue:(CPInt)val
+-(double)impactForValue:(CPInt)val
 {
    return _imps != NULL ? _imps[val] : 0.0;
 }
--(double)getImpact
+-(double)impactForVariable
 {
    if (_imps) {
       CPBounds cb;
@@ -150,26 +149,26 @@
    _cp = cp;
    _solver = (CPSolverI*)[cp solver];
    _monitor = nil;
+   _vars = nil;
    [cp addHeuristic:self];
    return self;
 }
 -(void)dealloc
 {
-   [_vars release];
    [_impacts release];
    [super dealloc];
 }
 -(float)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-   double rv = [[_impacts objectForKey:key] getImpact];
+   double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-   double rv = [[_impacts objectForKey:key] getImpactForValue:v];
+   double rv = [[_impacts objectForKey:key] impactForValue:v];
    [key release];
    return rv;
 }
@@ -181,7 +180,7 @@
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    for(CPUInt i=0;i<_nbv;i++) {
-      CPValueImpact* assigns = [[CPValueImpact alloc] initCPValueImpact:(id<CPIntVar>)[_vars at:i]];
+      CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<CPIntVar>)[_vars at:i]];
       [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
@@ -233,7 +232,7 @@
       double ir = 1.0 - [_monitor reductionFromRoot];
       NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
       //NSLog(@"base: %ld - %ld impact (%@) = %lf",low,up,key,ir);
-      CPValueImpact* vImpact = [_impacts objectForKey:key];
+      CPAssignImpact* vImpact = [_impacts objectForKey:key];
       for(CPInt c = low ; c <= up;c++) {
          [vImpact setImpact:ir forValue:c];
       }
