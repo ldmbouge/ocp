@@ -444,6 +444,7 @@ static void prune(CPAllDifferentDC* ad)
         }
     }   
 }
+// propagate
 
 -(CPStatus) propagate
 {   
