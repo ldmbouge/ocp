@@ -141,6 +141,20 @@
 		5B8C7E551586801F007042CA /* UIBoardController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7E521586801F007042CA /* UIBoardController.m */; };
 		5B8E16C21505BB5700D3C698 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; };
 		5B8E16C31505BB5700D3C698 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
+		5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
+		5B8F1A2315A2D464009CCE42 /* CPLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B896B59158933B4002E145B /* CPLinear.m */; };
+		5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B91C335159FAB2D00158EEA /* CPElement.m */; };
+		5B8F1A2515A2D495009CCE42 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A2C15A2D495009CCE42 /* CPSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9B63E81578C6FB00441452 /* CPSolution.h */; };
+		5B8F1A2D15A2D495009CCE42 /* CPBitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7408B015628C1400C05277 /* CPBitMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A2E15A2D495009CCE42 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A2F15A2D495009CCE42 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A3015A2D495009CCE42 /* CPDDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F2915826A28008DF214 /* CPDDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A3115A2D495009CCE42 /* CPMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B63C2D2156DB05E00C65B2A /* CPMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A3215A2D495009CCE42 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A3315A2D495009CCE42 /* CPFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F251582654F008DF214 /* CPFirstFail.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A3415A2D495009CCE42 /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8F1A3515A2D495009CCE42 /* CPElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B91C334159FAB2D00158EEA /* CPElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B91C336159FAB2D00158EEA /* CPElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B91C334159FAB2D00158EEA /* CPElement.h */; };
 		5B91C337159FAB2D00158EEA /* CPElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B91C335159FAB2D00158EEA /* CPElement.m */; };
 		5B92975713A01F45002AA188 /* CPValueConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B92975513A01F45002AA188 /* CPValueConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2600,6 +2614,16 @@
 				5B8C7E4915867E8C007042CA /* CPIBS.h in Headers */,
 				5B8C7E4115867E8B007042CA /* CPBitVar.h in Headers */,
 				5B8C7E4615867E8C007042CA /* CPCrFactory.h in Headers */,
+				5B8F1A2515A2D495009CCE42 /* CPAssignmentI.h in Headers */,
+				5B8F1A3215A2D495009CCE42 /* CPBaseHeuristic.h in Headers */,
+				5B8F1A2D15A2D495009CCE42 /* CPBitMacros.h in Headers */,
+				5B8F1A3015A2D495009CCE42 /* CPDDeg.h in Headers */,
+				5B8F1A3315A2D495009CCE42 /* CPFirstFail.h in Headers */,
+				5B8F1A2E15A2D495009CCE42 /* CPHeuristic.h in Headers */,
+				5B8F1A3415A2D495009CCE42 /* CPLinear.h in Headers */,
+				5B8F1A2F15A2D495009CCE42 /* CPWDeg.h in Headers */,
+				5B8F1A3115A2D495009CCE42 /* CPMonitor.h in Headers */,
+				5B8F1A3515A2D495009CCE42 /* CPElement.h in Headers */,
 				5B9EE53815175D4F00619B47 /* CPI.h in Headers */,
 				5B9EE55015175D4F00619B47 /* CPConstraintI.h in Headers */,
 				5B8C7E4215867E8B007042CA /* CPBitVarI.h in Headers */,
@@ -2610,6 +2634,13 @@
 				5B9EE56715175D4F00619B47 /* CPIntVarI.h in Headers */,
 				5BF8F02D1520E2BA00821CE2 /* CPConcurrencyI.h in Headers */,
 				5B9EE53B15175D4F00619B47 /* CPArrayI.h in Headers */,
+				5B8F1A2C15A2D495009CCE42 /* CPSolution.h in Headers */,
+				5B8F1A2D15A2D495009CCE42 /* CPBitMacros.h in Headers */,
+				5B8F1A2E15A2D495009CCE42 /* CPHeuristic.h in Headers */,
+				5B8F1A3015A2D495009CCE42 /* CPDDeg.h in Headers */,
+				5B8F1A3215A2D495009CCE42 /* CPBaseHeuristic.h in Headers */,
+				5B8F1A3315A2D495009CCE42 /* CPFirstFail.h in Headers */,
+				5B8F1A3415A2D495009CCE42 /* CPLinear.h in Headers */,
 				5B8C7E531586801F007042CA /* CPLib-Prefix.pch in Headers */,
 				5B8C7E541586801F007042CA /* UIBoardController.h in Headers */,
 			);
@@ -3564,6 +3595,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */,
+				5B8F1A2315A2D464009CCE42 /* CPLinear.m in Sources */,
+				5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */,
 				5B8C7E4A15867F13007042CA /* CPCircuitI.m in Sources */,
 				5B8C7E4B15867F13007042CA /* CPTableI.m in Sources */,
 				5B8C7E4C15867F13007042CA /* CPDDeg.m in Sources */,
