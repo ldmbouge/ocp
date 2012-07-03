@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
       CPRange D = (CPRange){0,9};
       id<CP> cp = [CPFactory createSolver];      
       id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];         
-      id<CPHeuristic> h = [CPFactory createWDeg:cp];
+      id<CPHeuristic> h = [CPFactory createIBS:cp];
       [cp solve: ^{
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
          [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
