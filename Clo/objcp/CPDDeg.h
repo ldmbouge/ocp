@@ -15,6 +15,7 @@
 
 @interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>  _vars;
+   CPUInt*          _map; 
    id<CP>            _cp;
    CPSolverI*    _solver;
    CPUInt           _nbv;

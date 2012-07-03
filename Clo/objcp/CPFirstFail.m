@@ -20,20 +20,16 @@
    [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPSolverI*)[cp solver];
-   _vars = [[NSMutableArray alloc] initWithCapacity:32];
+   _vars = nil;
    return self;
 }
 -(void)dealloc
 {
-   [_vars release];
    [super dealloc];
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,[_vars count]-1} with:^id<CPIntVar>(CPInt i) {
-      return (id<CPIntVar>)[_vars objectAtIndex:i];
-   }];
-   return rv;
+   return (id<CPIntVarArray>)_vars;
 }
 
 -(float)varOrdering:(id<CPIntVar>)x
@@ -44,10 +40,8 @@
 {
    return -v;   
 }
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t
 {
-   for(int k=0;k<len;k++) {
-      [_vars addObject:t[k]];
-   }
+   _vars = t;
 }
 @end

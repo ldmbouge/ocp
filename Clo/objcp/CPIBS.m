@@ -174,18 +174,15 @@
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len
+-(void)initInternal:(id<CPVarArray>)t
 {
-   _vars = [[NSMutableArray alloc] initWithCapacity:len];
-   for(CPUInt i=0;i<len;i++)
-      [_vars addObject:t[i]];
+   _vars = t;   
    _monitor = [[CPMonitor alloc] initCPMonitor:_solver vars:_vars];
-   _nbv = len;
-    // pvh: why is it times 3?
+   _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
-   for(CPUInt i=0;i<len;i++) {
-      CPValueImpact* assigns = [[CPValueImpact alloc] initCPValueImpact:t[i]];
-      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[t[i] getId]]];
+   for(CPUInt i=0;i<_nbv;i++) {
+      CPValueImpact* assigns = [[CPValueImpact alloc] initCPValueImpact:(id<CPIntVar>)[_vars at:i]];
+      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
    [_solver post:_monitor];
@@ -204,10 +201,7 @@
 
 -(id<CPIntVarArray>)allIntVars
 {
-   id<CPIntVarArray> rv = [CPFactory intVarArray:_cp range:(CPRange){0,_nbv-1} with:^id<CPIntVar>(CPInt i) {
-      return (id<CPIntVar>)[_vars objectAtIndex:i];
-   }];
-   return rv;   
+   return (id<CPIntVarArray>)_vars;   
 }
 
 -(void)addKillSetFrom:(CPInt)from to:(CPInt)to size:(CPUInt)sz into:(NSMutableSet*)set
@@ -273,7 +267,9 @@
 {
    CPInt blockWidth = 1;
    NSMutableSet* sacs = nil;
-   for(id<CPIntVar> v in _vars) {
+   CPInt low = [_vars low],up = [_vars up];
+   for(CPInt k=low; k <= up;k++) {
+      id<CPIntVar> v = (id<CPIntVar>)[_vars at:k];
       CPBounds vb;
       [v bounds: &vb];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];

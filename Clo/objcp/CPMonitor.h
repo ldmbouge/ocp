@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPConstraintI.h>
+#import <objcp/CPArray.h>
 
 @class CPVarInfo;
 
@@ -22,9 +23,9 @@
    CPSolverI*               _fdm;
    CPVarInfo**        _curActive;
    CPUInt              _nbActive;
-   NSArray*              _monVar;
+   id<CPVarArray>        _monVar;
 }
--(id)initCPMonitor:(CPSolverI*)fdm vars:(NSArray*)allVars;
+-(id)initCPMonitor:(CPSolverI*)fdm vars:(id<CPVarArray>)allVars;
 -(CPStatus) post;
 -(NSString*)description;
 -(double)reduction;

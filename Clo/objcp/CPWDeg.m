@@ -40,7 +40,6 @@
        [_cv[k] release];
      free(_cv);
    }
-   [_vars release];
    free(_map);
    [super dealloc];
 }

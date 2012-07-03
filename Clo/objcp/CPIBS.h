@@ -18,17 +18,17 @@
 #define ALPHA 8.0L
 
 @interface CPIBS : CPBaseHeuristic<CPHeuristic> {
-   NSMutableArray* _vars;
-   id<CP>            _cp;
-   CPSolverI*    _solver;
+   id<CPVarArray>   _vars;
+   id<CP>             _cp;
+   CPSolverI*     _solver;
    CPMonitor*    _monitor;
-   CPUInt    _nbv;
+   CPUInt            _nbv;
    NSMutableDictionary*  _impacts;
 }
 -(id)initCPIBS:(id<CP>)cp;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
--(void)initHeuristic:(id<CPIntVar>*)t length:(CPInt)len;
+-(void)initInternal:(id<CPVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
 -(void)initImpacts;
 @end

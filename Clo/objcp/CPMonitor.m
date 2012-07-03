@@ -55,11 +55,11 @@ BOOL refresh(CPVarInfo* vi)
 @end
 
 @implementation CPMonitor
--(id)initCPMonitor:(CPSolverI*)fdm vars:(NSArray*)allVars
+-(id)initCPMonitor:(CPSolverI*)fdm vars:(id<CPVarArray>)allVars
 {
    self = [super initCPCoreConstraint];
    _fdm = fdm;
-   _monVar    = [allVars retain];
+   _monVar    = allVars;
    _nbVI = [_monVar count];
    _nbActive = 0;
    _curActive = malloc(sizeof(CPVarInfo*)*_nbVI);
@@ -72,14 +72,14 @@ BOOL refresh(CPVarInfo* vi)
       [_varInfo[i] release];
    free(_varInfo);
    free(_curActive);
-   [_monVar release];
    [super dealloc];
 }
 -(CPStatus) post
 {
    CPTrail* trail = [_fdm trail];
    CPUInt nbW = 0;
-   for(id obj in _monVar) {
+   for(CPInt k = [_monVar low];k <= [_monVar up];k++) {
+      id obj = [_monVar at:k];
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
       _varInfo[nbW++] = vInfo; // [ldm] vInfo is in the _varInfo dico with refcnt = 1 from here on.
       [obj whenChangeDo: ^ { makeVarActive(vInfo);}
