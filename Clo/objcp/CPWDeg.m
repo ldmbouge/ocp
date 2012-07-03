@@ -59,7 +59,9 @@
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
-      h += ([obj nbUVars] - 1 > 0) * _w[[obj getId]];
+      CPInt cid = [obj getId];
+      assert(cid >=0 && cid < _nbc);
+      h += ([obj nbUVars] - 1 > 0) * _w[cid];
    }
    return h / [x domsize];
 }
