@@ -9,11 +9,11 @@
 
  ***********************************************************************/
 
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import <assert.h>
 
-@implementation CPTrail
--(CPTrail*) init
+@implementation ORTrail
+-(ORTrail*) init
 {
    self = [super init];
    _mxSeg = 32;
@@ -28,13 +28,13 @@
 -(void)dealloc
 {
    NSLog(@"CPTrail %p dealloc called...\n",self);
-   for(CPInt k=0;k<_mxSeg;k++)
+   for(ORInt k=0;k<_mxSeg;k++)
       if (_seg[k])
          free(_seg[k]);
    free(_seg);
    [super dealloc];
 }
--(CPUInt)magic
+-(ORUInt)magic
 {
    return _magic;
 }
@@ -53,7 +53,7 @@
       _seg[_cSeg] = malloc(sizeof(struct Segment));   
    _seg[_cSeg]->top = 0;
 }
--(void)trailInt:(CPInt*)ptr
+-(void)trailInt:(ORInt*)ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
@@ -62,7 +62,7 @@
    s->intVal = *ptr;
    ++_seg[_cSeg]->top;
 }
--(void)trailUnsigned:(CPUInt*)ptr
+-(void)trailUnsigned:(ORUInt*)ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
@@ -83,7 +83,7 @@
   ++_seg[_cSeg]->top;
 }
 
--(void) trailLong:(CPLong*) ptr
+-(void) trailLong:(ORLong*) ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = ptr;
@@ -91,7 +91,7 @@
    s->longVal = *ptr;
    ++_seg[_cSeg]->top;   
 }
--(void) trailUnsignedLong:(CPULong*) ptr
+-(void) trailUnsignedLong:(ORULong*) ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
@@ -138,16 +138,16 @@
    ++_seg[_cSeg]->top;   
 }
 
--(CPUInt)trailSize
+-(ORUInt)trailSize
 {
    return _cSeg * NBSLOT + _seg[_cSeg]->top;
 }
 
--(void)backtrack:(CPInt)to
+-(void)backtrack:(ORInt)to
 {
-   CPInt segId = to / NBSLOT;
-   CPInt inSeg = to % NBSLOT;
-   CPInt cSeg  = _cSeg;
+   ORInt segId = to / NBSLOT;
+   ORInt inSeg = to % NBSLOT;
+   ORInt cSeg  = _cSeg;
    while (segId <= cSeg) {
       struct Slot* target = _seg[cSeg]->tab + ((segId == cSeg) ? inSeg : 0);
       struct Slot* cs     = _seg[cSeg]->tab + _seg[cSeg]->top;
@@ -189,7 +189,7 @@
                break;
          }                  
       }
-      _seg[cSeg]->top = (CPInt)(cs - _seg[cSeg]->tab);
+      _seg[cSeg]->top = (ORInt)(cs - _seg[cSeg]->tab);
       --cSeg;
    }
    _cSeg = segId;
@@ -199,15 +199,15 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    // Only send the # of segments and the current magic
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_mxSeg];
-   [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_magic];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mxSeg];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_magic];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    // Allocate the right number of segments. Start with an empty trail in the clone.
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_mxSeg];
-   [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_magic];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mxSeg];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_magic];
    _seg = malloc(sizeof(struct Segment*)*_mxSeg);
    memset(_seg,0,sizeof(struct Segment*)*_mxSeg);
    _seg[0] = malloc(sizeof(struct Segment));
@@ -217,34 +217,34 @@
 }
 @end
 
-TRInt makeTRInt(CPTrail* trail,int val)
+TRInt makeTRInt(ORTrail* trail,int val)
 {
    return (TRInt){val,[trail magic]-1};
 }
 
-FXInt makeFXInt(CPTrail* trail)
+FXInt makeFXInt(ORTrail* trail)
 {
    return (FXInt){0,[trail magic]-1};
 }
-TRUInt makeTRUInt(CPTrail* trail,unsigned val)
+TRUInt makeTRUInt(ORTrail* trail,unsigned val)
 {
    return (TRUInt) {val,[trail magic]-1};
 }
-TRLong makeTRLong(CPTrail* trail,long long val)
+TRLong makeTRLong(ORTrail* trail,long long val)
 {
    return (TRLong) {val,[trail magic]-1};
 }
-TRId  makeTRId(CPTrail* trail,id val)
+TRId  makeTRId(ORTrail* trail,id val)
 {
    return (TRId) {val,[trail magic]-1};
 }
-TRDouble  makeTRDouble(CPTrail* trail,double val)
+TRDouble  makeTRDouble(ORTrail* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};
 }
 
-@implementation CPTrailStack 
--(CPTrailStack*) initTrailStack: (CPTrail*)tr
+@implementation ORTrailStack 
+-(ORTrailStack*) initTrailStack: (ORTrail*)tr
 {
    self = [super init];
    _trail = [tr retain];
@@ -260,7 +260,7 @@ TRDouble  makeTRDouble(CPTrail* trail,double val)
    [_trail release];
    [super dealloc];
 }
--(void)pushNode:(CPInt)x
+-(void)pushNode:(ORInt)x
 {
    if (_sz >= _mxs) {
       _tab = realloc(_tab,sizeof(struct TRNode)*_mxs*2);
@@ -268,14 +268,14 @@ TRDouble  makeTRDouble(CPTrail* trail,double val)
    }
    _tab[_sz++] = (struct TRNode){x,[_trail trailSize]};
 }
--(CPInt)popOffset:(CPInt)x
+-(ORInt)popOffset:(ORInt)x
 {
    do {
       --_sz;
    } while(_sz>0 && (_tab[_sz]._x != x));
    return _tab[_sz]._ofs;
 }
--(void)popNode:(CPInt) x
+-(void)popNode:(ORInt) x
 {
    [_trail backtrack:[self popOffset:x]];
 }
@@ -293,13 +293,13 @@ TRDouble  makeTRDouble(CPTrail* trail,double val)
 {
     return _sz == 0;
 }
--(CPInt)size
+-(ORInt)size
 {
    return _sz;
 }
 @end
 
-TRIntArray makeTRIntArray(CPTrail* trail,int nb,int low)
+TRIntArray makeTRIntArray(ORTrail* trail,int nb,int low)
 {
    TRIntArray x = {trail,nb,low,NULL};
    x._entries = malloc(sizeof(TRInt)*nb);

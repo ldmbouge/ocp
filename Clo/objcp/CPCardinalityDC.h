@@ -14,7 +14,7 @@
 #import "CPDataI.h"
 #import "CPArrayI.h"
 #import "CPConstraintI.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPBasicConstraint.h"
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> {

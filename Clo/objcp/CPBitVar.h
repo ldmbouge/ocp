@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPTrail.h"
+#import "ORFoundation/ORTrail.h"
 #import "objcp/CPSolver.h"
 
 @protocol CPBitVar <NSObject>

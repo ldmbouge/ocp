@@ -202,9 +202,9 @@ void failNow()
    }];
    return rv;
 }
-+(id<CPIntSet>) intSet: (id<CP>) cp 
++(id<ORIntSet>) intSet: (id<CP>) cp 
 {
-    CPIntSetI* o = [[CPIntSetI alloc] initCPIntSetI: cp]; 
+    ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI]; 
     [[cp solver] trackObject: o];
     return o;
 }

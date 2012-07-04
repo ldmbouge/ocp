@@ -13,7 +13,7 @@
 #import "CPI.h"
 #import "CPArrayI.h"
 #import "CPConstraintI.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 
 @class CPIntVarArrayI;
 

@@ -15,7 +15,7 @@
 #import "CPExplorerI.h"
 #import "CPController.h"
 #import "CPTypes.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPTracer.h"
 #import "CPSolver.h"
 #import "CPController.h"

@@ -29,7 +29,6 @@
 {
    [super viewDidLoad];
    [log setText:@"Ready...\n"];
-	
 }
 
 - (void)viewDidUnload

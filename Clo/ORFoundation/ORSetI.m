@@ -9,17 +9,16 @@
 
  ***********************************************************************/
 
-#import "CPSetI.h"
+#import "ORSetI.h"
 #import "ORFoundation/ORAVLTree.h"
 #import "CPFactoryI.h"
 #import "CPError.h"
 
-@implementation CPIntSetI 
--(id<CPIntSet>) initCPIntSetI: (id<CP>) cp
+@implementation ORIntSetI 
+-(id<ORIntSet>) initORIntSetI
 {
     self = [super init];
-    _cp = cp;
-    _avl = [[CPInternalFactory AVLTree: cp] retain];
+    _avl = [[CPInternalFactory AVLTree] retain];
     return self;
 }
 -(void) dealloc 
@@ -27,19 +26,19 @@
     [_avl release];
     [super dealloc];
 }
--(bool) member: (CPInt) v
+-(bool) member: (ORInt) v
 {
     return [_avl findNodeForKey:v] != NULL;
 }
--(void) insert: (CPInt) v
+-(void) insert: (ORInt) v
 {
     [_avl insertObject: NULL forKey:v];
 }
--(void) delete: (CPInt) v
+-(void) delete: (ORInt) v
 {
     [_avl removeObjectForKey: v];
 }
--(CPInt) size
+-(ORInt) size
 {
     return [_avl size];
 }
@@ -47,35 +46,29 @@
 {
     return [_avl description];
 }
--(id<CP>) cp
-{
-    return _cp;
-}
 -(id<IntEnumerator>) enumerator
 {
-    return [CPInternalFactory AVLTreeKeyIntEnumerator: _cp for: _avl];
+   return [CPInternalFactory AVLTreeKeyIntEnumerator: _avl];
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {   
-    [aCoder encodeObject:_cp];
-    CPInt size = [_avl size];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&size];
+    ORInt size = [_avl size];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&size];
     id<IntEnumerator> it = [self enumerator];
     while ([it more]) {
-        CPInt e = [it next];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&e];
+        ORInt e = [it next];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&e];
     }   
 }
 - (id) initWithCoder:(NSCoder*) aDecoder
 {
     self = [super init];
-    _cp = [[aDecoder decodeObject] retain];
-    _avl = [[CPInternalFactory AVLTree: _cp] retain];
-    CPInt size;
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&size];
-    for(CPInt i = 0; i < size; i++) {
-        CPInt e;
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&e];
+    _avl = [[CPInternalFactory AVLTree] retain];
+    ORInt size;
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&size];
+    for(ORInt i = 0; i < size; i++) {
+        ORInt e;
+        [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&e];
         [self insert: e];
     }
     return self;   

@@ -22,7 +22,7 @@
    @protected
    id<CPSolver>          _solver;
    id<CPExplorer>        _search;
-   CPTrail*              _trail;
+   ORTrail*              _trail;
    NSAutoreleasePool*    _pool;  
    id<CPPortal>          _portal;
    @package
@@ -37,7 +37,7 @@
 -(CPInt)                  nbFailures;
 -(CPUInt)                 nbPropagation;
 -(CPUInt)                 nbVars;
--(CPTrail*)               trail;
+-(ORTrail*)               trail;
 -(id<CPSearchController>) controller;
 -(void) setController: (id<CPSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
@@ -76,7 +76,7 @@
 -(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
 -(void)               lthen: (id<CPIntVar>) var with: (CPInt) val;
 -(void)               gthen: (id<CPIntVar>) var with: (CPInt) val;
--(void)            restrict: (id<CPIntVar>) var to: (id<CPIntSet>) S;
+-(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              search: (CPClosure) body;
 -(void)               solve: (CPClosure) body;

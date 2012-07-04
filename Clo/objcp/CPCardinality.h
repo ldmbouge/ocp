@@ -14,7 +14,7 @@
 #import "CPIntVarI.h"
 #import "CPDataI.h"
 #import "CPConstraintI.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPCardinality.h"
 
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)

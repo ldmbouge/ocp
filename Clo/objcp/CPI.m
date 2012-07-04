@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPTypes.h"
 #import "CPCommand.h"
 #import "CPConstraintI.h"
@@ -39,7 +39,7 @@
 -(id) init
 {
    self = [super init];
-   _trail = [[CPTrail alloc] init];
+   _trail = [[ORTrail alloc] init];
    _solver = [[CPSolverI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
    _returnLabel = _failLabel = nil;
@@ -112,7 +112,7 @@
 {
    return [_search nbFailures];
 }
--(CPTrail*) trail
+-(ORTrail*) trail
 {
    return _trail;
 }
@@ -305,7 +305,7 @@
    [CPConcurrency pumpEvents];
 }
 
--(void) restrict: (id<CPIntVar>) var to: (id<CPIntSet>) S
+-(void) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
     CPStatus status = [_solver restrict: var to: S];  
     if (status == CPFailure)

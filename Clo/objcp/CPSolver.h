@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
-#import <objcp/CPSet.h>
+#import <ORFoundation/ORSet.h>
 #import "CPConstraintI.h"
 
 @protocol AbstractSolver <NSObject>
@@ -32,7 +32,7 @@
 -(CPStatus) diff:  (id) var with: (CPInt) val;
 -(CPStatus) lthen: (id<CPIntVar>) var with: (CPInt) val;
 -(CPStatus) gthen: (id<CPIntVar>) var with: (CPInt) val;
--(CPStatus) restrict: (id<CPIntVar>) var to: (id<CPIntSet>) S;
+-(CPStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 -(CPStatus) propagate;
 -(CPUInt) nbPropagation;
 -(CPUInt) nbVars;

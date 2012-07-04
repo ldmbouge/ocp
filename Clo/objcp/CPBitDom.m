@@ -29,7 +29,7 @@
    return self;
 }
 
--(id<CPDom>)initBoundsDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up 
+-(id<CPDom>)initBoundsDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up 
 {
    self = [super init];
    _dc = DCBounds;
@@ -211,7 +211,7 @@
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
 }
--(CPBitDom*) initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up
+-(CPBitDom*) initBitDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up
 {
    self = [super initBoundsDomFor:trail low:low up:up];
    _dc = DCBits;
@@ -274,7 +274,7 @@ inline static void resetBit(CPBitDom* dom,CPInt b)
 {
    b -= dom->_imin;
    const CPInt bw = b >> 5;
-   const CPUInt magic = dom->_trail->_magic;
+   const CPUInt magic = trailMagic(dom->_trail);
    if (dom->_magic[bw] != magic) {
       dom->_magic[bw] = magic;
       [dom->_trail trailUnsigned:(dom->_bits + bw)];
@@ -334,7 +334,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    if (b >=_imin && b<=_imax) {
       b -= _imin;
       const CPInt bw = b >> 5;
-      const CPUInt magic = _trail->_magic;
+      const CPUInt magic = trailMagic(_trail);
       if (_magic[bw] != magic) {
          _magic[bw] = magic;
          trailUIntFun(_trail,_bits+bw);

@@ -15,7 +15,7 @@
 #import "CPIntVarI.h"
 #import "CPDataI.h"
 #import "CPConstraintI.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 
 @class CPIntVarI;
 @class CPSolverI;

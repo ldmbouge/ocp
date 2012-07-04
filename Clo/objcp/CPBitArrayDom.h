@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTrail.h>
+#import <ORFoundation/ORTrail.h>
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
@@ -21,7 +21,7 @@
 
 @interface CPBitArrayDom : NSObject {
 @private
-    CPTrail*        _trail;
+    ORTrail*        _trail;
     TRUInt*         _low;
     TRUInt*         _up;
     unsigned int    _wordLength;
@@ -30,8 +30,8 @@
     TRUInt*         _min;
     TRUInt*         _max;
 }
--(CPBitArrayDom*)       initWithLength: (int) len withTrail:(CPTrail*) tr;
--(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (unsigned int*) low andUp:(unsigned int*) up andTrail:(CPTrail*)tr;
+-(CPBitArrayDom*)       initWithLength: (int) len withTrail:(ORTrail*) tr;
+-(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (unsigned int*) low andUp:(unsigned int*) up andTrail:(ORTrail*)tr;
 
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;

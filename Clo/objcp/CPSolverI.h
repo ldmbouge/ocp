@@ -13,13 +13,13 @@
 #import "CPTypes.h"
 #import "CPConstraintI.h"
 #import "CPSolver.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPTypes.h"
 #import "CPConcurrency.h"
 #import "CPSolution.h"
 #import "CPData.h"
-@class CPTrail;
-@class CPTrailStack;
+@class ORTrail;
+@class ORTrailStack;
 @class CPAC3Queue;
 @class CPAC5Queue;
 
@@ -50,7 +50,7 @@
 
 @interface CPSolverI : NSObject <CPSolver,NSCoding> {
    BOOL                     _closed;
-   CPTrail*                 _trail;
+   ORTrail*                 _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
@@ -69,7 +69,7 @@
    id<CPVoidInformer>       _propagDone;
    CPFailException*         _fex;
 }
--(CPSolverI*) initSolver: (CPTrail*) trail;
+-(CPSolverI*) initSolver: (ORTrail*) trail;
 -(void)      dealloc;
 -(id<CPSolver>) solver;
 -(void)      trackVariable:(id)var;
@@ -86,7 +86,7 @@
 -(CPStatus)  diff:(id)var with:(CPInt)val;
 -(CPStatus)  lthen:(id)var with:(CPInt)val;
 -(CPStatus)  gthen:(id)var with:(CPInt)val;
--(CPStatus)  restrict: (id<CPIntVar>) var to: (id<CPIntSet>) S;
+-(CPStatus)  restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 -(id)virtual:(id)obj;
 -(CPInt)virtualOffset:(id)obj;
 -(NSMutableArray*)allVars;

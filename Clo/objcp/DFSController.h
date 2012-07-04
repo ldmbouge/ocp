@@ -14,7 +14,7 @@
 #import "CPExplorerI.h"
 #import "CPController.h"
 #import "CPTypes.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPTracer.h"
 
 @interface DFSController : CPDefaultController <NSCopying,CPSearchController> {

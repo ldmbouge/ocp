@@ -11,7 +11,7 @@
 
 #import "CPError.h"
 #import "DFSController.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPLimit.h"
 
 @implementation CPLimitSolutions
@@ -52,7 +52,7 @@
 
 @implementation CPLimitDiscrepancies
 
--(id) initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (CPTrail*) trail
+-(id) initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (ORTrail*) trail
 {
   self = [super initCPDefaultController];
   _trail = trail;

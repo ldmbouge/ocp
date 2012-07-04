@@ -24,10 +24,10 @@
 @interface CPLimitDiscrepancies : CPDefaultController <NSCopying,CPSearchController> 
 {
   CPInt _maxDiscrepancies;
-  CPTrail*  _trail;
+  ORTrail*  _trail;
   TRInt     _nbDiscrepancies;
 }
--(id)        initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (CPTrail*) trail;
+-(id)        initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (ORTrail*) trail;
 -(void)      dealloc;
 -(CPInt) addChoice:(NSCont*) k;
 -(void)      fail;

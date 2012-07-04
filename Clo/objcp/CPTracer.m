@@ -106,11 +106,11 @@
 @end
 
 @implementation DFSTracer
--(DFSTracer*) initDFSTracer: (CPTrail*) trail
+-(DFSTracer*) initDFSTracer: (ORTrail*) trail
 {
     self = [super init];
     _trail = [trail retain];
-    _trStack = [[CPTrailStack alloc] initTrailStack: _trail];
+    _trStack = [[ORTrailStack alloc] initTrailStack: _trail];
     _lastNode = 0;
     return self;
 }
@@ -151,7 +151,7 @@
     }
 	[self pushNode];
 }
--(CPTrail*)   trail
+-(ORTrail*)   trail
 {
    return _trail;
 }
@@ -345,11 +345,11 @@
 
 
 @implementation SemTracer
--(SemTracer*) initSemTracer: (CPTrail*) trail
+-(SemTracer*) initSemTracer: (ORTrail*) trail
 {
    self = [super init];
    _trail = trail;
-   _trStack = [[CPTrailStack alloc] initTrailStack: _trail];
+   _trStack = [[ORTrailStack alloc] initTrailStack: _trail];
    _lastNode = 0;
    _cmds = [[CPCmdStack alloc] initCPCmdStack:32];
    return self;
@@ -399,7 +399,7 @@
    }
 	[self pushNode];
 }
--(CPTrail*)   trail
+-(ORTrail*)   trail
 {
    return _trail;
 }

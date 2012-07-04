@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import "CPSolver.h"
 #import "CP.h"
-#import "CPSet.h"
+#import "ORFoundation/ORSet.h"
 #import "CPTable.h"
 #import "CPConcurrency.h"
 #import "CPHeuristic.h"
@@ -62,7 +62,7 @@ void failNow();
 
 +(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2;
 
-+(id<CPIntSet>) intSet: (id<CP>) cp;
++(id<ORIntSet>) intSet: (id<CP>) cp;
 +(id<CPInformer>) informer: (id<CP>) cp;
 +(id<CPVoidInformer>) voidInformer: (id<CP>) cp;
 +(id<CPIntInformer>) intInformer: (id<CP>) cp;

@@ -10,23 +10,21 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CP.h"
-#import "CPSet.h"
+#import "ORFoundation/ORSet.h"
 #import "ORFoundation/ORAVLTree.h"
+#import "CP.h"
 
 
-@interface CPIntSetI : NSObject<CPIntSet> {
-    id<CP>         _cp;
+@interface ORIntSetI : NSObject<ORIntSet> {
     ORAVLTree*     _avl;
 }
--(id<CPIntSet>) initCPIntSetI: (id<CP>) cp;
+-(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
 -(bool) member: (CPInt) v;
 -(void) insert: (CPInt) v;
 -(void) delete: (CPInt) v;
 -(CPInt) size;
 -(NSString*) description;
--(id<CP>) cp;
 -(id<IntEnumerator>) enumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;

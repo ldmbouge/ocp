@@ -10,18 +10,14 @@
  ***********************************************************************/
 
 
-#import "CPFactoryI.h"
-#import "CPI.h"
-#import "ORFoundation/ORAVLTree.h"
+#import <Foundation/Foundation.h>
+#import "CPFactory.h"
 
-@implementation CPInternalFactory 
+@class ORAVLTree;
 
-+(ORAVLTree*) AVLTree: (id<CP>) cp
-{
-    return [[ORAVLTree alloc] initEmptyAVL];
-}
-+(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (ORAVLTree*) tree
-{
-    return [[ORAVLTreeKeyIntEnumerator alloc] initORAVLTreeKeyIntEnumerator: tree];
-}
+@interface CPInternalFactory : NSObject
+
++(ORAVLTree*) AVLTree;
++(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (ORAVLTree*) tree;
+
 @end;

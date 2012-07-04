@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CPTypes.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPCommand.h"
 
 @class CPSolverI;
@@ -41,7 +41,7 @@ typedef enum {
 @end
 
 @interface CPActiveConstraint : CPCoreConstraint {
-   CPTrail* _trail;
+   ORTrail* _trail;
    TRInt    _active;
 }
 -(id) initCPActiveConstraint: (id<CPSolver>) m;

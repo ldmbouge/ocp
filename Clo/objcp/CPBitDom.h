@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CPDom.h"
-#import "CPTrail.h"
+#import "ORFoundation/ORTrail.h"
 #import "objc/runtime.h"
 
 @class CPSolverI;
@@ -25,7 +25,7 @@ enum CPDomClass {
 @interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
 @package
    enum CPDomClass    _dc;
-   CPTrail*        _trail;
+   ORTrail*        _trail;
    TRInt             _min;
    TRInt             _max;
    TRInt              _sz;
@@ -33,7 +33,7 @@ enum CPDomClass {
    CPInt            _imax;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
--(CPBoundsDom*)initBoundsDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
+-(CPBoundsDom*)initBoundsDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up;
 -(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
@@ -68,7 +68,7 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
    UBType  _updateMax;   
 }
 //-(CPBitDom*)initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
--(CPBitDom*)initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
+-(CPBitDom*)initBitDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up;
 -(void)dealloc;
 -(bool)get:(CPInt)b;
 -(bool)member:(CPInt)b;

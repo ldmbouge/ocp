@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
+#import <ORFoundation/ORTypes.h>
 
 #define NBSLOT 8192
 
@@ -25,97 +25,95 @@
 #define TAGClosure      0x9
 #define TAGRelease      0xA
 
-@interface CPTrail : NSObject<NSCoding> {
-   @package
+@interface ORTrail : NSObject<NSCoding> {
    struct Slot {
       void* ptr;
       union {
-         CPInt         intVal;          // 4-bytes
-         CPUInt       uintVal;          // 4-bytes
-         CPLong       longVal;          // 8-bytes
-         CPULong     ulongVal;          // 8-bytes
+         ORInt         intVal;          // 4-bytes
+         ORUInt       uintVal;          // 4-bytes
+         ORLong       longVal;          // 8-bytes
+         ORULong     ulongVal;          // 8-bytes
          float       floatVal;          // 4-bytes
          double     doubleVal;          // 8-bytes
          id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
          void (^cloVal)(void);         
       };
-      CPInt code;
+      ORInt code;
    };
    struct Segment {
       struct Slot tab[NBSLOT];
-      CPInt  top;
+      ORInt  top;
    };
    struct Segment** _seg; // array of segments
-   CPInt _cSeg;       // current segment
-   CPInt _mxSeg;      // maximum # of segments
-   @package
-   CPUInt _magic;     // magic is always 32-bit wide
+   ORInt _cSeg;       // current segment
+   ORInt _mxSeg;      // maximum # of segments
+   ORUInt _magic;     // magic is always 32-bit wide
 }
--(CPTrail*) init;
+-(ORTrail*) init;
 -(void) dealloc;
--(CPUInt) magic;
--(CPUInt) trailSize;
+-(ORUInt) magic;
+-(ORUInt) trailSize;
 -(void)resize;
 -(void) incMagic;
--(void) trailInt:(CPInt*) ptr;
--(void) trailUnsigned:(CPUInt*) ptr;
--(void) trailLong:(CPLong*) ptr;
--(void) trailUnsignedLong:(CPULong*) ptr;
+-(void) trailInt:(ORInt*) ptr;
+-(void) trailUnsigned:(ORUInt*) ptr;
+-(void) trailLong:(ORLong*) ptr;
+-(void) trailUnsignedLong:(ORULong*) ptr;
 -(void) trailId:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
--(void) backtrack:(CPInt) to;
+-(void) backtrack:(ORInt) to;
 @end
 
-@interface CPTrailStack : NSObject {
-   CPTrail*  _trail;
+@interface ORTrailStack : NSObject {
+   ORTrail*  _trail;
    struct TRNode {
-      CPInt   _x;
-      CPInt _ofs;
+      ORInt   _x;
+      ORInt _ofs;
    };
    struct TRNode*  _tab;
-   CPInt        _sz;
-   CPInt       _mxs;
+   ORInt        _sz;
+   ORInt       _mxs;
 }
--(CPTrailStack*) initTrailStack: (CPTrail*) tr;
+-(ORTrailStack*) initTrailStack: (ORTrail*) tr;
 -(void) dealloc;
--(void) pushNode:(CPInt) x;
--(void) popNode:(CPInt) x;
+-(void) pushNode:(ORInt) x;
+-(void) popNode:(ORInt) x;
 -(void) popNode;
 -(void) reset;
 -(bool) empty;
--(CPInt)size;
+-(ORInt)size;
 @end
 
 typedef struct {
    int    _val;   // TRInt should be a 32-bit wide trailable signed integer
-   CPUInt _mgc;
+   ORUInt _mgc;
 } TRInt;
 
 typedef struct {
    unsigned  _val;   // TRUInt should be a 32-bit wide trailable unsigned integer
-   CPUInt _mgc;
+   ORUInt _mgc;
 } TRUInt;
 
 typedef struct {
    long long _val;   // TRLong should be a 64-bit wide trailable signed integer
-   CPUInt _mgc;
+   ORUInt _mgc;
 } TRLong;
 
 typedef struct {
    double    _val;
-   CPUInt _mgc;
+   ORUInt _mgc;
 } TRDouble;
 
 typedef struct {
    id        _val;
-   CPUInt _mgc;
+   ORUInt _mgc;
 } TRId;
 
 typedef struct {
-    CPTrail* _trail;
+    ORTrail* _trail;
     int      _nb;
     int      _low;
     TRInt*   _entries;
@@ -124,10 +122,11 @@ typedef struct {
 
 typedef struct {
    int       _val;
-   CPUInt _mgc;
+   ORUInt _mgc;
 } FXInt;
 
-static inline void trailIntFun(CPTrail* t,int* ptr)
+@implementation ORTrail (Funs)
+static inline void trailIntFun(ORTrail* t,int* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
@@ -137,7 +136,7 @@ static inline void trailIntFun(CPTrail* t,int* ptr)
    ++(t->_seg[t->_cSeg]->top);   
 }
 
-static inline void trailUIntFun(CPTrail* t,unsigned* ptr)
+static inline void trailUIntFun(ORTrail* t,unsigned* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
@@ -147,43 +146,43 @@ static inline void trailUIntFun(CPTrail* t,unsigned* ptr)
    ++(t->_seg[t->_cSeg]->top);   
 }
 
-TRInt makeTRInt(CPTrail* trail,int val);
-TRUInt makeTRUInt(CPTrail* trail,unsigned val);
-TRLong makeTRLong(CPTrail* trail,long long val);
-TRDouble  makeTRDouble(CPTrail* trail,double val);
-TRId  makeTRId(CPTrail* trail,id val);
-TRIntArray makeTRIntArray(CPTrail* trail,int nb,int low);
+TRInt makeTRInt(ORTrail* trail,int val);
+TRUInt makeTRUInt(ORTrail* trail,unsigned val);
+TRLong makeTRLong(ORTrail* trail,long long val);
+TRDouble  makeTRDouble(ORTrail* trail,double val);
+TRId  makeTRId(ORTrail* trail,id val);
+TRIntArray makeTRIntArray(ORTrail* trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
-FXInt makeFXInt(CPTrail* trail);
+FXInt makeFXInt(ORTrail* trail);
 
-static inline void  assignTRInt(TRInt* v,int val,CPTrail* trail)
+static inline void  assignTRInt(TRInt* v,int val,ORTrail* trail)
 {
-   CPInt cmgc = trail->_magic;
+   ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       trailIntFun(trail, &v->_val);
    }
    v->_val = val;      
 }
-static inline void  assignTRUInt(TRUInt* v,unsigned val,CPTrail* trail) 
+static inline void  assignTRUInt(TRUInt* v,unsigned val,ORTrail* trail) 
 {
-   CPInt cmgc = trail->_magic;
+   ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       trailUIntFun(trail, &v->_val);
    }
    v->_val = val;         
 }
-static inline void  assignTRLong(TRLong* v,long long val,CPTrail* trail)
+static inline void  assignTRLong(TRLong* v,long long val,ORTrail* trail)
 {
-   CPInt cmgc = trail->_magic;
+   ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       [trail trailLong:&v->_val];
    }
    v->_val = val;      
 }
-static inline void  assignTRDouble(TRDouble* v,double val,CPTrail* trail)
+static inline void  assignTRDouble(TRDouble* v,double val,ORTrail* trail)
 {
    if (v->_mgc != [trail magic]) {
       v->_mgc = [trail magic];
@@ -191,7 +190,7 @@ static inline void  assignTRDouble(TRDouble* v,double val,CPTrail* trail)
    }
    v->_val = val;
 }
-static inline void  assignTRId(TRId* v,id val,CPTrail* trail)
+static inline void  assignTRId(TRId* v,id val,ORTrail* trail)
 {
    if (v->_mgc != [trail magic]) {
       v->_mgc = [trail magic];
@@ -200,7 +199,7 @@ static inline void  assignTRId(TRId* v,id val,CPTrail* trail)
    [v->_val release];
    v->_val = [val retain];         
 }
-static inline CPInt assignTRIntArray(TRIntArray a,int i,CPInt val)
+static inline ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
 {
    TRInt* ei = a._entries + i;
    if (ei->_mgc != a._trail->_magic) {
@@ -209,25 +208,29 @@ static inline CPInt assignTRIntArray(TRIntArray a,int i,CPInt val)
    }
    return ei->_val = val;
 }
-static inline CPInt getTRIntArray(TRIntArray a,int i)
+static inline ORInt getTRIntArray(TRIntArray a,int i)
 {
    return a._entries[i]._val;
 }
-static inline void  incrFXInt(FXInt* v,CPTrail* trail)
+static inline void  incrFXInt(FXInt* v,ORTrail* trail)
 {
-   CPInt cmgc = trail->_magic;
+   ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       v->_val = 0;      
    }
    v->_val++;
 }
-static inline int   getFXInt(FXInt* v,CPTrail* trail)
+static inline int   getFXInt(FXInt* v,ORTrail* trail)
 {
-   CPInt cmgc = trail->_magic;
+   ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       v->_val = 0;      
    }   
    return v->_val;
 }
+static inline ORInt trailMagic(ORTrail* trail) {
+   return trail->_magic;
+}
+@end

@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPDom.h"
 
 @class CPIntVarI;

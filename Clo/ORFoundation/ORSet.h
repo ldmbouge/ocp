@@ -9,17 +9,14 @@
 
  ***********************************************************************/
 
-
 #import <Foundation/Foundation.h>
-#import "CPSolver.h"
-#import "CP.h"
-#import "CPFactory.h"
+#import "ORFoundation/ORAVLTree.h"
 
-@class ORAVLTree;
-
-@interface CPInternalFactory : NSObject
-
-+(ORAVLTree*) AVLTree: (id<CP>) cp;
-+(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (ORAVLTree*) tree;
-
-@end;
+@protocol ORIntSet <NSObject> 
+-(bool) member: (ORInt) v;
+-(void) insert: (ORInt) v;
+-(void) delete: (ORInt) v;
+-(ORInt) size;
+-(NSString*) description;
+-(id<IntEnumerator>) enumerator;
+@end

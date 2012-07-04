@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import "CPSolverI.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPIntVarI.h"
 #import "CPBasicConstraint.h"
 #import "DFSController.h"
 #import "CPTypes.h"
-#import "CPSetI.h"
+#import "ORFoundation/ORSetI.h"
 #import "CPSolutionI.h"
 
 #define AC5LOADED(q) ((q)->_csz)
@@ -250,7 +250,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 @end
 
 @implementation CPSolverI
--(CPSolverI*) initSolver: (CPTrail*) trail
+-(CPSolverI*) initSolver: (ORTrail*) trail
 {
    self = [super init];
    _trail = trail;
@@ -552,7 +552,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }     
    return _status;
 }
--(CPStatus) restrict: (CPIntVarI*) var to: (CPIntSetI*) S
+-(CPStatus) restrict: (CPIntVarI*) var to: (ORIntSetI*) S
 {
    @try {
       CPStatus status = [var inside: S];

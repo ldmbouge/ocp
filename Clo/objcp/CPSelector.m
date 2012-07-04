@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPSelector.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPI.h"
 #if !defined(__APPLE__)
 #import <values.h>

@@ -15,7 +15,7 @@
 #import "CPDom.h"
 #import "CPConstraint.h"
 #import "CPDataI.h"
-#import "CPSetI.h"
+#import "ORFoundation/ORSetI.h"
 #import "CPBitDom.h"
 #import "objc/runtime.h"
 
@@ -196,7 +196,7 @@ enum CPVarClass {
 -(CPStatus)     updateMin: (CPInt) newMin andMax:(CPInt)newMax;
 -(CPStatus)     bind:(CPInt) val;
 -(CPStatus)     remove:(CPInt) val;
--(CPStatus)     inside:(CPIntSetI*) S;
+-(CPStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
 +(CPIntVarI*)    initCPIntVar: (id<CP>)fdm low:(CPInt)low up:(CPInt)up;

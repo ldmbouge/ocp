@@ -14,7 +14,7 @@
 #import "CPIntVarI.h"
 
 @implementation CPVarInfo
--(CPVarInfo*)initCPVarInfo:(id)v trail:(CPTrail*)trail
+-(CPVarInfo*)initCPVarInfo:(id)v trail:(ORTrail*)trail
 {
    self = [super init];
    _theVar = v;
@@ -76,7 +76,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(CPStatus) post
 {
-   CPTrail* trail = [[_cp solver] trail];
+   ORTrail* trail = [[_cp solver] trail];
    CPUInt nbW = 0;
    for(CPInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];

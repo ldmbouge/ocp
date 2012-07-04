@@ -14,7 +14,7 @@
 
 #import "objcp/CPData.h"
 #import "objcp/CPArray.h"
-#import "objcp/CPSet.h"
+#import "ORFoundation/ORSet.h"
 #import "objcp/CPConcurrency.h"
 
 @protocol CPSearchController;
@@ -52,7 +52,7 @@
 -(void)              addRel: (id<CPRelation>) r;
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
--(void)            restrict: (id<CPIntVar>) var to: (id<CPIntSet>) S;
+-(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              search: (CPClosure) body;
 -(void)               solve: (CPClosure) body;

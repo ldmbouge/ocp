@@ -15,7 +15,7 @@
 #import "CPIntVarI.h"
 #import "CPSolverI.h"
 #import "CPTrigger.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPBitDom.h"
 
 
@@ -23,7 +23,7 @@
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
 
-static void setUpNetwork(CPEventNetwork* net,CPTrail* t,CPInt low,CPInt sz) 
+static void setUpNetwork(CPEventNetwork* net,ORTrail* t,CPInt low,CPInt sz) 
 {
     net->_boundsEvt = makeTRId(t,nil);
     net->_bindEvt   = makeTRId(t,nil);
@@ -572,7 +572,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom remove:val for:_recv];
 }
--(CPStatus) inside:(CPIntSetI*) S
+-(CPStatus) inside:(ORIntSetI*) S
 {
     CPInt m = [self min];
     CPInt M = [self max];

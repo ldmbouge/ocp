@@ -13,7 +13,7 @@
 #import "cont.h"
 #import "CPTypes.h"
 #import "CPError.h"
-#import "CPTrail.h"
+#import "ORTrail.h"
 #import "CPController.h"
 #import "CPTracer.h"
 #import "CPDataI.h"

@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
-#import "CPTrail.h"
+#import "ORTrail.h"
 
 @protocol CPConstraint;
 @protocol CPCommand;
@@ -29,7 +29,7 @@
 -(id)         popNode;
 -(id)         popToNode: (CPInt) n;
 -(void)       reset;
--(CPTrail*)   trail;
+-(ORTrail*)   trail;
 @optional -(void)addCommand:(id<CPCommand>)com;
 @optional -(Checkpoint*)captureCheckpoint;
 @optional -(CPStatus)restoreCheckpoint:(Checkpoint*)acp  inSolver:(id<AbstractSolver>)fdm;
@@ -39,17 +39,17 @@
 
 @interface DFSTracer : NSObject<CPTracer> {
 @private
-    CPTrail*          _trail;
-    CPTrailStack*   _trStack;
+    ORTrail*          _trail;
+    ORTrailStack*   _trStack;
     CPInt      _lastNode;
 }
--(DFSTracer*) initDFSTracer: (CPTrail*) trail;
+-(DFSTracer*) initDFSTracer: (ORTrail*) trail;
 -(void)       dealloc;
 -(CPInt)  pushNode;
 -(id)         popNode;
 -(id)         popToNode: (CPInt) n;
 -(void)       reset;
--(CPTrail*)   trail;
+-(ORTrail*)   trail;
 @end
 
 @interface CPCmdStack : NSObject<NSCoding> {
@@ -99,18 +99,18 @@
 
 @interface SemTracer : NSObject<CPTracer> {
 @private
-   CPTrail*          _trail;
-   CPTrailStack*   _trStack;
+   ORTrail*          _trail;
+   ORTrailStack*   _trStack;
    CPInt      _lastNode;
    CPCmdStack*        _cmds;
 }
--(SemTracer*)initSemTracer:(CPTrail*)trail;
+-(SemTracer*)initSemTracer:(ORTrail*)trail;
 -(void)dealloc;
 -(CPInt) pushNode;
 -(id)         popNode;
 -(id)         popToNode: (CPInt) n;
 -(void)       reset;
--(CPTrail*)   trail;
+-(ORTrail*)   trail;
 -(void)addCommand:(id<CPCommand>)com;
 -(Checkpoint*)captureCheckpoint;
 -(CPStatus)restoreCheckpoint:(Checkpoint*)acp  inSolver:(id<AbstractSolver>)fdm;
