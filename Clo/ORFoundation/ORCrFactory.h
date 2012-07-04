@@ -10,18 +10,16 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
-#import "CPSolver.h"
-#import "CP.h"
+#import <ORFoundation/ORTypes.h>
 
-@protocol CPInteger;
-@protocol CPInformer;
-@protocol CPIntInformer;
-@protocol CPVoidInformer;
+@protocol ORInteger;
+@protocol ORInformer;
+@protocol ORIntInformer;
+@protocol ORVoidInformer;
 @class CPAVLTree;
 
-@interface CPCrFactory : NSObject
-+(id<CPInteger>) integer:(CPInt) value;
-+(id<CPIntInformer>) intInformer;
-+(id<CPVoidInformer>) voidInformer;
+@interface ORCrFactory : NSObject
++(id<ORInteger>) integer:(ORInt) value;
++(id<ORIntInformer>) intInformer;
++(id<ORVoidInformer>) voidInformer;
 @end

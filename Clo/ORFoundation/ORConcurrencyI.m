@@ -9,32 +9,32 @@
 
  ***********************************************************************/
 
-#import "CPData.h"
-#import "CPCrFactory.h"
-#import "CPError.h"
-#import "CPConcurrency.h"
-#import "CPConcurrencyI.h"
+#import "ORData.h"
+#import "ORCrFactory.h"
+#import "ORError.h"
+#import "ORConcurrency.h"
+#import "ORConcurrencyI.h"
 #import "pthread.h"
 #import <Foundation/NSThread.h>
 
 
-@interface CPEventQueue : NSObject {
+@interface OREventQueue : NSObject {
    @package
-   CPInt      _mxs;
+   ORInt      _mxs;
    id*            _tab;
-   CPInt    _enter;
-   CPInt     _exit;
-   CPInt     _mask;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
 }
--(id)initCPEventQueue:(CPInt)sz;
+-(id)initOREventQueue:(ORInt)sz;
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)cb;
 -(void)reset;
 @end
 
-@implementation CPEventQueue 
--(id) initCPEventQueue: (CPInt) sz
+@implementation OREventQueue 
+-(id) initOREventQueue: (ORInt) sz
 {
    self = [super init];
    _mxs = sz;
@@ -56,7 +56,7 @@
 {
    id* nt = malloc(sizeof(id)*_mxs*2);
    id* ptr = nt;
-   CPInt cur = _exit;
+   ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
       cur = (cur+1) & _mask;
@@ -69,15 +69,15 @@
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
-inline static void EvtenQueue(CPEventQueue* q,id cb)
+inline static void EvtenQueue(OREventQueue* q,id cb)
 {
-   CPInt nb = (q->_mxs + q->_enter - q->_exit)  & q->_mask;
+   ORInt nb = (q->_mxs + q->_enter - q->_exit)  & q->_mask;
    if (nb == q->_mxs-1) 
       [q resize];   
    q->_tab[q->_enter] = [cb retain];  // will be released once executed.
    q->_enter = (q->_enter+1) & q->_mask;
 }
-inline static id EvtdeQueue(CPEventQueue* q)
+inline static id EvtdeQueue(OREventQueue* q)
 {
    if (q->_enter != q->_exit) {
       id cb = q->_tab[q->_exit];
@@ -98,29 +98,29 @@ inline static id EvtdeQueue(CPEventQueue* q)
 @end
 
 
-@protocol CPExecuteEventI<NSObject>
+@protocol ORExecuteEventI<NSObject>
 -(void) execute;
 @end
 
-typedef void (^CPIdxInt2Void)(id,CPInt);
+typedef void (^ORIdxInt2Void)(id,ORInt);
 
-@interface CPExecuteClosureEventI : NSObject<CPExecuteEventI> {
-   CPClosure _closure;
+@interface ORExecuteClosureEventI : NSObject<ORExecuteEventI> {
+   ORClosure _closure;
 }
--(id<CPExecuteEventI>) initCPExecuteClosureEventI: (CPClosure) closure;
+-(id<ORExecuteEventI>) initORExecuteClosureEventI: (ORClosure) closure;
 -(void) dealloc;
 @end
 
-@implementation CPInterruptI 
--(CPInterruptI*) initCPInterruptI
+@implementation ORInterruptI 
+-(ORInterruptI*) initORInterruptI
 {
     self = [super init];
     return self;
 }
 @end
 
-@implementation CPExecuteClosureEventI
--(id<CPExecuteEventI>) initCPExecuteClosureEventI: (CPClosure) closure
+@implementation ORExecuteClosureEventI
+-(id<ORExecuteEventI>) initORExecuteClosureEventI: (ORClosure) closure
 {
     self = [super init];
     _closure = [closure retain];
@@ -137,11 +137,11 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 }
 @end
 
-@implementation CPEventList
--(CPEventList*) initCPEventList 
+@implementation OREventList
+-(OREventList*) initOREventList 
 {
     self = [super init];
-   _queue = [[CPEventQueue alloc] initCPEventQueue:32];
+   _queue = [[OREventQueue alloc] initOREventQueue:32];
     return self;
 }
 -(void) dealloc
@@ -162,7 +162,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 -(void) execute
 {
    @synchronized(self) {
-      CPClosure cl = nil;
+      ORClosure cl = nil;
       while ((cl = EvtdeQueue(_queue)) != nil) {
          cl();
          [cl release];
@@ -171,16 +171,16 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 }
 @end
 
-@interface CPInformerEventI : NSObject {
-   CPEventList* _eventList;
-   CPClosure _closure;
+@interface ORInformerEventI : NSObject {
+   OREventList* _eventList;
+   ORClosure _closure;
 }
--(CPInformerEventI*) initCPInformerEventI: (CPEventList*) eventList closure: (CPClosure) closure;
+-(ORInformerEventI*) initORInformerEventI: (OREventList*) eventList closure: (ORClosure) closure;
 -(void) dispatch;
 @end
 
-@implementation CPInformerEventI
--(CPInformerEventI*) initCPInformerEventI: (CPEventList*) eventList closure: (CPClosure) closure
+@implementation ORInformerEventI
+-(ORInformerEventI*) initORInformerEventI: (OREventList*) eventList closure: (ORClosure) closure
 {
     self = [super init];
     _eventList = [eventList retain];
@@ -199,24 +199,24 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 }
 -(void) dispatchWith:(int)a0
 {
-   CPInt2Void tClo = (CPInt2Void)_closure;
-   CPClosure wrap = ^{
+   ORInt2Void tClo = (ORInt2Void)_closure;
+   ORClosure wrap = ^{
       tClo(a0);
    };
    [_eventList addEvent:[wrap copy]];
 }
--(void) dispatchWith:(id)a0 andInt:(CPInt)a1
+-(void) dispatchWith:(id)a0 andInt:(ORInt)a1
 {
-   CPIdxInt2Void tClo = (CPIdxInt2Void)_closure;
-   CPClosure wrap = ^{
+   ORIdxInt2Void tClo = (ORIdxInt2Void)_closure;
+   ORClosure wrap = ^{
       tClo(a0,a1);
    };
    [_eventList addEvent:[wrap copy]];
 }
 @end
 
-@implementation CPInformerI 
--(CPInformerI*) initCPInformerI
+@implementation ORInformerI 
+-(ORInformerI*) initORInformerI
 {
    self = [super init];
    _lock = [[NSLock alloc] init];
@@ -227,7 +227,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 }
 -(void) whenNotifiedDo: (id) closure
 {
-   CPInformerEventI* event = [[CPInformerEventI alloc] initCPInformerEventI: [CPConcurrency eventList] closure: closure];
+   ORInformerEventI* event = [[ORInformerEventI alloc] initORInformerEventI: [ORConcurrency eventList] closure: closure];
    @synchronized(self) {
       [_whenList addObject: event];
       [event release];  // event is now owned by the whenList.
@@ -235,7 +235,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 }
 -(void) wheneverNotifiedDo: (id) closure
 {
-   CPInformerEventI* event = [[CPInformerEventI alloc] initCPInformerEventI: [CPConcurrency eventList] closure: closure];
+   ORInformerEventI* event = [[ORInformerEventI alloc] initORInformerEventI: [ORConcurrency eventList] closure: closure];
    @synchronized(self) {
       [_wheneverList addObject: event];
       [event release];  // even is now owned (exclusively) by the wheneverList
@@ -244,7 +244,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 
 -(void) sleepUntilNotified
 {
-   CPBarrierI* barrier = [CPConcurrency barrier: 1];
+   ORBarrierI* barrier = [ORConcurrency barrier: 1];
    @synchronized(self) {
       [_sleeperList addObject: barrier];
    }
@@ -259,7 +259,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
       [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
       for(id event in _wheneverList) 
          [event dispatch];    
-      for(CPBarrierI* barrier in _sleeperList)
+      for(ORBarrierI* barrier in _sleeperList)
          [barrier join]; 
       [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
    }
@@ -272,13 +272,13 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
       [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
       for(id event in _wheneverList) 
          [event dispatchWith:a0];    
-      for(CPBarrierI* barrier in _sleeperList)
+      for(ORBarrierI* barrier in _sleeperList)
          [barrier join]; 
       [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
    }
 }
 
--(void) notifyWith:(id)a0 andInt:(CPInt)a1
+-(void) notifyWith:(id)a0 andInt:(ORInt)a1
 {
    @synchronized(self) {
       for(id event in _whenList) 
@@ -286,7 +286,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
       [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
       for(id event in _wheneverList) 
          [event dispatchWith:a0 andInt:a1];    
-      for(CPBarrierI* barrier in _sleeperList)
+      for(ORBarrierI* barrier in _sleeperList)
          [barrier join]; 
       [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
    }
@@ -296,7 +296,7 @@ typedef void (^CPIdxInt2Void)(id,CPInt);
 {
    NSLog(@"informer release %p",self);
    @synchronized(self) {
-      for(CPBarrierI* barrier in _sleeperList)
+      for(ORBarrierI* barrier in _sleeperList)
          [barrier join]; 
       [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.   
    }
@@ -313,33 +313,33 @@ static void init_eventlist()
     pthread_key_create(&eventlist,NULL);  
 }
 
-@implementation CPConcurrency
-+(void) parall: (CPRange) R do: (CPInt2Void) closure
+@implementation ORConcurrency
++(void) parall: (ORRange) R do: (ORInt2Void) closure
 {
-    CPInt low = R.low;
-    CPInt up = R.up;
-    CPInt size = up - low + 1;
-    CPBarrierI* barrier = [[CPBarrierI alloc] initCPBarrierI: size];
-    for(CPInt i = low; i <= up; i++) {
-        CPThread* t = [[CPThread alloc] initCPThread: i barrier: barrier closure: closure];
+    ORInt low = R.low;
+    ORInt up = R.up;
+    ORInt size = up - low + 1;
+    ORBarrierI* barrier = [[ORBarrierI alloc] initORBarrierI: size];
+    for(ORInt i = low; i <= up; i++) {
+        ORThread* t = [[ORThread alloc] initORThread: i barrier: barrier closure: closure];
         [t start];
     }
     [barrier wait];
     [barrier release];
 }
-+(void) parall: (CPRange) R do: (CPInt2Void) closure untilNotifiedBy: (id<CPInformer>) informer
++(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer
 {
-    CPInt2Void clo = [closure copy];
-   id<CPInteger> done = [CPCrFactory integer:0];
-    [CPConcurrency parall: R
-                       do: ^void(CPInt i) { 
+    ORInt2Void clo = [closure copy];
+    id<ORInteger> done = [ORCrFactory integer:0];
+    [ORConcurrency parall: R
+                       do: ^void(ORInt i) { 
                            [informer whenNotifiedDo: ^(void) { 
-                               printf("Notification\n"); [done setValue: 1]; @throw [[CPInterruptI alloc] initCPInterruptI]; }];
+                               printf("Notification\n"); [done setValue: 1]; @throw [[ORInterruptI alloc] initORInterruptI]; }];
                            if ([done value] == 0) {
                                @try {
                                    clo(i);
                                }
-                               @catch (CPInterruptI* e) {
+                               @catch (ORInterruptI* e) {
                                    [e release];
                                }
                            }
@@ -348,32 +348,32 @@ static void init_eventlist()
     [done release];
     [clo release];
 }
-+(id<CPIntInformer>) intInformer
++(id<ORIntInformer>) intInformer
 {
-    return [[CPInformerI alloc] initCPInformerI];
+    return [[ORInformerI alloc] initORInformerI];
 }
-+(id<CPVoidInformer>) voidInformer
++(id<ORVoidInformer>) voidInformer
 {
-   return [[CPInformerI alloc] initCPInformerI];
+   return [[ORInformerI alloc] initORInformerI];
 }
-+(id<CPIdxIntInformer>) idxIntInformer
++(id<ORIdxIntInformer>) idxIntInformer
 {
-   return [[CPInformerI alloc] initCPInformerI];
+   return [[ORInformerI alloc] initORInformerI];
 }
-+(id<CPBarrier>)  barrier: (CPInt) nb
++(id<ORBarrier>)  barrier: (ORInt) nb
 {
-    return [[CPBarrierI alloc] initCPBarrierI: nb];
+    return [[ORBarrierI alloc] initORBarrierI: nb];
 }
 +(void) pumpEvents
 {
-    CPEventList* list = [CPConcurrency eventList];
+    OREventList* list = [ORConcurrency eventList];
     [list execute];
 }
 @end
 
 
-@implementation CPBarrierI
--(id<CPBarrier>) initCPBarrierI: (CPInt) nb
+@implementation ORBarrierI
+-(id<ORBarrier>) initORBarrierI: (ORInt) nb
 {
    self = [super init];
    _count = 0;
@@ -405,8 +405,8 @@ static void init_eventlist()
 @end;
 
 
-@implementation CPThread 
--(CPThread*) initCPThread: (CPInt) v barrier: (CPBarrierI*) barrier closure: (CPInt2Void) closure
+@implementation ORThread 
+-(ORThread*) initORThread: (ORInt) v barrier: (ORBarrierI*) barrier closure: (ORInt2Void) closure
 {
    self = [super init];
    _value = v;
@@ -418,21 +418,21 @@ static void init_eventlist()
 {
    _closure(_value);   
    [_barrier join];
-   [[CPConcurrency eventList] release];
+   [[ORConcurrency eventList] release];
    [_barrier release];
    [_closure release];
 }
 @end
 
-@implementation CPConcurrency (Internals)
+@implementation ORConcurrency (Internals)
 
-+(CPEventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
++(OREventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
 {
     static pthread_once_t block = PTHREAD_ONCE_INIT;
     pthread_once(&block,init_eventlist);
-    CPEventList* a = pthread_getspecific(eventlist);
+    OREventList* a = pthread_getspecific(eventlist);
     if (!a) {
-        a = [[CPEventList alloc] initCPEventList];
+        a = [[OREventList alloc] initOREventList];
         pthread_setspecific(eventlist,a);
     }
     return a;

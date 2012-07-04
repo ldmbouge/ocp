@@ -23,7 +23,7 @@
 #import "CPI.h"
 #import "objcp/CPFactory.h"
 #import "CPObjectQueue.h"
-#import "CPConcurrency.h"
+#import "ORFoundation/ORConcurrency.h"
 #if !defined(__APPLE__)
 #import <values.h>
 #endif
@@ -124,7 +124,7 @@
 }
 -(void) fail
 {
-   [CPConcurrency pumpEvents];
+   [ORConcurrency pumpEvents];
    _nbf++;
    [_controller._val fail];
 }
@@ -134,7 +134,7 @@
    [_solver close];
    [_hStack applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} 
                   with:[_solver allVars]];
-   [CPConcurrency pumpEvents];   
+   [ORConcurrency pumpEvents];   
 }
 
 // this is a top-level call; not a search combinator

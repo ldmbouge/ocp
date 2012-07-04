@@ -24,7 +24,7 @@ typedef struct ORBounds {
 
 @protocol ORExpr;
 
-@protocol ORInteger <ORExpr>
+@protocol ORInteger <NSObject,ORExpr>
 -(ORInt)  value;
 -(void) setValue: (ORInt) value;
 -(void) incr;

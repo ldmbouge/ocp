@@ -10,60 +10,60 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CPConcurrency.h"
-#import "CPData.h"
+#import "ORFoundation/ORConcurrency.h"
+#import "ORFoundation/ORData.h"
 
-@interface CPBarrierI : NSObject<CPBarrier> {
-    CPInt _nb;
-    CPInt _count;
+@interface ORBarrierI : NSObject<ORBarrier> {
+    ORInt _nb;
+    ORInt _count;
     NSCondition* _condition; 
 }
--(id<CPBarrier>) initCPBarrierI: (CPInt) nb;
+-(id<ORBarrier>) initORBarrierI: (ORInt) nb;
 -(void) join;
 -(void) wait;
 @end
 
-@class CPEventQueue;
+@class OREventQueue;
 
-@interface CPEventList : NSObject {
-   CPEventQueue* _queue;
+@interface OREventList : NSObject {
+   OREventQueue* _queue;
 }
--(CPEventList*) initCPEventList;
+-(OREventList*) initOREventList;
 -(void) addEvent: (id) closure;
 -(void) dealloc;
 -(void) execute;
 @end
 
-@interface CPThread : NSThread {
-    CPInt _value;
-    CPBarrierI* _barrier;
-    CPInt2Void _closure;
+@interface ORThread : NSThread {
+    ORInt _value;
+    ORBarrierI* _barrier;
+    ORInt2Void _closure;
 }
--(CPThread*) initCPThread: (CPInt) v barrier: (CPBarrierI*) barrier closure: (CPInt2Void) closure;
+-(ORThread*) initORThread: (ORInt) v barrier: (ORBarrierI*) barrier closure: (ORInt2Void) closure;
 -(void) main;
 @end
 
-@interface CPInformerI : NSObject<CPVoidInformer,CPIntInformer,CPIdxIntInformer> {
+@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
     NSMutableArray* _wheneverList;
     NSMutableArray* _sleeperList;
 }
--(CPInformerI*) initCPInformerI;
+-(ORInformerI*) initORInformerI;
 -(void) whenNotifiedDo: (id) closure;
 -(void) wheneverNotifiedDo: (id) closure;
 -(void) sleepUntilNotified;
 -(void) notify;
 -(void) notifyWith:(int)a0;
--(void) notifyWith:(id)a0 andInt:(CPInt)v;
+-(void) notifyWith:(id)a0 andInt:(ORInt)v;
 @end
 
 
-@interface CPConcurrency (Internals)
-+(CPEventList*) eventList;
+@interface ORConcurrency (Internals)
++(OREventList*) eventList;
 @end
 
-@interface CPInterruptI : NSObject 
--(CPInterruptI*) initCPInterruptI;
+@interface ORInterruptI : NSObject 
+-(ORInterruptI*) initORInterruptI;
 @end
 

@@ -206,27 +206,27 @@ void failNow()
     [[cp solver] trackObject: o];
     return o;
 }
-+(id<CPInformer>) informer: (id<CP>) cp
++(id<ORInformer>) informer: (id<CP>) cp
 {
-    id<CPInformer> o = [CPConcurrency intInformer];
+    id<ORInformer> o = [ORConcurrency intInformer];
     [[cp solver] trackObject: o];
     return o;    
 }
-+(id<CPVoidInformer>) voidInformer: (id<CP>) cp
++(id<ORVoidInformer>) voidInformer: (id<CP>) cp
 {
-   id<CPVoidInformer> o = [CPConcurrency voidInformer];
+   id<ORVoidInformer> o = [ORConcurrency voidInformer];
    [[cp solver] trackObject: o];
    return o;       
 }
-+(id<CPIntInformer>) intInformer: (id<CP>) cp
++(id<ORIntInformer>) intInformer: (id<CP>) cp
 {
-   id<CPIntInformer> o = [CPConcurrency intInformer];
+   id<ORIntInformer> o = [ORConcurrency intInformer];
    [[cp solver] trackObject: o];
    return o;          
 }
-+(id<CPBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb
++(id<ORBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb
 {
-    id<CPBarrier> o = [CPConcurrency barrier: nb];
+    id<ORBarrier> o = [ORConcurrency barrier: nb];
     [[cp solver] trackObject: o];
     return o;    
 }

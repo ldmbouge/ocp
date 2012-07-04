@@ -22,17 +22,17 @@
 #import "CPArrayI.h"
 #import "CPIntVarI.h"
 #import "CPParallel.h"
-#import "CPConcurrency.h"
+#import "ORFoundation/ORConcurrency.h"
 
 @interface CPInformerPortal : NSObject<CPPortal> {
    CoreCPI*       _cp;
    CPSolverI* _solver;
 }
 -(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp;
--(id<CPIdxIntInformer>) retLabel;
--(id<CPIdxIntInformer>) failLabel;
--(id<CPInformer>) propagateFail;
--(id<CPInformer>) propagateDone;
+-(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) failLabel;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
 @end
 
 @implementation CoreCPI
@@ -213,7 +213,7 @@
     CPStatus status = [_solver post: c];
     if (status == CPFailure)
         [_search fail];
-    [CPConcurrency pumpEvents];
+    [ORConcurrency pumpEvents];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -236,16 +236,16 @@
    if ([_solver close] == CPFailure)
       [_search fail];
 }
--(id<CPIdxIntInformer>) retLabel
+-(id<ORIdxIntInformer>) retLabel
 {
    if (_returnLabel==nil) 
-      _returnLabel = [CPConcurrency idxIntInformer];   
+      _returnLabel = [ORConcurrency idxIntInformer];   
    return _returnLabel;
 }
--(id<CPIdxIntInformer>) failLabel
+-(id<ORIdxIntInformer>) failLabel
 {
    if (_failLabel==nil) 
-      _failLabel = [CPConcurrency idxIntInformer];   
+      _failLabel = [ORConcurrency idxIntInformer];   
    return _failLabel;   
 }
 -(id<CPPortal>)portal
@@ -291,14 +291,14 @@
       [_search fail];
    }
    [_returnLabel notifyWith:var andInt:val];
-   [CPConcurrency pumpEvents]; 
+   [ORConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
 {
    CPStatus status = [_solver diff: var with: val];  
    if (status == CPFailure)
       [_search fail];
-   [CPConcurrency pumpEvents];   
+   [ORConcurrency pumpEvents];   
 }
 -(void) lthen: (id<CPIntVar>) var with: (CPInt) val
 {
@@ -306,7 +306,7 @@
    if (status == CPFailure) {
       [_search fail];
    }
-   [CPConcurrency pumpEvents];
+   [ORConcurrency pumpEvents];
 }
 -(void) gthen: (id<CPIntVar>) var with: (CPInt) val
 {
@@ -314,7 +314,7 @@
    if (status == CPFailure) {
       [_search fail];
    }
-   [CPConcurrency pumpEvents];
+   [ORConcurrency pumpEvents];
 }
 
 -(void) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S
@@ -322,7 +322,7 @@
     CPStatus status = [_solver restrict: var to: S];  
     if (status == CPFailure)
         [_search fail]; 
-    [CPConcurrency pumpEvents];   
+    [ORConcurrency pumpEvents];   
 }
 
 -(void) once: (CPClosure) cl
@@ -526,7 +526,7 @@
    }
    [_tracer addCommand:[[CPEqualc alloc] initCPEqualc:var and:val]];    // add after the fail (so if we fail, we don't bother adding it!]
    [_returnLabel notifyWith:var andInt:val];
-   [CPConcurrency pumpEvents]; 
+   [ORConcurrency pumpEvents]; 
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
 {
@@ -535,7 +535,7 @@
       [_search fail];
    // add after the fail (so if we fail, we don't bother adding it!]
    [_tracer addCommand:[[CPDiffc alloc] initCPDiffc:var and:val]]; 
-   [CPConcurrency pumpEvents]; 
+   [ORConcurrency pumpEvents]; 
 }
 
 -(void) search: (CPClosure) body 
@@ -689,19 +689,19 @@
 {
    [super dealloc];
 }
--(id<CPIdxIntInformer>) retLabel
+-(id<ORIdxIntInformer>) retLabel
 {
    return [_cp retLabel];
 }
--(id<CPIdxIntInformer>) failLabel
+-(id<ORIdxIntInformer>) failLabel
 {
    return [_cp failLabel];
 }
--(id<CPInformer>) propagateFail
+-(id<ORInformer>) propagateFail
 {
    return [_solver propagateFail];
 }
--(id<CPInformer>) propagateDone
+-(id<ORInformer>) propagateDone
 {
    return [_solver propagateDone];
 }

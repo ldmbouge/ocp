@@ -245,7 +245,7 @@
       id<CPTracer> tracer = [_cp tracer];
       [tracer pushNode];
       CPStatus s1 = [_solver lthen:x with:mid+1];
-      [CPConcurrency pumpEvents];
+      [ORConcurrency pumpEvents];
       if (s1!=CPFailure) {
          [self dichotomize:x from:low to:mid block:b sac:set];
       } else { 
@@ -255,7 +255,7 @@
       [tracer popNode];
       [tracer pushNode];
       CPStatus s2 = [_solver gthen:x with:mid];
-      [CPConcurrency pumpEvents];
+      [ORConcurrency pumpEvents];
       if (s2!=CPFailure) {
          [self dichotomize:x from:mid+1 to:up block:b sac:set];
       } else {
