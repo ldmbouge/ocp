@@ -249,6 +249,12 @@ void failNow()
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
+
++(id<CPExpr>) exprAbs: (id<CPExpr>) op
+{
+   return (id<CPExpr>)[ORFactory exprAbs:op];
+}
+
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
 {
    id<CP> cp = [vars[0] cp];

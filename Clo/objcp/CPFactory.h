@@ -78,7 +78,7 @@ void failNow();
 @end
 
 @interface CPFactory (expression)
-
++(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
 +(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 

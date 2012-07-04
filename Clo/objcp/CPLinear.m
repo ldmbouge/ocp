@@ -485,11 +485,10 @@
 @end
 
 @implementation CPExprConstraintI
--(id) initCPExprConstraintI:(id<CPExpr>)x consistency: (CPConsistency) c
+-(id) initCPExprConstraintI:(CPSolverI*)fdm expr:(id<CPExpr>)x consistency: (CPConsistency) c
 {
-   id<ORTracker> tracker = [x tracker];
-   self  = [super initCPActiveConstraint:[tracker solver]];
-   _fdm  = (CPSolverI*)[tracker solver];
+   self  = [super initCPActiveConstraint:fdm];
+   _fdm  = fdm;
    _expr = x;
    _c    = c;
    return self;
