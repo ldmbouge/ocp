@@ -18,35 +18,37 @@
 #import "CPArrayI.h"
 
 @interface CPAssignment : CPActiveConstraint<CPConstraint,NSCoding> {
-    id<CPIntVarArray>  _x;
-    id<CPIntMatrix>    _matrix;
-    CPIntVarI**        _var;
-    CPInt              _varSize;
-    CPInt              _low;
-    CPInt              _up;
-    
-    CPInt              _lowr;
-    CPInt              _upr;
-    CPInt              _lowc;
-    CPInt              _upc;
-    id<CPTRIntMatrix>  _cost;
-    
-    CPInt              _bigM;
-    
-    id<CPTRIntArray>   _lc;
-    id<CPTRIntArray>   _lr;
-    
-    id<CPTRIntArray>   _rowOfColumn;
-    id<CPTRIntArray>   _columnOfRow;
-    
-    CPInt*             _columnIsMarked;
-    CPInt*             _rowIsMarked;
-    CPInt*             _pi;
-    CPInt*             _pathRowOfColumn;
-    
-    bool               _posted;
+   id<CPIntVarArray>  _x;
+   id<CPIntMatrix>    _matrix;
+   CPIntVarI**        _var;
+   CPIntVarI*         _costVariable;
+   
+   CPInt              _varSize;
+   CPInt              _low;
+   CPInt              _up;
+   
+   CPInt              _lowr;
+   CPInt              _upr;
+   CPInt              _lowc;
+   CPInt              _upc;
+   id<CPTRIntMatrix>  _cost;
+   
+   CPInt              _bigM;
+   
+   id<CPTRIntArray>   _lc;
+   id<CPTRIntArray>   _lr;
+   
+   id<CPTRIntArray>   _rowOfColumn;
+   id<CPTRIntArray>   _columnOfRow;
+   
+   CPInt*             _columnIsMarked;
+   CPInt*             _rowIsMarked;
+   CPInt*             _pi;
+   CPInt*             _pathRowOfColumn;
+   
+   bool               _posted;
 }
--(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix;
+-(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<CPIntVar>) cost;
 -(void) dealloc;
 -(CPStatus) post;
 -(void) propagate;

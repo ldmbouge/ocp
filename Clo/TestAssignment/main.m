@@ -43,17 +43,22 @@ int main (int argc, const char * argv[])
         printf("\n");
     }
     
-    [cp solve: 
+    [cp solveAll: 
      ^() {
  //        [cp diff: [x at: 2] with: 2];
-         [cp add: [CPFactory assignment: x matrix: cost]];
+        [cp add: [CPFactory alldifferent: x]];
+ //       [cp add: [CPFactory assignment: x matrix: cost]];
      }
            using:
      ^() {        
          [CPLabel array: x];
          for(CPInt i = 1; i <= 3; i++)
              printf("%d ",[[x at: i] min]);
-         printf("\n");
+        printf("\n");
+        CPInt acost = 0;
+        for(CPInt i = 1; i <= 3; i++)
+           acost += [cost at: i : [[x at: i] min]];
+        printf("Cost: %d \n",acost);
      }
      ];
     NSLog(@"Solver status: %@\n",cp);

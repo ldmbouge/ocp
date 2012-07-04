@@ -25,13 +25,14 @@
     _posted = false;
 }
 
--(CPAssignment*) initCPAssignment: (CPIntVarArrayI*) x matrix: (CPIntMatrixI*) matrix
+-(CPAssignment*) initCPAssignment: (CPIntVarArrayI*) x matrix: (CPIntMatrixI*) matrix cost: (CPIntVarI*) costVariable
 {
-    self = [super initCPActiveConstraint: [[x cp] solver]];
-    _x = x;
-    _matrix = matrix;
-    [self initInstanceVariables];
-    return self;
+   self = [super initCPActiveConstraint: [[x cp] solver]];
+   _x = x;
+   _matrix = matrix;
+   _costVariable = costVariable;
+   [self initInstanceVariables];
+   return self;
 }
 
 -(void) dealloc 
@@ -148,17 +149,27 @@
     
     [self reduceCostMatrix];
     [self greedyAssignment];
-    [self printCostMatrix];
-    printf("\n");
-    [self printReducedCostMatrix];
-    printf("\n");
-    [self printAssignment];
+//    [self printCostMatrix];
+//    printf("\n");
+//    [self printReducedCostMatrix];
+//    printf("\n");
+//    [self printAssignment];
        
    [self propagate];
-    for(CPInt k = 0 ; k < _varSize; k++)
-        if (![_var[k] bound])
-            [_var[k] whenChangePropagate: self];
-    return CPSuspend;
+   for(CPInt r = _lowr ; r <= _upr; r++) {
+      CPIntVarI* var = (CPIntVarI*) [_x at: r];
+      if (![var bound]) {
+          [var whenChangePropagate: self]; 
+          [var whenLoseValue: self do: ^void(CPInt v) { 
+             [_cost set: _bigM at: r : v ];
+             if ([_columnOfRow at: r] == v) {
+                [_columnOfRow set: MAXINT at: r];
+                [_rowOfColumn set: MAXINT at: v];
+             }
+          }];
+      }
+   }
+   return CPSuspend;
 }
 
 -(void) preprocess
@@ -175,29 +186,106 @@
 
 -(void) propagate
 {   
-    [self findAssignment];
-    [self prune];
+   [self findAssignment];
+//   printf("After assignment \n");
+//   [self printCostMatrix];
+//   printf("\n");
+//   [self printReducedCostMatrix];
+//   printf("\n");
+   [self printAssignment];
+   [self prune];
 }
 
 -(void) findAssignment
 {
-    for(CPInt i = _lowr; i <= _upr; i++) 
-        if (!assignedRow(self,i))
-            [self applyAugmentingPathFrom: i to: [self findAugmentingPathFrom: i]];
+    for(CPInt r = _lowr; r <= _upr; r++) 
+        if (!assignedRow(self,r))
+            [self applyAugmentingPathFrom: r to: [self findAugmentingPathFrom: r]];
 }
 
--(CPStatus) prune
+-(void) prune
 {   
-    return CPSuspend;
+   int assignmentCost = 0;
+   for(CPInt r = _lowr; r <= _upr; r++) 
+      assignmentCost += [_cost at: r : [_columnOfRow at: r]];  
+   [_costVariable updateMin: assignmentCost];
 }
 
--(void) applyAugmentingPathFrom: (CPInt) i to: (CPInt) j
+-(void) applyAugmentingPathFrom: (CPInt) r to: (CPInt) c
 {
-    
+   CPInt currentRow;
+   CPInt currentCol;
+   do {
+      currentRow = _pathRowOfColumn[c];
+      [_rowOfColumn set: currentRow at: c];
+      currentCol = [_columnOfRow at: currentRow];
+      [_columnOfRow set: c at: currentRow];
+      c = currentCol;
+   } while (currentRow != r);
 }
+-(CPInt) dualStep
+{
+   CPInt col;
+   CPInt m = MAXINT;
+   for(CPInt c = _lowc; c <= _upc; c++)
+      if (!_columnIsMarked[c] && _pi[c] < m) {
+         m = _pi[c];
+         col = c;
+      }
+   for(CPInt c = _lowc; c <= _upc; c++)
+      if (_columnIsMarked[c])
+         [_lc set: [_lc at: c] - m at: c];
+      else 
+         _pi[c] -= m;
+   for(CPInt r = _lowr; r <= _upr; r++)
+      if (_rowIsMarked[r])
+         [_lr set: [_lr at: r] + m at: r];
+   return col;
+}
+
 -(CPInt) findAugmentingPathFrom: (CPInt) i 
 {
-    return 0;
+   for(CPInt r = _lowr; r <= _upr; r++) 
+      _rowIsMarked[r] = false;
+   for(CPInt c = _lowc; c <= _upc; c++) 
+      _columnIsMarked[c] = false;
+   _rowIsMarked[i] = true;
+   
+   for(CPInt c = _lowc; c <= _upc; c++) {
+      _pi[c] = [_cost at: i : c ] - [_lr at: i] - [_lc at: c];
+      _pathRowOfColumn[c] = i;
+   }
+   
+   do {
+      CPInt col = MAXINT;
+      for(CPInt c = _lowc; c <= _upc; c++) 
+         if (!_columnIsMarked[c] && _pi[c] == 0) {
+            col = c;
+            break;
+         }
+      if (col == MAXINT) 
+         col = [self dualStep];
+      
+      CPInt row;
+      if (!assignedColumn(self,col)) 
+          return col;
+      else {
+         row = [_rowOfColumn at: col];
+         _rowIsMarked[row] = true;
+         _columnIsMarked[col] = true;
+      }
+      
+      for(CPInt c = _lowc; c <= _upc; c++) 
+         if (!_columnIsMarked[c]) {
+            CPInt m  = [_cost at: row : c] - [_lr at: row] - [_lc at: c];
+            if (m < _pi[c]) {
+               _pi[c] = m;
+               _pathRowOfColumn[c] = row;
+            }
+         }
+         
+   } while (true);
+   return 0;
 }
 -(void) printCostMatrix
 {
@@ -255,6 +343,10 @@
     for(CPInt i = _lowr; i <= _upr; i++) 
         printf("Column of row %d is %d \n",i,[_columnOfRow at: i]);
     printf("\n");
+   int assignmentCost = 0;
+   for(CPInt r = _lowr; r <= _upr; r++) 
+      assignmentCost += [_cost at: r : [_columnOfRow at: r]];
+   printf("Cost of assignment: %d \n",assignmentCost);
     
 }
 
