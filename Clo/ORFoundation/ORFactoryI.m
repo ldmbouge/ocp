@@ -9,11 +9,10 @@
 
  ***********************************************************************/
 
-
-#import "CPFactoryI.h"
+#import "ORFactoryI.h"
 #import "ORFoundation/ORAVLTree.h"
 
-@implementation CPInternalFactory 
+@implementation ORInternalFactory 
 
 +(ORAVLTree*) AVLTree
 {

@@ -17,9 +17,9 @@
 #import "objcp/CPCrFactory.h"
 
 
-id<CPIntSet> knightMoves(id<CP> cp,int i) 
+id<ORIntSet> knightMoves(id<CP> cp,int i) 
 {
-    id<CPIntSet> S = [CPFactory intSet: cp];
+    id<ORIntSet> S = [CPFactory intSet: cp];
     if (i % 8 == 1) {
         [S insert: i-15]; [S insert: i-6]; [S insert: i+10]; [S insert: i+17];
     }

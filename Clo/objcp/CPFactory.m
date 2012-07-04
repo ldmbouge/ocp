@@ -11,6 +11,7 @@
 
 
 #import "CPFactory.h"
+#import "ORFoundation/ORFactory.h"
 #import "CPData.h"
 #import "CPI.h"
 #import "CPCreateI.h"
@@ -84,12 +85,24 @@ void failNow()
 {
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
-+(id<CPInteger>) integer: (id<CP>) cp value: (CPInt) value
++(id<CPInteger>) integer: (id<ORTracker>)tracker value: (CPInt) value
 {
-    CPIntegerI* o = [[CPIntegerI alloc] initCPIntegerI: value];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   return (id<CPInteger>)[ORFactory integer:tracker value:value];
 }
+
++(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value
+{
+   return (id<CPIntArray>)[ORFactory intArray:tracker range:range value:value];
+}
++(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo
+{
+   return (id<CPIntArray>)[ORFactory intArray:tracker range:range with:clo];
+}
++(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
+{
+   return (id<CPIntArray>)[ORFactory intArray:tracker range:r1 range:r2 with:clo];
+}
+
 +(CPIntVarI*) intVar: (id<CP>) cp domain: (CPRange) range
 {
     return [CPIntVarI initCPIntVar: cp low: range.low up: range.up];
@@ -117,27 +130,6 @@ void failNow()
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
-}
-
-+(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) range value: (CPInt) value
-{
-    CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range:range value: (CPInt) value];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
-}
-
-+(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) range with:(CPInt(^)(CPInt)) clo
-{
-    CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range:range with:clo];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
-}
-
-+(CPIntArrayI*) intArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with: (CPInt(^)(CPInt,CPInt)) clo
-{
-    CPIntArrayI* o = [[CPIntArrayI alloc] initCPIntArray: cp range: r1 range: r2 with:clo];    
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
 }
 
 +(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2
@@ -257,60 +249,21 @@ void failNow()
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
-+(id<CPExpr>) validate:(id<CPExpr>)e onError:(const char*)str
-{
-   id<CP> cp = [e cp];
-   if (cp == NULL)
-      @throw [[ORExecutionError alloc] initORExecutionError: str]; 
-   [[((CoreCPI*) cp) solver] trackObject: e];
-   return e;   
-}
-+(id<CPExpr>) expr: (id<CPExpr>) left add: (id<CPExpr>) right
-{
-   id<CPExpr> o = [[CPExprPlusI alloc] initCPExprPlusI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in Add Expression"];
-}
-+(id<CPExpr>) expr: (id<CPExpr>) left sub: (id<CPExpr>) right
-{
-   id<CPExpr> o = [[CPExprMinusI alloc] initCPExprMinusI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in Sub Expression"];
-}
-+(id<CPExpr>) expr: (id<CPExpr>) left mul: (id<CPExpr>) right
-{
-   id<CPExpr> o = [[CPExprMulI alloc] initCPExprMulI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in Mul Expression"];
-}
-+(id<CPRelation>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right
-{
-   id<CPRelation> o = [[CPExprEqualI alloc] initCPExprEqualI: left and: right]; 
-   [self validate:o onError:"No CP Solver in == Expression"];
-   return o;
-}
-+(id<CPExpr>) exprAbs: (id<CPExpr>) op
-{
-   id<CPExpr> o = [[CPExprAbsI alloc] initCPExprAbsI:op];
-   return [self validate:o onError:"No CP Solver in Abs Expression"];
-}
-
-+(id<CPExpr>) sum: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e
-{
-    CPExprSumI* o = [[CPExprSumI alloc] initCPExprSumI: cp range: r filteredBy: f of: e];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o; 
-}
-
-+(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
++(id<ORExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
 {
    id<CP> cp = [vars[0] cp];
-   id<CPExpr> rv = nil;
+   id<ORExpr> rv = nil;
    CPInt i = 0;
    while(vars[i]!=nil) {
-      id<CPExpr> term = [self expr:vars[i] mul:[CPFactory integer:cp value:coefs[i]]];
-      rv = rv==nil ? term : [CPFactory expr:rv add:term];
+      id<ORExpr> term = [vars[i] mul:[CPFactory integer:cp value:coefs[i]]];
+      rv = rv==nil ? term : [rv add:term];
       ++i;
    }
    return rv;
 }
-
++(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   return [ORFactory sum:tracker range:r filteredBy:f of:e];
+}
 @end
 

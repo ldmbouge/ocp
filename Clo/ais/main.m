@@ -11,6 +11,7 @@
 
 
 #import <Foundation/Foundation.h>
+#import "ORFoundation/ORFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
@@ -41,9 +42,8 @@ int main(int argc, const char * argv[])
       [cp solveAll: ^{
          [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
          for(CPUInt i=SD.low;i<=SD.up;i++) {
-            [cp add:[CPFactory expr:[CPFactory expr:[dx at:i]
-                                              equal:[CPFactory exprAbs:[CPFactory expr:[sx at:i+1] sub:[sx at:i]]]]
-                        consistency: DomainConsistency]];
+            [cp addRel:[[dx at:i] equal:[ORFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]]]
+           consistency: DomainConsistency];
          }
          [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
          [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];

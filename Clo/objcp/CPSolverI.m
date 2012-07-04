@@ -17,6 +17,7 @@
 #import "CPTypes.h"
 #import "ORFoundation/ORSetI.h"
 #import "CPSolutionI.h"
+#import "CPLinear.h"
 
 #define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
@@ -315,19 +316,19 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 -(void) trackVariable: (id) var
 {
    [var setId:[_vars count]];
-   [_vars addObject:var];
-   if (!_closed) 
+   if (!_closed) {
+      [_vars addObject:var];
       [var autorelease];
-   else 
+   } else 
       [_trail trailRelease:var];
 }
 
 -(void) trackObject:(id)obj
 {
-   [_oStore addObject:obj];
-   if (!_closed) 
+   if (!_closed) {
+      [_oStore addObject:obj];
       [obj autorelease];
-   else 
+   } else 
       [_trail trailRelease:obj];
 }
 -(id)virtual:(id<CPVirtual>)obj
@@ -490,9 +491,11 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    return _status;
 }
--(CPStatus)  addRel:(id<CPRelation>)c
+-(CPStatus)  addRel:(id<CPRelation>)c consistency:(CPConsistency)cons
 {
-   return [self add:[CPFactory expr:c]];
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:c consistency:cons];
+   [self trackObject:wrapper];
+   return [self add:wrapper];
 }
 -(CPStatus) add: (id<CPConstraint>) c
 {

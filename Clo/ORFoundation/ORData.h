@@ -2,26 +2,31 @@
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
-#import "CPSolver.h"
-#import "CP.h"
+#import "ORFoundation/ORTypes.h"
 
-@protocol CPInteger;
-@protocol CPInformer;
-@protocol CPIntInformer;
-@protocol CPVoidInformer;
-@class CPAVLTree;
+typedef struct ORRange {
+   ORInt low;
+   ORInt up;
+} ORRange;
 
-@interface CPCrFactory : NSObject
-+(id<CPInteger>) integer:(id<ORTracker>)tracker value:(CPInt) value;
-+(id<CPIntInformer>) intInformer;
-+(id<CPVoidInformer>) voidInformer;
+typedef struct ORBounds {
+   ORInt min;
+   ORInt max;
+} ORBounds;
+
+@protocol ORExpr;
+
+@protocol ORInteger <ORExpr>
+-(ORInt)  value;
+-(void) setValue: (ORInt) value;
+-(void) incr;
+-(void) decr;
 @end

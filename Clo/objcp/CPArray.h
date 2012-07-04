@@ -9,6 +9,11 @@
 
  ***********************************************************************/
 
+#import "ORFoundation/ORArray.h"
+
+@protocol CPIntArray <ORIntArray>
+@end
+
 @protocol CPVarArray <NSObject>
 -(id<CPVar>) at: (CPInt) value;
 -(void) set: (id<CPVar>) x at: (CPInt) value;
@@ -36,16 +41,6 @@
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<CP>) cp;
-@end
-
-@protocol CPIntArray <NSObject> 
--(CPInt) at: (CPInt) value;
--(CPInt) low;
--(CPInt) up;
--(NSUInteger) count;
--(NSString*) description;
--(id<CP>) cp;
--(id<CPExpr>) index: (id<CPExpr>) idx;
 @end
 
 @protocol CPTRIntArray <NSObject> 

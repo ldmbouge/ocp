@@ -15,6 +15,7 @@
 #import "CPDom.h"
 #import "CPConstraint.h"
 #import "CPDataI.h"
+#import "ORFoundation/ORExprI.h"
 #import "ORFoundation/ORSetI.h"
 #import "CPBitDom.h"
 #import "objc/runtime.h"
@@ -120,7 +121,7 @@ enum CPVarClass {
    CPVCAffine = 2
 };
 
-@interface CPIntVarI : CPExprI<CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : ORExprI<CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
    enum CPVarClass                      _vc;
    CPUInt                             _name;
@@ -139,6 +140,7 @@ enum CPVarClass {
 -(NSString*) description;
 -(CPSolverI*) solver;
 -(id<CP>) cp;
+-(id<ORTracker>) tracker;
 -(NSSet*)constraints;
 -(CPBitDom*)flatDomain;
 

@@ -37,7 +37,7 @@
 @interface CPConcurrency : NSObject {
     
 }
-+(void) parall: (CPRange) R do: (CPInt2Void) closure;
++(void) parall: (CPRange) R do: (ORInt2Void) closure;
 +(void) parall: (CPRange) R do: (CPInt2Void) closure untilNotifiedBy: (id<CPInformer>) informer;
 +(id<CPIntInformer>) intInformer;
 +(id<CPVoidInformer>) voidInformer;

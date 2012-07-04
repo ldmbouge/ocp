@@ -21,7 +21,7 @@
 
 CPInt labelFF3(CP* m,id<CPIntVarArray> x,CPInt from,CPInt to)
 {
-   CPIntegerI* nbSolutions = [[[CPIntegerI alloc] initCPIntegerI: 0] autorelease];
+   id<CPInteger> nbSolutions = [CPFactory integer:m value:0];
    [m solveAll: ^() {
       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
       [nbSolutions incr];

@@ -19,66 +19,6 @@
 #include <sys/resource.h>
 #include <unistd.h>
 #endif
-
-@implementation CPIntegerI 
--(CPIntegerI*) initCPIntegerI: (CPInt) value
-{
-  self = [super init];
-  _value = value;
-  return self;
-}
--(CPInt) value 
-{
-  return _value;
-}
--(void) setValue: (CPInt) value
-{
-  _value = value;
-}
--(void) incr
-{
-  _value++;
-}
--(void) decr;
-{
-  _value--;
-}
--(CPInt) min
-{
-    return _value;
-}
--(CPInt) max
-{
-   return _value;
-}
--(BOOL) isConstant
-{
-   return YES;
-}
--(BOOL) isVariable
-{
-   return NO;
-}
--(id<CP>) cp
-{
-    return nil;
-}
--(NSString*)description
-{
-   return [NSString stringWithFormat:@"%ld",_value];
-}
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_value];
-}
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_value];
-   return self;
-}
-@end
-
 static CPInt _nbStreams;
 static CPInt _deterministic;
 

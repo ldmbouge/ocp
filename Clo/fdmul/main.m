@@ -43,8 +43,8 @@ int main(int argc, const char * argv[])
          [cp addRel:[[x at:6] equal:[x at:15]]];
          [cp addRel:[[[x at: 7] add:[x at: 9]] equal:[[x at:16] add:[[c at:6] muli:10]]]];
          
-         id<CPExpr> lhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:8],[x at:10],[x at:12],[c at:6],nil} by:(int[]){1,1,1,1}];
-         id<CPExpr> lhs2 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:11],[x at:13],[c at:7],nil} by:(int[]){1,1,1}];
+         id<ORExpr> lhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:8],[x at:10],[x at:12],[c at:6],nil} by:(int[]){1,1,1,1}];
+         id<ORExpr> lhs2 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:11],[x at:13],[c at:7],nil} by:(int[]){1,1,1}];
          
          [cp addRel:[lhs1 equal:[[x at:17] add:[[c at:7] muli:10]]]];
          [cp addRel:[lhs2 equal:[[x at:18] add:[[c at:8] muli:10]]]];

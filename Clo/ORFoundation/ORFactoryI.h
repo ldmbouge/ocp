@@ -9,15 +9,14 @@
 
  ***********************************************************************/
 
-
 #import <Foundation/Foundation.h>
-#import "CPFactory.h"
 
 @class ORAVLTree;
+@protocol IntEnumerator;
 
-@interface CPInternalFactory : NSObject
+@interface ORInternalFactory : NSObject
 
 +(ORAVLTree*) AVLTree;
 +(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (ORAVLTree*) tree;
 
-@end;
+@end

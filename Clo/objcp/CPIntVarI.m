@@ -192,6 +192,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return _cp;
 }
+-(id<ORTracker>) tracker
+{
+   return _cp;
+}
 -(NSSet*)constraints
 {
    NSSet* rv = collectConstraints(&_net);

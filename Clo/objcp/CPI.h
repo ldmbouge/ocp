@@ -43,6 +43,7 @@
 -(void)addHeuristic:(id<CPHeuristic>)h;
    
 -(void)              addRel: (id<CPRelation>) c;
+-(void)              addRel: (id<ORRelation>) r consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                post: (id<CPConstraint>) c;
 -(void)               close;
@@ -60,6 +61,7 @@
 -(id)               virtual: (id) obj;
 -(id<CPSolver>)        solver;
 -(id<CPExplorer>)    explorer;
+-(void)trackObject:(id)object;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 -(id<CPPortal>)portal;

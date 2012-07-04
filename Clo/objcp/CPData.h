@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORFoundation/ORExpr.h"
 #import <objcp/CPSolution.h>
 #import <objcp/CPTypes.h>
 
@@ -17,15 +18,6 @@
 @protocol CP;
 @protocol CPExprVisitor;
 
-typedef struct CPRange {
-    CPInt low;
-    CPInt up;
-} CPRange;
-
-typedef struct CPBounds {
-    CPInt min;
-    CPInt max;
-} CPBounds;
 
 typedef enum  {
     CPFailure,
@@ -40,30 +32,20 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 typedef CPStatus (^CPVoid2CPStatus)(void);
 
 @protocol CPIntVar;
-@protocol CPRelation;
 
-@protocol CPExpr <NSObject,NSCoding>
--(id<CP>) cp;
--(CPInt) min;
--(CPInt) max;
--(id<CPIntVar>)var;
--(BOOL) isConstant;
--(BOOL) isVariable;
+@protocol CPExpr <ORExpr>
+/*
 -(id<CPExpr>) add: (id<CPExpr>) e;
 -(id<CPExpr>) sub: (id<CPExpr>) e;
 -(id<CPExpr>) mul: (id<CPExpr>) e;
--(id<CPExpr>) muli: (CPInt) e;
--(id<CPRelation>) equal: (id<CPExpr>) e;
+-(id<CPExpr>) muli: (ORInt) e;
+ */
 @end
 
 @protocol CPRelation <CPExpr>
 @end
 
-@protocol CPInteger <CPExpr>
--(CPInt)  value;
--(void) setValue: (CPInt) value;
--(void) incr;
--(void) decr;
+@protocol CPInteger <ORInteger>
 @end
 
 @protocol CPVar <CPExpr,CPSavable>
@@ -78,6 +60,7 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(bool) bound;
 -(CPInt)  min;
 -(CPInt)  max;
+-(id<CP>) cp;
 -(void) bounds: (CPBounds*) bnd;
 -(CPInt) domsize;
 -(CPInt)countFrom:(CPInt)from to:(CPInt)to;
@@ -97,14 +80,5 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 +(CPInt) cputime;
 +(CPInt) microseconds;
 @end;
-
-typedef void (^CPClosure)(void);
-typedef bool (^CPInt2Bool)(CPInt);
-typedef bool (^CPVoid2Bool)(void);
-typedef CPInt (^CPInt2Int)(CPInt);
-typedef void (^CPInt2Void)(CPInt);
-typedef int (^CPIntxInt2Int)(CPInt,CPInt);
-typedef id<CPExpr> (^CPInt2Expr)(CPInt);
-typedef void (^CPVirtualClosure)(id<CP>);
 
 

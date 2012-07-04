@@ -14,11 +14,12 @@
 #import "CPCreateI.h"
 #import "CPConcurrency.h"
 #import "ORFoundation/ORAVLTree.h"
+#import "ORFoundation/ORDataI.h"
 
 @implementation CPCrFactory
-+(id<CPInteger>) integer: (CPInt) value
++(id<CPInteger>) integer:(id<ORTracker>)tracker value:(CPInt) value
 {
-    return [[CPIntegerI alloc] initCPIntegerI: value];    
+   return (id<CPInteger>)[[ORIntegerI alloc] initORIntegerI:tracker value:value];    
 }
 +(id<CPIntInformer>) intInformer 
 {

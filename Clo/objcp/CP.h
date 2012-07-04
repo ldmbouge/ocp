@@ -36,7 +36,7 @@
 -(id<CPInformer>) propagateDone;
 @end
 
-@protocol CP <CPSolutionProtocol> 
+@protocol CP <CPSolutionProtocol,ORTracker> 
 
 -(id<CPSearchController>) controller;
 
@@ -49,7 +49,8 @@
 -(void)              tryall: (CPRange) range filteredBy: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
--(void)              addRel: (id<CPRelation>) r;
+-(void)              addRel: (id<ORRelation>) r;
+-(void)              addRel: (id<ORRelation>) r consistency:(CPConsistency)cons;
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;

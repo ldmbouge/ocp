@@ -19,30 +19,6 @@
 #import "CPIntVarI.h"
 #import "CPError.h"
 
-@interface CPIntArrayI : NSObject<CPVirtual,NSCoding,CPIntArray> {
-    id<CP>   _cp;
-    CPInt*   _array;
-    CPInt    _low;
-    CPInt    _up;
-    CPInt    _nb;
-}
--(CPIntArrayI*) initCPIntArray: (id<CP>) cp size: (CPInt) nb value: (CPInt) v;
--(CPIntArrayI*) initCPIntArray: (id<CP>) cp size: (CPInt) nb with: (CPInt(^)(CPInt)) clo;
--(CPIntArrayI*) initCPIntArray: (id<CP>) cp range: (CPRange) range value: (CPInt) v;
--(CPIntArrayI*) initCPIntArray: (id<CP>) cp range: (CPRange) range with: (CPInt(^)(CPInt)) clo;
--(CPIntArrayI*) initCPIntArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(CPInt(^)(CPInt,CPInt)) clo;
--(void) dealloc;
--(CPInt) at: (CPInt) value;
--(CPInt) low;
--(CPInt) up;
--(NSUInteger)count;
--(NSString*)description;
--(id<CP>) cp;
--(CPInt)virtualOffset;   
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
-
 @interface CPVarArrayI : NSObject<CPVirtual,CPVarArray,NSCoding> {
    id<CP>         _cp;
    id<CPVar>*  _array;

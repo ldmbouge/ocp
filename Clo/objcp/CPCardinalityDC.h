@@ -19,8 +19,8 @@
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> {
     CPIntVarArrayI* _x;
-    CPIntArrayI*    _lb;
-    CPIntArrayI*    _ub;
+    id<CPIntArray>  _lb;
+    id<CPIntArray>  _ub;
     
     CPIntVarI**     _var;         
     CPInt           _varSize;

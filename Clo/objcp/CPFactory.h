@@ -37,13 +37,17 @@ void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
-
-+(id<CPInteger>) integer: (id<CP>) cp value: (CPInt) value;
-+(id<CPIntVar>) intVar: (id<CP>) cp domain: (CPRange) range;
++(id<CPInteger>) integer: (id<ORTracker>)tracker value: (CPInt) value;
++(id<CPIntVar>) intVar: (id<ORTracker>) cp domain: (CPRange) range;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (CPInt) b;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a shift:(CPInt) b;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
+
++(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value;
++(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo;
++(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
+
 
 +(id<CPVarArray>) varArray: (id<CP>) cp range: (CPRange) range;
 
@@ -55,10 +59,6 @@ void failNow();
 
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
-
-+(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) range value: (CPInt) value;
-+(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) range with:(CPInt(^)(CPInt)) clo;
-+(id<CPIntArray>) intArray: (id<CP>) cp range: (CPRange) r1 range: (CPRange) r2 with:(CPInt(^)(CPInt,CPInt)) clo;
 
 +(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2;
 
@@ -79,13 +79,8 @@ void failNow();
 
 @interface CPFactory (expression)
 
-+(id<CPExpr>) expr: (id<CPExpr>) left add: (id<CPExpr>) right;
-+(id<CPExpr>) expr: (id<CPExpr>) left sub: (id<CPExpr>) right;
-+(id<CPExpr>) expr: (id<CPExpr>) left mul: (id<CPExpr>) right;
-+(id<CPRelation>) expr: (id<CPExpr>) left equal: (id<CPExpr>) right;
-+(id<CPExpr>) exprAbs: (id<CPExpr>) op;
-+(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
-+(id<CPExpr>) sum: (id<CP>) cp range: (CPRange) r filteredBy: (CPInt2Bool) f of: (CPInt2Expr) e;
++(id<ORExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
++(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 
 @end;
 

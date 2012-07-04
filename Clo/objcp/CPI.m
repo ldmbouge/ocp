@@ -189,9 +189,16 @@
 
 -(void) addRel: (id<CPRelation>) c
 {
-   CPStatus status = [_solver addRel: c];
+   CPStatus status = [_solver addRel: c consistency:ValueConsistency];
    if (status == CPFailure)
       [_search fail];
+}
+
+-(void) addRel: (id<ORRelation>) r consistency:(CPConsistency)cons
+{
+   CPStatus status = [_solver addRel: r consistency:cons];
+   if (status == CPFailure)
+      [_search fail];   
 }
 
 -(void) add: (id<CPConstraint>) c
@@ -245,6 +252,11 @@
 {
    return _portal;
 }
+-(void)trackObject:(id)object
+{
+   [_solver trackObject:object];
+}
+
 @end
 
 // ==================================================================================================================

@@ -34,23 +34,23 @@ int main(int argc, const char * argv[])
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
          [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
          
-         id<CPExpr> lhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:0],[x at:1],[x at:2],nil} by:(int[]){1,10,100}];
-         id<CPExpr> rhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],nil} by:(int[]){1,10,100}];
-         id<CPExpr> rhs2 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:9],[x at:10],[x at:11],nil} by:(int[]){1,10,100}];
-         id<CPExpr> rhs3 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:12],[x at:13],[x at:14],nil} by:(int[]){1,10,100}];
+         id<ORExpr> lhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:0],[x at:1],[x at:2],nil} by:(int[]){1,10,100}];
+         id<ORExpr> rhs1 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],nil} by:(int[]){1,10,100}];
+         id<ORExpr> rhs2 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:9],[x at:10],[x at:11],nil} by:(int[]){1,10,100}];
+         id<ORExpr> rhs3 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:12],[x at:13],[x at:14],nil} by:(int[]){1,10,100}];
          [cp addRel:[[lhs1 mul:[x at:3]] equal:rhs1]];
          [cp addRel:[[lhs1 mul:[x at:4]] equal:rhs2]];
          [cp addRel:[[lhs1 mul:[x at:5]] equal:rhs3]];
-         id<CPExpr> lhs4 = [CPFactory sum:cp range:(CPRange){1,5} filteredBy:nil
+         id<ORExpr> lhs4 = [CPFactory sum:cp range:(CPRange){1,5} filteredBy:nil
                                        of:^id<CPExpr>(CPInt i) {
                                           return [[x at:14+i] muli: ipow(10,i-1)];
                                        }];
          /*id<CPExpr> lhs4b = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:15],[x at:16],[x at:17],[x at:18],[x at:19],nil} 
                                               by:(int[]){1,10,100,1000,10000}];*/
          
-         id<CPExpr> rhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],[x at:9],[x at:10],[x at:11],[x at:12],[x at:13],[x at:14],nil}
+         id<ORExpr> rhs4 = [CPFactory dotProduct:(id<CPIntVar>[]){[x at:6],[x at:7],[x at:8],[x at:9],[x at:10],[x at:11],[x at:12],[x at:13],[x at:14],nil}
                                               by:(int[]){1,10,100,10,100,1000,100,1000,10000}];
-         [cp add:[CPFactory expr:[CPFactory expr:lhs4 equal:rhs4]]];
+         [cp addRel:[lhs4 equal:rhs4]];
 
          //NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
          //BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];

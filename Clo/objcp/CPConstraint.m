@@ -260,18 +260,6 @@
     [[[x cp] solver] trackObject:o];
     return o;    
 }
-+(id<CPConstraint>) expr: (id<CPExpr>)e 
-{
-   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:ValueConsistency];
-   [[[e cp] solver] trackObject:o];
-   return o;
-}
-+(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c
-{
-   id<CPConstraint> o = [[CPExprConstraintI alloc] initCPExprConstraintI:e consistency:c];
-   [[[e cp] solver] trackObject:o];
-   return o;
-}
 +(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix
 {
     id<CPConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix];

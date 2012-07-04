@@ -12,18 +12,16 @@
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORSet.h"
 #import "ORFoundation/ORAVLTree.h"
-#import "CP.h"
-
 
 @interface ORIntSetI : NSObject<ORIntSet> {
     ORAVLTree*     _avl;
 }
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
--(bool) member: (CPInt) v;
--(void) insert: (CPInt) v;
--(void) delete: (CPInt) v;
--(CPInt) size;
+-(bool) member: (ORInt) v;
+-(void) insert: (ORInt) v;
+-(void) delete: (ORInt) v;
+-(ORInt) size;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;

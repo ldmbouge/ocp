@@ -16,8 +16,8 @@
 #import "CPCardinality.h"
 
 static void computeCardinalities(CPIntVarArrayI* ax,
-                                 CPIntArrayI* clow,
-                                 CPIntArrayI* cup,
+                                 id<CPIntArray> clow,
+                                 id<CPIntArray> cup,
                                  CPInt** lowArrayr,
                                  CPInt** upArrayr,
                                  CPInt* lr,
@@ -123,7 +123,7 @@ static void computeCardinalities(CPIntVarArrayI* ax,
     return self;
 }
 
--(id) initCardinalityCst: (CPIntVarArrayI*) ax low: (CPIntArrayI*) low up: (CPIntArrayI*) up
+-(id) initCardinalityCst: (CPIntVarArrayI*) ax low: (id<CPIntArray>) low up: (id<CPIntArray>) up
 {
     self = [super initCPActiveConstraint: [ax solver]];
     _required = _possible = 0;   

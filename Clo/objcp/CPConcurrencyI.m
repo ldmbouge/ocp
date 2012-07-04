@@ -330,7 +330,7 @@ static void init_eventlist()
 +(void) parall: (CPRange) R do: (CPInt2Void) closure untilNotifiedBy: (id<CPInformer>) informer
 {
     CPInt2Void clo = [closure copy];
-    id<CPInteger> done = [CPCrFactory integer: 0];
+   id<CPInteger> done = [CPCrFactory integer:nil value:0];
     [CPConcurrency parall: R
                        do: ^void(CPInt i) { 
                            [informer whenNotifiedDo: ^(void) { 

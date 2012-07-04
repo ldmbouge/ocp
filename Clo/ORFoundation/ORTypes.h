@@ -40,4 +40,14 @@ static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
 #define MAXUNSIGNED ((ORUInt)0xFFFFFFFF)
 #define MINUNSIGNED ((ORUInt)0x0)
 
+@protocol ORExpr;
+
+typedef void (^ORClosure)(void);
+typedef bool (^ORInt2Bool)(ORInt);
+typedef bool (^ORVoid2Bool)(void);
+typedef ORInt (^ORInt2Int)(ORInt);
+typedef void (^ORInt2Void)(ORInt);
+typedef int (^ORIntxInt2Int)(ORInt,ORInt);
+typedef id<ORExpr> (^ORInt2Expr)(ORInt);
+
 #endif

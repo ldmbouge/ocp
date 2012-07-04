@@ -25,7 +25,7 @@
 @end
 
 @protocol CPSolver <AbstractSolver>
--(CPStatus) addRel:(id<CPRelation>) r;
+-(CPStatus) addRel:(id<CPRelation>) r consistency:(CPConsistency)cons;
 -(CPStatus) add: (id<CPConstraint>) c;
 -(CPStatus) post: (id<CPConstraint>) c;
 -(CPStatus) label: (id) var with: (CPInt) val;

@@ -17,7 +17,6 @@
 #import "ORTrail.h"
 #import "CPTracer.h"
 #import "CPSolver.h"
-#import "CPEvents.h"
 
 @interface SemDFSController : CPDefaultController <NSCopying,CPSearchController,CPStealing> {
 @private

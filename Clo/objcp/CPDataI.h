@@ -15,29 +15,6 @@
 @class CoreCPI;
 @class CP;
 
-@interface CPExprI: NSObject<CPExpr,NSCoding>
--(id<CPExpr>) add: (id<CPExpr>) e; 
--(id<CPExpr>) sub: (id<CPExpr>) e;
--(id<CPExpr>) mul: (id<CPExpr>) e;
--(id<CPExpr>) muli: (CPInt) e;
--(id<CPRelation>) equal: (id<CPExpr>) e;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
-
-@interface CPIntegerI : CPExprI<NSCoding,CPInteger> {
-	CPInt _value;
-}
--(CPIntegerI*) initCPIntegerI: (CPInt) value;
--(CPInt)  value;
--(void) setValue: (CPInt) value;
--(void) incr;
--(void) decr;
--(CPInt)   min;
--(id<CP>) cp;
-@end
-
-
 
 @interface CPStreamManager : NSObject 
 +(void) initialize;

@@ -11,14 +11,14 @@
 
 #import "ORSetI.h"
 #import "ORFoundation/ORAVLTree.h"
-#import "CPFactoryI.h"
-#import "CPError.h"
+#import "ORFactoryI.h"
+#import "ORError.h"
 
 @implementation ORIntSetI 
 -(id<ORIntSet>) initORIntSetI
 {
     self = [super init];
-    _avl = [[CPInternalFactory AVLTree] retain];
+    _avl = [[ORInternalFactory AVLTree] retain];
     return self;
 }
 -(void) dealloc 
@@ -48,7 +48,7 @@
 }
 -(id<IntEnumerator>) enumerator
 {
-   return [CPInternalFactory AVLTreeKeyIntEnumerator: _avl];
+   return [ORInternalFactory AVLTreeKeyIntEnumerator: _avl];
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {   
@@ -63,7 +63,7 @@
 - (id) initWithCoder:(NSCoder*) aDecoder
 {
     self = [super init];
-    _avl = [[CPInternalFactory AVLTree] retain];
+    _avl = [[ORInternalFactory AVLTree] retain];
     ORInt size;
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&size];
     for(ORInt i = 0; i < size; i++) {

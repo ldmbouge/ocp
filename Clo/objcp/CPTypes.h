@@ -13,11 +13,32 @@
 #define __CPTYPES_H
 
 #import <ORFoundation/ORTypes.h>
+#import <ORFoundation/ORData.h>
 
 typedef ORInt CPInt;
 typedef ORUInt CPUInt;
 typedef ORLong  CPLong;
 typedef ORULong CPULong;
+
+typedef enum {
+   DomainConsistency,
+   RangeConsistency,
+   ValueConsistency
+} CPConsistency;
+
+typedef ORRange CPRange;
+typedef ORBounds CPBounds;
+
+typedef ORClosure     CPClosure;
+typedef ORInt2Bool    CPInt2Bool;
+typedef ORVoid2Bool   CPVoid2Bool;
+typedef ORInt2Int     CPInt2Int;
+typedef ORInt2Void    CPInt2Void;
+typedef ORIntxInt2Int CPIntxInt2Int;
+typedef ORInt2Expr    CPInt2Expr;
+
+@protocol CP;
+typedef void (^CPVirtualClosure)(id<CP>);
 
 
 #endif
