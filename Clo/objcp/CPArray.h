@@ -12,6 +12,7 @@
 #import "ORFoundation/ORArray.h"
 
 @protocol CPIntArray <ORIntArray>
+-(id<CPExpr>) index: (id<CPExpr>) idx;
 @end
 
 @protocol CPVarArray <NSObject>

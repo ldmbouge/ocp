@@ -32,20 +32,20 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 typedef CPStatus (^CPVoid2CPStatus)(void);
 
 @protocol CPIntVar;
+@protocol CPRelation;
 
 @protocol CPExpr <ORExpr>
-/*
 -(id<CPExpr>) add: (id<CPExpr>) e;
 -(id<CPExpr>) sub: (id<CPExpr>) e;
 -(id<CPExpr>) mul: (id<CPExpr>) e;
 -(id<CPExpr>) muli: (ORInt) e;
- */
+-(id<CPRelation>) equal: (id<CPExpr>) e;
 @end
 
 @protocol CPRelation <CPExpr>
 @end
 
-@protocol CPInteger <ORInteger>
+@protocol CPInteger <ORInteger,CPExpr>
 @end
 
 @protocol CPVar <CPExpr,CPSavable>

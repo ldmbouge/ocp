@@ -21,7 +21,7 @@
 @class CPAVLTree;
 
 @interface CPCrFactory : NSObject
-+(id<CPInteger>) integer:(id<ORTracker>)tracker value:(CPInt) value;
++(id<CPInteger>) integer:(CPInt) value;
 +(id<CPIntInformer>) intInformer;
 +(id<CPVoidInformer>) voidInformer;
 @end

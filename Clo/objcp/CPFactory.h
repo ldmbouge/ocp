@@ -44,9 +44,9 @@ void failNow();
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a shift:(CPInt) b;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
-+(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value;
-+(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo;
-+(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) range value: (ORInt) value;
++(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) range with:(ORInt(^)(ORInt)) clo;
++(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 
 +(id<CPVarArray>) varArray: (id<CP>) cp range: (CPRange) range;
@@ -79,8 +79,8 @@ void failNow();
 
 @interface CPFactory (expression)
 
-+(id<ORExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
++(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 
 @end;
 

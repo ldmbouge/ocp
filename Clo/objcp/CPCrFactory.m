@@ -17,9 +17,9 @@
 #import "ORFoundation/ORDataI.h"
 
 @implementation CPCrFactory
-+(id<CPInteger>) integer:(id<ORTracker>)tracker value:(CPInt) value
++(id<CPInteger>) integer:(CPInt) value
 {
-   return (id<CPInteger>)[[ORIntegerI alloc] initORIntegerI:tracker value:value];    
+   return (id<CPInteger>)[[ORIntegerI alloc] initORIntegerI:nil value:value];    
 }
 +(id<CPIntInformer>) intInformer 
 {

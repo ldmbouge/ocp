@@ -90,17 +90,17 @@ void failNow()
    return (id<CPInteger>)[ORFactory integer:tracker value:value];
 }
 
-+(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value
++(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) range value: (ORInt) value
 {
-   return (id<CPIntArray>)[ORFactory intArray:tracker range:range value:value];
+   return (id<CPIntArray>)[ORFactory intArray:cp range:range value:value];
 }
-+(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo
++(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) range with:(ORInt(^)(ORInt)) clo
 {
-   return (id<CPIntArray>)[ORFactory intArray:tracker range:range with:clo];
+   return (id<CPIntArray>)[ORFactory intArray:cp range:range with:clo];
 }
-+(id<CPIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 {
-   return (id<CPIntArray>)[ORFactory intArray:tracker range:r1 range:r2 with:clo];
+   return (id<CPIntArray>)[ORFactory intArray:cp range:r1 range:r2 with:clo];
 }
 
 +(CPIntVarI*) intVar: (id<CP>) cp domain: (CPRange) range
@@ -249,21 +249,21 @@ void failNow()
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
-+(id<ORExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
++(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
 {
    id<CP> cp = [vars[0] cp];
-   id<ORExpr> rv = nil;
+   id<CPExpr> rv = nil;
    CPInt i = 0;
    while(vars[i]!=nil) {
-      id<ORExpr> term = [vars[i] mul:[CPFactory integer:cp value:coefs[i]]];
+      id<CPExpr> term = [vars[i] mul:[CPFactory integer:cp value:coefs[i]]];
       rv = rv==nil ? term : [rv add:term];
       ++i;
    }
    return rv;
 }
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   return [ORFactory sum:tracker range:r filteredBy:f of:e];
+   return (id<CPExpr>)[ORFactory sum:cp range:r filteredBy:f of:e];
 }
 @end
 
