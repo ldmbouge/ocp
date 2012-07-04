@@ -13,7 +13,7 @@
 #import "CPData.h"
 #import "CPCreateI.h"
 #import "CPConcurrency.h"
-#import "CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 
 @implementation CPCrFactory
 +(id<CPInteger>) integer: (CPInt) value

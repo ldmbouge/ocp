@@ -261,7 +261,7 @@ void failNow()
 {
    id<CP> cp = [e cp];
    if (cp == NULL)
-      @throw [[CPExecutionError alloc] initCPExecutionError: str]; 
+      @throw [[ORExecutionError alloc] initORExecutionError: str]; 
    [[((CoreCPI*) cp) solver] trackObject: e];
    return e;   
 }

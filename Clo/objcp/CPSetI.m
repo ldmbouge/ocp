@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPSetI.h"
-#import "CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 #import "CPFactoryI.h"
 #import "CPError.h"
 

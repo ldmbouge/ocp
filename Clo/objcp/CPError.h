@@ -10,12 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORFoundation/ORError.h"
 
-@protocol CPError <NSObject>
--(char*) msg;
-@end
-
-@interface CPSearchError : NSObject <CPError>
+@interface CPSearchError : NSObject <ORError>
 {
 @private
 	const char* _message;
@@ -24,17 +21,7 @@
 -(const char*) msg;
 @end  
 
-@interface CPExecutionError : NSObject <CPError>
-{
-@private
-	const char* _message;
-}
--(CPExecutionError*) initCPExecutionError: (const char*) msg;
--(const char*) msg;
-@end  
-
-
-@interface CPInternalError : NSObject <CPError>
+@interface CPInternalError : NSObject <ORError>
 {
 @private
 	const char* _message;
@@ -43,7 +30,7 @@
 -(const char*) msg;
 @end  
 
-@interface CPRemoveOnDenseDomainError : CPExecutionError <CPError>
+@interface CPRemoveOnDenseDomainError : ORExecutionError <ORError>
 {
 }
 -(CPRemoveOnDenseDomainError*) initCPRemoveOnDenseDomainError;

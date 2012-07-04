@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORFoundation/ORAVLTree.h"
 
 @protocol CPIntSet <NSObject> 
 -(bool) member: (CPInt) v;

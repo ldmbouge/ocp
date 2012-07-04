@@ -39,10 +39,6 @@ typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(CPInt);
 typedef CPStatus (^CPVoid2CPStatus)(void);
 
-@protocol IntEnumerator <NSObject>
--(bool) more;
--(CPInt) next;
-@end
 @protocol CPIntVar;
 @protocol CPRelation;
 

@@ -42,10 +42,10 @@
             o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC:x]; 
             break;
         case RangeConsistency:
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Range Consistency Not Implemented on alldifferent"];            
+            @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];            
             break;
         default:
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Consistency Not Implemented on alldifferent"]; 
+            @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
     }
     [[x solver] trackObject: o];
     return o;
@@ -64,13 +64,13 @@
             o = [[CPCardinalityCst alloc] initCardinalityCst: x low: low up: up]; 
             break;
         case RangeConsistency:
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Range Consistency Not Implemented on cardinality"];            
+            @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on cardinality"];            
             break;
         case DomainConsistency: 
             o = [[CPCardinalityDC alloc] initCPCardinalityDC: x low: low up: up]; 
             break;
         default:
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Consistency Not Implemented on alldifferent"]; 
+            @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
     }
     [[x solver] trackObject: o];
     return o;

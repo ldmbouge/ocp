@@ -29,6 +29,11 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
+		<key>ORFoundation.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>35</integer>
+		</dict>
 		<key>Sudoku.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -308,6 +313,11 @@
 			<true/>
 		</dict>
 		<key>5BEEF60F13970B6F002ADBD4</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BFD594215A3ACA500825BC3</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "objcp/CPTypes.h"
 #import "cont.h"
 
 @protocol CPSolver;

@@ -72,7 +72,7 @@ static void prune(CPAllDifferentDC* ad);
     if (_posted)
         return [[NSSet alloc] initWithObjects:_var count:_varSize];
     else
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: allVars called before the constraints is posted"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: allVars called before the constraints is posted"];
     return NULL;
 }
 
@@ -85,7 +85,7 @@ static void prune(CPAllDifferentDC* ad);
         return nb;
     }
     else 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
     return 0;
 }
 
@@ -160,7 +160,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
             _max = M;
     }
     if (_max == MAXINT)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "AllDifferent constraint posted on variable with no or very large domain"]; 
+        @throw [[ORExecutionError alloc] initORExecutionError: "AllDifferent constraint posted on variable with no or very large domain"]; 
     _valMatch = (CPInt*) malloc((_max-_min + 1)*sizeof(CPInt));
     _valMatch -= _min;
     for(CPInt k = _min; k <= _max; k++)

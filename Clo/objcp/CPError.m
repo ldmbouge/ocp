@@ -24,19 +24,6 @@
 }
 @end  
 
-@implementation CPExecutionError 
--(CPExecutionError*) initCPExecutionError: (const char*) msg
-{
-	self = [super init];
-	_message = msg;
-	return self;
-}
--(const char*) msg 
-{
-	return _message;
-}
-@end  
-
 @implementation CPInternalError 
 -(CPInternalError*) initCPInternalError: (const char*) msg
 {
@@ -53,7 +40,7 @@
 @implementation CPRemoveOnDenseDomainError 
 -(CPRemoveOnDenseDomainError*) initCPRemoveOnDenseDomainError
 {
-	self = [super initCPExecutionError: "Removing a value from a dense domain"];
+	self = [super initORExecutionError: "Removing a value from a dense domain"];
 	return self;
 }
 @end  

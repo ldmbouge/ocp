@@ -16,11 +16,11 @@
 
 // [ldm] The routine is meant to operate over 32-bit words (4-bytes at a time) or 64-bit wide 
 // datum. dest / src must be increased by the data item size.
-static inline void fastmemcpy(register CPUInt* dest,register CPUInt* src,register size_t len)
+static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,register size_t len)
 {
    while (len) {
       *dest++ = *src++;
-      len -= sizeof(CPUInt);
+      len -= sizeof(ORUInt);
    }
 }
 
@@ -38,12 +38,12 @@ static inline void fastmemcpy(register CPUInt* dest,register CPUInt* src,registe
       if (_length!=0) free(_data);
       _data = malloc(len);
    }
-   fastmemcpy((CPUInt*)_data,(CPUInt*)s,len);
+   fastmemcpy((ORUInt*)_data,(ORUInt*)s,len);
    _length = len;
    _start  = s;
 }
 
--(CPInt) nbCalls { return _used;}
+-(ORInt) nbCalls { return _used;}
 
 -(void)call {
 #if defined(__x86_64__)
@@ -70,7 +70,7 @@ static inline void fastmemcpy(register CPUInt* dest,register CPUInt* src,registe
    [k saveStack:len startAt:&k];
    register NSCont* jmpval = (NSCont*)_setjmp(k->_target);   
    if (jmpval != 0) {
-      fastmemcpy(jmpval->_start,(CPUInt*)jmpval->_data,jmpval->_length);
+      fastmemcpy(jmpval->_start,(ORUInt*)jmpval->_data,jmpval->_length);
       return jmpval;
    } else 
       return k;   
@@ -107,8 +107,8 @@ static void init_pthreads()
 {
    ContPool* pool = [self instancePool];
    if (pool) {
-      CPInt nb=0;
-      for(CPInt k=pool->low;k != pool->high;) {
+      ORInt nb=0;
+      for(ORInt k=pool->low;k != pool->high;) {
          [pool->pool[k] release];
          k = (k+1) % pool->sz;
          nb++;
@@ -158,7 +158,7 @@ static void init_pthreads()
 {
    if (--_cnt == 0) {
       ContPool* pool = [isa instancePool];
-      CPUInt next = (pool->high + 1) % pool->sz;
+      ORUInt next = (pool->high + 1) % pool->sz;
       if (next == pool->low) {
          free(_data);
          pool->nbCont -= 1;

@@ -49,7 +49,7 @@
     if (_posted)
         return [[NSSet alloc] initWithObjects:_var count:_varSize];
     else
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: allVars called before the constraints is posted"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: allVars called before the constraints is posted"];
     return NULL;
 }
 
@@ -62,7 +62,7 @@
         return nb;
     }
     else 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: nbUVars called before the constraints is posted"];
     return 0;
 }
 
@@ -105,7 +105,7 @@
     _upc = Columns.up;
     
     if ((_low != _lowr) || (_up != _upr))
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
     
     _cost = [CPFactory TRIntMatrix: cp range: Rows : Columns ];
     _bigM = 0;

@@ -12,12 +12,12 @@
 #import <Foundation/Foundation.h>
 #import "CP.h"
 #import "CPSet.h"
-#import "CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 
 
 @interface CPIntSetI : NSObject<CPIntSet> {
     id<CP>         _cp;
-    CPAVLTree*     _avl;
+    ORAVLTree*     _avl;
 }
 -(id<CPIntSet>) initCPIntSetI: (id<CP>) cp;
 -(void) dealloc;

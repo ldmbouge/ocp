@@ -12,16 +12,16 @@
 
 #import "CPFactoryI.h"
 #import "CPI.h"
-#import "CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 
 @implementation CPInternalFactory 
 
-+(CPAVLTree*) AVLTree: (id<CP>) cp
++(ORAVLTree*) AVLTree: (id<CP>) cp
 {
-    return [[CPAVLTree alloc] initEmptyAVL];
+    return [[ORAVLTree alloc] initEmptyAVL];
 }
-+(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (CPAVLTree*) tree
++(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (ORAVLTree*) tree
 {
-    return [[CPAVLTreeKeyIntEnumerator alloc] initCPAVLTreeKeyIntEnumerator: tree];
+    return [[ORAVLTreeKeyIntEnumerator alloc] initORAVLTreeKeyIntEnumerator: tree];
 }
 @end;

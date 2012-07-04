@@ -163,7 +163,7 @@
 -(bool) getBit:(unsigned int) idx
 {
    if (BITFREE(idx)) 
-      @throw [[CPExecutionError alloc] initCPExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
    return _low[WORDIDX(idx)]._val  & ONEAT(idx);
 }
 
@@ -209,7 +209,7 @@
 {
    // [ldm] Algorithm runs in THETA(k) where k is the number of free bits in domain.
    if(_freebits._val > 64)
-      @throw[[CPExecutionError alloc] initCPExecutionError:"Cannot get rank of a binary array with > 64 bits free.\n"];  
+      @throw[[ORExecutionError alloc] initORExecutionError:"Cannot get rank of a binary array with > 64 bits free.\n"];  
    unsigned long long rank = 0;
    unsigned long long rankIndex = 0;   
    for (int index=_wordLength-1;index >= 0;index--) {
@@ -229,7 +229,7 @@
 {
    // [ldm] Algorithm still has O(|B|) rather than O(k). Must improve and use __builtin_ffs.
    if(_wordLength>2)
-      @throw[[CPExecutionError alloc] initCPExecutionError:"CPBitArrayDom::atRank does not support bit arrays with length > 64 bits.\n"];    
+      @throw[[ORExecutionError alloc] initORExecutionError:"CPBitArrayDom::atRank does not support bit arrays with length > 64 bits.\n"];    
    unsigned int* bits = malloc(sizeof(unsigned int) * _wordLength);
    memset(bits,0,sizeof(unsigned int)*_wordLength);
    CPInt k = _freebits._val;
@@ -279,7 +279,7 @@
      */
     
     if(_wordLength>2)
-        @throw[[CPExecutionError alloc] initCPExecutionError:"CPBitArrayDomIterator does not support bit arrays with length > 64 bits.\n"];
+        @throw[[ORExecutionError alloc] initORExecutionError:"CPBitArrayDomIterator does not support bit arrays with length > 64 bits.\n"];
     
     uint64 x64bit = x[0];
     if (_wordLength>1) {

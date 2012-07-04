@@ -9,31 +9,31 @@
 
  ***********************************************************************/
 
-#import "CPAVLTree.h"
-#import "CPTypes.h"
-#import "CPError.h"
+#import "ORAVLTree.h"
+#import "ORTypes.h"
+#import "ORError.h"
 
-@interface CPAVLTreeIterator : NSEnumerator {
-   CPAVLTree* _theTree;
-   CPAVLTreeNode* _cur;   
+@interface ORAVLTreeIterator : NSEnumerator {
+   ORAVLTree* _theTree;
+   ORAVLTreeNode* _cur;   
 }
--(CPAVLTreeIterator*)initCPAVLTreeIterator:(CPAVLTree*)tree;
+-(ORAVLTreeIterator*)initORAVLTreeIterator:(ORAVLTree*)tree;
 -(NSArray*)allObjects;
 -(id)nextObject;
 @end
 
 
-@interface CPAVLTreeNode : NSObject<Position> {
+@interface ORAVLTreeNode : NSObject<Position> {
 @package
-   CPAVLTreeNode* _parent;
-   CPAVLTreeNode* _left;
-   CPAVLTreeNode* _right;
-   CPInt _height;
-   CPInt _size;
+   ORAVLTreeNode* _parent;
+   ORAVLTreeNode* _left;
+   ORAVLTreeNode* _right;
+   ORInt _height;
+   ORInt _size;
    id  _data;
-   CPInt _key;
+   ORInt _key;
 }
--(CPAVLTreeNode<Position>*)initAVLTreeNode:(CPInt)key object:(id)o;
+-(ORAVLTreeNode<Position>*)initAVLTreeNode:(ORInt)key object:(id)o;
 -(void)dealloc;
 -(bool)balanced;
 -(void)fixSize;
@@ -46,8 +46,8 @@
 #define RIGHTSIZE(n) ((n)->_right ? (n)->_right->_size : 0)
 
 
-@implementation CPAVLTreeNode
--(CPAVLTreeNode*)initAVLTreeNode:(CPInt)key object:(id)o
+@implementation ORAVLTreeNode
+-(ORAVLTreeNode*)initAVLTreeNode:(ORInt)key object:(id)o
 {
    self = [super init];
    _parent = 0;
@@ -67,7 +67,7 @@
 }
 -(bool)balanced 
 {
-   CPInt bal = LEFTHEIGHT(self) - RIGHTHEIGHT(self);
+   ORInt bal = LEFTHEIGHT(self) - RIGHTHEIGHT(self);
    return -1 <= bal && bal <= 1;
 }
 -(void)fixSize
@@ -78,7 +78,7 @@
 {
    _height = maxOf(LEFTHEIGHT(self),RIGHTHEIGHT(self))+1;
 }
--(CPAVLTreeNode<Position>*)tallest
+-(ORAVLTreeNode<Position>*)tallest
 {
    if (LEFTHEIGHT(self) > RIGHTHEIGHT(self))
        return _left;
@@ -91,9 +91,9 @@
 }
 @end
 
-@implementation CPAVLTree
+@implementation ORAVLTree
 
--(CPAVLTree*)initEmptyAVL
+-(ORAVLTree*)initEmptyAVL
 {
    self = [super init];
    _root = nil;
@@ -105,9 +105,9 @@
    [super dealloc];
 }
 
-static inline void leftRotate(CPAVLTree* t,CPAVLTreeNode* z)
+static inline void leftRotate(ORAVLTree* t,ORAVLTreeNode* z)
 {
-   CPAVLTreeNode* y = z->_right;
+   ORAVLTreeNode* y = z->_right;
    z->_right = y->_left;
    if (y->_left)
        y->_left->_parent = z;
@@ -122,9 +122,9 @@ static inline void leftRotate(CPAVLTree* t,CPAVLTreeNode* z)
        y->_parent->_left = y;      
 }
 
-static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
+static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
 {
-   CPAVLTreeNode* y = z->_left;
+   ORAVLTreeNode* y = z->_left;
    z->_left = y->_right;
    if (y->_right)
       y->_right->_parent = z;
@@ -139,16 +139,16 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
        y->_parent->_left = y;   
 }
 
--(void)reBalance:(CPAVLTreeNode*)high
+-(void)reBalance:(ORAVLTreeNode*)high
 {
    do {
       [high fixHeight];
       [high fixSize];
       if (![high balanced]) {
-         CPAVLTreeNode* z = high;
-         CPAVLTreeNode* y = [z tallest];
-         CPAVLTreeNode* x = [y tallest];
-         CPAVLTreeNode* nr;
+         ORAVLTreeNode* z = high;
+         ORAVLTreeNode* y = [z tallest];
+         ORAVLTreeNode* x = [y tallest];
+         ORAVLTreeNode* nr;
          if (z->_right == y) {
             if (y->_right == x) { // right-right
                leftRotate(self,z);
@@ -177,10 +177,10 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
    } while (high);   
 }
 
--(CPAVLTreeNode<Position>*)insertObject:(id)o forKey:(CPInt)k
+-(ORAVLTreeNode<Position>*)insertObject:(id)o forKey:(ORInt)k
 {
-   CPAVLTreeNode*  par = 0;
-   CPAVLTreeNode** cur = &_root;
+   ORAVLTreeNode*  par = 0;
+   ORAVLTreeNode** cur = &_root;
    while(*cur) {
       par = *cur;
       if (k < (*cur)->_key) 
@@ -189,16 +189,16 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
          cur = &(*cur)->_right;
       else return *cur;
    }
-   CPAVLTreeNode* retVal = [[CPAVLTreeNode alloc] initAVLTreeNode:k 
+   ORAVLTreeNode* retVal = [[ORAVLTreeNode alloc] initAVLTreeNode:k 
                                                            object:o];
    *cur = retVal;
    (*cur)->_parent = par;
    [self reBalance: *cur];
    return retVal;   
 }
--(CPAVLTreeNode<Position>*)findNodeForKey:(CPInt)k
+-(ORAVLTreeNode<Position>*)findNodeForKey:(ORInt)k
 {
-   CPAVLTreeNode* cur = _root;
+   ORAVLTreeNode* cur = _root;
    while (cur) {
       if (k < cur->_key)
          cur = cur->_left;
@@ -208,36 +208,36 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
    }
    return nil;
 }
--(id)findObjectForKey:(CPInt)k
+-(id)findObjectForKey:(ORInt)k
 {
-   CPAVLTreeNode* nd = [self findNodeForKey:k];
+   ORAVLTreeNode* nd = [self findNodeForKey:k];
    return nd ? nd->_data : nil;
 }
--(CPInt)size
+-(ORInt)size
 {
    return _root ? _root->_size : 0;
 }
--(void)updateObject:(id)o forKey:(CPInt)k
+-(void)updateObject:(id)o forKey:(ORInt)k
 {
-   CPAVLTreeNode* nd = [self findNodeForKey:k];
+   ORAVLTreeNode* nd = [self findNodeForKey:k];
    if (nd) {
       [nd->_data release];
       nd->_data = [o retain];
    }
 }
--(void)removeObjectForKey:(CPInt)k
+-(void)removeObjectForKey:(ORInt)k
 {
-   CPAVLTreeNode* togo = [self findNodeForKey:k];
+   ORAVLTreeNode* togo = [self findNodeForKey:k];
    [self removeNode:togo];
 }
--(void)removeNode:(CPAVLTreeNode<Position>*)togo
+-(void)removeNode:(ORAVLTreeNode<Position>*)togo
 {
-   CPAVLTreeNode* splice = 0;
+   ORAVLTreeNode* splice = 0;
    if (togo) {
       if (togo->_left==0 || togo->_right==0) {
          splice = togo;
-         CPAVLTreeNode* child = splice->_left ? splice->_left : splice->_right;
-         CPAVLTreeNode* from = child ? child : ( splice->_parent ? splice->_parent : 0);
+         ORAVLTreeNode* child = splice->_left ? splice->_left : splice->_right;
+         ORAVLTreeNode* from = child ? child : ( splice->_parent ? splice->_parent : 0);
          if (splice->_parent==0) {              
             _root = child;
             if (child) child->_parent = 0;
@@ -254,8 +254,8 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
          splice = togo->_right;
          while (splice->_left) splice = splice->_left;
          
-         CPAVLTreeNode* child = splice->_left ? splice->_left : splice->_right;
-         CPAVLTreeNode* from = child ? child : ( splice->_parent ? splice->_parent : 0);
+         ORAVLTreeNode* child = splice->_left ? splice->_left : splice->_right;
+         ORAVLTreeNode* from = child ? child : ( splice->_parent ? splice->_parent : 0);
          
          if (splice->_parent==0) {              
             _root = child;
@@ -275,27 +275,27 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
       }
    }   
 }
--(CPAVLTreeNode*)smallest:(CPAVLTreeNode*)x
+-(ORAVLTreeNode*)smallest:(ORAVLTreeNode*)x
 {
    if (x== 0) x = _root;
    while (x && x->_left != 0)
       x = x->_left;
    return x;
 }
--(CPAVLTreeNode*)largest:(CPAVLTreeNode*)x
+-(ORAVLTreeNode*)largest:(ORAVLTreeNode*)x
 {
    if (x==0) x = _root;
    while (x && x->_right != 0)
       x = x->_right;
    return x;
 }
--(CPAVLTreeNode*)findSucc:(CPAVLTreeNode*)x
+-(ORAVLTreeNode*)findSucc:(ORAVLTreeNode*)x
 {
    if (x) {
       if (x->_right) {
          return [self smallest:x->_right];
       } else {
-         CPAVLTreeNode* y = x->_parent;
+         ORAVLTreeNode* y = x->_parent;
          while(y != 0 && x == y->_right) {
             x = y;
             y = y->_parent;
@@ -304,13 +304,13 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
       }
    } else return 0;
 }
--(CPAVLTreeNode*)findPred:(CPAVLTreeNode*)x
+-(ORAVLTreeNode*)findPred:(ORAVLTreeNode*)x
 {
    if (x) {
       if (x->_left) {
          return [self largest:x->_left];
       } else {
-         CPAVLTreeNode* y = x->_parent;
+         ORAVLTreeNode* y = x->_parent;
          while(y != 0 && x == y->_left) {
             x = y;
             y = y->_parent;
@@ -321,11 +321,11 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
 }
 -(NSEnumerator*)iterator
 {
-   return [[[CPAVLTreeIterator alloc] init] autorelease];
+   return [[[ORAVLTreeIterator alloc] init] autorelease];
 }
 -(NSString*)description
 {
-   CPAVLTreeNode* from = [self smallest:_root];
+   ORAVLTreeNode* from = [self smallest:_root];
    NSMutableString* str = [NSMutableString stringWithCapacity:128];
    [str appendString:@"{"];
    while(from) {
@@ -341,9 +341,9 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
 }
 @end
 
-@implementation CPAVLTreeIterator
+@implementation ORAVLTreeIterator
 
--(CPAVLTreeIterator*) initCPAVLTreeIterator:(CPAVLTree*)tree
+-(ORAVLTreeIterator*) initORAVLTreeIterator:(ORAVLTree*)tree
 {
    self = [super init];
    _theTree = [tree retain];
@@ -357,9 +357,9 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
 }
 -(NSArray*)allObjects
 {
-   CPInt sz = [_theTree size];
+   ORInt sz = [_theTree size];
    NSMutableArray* rv = [NSMutableArray arrayWithCapacity:sz];
-   CPAVLTreeNode* from = [_theTree smallest:nil];
+   ORAVLTreeNode* from = [_theTree smallest:nil];
    while (from) {
       id elem = from->_data;
       [rv addObject:elem];
@@ -378,9 +378,9 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
 
 @end
 
-@implementation CPAVLTreeKeyIntEnumerator
+@implementation ORAVLTreeKeyIntEnumerator
 
--(CPAVLTreeKeyIntEnumerator*) initCPAVLTreeKeyIntEnumerator: (CPAVLTree*) tree
+-(ORAVLTreeKeyIntEnumerator*) initORAVLTreeKeyIntEnumerator: (ORAVLTree*) tree
 {
     self = [super init];
     _theTree = [tree retain];
@@ -392,19 +392,19 @@ static inline void rightRotate(CPAVLTree* t,CPAVLTreeNode* z)
     [_theTree release];
     [super dealloc];
 }
--(bool) more
+-(BOOL) more
 {
     return (_cur != NULL);
 }
--(CPInt) next
+-(ORInt) next
 {
     if (_cur) {
-        CPInt rv = _cur->_key;
+        ORInt rv = _cur->_key;
         _cur = [_theTree findSucc:_cur];
         return rv;
     } 
     else 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "No next element in the iterator"]; ;
+        @throw [[ORExecutionError alloc] initORExecutionError: "No next element in the iterator"]; ;
 }
 
 @end

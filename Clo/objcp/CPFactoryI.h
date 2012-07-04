@@ -15,11 +15,11 @@
 #import "CP.h"
 #import "CPFactory.h"
 
-@class CPAVLTree;
+@class ORAVLTree;
 
 @interface CPInternalFactory : NSObject
 
-+(CPAVLTree*) AVLTree: (id<CP>) cp;
-+(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (CPAVLTree*) tree;
++(ORAVLTree*) AVLTree: (id<CP>) cp;
++(id<IntEnumerator>) AVLTreeKeyIntEnumerator: (id<CP>) cp for: (ORAVLTree*) tree;
 
 @end;

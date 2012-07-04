@@ -68,7 +68,7 @@
 -(void) addEmptyTuple
 {
     if (_closed) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "The table is already closed"]; 
+        @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"]; 
     if (_nb == _size) 
        [self resize]; 
     _nb++;
@@ -77,9 +77,9 @@
 -(void) fill: (CPInt) j with: (CPInt) val
 {
     if (_closed) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "The table is already closed"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
     if (j < 0 || j >= _arity)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "No such index in the table tuples"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "No such index in the table tuples"];
     if (_nb == _size) 
         [self resize];
     _column[j][_nb-1] = val;
@@ -88,7 +88,7 @@
 -(void) insert: (CPInt) i : (CPInt) j : (CPInt) k
 {
     if (_closed) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "The table is already closed"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
     if (_nb == _size) 
         [self resize];
     _column[0][_nb] = i;

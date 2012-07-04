@@ -600,7 +600,7 @@ static void findSCCsink(CPCardinalityDC* card)
     if (_posted)
         return [[NSSet alloc] initWithObjects:_var count:_varSize];
     else
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Cardinality: allVars called before the constraints is posted"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: allVars called before the constraints is posted"];
     return NULL;
 }
 -(CPUInt) nbUVars
@@ -612,7 +612,7 @@ static void findSCCsink(CPCardinalityDC* card)
         return nb;
     }
     else 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Cardinality: nbUVars called before the constraints is posted"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: nbUVars called before the constraints is posted"];
     return 0;
 }
 -(void) encodeWithCoder: (NSCoder*) aCoder

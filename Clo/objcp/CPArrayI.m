@@ -101,7 +101,7 @@
 -(CPInt) at: (CPInt) value
 {
     if (value < _low || value > _up)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPIntArrayElement"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPIntArrayElement"];
     return _array[value];
 }
 -(id<CPExpr>)index:(id<CPExpr>)idx
@@ -194,13 +194,13 @@
 -(id<CPVar>) at: (CPInt) value
 {
    if (value < _low || value > _up)
-      @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPVarArrayElement"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPVarArrayElement"];
    return _array[value];
 }
 -(void) set: (id<CPVar>) x at: (CPInt) value
 {
    if (value < _low || value > _up)
-      @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPVarArrayElement"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPVarArrayElement"];
    _array[value] = x;
 }
 -(CPInt) low
@@ -376,13 +376,13 @@
 -(id<CPIntVar>) at: (CPInt) value
 {
     if (value < _low || value > _up)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPIntArrayElement"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPIntArrayElement"];
     return _array[value];
 }
 -(void) set: (id<CPIntVar>) x at: (CPInt) value
 {
     if (value < _low || value > _up)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPIntArrayElement"];  
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPIntArrayElement"];  
     _array[value] = x;
 }
 -(CPInt) low
@@ -522,7 +522,7 @@
 {
     for(CPInt k = 0; k < _arity; k++)
         if (_i[k] < _low[k] || _i[k] > _up[k])
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMatrix"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntVarMatrix"];
     int idx = _i[0] - _low[0];
     for(CPInt k = 1; k < _arity; k++)
         idx = idx * _size[k] + (_i[k] - _low[k]);
@@ -531,13 +531,13 @@
 -(CPRange) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
-       @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMatrix"]; 
+       @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntVarMatrix"]; 
     return _range[i];
 }
 -(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     _i[2] = i2;
@@ -546,7 +546,7 @@
 -(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     return _flat[[self getIndex]];
@@ -658,14 +658,14 @@
 -(CPInt) at: (CPInt) value
 {
     if (value < _low || value > _up)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPTRIntArrayElement"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPTRIntArrayElement"];
     return _array[value]._val;
 }
 
 -(void) set: (CPInt) value at: (CPInt) idx
 {
     if (idx < _low || idx > _up)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Index out of range in CPTRIntArrayElement"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPTRIntArrayElement"];
     assignTRInt(_array + idx,value,_trail);
 }
 
@@ -811,7 +811,7 @@
 {
     for(CPInt k = 0; k < _arity; k++)
         if (_i[k] < _low[k] || _i[k] > _up[k])
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMatrix"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntVarMatrix"];
     int idx = _i[0] - _low[0];
     for(CPInt k = 1; k < _arity; k++)
         idx = idx * _size[k] + (_i[k] - _low[k]);
@@ -820,13 +820,13 @@
 -(CPRange) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntVarMatrix"]; 
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntVarMatrix"]; 
     return _range[i];
 }
 -(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     _i[2] = i2;
@@ -835,7 +835,7 @@
 -(CPInt) at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     return _flat[[self getIndex]]._val;
@@ -844,7 +844,7 @@
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     _i[2] = i2;
@@ -853,7 +853,7 @@
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     assignTRInt(_flat + [self getIndex],value,_trail);
@@ -1015,7 +1015,7 @@
 {
     for(CPInt k = 0; k < _arity; k++)
         if (_i[k] < _low[k] || _i[k] > _up[k])
-            @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntMatrix"];
+            @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntMatrix"];
     int idx = _i[0] - _low[0];
     for(CPInt k = 1; k < _arity; k++)
         idx = idx * _size[k] + (_i[k] - _low[k]);
@@ -1024,13 +1024,13 @@
 -(CPRange) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong index in CPIntMatrix"]; 
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntMatrix"]; 
     return _range[i];
 }
 -(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     _i[2] = i2;
@@ -1039,7 +1039,7 @@
 -(CPInt) at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     return _flat[[self getIndex]];
@@ -1048,7 +1048,7 @@
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
     _i[2] = i2;
@@ -1057,7 +1057,7 @@
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[CPExecutionError alloc] initCPExecutionError: "Wrong arity in CPIntVarMatrix"];
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
     _i[0] = i0;
     _i[1] = i1;
    _flat[[self getIndex]] = value;

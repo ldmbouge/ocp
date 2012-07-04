@@ -11,7 +11,7 @@
 
 
 #import "CPTrigger.h"
-#import "CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 #import "CPSolverI.h"
 
 /*****************************************************************************************/
@@ -160,7 +160,7 @@ static void freeTriggers(CPTrigger* list)
 -(id) initSparseTriggerMap
 {
     self = [super init];
-    _map = [[CPAVLTree alloc] initEmptyAVL];
+    _map = [[ORAVLTree alloc] initEmptyAVL];
     return self;
 }
 -(void) dealloc
@@ -170,7 +170,7 @@ static void freeTriggers(CPTrigger* list)
 }
 -(CPTrigger*) addTriggerFor: (CPInt) value
 {
-    CPAVLTreeNode* at = [_map findNodeForKey:value];
+    ORAVLTreeNode* at = [_map findNodeForKey:value];
     if (at==nil) {
         CPTrigger* front = malloc(sizeof(CPTrigger));
         CPTrigger* back  = malloc(sizeof(CPTrigger));
@@ -193,7 +193,7 @@ static void freeTriggers(CPTrigger* list)
 }
 -(void)linkTrigger:(CPTrigger*)trig forValue:(CPInt)value
 {
-    CPAVLTreeNode* at = [_map findNodeForKey:value];
+    ORAVLTreeNode* at = [_map findNodeForKey:value];
     if (at==nil) {
         CPTrigger* front = malloc(sizeof(CPTrigger));
         CPTrigger* back  = malloc(sizeof(CPTrigger));

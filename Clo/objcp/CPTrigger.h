@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CPIntVarI.h"
-@class CPAVLTree;
+@class ORAVLTree;
 
 @protocol CPTriggerMapInterface <NSObject>
 @optional
@@ -47,7 +47,7 @@
 
 @interface CPSparseTriggerMap : CPTriggerMap {
 @private
-    CPAVLTree* _map;
+    ORAVLTree* _map;
 }
 -(id) initSparseTriggerMap;
 -(void) linkTrigger:(CPTrigger*)t forValue:(CPInt)value;

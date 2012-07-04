@@ -15,14 +15,14 @@
 #include <string.h>
 #include <stdio.h>
 #include "context.h"
-#include <objcp/CPTypes.h>
+#include <ORFoundation/ORTypes.h>
 
 typedef struct  {
    Class poolClass;
-   CPUInt low;
-   CPUInt high;
-   CPUInt sz;
-   CPUInt nbCont;
+   ORUInt low;
+   ORUInt high;
+   ORUInt sz;
+   ORUInt nbCont;
    id*          pool;
 } ContPool;
 
@@ -37,20 +37,20 @@ typedef struct  {
    void* _start;   
    char* _data;
    int _used;
-   CPInt field;  // a stored property
+   ORInt field;  // a stored property
    id  fieldId;
-   CPInt _cnt;
+   ORInt _cnt;
 }
 +(id)new;
 -(void)saveStack:(size_t)len startAt:(void*)s;
 -(void)call; 
--(CPInt)nbCalls;
+-(ORInt)nbCalls;
 -(void)dealloc;
 -(void)letgo;
 -(void)grab;
 +(NSCont*) takeContinuation;
 +(void)shutdown;
-@property (readwrite,assign) CPInt field;
+@property (readwrite,assign) ORInt field;
 @property (readwrite,assign) id  fieldId;
 @end 
 
