@@ -194,7 +194,7 @@
       [_search fail];
 }
 
--(void) addRel: (id<ORRelation>) r consistency:(CPConsistency)cons
+-(void) addRel: (id<CPRelation>) r consistency:(CPConsistency)cons
 {
    CPStatus status = [_solver addRel: r consistency:cons];
    if (status == CPFailure)
