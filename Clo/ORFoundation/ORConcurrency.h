@@ -11,37 +11,37 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol CPInformer<NSObject>
+@protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
 -(void) wheneverNotifiedDo: (id) closure;
 -(void) sleepUntilNotified;
 @end
 
-@protocol CPVoidInformer<CPInformer>
+@protocol ORVoidInformer<ORInformer>
 -(void) notify;
 @end
 
-@protocol CPIntInformer<CPInformer>
+@protocol ORIntInformer<ORInformer>
 -(void) notifyWith:(int)a0;
 @end
 
-@protocol CPIdxIntInformer<CPInformer>
--(void) notifyWith:(id)a0 andInt:(CPInt)v;
+@protocol ORIdxIntInformer<ORInformer>
+-(void) notifyWith:(id)a0 andInt:(ORInt)v;
 @end
 
-@protocol CPBarrier<NSObject> 
+@protocol ORBarrier<NSObject> 
 -(void) join;
 -(void) wait;
 @end
 
-@interface CPConcurrency : NSObject {
+@interface ORConcurrency : NSObject {
     
 }
-+(void) parall: (CPRange) R do: (ORInt2Void) closure;
-+(void) parall: (CPRange) R do: (CPInt2Void) closure untilNotifiedBy: (id<CPInformer>) informer;
-+(id<CPIntInformer>) intInformer;
-+(id<CPVoidInformer>) voidInformer;
-+(id<CPIdxIntInformer>) idxIntInformer;
-+(id<CPBarrier>)  barrier: (CPInt) nb;
++(void) parall: (ORRange) R do: (ORInt2Void) closure;
++(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer;
++(id<ORIntInformer>) intInformer;
++(id<ORVoidInformer>) voidInformer;
++(id<ORIdxIntInformer>) idxIntInformer;
++(id<ORBarrier>)  barrier: (ORInt) nb;
 +(void) pumpEvents;
 @end

@@ -597,16 +597,16 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 {
     return _closed;
 }
--(id<CPInformer>) propagateFail
+-(id<ORInformer>) propagateFail
 {
    if (_propagFail == nil)
-      _propagFail = [CPConcurrency  intInformer];
+      _propagFail = [ORConcurrency  intInformer];
    return _propagFail;
 }
--(id<CPInformer>) propagateDone
+-(id<ORInformer>) propagateDone
 {
    if (_propagDone == nil)
-      _propagDone = [CPConcurrency  voidInformer];
+      _propagDone = [ORConcurrency  voidInformer];
    return _propagDone;
 }
 

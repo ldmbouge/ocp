@@ -146,11 +146,11 @@ void foo() {
 int main (int argc, const char * argv[])
 {
     id<CP> cp = [CPFactory createSolver];
-    id<CPVoidInformer> informer = [CPConcurrency voidInformer];
+    id<ORVoidInformer> informer = [ORConcurrency voidInformer];
     NSMutableArray* array = [[NSMutableArray alloc] init];
     for(CPInt i = 1; i <= 10; i++)
         [array addObject: [CPCrFactory integer: 0]];
-    [CPConcurrency parall: (CPRange){1,10} 
+    [ORConcurrency parall: (CPRange){1,10} 
                        do: ^void(int i) { 
                            printf("The thread %p is printing %d \n",[NSThread currentThread],i); 
                            int sum = 0;
@@ -158,7 +158,7 @@ int main (int argc, const char * argv[])
                                sum++;
                                [[array objectAtIndex: i-1] incr];
                                if (sum % 100 == 0) 
-                                    [CPConcurrency pumpEvents];
+                                    [ORConcurrency pumpEvents];
                                 if (i == 10 && sum == 10000) {
                                     printf("Notification by thread 10 \n");
                                     [informer notify];

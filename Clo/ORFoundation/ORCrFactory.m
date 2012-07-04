@@ -9,24 +9,23 @@
 
  ***********************************************************************/
 
-#import "CPCrFactory.h"
-#import "CPData.h"
-#import "CPCreateI.h"
-#import "CPConcurrency.h"
+#import "ORCrFactory.h"
+#import "ORData.h"
+#import "ORConcurrency.h"
 #import "ORFoundation/ORAVLTree.h"
 #import "ORFoundation/ORDataI.h"
 
-@implementation CPCrFactory
-+(id<CPInteger>) integer:(CPInt) value
+@implementation ORCrFactory
++(id<ORInteger>) integer:(ORInt) value
 {
-   return (id<CPInteger>)[[ORIntegerI alloc] initORIntegerI:nil value:value];    
+   return [[ORIntegerI alloc] initORIntegerI:nil value:value];    
 }
-+(id<CPIntInformer>) intInformer 
++(id<ORIntInformer>) intInformer 
 {
-    return [CPConcurrency intInformer];
+    return [ORConcurrency intInformer];
 }
-+(id<CPVoidInformer>) voidInformer 
++(id<ORVoidInformer>) voidInformer 
 {
-   return [CPConcurrency voidInformer];
+   return [ORConcurrency voidInformer];
 }
 @end

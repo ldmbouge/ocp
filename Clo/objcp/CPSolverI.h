@@ -15,7 +15,7 @@
 #import "CPSolver.h"
 #import "ORTrail.h"
 #import "CPTypes.h"
-#import "CPConcurrency.h"
+#import "ORConcurrency.h"
 #import "CPSolution.h"
 #import "CPData.h"
 
@@ -66,8 +66,8 @@
    SEL                      _propagSEL;
    id<CPSolution>           _aSol;
    @package
-   id<CPIntInformer>        _propagFail;
-   id<CPVoidInformer>       _propagDone;
+   id<ORIntInformer>        _propagFail;
+   id<ORVoidInformer>       _propagDone;
    CPFailException*         _fex;
 }
 -(CPSolverI*) initSolver: (ORTrail*) trail;
@@ -100,6 +100,6 @@
 -(bool)      closed;
 -(CPUInt) nbPropagation;
 -(CPUInt) nbVars;
--(id<CPInformer>) propagateFail;
--(id<CPInformer>) propagateDone;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
 @end

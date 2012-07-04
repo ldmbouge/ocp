@@ -15,7 +15,7 @@
 #import "CPConstraintI.h"
 #import "CPExplorerI.h"
 #import "CPSelector.h"
-#import "CPConcurrency.h"
+#import "ORFoundation/ORConcurrency.h"
 
 
 @interface CoreCPI : NSObject  {
@@ -26,8 +26,8 @@
    NSAutoreleasePool*    _pool;  
    id<CPPortal>          _portal;
    @package
-   id<CPIdxIntInformer>  _returnLabel;
-   id<CPIdxIntInformer>  _failLabel;   
+   id<ORIdxIntInformer>  _returnLabel;
+   id<ORIdxIntInformer>  _failLabel;   
 }
 -(id)                     init;
 -(id)                     initFor:(id<CPSolver>) fdm;

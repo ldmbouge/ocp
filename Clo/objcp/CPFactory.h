@@ -15,7 +15,7 @@
 #import "CP.h"
 #import "ORFoundation/ORSet.h"
 #import "CPTable.h"
-#import "CPConcurrency.h"
+#import "ORConcurrency.h"
 #import "CPHeuristic.h"
 #import "CPSolverI.h"
 #import "CPData.h"
@@ -63,10 +63,10 @@ void failNow();
 +(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2;
 
 +(id<ORIntSet>) intSet: (id<CP>) cp;
-+(id<CPInformer>) informer: (id<CP>) cp;
-+(id<CPVoidInformer>) voidInformer: (id<CP>) cp;
-+(id<CPIntInformer>) intInformer: (id<CP>) cp;
-+(id<CPBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb;
++(id<ORInformer>) informer: (id<CP>) cp;
++(id<ORVoidInformer>) voidInformer: (id<CP>) cp;
++(id<ORIntInformer>) intInformer: (id<CP>) cp;
++(id<ORBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb;
 
 +(id<CPTable>) table: (id<CP>) cp arity: (int) arity;
 

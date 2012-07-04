@@ -15,13 +15,13 @@
 #import "objcp/CPData.h"
 #import "objcp/CPArray.h"
 #import "ORFoundation/ORSet.h"
-#import "objcp/CPConcurrency.h"
+#import "ORFoundation/ORConcurrency.h"
 
 @protocol CPSearchController;
 @protocol CPSolver;
 @protocol CPExplorer;
 @protocol CPHeuristic;
-@protocol CPIdxIntInformer;
+@protocol ORIdxIntInformer;
 @protocol CPTracer;
 
 @protocol CPSolutionProtocol <NSObject>
@@ -30,10 +30,10 @@
 @end
 
 @protocol CPPortal <NSObject>
--(id<CPIdxIntInformer>) retLabel;
--(id<CPIdxIntInformer>) failLabel;
--(id<CPInformer>) propagateFail;
--(id<CPInformer>) propagateDone;
+-(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) failLabel;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
 @end
 
 @protocol CP <CPSolutionProtocol,ORTracker> 
