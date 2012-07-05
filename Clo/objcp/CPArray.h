@@ -25,7 +25,7 @@
 -(id<CP>) cp;
 @end
 
-@protocol CPIntVarArray <NSObject> 
+@protocol CPIntVarArray <CPVarArray> 
 -(id<CPIntVar>) at: (CPInt) value;
 -(void) set: (id<CPIntVar>) x at: (CPInt) value;
 -(CPInt) low;

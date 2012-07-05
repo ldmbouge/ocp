@@ -19,13 +19,14 @@
 
 @interface CPIBS : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>   _vars;
+   id<CPVarArray>  _rvars;
    id<CP>             _cp;
    CPSolverI*     _solver;
    CPMonitor*    _monitor;
    CPUInt            _nbv;
    NSMutableDictionary*  _impacts;
 }
--(id)initCPIBS:(id<CP>)cp;
+-(id)initCPIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<CPVarArray>)t;

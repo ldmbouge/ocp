@@ -58,22 +58,40 @@ void failNow()
 {
    return [[SemCP alloc] initFor:fdm];
 }
-+(id<CPHeuristic>) createWDeg:(id<CP>)cp
++(id<CPHeuristic>) createWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 {
-   return [[CPWDeg alloc] initCPWDeg:cp];
+   return [[CPWDeg alloc] initCPWDeg:cp restricted:rvars];
 }
-+(id<CPHeuristic>) createDDeg:(id<CP>)cp
++(id<CPHeuristic>) createDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars; 
 {
-   return [[CPDDeg alloc] initCPDDeg:cp];
+   return [[CPDDeg alloc] initCPDDeg:cp restricted:rvars];
+}
++(id<CPHeuristic>) createIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+{
+   return [[CPIBS alloc] initCPIBS:cp restricted:rvars];
+}
++(id<CPHeuristic>)createFF:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+{
+   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
+}
++(id<CPHeuristic>) createWDeg:(id<CP>)cp;
+{
+   return [[CPWDeg alloc] initCPWDeg:cp restricted:nil];
+}
++(id<CPHeuristic>) createDDeg:(id<CP>)cp 
+{
+   return [[CPDDeg alloc] initCPDDeg:cp restricted:nil];
 }
 +(id<CPHeuristic>) createIBS:(id<CP>)cp
 {
-   return [[CPIBS alloc] initCPIBS:cp];
+   return [[CPIBS alloc] initCPIBS:cp restricted:nil];
 }
 +(id<CPHeuristic>)createFF:(id<CP>)cp
 {
-   return [[CPFirstFail alloc] initCPFirstFail:cp];
+   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:nil];
 }
+
+
 +(void) shutdown 
 {
    [NSCont shutdown];

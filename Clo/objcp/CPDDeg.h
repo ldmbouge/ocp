@@ -15,13 +15,14 @@
 
 @interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>  _vars;
+   id<CPVarArray> _rvars;
    CPUInt*          _map; 
    id<CP>            _cp;
    CPSolverI*    _solver;
    CPUInt           _nbv;
    NSSet**           _cv;
 }
--(id)initCPDDeg:(id<CP>)cp;
+-(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<CPVarArray>)t;

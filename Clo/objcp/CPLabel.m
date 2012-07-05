@@ -64,7 +64,7 @@
 +(void) heuristic:(id<CPHeuristic>)h
 {
    id<CPIntVarArray> av = [h allIntVars];
-   NSLog(@"Heuristic on: %@",av);
+   NSLog(@"Heuristic on: <%lu> %@",[av count],av);
    id<CP> cp = [av cp];
    CPI* cpi = (CPI*) cp;
    CPSelect* select = [cpi selectInRange: (CPRange){[av low],[av up]}
