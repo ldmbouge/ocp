@@ -9,13 +9,14 @@
 
  ***********************************************************************/
 
+#import "ORFoundation/ORArrayI.h"
 #import "CPTypes.h"
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPCardinality.h"
 
-static void computeCardinalities(CPIntVarArrayI* ax,
+static void computeCardinalities(id<CPIntVarArray> ax,
                                  id<CPIntArray> clow,
                                  id<CPIntArray> cup,
                                  CPInt** lowArrayr,
@@ -109,11 +110,11 @@ static void computeCardinalities(CPIntVarArrayI* ax,
         _ux = (CPInt)_sx - 1;
         [k release];
     } 
-    else if ([ax isKindOfClass:[CPIntVarArrayI class]]) {
+    else if ([ax isKindOfClass:[ORIdArrayI class]]) {
         _sx = [ax count];
         _x  = malloc(sizeof(CPIntVarI*)*_sx);
         int i=0;
-        CPIntVarArrayI* xa = ax;
+        id<CPIntVarArray> xa = ax;
         for(CPInt k=[ax low];k<=[ax up];k++)
             _x[i++] = (CPIntVarI*) [xa at:k];
         _lx = 0;
@@ -123,16 +124,17 @@ static void computeCardinalities(CPIntVarArrayI* ax,
     return self;
 }
 
--(id) initCardinalityCst: (CPIntVarArrayI*) ax low: (id<CPIntArray>) low up: (id<CPIntArray>) up
+-(id) initCardinalityCst: (id<CPIntVarArray>) ax low: (id<CPIntArray>) low up: (id<CPIntArray>) up
 {
-    self = [super initCPActiveConstraint: [ax solver]];
+   id<CPSolver> solver = [[ax cp] solver];
+    self = [super initCPActiveConstraint: solver];
     _required = _possible = 0;   
-    _fdm = (CPSolverI*)[ax solver];
+    _fdm = (CPSolverI*)solver;
 
     _sx = [ax count];
     _x  = malloc(sizeof(CPIntVarI*)*_sx);
     int i=0;
-    CPIntVarArrayI* xa = ax;
+    id<CPIntVarArray> xa = ax;
     for(CPInt k=[ax low];k<=[ax up];k++)
         _x[i++] = (CPIntVarI*) [xa at:k];
     _lx = 0;

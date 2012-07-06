@@ -27,6 +27,10 @@
 +(id<CP>) createDeterministicSolver;
 +(id<CP>) createSemSolverFor:(id<CPSolver>)fdm;
 +(void) shutdown;
++(id<CPHeuristic>) createDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>)createFF:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 +(id<CPHeuristic>) createDDeg:(id<CP>)cp;
 +(id<CPHeuristic>) createWDeg:(id<CP>)cp;
 +(id<CPHeuristic>) createIBS:(id<CP>)cp;
@@ -78,7 +82,7 @@ void failNow();
 @end
 
 @interface CPFactory (expression)
-
++(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
 +(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 

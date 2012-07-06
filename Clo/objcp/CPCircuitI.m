@@ -26,19 +26,19 @@
     _posted = false;
 }
 
--(CPCircuitI*) initCPSubtourEliminationI: (CPIntVarArrayI*) x
+-(CPCircuitI*) initCPSubtourEliminationI: (id<CPIntVarArray>) x
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
     _x = x;
     [self initInstanceVariables];
     return self;
 }
--(CPCircuitI*) initCPNoCycleI: (CPIntVarArrayI*) x
+-(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x
 {
     _noCycle = true;
     return [self initCPSubtourEliminationI: x];
 }
--(CPCircuitI*) initCPCircuitI: (CPIntVarArrayI*) x
+-(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x
 {
     _noCycle = false;
     return [self initCPSubtourEliminationI: x];

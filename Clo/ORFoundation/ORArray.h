@@ -22,3 +22,14 @@
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) index: (id<ORExpr>) idx;
 @end
+
+@protocol ORIdArray <NSObject>
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+-(id<ORExpr>) index: (id<ORExpr>) idx;
+@end

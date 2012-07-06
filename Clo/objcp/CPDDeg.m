@@ -14,12 +14,13 @@
 #import "CPIntVarI.h"
 
 @implementation CPDDeg
--(id)initCPDDeg:(id<CP>)cp
+-(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPSolverI*)[cp solver];
+   _rvars = rvars;
    return self;
 }
 -(void)dealloc
@@ -28,7 +29,7 @@
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>)_vars;
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 -(float)varOrdering:(id<CPIntVar>)x
 {

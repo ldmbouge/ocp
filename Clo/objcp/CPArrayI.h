@@ -19,56 +19,6 @@
 #import "CPIntVarI.h"
 #import "CPError.h"
 
-@interface CPVarArrayI : NSObject<CPVirtual,CPVarArray,NSCoding> {
-   id<CP>         _cp;
-   id<CPVar>*  _array;
-   CPInt         _low;
-   CPInt          _up;
-   CPInt          _nb;   
-}
--(CPVarArrayI*)initCPVarArray: (id<CP>) cp range:(CPRange)range;
--(id<CPVar>) at: (CPInt) value;
--(void) set: (id<CPVar>) x at: (CPInt) value;
--(CPInt) low;
--(CPInt) up;
--(NSUInteger)count;
--(NSString*)description;
--(id<CP>) cp;
--(id<CPSolver>) solver;
--(CPInt) virtualOffset;   
--(void)encodeWithCoder:(NSCoder*) aCoder;
--(id)initWithCoder:(NSCoder*) aDecoder;
-@end
-
-@interface CPIntVarArrayI : NSObject<CPVirtual,NSCoding,CPIntVarArray> {
-    id<CP>         _cp;
-    id<CPIntVar>*  _array;
-    CPInt          _low;
-    CPInt          _up;
-    CPInt          _nb;
-}
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp size: (CPInt) nb domain: (CPRange) domain;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp size: (CPInt) nb with:(CPIntVarI*(^)(CPInt)) clo;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2  with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
--(CPIntVarArrayI*) initCPIntVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2  : (CPRange) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
--(void) dealloc;
--(id<CPIntVar>) at: (CPInt) value;
--(void) set: (id<CPIntVar>) x at: (CPInt) value;
--(CPInt) low;
--(CPInt) up;
--(NSUInteger)count;
--(NSString*)description;
--(id<CP>) cp;
--(id<CPSolver>) solver;
--(CPInt)virtualOffset;   
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
-
-
 @interface CPIntVarMatrixI : NSObject<CPIntVarMatrix,CPVirtual,NSCoding> {
 @private
     id<CP>         _cp;

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "CPBasicConstraint.h"
+#import "ORFoundation/ORArrayI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPSolverI.h"
@@ -315,8 +316,9 @@ static CPStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRI
 {   
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
    for(CPInt j=min;j<=max;j++) {
+      if (!getCPDom(bd,j)) continue;
       CPInt t = a + j;
-      if (getCPDom(bd, j) && memberCPDom(cd, t)) {
+      if (memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
             removeDom(c, t);            
@@ -329,8 +331,9 @@ static CPStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRI
 {
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
    for(CPInt j=min;j<=max;j++) {
+      if (!getCPDom(bd,j)) continue;
       CPInt t = a - j;
-      if (getCPDom(bd, j) && memberCPDom(cd, t)) {
+      if (memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) { 
             removeDom(c, t);
@@ -343,8 +346,9 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 {
    CPInt min = minCPDom(ad),max = maxCPDom(ad);
    for(CPInt j=min;j<=max;j++) {
+      if (!getCPDom(ad,j)) continue;
       CPInt t = j - b;
-      if (getCPDom(ad, j) && memberCPDom(cd, t)) {
+      if (memberCPDom(cd, t)) {
          CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
             removeDom(c, t);
@@ -1178,9 +1182,9 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       for(CPInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    } 
-   else if ([x isKindOfClass:[CPIntVarArrayI class]]) {
-      CPIntVarArrayI* xa = x;
-      id<CPSolver> fdm = [xa solver];
+   else if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = x;
+      id<CPSolver> fdm = [[xa cp] solver];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

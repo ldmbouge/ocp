@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "CPEquationBC.h"
+#import "ORFoundation/ORArrayI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPSolverI.h"
@@ -28,8 +29,8 @@
       for(CPInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    } 
-   else if ([x isKindOfClass:[CPIntVarArrayI class]]) {
-      CPIntVarArrayI* xa = x;
+   else if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = x;
       [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
@@ -201,8 +202,8 @@ static void sumBounds(struct CPTerm* terms,CPInt nb,struct Bounds* bnd)
       for(CPInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    } 
-   else if ([x isKindOfClass:[CPIntVarArrayI class]]) {
-      CPIntVarArrayI* xa = x;
+   else if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = x;
       [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

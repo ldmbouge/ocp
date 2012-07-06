@@ -14,8 +14,6 @@
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPlabel.h"
-#import "objcp/CPCrFactory.h"
-
 
 id<ORIntSet> knightMoves(id<CP> cp,int i) 
 {

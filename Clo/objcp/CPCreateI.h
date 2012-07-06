@@ -15,8 +15,6 @@
 #import "CPConstraintI.h"
 #import "ORTrail.h"
 
-@class CPIntVarArrayI;
-
 @interface CPI (Create)  
 +(CPI*) create;
 +(CPI*) createRandomized;

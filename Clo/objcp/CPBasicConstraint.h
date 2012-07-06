@@ -15,7 +15,6 @@
 
 @class CPIntVarI;
 @class CPSolver;
-@class CPIntVarArrayI;
 
 // PVH: where is _active being used
 @interface CPEqualc : CPActiveConstraint<NSCoding> {

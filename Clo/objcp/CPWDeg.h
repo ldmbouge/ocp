@@ -17,17 +17,18 @@
 // pvh: This is too low level
 
 @interface CPWDeg : CPBaseHeuristic<CPHeuristic> {
-   id<CPVarArray>  _vars;
-   CPUInt*          _map; 
-   id<CP>            _cp;
-   CPSolverI*    _solver;
-   CPUInt       _nbc;
-   CPUInt       _nbv;
-   CPUInt*        _w;
-   NSSet**           _cv;
-   id*             _vOfC;
+   id<CPVarArray>   _vars;
+   id<CPVarArray>  _rvars;
+   CPUInt*           _map; 
+   id<CP>             _cp;
+   CPSolverI*     _solver;
+   CPUInt            _nbc;
+   CPUInt            _nbv;
+   CPUInt*             _w;
+   NSSet**            _cv;
+   id*              _vOfC;
 }
--(CPWDeg*)initCPWDeg:(id<CP>)cp;
+-(CPWDeg*)initCPWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<CPVarArray>)t;

@@ -37,13 +37,14 @@ int main(int argc, const char * argv[])
       id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
       id<CPIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
       id<CPIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
-      //id<CPHeuristic> h = [CPFactory createWDeg:cp];
-      //id<CPHeuristic> h = [CPFactory createFF:cp];
+      //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
+      //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
+      id<CPHeuristic> h = [CPFactory createFF:cp restricted:sx];
+      
       [cp solveAll: ^{
          [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
          for(CPUInt i=SD.low;i<=SD.up;i++) {
-            [cp addRel:[[dx at:i] equal:[ORFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]]]
-           consistency: DomainConsistency];
+            [cp add:[dx at:i] equal:[CPFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]] consistency: DomainConsistency];
          }
          [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
          [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
@@ -55,9 +56,11 @@ int main(int argc, const char * argv[])
          
       } using:^{
          NSLog(@"Start...");
-         labelFF(cp,sx);
-         //[CPLabel heuristic:h];
-         //[CPLabel array:sx];
+         //labelFF(cp,sx);
+         [CPLabel heuristic:h];
+         [CPLabel array:sx orderedBy:^ORInt(ORInt i) {
+            return [[sx at:i] domsize];
+         }];
          [nbSolutions incr];
          //NSLog(@"Solution: %@",sx);
       }];

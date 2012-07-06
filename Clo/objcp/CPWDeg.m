@@ -15,13 +15,14 @@
 
 @implementation CPWDeg
 
--(CPWDeg*)initCPWDeg:(id<CP>)cp
+-(CPWDeg*)initCPWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPSolverI*)[cp solver];
    _vars = nil;
+   _rvars = rvars;
    _w = 0;
    _cv = 0;
    return self;
@@ -48,7 +49,7 @@
 // pvh: why do we need vars and t and so on.
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>)_vars;
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 // pvh: see question below for the importance of _cv
@@ -101,6 +102,7 @@
    [[_solver propagateFail] wheneverNotifiedDo:^(int cID) {
       _w[cID]++;
    }];
+   NSLog(@"WDeg ready...");
 }
 
 @end

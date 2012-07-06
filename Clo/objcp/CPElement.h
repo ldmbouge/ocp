@@ -17,7 +17,6 @@
 
 @class CPIntVarI;
 @class CPSolver;
-@class CPIntVarArrayI;
 
 @interface CPElementCstBC : CPActiveConstraint<NSCoding> { // y == c[x]
 @private

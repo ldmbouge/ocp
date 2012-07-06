@@ -187,16 +187,17 @@
                                orderedBy: order];    
 }
 
--(void) addRel: (id<CPRelation>) c
+
+-(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;
 {
-   CPStatus status = [_solver addRel: c consistency:ValueConsistency];
+   CPStatus status = [_solver add: lhs equal:rhs consistency:ValueConsistency];
    if (status == CPFailure)
       [_search fail];
 }
 
--(void) addRel: (id<CPRelation>) r consistency:(CPConsistency)cons
+-(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 {
-   CPStatus status = [_solver addRel: r consistency:cons];
+   CPStatus status = [_solver add:lhs equal:rhs consistency:cons];
    if (status == CPFailure)
       [_search fail];   
 }

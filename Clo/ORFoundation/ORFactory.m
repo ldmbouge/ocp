@@ -43,6 +43,13 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (ORRange) range
+{
+   ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
+   [tracker trackObject:o];
+   return o;
+}
+
 @end
 
 @implementation ORFactory (Expressions)

@@ -17,7 +17,7 @@
 #import "CPBasicConstraint.h"
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding> {
-    CPIntVarArrayI* _x;
+    id<CPIntVarArray> _x;
     CPIntVarI**     _var;
     UBType*         _member;
     CPInt           _varSize;
@@ -49,7 +49,7 @@
     
     bool           _posted;
 }
--(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x;
+-(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(CPStatus) post;
 -(void) propagate;

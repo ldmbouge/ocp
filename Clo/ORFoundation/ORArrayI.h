@@ -35,6 +35,28 @@
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 //-(ORInt)virtualOffset;   
+-(id<ORExpr>) index: (id<ORExpr>) idx;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
+@end
+
+@interface ORIdArrayI : NSObject<NSCoding,ORIdArray> {
+   id<ORTracker>  _tracker;
+   id*              _array;
+   ORInt              _low;
+   ORInt               _up;
+   ORInt               _nb;   
+}
+-(ORIdArrayI*)initORIdArray: (id<ORTracker>)tracker range:(ORRange)range;
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger)count;
+-(NSString*)description;
+-(id<ORTracker>) tracker;
+//-(CPInt) virtualOffset;   
+-(id<ORExpr>) index: (id<ORExpr>) idx;
+-(void)encodeWithCoder:(NSCoder*) aCoder;
+-(id)initWithCoder:(NSCoder*) aDecoder;
 @end

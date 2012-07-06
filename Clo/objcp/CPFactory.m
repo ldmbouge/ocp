@@ -58,21 +58,37 @@ void failNow()
 {
    return [[SemCP alloc] initFor:fdm];
 }
-+(id<CPHeuristic>) createWDeg:(id<CP>)cp
++(id<CPHeuristic>) createWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 {
-   return [[CPWDeg alloc] initCPWDeg:cp];
+   return [[CPWDeg alloc] initCPWDeg:cp restricted:rvars];
 }
-+(id<CPHeuristic>) createDDeg:(id<CP>)cp
++(id<CPHeuristic>) createDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars; 
 {
-   return [[CPDDeg alloc] initCPDDeg:cp];
+   return [[CPDDeg alloc] initCPDDeg:cp restricted:rvars];
+}
++(id<CPHeuristic>) createIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+{
+   return [[CPIBS alloc] initCPIBS:cp restricted:rvars];
+}
++(id<CPHeuristic>)createFF:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+{
+   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
+}
++(id<CPHeuristic>) createWDeg:(id<CP>)cp;
+{
+   return [[CPWDeg alloc] initCPWDeg:cp restricted:nil];
+}
++(id<CPHeuristic>) createDDeg:(id<CP>)cp 
+{
+   return [[CPDDeg alloc] initCPDDeg:cp restricted:nil];
 }
 +(id<CPHeuristic>) createIBS:(id<CP>)cp
 {
-   return [[CPIBS alloc] initCPIBS:cp];
+   return [[CPIBS alloc] initCPIBS:cp restricted:nil];
 }
 +(id<CPHeuristic>)createFF:(id<CP>)cp
 {
-   return [[CPFirstFail alloc] initCPFirstFail:cp];
+   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:nil];
 }
 +(void) shutdown 
 {
@@ -126,7 +142,6 @@ void failNow()
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
-
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
@@ -138,42 +153,51 @@ void failNow()
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;   
 }
-
 +(id<CPVarArray>) varArray: (id<CP>) cp range: (CPRange) range
 {
-   CPVarArrayI* o = [[CPVarArrayI alloc] initCPVarArray:cp range:range];
-   [[((CoreCPI*)cp) solver] trackObject:o];
-   return o;
+   return (id<CPVarArray>)[ORFactory idArray:cp range:range];
 }
-+(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
 {
-    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range domain:domain];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(CPInt k=range.low;k <= range.up;k++)
+      [o set:[CPFactory intVar:cp domain:domain] at:k];
+   return (id<CPIntVarArray>)o;
 }
-+(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range 
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range 
 {
-    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   return (id<CPIntVarArray>)o;
 }
-+(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo
 {
-    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range:range with:clo];
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(CPInt k=range.low;k <= range.up;k++)
+      [o set:clo(k) at:k];
+   return (id<CPIntVarArray>)o;
 }
-+(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 with: (id<CPIntVar>(^)(CPInt,CPInt)) clo
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 with: (id<CPIntVar>(^)(CPInt,CPInt)) clo
 {
-    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range: r1 : r2 with:clo];    
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   CPInt nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
+   CPRange fr = {0,nb-1};
+   id<ORIdArray> o = [ORFactory idArray:cp range:fr];
+   CPInt k = 0;
+   for(CPInt i=r1.low;i <= r1.up;i++)
+      for(CPInt j=r2.low;j <= r2.up;j++)
+         [o set:clo(i,j) at:k];
+   return (id<CPIntVarArray>)o;
 }
-+(CPIntVarArrayI*) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 : (CPRange) r3 with: (id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo
++(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 : (CPRange) r3 with: (id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo
 {
-    CPIntVarArrayI* o = [[CPIntVarArrayI alloc] initCPIntVarArray: cp range: r1 : r2 : r3 with:clo];    
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   CPInt nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1) * (r3.up - r3.low + 1);
+   CPRange fr = {0,nb-1};
+   id<ORIdArray> o = [ORFactory idArray:cp range:fr];
+   CPInt l = 0;
+   for(CPInt i=r1.low;i <= r1.up;i++)
+      for(CPInt j=r2.low;j <= r2.up;j++)
+         for(CPInt k=r2.low;k <= r2.up;k++)
+            [o set:clo(i,j,k) at:l];
+   return (id<CPIntVarArray>)o;
 }
 +(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain
 {
@@ -187,9 +211,9 @@ void failNow()
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;
 }
-+(CPIntVarArrayI*) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c
++(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c
 {
-   CPIntVarArrayI* rv = (CPIntVarArrayI*)[self intVarArray:[x cp] range:(CPRange){[x low],[x up]} with:^id<CPIntVar>(CPInt i) {
+   id<CPIntVarArray> rv = [self intVarArray:[x cp] range:(CPRange){[x low],[x up]} with:^id<CPIntVar>(CPInt i) {
       return [self intVar:[x at:i]  scale:c[i]];
    }];
    return rv;
@@ -249,6 +273,12 @@ void failNow()
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
+
++(id<CPExpr>) exprAbs: (id<CPExpr>) op
+{
+   return (id<CPExpr>)[ORFactory exprAbs:op];
+}
+
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
 {
    id<CP> cp = [vars[0] cp];

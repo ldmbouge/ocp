@@ -14,7 +14,6 @@
 #import "objcp/CPConstraint.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPCrFactory.h"
 #import "objcp/CPLabel.h"
 
 //20639 choices

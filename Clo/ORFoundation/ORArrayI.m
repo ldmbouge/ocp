@@ -158,3 +158,100 @@
 }
 @end
 
+// ------------------------------------------------------------------------------------------
+
+@implementation ORIdArrayI
+-(ORIdArrayI*)initORIdArray: (id<ORTracker>) tracker range:(ORRange)range
+{
+   self = [super init];
+   _tracker = tracker;
+   _low = range.low;
+   _up  = range.up;
+   _nb  = _up - _low + 1;
+   _array = malloc(_nb * sizeof(id));
+   memset(_array,0,sizeof(id)*_nb);
+   _array -= _low;
+   return self;
+}
+-(void)dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+-(id) at: (ORInt) value
+{
+   if (value < _low || value > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPVarArrayElement"];
+   return _array[value];
+}
+-(void) set: (id) x at: (ORInt) value
+{
+   if (value < _low || value > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPVarArrayElement"];
+   _array[value] = x;
+}
+-(ORInt) low
+{
+   return _low;
+}
+-(ORInt) up 
+{
+   return _up;
+}
+-(NSUInteger)count
+{
+   return _nb;
+}
+-(NSString*)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendString:@"["];
+   for(ORInt i=_low;i<=_up;i++) {
+      [rv appendFormat:@"%d:",i];
+      [rv appendString:[_array[i] description]];
+      if (i < _up)
+         [rv appendString:@","];
+   }
+   [rv appendString:@"]"];
+   return rv;      
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+/*-(ORInt) virtualOffset
+{
+   return [[_cp solver] virtualOffset:self];   
+}
+*/
+-(id<ORExpr>)index:(id<ORExpr>)idx
+{
+   assert(NO); // [ldm] must fix or ORExprVarSubI
+   //return [[ORExprVarSubI alloc] initORExprVarSubI:self index:idx];
+   return nil;
+}
+-(void)encodeWithCoder:(NSCoder*) aCoder
+{
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   for(ORInt i=_low;i<=_up;i++)
+      [aCoder encodeObject:_array[i]];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _tracker = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   _array =  malloc(sizeof(id)*_nb) - _low;
+   for(ORInt i=_low;i<=_up;i++)
+      _array[i] = [aDecoder decodeObject];
+   return self;   
+}
+@end
+
+

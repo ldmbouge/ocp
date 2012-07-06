@@ -34,7 +34,7 @@
     TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
 }
 -(id) initCardinalityCst:(CPSolverI*)m values:(CPRange)r low:(CPInt*)low array:(id)ax up:(CPInt*)up;
--(id) initCardinalityCst:(CPIntVarArrayI*) ax low: (id<CPIntArray>)low up: (id<CPIntArray>) up;
+-(id) initCardinalityCst:(id<CPIntVarArray>) ax low: (id<CPIntArray>)low up: (id<CPIntArray>) up;
 -(void)dealloc;
 -(CPStatus)post;
 -(NSSet*)allVars;

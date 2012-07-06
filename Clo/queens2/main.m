@@ -19,7 +19,7 @@
 #import "objcp/CPHeuristic.h"
 #import "objcp/CPWDeg.h"
 
-CPInt labelFF3(CP* m,id<CPIntVarArray> x,CPInt from,CPInt to)
+CPInt labelFF3(id<CP> m,id<CPIntVarArray> x,CPInt from,CPInt to)
 {
    id<CPInteger> nbSolutions = [CPFactory integer:m value:0];
    [m solveAll: ^() {
@@ -41,6 +41,7 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<CPHeuristic> h = [CPFactory createFF:cp];
    [cp solveAll: 
     ^() {
        [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
@@ -50,6 +51,7 @@ int main (int argc, const char * argv[])
           using: 
     ^() {
        [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+       //[CPLabel heuristic:h];
        printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];
     }

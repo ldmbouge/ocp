@@ -31,7 +31,7 @@
 {
     return [CPFactory alldifferent: x consistency: DomainConsistency];
 }
-+(id<CPConstraint>) alldifferent: (CPIntVarArrayI*) x consistency: (CPConsistency) c
++(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (CPConsistency) c
 {
     id<CPConstraint> o;
     switch (c) {
@@ -47,7 +47,7 @@
         default:
             @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
     }
-    [[x solver] trackObject: o];
+    [[x tracker] trackObject: o];
     return o;
 }
 
@@ -56,7 +56,7 @@
 {
     return [CPFactory cardinality: x low: low up: up consistency: ValueConsistency];
 }
-+(id<CPConstraint>) cardinality: (CPIntVarArrayI*) x low: (id<CPIntArray>) low up: (id<CPIntArray>) up consistency: (CPConsistency) c
++(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<CPIntArray>) low up: (id<CPIntArray>) up consistency: (CPConsistency) c
 { 
     id<CPConstraint> o;
     switch (c) {
@@ -72,7 +72,7 @@
         default:
             @throw [[ORExecutionError alloc] initORExecutionError: "Consistency Not Implemented on alldifferent"]; 
     }
-    [[x solver] trackObject: o];
+    [[x tracker ] trackObject: o];
     return o;
 }
 
@@ -107,7 +107,7 @@
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (CPInt) c
 {
     id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBoolGeq: x geq: c];
-    [[[x cp] solver] trackObject: o];
+    [[x tracker] trackObject: o];
     return o;
 }
 
@@ -119,34 +119,34 @@
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons
 {
    id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
-   [[[x cp] solver] trackObject: o];
+   [[x tracker] trackObject: o];
    return o;
 }
 
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c
 {
    id<CPConstraint> o = [[CPINEquationBC alloc] initCPINEquationBC: x lequal: c];
-   [[[x cp] solver] trackObject: o];
+   [[x tracker] trackObject: o];
    return o;
 }
 
-+(id<CPConstraint>) circuit: (CPIntVarArrayI*) x
++(id<CPConstraint>) circuit: (id<CPIntVarArray>) x
 {
     id<CPConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];
-    [[[x cp] solver] trackObject: o];
+    [[x tracker] trackObject: o];
     return o;
 }
 
-+(id<CPConstraint>) nocycle: (CPIntVarArrayI*) x
++(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x
 {
     id<CPConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
-    [[[x cp] solver] trackObject: o];
+    [[x tracker] trackObject: o];
     return o;
 }
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c
 {
    id<CPConstraint> o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];
-   [[[x cp] solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;   
 }
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons
@@ -158,7 +158,7 @@
       default: 
          o = [[CPEqualBC alloc] initCPEqualBC:x and:y and:c];break;
    }
-   [[[x cp] solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;   
 }
 +(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons
@@ -248,7 +248,7 @@
    [[[x cp] solver] trackObject:o];
    return o;
 }
-+(id<CPConstraint>) table: (CPTableI*) table on: (CPIntVarArrayI*) x
++(id<CPConstraint>) table: (CPTableI*) table on: (id<CPIntVarArray>) x
 {
     id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
     [[[x cp] solver] trackObject:o];

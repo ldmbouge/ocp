@@ -143,13 +143,14 @@
 
 @implementation CPIBS
 
--(id)initCPIBS:(id<CP>)cp
+-(id)initCPIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
    _solver = (CPSolverI*)[cp solver];
    _monitor = nil;
    _vars = nil;
+   _rvars = rvars;
    [cp addHeuristic:self];
    return self;
 }
@@ -203,7 +204,7 @@
 
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>)_vars;   
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 -(void)addKillSetFrom:(CPInt)from to:(CPInt)to size:(CPUInt)sz into:(NSMutableSet*)set

@@ -54,7 +54,7 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
    id<CPExpr>    _expr;
    CPConsistency    _c;
 }
--(id) initCPExprConstraintI:(id<CPExpr>)x  consistency: (CPConsistency) c;
+-(id) initCPExprConstraintI:(id<CPSolver>)fdm expr:(id<CPExpr>)x  consistency: (CPConsistency) c;
 -(void) dealloc;
 -(CPStatus)post;
 -(NSSet*)allVars;
