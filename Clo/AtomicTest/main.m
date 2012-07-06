@@ -41,7 +41,7 @@
 {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     CP* m = [[[CP alloc] init] autorelease];
-    CPIntVarArrayI* x = [[[CPIntVarArrayI alloc] initCPIntVarArray: m 
+    id<CPIntVarArray> x = [[[CPIntVarArrayI alloc] initCPIntVarArray: m 
                                                             size: s 
                                                           domain: (CPRange){0,n-1}] autorelease];
     //         0 1 2 3 4 5 6 7

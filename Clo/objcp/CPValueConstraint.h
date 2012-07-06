@@ -19,7 +19,6 @@
 
 @class CPIntVarI;
 @class CPSolverI;
-@class CPIntVarArrayI;
 
 @interface CPReifyNotEqualDC : CPCoreConstraint<NSCoding> {
 @private

@@ -20,6 +20,8 @@
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
+
++(id<ORIdArray>)   idArray: (id<ORTracker>) tracker range: (ORRange) range;
 @end
 
 @interface ORFactory (Expressions)

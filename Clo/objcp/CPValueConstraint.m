@@ -11,6 +11,7 @@
 
 
 #import "CPValueConstraint.h"
+#import "ORFoundation/ORArrayI.h"
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
@@ -147,8 +148,8 @@
         for(CPInt k=0;k<_nb;k++)
             _x[k] = [x objectAtIndex:k];
     } 
-    else if ([x isKindOfClass:[CPIntVarArrayI class]]) {
-        CPIntVarArrayI* xa = x;
+    else if ([x isKindOfClass:[ORIdArrayI class]]) {
+        id<CPIntVarArray> xa = x;
         self = [super initCPCoreConstraint];
         _nb = [x count];
         _x  = malloc(sizeof(CPIntVarI*)*_nb);

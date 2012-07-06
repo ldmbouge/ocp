@@ -15,24 +15,16 @@
 -(id<CPExpr>) index: (id<CPExpr>) idx;
 @end
 
-@protocol CPVarArray <NSObject>
+@protocol CPVarArray <ORIdArray>
 -(id<CPVar>) at: (CPInt) value;
 -(void) set: (id<CPVar>) x at: (CPInt) value;
--(CPInt) low;
--(CPInt) up;
--(NSUInteger)count;
--(NSString*) description;
+-(id<CPExpr>) index: (id<CPExpr>) idx;
 -(id<CP>) cp;
 @end
 
 @protocol CPIntVarArray <CPVarArray> 
 -(id<CPIntVar>) at: (CPInt) value;
 -(void) set: (id<CPIntVar>) x at: (CPInt) value;
--(CPInt) low;
--(CPInt) up;
--(NSUInteger)count;
--(NSString*) description;
--(id<CP>) cp;
 @end
 
 @protocol CPIntVarMatrix <NSObject> 

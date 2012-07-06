@@ -25,7 +25,7 @@
     _posted = false;
 }
 
--(CPAssignment*) initCPAssignment: (CPIntVarArrayI*) x matrix: (CPIntMatrixI*) matrix
+-(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (CPIntMatrixI*) matrix
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
     _x = x;

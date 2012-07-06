@@ -19,7 +19,7 @@
 #import "CPBasicConstraint.h"
 
 @interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding> {
-    CPIntVarArrayI*  _x;
+    id<CPIntVarArray>  _x;
     CPIntVarI**      _var;
     CPInt            _varSize;  
     CPInt            _low;
@@ -30,8 +30,8 @@
     bool             _noCycle;
     bool             _posted;
 }
--(CPCircuitI*) initCPCircuitI: (CPIntVarArrayI*) x;
--(CPCircuitI*) initCPNoCycleI: (CPIntVarArrayI*) x;
+-(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
+-(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(CPStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;

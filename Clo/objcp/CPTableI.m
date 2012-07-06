@@ -192,7 +192,7 @@
     _posted = false;
 }
 
--(CPTableCstrI*) initCPTableCstrI: (CPIntVarArrayI*) x table: (CPTableI*) table  
+-(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (CPTableI*) table  
 {
     [table close];
     

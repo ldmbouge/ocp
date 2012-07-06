@@ -29,7 +29,7 @@ void labelFF(id<CP> m,id<CPIntVarArray> x)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 14;
+      int n = 10;
       CPRange R = (CPRange){1,n};
       CPRange D = (CPRange){0,n-1};
       CPRange SD = (CPRange){1,n-1};

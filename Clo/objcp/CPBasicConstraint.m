@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "CPBasicConstraint.h"
+#import "ORFoundation/ORArrayI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPSolverI.h"
@@ -1178,9 +1179,9 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       for(CPInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    } 
-   else if ([x isKindOfClass:[CPIntVarArrayI class]]) {
-      CPIntVarArrayI* xa = x;
-      id<CPSolver> fdm = [xa solver];
+   else if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = x;
+      id<CPSolver> fdm = [[xa cp] solver];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

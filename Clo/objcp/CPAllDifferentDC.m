@@ -33,7 +33,7 @@ static void prune(CPAllDifferentDC* ad);
     _posted = false;
 }
 
--(CPAllDifferentDC*) initCPAllDifferentDC: (CPIntVarArrayI*) x
+-(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPIntVarArray>) x
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
     _x = x;

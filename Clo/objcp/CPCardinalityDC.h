@@ -18,7 +18,7 @@
 #import "CPBasicConstraint.h"
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> {
-    CPIntVarArrayI* _x;
+    id<CPIntVarArray> _x;
     id<CPIntArray>  _lb;
     id<CPIntArray>  _ub;
     
@@ -64,7 +64,7 @@
     
     bool            _posted;
 }
--(CPCardinalityDC*) initCPCardinalityDC: (CPIntVarArrayI*) x low: (id<CPIntArray>) lb up: (id<CPIntArray>) ub;
+-(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<CPIntArray>) lb up: (id<CPIntArray>) ub;
 -(void) dealloc;
 
 -(CPStatus) post;
