@@ -63,7 +63,7 @@
    [_trail release];
    [_solver release];
    [_search release];
-   [_pool release];
+//   [_pool release];
    [_portal release];
    [_returnLabel release];
    [_failLabel release];

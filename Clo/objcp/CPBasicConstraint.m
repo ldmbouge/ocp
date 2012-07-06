@@ -1309,12 +1309,19 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 {
   CPInt bound = [_x min];
   if (bound < _primalBound) 
-    _primalBound = bound;
+    _primalBound = bound; 
 
 }
 -(CPStatus) check 
 {
-  return [_x updateMax: _primalBound - 1];    
+   @try {
+      [_x updateMax: _primalBound - 1];
+   }
+   @catch (CPFailException* e) {
+      [e release];
+      return CPFailure;
+   }
+   return CPSuspend;
 }
 -(CPInt) primalBound
 {
@@ -1363,7 +1370,14 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(CPStatus) check 
 {
-  return [_x updateMin: _primalBound + 1];    
+   @try {
+      [_x updateMin: _primalBound + 1];   
+   }
+   @catch (CPFailException* e) {
+      [e release];
+      return CPFailure;
+   }
+   return CPSuspend;  
 }
 
 -(CPInt) primalBound
