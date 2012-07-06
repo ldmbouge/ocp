@@ -81,6 +81,21 @@
 		5B778BB6154F1D030078EB07 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B778BB5154F1D030078EB07 /* main.m */; };
 		5B778BBA154F1D030078EB07 /* bitArrayTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B778BB9154F1D030078EB07 /* bitArrayTest.1 */; };
 		5B778BBE154F1D170078EB07 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B799CAB15A6BFF3006DD012 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
+		5B799CAC15A6BFF3006DD012 /* ORExprI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EAE15A3F5B000AD0820 /* ORExprI.m */; };
+		5B799CAD15A6BFF3006DD012 /* ORFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EB215A3F6DD00AD0820 /* ORFactory.m */; };
+		5B799CAE15A6BFF3006DD012 /* ORDataI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EBA15A3FDB800AD0820 /* ORDataI.m */; };
+		5B799CAF15A6BFF3006DD012 /* ORArrayI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EBE15A402A500AD0820 /* ORArrayI.m */; };
+		5B799CB015A6C017006DD012 /* ORFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BFD594C15A3ACA500825BC3 /* ORFoundation.h */; };
+		5B799CB115A6C017006DD012 /* ORError.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BFD5A6B15A3BEA900825BC3 /* ORError.h */; };
+		5B799CB215A6C017006DD012 /* ORExpr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EA915A3DDA600AD0820 /* ORExpr.h */; };
+		5B799CB315A6C017006DD012 /* ORTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EAB15A3F4A800AD0820 /* ORTracker.h */; };
+		5B799CB415A6C017006DD012 /* ORExprI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EAD15A3F5B000AD0820 /* ORExprI.h */; };
+		5B799CB515A6C017006DD012 /* ORFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB115A3F6DD00AD0820 /* ORFactory.h */; };
+		5B799CB615A6C017006DD012 /* ORData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB515A3F91A00AD0820 /* ORData.h */; };
+		5B799CB715A6C017006DD012 /* ORArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB715A3FB9E00AD0820 /* ORArray.h */; };
+		5B799CB815A6C017006DD012 /* ORDataI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB915A3FDB800AD0820 /* ORDataI.h */; };
+		5B799CB915A6C017006DD012 /* ORArrayI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EBD15A402A500AD0820 /* ORArrayI.h */; };
 		5B7CB9D813C2141700783BB3 /* SomeDocumentation.pages in Resources */ = {isa = PBXBuildFile; fileRef = 5B7CB9D713C2141600783BB3 /* SomeDocumentation.pages */; };
 		5B815B1C15A2E4FD0063ECD7 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; };
 		5B815B1D15A2E4FD0063ECD7 /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
@@ -2711,6 +2726,16 @@
 				5B9EE55015175D4F00619B47 /* CPConstraintI.h in Headers */,
 				5B8C7E4215867E8B007042CA /* CPBitVarI.h in Headers */,
 				5B8C7E4315867E8C007042CA /* CPSolutionI.h in Headers */,
+				5B799CB015A6C017006DD012 /* ORFoundation.h in Headers */,
+				5B799CB115A6C017006DD012 /* ORError.h in Headers */,
+				5B799CB215A6C017006DD012 /* ORExpr.h in Headers */,
+				5B799CB315A6C017006DD012 /* ORTracker.h in Headers */,
+				5B799CB415A6C017006DD012 /* ORExprI.h in Headers */,
+				5B799CB515A6C017006DD012 /* ORFactory.h in Headers */,
+				5B799CB615A6C017006DD012 /* ORData.h in Headers */,
+				5B799CB715A6C017006DD012 /* ORArray.h in Headers */,
+				5B799CB815A6C017006DD012 /* ORDataI.h in Headers */,
+				5B799CB915A6C017006DD012 /* ORArrayI.h in Headers */,
 				5B8C7E4515867E8C007042CA /* CPCircuitI.h in Headers */,
 				5B8C7E4815867E8C007042CA /* CPTableI.h in Headers */,
 				5B9EE56515175D4F00619B47 /* ORFactoryI.h in Headers */,
@@ -3699,6 +3724,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B799CAB15A6BFF3006DD012 /* ORError.m in Sources */,
+				5B799CAC15A6BFF3006DD012 /* ORExprI.m in Sources */,
+				5B799CAD15A6BFF3006DD012 /* ORFactory.m in Sources */,
+				5B799CAE15A6BFF3006DD012 /* ORDataI.m in Sources */,
+				5B799CAF15A6BFF3006DD012 /* ORArrayI.m in Sources */,
 				5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */,
 				5B8F1A2315A2D464009CCE42 /* CPLinear.m in Sources */,
 				5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */,
