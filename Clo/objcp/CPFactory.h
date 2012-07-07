@@ -85,7 +85,12 @@ void failNow();
 +(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
 +(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
+@end
 
-@end;
+
+
+#define RANGE(a,b) ((CPRange){a,b})
+#define SUM(P,R,E) [CPFactory sum: cp range:(R) filteredBy:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
+
 
 
