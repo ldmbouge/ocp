@@ -95,6 +95,7 @@
 -(NSMutableArray*)allModelConstraints;
 -(void)      saveSolution;
 -(void)      restoreSolution;
+-(id<CPSolution>) solution;
 -(CPStatus)  close;
 -(CPStatus)  status;
 -(bool)      closed;

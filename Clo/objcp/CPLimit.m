@@ -113,6 +113,11 @@
 {
   [_controller fail];
 }
+-(void) startTryLeft
+{
+   if (_canImprove() == CPFailure)
+      [_controller fail];
+}
 -(void) startTryRight
 {
   if (_canImprove() == CPFailure)

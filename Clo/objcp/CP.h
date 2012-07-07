@@ -78,6 +78,7 @@
 -(void)             restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
 -(id<CPPortal>) portal;
 -(id<CPTracer>) tracer;
+-(id<CPSolution>) solution;
 
 @optional -(void) solveParAll:(CPUInt)nbt subjectTo:(CPClosure)body using:(CPVirtualClosure)body;
 -(id<CPSolver>)       solver;

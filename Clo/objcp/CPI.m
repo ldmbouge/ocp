@@ -124,6 +124,10 @@
 {
    [_solver restoreSolution];
 }
+-(id<CPSolution>) solution
+{
+   return [_solver solution];
+}
 -(void) try: (CPClosure) left or: (CPClosure) right 
 {
    [_search try: left or: right];
