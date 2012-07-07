@@ -17,6 +17,8 @@
 #import "objcp/CPlabel.h"
 
 #import "objcp/CPArray.h"
+#import "objcp/CPDataI.h"
+
 
 /*
 int main (int argc, const char * argv[])
@@ -70,6 +72,7 @@ int main (int argc, const char * argv[])
 }
 */
 
+/*
 int main (int argc, const char * argv[])
 {
    CPRange R = (CPRange){1,3};
@@ -95,13 +98,13 @@ int main (int argc, const char * argv[])
    }
    
    [cp minimize: assignmentCost subjectTo:
-    ^() {
+    ^ {
        //        [cp diff: [x at: 2] with: 2];
        [cp add: [CPFactory alldifferent: x]];
        [cp add: [CPFactory assignment: x matrix: cost cost:assignmentCost]];
     }
           using:
-    ^() {        
+    ^{        
        [CPLabel array: x];
        for(CPInt i = 1; i <= 3; i++)
           printf("%d ",[[x at: i] min]);
@@ -119,5 +122,85 @@ int main (int argc, const char * argv[])
    [CPFactory shutdown];
    return 0;
 }
+*/
+void printCircuit(id<CPIntVarArray> x)
+{
+   int curr = 0;
+   printf("1");
+   do {
+      curr = [[x at: curr] min];
+      printf("->%d",curr);
+   } while (curr != 0);
+   printf("\n");
+}
 
+int main (int argc, const char * argv[])
+{
+   FILE* dta = fopen("/Users/pvh/NICTA/Project/objectivecp/data/rbg040a.tw","r");
+   CPInt nbCities;
+   CPInt tmp;
+   fscanf(dta, "%d",&nbCities);
+   printf("NbCities: %d \n",nbCities);
+   for(CPInt i = 0; i < nbCities; i++) {
+      fscanf(dta, "%d",&tmp);
+      fscanf(dta, "%d",&tmp);
+      fscanf(dta, "%d",&tmp);
+   }
+   CPRange Cities = (CPRange){0,nbCities-1};
+   id<CP> cp = [CPFactory createSolver];
+   id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
+   for(CPInt i = 0; i < nbCities; i++) {
+      for(CPInt j = 0; j < nbCities; j++) {
+         fscanf(dta, "%d",&tmp);
+         [cost set: tmp at: i : j ];
+      }
+   }
+   for(CPInt i = 0; i < nbCities; i++) {
+      for(CPInt j = 0; j < nbCities; j++) 
+         printf("%2d ",[cost at: i : j ]);
+      printf("\n");
+   }
+   CPUniformDistribution* distr = [[CPUniformDistribution alloc] initCPUniformDistribution: Cities];
+   for(CPInt i = 0; i < 10; i++) 
+      printf("%d \n",[distr next]);
+   printf("\n");
+      
+   
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
+   id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
+   [cp minimize: assignmentCost subjectTo:
+   ^{
+      for(CPInt i = 0; i < nbCities; i++)
+         [cp add: [CPFactory notEqualc: [x at: i] to: i]];
+      [cp add: [CPFactory alldifferent: x]];
+      [cp add: [CPFactory circuit: x]];
+      [cp add: [CPFactory assignment: x matrix: cost cost:assignmentCost]];
+    }
+          using:
+    ^{
+       [CPLabel array: x];
+       /*
+       for(CPInt i = 0; i < nbCities; i++)
+          printf("%d ",[[x at: i] min]);
+       printf("\n");
+       CPInt acost = 0;
+       for(CPInt i = 0; i < nbCities; i++)
+          acost += [cost at: i : [[x at: i] min]];
+       printf("Cost: %d \n",acost);
+        */
+       printf("Cost: %d \n",[assignmentCost min]);
+       printCircuit(x);
+    }
+    ];
+   id<CPSolution> solution = ((CPSolverI*) [cp solver])->_aSol;
+   for(int i = 0; i < nbCities; i++) {
+      printf("%d",[solution intValue: [x at: i]]);
+   }
+   NSLog(@"Solver status: %@\n",cp);
+   NSLog(@"Quitting");
+   [cp release];
+   [CPFactory shutdown];
+
+   return 0;
+}
 

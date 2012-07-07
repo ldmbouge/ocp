@@ -406,7 +406,6 @@
 		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
 		B12ED8CF159E0CAD00713C8E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1357F7A14AE73EE007AD73C /* libgurobi.so.4.6.1 in Frameworks */ = {isa = PBXBuildFile; fileRef = B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */; };
-		B1357F7C14AE746C007AD73C /* gurobi_c.h in Headers */ = {isa = PBXBuildFile; fileRef = B1357F7B14AE746C007AD73C /* gurobi_c.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
 		B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */ = {isa = PBXBuildFile; fileRef = B152BE2D13BB541E00531FD5 /* CPAllDifferentDC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1571EA313EDF10E007B5E88 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
@@ -1219,7 +1218,6 @@
 		B12ED8C7159E0C2200713C8E /* sport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sport-Prefix.pch"; sourceTree = "<group>"; };
 		B12ED8C8159E0C2200713C8E /* sport.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = sport.1; sourceTree = "<group>"; };
 		B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = libgurobi.so.4.6.1; path = ../../../../../Library/gurobi461/mac64/lib/libgurobi.so.4.6.1; sourceTree = "<group>"; };
-		B1357F7B14AE746C007AD73C /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = ../../../../../Library/gurobi461/mac64/include/gurobi_c.h; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* ORCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCrFactory.h; sourceTree = "<group>"; };
 		B149BF5C151E759600FC5887 /* ORCrFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCrFactory.m; sourceTree = "<group>"; };
 		B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAllDifferentDC.m; sourceTree = "<group>"; };
@@ -1693,7 +1691,6 @@
 			isa = PBXGroup;
 			children = (
 				5B9EE585151761F500619B47 /* Foundation.framework */,
-				B1357F7B14AE746C007AD73C /* gurobi_c.h */,
 				B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */,
 				5BCD970013FE807A00AB2589 /* libgurobi_g++4.2.a */,
 				B1571F0713EEC144007B5E88 /* gurobi_c.h */,
@@ -2279,6 +2276,9 @@
 				5BE642EF139D49320056F448 /* cont.m */,
 				5BE642F0139D49320056F448 /* context.h */,
 				5BE642F1139D49320056F448 /* context.m */,
+				5B920EB715A3FB9E00AD0820 /* ORArray.h */,
+				5B920EBD15A402A500AD0820 /* ORArrayI.h */,
+				5B920EBE15A402A500AD0820 /* ORArrayI.m */,
 				5BFD594C15A3ACA500825BC3 /* ORFoundation.h */,
 				5BFD594D15A3ACA500825BC3 /* ORFoundation.m */,
 				5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */,
@@ -2299,11 +2299,8 @@
 				5B920EB115A3F6DD00AD0820 /* ORFactory.h */,
 				5B920EB215A3F6DD00AD0820 /* ORFactory.m */,
 				5B920EB515A3F91A00AD0820 /* ORData.h */,
-				5B920EB715A3FB9E00AD0820 /* ORArray.h */,
 				5B920EB915A3FDB800AD0820 /* ORDataI.h */,
 				5B920EBA15A3FDB800AD0820 /* ORDataI.m */,
-				5B920EBD15A402A500AD0820 /* ORArrayI.h */,
-				5B920EBE15A402A500AD0820 /* ORArrayI.m */,
 				B12B178B151DC9CB008AB289 /* ORConcurrency.h */,
 				B12B178D151DCA16008AB289 /* ORConcurrencyI.h */,
 				B12B178E151DCA16008AB289 /* ORConcurrencyI.m */,
@@ -2813,7 +2810,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1571F0613EEBF9C007B5E88 /* lpgurobi.h in Headers */,
-				B1357F7C14AE746C007AD73C /* gurobi_c.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -173,6 +173,11 @@
          }];
       }
    }
+   int assignmentCost = 0;
+   for(CPInt r = _lowr; r <= _upr; r++)
+      assignmentCost += [_cost at: r : [_columnOfRow at: r]];
+   printf("Cost of assignment: %d \n",assignmentCost);
+
    return CPSuspend;
 }
 

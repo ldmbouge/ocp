@@ -52,9 +52,9 @@ int main(int argc, const char * argv[])
                                               by:(int[]){1,10,100,10,100,1000,100,1000,10000}];
          [cp add:lhs4 equal:rhs4];
 
-         //NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-         //BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
-         //NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+         BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
+         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
          [CPLabel heuristic:h];
