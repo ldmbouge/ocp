@@ -128,12 +128,12 @@
 {
    return _tracker;
 }
-/*
+
 -(ORInt)virtualOffset
 {
-   return [[_cp solver] virtualOffset:self];
+   return [_tracker virtualOffset:self];
 }
-*/
+
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -220,11 +220,11 @@
 {
    return _tracker;
 }
-/*-(ORInt) virtualOffset
+-(ORInt) virtualOffset
 {
-   return [[_cp solver] virtualOffset:self];   
+   return [_tracker virtualOffset:self];
 }
-*/
+
 -(id<ORExpr>)index:(id<ORExpr>)idx
 {
    assert(NO); // [ldm] must fix or ORExprVarSubI

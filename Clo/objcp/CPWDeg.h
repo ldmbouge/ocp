@@ -22,8 +22,8 @@
    CPUInt*           _map; 
    id<CP>             _cp;
    CPSolverI*     _solver;
-   CPUInt            _nbc;
-   CPUInt            _nbv;
+   CPULong           _nbc;
+   CPULong           _nbv;
    CPUInt*             _w;
    NSSet**            _cv;
    id*              _vOfC;

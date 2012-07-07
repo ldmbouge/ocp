@@ -76,7 +76,7 @@
 }
 -(void)fixHeight
 {
-   _height = maxOf(LEFTHEIGHT(self),RIGHTHEIGHT(self))+1;
+   _height = max(LEFTHEIGHT(self),RIGHTHEIGHT(self))+1;
 }
 -(ORAVLTreeNode<Position>*)tallest
 {

@@ -19,7 +19,7 @@
 
 @interface CPMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
-   CPInt                   _nbVI;
+   CPLong                  _nbVI;
    id<CP>                    _cp;
    CPVarInfo**        _curActive;
    CPUInt              _nbActive;

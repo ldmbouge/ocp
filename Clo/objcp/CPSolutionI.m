@@ -19,7 +19,7 @@
 {
    self = [super init];
    NSArray* av = [solver allVars];
-   CPUInt sz = [av count];
+   CPULong sz = [av count];
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
    [av enumerateObjectsUsingBlock:^(id<CPSavable> obj, NSUInteger idx, BOOL *stop) {
       id<CPSavable> shot = [obj snapshot];
@@ -43,7 +43,7 @@
 {
    return [[_shots objectAtIndex:[var getId]] boolValue];
 }
--(CPUInt)count
+-(CPULong)count
 {
    return [_shots count];
 }

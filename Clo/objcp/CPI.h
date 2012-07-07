@@ -62,6 +62,7 @@
 -(id<CPSolver>)        solver;
 -(id<CPExplorer>)    explorer;
 -(void)trackObject:(id)object;
+-(CPInt)virtualOffset:(id)obj;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 -(id<CPPortal>)portal;

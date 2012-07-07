@@ -68,7 +68,7 @@ static CPInt _deterministic;
 {
   [super dealloc];
 }
--(CPInt) next
+-(CPLong) next
 {
   return nrand48(_seed);
 }
@@ -105,14 +105,14 @@ static CPInt _deterministic;
   [_stream release];
   [super dealloc];
 }
--(CPInt) next
+-(CPLong) next
 {
   return _range.low + [_stream next] % _size;  
 }
 @end;
 
 @implementation CPRuntimeMonitor 
-+(CPInt) cputime
++(CPLong) cputime
 {
   struct rusage r;
   getrusage(RUSAGE_SELF,&r);
@@ -120,7 +120,7 @@ static CPInt _deterministic;
   t = r.ru_utime;
   return 1000 * t.tv_sec + t.tv_usec / 1000;
 }
-+(CPInt) microseconds
++(CPLong) microseconds
 {
   struct rusage r;
   getrusage(RUSAGE_SELF,&r);

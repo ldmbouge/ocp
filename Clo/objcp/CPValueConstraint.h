@@ -45,12 +45,12 @@
 @end
 
 @interface CPSumBoolGeq : CPCoreConstraint<NSCoding> {
-    CPIntVarI**            _x;
-    CPInt            _nb;
+    CPIntVarI**       _x;
+    CPLong           _nb;
     CPInt             _c;
-    CPTrigger**          _at; // the c+1 triggers.
+    CPTrigger**      _at; // the c+1 triggers.
     CPInt* _notTriggered;
-    CPInt          _last;
+    CPLong         _last;
 }
 -(id) initCPSumBoolGeq:(id)x geq:(CPInt)c;
 -(void) dealloc;

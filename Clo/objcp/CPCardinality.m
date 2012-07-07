@@ -99,7 +99,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     _so = 0;
     _required = _possible = 0;
     if ([ax isKindOfClass:[NSArray class]]) {
-        _sx = [ax count];
+        _sx = (CPInt)[ax count];
         _x = malloc(sizeof(CPIntVarI*)*_sx);
         NSEnumerator* k = [ax objectEnumerator];
         id xi;
@@ -111,7 +111,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
         [k release];
     } 
     else if ([ax isKindOfClass:[ORIdArrayI class]]) {
-        _sx = [ax count];
+        _sx = (CPInt)[ax count];
         _x  = malloc(sizeof(CPIntVarI*)*_sx);
         int i=0;
         id<CPIntVarArray> xa = ax;
@@ -131,7 +131,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     _required = _possible = 0;   
     _fdm = (CPSolverI*)solver;
 
-    _sx = [ax count];
+    _sx = (CPInt)[ax count];
     _x  = malloc(sizeof(CPIntVarI*)*_sx);
     int i=0;
     id<CPIntVarArray> xa = ax;
@@ -170,7 +170,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
 -(CPUInt)nbUVars
 {
    CPUInt nb=0;
-   CPUInt sz = _up - _low + 1;
+   CPUInt sz = (CPUInt)(_up - _low + 1);
    for(CPUInt k=0;k<sz;k++)
       nb += ![_x[k] bound];
    return nb;

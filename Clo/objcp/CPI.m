@@ -257,6 +257,10 @@
 {
    [_solver trackObject:object];
 }
+-(CPInt)virtualOffset:(id)obj
+{
+   return [_solver virtualOffset:obj];
+}
 
 @end
 

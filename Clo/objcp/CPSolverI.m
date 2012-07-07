@@ -310,12 +310,12 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 }
 -(CPUInt) nbVars
 {
-   return [_vars count];
+   return (CPUInt)[_vars count];
 }
 
 -(void) trackVariable: (id) var
 {
-   [var setId:[_vars count]];
+   [var setId:(CPUInt)[_vars count]];
    if (!_closed) {
       [_vars addObject:var];
       [var autorelease];
@@ -341,13 +341,13 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 }
 -(CPInt)virtualOffset:(id)obj
 {
-   CPUInt idx = [_oStore indexOfObjectIdenticalTo:obj];
+   CPUInt idx = (CPUInt)[_oStore indexOfObjectIdenticalTo:obj];
    return idx;
 }
 
 -(NSString*) description
 {
-  return [NSString stringWithFormat:@"Solver: %d vars\n\t%d propagations\n",[_vars count],_nbpropag];
+  return [NSString stringWithFormat:@"Solver: %ld vars\n\t%d propagations\n",[_vars count],_nbpropag];
 }
 -(id) trail
 {
@@ -482,7 +482,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
       CPStatus status = [cstr post];
       _status = internalPropagate(self,status);
       if (_status && status != CPSkip) {
-         [cstr setId:[_cStore count]];
+         [cstr setId:(CPUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
       }
    } @catch (CPFailException* ex) {
@@ -504,7 +504,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    else {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId:[_mStore count]];
+      [cstr setId:(CPUInt)[_mStore count]];
       [_mStore addObject:c]; 
       return CPSuspend;
    }

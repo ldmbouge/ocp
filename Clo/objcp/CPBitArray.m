@@ -245,7 +245,7 @@ unsigned int getLengthInWords(CPBitArray* array)
    int             i;
    unsigned int    ui;
    
-   if (_length <=BITSPERWORD)
+   if (_length <=BITSPERWORD) {
       if (_signed) {
          i = _data.sValue >> places;
          return [[CPBitArray alloc] initWithValue:i];
@@ -254,7 +254,7 @@ unsigned int getLengthInWords(CPBitArray* array)
          ui = _data.usValue >> places;
          return [[CPBitArray alloc] initWithUnsignedValue:ui];
       }
-   
+   }
    //TODO: Add code to deal with bit vectors with length > BITSPERWORD
    return nil;
    

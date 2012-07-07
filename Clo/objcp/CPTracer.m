@@ -205,11 +205,11 @@
    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
    NSArray* dico = [fdm allVars];
-   CPUInt nbProxies = [[fdm allVars] count] + 1; // 1 extra for the trail proxy
+   CPULong nbProxies = [[fdm allVars] count] + 1; // 1 extra for the trail proxy
    __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      proxies[idx] = [[CPProxyVar alloc] initProxyVar:idx];  // create a proxy 
+      proxies[idx] = [[CPProxyVar alloc] initProxyVar:(CPUInt)idx];  // create a proxy
       [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
    }];   
    proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];
@@ -300,11 +300,11 @@
    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
     NSArray* dico = [solver allVars];
-   CPUInt nbProxies = [[solver allVars] count] + 1; // 1 extra for the trail proxy
+   CPULong nbProxies = [[solver allVars] count] + 1; // 1 extra for the trail proxy
    __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      proxies[idx] = [[CPProxyVar alloc] initProxyVar:idx];  // create a proxy 
+      proxies[idx] = [[CPProxyVar alloc] initProxyVar:(CPUInt)idx];  // create a proxy
       [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
    }];   
    proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];

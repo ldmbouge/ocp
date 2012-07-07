@@ -20,6 +20,6 @@
 -(void)dealloc;
 -(int)intValue:(id)var;
 -(BOOL)boolValue:(id)var;
--(CPUInt)count;
+-(CPULong)count;
 -(void)restoreInto:(id<CPSolver>)solver;
 @end
