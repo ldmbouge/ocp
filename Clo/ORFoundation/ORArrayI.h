@@ -29,12 +29,12 @@
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with:(ORInt(^)(ORInt,ORInt)) clo;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
+-(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
-//-(ORInt)virtualOffset;   
 -(id<ORExpr>) index: (id<ORExpr>) idx;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -55,7 +55,8 @@
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
-//-(CPInt) virtualOffset;   
+-(id)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(id<ORExpr>) index: (id<ORExpr>) idx;
 -(void)encodeWithCoder:(NSCoder*) aCoder;
 -(id)initWithCoder:(NSCoder*) aDecoder;

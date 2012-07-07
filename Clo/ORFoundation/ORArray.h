@@ -15,6 +15,7 @@
 
 @protocol ORIntArray <NSObject> 
 -(ORInt) at: (ORInt) value;
+-(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(NSUInteger) count;

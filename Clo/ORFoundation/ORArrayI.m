@@ -96,6 +96,12 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    return _array[value];
 }
+-(void) set: (ORInt) value at:(ORInt)idx
+{
+   if (idx < _low || idx > _up)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
+   _array[idx] = value;
+}
 -(id<ORExpr>)index:(id<ORExpr>)idx
 {
    return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
@@ -225,6 +231,14 @@
    return [_tracker virtualOffset:self];
 }
 
+-(id)objectAtIndexedSubscript:(NSUInteger)key
+{
+   return _array[key];
+}
+-(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)key
+{
+   _array[key] = newValue;
+}
 -(id<ORExpr>)index:(id<ORExpr>)idx
 {
    assert(NO); // [ldm] must fix or ORExprVarSubI
