@@ -19,7 +19,7 @@
    CPUInt*          _map; 
    id<CP>            _cp;
    CPSolverI*    _solver;
-   CPUInt           _nbv;
+   CPULong          _nbv;
    NSSet**           _cv;
 }
 -(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;

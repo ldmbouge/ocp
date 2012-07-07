@@ -200,13 +200,13 @@
     }
     CPInt listen = _c+1;
     CPInt nbNW   = 0;
-    for(CPInt i=_nb-1;i >= 0;--i) {
+    for(CPLong i=_nb-1;i >= 0;--i) {
         if (listen > 0 && [_x[i] max] == true) { // Still in the domain and in need of more watches
             --listen; // the closure must capture the correct value of listen!
             _at[listen] = [_x[i] setLoseTrigger: true do: ^ 
                            {
                                // Look for another support among the non-tracked variables.
-                               CPInt j = _last;
+                               CPLong j = _last;
                                bool jOk = false;
                                do {
                                    j=(j+1) % (_nb - _c - 1);
@@ -238,10 +238,10 @@
                                }
                            }
                            onBehalf:self];                           
-            _at[listen]->_vId = i; // local identifier of var being watched.
+            _at[listen]->_vId = (CPInt)i; // local identifier of var being watched.
         } 
         else 
-            _notTriggered[nbNW++] = i;
+            _notTriggered[nbNW++] = (CPInt)i;
     }   
     assert(nbNW == _nb - _c - 1);
     _last = _nb - _c - 2;  // where we will start the circular scan among the unWatched variables.
@@ -263,7 +263,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [super encodeWithCoder:aCoder];   
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
     for(CPInt k=0;k<_nb;k++) 
         [aCoder encodeObject:_x[k]];
     [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
@@ -272,7 +272,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
     self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
     _x = malloc(sizeof(CPIntVarI*)*_nb);   
     for(CPInt k=0;k<_nb;k++) 
         _x[k] = [aDecoder decodeObject];

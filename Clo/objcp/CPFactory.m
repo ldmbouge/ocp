@@ -184,7 +184,7 @@ void failNow()
    CPInt k = 0;
    for(CPInt i=r1.low;i <= r1.up;i++)
       for(CPInt j=r2.low;j <= r2.up;j++)
-         [o set:clo(i,j) at:k];
+         [o set:clo(i,j) at:k++];
    return (id<CPIntVarArray>)o;
 }
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1  : (CPRange) r2 : (CPRange) r3 with: (id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo
@@ -195,8 +195,8 @@ void failNow()
    CPInt l = 0;
    for(CPInt i=r1.low;i <= r1.up;i++)
       for(CPInt j=r2.low;j <= r2.up;j++)
-         for(CPInt k=r2.low;k <= r2.up;k++)
-            [o set:clo(i,j,k) at:l];
+         for(CPInt k=r3.low;k <= r3.up;k++)
+            [o set:clo(i,j,k) at:l++];
    return (id<CPIntVarArray>)o;
 }
 +(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain

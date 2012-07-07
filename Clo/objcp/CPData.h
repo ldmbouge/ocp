@@ -77,8 +77,8 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 @end
 
 @interface CPRuntimeMonitor : NSObject 
-+(CPInt) cputime;
-+(CPInt) microseconds;
++(CPLong) cputime;
++(CPLong) microseconds;
 @end;
 
 

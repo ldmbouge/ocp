@@ -249,12 +249,12 @@
 
 -(unsigned int) getMaxRank
 {
-   return (1L << _freebits._val)-1;
+   return (1 << _freebits._val)-1;
 }
 
 -(CPUInt) getSize
 {
-   return (1L << _freebits._val)-1;
+   return (1 << _freebits._val)-1;
 }
 
 -(unsigned int*) pred:(unsigned int*)x
@@ -370,7 +370,7 @@
       uint64 curMax = INTERPRETATION(_up);
       if ((curMax < newMin) || (curMin > oldMax))
          failNow();
-      unsigned int freeBits = curMin ^ curMax;
+      uint64 freeBits = curMin ^ curMax;
       if ((0x1 << msbIndex) & freeBits) {
          if (curMax - (0x1 << msbIndex) < newMin) {
             curMin = curMin | (0x1 << msbIndex);
@@ -507,7 +507,7 @@
     
     if(up < newMax64){
         if (_wordLength == 1)
-            assignTRUInt(&_max[0], up, _trail);
+           assignTRUInt(&_max[0],(CPUInt) up, _trail);
         else{
             assignTRUInt(&_max[0], up>>32, _trail);
             assignTRUInt(&_max[1], (up << 32)>>32, _trail);
@@ -515,7 +515,7 @@
     }
     else{
         if (_wordLength == 1)
-            assignTRUInt(&_max[0], newMax64, _trail);
+           assignTRUInt(&_max[0], (CPUInt)newMax64, _trail); 
         else{
             assignTRUInt(&_max[0], newMax64>>32, _trail);
             assignTRUInt(&_max[1], (newMax64 << 32)>>32, _trail);

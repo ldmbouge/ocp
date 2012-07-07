@@ -58,7 +58,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"%ld",_value];
+   return [NSString stringWithFormat:@"%d",_value];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

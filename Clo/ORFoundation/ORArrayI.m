@@ -128,12 +128,12 @@
 {
    return _tracker;
 }
-/*
+
 -(ORInt)virtualOffset
 {
-   return [[_cp solver] virtualOffset:self];
+   return [_tracker virtualOffset:self];
 }
-*/
+
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -220,11 +220,11 @@
 {
    return _tracker;
 }
-/*-(ORInt) virtualOffset
+-(ORInt) virtualOffset
 {
-   return [[_cp solver] virtualOffset:self];   
+   return [_tracker virtualOffset:self];
 }
-*/
+
 -(id<ORExpr>)index:(id<ORExpr>)idx
 {
    assert(NO); // [ldm] must fix or ORExprVarSubI
@@ -247,7 +247,8 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   _array =  malloc(sizeof(id)*_nb) - _low;
+   _array =  malloc(sizeof(id)*_nb);
+   _array -= _low;
    for(ORInt i=_low;i<=_up;i++)
       _array[i] = [aDecoder decodeObject];
    return self;   

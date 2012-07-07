@@ -121,7 +121,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) bounds:(CPBounds*) bnd
 {
-    *bnd = (CPBounds){[_dom min],[_dom max]};
+    *bnd = (CPBounds){(CPInt)[_dom min],(CPInt)[_dom max]};
 }
 
 -(unsigned int)domsize
@@ -191,7 +191,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     if (_triggers == nil) {
         uint64 low = [_dom min];
         uint64 up = [_dom max];
-        _triggers = [CPTriggerMap triggerMapFrom:low to:up dense:(up-low+1)<256];    
+        _triggers = [CPTriggerMap triggerMapFrom:(CPInt)low to:(CPInt)up dense:(up-low+1)<256];
     }
 }
 

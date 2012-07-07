@@ -13,4 +13,5 @@
 
 @protocol ORTracker <NSObject>
 -(void)trackObject:(id)obj;
+-(ORInt)virtualOffset:(id)obj;
 @end

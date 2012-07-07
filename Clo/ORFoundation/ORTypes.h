@@ -28,8 +28,8 @@ typedef uint32 ORUInt;
 typedef sint64 ORLong;
 typedef uint64 ORULong;
 
-static inline ORInt minOf(ORInt a,ORInt b) { return a < b ? a : b;}
-static inline ORInt maxOf(ORInt a,ORInt b) { return a > b ? a : b;}
+static inline ORLong minOf(ORLong a,ORLong b) { return a < b ? a : b;}
+static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
 
 static inline ORInt min(ORInt a,ORInt b) { return a < b ? a : b;}
 static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
@@ -39,6 +39,9 @@ static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
 
 #define MAXUNSIGNED ((ORUInt)0xFFFFFFFF)
 #define MINUNSIGNED ((ORUInt)0x0)
+
+static inline ORInt bindUp(ORLong a)   { return (a < (ORLong)MAXINT) ? (ORInt)a : MAXINT;}
+static inline ORInt bindDown(ORLong a) { return (a > (ORLong)MININT) ? (ORInt)a : MININT;}
 
 @protocol ORExpr;
 

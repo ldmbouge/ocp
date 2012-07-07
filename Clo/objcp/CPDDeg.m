@@ -47,7 +47,7 @@
 -(void)initInternal:(id<CPVarArray>)t
 {
    _vars = t;
-   CPInt len = [_vars count];   
+   CPLong len = [_vars count];
    CPUInt maxID = 0;
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[[t at:k] getId]);   

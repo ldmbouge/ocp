@@ -165,7 +165,7 @@ typedef int (^intgetter) (void) ;
 
 @interface CPAllDifferenceVC : CPActiveConstraint<NSCoding> {
    CPIntVarI**   _x;
-   CPInt    _nb;   
+   CPLong       _nb;
 }
 -(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (CPInt) n;
 -(id) initCPAllDifferenceVC: (id) x;

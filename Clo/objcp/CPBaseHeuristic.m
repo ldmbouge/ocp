@@ -20,9 +20,9 @@
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       nbViews += ([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]);
    }];
-   CPUInt l = [array count] - nbViews;
+   CPULong l = [array count] - nbViews;
    id<CP> cp = [[array objectAtIndex:0] cp];
-   id<CPVarArray> direct = [CPFactory varArray:cp range:(CPRange){0,l-1}];
+   id<CPVarArray> direct = [CPFactory varArray:cp range:(CPRange){0,(CPInt)l-1}];
    __block CPUInt k = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       if (!([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]))

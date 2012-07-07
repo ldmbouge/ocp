@@ -76,7 +76,7 @@
 
 -(void)initInternal:(id<CPVarArray>)t
 {
-   CPInt len = [t count];
+   CPLong len = [t count];
    _vars = t;
    _cv = malloc(sizeof(NSSet*)*len);
    memset(_cv,sizeof(NSSet*)*len,0);

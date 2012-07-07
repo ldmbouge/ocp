@@ -275,7 +275,7 @@
       CPLong svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
-   return max(MININT,lb);
+   return max(MININT,bindDown(lb));
 }
 -(CPInt)max
 {
@@ -287,7 +287,7 @@
       CPLong svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
-   return min(MAXINT,ub);   
+   return min(MAXINT,bindUp(ub));
 }
 -(CPStatus)post:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
@@ -438,14 +438,14 @@
    CPLong lub = [lV max];
    CPLong rlb = [rV min];
    CPLong rub = [rV max];
-   CPLong a = min(llb * rlb,llb * rub);
-   CPLong b = min(lub * rlb,lub * rub);
-   CPLong lb = min(a,b);
-   CPLong c = max(llb * rlb,llb * rub);
-   CPLong d = max(lub * rlb,lub * rub);
-   CPLong ub = max(c,d);
+   CPLong a = minOf(llb * rlb,llb * rub);
+   CPLong b = minOf(lub * rlb,lub * rub);
+   CPLong lb = minOf(a,b);
+   CPLong c = maxOf(llb * rlb,llb * rub);
+   CPLong d = maxOf(lub * rlb,lub * rub);
+   CPLong ub = maxOf(c,d);
    if (_rv==nil)
-      _rv = [CPFactory intVar:cp domain:(CPRange){max(lb,MININT),min(ub,MAXINT)}];
+      _rv = [CPFactory intVar:cp domain:(CPRange){bindDown(lb),bindUp(ub)}];
    [_fdm post: [CPFactory mult:lV by:rV equal:_rv]];
    [lT release];
    [rT release];

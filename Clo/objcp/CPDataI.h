@@ -30,7 +30,7 @@
 }
 -(CPRandomStream*) init;
 -(void) dealloc;
--(CPInt) next;
+-(CPLong) next;
 @end;
 
 @interface CPZeroOneStream : NSObject {
@@ -48,7 +48,7 @@
 }
 -(CPUniformDistribution*) initCPUniformDistribution: (CPRange) r;
 -(void) dealloc;
--(CPInt) next;
+-(CPLong) next;
 @end;
 
 

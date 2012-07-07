@@ -163,7 +163,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPEqualBC:%02ld %@ == %@ + %d>",_name,_x,_y,_c];
+   return [NSMutableString stringWithFormat:@"<CPEqualBC:%02d %@ == %@ + %d>",_name,_x,_y,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -260,7 +260,7 @@
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPEqualDC:%02ld %@ == %@ + %d>",_name,_x,_y,_c];
+   return [NSMutableString stringWithFormat:@"<CPEqualDC:%02d %@ == %@ + %d>",_name,_x,_y,_c];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -490,7 +490,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPEqual3DC:%02ld %@ + %@ == %@>",_name,_x,_y,_z];
+   return [NSMutableString stringWithFormat:@"<CPEqual3DC:%02d %@ + %@ == %@>",_name,_x,_y,_z];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -559,7 +559,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPNotEqual: %02ld %@ != %@ + %d>",_name,_x,_y,_c];
+   return [NSMutableString stringWithFormat:@"<CPNotEqual: %02d %@ != %@ + %d>",_name,_x,_y,_c];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -621,7 +621,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPBasicNotEqual: %02ld %@ != %@>",_name,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPBasicNotEqual: %02d %@ != %@>",_name,_x,_y];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -672,7 +672,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPLEqualBC: %02ld %@ <= %@>",_name,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPLEqualBC: %02d %@ <= %@>",_name,_x,_y];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -704,7 +704,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
       return [_y bind:abs(minDom(_x))];
    }
    CPBounds xb = bounds(_x);
-   int mxy = maxOf( - xb.min,xb.max);
+   int mxy = max( - xb.min,xb.max);
    [_y updateMin:0 andMax:mxy];
    [_x updateMin:-mxy andMax:mxy];
    CPBounds yb = bounds(_y);
@@ -766,7 +766,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPAbsDC: %02ld %@ = abs(%@)>",_name,_y,_x];
+   return [NSMutableString stringWithFormat:@"<CPAbsDC: %02d %@ = abs(%@)>",_name,_y,_x];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -809,7 +809,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
       BOOL  cZ = xb.min < 0 && xb.max > 0;
       if (cZ) {
          CPRange aZ = [_x around:0];
-         CPInt lb = minOf(-aZ.low,aZ.up);
+         CPInt lb = min(-aZ.low,aZ.up);
          [_y updateMin:lb andMax:ub];
       } else if (xb.min >= 0) {
          [_y updateMin:xb.min andMax:xb.max];
@@ -832,7 +832,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPAbsBC: %02ld %@ == abs(%@)>",_name,_y,_x];
+   return [NSMutableString stringWithFormat:@"<CPAbsBC: %02d %@ == abs(%@)>",_name,_y,_x];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -872,7 +872,7 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPLEqualc: %02ld %@ <= %d>",_name,_x,_c];
+   return [NSMutableString stringWithFormat:@"<CPLEqualc: %02d %@ <= %d>",_name,_x,_c];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -904,8 +904,6 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 {
    [super dealloc];
 }
-static inline CPInt bindUp(CPLong a)   { return (a < (CPLong)MAXINT) ? (CPInt)a : MAXINT;}
-static inline CPInt bindDown(CPLong a) { return (a > (CPLong)MININT) ? (CPInt)a : MININT;}
 static inline CPInt minDiv(CPLong c,CPLong d1,CPLong d2)  {
    const CPLong rd1 = c % d1,rd2 = c % d2;
    const CPLong q1 = c / d1 + (rd1 && d1*c>0); 
@@ -1002,7 +1000,7 @@ static CPStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
 static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 {
    if ([x bound]) {
-      return [z bind:c * [x min]];
+      return [z bind:bindDown(c * [x min])];
    } else {
       if (c > 0) {
          CPInt newMax  = bindUp(c * [x max]);
@@ -1012,7 +1010,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       } else if (c == 0) {
          [z bind:0];
       } else {
-         [z updateMin:c * [x max] andMax: c * [x min]];
+         [z updateMin:bindDown(c * [x max]) andMax:bindDown(c * [x min])];
          [mc propagateCXZ:-c mult:x equal:negBounds(z)]; 
       }
       return CPSuspend;
@@ -1143,7 +1141,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPMultBC:%02ld %@ == %@ * %@>",_name,_z,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPMultBC:%02d %@ == %@ * %@>",_name,_z,_x,_y];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -1217,18 +1215,18 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 -(CPStatus) post 
 {
    bool ok = true;
-   CPInt low  = 0,up = _nb - 1;
+   CPLong low  = 0,up = _nb - 1;
    CPInt minX = MAXINT,maxX = MININT;
    for(CPInt k=0;k<_nb;k++) {
-      minX = minOf(minX,[_x[k] min]);
-      maxX = maxOf(maxX,[_x[k] max]);
+      minX = min(minX,[_x[k] min]);
+      maxX = max(maxX,[_x[k] max]);
    }
    CPInt* vCnt = alloca(sizeof(CPInt)*(maxX-minX+1));
    CPInt* vUse = alloca(sizeof(CPInt)*(maxX-minX+1));
    memset(vCnt,0,sizeof(CPInt)*(maxX-minX+1));
    vCnt -= minX;
    CPInt nbBoundVal = 0;
-   for(CPInt k=low;k<=up;k++) {
+   for(CPLong k=low;k<=up;k++) {
       if ([_x[k] bound]) {
          CPInt to = [_x[k] min];
          vCnt[to]++;
@@ -1238,7 +1236,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    }
    if (!ok) failNow();
    
-   for(CPInt k=low;k<=up && ok;k++) {
+   for(CPLong k=low;k<=up && ok;k++) {
       if ([_x[k] bound])
          continue;
       for(CPInt j=0;j<nbBoundVal;j++) {
@@ -1249,7 +1247,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       [_x[k] whenBindDo: ^ {
          //int vk = [_x[k] min];
          CPInt vk = (CPInt) minIMP(_x[k],minSEL);
-         for(CPInt i=up;i;--i) {
+         for(CPLong i=up;i;--i) {
             if (i == k) 
                continue;
             [_x[i] remove:vk];
@@ -1262,7 +1260,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
    for(CPInt k=0;k<_nb;k++) 
       [aCoder encodeObject:_x[k]];
 }
@@ -1270,7 +1268,7 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super initWithCoder:aDecoder];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
    _x = malloc(sizeof(CPIntVarI*)*_nb);   
    for(CPInt k=0;k<_nb;k++) 
       _x[k] = [aDecoder decodeObject];

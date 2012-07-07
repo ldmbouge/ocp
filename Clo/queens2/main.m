@@ -50,8 +50,8 @@ int main (int argc, const char * argv[])
     }   
           using: 
     ^() {
-       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
-       //[CPLabel heuristic:h];
+       //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+       [CPLabel heuristic:h];
        printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];
     }

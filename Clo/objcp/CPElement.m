@@ -209,7 +209,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(NSSet*)allVars
 {
-   CPUInt sz = [_z count] + 2;
+   CPULong sz = [_z count] + 2;
    id<CPIntVar>* t = alloca(sizeof(id<CPIntVar>)*sz);
    CPInt i = 0;
    for(CPInt k=[_z low];k<=[_z up];k++)
