@@ -161,13 +161,12 @@ int main (int argc, const char * argv[])
       printf("\n");
    }
    CPUniformDistribution* distr = [[CPUniformDistribution alloc] initCPUniformDistribution: Cities];
-   for(CPInt i = 0; i < 10; i++) 
-      printf("%d \n",[distr next]);
-   printf("\n");
       
-   
+   id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
+   id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
+   id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:
    ^{
       for(CPInt i = 0; i < nbCities; i++)
@@ -178,23 +177,45 @@ int main (int argc, const char * argv[])
     }
           using:
     ^{
-       [CPLabel array: x];
-       /*
-       for(CPInt i = 0; i < nbCities; i++)
-          printf("%d ",[[x at: i] min]);
-       printf("\n");
-       CPInt acost = 0;
-       for(CPInt i = 0; i < nbCities; i++)
-          acost += [cost at: i : [[x at: i] min]];
-       printf("Cost: %d \n",acost);
-        */
-       printf("Cost: %d \n",[assignmentCost min]);
-       printCircuit(x);
+       [cp restart:
+         ^{
+            [cp limitSolutions: [nbSolutions value] in:
+            ^{
+//               NSLog(@"x=%@",x);
+             [CPLabel array: x];
+             printf("Cost: %d \n",[assignmentCost min]);
+//             printCircuit(x);
+            }
+           ];
+         }
+         onRestart:
+            ^{
+               printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
+               [nbSolutions incr];
+               id<CPSolution> solution = [cp solution];
+               [cp add: [CPFactory lEqualc: assignmentCost to: [solution intValue: assignmentCost] - 1]];
+               for(CPInt i = 0; i < nbCities; i++)
+                  [mark set: 0 at: i];
+               
+               CPInt start = (int) [distr next];
+               for(CPInt i = 0; i < 19; i++) {
+                  [mark set: 1 at: start];
+                  start = [solution intValue: [x at: start]];
+               }
+               for(CPInt i = 0; i < nbCities; i++) {
+                  if ([mark at: i] == 0)
+                     [cp add: [CPFactory equalc: [x at: i] to: [solution intValue: [x at: i]]]];
+               }
+            }
+            isDone: NULL
+        ];
     }
     ];
-   id<CPSolution> solution = ((CPSolverI*) [cp solver])->_aSol;
-   for(int i = 0; i < nbCities; i++) {
-      printf("%d",[solution intValue: [x at: i]]);
+   id<CPSolution> solution = [cp solution];
+   CPInt start = (int) [distr next];
+   for(CPInt i = 0; i < 10; i++) {
+      printf("%d->",start);
+      start = [solution intValue: [x at: start]];
    }
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");

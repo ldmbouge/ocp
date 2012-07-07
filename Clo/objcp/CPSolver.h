@@ -35,6 +35,7 @@
 -(CPStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 -(CPStatus) propagate;
 -(CPUInt) nbPropagation;
+-(id<CPSolution>) solution;
 -(CPUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;

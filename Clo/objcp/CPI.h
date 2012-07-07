@@ -66,6 +66,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 -(id<CPPortal>)portal;
+-(id<CPSolution>) solution;
 @end
 
 @interface CPI : CoreCPI<CP> {

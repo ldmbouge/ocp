@@ -576,6 +576,10 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 {
    [_aSol restoreInto:self];
 }
+-(id<CPSolution>) solution
+{
+   return _aSol;
+}
 -(CPStatus) close
 {
    if (!_closed) {
