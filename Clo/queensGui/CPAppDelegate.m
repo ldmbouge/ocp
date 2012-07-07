@@ -98,6 +98,8 @@
 {
    [NSThread detachNewThreadSelector:@selector(runModel) toTarget:self withObject:nil];
 }
+- (IBAction)smart:(id)sender {
+}
 
 - (IBAction)resume:(id)sender 
 {

@@ -13,6 +13,7 @@
 
 @implementation CPAppDelegate
 
+@synthesize theView = _theView;
 @synthesize window = _window;
 
 - (void)dealloc
