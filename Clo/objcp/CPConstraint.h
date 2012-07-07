@@ -55,7 +55,7 @@
 //+(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c;
 //+(id<CPConstraint>) expr: (id<CPExpr>)e;
 
-+(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix;
++(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<CPIntVar>) cost;
 @end
 
 

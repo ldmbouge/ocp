@@ -260,12 +260,11 @@
     [[[x cp] solver] trackObject:o];
     return o;    
 }
-+(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix
++(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<CPIntVar>) cost
 {
-    id<CPConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix];
-    [[[x cp] solver] trackObject:o];
-    return o;
-    
+   id<CPConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix cost: cost];
+   [[[x cp] solver] trackObject:o];
+   return o;
 }
 @end
 
