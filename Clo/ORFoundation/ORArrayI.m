@@ -247,7 +247,8 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   _array =  malloc(sizeof(id)*_nb) - _low;
+   _array =  malloc(sizeof(id)*_nb);
+   _array -= _low;
    for(ORInt i=_low;i<=_up;i++)
       _array[i] = [aDecoder decodeObject];
    return self;   

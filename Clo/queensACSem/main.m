@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
    id<CPIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<CPIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   [cp solveParAll:4
+   [cp solveParAll:1
        subjectTo: 
             ^() {
                 [cp add: [CPFactory alldifferent: x]];
