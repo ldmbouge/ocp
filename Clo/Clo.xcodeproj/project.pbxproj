@@ -1822,7 +1822,6 @@
 				5B558C081563F01000D2BCD7 /* queensNaive */,
 				5B6E89281379D3EA005DB4CA /* Clo */,
 				5B9ABCE3139131EE000997E5 /* solver */,
-				5BBA3F8B151CCB0C00D6F6AD /* queensGui */,
 				5BB3836613B3C0E1005B7D52 /* magicserie */,
 				5BEEF61313970B6F002ADBD4 /* queens2 */,
 				5BCCC4061417F8CE0079E833 /* queensACSem */,
@@ -2154,14 +2153,6 @@
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
-		};
-		5BBA3F8B151CCB0C00D6F6AD /* queensGui */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = queensGui;
-			path = /Users/ldm/work/langExp/Clo/queensGui;
-			sourceTree = "<absolute>";
 		};
 		5BC116A31595067900E0F5C8 /* ais */ = {
 			isa = PBXGroup;
