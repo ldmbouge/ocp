@@ -17,7 +17,7 @@
 #import "objcp/CPTracer.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
-#import "objcp/CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 
 #import "objcp/CPBitArray.h"
 #import "objcp/CPBitArrayDom.h"

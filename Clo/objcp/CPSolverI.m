@@ -484,6 +484,10 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
       if (_status && status != CPSkip) {
          [cstr setId:(CPUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
+         const NSUInteger ofs = [_cStore count] - 1;
+         [_trail trailClosure:^{
+            [_cStore removeObjectAtIndex:ofs];
+         }];
       }
    } @catch (CPFailException* ex) {
       CFRelease(ex);

@@ -41,6 +41,7 @@
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;
+-(void)       trust;
 
 -(void)       startTry;
 -(void)       startTryLeft;
@@ -79,6 +80,7 @@
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;
+-(void)       trust;
 
 -(void)       startTry;
 -(void)       startTryLeft;

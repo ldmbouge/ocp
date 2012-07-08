@@ -15,7 +15,7 @@
 #import <ORFoundation/ORSet.h>
 #import "CPConstraintI.h"
 
-@protocol AbstractSolver <NSObject>
+@protocol AbstractSolver <NSObject,ORTracker>
 -(void) saveSolution;
 -(void) restoreSolution;
 -(CPStatus) close;

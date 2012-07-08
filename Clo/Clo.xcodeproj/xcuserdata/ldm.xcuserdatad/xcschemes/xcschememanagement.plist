@@ -34,6 +34,11 @@
 			<key>orderHint</key>
 			<integer>35</integer>
 		</dict>
+		<key>SportDemo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>36</integer>
+		</dict>
 		<key>Sudoku.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -388,6 +393,11 @@
 			<true/>
 		</dict>
 		<key>B1B68C73159FC16E008BC463</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B1C9DF1215A8045C00EE924C</key>
 		<dict>
 			<key>primary</key>
 			<true/>

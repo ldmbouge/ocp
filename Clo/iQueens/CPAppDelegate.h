@@ -17,6 +17,7 @@
 }
 
 @property (strong, nonatomic) UIWindow *window;
+@property (strong, nonatomic) UIView *theView;
 -(id)bindControllerOne:(CPSecondViewController*)svc;
 -(id)bindControllerTwo:(CPSecondViewController*)svc;
 @end

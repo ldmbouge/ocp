@@ -157,6 +157,10 @@ void failNow()
 {
    return (id<CPVarArray>)[ORFactory idArray:cp range:range];
 }
++(id<CPIntVarArray>) arrayCPIntVar: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo
+{
+   return [self intVarArray:cp range:range with:clo];
+}
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range domain: (CPRange) domain
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];

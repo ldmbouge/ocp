@@ -123,6 +123,10 @@
       }
    } while (true);
 }
+-(void) trust
+{
+   [_tracer trust];
+}
 - (id)copyWithZone:(NSZone *)zone
 {
    SemBDSController* ctrl = [[[self class] allocWithZone:zone] initSemBDSController:_tracer andSolver:_solver];

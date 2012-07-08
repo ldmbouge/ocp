@@ -61,13 +61,12 @@
    }
    _tab[_sz]   = k;
    _cpTab[_sz] = [_tracer captureCheckpoint];
-   /*
-   id arp = [NSAutoreleasePool new];
-   [self newChoice:_cpTab[_sz] onSolver:_solver];
-   [arp release];
-    */
    _sz++;
    return [_cpTab[_sz-1] nodeId];
+}
+-(void) trust
+{
+   [_tracer trust];
 }
 -(void) fail
 {

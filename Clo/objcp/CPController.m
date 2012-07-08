@@ -75,6 +75,14 @@
 {
    [_controller cleanup];
 }
+-(void)       trust
+{
+   if (_controller)
+      [_controller trust];
+   else
+      @throw [[CPSearchError alloc] initCPSearchError: "Call to Default Search Controller for method trust"];
+}
+
 -(CPInt) addChoice: (NSCont*) k
 {
   if (_controller)

@@ -30,6 +30,8 @@
 -(id)         popToNode: (CPInt) n;
 -(void)       reset;
 -(ORTrail*)   trail;
+-(void)       trust;
+-(CPInt)      level;
 @optional -(void)addCommand:(id<CPCommand>)com;
 @optional -(Checkpoint*)captureCheckpoint;
 @optional -(CPStatus)restoreCheckpoint:(Checkpoint*)acp  inSolver:(id<AbstractSolver>)fdm;
@@ -39,9 +41,10 @@
 
 @interface DFSTracer : NSObject<CPTracer> {
 @private
-    ORTrail*          _trail;
-    ORTrailStack*   _trStack;
-    CPInt      _lastNode;
+   ORTrail*          _trail;
+   ORTrailStack*   _trStack;
+   CPInt          _lastNode;
+   TRInt             _level;
 }
 -(DFSTracer*) initDFSTracer: (ORTrail*) trail;
 -(void)       dealloc;
@@ -50,6 +53,8 @@
 -(id)         popToNode: (CPInt) n;
 -(void)       reset;
 -(ORTrail*)   trail;
+-(void)       trust;
+-(CPInt)      level;
 @end
 
 @interface CPCmdStack : NSObject<NSCoding> {
@@ -101,8 +106,9 @@
 @private
    ORTrail*          _trail;
    ORTrailStack*   _trStack;
-   CPInt      _lastNode;
+   CPInt          _lastNode;
    CPCmdStack*        _cmds;
+   TRInt             _level;
 }
 -(SemTracer*)initSemTracer:(ORTrail*)trail;
 -(void)dealloc;
@@ -116,4 +122,6 @@
 -(CPStatus)restoreCheckpoint:(Checkpoint*)acp  inSolver:(id<AbstractSolver>)fdm;
 -(CPStatus)restoreProblem:(CPProblem*)p inSolver:(id<AbstractSolver>)fdm;
 -(CPProblem*)captureProblem;
+-(void)       trust;
+-(CPInt)      level;
 @end

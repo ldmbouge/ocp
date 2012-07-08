@@ -108,11 +108,12 @@
 @implementation DFSTracer
 -(DFSTracer*) initDFSTracer: (ORTrail*) trail
 {
-    self = [super init];
-    _trail = [trail retain];
-    _trStack = [[ORTrailStack alloc] initTrailStack: _trail];
-    _lastNode = 0;
-    return self;
+   self = [super init];
+   _trail = [trail retain];
+   _trStack = [[ORTrailStack alloc] initTrailStack: _trail];
+   _lastNode = 0;
+   _level = makeTRInt(_trail, 0);
+   return self;
 }
 -(void) dealloc
 {
@@ -123,37 +124,46 @@
 }
 -(CPInt) pushNode
 {
-    [_trStack pushNode: _lastNode];
-    [_trail incMagic];
-    _lastNode++;     
-    return _lastNode - 1;
+   [_trStack pushNode: _lastNode];
+   [_trail incMagic];
+   _lastNode++;
+   assignTRInt(&_level, _level._val + 1, _trail);
+   return _lastNode - 1;
 }
 -(id) popNode
 {
 	[_trStack popNode];
 	// necessary since the "onFailure" executes in the parent.
 	// Indeed, any change must be trailed in the parent node again
-	// so the magic must increase. 
-	[_trail incMagic]; 
+	// so the magic must increase.
+	[_trail incMagic];
    return nil;
 }
 -(id) popToNode: (CPInt) n
 {
 	[_trStack popNode: n];
 	// not clear this is needed for the intended uses but this is safe anyway
-	[_trail incMagic]; 
+	[_trail incMagic];
    return nil;
 }
 -(void) reset
 {
-    while (![_trStack empty]) {
-        [_trStack popNode];
-    }
+   while (![_trStack empty]) {
+      [_trStack popNode];
+   }
 	[self pushNode];
 }
 -(ORTrail*)   trail
 {
    return _trail;
+}
+-(void)       trust
+{
+   assignTRInt(&_level, _level._val + 1, _trail);
+}
+-(CPInt)      level
+{
+   return _level._val;
 }
 @end
 
@@ -368,6 +378,7 @@
    [_trail incMagic];
    _lastNode++;     
    assert([_cmds size] == [_trStack size]);
+   assignTRInt(&_level,_level._val+1,_trail);
    return _lastNode - 1;
 }
 -(id) popNode
@@ -389,6 +400,15 @@
 	[_trail incMagic]; 
    return nil;
 }
+-(void)       trust
+{
+   assignTRInt(&_level,_level._val+1,_trail);
+}
+-(CPInt)      level
+{
+   return _level._val;
+}
+
 -(void) reset
 {
    assert([_cmds size] == [_trStack size]);
@@ -397,6 +417,7 @@
       CPCommandList* clist = [_cmds popList];
       [clist release];
    }
+   assert(_level._val == 0);
 	[self pushNode];
 }
 -(ORTrail*)   trail

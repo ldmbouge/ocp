@@ -19,17 +19,18 @@
 
 @interface DFSController : CPDefaultController <NSCopying,CPSearchController> {
 @private
-   NSCont**        _tab;
+   NSCont**          _tab;
    CPInt              _sz;
-   CPInt             _mx;
-   id<CPTracer> _tracer;
-   CPInt    _atRoot;
+   CPInt              _mx;
+   id<CPTracer>   _tracer;
+   CPInt          _atRoot;
 }
 -(id)   initDFSController:(id<CPTracer>)tracer;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;
 -(CPInt) addChoice:(NSCont*)k;
+-(void) trust;
 -(void) fail;
 @end
 

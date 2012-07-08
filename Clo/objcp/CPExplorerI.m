@@ -320,6 +320,7 @@
    else {
       [_controller._val startTryRight];  
       [k letgo];
+      [_controller._val trust];
       right();
       [_controller._val exitTryRight];     
    }

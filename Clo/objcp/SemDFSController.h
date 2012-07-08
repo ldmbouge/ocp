@@ -33,6 +33,7 @@
 -(void) setup;
 -(void) cleanup;
 -(CPInt) addChoice:(NSCont*)k;
+-(void) trust;
 -(void) fail;
 -(CPHeist*)steal;
 @end

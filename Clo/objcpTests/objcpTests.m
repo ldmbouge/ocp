@@ -19,7 +19,7 @@
 #import "objcp/CPTracer.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
-#import "objcp/CPAVLTree.h"
+#import "ORFoundation/ORAVLTree.h"
 
 @implementation objcpTests
 
@@ -79,7 +79,7 @@
    } using: ^() {
       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       int nbOne = 0;
-      for(NSInteger k=0;k<s;k++) {
+      for(CPInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
          nbOne += [[x at:k] min] == 1;
       }
@@ -221,7 +221,7 @@
 -(void)testAVL
 {
    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
-   CPAVLTree* tree = [[[CPAVLTree alloc] initEmptyAVL] autorelease];
+   ORAVLTree* tree = [[[ORAVLTree alloc] initEmptyAVL] autorelease];
    for(NSInteger i=0;i<20;i++) {
       long k = random() % 1000;
       [tree insertObject:[NSNumber numberWithLong:k] forKey:(NSInteger)k];
@@ -298,5 +298,45 @@
    [other release];
    [m release];
     */
+}
+
+-(void)testRetractConstraintInSearch
+{
+   CPInt n = 8;
+   CPRange R = (CPRange){1,n};
+   id<CP> cp = [CPFactory createSolver];
+   id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
+   [CPFactory intArray:cp range:R with: ^CPInt(CPInt i) { return i; }];
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
+   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
+   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
+   
+   [cp solveAll:
+    ^() {
+       [cp add: [CPFactory alldifferent: x consistency: DomainConsistency]];
+       [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];
+       [cp add: [CPFactory alldifferent: xn consistency:DomainConsistency]];
+    }
+          using:
+    ^() {
+       for(CPInt i=1;i<=n;i++) {
+          while(![x[i] bound]) {
+             const CPInt curMin = [x[i] min];
+             [cp try:^{
+                [cp add: [CPFactory equalc:x[i] to:curMin]];
+             } or:^{
+                [cp add: [CPFactory notEqualc:x[i] to:curMin]];
+             }];
+          }
+       }
+       [nbSolutions incr];
+    }
+    ];
+   printf("GOT %d solutions\n",[nbSolutions value]);
+   NSLog(@"Solver status: %@\n",cp);
+   NSLog(@"Quitting");
+   STAssertTrue([nbSolutions value] == 92, @"Expecting 92 solutions");
+   [cp release];
+   [CPFactory shutdown];
 }
 @end

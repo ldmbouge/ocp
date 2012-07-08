@@ -59,6 +59,10 @@
    _tab[_sz++] = k;
    return [_tracer pushNode];
 }
+-(void) trust
+{
+   [_tracer trust];
+}
 -(void) fail
 {
    CPInt ofs = _sz-1;

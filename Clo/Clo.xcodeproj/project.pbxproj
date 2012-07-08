@@ -363,6 +363,7 @@
 		5BE777451594C9E500ADE34E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777441594C9E500ADE34E /* main.m */; };
 		5BE777491594C9E500ADE34E /* fdmul.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE777481594C9E500ADE34E /* fdmul.1 */; };
 		5BE7774D1594CD1200ADE34E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BE7C24415A9109400B2CBC1 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5BEB2B2915A5006C0080A18F /* ORConcurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178B151DC9CB008AB289 /* ORConcurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BEB2B2A15A5006C0080A18F /* ORConcurrencyI.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178D151DCA16008AB289 /* ORConcurrencyI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BEB2B2B15A5006C0080A18F /* ORConcurrencyI.m in Sources */ = {isa = PBXBuildFile; fileRef = B12B178E151DCA16008AB289 /* ORConcurrencyI.m */; };
@@ -627,6 +628,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		5BE7C24515A9109B00B2CBC1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
 		};
 		5BFD595615A3AEE900825BC3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1420,6 +1428,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BE7C24415A9109400B2CBC1 /* ORFoundation.framework in Frameworks */,
 				5B9ABD031391329D000997E5 /* Cocoa.framework in Frameworks */,
 				5B9ABD061391329D000997E5 /* objcp.framework in Frameworks */,
 			);
@@ -2997,6 +3006,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BE7C24615A9109B00B2CBC1 /* PBXTargetDependency */,
 				5B9ABD051391329D000997E5 /* PBXTargetDependency */,
 			);
 			name = objcpTests;
@@ -4186,6 +4196,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BE7774E1594CD1C00ADE34E /* PBXContainerItemProxy */;
+		};
+		5BE7C24615A9109B00B2CBC1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BE7C24515A9109B00B2CBC1 /* PBXContainerItemProxy */;
 		};
 		5BFD595715A3AEE900825BC3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6213,6 +6228,7 @@
 				B1C9DF2A15A8045C00EE924C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
