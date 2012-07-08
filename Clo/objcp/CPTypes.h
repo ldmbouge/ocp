@@ -28,6 +28,8 @@ typedef enum {
 
 typedef ORRange CPRange;
 typedef ORBounds CPBounds;
+typedef ORRuntimeMonitor CPRuntimeMonitor;
+
 
 typedef ORClosure     CPClosure;
 typedef ORInt2Bool    CPInt2Bool;

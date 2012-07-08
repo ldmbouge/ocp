@@ -443,18 +443,20 @@
 
 -(void) restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone
 {
-   id<CPInteger> nbRestarts = [CPFactory integer: _solver value: -1];
+//   id<CPInteger> nbRestarts = [CPFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
    if (isDone) 
       if (isDone()) {
          [enter letgo];
          [_controller._val fail];            
       }
+   /*
    [nbRestarts incr];
    if ([nbRestarts value] == 2000) {
       [enter letgo];
       [_controller._val fail];
    }
+    */
    [_controller._val addChoice: enter];
    if ([enter nbCalls]!=0) 
       if (onRestart) onRestart();

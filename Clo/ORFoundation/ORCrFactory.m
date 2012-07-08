@@ -28,4 +28,16 @@
 {
    return [ORConcurrency voidInformer];
 }
++(id<ORRandomStream>) randomStream
+{
+   return [[ORRandomStreamI alloc] init];
+}
++(id<ORZeroOneStream>) zeroOneStream
+{
+   return [[ORZeroOneStreamI alloc] init];
+}
++(id<ORUniformDistribution>) uniformDistribution: (ORRange) r
+{
+   return [[ORUniformDistributionI alloc] initORUniformDistribution: r];
+}
 @end

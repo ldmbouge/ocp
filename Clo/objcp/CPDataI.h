@@ -16,40 +16,4 @@
 @class CP;
 
 
-@interface CPStreamManager : NSObject 
-+(void) initialize;
-+(void) setDeterministic;
-+(void) setRandomized;
-+(CPInt) deterministic;
-+(void) initSeed: (unsigned short*) seed;
-@end
-
-  
-@interface CPRandomStream : NSObject {
-  unsigned short _seed[3];
-}
--(CPRandomStream*) init;
--(void) dealloc;
--(CPLong) next;
-@end;
-
-@interface CPZeroOneStream : NSObject {
-  unsigned short _seed[3];
-}
--(CPZeroOneStream*) init;
--(void) dealloc;
--(double) next;
-@end;
-
-@interface CPUniformDistribution : NSObject {
-  CPRange         _range;
-  CPRandomStream* _stream;
-  CPInt       _size;
-}
--(CPUniformDistribution*) initCPUniformDistribution: (CPRange) r;
--(void) dealloc;
--(CPLong) next;
-@end;
-
-
 

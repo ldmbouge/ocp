@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import "ORCrFactory.h"
 #import "CPSelector.h"
 #import "ORTrail.h"
 #import "CPI.h"
@@ -24,7 +25,7 @@
     _range = range;
     _filter = [filter copy];
     _order = [order copy];
-    _stream = [[CPRandomStream alloc] init];
+    _stream = [ORCrFactory randomStream];
     _direction = 1;
     return self;
 }
@@ -120,12 +121,12 @@
 
 -(CPSelectMinRandomized*) initWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
-  self = [super init];
-  _range = range;
-  _filter = [filter copy];
-  _order = [order copy];
-  _stream = [[CPRandomStream alloc] init];
-  return self;
+   self = [super init];
+   _range = range;
+   _filter = [filter copy];
+   _order = [order copy];
+   _stream = [ORCrFactory randomStream];
+   return self;
 }
 
 -(void) dealloc

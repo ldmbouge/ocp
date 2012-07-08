@@ -26,4 +26,31 @@
 -(id<ORTracker>) tracker;
 @end
 
+@interface ORRandomStreamI : NSObject<ORRandomStream>  {
+   unsigned short _seed[3];
+}
+-(ORRandomStreamI*) init;
+-(void) dealloc;
+-(ORLong) next;
+@end;
+
+@interface ORZeroOneStreamI : NSObject<ORZeroOneStream> {
+   unsigned short _seed[3];
+}
+-(ORZeroOneStreamI*) init;
+-(void) dealloc;
+-(double) next;
+@end;
+
+@interface ORUniformDistributionI : NSObject<ORUniformDistribution> {
+   ORRange          _range;
+   ORRandomStreamI* _stream;
+   ORInt            _size;
+}
+-(ORUniformDistributionI*) initORUniformDistribution: (ORRange) r;
+-(void) dealloc;
+-(ORInt) next;
+@end;
+
+
 

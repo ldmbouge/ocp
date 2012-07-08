@@ -160,7 +160,7 @@ int main (int argc, const char * argv[])
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
-   CPUniformDistribution* distr = [[CPUniformDistribution alloc] initCPUniformDistribution: Cities];
+   id<CPUniformDistribution> distr = [CPFactory uniformDistribution: cp range: Cities];
       
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
@@ -207,7 +207,7 @@ int main (int argc, const char * argv[])
                      [cp add: [CPFactory equalc: [x at: i] to: [solution intValue: [x at: i]]]];
                }
             }
-            isDone: NULL
+            isDone: ^bool() { return [nbRestarts value] >= 35; }
         ];
     }
     ];

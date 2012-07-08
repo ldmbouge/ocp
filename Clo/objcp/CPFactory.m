@@ -12,6 +12,7 @@
 
 #import "CPFactory.h"
 #import "ORFoundation/ORFactory.h"
+#import "ORFoundation/ORCrFactory.h"
 #import "CPData.h"
 #import "CPI.h"
 #import "CPCreateI.h"
@@ -276,6 +277,25 @@ void failNow()
     CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: cp range: R1 : R2];    
     [[((CoreCPI*) cp) solver] trackObject: o];
     return o;    
+}
+
++(id<CPRandomStream>) randomStream: (id<CP>) cp
+{
+   id<CPRandomStream> o = (id<CPRandomStream>) [ORCrFactory randomStream];
+   [[cp solver] trackObject: o];
+   return o;
+}
++(id<CPZeroOneStream>) zeroOneStream: (id<CP>) cp
+{
+   id<CPZeroOneStream> o = (id<CPZeroOneStream>) [ORCrFactory zeroOneStream];
+   [[cp solver] trackObject: o];
+   return o;
+}
++(id<CPUniformDistribution>) uniformDistribution: (id<CP>) cp range: (ORRange) r
+{
+   id<CPUniformDistribution> o = (id<CPUniformDistribution>) [ORCrFactory uniformDistribution:r];
+   [[cp solver] trackObject: o];
+   return o;
 }
 @end
 

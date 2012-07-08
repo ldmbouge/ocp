@@ -79,9 +79,13 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(CPInt) virtualOffset;   
 @end
 
-@interface CPRuntimeMonitor : NSObject 
-+(CPLong) cputime;
-+(CPLong) microseconds;
+@protocol CPRandomStream <ORRandomStream>
+@end;
+
+@protocol CPZeroOneStream <ORZeroOneStream>
+@end;
+
+@protocol CPUniformDistribution <ORUniformDistribution>
 @end;
 
 

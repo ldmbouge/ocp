@@ -30,3 +30,29 @@ typedef struct ORBounds {
 -(void) incr;
 -(void) decr;
 @end
+
+@interface ORRuntimeMonitor : NSObject
++(ORLong) cputime;
++(ORLong) microseconds;
+@end;
+
+@interface ORStreamManager : NSObject
++(void) initialize;
++(void) setDeterministic;
++(void) setRandomized;
++(ORInt) deterministic;
++(void) initSeed: (unsigned short*) seed;
+@end
+
+@protocol ORRandomStream <NSObject>
+-(ORLong) next;
+@end;
+
+@protocol ORZeroOneStream <NSObject>
+-(double) next;
+@end;
+
+@protocol ORUniformDistribution <NSObject>
+-(ORInt) next;
+@end;
+
