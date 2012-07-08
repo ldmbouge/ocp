@@ -222,7 +222,8 @@ void failNow()
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c
 {
    id<CPIntVarArray> rv = [self intVarArray:[x cp] range:(CPRange){[x low],[x up]} with:^id<CPIntVar>(CPInt i) {
-      return [self intVar:[x at:i]  scale:c[i]];
+      id<CPIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
+      return theView;
    }];
    return rv;
 }

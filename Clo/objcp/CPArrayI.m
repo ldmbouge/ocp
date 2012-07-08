@@ -20,16 +20,22 @@
 #import "CPArrayI.h"
 #import "CPExprI.h"
 #import "ORFoundation/ORArrayI.h"
-/*********************************************************************************/
-/*             Multi-Dimensional Matrix                                           */
-/*********************************************************************************/
 
 @implementation ORIdArrayI (CP)
 -(id<CP>) cp 
 {
    return (id<CP>)_tracker;
 }
+-(id<ORExpr>)index:(id<ORExpr>)idx
+{
+   return [[CPExprVarSubI alloc] initCPExprVarSubI:(id<CPIntVarArray>)self index:(id<CPExpr>)idx];
+   return nil;
+}
 @end
+
+/*********************************************************************************/
+/*             Multi-Dimensional Matrix                                           */
+/*********************************************************************************/
 
 @implementation CPIntVarMatrixI
 

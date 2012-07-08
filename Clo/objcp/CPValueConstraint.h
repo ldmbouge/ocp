@@ -24,7 +24,7 @@
 @private
     CPIntVarI* _b;
     CPIntVarI* _x;
-    CPInt       _c;
+    CPInt      _c;
 }
 -(id) initCPReifyNotEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(CPInt)c;
 -(CPStatus) post;
@@ -36,7 +36,7 @@
 @private
     CPIntVarI* _b;
     CPIntVarI* _x;
-    CPInt       _c;
+    CPInt      _c;
 }
 -(id) initCPReifyEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(CPInt)c;
 -(CPStatus) post;

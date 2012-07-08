@@ -496,6 +496,12 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    return _status;
 }
+-(CPStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
+{
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs leq:rhs] consistency:cons];
+   [self trackObject:wrapper];
+   return [self add:wrapper];
+}
 -(CPStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs equal:rhs] consistency:cons];
@@ -588,12 +594,12 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 -(CPStatus) close
 {
    if (!_closed) {
-      _closed = true;
       for(id<CPConstraint> c in _mStore) {
          [self post:c];
          if (_status == CPFailure)
             return CPFailure;
       }
+      _closed = true;
    }
    //printf("Closing CPSolver\n");
    return CPSuspend;

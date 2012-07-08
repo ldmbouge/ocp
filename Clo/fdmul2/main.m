@@ -28,8 +28,8 @@ int main(int argc, const char * argv[])
       CPRange R = (CPRange){0,19};
       CPRange D = (CPRange){0,9};
       id<CP> cp = [CPFactory createSolver];
-      id<CPIntVarArray> x = ALL(CPIntVar, i, R, [CPFactory intVar:cp bounds:D]);
-//      id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];
+//      id<CPIntVarArray> x = ALL(CPIntVar, i, R, [CPFactory intVar:cp bounds:D]);
+      id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solve: ^{
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];

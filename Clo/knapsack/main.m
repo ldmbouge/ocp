@@ -57,9 +57,8 @@ int main(int argc, const char * argv[])
 
       CPRange N = (CPRange){0,n-1};
       id<CP> cp = [CPFactory createSolver];
-      id<CPIntVarArray> x = [CPFactory intVarArray: cp 
-                                             range: N
-                                            domain: (CPRange){0,1}];
+      id<CPIntVarArray> x = ALL(CPIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(0,1)]);
+      // id<CPIntVarArray> x = [CPFactory intVarArray: cp range: N domain: (CPRange){0,1}];
       id<CPHeuristic> h = [CPFactory createIBS:cp];
       [cp solve: ^{
          [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];

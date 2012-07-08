@@ -1121,6 +1121,16 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }
    return nil;
 }
+-(NSString*)description
+{
+   static const char* classes[] = {"Bare","Shift","Affine"};
+   NSMutableString* buf = [NSMutableString stringWithCapacity:64];
+   [buf appendFormat:@"MC:<%d>[",_nb];
+   for(CPUInt k=0;k<_nb;k++) {
+      [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[_tab[k]->_vc],k < _nb -1 ? ',' : ']'];
+   }
+   return buf;
+}
 -(void) setTracksLoseEvt
 {
     _tracksLoseEvt = true;

@@ -167,7 +167,7 @@
                  onExit: onExit
    ];
    printf("Optimal Solution: %d \n",[cstr primalBound]);
-   [cstr release];
+   //[cstr release]; // [ldm] Why Release? [this is tracked anyhow!]
 }
 -(void) nestedMaximize: (CPIntVarI*) x in: (CPClosure) body onSolution: onSolution onExit: onExit
 {
@@ -180,7 +180,7 @@
                  onExit: onExit
     ];
    printf("Optimal Solution: %d \n",[cstr primalBound]);
-   [cstr release];
+   //[cstr release]; // [ldm] Why release? [this is tracked anyhow!]
 }
 
 -(CPSelect*) selectInRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
@@ -191,15 +191,26 @@
                                orderedBy: order];    
 }
 
-
--(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;
+-(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs
+{
+   CPStatus status = [_solver add: lhs leq:rhs consistency:ValueConsistency];
+   if (status == CPFailure)
+      [_search fail];
+}
+-(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons
+{
+   CPStatus status = [_solver add:lhs leq:rhs consistency:cons];
+   if (status == CPFailure)
+      [_search fail];   
+}
+-(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs
 {
    CPStatus status = [_solver add: lhs equal:rhs consistency:ValueConsistency];
    if (status == CPFailure)
       [_search fail];
 }
 
--(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
+-(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
    CPStatus status = [_solver add:lhs equal:rhs consistency:cons];
    if (status == CPFailure)

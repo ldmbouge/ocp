@@ -32,5 +32,4 @@
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
--(id<ORExpr>) index: (id<ORExpr>) idx;
 @end

@@ -82,12 +82,29 @@
    [self validate:o onError:"No CP Solver in == Expression"];
    return o;
 }
++(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right
+{
+   id<ORRelation> o = [[ORExprNotEqualI alloc] initORExprNotEqualI: left and: right];
+   [self validate:o onError:"No CP Solver in != Expression"];
+   return o;
+}
++(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right
+{
+   id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: left and: right];
+   [self validate:o onError:"No CP Solver in <= Expression"];
+   return o;
+}
++(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right
+{
+   id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: right and: left];
+   [self validate:o onError:"No CP Solver in >= Expression"];
+   return o;
+}
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP Solver in Abs Expression"];
 }
-
 +(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker range: r filteredBy: f of: e];

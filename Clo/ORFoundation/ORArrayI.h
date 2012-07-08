@@ -57,7 +57,6 @@
 -(id<ORTracker>) tracker;
 -(id)objectAtIndexedSubscript:(NSUInteger)key;
 -(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
--(id<ORExpr>) index: (id<ORExpr>) idx;
 -(void)encodeWithCoder:(NSCoder*) aCoder;
 -(id)initWithCoder:(NSCoder*) aDecoder;
 @end

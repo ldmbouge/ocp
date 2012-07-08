@@ -27,7 +27,18 @@
 -(id<ORExpr>) mul: (id<ORExpr>) e;
 -(id<ORExpr>) muli: (ORInt) e;
 -(id<ORRelation>) equal: (id<ORExpr>) e;
+-(id<ORRelation>) neq: (id<ORExpr>) e;
+-(id<ORRelation>) leq: (id<ORExpr>) e;
+-(id<ORRelation>) geq: (id<ORExpr>) e;
 @end
 
+enum CPRelationType {
+   CPRBad = 0,
+   CPREq  = 1,
+   CPRNEq = 2,
+   CPRLEq = 3
+};
+
 @protocol ORRelation <ORExpr>
+-(enum CPRelationType)type;
 @end

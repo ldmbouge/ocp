@@ -26,6 +26,7 @@
 
 @protocol CPSolver <AbstractSolver>
 -(CPStatus) add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
+-(CPStatus) add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(CPStatus) add: (id<CPConstraint>) c;
 -(CPStatus) post: (id<CPConstraint>) c;
 -(CPStatus) label: (id) var with: (CPInt) val;

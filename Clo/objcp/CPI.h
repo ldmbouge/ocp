@@ -42,6 +42,8 @@
 -(void) setController: (id<CPSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
    
+-(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs;
+-(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;
 -(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPConstraint>) c;

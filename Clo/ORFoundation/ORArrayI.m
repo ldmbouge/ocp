@@ -215,7 +215,9 @@
    [rv appendString:@"["];
    for(ORInt i=_low;i<=_up;i++) {
       [rv appendFormat:@"%d:",i];
-      [rv appendString:[_array[i] description]];
+      if (_array[i]!=nil)
+         [rv appendString:[_array[i] description]];
+      else [rv appendString:@"nil"];
       if (i < _up)
          [rv appendString:@","];
    }
@@ -238,12 +240,6 @@
 -(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)key
 {
    _array[key] = newValue;
-}
--(id<ORExpr>)index:(id<ORExpr>)idx
-{
-   assert(NO); // [ldm] must fix or ORExprVarSubI
-   //return [[ORExprVarSubI alloc] initORExprVarSubI:self index:idx];
-   return nil;
 }
 -(void)encodeWithCoder:(NSCoder*) aCoder
 {

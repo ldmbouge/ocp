@@ -33,6 +33,10 @@
 {
    return NO;
 }
+-(enum CPRelationType)type
+{
+   return CPRBad;
+}
 -(id<ORExpr>) add: (id<ORExpr>) e
 {
    return [ORFactory expr: self add: e];
@@ -52,6 +56,18 @@
 -(id<ORRelation>) equal: (id<ORExpr>) e
 {
    return [ORFactory expr:self equal:e];
+}
+-(id<ORRelation>) neq: (id<ORExpr>) e
+{
+   return [ORFactory expr:self neq:e];
+}
+-(id<ORRelation>) leq: (id<ORExpr>) e
+{
+   return [ORFactory expr:self leq:e];
+}
+-(id<ORRelation>) geq: (id<ORExpr>) e
+{
+   return [ORFactory expr:self geq:e];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
@@ -385,6 +401,10 @@
    [rv appendFormat:@"%@ == %@",[_left description],[_right description]];
    return rv;
 }
+-(enum CPRelationType)type
+{
+   return CPREq;
+}
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -395,6 +415,94 @@
    return self;
 }
 @end
+
+
+@implementation ORExprNotEqualI
+-(id<ORExpr>) initORExprNotEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(ORInt) max
+{
+   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitExprNEqualI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ != %@",[_left description],[_right description]];
+   return rv;
+}
+-(enum CPRelationType)type
+{
+   return CPRNEq;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprLEqualI
+-(id<ORExpr>) initORExprLEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(ORInt) max
+{
+   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitExprLEqualI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@ <= %@",[_left description],[_right description]];
+   return rv;
+}
+-(enum CPRelationType)type
+{
+   return CPRLEq;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
 
 @implementation ORExprSumI 
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
