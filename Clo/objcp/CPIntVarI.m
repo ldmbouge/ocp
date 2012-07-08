@@ -220,9 +220,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         _recv = [d retain];
     }
 }
--(CPIntVarI*)findOriginal
+-(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
 {
-   return self;
+   if (scale==1 && shift==0)
+      return self;
+   else return nil;
 }
 -(BOOL) isConstant
 {
@@ -671,10 +673,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    CPInt shift = [x shift];
    CPInt nScale = a * scale;
    CPInt nShift = a * shift;   
-   CPIntVarI* rv = nil;
-   if (nScale == 1 && nShift == 0)
-      rv = [x findOriginal];
-   else rv = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift];
+   CPIntVarI* rv = [x->_recv findAffine:nScale shift:nShift];
+   if (rv == nil)
+      rv = [[CPIntView alloc] initIVarAViewFor: nScale x: x b: nShift];
    return rv;
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a andShift: (CPInt) b
@@ -806,9 +807,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     [super loseValEvt: val+_b];
 }
--(CPIntVarI*)findOriginal
+-(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
 {
-   return [_recv findOriginal];
+   if (scale==1 && shift==_b)
+      return self;
+   else return nil;
 }
 -(NSString*) description
 {
@@ -1001,9 +1004,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     [super loseValEvt:_a * val+_b];
 }
--(CPIntVarI*)findOriginal
+-(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
 {
-   return [_recv findOriginal];
+   if (scale == _a && shift == _b)
+      return self;
+   else return nil;
 }
 -(NSString*)description
 {
@@ -1112,15 +1117,16 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
    _nb++;
 }
--(CPIntVarI*)findOriginal
+-(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
 {
-   Class core = [CPIntVarI class];
    for(CPUInt i=0;i < _nb;i++) {
-      if ([_tab[i] isKindOfClass:core])
-         return _tab[i];
+      CPIntVarI* sel = [_tab[i] findAffine:scale shift:shift];
+      if (sel)
+         return sel;
    }
    return nil;
 }
+
 -(NSString*)description
 {
    static const char* classes[] = {"Bare","Shift","Affine"};

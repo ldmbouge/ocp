@@ -112,7 +112,7 @@ typedef struct  {
 
 //-(void) loseRangeEvt:(CPDoRange) clo;
 -(void) loseRangeEvt:(CPClosure) clo;
--(CPIntVarI*)findOriginal;
+-(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift;
 @end
 
 enum CPVarClass {
