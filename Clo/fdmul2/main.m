@@ -49,11 +49,9 @@ int main(int argc, const char * argv[])
       } using:^{
          @try {
             [CPLabel heuristic:h];
-         } @catch(NSException* nsex) {
-            NSLog(@"GOT AN NSException: %@",nsex);
-         }
-         @catch(CPRemoveOnDenseDomainError* ex) {
-            NSLog(@"GOT A BAD ERROR: %@",ex);
+         } @catch(CPRemoveOnDenseDomainError* nsex) {
+            NSLog(@"GOT AN REMOVE: %@",nsex);
+            [nsex release];
          }
          NSLog(@"Solution: %@",x);
          NSLog(@"        %d %d %d",[x[2] min],[x[1] min],[x[0] min]);
