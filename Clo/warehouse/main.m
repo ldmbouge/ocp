@@ -52,8 +52,8 @@ int main(int argc, const char * argv[])
             }
             for(CPUInt i=Stores.low;i <= Stores.up; i++) {
                id<CPIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
-               [cp add: [open index:supp[i]] equal:[CPFactory integer:cp value:YES]];
-               [cp add: cost[i] equal:[row index:supp[i]]];
+               [cp add: [open elt:supp[i]] equal:[CPFactory integer:cp value:YES]];
+               [cp add: cost[i] equal:[row elt:supp[i]]];
             }
 
 /*

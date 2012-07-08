@@ -21,7 +21,7 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
--(id<ORExpr>) index: (id<ORExpr>) idx;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
 @end
 
 @protocol ORIdArray <NSObject>

@@ -12,13 +12,13 @@
 #import "ORFoundation/ORArray.h"
 
 @protocol CPIntArray <ORIntArray>
--(id<CPExpr>) index: (id<CPExpr>) idx;
+-(id<CPExpr>) elt: (id<CPExpr>) idx;
 @end
 
 @protocol CPVarArray <ORIdArray>
 -(id<CPVar>) at: (CPInt) value;
 -(void) set: (id<CPVar>) x at: (CPInt) value;
--(id<CPExpr>) index: (id<CPExpr>) idx;
+-(id<CPExpr>) elt: (id<CPExpr>) idx;
 -(id<CP>) cp;
 @end
 

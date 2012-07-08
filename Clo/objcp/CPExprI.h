@@ -23,7 +23,7 @@
    id<CPIntVarArray> _array;
    ORExprI*          _index;
 }
--(id<CPExpr>) initCPExprVarSubI: (id<CPIntVarArray>) array index:(id<CPExpr>) op;
+-(id<CPExpr>) initCPExprVarSubI: (id<CPIntVarArray>) array elt:(id<CPExpr>) op;
 -(id<ORTracker>) tracker;
 -(CPInt) min;
 -(CPInt) max;

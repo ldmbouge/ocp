@@ -102,7 +102,7 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
--(id<ORExpr>)index:(id<ORExpr>)idx
+-(id<ORExpr>)elt:(id<ORExpr>)idx
 {
    return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
 }
