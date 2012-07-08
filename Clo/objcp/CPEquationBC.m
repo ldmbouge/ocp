@@ -160,13 +160,16 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
                           (CPInt)terms[i].up);
     }
 }
--(NSString*)description
+-(NSString*) description
 {
-   NSMutableString* buf = [NSMutableString stringWithCapacity:64];
-   [buf appendFormat:@"<CPEquationBC:[%lld] == %d>",_nb,_c];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPEquationBC:%02d [%lld] ",_name,_nb];
+   for(CPInt k=0;k < _nb;k++) {
+      [buf appendFormat:@"%@ %c", [_x[k] description], k<_nb-1 ? ',' : ' '];
+   }
+   [buf appendFormat:@" == %d >",_c];
    return buf;
 }
-
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   
@@ -304,6 +307,16 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
       if (terms[i].updated) 
          terms[i].update(terms[i].var,@selector(updateMax:),(CPInt)terms[i].up);
    }
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<CPINEquationBC:%02d [%lld] ",_name,_nb];
+   for(CPInt k=0;k < _nb;k++) {
+      [buf appendFormat:@"%@ %c", [_x[k] description], k<_nb-1 ? ',' : ' '];
+   }
+   [buf appendFormat:@" <= %d >",_c];
+   return buf;
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

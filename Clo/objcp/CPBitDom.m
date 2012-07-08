@@ -165,20 +165,11 @@
    return CPSuspend;   
 }
 
-void failSilly()
-{
-   NSException *exception = [NSException exceptionWithName: @"Remove Dense Domain Error"
-                                                    reason: @"We can't prune a value in a dense domain"
-                                                  userInfo: nil];
-   [exception raise];
-}
 -(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-   if (val == _min._val) return [self updateMin:val+1 for:x];
-   if (val == _max._val) return [self updateMax:val-1 for:x];
-   //CPRemoveOnDenseDomainError* ex = [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
-   failSilly();
-   return CPSuspend;
+   if (val <= _min._val) return [self updateMin:val+1 for:x];
+   if (val >= _max._val) return [self updateMax:val-1 for:x];
+   @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
 }
 
 -(void)restoreDomain:(id<CPDom>)toRestore
@@ -202,7 +193,6 @@ void failSilly()
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_imin];
    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_imax];
-
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {

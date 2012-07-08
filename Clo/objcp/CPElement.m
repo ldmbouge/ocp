@@ -70,7 +70,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       _tab = malloc(sizeof(CPEltRecord)*_sz);
       for(CPInt k=cLow;k <= cUp;k++) 
          _tab[k - cLow] = (CPEltRecord){k,[_c at:k]};
-      qsort(_tab, sizeof(CPEltRecord), _sz,(int(*)(const void*,const void*)) &compareCPEltRecords);
+      qsort(_tab, _sz,sizeof(CPEltRecord),(int(*)(const void*,const void*)) &compareCPEltRecords);
       CPBounds yb = bounds(_y);
       CPStatus ok = CPSuspend;
       _from = makeTRInt(_trail, -1);
@@ -135,7 +135,12 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 {
    return !bound(_x) && !bound(_y);
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
+   return buf;
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
@@ -225,6 +230,12 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       nbuv += !bound((CPIntVarI*)[_z at: k]);
    nbuv += !bound(_x) + !bound(_y);
    return nbuv;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPElementVarBC: <%02d %@ [ %@ ] == %@ >",_name,_z,_x,_y];
+   return buf;
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

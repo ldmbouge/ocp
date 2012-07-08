@@ -17,14 +17,19 @@
 @protocol ORExprVisitor;
 
 @interface ORExprI: NSObject<ORExpr,NSCoding>
--(id<ORExpr>) add: (id<ORExpr>) e; 
+-(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
 -(id<ORExpr>) muli: (ORInt) e;
--(id<ORRelation>) equal: (id<ORExpr>) e;
+-(id<ORRelation>) eq: (id<ORExpr>) e;
+-(id<ORRelation>) eqi: (ORInt) e;
+-(id<ORRelation>) neq: (id<ORExpr>) e;
+-(id<ORRelation>) leq: (id<ORExpr>) e;
+-(id<ORRelation>) geq: (id<ORExpr>) e;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 - (void)visit:(id<ORExprVisitor>)v;
+-(enum CPRelationType)type;
 @end
 
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding> {
@@ -66,7 +71,6 @@
 -(void) visit:(id<ORExprVisitor>)v;
 @end
 
-
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
@@ -91,15 +95,32 @@
 -(void) visit: (id<ORExprVisitor>)v;
 @end
 
-
 @interface ORExprEqualI : ORExprBinaryI<ORRelation,NSCoding> 
 -(id<ORExpr>) initORExprEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
+-(enum CPRelationType)type;
 -(void) visit: (id<ORExprVisitor>)v;
 @end
 
+@interface ORExprNotEqualI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprNotEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(enum CPRelationType)type;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
+
+@interface ORExprLEqualI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORExprLEqualI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(enum CPRelationType)type;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
 
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
@@ -121,6 +142,8 @@
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e;
+-(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;

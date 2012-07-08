@@ -14,7 +14,6 @@
 #import <objcp/CPSolution.h>
 #import <objcp/CPTypes.h>
 
-@class CPExprI;
 @protocol CP;
 @protocol CPExprVisitor;
 
@@ -35,14 +34,18 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 @protocol CPRelation;
 
 @protocol CPExpr <ORExpr>
--(id<CPExpr>) add: (id<CPExpr>) e;
+-(id<CPExpr>) plus: (id<CPExpr>) e;
 -(id<CPExpr>) sub: (id<CPExpr>) e;
 -(id<CPExpr>) mul: (id<CPExpr>) e;
 -(id<CPExpr>) muli: (ORInt) e;
--(id<CPRelation>) equal: (id<CPExpr>) e;
+-(id<CPRelation>) eq: (id<CPExpr>) e;
+-(id<CPRelation>) eqi: (CPInt) e;
+-(id<CPRelation>) neq: (id<CPExpr>) e;
+-(id<CPRelation>) leq: (id<CPExpr>) e;
+-(id<CPRelation>) geq: (id<CPExpr>) e;
 @end
 
-@protocol CPRelation <CPExpr>
+@protocol CPRelation <ORRelation,CPExpr>
 @end
 
 @protocol CPInteger <ORInteger,CPExpr>

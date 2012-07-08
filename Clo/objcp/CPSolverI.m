@@ -382,7 +382,8 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
 
-static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
+//static inline
+CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 {
    *last = cb.cstr;
    if (cb.cb) 
@@ -439,6 +440,8 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       if (_propagDone)
          [_propagDone notify];
       _status = status;
+      --_propagating;
+      return _status;
    }
    @catch (CPFailException *exception) {
       for(CPInt p=NBPRIORITIES-1;p>=0;--p)
@@ -448,11 +451,9 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
          [_propagFail notifyWith:[_last getId]];
       CFRelease(exception);
       _status = CPFailure;
-   }
-   @finally {
       --_propagating;
       return _status;
-   }
+   } 
 }
 
 static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
@@ -495,9 +496,15 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    return _status;
 }
+-(CPStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
+{
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs leq:rhs] consistency:cons];
+   [self trackObject:wrapper];
+   return [self add:wrapper];
+}
 -(CPStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
-   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs equal:rhs] consistency:cons];
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs eq:rhs] consistency:cons];
    [self trackObject:wrapper];
    return [self add:wrapper];
 }
@@ -587,12 +594,12 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 -(CPStatus) close
 {
    if (!_closed) {
-      _closed = true;
       for(id<CPConstraint> c in _mStore) {
          [self post:c];
          if (_status == CPFailure)
             return CPFailure;
       }
+      _closed = true;
    }
    //printf("Closing CPSolver\n");
    return CPSuspend;
