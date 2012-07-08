@@ -114,13 +114,19 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"(%d)[%d .. %d]",_sz._val,
-           _min._val,_max._val];
+   if (_min._val == _max._val)
+      return [NSString stringWithFormat:@"%d",_min._val];
+   else
+      return [NSString stringWithFormat:@"(%d)[%d .. %d]",_sz._val,_min._val,_max._val];
 }
 -(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
 {
    if (newMin <= _min._val) return CPSuspend;
    if (newMin > _max._val) failNow();
+   if ([x tracksLoseEvt]) {
+      for(CPInt k=_min._val;k< newMin;k++)
+         [x loseValEvt:k];
+   }
    CPInt nbr = newMin - _min._val;
    CPInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
@@ -132,6 +138,10 @@
 {
    if (newMax >= _max._val) return CPSuspend;
    if (newMax < _min._val) failNow();
+   if ([x tracksLoseEvt]) {
+      for(CPInt k=newMax+1;k<= _max._val;k++)
+         [x loseValEvt:k];
+   }
    CPInt nbr = _max._val - newMax;
    CPInt nsz = _sz._val - nbr;
    assignTRInt(&_max, newMax, _trail);
@@ -143,7 +153,11 @@
 {
    if (val < _min._val || val > _max._val) failNow();
    if (_sz._val == 1 && val == _min._val) return CPSuccess;
-   
+   if ([x tracksLoseEvt]) {
+      for(CPInt k=_min._val;k<=_max._val;k++)
+         if (k != val)
+            [x loseValEvt:k];
+   };
    assignTRInt(&_min, val, _trail);
    assignTRInt(&_max, val, _trail);
    assignTRInt(&_sz, 1, _trail);
@@ -151,10 +165,20 @@
    return CPSuspend;   
 }
 
+void failSilly()
+{
+   NSException *exception = [NSException exceptionWithName: @"Remove Dense Domain Error"
+                                                    reason: @"We can't prune a value in a dense domain"
+                                                  userInfo: nil];
+   [exception raise];
+}
 -(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-    @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];     
-    return CPSuspend;
+   if (val == _min._val) return [self updateMin:val+1 for:x];
+   if (val == _max._val) return [self updateMax:val-1 for:x];
+   //CPRemoveOnDenseDomainError* ex = [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+   failSilly();
+ //  return CPSuspend;
 }
 
 -(void)restoreDomain:(id<CPDom>)toRestore
@@ -476,20 +500,20 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
-    if (newMax >= _max._val) return CPSuspend;
-    if (newMax < _min._val) failNow();
-    CPInt nbr = countFrom(self,newMax+1,_max._val);
+   if (newMax >= _max._val) return CPSuspend;
+   if (newMax < _min._val) failNow();
+   CPInt nbr = countFrom(self,newMax+1,_max._val);
    if ([x tracksLoseEvt]) {
-      for(CPInt k=newMax+1;k<= _max._val;k++) 
-         if (GETBIT(k)) 
-            [x loseValEvt:k];         
+      for(CPInt k=newMax+1;k<= _max._val;k++)
+         if (GETBIT(k))
+            [x loseValEvt:k];
    }
-    CPInt nsz = _sz._val - nbr;
-    assignTRInt(&_sz, nsz, _trail);
-    newMax = findMax(self,newMax);
-    assignTRInt(&_max, newMax, _trail);
-    [x changeMaxEvt:nsz];
-    return CPSuspend;      
+   CPInt nsz = _sz._val - nbr;
+   assignTRInt(&_sz, nsz, _trail);
+   newMax = findMax(self,newMax);
+   assignTRInt(&_max, newMax, _trail);
+   [x changeMaxEvt:nsz];
+   return CPSuspend;
 }
 
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x

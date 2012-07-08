@@ -13,6 +13,7 @@
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
+#import "objcp/CPError.h"
 
 CPInt ipow(CPInt b,CPInt e)
 {
@@ -26,8 +27,9 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       CPRange R = (CPRange){0,19};
       CPRange D = (CPRange){0,9};
-      id<CP> cp = [CPFactory createSolver];      
-      id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];         
+      id<CP> cp = [CPFactory createSolver];
+      id<CPIntVarArray> x = ALL(CPIntVar, i, R, [CPFactory intVar:cp bounds:D]);
+//      id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solve: ^{
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
@@ -45,8 +47,22 @@ int main(int argc, const char * argv[])
          NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
-         [CPLabel heuristic:h];
+         @try {
+            [CPLabel heuristic:h];
+         } @catch(NSException* nsex) {
+            NSLog(@"GOT AN NSException: %@",nsex);
+         }
+         @catch(CPRemoveOnDenseDomainError* ex) {
+            NSLog(@"GOT A BAD ERROR: %@",ex);
+         }
          NSLog(@"Solution: %@",x);
+         NSLog(@"        %d %d %d",[x[2] min],[x[1] min],[x[0] min]);
+         NSLog(@"        %d %d %d",[x[5] min],[x[4] min],[x[3] min]);
+         NSLog(@"* --------------");
+         NSLog(@"        %d %d %d",[x[8] min],[x[7] min],[x[6] min]);
+         NSLog(@"      %d %d %d",[x[11] min],[x[10] min],[x[9] min]);
+         NSLog(@"    %d %d %d",[x[14] min],[x[13] min],[x[12] min]);
+         NSLog(@"    %d %d %d %d %d",[x[19] min],[x[18] min],[x[17] min],[x[16] min],[x[15] min]);
          NSLog(@"Solver: %@",cp);
        }];
       [cp release];

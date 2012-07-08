@@ -600,6 +600,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_dom restoreValue:toRestore];
 }
 
+-(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp bounds:(CPRange)b
+{
+   self = [self initCPIntVarCore: cp low:b.low up:b.up];
+   _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low:b.low up:b.up];
+   return self;
+}
+
 -(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp low: (CPInt) low up: (CPInt) up
 {
     self = [self initCPIntVarCore: cp low:low up:up];
@@ -627,6 +634,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // ------------------------------------------------------------------------
 // Cluster Constructors
 // ------------------------------------------------------------------------
+
++(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(CPRange)b
+{
+   CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:b];
+   return x;
+}
 
 +(CPIntVarI*) initCPIntVar: (id<CP>) fdm low: (CPInt) low up: (CPInt) up
 {

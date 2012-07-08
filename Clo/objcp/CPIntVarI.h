@@ -201,6 +201,7 @@ enum CPVarClass {
 -(CPStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
++(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(CPRange)b;
 +(CPIntVarI*)    initCPIntVar: (id<CP>)fdm low:(CPInt)low up:(CPInt)up;
 +(CPIntVarI*)    initCPBoolVar:(id<CP>)fdm;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withShift:(CPInt)b;

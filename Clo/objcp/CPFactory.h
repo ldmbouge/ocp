@@ -42,6 +42,7 @@ void failNow();
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
 +(id<CPInteger>) integer: (id<ORTracker>)tracker value: (CPInt) value;
++(id<CPIntVar>) intVar: (id<ORTracker>) cp bounds: (CPRange) range;
 +(id<CPIntVar>) intVar: (id<ORTracker>) cp domain: (CPRange) range;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (CPInt) b;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a;

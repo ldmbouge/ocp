@@ -486,7 +486,7 @@
          @try {
             [fdm propagate];
          } @catch(CPFailException* ex) {
-            @throw;
+            @throw ex;
          } @finally {
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);            
