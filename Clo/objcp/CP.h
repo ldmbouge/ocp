@@ -49,8 +49,12 @@
 -(void)              tryall: (CPRange) range filteredBy: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
+-(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs;
+-(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;
 -(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
+-(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs;
+-(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs;
 -(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;

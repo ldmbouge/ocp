@@ -41,7 +41,13 @@
 -(id<CPSearchController>) controller;
 -(void) setController: (id<CPSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
-   
+
+// immediate RHS
+-(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs;
+-(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs consistency:(CPConsistency)cons;
+-(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs;
+-(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs consistency:(CPConsistency)cons;
+// expression RHS
 -(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs;
 -(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;

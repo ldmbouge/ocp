@@ -22,11 +22,12 @@
 -(ORInt) max;
 -(BOOL) isConstant;
 -(BOOL) isVariable;
--(id<ORExpr>) add: (id<ORExpr>) e;
+-(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
 -(id<ORExpr>) muli: (ORInt) e;
--(id<ORRelation>) equal: (id<ORExpr>) e;
+-(id<ORRelation>) eq: (id<ORExpr>) e;
+-(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) neq: (id<ORExpr>) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;

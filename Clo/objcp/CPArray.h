@@ -25,6 +25,8 @@
 @protocol CPIntVarArray <CPVarArray> 
 -(id<CPIntVar>) at: (CPInt) value;
 -(void) set: (id<CPIntVar>) x at: (CPInt) value;
+-(id<CPIntVar>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<CPIntVar>)newValue atIndexedSubscript:(NSUInteger)idx;
 @end
 
 @protocol CPIntVarMatrix <NSObject> 

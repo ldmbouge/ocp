@@ -25,7 +25,7 @@
 @end
 
 @interface ORFactory (Expressions)
-+(id<ORExpr>) expr: (id<ORExpr>) left add: (id<ORExpr>) right;
++(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right;
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right;
 +(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right;
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right;

@@ -295,7 +295,7 @@ void failNow()
    CPInt i = 0;
    while(vars[i]!=nil) {
       id<CPExpr> term = [vars[i] mul:[CPFactory integer:cp value:coefs[i]]];
-      rv = rv==nil ? term : [rv add:term];
+      rv = rv==nil ? term : [rv plus:term];
       ++i;
    }
    return rv;

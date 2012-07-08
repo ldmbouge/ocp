@@ -46,13 +46,13 @@ int main(int argc, const char * argv[])
       [cp minimize:obj
          subjectTo:^{
 
-            [cp add: obj equal: [SUM(s, Stores, cost[s]) add: SUM(w, Warehouses, [open[w] muli:fixed]) ]];
+            [cp add: obj equal: [SUM(s, Stores, cost[s]) plus: SUM(w, Warehouses, [open[w] muli:fixed]) ]];
             for(CPUInt i=Warehouses.low;i <= Warehouses.up;i++) {
-               [cp add: SUM(s, Stores, [supp[s] equal:[CPFactory integer:cp value:i]]) leq: [CPFactory integer:cp value:cap[i]]];
+               [cp add: SUM(s, Stores, [supp[s] eqi:i]) leqi:cap[i]];
             }
             for(CPUInt i=Stores.low;i <= Stores.up; i++) {
                id<CPIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
-               [cp add: [open elt:supp[i]] equal:[CPFactory integer:cp value:YES]];
+               [cp add: [open elt:supp[i]] eqi:YES];
                [cp add: cost[i] equal:[row elt:supp[i]]];
             }
 

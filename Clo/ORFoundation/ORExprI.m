@@ -37,9 +37,9 @@
 {
    return CPRBad;
 }
--(id<ORExpr>) add: (id<ORExpr>) e
+-(id<ORExpr>) plus: (id<ORExpr>) e
 {
-   return [ORFactory expr: self add: e];
+   return [ORFactory expr: self plus: e];
 }
 -(id<ORExpr>) sub: (id<ORExpr>) e
 {
@@ -53,9 +53,13 @@
 {
    return [ORFactory expr:self mul:[ORFactory integer:[self tracker] value:e]];
 }
--(id<ORRelation>) equal: (id<ORExpr>) e
+-(id<ORRelation>) eq: (id<ORExpr>) e
 {
    return [ORFactory expr:self equal:e];
+}
+-(id<ORRelation>) eqi: (ORInt) e
+{
+   return [ORFactory expr:self equal:[ORFactory integer:[self tracker] value:e]];
 }
 -(id<ORRelation>) neq: (id<ORExpr>) e
 {
@@ -514,11 +518,11 @@
    if (f!=nil) {
       for(ORInt i = low; i <= up; i++)
          if (!f(i)) 
-            _e = [_e add: e(i)];
+            _e = [_e plus: e(i)];
    } 
    else {
       for(ORInt i = low; i <= up; i++)
-         _e = [_e add: e(i)];      
+         _e = [_e plus: e(i)];
    }
    return self;       
 }

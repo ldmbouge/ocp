@@ -191,6 +191,15 @@
                                orderedBy: order];    
 }
 
+-(void) add: (id<CPExpr>)lhs leqi: (CPInt)rhs
+{
+   [self add:lhs leq:[CPFactory integer:(id<CP>)self value:rhs]];
+}
+-(void) add: (id<CPExpr>)lhs leqi: (CPInt)rhs consistency:(CPConsistency)cons
+{
+   [self add:lhs leq:[CPFactory integer:(id<CP>)self value:rhs] consistency:cons];
+}
+
 -(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs
 {
    CPStatus status = [_solver add: lhs leq:rhs consistency:ValueConsistency];
@@ -203,6 +212,15 @@
    if (status == CPFailure)
       [_search fail];   
 }
+-(void) add: (id<CPExpr>)lhs eqi: (CPInt)rhs
+{
+   [self add:lhs equal:[CPFactory integer:(id<CP>)self value:rhs]];
+}
+-(void) add: (id<CPExpr>)lhs eqi: (CPInt)rhs consistency:(CPConsistency)cons
+{
+   [self add:lhs equal:[CPFactory integer:(id<CP>)self value:rhs] consistency:cons];
+}
+
 -(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs
 {
    CPStatus status = [_solver add: lhs equal:rhs consistency:ValueConsistency];

@@ -61,7 +61,7 @@
    [cp trackObject: e];
    return e;   
 }
-+(id<ORExpr>) expr: (id<ORExpr>) left add: (id<ORExpr>) right
++(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right
 {
    id<ORExpr> o = [[ORExprPlusI alloc] initORExprPlusI: left and: right]; 
    return [self validate:o onError:"No CP Solver in Add Expression"];
