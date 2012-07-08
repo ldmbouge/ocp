@@ -25,7 +25,7 @@
 }
 +(CPI*) createRandomized
 {
-    [CPStreamManager setRandomized];
+    [ORStreamManager setRandomized];
     return [[CPI alloc] init];
 }
 +(CPI*) createDeterministic
@@ -46,7 +46,7 @@
 }
 +(SemCP*) createRandomized
 {
-   [CPStreamManager setRandomized];
+   [ORStreamManager setRandomized];
    return [[SemCP alloc] init];
 }
 +(SemCP*) createDeterministic

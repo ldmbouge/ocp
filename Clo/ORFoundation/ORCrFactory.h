@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORTypes.h>
+#import <ORFoundation/ORData.h>
 
 @protocol ORInteger;
 @protocol ORInformer;
@@ -22,4 +23,8 @@
 +(id<ORInteger>) integer:(ORInt) value;
 +(id<ORIntInformer>) intInformer;
 +(id<ORVoidInformer>) voidInformer;
+
++(id<ORRandomStream>) randomStream;
++(id<ORZeroOneStream>) zeroOneStream;
++(id<ORUniformDistribution>) uniformDistribution: (ORRange) r;
 @end

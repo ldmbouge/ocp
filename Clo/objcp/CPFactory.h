@@ -83,6 +83,9 @@ void failNow();
 
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c;
 
++(id<CPRandomStream>) randomStream: (id<CP>) cp ;
++(id<CPZeroOneStream>) zeroOneStream: (id<CP>) cp ;
++(id<CPUniformDistribution>) uniformDistribution: (id<CP>) cp range: (ORRange) r;
 @end
 
 @interface CPFactory (expression)

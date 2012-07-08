@@ -11,17 +11,18 @@
 
 #include <Foundation/Foundation.h>
 #import "CPTypes.h"
+#include "ORFoundation/ORData.h"
 #include "CPDataI.h"
 
 @interface OPTSelect : NSObject {
-    CPRandomStream* _stream;
-    CPRange         _range;
-    CPInt2Bool      _filter;
-    CPInt2Int       _order;
-    CPInt       _direction;
+    id<ORRandomStream> _stream;
+    CPRange            _range;
+    CPInt2Bool         _filter;
+    CPInt2Int          _order;
+    CPInt              _direction;
 }
 -(OPTSelect*) initOPTSelectWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
--(void)         dealloc;
+-(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
 -(CPInt)              any;
@@ -32,24 +33,22 @@
     OPTSelect* _select;
 }
 -(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
--(void)         dealloc;
+-(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
 -(CPInt)              any;
 @end
 
 @interface CPSelectMinRandomized : NSObject {
-  CPRandomStream* _stream;
-  CPRange         _range;
-  CPInt2Bool      _filter;
-  CPInt2Int       _order;
+  id<ORRandomStream> _stream;
+  CPRange            _range;
+  CPInt2Bool         _filter;
+  CPInt2Int          _order;
 }
 -(CPSelectMinRandomized*) initWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
--(void)         dealloc;
+-(void)            dealloc;
 -(CPInt)           choose;
 @end
-
-
 
 @interface CPSelectMax : NSObject {
    CPRange         _range;
@@ -59,7 +58,7 @@
 }
 -(CPSelectMax*) initSelectMin:(id<CP>)cp range: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)         dealloc;
--(CPInt)    min;
--(CPInt)    max;
--(CPInt)    choose;
+-(CPInt)        min;
+-(CPInt)        max;
+-(CPInt)        choose;
 @end

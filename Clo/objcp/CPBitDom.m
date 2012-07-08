@@ -178,7 +178,7 @@ void failSilly()
    if (val == _max._val) return [self updateMax:val-1 for:x];
    //CPRemoveOnDenseDomainError* ex = [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
    failSilly();
- //  return CPSuspend;
+   return CPSuspend;
 }
 
 -(void)restoreDomain:(id<CPDom>)toRestore
