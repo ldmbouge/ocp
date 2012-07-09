@@ -641,7 +641,7 @@
       }break;
       case CPRNEq: assert(NO);
       case CPRLEq: {
-         [terms postLEQZ: _fdm consistency:_c];
+         status = [terms postLEQZ: _fdm consistency:_c];
       }break;
    }
    [terms release];
