@@ -137,6 +137,33 @@
 @end
 
 
+@implementation CPLimitCondition
+-(id) initCPLimitCondition: (CPVoid2Bool) condition
+{
+   self = [super initCPDefaultController];
+   _condition = [condition copy];
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"CPOptimizationController dealloc called...\n");
+   [_condition release];
+   [super dealloc];
+}
+-(CPInt) addChoice:(NSCont*) k
+{
+   return [_controller addChoice: k];
+}
+-(void) fail
+{
+  [_controller fail];   
+}
+-(void) startTryRight
+{
+   if (_condition())
+      [_controller fail];
+}
+@end
 
 
 

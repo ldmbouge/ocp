@@ -29,7 +29,18 @@
 }
 -(id)        initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (ORTrail*) trail;
 -(void)      dealloc;
--(CPInt) addChoice:(NSCont*) k;
+-(CPInt)     addChoice:(NSCont*) k;
+-(void)      fail;
+-(void)      startTryRight;
+@end
+
+@interface CPLimitCondition : CPDefaultController <NSCopying,CPSearchController>
+{
+   CPVoid2Bool _condition;
+}
+-(id)        initCPLimitCondition: (CPVoid2Bool) condition;
+-(void)      dealloc;
+-(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryRight;
 @end
