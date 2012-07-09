@@ -26,6 +26,9 @@
 -(id<ORRelation>) neq: (id<ORExpr>) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORExpr>)and:(id<ORRelation>)e;
+-(id<ORExpr>)or:(id<ORRelation>)e;
+-(id<ORExpr>)imply:(id<ORRelation>)e;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 - (void)visit:(id<ORExprVisitor>)v;
@@ -136,6 +139,33 @@
 -(void) visit: ORExprVisitorI;
 @end
 
+@interface ORDisjunctI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORDisjunctI: (id<ORExpr>) left or: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(enum CPRelationType)type;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
+
+@interface ORConjunctI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORConjunctI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(enum CPRelationType)type;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
+
+@interface ORImplyI : ORExprBinaryI<ORRelation,NSCoding>
+-(id<ORExpr>) initORImplyI: (id<ORExpr>) left imply: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(enum CPRelationType)type;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
+
 @protocol ORExprVisitor
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
@@ -147,5 +177,8 @@
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
+-(void) visitExprDisjunctI:(ORDisjunctI*)e;
+-(void) visitExprConjunctI:(ORConjunctI*)e;
+-(void) visitExprImplyI:(ORImplyI*)e;
 @end
 

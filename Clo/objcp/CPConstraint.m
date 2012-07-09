@@ -130,6 +130,25 @@
    return o;
 }
 
++(id<CPConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b
+{
+   id<CPConstraint> o = [[CPOrDC alloc] initCPOrDC:b equal:x or:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<CPConstraint>) boolean:(id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)b
+{
+   id<CPConstraint> o = [[CPAndDC alloc] initCPAndDC:b equal:x and:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b
+{
+   id<CPConstraint> o = [[CPImplyDC alloc] initCPImplyDC:b equal:x imply:y];
+   [[x tracker] trackObject:o];
+   return o;   
+}
+
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x
 {
     id<CPConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];

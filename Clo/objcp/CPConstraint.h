@@ -34,6 +34,10 @@
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c;
 
++(id<CPConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
+
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 

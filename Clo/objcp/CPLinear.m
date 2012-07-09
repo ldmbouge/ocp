@@ -45,6 +45,9 @@
 -(void) visitExprAbsI:(ORExprAbsI *)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(CPExprVarSubI*)e;
+-(void) visitExprDisjunctI:(ORDisjunctI*)e;
+-(void) visitExprConjunctI:(ORConjunctI*)e;
+-(void) visitExprImplyI:(ORImplyI*)e;
 +(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(ORExprI*)expr consistency:(CPConsistency)c;
 +(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(ORExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c;
 @end
@@ -89,6 +92,9 @@
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(CPExprVarSubI*)e;
+-(void) visitExprDisjunctI:(ORDisjunctI*)e;
+-(void) visitExprConjunctI:(ORConjunctI*)e;
+-(void) visitExprImplyI:(ORImplyI*)e;
 @end
 
 @interface CPLinearizer : NSObject<CPExprVisitor> {
@@ -111,6 +117,9 @@
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(CPExprVarSubI*)e;
+-(void) visitExprDisjunctI:(ORDisjunctI*)e;
+-(void) visitExprConjunctI:(ORConjunctI*)e;
+-(void) visitExprImplyI:(ORImplyI*)e;
 @end
 
 @implementation CPRNormalizer
@@ -153,6 +162,18 @@
    [CPLinearizer addToLinear:linRight from:[e right] solver:_fdm consistency:_cons];
    [linRight release];
    _terms = linLeft;
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+   assert(NO);
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+   assert(NO);
+}
+-(void) visitExprImplyI:(ORImplyI*)e
+{
+   assert(NO);   
 }
 -(void) visitIntVarI: (CPIntVarI*) e       {}
 -(void) visitIntegerI: (id<CPInteger>) e   {}
@@ -228,6 +249,18 @@
 {
    id<CPIntVar> alpha = [CPSubst substituteIn:_fdm expr:e consistency:_cons];
    [_terms addTerm:alpha by:1];
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+   assert(NO);
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+   assert(NO);
+}
+-(void) visitExprImplyI:(ORImplyI*)e
+{
+   assert(NO);
 }
 -(void) visitExprSumI: (ORExprSumI*) e
 {
@@ -571,6 +604,19 @@
 {
    assert(NO);
 }
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+   assert(NO);
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+   assert(NO);
+}
+-(void) visitExprImplyI:(ORImplyI*)e
+{
+   assert(NO);   
+}
+
 -(void) visitExprAbsI:(ORExprAbsI *)e  
 {
    id<ORTracker> cp = [e tracker];
@@ -643,6 +689,7 @@
       case CPRLEq: {
          [terms postLEQZ: _fdm consistency:_c];
       }break;
+      default: assert(NO);
    }
    [terms release];
    return status ? CPSkip : CPFailure;

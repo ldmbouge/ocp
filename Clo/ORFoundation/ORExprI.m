@@ -73,6 +73,18 @@
 {
    return [ORFactory expr:self geq:e];
 }
+-(id<ORExpr>)and:(id<ORRelation>)e
+{
+   return [ORFactory expr:(id<ORRelation>)self and:e];
+}
+-(id<ORExpr>)or:(id<ORRelation>)e
+{
+   return [ORFactory expr:(id<ORRelation>)self or:e];
+}
+-(id<ORExpr>)imply:(id<ORRelation>)e
+{
+   return [ORFactory expr:(id<ORRelation>)self imply:e];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -506,6 +518,136 @@
    return self;
 }
 @end
+
+@implementation ORDisjunctI
+-(id<ORExpr>) initORDisjunctI: (id<ORExpr>) left or: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(ORInt) max
+{
+   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitExprDisjunctI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ || %@)",[_left description],[_right description]];
+   return rv;
+}
+-(enum CPRelationType)type
+{
+   return CPRDisj;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORConjunctI
+-(id<ORExpr>) initORConjunctI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(ORInt) max
+{
+   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitExprConjunctI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ && %@)",[_left description],[_right description]];
+   return rv;
+}
+-(enum CPRelationType)type
+{
+   return CPRConj;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORImplyI
+-(id<ORExpr>) initORImplyI: (id<ORExpr>) left imply: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(ORInt) max
+{
+   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+}
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitExprImplyI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ => %@)",[_left description],[_right description]];
+   return rv;
+}
+-(enum CPRelationType)type
+{
+   return CPRImply;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
 
 
 @implementation ORExprSumI 

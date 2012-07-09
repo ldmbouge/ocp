@@ -145,6 +145,24 @@
    [[e index] visit:self];
    printf("]");
 }
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+   [[e left] visit: self];
+   printf(" || ");
+   [[e right] visit: self];
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+   [[e left] visit: self];
+   printf(" && ");
+   [[e right] visit: self];
+}
+-(void) visitExprImplyI:(ORImplyI*)e;
+{
+   [[e left] visit: self];
+   printf(" => ");
+   [[e right] visit: self];
+}
 @end
 
 @implementation ORIntegerI (visitor)
