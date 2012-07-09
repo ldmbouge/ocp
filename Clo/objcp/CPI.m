@@ -368,6 +368,10 @@
   [_search once: cl];
 }
 
+-(void) limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl
+{
+   [_search limitCondition: condition in:cl];
+}
 -(void) limitSolutions: (CPInt) nb in: (CPClosure) cl
 {
   [_search limitSolutions: nb in: cl];
@@ -377,7 +381,14 @@
 {
   [_search limitDiscrepancies: nb in: cl];
 }
-
+-(void) limitFailures: (CPInt) maxFailures in: (CPClosure) cl
+{
+  [_search limitFailures: maxFailures in: cl];
+}
+-(void) applyController: (id<CPSearchController>) controller in: (CPClosure) cl
+{
+   [_search applyController: controller in: cl];
+}
 -(void) search: (CPClosure) body 
 {
   [_search search: body];

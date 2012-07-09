@@ -407,6 +407,15 @@
   [self popController]; 
 }
 
+-(void) limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl
+{
+   CPLimitCondition* limit = [[CPLimitCondition alloc] initCPLimitCondition: condition];
+   [self push: limit];
+   [limit release];
+   cl();
+   [self popController];
+}
+
 -(void) limitDiscrepancies: (CPInt) nb in: (CPClosure) cl
 {
   CPLimitDiscrepancies* limit = [[CPLimitDiscrepancies alloc] initCPLimitDiscrepancies: nb withTrail: [_tracer trail]];
@@ -415,7 +424,21 @@
   cl();
   [self popController]; 
 }
-
+-(void) limitFailures: (CPInt) nb in: (CPClosure) cl
+{
+   CPLimitFailures* limit = [[CPLimitFailures alloc] initCPLimitFailures: nb withTrail: [_tracer trail]];
+   [self push: limit];
+   [limit release];
+   cl();
+   [self popController];
+}
+-(void) applyController: (id<CPSearchController>) controller in: (CPClosure) cl
+{
+   [self push: controller];
+   [controller release];
+   cl();
+   [self popController];
+}
 -(void) search: (CPClosure) body
 {
   int to;
