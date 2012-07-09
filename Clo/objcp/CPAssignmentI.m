@@ -173,11 +173,8 @@
          }];
       }
    }
-   int assignmentCost = 0;
-   for(CPInt r = _lowr; r <= _upr; r++)
-      assignmentCost += [_cost at: r : [_columnOfRow at: r]];
-   printf("Cost of assignment: %d \n",assignmentCost);
-
+   if (![_costVariable bound]) 
+      [_costVariable whenChangeMaxPropagate: self];
    return CPSuspend;
 }
 
@@ -194,29 +191,15 @@
 }
 
 -(void) propagate
-{   
-   [self findAssignment];
-   //   printf("After assignment \n");
-   //   [self printCostMatrix];
-   //   printf("\n");
-   //   [self printReducedCostMatrix];
-   //   printf("\n");
-   //   [self printAssignment];
-   [self prune];
-}
-
--(void) findAssignment
 {
-   for(CPInt r = _lowr; r <= _upr; r++) 
-      if (!assignedRow(self,r))
+   for(CPInt r = _lowr; r <= _upr; r++)
+      if (!assignedRow(self,r)) 
          [self applyAugmentingPathFrom: r to: [self findAugmentingPathFrom: r]];
-}
-
--(void) prune
-{   
+   
    int assignmentCost = 0;
    for(CPInt r = _lowr; r <= _upr; r++) 
-      assignmentCost += [_cost at: r : [_columnOfRow at: r]];  
+      assignmentCost += [_cost at: r : [_columnOfRow at: r]];
+//   printf("Cost of assignment: %d \n",assignmentCost);
    [_costVariable updateMin: assignmentCost];
    CPInt bound = [_costVariable max] - assignmentCost;
    for(CPInt r = _lowr; r <= _upr; r++)

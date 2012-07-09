@@ -238,7 +238,7 @@
     ];
 }
 
--(void)restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 {
 }
 
@@ -464,7 +464,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; when a solution is found, execute onSolution; restore the state as before the call
 
--(void) restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 {
 //   id<CPInteger> nbRestarts = [CPFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
@@ -482,7 +482,7 @@
     */
    [_controller._val addChoice: enter];
    if ([enter nbCalls]!=0) 
-      if (onRestart) onRestart();
+      if (onRepeat) onRepeat();
    if (body) body();
 }
 
@@ -532,7 +532,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; when a solution is found, execute onSolution; restore the state as before the call
 
--(void) restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone
 {
    NSCont* enter = [NSCont takeContinuation];
    if (isDone) 
@@ -542,7 +542,7 @@
       }
    [_controller._val addChoice: enter];    
    if ([enter nbCalls]!=0) 
-      if (onRestart) onRestart();
+      if (onRepeat) onRepeat();
    if (body) body();
 }
 

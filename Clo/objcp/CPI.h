@@ -113,7 +113,8 @@
 -(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)     applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
--(void)             restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)              repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat;
+-(void)              repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(DFSTracer*)tracer;
 @end
 
@@ -151,7 +152,7 @@
 -(void)            maximize: (id<CPIntVar>) x in: (CPClosure) body;
 -(void)            minimize: (id<CPIntVar>) x subjectTo: (CPClosure) body using:(CPClosure) search;
 -(void)            maximize: (id<CPIntVar>) x subjectTo: (CPClosure) body using:(CPClosure) search;
--(void)             restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(void) solveParAll:(CPUInt)nbt subjectTo:(CPClosure)body using:(CPVirtualClosure)body;
 -(SemTracer*)tracer;
 @end

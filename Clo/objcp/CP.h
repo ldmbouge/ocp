@@ -59,6 +59,8 @@
 -(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
+-(void)               lthen: (id<CPIntVar>) var with: (CPInt) val;
+-(void)               gthen: (id<CPIntVar>) var with: (CPInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              search: (CPClosure) body;
@@ -85,7 +87,8 @@
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
 
--(void)             restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart;
+-(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart until: (CPVoid2Bool) isDone;
 -(id<CPPortal>) portal;
 -(id<CPTracer>) tracer;
 -(id<CPSolution>) solution;

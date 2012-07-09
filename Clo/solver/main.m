@@ -45,7 +45,7 @@ void labelFF1(CP* m,NSArray* x,int from,int to)
 {
    CPInteger* nbSolutions = [[CPInteger alloc] initCPInteger: 0];
    [m solveAll: ^() {
-      [m restart: ^() {
+      [m repeat: ^() {
          [m limitSolutions: 1 in: ^() {
             [m   forrange: (CPRange){from,to}
                filteredBy: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
@@ -60,8 +60,8 @@ void labelFF1(CP* m,NSArray* x,int from,int to)
          printf("\n");
          [nbSolutions incr];
       }
-       onRestart: ^() { printf("I am restarting ... %ld \n",[nbSolutions value]); }
-          isDone: ^bool() { return [nbSolutions value] >= 5; }
+       onRepeat: ^() { printf("I am restarting ... %ld \n",[nbSolutions value]); }
+          until: ^bool() { return [nbSolutions value] >= 5; }
        ];
    }
     ];
@@ -71,7 +71,7 @@ void labelFF2(CP* m,NSArray* x,int from,int to)
 {
    CPInteger* nbSolutions = [[CPInteger alloc] initCPInteger: 0];
    [m solveAll: ^() {
-      [m restart: ^() {
+      [m repeat: ^() {
          [m limitSolutions: 1 in: ^() {
             [m   forrange: (CPRange){from,to}
                filteredBy: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
@@ -82,8 +82,8 @@ void labelFF2(CP* m,NSArray* x,int from,int to)
           ];
          [nbSolutions incr];
       }
-       onRestart: ^() { printf("I am restarting ... %ld \n",[nbSolutions value]); }
-          isDone: ^bool() { return [nbSolutions value] >= 5; }
+       onRepeat: ^() { printf("I am restarting ... %ld \n",[nbSolutions value]); }
+          until: ^bool() { return [nbSolutions value] >= 5; }
        ];
    }
     ];
