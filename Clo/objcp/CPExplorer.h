@@ -47,8 +47,11 @@
                     onExit: (CPClosure) onExit;
 @optional 
 -(void)               once: (CPClosure) cl;
+-(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
 -(void)     limitSolutions: (CPInt) maxSolutions in: (CPClosure) cl;
+-(void)     limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
+-(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(CPStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;

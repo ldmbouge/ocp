@@ -96,7 +96,10 @@
 // combinators
 -(void)               once: (CPClosure) cl;
 -(void)     limitSolutions: (CPInt) masSolutions in: (CPClosure) cl;
+-(void)     limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
+-(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
+-(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
 -(void)            restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
 @end
 

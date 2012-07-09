@@ -23,7 +23,7 @@
 
 @interface CPLimitDiscrepancies : CPDefaultController <NSCopying,CPSearchController> 
 {
-  CPInt _maxDiscrepancies;
+  CPInt     _maxDiscrepancies;
   ORTrail*  _trail;
   TRInt     _nbDiscrepancies;
 }
@@ -31,6 +31,20 @@
 -(void)      dealloc;
 -(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;
+-(void)      startTryRight;
+@end
+
+@interface CPLimitFailures : CPDefaultController <NSCopying,CPSearchController>
+{
+   CPInt     _maxFailures;
+   ORTrail*  _trail;
+   CPInt     _nbFailures;
+}
+-(id)        initCPLimitFailures: (CPInt) maxFailures withTrail: (ORTrail*) trail;
+-(void)      dealloc;
+-(CPInt)     addChoice:(NSCont*) k;
+-(void)      fail;
+-(void)      startTryLeft;
 -(void)      startTryRight;
 @end
 
@@ -42,6 +56,7 @@
 -(void)      dealloc;
 -(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;
+-(void)      startTryLeft;
 -(void)      startTryRight;
 @end
 
@@ -51,7 +66,7 @@
 }
 -(id)        initCPOptimizationController: (CPVoid2CPStatus) canImprove;
 -(void)      dealloc;
--(CPInt) addChoice:(NSCont*) k;
+-(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryRight;
 -(void)      startTryallOnFailure;

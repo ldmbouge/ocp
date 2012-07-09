@@ -78,18 +78,70 @@
 }
 -(void) startTryRight
 {
-  //printf("startTryRight: %d \n",_nbDiscrepancies._val);
   assignTRInt(&_nbDiscrepancies,_nbDiscrepancies._val + 1,_trail);  
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   CPOptimizationController* ctrl = [[[self class] allocWithZone:zone] initCPLimitDiscrepancies:_maxDiscrepancies withTrail:_trail];
+   CPLimitDiscrepancies* ctrl = [[[self class] allocWithZone:zone] initCPLimitDiscrepancies:_maxDiscrepancies withTrail:_trail];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
 
 @end
 
+@implementation CPLimitFailures
+
+-(id) initCPLimitFailures: (CPInt) maxFailures withTrail: (ORTrail*) trail
+{
+   self = [super initCPDefaultController];
+   _trail = trail;
+   _nbFailures = 0;
+   _maxFailures = maxFailures;
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"CPLimitSolution dealloc called...\n");
+   [super dealloc];
+}
+-(CPInt) addChoice: (NSCont*) k
+{
+   return [_controller addChoice: k];
+}
+-(void) fail
+{
+   [_controller fail];
+}
+-(void) startTryLeft
+{
+   if (_nbFailures >= _maxFailures)
+      [_controller fail];
+   else
+      [_controller startTryLeft];
+}
+-(void) startTryRight
+{
+   _nbFailures++;
+   if (_nbFailures >= _maxFailures)
+      [_controller fail];
+   else
+      [_controller startTryRight];
+}
+-(void) startTryallOnFailure
+{
+   _nbFailures++;
+   if (_nbFailures >= _maxFailures)
+      [_controller fail];
+   else
+      [_controller startTryallOnFailure];
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPLimitFailures* ctrl = [[[self class] allocWithZone:zone] initCPLimitFailures:_maxFailures withTrail:_trail];
+   [ctrl setController:[_controller copyWithZone:zone]];
+   return ctrl;
+}
+@end
 
 @implementation CPOptimizationController
 
@@ -117,16 +169,22 @@
 {
    if (_canImprove() == CPFailure)
       [_controller fail];
+   else
+      [_controller startTryLeft];  
 }
 -(void) startTryRight
 {
-  if (_canImprove() == CPFailure)
-    [_controller fail];
+   if (_canImprove() == CPFailure)
+      [_controller fail];
+   else
+      [_controller startTryRight];
 }
 -(void) startTryallOnFailure
 {
-  if (_canImprove() == CPFailure)
-    [_controller fail];
+   if (_canImprove() == CPFailure)
+      [_controller fail];
+   else
+      [_controller startTryallOnFailure];
 }
 - (id)copyWithZone:(NSZone *)zone
 {
@@ -152,16 +210,27 @@
 }
 -(CPInt) addChoice:(NSCont*) k
 {
+   if (_condition())
+      [_controller fail];
    return [_controller addChoice: k];
 }
 -(void) fail
 {
   [_controller fail];   
 }
+-(void) startTryLeft
+{
+   if (_condition())
+      [_controller fail];
+   else
+      [_controller startTryLeft];
+}
 -(void) startTryRight
 {
    if (_condition())
       [_controller fail];
+   else
+      [_controller startTryRight];
 }
 @end
 
