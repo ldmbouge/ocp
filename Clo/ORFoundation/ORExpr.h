@@ -37,9 +37,15 @@ enum CPRelationType {
    CPRBad = 0,
    CPREq  = 1,
    CPRNEq = 2,
-   CPRLEq = 3
+   CPRLEq = 3,
+   CPRDisj = 4,
+   CPRConj = 5,
+   CPRImply = 6
 };
 
 @protocol ORRelation <ORExpr>
 -(enum CPRelationType)type;
+-(id<ORExpr>)and:(id<ORRelation>)e;
+-(id<ORExpr>)or:(id<ORRelation>)e;
+-(id<ORExpr>)imply:(id<ORRelation>)e;
 @end

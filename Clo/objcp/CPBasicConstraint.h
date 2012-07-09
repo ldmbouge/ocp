@@ -163,6 +163,39 @@ typedef int (^intgetter) (void) ;
 -(CPUInt)nbUVars;
 @end
 
+@interface CPOrDC : CPActiveConstraint<NSCoding> { // b == (x || y)
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id)initCPOrDC:(id)b equal:(id)x or:(id)y;
+-(CPStatus)post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPAndDC : CPActiveConstraint<NSCoding> { // b == (x && y)
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id)initCPAndDC:(id)b equal:(id)x and:(id)y;
+-(CPStatus)post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPImplyDC : CPActiveConstraint<NSCoding> { // b == (x => y)
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id)initCPImplyDC:(id)b equal:(id)x imply:(id)y;
+-(CPStatus)post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
 @interface CPAllDifferenceVC : CPActiveConstraint<NSCoding> {
    CPIntVarI**   _x;
    CPLong       _nb;

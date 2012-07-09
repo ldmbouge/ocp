@@ -850,6 +850,202 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 @end
 
+@implementation CPOrDC
+-(id)initCPOrDC:(id)b equal:(id)x or:(id)y
+{
+   self = [super initCPActiveConstraint:[b solver]];
+   _b = b;
+   _x = x;
+   _y = y;
+   _idempotent = YES;
+   return self;
+}
+-(CPStatus)post
+{
+   [self propagate];
+   if (!bound(_b)) [_b whenBindPropagate:self];
+   if (!bound(_x)) [_x whenBindPropagate:self];
+   if (!bound(_y)) [_y whenBindPropagate:self];
+   return CPSuspend;
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      BOOL bVal = minDom(_b);
+      if (bVal) {
+         if (maxDom(_x)==0)      [_y bind:TRUE];
+         else if (maxDom(_y)==0) [_x bind:TRUE];
+      } else {
+         [_x bind:NO];
+         [_y bind:NO];
+      }
+   } else {
+      if (bound(_x) && bound(_y))
+         [_b bind:minDom(_x) || minDom(_y)];
+      else if (minDom(_x)>0 || minDom(_y)>0)
+         [_b bind:TRUE];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+}
+-(CPUInt)nbUVars
+{
+   return !bound(_b) + !bound(_x) + !bound(_y);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPOrDC: %02d %@ == (%@ || %@)>",_name,_b,_x,_y];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPAndDC
+-(id)initCPAndDC:(id)b equal:(id)x and:(id)y
+{
+   self = [super initCPActiveConstraint:[b solver]];
+   _b = b;
+   _x = x;
+   _y = y;
+   _idempotent = YES;
+   return self;
+}
+-(CPStatus)post
+{
+   [self propagate];
+   if (!bound(_b)) [_b whenBindPropagate:self];
+   if (!bound(_x)) [_x whenBindPropagate:self];
+   if (!bound(_y)) [_y whenBindPropagate:self];
+   return CPSuspend;
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      BOOL bVal = minDom(_b);
+      if (bVal) {
+         [_x bind:TRUE];
+         [_y bind:TRUE];
+      } else {
+         if (minDom(_x)==1)      [_y bind:FALSE];
+         else if (minDom(_y)==1) [_x bind:FALSE];
+      }
+   } else {
+      if (bound(_x) && bound(_y))
+         [_b bind:minDom(_x) && minDom(_y)];
+      else if (maxDom(_x)==0 || maxDom(_y)==0)
+         [_b bind:FALSE];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+}
+-(CPUInt)nbUVars
+{
+   return !bound(_b) + !bound(_x) + !bound(_y);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPAndDC: %02d %@ == (%@ && %@)>",_name,_b,_x,_y];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation CPImplyDC
+-(id)initCPImplyDC:(id)b equal:(id)x imply:(id)y
+{
+   self = [super initCPActiveConstraint:[b solver]];
+   _b = b;
+   _x = x;
+   _y = y;
+   _idempotent = YES;
+   return self;
+}
+-(CPStatus)post
+{
+   [self propagate];
+   if (!bound(_b)) [_b whenBindPropagate:self];
+   if (!bound(_x)) [_x whenBindPropagate:self];
+   if (!bound(_y)) [_y whenBindPropagate:self];
+   return CPSuspend;
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      BOOL bVal = minDom(_b);
+      if (bVal) {                // x=>y is true:  thus NOT(x) || y is true.
+         if (minDom(_x)>0)       [_y bind:TRUE];
+         else if (maxDom(_y)==0) [_x bind:FALSE];
+      } else {                   // x=>y is false: thus NOT(x) || y is false.
+         [_x bind:TRUE];
+         [_y bind:FALSE];
+      }
+   } else {
+      if (bound(_x) && bound(_y))
+         [_b bind:!minDom(_x) || minDom(_y)];
+      else if (maxDom(_x)==0 || minDom(_y)>0)
+         [_b bind:TRUE];
+   }   
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+}
+-(CPUInt)nbUVars
+{
+   return !bound(_b) + !bound(_x) + !bound(_y);
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPImplyDC: %02d %@ == (%@ => %@)>",_name,_b,_x,_y];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
 @implementation CPLEqualc
 -(id) initCPLEqualc:(id)x and:(CPInt) c
 {

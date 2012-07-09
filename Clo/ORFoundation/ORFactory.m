@@ -100,6 +100,22 @@
    [self validate:o onError:"No CP Solver in >= Expression"];
    return o;
 }
++(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right
+{
+   id<ORExpr> o = [[ORConjunctI alloc] initORConjunctI:left and:right];
+   return [self validate:o onError:"No CP Solver in && Expression"];
+}
++(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right
+{
+   id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
+   return [self validate:o onError:"No CP Solver in || Expression"];
+}
++(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right
+{
+   id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
+   return [self validate:o onError:"No CP Solver in => Expression"];
+}
+
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];

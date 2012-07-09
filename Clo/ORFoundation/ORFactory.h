@@ -32,6 +32,9 @@
 +(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right;
 +(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right;
 +(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right;
++(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right;
++(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right;
++(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) sum: (id<ORTracker>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 @end
