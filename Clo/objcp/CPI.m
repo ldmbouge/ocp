@@ -493,9 +493,14 @@
      ];
 }
 
--(void) restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone
+
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat
 {
-  [_search restart: body onRestart: onRestart isDone: isDone];
+  [_search repeat: body onRepeat: onRepeat until: nil];
+}
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone
+{
+  [_search repeat: body onRepeat: onRepeat until: isDone];
 }
 -(DFSTracer*)tracer
 {
@@ -703,12 +708,14 @@
                            ]; }
     ];
 }
-
--(void) restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat
 {
-   [_search restart: body onRestart: onRestart isDone: isDone];
+   [_search repeat: body onRepeat: onRepeat until: nil];
 }
-
+-(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone
+{
+   [_search repeat: body onRepeat: onRepeat until: isDone];
+}
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

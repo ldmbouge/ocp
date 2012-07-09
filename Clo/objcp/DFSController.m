@@ -68,7 +68,6 @@
    CPInt ofs = _sz-1;
    if (ofs >= 0) {
       [_tracer popNode];
-      //printf("pop node to level %d \n",[_tracer level]);
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
       --_sz;

@@ -40,7 +40,7 @@
 -(void)             tryall: (CPRange) range filteredBy: (CPInt2Bool) f in: (CPInt2Void) body;
 -(void)             tryall: (CPRange) range filteredBy: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 -(void)               fail;
--(void)            restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2CPStatus) canImprove update: (CPClosure) update;
 -(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2CPStatus) canImprove update: (CPClosure) update 
                 onSolution: (CPClosure) onSolution 

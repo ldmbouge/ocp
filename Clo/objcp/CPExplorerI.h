@@ -57,7 +57,7 @@
 -(void)             search: (CPClosure) body;
 -(void)        nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
 -(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
--(void)            restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 
 -(void)          solve: (CPClosure) body;
 -(void)       solveAll: (CPClosure) body;
@@ -100,7 +100,7 @@
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
--(void)            restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 @end
 
 @interface CPSemExplorerI : CPCoreExplorerI<CPExplorer> {
@@ -110,7 +110,7 @@
 // top level calls
 -(void)             search: (CPClosure) body;
 // combinators
--(void)            restart: (CPClosure) body onRestart: (CPClosure) onRestart isDone: (CPVoid2Bool) isDone;
+-(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(CPStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;

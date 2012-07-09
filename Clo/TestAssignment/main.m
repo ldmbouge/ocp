@@ -136,7 +136,6 @@ void printCircuit(id<CPIntVarArray> x)
    printf("\n");
 }
 
-/*
 int main (int argc, const char * argv[])
 {
    FILE* dta = fopen("/Users/pvh/NICTA/Project/objectivecp/data/rbg040a.tw","r");
@@ -183,10 +182,10 @@ int main (int argc, const char * argv[])
 //       [cp applyController: [[CPLimitCondition alloc] initCPLimitCondition: ^bool() { return [nbRestarts value] >= 30; }] in:
        [cp limitCondition: ^bool() { return [nbRestarts value] >= 30; } in:
         ^{
-           [cp restart:
+           [cp repeat:
             ^{
 //               [cp limitSolutions: [nbSolutions value] in:
-               [cp limitFailures: 50000 in:
+               [cp limitFailures: 100 in:
                 ^{
                   [CPLabel array: x];
                    printf("Cost: %d \n",[assignmentCost min]);
@@ -194,7 +193,7 @@ int main (int argc, const char * argv[])
                 }
                 ];
             }
-             onRestart:
+            onRepeat:
                ^{
                   printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
                   [nbSolutions incr];
@@ -213,7 +212,7 @@ int main (int argc, const char * argv[])
                         [cp add: [CPFactory equalc: [x at: i] to: [solution intValue: [x at: i]]]];
                   }
                }
-               isDone: nil //^bool() { return [nbRestarts value] >= 35; }
+//               until: ^bool() { return [nbRestarts value] >= 35; }
             ];
         }
         ];
@@ -232,8 +231,9 @@ int main (int argc, const char * argv[])
 
    return 0;
 }
-*/
 
+
+/*
 int main (int argc, const char * argv[])
 {
    FILE* dta = fopen("/Users/ldm/work/langExp/benchdata/ATSPTW/rbg040a.tw","r");
@@ -267,9 +267,8 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
-   [cp solve: //minimize: assignmentCost subjectTo:
+   [cp minimize: assignmentCost subjectTo:
     ^{
- //      [cp add: assignmentCost leqi: 165];
        for(CPInt i = 0; i < nbCities; i++)
           [cp add: [CPFactory notEqualc: [x at: i] to: i]];
        [cp add: [CPFactory alldifferent: x]];
@@ -278,10 +277,11 @@ int main (int argc, const char * argv[])
     }
           using:
     ^{
-         [CPLabel array: x];
+       [cp lthen: assignmentCost with: 166];
+//         [CPLabel array: x];
          printf("Cost: %d \n",[assignmentCost min]);
-         [cp add: assignmentCost leqi: 163];
-         printf("Cost: %d \n",[assignmentCost min]);
+//         [cp add: assignmentCost leqi: 163];
+//         printf("Cost: %d \n",[assignmentCost min]);
                    //             printCircuit(x);
     }
     ];
@@ -299,3 +299,4 @@ int main (int argc, const char * argv[])
    
    return 0;
 }
+*/
