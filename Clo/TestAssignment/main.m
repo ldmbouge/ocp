@@ -236,7 +236,7 @@ int main (int argc, const char * argv[])
 
 int main (int argc, const char * argv[])
 {
-   FILE* dta = fopen("/Users/pvh/NICTA/Project/objectivecp/data/rbg040a.tw","r");
+   FILE* dta = fopen("/Users/ldm/work/langExp/benchdata/ATSPTW/rbg040a.tw","r");
    CPInt nbCities;
    CPInt tmp;
    fscanf(dta, "%d",&nbCities);

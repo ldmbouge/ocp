@@ -17,17 +17,23 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
+NSString* indent(int t)
+{
+   NSMutableString* tab = [NSMutableString stringWithCapacity:64];
+   for(int i=0;i<t;i++)
+      [tab appendString:@"   "];
+   return tab;
+}
 int main (int argc, const char * argv[])
 {
-   int n = 8;
+   int n = 5;
    CPRange R = (CPRange){0,n-1};
    id<CP> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-//   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-//   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   id<CPHeuristic> h = [CPFactory createIBS:cp];
+
+   //id<CPHeuristic> h = [CPFactory createIBS:cp];
    [cp solveAll: 
     ^() {
        for(CPUInt i =0;i < n; i++) {
@@ -42,10 +48,35 @@ int main (int argc, const char * argv[])
     }   
           using: 
     ^() {
-       //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
-      [CPLabel heuristic:h];
-       printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
-       [nbSolutions incr];
+       //[CPLabel array: x ];// orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+      //[CPLabel heuristic:h];
+       NSLog(@"LEVEL START: %d",[[cp tracer] level]);
+/*       for(CPInt i=0;i<n;i++) {
+          while (![x[i] bound]) {
+             CPInt min = [x[i] min];
+             [cp try:^{
+                NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,min,[[cp tracer] level]);
+                [cp label:x[i] with:min];
+             } or:^{
+                NSLog(@"%@x[%d]!=%d -- | %d |",indent(i),i,min,[[cp tracer] level]);
+                [cp diff:x[i] with:min];
+             }];
+          }
+       }*/
+       [cp forrange:R filteredBy:^bool(ORInt i ) {
+          return ![x[i] bound];
+       } orderedBy:^ORInt(ORInt i) {
+          return i;
+       } do:^(ORInt i) {
+          [cp tryall:R filteredBy:^bool(ORInt v) {
+             return [x[i] member:v];
+          } in:^(ORInt v) {
+             NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,v,[[cp tracer] level]);
+             [cp label:x[i] with:v];
+          }];
+       }];
+       NSLog(@"%@sol [%d]: %@ THREAD: %p || %d ||\n",indent(n),[nbSolutions value],x,[NSThread currentThread],[[cp tracer] level]);
+      [nbSolutions incr];
     }
     ];
    printf("GOT %d solutions\n",[nbSolutions value]);
