@@ -44,6 +44,31 @@
 -(CPUInt)nbUVars;
 @end
 
+@interface CPReifyLEqualDC : CPCoreConstraint<NSCoding> {
+@private
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPInt      _c;
+}
+-(id) initCPReifyLEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x leq:(CPInt)c;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPReifyGEqualDC : CPCoreConstraint<NSCoding> {
+@private
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPInt      _c;
+}
+-(id) initCPReifyGEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x geq:(CPInt)c;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+
 @interface CPSumBoolGeq : CPCoreConstraint<NSCoding> {
     CPIntVarI**       _x;
     CPLong           _nb;

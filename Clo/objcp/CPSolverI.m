@@ -496,6 +496,13 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    return _status;
 }
+-(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency:(CPConsistency)cons
+{
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:e consistency:cons];
+   [self trackObject:wrapper];
+   return wrapper;
+}
+
 -(CPStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs leq:rhs] consistency:cons];

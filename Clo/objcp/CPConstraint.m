@@ -104,6 +104,20 @@
     return o;
 }
 
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq: (CPInt) i
+{
+   id<CPConstraint> o = [[CPReifyLEqualDC alloc] initCPReifyLEqualDC: b when: x leq: i];
+   [[[x cp] solver] trackObject: o];
+   return o;
+}
+
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x geq: (CPInt) i
+{
+   id<CPConstraint> o = [[CPReifyGEqualDC alloc] initCPReifyGEqualDC: b when: x geq: i];
+   [[[x cp] solver] trackObject: o];
+   return o;
+}
+
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (CPInt) c
 {
     id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBoolGeq: x geq: c];

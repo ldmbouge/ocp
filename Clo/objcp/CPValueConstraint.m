@@ -76,7 +76,6 @@
 @end
 
 @implementation CPReifyEqualDC
-
 -(id) initCPReifyEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPInt) c
 {
    self = [super initCPCoreConstraint];
@@ -134,6 +133,141 @@
     _x = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
     return self;
+}
+@end
+
+@implementation CPReifyLEqualDC
+-(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leq: (CPInt) c
+{
+   self = [super initCPCoreConstraint];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+
+-(CPStatus) post
+{
+   if ([_b bound]) {
+      if ([_b min])
+         return [_x updateMax:_c];
+      else
+         return [_x updateMin:_c+1];
+   }
+   else if ([_x max] <= _c)
+      return [_b bind:YES];
+   else if ([_x min] > _c)
+      return [_b bind:NO];
+   else {
+      [_b setBindTrigger: ^ {
+         if ([_b min])
+            [_x updateMax:_c];
+         else
+            [_x updateMin:_c+1];
+      } onBehalf:self];
+      [_x whenChangeMinDo:^{
+         if ([_x min] > _c)
+            [_b bind:NO];
+      } onBehalf:self];
+      [_x whenChangeMaxDo:^{
+         if ([_x max] <= _c)
+            [_b bind:YES];
+      } onBehalf:self];
+      return CPSuspend;
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_b, nil];
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   return self;
+}
+@end
+
+
+@implementation CPReifyGEqualDC
+-(id) initCPReifyGEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x geq: (CPInt) c
+{
+   self = [super initCPCoreConstraint];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+
+-(CPStatus) post  // b <=>  x >= c
+{
+   if ([_b bound]) {
+      if ([_b min])
+         return [_x updateMin:_c];
+      else
+         return [_x updateMax:_c-1];
+   }
+   else if ([_x min] >= _c)
+      return [_b bind:YES];
+   else if ([_x max] < _c)
+      return [_b bind:NO];
+   else {
+      [_b setBindTrigger: ^ {
+         if ([_b min])
+            [_x updateMin:_c];
+         else
+            [_x updateMax:_c-1];
+      } onBehalf:self];
+      [_x whenChangeMinDo:^{
+         if ([_x min] >= _c)
+            [_b bind:YES];
+      } onBehalf:self];
+      [_x whenChangeMaxDo:^{
+         if ([_x max] < _c)
+            [_b bind:NO];
+      } onBehalf:self];
+      return CPSuspend;
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_b, nil];
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_b bound];
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   return self;
 }
 @end
 

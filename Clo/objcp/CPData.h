@@ -13,6 +13,7 @@
 #import "ORFoundation/ORExpr.h"
 #import <objcp/CPSolution.h>
 #import <objcp/CPTypes.h>
+#import <objcp/CPData.h>
 
 @protocol CP;
 @protocol CPExprVisitor;
@@ -33,7 +34,10 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 @protocol CPIntVar;
 @protocol CPRelation;
 
-@protocol CPExpr <ORExpr>
+@protocol CPConstraint <NSObject>
+@end
+
+@protocol CPExpr <ORExpr,CPConstraint>
 -(id<CPExpr>) plus: (id<CPExpr>) e;
 -(id<CPExpr>) sub: (id<CPExpr>) e;
 -(id<CPExpr>) mul: (id<CPExpr>) e;
@@ -43,9 +47,16 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(id<CPRelation>) neq: (id<CPExpr>) e;
 -(id<CPRelation>) leq: (id<CPExpr>) e;
 -(id<CPRelation>) geq: (id<CPExpr>) e;
+-(id<CPRelation>) lt: (id<CPExpr>) e;
+-(id<CPRelation>) gt: (id<CPExpr>) e;
+-(id<CPRelation>) lti: (CPInt) e;
+-(id<CPRelation>) gti: (CPInt) e;
 @end
 
 @protocol CPRelation <ORRelation,CPExpr>
+-(id<CPRelation>)and:(id<CPRelation>)e;
+-(id<CPRelation>)or:(id<CPRelation>)e;
+-(id<CPRelation>)imply:(id<CPRelation>)e;
 @end
 
 @protocol CPInteger <ORInteger,CPExpr>
@@ -72,8 +83,6 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(id)snapshot;
 @end
 
-@protocol CPConstraint <NSObject>
-@end
 
 @protocol CPVirtual 
 -(CPInt) virtualOffset;   

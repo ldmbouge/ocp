@@ -29,6 +29,7 @@
 -(CPStatus) add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(CPStatus) add: (id<CPConstraint>) c;
 -(CPStatus) post: (id<CPConstraint>) c;
+-(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency:(CPConsistency)cons;
 -(CPStatus) label: (id) var with: (CPInt) val;
 -(CPStatus) diff:  (id) var with: (CPInt) val;
 -(CPStatus) lthen: (id<CPIntVar>) var with: (CPInt) val;

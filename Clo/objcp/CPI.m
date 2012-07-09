@@ -237,9 +237,12 @@
 
 -(void) add: (id<CPConstraint>) c
 {
-    CPStatus status = [_solver add: c];
-    if (status == CPFailure)
-        [_search fail];
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
+      c = [_solver wrapExpr:(id<CPRelation>)c consistency:ValueConsistency];
+   }
+   CPStatus status = [_solver add: c];
+   if (status == CPFailure)
+      [_search fail];
 }
 
 -(void) post: (id<CPConstraint>) c

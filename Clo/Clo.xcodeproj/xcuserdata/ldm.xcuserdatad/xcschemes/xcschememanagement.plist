@@ -134,6 +134,11 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
+		<key>marriage.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>38</integer>
+		</dict>
 		<key>mpinterface.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -238,6 +243,11 @@
 			<true/>
 		</dict>
 		<key>5B6E891F1379D3E9005DB4CA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B76D98D15AAADBD00F8B445</key>
 		<dict>
 			<key>primary</key>
 			<true/>

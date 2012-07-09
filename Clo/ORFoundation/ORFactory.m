@@ -112,7 +112,7 @@
 }
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right
 {
-   id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
+   id<ORExpr> o = [[ORImplyI alloc] initORImplyI:left imply:right];
    return [self validate:o onError:"No CP Solver in => Expression"];
 }
 
