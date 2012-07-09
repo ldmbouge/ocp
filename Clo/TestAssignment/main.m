@@ -267,8 +267,9 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
-   [cp minimize: assignmentCost subjectTo:
+   [cp solve: //minimize: assignmentCost subjectTo:
     ^{
+ //      [cp add: assignmentCost leqi: 165];
        for(CPInt i = 0; i < nbCities; i++)
           [cp add: [CPFactory notEqualc: [x at: i] to: i]];
        [cp add: [CPFactory alldifferent: x]];
@@ -278,6 +279,8 @@ int main (int argc, const char * argv[])
           using:
     ^{
          [CPLabel array: x];
+         printf("Cost: %d \n",[assignmentCost min]);
+         [cp add: assignmentCost leqi: 163];
          printf("Cost: %d \n",[assignmentCost min]);
                    //             printCircuit(x);
     }
