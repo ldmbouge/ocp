@@ -37,10 +37,22 @@
 @interface CPLimitFailures : CPDefaultController <NSCopying,CPSearchController>
 {
    CPInt     _maxFailures;
-   ORTrail*  _trail;
    CPInt     _nbFailures;
 }
--(id)        initCPLimitFailures: (CPInt) maxFailures withTrail: (ORTrail*) trail;
+-(id)        initCPLimitFailures: (CPInt) maxFailures;
+-(void)      dealloc;
+-(CPInt)     addChoice:(NSCont*) k;
+-(void)      fail;
+-(void)      startTryLeft;
+-(void)      startTryRight;
+@end
+
+@interface CPLimitTime : CPDefaultController <NSCopying,CPSearchController>
+{
+   CPLong    _maxTime;
+   CPLong    _startTime;
+}
+-(id)        initCPLimitTime: (CPLong) maxTime;
 -(void)      dealloc;
 -(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;

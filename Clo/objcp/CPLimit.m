@@ -91,17 +91,16 @@
 
 @implementation CPLimitFailures
 
--(id) initCPLimitFailures: (CPInt) maxFailures withTrail: (ORTrail*) trail
+-(id) initCPLimitFailures: (CPInt) maxFailures
 {
    self = [super initCPDefaultController];
-   _trail = trail;
    _nbFailures = 0;
    _maxFailures = maxFailures;
    return self;
 }
 -(void) dealloc
 {
-   NSLog(@"CPLimitSolution dealloc called...\n");
+   NSLog(@"CPLimitFailures dealloc called...\n");
    [super dealloc];
 }
 -(CPInt) addChoice: (NSCont*) k
@@ -137,7 +136,61 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   CPLimitFailures* ctrl = [[[self class] allocWithZone:zone] initCPLimitFailures:_maxFailures withTrail:_trail];
+   CPLimitFailures* ctrl = [[[self class] allocWithZone:zone] initCPLimitFailures:_maxFailures];
+   [ctrl setController:[_controller copyWithZone:zone]];
+   return ctrl;
+}
+@end
+
+@implementation CPLimitTime
+
+-(id) initCPLimitTime: (CPLong) maxTime
+{
+   self = [super initCPDefaultController];
+   _startTime = [CPRuntimeMonitor cputime];
+   _maxTime = _startTime + maxTime;
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"CPLimitTime dealloc called...\n");
+   [super dealloc];
+}
+-(CPInt) addChoice: (NSCont*) k
+{
+   return [_controller addChoice: k];
+}
+-(void) fail
+{
+   [_controller fail];
+}
+-(void) startTryLeft
+{
+   CPLong currentTime = [CPRuntimeMonitor cputime];
+   if (currentTime < _maxTime)
+      [_controller fail];
+   else
+      [_controller startTryLeft];
+}
+-(void) startTryRight
+{
+   CPLong currentTime = [CPRuntimeMonitor cputime];
+   if (currentTime < _maxTime)
+      [_controller fail];
+   else
+      [_controller startTryRight];
+}
+-(void) startTryallOnFailure
+{
+   CPLong currentTime = [CPRuntimeMonitor cputime];
+   if (currentTime < _maxTime)
+      [_controller fail];
+   else
+      [_controller startTryallOnFailure];
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPLimitTime* ctrl = [[[self class] allocWithZone:zone] initCPLimitTime:_maxTime];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
