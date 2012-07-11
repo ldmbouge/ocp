@@ -22,6 +22,8 @@
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 +(id<ORIdArray>)   idArray: (id<ORTracker>) tracker range: (ORRange) range;
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1;
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2;
 @end
 
 @interface ORFactory (Expressions)

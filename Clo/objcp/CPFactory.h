@@ -47,6 +47,7 @@ void failNow();
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (CPInt) b;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a shift:(CPInt) b;
++(id<CPIntVar>)boolVar: (id<CP>)cp;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
 +(id<CPIntArray>) intArray: (id<CP>) cp range: (ORRange) range value: (ORInt) value;
@@ -64,9 +65,12 @@ void failNow();
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2 : (CPRange) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
++(id<CPIntVarArray>) flattenMatrix:(id<CPIntVarMatrix>)m;
 
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1;
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2;
 
 +(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (CPRange) r1 : (CPRange) r2;
 
@@ -94,11 +98,6 @@ void failNow();
 +(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 @end
 
-
-
-#define RANGE(a,b)        ((CPRange){a,b})
-#define SUM(P,R,E)        [CPFactory sum: cp range:(R) filteredBy:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
-#define ALL(RT,P,RANGE,E) [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(CPInt P) { return (E);}]
-
-
-
+#define RANGE(a,b)         ((CPRange){a,b})
+#define SUM(P,R,E)         [CPFactory sum: cp range:(R) filteredBy:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
+#define ALL(RT,P,RANGE,E)  [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(CPInt P) { return (E);}]

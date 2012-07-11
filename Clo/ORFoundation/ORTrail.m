@@ -44,7 +44,7 @@
 }
 -(void)resize 
 {
-   if (_cSeg == _mxSeg) {
+   if (_cSeg == _mxSeg - 1) {
       _seg = realloc(_seg, sizeof(struct Segment*)*_mxSeg*2);
       memset(_seg + _mxSeg,0,sizeof(struct Segment*)*_mxSeg);
       _mxSeg <<= 1;
@@ -169,7 +169,7 @@
                *((unsigned long long*)cs->ptr) = cs->ulongVal;
                break;
             case TAGId: {
-               [*((id*)cs->ptr) release];
+               CFRelease(*((id*)cs->ptr));// release];
                *((id*)cs->ptr) = cs->idVal;
             }break;
             case TAGFloat:
@@ -183,7 +183,7 @@
                [cs->cloVal release];
                break;
             case TAGRelease:
-               [cs->idVal release];
+               CFRelease(cs->idVal);
                break;
             default:
                break;

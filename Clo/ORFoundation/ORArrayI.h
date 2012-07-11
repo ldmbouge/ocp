@@ -60,3 +60,31 @@
 -(void)encodeWithCoder:(NSCoder*) aCoder;
 -(id)initWithCoder:(NSCoder*) aDecoder;
 @end
+
+@interface ORIdMatrixI : NSObject<NSCoding,ORIdMatrix> {
+   id<ORTracker> _tracker;
+   id*              _flat;
+   ORInt           _arity;
+   ORRange*        _range;
+   ORInt*            _low;
+   ORInt*             _up;
+   ORInt*           _size;
+   ORInt*              _i;
+   ORInt              _nb;
+}
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1;
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2;
+-(void) dealloc;
+-(ORInt) arity;
+-(id) flat:(ORInt)i;
+-(id) at: (ORInt) i0 : (ORInt) i1;
+-(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(void) set: (id) x at: (ORInt) i0 : (ORInt) i1;
+-(void) set: (id) x at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(ORRange) range: (ORInt) i;
+-(NSUInteger)count;
+-(id<ORTracker>) tracker;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
+@end
+

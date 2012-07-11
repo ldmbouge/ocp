@@ -364,8 +364,8 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    while (*mlist) {
       VarEventNode* list = *mlist; 
       while (list) {
-         if (list->_cstr) 
-            list->_cstr->_todo = CPTocheck;
+         assert(list->_cstr);
+         list->_cstr->_todo = CPTocheck;
          AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);        
          list = list->_node;
       }

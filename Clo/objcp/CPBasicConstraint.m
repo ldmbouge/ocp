@@ -935,9 +935,9 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(void)propagate
 {
-   if (bound(_b)) {
-      BOOL bVal = minDom(_b);
-      if (bVal) {
+   CPBounds bb = bounds(_b);
+   if (bb.min == bb.max) {
+      if (bb.min) {
          [_x bind:TRUE];
          [_y bind:TRUE];
       } else {
@@ -945,9 +945,10 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
          else if (minDom(_y)==1) [_x bind:FALSE];
       }
    } else {
-      if (bound(_x) && bound(_y))
-         [_b bind:minDom(_x) && minDom(_y)];
-      else if (maxDom(_x)==0 || maxDom(_y)==0)
+      CPBounds bx = bounds(_x),by = bounds(_y);
+      if (bx.min==bx.max && by.min==by.max)
+         [_b bind:bx.min && by.min];
+      else if (bx.max==0 || by.max==0)
          [_b bind:FALSE];
    }
 }

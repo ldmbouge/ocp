@@ -147,6 +147,11 @@ void failNow()
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
++(id<CPIntVar>)boolVar: (id<CP>)cp
+{
+   return [CPIntVarI initCPBoolVar:cp];
+}
+
 +(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
@@ -208,18 +213,50 @@ void failNow()
             [o set:clo(i,j,k) at:l++];
    return (id<CPIntVarArray>)o;
 }
-+(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain
++(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain
 {
-    CPIntVarMatrixI* o = [[CPIntVarMatrixI alloc] initCPIntVarMatrix: cp range: r0 : r1 domain:domain]; 
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
+   for(CPInt i=r0.low;i <= r0.up;i++)
+      for(CPInt j=r1.low;j <= r1.up;j++)
+         [o set:[CPFactory intVar:cp domain:domain] at:i :j];
+    return (id<CPIntVarMatrix>)o;
 }
-+(CPIntVarMatrixI*) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain
++(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain
 {
-    CPIntVarMatrixI* o = [[CPIntVarMatrixI alloc] initCPIntVarMatrix: cp range: r0 : r1 : r2 domain:domain]; 
-    [[((CoreCPI*) cp) solver] trackObject: o];
-    return o;
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
+   for(CPInt i=r0.low;i <= r0.up;i++)
+      for(CPInt j=r1.low;j <= r1.up;j++)
+         for(CPInt k=r2.low;k <= r2.up;k++)
+            [o set:[CPFactory intVar:cp domain:domain] at:i :j :k];
+   return (id<CPIntVarMatrix>)o;
 }
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
+   for(CPInt i=r0.low;i <= r0.up;i++)
+      for(CPInt j=r1.low;j <= r1.up;j++)
+         [o set:[CPFactory boolVar:cp] at:i :j];
+   return (id<CPIntVarMatrix>)o;   
+}
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
+   for(CPInt i=r0.low;i <= r0.up;i++)
+      for(CPInt j=r1.low;j <= r1.up;j++)
+         for(CPInt k=r2.low;k <= r2.up;k++)
+            [o set:[CPFactory boolVar:cp] at:i :j :k];
+   return (id<CPIntVarMatrix>)o;
+}
+
++(id<CPIntVarArray>) flattenMatrix:(id<CPIntVarMatrix>)m
+{
+   CPInt sz = (CPInt)[m count];
+   id<ORIdArray> flat = [ORFactory idArray:[m tracker] range:RANGE(0,sz-1)];
+   for(CPInt i=0;i<sz;i++)
+      flat[i] = [m flat:i];
+   return (id<CPIntVarArray>)flat;
+}
+
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c
 {
    id<CPIntVarArray> rv = [self intVarArray:[x cp] range:(CPRange){[x low],[x up]} with:^id<CPIntVar>(CPInt i) {

@@ -19,32 +19,6 @@
 #import "CPIntVarI.h"
 #import "CPError.h"
 
-@interface CPIntVarMatrixI : NSObject<CPIntVarMatrix,CPVirtual,NSCoding> {
-@private
-    id<CP>         _cp;
-    id<CPIntVar>*  _flat;
-    CPInt          _arity;
-    CPRange*       _range;
-    CPInt*         _low;
-    CPInt*         _up;
-    CPInt*         _size;
-     CPInt*        _i;
-    CPInt          _nb;
-}
--(CPIntVarMatrixI*) initCPIntVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 domain: (CPRange) domain;
--(CPIntVarMatrixI*) initCPIntVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain;
--(void) dealloc;  
--(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1; 
--(id<CPIntVar>) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
--(CPRange) range: (CPInt) i;
--(NSUInteger)count;
--(id<CP>) cp;
--(id<CPSolver>) solver;
--(CPInt) virtualOffset;   
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
-@end
-
 @interface CPTRIntArrayI : NSObject<CPTRIntArray,CPVirtual,NSCoding> {
     @package
     id<CP>       _cp;

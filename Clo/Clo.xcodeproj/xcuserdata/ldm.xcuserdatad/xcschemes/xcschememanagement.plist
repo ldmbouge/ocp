@@ -74,6 +74,11 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
+		<key>bibd.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>39</integer>
+		</dict>
 		<key>bitArrayTest.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -333,6 +338,11 @@
 			<true/>
 		</dict>
 		<key>5BE7C24A15A94BDF00B2CBC1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BEAD78415ABE38500A012FE</key>
 		<dict>
 			<key>primary</key>
 			<true/>

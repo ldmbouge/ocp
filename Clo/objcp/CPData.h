@@ -51,6 +51,9 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(id<CPRelation>) gt: (id<CPExpr>) e;
 -(id<CPRelation>) lti: (CPInt) e;
 -(id<CPRelation>) gti: (CPInt) e;
+-(id<CPRelation>)and:(id<CPExpr>)e;
+-(id<CPRelation>)or:(id<CPExpr>)e;
+-(id<CPRelation>)imply:(id<CPExpr>)e;
 @end
 
 @protocol CPRelation <ORRelation,CPExpr>
@@ -71,6 +74,7 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 
 @protocol CPIntVar <CPVar>
 -(CPUInt)getId;
+-(BOOL) isBool;
 -(bool) bound;
 -(CPInt)  min;
 -(CPInt)  max;

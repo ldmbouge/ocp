@@ -42,6 +42,7 @@
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding> {
    ORExprI* _left;
    ORExprI* _right;
+   id<ORTracker> _tracker;
 }
 -(id<ORExpr>) initORExprBinaryI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(id<ORTracker>) tracker;

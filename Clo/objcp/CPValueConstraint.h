@@ -77,10 +77,21 @@
     CPInt* _notTriggered;
     CPLong         _last;
 }
--(id) initCPSumBoolGeq:(id)x geq:(CPInt)c;
+-(id) initCPSumBool:(id)x geq:(CPInt)c;
 -(void) dealloc;
 -(CPStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
 
+@interface CPSumBoolEq : CPActiveConstraint<NSCoding> {
+   CPIntVarI**       _x;
+   CPLong           _nb;
+   CPInt             _c;
+}
+-(id) initCPSumBool:(id)x eq:(CPInt)c;
+-(void) dealloc;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end

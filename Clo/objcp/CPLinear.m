@@ -490,8 +490,21 @@ struct CPVarPair {
             return [fdm post:[CPFactory equal3:zp to:xp plus:yp consistency:cons]];            
          }
       }break;
-      default:
-         return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
+      default: {
+         CPInt sumCoefs = 0;
+         id<CP> cp = [_terms[0]._var cp];
+         for(CPInt k=0;k<_nb;k++)
+            if ([_terms[k]._var isBool])
+               sumCoefs += _terms[k]._coef;
+         if (sumCoefs == _nb) {
+            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(0,_nb-1), _terms[i]._var);
+            return [fdm post:[CPFactory sumbool:boolVars eq: - _indep]];
+         } else if (sumCoefs == - _nb) {
+            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(0,_nb-1), _terms[i]._var);
+            return [fdm post:[CPFactory sumbool:boolVars eq: _indep]];
+         } else
+            return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
+      }
    }
 }
 -(CPStatus)postLEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons

@@ -32,6 +32,7 @@
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x geq: (CPInt) i;
 
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (CPInt) c;
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (CPInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c;
 +(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c;
@@ -63,6 +64,7 @@
 //+(id<CPConstraint>) expr: (id<CPExpr>)e;
 
 +(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<CPIntVar>) cost;
++(id<CPConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y;
 @end
 
 

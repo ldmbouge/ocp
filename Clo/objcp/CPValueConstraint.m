@@ -273,7 +273,7 @@
 
 @implementation CPSumBoolGeq
 
--(id) initCPSumBoolGeq: (id) x geq: (CPInt) c
+-(id) initCPSumBool: (id) x geq: (CPInt) c
 {
     if ([x isKindOfClass:[NSArray class]]) {
         self = [super initCPCoreConstraint];
@@ -384,7 +384,10 @@
 
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x count:_nb];
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb];
+   for(CPInt k = 0;k < _nb;k++)
+      [rv addObject:_x[k]];
+   return rv;
 }
 -(CPUInt)nbUVars
 {
@@ -412,6 +415,136 @@
         _x[k] = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
     return self;
+}
+@end
+
+@implementation CPSumBoolEq {
+   TRInt _nbOne;
+   TRInt _nbZero;   
+}
+-(id) initCPSumBool:(id)x eq:(CPInt)c
+{
+   if ([x isKindOfClass:[NSArray class]]) {
+      self = [super initCPActiveConstraint:[[[x objectAtIndex:0] cp] solver]];
+      _nb = [x count];
+      _x = malloc(sizeof(CPIntVarI*)*_nb);
+      for(CPInt k=0;k<_nb;k++)
+         _x[k] = [x objectAtIndex:k];
+   }
+   else if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = x;
+      self = [super initCPActiveConstraint:[[x cp] solver]];
+      _nb = [x count];
+      _x  = malloc(sizeof(CPIntVarI*)*_nb);
+      CPInt low = [x low];
+      CPInt up = [x up];
+      CPInt i = 0;
+      for(CPInt k=low;k <= up;k++)
+         _x[i++] = (CPIntVarI*) [xa at:k];
+   }
+   _c = c;
+   return self;
+}
+-(void) dealloc
+{
+   free(_x);
+   [super dealloc];
+}
+-(CPStatus) post
+{
+   int nbTrue = 0;
+   int nbPos  = 0;
+   for(CPInt i=0;i<_nb;i++) {
+      nbTrue += minDom(_x[i])==1;
+      nbPos  += !bound(_x[i]);
+   }
+   if (nbTrue > _c)               // too many are true already. Fail.
+      failNow();
+   if (nbTrue == _c) {            // All the possible should be FALSE
+      for(CPInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+            [_x[i] bind:NO];
+      return CPSuccess;
+   }
+   if (nbTrue + nbPos < _c)      // We can't possibly make it to _c. fail.
+      failNow();
+   if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
+      for(CPInt i=0;i<_nb;++i)
+         if (!bound(_x[i]))
+             [_x[i] bind:YES];
+      return CPSuccess;
+   }
+   _nbOne  = makeTRInt(_trail, nbTrue);
+   _nbZero = makeTRInt(_trail, (CPInt)_nb - nbTrue - nbPos);
+   for(CPInt k=0;k < _nb;k++) {
+      if (bound(_x[k])) continue;
+      [_x[k] whenBindDo:^{
+         if (minDom(_x[k])) {  // ONE more TRUE
+            if (_nbOne._val + 1 == _c) {
+               CPInt nb1 = 0;
+               for(CPInt i=0;i<_nb;i++) {
+                  nb1 += (minDom(_x[i])==YES);   // already a ONE
+                  if (!bound(_x[i]))
+                     [_x[i] bind:FALSE];
+               }
+               if (nb1 != _c)
+                  failNow();                     // too many ONES!
+            }
+            else
+               assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
+         } else { // ONE more FALSE
+            if (_nb - _nbZero._val -  1 == _c) { // we have maxed out the # of FALSE
+               CPInt nb1 = 0;
+               for(CPInt i=0;i < _nb;i++) {
+                  nb1 += (minDom(_x[i])==YES);   // already a ONE
+                  if (!bound(_x[i])) {
+                     [_x[i] bind:TRUE];
+                     ++nb1;                      // We just added another ONE
+                  }
+               }
+               if (nb1 != _c)
+                  failNow();
+            }
+            else
+               assignTRInt(&_nbZero, _nbZero._val + 1, _trail);
+         }
+      } onBehalf:self];
+   }
+   return CPSuspend;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb];
+   for(CPInt k = 0;k < _nb;k++)
+      [rv addObject:_x[k]];
+   return rv;
+}
+-(CPUInt)nbUVars
+{
+   CPUInt nb=0;
+   for(CPUInt k=0;k<_nb;k++)
+      nb += ![_x[k] bound];
+   return nb;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   for(CPInt k=0;k<_nb;k++)
+      [aCoder encodeObject:_x[k]];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   _x = malloc(sizeof(CPIntVarI*)*_nb);
+   for(CPInt k=0;k<_nb;k++)
+      _x[k] = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   return self;
 }
 @end
 

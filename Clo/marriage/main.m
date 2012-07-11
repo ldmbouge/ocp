@@ -51,9 +51,9 @@ int main(int argc, const char * argv[])
       
       [cp solveAll:^{
          for(CPInt i=RMen.low;i <= RMen.up;i++)
-            [cp add: [husband elt:wife[i]] eqi: i];
+            [cp add: [husband elt: wife[i]] eqi: i];
          for(CPInt i=RWomen.low;i <= RWomen.up;i++)
-            [cp add: [wife elt:husband[i]] eqi: i];
+            [cp add: [wife elt: husband[i]] eqi: i];
          
          for(CPInt m=RMen.low;m <= RMen.up;m++) {
             for(CPInt w=RWomen.low;w <= RWomen.up;w++) {

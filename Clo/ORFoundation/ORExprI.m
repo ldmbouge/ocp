@@ -122,6 +122,9 @@
    self = [super init];
    _left = left;
    _right = right;
+   _tracker = [left tracker];
+   if (!_tracker)
+      _tracker = [right tracker];
    return self;
 }
 -(void) dealloc
@@ -138,10 +141,7 @@
 }
 -(id<ORTracker>) tracker
 {
-   id<ORTracker> cps = [_left tracker];
-   if (!cps) 
-      cps = [_right tracker];
-   return cps;
+   return _tracker;
 }
 -(BOOL) isConstant
 {
