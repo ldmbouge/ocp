@@ -9,14 +9,12 @@
 
  ***********************************************************************/
 
-#import "ORData.h"
-#import "ORCrFactory.h"
-#import "ORError.h"
+#import <Foundation/NSThread.h>
+#import "ORConcurrencyI.h"
 #import "ORConcurrency.h"
+#import "ORCrFactory.h"
 #import "ORConcurrencyI.h"
 #import "pthread.h"
-#import <Foundation/NSThread.h>
-
 
 @interface OREventQueue : NSObject {
    @package
@@ -96,7 +94,6 @@ inline static id EvtdeQueue(OREventQueue* q)
    return EvtdeQueue(self);
 }
 @end
-
 
 @protocol ORExecuteEventI<NSObject>
 -(void) execute;
@@ -326,27 +323,6 @@ static void init_eventlist()
     }
     [barrier wait];
     [barrier release];
-}
-+(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer
-{
-    ORInt2Void clo = [closure copy];
-    id<ORInteger> done = [ORCrFactory integer:0];
-    [ORConcurrency parall: R
-                       do: ^void(ORInt i) { 
-                           [informer whenNotifiedDo: ^(void) { 
-                               printf("Notification\n"); [done setValue: 1]; @throw [[ORInterruptI alloc] initORInterruptI]; }];
-                           if ([done value] == 0) {
-                               @try {
-                                   clo(i);
-                               }
-                               @catch (ORInterruptI* e) {
-                                   [e release];
-                               }
-                           }
-                       }
-     ];
-    [done release];
-    [clo release];
 }
 +(id<ORIntInformer>) intInformer
 {

@@ -43,7 +43,7 @@
    CPRange rows = {dom.min,dom.max};
    id grid = [_board makeGrid:rows by: cols];
    for(CPInt i = [x low];i <= [x up];i++) {
-      id<CPIntVar> xi = [x at:i];
+      id<CPIntVar> xi = x[i];
       [cp add: [CPFactory watchVariable:xi 
                             onValueLost:^void(CPInt val) {
                                [_board toggleGrid:grid row:val col:i to:Removed];

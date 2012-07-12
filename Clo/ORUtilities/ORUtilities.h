@@ -10,10 +10,5 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORData.h>
-#import <ORFoundation/ORError.h>
-#import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORArray.h>
-
+#import "ORUtilities/ORTypes.h"
+#import "ORUtilities/ORConcurrency.h"

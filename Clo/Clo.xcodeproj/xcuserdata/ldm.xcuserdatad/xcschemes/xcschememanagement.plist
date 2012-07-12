@@ -34,6 +34,16 @@
 			<key>orderHint</key>
 			<integer>35</integer>
 		</dict>
+		<key>ORUtilities.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>41</integer>
+		</dict>
+		<key>Silly.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>40</integer>
+		</dict>
 		<key>SportDemo.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -238,6 +248,16 @@
 			<true/>
 		</dict>
 		<key>5B558C041563F01000D2BCD7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B60E5BA15AE832C002FF2B3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B60E5D515AE907E002FF2B3</key>
 		<dict>
 			<key>primary</key>
 			<true/>

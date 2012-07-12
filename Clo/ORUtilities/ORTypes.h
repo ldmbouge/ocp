@@ -53,4 +53,15 @@ typedef void (^ORInt2Void)(ORInt);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 
+
+typedef struct ORRange {
+   ORInt low;
+   ORInt up;
+} ORRange;
+
+typedef struct ORBounds {
+   ORInt min;
+   ORInt max;
+} ORBounds;
+
 #endif

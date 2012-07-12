@@ -12,7 +12,7 @@
 
 #import "CPFactory.h"
 #import "ORFoundation/ORFactory.h"
-#import "ORFoundation/ORCrFactory.h"
+#import "ORUtilities/ORUtilities.h"
 #import "CPData.h"
 #import "CPI.h"
 #import "CPCreateI.h"
@@ -223,7 +223,7 @@ void failNow()
 }
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2 domain: (CPRange) domain
 {
-   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(CPInt i=r0.low;i <= r0.up;i++)
       for(CPInt j=r1.low;j <= r1.up;j++)
          for(CPInt k=r2.low;k <= r2.up;k++)

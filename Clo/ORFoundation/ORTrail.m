@@ -134,8 +134,17 @@
    struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = 0;
    s->code = TAGRelease;
-   s->idVal = obj;   
-   ++_seg[_cSeg]->top;   
+   s->idVal = obj;
+   ++_seg[_cSeg]->top;
+}
+-(void) trailFree:(void*)ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = 0;
+   s->code = TAGFree;
+   s->ptrVal = ptr;
+   ++_seg[_cSeg]->top;
 }
 
 -(ORUInt)trailSize
@@ -185,6 +194,9 @@
             case TAGRelease:
                CFRelease(cs->idVal);
                break;
+            case TAGFree:
+               free(cs->ptrVal);
+               break;
             default:
                break;
          }                  
@@ -221,7 +233,6 @@ TRInt makeTRInt(ORTrail* trail,int val)
 {
    return (TRInt){val,[trail magic]-1};
 }
-
 FXInt makeFXInt(ORTrail* trail)
 {
    return (FXInt){0,[trail magic]-1};

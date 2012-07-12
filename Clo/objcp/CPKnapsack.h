@@ -10,10 +10,19 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORData.h>
-#import <ORFoundation/ORError.h>
-#import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORArray.h>
+#import "CPConstraintI.h"
+#import "CPBitDom.h"
+#import "objcp/CPArray.h"
 
+@class CPIntVarI;
+@interface CPKnapsack : CPActiveConstraint<NSCoding> {
+   id<CPIntVarArray> _x;
+   id<CPIntArray>    _w;
+   CPIntVarI*        _c;
+}
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<CPIntArray>)w capacity:(id<CPIntVar>)cap;
+-(void) dealloc;
+-(CPStatus)post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end

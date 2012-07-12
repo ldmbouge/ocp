@@ -23,7 +23,7 @@
 #import "CPI.h"
 #import "objcp/CPFactory.h"
 #import "CPObjectQueue.h"
-#import "ORFoundation/ORConcurrency.h"
+#import "ORUtilities/ORUtilities.h"
 #if !defined(__APPLE__)
 #import <values.h>
 #endif

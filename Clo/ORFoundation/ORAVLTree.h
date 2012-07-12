@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORTypes.h"
+#import "ORUtilities/ORTypes.h"
 //#import "ORData.h"
 
 @protocol Position    

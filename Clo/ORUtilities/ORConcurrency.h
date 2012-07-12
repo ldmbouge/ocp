@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORUtilities/ORTypes.h"
 
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
@@ -34,11 +35,12 @@
 -(void) wait;
 @end
 
-@interface ORConcurrency : NSObject {
-    
-}
+@interface ORInterruptI : NSObject
+-(ORInterruptI*) initORInterruptI;
+@end
+
+@interface ORConcurrency : NSObject 
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
-+(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer;
 +(id<ORIntInformer>) intInformer;
 +(id<ORVoidInformer>) voidInformer;
 +(id<ORIdxIntInformer>) idxIntInformer;

@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORConcurrency.h"
-#import "ORFoundation/ORData.h"
+#import "ORUtilities/ORConcurrency.h"
+#import "ORUtilities/ORTypes.h"
 
 @interface ORBarrierI : NSObject<ORBarrier> {
     ORInt _nb;
@@ -61,9 +61,5 @@
 
 @interface ORConcurrency (Internals)
 +(OREventList*) eventList;
-@end
-
-@interface ORInterruptI : NSObject 
--(ORInterruptI*) initORInterruptI;
 @end
 

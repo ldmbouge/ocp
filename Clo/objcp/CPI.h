@@ -15,7 +15,7 @@
 #import "CPConstraintI.h"
 #import "CPExplorerI.h"
 #import "CPSelector.h"
-#import "ORFoundation/ORConcurrency.h"
+#import "ORUtilities/ORUtilities.h"
 
 
 @interface CoreCPI : NSObject  {

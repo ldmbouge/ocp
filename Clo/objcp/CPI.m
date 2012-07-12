@@ -22,7 +22,7 @@
 #import "CPArrayI.h"
 #import "CPIntVarI.h"
 #import "CPParallel.h"
-#import "ORFoundation/ORConcurrency.h"
+#import "ORUtilities/ORUtilities.h"
 
 @interface CPInformerPortal : NSObject<CPPortal> {
    CoreCPI*       _cp;

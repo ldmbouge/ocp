@@ -10,21 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORTypes.h>
-#import <ORFoundation/ORData.h>
+#import <ORUtilities/ORTypes.h>
 
-@protocol ORInteger;
 @protocol ORInformer;
 @protocol ORIntInformer;
 @protocol ORVoidInformer;
-@class CPAVLTree;
 
 @interface ORCrFactory : NSObject
-+(id<ORInteger>) integer:(ORInt) value;
 +(id<ORIntInformer>) intInformer;
 +(id<ORVoidInformer>) voidInformer;
-
-+(id<ORRandomStream>) randomStream;
-+(id<ORZeroOneStream>) zeroOneStream;
-+(id<ORUniformDistribution>) uniformDistribution: (ORRange) r;
 @end
