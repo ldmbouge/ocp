@@ -43,6 +43,7 @@
 
 +(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
++(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 
 +(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons;
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons;

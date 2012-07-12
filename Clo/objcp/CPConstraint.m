@@ -24,6 +24,7 @@
 #import "CPLinear.h"
 #import "CPAssignmentI.h"
 #import "CPLexConstraint.h"
+#import "CPBinPacking.h"
 
 @implementation CPFactory (Constraint)
 
@@ -176,6 +177,13 @@
     id<CPConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];
     [[x tracker] trackObject: o];
     return o;
+}
+
++(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
+{
+   id<CPConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: x itemSize: itemSize binSize: binSize];
+   [[x tracker] trackObject: o];
+   return o;
 }
 
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x
