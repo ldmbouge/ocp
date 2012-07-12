@@ -156,6 +156,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    self = [super init];
    _vc = CPVCBare;
+   _isBool = NO;
    _cp = cp;
    _fdm  = (CPSolverI*) [cp solver];
    [_fdm trackVariable: self];
@@ -183,6 +184,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(CPUInt)getId
 {
    return _name;
+}
+-(BOOL) isBool
+{
+   return _isBool;
 }
 -(CPSolverI*)solver
 {
@@ -640,32 +645,38 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 +(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(CPRange)b
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:b];
+   x->_isBool = (b.low == 0 && b.up==1);
    return x;
 }
 
 +(CPIntVarI*) initCPIntVar: (id<CP>) fdm low: (CPInt) low up: (CPInt) up
 {
-    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];
-    return x;
+   CPIntVarI* x = nil;
+   if (low==0 && up==1)
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:RANGE(0,1)];
+   else x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];
+   x->_isBool = (low == 0 && up==1);
+   return x;
 }
 +(CPIntVarI*) initCPBoolVar: (id<CP>) fdm
 {
-    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: 0 up: 1];
-    return x;
+   CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:RANGE(0,1)];
+   x->_isBool = YES;
+   return x;
 }
 
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withShift: (CPInt) b
 {
-    CPInt scale = [x scale];
-    CPInt shift = [x shift];
-    if (scale == 1) {
-        CPIntShiftView* view = [[CPIntShiftView alloc] initIVarShiftView: x b: b+shift];
-        return view;
-    }
-    else {
-        CPIntView* view = [[CPIntView alloc] initIVarAViewFor: scale x: x b: b+shift];
-        return view;        
-    }
+   CPInt scale = [x scale];
+   CPInt shift = [x shift];
+   if (scale == 1) {
+      CPIntShiftView* view = [[CPIntShiftView alloc] initIVarShiftView: x b: b+shift];
+      return view;
+   }
+   else {
+      CPIntView* view = [[CPIntView alloc] initIVarAViewFor: scale x: x b: b+shift];
+      return view;
+   }
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a
 {
@@ -680,24 +691,25 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a andShift: (CPInt) b
 {
-    CPInt scale = [x scale];
-    CPInt shift = [x shift];
-    CPIntView* view = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift+b];
-    return view;
+   CPInt scale = [x scale];
+   CPInt shift = [x shift];
+   CPIntView* view = [[CPIntView alloc] initIVarAViewFor: a*scale x: x b: a*shift+b];
+   return view;
 }
 +(CPIntVarI*) initCPNegateBoolView: (CPIntVarI*) x
 {
-    CPInt scale = [x scale];
-    CPInt shift = [x shift];
-    CPIntView* view = [[CPIntView alloc] initIVarAViewFor: (-1)*scale x: x b: (-1)*shift+1];
-    return view;   
+   CPInt scale = [x scale];
+   CPInt shift = [x shift];
+   CPIntView* view = [[CPIntView alloc] initIVarAViewFor: (-1)*scale x: x b: (-1)*shift+1];
+   view->_isBool = YES;
+   return view;
 }
 +(CPTrigger*) createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-    CPTrigger* trig = malloc(sizeof(CPTrigger));
-    trig->_cb = [todo copy];
-    trig->_cstr = c;
-    return trig;
+   CPTrigger* trig = malloc(sizeof(CPTrigger));
+   trig->_cb = [todo copy];
+   trig->_cstr = c;
+   return trig;
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {

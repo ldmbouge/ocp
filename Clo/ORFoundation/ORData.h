@@ -10,17 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORTypes.h"
-
-typedef struct ORRange {
-   ORInt low;
-   ORInt up;
-} ORRange;
-
-typedef struct ORBounds {
-   ORInt min;
-   ORInt max;
-} ORBounds;
+#import "ORUtilities/ORCrFactory.h"
 
 @protocol ORExpr;
 
@@ -56,3 +46,9 @@ typedef struct ORBounds {
 -(ORInt) next;
 @end;
 
+@interface ORCrFactory (OR)
++(id<ORInteger>) integer:(ORInt) value;
++(id<ORRandomStream>) randomStream;
++(id<ORZeroOneStream>) zeroOneStream;
++(id<ORUniformDistribution>) uniformDistribution: (ORRange) r;
+@end

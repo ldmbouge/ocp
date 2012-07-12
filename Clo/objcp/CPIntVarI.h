@@ -123,7 +123,8 @@ enum CPVarClass {
 
 @interface CPIntVarI : ORExprI<CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
-   enum CPVarClass                      _vc;
+   enum CPVarClass                   _vc:16;
+   CPUInt                        _isBool:16;
    CPUInt                             _name;
    id<CP>                               _cp;
    CPSolverI*                          _fdm;
@@ -137,6 +138,7 @@ enum CPVarClass {
 -(void) dealloc;
 -(void) setId:(CPUInt)name;
 -(CPUInt)getId;
+-(BOOL) isBool;
 -(NSString*) description;
 -(CPSolverI*) solver;
 -(id<CP>) cp;
@@ -294,6 +296,33 @@ static inline CPInt maxDom(CPIntVarI* x)
    }
 }
 
+#define DOMX ((CPBoundsDom*)x->_dom)
+static inline CPBounds bounds(CPIntVarI* x)
+{
+   switch (x->_vc) {
+      case CPVCBare:  return (CPBounds){DOMX->_min._val,DOMX->_max._val};
+      case CPVCShift: return (CPBounds){DOMX->_min._val + ((CPIntShiftView*)x)->_b,
+                                        DOMX->_max._val + ((CPIntShiftView*)x)->_b};
+      case CPVCAffine: {
+         CPInt fmin = DOMX->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         CPInt fmax = DOMX->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         if (((CPIntView*)x)->_a > 0)
+            return (CPBounds){fmin,fmax};
+         else
+            return (CPBounds){fmax,fmin};
+      }
+   }
+}
+#undef DOMX
+
+static inline CPBounds negBounds(CPIntVarI* x)
+{
+   CPBounds b;
+   [x bounds:&b];
+   return (CPBounds){- b.max, -b.min};
+}
+
+
 static inline CPInt memberDom(CPIntVarI* x,CPInt value)
 {
    CPInt target;
@@ -368,20 +397,6 @@ static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
    }
    return [x->_dom remove:target for:x->_recv];
 }
-
-static inline CPBounds bounds(CPIntVarI* x)
-{
-   CPBounds b;
-   [x bounds:&b];
-   return b;
-}
-static inline CPBounds negBounds(CPIntVarI* x)
-{
-   CPBounds b;
-   [x bounds:&b];
-   return (CPBounds){- b.max, -b.min};
-}
-
 
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */

@@ -22,33 +22,33 @@ public:
    operator id<CPExpr>() { return _h;}
    H operator+(H e2)
    {
-      return [CPFactory expr:_h add:e2];
+      return [_h plus:e2];
    }
    H operator-(H e2)
    {
-      return [CPFactory expr:_h sub:e2];
+      return [_h sub:e2];
    }
    H operator*(H e2)
    {
-      return [CPFactory expr:_h mul:e2];
+      return [_h mul:e2];
    }
    H operator==(id<CPExpr> e2)
    {
-      return [CPFactory expr:_h equal:e2];
+      return [_h eq:e2];
    }
    H operator==(H e2)
    {
-      return [CPFactory expr:_h equal:e2];
+      return [_h eq:e2];
    }
 };
 
 H operator-(id<CPIntVar> x,H y)
 {
-   return [CPFactory expr:x sub:y];
+   return [x sub:y];
 }
 H operator==(id<CPIntVar> x,H y)
 {
-   return [CPFactory expr:x equal:y];
+   return [x eq:y];
 }
 
 int main(int argc, const char * argv[])
@@ -66,14 +66,12 @@ int main(int argc, const char * argv[])
          for(CPUInt i=R.low;i<=R.up;i++) {
             for(CPUInt j=R.low;j<=R.up;j++) {
                if (i < j)
-                  [cp add:[CPFactory expr:H([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])]];
+                  [cp add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
                else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
             }            
          }
-         for(CPUInt i=1;i<=n-1;i++) {
-            id<CPIntVarArray> slice = [CPFactory intVarArray:cp range:(CPRange){i+1,n} with:^id<CPIntVar>(CPInt j) {
-               return [diff at:i :j];
-            }];
+         for(CPInt i=1;i<=n-1;i++) {
+            id<CPIntVarArray> slice = ALL(CPIntVar, j, RANGE(i+1,n), [diff at:i :j]);
             [cp add:[CPFactory alldifferent:slice]];
          }
          [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
@@ -84,8 +82,8 @@ int main(int argc, const char * argv[])
          }
          for (CPInt k=3; k<=n; k++) {
             for (CPInt l=k+1; l<=n; l++) {
-               [cp add:[CPFactory expr:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
-                                       H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])]];
+               [cp add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
+                       H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
             }
          }
                   

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORTypes.h>
+#import <ORUtilities/ORUtilities.h>
 
 #define NBSLOT 8192
 
@@ -24,6 +24,7 @@
 #define TAGUnsignedLong 0x8
 #define TAGClosure      0x9
 #define TAGRelease      0xA
+#define TAGFree         0xB
 
 @interface ORTrail : NSObject<NSCoding> {
    struct Slot {
@@ -36,6 +37,7 @@
          float       floatVal;          // 4-bytes
          double     doubleVal;          // 8-bytes
          id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
+         void*         ptrVal;          // 4 or 8 (pointer)
          void (^cloVal)(void);         
       };
       ORInt code;
@@ -64,6 +66,7 @@
 -(void) trailDouble:(double*) ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
+-(void) trailFree:(void*)ptr;
 -(void) backtrack:(ORInt) to;
 @end
 

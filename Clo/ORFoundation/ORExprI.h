@@ -26,6 +26,10 @@
 -(id<ORRelation>) neq: (id<ORExpr>) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORRelation>) lt: (id<ORExpr>) e;
+-(id<ORRelation>) gt: (id<ORExpr>) e;
+-(id<ORRelation>) lti: (ORInt) e;
+-(id<ORRelation>) gti: (ORInt) e;
 -(id<ORExpr>)and:(id<ORRelation>)e;
 -(id<ORExpr>)or:(id<ORRelation>)e;
 -(id<ORExpr>)imply:(id<ORRelation>)e;
@@ -38,6 +42,7 @@
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding> {
    ORExprI* _left;
    ORExprI* _right;
+   id<ORTracker> _tracker;
 }
 -(id<ORExpr>) initORExprBinaryI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(id<ORTracker>) tracker;

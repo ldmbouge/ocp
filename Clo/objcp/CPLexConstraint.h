@@ -10,10 +10,20 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORData.h>
-#import <ORFoundation/ORError.h>
-#import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORArray.h>
+#import "CPConstraintI.h"
+#import "CPBitDom.h"
+#import "objcp/CPArray.h"
 
+@class CPIntVarI;
+@class CPSolver;
+
+@interface CPLexConstraint : CPActiveConstraint<NSCoding> {
+   id<CPIntVarArray>  _x;
+   id<CPIntVarArray>  _y;
+}
+-(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y;
+-(void) dealloc;
+-(CPStatus)post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end

@@ -51,7 +51,7 @@ int main (int argc, const char * argv[])
        //[CPLabel array: x ];// orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
       //[CPLabel heuristic:h];
        NSLog(@"LEVEL START: %d",[[cp tracer] level]);
-/*       for(CPInt i=0;i<n;i++) {
+       for(CPInt i=0;i<n;i++) {
           while (![x[i] bound]) {
              CPInt min = [x[i] min];
              [cp try:^{
@@ -62,19 +62,15 @@ int main (int argc, const char * argv[])
                 [cp diff:x[i] with:min];
              }];
           }
-       }*/
-       [cp forrange:R filteredBy:^bool(ORInt i ) {
-          return ![x[i] bound];
-       } orderedBy:^ORInt(ORInt i) {
-          return i;
-       } do:^(ORInt i) {
-          [cp tryall:R filteredBy:^bool(ORInt v) {
-             return [x[i] member:v];
-          } in:^(ORInt v) {
+       }
+/*       [cp forrange:R filteredBy:^bool(ORInt i ) { return ![x[i] bound];}
+          orderedBy:^ORInt(ORInt i) { return i;}
+                 do:^(ORInt i) {
+                    [cp tryall:R filteredBy:^bool(ORInt v) { return [x[i] member:v];}
+                            in:^(ORInt v) {
              NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,v,[[cp tracer] level]);
              [cp label:x[i] with:v];
-          }];
-       }];
+          }];*/
        NSLog(@"%@sol [%d]: %@ THREAD: %p || %d ||\n",indent(n),[nbSolutions value],x,[NSThread currentThread],[[cp tracer] level]);
       [nbSolutions incr];
     }

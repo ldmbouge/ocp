@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORTracker.h"
+#import "ORFoundation/ORData.h"
 @protocol ORExpr;
 
 @protocol ORIntArray <NSObject> 
@@ -29,6 +30,19 @@
 -(void) set: (id) x at: (ORInt) value;
 -(ORInt) low;
 -(ORInt) up;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
+@protocol ORIdMatrix <NSObject>
+-(id) flat:(ORInt)i;
+-(id) at: (ORInt) i1 : (ORInt) i2;
+-(id) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(ORInt) arity;
+-(ORRange) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;

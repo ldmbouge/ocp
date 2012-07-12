@@ -22,7 +22,7 @@
 #import "CPArrayI.h"
 #import "CPIntVarI.h"
 #import "CPParallel.h"
-#import "ORFoundation/ORConcurrency.h"
+#import "ORUtilities/ORUtilities.h"
 
 @interface CPInformerPortal : NSObject<CPPortal> {
    CoreCPI*       _cp;
@@ -237,9 +237,12 @@
 
 -(void) add: (id<CPConstraint>) c
 {
-    CPStatus status = [_solver add: c];
-    if (status == CPFailure)
-        [_search fail];
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
+      c = [_solver wrapExpr:(id<CPRelation>)c consistency:ValueConsistency];
+   }
+   CPStatus status = [_solver add: c];
+   if (status == CPFailure)
+      [_search fail];
 }
 
 -(void) post: (id<CPConstraint>) c

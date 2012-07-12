@@ -49,7 +49,18 @@
    [tracker trackObject:o];
    return o;
 }
-
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1
+{
+   ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1];
+   [tracker trackObject:o];
+   return o;
+}
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2
+{
+   ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1 :r2];
+   [tracker trackObject:o];
+   return o;
+}
 @end
 
 @implementation ORFactory (Expressions)
@@ -112,7 +123,7 @@
 }
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right
 {
-   id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
+   id<ORExpr> o = [[ORImplyI alloc] initORImplyI:left imply:right];
    return [self validate:o onError:"No CP Solver in => Expression"];
 }
 

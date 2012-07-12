@@ -73,6 +73,22 @@
 {
    return [ORFactory expr:self geq:e];
 }
+-(id<ORRelation>) lt: (id<ORExpr>) e
+{
+   return [ORFactory expr:self leq:[e sub:[ORFactory integer:[self tracker] value:1]]];
+}
+-(id<ORRelation>) gt: (id<ORExpr>) e
+{
+   return [ORFactory expr:self geq:[e plus:[ORFactory integer:[self tracker] value:1]]];
+}
+-(id<ORRelation>) lti: (ORInt) e
+{
+   return [ORFactory expr:self leq:[ORFactory integer:[self tracker] value:e-1]];
+}
+-(id<ORRelation>) gti: (ORInt) e
+{
+   return [ORFactory expr:self geq:[ORFactory integer:[self tracker] value:e+1]];
+}
 -(id<ORExpr>)and:(id<ORRelation>)e
 {
    return [ORFactory expr:(id<ORRelation>)self and:e];
@@ -106,6 +122,9 @@
    self = [super init];
    _left = left;
    _right = right;
+   _tracker = [left tracker];
+   if (!_tracker)
+      _tracker = [right tracker];
    return self;
 }
 -(void) dealloc
@@ -122,10 +141,7 @@
 }
 -(id<ORTracker>) tracker
 {
-   id<ORTracker> cps = [_left tracker];
-   if (!cps) 
-      cps = [_right tracker];
-   return cps;
+   return _tracker;
 }
 -(BOOL) isConstant
 {
@@ -401,11 +417,13 @@
 }
 -(ORInt) min 
 {
-   return 0; // ldm dom(==)={0,1} [_left min] - [_right min]; 
+   assert([self isConstant]);
+   return [_left min] == [_right min];
 }
 -(ORInt) max 
 {
-   return 1; // ldm dom(==)={0,1} [_left min] - [_right min]; 
+   assert([self isConstant]);
+   return [_left max] == [_right max];
 }
 -(void) visit: (id<ORExprVisitor>) visitor
 {
@@ -445,11 +463,13 @@
 }
 -(ORInt) min
 {
-   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+   assert([self isConstant]);
+   return [_left min] != [_right min];
 }
 -(ORInt) max
 {
-   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+   assert([self isConstant]);
+   return [_left max] != [_right max];
 }
 -(void) visit: (id<ORExprVisitor>) visitor
 {
@@ -488,11 +508,13 @@
 }
 -(ORInt) min
 {
-   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+   assert([self isConstant]);
+   return [_left min] <= [_right min];
 }
 -(ORInt) max
 {
-   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+   assert([self isConstant]);
+   return [_left max] <= [_right max];
 }
 -(void) visit: (id<ORExprVisitor>) visitor
 {
@@ -531,11 +553,11 @@
 }
 -(ORInt) min
 {
-   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+   return [_left min] || [_right min];
 }
 -(ORInt) max
 {
-   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+   return [_left max] || [_right max];
 }
 -(void) visit: (id<ORExprVisitor>) visitor
 {
@@ -574,11 +596,11 @@
 }
 -(ORInt) min
 {
-   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+   return [_left min] && [_right min];
 }
 -(ORInt) max
 {
-   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+   return [_left max] && [_right max];
 }
 -(void) visit: (id<ORExprVisitor>) visitor
 {
@@ -617,11 +639,11 @@
 }
 -(ORInt) min
 {
-   return 0; // ldm dom(==)={0,1} [_left min] - [_right min];
+   return ![_left min] || [_right min];
 }
 -(ORInt) max
 {
-   return 1; // ldm dom(==)={0,1} [_left min] - [_right min];
+   return ![_left max] || [_right max];
 }
 -(void) visit: (id<ORExprVisitor>) visitor
 {

@@ -15,7 +15,7 @@
 #import "objcp/CPData.h"
 #import "objcp/CPArray.h"
 #import "ORFoundation/ORSet.h"
-#import "ORFoundation/ORConcurrency.h"
+#import "ORUtilities/ORUtilities.h"
 
 @protocol CPSearchController;
 @protocol CPSolver;

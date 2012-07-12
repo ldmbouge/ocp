@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORUtilities/ORTypes.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include "context.h"
-#include <ORFoundation/ORTypes.h>
 
 typedef struct  {
    Class poolClass;

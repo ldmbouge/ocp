@@ -80,6 +80,7 @@
 -(void)      scheduleAC3:(VarEventNode**)mlist;
 -(void)      scheduleAC5:(VarEventNode*)list with:(CPInt)val;
 -(CPStatus)  propagate;
+-(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency:(CPConsistency)cons;
 -(CPStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(CPStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(CPStatus)  add:(id<CPConstraint>)c;

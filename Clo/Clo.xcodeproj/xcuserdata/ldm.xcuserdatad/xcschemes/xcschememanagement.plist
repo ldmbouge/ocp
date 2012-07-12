@@ -34,6 +34,16 @@
 			<key>orderHint</key>
 			<integer>35</integer>
 		</dict>
+		<key>ORUtilities.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>41</integer>
+		</dict>
+		<key>Silly.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>40</integer>
+		</dict>
 		<key>SportDemo.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -73,6 +83,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>12</integer>
+		</dict>
+		<key>bibd.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>39</integer>
 		</dict>
 		<key>bitArrayTest.xcscheme</key>
 		<dict>
@@ -133,6 +148,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>11</integer>
+		</dict>
+		<key>marriage.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>38</integer>
 		</dict>
 		<key>mpinterface.xcscheme</key>
 		<dict>
@@ -232,12 +252,27 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5B60E5BA15AE832C002FF2B3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B60E5D515AE907E002FF2B3</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5B6A95FF15879F1500019903</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>5B6E891F1379D3E9005DB4CA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B76D98D15AAADBD00F8B445</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -268,6 +303,11 @@
 			<true/>
 		</dict>
 		<key>5B9EE52715175CF900619B47</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BAEE09C15AEA08D006CEE1E</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -323,6 +363,11 @@
 			<true/>
 		</dict>
 		<key>5BE7C24A15A94BDF00B2CBC1</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BEAD78415ABE38500A012FE</key>
 		<dict>
 			<key>primary</key>
 			<true/>

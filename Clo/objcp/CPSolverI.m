@@ -364,8 +364,8 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    while (*mlist) {
       VarEventNode* list = *mlist; 
       while (list) {
-         if (list->_cstr) 
-            list->_cstr->_todo = CPTocheck;
+         assert(list->_cstr);
+         list->_cstr->_todo = CPTocheck;
          AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);        
          list = list->_node;
       }
@@ -496,6 +496,13 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    }
    return _status;
 }
+-(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency:(CPConsistency)cons
+{
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:e consistency:cons];
+   [self trackObject:wrapper];
+   return wrapper;
+}
+
 -(CPStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs leq:rhs] consistency:cons];

@@ -159,6 +159,33 @@
    [m release];
    [CPFactory shutdown];
 }
+
+- (void) testWLSBEqc
+{
+   int s = 10;
+   CPRange R = (CPRange){0,s-1};
+   id<CP> m = [CPFactory createSolver];
+   id<CPIntVarArray> x = [CPFactory intVarArray: m range:R domain: RANGE(0,1)];
+   id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
+   
+   [m solveAll: ^() {
+      [m add: [CPFactory sumbool:x eq:4]];
+   } using: ^() {
+      [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
+      int nbOne = 0;
+      for(CPInt k=0;k<s;k++)
+         nbOne += [x[k] min] == 1;
+      NSLog(@"SOL: %@",x);
+      [nbSolutions  incr];
+      STAssertTrue(nbOne == 4, @"Each solution must have at least 4 ones");
+   }
+    ];
+   printf("GOT %d solutions\n",[nbSolutions value]);
+   [m release];
+   [CPFactory shutdown];
+}
+
+
 - (void) testBoolView
 {
    int s = 8;

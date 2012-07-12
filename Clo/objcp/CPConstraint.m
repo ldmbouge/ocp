@@ -23,6 +23,7 @@
 #import "CPTableI.h"
 #import "CPLinear.h"
 #import "CPAssignmentI.h"
+#import "CPLexConstraint.h"
 
 @implementation CPFactory (Constraint)
 
@@ -104,14 +105,35 @@
     return o;
 }
 
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq: (CPInt) i
+{
+   id<CPConstraint> o = [[CPReifyLEqualDC alloc] initCPReifyLEqualDC: b when: x leq: i];
+   [[[x cp] solver] trackObject: o];
+   return o;
+}
+
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x geq: (CPInt) i
+{
+   id<CPConstraint> o = [[CPReifyGEqualDC alloc] initCPReifyGEqualDC: b when: x geq: i];
+   [[[x cp] solver] trackObject: o];
+   return o;
+}
+
 +(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (CPInt) c
 {
-    id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBoolGeq: x geq: c];
+    id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBool: x geq: c];
     [[x tracker] trackObject: o];
     return o;
 }
 
-+(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c 
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (CPInt) c
+{
+   id<CPConstraint> o = [[CPSumBoolEq alloc] initCPSumBool: x eq: c];
+   [[x tracker] trackObject: o];
+   return o;
+}
+
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c
 {
    return [self sum:x eq:c consistency:RangeConsistency];
 }
@@ -285,5 +307,12 @@
    [[[x cp] solver] trackObject:o];
    return o;
 }
++(id<CPConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y
+{
+   id<CPConstraint> o = [[CPLexConstraint alloc] initCPLexConstraint:x and:y];
+   [[[x cp] solver] trackObject:o];
+   return o;
+}
+
 @end
 

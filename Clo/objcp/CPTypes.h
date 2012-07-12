@@ -12,8 +12,7 @@
 #ifndef __CPTYPES_H
 #define __CPTYPES_H
 
-#import <ORFoundation/ORTypes.h>
-#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORFoundation.h>
 
 typedef ORInt CPInt;
 typedef ORUInt CPUInt;

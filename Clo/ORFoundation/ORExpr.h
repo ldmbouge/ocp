@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORTypes.h"
+#import "ORUtilities/ORTypes.h"
 #import "ORFoundation/ORTracker.h"
 
 @protocol ORRelation;
@@ -31,6 +31,10 @@
 -(id<ORRelation>) neq: (id<ORExpr>) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORRelation>) lt: (id<ORExpr>) e;
+-(id<ORRelation>) gt: (id<ORExpr>) e;
+-(id<ORRelation>) lti: (ORInt) e;
+-(id<ORRelation>) gti: (ORInt) e;
 @end
 
 enum CPRelationType {
@@ -45,7 +49,7 @@ enum CPRelationType {
 
 @protocol ORRelation <ORExpr>
 -(enum CPRelationType)type;
--(id<ORExpr>)and:(id<ORRelation>)e;
--(id<ORExpr>)or:(id<ORRelation>)e;
--(id<ORExpr>)imply:(id<ORRelation>)e;
+-(id<ORRelation>)and:(id<ORRelation>)e;
+-(id<ORRelation>)or:(id<ORRelation>)e;
+-(id<ORRelation>)imply:(id<ORRelation>)e;
 @end
