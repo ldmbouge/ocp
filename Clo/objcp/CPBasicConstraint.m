@@ -315,7 +315,7 @@ static inline TRIntArray createSupport(CPIntVarI* v)
 static CPStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
 {   
    CPInt min = minCPDom(bd),max = maxCPDom(bd);
-   for(CPInt j=min;j<=max;j++) {
+   for(CPInt j=min;j<=max;++j) {
       if (!getCPDom(bd,j)) continue;
       CPInt t = a + j;
       if (memberCPDom(cd, t)) {

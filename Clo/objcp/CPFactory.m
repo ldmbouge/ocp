@@ -24,12 +24,6 @@
 #import "CPIBS.h"
 #import "CPFirstFail.h"
 
-void failNow()
-{
-   static CPFailException* fex = nil;
-   if (fex==nil) fex = [CPFailException new];
-   @throw  CFRetain(fex);
-}
 
 @implementation CPFactory
 

@@ -15,12 +15,13 @@
 @implementation CPCoreConstraint
 -(CPCoreConstraint*) initCPCoreConstraint 
 {
-    self = [super init];
-    _todo = CPTocheck;
-    _idempotent = NO; 
-    _priority = HIGHEST_PRIO;
-    _name = 0;
-    return self;
+   self = [super init];
+   _todo = CPTocheck;
+   _idempotent = NO;
+   _priority = HIGHEST_PRIO;
+   _name = 0;
+   _propagate = [self methodForSelector:@selector(propagate)];
+   return self;
 }
 // Tracer method
 -(CPStatus) doIt

@@ -123,6 +123,11 @@ typedef struct AC3Entry {
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
+inline static void AC3reset(CPAC3Queue* q)
+{
+   q->_enter = q->_exit = 0;
+   q->_csz = 0;
+}
 inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,CPCoreConstraint* cstr)
 {
    if (q->_csz == q->_mxs-1) 
@@ -220,6 +225,11 @@ typedef struct {
    _enter = _mxs-1;
    _mxs <<= 1;
    _mask = _mxs - 1;   
+}
+inline static void AC5reset(CPAC5Queue* q)
+{
+   q->_enter = q->_exit = 0;
+   q->_csz = 0;
 }
 inline static void enQueueAC5(CPAC5Queue* q,VarEventNode* cb,CPInt val)
 {
@@ -382,8 +392,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
 
-//static inline
-CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
+static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 {
    *last = cb.cstr;
    if (cb.cb) 
@@ -394,7 +403,8 @@ CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
          return CPSkip;
       else {
          cstr->_todo = cstr->_idempotent == NO ? CPChecked : cstr->_todo;
-         [cstr propagate];
+         //[cstr propagate];
+         cstr->_propagate(cstr,@selector(propagate));
          cstr->_todo = cstr->_idempotent == YES ? CPChecked : cstr->_todo;
       }
    }
@@ -445,8 +455,8 @@ CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    }
    @catch (CPFailException *exception) {
       for(CPInt p=NBPRIORITIES-1;p>=0;--p)
-         [_ac3[p] reset];
-      [_ac5 reset];
+         AC3reset(_ac3[p]);
+      AC5reset(_ac5);
       if (_propagFail)
          [_propagFail notifyWith:[_last getId]];
       CFRelease(exception);
@@ -461,7 +471,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    switch (status) {
       case CPFailure:
          for(CPInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
-            [fdm->_ac3[p] reset];
+            AC3reset(fdm->_ac3[p]);
          break; 
       case CPSuccess:
       case CPSuspend:

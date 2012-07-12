@@ -25,10 +25,11 @@ typedef enum {
 
 @interface CPCoreConstraint : NSObject<NSCoding,CPCommand,CPConstraint> {
 @package
-    CPTodo _todo;
-    bool   _idempotent;
-    int    _priority;
-    CPUInt _name;
+   CPTodo _todo;
+   bool   _idempotent;
+   int    _priority;
+   CPUInt _name;
+   IMP    _propagate;
 }
 -(CPCoreConstraint*) initCPCoreConstraint;
 -(CPStatus) doIt;
