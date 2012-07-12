@@ -19,6 +19,7 @@
 -(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
+-(ORRange) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
@@ -30,6 +31,7 @@
 -(void) set: (id) x at: (ORInt) value;
 -(ORInt) low;
 -(ORInt) up;
+-(ORRange) range;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;

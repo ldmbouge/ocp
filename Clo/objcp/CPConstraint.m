@@ -181,11 +181,20 @@
 
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 {
-   id<CPConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: x itemSize: itemSize binSize: binSize];
+   CPRange R = [binSize range];
+   id<CPIntVarArray> load = [CPFactory intVarArray: [x cp] range: R];
+   for(CPInt i = R.low; i <= R.up; i++) 
+      load[i] = [CPFactory intVar: [x cp] domain:(CPRange){0,[binSize at:i]}];
+   id<CPConstraint> o = [CPFactory packing: x itemSize: itemSize load: load];
    [[x tracker] trackObject: o];
    return o;
 }
-
++(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize load: (id<CPIntArray>) load;
+{
+   id<CPConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: x itemSize: itemSize binSize: load];
+   [[x tracker] trackObject: o];
+   return o;
+}
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x
 {
     id<CPConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];

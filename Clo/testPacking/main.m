@@ -20,11 +20,11 @@ int main (int argc, const char * argv[])
    id<CP> cp = [CPFactory createSolver];
    id<CPIntVarArray> item = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntArray> itemSize = [CPFactory intArray: cp range: R value: 0];
-   id<CPIntArray> binSize = [CPFactory intArray:cp range: R value: 14];
+   id<CPIntArray> binSize = [CPFactory intArray:cp range: D value: 14];
    [itemSize set: 8 at: 0];
    [itemSize set: 7 at: 1];
    [itemSize set: 6 at: 2];
-   [itemSize set: 5 at: 2];
+   [itemSize set: 5 at: 3];
    
    [cp solve:
     ^() {
@@ -34,7 +34,7 @@ int main (int argc, const char * argv[])
     ^() {
        [CPLabel array: item];
        for(CPInt i = 0; i <= 3; i++)
-          printf("item[%d]=%d \n",i,[item[i] min]);
+          printf("item[%d]=%d \n",i,[item[i] value]);
        printf("\n");
     }
     ];

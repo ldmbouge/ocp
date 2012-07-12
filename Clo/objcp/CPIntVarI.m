@@ -251,6 +251,16 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 { 
     return [_dom max];
 }
+-(CPInt) value
+{
+   if ([_dom bound])
+      return [_dom min];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      return 0;
+   }
+}
+
 -(void) bounds:(CPBounds*) bnd
 {
    *bnd = domBounds((CPBoundsDom*)_dom);

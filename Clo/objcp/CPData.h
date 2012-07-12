@@ -78,6 +78,7 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(bool) bound;
 -(CPInt)  min;
 -(CPInt)  max;
+-(CPInt)  value;
 -(id<CP>) cp;
 -(void) bounds: (CPBounds*) bnd;
 -(CPInt) domsize;

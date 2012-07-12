@@ -21,6 +21,7 @@
    ORInt             _low;
    ORInt              _up;
    ORInt              _nb;
+   ORRange         _range;
 }
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) v;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORInt(^)(ORInt)) clo;
@@ -32,6 +33,7 @@
 -(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
+-(ORRange) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
@@ -45,13 +47,15 @@
    id*              _array;
    ORInt              _low;
    ORInt               _up;
-   ORInt               _nb;   
+   ORInt               _nb;
+   ORRange          _range;
 }
 -(ORIdArrayI*)initORIdArray: (id<ORTracker>)tracker range:(ORRange)range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
 -(ORInt) low;
 -(ORInt) up;
+-(ORRange) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;

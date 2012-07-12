@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import "ORTypes.h"
 #import "ORArrayI.h"
 #import "ORError.h"
 #import "ORExprI.h"
@@ -26,6 +27,7 @@
    _low = 0;
    _up = nb-1;
    _nb = nb;
+   _range = (ORRange){_low,_up};
    for (ORInt i=0 ; i < _nb; i++) 
       _array[i] = value;
    return self;
@@ -38,6 +40,7 @@
    _low = 0;
    _up = nb-1;
    _nb = nb;
+   _range = (ORRange){_low,_up};
    for (ORInt i=0 ; i < _nb; i++) 
       _array[i] = clo(i);
    return self;
@@ -49,6 +52,7 @@
    _low = range.low;
    _up = range.up;
    _nb = _up - _low + 1;
+   _range = range;
    _array = malloc(_nb * sizeof(ORInt));
    _array -= _low;
    for (ORInt i=_low ; i <= _up; i++) 
@@ -62,6 +66,7 @@
    _low = range.low;
    _up = range.up;
    _nb = _up - _low + 1;
+   _range = range;
    _array = malloc(_nb * sizeof(ORInt));
    _array -= _low;
    for (ORInt i=_low ; i <= _up; i++) 
@@ -75,6 +80,7 @@
    _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
    _low = 0;
    _up = _nb-1;
+   _range = (ORRange){_low,_up};
    _array = malloc(_nb * sizeof(ORInt));
    int k = 0;
    for (ORInt i=r1.low ; i <= r1.up; i++) 
@@ -82,7 +88,10 @@
          _array[k++] = clo(i,j);
    return self;
 }
-
+-(ORRange) range
+{
+   return _range;
+}
 -(void) dealloc
 {
    _array += _low;
@@ -174,6 +183,7 @@
    _low = range.low;
    _up  = range.up;
    _nb  = _up - _low + 1;
+   _range = range;
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);
    _array -= _low;
@@ -208,6 +218,10 @@
 -(NSUInteger)count
 {
    return _nb;
+}
+-(ORRange) range
+{
+   return _range;
 }
 -(NSString*)description
 {

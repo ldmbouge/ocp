@@ -184,6 +184,7 @@ enum CPVarClass {
 -(bool) bound;
 -(CPInt) min;
 -(CPInt) max;
+-(CPInt) value;
 -(void) bounds:(CPBounds*)bnd;
 -(CPInt) domsize;
 -(bool) member:(CPInt)v;
