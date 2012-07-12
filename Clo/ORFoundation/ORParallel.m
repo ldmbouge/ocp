@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORConcurrency+OR.h"
+#import "ORParallel.h"
 #import "ORError.h"
 
 @implementation ORConcurrency (OR)
