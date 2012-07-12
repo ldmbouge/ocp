@@ -388,6 +388,10 @@
 {
   [_search limitFailures: maxFailures in: cl];
 }
+-(void) limitTime: (CPLong) maxTime in: (CPClosure) cl
+{
+  [_search limitTime: maxTime in: cl];
+}
 -(void) applyController: (id<CPSearchController>) controller in: (CPClosure) cl
 {
    [_search applyController: controller in: cl];

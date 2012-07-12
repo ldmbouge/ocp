@@ -52,6 +52,7 @@
 -(void)     limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
+-(void)          limitTime: (CPLong) maxTime in: (CPClosure) cl;
 -(CPStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;

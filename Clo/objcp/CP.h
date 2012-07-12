@@ -85,6 +85,7 @@
 -(void)      limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
 -(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
+-(void)      limitTime: (CPLong) maxTime in: (CPClosure) cl;
 -(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
 
 -(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart;

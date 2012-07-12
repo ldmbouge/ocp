@@ -426,7 +426,15 @@
 }
 -(void) limitFailures: (CPInt) nb in: (CPClosure) cl
 {
-   CPLimitFailures* limit = [[CPLimitFailures alloc] initCPLimitFailures: nb withTrail: [_tracer trail]];
+   CPLimitFailures* limit = [[CPLimitFailures alloc] initCPLimitFailures: nb];
+   [self push: limit];
+   [limit release];
+   cl();
+   [self popController];
+}
+-(void) limitTime: (CPLong) maxTime in: (CPClosure) cl
+{
+   CPLimitTime* limit = [[CPLimitTime alloc] initCPLimitTime: maxTime];
    [self push: limit];
    [limit release];
    cl();
