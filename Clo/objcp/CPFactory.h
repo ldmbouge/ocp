@@ -98,6 +98,6 @@ void failNow();
 +(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 @end
 
-#define RANGE(a,b)         ((CPRange){a,b})
+#define RANGE(a,b)         ((CPRange){(a),(b)})
 #define SUM(P,R,E)         [CPFactory sum: cp range:(R) filteredBy:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
 #define ALL(RT,P,RANGE,E)  [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(CPInt P) { return (E);}]

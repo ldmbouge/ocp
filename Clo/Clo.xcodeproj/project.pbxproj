@@ -327,6 +327,10 @@
 		5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BFD594C15A3ACA500825BC3 /* ORFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BAEE09715AE9EFD006CEE1E /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BAEE09815AE9F05006CEE1E /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BAEE09F15AEA08E006CEE1E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5BAEE0AA15AEA09C006CEE1E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BAEE0B115AEA10D006CEE1E /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777581594D27C00ADE34E /* main.mm */; };
+		5BAEE0B315AEA2E8006CEE1E /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5BB170101582820500D4791A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BB170131582820500D4791A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB170121582820500D4791A /* main.m */; };
 		5BB170171582820500D4791A /* driver.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BB170161582820500D4791A /* driver.1 */; };
@@ -636,6 +640,27 @@
 			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
 			remoteInfo = ORUtilities;
 		};
+		5BAEE0AB15AEA0A0006CEE1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BAEE0AD15AEA0A2006CEE1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BAEE0AF15AEA0A3006CEE1E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 		5BB1701C1582822300D4791A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -926,6 +951,15 @@
 			dstSubfolderSpec = 0;
 			files = (
 				5B778BBA154F1D030078EB07 /* bitArrayTest.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5BAEE09B15AEA08D006CEE1E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -1272,6 +1306,7 @@
 		5B9EE585151761F500619B47 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS5.1.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		5BAEE08415AE9883006CEE1E /* ORConcurrency+OR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ORConcurrency+OR.h"; sourceTree = "<group>"; };
 		5BAEE08515AE9883006CEE1E /* ORConcurrency+OR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ORConcurrency+OR.m"; sourceTree = "<group>"; };
+		5BAEE09D15AEA08E006CEE1E /* costas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB1700E1582820500D4791A /* driver */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = driver; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BB170121582820500D4791A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BB170151582820500D4791A /* driver-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "driver-Prefix.pch"; sourceTree = "<group>"; };
@@ -1608,6 +1643,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B9EE586151761F500619B47 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BAEE09A15AEA08D006CEE1E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BAEE0B315AEA2E8006CEE1E /* ORFoundation.framework in Frameworks */,
+				5BAEE0AA15AEA09C006CEE1E /* objcp.framework in Frameworks */,
+				5BAEE09F15AEA08E006CEE1E /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2016,6 +2061,7 @@
 				5B76D98E15AAADBD00F8B445 /* marriage */,
 				5BEAD78515ABE38500A012FE /* bibd */,
 				5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */,
+				5BAEE09D15AEA08E006CEE1E /* costas */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3362,6 +3408,26 @@
 			productReference = 5B9EE52815175CF900619B47 /* libCPLib.a */;
 			productType = "com.apple.product-type.library.static";
 		};
+		5BAEE09C15AEA08D006CEE1E /* costas */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BAEE0A715AEA08E006CEE1E /* Build configuration list for PBXNativeTarget "costas" */;
+			buildPhases = (
+				5BAEE09915AEA08D006CEE1E /* Sources */,
+				5BAEE09A15AEA08D006CEE1E /* Frameworks */,
+				5BAEE09B15AEA08D006CEE1E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BAEE0AC15AEA0A0006CEE1E /* PBXTargetDependency */,
+				5BAEE0AE15AEA0A2006CEE1E /* PBXTargetDependency */,
+				5BAEE0B015AEA0A3006CEE1E /* PBXTargetDependency */,
+			);
+			name = costas;
+			productName = costas;
+			productReference = 5BAEE09D15AEA08E006CEE1E /* costas */;
+			productType = "com.apple.product-type.tool";
+		};
 		5BB1700D1582820500D4791A /* driver */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5BB1701A1582820500D4791A /* Build configuration list for PBXNativeTarget "driver" */;
@@ -3920,6 +3986,7 @@
 				5BE7C24A15A94BDF00B2CBC1 /* warehouse */,
 				5B76D98D15AAADBD00F8B445 /* marriage */,
 				5BEAD78415ABE38500A012FE /* bibd */,
+				5BAEE09C15AEA08D006CEE1E /* costas */,
 			);
 		};
 /* End PBXProject section */
@@ -4271,6 +4338,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BAEE09915AEA08D006CEE1E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BAEE0B115AEA10D006CEE1E /* main.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5BB1700A1582820500D4791A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4581,6 +4656,21 @@
 			isa = PBXTargetDependency;
 			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
 			targetProxy = 5BAEE09515AE9EF0006CEE1E /* PBXContainerItemProxy */;
+		};
+		5BAEE0AC15AEA0A0006CEE1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BAEE0AB15AEA0A0006CEE1E /* PBXContainerItemProxy */;
+		};
+		5BAEE0AE15AEA0A2006CEE1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BAEE0AD15AEA0A2006CEE1E /* PBXContainerItemProxy */;
+		};
+		5BAEE0B015AEA0A3006CEE1E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5BAEE0AF15AEA0A3006CEE1E /* PBXContainerItemProxy */;
 		};
 		5BB1701D1582822300D4791A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5439,6 +5529,46 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5BAEE0A815AEA08E006CEE1E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "costas/costas-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5BAEE0A915AEA08E006CEE1E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "costas/costas-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -6642,6 +6772,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5BAEE0A715AEA08E006CEE1E /* Build configuration list for PBXNativeTarget "costas" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BAEE0A815AEA08E006CEE1E /* Debug */,
+				5BAEE0A915AEA08E006CEE1E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5BB1701A1582820500D4791A /* Build configuration list for PBXNativeTarget "driver" */ = {
 			isa = XCConfigurationList;
