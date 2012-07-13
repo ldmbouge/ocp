@@ -647,6 +647,10 @@ static CPStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    _y = y;
    return self;   
 }
+-(void)dealloc
+{
+   [super dealloc];
+}
 -(CPStatus) post  // x <= y
 {
    [self propagate];

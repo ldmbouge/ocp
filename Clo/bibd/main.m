@@ -33,11 +33,11 @@ void show(id<CPIntVarMatrix> M)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      CPInt a = 10;
-      CPInt instances[11][3] = {
+      CPInt a = 12;
+      CPInt instances[14][3] = {
          {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
          {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},
-         {7,3,200}
+         {7,3,300},{8,4,5},{8,4,6},{8,4,7}
       };
       CPInt v = instances[a][0],k = instances[a][1],l = instances[a][2];
       CPInt b = (v*(v-1)*l)/(k*(k-1));

@@ -186,6 +186,7 @@
 }
 
 
+
 - (void) testBoolView
 {
    int s = 8;
@@ -234,7 +235,7 @@
    id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
    id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [m solveAll:^() {
-      [m add:[CPFactory reify:b with:x eq:5]];      
+      [m add:[CPFactory reify:b with:x eqi:5]];
    } using: ^{
       [CPLabel var:x];
       STAssertTrue([b min] == ([x min]==5), @"reification not ok");
@@ -245,6 +246,42 @@
    [CPFactory shutdown];
 }
 
+-(void)testReify3
+{
+   id<CP> m = [CPFactory createSolver];
+   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<CPIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   [m solveAll:^() {
+      [m add:[CPFactory reify:b with:x eq:y]];
+   } using: ^{
+      [CPLabel var:x];
+      [CPLabel var:y];
+      [CPLabel var:b];
+      STAssertTrue([b min] == ([x min]==[y min]), @"reification (b<=> (x==y)) not ok");      
+   }
+    ];
+   [m release];
+   [CPFactory shutdown];
+}
+
+-(void)testReify4
+{
+   id<CP> m = [CPFactory createSolver];
+   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<CPIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   [m solveAll:^() {
+      [m add:[CPFactory reify:b with:x eq:y]];
+   } using: ^{
+      [CPLabel var:b];
+      [CPLabel var:x];
+      STAssertTrue([b min] == ([x min]==[y min]), @"reification (b first) (b<=> (x==y)) not ok");
+   }
+    ];
+   [m release];
+   [CPFactory shutdown];
+}
 -(void)testAVL
 {
    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];

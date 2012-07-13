@@ -16,8 +16,8 @@
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 
-@implementation CPReifyNotEqualDC
--(id)initCPReifyNotEqualDC:(CPIntVarI*)b when:(CPIntVarI*)x neq:(CPInt)c
+@implementation CPReifyNotEqualcDC
+-(id)initCPReifyNotEqualcDC:(CPIntVarI*)b when:(CPIntVarI*)x neq:(CPInt)c
 {
     self = [super initCPCoreConstraint];
     _b = b;
@@ -75,8 +75,8 @@
 }
 @end
 
-@implementation CPReifyEqualDC
--(id) initCPReifyEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPInt) c
+@implementation CPReifyEqualcDC
+-(id) initCPReifyEqualcDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPInt) c
 {
    self = [super initCPCoreConstraint];
     _b = b;
@@ -133,6 +133,138 @@
     _x = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
     return self;
+}
+@end
+
+
+@implementation CPReifyEqualDC
+-(id) initCPReifyEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPIntVarI*) y
+{
+   self = [super initCPCoreConstraint];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+
+-(CPStatus) post
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [[_b cp] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         return CPSkip;
+      } else {
+         [[_b cp] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         return CPSkip;
+      }
+   }
+   else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
+      [_b bind:minDom(_x) == minDom(_y)];
+   else if (bound(_x))
+      [self reifiedOp:_y equal:minDom(_x) equiv:_b];
+   else if (bound(_y))
+      [self reifiedOp:_x equal:minDom(_y) equiv:_b];   
+   else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
+      if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
+         [_b bind:NO];
+      else {   // nobody bound and domains of (x,y) overlap
+         [_b whenBindPropagate:self];
+         [self listenOn:_x inferOn:_y];
+         [self listenOn:_y inferOn:_x];
+      }
+   }
+   return CPSuspend;
+}
+-(void)listenOn:(CPIntVarI*)a inferOn:(CPIntVarI*)other
+{
+   [a whenLoseValue:self do:^(CPInt c) {  // c NOTIN(a)
+      if (minDom(_b)==1)                   // TRUE <=> a == other
+         [other remove:c];
+   }];
+   [a whenBindDo:^{
+      if (minDom(_b))             // TRUE <=> other == c
+         [other bind: minDom(a)];
+      else if (maxDom(_b)==0)     // FALSE <=> other == c -> other != c
+         [other remove:minDom(a)];
+      else {                      // b <=> y == c
+         if (!memberDom(other, minDom(a)))
+            [_b bind:NO];
+      }
+   } onBehalf:self];
+   
+}
+-(void)reifiedOp:(CPIntVarI*)a equal:(CPInt)c equiv:(CPIntVarI*)b
+{
+   if (!memberDom(a, c)) {                   // b <=> c == a & c NOTIN D(a)
+      [b bind:NO];                           // -> b=NO
+   } else {                                  // b <=> c == a & c IN D(a)
+      [a whenLoseValue:self do:^(CPInt v) {
+         if (v == c)
+            [b bind:NO];
+      }];
+      [a whenBindDo:^{
+         [b bind:c == minDom(a)];
+      } onBehalf:self];
+      [b whenBindDo:^{
+         if (minDom(b))
+            [a bind:c];
+         else
+            [a remove:c];
+      } onBehalf:self];
+   }
+}
+-(void)propagate
+{
+   assert(bound(_b));
+   if (minDom(_b)) {
+      if (bound(_x))            // TRUE <=> (y == c)
+         [_y bind:minDom(_x)];
+      else  if (bound(_y))      // TRUE <=> (x == c)
+         [_x bind:minDom(_y)];
+      else {                    // TRUE <=> (x == y)
+         [_x updateMin:minDom(_y) andMax:maxDom(_y)];
+         [_y updateMin:minDom(_x) andMax:maxDom(_x)];
+         CPBounds b = bounds(_x);
+         for(CPInt i = b.min;i <= b.max; i++) {
+            if (!memberBitDom(_x, i))
+               [_y remove:i];
+            if (!memberBitDom(_x, i))
+               [_x remove:i];
+         }
+      }
+   } else {
+      if (bound(_x))             // FALSE <=> y == c => y != c
+         [_y remove:minDom(_x)];
+      else if (bound(_y))        // FALSE <=> x == c => x != c
+         [_x remove:minDom(_y)];
+      // x != y
+   }
+}
+
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+}
+-(CPUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_b bound];
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
 }
 @end
 

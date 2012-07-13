@@ -624,21 +624,6 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
             [nDom set:-v at:NO];
          }
       }
-/*
-      const CPInt sz = bd->_imax - bd->_imin + 1;
-      const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0); // # words in array
-      for(CPUInt i=0;i < nb; i++) {
-         nDom->_magic[nb - 1 - i] = bd->_magic[i];    
-         CPUInt v = bd->_bits[i];
-         // http://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
-         v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1); // swap odd and even bits         
-         v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2); // swap consecutive pairs         
-         v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4); // swap nibbles ...           
-         v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8); // swap bytes          
-         v = ( v >> 16             ) | ( v               << 16); // swap 2-byte long pairs
-         nDom->_bits[nb - 1 - i] = v;
-      }      
- */
       return nDom;
    } else if (a == -1) {
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
@@ -647,21 +632,6 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
             [nDom set:-v+b at:NO];
          }
       }
-/*
- const CPInt sz = bd->_imax - bd->_imin + 1;
-      const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0); // # words in array
-      for(CPUInt i=0;i < nb; i++) {
-         nDom->_magic[nb - 1 - i] = bd->_magic[i];    
-         CPUInt v = bd->_bits[i];
-         // http://graphics.stanford.edu/~seander/bithacks.html#ReverseParallel
-         v = ((v >> 1) & 0x55555555) | ((v & 0x55555555) << 1); // swap odd and even bits         
-         v = ((v >> 2) & 0x33333333) | ((v & 0x33333333) << 2); // swap consecutive pairs         
-         v = ((v >> 4) & 0x0F0F0F0F) | ((v & 0x0F0F0F0F) << 4); // swap nibbles ...           
-         v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8); // swap bytes          
-         v = ( v >> 16             ) | ( v               << 16); // swap 2-byte long pairs
-         nDom->_bits[nb - 1 - i] = v;
-      }
-      [nDom translate:b];*/
       return nDom;
    } else {
       CPInt newLow = (a > 0 ? [bd min] : [bd max]) * a + b;
