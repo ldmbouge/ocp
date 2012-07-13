@@ -221,7 +221,7 @@
       _bits[k]  = 0xffffffff;
       _magic[k] = [_trail magic]-1;
    }
-   //_bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits
+   _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits
    _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
@@ -238,7 +238,7 @@
       _bits[k]  = 0xffffffff;
       _magic[k] = [trail magic]-1;
    }
-   //_bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits
+   _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits
    _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;
@@ -619,6 +619,12 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
       return clone;      
    } else if (a== -1 && b == 0) {
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
+      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+         if (!memberCPDom(bd, v)) {
+            [nDom set:-v at:NO];
+         }
+      }
+/*
       const CPInt sz = bd->_imax - bd->_imin + 1;
       const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0); // # words in array
       for(CPUInt i=0;i < nb; i++) {
@@ -632,10 +638,17 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
          v = ( v >> 16             ) | ( v               << 16); // swap 2-byte long pairs
          nDom->_bits[nb - 1 - i] = v;
       }      
+ */
       return nDom;
    } else if (a == -1) {
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
-      const CPInt sz = bd->_imax - bd->_imin + 1;
+      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+         if (!memberCPDom(bd, v)) {
+            [nDom set:-v+b at:NO];
+         }
+      }
+/*
+ const CPInt sz = bd->_imax - bd->_imin + 1;
       const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0); // # words in array
       for(CPUInt i=0;i < nb; i++) {
          nDom->_magic[nb - 1 - i] = bd->_magic[i];    
@@ -647,8 +660,8 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
          v = ((v >> 8) & 0x00FF00FF) | ((v & 0x00FF00FF) << 8); // swap bytes          
          v = ( v >> 16             ) | ( v               << 16); // swap 2-byte long pairs
          nDom->_bits[nb - 1 - i] = v;
-      }      
-      [nDom translate:b];
+      }
+      [nDom translate:b];*/
       return nDom;
    } else {
       CPInt newLow = (a > 0 ? [bd min] : [bd max]) * a + b;

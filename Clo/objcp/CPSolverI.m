@@ -265,7 +265,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 {
    self = [super init];
    _trail = trail;
-   _closed = false;
+   _state = CPOpen;
    _vars  = [[NSMutableArray alloc] init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
@@ -326,7 +326,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 -(void) trackVariable: (id) var
 {
    [var setId:(CPUInt)[_vars count]];
-   if (!_closed) {
+   if (_state != CPClosed) {
       [_vars addObject:var];
       [var autorelease];
    } else 
@@ -335,7 +335,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 
 -(void) trackObject:(id)obj
 {
-   if (!_closed) {
+   if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj autorelease];
    } else 
@@ -527,7 +527,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 }
 -(CPStatus) add: (id<CPConstraint>) c
 {
-   if (_closed) {
+   if (_state != CPOpen) {
       return [self post: c];
    }
    else {
@@ -610,13 +610,14 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 }
 -(CPStatus) close
 {
-   if (!_closed) {
+   if (_state == CPOpen) {
+      _state = CPClosing;
       for(id<CPConstraint> c in _mStore) {
          [self post:c];
          if (_status == CPFailure)
             return CPFailure;
       }
-      _closed = true;
+      _state = CPClosed;
    }
    //printf("Closing CPSolver\n");
    return CPSuspend;
@@ -627,7 +628,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 }
 -(bool) closed
 {
-    return _closed;
+   return _state == CPClosed;
 }
 -(id<ORInformer>) propagateFail
 {
@@ -644,7 +645,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_closed];
+   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_state];
    [aCoder encodeObject:_vars];
    [aCoder encodeObject:_trail];
    [aCoder encodeObject:_mStore];
@@ -655,7 +656,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    self = [super init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_closed];
+   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_state];
    _vars = [[aDecoder decodeObject] retain];
    _trail = [[aDecoder decodeObject] retain];
    NSMutableArray* originalStore = [aDecoder decodeObject];

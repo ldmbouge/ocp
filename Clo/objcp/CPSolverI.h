@@ -49,8 +49,14 @@
 -(CPFailException*)init;
 @end
 
+enum CPSolverState {
+   CPOpen    = 0,
+   CPClosing = 1,
+   CPClosed  = 2
+   };
+
 @interface CPSolverI : NSObject <CPSolver,NSCoding> {
-   BOOL                     _closed;
+   enum CPSolverState       _state;
    ORTrail*                 _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;

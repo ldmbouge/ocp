@@ -244,6 +244,12 @@ struct CPVarPair {
       CPInt coef = cv ? [[e left] min] : [[e right] min];
       id       x = cv ? [e right] : [e left];
       [_terms addTerm:x by:coef];
+   } else if ([[e left] isConstant]) {
+      id<CPIntVar> alpha = [CPSubst substituteIn:_fdm expr:[e right] consistency:_cons];
+      [_terms addTerm:alpha by:[[e left] min]];
+   } else if ([[e right] isConstant]) {
+      id<CPIntVar> alpha = [CPSubst substituteIn:_fdm expr:[e left] consistency:_cons];
+      [_terms addTerm:alpha by:[[e right] min]];
    } else {
       id<CPIntVar> alpha =  [CPSubst substituteIn:_fdm expr:e consistency:_cons];
       [_terms addTerm:alpha by:1];
@@ -414,7 +420,7 @@ struct CPVarPair {
 }
 -(CPInt)min
 {
-   CPLong lb = 0;
+   CPLong lb = _indep;
    for(CPInt k=0;k < _nb;k++) {
       CPInt c = _terms[k]._coef;
       CPLong vlb = [_terms[k]._var min];
@@ -426,7 +432,7 @@ struct CPVarPair {
 }
 -(CPInt)max
 {
-   CPLong ub = 0;
+   CPLong ub = _indep;
    for(CPInt k=0;k < _nb;k++) {
       CPInt c = _terms[k]._coef;
       CPLong vlb = [_terms[k]._var min];

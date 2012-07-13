@@ -219,6 +219,11 @@
 			<key>orderHint</key>
 			<integer>21</integer>
 		</dict>
+		<key>testPacking.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>42</integer>
+		</dict>
 		<key>tests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -453,6 +458,11 @@
 			<true/>
 		</dict>
 		<key>B1C9DF1215A8045C00EE924C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B1F531D715AED4B100E89F98</key>
 		<dict>
 			<key>primary</key>
 			<true/>
