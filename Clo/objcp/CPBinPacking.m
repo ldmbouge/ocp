@@ -67,7 +67,6 @@
    return self;
 }
 
-
 -(CPStatus) post
 {
    NSLog(@"BinPacking post called ...");
@@ -78,13 +77,15 @@
    CPRange BR = [_binSize range];
    CPRange IR = [_item range];
    id<CP> cp = [_item cp];
-   for(CPInt b = BR.low; b <= BR.up; b++)
-      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) leq: _binSize[b]]];
+   
+//   for(CPInt b = BR.low; b <= BR.up; b++)
+//      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) leq: _binSize[b]]];
    CPInt s = 0;
    for(CPInt i = IR.low; i <= IR.up; i++)
       s += [_itemSize at: i];
-   [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
-
+//   [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
+   for(CPInt b = BR.low; b <= BR.up; b++)
+      [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return CPSkip;
 }
 
@@ -109,10 +110,15 @@
    int                _nbCandidates;
    CPIntVarI**        _candidate;
    CPInt*             _candidateSize;
+   
+   int                _nbX;
+   CPInt*             _s;
 
+   CPInt              _maxLoad;
    CPInt              _p;
    CPInt              _alphaprime;
    CPInt              _betaprime;
+   BOOL               _changed;
    
 }
 
@@ -139,6 +145,7 @@
    if (_posted) {
       free(_var);
       free(_size);
+      free(_s);
       free(_candidate);
       free(_candidateSize);
    }
@@ -178,6 +185,7 @@
    _nbVar = _up - _low + 1;
    _var = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
    _size = (CPInt*) malloc(sizeof(CPInt*) * _nbVar);
+   _s = (CPInt*) malloc(sizeof(CPInt*) * _nbVar);
    _candidate = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
    _candidateSize = (CPInt*) malloc(sizeof(CPInt*) * _nbVar);
    for(CPInt i = _low; i <= _up; i++) {
@@ -185,21 +193,147 @@
       _size[i-_low] = [_itemSize at: i];
    }
    _load = (CPIntVarI*) _binSize;
+   [self propagate];
    
-   [self prune];
+   for(CPInt i = 0; i < _nbVar; i++)
+      if (![_var[i] bound])
+         [_var[i] whenChangePropagate: self];
+   [_load whenChangeBoundsPropagate: self];
+   
+   // need to connect the variables
    return CPSuspend;
+}
+
+-(void) propagate
+{
+   do {
+      _changed = false;
+      [self prune];
+   } while (_changed);
 }
 
 -(void) prune
 {
-   CPInt nbCandidates = 0;
-   for(CPInt i = 0; i < _nbVar; i++) {
-      
+   _nbCandidates = 0;
+   _p = 0;
+   _maxLoad = 0;
+   for(CPInt i = 0; i < _nbVar; i++) 
+      if ([_var[i] member: _bin]) {
+         if ([_var[i] bound]) 
+            _p += _size[i];
+         else {
+            _candidate[_nbCandidates] = _var[i];
+            _candidateSize[_nbCandidates] = _size[i];
+            _maxLoad += _size[i];
+            _nbCandidates++;
+         }
+      }
+   [_load updateMin: _p];
+   [_load updateMax: _maxLoad + _p];
+   CPInt alpha = [_load min] - _p;
+   CPInt beta = [_load max] - _p;
+   if ([self noSumForCandidates: alpha beta: beta])
+      failNow();
+   
+   CPInt alphaPrime = _alphaprime;
+   CPInt betaPrime = _betaprime;
+   if ([self noSumForCandidates: alpha beta: alpha])
+      [_load updateMin: _p + betaPrime];
+   if ([self noSumForCandidates: beta beta: beta])
+      [_load updateMax: _p + alphaPrime];
+   
+   alpha = [_load min] - _p;
+   beta = [_load max] - _p;
+   CPInt lastSize = MAXINT;
+   for(CPInt i = 0; i < _nbCandidates && !_changed; i++) {
+      if (_candidateSize[i] != lastSize)
+         [self noSumForCandidates: alpha beta: beta without: i];
+      lastSize = _candidateSize[i];
+   }
+   lastSize = MAXINT;
+   for(CPInt i = 0; i < _nbCandidates && !_changed; i++) {
+      if (_candidateSize[i] != lastSize)
+         [self noSumForCandidates: alpha beta: beta with: i];
+      lastSize = _candidateSize[i];
    }
 }
--(BOOL) noSum: (CPInt) alpha beta: (CPInt) beta 
+
+-(BOOL) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta
 {
-   return false;
+   _nbX = _nbCandidates;
+   _maxLoad = 0;
+   for(CPInt i = 0; i < _nbX; i++) {
+      _s[i] = _candidateSize[i];
+      _maxLoad += _s[i];
+   }
+   return [self noSum: alpha  beta: beta];
+}
+
+-(void) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta without: (CPInt) item
+{
+   _nbX = 0;
+   for(CPInt i = 0; i < _nbCandidates; i++)
+      if (i != item) {
+         _s[_nbX++] = _candidateSize[i];
+         _maxLoad += _s[i];
+      }
+   if ([self noSum: alpha beta: beta]) {
+      _changed = true;
+      [_candidate[item] bind: _bin];
+   }
+}
+
+-(void) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta with: (CPInt) item
+{
+   _nbX = 0;
+   for(CPInt i = 0; i < _nbCandidates; i++)
+      if (i != item) {
+         _s[_nbX++] = _candidateSize[i];
+         _maxLoad += _s[i];
+      }
+   if ([self noSum: alpha - _candidateSize[item] beta: beta - _candidateSize[item]]) {
+      _changed = true;
+      [_candidate[item] remove: _bin];
+   }
+}
+
+
+-(BOOL) noSum: (CPInt) alpha beta: (CPInt) beta
+{
+   if (alpha <= 0 || beta >= _maxLoad)
+      return false;
+   CPInt sumA = 0;
+   CPInt sumB = 0;
+   CPInt sumC = 0;
+   CPInt k = -1;
+   CPInt kp = _nbX - 1;
+   while (sumC + _s[kp] < alpha) {
+      sumC += _s[kp];
+      kp--;
+   }
+   sumB = _s[kp];
+   while (sumA < alpha && sumB <= beta) {
+      k++;
+      sumA += _s[k];
+      if (sumA < alpha) {
+         kp++;
+         sumB += _s[kp];
+         sumC -= _s[kp];
+         while (sumA + sumC >= alpha) {
+            kp++;
+            sumC -= _s[kp];
+            sumB += _s[kp];
+            sumB -= _s[kp - k - 1];
+         }
+      }
+   }
+   _alphaprime = sumA + sumC;
+   _betaprime = sumB;
+//   printf("SumA: %d \n",sumA);
+//   printf("SumB: %d \n",sumB);
+//   printf("SumC: %d \n",sumC);
+//   printf("SumA + SumC: %d \n",sumA + sumC);
+   return sumA < alpha;
 }
 @end
 

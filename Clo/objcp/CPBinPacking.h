@@ -32,6 +32,7 @@
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
 -(void) dealloc;
 -(CPStatus) post;
+-(void) propagate;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end

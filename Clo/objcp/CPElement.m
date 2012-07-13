@@ -47,7 +47,8 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    CPInt d1 = r1->_val - r2->_val;
    if (d1==0)
       return r1->_idx - r2->_idx;
-   else return d1;
+   else
+      return d1;
 }
 -(CPStatus) post
 {

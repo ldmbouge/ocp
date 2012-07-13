@@ -45,6 +45,7 @@
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize load: (id<CPIntVarArray>) load;
++(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
 
 +(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons;
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons;

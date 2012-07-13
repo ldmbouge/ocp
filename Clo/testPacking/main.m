@@ -1,10 +1,13 @@
-//
-//  main.m
-//  testPacking
-//
-//  Created by Pascal Van Hentenryck on 7/12/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import <Foundation/Foundation.h>
 #import <Foundation/Foundation.h>
@@ -15,26 +18,32 @@
 
 int main (int argc, const char * argv[])
 {
-   CPRange R = (CPRange){0,3};
+   CPRange R = (CPRange){0,9};
    CPRange D = (CPRange){0,1};
    id<CP> cp = [CPFactory createSolver];
    id<CPIntVarArray> item = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntArray> itemSize = [CPFactory intArray: cp range: R value: 0];
-   id<CPIntArray> binSize = [CPFactory intArray:cp range: D value: 14];
-   [itemSize set: 8 at: 0];
-   [itemSize set: 7 at: 1];
-   [itemSize set: 6 at: 2];
-   [itemSize set: 5 at: 3];
+   id<CPIntVarArray> binSize = [CPFactory intVarArray:cp range: (CPRange){0,0} domain: (CPRange){34,35}];
+   [itemSize set: 10 at: 9];
+   [itemSize set: 10 at: 8];
+   [itemSize set: 10 at: 7];
+   [itemSize set: 9 at: 6];
+   [itemSize set: 9 at: 5];
+   [itemSize set: 9 at: 4];
+   [itemSize set: 9 at: 3];
+   [itemSize set: 5 at: 2];
+   [itemSize set: 2 at: 1];
+   [itemSize set: 1 at: 0];
    
-   [cp solve:
-    ^() {
-       [cp add: [CPFactory packing: item itemSize: itemSize binSize: binSize]];
+   [cp solveAll:
+    ^ {
+       [cp add: [CPFactory packing: item itemSize: itemSize load: binSize]];
     }
           using:
-    ^() {
+    ^ {
        [CPLabel array: item];
-       for(CPInt i = 0; i <= 3; i++)
-          printf("item[%d]=%d \n",i,[item[i] value]);
+       NSLog(@"%@",item);
+       NSLog(@"%@",binSize);
        printf("\n");
     }
     ];

@@ -189,11 +189,50 @@
    [[x tracker] trackObject: o];
    return o;
 }
+
+typedef struct _CPPairIntId {
+   CPInt        _int;
+   id           _id;
+} CPPairIntId;
+
+int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
+{
+   return r2->_int - r1->_int;
+}
+
++(void) sortIntVarInt: (id<CPIntVarArray>) x size: (id<CPIntArray>) size sorted: (id<CPIntVarArray>*) sx sortedSize: (id<CPIntArray>*) sortedSize
+{
+   CPRange R = [x range];
+   int nb = R.up - R.low + 1;
+   int low = R.low;
+   CPPairIntId* toSort = (CPPairIntId*) alloca(sizeof(CPPairIntId) * nb);
+   int k = 0;
+   for(CPInt i = R.low; i <= R.up; i++)
+      toSort[k++] = (CPPairIntId){[size at: i],x[i]};
+   qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);
+   
+   *sx = [CPFactory intVarArray: [x cp] range: R with: ^id<CPIntVar>(int i) { return toSort[i - low]._id; }];
+   *sortedSize = [CPFactory intArray:[x cp] range: R with: ^ORInt(ORInt i) { return toSort[i - low]._int; }];
+}
+
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize load: (id<CPIntArray>) load;
 {
-   id<CPConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: x itemSize: itemSize binSize: load];
+   id<CPIntVarArray> sortedItem;
+   id<CPIntArray> sortedSize;
+   [CPFactory sortIntVarInt: x size: itemSize sorted: &sortedItem sortedSize: &sortedSize];
+   NSLog(@"%@",sortedItem);
+   NSLog(@"%@",sortedSize);
+   id<CPConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: sortedItem itemSize: sortedSize binSize: load];
    [[x tracker] trackObject: o];
    return o;
+}
+
++(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize
+{
+   id<CPConstraint> o = [[CPOneBinPackingI alloc] initCPOneBinPackingI: item itemSize: itemSize bin: b binSize: binSize];
+   [[item tracker] trackObject: o];
+   return o;
+   
 }
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x
 {
