@@ -734,3 +734,11 @@
 }
 @end
 
+id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r)
+{
+   return [r muli: l];
+}
+id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r)
+{
+   return [l mul: r];
+}

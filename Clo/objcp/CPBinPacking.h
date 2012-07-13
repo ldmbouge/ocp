@@ -27,3 +27,11 @@
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end
 
+@interface CPOneBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
+}
+-(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
+-(void) dealloc;
+-(CPStatus) post;
+-(void) encodeWithCoder: (NSCoder*) aCoder;
+-(id) initWithCoder: (NSCoder*) aDecoder;
+@end

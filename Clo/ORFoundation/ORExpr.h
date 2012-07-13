@@ -16,6 +16,9 @@
 @protocol ORRelation;
 @protocol ORExpr;
 
+id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r);
+id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
+
 @protocol ORExpr <NSObject,NSCoding>
 -(id<ORTracker>)tracker;
 -(ORInt) min;
