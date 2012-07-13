@@ -84,11 +84,19 @@ STATE2:
    assignTRInt(&_r,i,_trail);   
    if (i > up || LEX_XLY(i)) { // transition STATE 2 -> T3
       assignTRInt(&_active,NO,_trail);
-      [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
+      if (bound(_ya[LEX_Q]))
+         [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])];
+      else {
+         [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
+      }
    } else if (LEX_XGY(i)) {    // transition STATE 2 -> T2
       assignTRInt(&_active,NO,_trail);
-      [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
-                                to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
+      if (bound(_ya[LEX_Q]))
+         [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])-1];
+      else {
+         [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
+                                   to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
+      }
    } else if (LEX_XLEQY(i)) {  // transition STATE 2 -> STATE 3
       assignTRInt(&_s,i = max(i + 1,LEX_S),_trail);
       goto STATE3;
@@ -105,7 +113,11 @@ STATE3:
    assignTRInt(&_s,i,_trail);
    if (i>up || LEX_XLY(i)) {   // transition STATE 3 -> T3
       assignTRInt(&_active,NO,_trail);
-      [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
+      if (bound(_ya[LEX_Q]))
+         [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])];
+      else {
+         [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
+      }
    }
    // transition 3 -> D3
    // ****************** ENTERING STATE D3
@@ -117,8 +129,12 @@ STATE4:
    assignTRInt(&_s,i,_trail);
    if (i <= up && LEX_XGY(i)) {// transition STATE 4 -> T2
       assignTRInt(&_active,NO,_trail);
-      [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
-                                to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
+      if (bound(_ya[LEX_Q]))
+         [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])-1];
+      else {
+         [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
+                                   to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
+      }
    }
    // transition 4 -> D2
    // ****************** ENTERING STATE D2

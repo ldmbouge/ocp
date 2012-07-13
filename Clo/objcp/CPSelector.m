@@ -179,7 +179,7 @@
    memset(_used,0,sizeof(bool)*(range.up - range.low + 1));
    _filter = [filter copy];
    _order = [order copy];
-   [[cp trail] trailClosure: ^() { [self release]; }];
+   [[cp trail] trailRelease:self];
    return self;
 }
 

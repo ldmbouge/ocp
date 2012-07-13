@@ -112,7 +112,6 @@ typedef struct {
 
 typedef struct {
    id        _val;
-   ORUInt _mgc;
 } TRId;
 
 typedef struct {
@@ -195,12 +194,9 @@ static inline void  assignTRDouble(TRDouble* v,double val,ORTrail* trail)
 }
 static inline void  assignTRId(TRId* v,id val,ORTrail* trail)
 {
-   if (v->_mgc != [trail magic]) {
-      v->_mgc = [trail magic];
-      [trail trailId:&v->_val];
-   }
+   [trail trailId:&v->_val];
    [v->_val release];
-   v->_val = [val retain];         
+   v->_val = [val retain];
 }
 static inline ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
 {

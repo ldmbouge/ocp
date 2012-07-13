@@ -247,7 +247,7 @@ TRLong makeTRLong(ORTrail* trail,long long val)
 }
 TRId  makeTRId(ORTrail* trail,id val)
 {
-   return (TRId) {val,[trail magic]-1};
+   return (TRId) {val};
 }
 TRDouble  makeTRDouble(ORTrail* trail,double val)
 {

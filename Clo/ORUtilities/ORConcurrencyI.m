@@ -80,6 +80,7 @@ inline static id EvtdeQueue(OREventQueue* q)
    if (q->_enter != q->_exit) {
       id cb = q->_tab[q->_exit];
       q->_exit = (q->_exit+1) & q->_mask;
+      [cb release];
       return cb;
    } 
    else 
@@ -162,7 +163,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
       ORClosure cl = nil;
       while ((cl = EvtdeQueue(_queue)) != nil) {
          cl();
-         [cl release];
+         Block_release(cl);      
       }
    }
 }
@@ -186,13 +187,13 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 -(void)dealloc
 {
-   [_closure release];
+   Block_release(_closure);
    [_eventList release];
    [super dealloc];
 }
 -(void) dispatch
 {
-   [_eventList addEvent:_closure];
+   [_eventList addEvent:[_closure retain]];
 }
 -(void) dispatchWith:(int)a0
 {

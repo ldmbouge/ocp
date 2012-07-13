@@ -408,31 +408,30 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (CPInt) p
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
-                                            trigger:NULL
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._minEvt, evt, [_fdm trail]);
-    [evt release];
-    
+   id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
+                                           trigger:NULL
+                                              cstr:c
+                                                at:p];
+   assignTRId(&_net._minEvt, evt, [_fdm trail]);
+   [evt release];    
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (CPInt) p
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
-                                            trigger:NULL
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._maxEvt, evt, [_fdm trail]);
-    [evt release];
+   id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
+                                           trigger:NULL
+                                              cstr:c
+                                                at:p];
+   assignTRId(&_net._maxEvt, evt, [_fdm trail]);
+   [evt release];
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (CPInt) p
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
-                                            trigger:NULL
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._boundsEvt, evt, [_fdm trail]);
-    [evt release];    
+   id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
+                                           trigger:NULL
+                                              cstr:c
+                                                at:p];
+   assignTRId(&_net._boundsEvt, evt, [_fdm trail]);
+   [evt release];
 }
 
 -(void) whenBindPropagate: (CPCoreConstraint*) c
@@ -633,18 +632,18 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(CPIntVarI*) initCPIntVarView: (id<CP>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x
 {
-    self = [self initCPIntVarCore: cp low: low up: up];   
-    id<CPIntVarNotifier> xDeg = [x delegate];
-    if (xDeg == x) {
-        CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2];
-        [mc addVar: x];
-        [mc addVar: self];
-        [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
-    } 
-    else {
-        [xDeg addVar:self];
-    }   
-    return self;
+   self = [self initCPIntVarCore: cp low: low up: up];
+   id<CPIntVarNotifier> xDeg = [x delegate];
+   if (xDeg == x) {
+      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2];
+      [mc addVar: x];
+      [mc addVar: self];
+      [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
+   }
+   else {
+      [xDeg addVar:self];
+   }
+   return self;
 }
 
 
@@ -1133,10 +1132,17 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
+
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
    [_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
+   ORTrail* theTrail = [[v solver] trail];
+   CPInt toFix = _nb;
+   [theTrail trailClosure:^{
+      _tab[toFix] = nil;
+      _loseValIMP[toFix] = nil;
+   }];
    _nb++;
 }
 -(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift

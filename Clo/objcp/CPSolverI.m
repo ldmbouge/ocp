@@ -50,9 +50,10 @@
 }
 -(void)dealloc
 {
-    //NSLog(@"VarEventNode::dealloc] %p\n",self);
-    [_trigger release];
-    [super dealloc];
+   //NSLog(@"VarEventNode::dealloc] %p\n",self);
+   [_trigger release];
+   [_node release];
+   [super dealloc];
 }
 @end
 
