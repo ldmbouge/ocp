@@ -82,7 +82,7 @@
             printf("%d ",[_itemSize at: j]);
          printf("\n");
          NSLog(@"%@",_item);
-         [cp add: SUM(j,IR,[[_item[j] eqi: i] muli: [_itemSize at: j]]) leq: _binSize[i]];
+         [cp add: [SUM(j,IR,[[_item[j] eqi: i] muli: [_itemSize at: j]]) leq: _binSize[i]]];
       }
    }
    return CPSkip;
