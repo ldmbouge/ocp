@@ -625,7 +625,7 @@ struct CPVarPair {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
       _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
-   [_fdm post: [CPFactory reify:_rv with:theVar eq:c]];
+   [_fdm post: [CPFactory reify:_rv with:theVar eqi:c]];
 }
 -(void) reifyNEQc:(CPIntVarI*)theVar constant:(CPInt)c
 {
@@ -659,7 +659,16 @@ struct CPVarPair {
       [self reifyEQc:(CPIntVarI*)[e right] constant:[[e left] min]];
    } else if ([[e right] isConstant] && [[e left] isVariable]) {
       [self reifyEQc:(CPIntVarI*)[e left] constant:[[e right] min]];
-   } else assert(NO);
+   } else {
+      CPLinear* linLeft  = [CPLinearizer linearFrom:[e left] solver:_fdm consistency:_c];
+      CPLinear* linRight = [CPLinearizer linearFrom:[e right] solver:_fdm consistency:_c];
+      id<CPIntVar> lV = [CPSubst normSide:linLeft  for:_fdm consistency:_c];
+      id<CPIntVar> rV = [CPSubst normSide:linRight for:_fdm consistency:_c];
+      id<ORTracker> cp = [lV tracker];
+      if (_rv==nil)
+         _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
+      [_fdm post:[CPFactory reify:_rv with:lV eq:rV]];
+   }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {

@@ -92,16 +92,23 @@
     return o;
 }
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (CPInt) i
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (CPInt) i
 {
-    id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: i];
+   id<CPConstraint> o = [[CPReifyEqualcDC alloc] initCPReifyEqualcDC: b when: x eq: i];
+   [[[x cp] solver] trackObject: o];
+   return o;
+}
+
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y
+{
+    id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
     [[[x cp] solver] trackObject: o];
     return o;
 }
 
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (CPInt) i
 {
-    id<CPConstraint> o = [[CPReifyNotEqualDC alloc] initCPReifyNotEqualDC: b when: x neq: i];
+    id<CPConstraint> o = [[CPReifyNotEqualcDC alloc] initCPReifyNotEqualcDC: b when: x neq: i];
     [[[x cp] solver] trackObject: o];
     return o;
 }

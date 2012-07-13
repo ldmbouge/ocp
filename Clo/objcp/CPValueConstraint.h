@@ -20,13 +20,25 @@
 @class CPIntVarI;
 @class CPSolverI;
 
-@interface CPReifyNotEqualDC : CPCoreConstraint<NSCoding> {
+@interface CPReifyNotEqualcDC : CPCoreConstraint<NSCoding> {
 @private
     CPIntVarI* _b;
     CPIntVarI* _x;
     CPInt      _c;
 }
--(id) initCPReifyNotEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(CPInt)c;
+-(id) initCPReifyNotEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x neq:(CPInt)c;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
+@interface CPReifyEqualcDC : CPCoreConstraint<NSCoding> {
+@private
+    CPIntVarI* _b;
+    CPIntVarI* _x;
+    CPInt      _c;
+}
+-(id) initCPReifyEqualcDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(CPInt)c;
 -(CPStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -34,11 +46,11 @@
 
 @interface CPReifyEqualDC : CPCoreConstraint<NSCoding> {
 @private
-    CPIntVarI* _b;
-    CPIntVarI* _x;
-    CPInt      _c;
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPIntVarI* _y;
 }
--(id) initCPReifyEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(CPInt)c;
+-(id) initCPReifyEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(id<CPIntVar>)y;
 -(CPStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
