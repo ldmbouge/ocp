@@ -18,7 +18,7 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      const char* src = "/Users/ldm/work/langExp/benchdata/MKNAP";
+      const char* src = "MKNAP";
       const char* afn[6] = {"mknap1-0.txt",
                             "mknap1-2.txt",
                             "mknap1-3.txt",
