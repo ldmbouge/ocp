@@ -13,6 +13,7 @@
 #import "ORFoundation/ORExpr.h"
 #import "ORFoundation/ORData.h"
 #import "ORFoundation/ORArray.h"
+#import "ORFoundation/ORSet.h"
 
 @interface ORFactory : NSObject
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
@@ -24,7 +25,12 @@
 +(id<ORIdArray>)   idArray: (id<ORTracker>) tracker range: (ORRange) range;
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1;
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2;
+
++(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (ORRange) range;
++(id<ORIntSet>) collect: (id<ORTracker>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e;
 @end
+
+#define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]
 
 @interface ORFactory (Expressions)
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right;
@@ -38,5 +44,5 @@
 +(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right;
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
-+(id<ORExpr>) sum: (id<ORTracker>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 @end
+
