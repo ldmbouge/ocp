@@ -9,12 +9,14 @@
  
  ***********************************************************************/
 
+#import <ORUtilities/ORUtilities.h>
 #import "ORFactory.h"
 #import "ORError.h"
 #import "ORExprI.h"
 #import "ORData.h"
 #import "ORDataI.h"
 #import "ORArrayI.h"
+#import "ORSetI.h"
 
 @implementation ORFactory
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
@@ -59,6 +61,19 @@
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1 :r2];
    [tracker trackObject:o];
+   return o;
+}
++(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (ORRange) range
+{
+   return (id<ORIntSetArray>)[ORFactory idArray: tracker range: range];
+}
++(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e
+{
+   ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
+   for(ORInt i = r.low; i <= r.up; i++)
+      if (f == nil || f(i))
+         [o insert: e(i)];
+   [tracker trackObject: o];
    return o;
 }
 @end
