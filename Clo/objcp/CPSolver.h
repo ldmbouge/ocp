@@ -13,7 +13,6 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 #import <ORFoundation/ORSet.h>
-#import "CPConstraintI.h"
 
 @protocol AbstractSolver <NSObject,ORTracker>
 -(void) saveSolution;

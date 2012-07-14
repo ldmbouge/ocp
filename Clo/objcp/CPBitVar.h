@@ -22,6 +22,7 @@
 -(id<CPSolver>) solver;
 @end
 
+@class CPCoreConstraint;
 
 @protocol CPBitVarSubscriber <NSObject>
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 

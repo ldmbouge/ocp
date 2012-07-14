@@ -16,6 +16,20 @@
 #import "CPSolverI.h"
 #import "CPI.h"
 
+
+@interface CPWatch : CPActiveConstraint {
+   CPIntVarI* _theVar;
+   CPInt2Void _lost;
+   CPInt2Void _bind;
+   CPInt2Void _rec;
+   CPInt2Void _unb;
+}
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(CPInt2Void)lost onValueBind:(CPInt2Void)bind onValueRecover:(CPInt2Void)rec onValueUnbind:(CPInt2Void)unb;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
 @implementation CPWatch
 -(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(CPInt2Void)lost 
            onValueBind:(CPInt2Void)bind 

@@ -11,14 +11,13 @@
 
 
 #import <Foundation/Foundation.h>
-#import "CPSolver.h"
-#import "CP.h"
+#import "objcp/CPSolver.h"
+#import "objcp/CP.h"
 #import "ORFoundation/ORSet.h"
-#import "CPTable.h"
-#import "ORConcurrency.h"
-#import "CPHeuristic.h"
-#import "CPSolverI.h"
-#import "CPData.h"
+#import "objcp/CPTable.h"
+#import "ORUtilities/ORConcurrency.h"
+#import "objcp/CPHeuristic.h"
+#import "objcp/CPData.h"
 
 @interface CPFactory : NSObject
 +(id<CP>) createSolver;
@@ -37,7 +36,7 @@
 +(id<CPHeuristic>)createFF:(id<CP>)cp;
 @end;
 
-//void failNow();
+void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
@@ -102,9 +101,3 @@
 #define SUM(P,R,E)         [CPFactory sum: cp range:(R) filteredBy:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
 #define ALL(RT,P,RANGE,E)  [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(CPInt P) { return (E);}]
 
-static inline void failNow()
-{
-   static CPFailException* fex = nil;
-   if (fex==nil) fex = [CPFailException new];
-   @throw  CFRetain(fex);
-}

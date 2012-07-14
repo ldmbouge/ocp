@@ -13,7 +13,9 @@
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
 
-@implementation CPDDeg
+@implementation CPDDeg {
+   CPSolverI*    _solver;
+}
 -(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];

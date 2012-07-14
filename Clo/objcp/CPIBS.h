@@ -21,10 +21,6 @@
    id<CPVarArray>   _vars;
    id<CPVarArray>  _rvars;
    id<CP>             _cp;
-   CPSolverI*     _solver;
-   CPMonitor*    _monitor;
-   CPULong           _nbv;
-   NSMutableDictionary*  _impacts;
 }
 -(id)initCPIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;

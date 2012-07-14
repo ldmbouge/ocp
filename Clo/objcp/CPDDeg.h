@@ -18,7 +18,6 @@
    id<CPVarArray> _rvars;
    CPUInt*          _map; 
    id<CP>            _cp;
-   CPSolverI*    _solver;
    CPULong          _nbv;
    NSSet**           _cv;
 }

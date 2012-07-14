@@ -201,7 +201,7 @@
 		5B920EB815A3FB9E00AD0820 /* ORArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB715A3FB9E00AD0820 /* ORArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB915A3FDB800AD0820 /* ORDataI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B920EBC15A3FDB800AD0820 /* ORDataI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EBA15A3FDB800AD0820 /* ORDataI.m */; };
-		5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EBD15A402A500AD0820 /* ORArrayI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EBD15A402A500AD0820 /* ORArrayI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EBE15A402A500AD0820 /* ORArrayI.m */; };
 		5B920EC115A4319100AD0820 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B920EC215A4329A00AD0820 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -512,6 +512,7 @@
 		B17EB196146C55010097E18D /* CPConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17EB195146C55010097E18D /* CPConstraintI.m */; };
 		B189033F142C266F007F6EAD /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1890340142C266F007F6EAD /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
+		B1943A1115B0E34400E1771B /* rbg040a.tw in Copy Files */ = {isa = PBXBuildFile; fileRef = B1943A0F15B0E33C00E1771B /* rbg040a.tw */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B19ABA0E146D68FE004EB77E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA0D146D68FE004EB77E /* main.m */; };
 		B19ABA18146D6930004EB77E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -521,7 +522,6 @@
 		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1B68C79159FC16E008BC463 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C78159FC16E008BC463 /* main.m */; };
-		B1B68C7D159FC16E008BC463 /* TestAssignment.1 in Copy Files */ = {isa = PBXBuildFile; fileRef = B1B68C7C159FC16E008BC463 /* TestAssignment.1 */; };
 		B1B68C83159FC194008BC463 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */; };
 		B1C25AA21557540E009CB8A8 /* CPCircuitI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C25AA01557540E009CB8A8 /* CPCircuitI.m */; };
@@ -1159,14 +1159,14 @@
 		};
 		B1B68C72159FC16E008BC463 /* Copy Files */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
-				B1B68C7D159FC16E008BC463 /* TestAssignment.1 in Copy Files */,
+				B1943A1115B0E34400E1771B /* rbg040a.tw in Copy Files */,
 			);
 			name = "Copy Files";
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B1F531D615AED4B100E89F98 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -1542,6 +1542,7 @@
 		B17EB195146C55010097E18D /* CPConstraintI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConstraintI.m; sourceTree = "<group>"; };
 		B189033D142C266D007F6EAD /* CPTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrigger.h; sourceTree = "<group>"; };
 		B189033E142C266E007F6EAD /* CPTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrigger.m; sourceTree = "<group>"; };
+		B1943A0F15B0E33C00E1771B /* rbg040a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg040a.tw; sourceTree = "<group>"; };
 		B19ABA09146D68FE004EB77E /* AtomicTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AtomicTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B19ABA0D146D68FE004EB77E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B19ABA10146D68FE004EB77E /* AtomicTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "AtomicTest-Prefix.pch"; sourceTree = "<group>"; };
@@ -2058,6 +2059,7 @@
 				B111FBF913CF3C81003C5119 /* Foundation.framework */,
 				B17ABF8513CE4ECA00DC7288 /* Foundation.framework */,
 				5B9ABCEF1391329D000997E5 /* objcp.framework */,
+				B1943A1015B0E33C00E1771B /* data */,
 				5B7408AC1562828000C05277 /* Objective-CP Examples */,
 				5BFD594515A3ACA500825BC3 /* ORFoundation */,
 				5B60E5D815AE907E002FF2B3 /* ORUtilities */,
@@ -2954,6 +2956,15 @@
 				B17ABF8113CE4E7700DC7288 /* gurobiwrapper-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B1943A1015B0E33C00E1771B /* data */ = {
+			isa = PBXGroup;
+			children = (
+				B1943A0F15B0E33C00E1771B /* rbg040a.tw */,
+			);
+			name = data;
+			path = ../data;
 			sourceTree = "<group>";
 		};
 		B19ABA0C146D68FE004EB77E /* AtomicTest */ = {

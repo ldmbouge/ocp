@@ -141,7 +141,12 @@
 }
 @end
 
-@implementation CPIBS
+@implementation CPIBS {
+   CPSolverI*     _solver;
+   CPMonitor*    _monitor;
+   CPULong           _nbv;
+   NSMutableDictionary*  _impacts;
+}
 
 -(id)initCPIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {

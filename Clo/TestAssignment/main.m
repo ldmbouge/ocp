@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORCrFactory.h"
+#import "ORUtilities/ORUtilities.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
@@ -138,7 +138,7 @@ void printCircuit(id<CPIntVarArray> x)
 
 int main (int argc, const char * argv[])
 {
-   FILE* dta = fopen("/Users/pvh/NICTA/Project/objectivecp/data/rbg040a.tw","r");
+   FILE* dta = fopen("rbg040a.tw","r");
    CPInt nbCities;
    CPInt tmp;
    fscanf(dta, "%d",&nbCities);
@@ -198,7 +198,7 @@ int main (int argc, const char * argv[])
                   printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
                   [nbSolutions incr];
                   id<CPSolution> solution = [cp solution];
-                  [cp add: [CPFactory lEqualc: assignmentCost to: [solution intValue: assignmentCost] - 1]];
+//                  [cp add: [CPFactory lEqualc: assignmentCost to: [solution intValue: assignmentCost] - 1]];
                   for(CPInt i = 0; i < nbCities; i++)
                      [mark set: 0 at: i];
                   
@@ -209,7 +209,7 @@ int main (int argc, const char * argv[])
                   }
                   for(CPInt i = 0; i < nbCities; i++) {
                      if ([mark at: i] == 0)
-                        [cp add: [CPFactory equalc: [x at: i] to: [solution intValue: [x at: i]]]];
+                        [cp label: [x at: i] with: [solution intValue: [x at: i]]];
                   }
                }
 //               until: ^bool() { return [nbRestarts value] >= 35; }

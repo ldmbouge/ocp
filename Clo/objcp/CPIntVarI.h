@@ -19,6 +19,7 @@
 #import "ORFoundation/ORSetI.h"
 #import "CPBitDom.h"
 #import "objc/runtime.h"
+#import "CPConstraintI.h"
 
 // PVH: I am not sure that I like the fact that it is a struct
 // In any case, this should be hidden evenfrom those with access to extended interface.

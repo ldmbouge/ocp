@@ -23,6 +23,14 @@
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPFirstFail.h"
+#import "CPSolverI.h"
+
+void failNow()
+{
+   static CPFailException* fex = nil;
+   if (fex==nil) fex = [CPFailException new];
+   @throw  CFRetain(fex);
+}
 
 
 @implementation CPFactory

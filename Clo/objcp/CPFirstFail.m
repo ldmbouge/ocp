@@ -13,7 +13,9 @@
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
 
-@implementation CPFirstFail
+@implementation CPFirstFail {
+   CPSolverI*    _solver;
+}
 -(CPFirstFail*)initCPFirstFail:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];

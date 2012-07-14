@@ -12,6 +12,7 @@
 #import "CPKnapsack.h"
 #import "CPIntVarI.h"
 #import "CPArray.h"
+#import "CPSolverI.h"
 
 @interface KSNode : NSObject {
    @package

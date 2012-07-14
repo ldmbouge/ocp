@@ -13,6 +13,7 @@
 #import <objcp/CPHeuristic.h>
 #import <objcp/CPBaseHeuristic.h>
 
+@class CPSolverI;
 // pvh: heuristics should use the solver and it should make the informer available
 // pvh: This is too low level
 
