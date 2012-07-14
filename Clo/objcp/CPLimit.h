@@ -9,6 +9,8 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrail.h>
 #import <objcp/CPController.h>
 
 @interface CPLimitSolutions : CPDefaultController <NSCopying,CPSearchController> {
