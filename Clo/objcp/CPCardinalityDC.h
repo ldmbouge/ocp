@@ -10,12 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CPTypes.h"
-#import "CPDataI.h"
-#import "CPArrayI.h"
-#import "CPConstraintI.h"
-#import "ORTrail.h"
-#import "CPBasicConstraint.h"
+#import <objcp/CPTypes.h>
+#import <objcp/CPArray.h>
+#import <objcp/CPConstraintI.h>
+#import <objcp/CPBasicConstraint.h>
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> {
     id<CPIntVarArray> _x;

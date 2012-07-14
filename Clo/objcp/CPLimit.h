@@ -9,6 +9,8 @@
 
  ***********************************************************************/
 
+#import <objcp/CPController.h>
+
 @interface CPLimitSolutions : CPDefaultController <NSCopying,CPSearchController> {
 @private
    CPInt _maxSolutions;

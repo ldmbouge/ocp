@@ -9,15 +9,11 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CPTypes.h"
-#import "CPConstraintI.h"
-#import "CPSolver.h"
-#import "ORTrail.h"
-#import "CPTypes.h"
-#import "ORConcurrency.h"
-#import "CPSolution.h"
-#import "CPData.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPTypes.h>
+#import <objcp/CPSolver.h>
+#import <objcp/CPSolution.h>
+#import <objcp/CPConstraintI.h>
 
 @class ORTrail;
 @class ORTrailStack;

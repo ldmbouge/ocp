@@ -9,13 +9,11 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORDataI.h>
 #import <objcp/CPTypes.h>
-#import "CPIntVarI.h"
-#import "ORFoundation/ORExprI.h"
-#import "ORFoundation/ORDataI.h"
-#import "CPData.h"
-#import "CPIntVarI.h"
+#import <objcp/CPIntVarI.h>
 
 @protocol CPExprVisitor;
 

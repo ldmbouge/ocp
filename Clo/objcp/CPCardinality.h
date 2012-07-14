@@ -9,13 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CPTypes.h"
-#import "CPIntVarI.h"
-#import "CPDataI.h"
-#import "CPConstraintI.h"
-#import "ORTrail.h"
-#import "CPCardinality.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPTypes.h>
+#import <objcp/CPConstraintI.h>
 
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)
 @interface CPCardinalityCst : CPActiveConstraint<NSCoding> {  

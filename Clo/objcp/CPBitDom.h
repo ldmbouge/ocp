@@ -9,10 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CPDom.h"
-#import "ORFoundation/ORTrail.h"
-#import "objc/runtime.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrail.h>
+#import <objcp/CPDom.h>
 
 @class CPSolverI;
 

@@ -15,6 +15,7 @@
 #import "CPSolverI.h"
 #import "CPTrigger.h"
 #import "CPBitArrayDom.h"
+#import "CPIntVarI.h"
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */

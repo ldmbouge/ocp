@@ -17,9 +17,20 @@
 #import "CPArrayI.h"
 #import "CPError.h"
 
-@implementation CPCircuitI
+@implementation CPCircuitI {
+   id<CPIntVarArray>  _x;
+   CPIntVarI**      _var;
+   CPInt            _varSize;
+   CPInt            _low;
+   CPInt            _up;
+   id<CPTRIntArray> _pred;
+   id<CPTRIntArray> _succ;
+   id<CPTRIntArray> _length;
+   bool             _noCycle;
+   bool             _posted;
+}
 
--(void) initInstanceVariables 
+-(void) initInstanceVariables
 {
     _idempotent = YES;
     _priority = HIGHEST_PRIO;

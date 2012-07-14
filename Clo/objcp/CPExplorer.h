@@ -11,6 +11,8 @@
 
 
 #import <Foundation/Foundation.h>
+#import <objcp/CPHeuristic.h>
+#import <objcp/CPController.h>
 
 @class Checkpoint;
 

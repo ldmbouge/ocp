@@ -12,11 +12,11 @@
 
 #import <Foundation/Foundation.h>
 #import "CPTypes.h"
-#import "CPDataI.h"
 #import "CPConstraintI.h"
 #import "ORTrail.h"
 #import "CPBasicConstraint.h"
 #import "CPTable.h"
+#import <objcp/CPArray.h>
 
 @interface CPTableI : NSObject<CPTable,NSCoding> {
     @package

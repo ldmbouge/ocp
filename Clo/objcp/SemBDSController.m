@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
-#import "CPError.h"
 #import "SemBDSController.h"
-#import "CPTracer.h"
+#import "CPError.h"
+#import "CPSolver.h"
 
 @implementation BDSStack
 -(id)initBDSStack:(CPInt)mx

@@ -9,7 +9,8 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPTypes.h>
 
 @protocol CPTable <NSObject>
 -(void) insert: (CPInt) i : (CPInt) j : (CPInt) k;

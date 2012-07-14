@@ -9,10 +9,10 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrail.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
-#import "ORTrail.h"
 
 @protocol CPConstraint;
 @protocol CPCommand;

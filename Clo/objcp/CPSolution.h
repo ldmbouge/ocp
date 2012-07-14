@@ -9,8 +9,8 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "objcp/CPTypes.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPTypes.h>
 
 @protocol CPSolver;
 

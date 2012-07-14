@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
-#import "CPError.h"
 #import "SemDFSController.h"
-#import "CPTracer.h"
+#import "CPError.h"
+#import "CPSolver.h"
 
 
 @implementation SemDFSController 

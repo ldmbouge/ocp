@@ -11,25 +11,11 @@
 
 
 #import <Foundation/Foundation.h>
-#import "CPTypes.h"
-#import "CPDataI.h"
-#import "CPArray.h"
-#import "CPConstraintI.h"
-#import "ORTrail.h"
-#import "CPBasicConstraint.h"
+#import <objcp/CPTypes.h>
+#import <objcp/CPArray.h>
+#import <objcp/CPConstraintI.h>
 
-@interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding> {
-    id<CPIntVarArray>  _x;
-    CPIntVarI**      _var;
-    CPInt            _varSize;  
-    CPInt            _low;
-    CPInt            _up;
-    id<CPTRIntArray> _pred;
-    id<CPTRIntArray> _succ;
-    id<CPTRIntArray> _length;
-    bool             _noCycle;
-    bool             _posted;
-}
+@interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding>
 -(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
 -(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;

@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "ORFoundation/ORArray.h"
+#import "objcp/CPData.h"
 
 @protocol CPIntArray <ORIntArray>
 -(id<CPExpr>) elt: (id<CPExpr>) idx;

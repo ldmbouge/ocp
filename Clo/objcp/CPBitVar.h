@@ -9,9 +9,8 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORTrail.h"
-#import "objcp/CPSolver.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPSolver.h>
 
 @protocol CPBitVar <NSObject>
 -(bool) bound;

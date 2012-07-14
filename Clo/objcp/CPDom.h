@@ -10,12 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 
 @protocol CPIntVarNotifier;
-
-typedef CPStatus(*UBType)(id,SEL,...);
 
 @protocol CPDom <NSObject,NSCopying>
 -(void)dealloc;

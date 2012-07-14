@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "CPCreateI.h"
-#import "CPDataI.h"
 #import "CPI.h"
 #import "CPSolverI.h"
 #import "CPIntVarI.h"

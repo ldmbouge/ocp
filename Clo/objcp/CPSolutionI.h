@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPSolution.h>
+
 @protocol CPSolver;
 
 @interface CPSolutionI : NSObject<CPSolution,NSCoding> {

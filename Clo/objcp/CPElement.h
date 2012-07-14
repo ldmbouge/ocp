@@ -9,11 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CPConstraintI.h"
-#import "CPBitDom.h"
-#import "objcp/CPData.h"
-#import "objcp/CPArray.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPConstraintI.h>
+#import <objcp/CPArray.h>
 
 @class CPIntVarI;
 @class CPSolver;

@@ -10,14 +10,12 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
-#import "objcp/CPSolver.h"
-#import "objcp/CP.h"
-#import "ORFoundation/ORSet.h"
-#import "objcp/CPTable.h"
-#import "ORUtilities/ORConcurrency.h"
-#import "objcp/CPHeuristic.h"
-#import "objcp/CPData.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPSolver.h>
+#import <objcp/CP.h>
+#import <objcp/CPTable.h>
+#import <objcp/CPHeuristic.h>
+#import <objcp/CPData.h>
 
 @interface CPFactory : NSObject
 +(id<CP>) createSolver;
