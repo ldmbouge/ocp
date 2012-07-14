@@ -179,6 +179,11 @@
 			<key>orderHint</key>
 			<integer>29</integer>
 		</dict>
+		<key>progressive.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>43</integer>
+		</dict>
 		<key>queens2.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -418,6 +423,11 @@
 			<true/>
 		</dict>
 		<key>B1595B3D13C11F2A001FCB61</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B15F6DDD15B1361700158FA0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
