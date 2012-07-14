@@ -14,6 +14,7 @@
 #import "CPBitVar.h"
 #import "CPBitVarI.h"
 #import "CPBitMacros.h"
+#import "CPIntVarI.h"
 
 #define BITFREE(idx)     ((_low[WORDIDX(idx)]._val ^ _up[WORDIDX(idx)]._val) & ONEAT(idx))
 #define SETBITTRUE(idx)   (assignTRUInt(&_low[WORDIDX(idx)],_low[WORDIDX(idx)]._val | ONEAT(idx),_trail))

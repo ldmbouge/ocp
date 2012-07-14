@@ -10,9 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CPConstraintI.h"
-#import "ORTrail.h"
-#import "CPDom.h"
+#import <objcp/CPConstraintI.h>
 
 @class CPIntVarI;
 @interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c

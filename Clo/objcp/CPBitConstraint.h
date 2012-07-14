@@ -10,8 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CPConstraint.h"
-#import "CPBitVarI.h"
+#import <objcp/CPConstraint.h>
+#import <objcp/CPBitVarI.h>
+#import <objcp/CPConstraintI.h>
 
 #define UP_MASK 0xFFFFFFFF
 

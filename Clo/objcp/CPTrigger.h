@@ -11,8 +11,24 @@
 
 
 #import <Foundation/Foundation.h>
-#import "CPIntVarI.h"
+#import <objcp/CPData.h>
 @class ORAVLTree;
+
+// PVH: I am not sure that I like the fact that it is a struct
+// In any case, this should be hidden evenfrom those with access to extended interface.
+// PVH to clean up
+
+@class CPCoreConstraint;
+@class CPSolverI;
+
+typedef struct CPTrigger {
+   struct CPTrigger*  _prev;
+   struct CPTrigger*  _next;
+   ConstraintCallback   _cb;       // var/val held inside the closure (captured).
+   CPCoreConstraint*  _cstr;
+   CPInt _vId;               // local variable identifier (var being watched)
+} CPTrigger;
+
 
 @protocol CPTriggerMapInterface <NSObject>
 @optional

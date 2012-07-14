@@ -9,30 +9,15 @@
 
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
-#import "CPData.h"
-#import "CPDom.h"
-#import "CPConstraint.h"
-#import "CPDataI.h"
-#import "ORFoundation/ORExprI.h"
-#import "ORFoundation/ORSetI.h"
-#import "CPBitDom.h"
-#import "objc/runtime.h"
-#import "CPConstraintI.h"
-
-// PVH: I am not sure that I like the fact that it is a struct
-// In any case, this should be hidden evenfrom those with access to extended interface.
-// PVH to clean up
-
-typedef struct CPTrigger {
-   struct CPTrigger*  _prev;
-   struct CPTrigger*  _next;
-   ConstraintCallback   _cb;       // var/val held inside the closure (captured).
-   CPCoreConstraint*  _cstr;
-   CPInt _vId;               // local variable identifier (var being watched)
-} CPTrigger;
-
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORExprI.h>
+#import <ORFoundation/ORSetI.h>
+#import <objcp/CPData.h>
+#import <objcp/CPDom.h>
+#import <objcp/CPTrigger.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPBitDom.h>
+#import <objcp/CPConstraintI.h>
 
 @protocol CPIntVarSubscriber <NSObject>
 

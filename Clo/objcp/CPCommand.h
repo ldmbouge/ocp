@@ -9,10 +9,8 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
+#import <ORFoundation/ORFoundation.h>
 #import <objcp/CPData.h>
-
 /**
  * This is a simple Command protocol to record "decisions" that must be redone
  * when redoing a different semantic path. 

@@ -24,6 +24,7 @@
 #import "CPIBS.h"
 #import "CPFirstFail.h"
 #import "CPSolverI.h"
+#import "CPArrayI.h"
 
 void failNow()
 {

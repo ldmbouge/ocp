@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
-#import "CP.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CP.h>
 #import <objcp/CPHeuristic.h>
 
 @interface CPLabel : NSObject

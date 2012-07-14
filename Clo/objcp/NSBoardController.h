@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPFactory.h"
-#import "objcp/CPWatch.h"
+#import <objcp/CPFactory.h>
+#import <objcp/CPWatch.h>
 
 @interface NSBoardController : NSObject {
    NSView* _drawOn;

@@ -185,7 +185,7 @@
 
 -(CPSelect*) selectInRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
-   return [[CPSelect alloc] initCPSelect: self 
+   return [[CPSelect alloc] initCPSelect: (id<CP>)self
                                withRange: range
                               filteredBy: filter
                                orderedBy: order];    

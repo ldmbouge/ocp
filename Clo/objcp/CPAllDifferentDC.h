@@ -9,12 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CPTypes.h"
-#import "CPDataI.h"
-#import "CPConstraintI.h"
-#import "ORTrail.h"
-#import "CPBasicConstraint.h"
+#import "ORFoundation/ORFoundation.h"
+#import "objcp/CPArray.h"
+#import "objcp/CPBasicConstraint.h"
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding> {
     id<CPIntVarArray> _x;

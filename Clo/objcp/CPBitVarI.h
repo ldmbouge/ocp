@@ -9,15 +9,17 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CPBitVar.h"
-#import "CPIntVarI.h"
-#import "CPTypes.h"
-#import "CPSolver.h"
-
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrail.h>
+#import <objcp/CPBitVar.h>
+#import <objcp/CPTypes.h>
+#import <objcp/CPSolver.h>
+#import <objcp/CPTrigger.h>
 
 @class CPBitArrayDom;
 @class CPBitArrayIterator;
+@class CPSolverI;
+@class CPTriggerMap;
 
 typedef struct  {
    TRId         _boundsEvt;

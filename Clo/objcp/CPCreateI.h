@@ -10,10 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CPI.h"
-#import "CPArrayI.h"
-#import "CPConstraintI.h"
-#import "ORTrail.h"
+#import <objcp/CPI.h>
 
 @interface CPI (Create)  
 +(CPI*) create;

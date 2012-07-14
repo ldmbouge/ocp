@@ -9,15 +9,13 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "cont.h"
-#import "CPTypes.h"
-#import "CPError.h"
-#import "ORTrail.h"
-#import "CPController.h"
-#import "CPTracer.h"
-#import "CPDataI.h"
-#import "CPExplorer.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/cont.h>
+#import <objcp/CPTypes.h>
+#import <objcp/CPError.h>
+#import <objcp/CPController.h>
+#import <objcp/CPTracer.h>
+#import <objcp/CPExplorer.h>
 
 
 @protocol AbstractSolver;

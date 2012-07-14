@@ -15,7 +15,6 @@
 #import "CPTypes.h"
 #import "CPBitDom.h"
 #import "CPConstraintI.h"
-#import "CPDataI.h"
 #import "CPIntVarI.h"
 #import "CPError.h"
 

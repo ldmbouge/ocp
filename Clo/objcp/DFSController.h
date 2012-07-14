@@ -9,13 +9,12 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "cont.h"
-#import "CPExplorerI.h"
-#import "CPController.h"
-#import "CPTypes.h"
-#import "ORTrail.h"
-#import "CPTracer.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/cont.h>
+#import <objcp/CPTypes.h>
+#import <objcp/CPController.h>
+#import <objcp/CPTracer.h>
 
 @interface DFSController : CPDefaultController <NSCopying,CPSearchController> {
 @private

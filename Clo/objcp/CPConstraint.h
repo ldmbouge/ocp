@@ -9,11 +9,11 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "CP.h"
-#import "CPFactory.h"
-#import "CPTable.h"
-#import "CPArray.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CP.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPTable.h>
+#import <objcp/CPArray.h>
 
 @interface CPFactory (Constraint)
 

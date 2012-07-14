@@ -9,11 +9,8 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORExpr.h"
+#import <ORFoundation/ORFoundation.h>
 #import <objcp/CPSolution.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPData.h>
 
 @protocol CP;
 @protocol CPExprVisitor;
@@ -27,6 +24,7 @@ typedef enum  {
     CPSkip
 } CPStatus;
 
+typedef CPStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(CPInt);
 typedef CPStatus (^CPVoid2CPStatus)(void);

@@ -9,10 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
-#import <ORFoundation/ORSet.h>
 
 @protocol AbstractSolver <NSObject,ORTracker>
 -(void) saveSolution;

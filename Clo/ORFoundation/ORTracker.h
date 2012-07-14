@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORUtilities/ORTypes.h>
 
 @protocol ORTracker <NSObject>
 -(void)trackObject:(id)obj;

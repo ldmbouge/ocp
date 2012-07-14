@@ -9,10 +9,8 @@
 
  ***********************************************************************/
 
-#include <Foundation/Foundation.h>
-#import "CPTypes.h"
-#include "ORFoundation/ORData.h"
-#include "CPDataI.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPTypes.h>
 
 @interface OPTSelect : NSObject {
     id<ORRandomStream> _stream;
@@ -32,7 +30,7 @@
 @interface CPSelect : NSObject {
     OPTSelect* _select;
 }
--(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*) initCPSelect: (id<CP>) cp withRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;

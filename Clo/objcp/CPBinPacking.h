@@ -9,14 +9,10 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-
-#import "CPTypes.h"
-#import "CPDataI.h"
-#import "CPArray.h"
-#import "CPConstraintI.h"
-#import "ORTrail.h"
-#import "CPBasicConstraint.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPTypes.h>
+#import <objcp/CPArray.h>
+#import <objcp/CPConstraintI.h>
 
 @interface CPBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
 }
