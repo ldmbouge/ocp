@@ -169,8 +169,11 @@
          [_b bind:NO];
       else {   // nobody bound and domains of (x,y) overlap
          [_b whenBindPropagate:self];
-         [self listenOn:_x inferOn:_y];
-         [self listenOn:_y inferOn:_x];
+         [_x whenChangeBoundsPropagate: self];
+         [_y whenChangeBoundsPropagate: self];
+         // pvh: do not understand this at all
+//         [self listenOn:_x inferOn:_y];
+//         [self listenOn:_y inferOn:_x];
       }
    }
    return CPSuspend;
@@ -215,29 +218,43 @@
 }
 -(void)propagate
 {
-   assert(bound(_b));
-   if (minDom(_b)) {
-      if (bound(_x))            // TRUE <=> (y == c)
-         [_y bind:minDom(_x)];
-      else  if (bound(_y))      // TRUE <=> (x == c)
-         [_x bind:minDom(_y)];
-      else {                    // TRUE <=> (x == y)
-         [_x updateMin:minDom(_y) andMax:maxDom(_y)];
-         [_y updateMin:minDom(_x) andMax:maxDom(_x)];
-         CPBounds b = bounds(_x);
-         for(CPInt i = b.min;i <= b.max; i++) {
+//   return;
+//   assert(bound(_b));
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         if (bound(_x))            // TRUE <=> (y == c)
+            [_y bind:minDom(_x)];
+         else  if (bound(_y))      // TRUE <=> (x == c)
+            [_x bind:minDom(_y)];
+         else {                    // TRUE <=> (x == y)
+            [_x updateMin:minDom(_y) andMax:maxDom(_y)];
+            [_y updateMin:minDom(_x) andMax:maxDom(_x)];
+            CPBounds b = bounds(_x);
+            for(CPInt i = b.min;i <= b.max; i++) {
             if (!memberBitDom(_x, i))
                [_y remove:i];
             if (!memberBitDom(_x, i))
                [_x remove:i];
+            }
          }
       }
-   } else {
-      if (bound(_x))             // FALSE <=> y == c => y != c
-         [_y remove:minDom(_x)];
-      else if (bound(_y))        // FALSE <=> x == c => x != c
-         [_x remove:minDom(_y)];
+      else {
+         if (bound(_x))             // FALSE <=> y == c => y != c
+            [_y remove:minDom(_x)];
+         else if (bound(_y))        // FALSE <=> x == c => x != c
+            [_x remove:minDom(_y)];
       // x != y
+      }
+   }
+   else {
+      if (bound(_x) && bound(_y))
+         [_b bind: minDom(_x) == minDom(_y)];
+      else if (bound(_x) && !memberDom(_y,minDom(_x)))
+         [_b bind: 0];
+      else if (bound(_y) && !memberDom(_x,minDom(_y)))
+         [_b bind: 0];
+      else if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
+          [_b bind: 0];
    }
 }
 

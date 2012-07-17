@@ -69,7 +69,7 @@
 
 -(CPStatus) post
 {
-   NSLog(@"BinPacking post called ...");
+//   NSLog(@"BinPacking post called ...");
    if (_posted)
       return CPSkip;
    
@@ -175,7 +175,7 @@
 
 -(CPStatus) post
 {
-   NSLog(@"BinPacking post called ...");
+//   NSLog(@"BinPacking post called ...");
    if (_posted)
       return CPSkip;
    
