@@ -169,11 +169,8 @@
          [_b bind:NO];
       else {   // nobody bound and domains of (x,y) overlap
          [_b whenBindPropagate:self];
-         [_x whenChangeBoundsPropagate: self];
-         [_y whenChangeBoundsPropagate: self];
-         // pvh: do not understand this at all
-//         [self listenOn:_x inferOn:_y];
-//         [self listenOn:_y inferOn:_x];
+         [self listenOn:_x inferOn:_y];
+         [self listenOn:_y inferOn:_x];
       }
    }
    return CPSuspend;
@@ -181,17 +178,19 @@
 -(void)listenOn:(CPIntVarI*)a inferOn:(CPIntVarI*)other
 {
    [a whenLoseValue:self do:^(CPInt c) {  // c NOTIN(a)
-      if (minDom(_b)==1)                   // TRUE <=> a == other
-         [other remove:c];
+      if (bound(other) && minDom(other)==c) // FALSE <=> other==c & c NOTIN(a)
+            [_b bind:NO];
    }];
    [a whenBindDo:^{
-      if (minDom(_b))             // TRUE <=> other == c
+      if (minDom(_b)==1)           // TRUE <=> other == c
          [other bind: minDom(a)];
       else if (maxDom(_b)==0)     // FALSE <=> other == c -> other != c
          [other remove:minDom(a)];
       else {                      // b <=> y == c
          if (!memberDom(other, minDom(a)))
             [_b bind:NO];
+         if (bound(other))
+            [_b bind:minDom(a) == minDom(other)];
       }
    } onBehalf:self];
    
@@ -218,43 +217,29 @@
 }
 -(void)propagate
 {
-//   return;
-//   assert(bound(_b));
-   if (bound(_b)) {
-      if (minDom(_b)) {
-         if (bound(_x))            // TRUE <=> (y == c)
-            [_y bind:minDom(_x)];
-         else  if (bound(_y))      // TRUE <=> (x == c)
-            [_x bind:minDom(_y)];
-         else {                    // TRUE <=> (x == y)
-            [_x updateMin:minDom(_y) andMax:maxDom(_y)];
-            [_y updateMin:minDom(_x) andMax:maxDom(_x)];
-            CPBounds b = bounds(_x);
-            for(CPInt i = b.min;i <= b.max; i++) {
+   if (minDom(_b)) {
+      if (bound(_x))            // TRUE <=> (y == c)
+         [_y bind:minDom(_x)];
+      else  if (bound(_y))      // TRUE <=> (x == c)
+         [_x bind:minDom(_y)];
+      else {                    // TRUE <=> (x == y)
+         [_x updateMin:minDom(_y) andMax:maxDom(_y)];
+         [_y updateMin:minDom(_x) andMax:maxDom(_x)];
+         CPBounds b = bounds(_x);
+         for(CPInt i = b.min;i <= b.max; i++) {
             if (!memberBitDom(_x, i))
                [_y remove:i];
             if (!memberBitDom(_x, i))
                [_x remove:i];
-            }
          }
-      }
-      else {
-         if (bound(_x))             // FALSE <=> y == c => y != c
-            [_y remove:minDom(_x)];
-         else if (bound(_y))        // FALSE <=> x == c => x != c
-            [_x remove:minDom(_y)];
-      // x != y
       }
    }
    else {
-      if (bound(_x) && bound(_y))
-         [_b bind: minDom(_x) == minDom(_y)];
-      else if (bound(_x) && !memberDom(_y,minDom(_x)))
-         [_b bind: 0];
-      else if (bound(_y) && !memberDom(_x,minDom(_y)))
-         [_b bind: 0];
-      else if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
-          [_b bind: 0];
+      if (bound(_x))             // FALSE <=> y == c => y != c
+         [_y remove:minDom(_x)];
+      else if (bound(_y))        // FALSE <=> x == c => x != c
+         [_x remove:minDom(_y)];
+      // x != y
    }
 }
 

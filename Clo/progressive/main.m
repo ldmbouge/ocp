@@ -78,46 +78,52 @@ int main(int argc, const char * argv[])
    [cp solve:
     ^{
        for(CPInt g = Guests.low; g <= Guests.up; g++) {
-         [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods with: ^id<CPIntVar>(CPInt p) { return [boat at: g : p]; }]]];
+          [cp add: [CPFactory alldifferent: ALL(CPIntVar, p, Periods, [boat at:g :p]) ]];
        }
+       
        for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-            id<CPExpr> e = SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]);
-            [cp add: e leqi: 1];
+            [cp add: SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1];
          }
         for(CPInt p = Periods.low; p <= Periods.up; p++)
-        [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+           [cp add: [CPFactory packing: ALL(CPIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
     }
        using:
     ^{
-       for(CPInt p = Periods.low; p <= Periods.up; p++)
-          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
-      //         orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
-           ];
-      
-       /*
-           for(CPInt g = Guests.low; g <= Guests.up; g++) {
-              [cp
-                  tryall: Hosts
-               filteredBy: ^bool(CPInt h) {return [[boat at: g : p] member: h]; }
-                  in: ^void(CPInt h) { [cp label: [boat at: g: p] with: h]; }
-                  onFailure:^(CPInt h) { [cp diff: [boat at: g: p] with: h]; }
-               ];
-           }
-      */
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {          
+          [cp forrange:Guests filteredBy:^bool(ORInt g) { return ![[boat at:g :p] bound];}
+                              orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
+                    do:^(ORInt g) {
+                       NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
+                       [cp tryall:Hosts filteredBy:^bool(ORInt h) {
+                          return [[boat at:g :p] member:h];
+                       } in:^(ORInt h) {
+                          [cp label:[boat at:g :p] with:h];
+                       } onFailure:^(ORInt h) {
+                          [cp diff:[boat at:g :p] with:h];
+                       }];
+             }];
+
+//          [CPLabel array: ALL(CPIntVar, g, Guests, [boat at:g :p])
+//               orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
+//           ];
+
+       }
        CPLong endTime = [CPRuntimeMonitor cputime];
-       printf("Exexution Time: %lld \n",endTime - startTime);
-       /*
+       NSLog(@"Exexution Time: %lld \n",endTime - startTime);
+       
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
+          NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];
+          [line appendFormat:@"p=%2d : ",p];
           for(CPInt g = Guests.low; g <= Guests.up; g++) {
              if ([[boat at: g : p] bound])
-                printf("boat at: %2d : %2d] = %2d]; \n",g,p,[[boat at: g: p] value]);
-             else
-                NSLog(@" [boat at: %2d : %2d] is %@",g,p,[boat at: g: p]);
+                [line appendFormat:@"%2d ",[[boat at: g :p] value]];
+             else [line appendFormat:@"%@",[boat at: g :p] ];
           }
-          printf("\n");
+          NSLog(@"%@",line);
+          [line release];
        }
-*/
+       
        /*
        for(CPInt p = Periods.low; p <= Periods.up; p++)
          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
@@ -135,6 +141,20 @@ int main(int argc, const char * argv[])
                 abort();
              }
        }
+       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++) {
+          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+             CPInt nbEq = 0;
+             for(CPInt p=Periods.low;p <= Periods.up;p++) {
+                nbEq += [[boat at: g1 : p] value] == [[boat at: g2 :p] value];
+                if (nbEq >= 2) {
+                   NSLog(@"Violation of social: g1=%d g2=%d p=%d  %@   -  %@",g1,g2,p,[boat at:g1:p],[boat at:g2 :p]);
+                   abort();
+                }
+             }
+             assert (nbEq <= 1);
+          }
+       }
+
        for(CPInt g = Guests.low; g <= Guests.up; g++) {
           for(CPInt p1 = Periods.low; p1 <= Periods.up; p1++)
              for(CPInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
