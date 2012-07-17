@@ -23,11 +23,11 @@ int main(int argc, const char * argv[])
 {
    ORInt nbConfigs = 6;
    ORRange Configs = (ORRange){1,nbConfigs};
-   ORInt choiceConfig = 1;
+   ORInt choiceConfig = 4;
   
    ORRange Hosts = (ORRange){1,13};
    ORRange Guests = (ORRange){1,29};
-   ORInt nbPeriods = 9;
+   ORInt nbPeriods = 6;
    ORRange Periods = (ORRange){1,nbPeriods};
    
    id<CP> cp = [CPFactory createSolver];
@@ -90,10 +90,11 @@ int main(int argc, const char * argv[])
     }
        using:
     ^{
-       for(CPInt p = Periods.low; p <= Periods.up; p++)
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {
           [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
-      //         orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
+                 orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
            ];
+       }
       
        /*
            for(CPInt g = Guests.low; g <= Guests.up; g++) {
@@ -106,8 +107,7 @@ int main(int argc, const char * argv[])
            }
       */
        CPLong endTime = [CPRuntimeMonitor cputime];
-       printf("Exexution Time: %lld \n",endTime - startTime);
-       /*
+       
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
           for(CPInt g = Guests.low; g <= Guests.up; g++) {
              if ([[boat at: g : p] bound])
@@ -117,7 +117,7 @@ int main(int argc, const char * argv[])
           }
           printf("\n");
        }
-*/
+       printf("Exexution Time: %lld \n",endTime - startTime);
        /*
        for(CPInt p = Periods.low; p <= Periods.up; p++)
          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
@@ -145,7 +145,19 @@ int main(int argc, const char * argv[])
                 }
              }
        }
-//          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+   
+       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
+          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+             CPInt s = 0;
+             for(CPInt p = Periods.low; p <= Periods.up; p++)
+                s += [[boat at: g1 : p] value] == [[boat at:g2 : p] value];
+             if (s > 1) {
+                printf("guest %d and guest %d \n",g1,g2);
+                printf("social constraint is wrong \n");
+                abort();
+             }
+          }
+      //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
     ];
    NSLog(@"Solver status: %@\n",cp);

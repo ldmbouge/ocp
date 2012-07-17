@@ -56,6 +56,7 @@
         if (i < low) {
             return;
         }
+ //      printf("(%d)",[[x at: i] getId]);
         [CPLabel var: [x at: i]];
     } while (true);    
 }

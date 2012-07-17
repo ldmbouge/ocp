@@ -305,7 +305,7 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
    if (noSumForCandidates(self,alpha,alpha))
       [_load updateMin: _p + _betaprime];
    if (noSumForCandidates(self,beta,beta))
-        [_load updateMax: _p + _alphaprime];
+      [_load updateMax: _p + _alphaprime];
    
    alpha = minDom(_load) - _p;
    beta = maxDom(_load) - _p;
@@ -321,6 +321,7 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
          noSumForCandidatesWith(self,alpha,beta,i);
       lastSize = _candidateSize[i];
    }
+
 }
 
 static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
