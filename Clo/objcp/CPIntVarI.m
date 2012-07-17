@@ -1003,7 +1003,8 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(CPStatus)bind: (CPInt) val
 {
     CPInt r = (val - _b) % _a;
-    if (r != 0) failNow();
+    if (r != 0)
+       failNow();
     CPInt ov = (val - _b) / _a; 
     return [_dom bind:ov for:_recv];
 }

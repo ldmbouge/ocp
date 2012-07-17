@@ -70,25 +70,23 @@ int main(int argc, const char * argv[])
          g++;
       }
    }
-   NSLog(@"cap: %@",cap);
-   NSLog(@"crew %@",crew);
+//   NSLog(@"cap: %@",cap);
+//   NSLog(@"crew %@",crew);
    CPLong startTime = [CPRuntimeMonitor cputime];
    
    id<CPIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    [cp solve:
     ^{
        for(CPInt g = Guests.low; g <= Guests.up; g++) {
-          printf("g%d ",g);
          [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods with: ^id<CPIntVar>(CPInt p) { return [boat at: g : p]; }]]];
        }
- /*      for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
+       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
             id<CPExpr> e = SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]);
             [cp add: e leqi: 1];
          }
-  */
-       for(CPInt p = Periods.low; p <= Periods.up; p++)
-         [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+        for(CPInt p = Periods.low; p <= Periods.up; p++)
+        [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
        using:
     ^{
@@ -96,6 +94,7 @@ int main(int argc, const char * argv[])
           [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
       //         orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
            ];
+      
        /*
            for(CPInt g = Guests.low; g <= Guests.up; g++) {
               [cp
@@ -108,12 +107,45 @@ int main(int argc, const char * argv[])
       */
        CPLong endTime = [CPRuntimeMonitor cputime];
        printf("Exexution Time: %lld \n",endTime - startTime);
-       for(CPInt g = Guests.low; g <= Guests.up; g++) {
-          for(CPInt p = Periods.low; p <= Periods.up; p++)
-             printf("boat[%2d,%2d] = %2d   \n",g,p,[[boat at: g : p] value]);
+       /*
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {
+          for(CPInt g = Guests.low; g <= Guests.up; g++) {
+             if ([[boat at: g : p] bound])
+                printf("boat at: %2d : %2d] = %2d]; \n",g,p,[[boat at: g: p] value]);
+             else
+                NSLog(@" [boat at: %2d : %2d] is %@",g,p,[boat at: g: p]);
+          }
           printf("\n");
        }
-
+*/
+       /*
+       for(CPInt p = Periods.low; p <= Periods.up; p++)
+         [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+        */
+       int use[14];
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {
+          for(CPInt h = 1; h <= 13; h++)
+             use[h] = 0;
+          
+          for(CPInt g = Guests.low; g <= Guests.up; g++)
+             use[[[boat at: g : p] value]] += [crew at: g];
+          for(CPInt h = 1; h <= 13; h++)
+             if (use[h] > [cap at: h]) {
+                printf("Bad capacity at %d - %d: %d instead of %d \n",p,h,use[h],[cap at: h]);
+                abort();
+             }
+       }
+       for(CPInt g = Guests.low; g <= Guests.up; g++) {
+          for(CPInt p1 = Periods.low; p1 <= Periods.up; p1++)
+             for(CPInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
+                if ([[boat at: g : p1] value] == [[boat at: g : p2] value]) {
+                   printf("boat[%d,%d] = %d and boat[%d,%d] = %d \n",g,p1,g,p2,[[boat at:g : p1] value],[[boat at: g : p2] value]);
+                   printf("all different is wrong \n");
+                   abort();
+                }
+             }
+       }
+//          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
     ];
    NSLog(@"Solver status: %@\n",cp);

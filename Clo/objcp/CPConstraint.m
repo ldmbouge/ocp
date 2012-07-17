@@ -227,8 +227,8 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    id<CPIntVarArray> sortedItem;
    id<CPIntArray> sortedSize;
    [CPFactory sortIntVarInt: x size: itemSize sorted: &sortedItem sortedSize: &sortedSize];
-   NSLog(@"%@",sortedItem);
-   NSLog(@"%@",sortedSize);
+//   NSLog(@"%@",sortedItem);
+//   NSLog(@"%@",sortedSize);
    id<CPConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: sortedItem itemSize: sortedSize binSize: load];
    [[x tracker] trackObject: o];
    return o;

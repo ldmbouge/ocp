@@ -122,7 +122,8 @@
 -(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
 {
    if (newMin <= _min._val) return CPSuspend;
-   if (newMin > _max._val) failNow();
+   if (newMin > _max._val)
+      failNow();
    if ([x tracksLoseEvt]) {
       for(CPInt k=_min._val;k< newMin;k++)
          [x loseValEvt:k];
@@ -137,7 +138,8 @@
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
    if (newMax >= _max._val) return CPSuspend;
-   if (newMax < _min._val) failNow();
+   if (newMax < _min._val)
+      failNow();
    if ([x tracksLoseEvt]) {
       for(CPInt k=newMax+1;k<= _max._val;k++)
          [x loseValEvt:k];
@@ -151,7 +153,8 @@
 }
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-   if (val < _min._val || val > _max._val) failNow();
+   if (val < _min._val || val > _max._val)
+      failNow();
    if (_sz._val == 1 && val == _min._val) return CPSuccess;
    if ([x tracksLoseEvt]) {
       for(CPInt k=_min._val;k<=_max._val;k++)
@@ -474,7 +477,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus) updateMin: (CPInt) newMin for: (id<CPIntVarNotifier>)x
 {
     if (newMin <= _min._val) return CPSuspend;
-   if (newMin > _max._val)  failNow();
+   if (newMin > _max._val)
+      failNow();
     int nbr = countFrom(self,_min._val,newMin-1);
    if ([x tracksLoseEvt]) {
       for(CPInt k=_min._val;k< newMin;k++) 
@@ -493,7 +497,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 -(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
    if (newMax >= _max._val) return CPSuspend;
-   if (newMax < _min._val) failNow();
+   if (newMax < _min._val)
+      failNow();
    CPInt nbr = countFrom(self,newMax+1,_max._val);
    if ([x tracksLoseEvt]) {
       for(CPInt k=newMax+1;k<= _max._val;k++)
@@ -510,7 +515,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 -(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-    if (val < _min._val || val > _max._val) failNow();
+    if (val < _min._val || val > _max._val)
+       failNow();
     if (_sz._val == 1 && val == _min._val) return CPSuccess;
     if ([x tracksLoseEvt]) {
         for(CPInt k=_min._val;k<=_max._val;k++) 

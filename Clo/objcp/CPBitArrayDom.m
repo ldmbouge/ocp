@@ -537,7 +537,8 @@
 
 -(CPStatus)bind:(uint64)val for:(id<CPIntVarNotifier>)x
 {
-    if ((val < [self min]) || (val > [self max])) failNow();
+    if ((val < [self min]) || (val > [self max]))
+       failNow();
     if ((_freebits._val == 0) && (val == [self min])) return CPSuccess;
     //Deal with arrays < 64 bits long
     assignTRUInt(&_min[0], val>>32, _trail);

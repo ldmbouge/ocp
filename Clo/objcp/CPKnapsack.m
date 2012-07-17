@@ -236,7 +236,8 @@
       CPInt nbReached = 0;
       for(CPInt i=L;i <= U;i++)
          nbReached += f[up][i];
-      if (nbReached==0) failNow();
+      if (nbReached==0)
+         failNow();
       for(CPInt i=L;i <= U;i++)
          g[up][i] = YES;   // [ldm] Why aren't we skipping values _NOT_ in D(_c) ? 
       for(CPInt i = up - 1; i >= low; i--) {

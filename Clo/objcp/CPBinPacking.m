@@ -85,7 +85,7 @@
       s += [_itemSize at: i];
    [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
    for(CPInt b = BR.low; b <= BR.up; b++)
-      [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
+     [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return CPSkip;
 }
 
@@ -125,7 +125,7 @@
 -(void) initInstanceVariables
 {
    _idempotent = YES;
-   _priority = HIGHEST_PRIO-1;
+   _priority = HIGHEST_PRIO-2;
    _posted = false;
 }
 
@@ -141,7 +141,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"BinPacking dealloc called ...");
+//   NSLog(@"BinPacking dealloc called ...");
    if (_posted) {
       free(_var);
       free(_size);
@@ -199,8 +199,7 @@
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
-   
-   // need to connect the variables
+
    return CPSuspend;
 }
 
@@ -212,14 +211,82 @@
    } while (_changed);
 }
 
+static BOOL noSum(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
+{
+   if (alpha <= 0 || beta >= cstr->_maxLoad)
+      return false;
+   CPInt sumA = 0;
+   CPInt sumB = 0;
+   CPInt sumC = 0;
+   CPInt k = -1;
+   CPInt kp = cstr->_nbX - 1;
+   while (sumC + cstr->_s[kp] < alpha) {
+      sumC += cstr->_s[kp];
+      kp--;
+   }
+   sumB = cstr->_s[kp];
+   while (sumA < alpha && sumB <= beta) {
+      k++;
+      sumA += cstr->_s[k];
+      if (sumA < alpha) {
+         kp++;
+         sumB += cstr->_s[kp];
+         sumC -= cstr->_s[kp];
+         while (sumA + sumC >= alpha) {
+            kp++;
+            sumC -= cstr->_s[kp];
+            sumB += cstr->_s[kp];
+            sumB -= cstr->_s[kp - k - 1];
+         }
+      }
+   }
+   cstr->_alphaprime = sumA + sumC;
+   cstr->_betaprime = sumB;
+   //   printf("SumA: %d \n",sumA);
+   //   printf("SumB: %d \n",sumB);
+   //   printf("SumC: %d \n",sumC);
+   //   printf("SumA + SumC: %d \n",sumA + sumC);
+   return sumA < alpha;
+}
+
+static void noSumForCandidatesWithout(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt item)
+{
+   cstr->_nbX = 0;
+   for(CPInt i = 0; i < cstr->_nbCandidates; i++)
+      if (i != item) {
+         cstr->_s[cstr->_nbX++] = cstr->_candidateSize[i];
+         cstr->_maxLoad += cstr->_s[i];
+      }
+   if (noSum(cstr,alpha,beta)) {
+      cstr->_changed = true;
+      [cstr->_candidate[item] bind: cstr->_bin];
+   }
+}
+
+static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt item)
+{
+   cstr->_nbX = 0;
+   for(CPInt i = 0; i < cstr->_nbCandidates; i++)
+      if (i != item) {
+         cstr->_s[cstr->_nbX++] = cstr->_candidateSize[i];
+         cstr->_maxLoad += cstr->_s[i];
+      }
+
+   if (noSum(cstr,alpha - cstr->_candidateSize[item],beta - cstr->_candidateSize[item])) {
+      cstr->_changed = true;
+      [cstr->_candidate[item] remove: cstr->_bin];
+   }
+}
+
+
 -(void) prune
 {
    _nbCandidates = 0;
    _p = 0;
    _maxLoad = 0;
    for(CPInt i = 0; i < _nbVar; i++) 
-      if ([_var[i] member: _bin]) {
-         if ([_var[i] bound]) 
+      if (memberDom(_var[i],_bin)) {
+         if (bound(_var[i]))
             _p += _size[i];
          else {
             _candidate[_nbCandidates] = _var[i];
@@ -230,34 +297,43 @@
       }
    [_load updateMin: _p];
    [_load updateMax: _maxLoad + _p];
-   CPInt alpha = [_load min] - _p;
-   CPInt beta = [_load max] - _p;
-   if ([self noSumForCandidates: alpha beta: beta])
+   CPInt alpha = minDom(_load) - _p;
+   CPInt beta = maxDom(_load) - _p;
+   if (noSumForCandidates(self,alpha,beta))
       failNow();
    
-   CPInt alphaPrime = _alphaprime;
-   CPInt betaPrime = _betaprime;
-   if ([self noSumForCandidates: alpha beta: alpha])
-      [_load updateMin: _p + betaPrime];
-   if ([self noSumForCandidates: beta beta: beta])
-      [_load updateMax: _p + alphaPrime];
+   if (noSumForCandidates(self,alpha,alpha))
+      [_load updateMin: _p + _betaprime];
+   if (noSumForCandidates(self,beta,beta))
+        [_load updateMax: _p + _alphaprime];
    
-   alpha = [_load min] - _p;
-   beta = [_load max] - _p;
+   alpha = minDom(_load) - _p;
+   beta = maxDom(_load) - _p;
    CPInt lastSize = MAXINT;
    for(CPInt i = 0; i < _nbCandidates && !_changed; i++) {
       if (_candidateSize[i] != lastSize)
-         [self noSumForCandidates: alpha beta: beta without: i];
+         noSumForCandidatesWithout(self,alpha,beta,i);
       lastSize = _candidateSize[i];
    }
    lastSize = MAXINT;
    for(CPInt i = 0; i < _nbCandidates && !_changed; i++) {
       if (_candidateSize[i] != lastSize)
-         [self noSumForCandidates: alpha beta: beta with: i];
+         noSumForCandidatesWith(self,alpha,beta,i);
       lastSize = _candidateSize[i];
    }
 }
 
+static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
+{
+   cstr->_nbX = cstr->_nbCandidates;
+   cstr->_maxLoad = 0;
+   for(CPInt i = 0; i < cstr->_nbX; i++) {
+      cstr->_s[i] = cstr->_candidateSize[i];
+      cstr->_maxLoad += cstr->_s[i];
+   }
+   return noSum(cstr,alpha,beta);
+   
+}
 -(BOOL) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta
 {
    _nbX = _nbCandidates;
@@ -266,7 +342,7 @@
       _s[i] = _candidateSize[i];
       _maxLoad += _s[i];
    }
-   return [self noSum: alpha  beta: beta];
+   return noSum(self,alpha,beta);
 }
 
 -(void) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta without: (CPInt) item
@@ -277,7 +353,7 @@
          _s[_nbX++] = _candidateSize[i];
          _maxLoad += _s[i];
       }
-   if ([self noSum: alpha beta: beta]) {
+   if (noSum(self,alpha,beta)) {
       _changed = true;
       [_candidate[item] bind: _bin];
    }
@@ -291,7 +367,8 @@
          _s[_nbX++] = _candidateSize[i];
          _maxLoad += _s[i];
       }
-   if ([self noSum: alpha - _candidateSize[item] beta: beta - _candidateSize[item]]) {
+   assert(_nbX == _nbCandidates - 1);
+   if (noSum(self,alpha - _candidateSize[item],beta - _candidateSize[item])) {
       _changed = true;
       [_candidate[item] remove: _bin];
    }

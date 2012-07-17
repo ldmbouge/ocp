@@ -108,7 +108,8 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          [_y updateMin:_tab[k]._val];
          assignTRInt(&_from, k, _trail);
       }
-      else failNow();
+      else
+         failNow();
       k = _to._val;
       while(k >= 0 && !memberDom(_x,_tab[k]._idx))
          --k;
@@ -116,7 +117,8 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          [_y updateMax:_tab[k]._val];
          assignTRInt(&_to, k, _trail);
       }
-      else failNow();
+      else
+         failNow();
       CPBounds yb = bounds(_y);
       k = _from._val;
       while (k < _sz && _tab[k]._val < yb.min) 
