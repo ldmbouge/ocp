@@ -362,7 +362,7 @@ void failNow()
 }
 +(id<CPExpr>) sum: (id<CP>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   return (id<CPExpr>)[CPFactory sum:cp range:r filteredBy:f of:e];
+   return (id<CPExpr>)[ORFactory sum:cp range:r filteredBy:f of:e];
 }
 @end
 

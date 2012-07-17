@@ -29,8 +29,10 @@
 @end
 
 @protocol ORIntSetArray <NSObject>
--(ORInt) at: (id<ORIntSet>) value;
+-(id<ORIntSet>) at: (ORInt) idx;
 -(void) set: (id<ORIntSet>) value at: (ORInt)idx;
+-(id<ORIntSet>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORIntSet>)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(ORRange) range;
