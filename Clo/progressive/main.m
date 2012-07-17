@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2012 NICTAq, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -94,7 +94,7 @@ int main(int argc, const char * argv[])
           [cp forrange:Guests filteredBy:^bool(ORInt g) { return ![[boat at:g :p] bound];}
                               orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
                     do:^(ORInt g) {
-                       NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
+                       //NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
                        [cp tryall:Hosts filteredBy:^bool(ORInt h) {
                           return [[boat at:g :p] member:h];
                        } in:^(ORInt h) {
