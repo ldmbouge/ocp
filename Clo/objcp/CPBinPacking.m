@@ -78,12 +78,12 @@
    CPRange IR = [_item range];
    id<CP> cp = [_item cp];
    
-//   for(CPInt b = BR.low; b <= BR.up; b++)
-//      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) leq: _binSize[b]]];
+   for(CPInt b = BR.low; b <= BR.up; b++)
+      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]]];
    CPInt s = 0;
    for(CPInt i = IR.low; i <= IR.up; i++)
       s += [_itemSize at: i];
-//   [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
+   [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
    for(CPInt b = BR.low; b <= BR.up; b++)
       [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return CPSkip;

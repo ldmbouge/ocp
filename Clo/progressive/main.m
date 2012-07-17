@@ -21,13 +21,15 @@
 
 int main(int argc, const char * argv[])
 {
+   
+   
    ORInt nbConfigs = 6;
    ORRange Configs = (ORRange){1,nbConfigs};
    ORInt choiceConfig = 1;
   
    ORRange Hosts = (ORRange){1,13};
    ORRange Guests = (ORRange){1,29};
-   ORInt nbPeriods = 2;
+   ORInt nbPeriods = 6;
    ORRange Periods = (ORRange){1,nbPeriods};
    
    id<CP> cp = [CPFactory createSolver];
@@ -70,32 +72,53 @@ int main(int argc, const char * argv[])
          g++;
       }
    }
-//   NSLog(@"%@",cap);
-//   NSLog(@"%@",crew);
+   NSLog(@"cap: %@",cap);
+   NSLog(@"crew %@",crew);
+   CPLong startTime = [CPRuntimeMonitor cputime];
    
    id<CPIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    [cp solve:
     ^{
-       for(CPInt g = Guests.low; g <= Guests.up; g++)
-          [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods with: ^id<CPIntVar>(CPInt p) { return [boat at: g : p]; }]]];
-       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
-          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-             id<CPExpr> e = SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]);
-             [cp add: e leqi: 1];
-          }
+      for(CPInt g = Guests.low; g <= Guests.up; g++)
+         [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods with: ^id<CPIntVar>(CPInt p) { return [boat at: g : p]; }]]];
+//       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
+//          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+//             id<CPExpr> e = SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]);
+//             [cp add: e leqi: 1];
+//          }
+       for(CPInt p = Periods.low; p <= Periods.up; p++)
+          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
        using:
     ^{
        for(CPInt p = Periods.low; p <= Periods.up; p++)
-          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }]
-               orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}];
+          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }]];
+       //        orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}];
+       /*
+           for(CPInt g = Guests.low; g <= Guests.up; g++) {
+              [cp
+                  tryall: Hosts
+               filteredBy: ^bool(CPInt h) {return [[boat at: g : p] member: h]; }
+                  in: ^void(CPInt h) { [cp label: [boat at: g: p] with: h]; }
+                  onFailure:^(CPInt h) { [cp diff: [boat at: g: p] with: h]; }
+               ];
+           }
+      */
+       CPLong endTime = [CPRuntimeMonitor cputime];
+       printf("Exexution Time: %lld \n",endTime - startTime);
        for(CPInt g = Guests.low; g <= Guests.up; g++) {
           for(CPInt p = Periods.low; p <= Periods.up; p++)
-             printf("boat[%2d,%2d] = %2d   ",g,p,[[boat at: g : p] value]);
+             printf("boat[%2d,%2d] = %2d   \n",g,p,[[boat at: g : p] value]);
           printf("\n");
        }
     }
     ];
+   NSLog(@"Solver status: %@\n",cp);
+   NSLog(@"Quitting");
+   [cp release];
+   [CPFactory shutdown];
+   return 0;
+
 
    @autoreleasepool {
        
