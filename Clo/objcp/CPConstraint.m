@@ -99,11 +99,21 @@
    return o;
 }
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(CPConsistency)c
 {
-    id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
-    [[[x cp] solver] trackObject: o];
-    return o;
+   switch(c) {
+      case ValueConsistency:
+      case RangeConsistency: {
+         id<CPConstraint> o = [[CPReifyEqualBC alloc] initCPReifyEqualBC: b when: x eq: y];
+         [[[x cp] solver] trackObject: o];
+         return o;
+      }
+      case DomainConsistency: {
+         id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
+         [[[x cp] solver] trackObject: o];
+         return o;
+      }
+   }
 }
 
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (CPInt) i

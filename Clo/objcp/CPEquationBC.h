@@ -18,7 +18,6 @@
    CPIntVarI**        _x;  // array of vars
    CPLong            _nb;  // size
    CPInt              _c;  // constant c in:: sum(i in S) x_i == c
-   IMP*          _bndIMP;   
    UBType* _updateBounds;
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(CPInt) c;
@@ -33,7 +32,6 @@
    CPIntVarI**        _x;  // array of vars
    CPLong            _nb;  // size
    CPInt              _c;  // constant c in:: sum(i in S) x_i <= c
-   IMP*          _bndIMP;
    UBType*    _updateMax;
 }
 -(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(CPInt) c;

@@ -26,7 +26,7 @@
 +(id<CPConstraint>) minimize: (id<CPIntVar>) x;
 +(id<CPConstraint>) maximize: (id<CPIntVar>) x;
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(CPConsistency)c;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (CPInt) i;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (CPInt) i;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq: (CPInt) i;

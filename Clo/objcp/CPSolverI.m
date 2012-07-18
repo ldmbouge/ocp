@@ -277,8 +277,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    _status = CPSuspend;
    _propagating = 0;
    _nbpropag = 0;
-   _propagSEL = @selector(propagate);
-   _propagIMP = [self methodForSelector:_propagSEL];
+   _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    _propagFail = nil;
    _propagDone = nil;
    return self;
@@ -477,7 +476,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
       case CPSuccess:
       case CPSuspend:
          //status = [fdm propagate];
-         status = (CPStatus) fdm->_propagIMP(fdm,fdm->_propagSEL);
+         status = fdm->_propagIMP(fdm,@selector(propagate));
          break;
       case CPDelay:
          break;
@@ -554,7 +553,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 -(CPStatus) diff: (CPIntVarI*) var with: (CPInt) val
 {
    @try {
-      CPStatus status = [var remove:val];
+      CPStatus status =  removeDom(var, val);
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);
@@ -668,8 +667,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    _status = CPSuspend;
    _propagating = 0;
    _nbpropag = 0;
-   _propagSEL = @selector(propagate);
-   _propagIMP = [self methodForSelector:_propagSEL];
+   _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
    for(id<CPConstraint> c in originalStore) {
       // The retain is necessary given that the post will release it after storing in cStore.
       [self add:[c retain]];  

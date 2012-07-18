@@ -667,7 +667,7 @@ struct CPVarPair {
       id<ORTracker> cp = [lV tracker];
       if (_rv==nil)
          _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
-      [_fdm post:[CPFactory reify:_rv with:lV eq:rV]];
+      [_fdm post:[CPFactory reify:_rv with:lV eq:rV consistency:_c]];
    }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e

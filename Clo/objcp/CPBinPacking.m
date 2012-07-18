@@ -79,7 +79,7 @@
    id<CP> cp = [_item cp];
    
    for(CPInt b = BR.low; b <= BR.up; b++)
-      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]]];
+      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
    CPInt s = 0;
    for(CPInt i = IR.low; i <= IR.up; i++)
       s += [_itemSize at: i];
@@ -305,7 +305,7 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
    if (noSumForCandidates(self,alpha,alpha))
       [_load updateMin: _p + _betaprime];
    if (noSumForCandidates(self,beta,beta))
-        [_load updateMax: _p + _alphaprime];
+      [_load updateMax: _p + _alphaprime];
    
    alpha = minDom(_load) - _p;
    beta = maxDom(_load) - _p;
@@ -321,6 +321,7 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
          noSumForCandidatesWith(self,alpha,beta,i);
       lastSize = _candidateSize[i];
    }
+
 }
 
 static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)

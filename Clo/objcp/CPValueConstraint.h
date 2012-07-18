@@ -43,6 +43,18 @@
 -(CPUInt)nbUVars;
 @end
 
+@interface CPReifyEqualBC : CPCoreConstraint<NSCoding> {
+@private
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id) initCPReifyEqualBC:(id<CPIntVar>)b when:(id<CPIntVar>)x eq:(id<CPIntVar>)y;
+-(CPStatus) post;
+-(NSSet*)allVars;
+-(CPUInt)nbUVars;
+@end
+
 @interface CPReifyEqualDC : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI* _b;

@@ -64,8 +64,7 @@ enum CPSolverState {
    CPInt                _propagating;
    CPUInt               _nbpropag;
    CPCoreConstraint*        _last;               
-   IMP                      _propagIMP;
-   SEL                      _propagSEL;
+   UBType                   _propagIMP;
    id<CPSolution>           _aSol;
    @package
    id<ORIntInformer>        _propagFail;
