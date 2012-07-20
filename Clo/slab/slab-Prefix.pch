@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'slab' target in the 'slab' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

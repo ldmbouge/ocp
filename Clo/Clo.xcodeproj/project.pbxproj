@@ -524,6 +524,11 @@
 		B17EB196146C55010097E18D /* CPConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17EB195146C55010097E18D /* CPConstraintI.m */; };
 		B189033F142C266F007F6EAD /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1890340142C266F007F6EAD /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
+		B1935C6015B90ECE00107399 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		B1935C6315B90ECE00107399 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1935C6215B90ECE00107399 /* main.m */; };
+		B1935C7115B90EEA00107399 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		B1935C7215B90EED00107399 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		B1935C7315B90EF100107399 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1943A1115B0E34400E1771B /* rbg040a.tw in Copy Files */ = {isa = PBXBuildFile; fileRef = B1943A0F15B0E33C00E1771B /* rbg040a.tw */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B19ABA0E146D68FE004EB77E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA0D146D68FE004EB77E /* main.m */; };
@@ -905,6 +910,27 @@
 			remoteGlobalIDString = B178F62513E89CFA00D59B31;
 			remoteInfo = lpsolver;
 		};
+		B1935C6B15B90ED900107399 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		B1935C6D15B90EDB00107399 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		B1935C6F15B90EDE00107399 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
 		B19ABA16146D691A004EB77E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1195,6 +1221,15 @@
 				B177159D155798AA00BA14BF /* Euler.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		B1935C5C15B90ECE00107399 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = usr/share/man/man1;
+			dstSubfolderSpec = 6;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B19ABA07146D68FE004EB77E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -1598,6 +1633,10 @@
 		B17EB195146C55010097E18D /* CPConstraintI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConstraintI.m; sourceTree = "<group>"; };
 		B189033D142C266D007F6EAD /* CPTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrigger.h; sourceTree = "<group>"; };
 		B189033E142C266E007F6EAD /* CPTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrigger.m; sourceTree = "<group>"; };
+		B1935C5E15B90ECE00107399 /* slab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = slab; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1935C6215B90ECE00107399 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1935C6515B90ECE00107399 /* slab-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slab-Prefix.pch"; sourceTree = "<group>"; };
+		B1935C6615B90ECE00107399 /* slab.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slab.1; sourceTree = "<group>"; };
 		B1943A0F15B0E33C00E1771B /* rbg040a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg040a.tw; sourceTree = "<group>"; };
 		B19ABA09146D68FE004EB77E /* AtomicTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AtomicTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B19ABA0D146D68FE004EB77E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -2007,6 +2046,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1935C5B15B90ECE00107399 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1935C7315B90EF100107399 /* ORUtilities.framework in Frameworks */,
+				B1935C7215B90EED00107399 /* ORFoundation.framework in Frameworks */,
+				B1935C7115B90EEA00107399 /* objcp.framework in Frameworks */,
+				B1935C6015B90ECE00107399 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B19ABA06146D68FE004EB77E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2202,6 +2252,7 @@
 				5BAEE09D15AEA08E006CEE1E /* costas */,
 				B1F531D815AED4B100E89F98 /* testPacking */,
 				B15F6DDE15B1361700158FA0 /* progressive */,
+				B1935C5E15B90ECE00107399 /* slab */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2256,6 +2307,7 @@
 		5B7408AC1562828000C05277 /* Objective-CP Examples */ = {
 			isa = PBXGroup;
 			children = (
+				B1935C6115B90ECE00107399 /* slab */,
 				B15F6DE115B1361700158FA0 /* progressive */,
 				5BEAD78815ABE38500A012FE /* bibd */,
 				5B76D99115AAADBE00F8B445 /* marriage */,
@@ -3051,6 +3103,24 @@
 				B17ABF7D13CE4E7700DC7288 /* gurobiwrapper-Info.plist */,
 				B17ABF7E13CE4E7700DC7288 /* InfoPlist.strings */,
 				B17ABF8113CE4E7700DC7288 /* gurobiwrapper-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		B1935C6115B90ECE00107399 /* slab */ = {
+			isa = PBXGroup;
+			children = (
+				B1935C6215B90ECE00107399 /* main.m */,
+				B1935C6615B90ECE00107399 /* slab.1 */,
+				B1935C6415B90ECE00107399 /* Supporting Files */,
+			);
+			path = slab;
+			sourceTree = "<group>";
+		};
+		B1935C6415B90ECE00107399 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B1935C6515B90ECE00107399 /* slab-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -4069,6 +4139,26 @@
 			productReference = B17ABF7913CE4E7700DC7288 /* gurobiwrapper.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		B1935C5D15B90ECE00107399 /* slab */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1935C6A15B90ECF00107399 /* Build configuration list for PBXNativeTarget "slab" */;
+			buildPhases = (
+				B1935C5A15B90ECE00107399 /* Sources */,
+				B1935C5B15B90ECE00107399 /* Frameworks */,
+				B1935C5C15B90ECE00107399 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1935C7015B90EDE00107399 /* PBXTargetDependency */,
+				B1935C6E15B90EDB00107399 /* PBXTargetDependency */,
+				B1935C6C15B90ED900107399 /* PBXTargetDependency */,
+			);
+			name = slab;
+			productName = slab;
+			productReference = B1935C5E15B90ECE00107399 /* slab */;
+			productType = "com.apple.product-type.tool";
+		};
 		B19ABA08146D68FE004EB77E /* AtomicTest */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B19ABA15146D68FE004EB77E /* Build configuration list for PBXNativeTarget "AtomicTest" */;
@@ -4207,6 +4297,7 @@
 				5BAEE09C15AEA08D006CEE1E /* costas */,
 				B1F531D715AED4B100E89F98 /* testPacking */,
 				B15F6DDD15B1361700158FA0 /* progressive */,
+				B1935C5D15B90ECE00107399 /* slab */,
 			);
 		};
 /* End PBXProject section */
@@ -4791,6 +4882,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1935C5A15B90ECE00107399 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1935C6315B90ECE00107399 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B19ABA05146D68FE004EB77E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5072,6 +5171,21 @@
 			isa = PBXTargetDependency;
 			target = B178F62513E89CFA00D59B31 /* lpsolver */;
 			targetProxy = B178F63813E8AF0100D59B31 /* PBXContainerItemProxy */;
+		};
+		B1935C6C15B90ED900107399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = B1935C6B15B90ED900107399 /* PBXContainerItemProxy */;
+		};
+		B1935C6E15B90EDB00107399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = B1935C6D15B90EDB00107399 /* PBXContainerItemProxy */;
+		};
+		B1935C7015B90EDE00107399 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = B1935C6F15B90EDE00107399 /* PBXContainerItemProxy */;
 		};
 		B19ABA17146D691A004EB77E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6844,6 +6958,46 @@
 			};
 			name = Release;
 		};
+		B1935C6815B90ECF00107399 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "slab/slab-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		B1935C6915B90ECF00107399 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "slab/slab-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		B19ABA13146D68FE004EB77E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7357,6 +7511,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B1935C6A15B90ECF00107399 /* Build configuration list for PBXNativeTarget "slab" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1935C6815B90ECF00107399 /* Debug */,
+				B1935C6915B90ECF00107399 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		B19ABA15146D68FE004EB77E /* Build configuration list for PBXNativeTarget "AtomicTest" */ = {
 			isa = XCConfigurationList;
