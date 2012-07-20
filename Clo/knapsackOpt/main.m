@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
          "mknap1-5.txt",
          "mknap1-6.txt"};
       char buf[512];
-      sprintf(buf,"%s/%s",src,afn[3]);
+      sprintf(buf,"%s/%s",src,afn[4]);
       FILE* dta = fopen(buf,"r");
       int n,m,opt;
       fscanf(dta, "%d %d %d",&n,&m,&opt);

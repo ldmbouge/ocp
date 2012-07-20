@@ -44,7 +44,6 @@
 -(void)insert:(KSNode*)n below:(KSNode*)spot;
 -(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support  nbCol:(CPInt)nb;
 -(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support  nbCol:(CPInt)nb addWeight:(CPInt)w bound:(CPInt)U;
--(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks;
 -(void)lostCapacity:(CPInt)v knapsack:(CPKnapsack*)ks;
 -(NSString*)description;
 -(void)pruneCapacity:(CPIntVarI*)capVar;
@@ -57,6 +56,7 @@ typedef struct CPKSPair {
 
 static void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col);
 static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n);
+static inline void pullValue(KSColumn* k,CPInt v,CPKnapsack* ks);
 
 static inline void pullNode(KSColumn* col,KSNode* node)
 {
@@ -120,6 +120,8 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    for(CPInt k=_low;k<= _up;k++)
       _xb[k - _low] = (CPIntVarI*)_x[k];
    _support = malloc(sizeof(TRInt)*_nb*2);
+   for(CPInt k=0;k<_nb*2;k++)
+      _support[k] = makeTRInt(_trail, 0);
    [self makeSparse: [self denseMatrices]];  // after this, supports will be initialized.
    for(CPInt i = 0;i < _nb;i++)
       for(CPInt v=0;v <= 1;v++)
@@ -129,7 +131,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    for(CPInt i = 0;i < _nb;i++) {
       if (!bound(_xb[i])) {
          [_xb[i] whenLoseValue:self do:^(CPInt v) {
-            [_column[i] pullValue:v knapsack:self];
+            pullValue(_column[i],v,self);
          }];
       }
    }
@@ -348,12 +350,12 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       cur = cur->_up._val;
    return cur;
 }
--(CPKSPair)looseValue:(CPInt)v
+static inline CPKSPair looseValue(KSNode* n,CPInt v)
 {
-   KSNode* pv = _pred[v]._val;
+   KSNode* pv = n->_pred[v]._val;
    if (pv) {
-      assignTRIdNC(&_pred[v],nil,_trail);
-      return (CPKSPair){_pred[!v]._val == nil,pv};
+      assignTRIdNC(&n->_pred[v],nil,n->_trail);
+      return (CPKSPair){n->_pred[!v]._val == nil,pv};
    } else
       return (CPKSPair){NO,pv};
 }
@@ -400,18 +402,18 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    assignTRIdNC(&spot->_down,n,_trail);
 }
 
--(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks
+static inline void pullValue(KSColumn* k,CPInt v,CPKnapsack* ks)
 {
-   KSNode* cur = _first._val;
+   KSNode* cur = k->_first._val;
    while (cur) {
       KSNode* next = cur->_up._val;
-      CPKSPair status = [cur looseValue:v];
+      CPKSPair status = looseValue(cur,v);
       if (status.unreachable) {
-         forwardPropagateLoss(ks,cur,self);
+         forwardPropagateLoss(ks,cur,k);
          outboundLossOn(ks,status.pred,v);
       }
       else if (status.pred)
-         assignTRIdNC(&status.pred->_succ[v],nil,_trail);
+         assignTRIdNC(&status.pred->_succ[v],nil,k->_trail);
       cur = next;
    }
 }
