@@ -42,8 +42,8 @@
 -(void)makeSource;
 -(void)pushOnColumn:(KSNode*)c;
 -(void)insert:(KSNode*)n below:(KSNode*)spot;
--(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support;
--(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support addWeight:(CPInt)w bound:(CPInt)U;
+-(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support  nbCol:(CPInt)nb;
+-(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support  nbCol:(CPInt)nb addWeight:(CPInt)w bound:(CPInt)U;
 -(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks;
 -(void)lostCapacity:(CPInt)v knapsack:(CPKnapsack*)ks;
 -(NSString*)description;
@@ -89,7 +89,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    KSColumn**         _column;
 }
 
-#define SUPP(r,c) ((r)*2 + (c))
+#define SUPP(N,r,c) ((r)*2 + (c))
 
 -(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<CPIntArray>)w capacity:(CPIntVarI*)cap
 {
@@ -121,9 +121,9 @@ static inline void pullNode(KSColumn* col,KSNode* node)
       _xb[k - _low] = (CPIntVarI*)_x[k];
    _support = malloc(sizeof(TRInt)*_nb*2);
    [self makeSparse: [self denseMatrices]];  // after this, supports will be initialized.
-   for(CPInt v=0;v <= 1;v++)
-      for(CPInt i = 0;i < _nb;i++)
-         if (_support[SUPP(v,i)]._val ==0)
+   for(CPInt i = 0;i < _nb;i++)
+      for(CPInt v=0;v <= 1;v++)
+         if (_support[SUPP(_nb,i,v)]._val ==0)
             removeDom(_xb[i],v);
    [_column[_nb-1] pruneCapacity:_c];
    for(CPInt i = 0;i < _nb;i++) {
@@ -141,7 +141,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 static inline void outboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {
    CPInt colID = n->_col + 1;
-   CPInt ofs = SUPP(v,colID);
+   CPInt ofs = SUPP(ks->_nb,colID,v);
    CPInt ns  = ks->_support[ofs]._val - 1;
    assignTRInt(ks->_support + ofs,ns,ks->_trail);
    if (ns==0)
@@ -152,7 +152,7 @@ static inline void outboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 }
 static inline void inboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {
-   CPInt ofs = SUPP(v,n->_col);
+   CPInt ofs = SUPP(ks->_nb,n->_col,v);
    CPInt ns  = ks->_support[ofs]._val - 1;
    assignTRInt(ks->_support + ofs,ns,ks->_trail);
    if (ns==0)
@@ -261,9 +261,9 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    
    for(CPInt i = 0;i < _nb;i++) {
       if ([_xb[i] member: 0])
-         [_column[i-1] cloneInto:_column[i] dense:f support:_support];
+         [_column[i-1] cloneInto:_column[i] dense:f support:_support nbCol:(CPInt)_nb];
       if ([_xb[i] member: 1])
-         [_column[i-1] addInto:_column[i] dense:f support:_support addWeight:[_w at:i + _low] bound:[_c max]];
+         [_column[i-1] addInto:_column[i] dense:f support:_support nbCol:(CPInt)_nb addWeight:[_w at:i + _low] bound:[_c max]];
    }
    // Wrap up with the deallocation of this f that we no longer need.
    f -= 1;
@@ -437,13 +437,13 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       [capVar remove:v];
    }
 }
--(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support 
+-(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support nbCol:(CPInt)nb
 {
    CPInt idx = into->_col;
    KSNode* src = _first._val;
    while(src) {
       if (f[idx][src->_w]) {
-         CPInt ofs = SUPP(0,idx);
+         CPInt ofs = SUPP(nb,idx,0);
          CPInt ns  = support[ofs]._val + 1;
          assignTRInt(support + ofs, ns, _trail);
          KSNode* new = [[KSNode alloc] initKSNode:idx weight:src->_w trail:_trail];
@@ -453,7 +453,7 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       src = src->_up._val;
    }
 }
--(void)addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support addWeight:(CPInt)w bound:(CPInt)U
+-(void)addInto:(KSColumn*)into dense:(BOOL**)f support:(TRInt*)support nbCol:(CPInt)nb addWeight:(CPInt)w bound:(CPInt)U
 {
    KSNode* dst = into->_first._val;
    KSNode* src = _first._val;
@@ -461,7 +461,7 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    while (src) {
       CPInt fw = src->_w + w;
       if (fw <= U && f[idx][fw]) {
-         CPInt ofs = SUPP(1,idx);
+         CPInt ofs = SUPP(nb,idx,1);
          CPInt ns  = support[ofs]._val + 1;
          assignTRInt(support + ofs,ns,_trail);
          KSNode* at = [dst findSpot:fw];
