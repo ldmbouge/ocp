@@ -106,7 +106,7 @@
    } using: ^() {
       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       int nbOne = 0;
-      for(NSInteger k=0;k<s;k++) {
+      for(CPInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
          nbOne += [[x at:k] min] == 1;
       }
@@ -140,7 +140,7 @@
       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
       int nbOne = 0;
       int nbZero = 0;
-      for(NSInteger k=0;k<s;k++) {
+      for(CPInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
          nbOne  += [[x at:k] min] == 1;
          nbZero += [[nx at:k] min] == 1;
@@ -201,7 +201,7 @@
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return i;}];
-      for(NSInteger k=0;k<s;k++) {
+      for(CPInt k=0;k<s;k++) {
          STAssertTrue([[x at:k] min] == ![[nx at:k] min], @"x and nx should be negations of each other");
       }
       [nbSolutions  incr];
@@ -253,7 +253,7 @@
    id<CPIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
    id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [m solveAll:^() {
-      [m add:[CPFactory reify:b with:x eq:y]];
+      [m add:[CPFactory reify:b with:x eq:y consistency:ValueConsistency]];
    } using: ^{
       [CPLabel var:x];
       [CPLabel var:y];
@@ -272,7 +272,7 @@
    id<CPIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
    id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [m solveAll:^() {
-      [m add:[CPFactory reify:b with:x eq:y]];
+      [m add:[CPFactory reify:b with:x eq:y consistency:DomainConsistency]];
    } using: ^{
       [CPLabel var:b];
       [CPLabel var:x];
@@ -287,8 +287,8 @@
    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
    ORAVLTree* tree = [[[ORAVLTree alloc] initEmptyAVL] autorelease];
    for(NSInteger i=0;i<20;i++) {
-      long k = random() % 1000;
-      [tree insertObject:[NSNumber numberWithLong:k] forKey:(NSInteger)k];
+      CPInt k = random() % 1000;
+      [tree insertObject:[NSNumber numberWithLong:k] forKey:(CPInt)k];
    }
    NSLog(@"content: %@\n",tree);
    [pool release];
@@ -403,4 +403,60 @@
    [cp release];
    [CPFactory shutdown];
 }
+
+-(void)testKnapsack1
+{
+   CPInt n = 4;
+   id<CP> cp = [CPFactory createSolver];
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
+   id<CPIntVar> cap = [CPFactory intVar:cp domain:RANGE(0,25)];
+   int* coef = (int[]){3,4,10,30};
+   id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
+   [cp solveAll:^{
+      [cp add:[CPFactory knapsack: x weight: w capacity:cap ]];
+   } using:^{
+      NSLog(@"START: %@ = %@",x,cap);
+      [CPLabel array:x];
+      [CPLabel var:cap];
+      NSLog(@"SOL: %@ = %@",x,cap);
+   }];
+}
+
+-(void)testKnapsack2
+{
+   CPInt n = 4;
+   id<CP> cp = [CPFactory createSolver];
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
+   id<CPIntVar> cap = [CPFactory intVar:cp domain:RANGE(3,25)];
+   int* coef = (int[]){3,4,10,30};
+   id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
+   [cp solveAll:^{
+      [cp add:[CPFactory knapsack: x weight: w capacity:cap ]];
+   } using:^{
+      NSLog(@"KS2: START: %@ = %@",x,cap);
+      [CPLabel array:x];
+      [CPLabel var:cap];
+      NSLog(@"KS2: SOL: %@ = %@",x,cap);
+   }];
+}
+
+
+-(void)testKnapsack3
+{
+   CPInt n = 4;
+   id<CP> cp = [CPFactory createSolver];
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
+   id<CPIntVar> cap = [CPFactory intVar:cp domain:RANGE(14,25)];
+   int* coef = (int[]){3,4,10,30};
+   id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
+   [cp solveAll:^{
+      [cp add:[CPFactory knapsack: x weight: w capacity:cap ]];
+   } using:^{
+      NSLog(@"KS2: START: %@ = %@",x,cap);
+      [CPLabel array:x];
+      [CPLabel var:cap];
+      NSLog(@"KS2: SOL: %@ = %@",x,cap);
+   }];
+}
+
 @end

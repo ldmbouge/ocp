@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2012 NICTAq, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -23,11 +23,15 @@ int main(int argc, const char * argv[])
 {
    ORInt nbConfigs = 6;
    ORRange Configs = (ORRange){1,nbConfigs};
-   ORInt choiceConfig = 4;
+   ORInt choiceConfig = 1;
   
    ORRange Hosts = (ORRange){1,13};
    ORRange Guests = (ORRange){1,29};
+<<<<<<< HEAD
    ORInt nbPeriods = 7;
+=======
+   ORInt nbPeriods = 9;
+>>>>>>> 3e61f07380599bf731d4e50c614ac7eba9d16946
    ORRange Periods = (ORRange){1,nbPeriods};
    
    id<CP> cp = [CPFactory createSolver];
@@ -51,7 +55,7 @@ int main(int argc, const char * argv[])
    for(ORInt i = 16; i <= 19; i++)
       [config[6] insert: i];
    
-//   NSLog(@"%@",config);
+   NSLog(@"%@",config);
    
    FILE* dta = fopen("progressive.txt","r");
    CPInt h = 1;
@@ -93,6 +97,7 @@ int main(int argc, const char * argv[])
     }
        using:
     ^{
+<<<<<<< HEAD
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
           [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
                orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
@@ -105,6 +110,13 @@ int main(int argc, const char * argv[])
 //                              orderedBy:^ORInt(ORInt g) { return g;}
                     do:^(ORInt g){
 //                       NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
+=======
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {          
+          [cp forrange:Guests filteredBy:^bool(ORInt g) { return ![[boat at:g :p] bound];}
+             orderedBy:^ORInt(ORInt g) { return g;}//[[boat at:g :p] domsize];}
+                    do:^(ORInt g) {
+                       //NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
+>>>>>>> 3e61f07380599bf731d4e50c614ac7eba9d16946
                        [cp tryall:Hosts filteredBy:^bool(ORInt h) {
                           return [[boat at:g :p] member:h];
                        } in:^(ORInt h) {
@@ -129,7 +141,7 @@ int main(int argc, const char * argv[])
           NSLog(@"%@",line);
           [line release];
        }
-       printf("Exexution Time: %lld \n",endTime - startTime);
+       NSLog(@"Execution Time: %lld \n",endTime - startTime);
        /*
        for(CPInt p = Periods.low; p <= Periods.up; p++)
          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];

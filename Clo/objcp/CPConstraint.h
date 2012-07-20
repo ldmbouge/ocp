@@ -26,7 +26,7 @@
 +(id<CPConstraint>) minimize: (id<CPIntVar>) x;
 +(id<CPConstraint>) maximize: (id<CPIntVar>) x;
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(CPConsistency)c;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (CPInt) i;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (CPInt) i;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq: (CPInt) i;
@@ -47,6 +47,7 @@
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize load: (id<CPIntVarArray>) load;
 +(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
++(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<CPIntArray>) w capacity:(id<CPIntVar>)c;
 
 +(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (CPConsistency)cons;
 +(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (CPConsistency)cons;

@@ -36,7 +36,7 @@
     [super tearDown];
 }
 
--(NSInteger) setupCardWith:(NSInteger)n size:(NSInteger)s
+-(NSInteger) setupCardWith:(CPInt)n size:(CPInt)s
 {
    id<CP> m = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:m range:(CPRange){0,s-1} domain:(CPRange){0,n-1}];
@@ -56,7 +56,7 @@
       printf("]\n");
        */
       for(NSInteger k=0;k<n;k++)cnt[k]=0;
-      for(NSInteger k=0;k<s;k++)
+      for(CPInt k=0;k<s;k++)
          cnt[[[x at:k] min]]++;
       for(NSInteger k=0;k<n;k++)
          STAssertTrue(cnt[k]>=2 && cnt[k] <=3, @"cnt should always be in 2..3");

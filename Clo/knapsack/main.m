@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
                             "mknap1-5.txt",
                             "mknap1-6.txt"};
       char buf[512];
-      sprintf(buf,"%s/%s",src,afn[4]);
+      sprintf(buf,"%s/%s",src,afn[2]);
       FILE* dta = fopen(buf,"r");
       int n,m,opt;
       fscanf(dta, "%d %d %d",&n,&m,&opt);
@@ -59,11 +59,14 @@ int main(int argc, const char * argv[])
       id<CP> cp = [CPFactory createSolver];
       id<CPIntVarArray> x = ALL(CPIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(0,1)]);
       // id<CPIntVarArray> x = [CPFactory intVarArray: cp range: N domain: (CPRange){0,1}];
-      id<CPHeuristic> h = [CPFactory createIBS:cp];
+      id<CPHeuristic> h = [CPFactory createIBS:cp restricted:x];
       [cp solve: ^{
          [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];
          for(int i=0;i<m;i++) {
-            [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:r[i]] leq:b[i]]];
+            //[cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:r[i]] leq:b[i]]];
+            id<CPIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
+            id<CPIntVar>   c = [CPFactory intVar:cp domain:RANGE(0,b[i])];
+            [cp add:[CPFactory knapsack:x weight:w capacity:c]];       
          }
       } using:^{
          [CPLabel heuristic:h];

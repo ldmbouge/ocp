@@ -28,6 +28,7 @@
 -(void)dealloc;
 -(void)setSucc:(CPInt)v as:(KSNode*)n;
 -(void)pushKSNode:(KSNode*)top;
+-(CPInt)weight;
 @end
 
 @interface KSColumn : NSObject {
@@ -43,123 +44,17 @@
 -(void)insert:(KSNode*)n below:(KSNode*)spot;
 -(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support;
 -(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support addWeight:(CPInt)w bound:(CPInt)U;
+-(void)pullNode:(KSNode*)node;
+-(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks;
+-(void)lostCapacity:(CPInt)v knapsack:(CPKnapsack*)ks;
+-(NSString*)description;
+-(void)pruneCapacity:(CPIntVarI*)capVar;
 @end
 
-@implementation KSNode
--(KSNode*)initKSNode:(CPInt)cid weight:(CPInt)w trail:(ORTrail*)trail
-{
-   self = [super init];
-   _col = cid;
-   _w   = w;
-   _trail = trail;
-   _up   = makeTRId(trail, nil);
-   _down = makeTRId(trail, nil);
-   _succ[0] = _succ[1] = makeTRId(trail,nil);
-   _pred[0] = _pred[1] = makeTRId(trail,nil);
-   [_trail trailRelease:self];
-   return self;
-}
--(void)dealloc
-{
-   [super dealloc];
-}
--(void)setSucc:(CPInt)v as:(KSNode*)n
-{
-   assignTRId(&_succ[0],n,_trail);
-   assignTRId(&n->_pred[0],self,_trail);
-}
--(void)pushKSNode:(KSNode*)top
-{
-   assignTRId(&top->_down,_up._val,_trail);
-   assignTRId(&_up,top,_trail);
-}
--(KSNode*)findSpot:(CPInt)w
-{
-   KSNode* cur = self;
-   while (cur && cur->_w < w)
-      cur = cur->_up._val;
-   return cur;
-}
-@end
-
-@implementation KSColumn
--(KSColumn*)initKSColumn:(CPInt)cid trail:(ORTrail*)trail
-{
-   self = [super init];
-   _trail = trail;
-   _col   = 0;
-   _first = _last = makeTRId(_trail, nil);
-   return self;
-}
--(void)makeSource
-{
-   KSNode* source = [[KSNode alloc] initKSNode:_col weight:0 trail:_trail];
-   assignTRId(&_first,source,_trail);
-   assignTRId(&_last,source,_trail);
-}
--(void)pushOnColumn:(KSNode*)c
-{
-   if (_first._val == nil) {            // we do not have a content yet. Create one with c.
-      assignTRId(&_first,c,_trail);
-      assignTRId(&_last,c,_trail);
-   } else {                             // we do have a column. Add on top.
-      [_last._val pushKSNode:c];
-      assignTRId(&_last,c,_trail);
-   }
-}
--(void)insert:(KSNode*)n below:(KSNode*)spot
-{
-   KSNode* below = spot->_down._val;
-   assignTRId(&n->_up, spot, _trail);
-   assignTRId(&n->_down,below,_trail);
-   assignTRId(&below->_up,n,_trail);
-   assignTRId(&spot->_down,n,_trail);
-}
--(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support
-{
-   CPInt idx = into->_col;
-   KSNode* src = _first._val;
-   while(src) {
-      if (f[idx][src->_w]) {
-         [support set:[support at:idx :0]+1 at:idx :0];
-         KSNode* new = [[KSNode alloc] initKSNode:idx weight:src->_w trail:_trail];
-         [src setSucc:0 as:new];
-         [into pushOnColumn:new];
-      }
-      src = src->_up._val;
-   }
-}
--(void)addInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support addWeight:(CPInt)w bound:(CPInt)U
-{
-   KSNode* dst = into->_first._val;
-   KSNode* src = _first._val;
-   CPInt   idx = into->_col;
-   while (src) {
-      CPInt fw = src->_w + w;
-      if (fw <= U && f[idx][fw]) {
-         [support set:[support at:idx :1]+1 at:idx :1];
-         KSNode* at = [dst findSpot:fw];
-         if (at) {
-            if (at->_w == fw)
-               [src setSucc:1 as:at];
-            else {
-               assert(at->_w > fw);
-               KSNode* new = [[KSNode alloc] initKSNode:idx weight:fw trail:_trail];
-               [into insert:new below:at];
-               [src setSucc:1 as:new];
-               dst = at;
-            }
-         } else {
-            KSNode* new = [[KSNode alloc] initKSNode:idx weight:fw trail:_trail];
-            [src setSucc:1 as:new];
-            [into pushOnColumn:new];
-            dst = new;
-         }
-      }
-      src = src->_up._val;
-   }
-}
-@end
+typedef struct CPKSPair {
+   BOOL unreachable;
+   KSNode*     pred;
+} CPKSPair;
 
 @implementation CPKnapsack {
    id<CPSolver>          _fdm;
@@ -173,6 +68,7 @@
 -(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<CPIntArray>)w capacity:(CPIntVarI*)cap
 {
    self = [super initCPActiveConstraint:[[x cp] solver]];
+   _priority = HIGHEST_PRIO - 2;
    _fdm = [[x cp] solver];
    _x = x;
    _w = w;
@@ -199,16 +95,75 @@
       for(CPInt v=0;v <= 1;v++)
          if ([_support at:i :v]==0)
             [(CPIntVarI*)(_x[i]) remove:v];
-      
+   [_column[_up] pruneCapacity:_c];
+   for(CPInt i = _low;i <= _up;i++) {
+      CPIntVarI* xi = (CPIntVarI*)(_x[i]);
+      if (!bound(xi)) {
+         [xi whenLoseValue:self do:^(CPInt v) {
+/*            NSLog(@"x[%d] lost %d",i,v);
+            NSLog(@"%@",_column[3]);
+            [_trail trailClosure:^{
+               NSLog(@"BACKTRACKING from x[%d] lost %d : %@",i,v,_column[3]);
+            }];*/
+            [_column[i] pullValue:v knapsack:self];
+//            NSLog(@"AFTER: %@",_column[3]);
+         }];
+      }
+   }
+   [_c whenLoseValue:self do:^(CPInt v) {
+      [_column[_up] lostCapacity:v knapsack:self];
+   }];
    return CPSuspend;
 }
-
+-(void)outboundLossOn:(KSNode*)n forValue:(CPInt)v
+{
+   CPInt colID = n->_col + 1;
+   CPInt ns = [_support at:colID :v] - 1;
+   [_support set:ns at:colID :v];
+   CPIntVarI* xi = (CPIntVarI*)_x[colID];
+   if (ns==0)
+      [xi remove:v];
+   assignTRId(&n->_succ[v],nil,_trail);
+   if (n->_succ[!v]._val == nil)
+      [self backwardPropagateLoss:n];
+}
+-(void)inboundLossOn:(KSNode*)n forValue:(CPInt)v
+{
+   CPInt ns = [_support at:n->_col :v] - 1;
+   [_support set:ns at:n->_col :v];
+   CPIntVarI* xi = (CPIntVarI*)_x[n->_col];
+   if (ns==0)
+      [xi remove:v];
+   assignTRId(&n->_pred[v],nil,_trail);
+   if (n->_pred[!v]._val ==nil)
+      [self forwardPropagateLoss:n fromColumn:_column[n->_col]];
+}
+-(void)forwardPropagateLoss:(KSNode*)n fromColumn:(KSColumn*)col
+{
+   assert(col = _column[n->_col]);
+   [col pullNode:n];
+   if (col->_col == _up)
+      [_c remove:[n weight]];   
+   KSNode* succ[2] = { n->_succ[0]._val,n->_succ[1]._val};
+   for(CPInt k=0;k<=1;k++)
+      if (succ[k])
+         [self inboundLossOn:succ[k] forValue:k];
+}
+-(void)backwardPropagateLoss:(KSNode*)n
+{
+   KSColumn* col = _column[n->_col];
+   [col pullNode:n];
+   KSNode* pred[2] = {n->_pred[0]._val,n->_pred[1]._val};
+   for(CPInt k=0;k<=1;k++)
+      if (pred[k])
+         [self outboundLossOn:pred[k] forValue:k];
+}
 -(BOOL**)denseMatrices
 {
    CPInt low = [_x low],up = [_x up];
    CPInt L = [_c min],U = [_c max];
-   BOOL** f = malloc(sizeof(BOOL)*(_nb+1)); // allocate an extra column "in front" (reframing below)
-   BOOL** g = malloc(sizeof(BOOL)*(_nb+1)); // allocate an extra column "in front" (reframing below)
+   BOOL** f = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
+   BOOL** g = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
    for(CPInt k=0;k<_nb+1;k++) {
       f[k] = malloc(sizeof(BOOL)*(U+1));
       g[k] = malloc(sizeof(BOOL)*(U+1));
@@ -333,5 +288,210 @@
    _w = [aDecoder decodeObject];
    _c = [aDecoder decodeObject];
    return self;
+}
+@end
+
+@implementation KSNode
+-(KSNode*)initKSNode:(CPInt)cid weight:(CPInt)w trail:(ORTrail*)trail
+{
+   self = [super init];
+   _col = cid;
+   _w   = w;
+   _trail = trail;
+   _up   = makeTRId(trail, nil);
+   _down = makeTRId(trail, nil);
+   _succ[0] = _succ[1] = makeTRId(trail,nil);
+   _pred[0] = _pred[1] = makeTRId(trail,nil);
+   [_trail trailRelease:self];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(CPInt)weight
+{
+   return _w;
+}
+-(void)setSucc:(CPInt)v as:(KSNode*)n
+{
+   assignTRId(&_succ[v],n,_trail);
+   assignTRId(&n->_pred[v],self,_trail);
+}
+-(void)pushKSNode:(KSNode*)top
+{
+   assignTRId(&top->_down,self,_trail);
+   assignTRId(&_up,top,_trail);
+}
+-(KSNode*)findSpot:(CPInt)w
+{
+   KSNode* cur = self;
+   while (cur && cur->_w < w)
+      cur = cur->_up._val;
+   return cur;
+}
+-(CPKSPair)looseValue:(CPInt)v
+{
+   KSNode* pv = _pred[v]._val;
+   if (pv) {
+      assignTRId(&_pred[v],nil,_trail);
+      return (CPKSPair){_pred[!v]._val == nil,pv};
+   } else
+      return (CPKSPair){NO,pv};
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%p,%d,%d,p:[%p,%p],s:[%p,%p]>",self,_col,_w,_pred[0]._val,_pred[1]._val,_succ[0]._val,_succ[1]._val];
+   return buf;
+}
+@end
+
+@implementation KSColumn
+-(KSColumn*)initKSColumn:(CPInt)cid trail:(ORTrail*)trail
+{
+   self = [super init];
+   _trail = trail;
+   _col   = cid;
+   _first = _last = makeTRId(_trail, nil);
+   return self;
+}
+-(void)makeSource
+{
+   KSNode* source = [[KSNode alloc] initKSNode:_col weight:0 trail:_trail];
+   assignTRId(&_first,source,_trail);
+   assignTRId(&_last,source,_trail);
+}
+-(void)pushOnColumn:(KSNode*)c
+{
+   if (_first._val == nil) {            // we do not have a content yet. Create one with c.
+      assignTRId(&_first,c,_trail);
+      assignTRId(&_last,c,_trail);
+   } else {                             // we do have a column. Add on top.
+      [_last._val pushKSNode:c];
+      assignTRId(&_last,c,_trail);
+   }
+}
+-(void)insert:(KSNode*)n below:(KSNode*)spot
+{
+   KSNode* below = spot->_down._val;
+   assert(below != nil);
+   assignTRId(&n->_up, spot, _trail);
+   assignTRId(&n->_down,below,_trail);
+   assignTRId(&below->_up,n,_trail);
+   assignTRId(&spot->_down,n,_trail);
+}
+-(void)pullNode:(KSNode*)node
+{
+   KSNode* below = node->_down._val;
+   KSNode* above = node->_up._val;
+   if (_first._val == node) {
+      assert(below == nil);
+      assignTRId(&_first,above,_trail);
+   } else {
+      assert(below != nil);
+      assignTRId(&below->_up,above,_trail);
+   }
+   if (_last._val == node) {
+      assert(above == nil);
+      assignTRId(&_last,below,_trail);
+   } else {
+      assert(above != nil);
+      assignTRId(&above->_down,below,_trail);
+   }
+}
+-(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks
+{
+   KSNode* cur = _first._val;
+   while (cur) {
+      KSNode* next = cur->_up._val;
+      CPKSPair status = [cur looseValue:v];
+      if (status.unreachable) {
+         [ks forwardPropagateLoss:cur fromColumn:self];
+         [ks outboundLossOn:status.pred forValue:v];
+      }
+      else if (status.pred)
+         assignTRId(&status.pred->_succ[v],nil,_trail);
+      cur = next;
+   }
+}
+-(void)lostCapacity:(CPInt)v knapsack:(CPKnapsack*)ks
+{
+   KSNode* cur = _first._val;
+   while (cur) {
+      if (cur->_w == v) {     // we found a sparse node. This guy is a goner.
+         [ks backwardPropagateLoss:cur];
+      } else if (cur->_w > v) // we didn't even have a sparse node for v. stop.
+         return;
+      cur = cur->_up._val;
+   }
+}
+-(void)pruneCapacity:(CPIntVarI*)capVar
+{
+   KSNode* cur = _first._val;
+   for (CPInt v=[capVar min]; v<= [capVar max];++v) {
+      while (cur && cur->_w < v)
+         cur = cur->_up._val;
+      if (cur && cur->_w == v) continue;
+      assert(!cur || v < cur->_w);
+      [capVar remove:v];
+   }
+}
+-(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support
+{
+   CPInt idx = into->_col;
+   KSNode* src = _first._val;
+   while(src) {
+      if (f[idx][src->_w]) {
+         [support set:[support at:idx :0]+1 at:idx :0];
+         KSNode* new = [[KSNode alloc] initKSNode:idx weight:src->_w trail:_trail];
+         [src setSucc:0 as:new];
+         [into pushOnColumn:new];
+      }
+      src = src->_up._val;
+   }
+}
+-(void)addInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support addWeight:(CPInt)w bound:(CPInt)U
+{
+   KSNode* dst = into->_first._val;
+   KSNode* src = _first._val;
+   CPInt   idx = into->_col;
+   while (src) {
+      CPInt fw = src->_w + w;
+      if (fw <= U && f[idx][fw]) {
+         [support set:[support at:idx :1]+1 at:idx :1];
+         KSNode* at = [dst findSpot:fw];
+         if (at) {
+            if (at->_w == fw)
+               [src setSucc:1 as:at];
+            else {
+               assert(at->_w > fw);
+               KSNode* new = [[KSNode alloc] initKSNode:idx weight:fw trail:_trail];
+               [into insert:new below:at];
+               [src setSucc:1 as:new];
+               dst = at;
+            }
+         } else {
+            KSNode* new = [[KSNode alloc] initKSNode:idx weight:fw trail:_trail];
+            [src setSucc:1 as:new];
+            [into pushOnColumn:new];
+            dst = new;
+         }
+      }
+      src = src->_up._val;
+   }
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   KSNode* cur = _first._val;
+   [buf appendFormat:@"COL: %d [",_col];
+   while (cur) {
+      KSNode* next = cur->_up._val;
+      [buf appendFormat:@" %@ %c",[cur description],next==nil ? ' ' : ','];
+      cur = next;
+   }
+   [buf appendFormat:@"]"];
+   return buf;
 }
 @end

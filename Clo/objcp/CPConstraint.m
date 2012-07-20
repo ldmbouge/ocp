@@ -25,6 +25,7 @@
 #import "CPAssignmentI.h"
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
+#import "CPKnapsack.h"
 
 @implementation CPFactory (Constraint)
 
@@ -99,11 +100,21 @@
    return o;
 }
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(CPConsistency)c
 {
-    id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
-    [[[x cp] solver] trackObject: o];
-    return o;
+   switch(c) {
+      case ValueConsistency:
+      case RangeConsistency: {
+         id<CPConstraint> o = [[CPReifyEqualBC alloc] initCPReifyEqualBC: b when: x eq: y];
+         [[[x cp] solver] trackObject: o];
+         return o;
+      }
+      case DomainConsistency: {
+         id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
+         [[[x cp] solver] trackObject: o];
+         return o;
+      }
+   }
 }
 
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (CPInt) i
@@ -239,7 +250,12 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    id<CPConstraint> o = [[CPOneBinPackingI alloc] initCPOneBinPackingI: item itemSize: itemSize bin: b binSize: binSize];
    [[item tracker] trackObject: o];
    return o;
-   
+}
++(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<CPIntArray>) w capacity:(id<CPIntVar>)c
+{
+   id<CPConstraint> o = [[CPKnapsack alloc] initCPKnapsackDC:x weights:w capacity:c];
+   [[x tracker] trackObject: o];
+   return o;
 }
 +(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x
 {

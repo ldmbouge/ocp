@@ -45,7 +45,6 @@
 -(void) dealloc
 {
    free(_x);
-   free(_bndIMP);
    free(_updateBounds);
    [super dealloc];
 }
@@ -104,12 +103,9 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 
 -(CPStatus) post
 {
-   _bndIMP = malloc(sizeof(IMP)*_nb);
    _updateBounds = malloc(sizeof(UBType)*_nb);
-   for(CPInt k=0;k<_nb;k++) {
+   for(CPInt k=0;k<_nb;k++)
       _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
-      _bndIMP[k] = [_x[k] methodForSelector:@selector(bounds:)];
-   }
    [self propagate];
    for(CPInt k=0;k<_nb;k++) {
       if (![_x[k] bound])
@@ -122,9 +118,8 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
     struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
     for(CPInt k=0;k<_nb;k++) {
-        CPBounds b;
-        _bndIMP[k](_x[k],@selector(bounds:),&b);
-        terms[k] = (struct CPTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
+       CPBounds b = bounds(_x[k]);
+       terms[k] = (struct CPTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
     }
     struct Bounds b;
     b._bndLow = b._bndUp = - _c;
@@ -186,7 +181,6 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(int k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
-   _bndIMP = NULL;
    return self;
 }
 @end
@@ -256,12 +250,9 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 
 -(CPStatus) post
 {
-   _bndIMP = malloc(sizeof(IMP)*_nb);
    _updateMax = malloc(sizeof(UBType)*_nb);
-   for(CPInt k=0;k<_nb;k++) {
-      _bndIMP[k] = [_x[k] methodForSelector:@selector(bounds:)];
+   for(CPInt k=0;k<_nb;k++)
       _updateMax[k] = (UBType)[_x[k] methodForSelector:@selector(updateMax:)];
-   }
    [self propagate];
    for(CPInt k=0;k<_nb;k++) {
       if (![_x[k] bound])
@@ -274,8 +265,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
    for(CPInt k=0;k<_nb;k++) {
-      CPBounds b;
-      _bndIMP[k](_x[k],@selector(bounds:),&b);
+      CPBounds b = bounds(_x[k]);
       terms[k] = (struct CPTerm){_updateMax[k],_x[k],b.min,b.max,NO};
    }
    struct Bounds b;
@@ -334,7 +324,6 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(int k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
-   _bndIMP = NULL;
    return self;
 }
 @end

@@ -79,7 +79,7 @@
    id<CP> cp = [_item cp];
    
    for(CPInt b = BR.low; b <= BR.up; b++)
-      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]]];
+      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
    CPInt s = 0;
    for(CPInt i = IR.low; i <= IR.up; i++)
       s += [_itemSize at: i];

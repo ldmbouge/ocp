@@ -1210,9 +1210,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_mx];
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
-   for(CPInt k=0;k<_nb;k++)
+   _loseValIMP   = malloc(sizeof(IMP)*_mx);
+   for(CPInt k=0;k<_nb;k++) {
       _tab[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];   
+      _loseValIMP[k] = [_tab[k] methodForSelector:@selector(loseValEvt:)];
+   }
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
    return self;
 }
 @end
