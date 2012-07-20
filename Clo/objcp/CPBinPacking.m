@@ -85,7 +85,7 @@
       s += [_itemSize at: i];
    [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
    for(CPInt b = BR.low; b <= BR.up; b++)
-     [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
+      [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return CPSkip;
 }
 

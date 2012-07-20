@@ -21,13 +21,13 @@
 
 int main(int argc, const char * argv[])
 {
-   ORInt nbConfigs = 1;
+   ORInt nbConfigs = 6;
    ORRange Configs = (ORRange){1,nbConfigs};
    ORInt choiceConfig = 4;
   
    ORRange Hosts = (ORRange){1,13};
    ORRange Guests = (ORRange){1,29};
-   ORInt nbPeriods = 6;
+   ORInt nbPeriods = 7;
    ORRange Periods = (ORRange){1,nbPeriods};
    
    id<CP> cp = [CPFactory createSolver];
@@ -78,23 +78,33 @@ int main(int argc, const char * argv[])
    [cp solve:
     ^{
        for(CPInt g = Guests.low; g <= Guests.up; g++) {
-          [cp add: [CPFactory alldifferent: ALL(CPIntVar, p, Periods, [boat at:g :p]) ]];
+           [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods with: ^id<CPIntVar>(CPInt p) { return [boat at: g : p]; }]]];
+ //         [cp add: [CPFactory alldifferent: ALL(CPIntVar, p, Periods, [boat at:g :p]) ]];
        }
-       
+       printf(" 1 \n");
        for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
             [cp add: SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1];
          }
-        for(CPInt p = Periods.low; p <= Periods.up; p++)
+              printf(" 2 \n");
+       for(CPInt p = Periods.low; p <= Periods.up; p++)
            [cp add: [CPFactory packing: ALL(CPIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
+              printf(" 3 \n");
     }
        using:
     ^{
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {          
-          [cp forrange:Guests filteredBy:^bool(ORInt g) { return ![[boat at:g :p] bound];}
-                              orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {
+          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
+               orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
+           ];
+       }
+       /*
+       for(CPInt p = Periods.low; p <= Periods.up; p++) {
+          [cp forrange: Guests filteredBy:^bool(ORInt g) { return ![[boat at: g :p] bound];}
+                            orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
+//                              orderedBy:^ORInt(ORInt g) { return g;}
                     do:^(ORInt g){
-                       NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
+//                       NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g);
                        [cp tryall:Hosts filteredBy:^bool(ORInt h) {
                           return [[boat at:g :p] member:h];
                        } in:^(ORInt h) {
@@ -105,6 +115,7 @@ int main(int argc, const char * argv[])
                     }
            ];
        }
+        */
        CPLong endTime = [CPRuntimeMonitor cputime];
        
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
