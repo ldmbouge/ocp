@@ -120,6 +120,12 @@
 		5B799CB815A6C017006DD012 /* ORDataI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB915A3FDB800AD0820 /* ORDataI.h */; };
 		5B799CB915A6C017006DD012 /* ORArrayI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EBD15A402A500AD0820 /* ORArrayI.h */; };
 		5B7CB9D813C2141700783BB3 /* SomeDocumentation.pages in Resources */ = {isa = PBXBuildFile; fileRef = 5B7CB9D713C2141600783BB3 /* SomeDocumentation.pages */; };
+		5B7D694C15B9B16500C9A10C /* mknap1-0.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDC15B1518300E4A3DF /* mknap1-0.txt */; };
+		5B7D694D15B9B16500C9A10C /* mknap1-2.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDD15B1518300E4A3DF /* mknap1-2.txt */; };
+		5B7D694E15B9B16500C9A10C /* mknap1-3.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDE15B1518300E4A3DF /* mknap1-3.txt */; };
+		5B7D694F15B9B16500C9A10C /* mknap1-4.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDF15B1518300E4A3DF /* mknap1-4.txt */; };
+		5B7D695015B9B16500C9A10C /* mknap1-5.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABE015B1518300E4A3DF /* mknap1-5.txt */; };
+		5B7D695115B9B16500C9A10C /* mknap1-6.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABE115B1518300E4A3DF /* mknap1-6.txt */; };
 		5B815B1C15A2E4FD0063ECD7 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; };
 		5B815B1D15A2E4FD0063ECD7 /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
 		5B815B1E15A2E4FD0063ECD7 /* CPDDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F2915826A28008DF214 /* CPDDeg.h */; };
@@ -185,7 +191,6 @@
 		5B8C7E551586801F007042CA /* UIBoardController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7E521586801F007042CA /* UIBoardController.m */; };
 		5B8DA1F715B98BC300684FD8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B8DA1FA15B98BC300684FD8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8DA1F915B98BC300684FD8 /* main.m */; };
-		5B8DA1FE15B98BC300684FD8 /* knapsackOpt.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B8DA1FD15B98BC300684FD8 /* knapsackOpt.1 */; };
 		5B8DA20815B98BD900684FD8 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B8DA20915B98BD900684FD8 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B8DA20A15B98BD900684FD8 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -1050,13 +1055,18 @@
 		};
 		5B8DA1F315B98BC300684FD8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = MKNAP;
+			dstSubfolderSpec = 6;
 			files = (
-				5B8DA1FE15B98BC300684FD8 /* knapsackOpt.1 in CopyFiles */,
+				5B7D694C15B9B16500C9A10C /* mknap1-0.txt in CopyFiles */,
+				5B7D694D15B9B16500C9A10C /* mknap1-2.txt in CopyFiles */,
+				5B7D694E15B9B16500C9A10C /* mknap1-3.txt in CopyFiles */,
+				5B7D694F15B9B16500C9A10C /* mknap1-4.txt in CopyFiles */,
+				5B7D695015B9B16500C9A10C /* mknap1-5.txt in CopyFiles */,
+				5B7D695115B9B16500C9A10C /* mknap1-6.txt in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5BAEE09B15AEA08D006CEE1E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -7251,6 +7261,7 @@
 				5B8DA20015B98BC300684FD8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B9ABD121391329D000997E5 /* Build configuration list for PBXNativeTarget "objcp" */ = {
 			isa = XCConfigurationList;
