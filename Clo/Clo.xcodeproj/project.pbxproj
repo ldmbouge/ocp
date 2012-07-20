@@ -183,6 +183,12 @@
 		5B8C7E531586801F007042CA /* CPLib-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 5B8C7E501586801F007042CA /* CPLib-Prefix.pch */; };
 		5B8C7E541586801F007042CA /* UIBoardController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8C7E511586801F007042CA /* UIBoardController.h */; };
 		5B8C7E551586801F007042CA /* UIBoardController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7E521586801F007042CA /* UIBoardController.m */; };
+		5B8DA1F715B98BC300684FD8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B8DA1FA15B98BC300684FD8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8DA1F915B98BC300684FD8 /* main.m */; };
+		5B8DA1FE15B98BC300684FD8 /* knapsackOpt.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B8DA1FD15B98BC300684FD8 /* knapsackOpt.1 */; };
+		5B8DA20815B98BD900684FD8 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B8DA20915B98BD900684FD8 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B8DA20A15B98BD900684FD8 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B8E16C21505BB5700D3C698 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; };
 		5B8E16C31505BB5700D3C698 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
 		5B8E979315AA5693008146AA /* CPMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B63C2D3156DB05E00C65B2A /* CPMonitor.m */; };
@@ -625,6 +631,27 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5B8DA20215B98BC900684FD8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B8DA20415B98BCB00684FD8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B8DA20615B98BCD00684FD8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 		5B9ABD041391329D000997E5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1021,6 +1048,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		5B8DA1F315B98BC300684FD8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5B8DA1FE15B98BC300684FD8 /* knapsackOpt.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5BAEE09B15AEA08D006CEE1E /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1356,6 +1393,10 @@
 		5B8C7E501586801F007042CA /* CPLib-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CPLib-Prefix.pch"; sourceTree = "<group>"; };
 		5B8C7E511586801F007042CA /* UIBoardController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIBoardController.h; sourceTree = "<group>"; };
 		5B8C7E521586801F007042CA /* UIBoardController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIBoardController.m; sourceTree = "<group>"; };
+		5B8DA1F515B98BC300684FD8 /* knapsackOpt */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = knapsackOpt; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B8DA1F915B98BC300684FD8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B8DA1FC15B98BC300684FD8 /* knapsackOpt-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "knapsackOpt-Prefix.pch"; sourceTree = "<group>"; };
+		5B8DA1FD15B98BC300684FD8 /* knapsackOpt.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = knapsackOpt.1; sourceTree = "<group>"; };
 		5B8E16C01505BB5700D3C698 /* CPParallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPParallel.h; sourceTree = "<group>"; };
 		5B8E16C11505BB5700D3C698 /* CPParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPParallel.m; sourceTree = "<group>"; };
 		5B91C334159FAB2D00158EEA /* CPElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPElement.h; sourceTree = "<group>"; };
@@ -1706,6 +1747,17 @@
 				5B920ECC15A432DA00AD0820 /* ORFoundation.framework in Frameworks */,
 				5B778BBE154F1D170078EB07 /* objcp.framework in Frameworks */,
 				5B778BB3154F1D030078EB07 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B8DA1F215B98BC300684FD8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B8DA20815B98BD900684FD8 /* objcp.framework in Frameworks */,
+				5B8DA20915B98BD900684FD8 /* ORFoundation.framework in Frameworks */,
+				5B8DA20A15B98BD900684FD8 /* ORUtilities.framework in Frameworks */,
+				5B8DA1F715B98BC300684FD8 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2202,6 +2254,7 @@
 				5BAEE09D15AEA08E006CEE1E /* costas */,
 				B1F531D815AED4B100E89F98 /* testPacking */,
 				B15F6DDE15B1361700158FA0 /* progressive */,
+				5B8DA1F515B98BC300684FD8 /* knapsackOpt */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2264,6 +2317,7 @@
 				5BE777571594D27C00ADE34E /* costas */,
 				5BE777431594C9E500ADE34E /* fdmul */,
 				5BE5A7ED158A8390006703CB /* fdmul2 */,
+				5B8DA1F815B98BC300684FD8 /* knapsackOpt */,
 				5B6A960315879F1600019903 /* knapsack */,
 				5B8C7DE5158674D1007042CA /* queensGui */,
 				B1B68C77159FC16E008BC463 /* TestAssignment */,
@@ -2400,6 +2454,24 @@
 				5B8C7E521586801F007042CA /* UIBoardController.m */,
 			);
 			path = CPLib;
+			sourceTree = "<group>";
+		};
+		5B8DA1F815B98BC300684FD8 /* knapsackOpt */ = {
+			isa = PBXGroup;
+			children = (
+				5B8DA1F915B98BC300684FD8 /* main.m */,
+				5B8DA1FD15B98BC300684FD8 /* knapsackOpt.1 */,
+				5B8DA1FB15B98BC300684FD8 /* Supporting Files */,
+			);
+			path = knapsackOpt;
+			sourceTree = "<group>";
+		};
+		5B8DA1FB15B98BC300684FD8 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B8DA1FC15B98BC300684FD8 /* knapsackOpt-Prefix.pch */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		5B9ABCE3139131EE000997E5 /* solver */ = {
@@ -3511,6 +3583,26 @@
 			productReference = 5B778BB1154F1D030078EB07 /* bitArrayTest */;
 			productType = "com.apple.product-type.tool";
 		};
+		5B8DA1F415B98BC300684FD8 /* knapsackOpt */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B8DA20115B98BC300684FD8 /* Build configuration list for PBXNativeTarget "knapsackOpt" */;
+			buildPhases = (
+				5B8DA1F115B98BC300684FD8 /* Sources */,
+				5B8DA1F215B98BC300684FD8 /* Frameworks */,
+				5B8DA1F315B98BC300684FD8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B8DA20315B98BC900684FD8 /* PBXTargetDependency */,
+				5B8DA20515B98BCB00684FD8 /* PBXTargetDependency */,
+				5B8DA20715B98BCD00684FD8 /* PBXTargetDependency */,
+			);
+			name = knapsackOpt;
+			productName = knapsackOpt;
+			productReference = 5B8DA1F515B98BC300684FD8 /* knapsackOpt */;
+			productType = "com.apple.product-type.tool";
+		};
 		5B9ABCEE1391329D000997E5 /* objcp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B9ABD121391329D000997E5 /* Build configuration list for PBXNativeTarget "objcp" */;
@@ -4207,6 +4299,7 @@
 				5BAEE09C15AEA08D006CEE1E /* costas */,
 				B1F531D715AED4B100E89F98 /* testPacking */,
 				B15F6DDD15B1361700158FA0 /* progressive */,
+				5B8DA1F415B98BC300684FD8 /* knapsackOpt */,
 			);
 		};
 /* End PBXProject section */
@@ -4408,6 +4501,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B778BB6154F1D030078EB07 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B8DA1F115B98BC300684FD8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B8DA1FA15B98BC300684FD8 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4872,6 +4973,21 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B7AC1B514CFADD900B67A67 /* PBXContainerItemProxy */;
+		};
+		5B8DA20315B98BC900684FD8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B8DA20215B98BC900684FD8 /* PBXContainerItemProxy */;
+		};
+		5B8DA20515B98BCB00684FD8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B8DA20415B98BCB00684FD8 /* PBXContainerItemProxy */;
+		};
+		5B8DA20715B98BCD00684FD8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B8DA20615B98BCD00684FD8 /* PBXContainerItemProxy */;
 		};
 		5B9ABD051391329D000997E5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5608,6 +5724,46 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "bitArrayTest/bitArrayTest-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5B8DA1FF15B98BC300684FD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "knapsackOpt/knapsackOpt-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B8DA20015B98BC300684FD8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "knapsackOpt/knapsackOpt-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7087,6 +7243,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5B8DA20115B98BC300684FD8 /* Build configuration list for PBXNativeTarget "knapsackOpt" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B8DA1FF15B98BC300684FD8 /* Debug */,
+				5B8DA20015B98BC300684FD8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5B9ABD121391329D000997E5 /* Build configuration list for PBXNativeTarget "objcp" */ = {
 			isa = XCConfigurationList;

@@ -44,7 +44,6 @@
 -(void)insert:(KSNode*)n below:(KSNode*)spot;
 -(void)cloneInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support;
 -(void)  addInto:(KSColumn*)into dense:(BOOL**)f support:(id<CPTRIntMatrix>)support addWeight:(CPInt)w bound:(CPInt)U;
--(void)pullNode:(KSNode*)node;
 -(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks;
 -(void)lostCapacity:(CPInt)v knapsack:(CPKnapsack*)ks;
 -(NSString*)description;
@@ -59,8 +58,30 @@ typedef struct CPKSPair {
 static void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col);
 static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n);
 
+static inline void pullNode(KSColumn* col,KSNode* node)
+{
+   KSNode* below = node->_down._val;
+   KSNode* above = node->_up._val;
+   ORTrail* trail = col->_trail;
+   if (col->_first._val == node) {
+      assert(below == nil);
+      assignTRIdNC(&col->_first,above,trail);
+   } else {
+      assert(below != nil);
+      assignTRIdNC(&below->_up,above,trail);
+   }
+   if (col->_last._val == node) {
+      assert(above == nil);
+      assignTRIdNC(&col->_last,below,trail);
+   } else {
+      assert(above != nil);
+      assignTRIdNC(&above->_down,below,trail);
+   }
+}
+
 @implementation CPKnapsack {
    id<CPSolver>          _fdm;
+   CPIntVarI**            _xb;
    id<CPTRIntMatrix> _support;
    CPLong                 _nb;
    CPInt                 _low;
@@ -85,6 +106,7 @@ static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n);
    for(CPInt k=0;k<_nb+1;k++)
       [_column[k] release];
    free(_column);
+   free(_xb);
    [super dealloc];
 }
 -(CPStatus)post
@@ -92,15 +114,18 @@ static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n);
    _nb  = [_x count];
    _low = [_x low];
    _up  = [_x up];
+   _xb  = malloc(sizeof(CPIntVarI*)*_nb);
+   for(CPInt k=_low;k<= _up;k++)
+      _xb[k - _low] = (CPIntVarI*)_x[k];
    _support = [CPFactory TRIntMatrix:(id<CP>)_fdm range:RANGE(_low,_up) :RANGE(0,1)]; // ugly cast.
    [self makeSparse: [self denseMatrices]];  // after this, supports will be initialized.
    for(CPInt i = _low;i <= _up;i++)
       for(CPInt v=0;v <= 1;v++)
          if ([_support at:i :v]==0)
-            [(CPIntVarI*)(_x[i]) remove:v];
+            [_xb[i-_low] remove:v];
    [_column[_up] pruneCapacity:_c];
    for(CPInt i = _low;i <= _up;i++) {
-      CPIntVarI* xi = (CPIntVarI*)(_x[i]);
+      CPIntVarI* xi = _xb[i-_low];
       if (!bound(xi)) {
          [xi whenLoseValue:self do:^(CPInt v) {
             [_column[i] pullValue:v knapsack:self];
@@ -112,41 +137,41 @@ static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n);
    }];
    return CPSuspend;
 }
-static void outboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
+static inline void outboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {
    CPInt colID = n->_col + 1;
    CPInt ns = [ks->_support add: -1 at:colID :v];
-   CPIntVarI* xi = (CPIntVarI*)ks->_x[colID];
+   CPIntVarI* xi = ks->_xb[colID - ks->_low];
    if (ns==0)
-      [xi remove:v];
+      removeDom(xi, v);
    assignTRIdNC(&n->_succ[v],nil,ks->_trail);
    if (n->_succ[!v]._val == nil)
       backwardPropagateLoss(ks,n);
 }
-static void inboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
+static inline void inboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {
    CPInt ns = [ks->_support add: -1 at:n->_col :v];
-   CPIntVarI* xi = (CPIntVarI*)ks->_x[n->_col];
+   CPIntVarI* xi = ks->_xb[n->_col - ks->_low];
    if (ns==0)
-      [xi remove:v];
+      removeDom(xi,v);
    assignTRIdNC(&n->_pred[v],nil,ks->_trail);
    if (n->_pred[!v]._val ==nil)
       forwardPropagateLoss(ks,n,ks->_column[n->_col]);
 }
-static void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col)
+static inline void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col)
 {
-   [col pullNode:n];
+   pullNode(col,n);
    if (col->_col == ks->_up)
-      [ks->_c remove:[n weight]];
+      removeDom(ks->_c,n->_w);
    KSNode* succ[2] = { n->_succ[0]._val,n->_succ[1]._val};
    for(CPInt k=0;k<=1;k++)
       if (succ[k])
          inboundLossOn(ks,succ[k],k);
 }
-static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
+static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
    KSColumn* col = ks->_column[n->_col];
-   [col pullNode:n];
+   pullNode(col,n);
    KSNode* pred[2] = {n->_pred[0]._val,n->_pred[1]._val};
    for(CPInt k=0;k<=1;k++)
       if (pred[k])
@@ -250,17 +275,17 @@ static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 
 -(NSSet*)allVars
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:[_x count] + 1];
-   for(CPInt i=[_x low];i<=[_x up];i++)
-      [rv addObject:_x[i]];
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb + 1];
+   for(CPInt i=0;i< _nb;i++)
+      [rv addObject:_xb[i]];
    [rv addObject:_c];
    return rv;
 }
 -(CPUInt)nbUVars
 {
    CPUInt nb = 0;
-   for(CPInt i=[_x low];i<=[_x up];i++)
-      nb += !bound((CPIntVarI*)_x[i]);
+   for(CPInt i=0;i< _nb;i++)
+      nb += !bound(_xb[i]);
    nb += !bound(_c);
    return nb;
 }
@@ -280,7 +305,7 @@ static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    _w = [aDecoder decodeObject];
-   _c = [aDecoder decodeObject];
+   _c = [aDecoder decodeObject];   
    return self;
 }
 @end
@@ -375,25 +400,7 @@ static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    assignTRIdNC(&below->_up,n,_trail);
    assignTRIdNC(&spot->_down,n,_trail);
 }
--(void)pullNode:(KSNode*)node
-{
-   KSNode* below = node->_down._val;
-   KSNode* above = node->_up._val;
-   if (_first._val == node) {
-      assert(below == nil);
-      assignTRIdNC(&_first,above,_trail);
-   } else {
-      assert(below != nil);
-      assignTRIdNC(&below->_up,above,_trail);
-   }
-   if (_last._val == node) {
-      assert(above == nil);
-      assignTRIdNC(&_last,below,_trail);
-   } else {
-      assert(above != nil);
-      assignTRIdNC(&above->_down,below,_trail);
-   }
-}
+
 -(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks
 {
    KSNode* cur = _first._val;
