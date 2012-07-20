@@ -50,7 +50,7 @@
 @end
 
 typedef struct CPKSPair {
-   BOOL unreachable;
+   BOOL     changed;
    KSNode*     pred;
 } CPKSPair;
 
@@ -215,7 +215,9 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       if (nbReached==0)
          failNow();
       for(CPInt i=L;i <= U;i++)
-         g[_nb-1][i] = YES;   // [ldm] Why aren't we skipping values _NOT_ in D(_c) ?
+         if ([_c member:i])
+            g[_nb-1][i] = YES;   // [ldm] Why aren't we skipping values _NOT_ in D(_c) ?
+         else g[_nb-1][i] = NO;
       for(CPInt i = (CPInt)_nb - 2; i >= 0; i--) {
          for(CPInt b = 0; b <= U; b++) {
             if (g[i+1][b]) {
@@ -355,9 +357,14 @@ static inline CPKSPair looseValue(KSNode* n,CPInt v)
    KSNode* pv = n->_pred[v]._val;
    if (pv) {
       assignTRIdNC(&n->_pred[v],nil,n->_trail);
-      return (CPKSPair){n->_pred[!v]._val == nil,pv};
+      assignTRIdNC(&pv->_succ[v],nil,n->_trail);
+      return (CPKSPair){YES,pv};
    } else
       return (CPKSPair){NO,pv};
+}
+static inline BOOL unreachableFromRight(KSNode* n)
+{
+   return n->_succ[0]._val == nil && n->_succ[1]._val == nil;
 }
 -(NSString*)description
 {
@@ -408,12 +415,11 @@ static inline void pullValue(KSColumn* k,CPInt v,CPKnapsack* ks)
    while (cur) {
       KSNode* next = cur->_up._val;
       CPKSPair status = looseValue(cur,v);
-      if (status.unreachable) {
-         forwardPropagateLoss(ks,cur,k);
-         outboundLossOn(ks,status.pred,v);
+      if (status.changed) {
+         inboundLossOn(ks, cur, v);
+         if (unreachableFromRight(status.pred))
+            backwardPropagateLoss(ks, status.pred);
       }
-      else if (status.pred)
-         assignTRIdNC(&status.pred->_succ[v],nil,k->_trail);
       cur = next;
    }
 }

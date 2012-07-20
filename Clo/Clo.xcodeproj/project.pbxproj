@@ -126,6 +126,12 @@
 		5B7D694F15B9B16500C9A10C /* mknap1-4.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDF15B1518300E4A3DF /* mknap1-4.txt */; };
 		5B7D695015B9B16500C9A10C /* mknap1-5.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABE015B1518300E4A3DF /* mknap1-5.txt */; };
 		5B7D695115B9B16500C9A10C /* mknap1-6.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABE115B1518300E4A3DF /* mknap1-6.txt */; };
+		5B7D695815B9C91D00C9A10C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B7D695B15B9C91D00C9A10C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7D695A15B9C91D00C9A10C /* main.m */; };
+		5B7D696915B9C93A00C9A10C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B7D696A15B9C93A00C9A10C /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B7D696B15B9C93A00C9A10C /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B7D696D15B9C99A00C9A10C /* market.dta in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B7D696C15B9C99200C9A10C /* market.dta */; };
 		5B815B1C15A2E4FD0063ECD7 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; };
 		5B815B1D15A2E4FD0063ECD7 /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
 		5B815B1E15A2E4FD0063ECD7 /* CPDDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F2915826A28008DF214 /* CPDDeg.h */; };
@@ -636,6 +642,27 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5B7D696315B9C93000C9A10C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B7D696515B9C93200C9A10C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B7D696715B9C93300C9A10C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 		5B8DA20215B98BC900684FD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1053,6 +1080,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		5B7D695415B9C91D00C9A10C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
+			files = (
+				5B7D696D15B9C99A00C9A10C /* market.dta in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B8DA1F315B98BC300684FD8 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -1355,6 +1392,11 @@
 		5B778BB8154F1D030078EB07 /* bitArrayTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bitArrayTest-Prefix.pch"; sourceTree = "<group>"; };
 		5B778BB9154F1D030078EB07 /* bitArrayTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bitArrayTest.1; sourceTree = "<group>"; };
 		5B7CB9D713C2141600783BB3 /* SomeDocumentation.pages */ = {isa = PBXFileReference; lastKnownFileType = file; path = SomeDocumentation.pages; sourceTree = "<group>"; };
+		5B7D695615B9C91D00C9A10C /* market2s */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = market2s; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B7D695A15B9C91D00C9A10C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B7D695D15B9C91D00C9A10C /* market2s-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "market2s-Prefix.pch"; sourceTree = "<group>"; };
+		5B7D695E15B9C91D00C9A10C /* market2s.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = market2s.1; sourceTree = "<group>"; };
+		5B7D696C15B9C99200C9A10C /* market.dta */ = {isa = PBXFileReference; lastKnownFileType = text; path = market.dta; sourceTree = "<group>"; };
 		5B85DE111438B2D500E4E133 /* SemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SemBDSController.h; sourceTree = "<group>"; };
 		5B85DE121438B2D500E4E133 /* SemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SemBDSController.m; sourceTree = "<group>"; };
 		5B896B58158933B3002E145B /* CPLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLinear.h; sourceTree = "<group>"; };
@@ -1757,6 +1799,17 @@
 				5B920ECC15A432DA00AD0820 /* ORFoundation.framework in Frameworks */,
 				5B778BBE154F1D170078EB07 /* objcp.framework in Frameworks */,
 				5B778BB3154F1D030078EB07 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B7D695315B9C91D00C9A10C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B7D696915B9C93A00C9A10C /* objcp.framework in Frameworks */,
+				5B7D696A15B9C93A00C9A10C /* ORFoundation.framework in Frameworks */,
+				5B7D696B15B9C93A00C9A10C /* ORUtilities.framework in Frameworks */,
+				5B7D695815B9C91D00C9A10C /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2265,6 +2318,7 @@
 				B1F531D815AED4B100E89F98 /* testPacking */,
 				B15F6DDE15B1361700158FA0 /* progressive */,
 				5B8DA1F515B98BC300684FD8 /* knapsackOpt */,
+				5B7D695615B9C91D00C9A10C /* market2s */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2319,6 +2373,7 @@
 		5B7408AC1562828000C05277 /* Objective-CP Examples */ = {
 			isa = PBXGroup;
 			children = (
+				5B7D695915B9C91D00C9A10C /* market2s */,
 				B15F6DE115B1361700158FA0 /* progressive */,
 				5BEAD78815ABE38500A012FE /* bibd */,
 				5B76D99115AAADBE00F8B445 /* marriage */,
@@ -2391,6 +2446,24 @@
 			isa = PBXGroup;
 			children = (
 				5B778BB8154F1D030078EB07 /* bitArrayTest-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5B7D695915B9C91D00C9A10C /* market2s */ = {
+			isa = PBXGroup;
+			children = (
+				5B7D695A15B9C91D00C9A10C /* main.m */,
+				5B7D695E15B9C91D00C9A10C /* market2s.1 */,
+				5B7D695C15B9C91D00C9A10C /* Supporting Files */,
+			);
+			path = market2s;
+			sourceTree = "<group>";
+		};
+		5B7D695C15B9C91D00C9A10C /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B7D695D15B9C91D00C9A10C /* market2s-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -3140,6 +3213,7 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5B7D696C15B9C99200C9A10C /* market.dta */,
 				5B27ABDB15B1518300E4A3DF /* MKNAP */,
 				B15F6DF515B136C700158FA0 /* progressive.txt */,
 				B1943A0F15B0E33C00E1771B /* rbg040a.tw */,
@@ -3591,6 +3665,26 @@
 			name = bitArrayTest;
 			productName = bitArrayTest;
 			productReference = 5B778BB1154F1D030078EB07 /* bitArrayTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		5B7D695515B9C91D00C9A10C /* market2s */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B7D696015B9C91D00C9A10C /* Build configuration list for PBXNativeTarget "market2s" */;
+			buildPhases = (
+				5B7D695215B9C91D00C9A10C /* Sources */,
+				5B7D695315B9C91D00C9A10C /* Frameworks */,
+				5B7D695415B9C91D00C9A10C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B7D696415B9C93000C9A10C /* PBXTargetDependency */,
+				5B7D696615B9C93200C9A10C /* PBXTargetDependency */,
+				5B7D696815B9C93300C9A10C /* PBXTargetDependency */,
+			);
+			name = market2s;
+			productName = market2s;
+			productReference = 5B7D695615B9C91D00C9A10C /* market2s */;
 			productType = "com.apple.product-type.tool";
 		};
 		5B8DA1F415B98BC300684FD8 /* knapsackOpt */ = {
@@ -4310,6 +4404,7 @@
 				B1F531D715AED4B100E89F98 /* testPacking */,
 				B15F6DDD15B1361700158FA0 /* progressive */,
 				5B8DA1F415B98BC300684FD8 /* knapsackOpt */,
+				5B7D695515B9C91D00C9A10C /* market2s */,
 			);
 		};
 /* End PBXProject section */
@@ -4511,6 +4606,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B778BB6154F1D030078EB07 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B7D695215B9C91D00C9A10C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B7D695B15B9C91D00C9A10C /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4983,6 +5086,21 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B7AC1B514CFADD900B67A67 /* PBXContainerItemProxy */;
+		};
+		5B7D696415B9C93000C9A10C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B7D696315B9C93000C9A10C /* PBXContainerItemProxy */;
+		};
+		5B7D696615B9C93200C9A10C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B7D696515B9C93200C9A10C /* PBXContainerItemProxy */;
+		};
+		5B7D696815B9C93300C9A10C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B7D696715B9C93300C9A10C /* PBXContainerItemProxy */;
 		};
 		5B8DA20315B98BC900684FD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5734,6 +5852,46 @@
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "bitArrayTest/bitArrayTest-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5B7D696115B9C91D00C9A10C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "market2s/market2s-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B7D696215B9C91D00C9A10C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "market2s/market2s-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7253,6 +7411,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5B7D696015B9C91D00C9A10C /* Build configuration list for PBXNativeTarget "market2s" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B7D696115B9C91D00C9A10C /* Debug */,
+				5B7D696215B9C91D00C9A10C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5B8DA20115B98BC300684FD8 /* Build configuration list for PBXNativeTarget "knapsackOpt" */ = {
 			isa = XCConfigurationList;

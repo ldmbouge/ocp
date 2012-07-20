@@ -21,17 +21,17 @@
 
 @implementation CPLabel
 
-+(void) var: (id<CPIntVar>) x
++(void) var: (CPIntVarI*) x
 {
     id<CP> cp = [x cp];
-    while (![x bound]) {
-        CPInt m = [x min];
-        [cp try: ^() { 
-               [cp label:x with:m];
-             } 
-             or: ^() { 
-                [cp diff:x with:m];
-             }];
+    while (!bound(x)) {
+       CPInt m = minDom(x);
+       [cp try: ^() {
+          [cp label:x with:m];
+       }
+            or: ^() {
+               [cp diff:x with:m];
+            }];
     }
 }
 
