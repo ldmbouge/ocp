@@ -178,7 +178,8 @@
                *((unsigned long long*)cs->ptr) = cs->ulongVal;
                break;
             case TAGId: {
-               CFRelease(*((id*)cs->ptr));// release];
+               if (*((id*)cs->ptr))
+                  CFRelease(*((id*)cs->ptr));// release];
                *((id*)cs->ptr) = cs->idVal;
             }break;
             case TAGFloat:
