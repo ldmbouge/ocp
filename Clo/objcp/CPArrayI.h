@@ -91,6 +91,8 @@
 -(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1; 
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
+-(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1;
+-(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2;
 -(CPRange) range: (CPInt) i;
 -(NSUInteger)count;
 -(id<CP>) cp;

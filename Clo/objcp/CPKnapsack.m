@@ -18,10 +18,10 @@
    @package
    CPInt      _col;  // column identifier
    CPInt        _w;  // total weight of node
-   TRId        _up;  // "vertical" up link
-   TRId      _down;  // "vertical" down link
-   TRId   _succ[2];  // "successors" for {0,1}
-   TRId   _pred[2];  // "predecessors" for {0,1}
+   TRIdNC      _up;  // "vertical" up link
+   TRIdNC    _down;  // "vertical" down link
+   TRIdNC _succ[2];  // "successors" for {0,1}
+   TRIdNC _pred[2];  // "predecessors" for {0,1}
    ORTrail* _trail;
 }
 -(KSNode*)initKSNode:(CPInt)cid weight:(CPInt)w trail:(ORTrail*)trail;
@@ -34,8 +34,8 @@
 @interface KSColumn : NSObject {
    @package
    CPInt      _col;
-   TRId     _first;
-   TRId      _last;
+   TRIdNC   _first;
+   TRIdNC    _last;
    ORTrail* _trail;
 }
 -(KSColumn*)initKSColumn:(CPInt)cid trail:(ORTrail*)trail;
@@ -55,6 +55,9 @@ typedef struct CPKSPair {
    BOOL unreachable;
    KSNode*     pred;
 } CPKSPair;
+
+static void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col);
+static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n);
 
 @implementation CPKnapsack {
    id<CPSolver>          _fdm;
@@ -100,13 +103,7 @@ typedef struct CPKSPair {
       CPIntVarI* xi = (CPIntVarI*)(_x[i]);
       if (!bound(xi)) {
          [xi whenLoseValue:self do:^(CPInt v) {
-/*            NSLog(@"x[%d] lost %d",i,v);
-            NSLog(@"%@",_column[3]);
-            [_trail trailClosure:^{
-               NSLog(@"BACKTRACKING from x[%d] lost %d : %@",i,v,_column[3]);
-            }];*/
             [_column[i] pullValue:v knapsack:self];
-//            NSLog(@"AFTER: %@",_column[3]);
          }];
       }
    }
@@ -115,48 +112,45 @@ typedef struct CPKSPair {
    }];
    return CPSuspend;
 }
--(void)outboundLossOn:(KSNode*)n forValue:(CPInt)v
+static void outboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {
    CPInt colID = n->_col + 1;
-   CPInt ns = [_support at:colID :v] - 1;
-   [_support set:ns at:colID :v];
-   CPIntVarI* xi = (CPIntVarI*)_x[colID];
+   CPInt ns = [ks->_support add: -1 at:colID :v];
+   CPIntVarI* xi = (CPIntVarI*)ks->_x[colID];
    if (ns==0)
       [xi remove:v];
-   assignTRId(&n->_succ[v],nil,_trail);
+   assignTRIdNC(&n->_succ[v],nil,ks->_trail);
    if (n->_succ[!v]._val == nil)
-      [self backwardPropagateLoss:n];
+      backwardPropagateLoss(ks,n);
 }
--(void)inboundLossOn:(KSNode*)n forValue:(CPInt)v
+static void inboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {
-   CPInt ns = [_support at:n->_col :v] - 1;
-   [_support set:ns at:n->_col :v];
-   CPIntVarI* xi = (CPIntVarI*)_x[n->_col];
+   CPInt ns = [ks->_support add: -1 at:n->_col :v];
+   CPIntVarI* xi = (CPIntVarI*)ks->_x[n->_col];
    if (ns==0)
       [xi remove:v];
-   assignTRId(&n->_pred[v],nil,_trail);
+   assignTRIdNC(&n->_pred[v],nil,ks->_trail);
    if (n->_pred[!v]._val ==nil)
-      [self forwardPropagateLoss:n fromColumn:_column[n->_col]];
+      forwardPropagateLoss(ks,n,ks->_column[n->_col]);
 }
--(void)forwardPropagateLoss:(KSNode*)n fromColumn:(KSColumn*)col
+static void forwardPropagateLoss(CPKnapsack* ks,KSNode* n,KSColumn* col)
 {
-   assert(col = _column[n->_col]);
    [col pullNode:n];
-   if (col->_col == _up)
-      [_c remove:[n weight]];   
+   if (col->_col == ks->_up)
+      [ks->_c remove:[n weight]];
    KSNode* succ[2] = { n->_succ[0]._val,n->_succ[1]._val};
    for(CPInt k=0;k<=1;k++)
       if (succ[k])
-         [self inboundLossOn:succ[k] forValue:k];
+         inboundLossOn(ks,succ[k],k);
 }
--(void)backwardPropagateLoss:(KSNode*)n
+static void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 {
-   KSColumn* col = _column[n->_col];
+   KSColumn* col = ks->_column[n->_col];
    [col pullNode:n];
    KSNode* pred[2] = {n->_pred[0]._val,n->_pred[1]._val};
    for(CPInt k=0;k<=1;k++)
       if (pred[k])
-         [self outboundLossOn:pred[k] forValue:k];
+         outboundLossOn(ks,pred[k],k);
 }
 -(BOOL**)denseMatrices
 {
@@ -298,10 +292,10 @@ typedef struct CPKSPair {
    _col = cid;
    _w   = w;
    _trail = trail;
-   _up   = makeTRId(trail, nil);
-   _down = makeTRId(trail, nil);
-   _succ[0] = _succ[1] = makeTRId(trail,nil);
-   _pred[0] = _pred[1] = makeTRId(trail,nil);
+   _up   = makeTRIdNC(trail, nil);
+   _down = makeTRIdNC(trail, nil);
+   _succ[0] = _succ[1] = makeTRIdNC(trail,nil);
+   _pred[0] = _pred[1] = makeTRIdNC(trail,nil);
    [_trail trailRelease:self];
    return self;
 }
@@ -315,13 +309,13 @@ typedef struct CPKSPair {
 }
 -(void)setSucc:(CPInt)v as:(KSNode*)n
 {
-   assignTRId(&_succ[v],n,_trail);
-   assignTRId(&n->_pred[v],self,_trail);
+   assignTRIdNC(&_succ[v],n,_trail);
+   assignTRIdNC(&n->_pred[v],self,_trail);
 }
 -(void)pushKSNode:(KSNode*)top
 {
-   assignTRId(&top->_down,self,_trail);
-   assignTRId(&_up,top,_trail);
+   assignTRIdNC(&top->_down,self,_trail);
+   assignTRIdNC(&_up,top,_trail);
 }
 -(KSNode*)findSpot:(CPInt)w
 {
@@ -334,7 +328,7 @@ typedef struct CPKSPair {
 {
    KSNode* pv = _pred[v]._val;
    if (pv) {
-      assignTRId(&_pred[v],nil,_trail);
+      assignTRIdNC(&_pred[v],nil,_trail);
       return (CPKSPair){_pred[!v]._val == nil,pv};
    } else
       return (CPKSPair){NO,pv};
@@ -353,33 +347,33 @@ typedef struct CPKSPair {
    self = [super init];
    _trail = trail;
    _col   = cid;
-   _first = _last = makeTRId(_trail, nil);
+   _first = _last = makeTRIdNC(_trail, nil);
    return self;
 }
 -(void)makeSource
 {
    KSNode* source = [[KSNode alloc] initKSNode:_col weight:0 trail:_trail];
-   assignTRId(&_first,source,_trail);
-   assignTRId(&_last,source,_trail);
+   assignTRIdNC(&_first,source,_trail);
+   assignTRIdNC(&_last,source,_trail);
 }
 -(void)pushOnColumn:(KSNode*)c
 {
    if (_first._val == nil) {            // we do not have a content yet. Create one with c.
-      assignTRId(&_first,c,_trail);
-      assignTRId(&_last,c,_trail);
+      assignTRIdNC(&_first,c,_trail);
+      assignTRIdNC(&_last,c,_trail);
    } else {                             // we do have a column. Add on top.
       [_last._val pushKSNode:c];
-      assignTRId(&_last,c,_trail);
+      assignTRIdNC(&_last,c,_trail);
    }
 }
 -(void)insert:(KSNode*)n below:(KSNode*)spot
 {
    KSNode* below = spot->_down._val;
    assert(below != nil);
-   assignTRId(&n->_up, spot, _trail);
-   assignTRId(&n->_down,below,_trail);
-   assignTRId(&below->_up,n,_trail);
-   assignTRId(&spot->_down,n,_trail);
+   assignTRIdNC(&n->_up, spot, _trail);
+   assignTRIdNC(&n->_down,below,_trail);
+   assignTRIdNC(&below->_up,n,_trail);
+   assignTRIdNC(&spot->_down,n,_trail);
 }
 -(void)pullNode:(KSNode*)node
 {
@@ -387,17 +381,17 @@ typedef struct CPKSPair {
    KSNode* above = node->_up._val;
    if (_first._val == node) {
       assert(below == nil);
-      assignTRId(&_first,above,_trail);
+      assignTRIdNC(&_first,above,_trail);
    } else {
       assert(below != nil);
-      assignTRId(&below->_up,above,_trail);
+      assignTRIdNC(&below->_up,above,_trail);
    }
    if (_last._val == node) {
       assert(above == nil);
-      assignTRId(&_last,below,_trail);
+      assignTRIdNC(&_last,below,_trail);
    } else {
       assert(above != nil);
-      assignTRId(&above->_down,below,_trail);
+      assignTRIdNC(&above->_down,below,_trail);
    }
 }
 -(void)pullValue:(CPInt)v knapsack:(CPKnapsack*)ks
@@ -407,11 +401,11 @@ typedef struct CPKSPair {
       KSNode* next = cur->_up._val;
       CPKSPair status = [cur looseValue:v];
       if (status.unreachable) {
-         [ks forwardPropagateLoss:cur fromColumn:self];
-         [ks outboundLossOn:status.pred forValue:v];
+         forwardPropagateLoss(ks,cur,self);
+         outboundLossOn(ks,status.pred,v);
       }
       else if (status.pred)
-         assignTRId(&status.pred->_succ[v],nil,_trail);
+         assignTRIdNC(&status.pred->_succ[v],nil,_trail);
       cur = next;
    }
 }
@@ -420,7 +414,7 @@ typedef struct CPKSPair {
    KSNode* cur = _first._val;
    while (cur) {
       if (cur->_w == v) {     // we found a sparse node. This guy is a goner.
-         [ks backwardPropagateLoss:cur];
+         backwardPropagateLoss(ks,cur);
       } else if (cur->_w > v) // we didn't even have a sparse node for v. stop.
          return;
       cur = cur->_up._val;

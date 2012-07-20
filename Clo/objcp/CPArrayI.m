@@ -192,7 +192,6 @@
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
-    _i = malloc(sizeof(CPRange) * _arity);
     _range[0] = r0;
     _range[1] = r1;
     _low[0] = r0.low;
@@ -215,87 +214,98 @@
     free(_low);
     free(_up);
     free(_size);
-    free(_i);
     free(_flat);
     [super dealloc];
 }
--(CPInt) getIndex
+static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
-    for(CPInt k = 0; k < _arity; k++)
-        if (_i[k] < _low[k] || _i[k] > _up[k])
-            @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntVarMatrix"];
-    int idx = _i[0] - _low[0];
-    for(CPInt k = 1; k < _arity; k++)
-        idx = idx * _size[k] + (_i[k] - _low[k]);
+    for(CPInt k = 0; k < m->_arity; k++)
+        if (i[k] < m->_low[k] || i[k] > m->_up[k])
+            @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPTRIntMatrix"];
+    int idx = i[0] - m->_low[0];
+    for(CPInt k = 1; k < m->_arity; k++)
+        idx = idx * m->_size[k] + (i[k] - m->_low[k]);
     return idx;
 }
 -(CPRange) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
-        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntVarMatrix"]; 
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPTRIntMatrix"]; 
     return _range[i];
 }
 -(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
     if (_arity != 3) 
-        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
-    _i[0] = i0;
-    _i[1] = i1;
-    _i[2] = i2;
-    return _flat[[self getIndex]]._val;
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
+   CPInt i[3] = {i0,i1,i2};
+    return _flat[indexMatrix(self,i)]._val;
 }
 -(CPInt) at: (CPInt) i0 : (CPInt) i1
 {
     if (_arity != 2) 
-        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
-    _i[0] = i0;
-    _i[1] = i1;
-    return _flat[[self getIndex]]._val;
+        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
+   CPInt i[2] = {i0,i1};
+    return _flat[indexMatrix(self,i)]._val;
 }
 
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
 {
-    if (_arity != 3) 
-        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
-    _i[0] = i0;
-    _i[1] = i1;
-    _i[2] = i2;
-    assignTRInt(_flat + [self getIndex],value,_trail);
+   if (_arity != 3)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
+   CPInt i[3] = {i0,i1,i2};
+   assignTRInt(_flat + indexMatrix(self,i),value,_trail);
 }
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1
 {
-    if (_arity != 2) 
-        @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
-    _i[0] = i0;
-    _i[1] = i1;
-    assignTRInt(_flat + [self getIndex],value,_trail);
+   if (_arity != 2)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
+   CPInt i[3] = {i0,i1};
+   assignTRInt(_flat + indexMatrix(self,i),value,_trail);
 }
-
+-(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1
+{
+   if (_arity != 2)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
+   CPInt i[2] = {i0,i1};
+   TRInt* ptr = _flat + indexMatrix(self,i);
+   assignTRInt(ptr,ptr->_val + delta,_trail);
+   return ptr->_val;
+}
+-(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+{
+   if (_arity != 3)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
+   CPInt i[3] = {i0,i1,i2};
+   TRInt* ptr = _flat + indexMatrix(self,i);
+   assignTRInt(ptr,ptr->_val + delta,_trail);
+   return ptr->_val;
+}
 -(NSUInteger)count
 {
     return _nb;
 }
--(void) descriptionAux: (CPInt) i string: (NSMutableString*) rv
+-(void) descriptionAux: (CPInt*) i depth:(CPInt)d string: (NSMutableString*) rv
 {
-    if (i == _arity) {
-        [rv appendString:@"<"];
-        for(CPInt k = 0; k < _arity; k++) 
-            [rv appendFormat:@"%d,",_i[k]];
-        [rv appendString:@"> ="];
-        [rv appendFormat:@"%d \n",_flat[[self getIndex]]._val];
-    }
-    else {
-        for(CPInt k = _low[i]; k <= _up[i]; k++) {
-            _i[i] = k;
-            [self descriptionAux: i+1 string: rv];
-        }
-    }
+   if (d == _arity) {
+      [rv appendString:@"<"];
+      for(CPInt k = 0; k < _arity; k++)
+         [rv appendFormat:@"%d,",_i[k]];
+      [rv appendString:@"> ="];
+      [rv appendFormat:@"%d \n",_flat[indexMatrix(self, i)]._val];
+   }
+   else {
+      for(CPInt k = _low[d]; k <= _up[d]; k++) {
+         i[d] = k;
+         [self descriptionAux:i depth:d+1 string: rv];
+      }
+   }
 }
 -(NSString*)description
 {
-    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-    [self descriptionAux: 0 string: rv];
-    return rv;   
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   CPInt* i = alloca(sizeof(CPInt)*_arity);
+   [self descriptionAux: i depth:0 string: rv];
+   return rv;
 }
 -(id<CP>) cp
 {
