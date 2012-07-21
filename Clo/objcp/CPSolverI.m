@@ -428,6 +428,7 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
             while (list) {
                // PVH: this may need to be generalized for more general events
                ((ConstraintIntCallBack)(list->_trigger))(evt._value);
+               ++_nbpropag;
                list = list->_node;
             }
          }

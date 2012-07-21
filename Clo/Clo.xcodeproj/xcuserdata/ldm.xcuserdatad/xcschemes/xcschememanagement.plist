@@ -134,6 +134,11 @@
 			<key>orderHint</key>
 			<integer>17</integer>
 		</dict>
+		<key>knapsackOpt.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>44</integer>
+		</dict>
 		<key>lpsolver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -148,6 +153,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>11</integer>
+		</dict>
+		<key>market2s.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>45</integer>
 		</dict>
 		<key>marriage.xcscheme</key>
 		<dict>
@@ -288,6 +298,16 @@
 			<true/>
 		</dict>
 		<key>5B778BB0154F1D030078EB07</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B7D695515B9C91D00C9A10C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B8DA1F415B98BC300684FD8</key>
 		<dict>
 			<key>primary</key>
 			<true/>

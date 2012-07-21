@@ -281,15 +281,19 @@
 {
    CPInt sz = range.up - range.low + 1;
    bool*  used = alloca(sizeof(bool)*sz);
-   for(CPInt i=range.low;i<=range.up;i++) 
-      used[i-range.low] = !filter(i);         
+   if (filter)
+      for(CPInt i=range.low;i<=range.up;i++)
+         used[i-range.low] = !filter(i);
+   else
+      for(CPInt i=range.low;i<=range.up;i++)
+         used[i-range.low] = NO;
    bool done = false;
    while (!done) {
       float best = MAXFLOAT;
       CPInt chosen = range.low-1;
       CPInt i=range.low;
       while (i <= range.up) {
-         if (!(used[i-range.low]) && filter(i)) {
+         if (!(used[i-range.low]) && (!filter || filter(i))) {
             CPInt efi = order(i);
             if (efi < best) {
                chosen = i;

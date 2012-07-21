@@ -189,7 +189,6 @@ void failNow()
 +(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (CPRange) range with:(id<CPIntVar>(^)(CPInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
-   id<CPIntVar> v = clo(range.low);
    for(CPInt k=range.low;k <= range.up;k++)
       [o set:clo(k) at:k];
    return (id<CPIntVarArray>)o;

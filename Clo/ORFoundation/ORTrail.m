@@ -82,7 +82,16 @@
   s->idVal = obj;
   ++_seg[_cSeg]->top;
 }
-
+-(void)trailIdNC:(id*)ptr
+{
+   id obj = *ptr;
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGIdNC;
+   s->idVal = obj;
+   ++_seg[_cSeg]->top;
+}
 -(void) trailLong:(ORLong*) ptr
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
@@ -198,6 +207,9 @@
             case TAGFree:
                free(cs->ptrVal);
                break;
+            case TAGIdNC:
+               *((id*)cs->ptr) = cs->idVal;
+               break;
             default:
                break;
          }                  
@@ -249,6 +261,10 @@ TRLong makeTRLong(ORTrail* trail,long long val)
 TRId  makeTRId(ORTrail* trail,id val)
 {
    return (TRId) {val};
+}
+TRIdNC  makeTRIdNC(ORTrail* trail,id val)
+{
+   return (TRIdNC) {val};
 }
 TRDouble  makeTRDouble(ORTrail* trail,double val)
 {

@@ -25,6 +25,7 @@
 #define TAGClosure      0x9
 #define TAGRelease      0xA
 #define TAGFree         0xB
+#define TAGIdNC         0xC
 
 @interface ORTrail : NSObject<NSCoding> {
    struct Slot {
@@ -62,6 +63,7 @@
 -(void) trailLong:(ORLong*) ptr;
 -(void) trailUnsignedLong:(ORULong*) ptr;
 -(void) trailId:(id*) ptr;
+-(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
@@ -115,6 +117,10 @@ typedef struct {
 } TRId;
 
 typedef struct {
+   id        _val;
+} TRIdNC;
+
+typedef struct {
     ORTrail* _trail;
     int      _nb;
     int      _low;
@@ -147,12 +153,23 @@ static inline void trailUIntFun(ORTrail* t,unsigned* ptr)
    s->uintVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);   
 }
+static inline void trailIdNCFun(ORTrail* t,id* ptr)
+{
+   id obj = *ptr;
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGIdNC;
+   s->idVal = obj;
+   ++(t->_seg[t->_cSeg]->top);
+}
 
 TRInt makeTRInt(ORTrail* trail,int val);
 TRUInt makeTRUInt(ORTrail* trail,unsigned val);
 TRLong makeTRLong(ORTrail* trail,long long val);
 TRDouble  makeTRDouble(ORTrail* trail,double val);
 TRId  makeTRId(ORTrail* trail,id val);
+TRIdNC  makeTRIdNC(ORTrail* trail,id val);
 TRIntArray makeTRIntArray(ORTrail* trail,int nb,int low);
 void  freeTRIntArray(TRIntArray a);
 FXInt makeFXInt(ORTrail* trail);
@@ -197,6 +214,11 @@ static inline void  assignTRId(TRId* v,id val,ORTrail* trail)
    [trail trailId:&v->_val];
    [v->_val release];
    v->_val = [val retain];
+}
+static inline void  assignTRIdNC(TRIdNC* v,id val,ORTrail* trail)
+{
+   trailIdNCFun(trail, &v->_val);
+   v->_val = val;
 }
 static inline ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
 {
