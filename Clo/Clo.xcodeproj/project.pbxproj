@@ -529,6 +529,7 @@
 		B1935C7115B90EEA00107399 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1935C7215B90EED00107399 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1935C7315B90EF100107399 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		B1935C7515B910C700107399 /* slab.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1935C7415B90FFB00107399 /* slab.dat */; };
 		B1943A1115B0E34400E1771B /* rbg040a.tw in Copy Files */ = {isa = PBXBuildFile; fileRef = B1943A0F15B0E33C00E1771B /* rbg040a.tw */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B19ABA0E146D68FE004EB77E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA0D146D68FE004EB77E /* main.m */; };
@@ -1225,9 +1226,10 @@
 		B1935C5C15B90ECE00107399 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = usr/share/man/man1;
+			dstPath = "";
 			dstSubfolderSpec = 6;
 			files = (
+				B1935C7515B910C700107399 /* slab.dat in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1637,6 +1639,7 @@
 		B1935C6215B90ECE00107399 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1935C6515B90ECE00107399 /* slab-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slab-Prefix.pch"; sourceTree = "<group>"; };
 		B1935C6615B90ECE00107399 /* slab.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slab.1; sourceTree = "<group>"; };
+		B1935C7415B90FFB00107399 /* slab.dat */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = slab.dat; sourceTree = "<group>"; };
 		B1943A0F15B0E33C00E1771B /* rbg040a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg040a.tw; sourceTree = "<group>"; };
 		B19ABA09146D68FE004EB77E /* AtomicTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AtomicTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B19ABA0D146D68FE004EB77E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -3128,6 +3131,7 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				B1935C7415B90FFB00107399 /* slab.dat */,
 				5B27ABDB15B1518300E4A3DF /* MKNAP */,
 				B15F6DF515B136C700158FA0 /* progressive.txt */,
 				B1943A0F15B0E33C00E1771B /* rbg040a.tw */,
