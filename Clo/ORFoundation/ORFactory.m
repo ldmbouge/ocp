@@ -153,4 +153,10 @@
    [tracker trackObject: o];
    return o; 
 }
++(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) S filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker intSet: S filteredBy: f of: e];
+   [tracker trackObject: o];
+   return o;
+}
 @end

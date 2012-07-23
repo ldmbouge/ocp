@@ -51,7 +51,7 @@ int main(int argc, const char * argv[])
 //   NSLog(@"%@",color);
 //   NSLog(@"%@",cap);
    
-   CPInt nbSize = 111;
+   CPInt nbSize = 30;
    CPRange IOrders = {1,nbSize};
    CPRange Slabs = {1,nbSize};
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
@@ -75,24 +75,27 @@ int main(int argc, const char * argv[])
       [loss set: m at: c];
    }
    id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: IOrders domain: Slabs];
-   id<CPIntVarArray> load = [CPFactory intVarArray: cp range: IOrders domain: Capacities];
+   id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<CPIntVar> obj = [CPFactory intVar: cp bounds: (ORRange){0,nbSize*maxCapacities}];
    
    [cp minimize: obj subjectTo: ^{
-      [cp add: [obj eq: SUM(s,Slabs,loss[[load at: s]])]];
+      [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
       [cp add: [CPFactory packing: slab itemSize: weight load: load]];
-      for(CPInt s = Slabs.low; s <= Slabs.up; s++) {
-         id<CPExpr> e = [CPFactory integer: cp value: 0];
-         for(CPInt c = Colors.low; c <= Colors.up; c++) {
-            id<IntEnumerator> ite = [[coloredOrder at: c] enumerator];
-            while ([ite ])
       for(CPInt s = Slabs.low; s <= Slabs.up; s++)
-         [cp add: SUM(c,Colors,(SUM(o))
+         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
    }
    using:^{
-      
-      
+      [cp forrange: IOrders
+        filteredBy: nil
+         orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
+                do: ^(ORInt o)
+       {
+          [CPLabel var: slab[o]];
+       }
+       ];
+       NSLog(@"%@",slab);
    }
+   ];
    
                              
    @autoreleasepool {

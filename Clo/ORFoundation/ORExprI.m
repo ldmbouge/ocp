@@ -690,6 +690,27 @@
    }
    return self;       
 }
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   self = [super init];
+   id<IntEnumerator> ite = [S enumerator];
+   _e = [ORFactory integer: cp value: 0];
+   if (f!=nil) {
+      while ([ite more]) {
+         ORInt i = [ite next];
+         if (!f(i))
+            _e = [_e plus: e(i)];
+      }
+   }
+   else {
+      while ([ite more]) {
+         ORInt i = [ite next];
+         _e = [_e plus: e(i)];
+      }
+   }
+   return self;
+}
+
 -(void) dealloc
 {   
    [super dealloc];

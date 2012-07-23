@@ -46,5 +46,6 @@
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 @end
 

@@ -134,6 +134,7 @@
    id<ORExpr> _e;
 }
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>)tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;

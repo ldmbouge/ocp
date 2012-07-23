@@ -364,5 +364,10 @@ void failNow()
 {
    return (id<CPExpr>)[ORFactory sum:cp range:r filteredBy:f of:e];
 }
++(id<CPExpr>) sum: (id<CP>) cp intSet: (id<ORIntSet>) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   return (id<CPExpr>)[ORFactory sum:cp intSet:r filteredBy:f of:e];
+}
+
 @end
 
