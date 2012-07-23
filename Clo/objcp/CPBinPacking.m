@@ -116,8 +116,6 @@
 
    CPInt              _maxLoad;
    CPInt              _p;
-   CPInt              _alphaprime;
-   CPInt              _betaprime;
    BOOL               _changed;
    
 }
@@ -342,84 +340,6 @@ static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPI
       cstr->_maxLoad += cstr->_s[i];
    }
    return noSumAlphaBeta(cstr,alpha,beta,alphaPrime,betaPrime);
-}
--(BOOL) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta
-{
-   _nbX = _nbCandidates;
-   _maxLoad = 0;
-   for(CPInt i = 0; i < _nbX; i++) {
-      _s[i] = _candidateSize[i];
-      _maxLoad += _s[i];
-   }
-   return noSum(self,alpha,beta);
-}
-
--(void) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta without: (CPInt) item
-{
-   _nbX = 0;
-   for(CPInt i = 0; i < _nbCandidates; i++)
-      if (i != item) {
-         _s[_nbX++] = _candidateSize[i];
-         _maxLoad += _s[i];
-      }
-   if (noSum(self,alpha,beta)) {
-      _changed = true;
-      [_candidate[item] bind: _bin];
-   }
-}
-
--(void) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta with: (CPInt) item
-{
-   _nbX = 0;
-   for(CPInt i = 0; i < _nbCandidates; i++)
-      if (i != item) {
-         _s[_nbX++] = _candidateSize[i];
-         _maxLoad += _s[i];
-      }
-   assert(_nbX == _nbCandidates - 1);
-   if (noSum(self,alpha - _candidateSize[item],beta - _candidateSize[item])) {
-      _changed = true;
-      [_candidate[item] remove: _bin];
-   }
-}
-
-
--(BOOL) noSum: (CPInt) alpha beta: (CPInt) beta
-{
-   if (alpha <= 0 || beta >= _maxLoad)
-      return false;
-   CPInt sumA = 0;
-   CPInt sumB = 0;
-   CPInt sumC = 0;
-   CPInt k = -1;
-   CPInt kp = _nbX - 1;
-   while (sumC + _s[kp] < alpha) {
-      sumC += _s[kp];
-      kp--;
-   }
-   sumB = _s[kp];
-   while (sumA < alpha && sumB <= beta) {
-      k++;
-      sumA += _s[k];
-      if (sumA < alpha) {
-         kp++;
-         sumB += _s[kp];
-         sumC -= _s[kp];
-         while (sumA + sumC >= alpha) {
-            kp++;
-            sumC -= _s[kp];
-            sumB += _s[kp];
-            sumB -= _s[kp - k - 1];
-         }
-      }
-   }
-   _alphaprime = sumA + sumC;
-   _betaprime = sumB;
-//   printf("SumA: %d \n",sumA);
-//   printf("SumB: %d \n",sumB);
-//   printf("SumC: %d \n",sumC);
-//   printf("SumA + SumC: %d \n",sumA + sumC);
-   return sumA < alpha;
 }
 @end
 
