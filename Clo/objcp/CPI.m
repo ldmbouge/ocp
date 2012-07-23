@@ -144,6 +144,10 @@
 {
    [_search forrange: range suchThat: filter orderedBy: order do: body];
 }
+-(void) forrange: (CPRange) range orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+{
+   [_search forrange: range suchThat: nil orderedBy: order do: body];
+}
 -(void) fail
 {
     [_search fail];

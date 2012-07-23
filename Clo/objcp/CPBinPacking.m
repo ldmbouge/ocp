@@ -211,7 +211,7 @@
    } while (_changed);
 }
 
-static BOOL noSum(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
+static BOOL noSumAlphaBeta(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt* alphaPrime,CPInt* betaPrime)
 {
    if (alpha <= 0 || beta >= cstr->_maxLoad)
       return false;
@@ -240,13 +240,20 @@ static BOOL noSum(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
          }
       }
    }
-   cstr->_alphaprime = sumA + sumC;
-   cstr->_betaprime = sumB;
+   *alphaPrime = sumA + sumC;
+   *betaPrime = sumB;
    //   printf("SumA: %d \n",sumA);
    //   printf("SumB: %d \n",sumB);
    //   printf("SumC: %d \n",sumC);
    //   printf("SumA + SumC: %d \n",sumA + sumC);
    return sumA < alpha;
+}
+
+static BOOL noSum(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
+{
+   CPInt alphaPrime;
+   CPInt betaPrime;
+   return noSumAlphaBeta(cstr,alpha,beta,&alphaPrime,&betaPrime);
 }
 
 static void noSumForCandidatesWithout(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt item)
@@ -299,13 +306,15 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
    [_load updateMax: _maxLoad + _p];
    CPInt alpha = minDom(_load) - _p;
    CPInt beta = maxDom(_load) - _p;
-   if (noSumForCandidates(self,alpha,beta))
+   CPInt alphaPrime;
+   CPInt betaPrime;
+
+   if (noSumForCandidates(self,alpha,beta,&alphaPrime,&betaPrime))
       failNow();
-   
-   if (noSumForCandidates(self,alpha,alpha))
-      [_load updateMin: _p + _betaprime];
-   if (noSumForCandidates(self,beta,beta))
-      [_load updateMax: _p + _alphaprime];
+   if (noSumForCandidates(self,alpha,alpha,&alphaPrime,&betaPrime))
+      [_load updateMin: _p + betaPrime];
+   if (noSumForCandidates(self,beta,beta,&alphaPrime,&betaPrime))
+      [_load updateMax: _p + alphaPrime];
    
    alpha = minDom(_load) - _p;
    beta = maxDom(_load) - _p;
@@ -324,7 +333,7 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
 
 }
 
-static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
+static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt* alphaPrime,CPInt* betaPrime)
 {
    cstr->_nbX = cstr->_nbCandidates;
    cstr->_maxLoad = 0;
@@ -332,8 +341,7 @@ static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
       cstr->_s[i] = cstr->_candidateSize[i];
       cstr->_maxLoad += cstr->_s[i];
    }
-   return noSum(cstr,alpha,beta);
-   
+   return noSumAlphaBeta(cstr,alpha,beta,alphaPrime,betaPrime);
 }
 -(BOOL) noSumForCandidates: (CPInt) alpha beta: (CPInt) beta
 {
