@@ -277,7 +277,7 @@
 }
 
 
--(void) forrange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forrange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
 {
    CPInt sz = range.up - range.low + 1;
    bool*  used = alloca(sizeof(bool)*sz);
@@ -330,12 +330,12 @@
    }
    [_controller._val exitTry];
 }
--(void) tryall: (CPRange) range filteredBy: (CPInt2Bool) filter in: (CPInt2Void) body 
+-(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body 
 {
-   [self tryall: range filteredBy: filter in: body onFailure: NULL];
+   [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
 
--(void) tryall: (CPRange) range filteredBy: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
 {
    CPInt cur;
    [_controller._val startTryall];

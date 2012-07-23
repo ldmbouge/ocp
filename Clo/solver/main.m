@@ -28,7 +28,7 @@ void labelFF(id<CP> m,NSArray* x,int from,int to)
    [m solve: ^() {
       [m limitSolutions: 200 in: ^() {
          [m forrange: (CPRange){from,to}
-          filteredBy: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
+          suchThat: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
            orderedBy: ^int(int i) { return [[x objectAtIndex:i] domsize];}
                   do: ^(int i) { [m label: [x objectAtIndex:i]]; }
           ];
@@ -48,7 +48,7 @@ void labelFF1(CP* m,NSArray* x,int from,int to)
       [m repeat: ^() {
          [m limitSolutions: 1 in: ^() {
             [m   forrange: (CPRange){from,to}
-               filteredBy: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
+               suchThat: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
                 orderedBy: ^int(int i) { return [[x objectAtIndex:i] domsize];}
                        do: ^(int i) { [ m label: [x objectAtIndex:i]]; }
              ];
@@ -74,7 +74,7 @@ void labelFF2(CP* m,NSArray* x,int from,int to)
       [m repeat: ^() {
          [m limitSolutions: 1 in: ^() {
             [m   forrange: (CPRange){from,to}
-               filteredBy: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
+               suchThat: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
                 orderedBy: ^int(int i) { return [[x objectAtIndex:i] domsize];}
                        do: ^(int i) { [ m label: [x objectAtIndex:i]]; }
              ];
@@ -175,7 +175,7 @@ int main(int argc, const char * argv[])
     CPExpr* e2 = [CPExpr var: [x at: 1]];
     CPExpr* e3 = [e1 plus: e2];
     [e3 print];
-    CPExpr* es = [CPExpr sum: (CPRange){0,n-1} filteredBy: ^bool(int i) { return i < 3; } of: ^CPExpr*(int i) { return [CPExpr var: [x at: i]]; }];
+    CPExpr* es = [CPExpr sum: (CPRange){0,n-1} suchThat: ^bool(int i) { return i < 3; } of: ^CPExpr*(int i) { return [CPExpr var: [x at: i]]; }];
     printf("Sum: ");
     [es print];
     

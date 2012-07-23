@@ -67,7 +67,7 @@ int main(int argc, const char * argv[])
             [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
          }
       }  using:^{
-         [cp forrange:V filteredBy:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) {
+         [cp forrange:V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) {
             return -tw[i];
          } do:^(ORInt i) {
             [cp try:^{

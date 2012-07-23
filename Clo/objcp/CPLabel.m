@@ -48,7 +48,7 @@
     id<CP> cp = [x cp];
     CPI* cpi = (CPI*) cp;
     CPSelect* select = [cpi selectInRange: (CPRange){[x low],[x up]}
-                              filteredBy: ^bool(CPInt i) { return [[x at: i] bound]; }
+                              suchThat: ^bool(CPInt i) { return [[x at: i] bound]; }
                                orderedBy: orderedBy];
     CPInt low = [x low];
     do {
@@ -69,7 +69,7 @@
    id<CP> cp = [av cp];
    CPI* cpi = (CPI*) cp;
    CPSelect* select = [cpi selectInRange: (CPRange){[av low],[av up]}
-                              filteredBy: ^bool(CPInt i)      { return [[av at: i] bound]; }
+                              suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }
                                orderedBy: ^CPInt(CPInt i) { 
                                   id<CPIntVar> avi = [av at: i];
                                   return [h varOrdering:avi];
@@ -82,7 +82,7 @@
       id<CPIntVar> x = [av at: i];
       CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMin:cp
                                                             range:(CPRange){[x min],[x max]}
-                                                       filteredBy:^bool(CPInt v)      { return ![x member:v];}
+                                                       suchThat:^bool(CPInt v)      { return ![x member:v];}
                                                         orderedBy:^CPInt(CPInt v) { return [h valOrdering:v forVar:x];}];
       CPInt val = [valSelect min];
       do {

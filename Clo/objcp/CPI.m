@@ -132,17 +132,17 @@
 {
    [_search try: left or: right];
 }
--(void) tryall: (CPRange) range filteredBy: (CPInt2Bool) filter in: (CPInt2Void) body
+-(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body
 {
-   [_search tryall: range filteredBy: filter in: body];
+   [_search tryall: range suchThat: filter in: body];
 }
--(void) tryall: (CPRange) range filteredBy: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
 {
-   [_search tryall: range filteredBy: filter in: body onFailure: onFailure];
+   [_search tryall: range suchThat: filter in: body onFailure: onFailure];
 }
--(void) forrange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forrange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
 {
-   [_search forrange: range filteredBy: filter orderedBy: order do: body];
+   [_search forrange: range suchThat: filter orderedBy: order do: body];
 }
 -(void) fail
 {
@@ -183,11 +183,11 @@
    //[cstr release]; // [ldm] Why release? [this is tracked anyhow!]
 }
 
--(CPSelect*) selectInRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) selectInRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    return [[CPSelect alloc] initCPSelect: (id<CP>)self
                                withRange: range
-                              filteredBy: filter
+                              suchThat: filter
                                orderedBy: order];    
 }
 

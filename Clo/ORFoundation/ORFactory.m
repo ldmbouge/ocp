@@ -147,15 +147,15 @@
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP Solver in Abs Expression"];
 }
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker range: r filteredBy: f of: e];
+   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker range: r suchThat: f of: e];
    [tracker trackObject: o];
    return o; 
 }
-+(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) S filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker intSet: S filteredBy: f of: e];
+   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker intSet: S suchThat: f of: e];
    [tracker trackObject: o];
    return o;
 }

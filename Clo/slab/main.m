@@ -86,7 +86,7 @@ int main(int argc, const char * argv[])
    }
    using:^{
       [cp forrange: IOrders
-        filteredBy: nil
+        suchThat: nil
          orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
                 do: ^(ORInt o)
        {

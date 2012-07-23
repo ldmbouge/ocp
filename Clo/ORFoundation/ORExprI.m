@@ -65,13 +65,25 @@
 {
    return [ORFactory expr:self neq:e];
 }
+-(id<ORRelation>) neqi: (ORInt) c
+{
+   return [ORFactory expr:self neq: [ORFactory integer:[self tracker] value: c]];
+}
 -(id<ORRelation>) leq: (id<ORExpr>) e
 {
    return [ORFactory expr:self leq:e];
 }
+-(id<ORRelation>) leqi: (ORInt) c
+{
+   return [ORFactory expr:self leq: [ORFactory integer:[self tracker] value: c]];
+}
 -(id<ORRelation>) geq: (id<ORExpr>) e
 {
    return [ORFactory expr:self geq:e];
+}
+-(id<ORRelation>) geqi: (ORInt) c
+{
+   return [ORFactory expr:self geq: [ORFactory integer:[self tracker] value: c]];
 }
 -(id<ORRelation>) lt: (id<ORExpr>) e
 {
@@ -673,7 +685,7 @@
 
 
 @implementation ORExprSumI 
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    ORInt low = r.low;
@@ -690,7 +702,7 @@
    }
    return self;       
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];

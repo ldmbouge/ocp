@@ -63,10 +63,10 @@ int main (int argc, const char * argv[])
              }];
           }
        }
-/*       [cp forrange:R filteredBy:^bool(ORInt i ) { return ![x[i] bound];}
+/*       [cp forrange:R suchThat:^bool(ORInt i ) { return ![x[i] bound];}
           orderedBy:^ORInt(ORInt i) { return i;}
                  do:^(ORInt i) {
-                    [cp tryall:R filteredBy:^bool(ORInt v) { return [x[i] member:v];}
+                    [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
                             in:^(ORInt v) {
              NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,v,[[cp tracer] level]);
              [cp label:x[i] with:v];

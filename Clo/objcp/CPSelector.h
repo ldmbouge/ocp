@@ -19,7 +19,7 @@
     CPInt2Int          _order;
     CPInt              _direction;
 }
--(OPTSelect*) initOPTSelectWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(OPTSelect*) initOPTSelectWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -30,7 +30,7 @@
 @interface CPSelect : NSObject {
     OPTSelect* _select;
 }
--(CPSelect*) initCPSelect: (id<CP>) cp withRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*) initCPSelect: (id<CP>) cp withRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -43,7 +43,7 @@
   CPInt2Bool         _filter;
   CPInt2Int          _order;
 }
--(CPSelectMinRandomized*) initWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMinRandomized*) initWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)            dealloc;
 -(CPInt)           choose;
 @end
@@ -54,7 +54,7 @@
    CPInt2Bool      _filter;
    CPInt2Int       _order;
 }
--(CPSelectMax*) initSelectMin:(id<CP>)cp range: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMax*) initSelectMin:(id<CP>)cp range: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)         dealloc;
 -(CPInt)        min;
 -(CPInt)        max;

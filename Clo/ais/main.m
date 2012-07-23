@@ -20,7 +20,7 @@ void labelFF(id<CP> m,id<CPIntVarArray> x)
 {
    CPRange R = {[x low],[x up]};
    [m forrange: R
-    filteredBy: ^bool(int i) { return ![[x at:i] bound];}
+    suchThat: ^bool(int i) { return ![[x at:i] bound];}
      orderedBy: ^int(int i)  { return [[x at:i] domsize];}
             do: ^(int i)     { [CPLabel var: [x at:i]]; }
     ];

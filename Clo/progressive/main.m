@@ -100,12 +100,12 @@ int main(int argc, const char * argv[])
        }
        /*
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          [cp forrange: Guests filteredBy:^bool(ORInt g) { return ![[boat at: g :p] bound];}
+          [cp forrange: Guests suchThat:^bool(ORInt g) { return ![[boat at: g :p] bound];}
                             orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
 //                              orderedBy:^ORInt(ORInt g) { return g;}
                     do:^(ORInt g){
 //                       NSLog(@"BRANCHING ON: <p,g>:<%d,%d>",p,g)
-                       [cp tryall:Hosts filteredBy:^bool(ORInt h) {
+                       [cp tryall:Hosts suchThat:^bool(ORInt h) {
                           return [[boat at:g :p] member:h];
                        } in:^(ORInt h) {
                           [cp label:[boat at:g :p] with:h];

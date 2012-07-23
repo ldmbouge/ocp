@@ -19,7 +19,7 @@
 
 @implementation OPTSelect
 
--(OPTSelect*) initOPTSelectWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(OPTSelect*) initOPTSelectWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
     self = [super init];
     _range = range;
@@ -87,10 +87,10 @@
 @end
 
 @implementation CPSelect
--(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
     self = [super init];
-    _select = [[OPTSelect alloc] initOPTSelectWithRange:range filteredBy: filter orderedBy:order];
+    _select = [[OPTSelect alloc] initOPTSelectWithRange:range suchThat: filter orderedBy:order];
     [[cp trail] trailClosure: ^() { [self release]; }];
     return self;
 }
@@ -119,7 +119,7 @@
 
 @implementation CPSelectMinRandomized
 
--(CPSelectMinRandomized*) initWithRange: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMinRandomized*) initWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    self = [super init];
    _range = range;
@@ -171,7 +171,7 @@
 
 @implementation CPSelectMax
 
--(CPSelectMax*) initSelectMin:(CoreCPI*)cp range: (CPRange) range filteredBy: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMax*) initSelectMin:(CoreCPI*)cp range: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    self = [super init];
    _range = range;

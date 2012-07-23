@@ -24,11 +24,15 @@
 -(id<ORRelation>) eq: (id<ORExpr>) e;
 -(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) neq: (id<ORExpr>) e;
+-(id<ORRelation>) neqi: (ORInt) e;
+-(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
+-(id<ORRelation>) leqi: (ORInt) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORRelation>) geqi: (ORInt) e;
 -(id<ORRelation>) lt: (id<ORExpr>) e;
--(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) lti: (ORInt) e;
+-(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) gti: (ORInt) e;
 -(id<ORExpr>)and:(id<ORRelation>)e;
 -(id<ORExpr>)or:(id<ORRelation>)e;
@@ -133,8 +137,8 @@
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>)tracker range: (ORRange) r filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S filteredBy: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>)tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;
