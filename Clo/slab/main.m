@@ -80,9 +80,9 @@ int main(int argc, const char * argv[])
    
    [cp minimize: obj subjectTo: ^{
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
-      //[cp add: [CPFactory packing: slab itemSize: weight load: load]];
-      //for(CPInt s = Slabs.low; s <= Slabs.up; s++)
-      //   [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
+      [cp add: [CPFactory packing: slab itemSize: weight load: load]];
+      for(CPInt s = Slabs.low; s <= Slabs.up; s++)
+         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
    }
    using:^{
       [cp forrange: IOrders
