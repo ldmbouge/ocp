@@ -139,6 +139,10 @@
 {
     [[e expr] visit: self];
 }
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit: self];
+}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
    printf("SUBSCRIPT-CST[");

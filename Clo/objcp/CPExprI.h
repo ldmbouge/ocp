@@ -48,6 +48,7 @@
 -(void) visitExprMulI: (ORExprMulI*) e;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 @end;

@@ -159,4 +159,16 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORRelation>) or: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker range: r suchThat: f of: e];
+   [tracker trackObject: o];
+   return o;
+}
++(id<ORRelation>) or: (id<ORTracker>) tracker intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker intSet: S suchThat: f of: e];
+   [tracker trackObject: o];
+   return o;
+}
 @end

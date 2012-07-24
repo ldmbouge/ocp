@@ -38,6 +38,9 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) lti: (ORInt) e;
 -(id<ORRelation>) gti: (ORInt) e;
+
+-(id<ORExpr>) and: (id<ORRelation>) e;
+-(id<ORExpr>) or: (id<ORRelation>) e;
 @end
 
 enum CPRelationType {
@@ -52,7 +55,7 @@ enum CPRelationType {
 
 @protocol ORRelation <ORExpr>
 -(enum CPRelationType)type;
--(id<ORRelation>)and:(id<ORRelation>)e;
--(id<ORRelation>)or:(id<ORRelation>)e;
--(id<ORRelation>)imply:(id<ORRelation>)e;
+-(id<ORRelation>) and:(id<ORRelation>)e;
+-(id<ORRelation>) or:(id<ORRelation>)e;
+-(id<ORRelation>) imply:(id<ORRelation>)e;
 @end

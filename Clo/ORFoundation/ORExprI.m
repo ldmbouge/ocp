@@ -105,11 +105,11 @@
 {
    return [ORFactory expr:(id<ORRelation>)self and:e];
 }
--(id<ORExpr>)or:(id<ORRelation>)e
+-(id<ORExpr>) or: (id<ORRelation>)e
 {
    return [ORFactory expr:(id<ORRelation>)self or:e];
 }
--(id<ORExpr>)imply:(id<ORRelation>)e
+-(id<ORExpr>) imply:(id<ORRelation>)e
 {
    return [ORFactory expr:(id<ORRelation>)self imply:e];
 }
@@ -750,6 +750,89 @@
 -(void) visit: (id<ORExprVisitor>) visitor
 {
    [visitor visitExprSumI: self]; 
+}
+-(NSString *) description
+{
+   return [_e description];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_e];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _e = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORExprAggOrI
+-(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   self = [super init];
+   ORInt low = r.low;
+   ORInt up = r.up;
+   _e = [ORFactory integer: cp value: 0];
+   if (f!=nil) {
+      for(ORInt i = low; i <= up; i++)
+         if (!f(i))
+            _e = [_e or: e(i)];
+   }
+   else {
+      for(ORInt i = low; i <= up; i++)
+         _e = [_e or: e(i)];
+   }
+   return self;
+}
+-(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   self = [super init];
+   id<IntEnumerator> ite = [S enumerator];
+   _e = [ORFactory integer: cp value: 0];
+   if (f!=nil) {
+      while ([ite more]) {
+         ORInt i = [ite next];
+         if (!f(i))
+            _e = [_e or: e(i)];
+      }
+   }
+   else {
+      while ([ite more]) {
+         ORInt i = [ite next];
+         _e = [_e or: e(i)];
+      }
+   }
+   return self;
+}
+
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORExpr>) expr
+{
+   return _e;
+}
+-(ORInt) min
+{
+   return [_e min];
+}
+-(ORInt) max
+{
+   return [_e max];
+}
+-(BOOL) isConstant
+{
+   return [_e isConstant];
+}
+-(id<ORTracker>) tracker
+{
+   return [_e tracker];
+}
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitExprAggOrI: self];
 }
 -(NSString *) description
 {

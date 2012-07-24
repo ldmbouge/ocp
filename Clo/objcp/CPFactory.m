@@ -368,6 +368,14 @@ void failNow()
 {
    return (id<CPExpr>)[ORFactory sum:cp intSet:r suchThat:f of:e];
 }
++(id<CPRelation>) or: (id<CP>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   return (id<CPRelation>)[ORFactory or:cp range:r suchThat:f of:e];
+}
++(id<CPRelation>) or: (id<CP>) cp intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   return (id<CPRelation>)[ORFactory or:cp intSet:r suchThat:f of:e];
+}
 
 @end
 

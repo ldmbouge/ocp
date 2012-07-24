@@ -17,6 +17,7 @@
 #import <objcp/CP.h>
 #import "objcp/CPLabel.h"
 
+
 int main(int argc, const char * argv[])
 {
    id<CP> cp = [CPFactory createSolver];
@@ -70,8 +71,8 @@ int main(int argc, const char * argv[])
    for(CPInt c = 0; c <= maxCapacities; c++) {
       CPInt m = MAXINT;
       for(CPInt i = Caps.low; i <= Caps.up; i++)
-         if ([cap at: i] < m)
-            m = [cap at: i];
+         if ([cap at: i] >= c && [cap at: i] - c < m)
+            m = [cap at: i] - c;
       [loss set: m at: c];
    }
    id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: IOrders domain: Slabs];
@@ -82,21 +83,68 @@ int main(int argc, const char * argv[])
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
       [cp add: [CPFactory packing: slab itemSize: weight load: load]];
       for(CPInt s = Slabs.low; s <= Slabs.up; s++)
-         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
+//         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
+         [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) lti: 3]];
    }
    using:^{
+      
       [cp forrange: IOrders
         suchThat: nil
-         orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
+         orderedBy: ^ORInt(ORInt o) { return o; /*[slab[o] domsize];*/}
                 do: ^(ORInt o)
        {
           [CPLabel var: slab[o]];
        }
        ];
-       NSLog(@"%@",slab);
+      
+ //  [cp label: slab[1] with: 1];
+ //  [cp label: slab[2] with: 1];
+      printf("\n");
+      printf("obj: %d \n",[obj min]);
+      printf("Slab: ");
+      for(ORInt i = 1; i <= nbSize; i++)
+         printf("%d ",[slab[i] value]);
+      printf("\n");
+//      printf("Color: ");
+  //    for(ORInt i = 1; i <= nbSize; i++)
+    //     printf("%d ",[color at: i]);
+   //   printf("\n");
+   //   printf("loss: ");
+   //   for(ORInt i = 0; i <= maxCapacities; i++)
+   //      printf("%d ",[loss at: i]);
+    //  printf("\n");
+//      NSLog(@"%@",loss);
+//      NSLog(@"%@",coloredOrder);
+//      NSLog(@"%@",weight);
+//      NSLog(@"%@",load);
+
+
+      for(ORInt i = 1; i <= nbSize; i++) {
+         ORInt s = 0;
+         for(ORInt c = Colors.low; c <= Colors.up; c++) {
+            id<IntEnumerator> ite = [coloredOrder[c] enumerator];
+            BOOL hasColor = false;
+            while ([ite more]) {
+               CPInt o = [ite next];
+               hasColor |= ([slab[o] value] == i);
+            }
+            if (hasColor)
+               s++;
+         }
+         if (s > 2) {
+            printf("color violations \n");
+            abort();
+         }
+//         else
+//            printf("nbColors: %d \n",s);
+      }
    }
    ];
    
+   NSLog(@"Solver status: %@\n",cp);
+   NSLog(@"Quitting");
+   [cp release];
+   [CPFactory shutdown];
                              
    @autoreleasepool {
        
@@ -106,4 +154,6 @@ int main(int argc, const char * argv[])
    }
     return 0;
 }
+ 
+
 

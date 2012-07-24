@@ -34,11 +34,11 @@
 -(id<ORRelation>) lti: (ORInt) e;
 -(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) gti: (ORInt) e;
--(id<ORExpr>)and:(id<ORRelation>)e;
--(id<ORExpr>)or:(id<ORRelation>)e;
--(id<ORExpr>)imply:(id<ORRelation>)e;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
+-(id<ORExpr>) and:(id<ORRelation>) e;
+-(id<ORExpr>) or:(id<ORRelation>) e;
+-(id<ORExpr>) imply:(id<ORRelation>) e;
+- (void) encodeWithCoder:(NSCoder *)aCoder;
+- (id) initWithCoder:(NSCoder *)aDecoder;
 - (void)visit:(id<ORExprVisitor>)v;
 -(enum CPRelationType)type;
 @end
@@ -149,6 +149,21 @@
 -(void) visit: ORExprVisitorI;
 @end
 
+@interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) initORExprAggOrI: (id<ORTracker>)tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(BOOL) isConstant;
+-(NSString *) description;
+-(void) visit: ORExprVisitorI;
+@end
+
 @interface ORDisjunctI : ORExprBinaryI<ORRelation,NSCoding>
 -(id<ORExpr>) initORDisjunctI: (id<ORExpr>) left or: (id<ORExpr>) right;
 -(ORInt) min;
@@ -190,5 +205,6 @@
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
+-(void) visitExprAggOrI: (ORExprAggOrI*) e;
 @end
 
