@@ -617,10 +617,23 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
 {
-   if (a == 1 && b == 0)
-      return [bd copyWithZone:NULL];
-   else if (a==1) {
-      CPBitDom* clone = [bd copyWithZone:NULL];
+   if (a == 1 && b == 0) {
+      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
+      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+         if (!memberCPDom(bd, v)) {
+            [nDom set:-v at:NO];
+         }
+      }
+      return nDom;
+      //return [bd copyWithZone:NULL];
+   } else if (a==1) {
+      CPBitDom* clone = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
+      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+         if (!memberCPDom(bd, v)) {
+            [clone set:-v at:NO];
+         }
+      }
+      //CPBitDom* clone = [bd copyWithZone:NULL];
       [clone translate: b];
       return clone;      
    } else if (a== -1 && b == 0) {

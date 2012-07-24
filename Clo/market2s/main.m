@@ -59,7 +59,7 @@ int main(int argc, const char * argv[])
       
       
       id<CP> cp = [CPFactory createSolver];
-      id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp bounds:RANGE(0,1)]);
+      id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp domain:RANGE(0,1)]);
       [cp solve: ^{
          for(int i=0;i<m;i++) {
             id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];

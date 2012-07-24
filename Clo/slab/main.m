@@ -75,6 +75,7 @@ int main(int argc, const char * argv[])
             m = [cap at: i] - c;
       [loss set: m at: c];
    }
+   CPLong startTime = [CPRuntimeMonitor cputime];
    id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: IOrders domain: Slabs];
    id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<CPIntVar> obj = [CPFactory intVar: cp bounds: (ORRange){0,nbSize*maxCapacities}];
@@ -96,7 +97,7 @@ int main(int argc, const char * argv[])
           [CPLabel var: slab[o]];
        }
        ];
-      
+   
  //  [cp label: slab[1] with: 1];
  //  [cp label: slab[2] with: 1];
       printf("\n");
@@ -140,7 +141,8 @@ int main(int argc, const char * argv[])
       }
    }
    ];
-   
+   CPLong endTime = [CPRuntimeMonitor cputime];
+   NSLog(@"Execution Time: %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
