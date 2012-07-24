@@ -80,30 +80,24 @@ int main(int argc, const char * argv[])
    
    [cp minimize: obj subjectTo: ^{
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
-      [cp add: [CPFactory packing: slab itemSize: weight load: load]];
-      for(CPInt s = Slabs.low; s <= Slabs.up; s++)
-         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
+      //[cp add: [CPFactory packing: slab itemSize: weight load: load]];
+      //for(CPInt s = Slabs.low; s <= Slabs.up; s++)
+      //   [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
    }
    using:^{
       [cp forrange: IOrders
-        suchThat: nil
+          suchThat: nil
          orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
                 do: ^(ORInt o)
        {
           [CPLabel var: slab[o]];
+          NSLog(@"BRANCHED on slab[%d] -> %@",o,slab[o]);
        }
        ];
        NSLog(@"%@",slab);
+      NSLog(@"@losses: %@",loss);
+      NSLog(@"loads: %@",load);
    }
-   ];
-   
-                             
-   @autoreleasepool {
-       
-       // insert code here...
-       NSLog(@"Hello, World!");
-       
-   }
-    return 0;
+   ];   
 }
 
