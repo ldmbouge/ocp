@@ -43,15 +43,18 @@ typedef CPStatus (^CPVoid2CPStatus)(void);
 -(id<CPRelation>) eq: (id<CPExpr>) e;
 -(id<CPRelation>) eqi: (CPInt) e;
 -(id<CPRelation>) neq: (id<CPExpr>) e;
+-(id<CPRelation>) neqi: (CPInt) e;
 -(id<CPRelation>) leq: (id<CPExpr>) e;
+-(id<CPRelation>) leqi: (CPInt) e;
 -(id<CPRelation>) geq: (id<CPExpr>) e;
+-(id<CPRelation>) geqi: (CPInt) e;
 -(id<CPRelation>) lt: (id<CPExpr>) e;
--(id<CPRelation>) gt: (id<CPExpr>) e;
 -(id<CPRelation>) lti: (CPInt) e;
+-(id<CPRelation>) gt: (id<CPExpr>) e;
 -(id<CPRelation>) gti: (CPInt) e;
--(id<CPRelation>)and:(id<CPExpr>)e;
--(id<CPRelation>)or:(id<CPExpr>)e;
--(id<CPRelation>)imply:(id<CPExpr>)e;
+-(id<CPRelation>) and:(id<CPExpr>)e;
+-(id<CPRelation>) or:(id<CPExpr>)e;
+-(id<CPRelation>) imply:(id<CPExpr>)e;
 @end
 
 @protocol CPRelation <ORRelation,CPExpr>

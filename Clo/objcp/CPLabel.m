@@ -98,4 +98,14 @@
    } while (true);
 }
 
++(CPInt) maxBound: (id<CPIntVarArray>) x
+{
+   CPInt low = [x low];
+   CPInt up = [x up];
+   CPInt M = -MAXINT;
+   for(CPInt i = low; i <= up; i++)
+      if ([x[i] bound] && [x[i] value] > M)
+         M = [x[i] value];
+   return M;
+}
 @end;

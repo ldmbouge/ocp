@@ -32,11 +32,14 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) eq: (id<ORExpr>) e;
 -(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) neq: (id<ORExpr>) e;
+-(id<ORRelation>) neqi: (ORInt) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
+-(id<ORRelation>) leqi: (ORInt) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORRelation>) geqi: (ORInt) e;
 -(id<ORRelation>) lt: (id<ORExpr>) e;
--(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) lti: (ORInt) e;
+-(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) gti: (ORInt) e;
 
 -(id<ORExpr>) and: (id<ORRelation>) e;

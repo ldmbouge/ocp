@@ -19,5 +19,6 @@
 +(void) array: (id<CPIntVarArray>) x;
 +(void) array: (id<CPIntVarArray>) x orderedBy: (CPInt2Int) orderedBy;
 +(void) heuristic:(id<CPHeuristic>)h;
++(CPInt) maxBound: (id<CPIntVarArray>) x;
 @end;
 

@@ -212,7 +212,9 @@
 }
 -(CPInt) addChoice: (NSCont*) k
 {
-  return [_controller addChoice: k];
+   if (_canImprove() == CPFailure)
+      [_controller fail];
+   return [_controller addChoice: k];
 }
 -(void) fail
 {
