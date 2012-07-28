@@ -38,6 +38,7 @@
 -(bool)balanced;
 -(void)fixSize;
 -(void)fixHeight;
+-(void) iterateOverKey: (ORInt2Void) f;
 @end
 
 #define LEFTHEIGHT(n)  ((n)->_left  ? (n)->_left->_height : 0L)
@@ -88,6 +89,12 @@
 -(id)element
 {
    return _data;
+}
+-(void) iterateOverKey: (ORInt2Void) f
+{
+   [_left iterateOverKey: f];
+   f(_key);
+   [_right iterateOverKey: f];
 }
 @end
 
@@ -318,6 +325,10 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
          return y;
       }
    } else return 0;
+}
+-(void) iterateOverKey: (ORInt2Void) f
+{
+   [_root iterateOverKey: f];
 }
 -(NSEnumerator*)iterator
 {

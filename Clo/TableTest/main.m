@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import "objcp/CPConstraint.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
@@ -45,6 +46,7 @@ void printCircuit(id<CPIntVarArray> jump)
     } while (curr != 1);
     printf("\n");
 }
+/*
 int main (int argc, const char * argv[])
 {
     CPRange R = (CPRange){0,2};
@@ -73,6 +75,52 @@ int main (int argc, const char * argv[])
     [CPFactory shutdown];
     return 0;
 }
+*/
 
+int main (int argc, const char * argv[])
+{
+   id<CP> cp = [CPFactory createSolver];
+   id<ORIntRange> R = [ORFactory intRange: cp low: 1 up: 10];
+   id<ORIntSet> S = [ORFactory intSet: cp];
+   NSLog(@"%@",R);
+   [R iterate: ^(ORInt i)
+    {
+       [S insert: i];
+    }
+   ];
+   [S iterate: ^(ORInt i)
+    {
+       printf("%d,",i);
+    }
+    ];
+   printf("\n");
+   /*
+   CPRange R = (CPRange){0,2};
+   CPRange D = (CPRange){0,30};
+   id<CP> cp = [CPFactory createSolver];
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
+   id<CPTable> table = [CPFactory table: cp arity: 3];
+   for(CPInt i = 0; i < 5; i++)
+      for(CPInt j = i+1; j < 5; j++)
+         [table insert: i : j : i*5 + j];
+   [table close];
+   [table print];
+   [cp solveAll:
+    ^() {
+       [cp add: [CPFactory table: table on: x]];
+    }
+          using:
+    ^() {
+       [CPLabel array: x];
+       printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
+    }
+    ];
+    */
+   NSLog(@"Solver status: %@\n",cp);
+   NSLog(@"Quitting");
+   [cp release];
+   [CPFactory shutdown];
+   return 0;
+}
 
 

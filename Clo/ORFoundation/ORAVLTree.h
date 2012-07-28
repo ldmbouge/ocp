@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
-//#import "ORData.h"
 
 @protocol Position    
 -(id)element;
@@ -19,10 +18,6 @@
 
 @class ORAVLTreeNode;
 
-@protocol IntEnumerator <NSObject>
--(bool) more;
--(ORInt) next;
-@end
 
 @interface ORAVLTree : NSObject {
 @private
@@ -34,6 +29,7 @@
 -(ORAVLTreeNode<Position>*)findNodeForKey:(ORInt)k;
 -(id)findObjectForKey:(ORInt)k;
 -(ORInt)size;
+-(void) iterateOverKey: (ORInt2Void) f;
 -(void)updateObject:(id)o forKey:(ORInt)k;
 -(void)removeObjectForKey:(ORInt)k;
 -(void)removeNode:(ORAVLTreeNode<Position>*)n;

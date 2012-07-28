@@ -66,4 +66,9 @@ typedef struct ORBounds {
    ORInt max;
 } ORBounds;
 
+@protocol IntEnumerator <NSObject>
+-(bool) more;
+-(ORInt) next;
+@end
+
 #endif

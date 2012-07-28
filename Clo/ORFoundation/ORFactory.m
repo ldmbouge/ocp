@@ -25,6 +25,18 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORIntSet>)  intSet: (id<ORTracker>) tracker
+{
+   ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
+   [tracker trackObject: o];
+   return o;
+}
++(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up
+{
+   ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
+   [tracker trackObject: o];
+   return o;
+}
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: (ORInt) value];

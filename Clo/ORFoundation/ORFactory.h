@@ -16,7 +16,9 @@
 #import "ORFoundation/ORSet.h"
 
 @interface ORFactory : NSObject
-+(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
++(id<ORInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
++(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
++(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo;

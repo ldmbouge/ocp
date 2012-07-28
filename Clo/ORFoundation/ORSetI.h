@@ -22,9 +22,21 @@
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
 -(ORInt) size;
+-(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
+@interface ORIntRangeI : NSObject<ORIntRange> {}
+-(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
+-(ORInt) low;
+-(ORInt) up;
+-(ORInt) size;
+-(void) iterate: (ORInt2Void) f;
+-(NSString*) description;
+-(id<IntEnumerator>) enumerator;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
+@end

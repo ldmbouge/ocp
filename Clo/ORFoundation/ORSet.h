@@ -12,11 +12,25 @@
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORAVLTree.h"
 
-@protocol ORIntSet <NSObject> 
+@protocol ORIntIterator <NSObject>
+-(void) iterate: (ORInt2Void) f;
+@end
+
+@protocol ORIntSet <ORIntIterator>
 -(bool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
 -(ORInt) size;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
+-(void) iterate: (ORInt2Void) f;
+@end
+
+@protocol ORIntRange <ORIntIterator>
+-(ORInt) low;
+-(ORInt) up;
+-(ORInt) size;
+-(NSString*) description;
+-(id<IntEnumerator>) enumerator;
+-(void) iterate: (ORInt2Void) f;
 @end

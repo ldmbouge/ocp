@@ -192,37 +192,37 @@ int main(int argc, const char * argv[])
       for(CPInt s = Slabs.low; s <= Slabs.up; s++)
          //         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
          [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
-   }
-          using:^{
+      }
+      using:^{
              
-             [cp repeat: ^{
-                [cp limitFailures: 100 in: ^{
-                   [cp forrange: IOrders
-                       suchThat: nil
-                        orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
-                             do: ^(ORInt o)
-                    {
-                       [CPLabel var: slab[o]];
-                    }  
-                    ];
-                  }
-                 ];
+         [cp repeat: ^{
+            [cp limitFailures: 100 in: ^{
+               [cp forrange: IOrders
+                   suchThat: nil
+                  orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
+                  do: ^(ORInt o)
+                  {
+                     [CPLabel var: slab[o]];
+                  }  
+               ];
+            }
+            ];
+         }
+         onRepeat: ^{
+            id<CPSolution> solution = [cp solution];
+            for(CPInt i = 1; i <= nbSize; i++) {
+               if ([distr next] <= 90)
+                  [cp label: slab[i] with: [solution intValue: slab[i]]];
                }
-               onRepeat: ^{
-                  id<CPSolution> solution = [cp solution];
-                  for(CPInt i = 1; i <= nbSize; i++) {
-                     if ([distr next] <= 90)
-                      [cp label: slab[i] with: [solution intValue: slab[i]]];
-                  }
-               }
-              ];
-             printf("\n");
-             printf("obj: %d \n",[obj min]);
-             printf("Slab: ");
-             for(ORInt i = 1; i <= nbSize; i++)
-                printf("%d ",[slab[i] value]);
-             printf("\n");
-          }
+            }
+         ];
+         printf("\n");
+         printf("obj: %d \n",[obj min]);
+         printf("Slab: ");
+         for(ORInt i = 1; i <= nbSize; i++)
+            printf("%d ",[slab[i] value]);
+         printf("\n");
+      }
     ];
    CPLong endTime = [CPRuntimeMonitor cputime];
    NSLog(@"Execution Time: %lld \n",endTime - startTime);
