@@ -10,7 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORUtilities.h"
+#import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORFoundation.h>
 #import "objcp/CPConstraint.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
@@ -19,7 +20,7 @@
 #import "objcp/CPLimit.h"
 
 #import "objcp/CPArray.h"
-#import "objcp/CPDataI.h"
+
 
 
 /*
@@ -148,8 +149,9 @@ int main (int argc, const char * argv[])
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
    }
-   CPRange Cities = (CPRange){0,nbCities-1};
    id<CP> cp = [CPFactory createSolver];
+   id<ORIntRange> Cities = RANGE(cp,0,nbCities-1);
+
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
    for(CPInt i = 0; i < nbCities; i++) {
       for(CPInt j = 0; j < nbCities; j++) {
@@ -167,7 +169,7 @@ int main (int argc, const char * argv[])
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
-   id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
+   id<CPIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:
    ^{

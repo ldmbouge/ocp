@@ -375,6 +375,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
+    _i = malloc(sizeof(ORRange) * _arity);
     _range[0] = r0;
     _range[1] = r1;
     _range[2] = r2;
@@ -396,30 +397,31 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 
 -(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
-    self = [super init];
-    _cp = cp;  
-    _trail = [[cp solver] trail];
-    _arity = 2;
-    _range = malloc(sizeof(id<ORIntRange>) * _arity);
-    _low = malloc(sizeof(CPInt) * _arity);
-    _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);
-    _range[0] = r0;
-    _range[1] = r1;
-    _low[0] = [r0 low];
-    _low[1] = [r1 low];
-    _up[0] = [r0 up];
-    _up[1] = [r1 up];
-    _size[0] = (_up[0] - _low[0] + 1);
-    _size[1] = (_up[1] - _low[1] + 1);
-    _nb = _size[0] * _size[1];
-    _flat = malloc(sizeof(CPInt) * _nb);
-    for (CPInt i=0 ; i < _nb; i++) 
-        _flat[i] = 0;   
-    return self;
+   self = [super init];
+   _cp = cp;
+   _trail = [[cp solver] trail];
+   _arity = 2;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(CPInt) * _arity);
+   _up = malloc(sizeof(CPInt) * _arity);
+   _size = malloc(sizeof(CPInt) * _arity);
+   _i = malloc(sizeof(ORRange) * _arity);
+   _range[0] = r0;
+   _range[1] = r1;
+   _low[0] = [r0 low];
+   _low[1] = [r1 low];
+   _up[0] = [r0 up];
+   _up[1] = [r1 up];
+   _size[0] = (_up[0] - _low[0] + 1);
+   _size[1] = (_up[1] - _low[1] + 1);
+   _nb = _size[0] * _size[1];
+   _flat = malloc(sizeof(CPInt) * _nb);
+   for (CPInt i=0 ; i < _nb; i++)
+      _flat[i] = 0;
+   return self;
 }
 
--(void) dealloc 
+-(void) dealloc
 {
     //   NSLog(@"CPIntVarMatrix dealloc called...\n");
     free(_range);
