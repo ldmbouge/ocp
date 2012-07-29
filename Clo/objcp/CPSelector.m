@@ -19,7 +19,7 @@
 
 @implementation OPTSelect
 
--(OPTSelect*) initOPTSelectWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
     self = [super init];
     _range = range;
@@ -55,39 +55,37 @@
 }
 -(CPInt) choose
 {
-    CPInt low = _range.low;
-    CPInt up = _range.up;
-    
-    float bestFound = MAXFLOAT;
-    float bestRand = MAXFLOAT;
-    CPInt indexFound = low - 1;
-    
-    for(CPInt i = low; i <= up; i++) {
-        if (!_filter(i)) {
-            float val = _direction * _order(i);
-            if (val < bestFound) {
-                bestFound = val;
-                indexFound = i;
-                bestRand = [_stream next];
-            } 
-            /*
-            else if (val == bestFound) {
-                float r = [_stream next];
-                if (r < bestRand) {
-                    indexFound = i;
-                    bestRand = r;
-                }
-            } 
-             */
-        }
-    }
-    return indexFound;
+   float bestFound = MAXFLOAT;
+   float bestRand = MAXFLOAT;
+   ORInt indexFound = MAXINT;
+   id<IntEnumerator> ite = [_range enumerator];
+   while ([ite more]) {
+      ORInt i = [ite next];
+      if (!_filter(i)) {
+         float val = _direction * _order(i);
+         if (val < bestFound) {
+            bestFound = val;
+            indexFound = i;
+            bestRand = [_stream next];
+         }
+         /*
+          else if (val == bestFound) {
+          float r = [_stream next];
+          if (r < bestRand) {
+          indexFound = i;
+          bestRand = r;
+          }
+          }
+          */
+      }
+   }
+   return indexFound;
 }
 
 @end
 
 @implementation CPSelect
--(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
     self = [super init];
     _select = [[OPTSelect alloc] initOPTSelectWithRange:range suchThat: filter orderedBy:order];
@@ -119,7 +117,7 @@
 
 @implementation CPSelectMinRandomized
 
--(CPSelectMinRandomized*) initWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    self = [super init];
    _range = range;
@@ -139,31 +137,29 @@
 
 -(CPInt) choose
 {
-  CPInt low = _range.low;
-  CPInt up = _range.up;
-
-  float bestFound = MAXFLOAT;
-  float bestRand = MAXFLOAT;
-  CPInt indexFound = low - 1;
-
-  for(CPInt i = low; i <= up; i++) {
-    if (!_filter(i)) {
-      float val = _order(i);
-      if (val < bestFound) {
-          bestFound = val;
-          indexFound = i;
-          bestRand = [_stream next];
+   float bestFound = MAXFLOAT;
+   float bestRand = MAXFLOAT;
+   CPInt indexFound = MAXINT;
+   id<IntEnumerator> ite = [_range enumerator];
+   while ([ite more]) {
+      ORInt i = [ite next];
+      if (!_filter(i)) {
+         float val = _order(i);
+         if (val < bestFound) {
+            bestFound = val;
+            indexFound = i;
+            bestRand = [_stream next];
+         }
+         else if (val == bestFound) {
+            float r = [_stream next];
+            if (r < bestRand) {
+               indexFound = i;
+               bestRand = r;
+            }
+         }
       }
-      else if (val == bestFound) {
-          float r = [_stream next];
-          if (r < bestRand) {
-              indexFound = i;
-              bestRand = r;
-          }
-      }
-    }
-  }
-  return indexFound;
+   }
+   return indexFound;
 }
 
 @end
@@ -171,12 +167,10 @@
 
 @implementation CPSelectMax
 
--(CPSelectMax*) initSelectMin:(CoreCPI*)cp range: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMax*) initSelectMax:(CoreCPI*)cp range: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    self = [super init];
    _range = range;
-   _used = malloc(sizeof(bool)*(range.up - range.low + 1));
-   memset(_used,0,sizeof(bool)*(range.up - range.low + 1));
    _filter = [filter copy];
    _order = [order copy];
    [[cp trail] trailRelease:self];
@@ -185,27 +179,18 @@
 
 -(void) dealloc
 {
-   free(_used);
   [_filter release];
   [_order release];
   [super dealloc];
 }
--(CPInt) min 
-{
-   return _range.low;
-}
--(CPInt) max
-{
-   return _range.up;
-}
 -(CPInt) choose
 {
-   CPInt low = _range.low;
-   CPInt up  = _range.up;   
    float bestFound = -MAXFLOAT;
-   CPInt indexFound = low - 1;   
-   for(CPInt i = low; i <= up; i++) {
-      if (!_filter(i) && !_used[i-low]) {
+   CPInt indexFound = MAXINT;
+   id<IntEnumerator> ite = [_range enumerator];
+   while ([ite more]) {
+      ORInt i = [ite next];
+      if (_filter(i)) {
          float val = _order(i);
          if (val > bestFound) {
             bestFound = val;
@@ -213,7 +198,6 @@
          }
       }
    }
-   _used[indexFound - low] = YES;
    return indexFound;
 }
 @end

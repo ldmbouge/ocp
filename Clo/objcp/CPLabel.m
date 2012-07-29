@@ -50,10 +50,9 @@
     CPSelect* select = [cpi selectInRange: RANGE(cp,[x low],[x up])
                               suchThat: ^bool(CPInt i) { return [[x at: i] bound]; }
                                orderedBy: orderedBy];
-    CPInt low = [x low];
     do {
         CPInt i = [select min];
-        if (i < low) {
+        if (i == MAXINT) {
             return;
         }
  //      printf("(%d)",[[x at: i] getId]);
@@ -77,14 +76,13 @@
       if (i < low) 
          return;
       id<CPIntVar> x = [av at: i];
-      CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMin:cp
-                                                            range:(CPRange){[x min],[x max]}
-                                                       suchThat:^bool(CPInt v)      { return ![x member:v];}
+      CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMax:cp
+                                                            range:RANGE(cp,[x min],[x max])
+                                                       suchThat:^bool(CPInt v)  { return ![x member:v];}
                                                         orderedBy:^CPInt(CPInt v) { return [h valOrdering:v forVar:x];}];
-      CPInt val = [valSelect min];
       do {
          CPInt curVal = [valSelect choose];
-         if (curVal < val)
+         if (curVal == MAXINT)
             break;
          [cp try:^{
             [cp label:x with:curVal];

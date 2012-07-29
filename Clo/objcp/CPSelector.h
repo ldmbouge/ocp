@@ -14,12 +14,12 @@
 
 @interface OPTSelect : NSObject {
     id<ORRandomStream> _stream;
-    CPRange            _range;
+    id<ORIntIterator>  _range;
     CPInt2Bool         _filter;
     CPInt2Int          _order;
     CPInt              _direction;
 }
--(OPTSelect*) initOPTSelectWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -30,7 +30,7 @@
 @interface CPSelect : NSObject {
     OPTSelect* _select;
 }
--(CPSelect*) initCPSelect: (id<CP>) cp withRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*) initCPSelect: (id<CP>) cp withRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -39,24 +39,21 @@
 
 @interface CPSelectMinRandomized : NSObject {
   id<ORRandomStream> _stream;
-  CPRange            _range;
+  id<ORIntIterator>  _range;
   CPInt2Bool         _filter;
   CPInt2Int          _order;
 }
--(CPSelectMinRandomized*) initWithRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)            dealloc;
 -(CPInt)           choose;
 @end
 
 @interface CPSelectMax : NSObject {
-   CPRange         _range;
-   bool*           _used;
-   CPInt2Bool      _filter;
-   CPInt2Int       _order;
+   id<ORIntIterator> _range;
+   CPInt2Bool        _filter;
+   CPInt2Int         _order;
 }
--(CPSelectMax*) initSelectMin:(id<CP>)cp range: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMax*) initSelectMax:(id<CP>)cp range: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)         dealloc;
--(CPInt)        min;
--(CPInt)        max;
 -(CPInt)        choose;
 @end

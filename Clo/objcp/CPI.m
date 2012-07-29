@@ -187,7 +187,7 @@
    //[cstr release]; // [ldm] Why release? [this is tracked anyhow!]
 }
 
--(CPSelect*) selectInRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    return [[CPSelect alloc] initCPSelect: (id<CP>)self
                                withRange: range
