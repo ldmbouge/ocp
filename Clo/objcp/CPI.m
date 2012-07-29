@@ -132,21 +132,21 @@
 {
    [_search try: left or: right];
 }
--(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body
+-(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body
 {
    [_search tryall: range suchThat: filter in: body];
 }
--(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];
 }
--(void) forrange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forrange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
 {
-   [_search forrange: range suchThat: filter orderedBy: order do: body];
+   [ORControl forall: range suchThat: filter orderedBy: order do: body];
 }
--(void) forrange: (CPRange) range orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forrange: (id<ORIntIterator>) range orderedBy: (CPInt2Int) order do: (CPInt2Void) body
 {
-   [_search forrange: range suchThat: nil orderedBy: order do: body];
+   [ORControl forall: range suchThat: nil orderedBy: order do: body];
 }
 -(void) fail
 {

@@ -74,17 +74,21 @@
       return CPSkip;
    
    _posted = true;
-   CPRange BR = [_binSize range];
-   CPRange IR = [_item range];
+   id<ORIntRange> BR = [_binSize range];
+   id<ORIntRange> IR = [_item range];
    id<CP> cp = [_item cp];
    
-   for(CPInt b = BR.low; b <= BR.up; b++)
+   ORInt brlow = [BR low];
+   ORInt brup = [BR up];
+   for(CPInt b = brlow; b <= brup; b++)
       [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
    CPInt s = 0;
-   for(CPInt i = IR.low; i <= IR.up; i++)
+   ORInt irlow = [IR low];
+   ORInt irup = [IR up];
+   for(CPInt i = irlow; i <= irup; i++)
       s += [_itemSize at: i];
    [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
-   for(CPInt b = BR.low; b <= BR.up; b++)
+   for(CPInt b = brlow; b <= brup; b++)
       [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return CPSkip;
 }

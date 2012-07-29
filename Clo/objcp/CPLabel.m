@@ -47,7 +47,7 @@
 {
     id<CP> cp = [x cp];
     CPI* cpi = (CPI*) cp;
-    CPSelect* select = [cpi selectInRange: (CPRange){[x low],[x up]}
+    CPSelect* select = [cpi selectInRange: RANGE(cp,[x low],[x up])
                               suchThat: ^bool(CPInt i) { return [[x at: i] bound]; }
                                orderedBy: orderedBy];
     CPInt low = [x low];
@@ -68,12 +68,9 @@
    NSLog(@"Heuristic on: <%lu> %@",[av count],av);
    id<CP> cp = [av cp];
    CPI* cpi = (CPI*) cp;
-   CPSelect* select = [cpi selectInRange: (CPRange){[av low],[av up]}
-                              suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }
-                               orderedBy: ^CPInt(CPInt i) { 
-                                  id<CPIntVar> avi = [av at: i];
-                                  return [h varOrdering:avi];
-                               }];
+   CPSelect* select = [cpi selectInRange: RANGE(cp,[av low],[av up])
+                                suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }
+                               orderedBy: ^CPInt(CPInt i) { return [h varOrdering:av[i]]; }];
    CPInt low = [av low];
    do {      
       CPInt i = [select max];

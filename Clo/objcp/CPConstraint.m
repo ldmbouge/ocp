@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPTypes.h"
 #import "CPError.h"
 #import "CPFactory.h"
@@ -199,10 +200,12 @@
 
 +(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 {
-   CPRange R = [binSize range];
+   id<ORIntRange> R = [binSize range];
    id<CPIntVarArray> load = [CPFactory intVarArray: [x cp] range: R];
-   for(CPInt i = R.low; i <= R.up; i++) 
-      load[i] = [CPFactory intVar: [x cp] domain:(CPRange){0,[binSize at:i]}];
+   ORInt low = [R low];
+   ORInt up = [R up];
+   for(CPInt i = low; i <= up; i++) 
+      load[i] = [CPFactory intVar: [x cp] domain: RANGE([x tracker],0,[binSize at:i])];
    id<CPConstraint> o = [CPFactory packing: x itemSize: itemSize load: load];
    [[x tracker] trackObject: o];
    return o;
@@ -220,12 +223,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
 
 +(void) sortIntVarInt: (id<CPIntVarArray>) x size: (id<CPIntArray>) size sorted: (id<CPIntVarArray>*) sx sortedSize: (id<CPIntArray>*) sortedSize
 {
-   CPRange R = [x range];
-   int nb = R.up - R.low + 1;
-   int low = R.low;
+   id<ORIntRange> R = [x range];
+   int nb = [R up] - [R low] + 1;
+   ORInt low = [R low];
+   ORInt up = [R up];
    CPPairIntId* toSort = (CPPairIntId*) alloca(sizeof(CPPairIntId) * nb);
    int k = 0;
-   for(CPInt i = R.low; i <= R.up; i++)
+   for(CPInt i = low; i <= up; i++)
       toSort[k++] = (CPPairIntId){[size at: i],x[i]};
    qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);
    

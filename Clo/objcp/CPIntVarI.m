@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPTypes.h"
 #import "CPData.h"
 #import "CPDom.h"
@@ -616,10 +617,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_dom restoreValue:toRestore];
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp bounds:(CPRange)b
+-(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp bounds:(id<ORIntRange>)b
 {
-   self = [self initCPIntVarCore: cp low:b.low up:b.up];
-   _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low:b.low up:b.up];
+   self = [self initCPIntVarCore: cp low: [b low] up: [b up]];
+   _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: [b low] up: [b up]];
    return self;
 }
 
@@ -651,10 +652,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 
-+(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(CPRange)b
++(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(id<ORIntRange>)b
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:b];
-   x->_isBool = (b.low == 0 && b.up==1);
+   x->_isBool = ([b low] == 0 && [b up] == 1);
    return x;
 }
 
@@ -662,14 +663,15 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    CPIntVarI* x = nil;
    if (low==0 && up==1)
-      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:RANGE(0,1)];
-   else x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
+   else
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];
    x->_isBool = (low == 0 && up==1);
    return x;
 }
 +(CPIntVarI*) initCPBoolVar: (id<CP>) fdm
 {
-   CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:RANGE(0,1)];
+   CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
    x->_isBool = YES;
    return x;
 }

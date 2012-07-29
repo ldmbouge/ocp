@@ -64,9 +64,9 @@
 -(void)            forrange: (CPRange) range suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)            forrange: (CPRange) range orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)                 try: (CPClosure) left or: (CPClosure) right;
--(void)              tryall: (CPRange) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body; 
--(void)              tryall: (CPRange) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
--(CPSelect*)  selectInRange: (CPRange) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body; 
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
+-(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
 
 -(id)               virtual: (id) obj;
 -(id<CPSolver>)        solver;

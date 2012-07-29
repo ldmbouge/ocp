@@ -26,7 +26,7 @@
 {
    return [[ORZeroOneStreamI alloc] init];
 }
-+(id<ORUniformDistribution>) uniformDistribution: (ORRange) r
++(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r
 {
    return [[ORUniformDistributionI alloc] initORUniformDistribution: r];
 }

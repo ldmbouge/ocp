@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "ORDataI.h"
-
+#import "ORSet.h"
 
 @implementation ORIntegerI 
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value
@@ -145,12 +145,12 @@ static ORInt _deterministic;
 @end;
 
 @implementation ORUniformDistributionI
--(ORUniformDistributionI*) initORUniformDistribution: (ORRange) r
+-(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r
 {
    self = [super init];
    _range = r;
    _stream = [[ORRandomStreamI alloc] init];
-   _size = _range.up - _range.low + 1;
+   _size = [_range up] - [_range low] + 1;
    return self;
 }
 -(void) dealloc

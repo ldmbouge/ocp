@@ -498,6 +498,8 @@
 		B15A2DAB139AB25F002401A0 /* CPLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A2DA9139AB25F002401A0 /* CPLimit.m */; };
 		B15A312F13A018A9002401A0 /* CPSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A312D13A018A9002401A0 /* CPSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15A313013A018A9002401A0 /* CPSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A312E13A018A9002401A0 /* CPSelector.m */; };
+		B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */ = {isa = PBXBuildFile; fileRef = B15B2F6615C4A86F0027A7E6 /* ORControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B15B2F6715C4A86F0027A7E6 /* ORControl.m */; };
 		B15F6DB215B10C1100158FA0 /* CPDDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B43634015AECE4D00E9458D /* CPDDeg.m */; };
 		B15F6DB315B10C6100158FA0 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
 		B15F6DB415B10C6100158FA0 /* CPKnapsack.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B65615D15AD58F6002F344B /* CPKnapsack.m */; };
@@ -1687,6 +1689,8 @@
 		B15A2DA9139AB25F002401A0 /* CPLimit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLimit.m; sourceTree = "<group>"; };
 		B15A312D13A018A9002401A0 /* CPSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSelector.h; sourceTree = "<group>"; };
 		B15A312E13A018A9002401A0 /* CPSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSelector.m; sourceTree = "<group>"; };
+		B15B2F6615C4A86F0027A7E6 /* ORControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORControl.h; sourceTree = "<group>"; };
+		B15B2F6715C4A86F0027A7E6 /* ORControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORControl.m; sourceTree = "<group>"; };
 		B15F6DDE15B1361700158FA0 /* progressive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = progressive; sourceTree = BUILT_PRODUCTS_DIR; };
 		B15F6DE215B1361700158FA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B15F6DE515B1361700158FA0 /* progressive-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "progressive-Prefix.pch"; sourceTree = "<group>"; };
@@ -2998,13 +3002,15 @@
 				5BE64310139D49610056F448 /* ORTrail.h */,
 				5BE64311139D49610056F448 /* ORTrail.m */,
 				5B920EAB15A3F4A800AD0820 /* ORTracker.h */,
+				5B920EB515A3F91A00AD0820 /* ORData.h */,
 				5B920EB915A3FDB800AD0820 /* ORDataI.h */,
 				5B920EBA15A3FDB800AD0820 /* ORDataI.m */,
-				5B920EB515A3F91A00AD0820 /* ORData.h */,
 				5B60E5F115AE9661002FF2B3 /* ORData.m */,
 				5BAEE08415AE9883006CEE1E /* ORParallel.h */,
 				5BAEE08515AE9883006CEE1E /* ORParallel.m */,
 				5BFD594615A3ACA500825BC3 /* Supporting Files */,
+				B15B2F6615C4A86F0027A7E6 /* ORControl.h */,
+				B15B2F6715C4A86F0027A7E6 /* ORControl.m */,
 			);
 			path = ORFoundation;
 			sourceTree = "<group>";
@@ -3565,6 +3571,7 @@
 				5B920EB315A3F6DD00AD0820 /* ORFactory.h in Headers */,
 				5B920EB615A3F91A00AD0820 /* ORData.h in Headers */,
 				5B920EB815A3FB9E00AD0820 /* ORArray.h in Headers */,
+				B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
@@ -4993,6 +5000,7 @@
 				5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */,
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
+				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7577,6 +7585,7 @@
 				5B7D696215B9C91D00C9A10C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B8DA20115B98BC300684FD8 /* Build configuration list for PBXNativeTarget "knapsackOpt" */ = {
 			isa = XCConfigurationList;
@@ -7864,6 +7873,7 @@
 				B1935C6915B90ECF00107399 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B19ABA15146D68FE004EB77E /* Build configuration list for PBXNativeTarget "AtomicTest" */ = {
 			isa = XCConfigurationList;

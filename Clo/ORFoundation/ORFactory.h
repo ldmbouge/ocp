@@ -20,16 +20,16 @@
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 
-+(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value;
-+(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo;
-+(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
-+(id<ORIdArray>)   idArray: (id<ORTracker>) tracker range: (ORRange) range;
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1;
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2;
++(id<ORIdArray>)   idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 
-+(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (ORRange) range;
-+(id<ORIntSet>) collect: (id<ORTracker>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e;
++(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
++(id<ORIntSet>) collect: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e;
 
 @end
 
@@ -47,9 +47,10 @@
 +(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right;
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<ORExpr>) sum: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORRelation>) or: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORRelation>) or: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 +(id<ORRelation>) or: (id<ORTracker>) tracker intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
+#define RANGE(cp,a,b)      [ORFactory intRange: cp low: a up: b]

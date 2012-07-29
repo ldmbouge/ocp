@@ -12,10 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/NSObject.h>
 
-#import "objcp/CPData.h"
-#import "objcp/CPArray.h"
-#import "ORFoundation/ORSet.h"
-#import "ORUtilities/ORUtilities.h"
+#import <objcp/CPData.h>
+#import <objcp/CPArray.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORUtilities/ORUtilities.h>
 
 @protocol CPSearchController;
 @protocol CPSolver;
@@ -46,8 +46,8 @@
 -(void)            forrange: (CPRange) range suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)            forrange: (CPRange) range orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)                 try: (CPClosure) left or: (CPClosure) right;
--(void)              tryall: (CPRange) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body; 
--(void)              tryall: (CPRange) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;

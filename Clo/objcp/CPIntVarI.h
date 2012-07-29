@@ -96,7 +96,6 @@ typedef struct  {
 -(void) changeMaxEvt:(CPInt) dsz;
 -(void) loseValEvt: (CPInt) val;
 
-//-(void) loseRangeEvt:(CPDoRange) clo;
 -(void) loseRangeEvt:(CPClosure) clo;
 -(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift;
 @end
@@ -174,7 +173,7 @@ enum CPVarClass {
 -(void) bounds:(CPBounds*)bnd;
 -(CPInt) domsize;
 -(bool) member:(CPInt)v;
--(CPRange)around:(CPInt)v;
+-(CPRange) around:(CPInt)v;
 -(id<CPDom>) domain;
 -(CPInt) shift;
 -(CPInt) scale;
@@ -190,7 +189,7 @@ enum CPVarClass {
 -(CPStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
-+(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(CPRange)b;
++(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(id<ORIntRange>)b;
 +(CPIntVarI*)    initCPIntVar: (id<CP>)fdm low:(CPInt)low up:(CPInt)up;
 +(CPIntVarI*)    initCPBoolVar:(id<CP>)fdm;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withShift:(CPInt)b;

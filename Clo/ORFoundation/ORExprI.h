@@ -137,7 +137,7 @@
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>)tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>)tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(void) dealloc;
 -(ORInt) min;
@@ -152,7 +152,7 @@
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>)tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAggOrI: (id<ORTracker>)tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 -(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 -(void) dealloc;
 -(ORInt) min;

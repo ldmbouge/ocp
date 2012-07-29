@@ -37,52 +37,52 @@
    [tracker trackObject: o];
    return o;
 }
-+(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value
++(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: (ORInt) value];
    [tracker trackObject: o];
    return o;
 }
 
-+(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo
++(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range with:clo];
    [tracker trackObject: o];
    return o;
 }
 
-+(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with: (ORInt(^)(ORInt,ORInt)) clo
++(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range: r1 range: r2 with:clo];    
    [tracker trackObject: o];
    return o;
 }
-+(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (ORRange) range
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
    [tracker trackObject:o];
    return o;
 }
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1];
    [tracker trackObject:o];
    return o;
 }
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker range:r0 :r1 :r2];
    [tracker trackObject:o];
    return o;
 }
-+(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (ORRange) range
++(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    return (id<ORIntSetArray>)[ORFactory idArray: tracker range: range];
 }
-+(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e
++(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e
 {
    ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
-   for(ORInt i = r.low; i <= r.up; i++)
+   for(ORInt i = [r low]; i <= [r up]; i++)
       if (f == nil || f(i))
          [o insert: e(i)];
    [tracker trackObject: o];
@@ -159,7 +159,7 @@
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP Solver in Abs Expression"];
 }
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) sum: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker range: r suchThat: f of: e];
    [tracker trackObject: o];
@@ -171,7 +171,7 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORRelation>) or: (id<ORTracker>) tracker range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) or: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker range: r suchThat: f of: e];
    [tracker trackObject: o];

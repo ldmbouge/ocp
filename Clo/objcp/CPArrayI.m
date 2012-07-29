@@ -46,13 +46,13 @@
 
 
 @implementation CPTRIntArrayI 
--(CPTRIntArrayI*) initCPTRIntArray: (id<CP>) cp range: (CPRange) R
+-(CPTRIntArrayI*) initCPTRIntArray: (id<CP>) cp range: (id<ORIntRange>) R
 {
     self = [super init];
     _cp = cp;
     _trail = [[cp solver] trail];
-    _low = R.low;
-    _up = R.up;
+    _low = [R low];
+    _up = [R up];
     _nb = (_up - _low + 1);
     _array = malloc(_nb * sizeof(TRInt));
     _array -= _low;
@@ -93,7 +93,7 @@
 {
     return _nb;
 }
--(NSString*)description
+-(NSString*) description
 {
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [rv appendString:@"["];
@@ -118,7 +118,7 @@
     return [[_cp solver] virtualOffset:self];
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *)aCoder
 {
     [aCoder encodeObject:_cp];
     [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low];
@@ -129,7 +129,7 @@
         [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
     }
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
+-(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
@@ -152,29 +152,28 @@
 
 @implementation CPTRIntMatrixI
 
--(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2
+-(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     self = [super init];
     _cp = cp;  
     _trail = [[cp solver] trail];
     _arity = 3;
-    _range = malloc(sizeof(CPRange) * _arity);
+    _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
-    _i = malloc(sizeof(CPRange) * _arity);
     _range[0] = r0;
     _range[1] = r1;
     _range[2] = r2;
-    _low[0] = r0.low;
-    _low[1] = r1.low;
-    _low[2] = r2.low;
-    _up[0] = r0.up;
-    _up[1] = r1.up;
-    _up[2] = r2.up;
-    _size[0] = (r0.up - r0.low + 1);
-    _size[1] = (r1.up - r1.low + 1);
-    _size[2] = (r2.up - r2.low + 1);
+    _low[0] = [r0 low];
+    _low[1] = [r1 low];
+    _low[2] = [r2 low];
+    _up[0] = [r0 up];
+    _up[1] = [r1 up];
+    _up[2] = [r2 up];
+    _size[0] = (_up[0] - _low[0] + 1);
+    _size[1] = (_up[1] - _low[1] + 1);
+    _size[2] = (_up[2] - _low[2] + 1);
     _nb = _size[0] * _size[1] * _size[2];
     _flat = malloc(sizeof(TRInt) * _nb);
     for (CPInt i=0 ; i < _nb; i++) 
@@ -182,24 +181,24 @@
     return self;
 }
 
--(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CP>) cp range: (CPRange) r0 : (CPRange) r1
+-(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
     self = [super init];
     _cp = cp;  
     _trail = [[cp solver] trail];
     _arity = 2;
-    _range = malloc(sizeof(CPRange) * _arity);
+    _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
     _range[0] = r0;
     _range[1] = r1;
-    _low[0] = r0.low;
-    _low[1] = r1.low;
-    _up[0] = r0.up;
-    _up[1] = r1.up;
-    _size[0] = (r0.up - r0.low + 1);
-    _size[1] = (r1.up - r1.low + 1);
+    _low[0] = [r0 low];
+    _low[1] = [r1 low];
+    _up[0] = [r0 up];
+    _up[1] = [r1 up];
+    _size[0] = (_up[0] - _low[0] + 1);
+    _size[1] = (_up[1] - _low[1] + 1);
     _nb = _size[0] * _size[1];
     _flat = malloc(sizeof(TRInt) * _nb);
     for (CPInt i=0 ; i < _nb; i++) 
@@ -227,7 +226,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
         idx = idx * m->_size[k] + (i[k] - m->_low[k]);
     return idx;
 }
--(CPRange) range: (CPInt) i
+-(id<ORIntRange>) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPTRIntMatrix"]; 
@@ -280,7 +279,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    assignTRInt(ptr,ptr->_val + delta,_trail);
    return ptr->_val;
 }
--(NSUInteger)count
+-(NSUInteger) count
 {
     return _nb;
 }
@@ -300,7 +299,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
       }
    }
 }
--(NSString*)description
+-(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    CPInt* i = alloca(sizeof(CPInt)*_arity);
@@ -324,8 +323,9 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     [aCoder encodeObject:_cp];
     [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
     for(CPInt i = 0; i < _arity; i++) {
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].low];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].up];
+        [aCoder encodeObject:_range[i]];
+        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
+        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
     }
     for(CPInt i=0 ; i < _nb ;i++) {
         [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_flat[i]._val];
@@ -337,18 +337,17 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
-    _range = malloc(sizeof(CPRange) * _arity);
+    _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
-    _i = malloc(sizeof(CPRange) * _arity);    
     _nb = 1;
     for(CPInt i = 0; i < _arity; i++) {
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
-        _range[i] = (CPRange){_low[i],_up[i]};
-        _size[i] = (_up[i] - _low[i] + 1);
-        _nb *= _size[i];
+       _range[i] = [[aDecoder decodeObject] retain];
+       [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
+       [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
+       _size[i] = (_up[i] - _low[i] + 1);
+       _nb *= _size[i];
     }
     _flat = malloc(sizeof(TRInt) * _nb);
     for(CPInt i=0 ; i < _nb ;i++) {
@@ -366,29 +365,28 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 
 @implementation CPIntMatrixI
 
--(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (CPRange) r0 : (CPRange) r1 : (CPRange) r2
+-(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     self = [super init];
     _cp = cp;  
     _trail = [[cp solver] trail];
     _arity = 3;
-    _range = malloc(sizeof(CPRange) * _arity);
+    _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
-    _i = malloc(sizeof(CPRange) * _arity);
     _range[0] = r0;
     _range[1] = r1;
     _range[2] = r2;
-    _low[0] = r0.low;
-    _low[1] = r1.low;
-    _low[2] = r2.low;
-    _up[0] = r0.up;
-    _up[1] = r1.up;
-    _up[2] = r2.up;
-    _size[0] = (r0.up - r0.low + 1);
-    _size[1] = (r1.up - r1.low + 1);
-    _size[2] = (r2.up - r2.low + 1);
+    _low[0] = [r0 low];
+    _low[1] = [r1 low];
+    _low[2] = [r2 low];
+    _up[0] = [r0 up];
+    _up[1] = [r1 up];
+    _up[2] = [r2 up];
+    _size[0] = (_up[0] - _low[0] + 1);
+    _size[1] = (_up[1] - _low[1] + 1);
+    _size[2] = (_up[2] - _low[2] + 1);
     _nb = _size[0] * _size[1] * _size[2];
     _flat = malloc(sizeof(CPInt) * _nb);
     for (CPInt i=0 ; i < _nb; i++) 
@@ -396,25 +394,24 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     return self;
 }
 
--(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (CPRange) r0 : (CPRange) r1
+-(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
     self = [super init];
     _cp = cp;  
     _trail = [[cp solver] trail];
     _arity = 2;
-    _range = malloc(sizeof(CPRange) * _arity);
+    _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
     _size = malloc(sizeof(CPInt) * _arity);
-    _i = malloc(sizeof(CPRange) * _arity);
     _range[0] = r0;
     _range[1] = r1;
-    _low[0] = r0.low;
-    _low[1] = r1.low;
-    _up[0] = r0.up;
-    _up[1] = r1.up;
-    _size[0] = (r0.up - r0.low + 1);
-    _size[1] = (r1.up - r1.low + 1);
+    _low[0] = [r0 low];
+    _low[1] = [r1 low];
+    _up[0] = [r0 up];
+    _up[1] = [r1 up];
+    _size[0] = (_up[0] - _low[0] + 1);
+    _size[1] = (_up[1] - _low[1] + 1);
     _nb = _size[0] * _size[1];
     _flat = malloc(sizeof(CPInt) * _nb);
     for (CPInt i=0 ; i < _nb; i++) 
@@ -443,7 +440,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
         idx = idx * _size[k] + (_i[k] - _low[k]);
     return idx;
 }
--(CPRange) range: (CPInt) i
+-(id<ORIntRange>) range: (CPInt) i
 {
     if (i < 0 || i >= _arity)
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntMatrix"]; 
@@ -485,7 +482,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    _flat[[self getIndex]] = value;
 }
 
--(NSUInteger)count
+-(NSUInteger) count
 {
     return _nb;
 }
@@ -505,7 +502,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
         }
     }
 }
--(NSString*)description
+-(NSString*) description
 {
     NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
     [self descriptionAux: 0 string: rv];
@@ -528,8 +525,9 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     [aCoder encodeObject:_cp];
     [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
     for(CPInt i = 0; i < _arity; i++) {
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].low];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_range[i].up];
+        [aCoder encodeObject:_range[i]];
+        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
+        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
     }
     for(CPInt i=0 ; i < _nb ;i++) 
         [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_flat[i]];
@@ -539,16 +537,15 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
-    _range = malloc(sizeof(CPRange) * _arity);
+    _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(CPInt) * _arity);
     _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);
-    _i = malloc(sizeof(CPRange) * _arity);    
+    _size = malloc(sizeof(CPInt) * _arity);   
     _nb = 1;
     for(CPInt i = 0; i < _arity; i++) {
+       _range[i] = [[aDecoder decodeObject] retain];
         [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
         [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
-        _range[i] = (CPRange){_low[i],_up[i]};
         _size[i] = (_up[i] - _low[i] + 1);
         _nb *= _size[i];
     }

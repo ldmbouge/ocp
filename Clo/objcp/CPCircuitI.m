@@ -109,7 +109,7 @@ CPStatus assign(CPCircuitI* cstr,int i)
         _var[i] = (CPIntVarI*) [_x at: _low + i];
     _var -= _low;
     
-    CPRange R = (CPRange){_low,_up};
+    id<ORIntRange> R = RANGE([_x cp],_low,_up);
     _pred = [CPFactory TRIntArray: [_x cp] range: R];
     _succ = [CPFactory TRIntArray: [_x cp] range: R];
     _length = [CPFactory TRIntArray: [_x cp] range: R];

@@ -330,24 +330,26 @@
    }
    [_controller._val exitTry];
 }
--(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body 
+-(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body 
 {
    [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
 
--(void) tryall: (CPRange) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
 {
    CPInt cur;
    [_controller._val startTryall];
    NSCont* exit = [NSCont takeContinuation];
    NSCont* next = nil;
+   ORInt low = [range low];
+   ORInt up = [range up];
    if ([exit nbCalls] == 0) {
       [_controller._val addChoice: exit];
       next = [NSCont takeContinuation];
       [exit setFieldId: next];
       if ([next nbCalls]== 0) { // This is the first call to the continuation.
-         [next setField: range.low];
-         cur = range.low;
+         [next setField: low];
+         cur = low;
       } 
       else {
          cur = [next field] + 1;
@@ -357,10 +359,10 @@
          [_controller._val exitTryallOnFailure];	
       }
       if (filter) {
-         while (!filter(cur) && cur <= range.up) 
+         while (!filter(cur) && cur <= up) 
             ++cur;
       }
-      if (cur <= range.up) {
+      if (cur <= up) {
          [next setField: cur];
          _nbc++;
          [_controller._val addChoice: next];

@@ -10,18 +10,19 @@
  ***********************************************************************/
 
 #import "ORSetI.h"
+#import <ORFoundation/ORFoundation.h>
 #import "ORFoundation/ORAVLTree.h"
 #import "ORFactoryI.h"
 #import "ORError.h"
 
-@implementation ORIntSetI 
+@implementation ORIntSetI
 -(id<ORIntSet>) initORIntSetI
 {
     self = [super init];
     _avl = [[ORInternalFactory AVLTree] retain];
     return self;
 }
--(void) dealloc 
+-(void) dealloc
 {
     [_avl release];
     [super dealloc];
@@ -86,6 +87,12 @@
 -(BOOL) more;
 @end
 
+@interface ORTrailableIntRangeEnumerator : NSObject<IntEnumerator>
+-(ORTrailableIntRangeEnumerator*) initORTrailableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up;
+-(ORInt) next;
+-(BOOL) more;
+@end
+
 @implementation ORIntRangeEnumerator {
    ORInt _low;
    ORInt _up;
@@ -113,6 +120,36 @@
 }
 @end
 
+/*
+TRInt makeTRInt(ORTrail* trail,int val);
+
+@implementation ORTrailableIntRangeEnumerator {
+   ORTrail* _trail;
+   ORInt _low;
+   ORInt _up;
+   TRInt _i;
+}
+-(ORTrailableIntRangeEnumerator*) initORTrailableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up
+{
+   self = [super init];
+   _trail= [track trail];
+   _low = low;
+   _up = up;
+   _i = makeTRInt(trail,_low - 1);
+   return self;
+}
+-(ORInt) next
+{
+   ORInt v = &_i._val;
+   assignTRInt(_i,_i.val,ORTrail* trail)
+return ++_i;   
+}
+-(BOOL) more
+{
+   return (_i < _up);
+}
+@end
+*/
 
 @implementation ORIntRangeI
 {

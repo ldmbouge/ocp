@@ -39,8 +39,8 @@
 -(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
 -(void)           forrange: (CPRange) range suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)                try: (CPClosure) left or: (CPClosure) right;
--(void)             tryall: (CPRange) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
--(void)             tryall: (CPRange) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
+-(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
+-(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 -(void)               fail;
 -(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2CPStatus) canImprove update: (CPClosure) update;

@@ -43,11 +43,11 @@
 @end;
 
 @interface ORUniformDistributionI : NSObject<ORUniformDistribution> {
-   ORRange          _range;
+   id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
 }
--(ORUniformDistributionI*) initORUniformDistribution: (ORRange) r;
+-(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;
 @end;

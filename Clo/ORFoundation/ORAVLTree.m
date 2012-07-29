@@ -366,7 +366,7 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
    [_theTree release];
    [super dealloc];
 }
--(NSArray*)allObjects
+-(NSArray*) allObjects
 {
    ORInt sz = [_theTree size];
    NSMutableArray* rv = [NSMutableArray arrayWithCapacity:sz];
@@ -384,7 +384,8 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
       id rv = _cur->_data;
       _cur = [_theTree findSucc:_cur];
       return rv;
-   } else return nil;
+   } else
+      return nil;
 }
 
 @end

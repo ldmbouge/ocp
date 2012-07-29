@@ -25,14 +25,14 @@
 }
 -(ORAVLTree*)initEmptyAVL;
 -(void)dealloc;
--(ORAVLTreeNode<Position>*)insertObject:(id)o forKey:(ORInt)k;
--(ORAVLTreeNode<Position>*)findNodeForKey:(ORInt)k;
+-(ORAVLTreeNode<Position>*) insertObject:(id)o forKey:(ORInt)k;
+-(ORAVLTreeNode<Position>*) findNodeForKey:(ORInt)k;
 -(id)findObjectForKey:(ORInt)k;
 -(ORInt)size;
 -(void) iterateOverKey: (ORInt2Void) f;
--(void)updateObject:(id)o forKey:(ORInt)k;
--(void)removeObjectForKey:(ORInt)k;
--(void)removeNode:(ORAVLTreeNode<Position>*)n;
+-(void) updateObject:(id)o forKey:(ORInt)k;
+-(void) removeObjectForKey:(ORInt) k;
+-(void) removeNode:(ORAVLTreeNode<Position>*)n;
 -(NSEnumerator*)iterator;
 @end
 
@@ -43,5 +43,5 @@
 }
 -(ORAVLTreeKeyIntEnumerator*) initORAVLTreeKeyIntEnumerator: (ORAVLTree*) tree;
 -(ORInt) next;
--(BOOL) more;
+-(BOOL)  more;
 @end

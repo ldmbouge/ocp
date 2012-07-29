@@ -12,16 +12,17 @@
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORTracker.h"
 #import "ORFoundation/ORData.h"
+
 @protocol ORExpr;
 @protocol ORIntSet;
-
+@protocol ORIntRange;
 
 @protocol ORIntArray <NSObject> 
 -(ORInt) at: (ORInt) value;
--(void) set: (ORInt) value at:(ORInt)idx;
+-(void) set: (ORInt) value at: (ORInt) idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORRange) range;
+-(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
@@ -35,7 +36,7 @@
 -(void)setObject:(id<ORIntSet>)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORRange) range;
+-(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
@@ -46,7 +47,7 @@
 -(void) set: (id) x at: (ORInt) value;
 -(ORInt) low;
 -(ORInt) up;
--(ORRange) range;
+-(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
@@ -59,7 +60,7 @@
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
 -(ORInt) arity;
--(ORRange) range: (ORInt) i;
+-(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;

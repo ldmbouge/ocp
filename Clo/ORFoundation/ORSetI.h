@@ -13,6 +13,7 @@
 #import "ORFoundation/ORSet.h"
 #import "ORFoundation/ORAVLTree.h"
 
+
 @interface ORIntSetI : NSObject<ORIntSet> {
     ORAVLTree*     _avl;
 }
@@ -29,7 +30,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : NSObject<ORIntRange> {}
+@interface ORIntRangeI : NSObject<ORIntRange> 
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
@@ -37,6 +38,7 @@
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
+//-(id<IntEnumerator>) tailableEnumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end

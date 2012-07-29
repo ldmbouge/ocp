@@ -13,6 +13,7 @@
 #import "ORUtilities/ORCrFactory.h"
 
 @protocol ORExpr;
+@protocol ORIntRange;
 
 @protocol ORInteger <NSObject,ORExpr>
 -(ORInt)  value;
@@ -50,5 +51,5 @@
 +(id<ORInteger>) integer:(ORInt) value;
 +(id<ORRandomStream>) randomStream;
 +(id<ORZeroOneStream>) zeroOneStream;
-+(id<ORUniformDistribution>) uniformDistribution: (ORRange) r;
++(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
 @end

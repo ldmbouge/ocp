@@ -178,7 +178,7 @@ struct CPVarPair {
    CPLinear* linRight = [CPLinearizer linearFrom:r solver:_fdm consistency:_cons];
    id<CPIntVar> lV = [CPSubst normSide:linLeft  for:_fdm consistency:_cons];
    id<CPIntVar> rV = [CPSubst normSide:linRight for:_fdm consistency:_cons];
-   id<CPIntVar> final = [CPFactory intVar:_fdm bounds:RANGE(0,1)];
+   id<CPIntVar> final = [CPFactory intVar:_fdm bounds:RANGE(_fdm,0,1)];
    [_fdm post:[CPFactory equalc:final to:1]];
    return (struct CPVarPair){lV,rV,final};
 }
@@ -404,7 +404,7 @@ struct CPVarPair {
 {
    id<CP> cp = [_terms[0]._var cp];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp 
-                                          range:(CPRange){0,_nb-1}
+                                          range: RANGE(cp,0,_nb-1)
                                            with:^id<CPIntVar>(CPInt i) {
                                               return _terms[i]._var;
                                            }];
@@ -510,10 +510,10 @@ struct CPVarPair {
             if ([_terms[k]._var isBool])
                sumCoefs += _terms[k]._coef;
          if (sumCoefs == _nb) {
-            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(0,_nb-1), _terms[i]._var);
+            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(fdm,0,_nb-1), _terms[i]._var);
             return [fdm post:[CPFactory sumbool:boolVars eq: - _indep]];
          } else if (sumCoefs == - _nb) {
-            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(0,_nb-1), _terms[i]._var);
+            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(fdm,0,_nb-1), _terms[i]._var);
             return [fdm post:[CPFactory sumbool:boolVars eq: _indep]];
          } else
             return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];
@@ -548,7 +548,7 @@ struct CPVarPair {
    if ([e size] == 1) {
       return [e oneView];
    } else {
-      id<CPIntVar> xv = [CPFactory intVar:cp domain:(CPRange){[e min],[e max]}];
+      id<CPIntVar> xv = [CPFactory intVar:cp domain: RANGE(cp,[e min],[e max])];
       [e addTerm:xv by:-1];
       [e postEQZ:cp consistency:c];
       return xv;
@@ -585,14 +585,14 @@ struct CPVarPair {
 {
    id<ORTracker> cp = [e tracker];
    if (!_rv)
-      _rv = [CPFactory intVar:cp domain:(CPRange){[e value],[e value]}];   
+      _rv = [CPFactory intVar:cp domain: RANGE(cp,[e value],[e value])];
    [_fdm post:[CPFactory equalc:_rv to:[e value]]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    CPLinear* terms = [CPLinearizer linearFrom:e solver:_fdm consistency:_c];
    if (_rv==nil)
-      _rv = [CPFactory intVar:[e tracker] domain:(CPRange){max([terms min],MININT),min([terms max],MAXINT)}];
+      _rv = [CPFactory intVar:[e tracker] domain: RANGE(_fdm,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_fdm consistency:_c];
 }
@@ -600,7 +600,7 @@ struct CPVarPair {
 {
    CPLinear* terms = [CPLinearizer linearFrom:e solver:_fdm consistency:_c];
    if (_rv==nil)
-      _rv = [CPFactory intVar:[e tracker] domain:(CPRange){max([terms min],MININT),min([terms max],MAXINT)}];
+      _rv = [CPFactory intVar:[e tracker] domain: RANGE(_fdm,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_fdm consistency:_c];
 }
@@ -622,7 +622,7 @@ struct CPVarPair {
    CPLong d = maxOf(lub * rlb,lub * rub);
    CPLong ub = maxOf(c,d);
    if (_rv==nil)
-      _rv = [CPFactory intVar:cp domain:(CPRange){bindDown(lb),bindUp(ub)}];
+      _rv = [CPFactory intVar:cp domain: RANGE(cp,bindDown(lb),bindUp(ub))];
    [_fdm post: [CPFactory mult:lV by:rV equal:_rv]];
    [lT release];
    [rT release];
@@ -631,14 +631,14 @@ struct CPVarPair {
 {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
-      _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:cp bounds: RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar eqi:c]];
 }
 -(void) reifyNEQc:(CPIntVarI*)theVar constant:(CPInt)c
 {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
-      _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:cp bounds:RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar neq:c]];
 }
 -(void) reifyLEQc:(ORExprI*)theOther constant:(CPInt)c
@@ -647,7 +647,7 @@ struct CPVarPair {
    id<CPIntVar> theVar = [CPSubst normSide:linOther for:_fdm consistency:_c];
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
-      _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:cp bounds:RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar leq:c]];
 }
 -(void) reifyGEQc:(ORExprI*)theOther constant:(CPInt)c
@@ -656,7 +656,7 @@ struct CPVarPair {
    id<CPIntVar> theVar = [CPSubst normSide:linOther for:_fdm consistency:_c];
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
-      _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:cp bounds:RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar geq:c]];
 }
 
@@ -673,7 +673,7 @@ struct CPVarPair {
       id<CPIntVar> rV = [CPSubst normSide:linRight for:_fdm consistency:_c];
       id<ORTracker> cp = [lV tracker];
       if (_rv==nil)
-         _rv = [CPFactory intVar:cp bounds:RANGE(0,1)];
+         _rv = [CPFactory intVar:cp bounds:RANGE(cp,0,1)];
       [_fdm post:[CPFactory reify:_rv with:lV eq:rV consistency:_c]];
    }
 }
@@ -700,7 +700,7 @@ struct CPVarPair {
    id<CPIntVar> lV = [CPSubst normSide:linLeft  for:_fdm consistency:_c];
    id<CPIntVar> rV = [CPSubst normSide:linRight for:_fdm consistency:_c];
    if (_rv==nil)
-      _rv = [CPFactory intVar:_fdm bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:_fdm bounds:RANGE(_fdm,0,1)];
    [_fdm post:[CPFactory boolean:lV or:rV equal:_rv]];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
@@ -710,7 +710,7 @@ struct CPVarPair {
    id<CPIntVar> lV = [CPSubst normSide:linLeft  for:_fdm consistency:_c];
    id<CPIntVar> rV = [CPSubst normSide:linRight for:_fdm consistency:_c];
    if (_rv==nil)
-      _rv = [CPFactory intVar:_fdm bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:_fdm bounds:RANGE(_fdm,0,1)];
    [_fdm post:[CPFactory boolean:lV and:rV equal:_rv]];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
@@ -720,7 +720,7 @@ struct CPVarPair {
    id<CPIntVar> lV = [CPSubst normSide:linLeft  for:_fdm consistency:_c];
    id<CPIntVar> rV = [CPSubst normSide:linRight for:_fdm consistency:_c];
    if (_rv==nil)
-      _rv = [CPFactory intVar:_fdm bounds:RANGE(0,1)];
+      _rv = [CPFactory intVar:_fdm bounds:RANGE(_fdm,0,1)];
    [_fdm post:[CPFactory boolean:lV imply:rV equal:_rv]];
 }
 
@@ -732,7 +732,7 @@ struct CPVarPair {
    CPInt lb = [lT min];
    CPInt ub = [lT max];
    if (_rv == nil)
-      _rv = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
+      _rv = [CPFactory intVar:cp domain:RANGE(cp,lb,ub)];
    [_fdm post:[CPFactory abs:oV equal:_rv consistency:_c]];
    [lT release];
 }
@@ -744,7 +744,7 @@ struct CPVarPair {
    CPInt lb = [e min];
    CPInt ub = [e max];
    if (_rv == nil)
-      _rv = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
+      _rv = [CPFactory intVar:cp domain: RANGE(cp,lb,ub)];
    [_fdm post:[CPFactory element:oV idxCstArray:[e array] equal:_rv]];
    [lT release];
 }
@@ -757,7 +757,7 @@ struct CPVarPair {
    CPInt lb = [e min];
    CPInt ub = [e max];
    if (_rv == nil)
-      _rv = [CPFactory intVar:cp domain:(CPRange){lb,ub}];
+      _rv = [CPFactory intVar:cp domain: RANGE(cp,lb,ub)];
    [_fdm post:[CPFactory element:oV idxVarArray:[e array] equal:_rv]];
    [lT release];   
 }

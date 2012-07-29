@@ -21,19 +21,19 @@
    ORInt             _low;
    ORInt              _up;
    ORInt              _nb;
-   ORRange         _range;
+   id<ORIntRange>  _range;
 }
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) v;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORInt(^)(ORInt)) clo;
--(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) v;
--(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) range with: (ORInt(^)(ORInt)) clo;
--(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with:(ORInt(^)(ORInt,ORInt)) clo;
+-(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) v;
+-(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORInt(^)(ORInt)) clo;
+-(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORInt(^)(ORInt,ORInt)) clo;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
--(ORRange) range;
+-(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
@@ -48,36 +48,36 @@
    ORInt              _low;
    ORInt               _up;
    ORInt               _nb;
-   ORRange          _range;
+   id<ORIntRange>   _range;
 }
--(ORIdArrayI*)initORIdArray: (id<ORTracker>)tracker range:(ORRange)range;
+-(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
 -(ORInt) low;
 -(ORInt) up;
--(ORRange) range;
--(NSUInteger)count;
--(NSString*)description;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
 -(id<ORTracker>) tracker;
--(id)objectAtIndexedSubscript:(NSUInteger)key;
--(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
--(void)encodeWithCoder:(NSCoder*) aCoder;
--(id)initWithCoder:(NSCoder*) aDecoder;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+-(void)encodeWithCoder: (NSCoder*) aCoder;
+-(id)initWithCoder: (NSCoder*) aDecoder;
 @end
 
 @interface ORIdMatrixI : NSObject<NSCoding,ORIdMatrix> {
    id<ORTracker> _tracker;
    id*              _flat;
    ORInt           _arity;
-   ORRange*        _range;
+   id<ORIntRange>* _range;
    ORInt*            _low;
    ORInt*             _up;
    ORInt*           _size;
    ORInt*              _i;
    ORInt              _nb;
 }
--(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1;
--(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2;
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;
 -(ORInt) arity;
 -(id) flat:(ORInt)i;
@@ -85,10 +85,10 @@
 -(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1;
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
--(ORRange) range: (ORInt) i;
--(NSUInteger)count;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger) count;
 -(id<ORTracker>) tracker;
--(void)encodeWithCoder:(NSCoder *)aCoder;
--(id)initWithCoder:(NSCoder *)aDecoder;
+-(void)encodeWithCoder: (NSCoder*) aCoder;
+-(id)initWithCoder: (NSCoder*) aDecoder;
 @end
 

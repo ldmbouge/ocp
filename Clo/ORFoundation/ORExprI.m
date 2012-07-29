@@ -685,7 +685,7 @@
 
 
 @implementation ORExprSumI 
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    ORInt low = r.low;
@@ -768,7 +768,7 @@
 @end
 
 @implementation ORExprAggOrI
--(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp range: (ORRange) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+-(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    self = [super init];
    ORInt low = r.low;

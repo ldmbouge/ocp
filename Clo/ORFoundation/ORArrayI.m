@@ -13,6 +13,7 @@
 #import "ORArrayI.h"
 #import "ORError.h"
 #import "ORExprI.h"
+#import "ORFactory.h"
 
 /**********************************************************************************************/
 /*                          ORIntArray                                                        */
@@ -27,7 +28,7 @@
    _low = 0;
    _up = nb-1;
    _nb = nb;
-   _range = (ORRange){_low,_up};
+   _range = [ORFactory intRange: tracker low: _low up: _up];
    for (ORInt i=0 ; i < _nb; i++) 
       _array[i] = value;
    return self;
@@ -40,12 +41,12 @@
    _low = 0;
    _up = nb-1;
    _nb = nb;
-   _range = (ORRange){_low,_up};
+   _range = [ORFactory intRange: tracker low: _low up: _up];  
    for (ORInt i=0 ; i < _nb; i++) 
       _array[i] = clo(i);
    return self;
 }
--(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) range value: (ORInt) value
+-(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    self = [super init];
    _tracker = tracker;
@@ -59,7 +60,7 @@
       _array[i] = value;
    return self;
 }
--(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) range with:(ORInt(^)(ORInt)) clo
+-(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
 {
    self = [super init];
    _tracker = tracker;
@@ -73,14 +74,14 @@
       _array[i] = clo(i);
    return self;
 }
--(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (ORRange) r1 range: (ORRange) r2 with:(ORInt(^)(ORInt,ORInt)) clo
+-(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORInt(^)(ORInt,ORInt)) clo
 {
    self = [super init];
    _tracker = tracker;
    _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
    _low = 0;
    _up = _nb-1;
-   _range = (ORRange){_low,_up};
+   _range = [ORFactory intRange: tracker low: _low up: _up];
    _array = malloc(_nb * sizeof(ORInt));
    int k = 0;
    for (ORInt i=r1.low ; i <= r1.up; i++) 
@@ -88,7 +89,7 @@
          _array[k++] = clo(i,j);
    return self;
 }
--(ORRange) range
+-(id<ORIntRange>) range
 {
    return _range;
 }
@@ -176,12 +177,12 @@
 // ------------------------------------------------------------------------------------------
 
 @implementation ORIdArrayI
--(ORIdArrayI*)initORIdArray: (id<ORTracker>) tracker range:(ORRange)range
+-(ORIdArrayI*) initORIdArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    self = [super init];
    _tracker = tracker;
-   _low = range.low;
-   _up  = range.up;
+   _low = [range low];
+   _up  = [range up];
    _nb  = _up - _low + 1;
    _range = range;
    _array = malloc(_nb * sizeof(id));
@@ -189,7 +190,7 @@
    _array -= _low;
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    _array += _low;
    free(_array);
@@ -219,11 +220,11 @@
 {
    return _nb;
 }
--(ORRange) range
+-(id<ORIntRange>) range
 {
    return _range;
 }
--(NSString*)description
+-(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendString:@"["];
@@ -247,15 +248,15 @@
    return [_tracker virtualOffset:self];
 }
 
--(id)objectAtIndexedSubscript:(NSUInteger)key
+-(id) objectAtIndexedSubscript: (NSUInteger)key
 {
    return _array[key];
 }
--(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)key
+-(void) setObject: (id) newValue atIndexedSubscript: (NSUInteger) key
 {
    _array[key] = newValue;
 }
--(void)encodeWithCoder:(NSCoder*) aCoder
+-(void) encodeWithCoder: (NSCoder*) aCoder
 {
    [aCoder encodeObject:_tracker];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
@@ -264,7 +265,7 @@
    for(ORInt i=_low;i<=_up;i++)
       [aCoder encodeObject:_array[i]];
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder: (NSCoder *) aDecoder
 {
    self = [super init];
    _tracker = [[aDecoder decodeObject] retain];
@@ -284,12 +285,12 @@
 
 @implementation ORIdMatrixI
 
--(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>)tracker arity:(ORInt)ar ranges:(ORRange*)rs;
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 {
    self = [super init];
    _tracker = tracker;
    _arity = ar;
-   _range = malloc(sizeof(ORRange)*_arity);
+   _range = malloc(sizeof(id<ORIntRange>)*_arity);
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
@@ -297,22 +298,22 @@
    _nb = 1;
    for(ORInt k=0;k < _arity;k++) {
       _range[k] = rs[k];
-      _low[k] = rs[k].low;
-      _up[k] = rs[k].up;
-      _size[k] = rs[k].up - rs[k].low + 1;
+      _low[k] = [rs[k] low];
+      _up[k] = [rs[k] up];
+      _size[k] = _up[k] - _low[k] + 1;
       _nb *= _size[k];
    }
    _flat = malloc(sizeof(id)*_nb);
    return self;
 }
--(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1 : (ORRange) r2
+-(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
-   return self = [self initORIdMatrix: tracker arity:3 ranges:(ORRange[]){r0,r1,r2}];
+   return self = [self initORIdMatrix: tracker arity:3 ranges:(id<ORIntRange>[]){r0,r1,r2}];
 }
 
--(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>) tracker range: (ORRange) r0 : (ORRange) r1
+-(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
-   return self = [self initORIdMatrix: tracker arity:2 ranges:(ORRange[]){r0,r1}];
+   return self = [self initORIdMatrix: tracker arity:2 ranges:(id<ORIntRange>[]){r0,r1}];
 }
 
 -(void) dealloc
@@ -340,13 +341,13 @@
       idx = idx * _size[k] + (_i[k] - _low[k]);
    return idx;
 }
--(ORRange) range: (ORInt) i
+-(id<ORIntRange>) range: (ORInt) i
 {
    if (i < 0 || i >= _arity)
       @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in ORIntVarMatrix"];
    return _range[i];
 }
--(id) flat:(ORInt)i
+-(id) flat: (ORInt) i
 {
    return _flat[i];
 }
@@ -385,7 +386,7 @@
    _flat[[self index]] = x;
 }
 
--(NSUInteger)count
+-(NSUInteger) count
 {
    return _nb;
 }
@@ -405,7 +406,7 @@
       }
    }
 }
--(NSString*)description
+-(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [self descriptionAux: 0 string: rv];
@@ -415,13 +416,14 @@
 {
    return _tracker;
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeObject:_tracker];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
    for(ORInt i = 0; i < _arity; i++) {
-      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_range[i].low];
-      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_range[i].up];
+      [aCoder encodeObject: _range[i]];
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
    }
    for(ORInt i=0 ; i < _nb ;i++)
       [aCoder encodeObject:_flat[i]];
@@ -438,9 +440,9 @@
    _i = malloc(sizeof(ORRange) * _arity);
    _nb = 1;
    for(ORInt i = 0; i < _arity; i++) {
+      _range[i] = [[aDecoder decodeObject] retain];
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
-      _range[i] = (ORRange){_low[i],_up[i]};
       _size[i] = (_up[i] - _low[i] + 1);
       _nb *= _size[i];
    }

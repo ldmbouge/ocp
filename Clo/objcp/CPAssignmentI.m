@@ -96,12 +96,12 @@
    _low = [_x low];
    _up = [_x up];
 
-   CPRange Rows = [_matrix range: 0];
-   CPRange Columns = [_matrix range: 1];
-   _lowr = Rows.low;
-   _upr = Rows.up;
-   _lowc = Columns.low;
-   _upc = Columns.up;
+   id<ORIntRange> Rows = [_matrix range: 0];
+   id<ORIntRange> Columns = [_matrix range: 1];
+   _lowr = [Rows low];
+   _upr = [Rows up];
+   _lowc = [Columns low];
+   _upc = [Columns up];
    
    if ((_low != _lowr) || (_up != _upr))
       @throw [[ORExecutionError alloc] initORExecutionError: "Assignment: The range of the variables does not agree with the rows of the matrix"];
