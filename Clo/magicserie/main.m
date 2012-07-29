@@ -18,26 +18,22 @@
 
 int main (int argc, const char * argv[])
 {
-   const CPInt n = 20;  // 128 -> 494 fails
-   id<CP> cp = [CPFactory createSolver]; 
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:(CPRange){0,n-1} domain: (CPRange){0,n-1}];
-   id<CPIntVarMatrix> b = [CPFactory intVarMatrix:cp range:(CPRange){0,n-1} : (CPRange){0,n-1} domain: (CPRange){0,1}];
-   [cp solve: 
-    ^() {
-        for(CPInt i=0;i<n;i++) {
-            for(CPInt j=0;j<n;j++) 
-                [cp add: [CPFactory reify: [b at:i :j] with: [x at:j] eq: i]];
-            id<CPIntVar> nxi = [CPFactory intVar:[x at:i] scale: -1 shift:0];
-            id<CPIntVarArray> rowi = [CPFactory intVarArray: cp range: (CPRange){0,n} with: ^id<CPIntVar>(CPInt j) { if (j == n) return nxi; else return [b at: i : j]; }];
-            [cp add:[CPFactory sum: rowi eq: 0]];
-        }
-     }   
-    using: 
-    ^() {
-        [CPLabel array: x];
-        printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);      
-     }
-    ];
+   const CPInt n = 128;  // 128 -> 494 fails
+   id<CP> cp = [CPFactory createSolver];
+   id<ORIntRange> R = RANGE(cp,0,n-1);
+   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
+   [cp solve: ^{
+      for(CPInt i=0;i<n;i++)
+         [cp add: [SUM(j,R,[x[j] eqi: i]) eq: x[i] ]];
+      [cp add: [SUM(i,R,[x[i] muli: i]) eqi: n ]];
+   }
+   using: ^{
+      [CPLabel array: x];
+      for(ORInt i = 0; i < n; i++)
+         printf("%d ",[x[i] value]);
+      printf("\n");
+   }
+   ];
    NSLog(@"Solver status: %@\n",cp);
    [cp release];
    [CPFactory shutdown];

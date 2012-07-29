@@ -17,9 +17,9 @@
 
 void show(id<CPIntVarMatrix> m) 
 {
-    CPRange R = [m range: 0];
-    CPRange C = [m range: 1];
-    for(CPInt i = R.low ; i <= R.up; i++) {
+    id<ORIntRange> R = [m range: 0];
+    id<ORIntRange> C = [m range: 1];
+    for(CPInt i = [R low] ; i <= [R up]; i++) {
         for(CPInt j = C.low ; j <= C.up; j++) 
             printf("%d  ",[[m at: i : j] min]);
         printf("\n");   
@@ -34,8 +34,8 @@ int main (int argc, const char * argv[])
     int r, c, v;
     fscanf(f,"%d \n",&nb);
     printf("number of entries %d \n",nb);
-    CPRange R = (CPRange){1,9};
     id<CP> cp = [CPFactory createSolver];
+    id<ORIntRange> R = RANGE(cp,1,9);
     id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
     id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
     [cp solve: 
@@ -51,8 +51,8 @@ int main (int argc, const char * argv[])
          for(CPInt i = 0; i <= 2; i++)
              for(CPInt j = 0; j <= 2; j++)
                  [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp 
-                                                                     range: (CPRange){i*3+1,i*3+3}
-                                                                          : (CPRange){j*3+1,j*3+3}
+                                                                     range: RANGE(cp,i*3+1,i*3+3)
+                                                                          : RANGE(cp,j*3+1,j*3+3)
                                                                       with: ^id<CPIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
      }   
         using: 
