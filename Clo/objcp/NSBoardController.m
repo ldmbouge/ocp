@@ -18,27 +18,27 @@
 #import "CPWatch.h"
 
 @interface CPGrid : NSObject {
-   CPRange _rows;
-   CPRange _cols;
+   id<ORIntRange> _rows;
+   id<ORIntRange> _cols;
    NSColor* _red;
    NSColor* _green;
    NSColor* _back;
    enum CPDomValue* _values;
 }
--(CPGrid*)initGrid:(CPRange)rows by:(CPRange)cols;
+-(CPGrid*)initGrid:(id<ORIntRange>)rows by:(id<ORIntRange>)cols;
 -(void)toggleRow:(CPInt)r col:(CPInt)c to:(enum CPDomValue)dv;
 -(void)drawRect:(NSRect)dirtyRect inView:(NSView*)view;
 @end
 
 
 @implementation CPGrid
--(CPGrid*)initGrid:(CPRange)rows by:(CPRange)cols
+-(CPGrid*)initGrid:(id<ORIntRange>)rows by:(id<ORIntRange>)cols
 {
    self = [super init];
    _rows = rows;
    _cols = cols;
-   CPInt nbRows = _rows.up - _rows.low + 1;
-   CPInt nbCols = _cols.up - _cols.low + 1;
+   CPInt nbRows = [_rows up] - [_rows low] + 1;
+   CPInt nbCols = [_cols up] - [_cols low] + 1;
    _values = malloc(sizeof(enum CPDomValue)*nbRows*nbCols);
    for(CPInt i=0;i<nbRows*nbCols;i++)
       _values[i] = Possible;
@@ -54,28 +54,28 @@
 }
 -(void)toggleRow:(CPInt)r col:(CPInt)c to:(enum CPDomValue)dv
 {
-   CPInt nbCols = _cols.up - _cols.low + 1;
-   _values[(r - _rows.low) * nbCols + c - _cols.low] = dv;
+   CPInt nbCols = [_cols up] - [_cols low] + 1;
+   _values[(r - [_rows low]) * nbCols + c - [_cols low]] = dv;
 }
 -(void)drawRect:(NSRect)dirtyRect inView:(NSView*)view
 {
    NSRect bnds  = [view frame];
-   CPInt nbRows = _rows.up - _rows.low + 1;
-   CPInt nbCols = _cols.up - _cols.low + 1;
+   CPInt nbRows = [_rows size];
+   CPInt nbCols = [_cols size];
    float stripW = bnds.size.width / nbCols;
    float stripH = bnds.size.height/ nbRows;
    float colW = stripW - 6;
    float rowH = stripH - 6;
-   for(CPInt i=_rows.low;i<=_rows.up;i++) {
-      for(CPInt j=_cols.low; j <= _cols.up;j++) {      
-         enum CPDomValue dv = _values[(i - _rows.low) * nbCols + j - _cols.low];
+   for(CPInt i=[_rows low];i<=[_rows up];i++) {
+      for(CPInt j=[_cols low]; j <= [_cols up];j++) {      
+         enum CPDomValue dv = _values[(i - [_rows low]) * nbCols + j - [_cols low]];
          switch(dv) {
             case Possible: [_back setFill];break;
             case Required: [_green setFill];break;
             case Removed:  [_red setFill];break;
          }
-         CGFloat x = (j-_cols.low)*stripW;
-         CGFloat y = (i-_rows.low)*stripH;
+         CGFloat x = (j-[_cols low])*stripW;
+         CGFloat y = (i-[_rows low])*stripH;
          NSRectFill(NSMakeRect(x + 3 + bnds.origin.x, 
                                y + 3 + bnds.origin.y, 
                                colW, rowH));
@@ -112,7 +112,7 @@
    }];
 }
 
--(id)makeGrid:(CPRange) rows by:(CPRange)cols
+-(id)makeGrid:(id<ORIntRange>) rows by:(id<ORIntRange>)cols
 {
    CPGrid* g = nil;
    @synchronized(self) {

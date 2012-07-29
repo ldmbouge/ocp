@@ -51,8 +51,8 @@
 }
 -(void)visualize:(id<CPIntVarMatrix>) game teams: (id<CPIntVarMatrix>) teams on: (id<CP>)cp
 {
-   CPRange Periods = [game range: 0];
-   CPRange Weeks = [game range: 1];
+   id<ORIntRange> Periods = [game range: 0];
+   id<ORIntRange> Weeks = [game range: 1];
    [_mtxView setCellClass: [NSTextFieldCell class]];
    [_mtxView setAutosizesCells:true];
 
@@ -61,8 +61,8 @@
    
    id grid = [_topBoard makeGrid: Periods by: Weeks];
    NSFont* theFont = [NSFont menuFontOfSize:18.0];
-   for(CPInt p = Periods.low; p <= Periods.up; p++)
-      for(CPInt w = Weeks.low; w <= Weeks.up; w++) {
+   for(ORInt p = [Periods low]; p <= [Periods up]; p++)
+      for(ORInt w = [Weeks low]; w <= [Weeks up]; w++) {
          [self display: ^ {
             [[_mtxView cellAtRow:p-1 column:w-1] setStringValue: @""];
             [[_mtxView cellAtRow:p-1 column:w-1] setDrawsBackground:true];
@@ -104,14 +104,14 @@
 {
    CPLong startTime = [CPRuntimeMonitor cputime];
    CPInt n = 14;
-   CPRange Periods = (CPRange){1,n/2};
-   CPRange Teams = (CPRange){1,n};
-   CPRange Weeks = (CPRange){1,n-1};
-   CPRange EWeeks = (CPRange){1,n};
-   CPRange HomeAway = (CPRange){0,1};
-   CPRange Games = (CPRange){0,n*n};
-   
+    
    id<CP> cp = [CPFactory createSolver];
+   id<ORIntRange> Periods = RANGE(cp,1,n/2);
+   id<ORIntRange> Teams = RANGE(cp,1,n);
+   id<ORIntRange> Weeks = RANGE(cp,1,n-1);
+   id<ORIntRange> EWeeks = RANGE(cp,1,n);
+   id<ORIntRange> HomeAway = RANGE(cp,0,1);
+   id<ORIntRange> Games = RANGE(cp,0,n*n);
    id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
    id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
    id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];

@@ -22,7 +22,7 @@
 }
 -(NSBoardController*)initBoardController:(NSView*)theView;
 -(void)dealloc;
--(id)makeGrid:(CPRange) rows by:(CPRange)cols;
+-(id)makeGrid:(id<ORIntRange>) rows by:(id<ORIntRange>) cols;
 -(void)pause;
 -(void)resume;
 -(void)neverStop;
