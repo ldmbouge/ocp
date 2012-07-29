@@ -18,12 +18,12 @@
 
 int main (int argc, const char * argv[])
 {
-   CPRange R = (CPRange){0,9};
-   CPRange D = (CPRange){0,1};
    id<CP> cp = [CPFactory createSolver];
+   id<ORIntRange> R = RANGE(cp,0,9);
+   id<ORIntRange> D = RANGE(cp,0,1);
    id<CPIntVarArray> item = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntArray> itemSize = [CPFactory intArray: cp range: R value: 0];
-   id<CPIntVarArray> binSize = [CPFactory intVarArray:cp range: (CPRange){0,0} domain: (CPRange){34,35}];
+   id<CPIntVarArray> binSize = [CPFactory intVarArray:cp range: RANGE(cp,0,0) domain: RANGE(cp,34,35)];
    [itemSize set: 10 at: 9];
    [itemSize set: 10 at: 8];
    [itemSize set: 10 at: 7];

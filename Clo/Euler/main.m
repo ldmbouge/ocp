@@ -55,9 +55,15 @@ void printCircuit(id<CPIntVarArray> jump)
 }
 int main (int argc, const char * argv[])
 {
-    CPRange R = (CPRange){1,64};
-    id<CP> cp = [CPFactory createSolver]; 
-    id<CPIntVarArray> jump = [CPFactory intVarArray:cp range: R domain: R];
+    id<CP> cp = [CPFactory createSolver];
+    id<ORIntRange> R = RANGE(cp,1,64);
+   id<ORIntRange> D = RANGE(cp,1,64);
+    id<CPIntVarArray> jump = [CPFactory intVarArray:cp range: R domain: D];
+   
+    NSLog(@"%@",jump[1]);
+   printf("min %d \n",[jump[1] min]);
+   printf("max %d \n",[jump[1] max]);
+   printf("size %d \n",[jump[1] domsize]);
     [cp solve: 
      ^() {
          for(int i = 1; i <= 64; i++)
