@@ -334,15 +334,18 @@
 {
    [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
-
+/*
 -(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
 {
    CPInt cur;
+   CPInt curIte;
+   CPInt foundIte;
    [_controller._val startTryall];
    NSCont* exit = [NSCont takeContinuation];
    NSCont* next = nil;
    ORInt low = [range low];
    ORInt up = [range up];
+   id<IntEnumerator> ite = [ORFactory intRangeEnumerator: _solver range: range];
    if ([exit nbCalls] == 0) {
       [_controller._val addChoice: exit];
       next = [NSCont takeContinuation];
@@ -350,19 +353,44 @@
       if ([next nbCalls]== 0) { // This is the first call to the continuation.
          [next setField: low];
          cur = low;
+         curIte = [ite next];
+         assert(cur == curIte);
       } 
       else {
          cur = [next field] + 1;
-         [_controller._val startTryallOnFailure];	
+         if (cur == up + 1)
+            assert(false);
+         foundIte = [ite more];
+         if (foundIte) 
+            curIte = [ite next];
+         else
+            assert(false);
+         if (cur <= up)
+            assert(cur == curIte);
+         else {
+            printf("I am in this strange place \n");
+            assert(!foundIte);
+         }
+         [_controller._val startTryallOnFailure];
          if (onFailure)
             onFailure([next field]);
          [_controller._val exitTryallOnFailure];	
       }
+      bool found = true;
       if (filter) {
-         while (!filter(cur) && cur <= up) 
+         while (!filter(cur)) {
+            if (![ite more]) {
+               found = false;
+               break;
+            }
             ++cur;
+            curIte = [ite next];
+            assert(cur == curIte);
+         }
       }
-      if (cur <= up) {
+      if (found) {
+//      if (cur <= up) {
+         assert(cur == curIte);
          [next setField: cur];
          _nbc++;
          [_controller._val addChoice: next];
@@ -373,6 +401,58 @@
       else
          [_controller._val fail];
    } 
+   else {
+      [[exit fieldId] letgo];
+      [exit letgo];
+      [_controller._val fail];
+   }
+   [_controller._val exitTryall];
+}
+
+@end
+*/
+
+-(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+{
+   CPInt curIte;
+   CPInt foundIte;
+   [_controller._val startTryall];
+   NSCont* exit = [NSCont takeContinuation];
+   NSCont* next = nil;
+   id<IntEnumerator> ite = [ORFactory intEnumerator: _solver range: range];
+   if ([exit nbCalls] == 0) {
+      [_controller._val addChoice: exit];
+      next = [NSCont takeContinuation];
+      [exit setFieldId: next];
+      if ([next nbCalls] != 0) { 
+         [_controller._val startTryallOnFailure];
+         if (onFailure)
+            onFailure([next field]);
+         [_controller._val exitTryallOnFailure];
+      }
+      foundIte = [ite more];
+      if (foundIte) {
+         curIte = [ite next];
+         if (filter) 
+            while (!filter(curIte)) {
+               if (![ite more]) {
+                  foundIte = false;
+                  break;
+               }
+               curIte = [ite next];
+            }
+      }
+      if (foundIte) {
+         [next setField: curIte];
+         _nbc++;
+         [_controller._val addChoice: next];
+         [_controller._val startTryallBody];
+         body(curIte);
+         [_controller._val exitTryallBody];
+      }
+      else
+         [_controller._val fail];
+   }
    else {
       [[exit fieldId] letgo];
       [exit letgo];

@@ -88,6 +88,13 @@
    [tracker trackObject: o];
    return o;
 }
+
++(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker range: (id<ORIntIterator>) r
+{
+   id<IntEnumerator> ite = [r enumerator];
+   [tracker trackObject: ite];
+   return ite;
+}
 @end
 
 @implementation ORFactory (Expressions)

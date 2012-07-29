@@ -296,7 +296,10 @@ int main(int argc, const char * argv[])
    id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
    id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<CPIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
-   id<CPUniformDistribution> distr = [CPFactory uniformDistribution: cp range: RANGE(cp,1,100)];
+   
+//   id<ORIntSet> SetSlabs = [ORFactory intSet: cp];
+//   [Slabs iterate: ^void(ORInt e) { [SetSlabs insert: e]; } ];
+  
    [cp minimize: obj subjectTo: ^{
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
       [cp add: [CPFactory packing: slab itemSize: weight load: load]];
@@ -320,27 +323,6 @@ int main(int argc, const char * argv[])
               ];
           }
           ];
-
-         [cp repeat: ^{
-            [cp limitFailures: 100 in: ^{
-               [ORControl forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
-                  {
- //                    printf("o: %d \n",o);
-                     [CPLabel var: slab[o]];
-                  }  
-               ];
-//               NSLog(@"%@",slab);
-            }
-            ];
-         }
-         onRepeat: ^{
-            id<CPSolution> solution = [cp solution];
-            for(CPInt i = 1; i <= nbSize; i++) {
-               if ([distr next] <= 90)
-                  [cp label: slab[i] with: [solution intValue: slab[i]]];
-               }
-            }
-         ];
          printf("\n");
          printf("obj: %d \n",[obj min]);
          printf("Slab: ");

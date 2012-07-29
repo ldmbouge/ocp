@@ -108,6 +108,7 @@
 }
 -(void)dealloc
 {
+//   NSLog(@"initORIntRangeEnumerator dealloc");
    [super dealloc];
 }
 -(ORInt) next
@@ -120,36 +121,6 @@
 }
 @end
 
-/*
-TRInt makeTRInt(ORTrail* trail,int val);
-
-@implementation ORTrailableIntRangeEnumerator {
-   ORTrail* _trail;
-   ORInt _low;
-   ORInt _up;
-   TRInt _i;
-}
--(ORTrailableIntRangeEnumerator*) initORTrailableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up
-{
-   self = [super init];
-   _trail= [track trail];
-   _low = low;
-   _up = up;
-   _i = makeTRInt(trail,_low - 1);
-   return self;
-}
--(ORInt) next
-{
-   ORInt v = &_i._val;
-   assignTRInt(_i,_i.val,ORTrail* trail)
-return ++_i;   
-}
--(BOOL) more
-{
-   return (_i < _up);
-}
-@end
-*/
 
 @implementation ORIntRangeI
 {
