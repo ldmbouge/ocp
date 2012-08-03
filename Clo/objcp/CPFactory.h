@@ -92,15 +92,12 @@ void failNow();
 @interface CPFactory (expression)
 +(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
-+(id<CPExpr>) sum: (id<CP>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<CPExpr>) sum: (id<CP>) cp intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<CPRelation>) or: (id<CP>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
-+(id<CPRelation>) or: (id<CP>) cp intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<CPExpr>) sum: (id<CP>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<CPRelation>) or: (id<CP>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 
-#define SUM(P,R,E)         [CPFactory sum: cp range:(R) suchThat:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
-#define ISSUM(P,R,E)       [CPFactory sum: cp intSet:(R) suchThat:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
+#define SUM(P,R,E)         [CPFactory sum: cp over:(R) suchThat:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
 #define ALL(RT,P,RANGE,E)  [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(CPInt P) { return (E);}]
-#define OR(P,R,E)          [CPFactory or: cp intSet:(R) suchThat:nil of:^id<CPRelation>(ORInt P) { return (id<CPRelation>)(E);}]
+#define OR(P,R,E)          [CPFactory or: cp over:(R) suchThat:nil of:^id<CPRelation>(ORInt P) { return (id<CPRelation>)(E);}]
 

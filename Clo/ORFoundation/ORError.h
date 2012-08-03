@@ -18,10 +18,7 @@
 -(char*) msg;
 @end
 
-@interface ORExecutionError : NSObject <ORError> {
-@private
-	const char* _message;
-}
+@interface ORExecutionError : NSObject <ORError> 
 -(ORExecutionError*) initORExecutionError: (const char*) msg;
 -(const char*) msg;
 @end 

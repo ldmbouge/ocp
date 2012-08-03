@@ -99,6 +99,9 @@
 @end
 
 @implementation ORAVLTree
+{
+   ORAVLTreeNode<Position>* _root;
+}
 
 -(ORAVLTree*)initEmptyAVL
 {
@@ -391,7 +394,11 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
 @end
 
 @implementation ORAVLTreeKeyIntEnumerator
-
+{
+   ORAVLTree* _theTree;
+   ORAVLTreeNode* _cur;
+   ORInt*     _ra;
+}
 -(ORAVLTreeKeyIntEnumerator*) initORAVLTreeKeyIntEnumerator: (ORAVLTree*) tree
 {
     self = [super init];

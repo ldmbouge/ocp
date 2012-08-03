@@ -129,6 +129,7 @@
 
 
 @implementation ORExprBinaryI
+
 -(id<ORExpr>) initORExprBinaryI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
    self = [super init];
@@ -685,28 +686,11 @@
 
 
 @implementation ORExprSumI 
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
-{
-   self = [super init];
-   ORInt low = r.low;
-   ORInt up = r.up;
-   _e = [ORFactory integer: cp value: 0];
-   if (f!=nil) {
-      for(ORInt i = low; i <= up; i++)
-         if (!f(i)) 
-            _e = [_e plus: e(i)];
-   } 
-   else {
-      for(ORInt i = low; i <= up; i++)
-         _e = [_e plus: e(i)];
-   }
-   return self;       
-}
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
-   _e = [ORFactory integer: cp value: 0];
+   _e = [ORFactory integer: tracker value: 0];
    if (f!=nil) {
       while ([ite more]) {
          ORInt i = [ite next];
@@ -722,7 +706,6 @@
    }
    return self;
 }
-
 -(void) dealloc
 {   
    [super dealloc];
@@ -768,24 +751,7 @@
 @end
 
 @implementation ORExprAggOrI
--(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
-{
-   self = [super init];
-   ORInt low = r.low;
-   ORInt up = r.up;
-   _e = [ORFactory integer: cp value: 0];
-   if (f!=nil) {
-      for(ORInt i = low; i <= up; i++)
-         if (!f(i))
-            _e = [_e or: e(i)];
-   }
-   else {
-      for(ORInt i = low; i <= up; i++)
-         _e = [_e or: e(i)];
-   }
-   return self;
-}
--(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+-(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];

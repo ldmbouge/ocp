@@ -14,9 +14,8 @@
 #import "ORFoundation/ORAVLTree.h"
 
 
-@interface ORIntSetI : NSObject<ORIntSet> {
-    ORAVLTree*     _avl;
-}
+@interface ORIntSetI : NSObject<ORIntSet>
+
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
 -(bool) member: (ORInt) v;

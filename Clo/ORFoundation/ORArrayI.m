@@ -19,7 +19,16 @@
 /*                          ORIntArray                                                        */
 /**********************************************************************************************/
 
-@implementation ORIntArrayI 
+@implementation ORIntArrayI
+{
+   id<ORTracker> _tracker;
+   ORInt*          _array;
+   ORInt             _low;
+   ORInt              _up;
+   ORInt              _nb;
+   id<ORIntRange>  _range;
+}
+
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) value
 {
    self = [super init];
@@ -177,6 +186,14 @@
 // ------------------------------------------------------------------------------------------
 
 @implementation ORIdArrayI
+{
+   id*              _array;
+   ORInt              _low;
+   ORInt               _up;
+   ORInt               _nb;
+   id<ORIntRange>   _range;
+}
+
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    self = [super init];
@@ -284,6 +301,16 @@
 
 
 @implementation ORIdMatrixI
+{
+   id*              _flat;
+   ORInt           _arity;
+   id<ORIntRange>* _range;
+   ORInt*            _low;
+   ORInt*             _up;
+   ORInt*           _size;
+   ORInt*              _i;
+   ORInt              _nb;
+}
 
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 {

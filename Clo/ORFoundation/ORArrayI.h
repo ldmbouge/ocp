@@ -15,14 +15,7 @@
 #import "ORTracker.h"
 #import "ORArray.h"
 
-@interface ORIntArrayI : NSObject<NSCoding,ORIntArray> {
-   id<ORTracker> _tracker;
-   ORInt*          _array;
-   ORInt             _low;
-   ORInt              _up;
-   ORInt              _nb;
-   id<ORIntRange>  _range;
-}
+@interface ORIntArrayI : NSObject<NSCoding,ORIntArray>
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) v;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORInt(^)(ORInt)) clo;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) v;
@@ -42,14 +35,11 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIdArrayI : NSObject<NSCoding,ORIdArray> {
+@interface ORIdArrayI : NSObject<NSCoding,ORIdArray>
+{
    id<ORTracker>  _tracker;
-   id*              _array;
-   ORInt              _low;
-   ORInt               _up;
-   ORInt               _nb;
-   id<ORIntRange>   _range;
 }
+
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
@@ -65,16 +55,9 @@
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end
 
-@interface ORIdMatrixI : NSObject<NSCoding,ORIdMatrix> {
-   id<ORTracker> _tracker;
-   id*              _flat;
-   ORInt           _arity;
-   id<ORIntRange>* _range;
-   ORInt*            _low;
-   ORInt*             _up;
-   ORInt*           _size;
-   ORInt*              _i;
-   ORInt              _nb;
+@interface ORIdMatrixI : NSObject<NSCoding,ORIdMatrix>
+{
+   id<ORTracker>  _tracker;
 }
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;

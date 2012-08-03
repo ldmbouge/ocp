@@ -13,10 +13,7 @@
 #import "ORData.h"
 #import "ORExprI.h"
 
-@interface ORIntegerI : ORExprI<NSCoding,ORInteger> {
-	ORInt           _value;
-   id<ORTracker> _tracker;
-}
+@interface ORIntegerI : ORExprI<NSCoding,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
 -(ORInt)  value;
 -(void) setValue: (ORInt) value;
@@ -26,27 +23,19 @@
 -(id<ORTracker>) tracker;
 @end
 
-@interface ORRandomStreamI : NSObject<ORRandomStream>  {
-   unsigned short _seed[3];
-}
+@interface ORRandomStreamI : NSObject<ORRandomStream>
 -(ORRandomStreamI*) init;
 -(void) dealloc;
 -(ORLong) next;
 @end;
 
-@interface ORZeroOneStreamI : NSObject<ORZeroOneStream> {
-   unsigned short _seed[3];
-}
+@interface ORZeroOneStreamI : NSObject<ORZeroOneStream>
 -(ORZeroOneStreamI*) init;
 -(void) dealloc;
 -(double) next;
 @end;
 
-@interface ORUniformDistributionI : NSObject<ORUniformDistribution> {
-   id<ORIntRange>   _range;
-   ORRandomStreamI* _stream;
-   ORInt            _size;
-}
+@interface ORUniformDistributionI : NSObject<ORUniformDistribution>
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;

@@ -16,6 +16,9 @@
 #import "ORError.h"
 
 @implementation ORIntSetI
+{
+   ORAVLTree*     _avl;
+}
 -(id<ORIntSet>) initORIntSetI
 {
     self = [super init];

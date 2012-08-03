@@ -13,6 +13,7 @@
 #import "ORFoundation/ORExpr.h"
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORData.h"
+#import "ORFoundation/ORSet.h"
 
 @protocol ORExprVisitor;
 
@@ -43,7 +44,8 @@
 -(enum CPRelationType)type;
 @end
 
-@interface ORExprBinaryI : ORExprI<ORExpr,NSCoding> {
+@interface ORExprBinaryI : ORExprI<ORExpr,NSCoding>
+{
    ORExprI* _left;
    ORExprI* _right;
    id<ORTracker> _tracker;
@@ -137,8 +139,7 @@
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>)tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;
@@ -152,8 +153,7 @@
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>)tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;

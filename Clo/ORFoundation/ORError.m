@@ -12,7 +12,10 @@
 #import "ORError.h"
 
 
-@implementation ORExecutionError 
+@implementation ORExecutionError
+{
+	const char* _message;
+}
 -(ORExecutionError*) initORExecutionError: (const char*) msg
 {
 	self = [super init];

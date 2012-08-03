@@ -419,7 +419,7 @@
    [_controller._val startTryall];
    NSCont* exit = [NSCont takeContinuation];
    NSCont* next = nil;
-   id<IntEnumerator> ite = [ORFactory intEnumerator: _solver range: range];
+   id<IntEnumerator> ite = [ORFactory intEnumerator: _solver over: range];
    if ([exit nbCalls] == 0) {
       [_controller._val addChoice: exit];
       next = [NSCont takeContinuation];

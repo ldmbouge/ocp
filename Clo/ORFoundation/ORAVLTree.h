@@ -19,10 +19,7 @@
 @class ORAVLTreeNode;
 
 
-@interface ORAVLTree : NSObject {
-@private
-    ORAVLTreeNode<Position>* _root;
-}
+@interface ORAVLTree : NSObject
 -(ORAVLTree*)initEmptyAVL;
 -(void)dealloc;
 -(ORAVLTreeNode<Position>*) insertObject:(id)o forKey:(ORInt)k;
@@ -36,11 +33,7 @@
 -(NSEnumerator*)iterator;
 @end
 
-@interface ORAVLTreeKeyIntEnumerator : NSObject<IntEnumerator> {
-    ORAVLTree* _theTree;
-    ORAVLTreeNode* _cur; 
-    ORInt*     _ra;
-}
+@interface ORAVLTreeKeyIntEnumerator : NSObject<IntEnumerator>
 -(ORAVLTreeKeyIntEnumerator*) initORAVLTreeKeyIntEnumerator: (ORAVLTree*) tree;
 -(ORInt) next;
 -(BOOL)  more;

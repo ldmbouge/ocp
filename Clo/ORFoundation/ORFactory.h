@@ -31,7 +31,7 @@
 +(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 +(id<ORIntSet>) collect: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e;
 
-+(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp range: (id<ORIntIterator>) r;
++(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp over: (id<ORIntIterator>) r;
 @end
 
 #define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]
@@ -48,10 +48,8 @@
 +(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right;
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORRelation>) or: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
-+(id<ORRelation>) or: (id<ORTracker>) tracker intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterator>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 #define RANGE(cp,a,b)      [ORFactory intRange: cp low: a up: b]

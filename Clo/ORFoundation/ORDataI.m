@@ -12,7 +12,12 @@
 #import "ORDataI.h"
 #import "ORSet.h"
 
-@implementation ORIntegerI 
+@implementation ORIntegerI
+{
+	ORInt           _value;
+   id<ORTracker> _tracker;
+}
+
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value
 {
    self = [super init];
@@ -111,6 +116,9 @@ static ORInt _deterministic;
 @end
 
 @implementation ORRandomStreamI
+{
+   unsigned short _seed[3];
+}
 -(ORRandomStreamI*) init
 {
    self = [super init];
@@ -128,6 +136,9 @@ static ORInt _deterministic;
 @end;
 
 @implementation ORZeroOneStreamI
+{
+   unsigned short _seed[3];
+}
 -(ORZeroOneStreamI*) init
 {
    self = [super init];
@@ -145,6 +156,11 @@ static ORInt _deterministic;
 @end;
 
 @implementation ORUniformDistributionI
+{
+   id<ORIntRange>   _range;
+   ORRandomStreamI* _stream;
+   ORInt            _size;
+}
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r
 {
    self = [super init];

@@ -89,7 +89,7 @@
    return o;
 }
 
-+(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker range: (id<ORIntIterator>) r
++(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker over: (id<ORIntIterator>) r
 {
    id<IntEnumerator> ite = [r enumerator];
    [tracker trackObject: ite];
@@ -166,27 +166,15 @@
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP Solver in Abs Expression"];
 }
-+(id<ORExpr>) sum: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker range: r suchThat: f of: e];
-   [tracker trackObject: o];
-   return o; 
-}
-+(id<ORExpr>) sum: (id<ORTracker>) tracker intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
-{
-   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker intSet: S suchThat: f of: e];
+   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker over: S suchThat: f of: e];
    [tracker trackObject: o];
    return o;
 }
-+(id<ORRelation>) or: (id<ORTracker>) tracker range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
-   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker range: r suchThat: f of: e];
-   [tracker trackObject: o];
-   return o;
-}
-+(id<ORRelation>) or: (id<ORTracker>) tracker intSet: (id<ORIntSet>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
-{
-   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker intSet: S suchThat: f of: e];
+   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker over: S suchThat: f of: e];
    [tracker trackObject: o];
    return o;
 }

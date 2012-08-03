@@ -27,7 +27,8 @@
 #define TAGFree         0xB
 #define TAGIdNC         0xC
 
-@interface ORTrail : NSObject<NSCoding> {
+@interface ORTrail : NSObject<NSCoding>
+{
    struct Slot {
       void* ptr;
       union {
@@ -39,7 +40,7 @@
          double     doubleVal;          // 8-bytes
          id             idVal;          // 4-bytes OR 8-bytes depending 32/64 compilation mode
          void*         ptrVal;          // 4 or 8 (pointer)
-         void (^cloVal)(void);         
+         void (^cloVal)(void);
       };
       ORInt code;
    };
@@ -52,6 +53,7 @@
    ORInt _mxSeg;      // maximum # of segments
    ORUInt _magic;     // magic is always 32-bit wide
 }
+
 -(ORTrail*) init;
 -(void) dealloc;
 -(ORUInt) magic;

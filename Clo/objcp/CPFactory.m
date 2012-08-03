@@ -362,21 +362,13 @@ void failNow()
    }
    return rv;
 }
-+(id<CPExpr>) sum: (id<CP>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<CPExpr>) sum: (id<CP>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   return (id<CPExpr>)[ORFactory sum:cp range:r suchThat:f of:e];
+   return (id<CPExpr>)[ORFactory sum:cp over: S suchThat:f of:e];
 }
-+(id<CPExpr>) sum: (id<CP>) cp intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<CPRelation>) or: (id<CP>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
-   return (id<CPExpr>)[ORFactory sum:cp intSet:r suchThat:f of:e];
-}
-+(id<CPRelation>) or: (id<CP>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
-{
-   return (id<CPRelation>)[ORFactory or:cp range:r suchThat:f of:e];
-}
-+(id<CPRelation>) or: (id<CP>) cp intSet: (id<ORIntSet>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
-{
-   return (id<CPRelation>)[ORFactory or:cp intSet:r suchThat:f of:e];
+   return (id<CPRelation>)[ORFactory or:cp over: S suchThat:f of:e];
 }
 
 @end
