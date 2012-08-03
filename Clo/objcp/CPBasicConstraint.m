@@ -247,12 +247,12 @@
 -(void) propagate
 {
    do {
+      _todo = CPChecked;
       if (bound(_x)) {
          [_y bind:minDom(_x) - _c];
       } else if (bound(_y)) {
          [_x bind:minDom(_y) + _c];
       } else {
-         _todo = CPChecked;
          [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
          [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
       }

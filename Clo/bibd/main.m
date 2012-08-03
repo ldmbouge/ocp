@@ -17,8 +17,8 @@
 
 void show(id<CPIntVarMatrix> M)
 {
-   CPRange r0 = [M range:0];
-   CPRange r1 = [M range:1];
+   id<ORIntRange> r0 = [M range:0];
+   id<ORIntRange> r1 = [M range:1];
    for(CPInt i = r0.low ; i <= r0.up;i++) {
       for(CPInt j = r1.low ; j <= r1.up;j++) {
          if ([[M at:i :j] bound])
@@ -43,9 +43,10 @@ int main(int argc, const char * argv[])
       CPInt b = (v*(v-1)*l)/(k*(k-1));
       CPInt r = l*(v-1)/(k-1);
       
-      CPRange Rows = RANGE(1,v);
-      CPRange Cols = RANGE(1,b);
       id<CP> cp = [CPFactory createSolver];
+      id<ORIntRange> Rows = RANGE(cp,1,v);
+      id<ORIntRange> Cols = RANGE(cp,1,b);
+     
       id<CPIntVarMatrix> M = [CPFactory boolVarMatrix:cp range:Rows :Cols];
                
       [cp solve:^{

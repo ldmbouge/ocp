@@ -16,24 +16,25 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
-void labelFF(id<CP> m,id<CPIntVarArray> x)
+void labelFF(id<CP> cp,id<CPIntVarArray> x)
 {
-   CPRange R = {[x low],[x up]};
-   [m forrange: R
-    suchThat: ^bool(int i) { return ![[x at:i] bound];}
-     orderedBy: ^int(int i)  { return [[x at:i] domsize];}
-            do: ^(int i)     { [CPLabel var: [x at:i]]; }
+   id<ORIntRange> R = RANGE(cp,[x low],[x up]);
+   [ORControl forall: R
+            suchThat: ^bool(int i) { return ![[x at:i] bound];}
+           orderedBy: ^int(int i)  { return [[x at:i] domsize];}
+                  do: ^(int i)     { [CPLabel var: [x at:i]]; }
     ];
 }
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 14;
-      CPRange R = (CPRange){1,n};
-      CPRange D = (CPRange){0,n-1};
-      CPRange SD = (CPRange){1,n-1};
-      id<CP> cp = [CPFactory createSolver];      
+      id<CP> cp = [CPFactory createSolver];  
+      int n = 8;
+      id<ORIntRange> R = RANGE(cp,1,n);
+      id<ORIntRange> D = RANGE(cp,0,n-1);
+      id<ORIntRange> SD = RANGE(cp,1,n-1);
+      
       id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
       id<CPIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
       id<CPIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
@@ -50,9 +51,9 @@ int main(int argc, const char * argv[])
          [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
          [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
          
-         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-         BOOL ok = [archive writeToFile:@"ais.CParchive" atomically:NO];
-         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+//         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+//         BOOL ok = [archive writeToFile:@"ais.CParchive" atomically:NO];
+//         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
          NSLog(@"Start...");

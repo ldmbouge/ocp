@@ -70,15 +70,14 @@
    CPSelect* select = [cpi selectInRange: RANGE(cp,[av low],[av up])
                                 suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }
                                orderedBy: ^CPInt(CPInt i) { return [h varOrdering:av[i]]; }];
-   CPInt low = [av low];
    do {      
       CPInt i = [select max];
-      if (i < low) 
+      if (i == MAXINT)
          return;
       id<CPIntVar> x = [av at: i];
       CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMax:cp
                                                             range:RANGE(cp,[x min],[x max])
-                                                       suchThat:^bool(CPInt v)  { return ![x member:v];}
+                                                         suchThat:^bool(CPInt v)  { return [x member:v];}
                                                         orderedBy:^CPInt(CPInt v) { return [h valOrdering:v forVar:x];}];
       do {
          CPInt curVal = [valSelect choose];

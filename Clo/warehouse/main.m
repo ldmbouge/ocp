@@ -18,10 +18,11 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
+      id<CP> cp = [CPFactory createSolver];
       CPInt fixed = 30;
       CPInt maxCost = 100;
-      CPRange Stores     = RANGE(0,9);
-      CPRange Warehouses = RANGE(0,4);
+      id<ORIntRange> Stores     = RANGE(cp,0,9);
+      id<ORIntRange> Warehouses = RANGE(cp,0,4);
       CPInt* cap = (CPInt[]){1,4,2,1,3};
       CPInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
                                  { 28, 27, 82, 83, 74 },
@@ -35,13 +36,13 @@ int main(int argc, const char * argv[])
                                  { 47, 65, 55, 71, 95 }};
       CPInt* conn = (CPInt*)connection;
 
-      id<CP> cp = [CPFactory createSolver];
+    
       id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
       
-      id<CPIntVarArray> cost = [CPFactory intVarArray: cp range:Stores domain: RANGE(0,maxCost)];
+      id<CPIntVarArray> cost = [CPFactory intVarArray: cp range:Stores domain: RANGE(cp,0,maxCost)];
       id<CPIntVarArray> supp = [CPFactory intVarArray: cp range:Stores domain: Warehouses];
-      id<CPIntVarArray> open = [CPFactory intVarArray: cp range:Warehouses domain: RANGE(0,1)];
-      id<CPIntVar>      obj  = [CPFactory intVar:cp domain:RANGE(0,maxCost*sizeof(cap))];
+      id<CPIntVarArray> open = [CPFactory intVarArray: cp range:Warehouses domain: RANGE(cp,0,1)];
+      id<CPIntVar>      obj  = [CPFactory intVar:cp bounds:RANGE(cp,0,maxCost*sizeof(cap))];
       
       [cp minimize:obj
          subjectTo:^{

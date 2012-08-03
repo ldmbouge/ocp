@@ -18,25 +18,27 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
+   
+      id<CP> cp = [CPFactory createSolver];
       enum Men   { Richard = 1,James = 2,John = 3,Hugh = 4,Greg = 5 };
       enum Women { Helen = 1,Tracy = 2, Linda = 3,Sally = 4,Wanda = 5 };
-      CPRange RMen   = RANGE(1,5);
-      CPRange RWomen = RANGE(1,5);
+      id<ORIntRange> RMen   = RANGE(cp,1,5);
+      id<ORIntRange> RWomen = RANGE(cp,1,5);
       CPInt  rankM[5][5] = {{5,1,2,4,3},
-                            {4,1,3,2,5},
-                            {5,3,2,4,1},
-                            {1,5,4,3,2},
-                            {4,3,2,1,5}};
+         {4,1,3,2,5},
+         {5,3,2,4,1},
+         {1,5,4,3,2},
+         {4,3,2,1,5}};
       
       CPInt rankW[5][5] = {{1,2,4,3,5},
-                           {3,5,1,2,4},
-                           {5,4,2,1,3},
-                           {1,3,5,4,2},
-                           {4,2,3,5,1}};
+         {3,5,1,2,4},
+         {5,4,2,1,3},
+         {1,3,5,4,2},
+         {4,2,3,5,1}};
       CPInt* rankMPtr = (CPInt*)rankM;
       CPInt* rankWPtr = (CPInt*)rankW;
       
-      id<CP> cp = [CPFactory createSolver];
+     
       id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
       
       

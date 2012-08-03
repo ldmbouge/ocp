@@ -55,9 +55,10 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       int n = 10;
-      CPRange R = (CPRange){1,n};
-      CPRange D = (CPRange){-n+1,n-1};
-      id<CP> cp = [CPFactory createSolver];      
+      id<CP> cp = [CPFactory createSolver];
+      id<ORIntRange> R = RANGE(cp,1,n);
+      id<ORIntRange> D = RANGE(cp,-n+1,n-1);
+          
       id<CPIntVarArray> costas = [CPFactory intVarArray: cp range:R domain: R];         
       id<CPIntVarMatrix>  diff = [CPFactory intVarMatrix:cp range:R : R domain:D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
@@ -71,7 +72,7 @@ int main(int argc, const char * argv[])
             }            
          }
          for(CPInt i=1;i<=n-1;i++) {
-            id<CPIntVarArray> slice = ALL(CPIntVar, j, RANGE(i+1,n), [diff at:i :j]);
+            id<CPIntVarArray> slice = ALL(CPIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
             [cp add:[CPFactory alldifferent:slice]];
          }
          [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
@@ -87,11 +88,12 @@ int main(int argc, const char * argv[])
             }
          }
                   
-         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
-         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+//         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+//         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
+//         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
          
       } using:^{
+         NSLog(@"Search");
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@",costas);
          NSLog(@"Solver: %@",cp);

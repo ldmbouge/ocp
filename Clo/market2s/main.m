@@ -18,11 +18,12 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
+      id<CP> cp = [CPFactory createSolver];
       const char* fn = "market.dta";
       FILE* dta = fopen(fn,"r");
       int n,m,z;
       fscanf(dta, "%d %d %d",&m,&n,&z);
-      CPRange V = RANGE(0,n-1);
+      id<ORIntRange> V = RANGE(cp,0,n-1);
       int** w = alloca(sizeof(int*)*m);
       for(int k=0;k<m;k++)
          w[k] = alloca(sizeof(int)*n);
@@ -58,16 +59,16 @@ int main(int argc, const char * argv[])
       }
       
       
-      id<CP> cp = [CPFactory createSolver];
-      id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp domain:RANGE(0,1)]);
+      
+      id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
       [cp solve: ^{
          for(int i=0;i<m;i++) {
             id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
-            id<CPIntVar>   r = [CPFactory intVar:cp domain:RANGE(rhs[i],rhs[i])];
+            id<CPIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
             [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
          }
       }  using:^{
-         [cp forrange:V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) {
+         [ORControl forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) {
             return -tw[i];
          } do:^(ORInt i) {
             [cp try:^{

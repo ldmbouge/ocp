@@ -18,11 +18,12 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      CPRange R = (CPRange){0,19};
-      CPRange D = (CPRange){0,9};
-      id<CP> cp = [CPFactory createSolver];      
+      id<CP> cp = [CPFactory createSolver];
+      id<ORIntRange> R = RANGE(cp,0,19);
+      id<ORIntRange> D = RANGE(cp,0,9);
+            
       id<CPIntVarArray> x = [CPFactory intVarArray: cp range:R domain: D];         
-      id<CPIntVarArray> c = [CPFactory intVarArray:cp range:(CPRange){0,8} domain: D];
+      id<CPIntVarArray> c = [CPFactory intVarArray:cp range:RANGE(cp,0,8) domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       [cp solve: ^{
          id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
