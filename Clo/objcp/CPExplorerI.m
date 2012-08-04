@@ -504,7 +504,7 @@
   int to;
   initContinuationLibrary(&to);
   @try {
-     DFSController* dfs = [[DFSController alloc] initDFSController:_tracer];
+     ORDFSController* dfs = [[ORDFSController alloc] initDFSController:_tracer];
      NSCont* exit = [NSCont takeContinuation];
      if ([exit nbCalls]==0) {
         [dfs addChoice: exit];

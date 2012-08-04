@@ -83,7 +83,7 @@
 -(BOOL) isFinitelyFailed;
 @end
 
-@interface DFSController : ORDefaultController <NSCopying,ORSearchController> {
+@interface ORDFSController : ORDefaultController <NSCopying,ORSearchController> {
 @private
    NSCont**          _tab;
    ORInt              _sz;

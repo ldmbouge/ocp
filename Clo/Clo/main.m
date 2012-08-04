@@ -93,7 +93,7 @@ void startSearch() {
 void traverseTree() {
    int x;
    initContinuationLibrary(&x);
-   DFSController* cp = [[DFSController alloc] init];
+   ORDFSController* cp = [[ORDFSController alloc] init];
    id<CP> m = [CPFactory createSolver];
    int* cnt = NSAllocateCollectable(sizeof(CPInt), NSCollectorDisabledOption);
    *cnt = 0;

@@ -182,7 +182,7 @@
 }
 @end
 
-@implementation DFSController
+@implementation ORDFSController
 
 - (id) initDFSController:(id<ORTracer>)tracer;
 {
@@ -246,9 +246,9 @@
       }
    }
 }
-- (id)copyWithZone:(NSZone *)zone
+- (id) copyWithZone: (NSZone*) zone
 {
-   DFSController* ctrl = [[[self class] allocWithZone:zone] initDFSController:_tracer];
+   ORDFSController* ctrl = [[[self class] allocWithZone:zone] initDFSController:_tracer];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
