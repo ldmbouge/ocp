@@ -64,12 +64,12 @@
 
 -(void)           optimize: (CPClosure) body 
                       post: (CPClosure) post 
-                canImprove: (CPVoid2ORStatus) canImprove 
+                canImprove: (Void2ORStatus) canImprove 
                     update: (CPClosure) update;
 
 -(void)           optimize: (CPClosure) body 
                       post: (CPClosure) post 
-                canImprove: (CPVoid2ORStatus) canImprove 
+                canImprove: (Void2ORStatus) canImprove 
                     update: (CPClosure) update 
                 onSolution: (CPClosure) onSolution 
                     onExit: (CPClosure) onExit;

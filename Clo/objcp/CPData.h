@@ -20,7 +20,7 @@
 typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(CPInt);
-typedef ORStatus (^CPVoid2ORStatus)(void);
+
 
 @protocol CPIntVar;
 @protocol CPRelation;

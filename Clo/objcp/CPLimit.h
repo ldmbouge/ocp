@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTrail.h>
 #import <objcp/CPController.h>
@@ -78,9 +79,9 @@
 
 @interface CPOptimizationController : CPDefaultController <NSCopying,CPSearchController> 
 {
-  CPVoid2ORStatus _canImprove;
+  Void2ORStatus _canImprove;
 }
--(id)        initCPOptimizationController: (CPVoid2ORStatus) canImprove;
+-(id)        initCPOptimizationController: (Void2ORStatus) canImprove;
 -(void)      dealloc;
 -(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;

@@ -33,12 +33,12 @@
 @end
 
 @protocol CPSearchController <NSObject,NSCopying>
--(void)                   setController: (id<CPSearchController>) controller;
+-(void)                      setController: (id<CPSearchController>) controller;
 -(id<CPSearchController>)    controller;
 -(void)       setup;
 -(void)       cleanup;
 
--(CPInt)  addChoice: (NSCont*) k;
+-(CPInt)      addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;
 -(void)       trust;

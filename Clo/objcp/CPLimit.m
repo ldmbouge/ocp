@@ -198,7 +198,7 @@
 
 @implementation CPOptimizationController
 
--(id) initCPOptimizationController: (CPVoid2ORStatus) canImprove
+-(id) initCPOptimizationController: (Void2ORStatus) canImprove
 {
   self = [super initCPDefaultController];
   _canImprove = [canImprove copy];

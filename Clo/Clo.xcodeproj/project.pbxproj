@@ -554,6 +554,8 @@
 		B1A0124515CCA4C8001ED0D4 /* ORSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124415CCA4C8001ED0D4 /* ORSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124615CCA92F001ED0D4 /* ORCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
+		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
 		B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; };
 		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1744,6 +1746,8 @@
 		B1A0124415CCA4C8001ED0D4 /* ORSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolver.h; sourceTree = "<group>"; };
 		B1A0124615CCA92F001ED0D4 /* ORCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCommand.h; sourceTree = "<group>"; };
 		B1A0124715CCA930001ED0D4 /* ORCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCommand.m; sourceTree = "<group>"; };
+		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORTracer.h; sourceTree = "<group>"; };
+		B1A0124B15CCAE72001ED0D4 /* ORTracer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORTracer.m; sourceTree = "<group>"; };
 		B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAssignmentI.h; sourceTree = "<group>"; };
 		B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAssignmentI.m; sourceTree = "<group>"; };
 		B1B68C74159FC16E008BC463 /* TestAssignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAssignment; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3000,6 +3004,8 @@
 				B10ECF0E150C34DE00B82836 /* ORFactoryI.h */,
 				B10ECF0F150C34DE00B82836 /* ORFactoryI.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
+				B1A0124A15CCAE71001ED0D4 /* ORTracer.h */,
+				B1A0124B15CCAE72001ED0D4 /* ORTracer.m */,
 				5BE64310139D49610056F448 /* ORTrail.h */,
 				5BE64311139D49610056F448 /* ORTrail.m */,
 				5B920EAB15A3F4A800AD0820 /* ORTracker.h */,
@@ -3573,6 +3579,7 @@
 				B1A0124515CCA4C8001ED0D4 /* ORSolver.h in Headers */,
 				B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */,
 				B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */,
+				B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
@@ -5001,6 +5008,7 @@
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
 				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
+				B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

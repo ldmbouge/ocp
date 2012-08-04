@@ -42,8 +42,8 @@
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 -(void)               fail;
 -(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
--(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2ORStatus) canImprove update: (CPClosure) update;
--(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2ORStatus) canImprove update: (CPClosure) update 
+-(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (Void2ORStatus) canImprove update: (CPClosure) update;
+-(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (Void2ORStatus) canImprove update: (CPClosure) update 
                 onSolution: (CPClosure) onSolution 
                     onExit: (CPClosure) onExit;
 @optional 

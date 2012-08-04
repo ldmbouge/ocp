@@ -9,17 +9,19 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORFactory.h>
-#import <ORFoundation/ORTracker.h>
-#import <ORFoundation/ORData.h>
-#import <ORFoundation/ORError.h>
-#import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORArray.h>
-#import <ORFoundation/ORExpr.h>
-#import <ORFoundation/ORControl.h>
-#import <ORFoundation/ORCommand.h>
-#import <ORFoundation/ORTracer.h>
-#import <ORFoundation/ORSolver.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTrail.h>
+
+@protocol ORCommand;
+@protocol ORSolver;
+@class ORCommandList;
+
+@protocol CPTracer <NSObject>
+-(ORInt)      pushNode;
+-(id)         popNode;
+-(id)         popToNode: (ORInt) n;
+-(void)       reset;
+-(ORTrail*)   trail;
+-(void)       trust;
+-(ORInt)      level;
+@end
