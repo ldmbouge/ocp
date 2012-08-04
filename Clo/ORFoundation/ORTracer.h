@@ -25,3 +25,15 @@
 -(void)       trust;
 -(ORInt)      level;
 @end
+
+@interface DFSTracer : NSObject<ORTracer> 
+-(DFSTracer*) initDFSTracer: (ORTrail*) trail;
+-(void)       dealloc;
+-(ORInt)      pushNode;
+-(id)         popNode;
+-(id)         popToNode: (ORInt) n;
+-(void)       reset;
+-(ORTrail*)   trail;
+-(void)       trust;
+-(ORInt)      level;
+@end

@@ -18,25 +18,9 @@
 @class Checkpoint;
 @class CPProblem;
 
-// PVH: This optional must disappear
 
-@interface DFSTracer : NSObject<ORTracer> {
-@private
-   ORTrail*          _trail;
-   ORTrailStack*   _trStack;
-   ORInt          _lastNode;
-   TRInt             _level;
-}
--(DFSTracer*) initDFSTracer: (ORTrail*) trail;
--(void)       dealloc;
--(ORInt)      pushNode;
--(id)         popNode;
--(id)         popToNode: (ORInt) n;
--(void)       reset;
--(ORTrail*)   trail;
--(void)       trust;
--(ORInt)      level;
-@end
+
+
 
 @interface CPCmdStack : NSObject<NSCoding> {
 @private
