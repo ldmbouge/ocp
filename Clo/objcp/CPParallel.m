@@ -14,14 +14,14 @@
 #import "CPFactory.h"
 
 @interface CPGenerator : ORDefaultController<ORSearchController> {
-   id<CPExplorer>  _explorer;
+   id<ORExplorer>  _explorer;
    PCObjectQueue*      _pool;   
    NSCont**             _tab;
    Checkpoint**       _cpTab;
    int                   _sz;
    int                   _mx;
 }
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq;
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq;
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(BOOL) isFinitelyFailed;
@@ -32,12 +32,12 @@
 @end
 
 @interface CPParallelAdapter : ORNestedController<ORSearchController> {
-   id<CPExplorer>     _explorer;
+   id<ORExplorer>     _explorer;
    PCObjectQueue*         _pool;
    BOOL             _publishing;
    CPGenerator*            _gen;
 }
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq;
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq;
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;
@@ -48,7 +48,7 @@
 @end
 
 @implementation CPParallelAdapter
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue *)pcq
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue *)pcq
 {
    self = [super initCPNestedController:chain];
    _explorer = explorer;
@@ -118,7 +118,7 @@
 
 @implementation CPGenerator
 
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq
 {
    self = [super initCPDefaultController];
    [self setController:chain];

@@ -15,7 +15,7 @@
 #import "CPConstraintI.h"
 #import "CPI.h"
 #import "CPSolverI.h"
-#import "CPExplorer.h"
+#import "ORExplorer.h"
 #import "CPExplorerI.h"
 #import "CPBasicConstraint.h"
 #import "CPSelector.h"
@@ -78,7 +78,7 @@
 {
    return _solver;
 }
--(id<CPExplorer>) explorer
+-(id<ORExplorer>) explorer
 {
    return _search;
 }
@@ -128,23 +128,23 @@
 {
    return [_solver solution];
 }
--(void) try: (CPClosure) left or: (CPClosure) right 
+-(void) try: (ORClosure) left or: (ORClosure) right 
 {
    [_search try: left or: right];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
    [_search tryall: range suchThat: filter in: body];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order do: (ORInt2Void) body
 {
    [ORControl forall: S suchThat: filter orderedBy: order do: body];
 }
--(void) forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) order do: (ORInt2Void) body
 {
    [ORControl forall: S suchThat: nil orderedBy: order do: body];
 }
@@ -161,7 +161,7 @@
 {
    [_search push: controller];
 }
--(void) nestedMinimize: (CPIntVarI*) x in: (CPClosure) body onSolution: onSolution onExit: onExit
+-(void) nestedMinimize: (CPIntVarI*) x in: (ORClosure) body onSolution: onSolution onExit: onExit
 {
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [_search    optimize: body
@@ -174,7 +174,7 @@
    printf("Optimal Solution: %d \n",[cstr primalBound]);
    //[cstr release]; // [ldm] Why Release? [this is tracked anyhow!]
 }
--(void) nestedMaximize: (CPIntVarI*) x in: (CPClosure) body onSolution: onSolution onExit: onExit
+-(void) nestedMaximize: (CPIntVarI*) x in: (ORClosure) body onSolution: onSolution onExit: onExit
 {
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [_search    optimize: body
@@ -188,7 +188,7 @@
    //[cstr release]; // [ldm] Why release? [this is tracked anyhow!]
 }
 
--(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    return [[CPSelect alloc] initCPSelect: (id<CP>)self
                                withRange: range
@@ -325,13 +325,13 @@
 {
    self = [super init];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[CPExplorerI alloc] initCPExplorer: _solver withTracer: _tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
 -(CPI*) initFor:(CPSolverI*)fdm
 {
    self = [super initFor:fdm];
-   _search = [[CPExplorerI alloc] initCPExplorer: _solver withTracer: _tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
 -(void)dealloc
@@ -382,99 +382,99 @@
     [ORConcurrency pumpEvents];   
 }
 
--(void) once: (CPClosure) cl
+-(void) once: (ORClosure) cl
 {
   [_search once: cl];
 }
 
--(void) limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl
+-(void) limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl
 {
    [_search limitCondition: condition in:cl];
 }
--(void) limitSolutions: (CPInt) nb in: (CPClosure) cl
+-(void) limitSolutions: (CPInt) nb in: (ORClosure) cl
 {
   [_search limitSolutions: nb in: cl];
 }
 
--(void) limitDiscrepancies: (CPInt) nb in: (CPClosure) cl
+-(void) limitDiscrepancies: (CPInt) nb in: (ORClosure) cl
 {
   [_search limitDiscrepancies: nb in: cl];
 }
--(void) limitFailures: (CPInt) maxFailures in: (CPClosure) cl
+-(void) limitFailures: (CPInt) maxFailures in: (ORClosure) cl
 {
   [_search limitFailures: maxFailures in: cl];
 }
--(void) limitTime: (CPLong) maxTime in: (CPClosure) cl
+-(void) limitTime: (CPLong) maxTime in: (ORClosure) cl
 {
   [_search limitTime: maxTime in: cl];
 }
--(void) applyController: (id<ORSearchController>) controller in: (CPClosure) cl
+-(void) applyController: (id<ORSearchController>) controller in: (ORClosure) cl
 {
    [_search applyController: controller in: cl];
 }
--(void) search: (CPClosure) body 
+-(void) search: (ORClosure) body 
 {
   [_search search: body];
 }
 
 
--(void) solve: (CPClosure) body 
+-(void) solve: (ORClosure) body 
 {
   [_search solve: body];
 }
--(void) solve: (CPClosure) body using: (CPClosure) search    
+-(void) solve: (ORClosure) body using: (ORClosure) search    
 {
     [_search solve: body using: search];
 }
 
--(void) solveAll: (CPClosure) body 
+-(void) solveAll: (ORClosure) body 
 {
   [_search solveAll: body];
 }
 
--(void) solveAll: (CPClosure) body using: (CPClosure) search    
+-(void) solveAll: (ORClosure) body using: (ORClosure) search    
 {
     [_search solveAll: body using: search];
 }
 
--(void) nestedSolve: (CPClosure) body
+-(void) nestedSolve: (ORClosure) body
 {
   [_search nestedSolve: body onSolution:nil onExit:nil 
                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution;
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
   [_search nestedSolve: body onSolution: onSolution onExit:nil 
                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit 
                 control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body
+-(void) nestedSolveAll: (ORClosure) body
 {
   [_search nestedSolveAll: body onSolution:nil onExit:nil 
                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution;
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit:nil 
                    control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 
--(void) minimize: (id<CPIntVar>) x in: (CPClosure) body 
+-(void) minimize: (id<CPIntVar>) x in: (ORClosure) body 
 {
   [_search search: ^() { [self nestedMinimize: x 
                                            in: body 
@@ -484,7 +484,7 @@
   ];
 }
 
--(void) minimize: (id<CPIntVar>) x subjectTo: (CPClosure) body using: (CPClosure) search
+-(void) minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
 {
     [_search search: ^() { [self nestedMinimize: x 
                                              in: ^() { body(); [self close]; search(); } 
@@ -493,7 +493,7 @@
                             ]; }
      ];
 }
--(void) maximize: (id<CPIntVar>) x in: (CPClosure) body 
+-(void) maximize: (id<CPIntVar>) x in: (ORClosure) body 
 {
   [_search search: ^() { [self nestedMaximize: x 
                                            in: body 
@@ -503,7 +503,7 @@
   ];
 }
 
--(void) maximize: (id<CPIntVar>) x subjectTo: (CPClosure) body using: (CPClosure) search
+-(void) maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
 {
     [_search search: ^() { [self nestedMaximize: x 
                                              in: ^() { body(); [self close]; search(); } 
@@ -514,11 +514,11 @@
 }
 
 
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
   [_search repeat: body onRepeat: onRepeat until: nil];
 }
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone
 {
   [_search repeat: body onRepeat: onRepeat until: isDone];
 }
@@ -539,7 +539,7 @@
 {
    self = [super initWithCoder:aDecoder];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[CPExplorerI alloc] initCPExplorer: _solver withTracer: _tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
 
@@ -615,31 +615,31 @@
    [ORConcurrency pumpEvents]; 
 }
 
--(void) search: (CPClosure) body 
+-(void) search: (ORClosure) body 
 {
    [_search search: body];
 }
 
--(void) solve: (CPClosure) body 
+-(void) solve: (ORClosure) body 
 {
    [_search solve: body];
 }
--(void) solve: (CPClosure) body using: (CPClosure) search    
+-(void) solve: (ORClosure) body using: (ORClosure) search    
 {
    [_search solve: body using: search];
 }
 
--(void) solveAll: (CPClosure) body 
+-(void) solveAll: (ORClosure) body 
 {
    [_search solveAll: body];
 }
 
--(void) solveAll: (CPClosure) body using: (CPClosure) search    
+-(void) solveAll: (ORClosure) body using: (ORClosure) search    
 {
    [_search solveAll: body using: search];
 }
 
--(void)solveParAll:(CPUInt)nbt subjectTo:(CPClosure)body using:(CPVirtualClosure)search
+-(void)solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)search
 {
    [self search:^() {
       body();
@@ -650,47 +650,47 @@
    }];
 }
 
--(void) nestedSolve: (CPClosure) body
+-(void) nestedSolve: (ORClosure) body
 {
    [_search nestedSolve: body onSolution:nil onExit:nil 
                 control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];   
 }
--(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution;
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
    [_search nestedSolve: body onSolution: onSolution onExit:nil 
                 control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit 
                 control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body
+-(void) nestedSolveAll: (ORClosure) body
 {
    [_search nestedSolveAll: body onSolution:nil onExit:nil 
                    control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution;
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit:nil 
                    control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
                    control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit: onExit control:sc];   
 }
 
--(void) minimize: (id<CPIntVar>) x in: (CPClosure) body 
+-(void) minimize: (id<CPIntVar>) x in: (ORClosure) body 
 {
    [_search search: ^() { [self nestedMinimize: x 
                                             in: body 
@@ -700,7 +700,7 @@
     ];
 }
 
--(void) minimize: (id<CPIntVar>) x subjectTo: (CPClosure) body using: (CPClosure) search
+-(void) minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
 {
    [_search search: ^() { [self nestedMinimize: x 
                                             in: ^() { body(); [self close]; search(); } 
@@ -709,7 +709,7 @@
                            ]; }
     ];
 }
--(void) maximize: (id<CPIntVar>) x in: (CPClosure) body 
+-(void) maximize: (id<CPIntVar>) x in: (ORClosure) body 
 {
    [_search search: ^() { [self nestedMaximize: x 
                                             in: body 
@@ -719,7 +719,7 @@
     ];
 }
 
--(void) maximize: (id<CPIntVar>) x subjectTo: (CPClosure) body using: (CPClosure) search
+-(void) maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
 {
    [_search search: ^() { [self nestedMaximize: x 
                                             in: ^() { body(); [self close]; search(); } 
@@ -728,11 +728,11 @@
                            ]; }
     ];
 }
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
 }
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone
 {
    [_search repeat: body onRepeat: onRepeat until: isDone];
 }

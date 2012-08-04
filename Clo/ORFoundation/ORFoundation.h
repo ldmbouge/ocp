@@ -24,3 +24,4 @@
 #import <ORFoundation/ORSolver.h>
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORController.h>
+#import <ORFoundation/ORExplorer.h>

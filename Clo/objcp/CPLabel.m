@@ -14,7 +14,7 @@
 #import "CPLabel.h"
 #import "CPSelector.h"
 #import "CPSolverI.h"
-#import "CPExplorer.h"
+#import "ORExplorer.h"
 #import "CPExplorerI.h"
 #import "CPI.h"
 #import "CPIntVarI.h"

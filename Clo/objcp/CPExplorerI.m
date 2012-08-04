@@ -138,11 +138,11 @@
 }
 
 // this is a top-level call; not a search combinator
--(void) search: (CPClosure) body
+-(void) search: (ORClosure) body
 {
 }
 
--(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit  control:(id<ORSearchController>)newCtrl
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
 {
    // clone the old controller chain in full. Must be done before creating the continuation
    // to make sure that newCtrl is available when we "come back". 
@@ -168,7 +168,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; Each time a solution is found, execute onSolution; restore the state as before the call; execute onExit at the end
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)newCtrl
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)newCtrl
 {
    id<ORSearchController> oldCtrl = _controller._val;
    NSCont* exit = [NSCont takeContinuation];
@@ -190,7 +190,7 @@
    }   
 }
 
--(void) solveAll: (CPClosure) body 
+-(void) solveAll: (ORClosure) body 
 {
    [self search: ^() 
     {
@@ -200,7 +200,7 @@
     ];
 }
 
--(void) solveAll: (CPClosure) body using: (CPClosure) search
+-(void) solveAll: (ORClosure) body using: (ORClosure) search
 {
    [self search: ^() 
     {
@@ -214,7 +214,7 @@
 
 // this is a top-level call; not a search combinator
 
--(void) solve: (CPClosure) body
+-(void) solve: (ORClosure) body
 {
    [self search: ^() 
     {
@@ -226,7 +226,7 @@
     ];
 }
 
--(void) solve: (CPClosure) body using: (CPClosure) search
+-(void) solve: (ORClosure) body using: (ORClosure) search
 {
    [self search: ^() 
     {
@@ -238,17 +238,17 @@
     ];
 }
 
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
 {
 }
 
 
--(void)           optimize: (CPClosure) body 
-                      post: (CPClosure) post 
+-(void)           optimize: (ORClosure) body 
+                      post: (ORClosure) post 
                 canImprove: (Void2ORStatus) canImprove
-                    update: (CPClosure) update 
-                onSolution: (CPClosure) onSolution 
-                    onExit: (CPClosure) onExit
+                    update: (ORClosure) update 
+                onSolution: (ORClosure) onSolution 
+                    onExit: (ORClosure) onExit
 {
    NSCont* exit = [NSCont takeContinuation];
    [_controller._val addChoice: exit];    
@@ -268,15 +268,15 @@
    }
 }
 
--(void) optimize: (CPClosure) body 
-            post: (CPClosure) post 
+-(void) optimize: (ORClosure) body 
+            post: (ORClosure) post 
       canImprove: (Void2ORStatus) canImprove 
-          update: (CPClosure) update
+          update: (ORClosure) update
 {
    [self optimize: body post: post canImprove: canImprove update: update onSolution: NULL onExit: NULL];
 }
 
--(void) try: (CPClosure) left or: (CPClosure) right
+-(void) try: (ORClosure) left or: (ORClosure) right
 {
    [_controller._val startTry];
    NSCont* k = [NSCont takeContinuation];
@@ -296,12 +296,12 @@
    }
    [_controller._val exitTry];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body 
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body 
 {
    [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
 /*
--(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    CPInt cur;
    CPInt curIte;
@@ -378,7 +378,7 @@
 @end
 */
 
--(void) tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    CPInt curIte;
    CPInt foundIte;
@@ -432,8 +432,8 @@
 // ====================================================================================================
 // DFS style explorer.
 
-@implementation CPExplorerI
--(CPExplorerI*) initCPExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
+@implementation ORExplorerI
+-(ORExplorerI*) initORExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
 {
    self = [super initCPCoreExplorer:solver withTracer:tracer];
    return self;
@@ -444,12 +444,12 @@
    [super dealloc];
 }
 
--(void) once: (CPClosure) cl
+-(void) once: (ORClosure) cl
 {
   [self limitSolutions: 1 in: cl];
 }
 
--(void) limitSolutions: (CPInt) nb in: (CPClosure) cl
+-(void) limitSolutions: (CPInt) nb in: (ORClosure) cl
 {
   CPLimitSolutions* limit = [[CPLimitSolutions alloc] initCPLimitSolutions: nb];
   [self push: limit];
@@ -459,7 +459,7 @@
   [self popController]; 
 }
 
--(void) limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl
+-(void) limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl
 {
    CPLimitCondition* limit = [[CPLimitCondition alloc] initCPLimitCondition: condition];
    [self push: limit];
@@ -468,7 +468,7 @@
    [self popController];
 }
 
--(void) limitDiscrepancies: (CPInt) nb in: (CPClosure) cl
+-(void) limitDiscrepancies: (CPInt) nb in: (ORClosure) cl
 {
   CPLimitDiscrepancies* limit = [[CPLimitDiscrepancies alloc] initCPLimitDiscrepancies: nb withTrail: [_tracer trail]];
   [self push: limit];
@@ -476,7 +476,7 @@
   cl();
   [self popController]; 
 }
--(void) limitFailures: (CPInt) nb in: (CPClosure) cl
+-(void) limitFailures: (CPInt) nb in: (ORClosure) cl
 {
    CPLimitFailures* limit = [[CPLimitFailures alloc] initCPLimitFailures: nb];
    [self push: limit];
@@ -484,7 +484,7 @@
    cl();
    [self popController];
 }
--(void) limitTime: (CPLong) maxTime in: (CPClosure) cl
+-(void) limitTime: (CPLong) maxTime in: (ORClosure) cl
 {
    CPLimitTime* limit = [[CPLimitTime alloc] initCPLimitTime: maxTime];
    [self push: limit];
@@ -492,14 +492,14 @@
    cl();
    [self popController];
 }
--(void) applyController: (id<ORSearchController>) controller in: (CPClosure) cl
+-(void) applyController: (id<ORSearchController>) controller in: (ORClosure) cl
 {
    [self push: controller];
    [controller release];
    cl();
    [self popController];
 }
--(void) search: (CPClosure) body
+-(void) search: (ORClosure) body
 {
   int to;
   initContinuationLibrary(&to);
@@ -524,7 +524,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; when a solution is found, execute onSolution; restore the state as before the call
 
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
 {
 //   id<CPInteger> nbRestarts = [CPFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
@@ -568,7 +568,7 @@
    [super dealloc];
 }
 
--(void) search: (CPClosure) body
+-(void) search: (ORClosure) body
 {
    int to;
    initContinuationLibrary(&to);
@@ -592,7 +592,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; when a solution is found, execute onSolution; restore the state as before the call
 
--(void) repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone
 {
    NSCont* enter = [NSCont takeContinuation];
    if (isDone) 

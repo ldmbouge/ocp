@@ -15,11 +15,11 @@
 @interface OPTSelect : NSObject {
     id<ORRandomStream> _stream;
     id<ORIntIterator>  _range;
-    CPInt2Bool         _filter;
+    ORInt2Bool         _filter;
     CPInt2Int          _order;
     CPInt              _direction;
 }
--(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -30,7 +30,7 @@
 @interface CPSelect : NSObject {
     OPTSelect* _select;
 }
--(CPSelect*) initCPSelect: (id<CP>) cp withRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*) initCPSelect: (id<CP>) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -40,20 +40,20 @@
 @interface CPSelectMinRandomized : NSObject {
   id<ORRandomStream> _stream;
   id<ORIntIterator>  _range;
-  CPInt2Bool         _filter;
+  ORInt2Bool         _filter;
   CPInt2Int          _order;
 }
--(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)            dealloc;
 -(CPInt)           choose;
 @end
 
 @interface CPSelectMax : NSObject {
    id<ORIntIterator> _range;
-   CPInt2Bool        _filter;
+   ORInt2Bool        _filter;
    CPInt2Int         _order;
 }
--(CPSelectMax*) initSelectMax:(id<CP>)cp range: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMax*) initSelectMax:(id<CP>)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)         dealloc;
 -(CPInt)        choose;
 @end

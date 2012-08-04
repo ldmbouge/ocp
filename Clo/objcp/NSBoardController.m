@@ -130,7 +130,7 @@
    }
    [_drawOn setNeedsDisplay:TRUE];
 }
--(void)watchSearch:(CoreCPI*)cp onChoose:(CPClosure)onc onFail:(CPClosure)onf
+-(void)watchSearch:(CoreCPI*)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
    [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
 }

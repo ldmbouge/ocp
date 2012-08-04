@@ -96,7 +96,7 @@ typedef struct  {
 -(void) changeMaxEvt:(CPInt) dsz;
 -(void) loseValEvt: (CPInt) val;
 
--(void) loseRangeEvt:(CPClosure) clo;
+-(void) loseRangeEvt:(ORClosure) clo;
 -(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift;
 @end
 

@@ -33,7 +33,7 @@
 @end
 
 
-@interface CPCoreExplorerI : NSObject<CPExplorer> {
+@interface CPCoreExplorerI : NSObject<ORExplorer> {
    id<ORSolver> _solver;
    id<ORTracer>       _tracer;
    TRId               _controller;
@@ -51,63 +51,64 @@
 -(void)addHeuristic:(id<CPHeuristic>)h;
 
 
--(void)             search: (CPClosure) body;
--(void)        nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
--(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
--(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)             search: (ORClosure) body;
+-(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
+-(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
+-(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
 
--(void)          solve: (CPClosure) body;
--(void)       solveAll: (CPClosure) body;
--(void)          solve: (CPClosure) body using: (CPClosure) search;
--(void)       solveAll: (CPClosure) body using: (CPClosure) search;
+-(void)          solve: (ORClosure) body;
+-(void)       solveAll: (ORClosure) body;
+-(void)          solve: (ORClosure) body using: (ORClosure) search;
+-(void)       solveAll: (ORClosure) body using: (ORClosure) search;
 
--(void)           optimize: (CPClosure) body 
-                      post: (CPClosure) post 
+-(void)           optimize: (ORClosure) body 
+                      post: (ORClosure) post 
                 canImprove: (Void2ORStatus) canImprove 
-                    update: (CPClosure) update;
+                    update: (ORClosure) update;
 
--(void)           optimize: (CPClosure) body 
-                      post: (CPClosure) post 
+-(void)           optimize: (ORClosure) body 
+                      post: (ORClosure) post 
                 canImprove: (Void2ORStatus) canImprove 
-                    update: (CPClosure) update 
-                onSolution: (CPClosure) onSolution 
-                    onExit: (CPClosure) onExit;
+                    update: (ORClosure) update 
+                onSolution: (ORClosure) onSolution 
+                    onExit: (ORClosure) onExit;
 
 
--(void)                try: (CPClosure) left or: (CPClosure) right;
--(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
--(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
+-(void)                try: (ORClosure) left or: (ORClosure) right;
+-(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
+-(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)               fail;
 -(void)              close;
 @end
 
 
-@interface CPExplorerI : CPCoreExplorerI <CPExplorer> {
+@interface ORExplorerI : CPCoreExplorerI <ORExplorer>
+{
 }
--(CPExplorerI*)initCPExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
+-(ORExplorerI*)initORExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
 -(void)dealloc;
 // top level calls
--(void)         search: (CPClosure) body;
+-(void)         search: (ORClosure) body;
 
 // combinators
--(void)               once: (CPClosure) cl;
--(void)     limitSolutions: (CPInt) masSolutions in: (CPClosure) cl;
--(void)     limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
--(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
--(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
--(void)          limitTime: (CPLong) maxTime in: (CPClosure) cl;
--(void)    applyController: (id<ORSearchController>) controller in: (CPClosure) cl;
--(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)               once: (ORClosure) cl;
+-(void)     limitSolutions: (CPInt) masSolutions in: (ORClosure) cl;
+-(void)     limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
+-(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)      limitFailures: (CPInt) maxFailures in: (ORClosure) cl;
+-(void)          limitTime: (CPLong) maxTime in: (ORClosure) cl;
+-(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
+-(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
 @end
 
-@interface CPSemExplorerI : CPCoreExplorerI<CPExplorer> {
+@interface CPSemExplorerI : CPCoreExplorerI<ORExplorer> {
 }
 -(CPSemExplorerI*)initCPSemExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
 -(void)dealloc;
 // top level calls
--(void)             search: (CPClosure) body;
+-(void)             search: (ORClosure) body;
 // combinators
--(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(ORStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;

@@ -19,22 +19,22 @@
 
 @interface CPWatch : CPActiveConstraint {
    CPIntVarI* _theVar;
-   CPInt2Void _lost;
-   CPInt2Void _bind;
-   CPInt2Void _rec;
-   CPInt2Void _unb;
+   ORInt2Void _lost;
+   ORInt2Void _bind;
+   ORInt2Void _rec;
+   ORInt2Void _unb;
 }
--(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(CPInt2Void)lost onValueBind:(CPInt2Void)bind onValueRecover:(CPInt2Void)rec onValueUnbind:(CPInt2Void)unb;
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
 
 @implementation CPWatch
--(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(CPInt2Void)lost 
-           onValueBind:(CPInt2Void)bind 
-        onValueRecover:(CPInt2Void)rec 
-         onValueUnbind:(CPInt2Void)unb
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost 
+           onValueBind:(ORInt2Void)bind 
+        onValueRecover:(ORInt2Void)rec 
+         onValueUnbind:(ORInt2Void)unb
 {
    self = [super initCPActiveConstraint:(id<CPSolver>)[(CPIntVarI*)x solver]];
    _theVar = (CPIntVarI*)x;
@@ -87,10 +87,10 @@
 
 @implementation CPFactory(Visualize)
 +(id<CPConstraint>)watchVariable:(id<CPIntVar>)x 
-                     onValueLost:(CPInt2Void)lost 
-                     onValueBind:(CPInt2Void)bind 
-                  onValueRecover:(CPInt2Void)rec 
-                   onValueUnbind:(CPInt2Void)unb
+                     onValueLost:(ORInt2Void)lost 
+                     onValueBind:(ORInt2Void)bind 
+                  onValueRecover:(ORInt2Void)rec 
+                   onValueUnbind:(ORInt2Void)unb
 {
    id<CPConstraint> c = nil;
    c = [[CPWatch alloc] initCPWatch:x 
@@ -107,7 +107,7 @@
 
 
 @implementation CPViewController
--(CPViewController*)initCPViewController:(id<ORSearchController>)chain onChoose:(CPClosure)onc onFail:(CPClosure)onf
+-(CPViewController*)initCPViewController:(id<ORSearchController>)chain onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
    self = [super initCPDefaultController];
    [self setController:chain];

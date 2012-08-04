@@ -2,32 +2,26 @@
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPHeuristic.h>
-#import <objcp/CPController.h>
 
-@class Checkpoint;
-
-/*
 @protocol ORExplorer <NSObject>
--(void)                push: (id<ORSearchController>) c;
+-(void) push: (id<ORSearchController>) c;
 
 // Statistics
--(CPInt)       nbChoices;
--(CPInt)       nbFailures;
+-(ORInt)       nbChoices;
+-(ORInt)       nbFailures;
 
-// access 
+// access
 -(id<ORSearchController>)    controller;
 -(void)                   setController: (id<ORSearchController>) controller;
--(void)addHeuristic:(id<CPHeuristic>)h;
 
 // top level calls
 -(void)              search: (ORClosure) body;
@@ -44,10 +38,9 @@
 -(void)               fail;
 -(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 -(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update;
--(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update 
-                onSolution: (ORClosure) onSolution 
+-(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update
+                onSolution: (ORClosure) onSolution
                     onExit: (ORClosure) onExit;
-@optional 
 -(void)               once: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)     limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
@@ -55,9 +48,5 @@
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
--(ORStatus)restoreCheckpoint:(Checkpoint*)cp;
--(Checkpoint*)captureCheckpoint;
--(NSData*)packCheckpoint:(Checkpoint*)cp;
--(NSData*)captureAndPackProblem;
 @end
-*/
+

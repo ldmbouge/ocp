@@ -15,7 +15,7 @@
 
 @protocol CPSolver;
 @protocol ORTracer;
-@protocol CPExplorer;
+@protocol ORExplorer;
 @class Checkpoint;
 
 @interface CPHeist : NSObject {
@@ -32,37 +32,6 @@
 -(BOOL)willingToShare;
 @end
 
-/*
-@protocol CPSearchController <NSObject,NSCopying>
--(void)                      setController: (id<CPSearchController>) controller;
--(id<CPSearchController>)    controller;
--(void)       setup;
--(void)       cleanup;
-
--(CPInt)      addChoice: (NSCont*) k;
--(void)       fail;
--(void)       succeeds;
--(void)       trust;
-
--(void)       startTry;
--(void)       startTryLeft;
--(void)       exitTryLeft;
--(void)       startTryRight;
--(void)       exitTryRight;
--(void)       exitTry;
-
--(void)       startTryall;
--(void)       exitTryall;
--(void)       startTryallBody;
--(void)       exitTryallBody;
--(void)       startTryallOnFailure;
--(void)       exitTryallOnFailure;
--(BOOL)       isFinitelyFailed;
--(id)         copy;
-@optional -(CPHeist*)steal;
-@optional -(BOOL)willingToShare;
-@end
-*/
 
 @class Checkpoint;
 @protocol ControllerEvt 

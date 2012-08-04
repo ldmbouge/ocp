@@ -128,7 +128,7 @@
    }
    [_drawOn performSelectorOnMainThread:@selector(setNeedsDisplay) withObject:0 waitUntilDone:NO];
 }
--(void)watchSearch:(CoreCPI*)cp onChoose:(CPClosure)onc onFail:(CPClosure)onf
+-(void)watchSearch:(CoreCPI*)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
    [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
 }

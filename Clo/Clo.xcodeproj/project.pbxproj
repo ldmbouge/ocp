@@ -563,6 +563,7 @@
 		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1B68C79159FC16E008BC463 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C78159FC16E008BC463 /* main.m */; };
 		B1B68C83159FC194008BC463 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */; };
 		B1C25AA21557540E009CB8A8 /* CPCircuitI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C25AA01557540E009CB8A8 /* CPCircuitI.m */; };
 		B1C8C5F614BEBE1C000C5486 /* CPFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C8C5F414BEBE1C000C5486 /* CPFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1578,10 +1579,10 @@
 		5BE642F2139D49320056F448 /* CPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPI.h; sourceTree = "<group>"; };
 		5BE642F3139D49320056F448 /* CPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPI.m; sourceTree = "<group>"; };
 		5BE642F4139D49320056F448 /* CPConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConstraintI.h; sourceTree = "<group>"; };
-		5BE642F5139D49320056F448 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPController.h; sourceTree = "<group>"; };
+		5BE642F5139D49320056F448 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642F6139D49320056F448 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
-		5BE642F9139D49320056F448 /* CPExplorerI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPExplorerI.h; sourceTree = "<group>"; };
-		5BE642FA139D49320056F448 /* CPExplorerI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPExplorerI.m; sourceTree = "<group>"; };
+		5BE642F9139D49320056F448 /* CPExplorerI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPExplorerI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BE642FA139D49320056F448 /* CPExplorerI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPExplorerI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BE642FB139D49320056F448 /* CPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSolverI.h; sourceTree = "<group>"; };
 		5BE642FC139D49320056F448 /* CPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSolverI.m; sourceTree = "<group>"; };
 		5BE642FD139D49320056F448 /* CPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSolver.h; sourceTree = "<group>"; };
@@ -1615,7 +1616,7 @@
 		5BEEF61813970B6F002ADBD4 /* queens2.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queens2.1; sourceTree = "<group>"; };
 		5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORAVLTree.h; sourceTree = "<group>"; };
 		5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORAVLTree.m; sourceTree = "<group>"; };
-		5BF72E5514E0505A00573BA9 /* CP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CP.h; sourceTree = "<group>"; };
+		5BF72E5514E0505A00573BA9 /* CP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CP.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BFD594315A3ACA500825BC3 /* ORFoundation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORFoundation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BFD594715A3ACA500825BC3 /* ORFoundation-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORFoundation-Info.plist"; sourceTree = "<group>"; };
 		5BFD594915A3ACA500825BC3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1758,6 +1759,7 @@
 		B1B68C78159FC16E008BC463 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1B68C7B159FC16E008BC463 /* TestAssignment-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestAssignment-Prefix.pch"; sourceTree = "<group>"; };
 		B1B68C7C159FC16E008BC463 /* TestAssignment.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestAssignment.1; sourceTree = "<group>"; };
+		B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORExplorer.h; sourceTree = "<group>"; };
 		B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCircuitI.h; sourceTree = "<group>"; };
 		B1C25AA01557540E009CB8A8 /* CPCircuitI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCircuitI.m; sourceTree = "<group>"; };
 		B1C8C5F414BEBE1C000C5486 /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFactory.h; sourceTree = "<group>"; };
@@ -1773,7 +1775,7 @@
 		B1C9DF2615A8045C00EE924C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		B1C9DF3115A8078400EE924C /* SportView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SportView.h; sourceTree = "<group>"; };
 		B1C9DF3215A8078400EE924C /* SportView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SportView.m; sourceTree = "<group>"; };
-		B1D3BCD2150473A10036AB23 /* CPExplorer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPExplorer.h; sourceTree = "<group>"; };
+		B1D3BCD2150473A10036AB23 /* CPExplorer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPExplorer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1D3BCD615048D2A0036AB23 /* CPLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLabel.h; sourceTree = "<group>"; };
 		B1D3BCD715048D2B0036AB23 /* CPLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLabel.m; sourceTree = "<group>"; };
 		B1DA97E713EC714F00BA7244 /* lpsolveri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpsolveri.h; sourceTree = "<group>"; };
@@ -3003,6 +3005,7 @@
 				5B60E5F115AE9661002FF2B3 /* ORData.m */,
 				5BFD5A6B15A3BEA900825BC3 /* ORError.h */,
 				5B8B12DB15A3BF8000300385 /* ORError.m */,
+				B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */,
 				5B920EA915A3DDA600AD0820 /* ORExpr.h */,
 				5B920EAE15A3F5B000AD0820 /* ORExprI.m */,
 				5B920EAD15A3F5B000AD0820 /* ORExprI.h */,
@@ -3587,6 +3590,7 @@
 				B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */,
 				B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */,
 				B139DEA115CCE3F8007D523E /* ORController.h in Headers */,
+				B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,

@@ -19,7 +19,7 @@
 
 @protocol ORSearchController;
 @protocol CPSolver;
-@protocol CPExplorer;
+@protocol ORExplorer;
 @protocol CPHeuristic;
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
@@ -41,13 +41,13 @@
 -(id<ORSearchController>) controller;
 
 -(void)                push: (id<ORSearchController>) c;
--(void)      nestedMinimize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
--(void)      nestedMaximize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
--(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
--(void)              forall: (id<ORIntIterator>) S suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
--(void)                 try: (CPClosure) left or: (CPClosure) right;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
+-(void)      nestedMinimize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
+-(void)      nestedMaximize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
+-(void)                 try: (ORClosure) left or: (ORClosure) right;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
@@ -57,40 +57,40 @@
 -(void)               gthen: (id<CPIntVar>) var with: (CPInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
--(void)              search: (CPClosure) body;
--(void)               solve: (CPClosure) body;
--(void)               solve: (CPClosure) body using:(CPClosure) search;
--(void)            solveAll: (CPClosure) body;
--(void)            solveAll: (CPClosure) body using:(CPClosure) search;
--(void)            minimize: (id<CPIntVar>) x in: (CPClosure) body;
--(void)            maximize: (id<CPIntVar>) x in: (CPClosure) body;
--(void)            minimize: (id<CPIntVar>) x subjectTo: (CPClosure) body using:(CPClosure) search;
--(void)            maximize: (id<CPIntVar>) x subjectTo: (CPClosure) body using:(CPClosure) search;
+-(void)              search: (ORClosure) body;
+-(void)               solve: (ORClosure) body;
+-(void)               solve: (ORClosure) body using:(ORClosure) search;
+-(void)            solveAll: (ORClosure) body;
+-(void)            solveAll: (ORClosure) body using:(ORClosure) search;
+-(void)            minimize: (id<CPIntVar>) x in: (ORClosure) body;
+-(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
+-(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
+-(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 
--(void)         nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit;
--(void)         nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution;
--(void)         nestedSolve: (CPClosure) body;
--(void)      nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit;
--(void)      nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution;
--(void)      nestedSolveAll: (CPClosure) body;
+-(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
+-(void)         nestedSolve: (ORClosure) body;
+-(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
+-(void)      nestedSolveAll: (ORClosure) body;
 
--(void)                once: (CPClosure) cl;
--(void)      limitSolutions: (CPInt) maxSolutions in: (CPClosure) cl;
--(void)      limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
--(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
--(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
--(void)      limitTime: (CPLong) maxTime in: (CPClosure) cl;
--(void)    applyController: (id<ORSearchController>) controller in: (CPClosure) cl;
+-(void)                once: (ORClosure) cl;
+-(void)      limitSolutions: (CPInt) maxSolutions in: (ORClosure) cl;
+-(void)      limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
+-(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)      limitFailures: (CPInt) maxFailures in: (ORClosure) cl;
+-(void)      limitTime: (CPLong) maxTime in: (ORClosure) cl;
+-(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 
--(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart;
--(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart until: (CPVoid2Bool) isDone;
+-(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
+-(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (CPVoid2Bool) isDone;
 -(id<CPPortal>) portal;
 -(id<ORTracer>) tracer;
 -(id<CPSolution>) solution;
 
-@optional -(void) solveParAll:(CPUInt)nbt subjectTo:(CPClosure)body using:(CPVirtualClosure)body;
+@optional -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
 -(id<CPSolver>)       solver;
--(id<CPExplorer>)   explorer;
+-(id<ORExplorer>)   explorer;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 @optional -(id)virtual:(id)obj;
 @end
