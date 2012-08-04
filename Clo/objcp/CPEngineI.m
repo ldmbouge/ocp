@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "CPEngineIm.h"
+#import "CPEngineI.h"
 #import "ORTrail.h"
 #import "CPIntVarI.h"
 #import "CPBasicConstraint.h"

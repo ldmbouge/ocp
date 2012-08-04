@@ -521,8 +521,6 @@
 		B1672FFB1584A7CD00EFE5C3 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B169F9C814EF87D500B2F3A6 /* CPConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = B169F9C614EF87D500B2F3A6 /* CPConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B169F9C914EF87D500B2F3A6 /* CPConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = B169F9C714EF87D500B2F3A6 /* CPConstraint.m */; };
-		B173284315CDA00E00025146 /* CPEngineIm.h in Headers */ = {isa = PBXBuildFile; fileRef = B173284115CDA00E00025146 /* CPEngineIm.h */; };
-		B173284415CDA00E00025146 /* CPEngineIm.m in Sources */ = {isa = PBXBuildFile; fileRef = B173284215CDA00E00025146 /* CPEngineIm.m */; };
 		B1771596155798AA00BA14BF /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1771599155798AA00BA14BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1771598155798AA00BA14BF /* main.m */; };
 		B177159D155798AA00BA14BF /* Euler.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B177159C155798AA00BA14BF /* Euler.1 */; };
@@ -583,6 +581,8 @@
 		B1D3BCD3150473A10036AB23 /* CPExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D3BCD2150473A10036AB23 /* CPExplorer.h */; };
 		B1D3BCD815048D2B0036AB23 /* CPLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D3BCD615048D2A0036AB23 /* CPLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1D3BCD915048D2B0036AB23 /* CPLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D3BCD715048D2B0036AB23 /* CPLabel.m */; };
+		B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */; };
+		B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
 		B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = B1F531D015AED1DB00E89F98 /* CPBinPacking.h */; };
 		B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
 		B1F531DA15AED4B100E89F98 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1716,8 +1716,6 @@
 		B1672FF41584A7A500EFE5C3 /* CardinalityTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CardinalityTest.1; sourceTree = "<group>"; };
 		B169F9C614EF87D500B2F3A6 /* CPConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConstraint.h; sourceTree = "<group>"; };
 		B169F9C714EF87D500B2F3A6 /* CPConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConstraint.m; sourceTree = "<group>"; };
-		B173284115CDA00E00025146 /* CPEngineIm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngineIm.h; sourceTree = "<group>"; };
-		B173284215CDA00E00025146 /* CPEngineIm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEngineIm.m; sourceTree = "<group>"; };
 		B1771594155798AA00BA14BF /* Euler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Euler; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1771598155798AA00BA14BF /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B177159B155798AA00BA14BF /* Euler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Euler-Prefix.pch"; sourceTree = "<group>"; };
@@ -1788,6 +1786,8 @@
 		B1D3BCD615048D2A0036AB23 /* CPLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLabel.h; sourceTree = "<group>"; };
 		B1D3BCD715048D2B0036AB23 /* CPLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLabel.m; sourceTree = "<group>"; };
 		B1DA97E713EC714F00BA7244 /* lpsolveri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpsolveri.h; sourceTree = "<group>"; };
+		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngineI.h; sourceTree = "<group>"; };
+		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEngineI.m; sourceTree = "<group>"; };
 		B1F531D015AED1DB00E89F98 /* CPBinPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBinPacking.h; sourceTree = "<group>"; };
 		B1F531D115AED1DB00E89F98 /* CPBinPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBinPacking.m; sourceTree = "<group>"; };
 		B1F531D815AED4B100E89F98 /* testPacking */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testPacking; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2707,9 +2707,9 @@
 				5B3606901392A8DA008B0EE8 /* CPDom.h */,
 				5B91C334159FAB2D00158EEA /* CPElement.h */,
 				5B91C335159FAB2D00158EEA /* CPElement.m */,
-				B173284115CDA00E00025146 /* CPEngineIm.h */,
-				B173284215CDA00E00025146 /* CPEngineIm.m */,
 				5BE642FD139D49320056F448 /* CPEngine.h */,
+				B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */,
+				B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */,
 				5BB3835A13B3B624005B7D52 /* CPEquationBC.h */,
 				5BB3835B13B3B624005B7D52 /* CPEquationBC.m */,
 				B15A2B4E13995F12002401A0 /* CPError.h */,
@@ -3492,7 +3492,7 @@
 				5BEAD77F15ABBAFC00A012FE /* CPLexConstraint.h in Headers */,
 				5B65615E15AD58F6002F344B /* CPKnapsack.h in Headers */,
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
-				B173284315CDA00E00025146 /* CPEngineIm.h in Headers */,
+				B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4815,7 +4815,7 @@
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				5B43634115AECE4D00E9458D /* CPDDeg.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
-				B173284415CDA00E00025146 /* CPEngineIm.m in Sources */,
+				B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

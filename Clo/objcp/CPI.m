@@ -14,7 +14,7 @@
 #import "CPCommand.h"
 #import "CPConstraintI.h"
 #import "CPI.h"
-#import "CPEngineIm.h"
+#import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPExplorerI.h"
 #import "CPBasicConstraint.h"
