@@ -14,7 +14,7 @@
 #import <ORFoundation/ORTrail.h>
 #import <objcp/CPController.h>
 
-@interface CPLimitSolutions : CPDefaultController <NSCopying,CPSearchController> {
+@interface CPLimitSolutions : ORDefaultController <NSCopying,ORSearchController> {
 @private
    CPInt _maxSolutions;
    CPInt _nbSolutions;
@@ -26,7 +26,7 @@
 -(void) succeeds;
 @end
 
-@interface CPLimitDiscrepancies : CPDefaultController <NSCopying,CPSearchController> 
+@interface CPLimitDiscrepancies : ORDefaultController <NSCopying,ORSearchController> 
 {
   CPInt     _maxDiscrepancies;
   ORTrail*  _trail;
@@ -39,7 +39,7 @@
 -(void)      startTryRight;
 @end
 
-@interface CPLimitFailures : CPDefaultController <NSCopying,CPSearchController>
+@interface CPLimitFailures : ORDefaultController <NSCopying,ORSearchController>
 {
    CPInt     _maxFailures;
    CPInt     _nbFailures;
@@ -52,7 +52,7 @@
 -(void)      startTryRight;
 @end
 
-@interface CPLimitTime : CPDefaultController <NSCopying,CPSearchController>
+@interface CPLimitTime : ORDefaultController <NSCopying,ORSearchController>
 {
    CPLong    _maxTime;
    CPLong    _startTime;
@@ -65,7 +65,7 @@
 -(void)      startTryRight;
 @end
 
-@interface CPLimitCondition : CPDefaultController <NSCopying,CPSearchController>
+@interface CPLimitCondition : ORDefaultController <NSCopying,ORSearchController>
 {
    CPVoid2Bool _condition;
 }
@@ -77,7 +77,7 @@
 -(void)      startTryRight;
 @end
 
-@interface CPOptimizationController : CPDefaultController <NSCopying,CPSearchController> 
+@interface CPOptimizationController : ORDefaultController <NSCopying,ORSearchController> 
 {
   Void2ORStatus _canImprove;
 }

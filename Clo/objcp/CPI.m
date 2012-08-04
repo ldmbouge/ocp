@@ -82,7 +82,7 @@
 {
    return _search;
 }
--(id<CPSearchController>) controller
+-(id<ORSearchController>) controller
 {
     return [_search controller];
 }
@@ -153,11 +153,11 @@
 {
     [_search fail];
 }
--(void) setController: (id<CPSearchController>) controller
+-(void) setController: (id<ORSearchController>) controller
 {
    [_search setController: controller];
 }
--(void) push: (id<CPSearchController>) controller
+-(void) push: (id<ORSearchController>) controller
 {
    [_search push: controller];
 }
@@ -408,7 +408,7 @@
 {
   [_search limitTime: maxTime in: cl];
 }
--(void) applyController: (id<CPSearchController>) controller in: (CPClosure) cl
+-(void) applyController: (id<ORSearchController>) controller in: (CPClosure) cl
 {
    [_search applyController: controller in: cl];
 }
@@ -440,37 +440,37 @@
 -(void) nestedSolve: (CPClosure) body
 {
   [_search nestedSolve: body onSolution:nil onExit:nil 
-               control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+               control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution;
 {
   [_search nestedSolve: body onSolution: onSolution onExit:nil 
-               control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+               control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit 
-                control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (CPClosure) body
 {
   [_search nestedSolveAll: body onSolution:nil onExit:nil 
-                  control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                  control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution;
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit:nil 
-                   control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
 {
   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
-                  control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                  control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 
@@ -653,39 +653,39 @@
 -(void) nestedSolve: (CPClosure) body
 {
    [_search nestedSolve: body onSolution:nil onExit:nil 
-                control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];   
+                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];   
 }
 -(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution;
 {
    [_search nestedSolve: body onSolution: onSolution onExit:nil 
-                control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit 
-                control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (CPClosure) body
 {
    [_search nestedSolveAll: body onSolution:nil onExit:nil 
-                   control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution;
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit:nil 
-                   control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
-                   control:[[CPNestedController alloc] initCPNestedController:[_search controller]]];
+                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
 }
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc
+-(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit: onExit control:sc];   
 }

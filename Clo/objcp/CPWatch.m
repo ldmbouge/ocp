@@ -107,7 +107,7 @@
 
 
 @implementation CPViewController
--(CPViewController*)initCPViewController:(id<CPSearchController>)chain onChoose:(CPClosure)onc onFail:(CPClosure)onf
+-(CPViewController*)initCPViewController:(id<ORSearchController>)chain onChoose:(CPClosure)onc onFail:(CPClosure)onf
 {
    self = [super initCPDefaultController];
    [self setController:chain];

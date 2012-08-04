@@ -17,7 +17,7 @@
 #import <objcp/CPTracer.h>
 
 
-@interface SemDFSController : CPDefaultController <NSCopying,CPSearchController,CPStealing> {
+@interface SemDFSController : ORDefaultController <NSCopying,ORSearchController,CPStealing> {
 @private
    NSCont**        _tab;
    CPInt              _sz;

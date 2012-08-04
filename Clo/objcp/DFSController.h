@@ -16,20 +16,4 @@
 #import <objcp/CPController.h>
 
 
-@interface DFSController : CPDefaultController <NSCopying,CPSearchController> {
-@private
-   NSCont**          _tab;
-   CPInt              _sz;
-   CPInt              _mx;
-   id<ORTracer>   _tracer;
-   CPInt          _atRoot;
-}
--(id)   initDFSController:(id<ORTracer>)tracer;
--(void) dealloc;
--(void) setup;
--(void) cleanup;
--(CPInt) addChoice:(NSCont*)k;
--(void) trust;
--(void) fail;
-@end
 

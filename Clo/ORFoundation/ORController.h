@@ -11,10 +11,13 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
+#import <ORFoundation/ORTracer.h>
 
-@protocol CPSearchController <NSObject,NSCopying>
--(void)                      setController: (id<CPSearchController>) controller;
--(id<CPSearchController>)    controller;
+@protocol ORTracer;
+
+@protocol ORSearchController <NSObject,NSCopying>
+-(void)                      setController: (id<ORSearchController>) controller;
+-(id<ORSearchController>)    controller;
 -(void)       setup;
 -(void)       cleanup;
 
@@ -40,13 +43,13 @@
 -(id)         copy;
 @end
 
-@interface CPDefaultController : NSObject <NSCopying,CPSearchController>
+@interface ORDefaultController : NSObject <NSCopying,ORSearchController>
 {
-   id<CPSearchController> _controller;    // Delegation chain for stackable limits
+   id<ORSearchController> _controller;    // Delegation chain for stackable limits
 }
 -(id) initCPDefaultController;
--(void) setController: (id<CPSearchController>) controller;
--(id<CPSearchController>) controller;
+-(void) setController: (id<ORSearchController>) controller;
+-(id<ORSearchController>) controller;
 -(void)       setup;
 -(void)       cleanup;
 -(ORInt)  addChoice: (NSCont*) k;
@@ -70,15 +73,30 @@
 -(BOOL)       isFinitelyFailed;
 @end
 
-@interface CPNestedController : CPDefaultController {
-   id<CPSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (failAll).
-   BOOL                   _isFF;
-}
--(id)initCPNestedController:(id<CPSearchController>)chain;
--(void) setParent:(id<CPSearchController>) controller;
+@interface ORNestedController : ORDefaultController
+
+-(id)initCPNestedController:(id<ORSearchController>)chain;
+-(void) setParent:(id<ORSearchController>) controller;
 -(void) fail;
 -(void) succeeds;
 -(void) finitelyFailed;
 -(BOOL) isFinitelyFailed;
+@end
+
+@interface DFSController : ORDefaultController <NSCopying,ORSearchController> {
+@private
+   NSCont**          _tab;
+   ORInt              _sz;
+   ORInt              _mx;
+   id<ORTracer>   _tracer;
+   ORInt          _atRoot;
+}
+-(id)   initDFSController:(id<ORTracer>) tracer;
+-(void) dealloc;
+-(void) setup;
+-(void) cleanup;
+-(ORInt) addChoice:(NSCont*)k;
+-(void) trust;
+-(void) fail;
 @end
 

@@ -13,7 +13,7 @@
 #import "CPI.h"
 #import "CPFactory.h"
 
-@interface CPGenerator : CPDefaultController<CPSearchController> {
+@interface CPGenerator : ORDefaultController<ORSearchController> {
    id<CPExplorer>  _explorer;
    PCObjectQueue*      _pool;   
    NSCont**             _tab;
@@ -21,7 +21,7 @@
    int                   _sz;
    int                   _mx;
 }
--(id)initCPGenerator:(id<CPSearchController>)chain explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq;
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq;
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(BOOL) isFinitelyFailed;
@@ -31,13 +31,13 @@
 -(void)       exitTryallOnFailure;
 @end
 
-@interface CPParallelAdapter : CPNestedController<CPSearchController> {
+@interface CPParallelAdapter : ORNestedController<ORSearchController> {
    id<CPExplorer>     _explorer;
    PCObjectQueue*         _pool;
    BOOL             _publishing;
    CPGenerator*            _gen;
 }
--(id)initCPParallelAdapter:(id<CPSearchController>)chain  explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq;
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq;
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;
@@ -48,7 +48,7 @@
 @end
 
 @implementation CPParallelAdapter
--(id)initCPParallelAdapter:(id<CPSearchController>)chain  explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue *)pcq
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue *)pcq
 {
    self = [super initCPNestedController:chain];
    _explorer = explorer;
@@ -76,7 +76,7 @@
    _publishing = YES;
    Checkpoint* theCP = [_explorer captureCheckpoint];
    CPHeist* stolen = [_controller steal];
-   id<CPSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_explorer onPool:_pool];
+   id<ORSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_explorer onPool:_pool];
    [_explorer restoreCheckpoint:[stolen theCP]];
    [_explorer nestedSolveAll:^() { [[stolen cont] call];} 
                   onSolution:nil 
@@ -118,7 +118,7 @@
 
 @implementation CPGenerator
 
--(id)initCPGenerator:(id<CPSearchController>)chain explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPExplorer>)explorer onPool:(PCObjectQueue*)pcq
 {
    self = [super initCPDefaultController];
    [self setController:chain];
@@ -284,7 +284,7 @@
 }
 -(void)setupAndGo:(NSData*)root forCP:(SemCP*)cp searchWith:(CPVirtualClosure)body 
 {
-   id<CPSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:[cp controller] explorer:[cp explorer] onPool:_queue];
+   id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:[cp controller] explorer:[cp explorer] onPool:_queue];
    [cp nestedSolveAll:^() {  [self setupWork:root forCP:cp]; body((id<CP>)cp);} 
            onSolution:nil 
                onExit:nil

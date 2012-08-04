@@ -20,11 +20,11 @@ enum CPDomValue {
    Removed  = 2
 };
 
-@interface CPViewController : CPDefaultController {
+@interface CPViewController : ORDefaultController {
    CPClosure _onChoose;
    CPClosure _onFail;
 }
--(CPViewController*)initCPViewController:(id<CPSearchController>)chain onChoose:(CPClosure)onc onFail:(CPClosure)onf;
+-(CPViewController*)initCPViewController:(id<ORSearchController>)chain onChoose:(CPClosure)onc onFail:(CPClosure)onf;
 -(CPInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 @end

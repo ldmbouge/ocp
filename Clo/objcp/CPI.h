@@ -38,8 +38,8 @@
 -(CPUInt)                 nbPropagation;
 -(CPUInt)                 nbVars;
 -(ORTrail*)               trail;
--(id<CPSearchController>) controller;
--(void) setController: (id<CPSearchController>) controller;
+-(id<ORSearchController>) controller;
+-(void) setController: (id<ORSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 
 // immediate RHS
@@ -58,7 +58,7 @@
 -(void)               close;
 -(void)        saveSolution;
 -(void)     restoreSolution;
--(void)                push: (id<CPSearchController>) c;
+-(void)                push: (id<ORSearchController>) c;
 -(void)      nestedMinimize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
 -(void)      nestedMaximize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
 -(void)              forall: (id<ORIntIterator>) S suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
@@ -115,7 +115,7 @@
 -(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)       limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)           limitTime: (CPLong) maxTime in: (CPClosure) cl;
--(void)     applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
+-(void)     applyController: (id<ORSearchController>) controller in: (CPClosure) cl;
 -(void)              repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat;
 -(void)              repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(DFSTracer*)tracer;
@@ -145,7 +145,7 @@
 -(void)         nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit;
 -(void)         nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution;
 -(void)         nestedSolve: (CPClosure) body;
--(void)      nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
+-(void)      nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
 -(void)      nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit;
 -(void)      nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution;
 -(void)      nestedSolveAll: (CPClosure) body;

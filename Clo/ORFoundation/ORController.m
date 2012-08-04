@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
 
-@implementation CPDefaultController
+@implementation ORDefaultController
 - (id) initCPDefaultController
 {
    self = [super init];
@@ -29,16 +29,16 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   CPDefaultController* ctrl = [[[self class] allocWithZone:zone] initCPDefaultController];
+   ORDefaultController* ctrl = [[[self class] allocWithZone:zone] initCPDefaultController];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
 
--(id<CPSearchController>) controller
+-(id<ORSearchController>) controller
 {
    return _controller;
 }
--(void) setController: (id<CPSearchController>) controller
+-(void) setController: (id<ORSearchController>) controller
 {
    _controller = [controller retain];
 }
@@ -132,12 +132,15 @@
 }
 @end
 
-@implementation CPNestedController
-
--(id)initCPNestedController:(id<CPSearchController>)chain
+@implementation ORNestedController
+{
+   id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (failAll).
+   BOOL                   _isFF;
+}
+-(id)initCPNestedController:(id<ORSearchController>)chain
 {
    self = [super initCPDefaultController];
-   id<CPSearchController> theClone = [chain copy];
+   id<ORSearchController> theClone = [chain copy];
    [self setController:theClone];
    _parent = [chain retain];
    [theClone release]; // We have a reference to it already. Caller does *NOT* keep track of it.
@@ -150,7 +153,7 @@
    [_parent release];
    [super dealloc];
 }
--(void) setParent:(id<CPSearchController>) controller
+-(void) setParent:(id<ORSearchController>) controller
 {
    [_parent release];
    _parent = [controller retain];
@@ -161,7 +164,7 @@
    [self finitelyFailed];
 }
 
--(void)succeeds
+-(void) succeeds
 {
    _isFF = NO;
    [_controller cleanup];
@@ -178,3 +181,76 @@
    return _isFF;
 }
 @end
+
+@implementation DFSController
+
+- (id) initDFSController:(id<ORTracer>)tracer;
+{
+   self = [super initCPDefaultController];
+   _tracer = [tracer retain];
+   _mx  = 100;
+   _tab = malloc(sizeof(NSCont*)* _mx);
+   _sz  = 0;
+   _atRoot = 0;
+   return self;
+}
+
+- (void) dealloc
+{
+   NSLog(@"DFSController dealloc called...\n");
+   [_tracer release];
+   free(_tab);
+   [super dealloc];
+}
+-(void)setup
+{
+   if (_atRoot==0)
+      _atRoot = [_tracer pushNode];
+}
+-(void) cleanup
+{
+   while (_sz > 0)
+      [_tab[--_sz] letgo];
+   [_tracer popToNode:_atRoot];
+}
+
+-(ORInt) addChoice: (NSCont*)k
+{
+   if (_sz >= _mx) {
+      NSCont** nt = malloc(sizeof(NSCont*)*_mx*2);
+      for(ORInt i=0;i<_mx;i++)
+         nt[i] = _tab[i];
+      free(_tab);
+      _tab = nt;
+      _mx <<= 1;
+   }
+   _tab[_sz++] = k;
+   return [_tracer pushNode];
+}
+-(void) trust
+{
+   [_tracer trust];
+}
+-(void) fail
+{
+   ORInt ofs = _sz-1;
+   if (ofs >= 0) {
+      [_tracer popNode];
+      NSCont* k = _tab[ofs];
+      _tab[ofs] = 0;
+      --_sz;
+      if (k!=NULL)
+         [k call];
+      else {
+      	@throw [[ORExecutionError alloc] initORExecutionError: "Empty Continuation in backtracking"];
+      }
+   }
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   DFSController* ctrl = [[[self class] allocWithZone:zone] initDFSController:_tracer];
+   [ctrl setController:[_controller copyWithZone:zone]];
+   return ctrl;
+}
+@end
+

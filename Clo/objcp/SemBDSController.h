@@ -34,7 +34,7 @@
 -(bool)empty;
 @end
 
-@interface SemBDSController : CPDefaultController<NSCopying,CPSearchController> {
+@interface SemBDSController : ORDefaultController<NSCopying,ORSearchController> {
 @private
    BDSStack*        _tab;
    BDSStack*       _next;

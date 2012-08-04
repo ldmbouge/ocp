@@ -17,7 +17,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORUtilities/ORUtilities.h>
 
-@protocol CPSearchController;
+@protocol ORSearchController;
 @protocol CPSolver;
 @protocol CPExplorer;
 @protocol CPHeuristic;
@@ -38,9 +38,9 @@
 
 @protocol CP <CPSolutionProtocol,ORTracker> 
 
--(id<CPSearchController>) controller;
+-(id<ORSearchController>) controller;
 
--(void)                push: (id<CPSearchController>) c;
+-(void)                push: (id<ORSearchController>) c;
 -(void)      nestedMinimize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
 -(void)      nestedMaximize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
@@ -80,7 +80,7 @@
 -(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)      limitTime: (CPLong) maxTime in: (CPClosure) cl;
--(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
+-(void)    applyController: (id<ORSearchController>) controller in: (CPClosure) cl;
 
 -(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart;
 -(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart until: (CPVoid2Bool) isDone;

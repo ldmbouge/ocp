@@ -17,15 +17,15 @@
 @class Checkpoint;
 
 @protocol CPExplorer <NSObject>
--(void)                push: (id<CPSearchController>) c;
+-(void)                push: (id<ORSearchController>) c;
 
 // Statistics
 -(CPInt)       nbChoices;
 -(CPInt)       nbFailures;
 
 // access 
--(id<CPSearchController>)    controller;
--(void)                   setController: (id<CPSearchController>) controller;
+-(id<ORSearchController>)    controller;
+-(void)                   setController: (id<ORSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 
 // top level calls
@@ -35,8 +35,8 @@
 -(void)               solve: (CPClosure) body using: (CPClosure) search;
 -(void)            solveAll: (CPClosure) body using: (CPClosure) search;
 // combinators
--(void)        nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
--(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
+-(void)        nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
+-(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
 -(void)                try: (CPClosure) left or: (CPClosure) right;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
@@ -48,7 +48,7 @@
                     onExit: (CPClosure) onExit;
 @optional 
 -(void)               once: (CPClosure) cl;
--(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
+-(void)    applyController: (id<ORSearchController>) controller in: (CPClosure) cl;
 -(void)     limitSolutions: (CPInt) maxSolutions in: (CPClosure) cl;
 -(void)     limitCondition: (CPVoid2Bool) condition in: (CPClosure) cl;
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;

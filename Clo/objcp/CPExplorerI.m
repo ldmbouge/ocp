@@ -101,13 +101,13 @@
 {
    return _nbf;
 }
--(void) setController: (id<CPSearchController>) controller
+-(void) setController: (id<ORSearchController>) controller
 {
    assignTRId(&_controller,controller,[_tracer trail]);  
    [controller setup];
 }
 
--(void) push: (id<CPSearchController>) controller
+-(void) push: (id<ORSearchController>) controller
 {
    [controller setController: _controller._val];
    assignTRId(&_controller,controller,[_tracer trail]);  
@@ -115,10 +115,10 @@
 
 -(void) popController
 {
-   id<CPSearchController> controller = [_controller._val controller];
+   id<ORSearchController> controller = [_controller._val controller];
    assignTRId(&_controller,controller,[_tracer trail]);  
 }
--(id<CPSearchController>) controller
+-(id<ORSearchController>) controller
 {
    return _controller._val;
 }
@@ -142,7 +142,7 @@
 {
 }
 
--(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit  control:(id<CPSearchController>)newCtrl
+-(void) nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit  control:(id<ORSearchController>)newCtrl
 {
    // clone the old controller chain in full. Must be done before creating the continuation
    // to make sure that newCtrl is available when we "come back". 
@@ -168,9 +168,9 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; Each time a solution is found, execute onSolution; restore the state as before the call; execute onExit at the end
 
--(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)newCtrl
+-(void) nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)newCtrl
 {
-   id<CPSearchController> oldCtrl = _controller._val;
+   id<ORSearchController> oldCtrl = _controller._val;
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       [_controller._val addChoice: exit];    
@@ -207,7 +207,7 @@
        [self nestedSolveAll: ^() { body(); [self close]; search(); } 
                  onSolution: nil 
                      onExit: nil
-                    control: [[CPNestedController alloc] initCPNestedController:_controller._val]];
+                    control: [[ORNestedController alloc] initCPNestedController:_controller._val]];
     }
     ];
 }
@@ -221,7 +221,7 @@
        [self nestedSolve: body 
               onSolution: ^() { [_solver saveSolution]; } 
                   onExit: ^() { [_solver restoreSolution]; }
-                 control: [[CPNestedController alloc] initCPNestedController:_controller._val]];
+                 control: [[ORNestedController alloc] initCPNestedController:_controller._val]];
     }
     ];
 }
@@ -233,7 +233,7 @@
        [self nestedSolve: ^() { body(); [self close]; search(); } 
               onSolution: ^() { [_solver saveSolution]; } 
                   onExit: ^() { [_solver restoreSolution]; }
-                 control: [[CPNestedController alloc] initCPNestedController:_controller._val]];
+                 control: [[ORNestedController alloc] initCPNestedController:_controller._val]];
     }
     ];
 }
@@ -492,7 +492,7 @@
    cl();
    [self popController];
 }
--(void) applyController: (id<CPSearchController>) controller in: (CPClosure) cl
+-(void) applyController: (id<ORSearchController>) controller in: (CPClosure) cl
 {
    [self push: controller];
    [controller release];

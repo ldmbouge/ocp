@@ -45,15 +45,15 @@
 -(void)                   dealloc;
 -(CPInt)              nbChoices;
 -(CPInt)              nbFailures;
--(id<CPSearchController>) controller;
--(void)      setController: (id<CPSearchController>) controller;
--(void)               push: (id<CPSearchController>) controller;
+-(id<ORSearchController>) controller;
+-(void)      setController: (id<ORSearchController>) controller;
+-(void)               push: (id<ORSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 
 
 -(void)             search: (CPClosure) body;
--(void)        nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
--(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<CPSearchController>)sc;
+-(void)        nestedSolve: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
+-(void)     nestedSolveAll: (CPClosure) body onSolution: (CPClosure) onSolution onExit: (CPClosure) onExit control:(id<ORSearchController>)sc;
 -(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 
 -(void)          solve: (CPClosure) body;
@@ -96,7 +96,7 @@
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)          limitTime: (CPLong) maxTime in: (CPClosure) cl;
--(void)    applyController: (id<CPSearchController>) controller in: (CPClosure) cl;
+-(void)    applyController: (id<ORSearchController>) controller in: (CPClosure) cl;
 -(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
 @end
 
