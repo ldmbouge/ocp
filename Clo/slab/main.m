@@ -85,7 +85,7 @@ int main1(int argc, const char * argv[])
    }
    using:^{
       
-      [cp forrange: IOrders
+      [cp forall: IOrders
         suchThat: nil
          orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
                 do: ^(ORInt o)
@@ -196,7 +196,7 @@ int main1(int argc, const char * argv[])
              
              [cp repeat: ^{
                 [cp limitFailures: 100 in: ^{
-                   [ORControl forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
+                   [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
                     {
                        //                    printf("o: %d \n",o);
                        [CPLabel var: slab[o]];

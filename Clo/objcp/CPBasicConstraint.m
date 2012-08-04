@@ -1484,7 +1484,10 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 
 @implementation CPIntVarMinimize
-
+{
+   CPIntVarI*  _x;
+   CPInt        _primalBound;
+}
 -(CPIntVarMinimize*) initCPIntVarMinimize: (CPIntVarI*) x
 {
    self = [super initCPCoreConstraint];
@@ -1539,6 +1542,10 @@ static CPStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 
 @implementation CPIntVarMaximize
+{
+   CPIntVarI*  _x;
+   CPInt        _primalBound;
+}
 
 -(CPIntVarMaximize*) initCPIntVarMaximize: (CPIntVarI*) x
 {

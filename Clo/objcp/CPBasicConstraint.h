@@ -208,10 +208,7 @@ typedef int (^intgetter) (void) ;
 -(CPUInt)nbUVars;
 @end
 
-@interface CPIntVarMinimize : CPCoreConstraint {
-   CPIntVarI*  _x;
-   CPInt        _primalBound;
-}
+@interface CPIntVarMinimize : CPCoreConstraint
 -(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
 -(void)      dealloc;
 -(CPStatus)  post;
@@ -222,10 +219,7 @@ typedef int (^intgetter) (void) ;
 -(CPUInt)nbUVars;
 @end
 
-@interface CPIntVarMaximize : CPCoreConstraint {
-   CPIntVarI*  _x;
-   CPInt        _primalBound;
-}
+@interface CPIntVarMaximize : CPCoreConstraint
 -(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
 -(void)      dealloc;
 -(CPStatus)  post;

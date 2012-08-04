@@ -63,7 +63,7 @@ int main (int argc, const char * argv[])
              }];
           }
        }
-/*       [cp forrange:R suchThat:^bool(ORInt i ) { return ![x[i] bound];}
+/*       [cp forall:R suchThat:^bool(ORInt i ) { return ![x[i] bound];}
           orderedBy:^ORInt(ORInt i) { return i;}
                  do:^(ORInt i) {
                     [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}

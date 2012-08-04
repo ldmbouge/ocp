@@ -27,7 +27,7 @@ void labelFF(id<CP> m,NSArray* x,int from,int to)
    CPIntegerI* nbSolutions = [[CPIntegerI alloc] initCPIntegerI: 0];
    [m solve: ^() {
       [m limitSolutions: 200 in: ^() {
-         [m forrange: (CPRange){from,to}
+         [m forall: RANGE(m,from,to)
           suchThat: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
            orderedBy: ^int(int i) { return [[x objectAtIndex:i] domsize];}
                   do: ^(int i) { [m label: [x objectAtIndex:i]]; }
@@ -47,7 +47,7 @@ void labelFF1(CP* m,NSArray* x,int from,int to)
    [m solveAll: ^() {
       [m repeat: ^() {
          [m limitSolutions: 1 in: ^() {
-            [m   forrange: (CPRange){from,to}
+            [m   forall: RANGE(m,from,to)
                suchThat: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
                 orderedBy: ^int(int i) { return [[x objectAtIndex:i] domsize];}
                        do: ^(int i) { [ m label: [x objectAtIndex:i]]; }
@@ -73,7 +73,7 @@ void labelFF2(CP* m,NSArray* x,int from,int to)
    [m solveAll: ^() {
       [m repeat: ^() {
          [m limitSolutions: 1 in: ^() {
-            [m   forrange: (CPRange){from,to}
+            [m   forall: RANGE(m,from,to)
                suchThat: ^bool(int i) { return ![[x objectAtIndex:i] bound];}
                 orderedBy: ^int(int i) { return [[x objectAtIndex:i] domsize];}
                        do: ^(int i) { [ m label: [x objectAtIndex:i]]; }

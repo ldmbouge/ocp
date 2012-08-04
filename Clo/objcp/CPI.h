@@ -61,8 +61,8 @@
 -(void)                push: (id<CPSearchController>) c;
 -(void)      nestedMinimize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
 -(void)      nestedMaximize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
--(void)            forrange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
--(void)            forrange: (id<ORIntIterator>) range orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)                 try: (CPClosure) left or: (CPClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body; 
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;

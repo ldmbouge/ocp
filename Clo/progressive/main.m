@@ -96,7 +96,7 @@ int main(int argc, const char * argv[])
        }
        /*
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          [cp forrange: Guests suchThat:^bool(ORInt g) { return ![[boat at: g :p] bound];}
+          [cp forall: Guests suchThat:^bool(ORInt g) { return ![[boat at: g :p] bound];}
                             orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
 //                              orderedBy:^ORInt(ORInt g) { return g;}
                     do:^(ORInt g){

@@ -43,22 +43,14 @@
 -(void)                push: (id<CPSearchController>) c;
 -(void)      nestedMinimize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
 -(void)      nestedMaximize: (id<CPIntVar>) x in: (CPClosure) body onSolution: onSolution onExit: onExit;
--(void)            forrange: (CPRange) range suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
--(void)            forrange: (CPRange) range orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (CPInt2Bool) f orderedBy: (CPInt2Int) o do: (CPInt2Void) b;
 -(void)                 try: (CPClosure) left or: (CPClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
--(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs;
--(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs consistency:(CPConsistency)cons;
--(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;
--(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
--(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs;
--(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs consistency:(CPConsistency)cons;
--(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs;
--(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
 -(void)               lthen: (id<CPIntVar>) var with: (CPInt) val;

@@ -140,14 +140,15 @@
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];
 }
--(void) forrange: (id<ORIntIterator>) range suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forall: (id<ORIntIterator>) S suchThat: (CPInt2Bool) filter orderedBy: (CPInt2Int) order do: (CPInt2Void) body
 {
-   [ORControl forall: range suchThat: filter orderedBy: order do: body];
+   [ORControl forall: S suchThat: filter orderedBy: order do: body];
 }
--(void) forrange: (id<ORIntIterator>) range orderedBy: (CPInt2Int) order do: (CPInt2Void) body
+-(void) forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) order do: (CPInt2Void) body
 {
-   [ORControl forall: range suchThat: nil orderedBy: order do: body];
+   [ORControl forall: S suchThat: nil orderedBy: order do: body];
 }
+
 -(void) fail
 {
     [_search fail];
