@@ -11,7 +11,7 @@
 
 #import "SemBDSController.h"
 #import "CPError.h"
-#import "CPSolver.h"
+#import "CPEngine.h"
 
 @implementation BDSStack
 -(id)initBDSStack:(CPInt)mx
@@ -56,7 +56,7 @@
 
 @implementation SemBDSController 
 
-- (id) initSemBDSController:(id<ORTracer>)tracer andSolver:(id<CPSolver>)solver
+- (id) initSemBDSController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver
 {
    self = [super initCPDefaultController];
    _tracer = [tracer retain];

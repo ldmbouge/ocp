@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPSolver.h"
+#import "objcp/CPEngine.h"
 //#import <SenTestingKit/SenTestingKit.h>
 
 #import "objcp/CPBitArray.h"

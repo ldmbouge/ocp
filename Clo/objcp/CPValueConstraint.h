@@ -17,7 +17,7 @@
 #import "CPConstraintI.h"
 
 @class CPIntVarI;
-@class CPSolverI;
+@class CPEngineI;
 
 @interface CPReifyNotEqualcDC : CPCoreConstraint<NSCoding> {
 @private

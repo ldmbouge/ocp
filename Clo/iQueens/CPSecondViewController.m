@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPSecondViewController.h"
-#import "CPSolverController.h"
+#import "CPEngineController.h"
 
 @interface CPSecondViewController ()
 

@@ -12,9 +12,9 @@
 
 #import <Foundation/Foundation.h>
 #import "CPTypes.h"
+#import "CPIntVarI.h"
 #import "CPConstraintI.h"
 #import "ORTrail.h"
-#import "CPBasicConstraint.h"
 #import "CPTable.h"
 #import <objcp/CPArray.h>
 

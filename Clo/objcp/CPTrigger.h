@@ -19,7 +19,7 @@
 // PVH to clean up
 
 @class CPCoreConstraint;
-@class CPSolverI;
+@class CPEngineI;
 
 typedef struct CPTrigger {
    struct CPTrigger*  _prev;
@@ -35,8 +35,8 @@ typedef struct CPTrigger {
 -(void)linkTrigger:(CPTrigger*)t forValue:(CPInt)value;
 -(void)linkBindTrigger:(CPTrigger*)t;
 // Events for those triggers.
--(void) loseValEvt:(CPInt)val solver:(CPSolverI*)fdm;
--(void) bindEvt:(CPSolverI*)fdm;
+-(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm;
+-(void) bindEvt:(CPEngineI*)fdm;
 @end
 
 @interface CPTriggerMap : NSObject<CPTriggerMapInterface> {
@@ -47,7 +47,7 @@ typedef struct CPTrigger {
 -(CPTriggerMap*) init;
 +(CPTriggerMap*) triggerMapFrom:(CPInt)low to:(CPInt)up dense:(bool)b;
 -(void) linkBindTrigger:(CPTrigger*)t;
--(void) bindEvt:(CPSolverI*)fdm;
+-(void) bindEvt:(CPEngineI*)fdm;
 @end
 
 @interface CPDenseTriggerMap : CPTriggerMap {
@@ -58,7 +58,7 @@ typedef struct CPTrigger {
 }
 -(id) initDenseTriggerMap:(CPInt)low size:(CPInt)sz;
 -(void)linkTrigger:(CPTrigger*)t forValue:(CPInt)value;
--(void) loseValEvt:(CPInt)val solver:(CPSolverI*)fdm;
+-(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm;
 @end
 
 @interface CPSparseTriggerMap : CPTriggerMap {
@@ -67,6 +67,6 @@ typedef struct CPTrigger {
 }
 -(id) initSparseTriggerMap;
 -(void) linkTrigger:(CPTrigger*)t forValue:(CPInt)value;
--(void) loseValEvt:(CPInt)val solver:(CPSolverI*)fdm;
+-(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm;
 @end
 

@@ -14,7 +14,7 @@
 #import <objc/runtime.h>
 #import <objc/objc-auto.h>
 #import "cont.h"
-#import "CPSolver.h"
+#import "CPEngine.h"
 #import "CPExplorerI.h"
 #import "CPController.h"
 #import "DFSController.h"
@@ -28,6 +28,7 @@
 #import <values.h>
 #endif
 
+/*
 @implementation CPHStack
 -(CPHStack*)initCPHStack
 {
@@ -300,83 +301,7 @@
 {
    [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
-/*
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
-{
-   CPInt cur;
-   CPInt curIte;
-   CPInt foundIte;
-   [_controller._val startTryall];
-   NSCont* exit = [NSCont takeContinuation];
-   NSCont* next = nil;
-   ORInt low = [range low];
-   ORInt up = [range up];
-   id<IntEnumerator> ite = [ORFactory intRangeEnumerator: _solver range: range];
-   if ([exit nbCalls] == 0) {
-      [_controller._val addChoice: exit];
-      next = [NSCont takeContinuation];
-      [exit setFieldId: next];
-      if ([next nbCalls]== 0) { // This is the first call to the continuation.
-         [next setField: low];
-         cur = low;
-         curIte = [ite next];
-         assert(cur == curIte);
-      } 
-      else {
-         cur = [next field] + 1;
-         if (cur == up + 1)
-            assert(false);
-         foundIte = [ite more];
-         if (foundIte) 
-            curIte = [ite next];
-         else
-            assert(false);
-         if (cur <= up)
-            assert(cur == curIte);
-         else {
-            printf("I am in this strange place \n");
-            assert(!foundIte);
-         }
-         [_controller._val startTryallOnFailure];
-         if (onFailure)
-            onFailure([next field]);
-         [_controller._val exitTryallOnFailure];	
-      }
-      bool found = true;
-      if (filter) {
-         while (!filter(cur)) {
-            if (![ite more]) {
-               found = false;
-               break;
-            }
-            ++cur;
-            curIte = [ite next];
-            assert(cur == curIte);
-         }
-      }
-      if (found) {
-//      if (cur <= up) {
-         assert(cur == curIte);
-         [next setField: cur];
-         _nbc++;
-         [_controller._val addChoice: next];
-         [_controller._val startTryallBody];	
-         body(cur);
-         [_controller._val exitTryallBody];	
-      } 
-      else
-         [_controller._val fail];
-   } 
-   else {
-      [[exit fieldId] letgo];
-      [exit letgo];
-      [_controller._val fail];
-   }
-   [_controller._val exitTryall];
-}
 
-@end
-*/
 
 -(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
@@ -432,8 +357,8 @@
 // ====================================================================================================
 // DFS style explorer.
 
-@implementation ORExplorerI
--(ORExplorerI*) initORExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
+@implementation CPExplorerI
+-(CPExplorerI*) initCPExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
 {
    self = [super initCPCoreExplorer:solver withTracer:tracer];
    return self;
@@ -533,14 +458,7 @@
          [enter letgo];
          [_controller._val fail];            
       }
-   /*
-   [nbRestarts incr];
-   if ([nbRestarts value] == 2000) {
-      [enter letgo];
-      [_controller._val fail];
-   }
-    */
-   [_controller._val addChoice: enter];
+    [_controller._val addChoice: enter];
    if ([enter nbCalls]!=0) 
       if (onRepeat) onRepeat();
    if (body) body();
@@ -573,7 +491,7 @@
    int to;
    initContinuationLibrary(&to);
    @try {
-      SemDFSController* dfs = [[SemDFSController alloc] initSemController:_tracer andSolver:(id<CPSolver>)_solver];
+      SemDFSController* dfs = [[SemDFSController alloc] initSemController:_tracer andSolver:(id<CPEngine>)_solver];
       NSCont* exit = [NSCont takeContinuation];
       if ([exit nbCalls]==0) {
          [dfs addChoice: exit];
@@ -617,14 +535,15 @@
 }
 -(NSData*)packCheckpoint:(Checkpoint*)cp
 {
-   return [cp packFromSolver:(id<CPSolver>)_solver];
+   return [cp packFromSolver:(id<CPEngine>)_solver];
 }
 -(NSData*)captureAndPackProblem
 {
    CPProblem* theProb = [_tracer captureProblem];
-   NSData* theData = [theProb packFromSolver:(id<CPSolver>)_solver];
+   NSData* theData = [theProb packFromSolver:(id<CPEngine>)_solver];
    [theProb release];
    return theData;
 }
 
 @end
+*/

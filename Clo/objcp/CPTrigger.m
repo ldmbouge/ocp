@@ -12,7 +12,7 @@
 
 #import "CPTrigger.h"
 #import "ORFoundation/ORAVLTree.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 
 /*****************************************************************************************/
 /*                        CPTriggerMap                                                   */
@@ -72,7 +72,7 @@ static void freeTriggers(CPTrigger* list)
     front->_next = t;
     t->_next->_prev = t;
 }
--(void) bindEvt: (CPSolverI*) fdm
+-(void) bindEvt: (CPEngineI*) fdm
 {
     if (_bind) {
         CPTrigger* front = _bind->_next;
@@ -123,7 +123,7 @@ static void freeTriggers(CPTrigger* list)
     front->_next = trig;
     trig->_next->_prev = trig;   
 }
--(void)loseValEvt:(CPInt)val solver:(CPSolverI*)fdm
+-(void)loseValEvt:(CPInt)val solver:(CPEngineI*)fdm
 {
     if (_tab[val]) {
         CPTrigger* front = _tab[val]->_next;
@@ -212,7 +212,7 @@ static void freeTriggers(CPTrigger* list)
     front->_next = trig;
     trig->_next->_prev = trig;   
 }
--(void) loseValEvt:(CPInt)val solver:(CPSolverI*)fdm
+-(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm
 {
     CPTriggerList* tList = [_map findObjectForKey:val];
     if (tList) {

@@ -13,7 +13,7 @@
 #import <ORFoundation/cont.h>
 #import <objcp/CPTypes.h>
 
-@protocol CPSolver;
+@protocol CPEngine;
 @protocol ORTracer;
 @protocol ORExplorer;
 @class Checkpoint;
@@ -35,7 +35,7 @@
 
 @class Checkpoint;
 @protocol ControllerEvt 
-@optional -(void)newChoice:(Checkpoint*)cp onSolver:(id<CPSolver>)solver;
+@optional -(void)newChoice:(Checkpoint*)cp onSolver:(id<CPEngine>)solver;
 @end
 
 

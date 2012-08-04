@@ -18,7 +18,7 @@
 #import "Silly.h"
 #import "DFSController.h"
 #import "SillyVar.h"
-#import "CPSolver.h"
+#import "CPEngine.h"
 #import "CPBasicConstraint.h"
 #import "CP.h"
 

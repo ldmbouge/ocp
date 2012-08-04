@@ -28,3 +28,15 @@
 }
 @end  
 
+@implementation ORSearchError
+-(ORSearchError*) initORSearchError: (const char*) msg
+{
+	self = [super init];
+	_message = msg;
+	return self;
+}
+-(const char*) msg 
+{
+	return _message;
+}
+@end

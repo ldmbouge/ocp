@@ -9,10 +9,10 @@
 
  ***********************************************************************/
 
-#import "CPSolverController.h"
+#import "CPEngineController.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/DFSController.h"
-#import "objcp/CPSolver.h"
+#import "objcp/CPEngine.h"
 #import "objcp/cp.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
@@ -20,9 +20,9 @@
 #import "CPSecondViewController.h"
 
 
-@implementation CPSolverController
+@implementation CPEngineController
 
--(CPSolverController*)init 
+-(CPEngineController*)init 
 {
    self = [super init];
    _view1 = nil;

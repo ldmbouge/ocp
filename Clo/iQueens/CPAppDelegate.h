@@ -10,10 +10,10 @@
  ***********************************************************************/
 
 #import <UIKit/UIKit.h>
-#import "CPSolverController.h"
+#import "CPEngineController.h"
 
 @interface CPAppDelegate : UIResponder <UIApplicationDelegate> {
-   CPSolverController* _solver;
+   CPEngineController* _solver;
 }
 
 @property (strong, nonatomic) UIWindow *window;

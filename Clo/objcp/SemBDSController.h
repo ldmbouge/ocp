@@ -42,9 +42,9 @@
    CPInt           _nbDisc;
    SemTracer*    _tracer;
    Checkpoint*   _atRoot;
-   id<CPSolver> _solver;   
+   id<CPEngine> _solver;   
 }
--(id)   initSemBDSController:(id<ORTracer>)tracer andSolver:(id<CPSolver>)solver;
+-(id)   initSemBDSController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver;
 -(void) dealloc;
 -(void)       setup;
 -(void)       cleanup;

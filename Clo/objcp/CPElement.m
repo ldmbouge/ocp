@@ -12,7 +12,7 @@
 #import "CPElement.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 
 typedef struct CPEltRecordTag {

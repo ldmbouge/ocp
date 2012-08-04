@@ -47,7 +47,7 @@
 {
    id<ORSearchController> _controller;    // Delegation chain for stackable limits
 }
--(id) initCPDefaultController;
+-(id) initORDefaultController;
 -(void) setController: (id<ORSearchController>) controller;
 -(id<ORSearchController>) controller;
 -(void)       setup;
@@ -75,7 +75,7 @@
 
 @interface ORNestedController : ORDefaultController
 
--(id)initCPNestedController:(id<ORSearchController>)chain;
+-(id)initORNestedController:(id<ORSearchController>)chain;
 -(void) setParent:(id<ORSearchController>) controller;
 -(void) fail;
 -(void) succeeds;

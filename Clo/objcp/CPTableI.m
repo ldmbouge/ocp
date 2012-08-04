@@ -12,7 +12,7 @@
 
 #import "CPTableI.h"
 #import "CPBasicConstraint.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPError.h"

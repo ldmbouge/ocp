@@ -11,7 +11,7 @@
 
 #import "ORFoundation/ORArrayI.h"
 #import "CPTypes.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPCardinality.h"
@@ -88,7 +88,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     _up  = ub - _lo;
 }
 
--(id)initCardinalityCst:(CPSolverI*)m values:(CPRange) r low:(CPInt*)low array:(id)ax up:(CPInt*)up
+-(id)initCardinalityCst:(CPEngineI*)m values:(CPRange) r low:(CPInt*)low array:(id)ax up:(CPInt*)up
 {
     self = [super initCPActiveConstraint: m];
     _fdm = m;
@@ -126,10 +126,10 @@ static void computeCardinalities(id<CPIntVarArray> ax,
 
 -(id) initCardinalityCst: (id<CPIntVarArray>) ax low: (id<CPIntArray>) low up: (id<CPIntArray>) up
 {
-   id<CPSolver> solver = [[ax cp] solver];
+   id<CPEngine> solver = [[ax cp] solver];
     self = [super initCPActiveConstraint: solver];
     _required = _possible = 0;   
-    _fdm = (CPSolverI*)solver;
+    _fdm = (CPEngineI*)solver;
 
     _sx = (CPInt)[ax count];
     _x  = malloc(sizeof(CPIntVarI*)*_sx);

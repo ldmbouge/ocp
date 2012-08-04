@@ -18,7 +18,7 @@
 #import <ORUtilities/ORUtilities.h>
 
 @protocol ORSearchController;
-@protocol CPSolver;
+@protocol CPEngine;
 @protocol ORExplorer;
 @protocol CPHeuristic;
 @protocol ORIdxIntInformer;
@@ -89,7 +89,7 @@
 -(id<CPSolution>) solution;
 
 @optional -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
--(id<CPSolver>)       solver;
+-(id<CPEngine>)       solver;
 -(id<ORExplorer>)   explorer;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 @optional -(id)virtual:(id)obj;

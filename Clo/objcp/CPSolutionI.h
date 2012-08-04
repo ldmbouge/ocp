@@ -12,15 +12,15 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPSolution.h>
 
-@protocol CPSolver;
+@protocol CPEngine;
 
 @interface CPSolutionI : NSObject<CPSolution,NSCoding> {
    NSArray* _shots;
 }
--(CPSolutionI*)initCPSolution:(id<CPSolver>)solver;
+-(CPSolutionI*)initCPSolution:(id<CPEngine>)solver;
 -(void)dealloc;
 -(int)intValue:(id)var;
 -(BOOL)boolValue:(id)var;
 -(CPULong)count;
--(void)restoreInto:(id<CPSolver>)solver;
+-(void)restoreInto:(id<CPEngine>)solver;
 @end

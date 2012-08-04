@@ -13,12 +13,12 @@
 #import <ORFoundation/ORTrail.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPTypes.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPEngine.h>
 #import <objcp/CPTrigger.h>
 
 @class CPBitArrayDom;
 @class CPBitArrayIterator;
-@class CPSolverI;
+@class CPEngineI;
 @class CPTriggerMap;
 
 typedef struct  {
@@ -33,18 +33,18 @@ typedef struct  {
 @private
 @protected
     CPUInt                         _name;
-    CPSolverI*                          _fdm;
+    CPEngineI*                          _fdm;
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
     CPTriggerMap*                  _triggers;
     id<CPBitVarNotifier>               _recv;
 }
--(void) initCPBitVarCore:(id<CPSolver>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
-//-(CPBitVarI*) initCPBitVarView: (id<CPSolver>) fdm low: (int) low up: (int) up for: (CPBitVarI*) x;
+-(void) initCPBitVarCore:(id<CPEngine>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
+//-(CPBitVarI*) initCPBitVarView: (id<CPEngine>) fdm low: (int) low up: (int) up for: (CPBitVarI*) x;
 -(void) dealloc;
 -(void) setId:(CPUInt)name;
 -(NSString*) description;
--(id<CPSolver>) solver;
+-(id<CPEngine>) solver;
 
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
@@ -82,11 +82,11 @@ typedef struct  {
 -(ORStatus)     bind:(unsigned int*) val;
 -(ORStatus)     bindUInt64:(uint64) val;
 //-(ORStatus)     remove:(int) val;
--(CPBitVarI*)    initCPExplicitBitVar: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
--(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
+-(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
+-(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods
-+(CPBitVarI*)   initCPBitVar: (id<CPSolver>)fdm low:(int)low up:(int)up len:(unsigned int)len;
-+(CPBitVarI*)   initCPBitVarWithPat:(id<CPSolver>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
++(CPBitVarI*)   initCPBitVar: (id<CPEngine>)fdm low:(int)low up:(int)up len:(unsigned int)len;
++(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
 +(CPTrigger*)   createTrigger: (ConstraintCallback) todo;
 @end
 

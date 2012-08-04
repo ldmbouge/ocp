@@ -14,7 +14,7 @@
 #import "CPData.h"
 #import "CPDom.h"
 #import "CPIntVarI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPTrigger.h"
 #import "ORTrail.h"
 #import "CPBitDom.h"
@@ -159,7 +159,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    _vc = CPVCBare;
    _isBool = NO;
    _cp = cp;
-   _fdm  = (CPSolverI*) [cp solver];
+   _fdm  = (CPEngineI*) [cp solver];
    [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;
@@ -190,7 +190,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return _isBool;
 }
--(CPSolverI*)solver
+-(CPEngineI*)solver
 {
     return _fdm;
 }

@@ -112,7 +112,7 @@ enum CPVarClass {
    CPUInt                        _isBool:16;
    CPUInt                             _name;
    id<CP>                               _cp;
-   CPSolverI*                          _fdm;
+   CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    CPTriggerMap*                  _triggers;
@@ -125,7 +125,7 @@ enum CPVarClass {
 -(CPUInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
--(CPSolverI*) solver;
+-(CPEngineI*) solver;
 -(id<CP>) cp;
 -(id<ORTracker>) tracker;
 -(NSSet*)constraints;

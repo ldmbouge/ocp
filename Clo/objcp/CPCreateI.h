@@ -16,13 +16,14 @@
 +(CPI*) create;
 +(CPI*) createRandomized;
 +(CPI*) createDeterministic;
-+(CPI*) createFor:(CPSolverI*)fdm;
++(CPI*) createFor:(CPEngineI*)fdm;
 @end
 
+/*
 @interface SemCP (Create)
 +(SemCP*)            create;
 +(SemCP*)            createRandomized;
 +(SemCP*)            createDeterministic;
-+(SemCP*)            createFor:(CPSolverI*)fdm;
++(SemCP*)            createFor:(CPEngineI*)fdm;
 @end
-
+*/

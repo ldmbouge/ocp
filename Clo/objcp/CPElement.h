@@ -14,7 +14,7 @@
 #import <objcp/CPArray.h>
 
 @class CPIntVarI;
-@class CPSolver;
+@class CPEngine;
 
 @interface CPElementCstBC : CPActiveConstraint<NSCoding> { // y == c[x]
 @private

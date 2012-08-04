@@ -13,7 +13,7 @@
 #import "ORFoundation/ORArrayI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 
 @implementation CPEquationBC
 

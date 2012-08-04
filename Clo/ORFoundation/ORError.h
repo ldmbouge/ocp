@@ -23,4 +23,12 @@
 -(const char*) msg;
 @end 
 
+@interface ORSearchError : NSObject <ORError>
+{
+@private
+	const char* _message;
+}
+-(ORSearchError*) initORSearchError: (const char*) msg;
+-(const char*) msg;
+@end
 #endif

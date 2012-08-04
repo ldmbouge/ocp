@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPBaseHeuristic.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 
 @implementation CPBaseHeuristic

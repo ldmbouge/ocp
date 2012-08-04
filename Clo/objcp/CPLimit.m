@@ -14,6 +14,7 @@
 #import "ORTrail.h"
 #import "CPLimit.h"
 
+/*
 @implementation CPLimitSolutions
 
 -(id)   initCPLimitSolutions: (CPInt) maxSolutions
@@ -289,6 +290,7 @@
 }
 @end
 
+*/
 
 
 

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPWDeg.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 
 @implementation CPWDeg
@@ -20,7 +20,7 @@
    self = [super init];
    [cp addHeuristic:self];
    _cp = cp;
-   _solver  = (CPSolverI*)[cp solver];
+   _solver  = (CPEngineI*)[cp solver];
    _vars = nil;
    _rvars = rvars;
    _w = 0;

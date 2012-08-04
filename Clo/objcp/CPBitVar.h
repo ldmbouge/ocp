@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPEngine.h>
 
 @protocol CPBitVar <NSObject>
 -(bool) bound;
@@ -18,7 +18,7 @@
 -(uint64)max;
 -(unsigned int)  domsize;
 -(bool) member: (unsigned int*) v;
--(id<CPSolver>) solver;
+-(id<CPEngine>) solver;
 @end
 
 @class CPCoreConstraint;

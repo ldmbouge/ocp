@@ -11,7 +11,7 @@
 
 #import "CPAllDifferentDC.h"
 #import "CPBasicConstraint.h"
-#import "CPSolverI.h"
+#import "CPEngineIm.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 #import "CPError.h"

@@ -15,7 +15,7 @@
 #import "objcp/CPArray.h"
 
 @class CPIntVarI;
-@class CPSolver;
+@class CPEngine;
 
 @interface CPLexConstraint : CPActiveConstraint<NSCoding> {
    id<CPIntVarArray>  _x;

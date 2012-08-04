@@ -13,7 +13,6 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPArray.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPBasicConstraint.h>
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<CPIntArray>) lb up: (id<CPIntArray>) ub;

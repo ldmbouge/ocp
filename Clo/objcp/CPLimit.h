@@ -14,6 +14,7 @@
 #import <ORFoundation/ORTrail.h>
 #import <objcp/CPController.h>
 
+
 @interface CPLimitSolutions : ORDefaultController <NSCopying,ORSearchController> {
 @private
    CPInt _maxSolutions;
@@ -89,3 +90,4 @@
 -(void)      startTryallOnFailure;
 - (id)copyWithZone:(NSZone *)zone;
 @end
+

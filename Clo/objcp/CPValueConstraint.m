@@ -12,7 +12,7 @@
 
 #import "CPValueConstraint.h"
 #import "ORFoundation/ORArrayI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
 

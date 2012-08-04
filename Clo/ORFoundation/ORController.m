@@ -13,7 +13,7 @@
 #import <ORFoundation/cont.h>
 
 @implementation ORDefaultController
-- (id) initCPDefaultController
+- (id) initORDefaultController
 {
    self = [super init];
    _controller = nil;
@@ -23,13 +23,13 @@
 -(void) dealloc
 {
    [_controller release];
-   //NSLog(@"CPDefaultController %p dealloc called...\n",self);
+   //NSLog(@"ORDefaultController %p dealloc called...\n",self);
    [super dealloc];
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORDefaultController* ctrl = [[[self class] allocWithZone:zone] initCPDefaultController];
+   ORDefaultController* ctrl = [[[self class] allocWithZone:zone] initORDefaultController];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
@@ -137,9 +137,9 @@
    id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (failAll).
    BOOL                   _isFF;
 }
--(id)initCPNestedController:(id<ORSearchController>)chain
+-(id)initORNestedController:(id<ORSearchController>)chain
 {
-   self = [super initCPDefaultController];
+   self = [super initORDefaultController];
    id<ORSearchController> theClone = [chain copy];
    [self setController:theClone];
    _parent = [chain retain];
@@ -149,7 +149,7 @@
 }
 -(void)dealloc
 {
-   //NSLog(@"CPNestedController %p dealloc called...\n",self);
+   //NSLog(@"ORNestedController %p dealloc called...\n",self);
    [_parent release];
    [super dealloc];
 }
@@ -186,7 +186,7 @@
 
 - (id) initDFSController:(id<ORTracer>)tracer;
 {
-   self = [super initCPDefaultController];
+   self = [super initORDefaultController];
    _tracer = [tracer retain];
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);

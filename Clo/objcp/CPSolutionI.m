@@ -10,12 +10,12 @@
  ***********************************************************************/
 
 #import "CPSolutionI.h"
-#import "CPSolver.h"
+#import "CPEngine.h"
 
 
 // Not sure why this works if shot is null
 @implementation CPSolutionI
--(CPSolutionI*)initCPSolution:(id<CPSolver>)solver
+-(CPSolutionI*)initCPSolution:(id<CPEngine>)solver
 {
    self = [super init];
    NSArray* av = [solver allVars];
@@ -47,7 +47,7 @@
 {
    return [_shots count];
 }
--(void)restoreInto:(id<CPSolver>)solver
+-(void)restoreInto:(id<CPEngine>)solver
 {
    NSArray* av = [solver allVars];
    [_shots enumerateObjectsUsingBlock:^(id<CPSnapshot> obj,NSUInteger idx,BOOL* stop) {

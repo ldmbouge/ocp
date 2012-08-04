@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 
-@protocol CPSolver;
+@protocol CPEngine;
 
 @protocol CPSnapshot
 -(void)restoreInto:(NSArray*)av;
@@ -28,5 +28,5 @@
 -(CPInt)intValue:(id)var;
 -(BOOL)boolValue:(id)var;
 -(NSUInteger)count;
--(void)restoreInto:(id<CPSolver>)solver;
+-(void)restoreInto:(id<CPEngine>)solver;
 @end

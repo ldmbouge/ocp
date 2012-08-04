@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPData.h>
 
-@class CPSolverI;
+@class CPEngineI;
 
 typedef enum {
    CPChecked,
@@ -43,6 +43,6 @@ typedef enum {
    ORTrail* _trail;
    TRInt    _active;
 }
--(id) initCPActiveConstraint: (id<CPSolver>) m;
+-(id) initCPActiveConstraint: (id<CPEngine>) m;
 @end
 

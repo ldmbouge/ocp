@@ -11,12 +11,12 @@
 
 #import "SemDFSController.h"
 #import "CPError.h"
-#import "CPSolver.h"
+#import "CPEngine.h"
 
 
 @implementation SemDFSController 
 
-- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<CPSolver>)solver
+- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver
 {
    self = [super initCPDefaultController];
    _tracer = [tracer retain];

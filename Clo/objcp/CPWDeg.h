@@ -13,7 +13,7 @@
 #import <objcp/CPHeuristic.h>
 #import <objcp/CPBaseHeuristic.h>
 
-@class CPSolverI;
+@class CPEngineI;
 // pvh: heuristics should use the solver and it should make the informer available
 // pvh: This is too low level
 
@@ -22,7 +22,7 @@
    id<CPVarArray>  _rvars;
    CPUInt*           _map; 
    id<CP>             _cp;
-   CPSolverI*     _solver;
+   CPEngineI*     _solver;
    CPULong           _nbc;
    CPULong           _nbv;
    CPUInt*             _w;

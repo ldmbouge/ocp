@@ -16,7 +16,7 @@
 #import <objcp/CPController.h>
 #import <objcp/CPExplorer.h>
 
-
+/*
 @protocol ORSolver;
 @protocol CPHeuristic;
 
@@ -82,10 +82,10 @@
 @end
 
 
-@interface ORExplorerI : CPCoreExplorerI <ORExplorer>
+@interface CPExplorerI : CPCoreExplorerI <ORExplorer>
 {
 }
--(ORExplorerI*)initORExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
+-(CPExplorerI*)initCPExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
 -(void)dealloc;
 // top level calls
 -(void)         search: (ORClosure) body;
@@ -114,3 +114,4 @@
 -(NSData*)packCheckpoint:(Checkpoint*)cp;
 -(NSData*)captureAndPackProblem;
 @end
+*/

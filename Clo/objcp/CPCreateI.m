@@ -11,7 +11,7 @@
 
 #import "CPCreateI.h"
 #import "CPI.h"
-#import "CPSolverI.h"
+#import "CPEngineIm.h"
 #import "CPIntVarI.h"
 #import "CPAllDifferentDC.h"
 #import "CPBasicConstraint.h"
@@ -32,12 +32,13 @@
     return [[CPI alloc] init];
 }
 
-+(CPI*) createFor:(CPSolverI*)fdm
++(CPI*) createFor:(CPEngineI*)fdm
 {
    return [[CPI alloc] initFor:fdm];
 }
 @end
 
+/*
 @implementation SemCP(Create)
 +(SemCP*) create
 {
@@ -53,10 +54,11 @@
    return [[SemCP alloc] init];
 }
 
-+(SemCP*) createFor:(CPSolverI*)fdm
++(SemCP*) createFor:(CPEngineI*)fdm
 {
    return [[SemCP alloc] initFor:fdm];
 }
 @end
+*/
 
 

@@ -24,7 +24,7 @@
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPFirstFail.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPArrayI.h"
 
 void failNow()
@@ -37,20 +37,14 @@ void failNow()
 
 @implementation CPFactory
 
-// [ldm] I removed the autorelease. We cannot do that. The pool is embedded in the solver
-// that sits inside the CoreCPI that is created by the calls below. So the pool will
-// only disappear when the CPSolver goes away. Which happens when the CoreCPI goes away.
-// So the pool can't be released automatically. Worse, the addition  of a release in the
-// test program causes a double-deletion since the CPI is in the pool and manually released.
-// Bottom line: we still have some issues with memory management. I'm going over them.
 +(CPI*) createSolver
 {
     return [CPI create];
 }
-+(SemCP*) createSemSolver
-{
-   return [SemCP create];
-}
+//+(SemCP*) createSemSolver
+//{
+//   return [SemCP create];
+//}
 +(CPI*) createRandomizedSolver
 {
     return [CPI createRandomized];
@@ -59,10 +53,10 @@ void failNow()
 {
     return [CPI createDeterministic];
 }
-+(SemCP*) createSemSolverFor:(id<CPSolver>)fdm
-{
-   return [[SemCP alloc] initFor:fdm];
-}
+//+(SemCP*) createSemSolverFor:(id<CPEngine>)fdm
+//{
+//   return [[SemCP alloc] initFor:fdm];
+//}
 +(id<CPHeuristic>) createWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 {
    return [[CPWDeg alloc] initCPWDeg:cp restricted:rvars];

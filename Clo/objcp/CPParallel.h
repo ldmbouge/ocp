@@ -11,7 +11,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPSolver.h"
+#import "objcp/CPEngine.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPController.h"
 

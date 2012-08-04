@@ -13,7 +13,7 @@
 #import "NSBoardController.h"
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPI.h"
 #import "CPWatch.h"
 

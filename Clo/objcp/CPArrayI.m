@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPIntVarI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPCreateI.h"
 #import "CPBitDom.h"
 #import "CPI.h"
@@ -109,7 +109,7 @@
 {
     return _cp;
 }
--(id<CPSolver>) solver
+-(id<CPEngine>) solver
 {
     return [_cp solver];
 }
@@ -310,7 +310,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     return _cp;
 }
--(id<CPSolver>) solver
+-(id<CPEngine>) solver
 {
     return [_cp solver];
 }
@@ -514,7 +514,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     return _cp;
 }
--(id<CPSolver>) solver
+-(id<CPEngine>) solver
 {
     return [_cp solver];
 }

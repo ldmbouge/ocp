@@ -22,7 +22,7 @@
    CPIntVarI**   _xa; // 0-based version of _x
    CPIntVarI**   _ya; // 0-based version of _y
    CPULong       _sz; // size of xa/ya
-   id<CPSolver> _fdm;
+   id<CPEngine> _fdm;
 }
 -(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y
 {

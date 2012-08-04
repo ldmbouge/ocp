@@ -12,7 +12,7 @@
 #import "ORTracer.h"
 #import "ORCommand.h"
 #import "CPBasicConstraint.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPI.h"
 
 
@@ -21,14 +21,14 @@
 #else
    @interface CPUnarchiver : NSKeyedUnarchiver {
 #endif
-      id<CPSolver> _fdm;
+      id<CPEngine> _fdm;
    }
-   -(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<CPSolver>)fdm;
-   -(id<CPSolver>)solver;
+   -(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<CPEngine>)fdm;
+   -(id<CPEngine>)solver;
    @end
    
    @implementation CPUnarchiver
-   -(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<CPSolver>)fdm
+   -(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<CPEngine>)fdm
    {
       self = [super initForReadingWithData:data];
       _fdm = [fdm retain];
@@ -39,7 +39,7 @@
       [_fdm release];
       [super dealloc];
    }
-   -(id<CPSolver>)solver
+   -(id<CPEngine>)solver
    {
       return _fdm;
    }
@@ -98,7 +98,7 @@
    {
       self = [super init];
       [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_id];
-      id<CPSolver> fdm = [aDecoder solver];
+      id<CPEngine> fdm = [aDecoder solver];
       id theVar = [[[fdm allVars] objectAtIndex:_id] retain];
       [self release];
       return theVar;
@@ -144,7 +144,7 @@
       return self;
    }
    
-   -(NSData*)packFromSolver:(id<CPSolver>)fdm
+   -(NSData*)packFromSolver:(id<CPEngine>)fdm
    {
       NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
@@ -179,7 +179,7 @@
    }
    +(CPProblem*)unpack:(NSData*)msg forSolver:(id)cp
    {
-      id<CPSolver> fdm = [cp solver];
+      id<CPEngine> fdm = [cp solver];
       CPUInt nbProxies = 0;
       id arp  = [[NSAutoreleasePool alloc] init];
       CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
@@ -239,7 +239,7 @@
       _path = [[aDecoder decodeObject] retain];
       return self;
    }
-   -(NSData*)packFromSolver:(id<CPSolver>) solver
+   -(NSData*)packFromSolver:(id<CPEngine>) solver
    {
       NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
@@ -275,7 +275,7 @@
    +(Checkpoint*)unpack:(NSData*)msg forSolver:(id)cp
    {
       id arp = [[NSAutoreleasePool alloc] init];
-      id<CPSolver> fdm = [cp solver];
+      id<CPEngine> fdm = [cp solver];
       CPUInt nbProxies = 0;
       CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
       [decoder decodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
@@ -389,7 +389,7 @@
       return np;
    }
    
-   -(ORStatus)restoreCheckpoint:(Checkpoint*)acp inSolver:(id<CPSolver>)fdm
+   -(ORStatus)restoreCheckpoint:(Checkpoint*)acp inSolver:(id<CPEngine>)fdm
    {
       //NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
       CPCmdStack* toRestore = [acp commands];
@@ -434,7 +434,7 @@
       return ORSuspend;
    }
    
-   -(ORStatus)restoreProblem:(CPProblem*)p inSolver:(id<CPSolver>)fdm
+   -(ORStatus)restoreProblem:(CPProblem*)p inSolver:(id<CPEngine>)fdm
    {
       [_trStack pushNode: _lastNode++];
       [_trail incMagic];

@@ -9,8 +9,8 @@
 
  ***********************************************************************/
 
-#import "CPIBS.h"
-#import "CPSolverI.h"
+#import <CPIBS.h>
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPMonitor.h"
 #import "ORTracer.h"
@@ -142,7 +142,7 @@
 @end
 
 @implementation CPIBS {
-   CPSolverI*     _solver;
+   CPEngineI*     _solver;
    CPMonitor*    _monitor;
    CPULong           _nbv;
    NSMutableDictionary*  _impacts;
@@ -152,7 +152,7 @@
 {
    self = [super init];
    _cp = cp;
-   _solver = (CPSolverI*)[cp solver];
+   _solver = (CPEngineI*)[cp solver];
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;

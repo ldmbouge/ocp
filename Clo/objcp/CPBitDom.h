@@ -13,7 +13,7 @@
 #import <ORFoundation/ORTrail.h>
 #import <objcp/CPDom.h>
 
-@class CPSolverI;
+@class CPEngineI;
 
 enum CPDomClass {
    DCBounds = 0,

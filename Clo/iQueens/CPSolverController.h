@@ -13,7 +13,7 @@
 #import "CPFirstViewController.h"
 #import "CPSecondViewController.h"
 
-@interface CPSolverController : NSObject {
+@interface CPEngineController : NSObject {
    CPFirstViewController* _view1;
    CPSecondViewController* _view2;
 }

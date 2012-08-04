@@ -14,19 +14,20 @@
 #import "CPCommand.h"
 #import "CPConstraintI.h"
 #import "CPI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPExplorerI.h"
 #import "CPBasicConstraint.h"
 #import "CPSelector.h"
 #import "CPArrayI.h"
 #import "CPIntVarI.h"
-#import "CPParallel.h"
 #import "ORUtilities/ORUtilities.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORExplorerI.h>
 
 @interface CPInformerPortal : NSObject<CPPortal> {
    CoreCPI*       _cp;
-   CPSolverI* _solver;
+   CPEngineI* _solver;
 }
 -(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp;
 -(id<ORIdxIntInformer>) retLabel;
@@ -40,13 +41,13 @@
 {
    self = [super init];
    _trail = [[ORTrail alloc] init];
-   _solver = [[CPSolverI alloc] initSolver: _trail];
+   _solver = [[CPEngineI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    return self;
 }
--(id) initFor:(CPSolverI*)fdm
+-(id) initFor:(CPEngineI*)fdm
 {
    self = [super init];
    _solver = [fdm retain];
@@ -71,10 +72,10 @@
 }
 -(void)addHeuristic:(id<CPHeuristic>)h
 {
-   [_search addHeuristic:h];
+ //  [_search addHeuristic:h];
 }
 
--(id<CPSolver>) solver
+-(id<CPEngine>) solver
 {
    return _solver;
 }
@@ -328,7 +329,7 @@
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
--(CPI*) initFor:(CPSolverI*)fdm
+-(CPI*) initFor:(CPEngineI*)fdm
 {
    self = [super initFor:fdm];
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
@@ -440,37 +441,37 @@
 -(void) nestedSolve: (ORClosure) body
 {
   [_search nestedSolve: body onSolution:nil onExit:nil 
-               control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
+               control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
   [_search nestedSolve: body onSolution: onSolution onExit:nil 
-               control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
+               control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit 
-                control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
+                control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (ORClosure) body
 {
   [_search nestedSolveAll: body onSolution:nil onExit:nil 
-                  control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
+                  control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit:nil 
-                   control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
+                   control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
-                  control:[[ORNestedController alloc] initCPNestedController:[_search controller]]];
+                  control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
 
 
@@ -545,6 +546,7 @@
 
 @end
 
+/*
 @implementation SemCP
 -(SemCP*) init
 {
@@ -553,7 +555,7 @@
    _search = [[CPSemExplorerI alloc] initCPSemExplorer: _solver withTracer: _tracer];
    return self;
 }
--(SemCP*) initFor:(CPSolverI*)fdm
+-(SemCP*) initFor:(CPEngineI*)fdm
 {
    self = [super initFor:fdm];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
@@ -756,12 +758,19 @@
 @end
 
 
+
+void printnl(id x)
+{
+    printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);        
+}
+*/
+
 @implementation CPInformerPortal
 -(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp
 {
    self = [super init];
    _cp = cp;
-   _solver = (CPSolverI*)[cp solver];
+   _solver = (CPEngineI*)[cp solver];
    return self;
 }
 -(void)dealloc
@@ -785,10 +794,3 @@
    return [_solver propagateDone];
 }
 @end
-
-void printnl(id x)
-{
-    printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);        
-}
-
-

@@ -10,18 +10,18 @@
  ***********************************************************************/
 
 #import "CPDDeg.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "CPIntVarI.h"
 
 @implementation CPDDeg {
-   CPSolverI*    _solver;
+   CPEngineI*    _solver;
 }
 -(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
    _cp = cp;
-   _solver  = (CPSolverI*)[cp solver];
+   _solver  = (CPEngineI*)[cp solver];
    _rvars = rvars;
    return self;
 }

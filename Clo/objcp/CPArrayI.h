@@ -64,7 +64,7 @@
 -(id<ORIntRange>) range: (CPInt) i;
 -(NSUInteger) count;
 -(id<CP>) cp;
--(id<CPSolver>) solver;
+-(id<CPEngine>) solver;
 -(CPInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
@@ -96,7 +96,7 @@
 -(id<ORIntRange>) range: (CPInt) i;
 -(NSUInteger) count;
 -(id<CP>) cp;
--(id<CPSolver>) solver;
+-(id<CPEngine>) solver;
 -(CPInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;

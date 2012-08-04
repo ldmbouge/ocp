@@ -14,7 +14,7 @@
 #import <objcp/CPBitDom.h>
 
 @class CPIntVarI;
-@class CPSolver;
+@class CPEngine;
 
 // PVH: where is _active being used
 @interface CPEqualc : CPActiveConstraint<NSCoding> {

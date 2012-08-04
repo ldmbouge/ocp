@@ -13,7 +13,7 @@
 #import "ORFoundation/ORArrayI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 
 @implementation CPEqualc
 -(id) initCPEqualc:(id)x and:(CPInt)c
@@ -1378,7 +1378,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 -(id) initCPAllDifferenceVC:(id) x
 {
    if ([x isKindOfClass:[NSArray class]]) {
-      id<CPSolver> fdm = [[x objectAtIndex:0] solver];
+      id<CPEngine> fdm = [[x objectAtIndex:0] solver];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
@@ -1387,7 +1387,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    } 
    else if ([x isKindOfClass:[ORIdArrayI class]]) {
       id<CPIntVarArray> xa = x;
-      id<CPSolver> fdm = [[xa cp] solver];
+      id<CPEngine> fdm = [[xa cp] solver];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

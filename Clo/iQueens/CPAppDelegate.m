@@ -35,7 +35,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-   _solver = [[CPSolverController alloc] init];   
+   _solver = [[CPEngineController alloc] init];   
    return YES;
 }
 							

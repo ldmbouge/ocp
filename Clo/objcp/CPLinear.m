@@ -12,7 +12,7 @@
 #import "CPLinear.h"
 #import "CPExprI.h"
 #import "CPIntVarI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import <objcp/CPData.h>
 
 @interface CPLinearFlip : NSObject<CPLinear> {
@@ -27,11 +27,11 @@
 
 @interface CPSubst   : NSObject<CPExprVisitor> {
    id<CPIntVar>    _rv;
-   id<CPSolver>   _fdm;
+   id<CPEngine>   _fdm;
    CPConsistency    _c;
 }
--(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c;
--(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c by:(id<CPIntVar>)x;
+-(id)initCPSubst:(id<CPEngine>)fdm consistency:(CPConsistency)c;
+-(id)initCPSubst:(id<CPEngine>)fdm consistency:(CPConsistency)c by:(id<CPIntVar>)x;
 -(id<CPIntVar>)result;
 -(void) visitIntVarI: (id<CPIntVar>) e;
 -(void) visitIntegerI: (id<CPInteger>) e;
@@ -49,9 +49,9 @@
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
-+(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(ORExprI*)expr consistency:(CPConsistency)c;
-+(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(ORExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c;
-+(id<CPIntVar>)normSide:(CPLinear*)e for:(id<CPSolver>)cp consistency:(CPConsistency)c;
++(id<CPIntVar>) substituteIn:(id<CPEngine>)fdm expr:(ORExprI*)expr consistency:(CPConsistency)c;
++(id<CPIntVar>) substituteIn:(id<CPEngine>)fdm expr:(ORExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c;
++(id<CPIntVar>)normSide:(CPLinear*)e for:(id<CPEngine>)cp consistency:(CPConsistency)c;
 @end
 
 @implementation CPLinearFlip
@@ -77,11 +77,11 @@
 
 @interface CPRNormalizer : NSObject<CPExprVisitor> {
    id<CPLinear> _terms;
-   CPSolverI*     _fdm;
+   CPEngineI*     _fdm;
    CPConsistency _cons;
 }
-+(CPLinear*)normalize:(id<ORRelation>)rel solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
--(id)initCPRNormalizer:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
++(CPLinear*)normalize:(id<ORRelation>)rel solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
+-(id)initCPRNormalizer:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
@@ -102,12 +102,12 @@
 
 @interface CPLinearizer : NSObject<CPExprVisitor> {
    id<CPLinear> _terms;
-   id<CPSolver>   _fdm;
+   id<CPEngine>   _fdm;
    CPConsistency _cons;
 }
-+(CPLinear*)linearFrom:(id<ORExpr>)e  solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
-+(CPLinear*)addToLinear:(id<CPLinear>)terms from:(id<ORExpr>)e  solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
--(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
++(CPLinear*)linearFrom:(id<ORExpr>)e  solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
++(CPLinear*)addToLinear:(id<CPLinear>)terms from:(id<ORExpr>)e  solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
+-(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
 -(void) visitIntVarI: (CPIntVarI*) e;
 -(void) visitIntegerI: (id<CPInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
@@ -127,7 +127,7 @@
 @end
 
 @implementation CPRNormalizer
-+(CPLinear*)normalize:(ORExprI*)rel solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
++(CPLinear*)normalize:(ORExprI*)rel solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    CPRNormalizer* v = [[CPRNormalizer alloc] initCPRNormalizer:fdm consistency:cons];
    [rel visit:v];
@@ -135,7 +135,7 @@
    [v release];
    return rv;
 }
--(id)initCPRNormalizer:(CPSolverI*)fdm consistency:(CPConsistency)cons
+-(id)initCPRNormalizer:(CPEngineI*)fdm consistency:(CPConsistency)cons
 {
    self = [super init];
    _terms = nil;
@@ -210,7 +210,7 @@ struct CPVarPair {
 @end
 
 @implementation CPLinearizer
--(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+-(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    self = [super init];
    _terms = t;
@@ -313,7 +313,7 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 
-+(CPLinear*)linearFrom:(ORExprI*)e solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
++(CPLinear*)linearFrom:(ORExprI*)e solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    CPLinear* rv = [[CPLinear alloc] initCPLinear:4];
    CPLinearizer* v = [[CPLinearizer alloc] initCPLinearizer:rv solver:fdm consistency:cons];
@@ -321,7 +321,7 @@ struct CPVarPair {
    [v release];
    return rv;
 }
-+(CPLinear*)addToLinear:(id<CPLinear>)terms from:(ORExprI*)e  solver:(id<CPSolver>)fdm consistency:(CPConsistency)cons
++(CPLinear*)addToLinear:(id<CPLinear>)terms from:(ORExprI*)e  solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    CPLinearizer* v = [[CPLinearizer alloc] initCPLinearizer:terms solver:fdm consistency:cons];
    [e visit:v];
@@ -449,7 +449,7 @@ struct CPVarPair {
    }
    return min(MAXINT,bindUp(ub));
 }
--(ORStatus)postEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+-(ORStatus)postEQZ:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    // [ldm] This should *never* raise an exception, but return a ORFailure.
    switch (_nb) {
@@ -520,14 +520,14 @@ struct CPVarPair {
       }
    }
 }
--(ORStatus)postLEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+-(ORStatus)postLEQZ:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    return [fdm post:[CPFactory sum:[self scaledViews] leq:- _indep]];
 }
 @end
 
 @implementation CPSubst
-+(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(ORExprI*)expr consistency:(CPConsistency)c
++(id<CPIntVar>) substituteIn:(id<CPEngine>)fdm expr:(ORExprI*)expr consistency:(CPConsistency)c
 {
    CPSubst* subst = [[CPSubst alloc] initCPSubst:fdm consistency:c];
    [expr visit:subst];
@@ -535,7 +535,7 @@ struct CPVarPair {
    [subst release];
    return theVar;   
 }
-+(id<CPIntVar>) substituteIn:(id<CPSolver>)fdm expr:(ORExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c
++(id<CPIntVar>) substituteIn:(id<CPEngine>)fdm expr:(ORExprI*)expr by:(id<CPIntVar>)x consistency:(CPConsistency)c
 {
    CPSubst* subst = [[CPSubst alloc] initCPSubst:fdm consistency:c by:x];
    [expr visit:subst];
@@ -543,7 +543,7 @@ struct CPVarPair {
    [subst release];
    return theVar;      
 }
-+(id<CPIntVar>)normSide:(CPLinear*)e for:(id<CPSolver>)cp consistency:(CPConsistency)c
++(id<CPIntVar>)normSide:(CPLinear*)e for:(id<CPEngine>)cp consistency:(CPConsistency)c
 {
    if ([e size] == 1) {
       return [e oneView];
@@ -555,7 +555,7 @@ struct CPVarPair {
    }
 }
 
--(id)initCPSubst:(id<CPSolver>)fdm consistency: (CPConsistency) c
+-(id)initCPSubst:(id<CPEngine>)fdm consistency: (CPConsistency) c
 {
    self = [super init];
    _rv = nil;
@@ -563,7 +563,7 @@ struct CPVarPair {
    _c = c;
    return self;
 }
--(id)initCPSubst:(id<CPSolver>)fdm consistency:(CPConsistency)c by:(id<CPIntVar>)x
+-(id)initCPSubst:(id<CPEngine>)fdm consistency:(CPConsistency)c by:(id<CPIntVar>)x
 {
    self = [super init];
    _rv  = x;
@@ -773,7 +773,7 @@ struct CPVarPair {
 @end
 
 @implementation CPExprConstraintI
--(id) initCPExprConstraintI:(CPSolverI*)fdm expr:(id<CPRelation>)x consistency: (CPConsistency) c
+-(id) initCPExprConstraintI:(CPEngineI*)fdm expr:(id<CPRelation>)x consistency: (CPConsistency) c
 {
    self  = [super initCPActiveConstraint:fdm];
    _fdm  = fdm;

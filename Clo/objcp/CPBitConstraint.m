@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPBitConstraint.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 
 @implementation CPBitEqual
 

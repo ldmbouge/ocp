@@ -20,7 +20,7 @@
 
 @interface CoreCPI : NSObject  {
    @protected
-   id<CPSolver>          _solver;
+   id<CPEngine>          _solver;
    id<ORExplorer>        _search;
    ORTrail*              _trail;
    NSAutoreleasePool*    _pool;  
@@ -30,7 +30,7 @@
    id<ORIdxIntInformer>  _failLabel;   
 }
 -(id)                     init;
--(id)                     initFor:(id<CPSolver>) fdm;
+-(id)                     initFor:(id<CPEngine>) fdm;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(CPInt)                  nbChoices;
@@ -42,16 +42,6 @@
 -(void) setController: (id<ORSearchController>) controller;
 -(void)addHeuristic:(id<CPHeuristic>)h;
 
-// immediate RHS
--(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs;
--(void)                 add: (id<CPExpr>)lhs leqi: (CPInt)rhs consistency:(CPConsistency)cons;
--(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs;
--(void)                 add: (id<CPExpr>)lhs eqi: (CPInt)rhs consistency:(CPConsistency)cons;
-// expression RHS
--(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs;
--(void)                 add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
--(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs;
--(void)                 add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                post: (id<CPConstraint>) c;
@@ -69,7 +59,7 @@
 -(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 
 -(id)               virtual: (id) obj;
--(id<CPSolver>)        solver;
+-(id<CPEngine>)        solver;
 -(id<ORExplorer>)    explorer;
 -(void)trackObject:(id)object;
 -(CPInt)virtualOffset:(id)obj;
@@ -83,7 +73,7 @@
    DFSTracer* _tracer;
 }
 -(CPI*)                   init;
--(CPI*)                   initFor:(CPSolverI*)fdm;
+-(CPI*)                   initFor:(CPEngineI*)fdm;
 -(void)dealloc;
 
 -(void)               label: (id<CPIntVar>) var with: (CPInt) val;
@@ -121,11 +111,12 @@
 -(DFSTracer*)tracer;
 @end
 
+/*
 @interface SemCP : CoreCPI {
    SemTracer* _tracer;
 }
 -(SemCP*)                   init;
--(SemCP*)                   initFor:(id<CPSolver>)fdm;
+-(SemCP*)                   initFor:(id<CPEngine>)fdm;
 -(void)dealloc;
 -(ORStatus)installCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
@@ -159,8 +150,9 @@
 -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
 -(SemTracer*)tracer;
 @end
+*/
 
-void printnl(id object);
+
 
 
 

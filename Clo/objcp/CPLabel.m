@@ -13,7 +13,7 @@
 #import "CPData.h"
 #import "CPLabel.h"
 #import "CPSelector.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPExplorerI.h"
 #import "CPI.h"

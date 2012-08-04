@@ -12,7 +12,7 @@
 #import "CPKnapsack.h"
 #import "CPIntVarI.h"
 #import "CPArray.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 
 @interface KSNode : NSObject {
    @package
@@ -80,7 +80,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 }
 
 @implementation CPKnapsack {
-   id<CPSolver>          _fdm;
+   id<CPEngine>          _fdm;
    CPIntVarI**            _xb;
    TRInt*            _support;
    CPLong                 _nb;

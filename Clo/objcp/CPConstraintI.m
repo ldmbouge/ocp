@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import "CPConstraintI.h"
-#import "CPSolverI.h"
+#import "CPEngineI.h"
 
 @implementation CPCoreConstraint
 -(CPCoreConstraint*) initCPCoreConstraint 
@@ -78,7 +78,7 @@
 @end
 
 @implementation CPActiveConstraint
--(id) initCPActiveConstraint:(id<CPSolver>) m
+-(id) initCPActiveConstraint:(id<CPEngine>) m
 {
     self = [super initCPCoreConstraint];
     _trail = [[m trail] retain];

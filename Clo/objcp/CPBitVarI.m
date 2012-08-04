@@ -11,8 +11,8 @@
 
 #import "CPBitVarI.h"
 #import "CPBitVar.h"
-#import "CPSolver.h"
-#import "CPSolverI.h"
+#import "CPEngine.h"
+#import "CPEngineI.h"
 #import "CPTrigger.h"
 #import "CPBitArrayDom.h"
 #import "CPIntVarI.h"
@@ -47,7 +47,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 
 @implementation CPBitVarI
--(void) initCPBitVarCore:(CPSolverI*)fdm low: (unsigned int*) low up: (unsigned int*)up length:(int)len
+-(void) initCPBitVarCore:(CPEngineI*)fdm low: (unsigned int*) low up: (unsigned int*)up length:(int)len
 {
     self = [super init];
     _fdm  = fdm;
@@ -72,7 +72,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     _name = name;
 }
--(id<CPSolver>)solver
+-(id<CPEngine>)solver
 {
     return _fdm;
 }
@@ -287,7 +287,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom bindToPat: val for:_recv];
 }
 
--(CPBitVarI*) initCPExplicitBitVar: (id<CPSolver>)fdm withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
+-(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)fdm withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {
     [self initCPBitVarCore:fdm low:low up:up length:len];
     [_dom setLow: low for:self];
@@ -295,7 +295,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return self;
 }
 
--(CPBitVarI*) initCPExplicitBitVarPat: (CPSolverI*)fdm withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
+-(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)fdm withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
 {
     self = [super init];
     _fdm  = fdm;
@@ -311,7 +311,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 //Integer interpretation of BitVar
-+(CPBitVarI*) initCPBitVar: (id<CPSolver>) fdm low: (int)low up: (int) up len: (unsigned int) len
++(CPBitVarI*) initCPBitVar: (id<CPEngine>) fdm low: (int)low up: (int) up len: (unsigned int) len
 {
     unsigned int uLow[2];
     unsigned int uUp[2];
@@ -324,7 +324,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 
 //Binary bit pattern interpretation of BitVar
-+(CPBitVarI*) initCPBitVarWithPat:(CPSolverI*)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
++(CPBitVarI*) initCPBitVarWithPat:(CPEngineI*)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
     
     CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVarPat: fdm withLow: low andUp: up andLen: len];
     return x;

@@ -11,7 +11,7 @@
 
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPEngine.h>
 #import <objcp/CP.h>
 #import <objcp/CPTable.h>
 #import <objcp/CPHeuristic.h>
@@ -22,7 +22,7 @@
 +(id<CP>) createSemSolver;
 +(id<CP>) createRandomizedSolver;
 +(id<CP>) createDeterministicSolver;
-+(id<CP>) createSemSolverFor:(id<CPSolver>)fdm;
++(id<CP>) createSemSolverFor:(id<CPEngine>)fdm;
 +(void) shutdown;
 +(id<CPHeuristic>) createDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
 +(id<CPHeuristic>) createWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
