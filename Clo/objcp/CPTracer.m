@@ -171,7 +171,7 @@
 -(CPProblem*)init
 {
    self = [super init];
-   _cstrs = [[CPCommandList alloc] initCPCommandList];
+   _cstrs = [[ORCommandList alloc] initCPCommandList];
    return self;
 }
 -(void)dealloc
@@ -183,15 +183,15 @@
 {
    return [_cstrs description];
 }
--(void)addCommand:(id<CPCommand>)c
+-(void)addCommand:(id<ORCommand>)c
 {
    [_cstrs insert:c];
 }
--(bool)apply:(bool(^)(id<CPCommand>))clo
+-(bool)apply:(bool(^)(id<ORCommand>))clo
 {
    return [_cstrs apply:clo];
 }
--(CPCommandList*)theList
+-(ORCommandList*)theList
 {
    return _cstrs;
 }
@@ -275,7 +275,7 @@
 {
    return [_path description];
 }
--(void)pushCommandList:(CPCommandList*)aList
+-(void)pushCommandList:(ORCommandList*)aList
 {
    [_path pushCommandList:aList];
 }
@@ -384,7 +384,7 @@
 -(id) popNode
 {
 	[_trStack popNode];
-   CPCommandList* theList = [_cmds popList];
+   ORCommandList* theList = [_cmds popList];
 	// necessary since the "onFailure" executes in the parent.
 	// Indeed, any change must be trailed in the parent node again
 	// so the magic must increase. 
@@ -414,7 +414,7 @@
    assert([_cmds size] == [_trStack size]);
    while (![_trStack empty]) {
       [_trStack popNode];
-      CPCommandList* clist = [_cmds popList];
+      ORCommandList* clist = [_cmds popList];
       [clist release];
    }
    assert(_level._val == 0);
@@ -424,7 +424,7 @@
 {
    return _trail;
 }
--(void)addCommand:(id<CPCommand>)com
+-(void)addCommand:(id<ORCommand>)com
 {
    [_cmds addCommand:com];
 }
@@ -443,7 +443,7 @@
    CPUInt ub = [_cmds size];
    CPProblem* np = [[CPProblem alloc] init];
    for(CPInt i=0;i< ub;i++) {
-      [[_cmds peekAt:i] apply:^bool(id<CPCommand> theCommand) {
+      [[_cmds peekAt:i] apply:^bool(id<ORCommand> theCommand) {
          [np addCommand:[theCommand retain]];
          return true;
       }];
@@ -466,17 +466,17 @@
       // the suffix in toRestore [i+1 toR.top] should be replayed
       while (i != [_cmds size]) {
          [_trStack popNode];
-         CPCommandList* lst = [_cmds popList];
+         ORCommandList* lst = [_cmds popList];
          [lst release];
       }
       //NSLog(@"SemTracer AFTER SUFFIXUNDO: %@ - in thread %p",[self description],[NSThread currentThread]);
       //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
       [_trail incMagic]; 
       for(CPInt j=i;j < [toRestore size];j++) {
-         CPCommandList* theList = [toRestore peekAt:j];
+         ORCommandList* theList = [toRestore peekAt:j];
          [_trStack pushNode:[theList getNodeId]];
          [_trail incMagic];
-         bool pOk = [theList apply:^bool(id<CPCommand> c) {
+         bool pOk = [theList apply:^bool(id<ORCommand> c) {
             return [c doIt];               
          }];
          if (!pOk) {
@@ -500,7 +500,7 @@
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
-   bool ok = [p apply:^bool(id<CPCommand> c) {
+   bool ok = [p apply:^bool(id<ORCommand> c) {
       return [c doIt];
    }];
    if (!ok) return ORFailure;
@@ -521,7 +521,7 @@
    self = [super init];
    _mxs = mx;
    _sz  = 0;
-   _tab = malloc(sizeof(CPCommandList*)*_mxs);   
+   _tab = malloc(sizeof(ORCommandList*)*_mxs);   
    return self;
 }
 -(void)dealloc
@@ -535,30 +535,30 @@
 -(void)pushList:(CPInt)node
 {
    if (_sz >= _mxs) {
-      _tab = realloc(_tab,sizeof(id<CPCommand>)*_mxs*2);
+      _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);
       _mxs <<= 1;
    }
-   CPCommandList* list = [[CPCommandList alloc] initCPCommandList:node];
+   ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
    _tab[_sz++] = list;
 }
--(void)pushCommandList:(CPCommandList*)list
+-(void)pushCommandList:(ORCommandList*)list
 {  
    if (_sz >= _mxs) {
-      _tab = realloc(_tab,sizeof(id<CPCommand>)*_mxs*2);
+      _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);
       _mxs <<= 1;
    }
    _tab[_sz++] = [list retain];
 }
--(void)addCommand:(id<CPCommand>)c
+-(void)addCommand:(id<ORCommand>)c
 {
    [_tab[_sz-1] insert:c];
 }
--(CPCommandList*)popList
+-(ORCommandList*)popList
 {
    assert(_sz > 0);
    return _tab[--_sz];
 }
--(CPCommandList*)peekAt:(CPUInt)d
+-(ORCommandList*)peekAt:(CPUInt)d
 {
    return _tab[d];
 }
@@ -588,7 +588,7 @@
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_mxs];
    [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_sz];
-   _tab = malloc(sizeof(CPCommandList*)*_mxs);
+   _tab = malloc(sizeof(ORCommandList*)*_mxs);
    for (CPUInt i =0; i<_sz; i++) {
       _tab[i] = [[aDecoder decodeObject] retain];
    }

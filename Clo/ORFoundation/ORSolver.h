@@ -8,13 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-typedef enum  {
-   ORFailure,
-   ORSuccess,
-   ORSuspend,
-   ORDelay,
-   ORSkip
-} ORStatus;
 
 @protocol ORSolver <NSObject,ORTracker>
 -(void)            saveSolution;

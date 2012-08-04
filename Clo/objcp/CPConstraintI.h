@@ -10,8 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTrail.h>
-#import <objcp/CPCommand.h>
+#import <objcp/CPData.h>
 
 @class CPSolverI;
 
@@ -22,7 +21,7 @@ typedef enum {
 } CPTodo;
 
 
-@interface CPCoreConstraint : NSObject<NSCoding,CPCommand,CPConstraint> {
+@interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @package
    CPTodo _todo;
    bool   _idempotent;

@@ -26,8 +26,6 @@
 /* Begin PBXBuildFile section */
 		5B074A28142E5B2E0055B72D /* SemDFSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B074A26142E5B2D0055B72D /* SemDFSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B074A29142E5B2E0055B72D /* SemDFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A27142E5B2D0055B72D /* SemDFSController.m */; };
-		5B074A2B142E5D900055B72D /* CPCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B074A2A142E5D900055B72D /* CPCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B074A2D142E5F1B0055B72D /* CPCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A2C142E5F1B0055B72D /* CPCommand.m */; };
 		5B0ECEBE1562C4FB000D1A08 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC11562C5E3000D1A08 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC21562C5E3000D1A08 /* CPWDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */; };
@@ -283,8 +281,6 @@
 		5B9EE54615175D4F00619B47 /* CPBitDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3606941392A9C5008B0EE8 /* CPBitDom.m */; };
 		5B9EE54715175D4F00619B47 /* CPCardinality.h in Headers */ = {isa = PBXBuildFile; fileRef = B19ABA24146DC7FA004EB77E /* CPCardinality.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE54815175D4F00619B47 /* CPCardinality.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA25146DC7FA004EB77E /* CPCardinality.m */; };
-		5B9EE54915175D4F00619B47 /* CPCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B074A2A142E5D900055B72D /* CPCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE54A15175D4F00619B47 /* CPCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A2C142E5F1B0055B72D /* CPCommand.m */; };
 		5B9EE54B15175D4F00619B47 /* CPBitDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606931392A9C5008B0EE8 /* CPBitDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE54C15175D4F00619B47 /* CPController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F5139D49320056F448 /* CPController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE54D15175D4F00619B47 /* CPController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F6139D49320056F448 /* CPController.m */; };
@@ -556,6 +552,8 @@
 		B19ABA26146DC7FA004EB77E /* CPCardinality.h in Headers */ = {isa = PBXBuildFile; fileRef = B19ABA24146DC7FA004EB77E /* CPCardinality.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA25146DC7FA004EB77E /* CPCardinality.m */; };
 		B1A0124515CCA4C8001ED0D4 /* ORSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124415CCA4C8001ED0D4 /* ORSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124615CCA92F001ED0D4 /* ORCommand.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
 		B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; };
 		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1355,8 +1353,6 @@
 /* Begin PBXFileReference section */
 		5B074A26142E5B2D0055B72D /* SemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SemDFSController.h; sourceTree = "<group>"; };
 		5B074A27142E5B2D0055B72D /* SemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SemDFSController.m; sourceTree = "<group>"; };
-		5B074A2A142E5D900055B72D /* CPCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCommand.h; sourceTree = "<group>"; };
-		5B074A2C142E5F1B0055B72D /* CPCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCommand.m; sourceTree = "<group>"; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
 		5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPWDeg.h; sourceTree = "<group>"; };
 		5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPWDeg.m; sourceTree = "<group>"; };
@@ -1746,6 +1742,8 @@
 		B19ABA24146DC7FA004EB77E /* CPCardinality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCardinality.h; sourceTree = "<group>"; };
 		B19ABA25146DC7FA004EB77E /* CPCardinality.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCardinality.m; sourceTree = "<group>"; };
 		B1A0124415CCA4C8001ED0D4 /* ORSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolver.h; sourceTree = "<group>"; };
+		B1A0124615CCA92F001ED0D4 /* ORCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCommand.h; sourceTree = "<group>"; };
+		B1A0124715CCA930001ED0D4 /* ORCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCommand.m; sourceTree = "<group>"; };
 		B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAssignmentI.h; sourceTree = "<group>"; };
 		B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAssignmentI.m; sourceTree = "<group>"; };
 		B1B68C74159FC16E008BC463 /* TestAssignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAssignment; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2675,8 +2673,6 @@
 				B1672FE115849EA300EFE5C3 /* CPCardinalityDC.m */,
 				B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */,
 				B1C25AA01557540E009CB8A8 /* CPCircuitI.m */,
-				5B074A2A142E5D900055B72D /* CPCommand.h */,
-				5B074A2C142E5F1B0055B72D /* CPCommand.m */,
 				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
 				5BE642F5139D49320056F448 /* CPController.h */,
 				5BE642F6139D49320056F448 /* CPController.m */,
@@ -2989,6 +2985,8 @@
 				5BFD594D15A3ACA500825BC3 /* ORFoundation.m */,
 				5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */,
 				5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */,
+				B1A0124615CCA92F001ED0D4 /* ORCommand.h */,
+				B1A0124715CCA930001ED0D4 /* ORCommand.m */,
 				5BFD5A6B15A3BEA900825BC3 /* ORError.h */,
 				5B8B12DB15A3BF8000300385 /* ORError.m */,
 				5B920EA915A3DDA600AD0820 /* ORExpr.h */,
@@ -3438,7 +3436,6 @@
 				B189033F142C266F007F6EAD /* CPTrigger.h in Headers */,
 				5B7408B115628C1400C05277 /* CPBitMacros.h in Headers */,
 				5B074A28142E5B2E0055B72D /* SemDFSController.h in Headers */,
-				5B074A2B142E5D900055B72D /* CPCommand.h in Headers */,
 				B11ADE6F14C00310003DA748 /* CPArray.h in Headers */,
 				B11ADE7114C00594003DA748 /* CPData.h in Headers */,
 				5B85DE131438B2D500E4E133 /* SemBDSController.h in Headers */,
@@ -3489,7 +3486,6 @@
 				5B9EE53D15175D4F00619B47 /* ORSet.h in Headers */,
 				5B9EE53E15175D4F00619B47 /* ORSetI.h in Headers */,
 				5B9EE54215175D4F00619B47 /* ORAVLTree.h in Headers */,
-				5B9EE54915175D4F00619B47 /* CPCommand.h in Headers */,
 				5B9EE55215175D4F00619B47 /* CPCreateI.h in Headers */,
 				5B9EE55E15175D4F00619B47 /* CPExplorer.h in Headers */,
 				5B9EE55415175D4F00619B47 /* CPData.h in Headers */,
@@ -3575,6 +3571,7 @@
 				5B920EB615A3F91A00AD0820 /* ORData.h in Headers */,
 				5B920EB815A3FB9E00AD0820 /* ORArray.h in Headers */,
 				B1A0124515CCA4C8001ED0D4 /* ORSolver.h in Headers */,
+				B1A0124815CCA931001ED0D4 /* ORCommand.h in Headers */,
 				B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
@@ -4755,7 +4752,6 @@
 				B17ABE9313CC852C00DC7288 /* CPIntVarI.m in Sources */,
 				B1890340142C266F007F6EAD /* CPTrigger.m in Sources */,
 				5B074A29142E5B2E0055B72D /* SemDFSController.m in Sources */,
-				5B074A2D142E5F1B0055B72D /* CPCommand.m in Sources */,
 				5B85DE141438B2D500E4E133 /* SemBDSController.m in Sources */,
 				B17EB196146C55010097E18D /* CPConstraintI.m in Sources */,
 				B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */,
@@ -4854,7 +4850,6 @@
 				5B9EE54515175D4F00619B47 /* CPBasicConstraint.m in Sources */,
 				5B9EE54615175D4F00619B47 /* CPBitDom.m in Sources */,
 				5B9EE54815175D4F00619B47 /* CPCardinality.m in Sources */,
-				5B9EE54A15175D4F00619B47 /* CPCommand.m in Sources */,
 				5B9EE54D15175D4F00619B47 /* CPController.m in Sources */,
 				5B9EE54F15175D4F00619B47 /* CPConstraint.m in Sources */,
 				5B9EE55115175D4F00619B47 /* CPConstraintI.m in Sources */,
@@ -5005,6 +5000,7 @@
 				5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */,
 				5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */,
 				B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */,
+				B1A0124915CCA931001ED0D4 /* ORCommand.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

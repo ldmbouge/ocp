@@ -71,4 +71,12 @@ typedef struct ORBounds {
 -(ORInt) next;
 @end
 
+typedef enum  {
+   ORFailure,
+   ORSuccess,
+   ORSuspend,
+   ORDelay,
+   ORSkip
+} ORStatus;
+
 #endif
