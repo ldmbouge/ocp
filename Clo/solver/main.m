@@ -22,7 +22,7 @@ static int nbSol = 0;
 #define bound(a) ^bool(int i) { return ![[a objectAtIndex:i] bound];}
 #define minDomain(a) ^int(int i) { return [[x objectAtIndex:i] domsize];}
 
-void labelFF(id<CP> m,NSArray* x,int from,int to)
+void labelFF(id<CPSolver> m,NSArray* x,int from,int to)
 {
    CPIntegerI* nbSolutions = [[CPIntegerI alloc] initCPIntegerI: 0];
    [m solve: ^() {
@@ -126,7 +126,7 @@ int main(int argc, const char * argv[])
    
     id pool = [[NSAutoreleasePool alloc] init];
    
-   id<CP> m = [CPFactory createSolver]; 
+   id<CPSolver> m = [CPFactory createSolver]; 
    id<CPIntVarArray> x = [m createIntVarArray:(CPRange){0,n-1} domain:(CPRange){0,n-1}];
     [m solve: ^() 
      {

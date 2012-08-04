@@ -402,7 +402,7 @@ struct CPVarPair {
 }
 -(id<CPIntVarArray>)scaledViews
 {
-   id<CP> cp = [_terms[0]._var cp];
+   id<CPSolver> cp = [_terms[0]._var cp];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp 
                                           range: RANGE(cp,0,_nb-1)
                                            with:^id<CPIntVar>(CPInt i) {
@@ -505,7 +505,7 @@ struct CPVarPair {
       }break;
       default: {
          CPInt sumCoefs = 0;
-         id<CP> cp = [_terms[0]._var cp];
+         id<CPSolver> cp = [_terms[0]._var cp];
          for(CPInt k=0;k<_nb;k++)
             if ([_terms[k]._var isBool])
                sumCoefs += _terms[k]._coef;

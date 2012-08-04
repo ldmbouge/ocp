@@ -20,7 +20,7 @@
 /*
 int main1(int argc, const char * argv[])
 {
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
    CPInt nbCap;
    fscanf(dta,"%d",&nbCap);
@@ -129,7 +129,7 @@ int main1(int argc, const char * argv[])
 */
 int main1(int argc, const char * argv[])
 {
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
    CPInt nbCap;
    fscanf(dta,"%d",&nbCap);
@@ -241,7 +241,7 @@ int main1(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
    CPInt nbCap;
    fscanf(dta,"%d",&nbCap);

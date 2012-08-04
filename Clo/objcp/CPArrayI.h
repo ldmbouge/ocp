@@ -20,14 +20,14 @@
 
 @interface CPTRIntArrayI : NSObject<CPTRIntArray,CPVirtual,NSCoding> {
     @package
-    id<CP>       _cp;
+    id<CPSolver>       _cp;
     ORTrail*     _trail;
     TRInt*       _array;
     CPInt        _low;
     CPInt        _up;
     CPInt        _nb;
 }
--(CPTRIntArrayI*) initCPTRIntArray: (id<CP>) cp range: (id<ORIntRange>) R;
+-(CPTRIntArrayI*) initCPTRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
 -(CPInt) at: (CPInt) value;
 -(void) set: (CPInt) value at: (CPInt) idx;
@@ -35,7 +35,7 @@
 -(CPInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
--(id<CP>) cp;
+-(id<CPSolver>) cp;
 -(CPInt) virtualOffset;   
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
@@ -43,7 +43,7 @@
 
 @interface CPIntMatrixI : NSObject<CPIntMatrix,CPVirtual,NSCoding> {
 @private
-    id<CP>          _cp;
+    id<CPSolver>          _cp;
     ORTrail*        _trail;
     CPInt*          _flat;
     CPInt           _arity;
@@ -54,8 +54,8 @@
     CPInt*          _i;
     CPInt           _nb;
 }
--(CPIntMatrixI*) initCPIntMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(CPIntMatrixI*) initCPIntMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;  
 -(CPInt) at: (CPInt) i0 : (CPInt) i1; 
 -(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
@@ -63,7 +63,7 @@
 -(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
 -(id<ORIntRange>) range: (CPInt) i;
 -(NSUInteger) count;
--(id<CP>) cp;
+-(id<CPSolver>) cp;
 -(id<CPEngine>) solver;
 -(CPInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
@@ -73,7 +73,7 @@
 
 @interface CPTRIntMatrixI : NSObject<CPTRIntMatrix,CPVirtual,NSCoding> {
 @private
-    id<CP>          _cp;
+    id<CPSolver>          _cp;
     ORTrail*        _trail;
     TRInt*          _flat;
     CPInt           _arity;
@@ -84,8 +84,8 @@
     CPInt*          _i;
     CPInt           _nb;
 }
--(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;  
 -(CPInt) at: (CPInt) i0 : (CPInt) i1; 
 -(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
@@ -95,7 +95,7 @@
 -(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2;
 -(id<ORIntRange>) range: (CPInt) i;
 -(NSUInteger) count;
--(id<CP>) cp;
+-(id<CPSolver>) cp;
 -(id<CPEngine>) solver;
 -(CPInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;

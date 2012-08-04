@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       int n = 10;
-      id<CP> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       id<ORIntRange> R = RANGE(cp,1,n);
       id<ORIntRange> D = RANGE(cp,-n+1,n-1);
           

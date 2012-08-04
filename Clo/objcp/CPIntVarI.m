@@ -153,7 +153,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntVarI
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
--(CPIntVarI*) initCPIntVarCore:(id<CP>)cp low: (CPInt) low up: (CPInt)up
+-(CPIntVarI*) initCPIntVarCore:(id<CPSolver>)cp low: (CPInt) low up: (CPInt)up
 {
    self = [super init];
    _vc = CPVCBare;
@@ -194,7 +194,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return _fdm;
 }
--(id<CP>) cp
+-(id<CPSolver>) cp
 {
     return _cp;
 }
@@ -617,21 +617,21 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_dom restoreValue:toRestore];
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp bounds:(id<ORIntRange>)b
+-(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp bounds:(id<ORIntRange>)b
 {
    self = [self initCPIntVarCore: cp low: [b low] up: [b up]];
    _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: [b low] up: [b up]];
    return self;
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CP>) cp low: (CPInt) low up: (CPInt) up
+-(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp low: (CPInt) low up: (CPInt) up
 {
     self = [self initCPIntVarCore: cp low:low up:up];
     _dom = [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:low up:up];
     return self;
 }
 
--(CPIntVarI*) initCPIntVarView: (id<CP>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x
+-(CPIntVarI*) initCPIntVarView: (id<CPSolver>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x
 {
    self = [self initCPIntVarCore: cp low: low up: up];
    id<CPIntVarNotifier> xDeg = [x delegate];
@@ -652,14 +652,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 
-+(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(id<ORIntRange>)b
++(CPIntVarI*)    initCPIntVar: (id<CPSolver>)fdm bounds:(id<ORIntRange>)b
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:b];
    x->_isBool = ([b low] == 0 && [b up] == 1);
    return x;
 }
 
-+(CPIntVarI*) initCPIntVar: (id<CP>) fdm low: (CPInt) low up: (CPInt) up
++(CPIntVarI*) initCPIntVar: (id<CPSolver>) fdm low: (CPInt) low up: (CPInt) up
 {
    CPIntVarI* x = nil;
    if (low==0 && up==1)
@@ -669,7 +669,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    x->_isBool = (low == 0 && up==1);
    return x;
 }
-+(CPIntVarI*) initCPBoolVar: (id<CP>) fdm
++(CPIntVarI*) initCPBoolVar: (id<CPSolver>) fdm
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
    x->_isBool = YES;

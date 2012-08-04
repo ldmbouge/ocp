@@ -16,7 +16,7 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
-void labelFF(id<CP> cp,id<CPIntVarArray> x)
+void labelFF(id<CPSolver> cp,id<CPIntVarArray> x)
 {
    id<ORIntRange> R = RANGE(cp,[x low],[x up]);
    [ORControl forall: R
@@ -29,7 +29,7 @@ void labelFF(id<CP> cp,id<CPIntVarArray> x)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CP> cp = [CPFactory createSolver];  
+      id<CPSolver> cp = [CPFactory createSolver];  
       int n = 8;
       id<ORIntRange> R = RANGE(cp,1,n);
       id<ORIntRange> D = RANGE(cp,0,n-1);

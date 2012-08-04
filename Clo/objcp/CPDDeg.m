@@ -16,7 +16,7 @@
 @implementation CPDDeg {
    CPEngineI*    _solver;
 }
--(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars
+-(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];

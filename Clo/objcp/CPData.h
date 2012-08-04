@@ -73,7 +73,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 -(CPInt)  min;
 -(CPInt)  max;
 -(CPInt)  value;
--(id<CP>) cp;
+-(id<CPSolver>) cp;
 -(void) bounds: (CPBounds*) bnd;
 -(CPInt) domsize;
 -(CPInt)countFrom:(CPInt)from to:(CPInt)to;

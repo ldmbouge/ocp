@@ -19,7 +19,7 @@
 
 int main(int argc, const char * argv[])
 {
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    ORInt nbConfigs = 6;
    id<ORIntRange> Configs = RANGE(cp,1,nbConfigs);
    ORInt choiceConfig = 1;

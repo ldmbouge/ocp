@@ -123,7 +123,7 @@
       return ORSuspend;
    _posted = true;
    
-   id<CP> cp = [_x cp];
+   id<CPSolver> cp = [_x cp];
    _low = [_x low];
    _up = [_x up];
 

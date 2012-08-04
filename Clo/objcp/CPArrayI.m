@@ -21,9 +21,9 @@
 #import "ORFoundation/ORArrayI.h"
 
 @implementation ORIdArrayI (CP)
--(id<CP>) cp 
+-(id<CPSolver>) cp 
 {
-   return (id<CP>)_tracker;
+   return (id<CPSolver>)_tracker;
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
@@ -33,9 +33,9 @@
 @end
 
 @implementation ORIdMatrixI (CP)
--(id<CP>) cp
+-(id<CPSolver>) cp
 {
-   return (id<CP>)_tracker;
+   return (id<CPSolver>)_tracker;
 }
 @end
 
@@ -46,7 +46,7 @@
 
 
 @implementation CPTRIntArrayI 
--(CPTRIntArrayI*) initCPTRIntArray: (id<CP>) cp range: (id<ORIntRange>) R
+-(CPTRIntArrayI*) initCPTRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R
 {
     self = [super init];
     _cp = cp;
@@ -105,7 +105,7 @@
     [rv appendString:@"]"];
     return rv;   
 }
--(id<CP>) cp
+-(id<CPSolver>) cp
 {
     return _cp;
 }
@@ -152,7 +152,7 @@
 
 @implementation CPTRIntMatrixI
 
--(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+-(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     self = [super init];
     _cp = cp;  
@@ -181,7 +181,7 @@
     return self;
 }
 
--(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+-(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
     self = [super init];
     _cp = cp;  
@@ -306,7 +306,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    [self descriptionAux: i depth:0 string: rv];
    return rv;
 }
--(id<CP>) cp
+-(id<CPSolver>) cp
 {
     return _cp;
 }
@@ -365,7 +365,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 
 @implementation CPIntMatrixI
 
--(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+-(CPIntMatrixI*) initCPIntMatrix:(id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     self = [super init];
     _cp = cp;  
@@ -395,7 +395,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     return self;
 }
 
--(CPIntMatrixI*) initCPIntMatrix:(id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+-(CPIntMatrixI*) initCPIntMatrix:(id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    self = [super init];
    _cp = cp;
@@ -510,7 +510,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     [self descriptionAux: 0 string: rv];
     return rv;   
 }
--(id<CP>) cp
+-(id<CPSolver>) cp
 {
     return _cp;
 }

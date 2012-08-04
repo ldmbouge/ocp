@@ -16,9 +16,9 @@
 @interface CPFirstFail : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>  _vars;
    id<CPVarArray> _rvars;
-   id<CP>            _cp;
+   id<CPSolver>            _cp;
 }
--(CPFirstFail*)initCPFirstFail:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+-(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<CPVarArray>)t;

@@ -76,7 +76,7 @@
    _posted = true;
    id<ORIntRange> BR = [_binSize range];
    id<ORIntRange> IR = [_item range];
-   id<CP> cp = [_item cp];
+   id<CPSolver> cp = [_item cp];
    
    ORInt brlow = [BR low];
    ORInt brup = [BR up];

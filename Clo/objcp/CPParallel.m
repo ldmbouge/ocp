@@ -285,7 +285,7 @@
 -(void)setupAndGo:(NSData*)root forCP:(SemCP*)cp searchWith:(CPVirtualClosure)body 
 {
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:[cp controller] explorer:[cp explorer] onPool:_queue];
-   [cp nestedSolveAll:^() {  [self setupWork:root forCP:cp]; body((id<CP>)cp);} 
+   [cp nestedSolveAll:^() {  [self setupWork:root forCP:cp]; body((id<CPSolver>)cp);} 
            onSolution:nil 
                onExit:nil
               control:parc];

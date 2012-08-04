@@ -23,7 +23,7 @@
 
 +(void) var: (CPIntVarI*) x
 {
-    id<CP> cp = [x cp];
+    id<CPSolver> cp = [x cp];
     while (!bound(x)) {
        CPInt m = minDom(x);
        [cp try: ^() {
@@ -45,7 +45,7 @@
 
 +(void) array: (id<CPIntVarArray>) x orderedBy: (CPInt2Int) orderedBy
 {
-    id<CP> cp = [x cp];
+    id<CPSolver> cp = [x cp];
     CPI* cpi = (CPI*) cp;
     CPSelect* select = [cpi selectInRange: RANGE(cp,[x low],[x up])
                               suchThat: ^bool(CPInt i) { return [[x at: i] bound]; }
@@ -65,7 +65,7 @@
 {
    id<CPIntVarArray> av = [h allIntVars];
    NSLog(@"Heuristic on: <%lu> %@",[av count],av);
-   id<CP> cp = [av cp];
+   id<CPSolver> cp = [av cp];
    CPI* cpi = (CPI*) cp;
    CPSelect* select = [cpi selectInRange: RANGE(cp,[av low],[av up])
                                 suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }

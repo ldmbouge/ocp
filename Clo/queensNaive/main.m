@@ -28,7 +28,7 @@ int main (int argc, const char * argv[])
 {
    int n = 5;
    CPRange R = (CPRange){0,n-1};
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];

@@ -18,7 +18,7 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CP> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       const char* fn = "market.dta";
       FILE* dta = fopen(fn,"r");
       int n,m,z;

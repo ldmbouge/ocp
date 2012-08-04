@@ -55,7 +55,7 @@ BOOL refresh(CPVarInfo* vi)
 @end
 
 @implementation CPMonitor
--(id)initCPMonitor:(id<CP>)cp vars:(id<CPVarArray>)allVars
+-(id)initCPMonitor:(id<CPSolver>)cp vars:(id<CPVarArray>)allVars
 {
    self = [super initCPCoreConstraint];
    _cp = cp;

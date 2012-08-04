@@ -18,7 +18,7 @@
 
 int main (int argc, const char * argv[])
 {
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,9);
    id<ORIntRange> D = RANGE(cp,0,1);
    id<CPIntVarArray> item = [CPFactory intVarArray:cp range: R domain: D];

@@ -23,7 +23,7 @@
 //3 fails
 //199 propagations
 
-id<ORIntSet> knightMoves(id<CP> cp,int i) 
+id<ORIntSet> knightMoves(id<CPSolver> cp,int i) 
 {
     id<ORIntSet> S = [CPFactory intSet: cp];
     if (i % 8 == 1) {
@@ -55,7 +55,7 @@ void printCircuit(id<CPIntVarArray> jump)
 }
 int main (int argc, const char * argv[])
 {
-    id<CP> cp = [CPFactory createSolver];
+    id<CPSolver> cp = [CPFactory createSolver];
     id<ORIntRange> R = RANGE(cp,1,64);
    id<ORIntRange> D = RANGE(cp,1,64);
     id<CPIntVarArray> jump = [CPFactory intVarArray:cp range: R domain: D];

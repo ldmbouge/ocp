@@ -15,7 +15,7 @@
 
 @implementation CPWDeg
 
--(CPWDeg*)initCPWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars
+-(CPWDeg*)initCPWDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];

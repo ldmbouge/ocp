@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
       CPInt b = (v*(v-1)*l)/(k*(k-1));
       CPInt r = l*(v-1)/(k-1);
       
-      id<CP> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       id<ORIntRange> Rows = RANGE(cp,1,v);
       id<ORIntRange> Cols = RANGE(cp,1,b);
      

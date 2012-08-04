@@ -34,7 +34,7 @@ int main (int argc, const char * argv[])
     int r, c, v;
     fscanf(f,"%d \n",&nb);
     printf("number of entries %d \n",nb);
-    id<CP> cp = [CPFactory createSolver];
+    id<CPSolver> cp = [CPFactory createSolver];
     id<ORIntRange> R = RANGE(cp,1,9);
     id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
     id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];

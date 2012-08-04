@@ -69,7 +69,7 @@
 -(id<CPSolution>) solution;
 @end
 
-@interface CPI : CoreCPI<CP> {
+@interface CPI : CoreCPI<CPSolver> {
    DFSTracer* _tracer;
 }
 -(CPI*)                   init;

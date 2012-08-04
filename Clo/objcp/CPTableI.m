@@ -19,7 +19,7 @@
 
 @implementation CPTableI
 
--(CPTableI*) initCPTableI: (id<CP>) cp arity: (CPInt) arity
+-(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (CPInt) arity
 {
     self = [super init];    
     _cp = cp;
@@ -166,7 +166,7 @@
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
-    id<CP> cp = [[aDecoder decodeObject] retain];
+    id<CPSolver> cp = [[aDecoder decodeObject] retain];
     CPInt arity;
     [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&arity];
     [self initCPTableI: cp arity: arity];

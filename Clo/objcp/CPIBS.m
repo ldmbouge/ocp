@@ -148,7 +148,7 @@
    NSMutableDictionary*  _impacts;
 }
 
--(id)initCPIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars
+-(id)initCPIBS:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    _cp = cp;

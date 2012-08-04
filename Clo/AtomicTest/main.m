@@ -145,7 +145,7 @@ void foo() {
 
 int main (int argc, const char * argv[])
 {
-    id<CP> cp = [CPFactory createSolver];
+    id<CPSolver> cp = [CPFactory createSolver];
     id<ORVoidInformer> informer = [ORConcurrency voidInformer];
     NSMutableArray* array = [[NSMutableArray alloc] init];
     for(CPInt i = 1; i <= 10; i++)
@@ -206,7 +206,7 @@ int main (int argc, const char * argv[])
 //   foo();   
    
     /*
-    id<CP> cp = [CPFactory createSolver];
+    id<CPSolver> cp = [CPFactory createSolver];
     CPRange R = (CPRange){1,10};
     id<CPIntVar> x = [CPFactory intVar: cp domain: R];
     id<CPIntSet> S = [CPFactory intSet: cp];

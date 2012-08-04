@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
    
-      id<CP> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       enum Men   { Richard = 1,James = 2,John = 3,Hugh = 4,Greg = 5 };
       enum Women { Helen = 1,Tracy = 2, Linda = 3,Sally = 4,Wanda = 5 };
       id<ORIntRange> RMen   = RANGE(cp,1,5);

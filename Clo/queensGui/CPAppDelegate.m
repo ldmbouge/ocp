@@ -35,7 +35,7 @@
    _board = [[NSBoardController alloc] initBoardController:_theView];
 }
 
--(void)visualize:(id<CPIntVarArray>)x on:(id<CP>)cp
+-(void)visualize:(id<CPIntVarArray>)x on:(id<CPSolver>)cp
 {
    CPBounds dom;
    [[x at: [x low]] bounds:&dom];
@@ -69,7 +69,7 @@
 {
    int n = 8;
    CPRange R = (CPRange){1,n};
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 

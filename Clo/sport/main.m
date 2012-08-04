@@ -27,7 +27,7 @@ int main(int argc, const char * argv[])
 {
    CPLong startTime = [CPRuntimeMonitor cputime];
    CPInt n = 14;
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> Periods = RANGE(cp,1,n/2);
    id<ORIntRange> Teams = RANGE(cp,1,n);
    id<ORIntRange> Weeks = RANGE(cp,1,n-1);

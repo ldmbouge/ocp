@@ -19,7 +19,7 @@
 int main (int argc, const char * argv[])
 {
    const CPInt n = 128;  // 128 -> 494 fails
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    [cp solve: ^{
@@ -46,7 +46,7 @@ int main (int argc, const char * argv[])
 int main (int argc, const char * argv[])
 {
    const CPInt n = 128;  // 128 -> 494 fails
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<ORIntSet> RS = [ORFactory intSet: cp];
    [R iterate: ^(ORInt e) { [RS insert: e]; } ];

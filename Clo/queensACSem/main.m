@@ -21,7 +21,7 @@
 int main (int argc, const char * argv[])
 {
    int n = 12;
-   id<CP> cp = [CPFactory createSemSolver];
+   id<CPSolver> cp = [CPFactory createSemSolver];
    id<ORIntRange> R = RANGE(cp,1,n);
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
    id<CPIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
@@ -35,7 +35,7 @@ int main (int argc, const char * argv[])
                 [cp add: [CPFactory alldifferent: xn]];
             }   
              using: 
-           ^void(id<CP> cp) {
+           ^void(id<CPSolver> cp) {
                id<CPIntVarArray> y = [cp virtual:x]; 
                [CPLabel array: y orderedBy: ^CPInt(CPInt i) { return [[y at:i] domsize];}];              
                 @synchronized(nbSolutions) {

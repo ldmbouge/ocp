@@ -111,22 +111,22 @@ enum CPVarClass {
    enum CPVarClass                   _vc:16;
    CPUInt                        _isBool:16;
    CPUInt                             _name;
-   id<CP>                               _cp;
+   id<CPSolver>                               _cp;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    CPTriggerMap*                  _triggers;
    id<CPIntVarNotifier,NSCoding>      _recv;
 }
--(CPIntVarI*) initCPIntVarCore:(id<CP>) cp low:(CPInt)low up:(CPInt)up;
--(CPIntVarI*) initCPIntVarView: (id<CP>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x;
+-(CPIntVarI*) initCPIntVarCore:(id<CPSolver>) cp low:(CPInt)low up:(CPInt)up;
+-(CPIntVarI*) initCPIntVarView: (id<CPSolver>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(void) setId:(CPUInt)name;
 -(CPUInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) solver;
--(id<CP>) cp;
+-(id<CPSolver>) cp;
 -(id<ORTracker>) tracker;
 -(NSSet*)constraints;
 -(CPBitDom*)flatDomain;
@@ -189,9 +189,9 @@ enum CPVarClass {
 -(ORStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
-+(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(id<ORIntRange>)b;
-+(CPIntVarI*)    initCPIntVar: (id<CP>)fdm low:(CPInt)low up:(CPInt)up;
-+(CPIntVarI*)    initCPBoolVar:(id<CP>)fdm;
++(CPIntVarI*)    initCPIntVar: (id<CPSolver>)fdm bounds:(id<ORIntRange>)b;
++(CPIntVarI*)    initCPIntVar: (id<CPSolver>)fdm low:(CPInt)low up:(CPInt)up;
++(CPIntVarI*)    initCPBoolVar:(id<CPSolver>)fdm;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withShift:(CPInt)b;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(CPInt)a;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(CPInt)a andShift:(CPInt)b;

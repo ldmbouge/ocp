@@ -16,7 +16,7 @@
 @implementation CPFirstFail {
    CPEngineI*    _solver;
 }
--(CPFirstFail*)initCPFirstFail:(id<CP>)cp restricted:(id<CPVarArray>)rvars
+-(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];

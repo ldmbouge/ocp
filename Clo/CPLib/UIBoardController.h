@@ -29,5 +29,5 @@
 -(void)neverStop;
 -(void)toggleGrid:(id)grid row:(NSInteger)r col:(NSInteger)c to:(enum CPDomValue)dv;
 -(void)drawRect:(CGRect)dirtyRect inView:(id)view;
--(void)watchSearch:(id<CP>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
+-(void)watchSearch:(id<CPSolver>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end

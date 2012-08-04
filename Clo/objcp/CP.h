@@ -32,7 +32,7 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol CP <ORSolutionProtocol,ORTracker>
+@protocol CPSolver <ORSolutionProtocol,ORTracker>
 
 -(id<ORSearchController>) controller;
 

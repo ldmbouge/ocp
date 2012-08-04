@@ -17,11 +17,11 @@
    id<CPVarArray>  _vars;
    id<CPVarArray> _rvars;
    CPUInt*          _map; 
-   id<CP>            _cp;
+   id<CPSolver>            _cp;
    CPULong          _nbv;
    NSSet**           _cv;
 }
--(id)initCPDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+-(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<CPVarArray>)t;

@@ -28,7 +28,7 @@ int main (int argc, const char * argv[])
 {
    CPRange R = (CPRange){1,3};
    CPRange D = (CPRange){1,3};
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
    id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,36}];
@@ -80,7 +80,7 @@ int main (int argc, const char * argv[])
 {
    CPRange R = (CPRange){1,3};
    CPRange D = (CPRange){1,3};
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
    id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,100}];
@@ -149,7 +149,7 @@ int main (int argc, const char * argv[])
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
    }
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> Cities = RANGE(cp,0,nbCities-1);
 
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
@@ -249,7 +249,7 @@ int main (int argc, const char * argv[])
       fscanf(dta, "%d",&tmp);
    }
    CPRange Cities = (CPRange){0,nbCities-1};
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
    for(CPInt i = 0; i < nbCities; i++) {
       for(CPInt j = 0; j < nbCities; j++) {

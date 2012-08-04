@@ -20,7 +20,7 @@
 
 @interface CPTableI : NSObject<CPTable,NSCoding> {
     @package
-    id<CP>  _cp;
+    id<CPSolver>  _cp;
     CPInt   _arity; 
     CPInt   _nb;
     CPInt   _size;
@@ -31,7 +31,7 @@
     CPInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
     CPInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
 }
--(CPTableI*) initCPTableI: (id<CP>) cp arity: (CPInt) arity;
+-(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (CPInt) arity;
 -(void) dealloc;
 -(void) insert: (CPInt) i : (CPInt) j : (CPInt) k;
 -(void) addEmptyTuple;

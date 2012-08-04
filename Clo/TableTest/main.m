@@ -16,7 +16,7 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPlabel.h"
 
-id<ORIntSet> knightMoves(id<CP> cp,int i) 
+id<ORIntSet> knightMoves(id<CPSolver> cp,int i) 
 {
     id<ORIntSet> S = [CPFactory intSet: cp];
     if (i % 8 == 1) {
@@ -49,7 +49,7 @@ void printCircuit(id<CPIntVarArray> jump)
 
 int main (int argc, const char * argv[])
 {
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = [ORFactory intRange: cp low: 0 up: 2];
    id<ORIntRange> D = [ORFactory intRange: cp low: 0 up: 30];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];

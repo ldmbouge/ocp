@@ -18,7 +18,7 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CP> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       CPInt fixed = 30;
       CPInt maxCost = 100;
       id<ORIntRange> Stores     = RANGE(cp,0,9);

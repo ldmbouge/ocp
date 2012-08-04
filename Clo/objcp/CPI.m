@@ -191,7 +191,7 @@
 
 -(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
 {
-   return [[CPSelect alloc] initCPSelect: (id<CP>)self
+   return [[CPSelect alloc] initCPSelect: (id<CPSolver>)self
                                withRange: range
                               suchThat: filter
                                orderedBy: order];    

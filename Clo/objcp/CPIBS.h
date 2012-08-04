@@ -20,9 +20,9 @@
 @interface CPIBS : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>   _vars;
    id<CPVarArray>  _rvars;
-   id<CP>             _cp;
+   id<CPSolver>             _cp;
 }
--(id)initCPIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
+-(id)initCPIBS:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<CPVarArray>)t;

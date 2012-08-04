@@ -94,7 +94,7 @@ void traverseTree() {
    int x;
    initContinuationLibrary(&x);
    ORDFSController* cp = [[ORDFSController alloc] init];
-   id<CP> m = [CPFactory createSolver];
+   id<CPSolver> m = [CPFactory createSolver];
    int* cnt = NSAllocateCollectable(sizeof(CPInt), NSCollectorDisabledOption);
    *cnt = 0;
    const CPInt nbv = 8;

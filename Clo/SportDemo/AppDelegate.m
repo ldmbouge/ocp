@@ -49,7 +49,7 @@
 {
    dispatch_async(_queue,cl);
 }
--(void)visualize:(id<CPIntVarMatrix>) game teams: (id<CPIntVarMatrix>) teams on: (id<CP>)cp
+-(void)visualize:(id<CPIntVarMatrix>) game teams: (id<CPIntVarMatrix>) teams on: (id<CPSolver>)cp
 {
    id<ORIntRange> Periods = [game range: 0];
    id<ORIntRange> Weeks = [game range: 1];
@@ -105,7 +105,7 @@
    CPLong startTime = [CPRuntimeMonitor cputime];
    CPInt n = 14;
     
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> Periods = RANGE(cp,1,n/2);
    id<ORIntRange> Teams = RANGE(cp,1,n);
    id<ORIntRange> Weeks = RANGE(cp,1,n-1);

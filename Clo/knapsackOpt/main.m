@@ -57,7 +57,7 @@ int main(int argc, const char * argv[])
          printf(" <= %d\n",b[i]);
       }
       
-      id<CP> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       id<ORIntRange> N = RANGE(cp,0,n-1);
       
       id<CPIntVarArray> x = ALL(CPIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(cp,0,1)]);

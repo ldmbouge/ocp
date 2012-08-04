@@ -18,20 +18,20 @@
 #import <objcp/CPData.h>
 
 @interface CPFactory : NSObject
-+(id<CP>) createSolver;
-+(id<CP>) createSemSolver;
-+(id<CP>) createRandomizedSolver;
-+(id<CP>) createDeterministicSolver;
-+(id<CP>) createSemSolverFor:(id<CPEngine>)fdm;
++(id<CPSolver>) createSolver;
++(id<CPSolver>) createSemSolver;
++(id<CPSolver>) createRandomizedSolver;
++(id<CPSolver>) createDeterministicSolver;
++(id<CPSolver>) createSemSolverFor:(id<CPEngine>)fdm;
 +(void) shutdown;
-+(id<CPHeuristic>) createDDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
-+(id<CPHeuristic>) createWDeg:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
-+(id<CPHeuristic>) createIBS:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
-+(id<CPHeuristic>)createFF:(id<CP>)cp restricted:(id<CPVarArray>)rvars;
-+(id<CPHeuristic>) createDDeg:(id<CP>)cp;
-+(id<CPHeuristic>) createWDeg:(id<CP>)cp;
-+(id<CPHeuristic>) createIBS:(id<CP>)cp;
-+(id<CPHeuristic>)createFF:(id<CP>)cp;
++(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createIBS:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>)createFF:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp;
++(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp;
++(id<CPHeuristic>) createIBS:(id<CPSolver>)cp;
++(id<CPHeuristic>)createFF:(id<CPSolver>)cp;
 @end;
 
 void failNow();
@@ -44,56 +44,56 @@ void failNow();
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (CPInt) b;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a;
 +(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (CPInt) a shift:(CPInt) b;
-+(id<CPIntVar>)boolVar: (id<CP>)cp;
++(id<CPIntVar>)boolVar: (id<CPSolver>)cp;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
-+(id<CPIntArray>) intArray: (id<CP>) cp range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<CPIntArray>) intArray: (id<CP>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
-+(id<CPIntArray>) intArray: (id<CP>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<CPIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;
++(id<CPIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
++(id<CPIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 
-+(id<CPVarArray>) varArray: (id<CP>) cp range: (id<ORIntRange>) range;
++(id<CPVarArray>) varArray: (id<CPSolver>) cp range: (id<ORIntRange>) range;
 
 
-+(id<CPIntVarArray>) arrayCPIntVar: (id<CP>) cp range: (id<ORIntRange>) range with:(id<CPIntVar>(^)(CPInt)) clo;
++(id<CPIntVarArray>) arrayCPIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<CPIntVar>(^)(CPInt)) clo;
 
-+(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
-+(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (id<ORIntRange>) range;
-+(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (id<ORIntRange>) range with:(id<CPIntVar>(^)(CPInt)) clo;
-+(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
-+(id<CPIntVarArray>) intVarArray: (id<CP>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
++(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
++(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range;
++(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<CPIntVar>(^)(CPInt)) clo;
++(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<CPIntVar>(^)(CPInt,CPInt)) clo;
++(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo;
 +(id<CPIntVarArray>) flattenMatrix:(id<CPIntVarMatrix>)m;
 
-+(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
-+(id<CPIntVarMatrix>) intVarMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;
-+(id<CPIntVarMatrix>) boolVarMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
-+(id<CPIntVarMatrix>) boolVarMatrix: (id<CP>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
++(id<CPIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
++(id<CPIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 
-+(id<CPIntMatrix>) intMatrix: (id<CP>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
++(id<CPIntMatrix>) intMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 
-+(id<ORIntSet>) intSet: (id<CP>) cp;
-+(id<ORInformer>) informer: (id<CP>) cp;
-+(id<ORVoidInformer>) voidInformer: (id<CP>) cp;
-+(id<ORIntInformer>) intInformer: (id<CP>) cp;
-+(id<ORBarrier>)  barrier: (id<CP>) cp value: (CPInt) nb;
++(id<ORIntSet>) intSet: (id<CPSolver>) cp;
++(id<ORInformer>) informer: (id<CPSolver>) cp;
++(id<ORVoidInformer>) voidInformer: (id<CPSolver>) cp;
++(id<ORIntInformer>) intInformer: (id<CPSolver>) cp;
++(id<ORBarrier>)  barrier: (id<CPSolver>) cp value: (CPInt) nb;
 
-+(id<CPTable>) table: (id<CP>) cp arity: (int) arity;
++(id<CPTable>) table: (id<CPSolver>) cp arity: (int) arity;
 
-+(id<CPTRIntArray>)  TRIntArray: (id<CP>) cp range: (id<ORIntRange>) R;
-+(id<CPTRIntMatrix>) TRIntMatrix: (id<CP>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
++(id<CPTRIntArray>)  TRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R;
++(id<CPTRIntMatrix>) TRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c;
 
-+(id<CPRandomStream>) randomStream: (id<CP>) cp ;
-+(id<CPZeroOneStream>) zeroOneStream: (id<CP>) cp ;
-+(id<CPUniformDistribution>) uniformDistribution: (id<CP>) cp range: (id<ORIntRange>) r;
++(id<CPRandomStream>) randomStream: (id<CPSolver>) cp ;
++(id<CPZeroOneStream>) zeroOneStream: (id<CPSolver>) cp ;
++(id<CPUniformDistribution>) uniformDistribution: (id<CPSolver>) cp range: (id<ORIntRange>) r;
 @end
 
 @interface CPFactory (expression)
 +(id<CPExpr>) exprAbs: (id<CPExpr>) op;
 +(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs;
-+(id<CPExpr>) sum: (id<CP>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<CPRelation>) or: (id<CP>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<CPExpr>) sum: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<CPRelation>) or: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 

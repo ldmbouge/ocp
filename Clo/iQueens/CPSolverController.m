@@ -42,7 +42,7 @@
    return self;
 }
 
--(void)visualize:(id<CPIntVarArray>)x on:(id<CP>)cp
+-(void)visualize:(id<CPIntVarArray>)x on:(id<CPSolver>)cp
 {
    UIBoardController* board = [_view1 boardController];
    CPBounds dom;
@@ -77,7 +77,7 @@
 {
    int n = 8;
    CPRange R = (CPRange){1,n};
-   id<CP> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];

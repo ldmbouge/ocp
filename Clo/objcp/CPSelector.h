@@ -30,7 +30,7 @@
 @interface CPSelect : NSObject {
     OPTSelect* _select;
 }
--(CPSelect*) initCPSelect: (id<CP>) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*) initCPSelect: (id<CPSolver>) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
 -(CPInt)              min;
 -(CPInt)              max;
@@ -53,7 +53,7 @@
    ORInt2Bool        _filter;
    CPInt2Int         _order;
 }
--(CPSelectMax*) initSelectMax:(id<CP>)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMax*) initSelectMax:(id<CPSolver>)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)         dealloc;
 -(CPInt)        choose;
 @end
