@@ -105,11 +105,11 @@
    return [_solver nbVars];
 }
 
--(CPInt) nbChoices
+-(ORInt) nbChoices
 {
    return [_search nbChoices];
 }
--(CPInt) nbFailures
+-(ORInt) nbFailures
 {
    return [_search nbFailures];
 }
@@ -141,11 +141,11 @@
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    [ORControl forall: S suchThat: filter orderedBy: order do: body];
 }
--(void) forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    [ORControl forall: S suchThat: nil orderedBy: order do: body];
 }
@@ -189,7 +189,7 @@
    //[cstr release]; // [ldm] Why release? [this is tracked anyhow!]
 }
 
--(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
    return [[CPSelect alloc] initCPSelect: (id<CPSolver>)self
                                withRange: range
@@ -264,7 +264,7 @@
 {
    [_solver trackObject:object];
 }
--(CPInt)virtualOffset:(id)obj
+-(ORInt)virtualOffset:(id)obj
 {
    return [_solver virtualOffset:obj];
 }
@@ -295,7 +295,7 @@
    [super dealloc];
 }
 
--(void) label: (CPIntVarI*) var with: (CPInt) val
+-(void) label: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_solver label: var with: val];  
    if (status == ORFailure) {
@@ -305,14 +305,14 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents]; 
 }
--(void) diff: (CPIntVarI*) var with: (CPInt) val
+-(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_solver diff: var with: val];  
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) lthen: (id<CPIntVar>) var with: (CPInt) val
+-(void) lthen: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_solver lthen:var with: val];
    if (status == ORFailure) {
@@ -320,7 +320,7 @@
    }
    [ORConcurrency pumpEvents];
 }
--(void) gthen: (id<CPIntVar>) var with: (CPInt) val
+-(void) gthen: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_solver gthen:var with:val];
    if (status == ORFailure) {
@@ -346,16 +346,16 @@
 {
    [_search limitCondition: condition in:cl];
 }
--(void) limitSolutions: (CPInt) nb in: (ORClosure) cl
+-(void) limitSolutions: (ORInt) nb in: (ORClosure) cl
 {
   [_search limitSolutions: nb in: cl];
 }
 
--(void) limitDiscrepancies: (CPInt) nb in: (ORClosure) cl
+-(void) limitDiscrepancies: (ORInt) nb in: (ORClosure) cl
 {
   [_search limitDiscrepancies: nb in: cl];
 }
--(void) limitFailures: (CPInt) maxFailures in: (ORClosure) cl
+-(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
   [_search limitFailures: maxFailures in: cl];
 }
@@ -550,7 +550,7 @@
            [_search nbChoices],[_search nbFailures],[_solver nbPropagation]];
 }
 
--(void) label: (CPIntVarI*) var with: (CPInt) val
+-(void) label: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_solver label: var with: val];  
    if (status == ORFailure) {
@@ -561,7 +561,7 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents]; 
 }
--(void) diff: (CPIntVarI*) var with: (CPInt) val
+-(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_solver diff: var with: val];  
    if (status == ORFailure)

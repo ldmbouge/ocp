@@ -11,16 +11,15 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/NSObject.h>
-
-#import <objcp/CPData.h>
-#import <objcp/CPArray.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORUtilities/ORUtilities.h>
+#import <objcp/CPData.h>
+#import <objcp/CPArray.h>
+#import <objcp/CPHeuristic.h>
 
 @protocol ORSearchController;
 @protocol CPEngine;
 @protocol ORExplorer;
-@protocol CPHeuristic;
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 
@@ -47,10 +46,10 @@
 
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
--(void)               label: (id<CPIntVar>) var with: (CPInt) val;
--(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
--(void)               lthen: (id<CPIntVar>) var with: (CPInt) val;
--(void)               gthen: (id<CPIntVar>) var with: (CPInt) val;
+-(void)               label: (id<CPIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              search: (ORClosure) body;
@@ -71,23 +70,27 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 
 -(void)                once: (ORClosure) cl;
--(void)      limitSolutions: (CPInt) maxSolutions in: (ORClosure) cl;
--(void)      limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
--(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (ORClosure) cl;
--(void)      limitFailures: (CPInt) maxFailures in: (ORClosure) cl;
--(void)      limitTime: (CPLong) maxTime in: (ORClosure) cl;
--(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
+-(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
+-(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
+-(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+-(void)           limitTime: (CPLong) maxTime in: (ORClosure) cl;
+-(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 
--(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
--(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (CPVoid2Bool) isDone;
+-(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
+-(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
+
+-(void)        addHeuristic: (id<CPHeuristic>) h;
+
 -(id<CPPortal>) portal;
 -(id<ORTracer>) tracer;
 -(id<CPSolution>) solution;
 
+
 @optional -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
 -(id<CPEngine>)       solver;
 -(id<ORExplorer>)   explorer;
--(void)addHeuristic:(id<CPHeuristic>)h;
+
 @optional -(id)virtual:(id)obj;
 @end
 

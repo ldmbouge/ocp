@@ -33,8 +33,8 @@
 -(id)                     initFor:(id<CPEngine>) fdm;
 -(void)                   dealloc;
 -(NSString*)              description;
--(CPInt)                  nbChoices;
--(CPInt)                  nbFailures;
+-(ORInt)                  nbChoices;
+-(ORInt)                  nbFailures;
 -(CPUInt)                 nbPropagation;
 -(CPUInt)                 nbVars;
 -(ORTrail*)               trail;
@@ -51,18 +51,18 @@
 -(void)                push: (id<ORSearchController>) c;
 -(void)      nestedMinimize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
 -(void)      nestedMaximize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
--(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body; 
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
--(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 
 -(id)               virtual: (id) obj;
 -(id<CPEngine>)        solver;
 -(id<ORExplorer>)    explorer;
 -(void)          trackObject:(id)object;
--(CPInt)virtualOffset:(id)obj;
+-(ORInt)virtualOffset:(id)obj;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 -(id<CPPortal>)portal;
@@ -76,10 +76,10 @@
 -(CPI*)                   initFor:(CPEngineI*)fdm;
 -(void)dealloc;
 
--(void)               label: (id<CPIntVar>) var with: (CPInt) val;
--(void)                diff: (id<CPIntVar>) var with: (CPInt) val;
--(void)               lthen: (id<CPIntVar>) var with: (CPInt) val;
--(void)               gthen: (id<CPIntVar>) var with: (CPInt) val;
+-(void)               label: (id<CPIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              search: (ORClosure) body;
@@ -100,10 +100,10 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 
 -(void)                once: (ORClosure) cl;
--(void)      limitSolutions: (CPInt) maxSolutions in: (ORClosure) cl;
+-(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)      limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
--(void)  limitDiscrepancies: (CPInt) maxDiscrepancies in: (ORClosure) cl;
--(void)       limitFailures: (CPInt) maxFailures in: (ORClosure) cl;
+-(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)           limitTime: (CPLong) maxTime in: (ORClosure) cl;
 -(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
@@ -123,8 +123,8 @@
 -(NSData*)packCheckpoint:(Checkpoint*)cp;
 -(ORStatus)installProblem:(CPProblem*)problem;
 
--(void)               label: (id) var with: (CPInt) val;
--(void)                diff: (id) var with: (CPInt) val;
+-(void)               label: (id) var with: (ORInt) val;
+-(void)                diff: (id) var with: (ORInt) val;
 
 
 -(void)              search: (ORClosure) body;
