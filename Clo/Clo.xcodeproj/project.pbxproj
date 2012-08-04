@@ -566,6 +566,8 @@
 		B1B68C83159FC194008BC463 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1C010EC15CDAF7300ED7027 /* CPFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C8C5F414BEBE1C000C5486 /* CPFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1C010ED15CDAFEB00ED7027 /* CPFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C8C5F514BEBE1C000C5486 /* CPFactory.m */; };
+		B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C010EE15CDBC3A00ED7027 /* OREngine.h */; };
+		B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C010EF15CDBC3A00ED7027 /* OREngine.m */; };
 		B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */; };
 		B1C25AA21557540E009CB8A8 /* CPCircuitI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C25AA01557540E009CB8A8 /* CPCircuitI.m */; };
@@ -1764,6 +1766,8 @@
 		B1B68C78159FC16E008BC463 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1B68C7B159FC16E008BC463 /* TestAssignment-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestAssignment-Prefix.pch"; sourceTree = "<group>"; };
 		B1B68C7C159FC16E008BC463 /* TestAssignment.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestAssignment.1; sourceTree = "<group>"; };
+		B1C010EE15CDBC3A00ED7027 /* OREngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OREngine.h; sourceTree = "<group>"; };
+		B1C010EF15CDBC3A00ED7027 /* OREngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OREngine.m; sourceTree = "<group>"; };
 		B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORExplorer.h; sourceTree = "<group>"; };
 		B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCircuitI.h; sourceTree = "<group>"; };
 		B1C25AA01557540E009CB8A8 /* CPCircuitI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCircuitI.m; sourceTree = "<group>"; };
@@ -3008,6 +3012,8 @@
 				5B920EB915A3FDB800AD0820 /* ORDataI.h */,
 				5B920EBA15A3FDB800AD0820 /* ORDataI.m */,
 				5B60E5F115AE9661002FF2B3 /* ORData.m */,
+				B1C010EE15CDBC3A00ED7027 /* OREngine.h */,
+				B1C010EF15CDBC3A00ED7027 /* OREngine.m */,
 				5BFD5A6B15A3BEA900825BC3 /* ORError.h */,
 				5B8B12DB15A3BF8000300385 /* ORError.m */,
 				B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */,
@@ -3604,6 +3610,7 @@
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
+				B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5031,6 +5038,7 @@
 				B139DEA215CCE3F8007D523E /* ORController.m in Sources */,
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
+				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

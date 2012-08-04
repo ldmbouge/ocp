@@ -61,7 +61,7 @@
 -(id)               virtual: (id) obj;
 -(id<CPEngine>)        solver;
 -(id<ORExplorer>)    explorer;
--(void)trackObject:(id)object;
+-(void)          trackObject:(id)object;
 -(CPInt)virtualOffset:(id)obj;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;

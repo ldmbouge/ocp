@@ -197,50 +197,6 @@
                                orderedBy: order];    
 }
 
--(void) add: (id<CPExpr>)lhs leqi: (CPInt)rhs
-{
-   [self add:lhs leq:[CPFactory integer:(id<CP>)self value:rhs]];
-}
--(void) add: (id<CPExpr>)lhs leqi: (CPInt)rhs consistency:(CPConsistency)cons
-{
-   [self add:lhs leq:[CPFactory integer:(id<CP>)self value:rhs] consistency:cons];
-}
-
--(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs
-{
-   ORStatus status = [_solver add: lhs leq:rhs consistency:ValueConsistency];
-   if (status == ORFailure)
-      [_search fail];
-}
--(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons
-{
-   ORStatus status = [_solver add:lhs leq:rhs consistency:cons];
-   if (status == ORFailure)
-      [_search fail];   
-}
--(void) add: (id<CPExpr>)lhs eqi: (CPInt)rhs
-{
-   [self add:lhs equal:[CPFactory integer:(id<CP>)self value:rhs]];
-}
--(void) add: (id<CPExpr>)lhs eqi: (CPInt)rhs consistency:(CPConsistency)cons
-{
-   [self add:lhs equal:[CPFactory integer:(id<CP>)self value:rhs] consistency:cons];
-}
-
--(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs
-{
-   ORStatus status = [_solver add: lhs equal:rhs consistency:ValueConsistency];
-   if (status == ORFailure)
-      [_search fail];
-}
-
--(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons
-{
-   ORStatus status = [_solver add:lhs equal:rhs consistency:cons];
-   if (status == ORFailure)
-      [_search fail];   
-}
-
 -(void) add: (id<CPConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
@@ -250,7 +206,6 @@
    if (status == ORFailure)
       [_search fail];
 }
-
 -(void) add: (id<CPConstraint>) c consistency:(CPConsistency)cons
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
@@ -260,7 +215,6 @@
    if (status == ORFailure)
       [_search fail];
 }
-
 
 -(void) post: (id<CPConstraint>) c
 {
