@@ -564,7 +564,7 @@
 		B1B68C83159FC194008BC463 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1C010EC15CDAF7300ED7027 /* CPFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C8C5F414BEBE1C000C5486 /* CPFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1C010ED15CDAFEB00ED7027 /* CPFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C8C5F514BEBE1C000C5486 /* CPFactory.m */; };
-		B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C010EE15CDBC3A00ED7027 /* OREngine.h */; };
+		B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C010EE15CDBC3A00ED7027 /* OREngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C010EF15CDBC3A00ED7027 /* OREngine.m */; };
 		B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C0E7CE15CD853700DA4F82 /* ORExplorer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */; };
@@ -1788,6 +1788,7 @@
 		B1DA97E713EC714F00BA7244 /* lpsolveri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpsolveri.h; sourceTree = "<group>"; };
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngineI.h; sourceTree = "<group>"; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEngineI.m; sourceTree = "<group>"; };
+		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OREngine.h; path = ORFoundation/OREngine.h; sourceTree = "<group>"; };
 		B1F531D015AED1DB00E89F98 /* CPBinPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBinPacking.h; sourceTree = "<group>"; };
 		B1F531D115AED1DB00E89F98 /* CPBinPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBinPacking.m; sourceTree = "<group>"; };
 		B1F531D815AED4B100E89F98 /* testPacking */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testPacking; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2323,6 +2324,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				B1EADBD215CDC0590032A6C7 /* OREngine.h */,
 				B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */,
 				5BCD970013FE807A00AB2589 /* libgurobi_g++4.2.a */,
 				B1571F0713EEC144007B5E88 /* gurobi_c.h */,
@@ -3605,12 +3607,12 @@
 				B139DEA115CCE3F8007D523E /* ORController.h in Headers */,
 				B11D862715CD8E310019729B /* ORLimit.h in Headers */,
 				B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */,
+				B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */,
 				B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
-				B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

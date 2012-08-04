@@ -13,7 +13,7 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 
-@protocol CPEngine <ORSolver>
+@protocol CPEngine <OREngine,ORSolutionProtocol>
 -(ORStatus) add: (id<CPConstraint>) c;
 -(ORStatus) post: (id<CPConstraint>) c;
 -(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency: (CPConsistency) cons;

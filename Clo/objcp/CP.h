@@ -24,10 +24,6 @@
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 
-@protocol CPSolutionProtocol <NSObject>
--(void)        saveSolution;
--(void)     restoreSolution;
-@end
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -36,7 +32,7 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol CP <CPSolutionProtocol,ORTracker> 
+@protocol CP <ORSolutionProtocol,ORTracker>
 
 -(id<ORSearchController>) controller;
 

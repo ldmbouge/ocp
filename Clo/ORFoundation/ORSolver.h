@@ -8,12 +8,3 @@
 
 #import <Foundation/Foundation.h>
 
-
-@protocol ORSolver <NSObject,ORTracker>
--(void)            saveSolution;
--(void)            restoreSolution;
--(ORStatus)        close;
--(bool)            closed;
--(void)            trackObject:(id)obj;
--(NSMutableArray*) allVars;
-@end
