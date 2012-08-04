@@ -20,17 +20,7 @@
 @protocol ORSolver;
 @protocol CPHeuristic;
 
-@interface CPHStack : NSObject {
-   id<CPHeuristic>* _tab;
-   CPUInt       _sz;
-   CPUInt       _mx;
-}
--(CPHStack*)initCPHStack;
--(void)push:(id<CPHeuristic>)h;
--(id<CPHeuristic>)pop;
--(void)reset;
--(void)applyToAll:(void(^)(id<CPHeuristic> h,NSMutableArray*))closure with:(NSMutableArray*)tab;
-@end
+
 
 
 @interface CPCoreExplorerI : NSObject<ORExplorer> {

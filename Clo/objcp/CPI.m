@@ -25,6 +25,46 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORExplorerI.h>
 
+@implementation CPHeuristicStack
+-(CPHeuristicStack*)initCPHStack
+{
+   self = [super init];
+   _mx  = 2;
+   _tab = malloc(sizeof(id<CPHeuristic>)*_mx);
+   _sz  = 0;
+   return self;
+}
+-(void)push:(id<CPHeuristic>)h
+{
+   if (_sz >= _mx) {
+      _tab = realloc(_tab, _mx << 1);
+      _mx <<= 1;
+   }
+   _tab[_sz++] = h;
+}
+-(id<CPHeuristic>)pop
+{
+   return _tab[--_sz];
+}
+-(void)reset
+{
+   for(CPUInt k=0;k<_sz;k++)
+      [_tab[k] release];
+   _sz = 0;
+}
+-(void)dealloc
+{
+   [self reset];
+   free(_tab);
+   [super dealloc];
+}
+-(void)applyToAll:(void(^)(id<CPHeuristic>,NSMutableArray*))closure with:(NSMutableArray*)av;
+{
+   for(CPUInt k=0;k<_sz;k++)
+      closure(_tab[k],av);
+}
+@end
+
 @interface CPInformerPortal : NSObject<CPPortal> {
    CoreCPI*       _cp;
    CPEngineI* _solver;

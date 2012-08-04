@@ -18,6 +18,18 @@
 #import "ORUtilities/ORUtilities.h"
 #import <objcp/CPTracer.h>
 
+@interface CPHeuristicStack : NSObject {
+   id<CPHeuristic>* _tab;
+   CPUInt       _sz;
+   CPUInt       _mx;
+}
+-(CPHeuristicStack*)initCPHeuristicStack;
+-(void)push:(id<CPHeuristic>)h;
+-(id<CPHeuristic>)pop;
+-(void)reset;
+-(void)applyToAll:(void(^)(id<CPHeuristic> h,NSMutableArray*))closure with:(NSMutableArray*)tab;
+@end
+
 @interface CoreCPI : NSObject  {
    @protected
    id<CPEngine>          _solver;
