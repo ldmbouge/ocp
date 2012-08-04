@@ -19,10 +19,10 @@
 -(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
 -(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 
-static CPStatus assign(CPCircuitI* cstr,int i);
+static ORStatus assign(CPCircuitI* cstr,int i);
 @end
 

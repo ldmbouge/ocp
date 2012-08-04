@@ -69,7 +69,7 @@
 @end
 
 @implementation CPCoreExplorerI
--(id) initCPCoreExplorer: (id<AbstractSolver>) solver withTracer: (id<CPTracer>) tracer
+-(id) initCPCoreExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer
 {
    self = [super init];
    _solver = solver;
@@ -245,7 +245,7 @@
 
 -(void)           optimize: (CPClosure) body 
                       post: (CPClosure) post 
-                canImprove: (CPVoid2CPStatus) canImprove 
+                canImprove: (CPVoid2ORStatus) canImprove 
                     update: (CPClosure) update 
                 onSolution: (CPClosure) onSolution 
                     onExit: (CPClosure) onExit
@@ -270,7 +270,7 @@
 
 -(void) optimize: (CPClosure) body 
             post: (CPClosure) post 
-      canImprove: (CPVoid2CPStatus) canImprove 
+      canImprove: (CPVoid2ORStatus) canImprove 
           update: (CPClosure) update
 {
    [self optimize: body post: post canImprove: canImprove update: update onSolution: NULL onExit: NULL];
@@ -433,7 +433,7 @@
 // DFS style explorer.
 
 @implementation CPExplorerI
--(CPExplorerI*) initCPExplorer: (id<AbstractSolver>) solver withTracer: (id<CPTracer>) tracer
+-(CPExplorerI*) initCPExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer
 {
    self = [super initCPCoreExplorer:solver withTracer:tracer];
    return self;
@@ -557,7 +557,7 @@
 
 @implementation CPSemExplorerI
 
--(CPSemExplorerI*) initCPSemExplorer: (id<AbstractSolver>) solver withTracer:(id<CPTracer>)tracer
+-(CPSemExplorerI*) initCPSemExplorer: (id<ORSolver>) solver withTracer:(id<CPTracer>)tracer
 {
    self = [super initCPCoreExplorer:solver withTracer:tracer];
    return self;
@@ -611,7 +611,7 @@
    return [_tracer captureCheckpoint];
 }
 
--(CPStatus)restoreCheckpoint:(Checkpoint*)cp
+-(ORStatus)restoreCheckpoint:(Checkpoint*)cp
 {
    return [_tracer restoreCheckpoint:cp inSolver:_solver];
 }

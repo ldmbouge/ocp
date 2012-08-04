@@ -81,7 +81,7 @@
     return self;
 }
 
-CPStatus assign(CPCircuitI* cstr,int i)
+ORStatus assign(CPCircuitI* cstr,int i)
 {
     CPInt val = [cstr->_var[i] min];
     CPInt end = [cstr->_succ at: val];
@@ -92,13 +92,13 @@ CPStatus assign(CPCircuitI* cstr,int i)
     [cstr->_length set: l at: start];
     if (l < cstr->_varSize- 1 || cstr->_noCycle)
         return [cstr->_var[end] remove: start];
-    return CPSuspend;
+    return ORSuspend;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     if (_posted)
-        return CPSuspend;
+        return ORSuspend;
     _posted = true;
     
     _low = [_x low];
@@ -130,7 +130,7 @@ CPStatus assign(CPCircuitI* cstr,int i)
         else 
             [_var[i] whenBindDo: ^ { assign(self,i); } onBehalf:self];  
     }
-    return CPSuspend;
+    return ORSuspend;
 }
 
 @end

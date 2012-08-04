@@ -32,7 +32,7 @@
 -(id) initCardinalityCst:(CPSolverI*)m values:(CPRange)r low:(CPInt*)low array:(id)ax up:(CPInt*)up;
 -(id) initCardinalityCst:(id<CPIntVarArray>) ax low: (id<CPIntArray>)low up: (id<CPIntArray>) up;
 -(void)dealloc;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

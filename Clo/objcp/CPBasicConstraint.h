@@ -24,7 +24,7 @@
 }
 -(id) initCPEqualc:(id)x and:(CPInt)c;
 -(void) dealloc;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -36,7 +36,7 @@
 }
 -(id) initCPDiffc:(id)x and:(CPInt)c;
 -(void) dealloc;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -49,7 +49,7 @@
 }
 -(id) initCPEqualBC: (id) x and: (id) y  and: (CPInt) c;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -63,7 +63,7 @@
 }
 -(id) initCPEqualDC: (id) x and: (id) y  and: (CPInt) c;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -80,7 +80,7 @@
    TRIntArray _zs;
 }
 -(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -94,7 +94,7 @@ typedef int (^intgetter) (void) ;
    CPInt  _c;
 }
 -(id) initCPNotEqual: (id) x and: (id) y  and: (CPInt) c;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -105,7 +105,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id) initCPBasicNotEqual:(id)x and:(id) y;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -116,7 +116,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI*  _y;   
 }
 -(id) initCPLEqualBC:(id)x and:(id) y;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -127,7 +127,7 @@ typedef int (^intgetter) (void) ;
    CPInt      _c;
 }
 -(id) initCPLEqualc:(id)x and:(CPInt) c;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -138,7 +138,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _z;
 }
 -(id) initCPMultBC:(id)x times:(id)y equal:(id)z;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -148,7 +148,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPAbsBC:(id)x equal:(id)y;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -158,7 +158,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPAbsDC:(id)x equal:(id)y;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -169,7 +169,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPOrDC:(id)b equal:(id)x or:(id)y;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -180,7 +180,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPAndDC:(id)b equal:(id)x and:(id)y;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -191,7 +191,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPImplyDC:(id)b equal:(id)x imply:(id)y;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -203,7 +203,7 @@ typedef int (^intgetter) (void) ;
 -(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (CPInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -211,8 +211,8 @@ typedef int (^intgetter) (void) ;
 @interface CPIntVarMinimize : CPCoreConstraint
 -(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
 -(void)      dealloc;
--(CPStatus)  post;
--(CPStatus)  check;
+-(ORStatus)  post;
+-(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(CPInt)       primalBound;
 -(NSSet*)allVars;
@@ -222,8 +222,8 @@ typedef int (^intgetter) (void) ;
 @interface CPIntVarMaximize : CPCoreConstraint
 -(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
 -(void)      dealloc;
--(CPStatus)  post;
--(CPStatus)  check;
+-(ORStatus)  post;
+-(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(CPInt)       primalBound;
 -(NSSet*)allVars;

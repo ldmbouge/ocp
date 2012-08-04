@@ -78,9 +78,9 @@
 
 @interface CPOptimizationController : CPDefaultController <NSCopying,CPSearchController> 
 {
-  CPVoid2CPStatus _canImprove;
+  CPVoid2ORStatus _canImprove;
 }
--(id)        initCPOptimizationController: (CPVoid2CPStatus) canImprove;
+-(id)        initCPOptimizationController: (CPVoid2ORStatus) canImprove;
 -(void)      dealloc;
 -(CPInt)     addChoice:(NSCont*) k;
 -(void)      fail;

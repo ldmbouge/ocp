@@ -449,13 +449,13 @@ struct CPVarPair {
    }
    return min(MAXINT,bindUp(ub));
 }
--(CPStatus)postEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+-(ORStatus)postEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
-   // [ldm] This should *never* raise an exception, but return a CPFailure.
+   // [ldm] This should *never* raise an exception, but return a ORFailure.
    switch (_nb) {
       case 0: 
          assert(NO);
-         return CPFailure;
+         return ORFailure;
       case 1: {
          if (_terms[0]._coef == 1) {
             return [fdm post:[CPFactory equalc:_terms[0]._var to:-_indep]];
@@ -466,7 +466,7 @@ struct CPVarPair {
             CPInt nc = - _indep / _terms[0]._coef;   
             CPInt cr = - _indep % _terms[0]._coef;
             if (cr != 0)
-               return CPFailure;
+               return ORFailure;
             else
                return [fdm post:[CPFactory equalc:_terms[0]._var to:nc]];
          }
@@ -520,7 +520,7 @@ struct CPVarPair {
       }
    }
 }
--(CPStatus)postLEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons
+-(ORStatus)postLEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons
 {
    return [fdm post:[CPFactory sum:[self scaledViews] leq:- _indep]];
 }
@@ -785,10 +785,10 @@ struct CPVarPair {
 {
    [super dealloc];
 }
--(CPStatus) post
+-(ORStatus) post
 {
    CPLinear* terms = [CPRNormalizer normalize:_expr solver:_fdm consistency:_c];
-   CPStatus status = CPSuspend;
+   ORStatus status = ORSuspend;
    @try {
       switch ([_expr type]) {
          case CPRBad: assert(NO);
@@ -806,7 +806,7 @@ struct CPVarPair {
             break;
       }
       [terms release];
-      return status ? CPSkip : CPFailure;
+      return status ? ORSkip : ORFailure;
    } @catch(CPFailException* ex) {
       [terms release];
       @throw;

@@ -50,7 +50,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    else
       return d1;
 }
--(CPStatus) post
+-(ORStatus) post
 {
    if (bound(_x)) {
        return [_y bind:[_x min]];
@@ -59,7 +59,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       CPInt cUp  = [_c up];
       CPInt yv   = [_y min];
       CPBounds xb = bounds(_x);
-      CPStatus ok = CPSuspend;
+      ORStatus ok = ORSuspend;
       for(CPInt k=xb.min;k <= xb.max && ok;k++)
          if (k < cLow || k > cUp || [_c at:k] != yv)
             ok = removeDom(_x, k);
@@ -73,7 +73,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          _tab[k - cLow] = (CPEltRecord){k,[_c at:k]};
       qsort(_tab, _sz,sizeof(CPEltRecord),(int(*)(const void*,const void*)) &compareCPEltRecords);
       CPBounds yb = bounds(_y);
-      CPStatus ok = CPSuspend;
+      ORStatus ok = ORSuspend;
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
       for(CPInt k=0;k < _sz && ok;k++) {
@@ -177,7 +177,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 {
    [super dealloc];
 }
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    [_x whenChangePropagate:self];
@@ -186,7 +186,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    for(CPInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVarI*)[_z at:k] whenChangeBoundsPropagate:self];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {

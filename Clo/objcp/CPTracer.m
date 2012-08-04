@@ -451,7 +451,7 @@
    return np;
 }
 
--(CPStatus)restoreCheckpoint:(Checkpoint*)acp inSolver:(id<CPSolver>)fdm
+-(ORStatus)restoreCheckpoint:(Checkpoint*)acp inSolver:(id<CPSolver>)fdm
 {
    //NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
    CPCmdStack* toRestore = [acp commands];
@@ -481,7 +481,7 @@
          }];
          if (!pOk) {
             //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
-            return CPFailure;  
+            return ORFailure;  
          }
          @try {
             [fdm propagate];
@@ -493,17 +493,17 @@
          }
       }
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 
--(CPStatus)restoreProblem:(CPProblem*)p inSolver:(id<CPSolver>)fdm
+-(ORStatus)restoreProblem:(CPProblem*)p inSolver:(id<CPSolver>)fdm
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
    bool ok = [p apply:^bool(id<CPCommand> c) {
       return [c doIt];
    }];
-   if (!ok) return CPFailure;
+   if (!ok) return ORFailure;
    [_cmds pushCommandList:[p theList]];
    assert([_cmds size] == [_trStack size]);
    return [fdm propagate];

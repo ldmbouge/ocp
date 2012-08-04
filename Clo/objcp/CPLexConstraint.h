@@ -23,7 +23,7 @@
 }
 -(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y;
 -(void) dealloc;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

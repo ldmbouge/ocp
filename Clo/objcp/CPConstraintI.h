@@ -31,8 +31,8 @@ typedef enum {
    IMP    _propagate;
 }
 -(CPCoreConstraint*) initCPCoreConstraint;
--(CPStatus) doIt;
--(CPStatus) post;
+-(ORStatus) doIt;
+-(ORStatus) post;
 -(void) propagate;
 -(void) setId:(CPUInt)name;
 -(CPUInt)getId;

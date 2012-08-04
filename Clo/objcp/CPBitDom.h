@@ -33,10 +33,10 @@ enum CPDomClass {
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
 -(CPBoundsDom*)initBoundsDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up;
--(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
--(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
--(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
--(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x;
 -(CPInt)min;
 -(CPInt)max;
 -(CPInt)imin;
@@ -66,7 +66,6 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
    UBType  _updateMin;
    UBType  _updateMax;   
 }
-//-(CPBitDom*)initBitDomFor:(CPTrail*)trail low:(CPInt)low up:(CPInt)up;
 -(CPBitDom*)initBitDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up;
 -(void)dealloc;
 -(bool)get:(CPInt)b;
@@ -78,10 +77,10 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 -(CPInt)findMax:(CPInt)from;
 -(CPInt)regret;
 -(NSString*)description;
--(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
--(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
--(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
--(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(CPInt)toRestore;

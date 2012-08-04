@@ -569,31 +569,31 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     if (_triggers != nil)
         [_triggers loseValEvt:val solver:_fdm];
 }
--(CPStatus) updateMin: (CPInt) newMin
+-(ORStatus) updateMin: (CPInt) newMin
 {
     return [_dom updateMin:newMin for:_recv];
 }
 
--(CPStatus) updateMax: (CPInt) newMax
+-(ORStatus) updateMax: (CPInt) newMax
 {
     return [_dom updateMax:newMax for:_recv];
 }
--(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+-(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
 {
-   CPStatus s = [_dom updateMin:newMin for:_recv];
+   ORStatus s = [_dom updateMin:newMin for:_recv];
    if (s)   s = [_dom updateMax:newMax for:_recv];
    return s;
 }
 
--(CPStatus) bind: (CPInt) val
+-(ORStatus) bind: (CPInt) val
 {
     return [_dom bind:val for:_recv];
 }
--(CPStatus) remove: (CPInt) val
+-(ORStatus) remove: (CPInt) val
 {
     return [_dom remove:val for:_recv];
 }
--(CPStatus) inside:(ORIntSetI*) S
+-(ORStatus) inside:(ORIntSetI*) S
 {
     CPInt m = [self min];
     CPInt M = [self max];
@@ -601,7 +601,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         if ([self member: i] && ![S member: i])
             [self remove: i];
     }
-    return CPSuspend;
+    return ORSuspend;
 }
 
 -(id)snapshot
@@ -802,26 +802,26 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return 1;
 }
--(CPStatus)updateMin: (CPInt) newMin
+-(ORStatus)updateMin: (CPInt) newMin
 {
     return [_dom updateMin: newMin-_b for: _recv];
 }
--(CPStatus)updateMax: (CPInt) newMax
+-(ORStatus)updateMax: (CPInt) newMax
 {
     return [_dom updateMax: newMax-_b for: _recv];
 }
--(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+-(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
 {
-   CPStatus s = [_dom updateMin:newMin-_b for:_recv];
+   ORStatus s = [_dom updateMin:newMin-_b for:_recv];
    if (s)   s = [_dom updateMax:newMax-_b for:_recv];
    return s;
 }
 
--(CPStatus)bind: (CPInt) val
+-(ORStatus)bind: (CPInt) val
 {
     return [_dom bind: val-_b for: _recv];
 }
--(CPStatus) remove: (CPInt) val
+-(ORStatus) remove: (CPInt) val
 {
     return [_dom remove: val-_b for: _recv];
 }
@@ -967,7 +967,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return _a;
 }
--(CPStatus) updateMin: (CPInt) newMin
+-(ORStatus) updateMin: (CPInt) newMin
 {
     CPInt r = (newMin - _b) % _a;
     CPInt om = (newMin - _b)/_a;
@@ -976,7 +976,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     else 
         return [_dom updateMax:om for:_recv]; 
 }
--(CPStatus) updateMax: (CPInt) newMax
+-(ORStatus) updateMax: (CPInt) newMax
 {
     CPInt r = (newMax - _b) % _a;
     CPInt om = (newMax - _b)/_a;
@@ -985,9 +985,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     else 
         return [_dom updateMin:om + (r!=0) for:_recv]; 
 }
--(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+-(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
 {
-   CPStatus s;
+   ORStatus s;
    CPInt tMin = (newMin - _b) / _a;
    CPInt tMax = (newMax - _b) / _a;
    if (_a > 0) {      
@@ -1002,7 +1002,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return s;
 }
 
--(CPStatus)bind: (CPInt) val
+-(ORStatus)bind: (CPInt) val
 {
     CPInt r = (val - _b) % _a;
     if (r != 0)
@@ -1010,7 +1010,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     CPInt ov = (val - _b) / _a; 
     return [_dom bind:ov for:_recv];
 }
--(CPStatus)remove: (CPInt) val
+-(ORStatus)remove: (CPInt) val
 {
    CPInt ov;
    if (_a == -1)
@@ -1019,7 +1019,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       ov = val - _b;
    else {
       CPInt r = (val - _b) % _a;
-      if (r != 0) return CPSuspend;
+      if (r != 0) return ORSuspend;
       ov = (val - _b) / _a; 
    }
    return [_dom remove:ov for:_recv];

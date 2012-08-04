@@ -21,7 +21,7 @@
    UBType* _updateBounds;
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(CPInt) c;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -35,7 +35,7 @@
    UBType*    _updateMax;
 }
 -(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(CPInt) c;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;

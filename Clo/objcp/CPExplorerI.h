@@ -18,7 +18,7 @@
 #import <objcp/CPExplorer.h>
 
 
-@protocol AbstractSolver;
+@protocol ORSolver;
 @protocol CPHeuristic;
 
 @interface CPHStack : NSObject {
@@ -35,14 +35,14 @@
 
 
 @interface CPCoreExplorerI : NSObject<CPExplorer> {
-   id<AbstractSolver> _solver;
+   id<ORSolver> _solver;
    id<CPTracer>       _tracer;
    TRId               _controller;
    CPHStack*          _hStack;
    CPInt          _nbf;
    CPInt          _nbc;   
 }
--(id)            initCPCoreExplorer: (id<AbstractSolver>) solver withTracer: (id<CPTracer>) tracer;
+-(id)            initCPCoreExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer;
 -(void)                   dealloc;
 -(CPInt)              nbChoices;
 -(CPInt)              nbFailures;
@@ -64,12 +64,12 @@
 
 -(void)           optimize: (CPClosure) body 
                       post: (CPClosure) post 
-                canImprove: (CPVoid2CPStatus) canImprove 
+                canImprove: (CPVoid2ORStatus) canImprove 
                     update: (CPClosure) update;
 
 -(void)           optimize: (CPClosure) body 
                       post: (CPClosure) post 
-                canImprove: (CPVoid2CPStatus) canImprove 
+                canImprove: (CPVoid2ORStatus) canImprove 
                     update: (CPClosure) update 
                 onSolution: (CPClosure) onSolution 
                     onExit: (CPClosure) onExit;
@@ -85,7 +85,7 @@
 
 @interface CPExplorerI : CPCoreExplorerI <CPExplorer> {
 }
--(CPExplorerI*)initCPExplorer: (id<AbstractSolver>) solver withTracer: (id<CPTracer>) tracer;
+-(CPExplorerI*)initCPExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer;
 -(void)dealloc;
 // top level calls
 -(void)         search: (CPClosure) body;
@@ -103,13 +103,13 @@
 
 @interface CPSemExplorerI : CPCoreExplorerI<CPExplorer> {
 }
--(CPSemExplorerI*)initCPSemExplorer: (id<AbstractSolver>) solver withTracer: (id<CPTracer>) tracer;
+-(CPSemExplorerI*)initCPSemExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer;
 -(void)dealloc;
 // top level calls
 -(void)             search: (CPClosure) body;
 // combinators
 -(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
--(CPStatus)restoreCheckpoint:(Checkpoint*)cp;
+-(ORStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;
 -(NSData*)captureAndPackProblem;

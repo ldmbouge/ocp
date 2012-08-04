@@ -250,12 +250,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
    [_fdm scheduleAC3:mList];
 }
 
--(CPStatus) updateMin: (uint64) newMin
+-(ORStatus) updateMin: (uint64) newMin
 {
     return [_dom updateMin:newMin for:_recv];
 }
 
--(CPStatus) updateMax: (uint64) newMax
+-(ORStatus) updateMax: (uint64) newMax
 {
     return [_dom updateMax:newMax for:_recv];
 }
@@ -278,12 +278,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom getUp];
 }
 
--(CPStatus) bindUInt64:(uint64)val
+-(ORStatus) bindUInt64:(uint64)val
 {
     return [_dom bind:val for:_recv];
 }
 
--(CPStatus)bind:(unsigned int *)val{
+-(ORStatus)bind:(unsigned int *)val{
     return [_dom bindToPat: val for:_recv];
 }
 

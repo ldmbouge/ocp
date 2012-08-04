@@ -16,10 +16,10 @@
 
 @protocol CPDom <NSObject,NSCopying>
 -(void)dealloc;
--(CPStatus) updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
--(CPStatus) updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
--(CPStatus) bind:(CPInt)val  for:(id<CPIntVarNotifier>)x;
--(CPStatus) remove:(CPInt)val  for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus) bind:(CPInt)val  for:(id<CPIntVarNotifier>)x;
+-(ORStatus) remove:(CPInt)val  for:(id<CPIntVarNotifier>)x;
 
 -(CPInt)min;
 -(CPInt)max;

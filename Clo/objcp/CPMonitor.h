@@ -26,7 +26,7 @@
    id<CPVarArray>        _monVar;
 }
 -(id)initCPMonitor:(id<CP>)cp vars:(id<CPVarArray>)allVars;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSString*)description;
 -(double)reduction;
 -(double)reductionFromRoot;

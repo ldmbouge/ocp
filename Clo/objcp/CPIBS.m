@@ -250,9 +250,9 @@
       CPInt mid = low + (up - low)/2;
       id<CPTracer> tracer = [_cp tracer];
       [tracer pushNode];
-      CPStatus s1 = [_solver lthen:x with:mid+1];
+      ORStatus s1 = [_solver lthen:x with:mid+1];
       [ORConcurrency pumpEvents];
-      if (s1!=CPFailure) {
+      if (s1!=ORFailure) {
          [self dichotomize:x from:low to:mid block:b sac:set];
       } else { 
          // [ldm] We know that x IN [l..mid] leads to an inconsistency. -> record a SAC.
@@ -260,9 +260,9 @@
       }
       [tracer popNode];
       [tracer pushNode];
-      CPStatus s2 = [_solver gthen:x with:mid];
+      ORStatus s2 = [_solver gthen:x with:mid];
       [ORConcurrency pumpEvents];
-      if (s2!=CPFailure) {
+      if (s2!=ORFailure) {
          [self dichotomize:x from:mid+1 to:up block:b sac:set];
       } else {
          // [ldm] We know that x IN [mid+1..up] leads to an inconsistency. -> record a SAC.

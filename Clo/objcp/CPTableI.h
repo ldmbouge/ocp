@@ -53,7 +53,7 @@
 -(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (CPTableI*) table;
 -(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 

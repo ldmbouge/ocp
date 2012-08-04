@@ -136,7 +136,7 @@ static void prune(CPAllDifferentDC* ad);
    return self;
 }
 
-static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
+static ORStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
 {
    CPIntVarI** var = ad->_var;
    CPInt nb = ad->_varSize;
@@ -144,14 +144,14 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
    for(CPInt i = 0; i < nb; i++)
       if (i != k) 
          removeDom(var[i], val);
-   return CPSuspend;
+   return ORSuspend;
 }
 
 // post
--(CPStatus) post
+-(ORStatus) post
 {
     if (_posted)
-        return CPSuspend;
+        return ORSuspend;
     _posted = true;
     
     CPInt low = [_x low];
@@ -178,7 +178,7 @@ static CPStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
     for(CPInt k = 0 ; k < _varSize; k++)
         if (![_var[k] bound])
             [_var[k] whenChangePropagate: self];
-    return CPSuspend;
+    return ORSuspend;
 }
 -(void) findValueRange
 {

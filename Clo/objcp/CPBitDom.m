@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPBitDom.h"
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
@@ -119,9 +120,9 @@
    else
       return [NSString stringWithFormat:@"(%d)[%d .. %d]",_sz._val,_min._val,_max._val];
 }
--(CPStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
+-(ORStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
 {
-   if (newMin <= _min._val) return CPSuspend;
+   if (newMin <= _min._val) return ORSuspend;
    if (newMin > _max._val)
       failNow();
    if ([x tracksLoseEvt]) {
@@ -133,11 +134,11 @@
    assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_min, newMin, _trail);
    [x changeMinEvt:nsz];
-   return CPSuspend;
+   return ORSuspend;
 }
--(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
+-(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
-   if (newMax >= _max._val) return CPSuspend;
+   if (newMax >= _max._val) return ORSuspend;
    if (newMax < _min._val)
       failNow();
    if ([x tracksLoseEvt]) {
@@ -149,13 +150,13 @@
    assignTRInt(&_max, newMax, _trail);
    assignTRInt(&_sz, nsz, _trail);
    [x changeMaxEvt:nsz];
-   return CPSuspend;   
+   return ORSuspend;   
 }
--(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val)
       failNow();
-   if (_sz._val == 1 && val == _min._val) return CPSuccess;
+   if (_sz._val == 1 && val == _min._val) return ORSuccess;
    if ([x tracksLoseEvt]) {
       for(CPInt k=_min._val;k<=_max._val;k++)
          if (k != val)
@@ -165,10 +166,10 @@
    assignTRInt(&_max, val, _trail);
    assignTRInt(&_sz, 1, _trail);
    [x bindEvt];
-   return CPSuspend;   
+   return ORSuspend;   
 }
 
--(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val <= _min._val) return [self updateMin:val+1 for:x];
    if (val >= _max._val) return [self updateMax:val-1 for:x];
@@ -474,9 +475,9 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    return s;
 }
 
--(CPStatus) updateMin: (CPInt) newMin for: (id<CPIntVarNotifier>)x
+-(ORStatus) updateMin: (CPInt) newMin for: (id<CPIntVarNotifier>)x
 {
-    if (newMin <= _min._val) return CPSuspend;
+    if (newMin <= _min._val) return ORSuspend;
    if (newMin > _max._val)
       failNow();
     int nbr = countFrom(self,_min._val,newMin-1);
@@ -491,12 +492,12 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
     newMin = findMin(self,newMin);
     assignTRInt(&_min, newMin, _trail);
     [x changeMinEvt:nsz];
-    return CPSuspend;   
+    return ORSuspend;   
 }
 
--(CPStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
+-(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
 {
-   if (newMax >= _max._val) return CPSuspend;
+   if (newMax >= _max._val) return ORSuspend;
    if (newMax < _min._val)
       failNow();
    CPInt nbr = countFrom(self,newMax+1,_max._val);
@@ -510,14 +511,14 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    newMax = findMax(self,newMax);
    assignTRInt(&_max, newMax, _trail);
    [x changeMaxEvt:nsz];
-   return CPSuspend;
+   return ORSuspend;
 }
 
--(CPStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
     if (val < _min._val || val > _max._val)
        failNow();
-    if (_sz._val == 1 && val == _min._val) return CPSuccess;
+    if (_sz._val == 1 && val == _min._val) return ORSuccess;
     if ([x tracksLoseEvt]) {
         for(CPInt k=_min._val;k<=_max._val;k++) 
             if (GETBIT(k) && k != val) 
@@ -527,22 +528,22 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
     assignTRInt(&_max, val, _trail);
     assignTRInt(&_sz, 1, _trail);
     [x bindEvt];
-    return CPSuspend;      
+    return ORSuspend;      
 }
 
--(CPStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
 {
-   if (val < _min._val || val > _max._val) return CPSuspend;
+   if (val < _min._val || val > _max._val) return ORSuspend;
    if (val == _min._val) return _updateMin(self,@selector(updateMin:for:),val+1,x);
    if (val == _max._val) return _updateMax(self,@selector(updateMax:for:),val-1,x);   
    if (GETBIT(val)) {
        resetBit(self,val);
        assignTRInt(&_sz, _sz._val -  1, _trail);
        [x loseValEvt:val];
-       return CPSuspend;
+       return ORSuspend;
    } 
    else
-      return CPSuspend;   
+      return ORSuspend;   
 }
 
 -(void)restoreDomain:(CPBitDom*)toRestore

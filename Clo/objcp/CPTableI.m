@@ -245,7 +245,7 @@ static bool isValidTuple(CPTableCstrI* cstr,CPInt tuple)
     return true;
 }
 
-static CPStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
+static ORStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
 {
     CPTableI* table = cstr->_table;
     CPInt v = table->_column[col][tuple];
@@ -263,10 +263,10 @@ static CPStatus findNewSupport(CPTableCstrI* cstr,CPInt tuple,CPInt col)
             assignTRIntArray(cstr->_currentSupport[col],v,tuple);
         }
     }
-    return CPSuspend;
+    return ORSuspend;
 }
 
-static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
+static ORStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
 {
     CPInt arity = cstr->_arity;
     TRIntArray currentSupport = cstr->_currentSupport[i];
@@ -277,10 +277,10 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
                findNewSupport(cstr,tuple,j);
         tuple = cstr->_table->_nextSupport[i][tuple];
     } while (tuple != -1);
-    return CPSuspend;
+    return ORSuspend;
 }
 
--(CPStatus) initSupport: (CPInt) i
+-(ORStatus) initSupport: (CPInt) i
 {
     int nb = _table->_max[i] - _table->_min[i] + 1;
     _currentSupport[i] = makeTRIntArray(_trail,nb,_table->_min[i]);
@@ -301,13 +301,13 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
             assignTRIntArray(_currentSupport[i],v,tuple);
 //        printf("Support of value %d for column %d is %d \n",v,i,getTRIntArray(_currentSupport[i],v));
     }
-    return CPSuspend;
+    return ORSuspend;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     if (_posted)
-        return CPSuspend;
+        return ORSuspend;
     _posted = true;
     for(CPInt i = 0; i < _arity; i++) {
        [_var[i] updateMin: _table->_min[i]];
@@ -320,7 +320,7 @@ static CPStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
     for(CPInt i = 0; i < _arity; i++) 
         if (![_var[i] bound])
             [_var[i] whenLoseValue: self do: ^(CPInt v) { removeValue(self,i,v); }];
-    return CPSuspend;        
+    return ORSuspend;        
 }
 
 -(void) encodeWithCoder: (NSCoder*) aCoder

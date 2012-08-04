@@ -111,7 +111,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    free(_xb);
    [super dealloc];
 }
--(CPStatus)post
+-(ORStatus)post
 {
    _nb  = [_x count];
    _low = [_x low];
@@ -138,7 +138,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    [_c whenLoseValue:self do:^(CPInt v) {
       [_column[_nb-1] lostCapacity:v knapsack:self];
    }];
-   return CPSuspend;
+   return ORSuspend;
 }
 static inline void outboundLossOn(CPKnapsack* ks,KSNode* n,CPInt v)
 {

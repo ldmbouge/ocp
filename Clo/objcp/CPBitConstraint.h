@@ -24,7 +24,7 @@
 }
 -(id) initCPBitEqual: (id) x and: (id) y ;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -36,7 +36,7 @@
 }
 -(id) initCPBitNOT: (id) x equals: (id) y;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -49,7 +49,7 @@
 }
 -(id) initCPBitAND: (id) x and: (id) y equals: (id) z;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -62,7 +62,7 @@
 }
 -(id) initCPBitOR: (id) x or: (id) y equals: (id) z;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -75,7 +75,7 @@
 }
 -(id) initCPBitXOR: (id) x xor: (id) y equals: (id) z;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -89,7 +89,7 @@
 }
 -(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -102,7 +102,7 @@
 }
 -(id) initCPBitShiftL: (id) x shiftLBy:(int) places equals:(id) y;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -114,7 +114,7 @@
     
 }-(id) initCPBitShiftR: (id) x shiftRBy:(int) places equals:(id) y;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 
@@ -129,7 +129,7 @@
 }
 -(id) initCPBitAdd: (id) x plus:(id) y equals:(id) z withCarryIn:(id) cin andCarryOut:cout;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 @end
 

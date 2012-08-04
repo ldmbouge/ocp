@@ -24,7 +24,7 @@
 }
 -(id) initCPElementBC: (id) x indexCstArray:(id<CPIntArray>) c equal:(id)y;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -37,7 +37,7 @@
 }
 -(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>) c equal:(id)y;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

@@ -19,4 +19,5 @@
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORExpr.h>
 #import <ORFoundation/ORControl.h>
+#import <ORFoundation/ORSolver.h>
 #import <ORFoundation/ORTrail.h>

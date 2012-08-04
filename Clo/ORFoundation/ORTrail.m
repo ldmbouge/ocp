@@ -27,7 +27,7 @@
 }
 -(void)dealloc
 {
-   NSLog(@"CPTrail %p dealloc called...\n",self);
+   NSLog(@"ORTrail %p dealloc called...\n",self);
    for(ORInt k=0;k<_mxSeg;k++)
       if (_seg[k])
          free(_seg[k]);

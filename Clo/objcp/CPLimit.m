@@ -198,7 +198,7 @@
 
 @implementation CPOptimizationController
 
--(id) initCPOptimizationController: (CPVoid2CPStatus) canImprove
+-(id) initCPOptimizationController: (CPVoid2ORStatus) canImprove
 {
   self = [super initCPDefaultController];
   _canImprove = [canImprove copy];
@@ -212,7 +212,7 @@
 }
 -(CPInt) addChoice: (NSCont*) k
 {
-   if (_canImprove() == CPFailure)
+   if (_canImprove() == ORFailure)
       [_controller fail];
    return [_controller addChoice: k];
 }
@@ -222,21 +222,21 @@
 }
 -(void) startTryLeft
 {
-   if (_canImprove() == CPFailure)
+   if (_canImprove() == ORFailure)
       [_controller fail];
    else
       [_controller startTryLeft];  
 }
 -(void) startTryRight
 {
-   if (_canImprove() == CPFailure)
+   if (_canImprove() == ORFailure)
       [_controller fail];
    else
       [_controller startTryRight];
 }
 -(void) startTryallOnFailure
 {
-   if (_canImprove() == CPFailure)
+   if (_canImprove() == ORFailure)
       [_controller fail];
    else
       [_controller startTryallOnFailure];

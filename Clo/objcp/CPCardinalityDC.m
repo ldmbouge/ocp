@@ -17,6 +17,53 @@
 #import "CPError.h"
 
 @implementation CPCardinalityDC
+{
+   id<CPIntVarArray> _x;
+   id<CPIntArray>  _lb;
+   id<CPIntArray>  _ub;
+   
+   CPIntVarI**     _var;
+   CPInt           _varSize;
+   
+   CPInt           _valMin;           // smallest value
+   CPInt           _valMax;           // largest value
+   CPInt           _valSize;          // number of values
+   CPInt*          _low;              // _low[i] = lower bound on value i
+   CPInt*          _up;               // _up[i]  = upper bound on value i
+   
+   CPInt*          _flow;           // the flow for a value
+   CPInt           _nbAssigned;     // number of variable assigned
+   
+   CPInt*          _varMatch;       // the value of a variable
+   CPInt*          _valFirstMatch;  // The first variable matched to a value
+   CPInt*          _nextMatch;      // The next variable matched to a value; indexed by variable id
+   CPInt*          _prevMatch;      // The previous variable matched to a value; indexed by variable id
+   
+   CPULong         _magic;
+   CPULong*        _varMagic;
+   CPULong*        _valueMagic;
+   
+   CPInt           _dfs;
+   CPInt           _component;
+   
+   CPInt*          _varComponent;
+   CPInt*          _varDfs;
+   CPInt*          _varHigh;
+   
+   CPInt*          _valComponent;
+   CPInt*          _valDfs;
+   CPInt*          _valHigh;
+   
+   CPInt           _sinkComponent;
+   CPInt           _sinkDfs;
+   CPInt           _sinkHigh;
+   
+   CPInt*          _stack;
+   CPInt*          _type;
+   CPInt           _top;
+   
+   bool            _posted;
+}
 
 static void initSCC(CPCardinalityDC* card);
 static void findSCC(CPCardinalityDC* card);
@@ -489,55 +536,51 @@ static void findSCCval(CPCardinalityDC* card,CPInt v)
 }
 static void findSCCsink(CPCardinalityDC* card)
 {
-    CPInt* _stack = card->_stack;
-    CPInt* _type = card->_type;
-    CPInt* _valDfs = card->_valDfs;
-    CPInt* _valHigh = card->_valHigh;
-    CPInt* _valComponent = card->_valComponent;
-    CPInt* _low = card->_low;
-    CPInt* _flow = card->_flow;
-    CPInt* _varMatch = card->_varMatch;
-    
-    card->_sinkDfs  = card->_dfs--;
-    card->_sinkHigh = card->_sinkDfs;
-    _stack[card->_top] = MAXINT;
-    _type[card->_top] = 2;
-    card->_top++;
-    // should really iterate over the value
-    for(CPInt i = 0; i < card->_varSize; i++) {
-        CPInt v = _varMatch[i];
-        // borrow
-        if (_flow[v] > _low[v]) {
-            if (!_valDfs[v]) {
-                findSCCval(card,v);
-                if (_valHigh[v] > card->_sinkHigh)
-                    card->_sinkHigh = _valHigh[v];
-            }
-            else if ((_valDfs[v] > card->_sinkDfs) && !_valComponent[v]) {
-                if (_valDfs[v] > card->_sinkHigh)
-                    card->_sinkHigh = _valDfs[v];
-            }
-        }
-    }
-    
-    if (card->_sinkHigh == card->_sinkDfs) {
-        card->_component++;
-        do {
-            CPInt i = _stack[--(card->_top)];
-            int t = _type[card->_top];
-            if (t == 0)
-                card->_varComponent[i] = card->_component;
-            else if (t == 1)
-                card->_valComponent[i] = card->_component;
-            else
-                card->_sinkComponent = card->_component;
-            if (t == 2)
-                break;
-        } while (true);
-    }    
+   CPInt* _stack = card->_stack;
+   CPInt* _type = card->_type;
+   CPInt* _valDfs = card->_valDfs;
+   CPInt* _valHigh = card->_valHigh;
+   CPInt* _valComponent = card->_valComponent;
+   CPInt* _low = card->_low;
+   CPInt* _flow = card->_flow;
+   
+   card->_sinkDfs  = card->_dfs--;
+   card->_sinkHigh = card->_sinkDfs;
+   _stack[card->_top] = MAXINT;
+   _type[card->_top] = 2;
+   card->_top++;
+   
+   for(CPInt v = card->_valMin; v <= card->_valMax; v++) 
+      if (_flow[v] > _low[v]) {
+         if (!_valDfs[v]) {
+            findSCCval(card,v);
+            if (_valHigh[v] > card->_sinkHigh)
+               card->_sinkHigh = _valHigh[v];
+         }
+         else if ((_valDfs[v] > card->_sinkDfs) && !_valComponent[v]) {
+            if (_valDfs[v] > card->_sinkHigh)
+               card->_sinkHigh = _valDfs[v];
+         }
+      }
+   
+   if (card->_sinkHigh == card->_sinkDfs) {
+      card->_component++;
+      do {
+         CPInt i = _stack[--(card->_top)];
+         int t = _type[card->_top];
+         if (t == 0)
+            card->_varComponent[i] = card->_component;
+         else if (t == 1)
+            card->_valComponent[i] = card->_component;
+         else
+            card->_sinkComponent = card->_component;
+         if (t == 2)
+            break;
+      } while (true);
+   }
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     if (!_posted) {
        _posted = true;
@@ -551,7 +594,7 @@ static void findSCCsink(CPCardinalityDC* card)
           if (![_var[i] bound])
              [_var[i] whenChangePropagate: self];
     }
-    return CPSuspend;
+    return ORSuspend;
 }
 
 -(void) printFlows

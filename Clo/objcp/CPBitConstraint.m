@@ -27,7 +27,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     [self propagate];
     if (![_x bound] || ![_y bound]) {
@@ -35,7 +35,7 @@
         [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
     [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void) propagate
@@ -96,7 +96,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     [self propagate];
     if (![_x bound] || ![_y bound]) {
@@ -104,7 +104,7 @@
         [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void) propagate
@@ -184,7 +184,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -193,7 +193,7 @@
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -286,7 +286,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -295,7 +295,7 @@
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -386,7 +386,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -395,7 +395,7 @@
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -494,7 +494,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -503,7 +503,7 @@
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {    
@@ -613,7 +613,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -621,7 +621,7 @@
       [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -731,7 +731,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
@@ -740,7 +740,7 @@
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void) propagate
 {

@@ -117,10 +117,10 @@
    return self;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    if (_posted)
-      return CPSuspend;
+      return ORSuspend;
    _posted = true;
    
    id<CP> cp = [_x cp];
@@ -206,7 +206,7 @@
    }
    if (![_costVariable bound]) 
       [_costVariable whenChangeMaxPropagate: self];
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void) preprocess

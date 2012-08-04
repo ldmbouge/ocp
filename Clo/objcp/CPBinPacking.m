@@ -67,11 +67,11 @@
    return self;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
 //   NSLog(@"BinPacking post called ...");
    if (_posted)
-      return CPSkip;
+      return ORSkip;
    
    _posted = true;
    id<ORIntRange> BR = [_binSize range];
@@ -90,7 +90,7 @@
    [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
    for(CPInt b = brlow; b <= brup; b++)
       [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
-   return CPSkip;
+   return ORSkip;
 }
 
 @end
@@ -175,11 +175,11 @@
 }
 
 
--(CPStatus) post
+-(ORStatus) post
 {
 //   NSLog(@"BinPacking post called ...");
    if (_posted)
-      return CPSkip;
+      return ORSkip;
    
    _posted = true;
    _low = [_item range].low;
@@ -202,7 +202,7 @@
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
 
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void) propagate

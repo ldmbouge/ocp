@@ -156,7 +156,7 @@ STATE4:
 }
 
 
--(CPStatus)post
+-(ORStatus)post
 {
    _q = makeTRInt(_trail, 0);
    _r = makeTRInt(_trail, 0);
@@ -177,7 +177,7 @@ STATE4:
    }
    assignTRInt(&_q,i,_trail);  // update Q to point to the first symbol s.t. x_q ? y_q
    if (i > up || LEX_XLY(i))
-      return CPSuccess;        // STATE T1. We added the requirements on P.
+      return ORSuccess;        // STATE T1. We added the requirements on P.
    // transition 1 -> 2
    // q is now pointing to the ? :  x_q <= y_q
    [_xa[LEX_Q] updateMax: maxDom(_ya[LEX_Q])];
@@ -206,7 +206,7 @@ STATE4:
       // ****************** ENTERING STATE D3
       [self listenFrom:LEX_Q];
       assignTRInt(&_u,3,_trail);
-      return CPSuspend;
+      return ORSuspend;
    } else if (LEX_XGEQY(i)) {  // transition 2 -> 4
       assignTRInt(&_s,i = i + 1,_trail);
       // ****************** ENTERING STATE 4
@@ -220,12 +220,12 @@ STATE4:
       // ****************** ENTERING STATE D2
       [self listenFrom:LEX_Q];
       assignTRInt(&_u, 4, _trail);
-      return CPSuspend;
+      return ORSuspend;
    } else {
       // ****************** ENTERING STATE D1
       [self listenFrom:LEX_Q];
       assignTRInt(&_u,2,_trail);      // remember we were in state 2 (where to resume).
-      return CPSuspend;
+      return ORSuspend;
    }
 }
 -(NSSet*)allVars

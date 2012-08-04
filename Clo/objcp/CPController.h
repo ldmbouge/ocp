@@ -28,7 +28,7 @@
 @end
 
 @protocol CPStealing
--(CPHeist*)steal;
+-(CPHeist*) steal;
 -(BOOL)willingToShare;
 @end
 

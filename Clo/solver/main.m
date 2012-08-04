@@ -180,7 +180,7 @@ int main(int argc, const char * argv[])
     [es print];
     
     
-    typedef CPStatus (^AC3Callback)(void);
+    typedef ORStatus (^AC3Callback)(void);
   
     for(CPInt i = 0; i < n-1; i++) 
         printf("%s %d:%s",(i>1 ? "," : " "),i,[[[x at: i] description] cStringUsingEncoding:NSASCIIStringEncoding]);

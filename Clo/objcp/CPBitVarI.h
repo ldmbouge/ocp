@@ -73,15 +73,15 @@ typedef struct  {
 -(unsigned int) domsize;
 -(bool) member:(unsigned int*)v;
 // update
--(CPStatus)     updateMin: (uint64) newMin;
--(CPStatus)     updateMax: (uint64) newMax;
+-(ORStatus)     updateMin: (uint64) newMin;
+-(ORStatus)     updateMax: (uint64) newMax;
 -(void)         setLow: (unsigned int*) newLow;
 -(void)         setUp: (unsigned int*) newUp;
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
--(CPStatus)     bind:(unsigned int*) val;
--(CPStatus)     bindUInt64:(uint64) val;
-//-(CPStatus)     remove:(int) val;
+-(ORStatus)     bind:(unsigned int*) val;
+-(ORStatus)     bindUInt64:(uint64) val;
+//-(ORStatus)     remove:(int) val;
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 -(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods

@@ -25,7 +25,7 @@
    CPInt2Void _unb;
 }
 -(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(CPInt2Void)lost onValueBind:(CPInt2Void)bind onValueRecover:(CPInt2Void)rec onValueUnbind:(CPInt2Void)unb;
--(CPStatus) post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -62,7 +62,7 @@
    return ![_theVar bound];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    [_theVar whenLoseValue:self do:^(CPInt val) {
       if (_lost) _lost(val);
@@ -81,7 +81,7 @@
          }];
       }
    } onBehalf:self];
-   return CPSuspend;
+   return ORSuspend;
 }
 @end
 

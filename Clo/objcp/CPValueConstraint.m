@@ -25,7 +25,7 @@
     _c = c;
     return self;
 }
--(CPStatus) post
+-(ORStatus) post
 {
    if ([_b bound]) {
       if ([_b min] == true) 
@@ -46,7 +46,7 @@
       } onBehalf:self];
       [_x setLoseTrigger: _c do: ^(void) { [_b bind:true]; } onBehalf:self];
       [_x whenBindDo: ^(void) { [_b bind:[_x min] != _c];} onBehalf:self];
-      return CPSuspend;
+      return ORSuspend;
    } 
 }
 -(NSSet*)allVars
@@ -88,7 +88,7 @@
     return self;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     if ([_b bound]) {
         if ([_b min] == true) 
@@ -109,7 +109,7 @@
         } onBehalf:self];
         [_x setLoseTrigger: _c do: ^ { [_b bind:false]; } onBehalf:self];
         [_x setBindTrigger: ^ { [_b bind:[_x min] == _c]; } onBehalf:self];
-        return CPSuspend;
+        return ORSuspend;
     }   
 } 
 -(NSSet*)allVars
@@ -152,26 +152,26 @@
    return self;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b cp] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
-         return CPSkip;
+         return ORSkip;
       } else {
          [[_b cp] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
-         return CPSkip;
+         return ORSkip;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
       [[_b cp] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
-      return CPSkip;
+      return ORSkip;
    }
    else if (bound(_y)) {
       [[_b cp] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
-      return CPSkip;
+      return ORSkip;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
          [_b bind:NO];
@@ -182,7 +182,7 @@
          [_y whenChangeBoundsPropagate:self];
       }
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void)propagate
@@ -251,15 +251,15 @@
    return self;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    if (bound(_b)) {
       if (minDom(_b)) {
          [[_b cp] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
-         return CPSkip;
+         return ORSkip;
       } else {
          [[_b cp] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
-         return CPSkip;
+         return ORSkip;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
@@ -277,7 +277,7 @@
          [self listenOn:_y inferOn:_x];
       }
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 -(void)listenOn:(CPIntVarI*)a inferOn:(CPIntVarI*)other
 {
@@ -387,7 +387,7 @@
    return self;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    if ([_b bound]) {
       if ([_b min])
@@ -414,7 +414,7 @@
          if ([_x max] <= _c)
             [_b bind:YES];
       } onBehalf:self];
-      return CPSuspend;
+      return ORSuspend;
    }
 }
 -(NSSet*)allVars
@@ -458,7 +458,7 @@
    return self;
 }
 
--(CPStatus) post  // b <=>  x >= c
+-(ORStatus) post  // b <=>  x >= c
 {
    if ([_b bound]) {
       if ([_b min])
@@ -485,7 +485,7 @@
          if ([_x max] < _c)
             [_b bind:NO];
       } onBehalf:self];
-      return CPSuspend;
+      return ORSuspend;
    }
 }
 -(NSSet*)allVars
@@ -551,7 +551,7 @@
     [super dealloc];
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     _at = malloc(sizeof(CPTrigger*)*(_c+1));
     _notTriggered = malloc(sizeof(CPInt)*(_nb - _c - 1));
@@ -564,7 +564,7 @@
        nbPos  += ![_x[i] bound];
     }
     if (nbTrue >= _c) 
-        return CPSuccess;
+        return ORSuccess;
     if (nbTrue + nbPos < _c) 
        failNow();
     if (nbTrue + nbPos == _c) {
@@ -574,7 +574,7 @@
                 continue;
            [_x[i] updateMin:true];
         }
-        return CPSuccess;      
+        return ORSuccess;      
     }
     CPInt listen = _c+1;
     CPInt nbNW   = 0;
@@ -608,7 +608,7 @@
                                else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
                                    for(CPInt k=0;k<_c+1;k++) {
                                        if (k != listen) {
-                                           CPStatus ok = [_x[_at[k]->_vId] updateMin:true];
+                                           ORStatus ok = [_x[_at[k]->_vId] updateMin:true];
                                            if (!ok) 
                                               failNow();
                                        }
@@ -623,7 +623,7 @@
     }   
     assert(nbNW == _nb - _c - 1);
     _last = _nb - _c - 2;  // where we will start the circular scan among the unWatched variables.
-    return CPSuspend;
+    return ORSuspend;
 }
 
 -(NSSet*)allVars
@@ -694,7 +694,7 @@
    free(_x);
    [super dealloc];
 }
--(CPStatus) post
+-(ORStatus) post
 {
    int nbTrue = 0;
    int nbPos  = 0;
@@ -708,7 +708,7 @@
       for(CPInt i=0;i<_nb;++i)
          if (!bound(_x[i]))
             [_x[i] bind:NO];
-      return CPSuccess;
+      return ORSuccess;
    }
    if (nbTrue + nbPos < _c)      // We can't possibly make it to _c. fail.
       failNow();
@@ -716,7 +716,7 @@
       for(CPInt i=0;i<_nb;++i)
          if (!bound(_x[i]))
              [_x[i] bind:YES];
-      return CPSuccess;
+      return ORSuccess;
    }
    _nbOne  = makeTRInt(_trail, nbTrue);
    _nbZero = makeTRInt(_trail, (CPInt)_nb - nbTrue - nbPos);
@@ -754,7 +754,7 @@
          }
       } onBehalf:self];
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 -(NSSet*)allVars
 {

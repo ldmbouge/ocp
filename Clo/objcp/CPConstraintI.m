@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPConstraintI.h"
 #import "CPSolverI.h"
 
@@ -24,14 +25,14 @@
    return self;
 }
 // Tracer method
--(CPStatus) doIt
+-(ORStatus) doIt
 {
     return [self post];
 }
 // Constraint method
--(CPStatus) post 
+-(ORStatus) post 
 {
-    return CPSuspend;
+    return ORSuspend;
 }
 -(void) propagate
 {}

@@ -16,18 +16,11 @@
 @protocol CPExprVisitor;
 
 
-typedef enum  {
-    CPFailure,
-    CPSuccess,
-    CPSuspend,
-    CPDelay,
-    CPSkip
-} CPStatus;
 
-typedef CPStatus(*UBType)(id,SEL,...);
+typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(CPInt);
-typedef CPStatus (^CPVoid2CPStatus)(void);
+typedef ORStatus (^CPVoid2ORStatus)(void);
 
 @protocol CPIntVar;
 @protocol CPRelation;

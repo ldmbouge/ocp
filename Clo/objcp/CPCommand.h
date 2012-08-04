@@ -19,7 +19,7 @@
  */
 
 @protocol CPCommand <NSObject,NSCoding>
--(CPStatus) doIt;
+-(ORStatus) doIt;
 @end
 
 @interface CPCommandList : NSObject<NSCoding> {

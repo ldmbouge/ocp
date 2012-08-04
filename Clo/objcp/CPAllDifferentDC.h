@@ -16,7 +16,7 @@
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding>
 -(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPIntVarArray>) x;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;

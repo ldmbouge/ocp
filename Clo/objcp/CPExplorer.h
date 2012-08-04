@@ -42,8 +42,8 @@
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (CPInt2Bool) f in: (CPInt2Void) body onFailure: (CPInt2Void) onFailure;
 -(void)               fail;
 -(void)            repeat: (CPClosure) body onRepeat: (CPClosure) onRepeat until: (CPVoid2Bool) isDone;
--(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2CPStatus) canImprove update: (CPClosure) update;
--(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2CPStatus) canImprove update: (CPClosure) update 
+-(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2ORStatus) canImprove update: (CPClosure) update;
+-(void)           optimize: (CPClosure) body post: (CPClosure) post canImprove: (CPVoid2ORStatus) canImprove update: (CPClosure) update 
                 onSolution: (CPClosure) onSolution 
                     onExit: (CPClosure) onExit;
 @optional 
@@ -54,7 +54,7 @@
 -(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (CPClosure) cl;
 -(void)      limitFailures: (CPInt) maxFailures in: (CPClosure) cl;
 -(void)          limitTime: (CPLong) maxTime in: (CPClosure) cl;
--(CPStatus)restoreCheckpoint:(Checkpoint*)cp;
+-(ORStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;
 -(NSData*)captureAndPackProblem;

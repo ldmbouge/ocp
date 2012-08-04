@@ -46,8 +46,8 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 -(CPInt)size;
 -(CPInt)min;
 -(CPInt)max;
--(CPStatus)postEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
--(CPStatus)postLEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
+-(ORStatus)postEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
+-(ORStatus)postLEQZ:(id<CPSolver>)fdm consistency:(CPConsistency)cons;
 @end
 
 @interface CPExprConstraintI : CPActiveConstraint<NSCoding> {
@@ -57,7 +57,7 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 }
 -(id) initCPExprConstraintI:(id<CPSolver>)fdm expr:(id<CPRelation>)x  consistency: (CPConsistency) c;
 -(void) dealloc;
--(CPStatus)post;
+-(ORStatus)post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

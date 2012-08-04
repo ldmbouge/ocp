@@ -127,10 +127,10 @@
 -(SemCP*)                   init;
 -(SemCP*)                   initFor:(id<CPSolver>)fdm;
 -(void)dealloc;
--(CPStatus)installCheckpoint:(Checkpoint*)cp;
+-(ORStatus)installCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;
--(CPStatus)installProblem:(CPProblem*)problem;
+-(ORStatus)installProblem:(CPProblem*)problem;
 
 -(void)               label: (id) var with: (CPInt) val;
 -(void)                diff: (id) var with: (CPInt) val;

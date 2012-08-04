@@ -116,9 +116,9 @@
          }
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
-         CPStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
+         ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
          [node._cp release];
-         if (status != CPFailure)
+         if (status != ORFailure)
             [node._cont call];      
       }
    } while (true);

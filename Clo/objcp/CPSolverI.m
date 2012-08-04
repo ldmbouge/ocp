@@ -274,7 +274,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    for(CPInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
    _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
-   _status = CPSuspend;
+   _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
@@ -392,7 +392,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
 
-static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
+static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 {
    *last = cb.cstr;
    if (cb.cb) 
@@ -400,7 +400,7 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    else {
       CPCoreConstraint* cstr = cb.cstr;
       if (cstr->_todo == CPChecked) 
-         return CPSkip;
+         return ORSkip;
       else {
          cstr->_todo = cstr->_idempotent == NO ? CPChecked : cstr->_todo;
          //[cstr propagate];
@@ -408,16 +408,16 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
          cstr->_todo = cstr->_idempotent == YES ? CPChecked : cstr->_todo;
       }
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 
--(CPStatus) propagate
+-(ORStatus) propagate
 {
    if (_propagating > 0) 
-      return CPDelay;
+      return ORDelay;
    _last = nil;
    ++_propagating;
-   CPStatus status = CPSuspend;
+   ORStatus status = ORSuspend;
    bool done = false;
    @try {
       while (!done) {
@@ -439,7 +439,7 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
          done = p < LOWEST_PRIO;
          while (!done) {      
             status = executeAC3(AC3deQueue(_ac3[p]),&_last);
-            _nbpropag += status !=CPSkip;
+            _nbpropag += status !=ORSkip;
             if (AC5LOADED(_ac5)) 
                break;
             p = HIGHEST_PRIO;
@@ -461,25 +461,25 @@ static inline CPStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       if (_propagFail)
          [_propagFail notifyWith:[_last getId]];
       CFRelease(exception);
-      _status = CPFailure;
+      _status = ORFailure;
       --_propagating;
       return _status;
    } 
 }
 
-static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
+static inline ORStatus internalPropagate(CPSolverI* fdm,ORStatus status)
 {
    switch (status) {
-      case CPFailure:
+      case ORFailure:
          for(CPInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
             AC3reset(fdm->_ac3[p]);
          break; 
-      case CPSuccess:
-      case CPSuspend:
+      case ORSuccess:
+      case ORSuspend:
          //status = [fdm propagate];
          status = fdm->_propagIMP(fdm,@selector(propagate));
          break;
-      case CPDelay:
+      case ORDelay:
          break;
       default:
          break;
@@ -487,13 +487,13 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    return status;
 }
 
--(CPStatus) post: (id<CPConstraint>) c
+-(ORStatus) post: (id<CPConstraint>) c
 {
    @try {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      CPStatus status = [cstr post];
+      ORStatus status = [cstr post];
       _status = internalPropagate(self,status);
-      if (_status && status != CPSkip) {
+      if (_status && status != ORSkip) {
          [cstr setId:(CPUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
@@ -503,7 +503,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
       }
    } @catch (CPFailException* ex) {
       CFRelease(ex);
-      _status = CPFailure;
+      _status = ORFailure;
    }
    return _status;
 }
@@ -514,19 +514,19 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    return wrapper;
 }
 
--(CPStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
+-(ORStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs leq:rhs] consistency:cons];
    [self trackObject:wrapper];
    return [self add:wrapper];
 }
--(CPStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons
+-(ORStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs eq:rhs] consistency:cons];
    [self trackObject:wrapper];
    return [self add:wrapper];
 }
--(CPStatus) add: (id<CPConstraint>) c
+-(ORStatus) add: (id<CPConstraint>) c
 {
    if (_state != CPOpen) {
       return [self post: c];
@@ -535,63 +535,63 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr setId:(CPUInt)[_mStore count]];
       [_mStore addObject:c]; 
-      return CPSuspend;
+      return ORSuspend;
    }
 }
 
--(CPStatus) label: (id) var with: (CPInt) val
+-(ORStatus) label: (id) var with: (CPInt) val
 {
    @try {
-      CPStatus status = [var bind:val];
+      ORStatus status = [var bind:val];
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);
-      _status = CPFailure;
+      _status = ORFailure;
    }     
    return _status;
 }
 
--(CPStatus) diff: (CPIntVarI*) var with: (CPInt) val
+-(ORStatus) diff: (CPIntVarI*) var with: (CPInt) val
 {
    @try {
-      CPStatus status =  removeDom(var, val);
+      ORStatus status =  removeDom(var, val);
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);
-      _status = CPFailure;
+      _status = ORFailure;
    }     
    return _status;
 }
--(CPStatus)  lthen:(id)var with:(CPInt)val
+-(ORStatus)  lthen:(id)var with:(CPInt)val
 {
    @try {
-      CPStatus status = [var updateMax:val-1];
+      ORStatus status = [var updateMax:val-1];
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);
-      _status = CPFailure;
+      _status = ORFailure;
    }     
    return _status;
 }
--(CPStatus)  gthen:(id)var with:(CPInt)val
+-(ORStatus)  gthen:(id)var with:(CPInt)val
 {
    @try {
-      CPStatus status = [var updateMin:val+1];
+      ORStatus status = [var updateMin:val+1];
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);
-      _status = CPFailure;
+      _status = ORFailure;
    }     
    return _status;
 }
--(CPStatus) restrict: (CPIntVarI*) var to: (ORIntSetI*) S
+-(ORStatus) restrict: (CPIntVarI*) var to: (ORIntSetI*) S
 {
    @try {
-      CPStatus status = [var inside: S];
+      ORStatus status = [var inside: S];
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);
-      _status = CPFailure;
+      _status = ORFailure;
    }
    return _status;   
 }
@@ -609,21 +609,21 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
 {
    return _aSol;
 }
--(CPStatus) close
+-(ORStatus) close
 {
    if (_state == CPOpen) {
       _state = CPClosing;
       for(id<CPConstraint> c in _mStore) {
          [self post:c];
-         if (_status == CPFailure)
-            return CPFailure;
+         if (_status == ORFailure)
+            return ORFailure;
       }
       _state = CPClosed;
    }
    //printf("Closing CPSolver\n");
-   return CPSuspend;
+   return ORSuspend;
 }
--(CPStatus)  status
+-(ORStatus)  status
 {
    return _status;
 }
@@ -665,7 +665,7 @@ static inline CPStatus internalPropagate(CPSolverI* fdm,CPStatus status)
    for(CPInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[[CPAC3Queue alloc] initAC3Queue:512] retain];
    _ac5 = [[[CPAC5Queue alloc] initAC5Queue:512] retain];
-   _status = CPSuspend;
+   _status = ORSuspend;
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];

@@ -18,7 +18,7 @@
 }
 -(CPBinPackingI*) initCPBinPackingI: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end
@@ -27,7 +27,7 @@
 }
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;

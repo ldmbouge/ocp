@@ -166,7 +166,7 @@
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [_search    optimize: body
                    post: ^() {  [self add: cstr];  }
-             canImprove: ^CPStatus(void) { return [cstr check]; } 
+             canImprove: ^ORStatus(void) { return [cstr check]; } 
                  update: ^() { [cstr updatePrimalBound]; }
              onSolution: onSolution
                  onExit: onExit
@@ -179,7 +179,7 @@
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [_search    optimize: body
                    post: ^() {  [self add: cstr];  }
-             canImprove: ^CPStatus(void) { return [cstr check]; } 
+             canImprove: ^ORStatus(void) { return [cstr check]; } 
                  update: ^() { [cstr updatePrimalBound]; }
              onSolution: onSolution
                  onExit: onExit
@@ -207,14 +207,14 @@
 
 -(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs
 {
-   CPStatus status = [_solver add: lhs leq:rhs consistency:ValueConsistency];
-   if (status == CPFailure)
+   ORStatus status = [_solver add: lhs leq:rhs consistency:ValueConsistency];
+   if (status == ORFailure)
       [_search fail];
 }
 -(void) add: (id<CPExpr>)lhs leq: (id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
-   CPStatus status = [_solver add:lhs leq:rhs consistency:cons];
-   if (status == CPFailure)
+   ORStatus status = [_solver add:lhs leq:rhs consistency:cons];
+   if (status == ORFailure)
       [_search fail];   
 }
 -(void) add: (id<CPExpr>)lhs eqi: (CPInt)rhs
@@ -228,15 +228,15 @@
 
 -(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs
 {
-   CPStatus status = [_solver add: lhs equal:rhs consistency:ValueConsistency];
-   if (status == CPFailure)
+   ORStatus status = [_solver add: lhs equal:rhs consistency:ValueConsistency];
+   if (status == ORFailure)
       [_search fail];
 }
 
 -(void) add: (id<CPExpr>)lhs equal: (id<CPExpr>)rhs consistency:(CPConsistency)cons
 {
-   CPStatus status = [_solver add:lhs equal:rhs consistency:cons];
-   if (status == CPFailure)
+   ORStatus status = [_solver add:lhs equal:rhs consistency:cons];
+   if (status == ORFailure)
       [_search fail];   
 }
 
@@ -245,8 +245,8 @@
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
       c = [_solver wrapExpr:(id<CPRelation>)c consistency:ValueConsistency];
    }
-   CPStatus status = [_solver add: c];
-   if (status == CPFailure)
+   ORStatus status = [_solver add: c];
+   if (status == ORFailure)
       [_search fail];
 }
 
@@ -255,16 +255,16 @@
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
       c = [_solver wrapExpr:(id<CPRelation>)c consistency:cons];
    }
-   CPStatus status = [_solver add: c];
-   if (status == CPFailure)
+   ORStatus status = [_solver add: c];
+   if (status == ORFailure)
       [_search fail];
 }
 
 
 -(void) post: (id<CPConstraint>) c
 {
-    CPStatus status = [_solver post: c];
-    if (status == CPFailure)
+    ORStatus status = [_solver post: c];
+    if (status == ORFailure)
         [_search fail];
     [ORConcurrency pumpEvents];
 }
@@ -286,7 +286,7 @@
 
 -(void) close
 {
-   if ([_solver close] == CPFailure)
+   if ([_solver close] == ORFailure)
       [_search fail];
 }
 -(id<ORIdxIntInformer>) retLabel
@@ -342,8 +342,8 @@
 
 -(void) label: (CPIntVarI*) var with: (CPInt) val
 {
-   CPStatus status = [_solver label: var with: val];  
-   if (status == CPFailure) {
+   ORStatus status = [_solver label: var with: val];  
+   if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -352,23 +352,23 @@
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
 {
-   CPStatus status = [_solver diff: var with: val];  
-   if (status == CPFailure)
+   ORStatus status = [_solver diff: var with: val];  
+   if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
 -(void) lthen: (id<CPIntVar>) var with: (CPInt) val
 {
-   CPStatus status = [_solver lthen:var with: val];
-   if (status == CPFailure) {
+   ORStatus status = [_solver lthen:var with: val];
+   if (status == ORFailure) {
       [_search fail];
    }
    [ORConcurrency pumpEvents];
 }
 -(void) gthen: (id<CPIntVar>) var with: (CPInt) val
 {
-   CPStatus status = [_solver gthen:var with:val];
-   if (status == CPFailure) {
+   ORStatus status = [_solver gthen:var with:val];
+   if (status == ORFailure) {
       [_search fail];
    }
    [ORConcurrency pumpEvents];
@@ -376,8 +376,8 @@
 
 -(void) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
-    CPStatus status = [_solver restrict: var to: S];  
-    if (status == CPFailure)
+    ORStatus status = [_solver restrict: var to: S];  
+    if (status == ORFailure)
         [_search fail]; 
     [ORConcurrency pumpEvents];   
 }
@@ -571,11 +571,11 @@
    return _tracer;
 }
 
--(CPStatus)installCheckpoint:(Checkpoint*)cp
+-(ORStatus)installCheckpoint:(Checkpoint*)cp
 {
    return [_tracer restoreCheckpoint:cp inSolver:_solver];
 }
--(CPStatus)installProblem:(CPProblem*)problem
+-(ORStatus)installProblem:(CPProblem*)problem
 {
    return [_tracer restoreProblem:problem inSolver:_solver];
 }
@@ -596,8 +596,8 @@
 
 -(void) label: (CPIntVarI*) var with: (CPInt) val
 {
-   CPStatus status = [_solver label: var with: val];  
-   if (status == CPFailure) {
+   ORStatus status = [_solver label: var with: val];  
+   if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
    }
@@ -607,8 +607,8 @@
 }
 -(void) diff: (CPIntVarI*) var with: (CPInt) val
 {
-   CPStatus status = [_solver diff: var with: val];  
-   if (status == CPFailure)
+   ORStatus status = [_solver diff: var with: val];  
+   if (status == ORFailure)
       [_search fail];
    // add after the fail (so if we fail, we don't bother adding it!]
    [_tracer addCommand:[[CPDiffc alloc] initCPDiffc:var and:val]]; 

@@ -16,7 +16,7 @@
 @interface CPAssignment : CPActiveConstraint<CPConstraint,NSCoding>
 -(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<CPIntVar>) cost;
 -(void) dealloc;
--(CPStatus) post;
+-(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;

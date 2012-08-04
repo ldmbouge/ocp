@@ -277,9 +277,9 @@
 -(void)setupWork:(NSData*)root forCP:(SemCP*)cp
 {
    CPProblem* theSub = [[CPProblem unpack:root forSolver:cp] retain];
-   CPStatus status = [cp installProblem:theSub];
+   ORStatus status = [cp installProblem:theSub];
    [theSub release];
-   if (status == CPFailure)
+   if (status == ORFailure)
       [[cp explorer] fail];
 }
 -(void)setupAndGo:(NSData*)root forCP:(SemCP*)cp searchWith:(CPVirtualClosure)body 

@@ -13,27 +13,20 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 
-@protocol AbstractSolver <NSObject,ORTracker>
--(void) saveSolution;
--(void) restoreSolution;
--(CPStatus) close;
--(bool) closed;
--(void) trackObject:(id)obj;
--(NSMutableArray*)allVars;
-@end
 
-@protocol CPSolver <AbstractSolver>
--(CPStatus) add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
--(CPStatus) add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
--(CPStatus) add: (id<CPConstraint>) c;
--(CPStatus) post: (id<CPConstraint>) c;
+
+@protocol CPSolver <ORSolver>
+-(ORStatus) add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
+-(ORStatus) add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
+-(ORStatus) add: (id<CPConstraint>) c;
+-(ORStatus) post: (id<CPConstraint>) c;
 -(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency:(CPConsistency)cons;
--(CPStatus) label: (id) var with: (CPInt) val;
--(CPStatus) diff:  (id) var with: (CPInt) val;
--(CPStatus) lthen: (id<CPIntVar>) var with: (CPInt) val;
--(CPStatus) gthen: (id<CPIntVar>) var with: (CPInt) val;
--(CPStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
--(CPStatus) propagate;
+-(ORStatus) label: (id) var with: (CPInt) val;
+-(ORStatus) diff:  (id) var with: (CPInt) val;
+-(ORStatus) lthen: (id<CPIntVar>) var with: (CPInt) val;
+-(ORStatus) gthen: (id<CPIntVar>) var with: (CPInt) val;
+-(ORStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(ORStatus) propagate;
 -(CPUInt) nbPropagation;
 -(id<CPSolution>) solution;
 -(CPUInt) nbVars;

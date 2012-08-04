@@ -168,7 +168,7 @@
    return _low[WORDIDX(idx)]._val  & ONEAT(idx);
 }
 
--(CPStatus) setBit:(unsigned int) idx to:(bool) val
+-(ORStatus) setBit:(unsigned int) idx to:(bool) val
 {
    if (BITFREE(idx)) {
       if (val)
@@ -179,7 +179,7 @@
       if (theBit ^ val)
          failNow();
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 -(bool) isFree:(unsigned int)idx
 {
@@ -360,7 +360,7 @@
 
 #define INTERPRETATION(t) ((((unsigned long long)(t)[0]._val)<<BITSPERWORD) | (t)[1]._val)
 
--(CPStatus)updateMin:(uint64)newMin for:(id<CPBitVarNotifier>)x
+-(ORStatus)updateMin:(uint64)newMin for:(id<CPBitVarNotifier>)x
 {
    uint64 oldMin = INTERPRETATION(_low);
    uint64 oldMax = INTERPRETATION(_up);
@@ -395,10 +395,10 @@
       [x changeMinEvt:oldDS];
    if (finalMax < oldMax)
       [x changeMaxEvt:oldDS];
-   return CPSuspend;
+   return ORSuspend;
 }
 
--(CPStatus)updateMax:(uint64)newMax for:(id<CPBitVarNotifier>)x
+-(ORStatus)updateMax:(uint64)newMax for:(id<CPBitVarNotifier>)x
 {
     uint64 originalMax = _max[0]._val;
     uint64 min = _min[0]._val;
@@ -412,7 +412,7 @@
    uint64 newMax64 = newMax;
     
     if(newMax64 >= originalMax)
-        return CPSuspend;
+        return ORSuspend;
    unsigned int* ptrMax = (unsigned int*)&newMax;
 
     assignTRUInt(&_max[0], ptrMax[0], _trail);
@@ -532,14 +532,14 @@
     }
    if (min > newMax64)
       failNow();
-   return CPSuspend;
+   return ORSuspend;
 }
 
--(CPStatus)bind:(uint64)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)bind:(uint64)val for:(id<CPIntVarNotifier>)x
 {
     if ((val < [self min]) || (val > [self max]))
        failNow();
-    if ((_freebits._val == 0) && (val == [self min])) return CPSuccess;
+    if ((_freebits._val == 0) && (val == [self min])) return ORSuccess;
     //Deal with arrays < 64 bits long
     assignTRUInt(&_min[0], val>>32, _trail);
     assignTRUInt(&_max[0], val>>32, _trail);
@@ -547,10 +547,10 @@
     assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
     assignTRInt(&_freebits, 0, _trail);
     [x bindEvt];
-    return CPSuspend;   
+    return ORSuspend;   
 }
 
--(CPStatus) bindToPat:(unsigned int*) pat for:(id<CPIntVarNotifier>)x
+-(ORStatus) bindToPat:(unsigned int*) pat for:(id<CPIntVarNotifier>)x
 {
    uint64  val = (((unsigned long long)pat[0]) << BITSPERWORD) | pat[1];
    if(_wordLength > 1){
@@ -560,7 +560,7 @@
    if (val < [self min] || val > [self max]) 
       failNow();
    if (_freebits._val == 0 && val == [self min]) 
-      return CPSuccess;
+      return ORSuccess;
 
    assignTRUInt(&_min[0], pat[0], _trail);
    assignTRUInt(&_max[0], pat[0], _trail);
@@ -568,7 +568,7 @@
    assignTRUInt(&_max[1], pat[1], _trail);
    assignTRInt(&_freebits, 0, _trail);
    [x bindEvt];
-   return CPSuspend;   
+   return ORSuspend;   
 }
 
 

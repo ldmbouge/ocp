@@ -176,7 +176,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
    return nb;
 }
 
--(CPStatus) bindRemainingTo: (CPInt) val
+-(ORStatus) bindRemainingTo: (CPInt) val
 {
     int count = 0;
     for(CPInt i = _lx; i <= _ux; i++) {
@@ -189,11 +189,11 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     }
     if (count != _low[val])
        failNow();
-    return CPSuspend;
+    return ORSuspend;
 }
 
 
-static CPStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
+static ORStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
 {
     int count = 0;
     for(CPInt i =cc->_lx; i <= cc->_ux ;i++) {
@@ -205,10 +205,10 @@ static CPStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
     }
     if (count != cc->_up[val])
        failNow();
-    return CPSuspend;     
+    return ORSuspend;     
 }
 
-static CPStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
+static ORStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
 {
    CPInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
@@ -216,20 +216,20 @@ static CPStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
       failNow();
    if (cc->_required[val]._val == cc->_up[val])
       removeFromRemaining(cc,val);
-   return CPSuspend;
+   return ORSuspend;
 }
 
-static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val)
+static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val)
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
       failNow();
    if (cc->_low[val] > 0 && cc->_possible[val]._val == cc->_low[val])
       [cc bindRemainingTo: val];    
-   return CPSuspend;
+   return ORSuspend;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
     _required = malloc(sizeof(TRInt)*_so);
     _possible = malloc(sizeof(TRInt)*_so);
@@ -268,7 +268,7 @@ static CPStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
         if (_low[i] > 0 && _possible[i]._val == _low[i])
            [self bindRemainingTo: i];
     }   
-    return CPSuspend;
+    return ORSuspend;
 }
 -(CPInt) nbFreeVars
 {

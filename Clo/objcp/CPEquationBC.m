@@ -101,7 +101,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    bnd->_nb     = nb;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    _updateBounds = malloc(sizeof(UBType)*_nb);
    for(CPInt k=0;k<_nb;k++)
@@ -111,7 +111,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
       if (![_x[k] bound])
          [_x[k] whenChangeBoundsPropagate: self];
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void) propagate
@@ -248,7 +248,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    bnd->_nb     = nb;
 }
 
--(CPStatus) post
+-(ORStatus) post
 {
    _updateMax = malloc(sizeof(UBType)*_nb);
    for(CPInt k=0;k<_nb;k++)
@@ -258,7 +258,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
       if (![_x[k] bound])
          [_x[k] whenChangeMinPropagate: self];
    }
-   return CPSuspend;
+   return ORSuspend;
 }
 
 -(void) propagate

@@ -63,11 +63,11 @@
 // Interface for CP extensions
 
 @protocol CPIntVarExtendedItf <CPIntVar,CPIntVarSubscriber>
--(CPStatus) updateMin: (CPInt) newMin;
--(CPStatus) updateMax: (CPInt) newMax;
--(CPStatus) updateMin: (CPInt) newMin andMax:(CPInt)newMax;
--(CPStatus) bind: (CPInt) val;
--(CPStatus) remove: (CPInt) val;
+-(ORStatus) updateMin: (CPInt) newMin;
+-(ORStatus) updateMax: (CPInt) newMax;
+-(ORStatus) updateMin: (CPInt) newMin andMax:(CPInt)newMax;
+-(ORStatus) bind: (CPInt) val;
+-(ORStatus) remove: (CPInt) val;
 @end
 
 typedef struct  {
@@ -181,12 +181,12 @@ enum CPVarClass {
 -(void)restoreValue:(CPInt)toRestore;
 
 // update
--(CPStatus)     updateMin: (CPInt) newMin;
--(CPStatus)     updateMax: (CPInt) newMax;
--(CPStatus)     updateMin: (CPInt) newMin andMax:(CPInt)newMax;
--(CPStatus)     bind:(CPInt) val;
--(CPStatus)     remove:(CPInt) val;
--(CPStatus)     inside:(ORIntSetI*) S;
+-(ORStatus)     updateMin: (CPInt) newMin;
+-(ORStatus)     updateMax: (CPInt) newMax;
+-(ORStatus)     updateMin: (CPInt) newMin andMax:(CPInt)newMax;
+-(ORStatus)     bind:(CPInt) val;
+-(ORStatus)     remove:(CPInt) val;
+-(ORStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
 +(CPIntVarI*)    initCPIntVar: (id<CP>)fdm bounds:(id<ORIntRange>)b;
@@ -216,11 +216,11 @@ enum CPVarClass {
 -(CPRange)around:(CPInt)v;
 -(CPInt) shift;
 -(CPInt) scale;
--(CPStatus)updateMin:(CPInt)newMin;
--(CPStatus)updateMax:(CPInt)newMax;
--(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax;
--(CPStatus)bind:(CPInt)val;
--(CPStatus)remove:(CPInt)val;
+-(ORStatus)updateMin:(CPInt)newMin;
+-(ORStatus)updateMax:(CPInt)newMax;
+-(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax;
+-(ORStatus)bind:(CPInt)val;
+-(ORStatus)remove:(CPInt)val;
 -(void) loseValEvt:(CPInt)val;
 -(id)           snapshot;
 @end
@@ -240,11 +240,11 @@ enum CPVarClass {
 -(CPRange)around:(CPInt)v;
 -(CPInt) shift;
 -(CPInt) scale;
--(CPStatus)updateMin:(CPInt)newMin;
--(CPStatus)updateMax:(CPInt)newMax;
--(CPStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax;
--(CPStatus)bind:(CPInt)val;
--(CPStatus)remove:(CPInt)val;
+-(ORStatus)updateMin:(CPInt)newMin;
+-(ORStatus)updateMax:(CPInt)newMax;
+-(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax;
+-(ORStatus)bind:(CPInt)val;
+-(ORStatus)remove:(CPInt)val;
 -(void) loseValEvt:(CPInt)val;
 -(id)           snapshot;
 @end
@@ -361,7 +361,7 @@ static inline CPInt memberBitDom(CPIntVarI* x,CPInt value)
    return getCPDom((CPBitDom*)x->_dom, target);   
 }
 
-static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
+static inline ORStatus removeDom(CPIntVarI* x,CPInt v)
 {
    CPInt target;
    switch (x->_vc) {
@@ -376,7 +376,7 @@ static inline CPStatus removeDom(CPIntVarI* x,CPInt v)
             target = v - b;
          else {
             CPInt r = (v - b) % a;
-            if (r != 0) return CPSuspend;
+            if (r != 0) return ORSuspend;
             target = (v - b) / a; 
          }
       }

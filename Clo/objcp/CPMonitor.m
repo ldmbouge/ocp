@@ -74,7 +74,7 @@ BOOL refresh(CPVarInfo* vi)
    free(_curActive);
    [super dealloc];
 }
--(CPStatus) post
+-(ORStatus) post
 {
    ORTrail* trail = [[_cp solver] trail];
    CPUInt nbW = 0;
@@ -103,7 +103,7 @@ BOOL refresh(CPVarInfo* vi)
       [buf release];
        */
    }];
-   return CPSuspend;
+   return ORSuspend;
 }
 -(NSString*)description
 {
