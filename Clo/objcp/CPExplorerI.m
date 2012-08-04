@@ -69,7 +69,7 @@
 @end
 
 @implementation CPCoreExplorerI
--(id) initCPCoreExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer
+-(id) initCPCoreExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
 {
    self = [super init];
    _solver = solver;
@@ -433,7 +433,7 @@
 // DFS style explorer.
 
 @implementation CPExplorerI
--(CPExplorerI*) initCPExplorer: (id<ORSolver>) solver withTracer: (id<CPTracer>) tracer
+-(CPExplorerI*) initCPExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
 {
    self = [super initCPCoreExplorer:solver withTracer:tracer];
    return self;
@@ -557,7 +557,7 @@
 
 @implementation CPSemExplorerI
 
--(CPSemExplorerI*) initCPSemExplorer: (id<ORSolver>) solver withTracer:(id<CPTracer>)tracer
+-(CPSemExplorerI*) initCPSemExplorer: (id<ORSolver>) solver withTracer:(id<ORTracer>)tracer
 {
    self = [super initCPCoreExplorer:solver withTracer:tracer];
    return self;

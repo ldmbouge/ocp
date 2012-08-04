@@ -20,7 +20,7 @@
 
 // PVH: This optional must disappear
 
-@interface DFSTracer : NSObject<CPTracer> {
+@interface DFSTracer : NSObject<ORTracer> {
 @private
    ORTrail*          _trail;
    ORTrailStack*   _trStack;
@@ -98,7 +98,7 @@
 @optional -(CPProblem*) captureProblem;
 @end
 
-@interface SemTracer : NSObject<CPTracer> {
+@interface SemTracer : NSObject<ORTracer> {
 @private
    ORTrail*          _trail;
    ORTrailStack*   _trStack;

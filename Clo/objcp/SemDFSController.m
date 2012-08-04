@@ -16,7 +16,7 @@
 
 @implementation SemDFSController 
 
-- (id) initSemController:(id<CPTracer>)tracer andSolver:(id<CPSolver>)solver
+- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<CPSolver>)solver
 {
    self = [super initCPDefaultController];
    _tracer = [tracer retain];

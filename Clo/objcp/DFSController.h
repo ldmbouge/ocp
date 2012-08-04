@@ -14,17 +14,17 @@
 #import <ORFoundation/cont.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPController.h>
-#import <objcp/CPTracer.h>
+
 
 @interface DFSController : CPDefaultController <NSCopying,CPSearchController> {
 @private
    NSCont**          _tab;
    CPInt              _sz;
    CPInt              _mx;
-   id<CPTracer>   _tracer;
+   id<ORTracer>   _tracer;
    CPInt          _atRoot;
 }
--(id)   initDFSController:(id<CPTracer>)tracer;
+-(id)   initDFSController:(id<ORTracer>)tracer;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

@@ -16,7 +16,7 @@
 @protocol ORSolver;
 @class ORCommandList;
 
-@protocol CPTracer <NSObject>
+@protocol ORTracer <NSObject>
 -(ORInt)      pushNode;
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;

@@ -16,6 +16,7 @@
 #import <objcp/CPController.h>
 #import <objcp/CPTracer.h>
 
+
 @interface SemDFSController : CPDefaultController <NSCopying,CPSearchController,CPStealing> {
 @private
    NSCont**        _tab;
@@ -26,7 +27,7 @@
    Checkpoint*  _atRoot;
    id<CPSolver> _solver;
 }
--(id)   initSemController:(id<CPTracer>)tracer andSolver:(id<CPSolver>)solver;
+-(id)   initSemController:(id<ORTracer>)tracer andSolver:(id<CPSolver>)solver;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

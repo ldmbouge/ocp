@@ -16,7 +16,7 @@
 
 @implementation DFSController 
 
-- (id) initDFSController:(id<CPTracer>)tracer;
+- (id) initDFSController:(id<ORTracer>)tracer;
 {
    self = [super initCPDefaultController];
    _tracer = [tracer retain];

@@ -13,7 +13,7 @@
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
 #import "CPMonitor.h"
-#import "CPTracer.h"
+#import "ORTracer.h"
 
 @interface CPKillRange : NSObject {
 @package
@@ -248,7 +248,7 @@
       [key release];
    } else {
       CPInt mid = low + (up - low)/2;
-      id<CPTracer> tracer = [_cp tracer];
+      id<ORTracer> tracer = [_cp tracer];
       [tracer pushNode];
       ORStatus s1 = [_solver lthen:x with:mid+1];
       [ORConcurrency pumpEvents];

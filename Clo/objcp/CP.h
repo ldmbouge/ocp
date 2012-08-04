@@ -22,7 +22,7 @@
 @protocol CPExplorer;
 @protocol CPHeuristic;
 @protocol ORIdxIntInformer;
-@protocol CPTracer;
+@protocol ORTracer;
 
 @protocol CPSolutionProtocol <NSObject>
 -(void)        saveSolution;
@@ -85,7 +85,7 @@
 -(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart;
 -(void)             repeat: (CPClosure) body onRepeat: (CPClosure) onRestart until: (CPVoid2Bool) isDone;
 -(id<CPPortal>) portal;
--(id<CPTracer>) tracer;
+-(id<ORTracer>) tracer;
 -(id<CPSolution>) solution;
 
 @optional -(void) solveParAll:(CPUInt)nbt subjectTo:(CPClosure)body using:(CPVirtualClosure)body;

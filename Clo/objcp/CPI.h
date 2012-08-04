@@ -16,7 +16,7 @@
 #import "CPExplorerI.h"
 #import "CPSelector.h"
 #import "ORUtilities/ORUtilities.h"
-
+#import <objcp/CPTracer.h>
 
 @interface CoreCPI : NSObject  {
    @protected

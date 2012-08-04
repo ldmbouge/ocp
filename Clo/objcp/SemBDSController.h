@@ -44,7 +44,7 @@
    Checkpoint*   _atRoot;
    id<CPSolver> _solver;   
 }
--(id)   initSemBDSController:(id<CPTracer>)tracer andSolver:(id<CPSolver>)solver;
+-(id)   initSemBDSController:(id<ORTracer>)tracer andSolver:(id<CPSolver>)solver;
 -(void) dealloc;
 -(void)       setup;
 -(void)       cleanup;

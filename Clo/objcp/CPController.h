@@ -14,7 +14,7 @@
 #import <objcp/CPTypes.h>
 
 @protocol CPSolver;
-@protocol CPTracer;
+@protocol ORTracer;
 @protocol CPExplorer;
 @class Checkpoint;
 

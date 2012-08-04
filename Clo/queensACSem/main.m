@@ -14,7 +14,7 @@
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPController.h"
-#import "objcp/CPTracer.h"
+#import "objcp/ORTracer.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 
