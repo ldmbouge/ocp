@@ -14,7 +14,7 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 
 
 @interface CPWatch : CPActiveConstraint {

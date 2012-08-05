@@ -10,13 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPI.h>
+#import "CPSolverI.h"
 
-@interface CPI (Create)  
-+(CPI*) create;
-+(CPI*) createRandomized;
-+(CPI*) createDeterministic;
-+(CPI*) createFor:(CPEngineI*)fdm;
+@interface CPSolverI (Create)  
++(CPSolverI*) create;
++(CPSolverI*) createRandomized;
++(CPSolverI*) createDeterministic;
++(CPSolverI*) createFor:(CPEngineI*)fdm;
 @end
 
 /*

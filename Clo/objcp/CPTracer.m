@@ -13,7 +13,7 @@
 #import "ORCommand.h"
 #import "CPBasicConstraint.h"
 #import "CPEngineI.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 
 
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)

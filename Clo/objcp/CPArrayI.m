@@ -13,7 +13,7 @@
 #import "CPEngineI.h"
 #import "CPCreateI.h"
 #import "CPBitDom.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPError.h"
 #import "CPTypes.h"
 #import "CPArrayI.h"

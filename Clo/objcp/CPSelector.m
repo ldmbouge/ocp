@@ -12,7 +12,7 @@
 #import "ORCrFactory.h"
 #import "CPSelector.h"
 #import "ORTrail.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #if !defined(__APPLE__)
 #import <values.h>
 #endif
@@ -85,7 +85,7 @@
 @end
 
 @implementation CPSelect
--(CPSelect*) initCPSelect: (CoreCPI*) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) initCPSelect: (CPSolverI*) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
 {
     self = [super init];
     _select = [[OPTSelect alloc] initOPTSelectWithRange:range suchThat: filter orderedBy:order];
@@ -167,7 +167,7 @@
 
 @implementation CPSelectMax
 
--(CPSelectMax*) initSelectMax:(CoreCPI*)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMax*) initSelectMax:(CPSolverI*)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
 {
    self = [super init];
    _range = range;

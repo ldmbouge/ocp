@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPParallel.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPFactory.h"
 
 @interface CPGenerator : ORDefaultController<ORSearchController> {

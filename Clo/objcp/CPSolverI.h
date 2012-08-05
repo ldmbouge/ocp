@@ -30,8 +30,10 @@
 -(void)applyToAll:(void(^)(id<CPHeuristic> h,NSMutableArray*))closure with:(NSMutableArray*)tab;
 @end
 
-@interface CoreCPI : NSObject  {
-   @protected
+
+@interface CPSolverI : NSObject<CPSolver>
+{
+@protected
    id<CPEngine>          _solver;
    id<ORExplorer>        _search;
    ORTrail*              _trail;
@@ -40,11 +42,13 @@
    id<CPPortal>          _portal;
    @package
    id<ORIdxIntInformer>  _returnLabel;
-   id<ORIdxIntInformer>  _failLabel;   
+   id<ORIdxIntInformer>  _failLabel;
+   DFSTracer* _tracer;
 }
--(id)                     init;
--(id)                     initFor:(id<CPEngine>) fdm;
--(void)                   dealloc;
+-(CPSolverI*)                init;
+-(CPSolverI*)             initFor:(CPEngineI*)fdm;
+-(void)             dealloc;
+
 -(NSString*)              description;
 -(ORInt)                  nbChoices;
 -(ORInt)                  nbFailures;
@@ -52,8 +56,8 @@
 -(CPUInt)                 nbVars;
 -(ORTrail*)               trail;
 -(id<ORSearchController>) controller;
--(void) setController: (id<ORSearchController>) controller;
--(void)               addHeuristic:(id<CPHeuristic>)h;
+-(void)                   setController: (id<ORSearchController>) controller;
+-(void)                   addHeuristic: (id<CPHeuristic>) h;
 
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPConstraint>) c;
@@ -66,27 +70,19 @@
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body; 
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 
 -(id)               virtual: (id) obj;
 -(id<CPEngine>)        solver;
 -(id<ORExplorer>)    explorer;
--(void)          trackObject:(id)object;
--(ORInt)virtualOffset:(id)obj;
-- (void)encodeWithCoder:(NSCoder *)aCoder;
-- (id)initWithCoder:(NSCoder *)aDecoder;
--(id<CPPortal>)portal;
--(id<ORSolution>) solution;
-@end
-
-@interface CPI : CoreCPI<CPSolver> {
-   DFSTracer* _tracer;
-}
--(CPI*)                   init;
--(CPI*)                   initFor:(CPEngineI*)fdm;
--(void)dealloc;
+-(void)          trackObject: (id)object;
+-(ORInt)       virtualOffset: (id)obj;
+- (void)     encodeWithCoder: (NSCoder *)aCoder;
+- (id)         initWithCoder: (NSCoder *)aDecoder;
+-(id<CPPortal>)       portal;
+-(id<ORSolution>)   solution;
 
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
@@ -120,7 +116,7 @@
 -(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
--(DFSTracer*)tracer;
+-(DFSTracer*)        tracer;
 @end
 
 /*

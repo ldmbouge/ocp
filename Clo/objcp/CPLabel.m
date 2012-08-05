@@ -16,7 +16,7 @@
 #import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPExplorerI.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPIntVarI.h"
 
 @implementation CPLabel
@@ -46,7 +46,7 @@
 +(void) array: (id<CPIntVarArray>) x orderedBy: (CPInt2Int) orderedBy
 {
     id<CPSolver> cp = [x cp];
-    CPI* cpi = (CPI*) cp;
+    CPSolverI* cpi = (CPSolverI*) cp;
     CPSelect* select = [cpi selectInRange: RANGE(cp,[x low],[x up])
                               suchThat: ^bool(CPInt i) { return [[x at: i] bound]; }
                                orderedBy: orderedBy];
@@ -66,7 +66,7 @@
    id<CPIntVarArray> av = [h allIntVars];
    NSLog(@"Heuristic on: <%lu> %@",[av count],av);
    id<CPSolver> cp = [av cp];
-   CPI* cpi = (CPI*) cp;
+   CPSolverI* cpi = (CPSolverI*) cp;
    CPSelect* select = [cpi selectInRange: RANGE(cp,[av low],[av up])
                                 suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }
                                orderedBy: ^CPInt(CPInt i) { return [h varOrdering:av[i]]; }];

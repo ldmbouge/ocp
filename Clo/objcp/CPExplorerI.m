@@ -20,7 +20,7 @@
 #import "DFSController.h"
 #import "SemDFSController.h"
 #import "CPLimit.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "objcp/CPFactory.h"
 #import "CPObjectQueue.h"
 #import "ORUtilities/ORUtilities.h"

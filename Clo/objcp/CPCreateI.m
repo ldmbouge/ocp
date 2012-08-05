@@ -10,31 +10,31 @@
  ***********************************************************************/
 
 #import "CPCreateI.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPAllDifferentDC.h"
 #import "CPBasicConstraint.h"
 #import "CPCardinality.h"
 
-@implementation CPI (Create)
-+(CPI*) create
+@implementation CPSolverI (Create)
++(CPSolverI*) create
 {
-    return [[CPI alloc] init];
+    return [[CPSolverI alloc] init];
 }
-+(CPI*) createRandomized
++(CPSolverI*) createRandomized
 {
     [ORStreamManager setRandomized];
-    return [[CPI alloc] init];
+    return [[CPSolverI alloc] init];
 }
-+(CPI*) createDeterministic
++(CPSolverI*) createDeterministic
 {
-    return [[CPI alloc] init];
+    return [[CPSolverI alloc] init];
 }
 
-+(CPI*) createFor:(CPEngineI*)fdm
++(CPSolverI*) createFor:(CPEngineI*)fdm
 {
-   return [[CPI alloc] initFor:fdm];
+   return [[CPSolverI alloc] initFor:fdm];
 }
 @end
 

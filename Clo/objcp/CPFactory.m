@@ -15,7 +15,7 @@
 #import "ORUtilities/ORUtilities.h"
 #import "CPFactory.h"
 #import "CPData.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPCreateI.h"
 #import "cont.h"
 #import "CPExprI.h"
@@ -37,21 +37,21 @@ void failNow()
 
 @implementation CPFactory
 
-+(CPI*) createSolver
++(CPSolverI*) createSolver
 {
-    return [CPI create];
+    return [CPSolverI create];
 }
 //+(SemCP*) createSemSolver
 //{
 //   return [SemCP create];
 //}
-+(CPI*) createRandomizedSolver
++(CPSolverI*) createRandomizedSolver
 {
-    return [CPI createRandomized];
+    return [CPSolverI createRandomized];
 }
-+(CPI*) createDeterministicSolver
++(CPSolverI*) createDeterministicSolver
 {
-    return [CPI createDeterministic];
+    return [CPSolverI createDeterministic];
 }
 //+(SemCP*) createSemSolverFor:(id<CPEngine>)fdm
 //{
@@ -158,7 +158,7 @@ void failNow()
 +(id<CPIntMatrix>) intMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: cp range: r1 : r2];    
-    [[((CoreCPI*) cp) solver] trackObject: o];
+    [[((CPSolverI*) cp) solver] trackObject: o];
     return o;   
 }
 +(id<CPVarArray>) varArray: (id<CPSolver>) cp range: (id<ORIntRange>) range
@@ -304,14 +304,14 @@ void failNow()
 +(CPTRIntArrayI*) TRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R
 {
     CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp range: R];    
-    [[((CoreCPI*) cp) solver] trackObject: o];
+    [[((CPSolverI*) cp) solver] trackObject: o];
     return o;    
 }
 
 +(id<CPTRIntMatrix>) TRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
     CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: cp range: R1 : R2];    
-    [[((CoreCPI*) cp) solver] trackObject: o];
+    [[((CPSolverI*) cp) solver] trackObject: o];
     return o;    
 }
 

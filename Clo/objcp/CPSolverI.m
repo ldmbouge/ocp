@@ -13,7 +13,7 @@
 #import "CPTypes.h"
 #import "CPCommand.h"
 #import "CPConstraintI.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPExplorerI.h"
@@ -66,17 +66,17 @@
 @end
 
 @interface CPInformerPortal : NSObject<CPPortal> {
-   CoreCPI*       _cp;
+   CPSolverI*       _cp;
    CPEngineI* _solver;
 }
--(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp;
+-(CPInformerPortal*) initCPInformerPortal:(CPSolverI*) cp;
 -(id<ORIdxIntInformer>) retLabel;
 -(id<ORIdxIntInformer>) failLabel;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
 
-@implementation CoreCPI
+@implementation CPSolverI
 -(id) init
 {
    self = [super init];
@@ -86,6 +86,10 @@
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
+   
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
+
    return self;
 }
 -(id) initFor:(CPEngineI*)fdm
@@ -97,6 +101,8 @@
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
+   
+   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
 
@@ -110,6 +116,7 @@
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
+   [_tracer release];
    [super dealloc]; 
 }
 -(void) addHeuristic: (id<CPHeuristic>)h
@@ -271,6 +278,8 @@
    _solver = [[aDecoder decodeObject] retain];
    _trail  = [[aDecoder decodeObject] retain];
    _pool = [[NSAutoreleasePool alloc] init];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
 
@@ -305,32 +314,6 @@
 -(ORInt)virtualOffset:(id)obj
 {
    return [_solver virtualOffset:obj];
-}
-
-@end
-
-// ==================================================================================================================
-// CPI
-// ==================================================================================================================
-
-@implementation CPI
--(CPI*) init
-{
-   self = [super init];
-   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
-   return self;
-}
--(CPI*) initFor:(CPEngineI*)fdm
-{
-   self = [super initFor:fdm];
-   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
-   return self;
-}
--(void)dealloc
-{
-   [_tracer release];
-   [super dealloc];
 }
 
 -(void) label: (CPIntVarI*) var with: (ORInt) val
@@ -519,23 +502,6 @@
 {
    return _tracer;
 }
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-   // Nothing special here. Simply delegate back up. (We could remove the method, 
-   // but I prefer to keep it to remind me that the encode/decode pair ought to be present
-   // and that is it intentional to not encode anything here.
-   // The decoder also delegates up and _recreates_ a fresh tracer and a fresh search
-   // based on the decoded empty shell of the trail. 
-   [super encodeWithCoder:aCoder];
-}
-- (id) initWithCoder:(NSCoder *)aDecoder;
-{
-   self = [super initWithCoder:aDecoder];
-   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
-   return self;
-}
-
 @end
 
 /*
@@ -758,7 +724,7 @@ void printnl(id x)
 */
 
 @implementation CPInformerPortal
--(CPInformerPortal*)initCPInformerPortal:(CoreCPI*)cp
+-(CPInformerPortal*) initCPInformerPortal: (CPSolverI*) cp
 {
    self = [super init];
    _cp = cp;

@@ -14,7 +14,7 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPI.h"
+#import "CPSolverI.h"
 #import "CPWatch.h"
 
 @interface CPGrid : NSObject {
@@ -130,7 +130,7 @@
    }
    [_drawOn setNeedsDisplay:TRUE];
 }
--(void)watchSearch:(CoreCPI*)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf
+-(void)watchSearch: (CPSolverI*)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
 {
    [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
 }
