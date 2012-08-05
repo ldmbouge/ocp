@@ -63,7 +63,7 @@
 -(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                  add: (id<CPConstraint>) c;
 -(void)             minimize: (id<CPIntVar>) x;
--(void)           solveModel;
+-(void)           solveModel: (ORClosure) body;
 -(id<ORObjective>) objective;
 
 -(void)               close;

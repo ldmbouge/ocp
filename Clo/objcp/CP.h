@@ -47,7 +47,7 @@
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
 -(void)            minimize: (id<CPIntVar>) x;
--(void)          solveModel;
+-(void)          solveModel: (ORClosure) body;
 
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (ORInt) val;

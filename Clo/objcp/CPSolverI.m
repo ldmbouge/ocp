@@ -275,13 +275,22 @@
 
 -(void) minimize: (id<CPIntVar>) x
 {
-   
+   CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
+   [self add: cstr];
+   _objective = cstr;
 }
--(void) solveModel
+-(void) solveModel: (ORClosure) body
 {
-   
+   if (_objective != nil) {
+      [_search search: ^() {
+         [_search optimize: self using: body onSolution: ^() { [_solver saveSolution]; } onExit: ^() { [_solver restoreSolution]; }];
+      }];
+      printf("Optimal Solution: %d \n",[_objective primalBound]);
+   }
+   else {
+      
+   }
 }
-
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -492,11 +501,8 @@
 
 -(void) nestedMinimize: (id<CPIntVar>) x using: (ORClosure) body onSolution: onSolution onExit: onExit
 {
-   CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
-   [self add: cstr];
-   _objective = cstr;
    [_search optimize: self using: body onSolution: onSolution onExit: onExit];
-   printf("Optimal Solution: %d \n",[cstr primalBound]);
+   printf("Optimal Solution: %d \n",[_objective primalBound]);
 }
 
 -(void) minimize: (id<CPIntVar>) x using: (ORClosure) search
