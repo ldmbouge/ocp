@@ -50,20 +50,19 @@ int main(int argc, const char * argv[])
          rm[m] = [CPFactory intArray:cp range:RWomen with:^ORInt(ORInt w) { return rankMPtr[(m-1) * 5 + w-1];}];
       for(CPInt w=RWomen.low;w <= RWomen.up;w++) 
          rw[w] = [CPFactory intArray:cp range:RMen with:^ORInt(ORInt m) { return rankWPtr[(w-1) * 5 + m-1];}];
+      for(CPInt i=RMen.low;i <= RMen.up;i++)
+         [cp add: [[husband elt: wife[i]] eqi: i]];
+      for(CPInt i=RWomen.low;i <= RWomen.up;i++)
+         [cp add: [[wife elt: husband[i]] eqi: i]];
       
-      [cp solveAll:^{
-         for(CPInt i=RMen.low;i <= RMen.up;i++)
-            [cp add: [husband elt: wife[i]] eqi: i];
-         for(CPInt i=RWomen.low;i <= RWomen.up;i++)
-            [cp add: [wife elt: husband[i]] eqi: i];
-         
-         for(CPInt m=RMen.low;m <= RMen.up;m++) {
-            for(CPInt w=RWomen.low;w <= RWomen.up;w++) {
-               [cp add: [[[rm[m] elt:wife[m]] gti: [rm[m] at:w]] imply: [[rw[w] elt:husband[w]] lti: [rw[w] at:m]]]];
-               [cp add: [[[rw[w] elt:husband[w]] gti: [rw[w] at:m]] imply: [[rm[m] elt:wife[m]] lti: [rm[m] at:w]]]];
-            }
+      for(CPInt m=RMen.low;m <= RMen.up;m++) {
+         for(CPInt w=RWomen.low;w <= RWomen.up;w++) {
+            [cp add: [[[rm[m] elt:wife[m]] gti: [rm[m] at:w]] imply: [[rw[w] elt:husband[w]] lti: [rw[w] at:m]]]];
+            [cp add: [[[rw[w] elt:husband[w]] gti: [rw[w] at:m]] imply: [[rm[m] elt:wife[m]] lti: [rm[m] at:w]]]];
          }
-      } using:^{
+      }
+
+      [cp solveModel:^{
          NSLog(@"Start...");
          [CPLabel array:husband orderedBy:^ORInt(ORInt i) { return [husband[i] domsize];}];
          [CPLabel array:wife orderedBy:^ORInt(ORInt i) { return [wife[i] domsize];}];

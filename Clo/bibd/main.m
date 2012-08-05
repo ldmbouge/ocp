@@ -48,24 +48,23 @@ int main(int argc, const char * argv[])
       id<ORIntRange> Cols = RANGE(cp,1,b);
      
       id<CPIntVarMatrix> M = [CPFactory boolVarMatrix:cp range:Rows :Cols];
-               
-      [cp solve:^{
-         for(CPInt i=Rows.low;i<=Rows.up;i++)
-            [cp add: SUM(x, Cols, [M at:i :x]) eqi:r];
-         for(CPInt i=Cols.low;i<=Cols.up;i++)
-            [cp add: SUM(x, Rows, [M at:x :i]) eqi:k];
-         for(CPInt i=Rows.low;i<=Rows.up;i++)
-            for(CPInt j=i+1;j <= v;j++)
-               [cp add: SUM(x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l];
-         for(CPInt i=1;i <= v-1;i++) {
-            [cp add: [CPFactory lex:ALL(CPIntVar, j, Cols, [M at:i+1 :j])
-                                leq:ALL(CPIntVar, j, Cols, [M at:i   :j])]];
-         }
-         for(CPInt j=1;j <= b-1;j++) {
-            [cp add: [CPFactory lex:ALL(CPIntVar, i, Rows, [M at:i :j+1])
-                                leq:ALL(CPIntVar, i, Rows, [M at:i :j])]];
-         }
-      } using:^{
+      for(CPInt i=Rows.low;i<=Rows.up;i++)
+         [cp add: [SUM(x, Cols, [M at:i :x]) eqi:r]];
+      for(CPInt i=Cols.low;i<=Cols.up;i++)
+         [cp add: [SUM(x, Rows, [M at:x :i]) eqi:k]];
+      for(CPInt i=Rows.low;i<=Rows.up;i++)
+         for(CPInt j=i+1;j <= v;j++)
+            [cp add: [SUM(x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
+      for(CPInt i=1;i <= v-1;i++) {
+         [cp add: [CPFactory lex:ALL(CPIntVar, j, Cols, [M at:i+1 :j])
+                             leq:ALL(CPIntVar, j, Cols, [M at:i   :j])]];
+      }
+      for(CPInt j=1;j <= b-1;j++) {
+         [cp add: [CPFactory lex:ALL(CPIntVar, i, Rows, [M at:i :j+1])
+                             leq:ALL(CPIntVar, i, Rows, [M at:i :j])]];
+      }
+         
+      [cp solveModel:^{
          NSLog(@"Start...");
          [CPLabel array:[CPFactory flattenMatrix:M]];
          NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);

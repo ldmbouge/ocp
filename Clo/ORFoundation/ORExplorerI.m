@@ -166,6 +166,39 @@
 }
 
 
+-(void)           optimize: (ORClosure) body
+                      post: (ORClosure) post
+                canImprove: (Void2ORStatus) canImprove
+                    update: (ORClosure) update
+                onSolution: (ORClosure) onSolution
+                    onExit: (ORClosure) onExit
+{
+   NSCont* exit = [NSCont takeContinuation];
+   [_controller._val addChoice: exit];
+   if ([exit nbCalls]==0) {
+      OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: canImprove];
+      [self push: controller];
+      [controller release];
+      if (post) post();
+      if (body) body();
+      if (update) update();
+      if (onSolution) onSolution();
+      [_controller._val fail];
+   }
+   else {
+      if (onExit) onExit();
+      [exit letgo];
+   }
+}
+
+-(void) optimize: (ORClosure) body
+            post: (ORClosure) post
+      canImprove: (Void2ORStatus) canImprove
+          update: (ORClosure) update
+{
+   [self optimize: body post: post canImprove: canImprove update: update onSolution: NULL onExit: NULL];
+}
+
 -(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    NSCont* exit = [NSCont takeContinuation];
@@ -195,6 +228,17 @@
               onSolution: ^() { [_solver saveSolution]; }
                   onExit: ^() { [_solver restoreSolution]; }
                  control: [[ORNestedController alloc] initORNestedController:_controller._val]];
+    }
+    ];
+}
+-(void) solveAllModel: (id<ORSolver>) solver using: (ORClosure) search
+{
+   [self search: ^()
+    {
+       [self nestedSolveAll: ^() { [solver close]; search(); }
+                 onSolution: ^() { [_solver saveSolution]; }
+                     onExit: ^() { [_solver restoreSolution]; }
+                    control: [[ORNestedController alloc] initORNestedController:_controller._val]];
     }
     ];
 }

@@ -41,8 +41,21 @@
 -(void)          solve: (ORClosure) body using: (ORClosure) search;
 -(void)       solveAll: (ORClosure) body using: (ORClosure) search;
 
+-(void)           optimize: (ORClosure) body
+                      post: (ORClosure) post
+                canImprove: (Void2ORStatus) canImprove
+                    update: (ORClosure) update;
+
+-(void)           optimize: (ORClosure) body
+                      post: (ORClosure) post
+                canImprove: (Void2ORStatus) canImprove
+                    update: (ORClosure) update
+                onSolution: (ORClosure) onSolution
+                    onExit: (ORClosure) onExit;
+
 -(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
+-(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
 
 
 -(void)                try: (ORClosure) left or: (ORClosure) right;

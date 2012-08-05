@@ -34,22 +34,20 @@ CPInt labelFF3(id<CPSolver> m,id<CPIntVarArray> x,CPInt from,CPInt to)
 int main (int argc, const char * argv[])
 {
    int n = 8;
-   CPRange R = (CPRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
+   id<ORIntRange> R = RANGE(cp,1,n);
+ 
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    id<CPHeuristic> h = [CPFactory createFF:cp];
-   [cp solveAll: 
-    ^() {
-       [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
-    }   
-          using: 
-    ^() {
+   [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
+   [cp solveModel:
+   ^() {
        //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
        [CPLabel heuristic:h];
        printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);

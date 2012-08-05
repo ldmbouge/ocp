@@ -44,24 +44,21 @@ int main(int argc, const char * argv[])
       for(CPInt j = i+1; j <= n; j++)
          [table insert: i : j : (i-1)*n + j-1];
    [table close];
-   
-   [cp solve:
-    ^() {
-       for(CPInt w = 1; w < n; w++)
-          for(CPInt p = 1; p <= n/2; p++)
-             [cp add: [CPFactory table: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
-       [cp add: [CPFactory alldifferent:allgames]];
-       for(CPInt w = 1; w <= n; w++)
-          [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods : HomeAway
-                                                              with: ^id<CPIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
-       for(CPInt p = 1; p <= n/2; p++)
-          [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp range: EWeeks : HomeAway
-                                                             with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
-                                      low: c
-                                       up: c
-                              consistency:DomainConsistency]];
-    }
-       using:
+   for(CPInt w = 1; w < n; w++)
+      for(CPInt p = 1; p <= n/2; p++)
+         [cp add: [CPFactory table: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
+   [cp add: [CPFactory alldifferent:allgames]];
+   for(CPInt w = 1; w <= n; w++)
+      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods : HomeAway
+                                                          with: ^id<CPIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
+   for(CPInt p = 1; p <= n/2; p++)
+      [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp range: EWeeks : HomeAway
+                                                         with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
+                                  low: c
+                                   up: c
+                          consistency:DomainConsistency]];
+
+   [cp solveModel:
     ^() {
        [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
        printf("Solution \n");

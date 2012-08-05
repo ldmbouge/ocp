@@ -304,6 +304,14 @@
    }
 }
 
+-(void) solveAllModel: (ORClosure) search
+{
+   [_search solveAllModel: self using: search];
+}
+-(void) stateModel
+{
+   [_search solveModel: self using: ^{}];
+}
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
    // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail

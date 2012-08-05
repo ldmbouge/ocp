@@ -66,6 +66,8 @@
 -(void)             minimize: (id<CPIntVar>) x;
 -(void)             maximize: (id<CPIntVar>) x;
 -(void)           solveModel: (ORClosure) body;
+-(void)        solveAllModel: (ORClosure) body;
+-(void)           stateModel;
 -(id<ORObjective>) objective;
 
 -(void)               close;
@@ -103,10 +105,6 @@
 -(void)               solve: (ORClosure) body using:(ORClosure) search;
 -(void)            solveAll: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body using:(ORClosure) search;
--(void)            minimize: (id<CPIntVar>) x in: (ORClosure) body;
--(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
--(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
--(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

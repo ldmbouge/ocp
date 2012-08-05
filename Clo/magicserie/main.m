@@ -22,12 +22,10 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
-   [cp solve: ^{
-      for(CPInt i=0;i<n;i++)
-         [cp add: [SUM(j,R,[x[j] eqi: i]) eq: x[i] ]];
-      [cp add: [SUM(i,R,[x[i] muli: i]) eqi: n ]];
-   }
-   using: ^{
+   for(CPInt i=0;i<n;i++)
+      [cp add: [SUM(j,R,[x[j] eqi: i]) eq: x[i] ]];
+   [cp add: [SUM(i,R,[x[i] muli: i]) eqi: n ]];
+   [cp solveModel: ^{
       [CPLabel array: x];
       for(ORInt i = 0; i < n; i++)
          printf("%d ",[x[i] value]);

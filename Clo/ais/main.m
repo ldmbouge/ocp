@@ -41,23 +41,14 @@ int main(int argc, const char * argv[])
       //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
       //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
       id<CPHeuristic> h = [CPFactory createFF:cp restricted:sx];
-      
-      [cp solveAll: ^{
-         [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
-         for(CPUInt i=SD.low;i<=SD.up;i++) {
-            [cp add:[dx at:i] equal:[CPFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]] consistency: DomainConsistency];
-         }
-         [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
-         [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
-         [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
-         
-//         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-//         BOOL ok = [archive writeToFile:@"ais.CParchive" atomically:NO];
-//         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
-         
-      } using:^{
-         NSLog(@"Start...");
-         //labelFF(cp,sx);
+      [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
+      for(CPUInt i=SD.low;i<=SD.up;i++) {
+         [cp add:[[dx at:i] eq:[CPFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]]] consistency: DomainConsistency];
+      }
+      [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
+      [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
+      [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
+      [cp solveModel: ^{
          [CPLabel heuristic:h];
          [CPLabel array:sx orderedBy:^ORInt(ORInt i) {
             return [[sx at:i] domsize];

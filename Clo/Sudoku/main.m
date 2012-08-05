@@ -29,33 +29,30 @@ void show(id<CPIntVarMatrix> m)
 
 int main (int argc, const char * argv[])
 {
-    FILE* f = fopen("sudokuFile3.txt","r");
-    int nb;
-    int r, c, v;
-    fscanf(f,"%d \n",&nb);
-    printf("number of entries %d \n",nb);
-    id<CPSolver> cp = [CPFactory createSolver];
-    id<ORIntRange> R = RANGE(cp,1,9);
-    id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
-    id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
-    [cp solve: 
-     ^() {
-         for(CPInt i = 0; i < nb; i++) {
-             fscanf(f,"%d%d%d",&r,&c,&v);
-             [cp label: [x at: r : c] with:v];
-         }
-         for(CPInt i = 1; i <= 9; i++)
-             [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<CPIntVar>(CPInt j) { return [x at: i : j]; }]]];
-         for(CPInt j = 1; j <= 9; j++)
-             [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<CPIntVar>(CPInt i) { return [x at: i : j]; }]]];
-         for(CPInt i = 0; i <= 2; i++)
-             for(CPInt j = 0; j <= 2; j++)
-                 [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp 
-                                                                     range: RANGE(cp,i*3+1,i*3+3)
-                                                                          : RANGE(cp,j*3+1,j*3+3)
-                                                                      with: ^id<CPIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
-     }   
-        using: 
+   FILE* f = fopen("sudokuFile3.txt","r");
+   int nb;
+   int r, c, v;
+   fscanf(f,"%d \n",&nb);
+   printf("number of entries %d \n",nb);
+   id<CPSolver> cp = [CPFactory createSolver];
+   id<ORIntRange> R = RANGE(cp,1,9);
+   id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
+   id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<CPIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
+   for(CPInt i = 0; i < nb; i++) {
+      fscanf(f,"%d%d%d",&r,&c,&v);
+      [cp label: [x at: r : c] with:v];
+   }
+   for(CPInt i = 1; i <= 9; i++)
+      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<CPIntVar>(CPInt j) { return [x at: i : j]; }]]];
+   for(CPInt j = 1; j <= 9; j++)
+      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<CPIntVar>(CPInt i) { return [x at: i : j]; }]]];
+   for(CPInt i = 0; i <= 2; i++)
+      for(CPInt j = 0; j <= 2; j++)
+         [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp
+                                                            range: RANGE(cp,i*3+1,i*3+3)
+                                                                 : RANGE(cp,j*3+1,j*3+3)
+                                                             with: ^id<CPIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
+    [cp solveModel:
      ^() {
          [CPLabel array: a orderedBy: ^CPInt(CPInt i) { return [[a at:i] domsize];}];
          show(x);

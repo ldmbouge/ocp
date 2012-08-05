@@ -33,15 +33,12 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    id<CPIntVarArray> xp = ALL(CPIntVar,i,R,[CPFactory intVar:x[i] shift:i]);
    id<CPIntVarArray> xn = ALL(CPIntVar,i,R,[CPFactory intVar:x[i] shift:-i]);
-  
-   [cp solveAll:
-    ^() {
-       [cp add: [CPFactory alldifferent: x consistency: DomainConsistency]];
-       [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];
-       [cp add: [CPFactory alldifferent: xn consistency:DomainConsistency]];
-    }
-          using:
-    ^() {
+   [cp add: [CPFactory alldifferent: x consistency: DomainConsistency]];
+   [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];
+   [cp add: [CPFactory alldifferent: xn consistency:DomainConsistency]];
+
+   [cp solveAllModel:
+     ^() {
        [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [x[i] domsize];}];
        [nbSolutions incr];
     }

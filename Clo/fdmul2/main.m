@@ -32,22 +32,22 @@ int main(int argc, const char * argv[])
 //      id<CPIntVarArray> x = ALL(CPIntVar, i, R, [CPFactory intVar:cp bounds:D]);
       id<CPIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
-      [cp solve: ^{
-         id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
-         [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
-         
-         id<CPExpr> lhs1 = SUM(i,RANGE(cp,0,2),[x[i] muli:ipow(10,i)]);
-         [cp add: [[lhs1 mul:x[3]] eq: SUM(i,RANGE(cp,6,8),[x[i] muli:ipow(10,i-6)])]];
-         [cp add: [[lhs1 mul:x[4]] eq: SUM(i,RANGE(cp,9,11),[x[i] muli:ipow(10,i-9)])]];
-         [cp add: [[lhs1 mul:x[5]] eq: SUM(i,RANGE(cp,12,14),[x[i] muli:ipow(10,i-12)])]];
-         int* coefs = (int[]){1,10,100,10,100,1000,100,1000,10000};
-         [cp add: [SUM(i,RANGE(cp,1,5),[x[14+i] muli: ipow(10,i-1)]) eq: SUM(i,RANGE(cp,6,14), [x[i] muli:coefs[i-6]])]];
+      
+      id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
+      [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
+      
+      id<CPExpr> lhs1 = SUM(i,RANGE(cp,0,2),[x[i] muli:ipow(10,i)]);
+      [cp add: [[lhs1 mul:x[3]] eq: SUM(i,RANGE(cp,6,8),[x[i] muli:ipow(10,i-6)])]];
+      [cp add: [[lhs1 mul:x[4]] eq: SUM(i,RANGE(cp,9,11),[x[i] muli:ipow(10,i-9)])]];
+      [cp add: [[lhs1 mul:x[5]] eq: SUM(i,RANGE(cp,12,14),[x[i] muli:ipow(10,i-12)])]];
+      int* coefs = (int[]){1,10,100,10,100,1000,100,1000,10000};
+      [cp add: [SUM(i,RANGE(cp,1,5),[x[14+i] muli: ipow(10,i-1)]) eq: SUM(i,RANGE(cp,6,14), [x[i] muli:coefs[i-6]])]];
+      
+      NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+      BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
+      NSLog(@"Writing ? %s",ok ? "OK" : "KO");
 
-         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-         BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
-         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
-         
-      } using:^{
+      [cp solveModel: ^{
          @try {
             [CPLabel heuristic:h];
          } @catch(CPRemoveOnDenseDomainError* nsex) {

@@ -62,38 +62,38 @@ int main(int argc, const char * argv[])
       id<CPIntVarArray> costas = [CPFactory intVarArray: cp range:R domain: R];         
       id<CPIntVarMatrix>  diff = [CPFactory intVarMatrix:cp range:R : R domain:D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
-      [cp solve: ^{
-         [cp add:[CPFactory alldifferent:costas]];
-         for(CPUInt i=R.low;i<=R.up;i++) {
-            for(CPUInt j=R.low;j<=R.up;j++) {
-               if (i < j)
-                  [cp add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
-               else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
-            }            
+      
+      [cp add:[CPFactory alldifferent:costas]];
+      for(CPUInt i=R.low;i<=R.up;i++) {
+         for(CPUInt j=R.low;j<=R.up;j++) {
+            if (i < j)
+               [cp add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
+            else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
          }
-         for(CPInt i=1;i<=n-1;i++) {
-            id<CPIntVarArray> slice = ALL(CPIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
-            [cp add:[CPFactory alldifferent:slice]];
+      }
+      for(CPInt i=1;i<=n-1;i++) {
+         id<CPIntVarArray> slice = ALL(CPIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
+         [cp add:[CPFactory alldifferent:slice]];
+      }
+      [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
+      for(CPUInt i=R.low;i<=R.up;i++) {
+         for(CPUInt j=i+1;j<=R.up;j++) {
+            [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
          }
-         [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
-         for(CPUInt i=R.low;i<=R.up;i++) {
-            for(CPUInt j=i+1;j<=R.up;j++) {
-               [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
-            }
+      }
+      for (CPInt k=3; k<=n; k++) {
+         for (CPInt l=k+1; l<=n; l++) {
+            [cp add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
+             H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
          }
-         for (CPInt k=3; k<=n; k++) {
-            for (CPInt l=k+1; l<=n; l++) {
-               [cp add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
-                       H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
-            }
-         }
-                  
-//         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-//         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
-//         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
-         
-      } using:^{
-         NSLog(@"Search");
+      }
+      
+      //         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+      //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
+      //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+
+      [cp solveModel: ^{
+          NSLog(@"Search");
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@",costas);
          NSLog(@"Solver: %@",cp);

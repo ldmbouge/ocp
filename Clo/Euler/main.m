@@ -64,14 +64,13 @@ int main (int argc, const char * argv[])
    printf("min %d \n",[jump[1] min]);
    printf("max %d \n",[jump[1] max]);
    printf("size %d \n",[jump[1] domsize]);
-    [cp solve: 
-     ^() {
-         for(int i = 1; i <= 64; i++)
-             [cp restrict: [jump at: i] to: knightMoves(cp,i)];
-         [cp add: [CPFactory alldifferent: jump consistency: DomainConsistency]];
-         [cp add: [CPFactory circuit: jump]];
-     }   
-     using: 
+   
+   for(int i = 1; i <= 64; i++)
+      [cp restrict: [jump at: i] to: knightMoves(cp,i)];
+   [cp add: [CPFactory alldifferent: jump consistency: DomainConsistency]];
+   [cp add: [CPFactory circuit: jump]];
+
+    [cp solveModel:
      ^() {
          [CPLabel array: jump orderedBy: ^CPInt(CPInt i) { return [[jump at:i] domsize];}];
          printCircuit(jump);

@@ -61,16 +61,13 @@ int main(int argc, const char * argv[])
       
       
       id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
-      [cp solve: ^{
-         for(int i=0;i<m;i++) {
-            id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
-            id<CPIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
-            [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
-         }
-      }  using:^{
-         [ORControl forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) {
-            return -tw[i];
-         } do:^(ORInt i) {
+      for(int i=0;i<m;i++) {
+         id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
+         id<CPIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
+         [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
+      }
+      [cp solveModel: ^{
+         [cp forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) { return -tw[i]; } do:^(ORInt i) {
             [cp try:^{
                //printf("BR:%d==%d\n",i+1,0);
                [cp label:x[i] with:0];
