@@ -19,10 +19,10 @@
 
 @interface CPFactory : NSObject
 +(id<CPSolver>) createSolver;
-+(id<CPSolver>) createSemSolver;
+//+(id<CPSolver>) createSemSolver;
 +(id<CPSolver>) createRandomizedSolver;
 +(id<CPSolver>) createDeterministicSolver;
-+(id<CPSolver>) createSemSolverFor:(id<CPEngine>)fdm;
+//+(id<CPSolver>) createSemSolverFor:(id<CPEngine>)fdm;
 +(void) shutdown;
 +(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
 +(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;

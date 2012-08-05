@@ -80,7 +80,7 @@ int main(int argc, const char * argv[])
        printf(" 1 \n");
        for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-            [cp add: SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1];
+            [cp add: [SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
          }
               printf(" 2 \n");
        for(CPInt p = Periods.low; p <= Periods.up; p++)

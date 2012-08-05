@@ -15,7 +15,7 @@
 #import "ORExplorerI.h"
 
 @implementation ORExplorerI
--(id) initORExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer
+-(id) initORExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer
 {
    self = [super init];
    _solver = solver;

@@ -17,21 +17,20 @@
 #import <objcp/CPExplorer.h>
 
 /*
-@protocol ORSolver;
 @protocol CPHeuristic;
 
 
 
 
 @interface CPCoreExplorerI : NSObject<ORExplorer> {
-   id<ORSolver> _solver;
+   id<OREngine> _solver;
    id<ORTracer>       _tracer;
    TRId               _controller;
    CPHStack*          _hStack;
    CPInt          _nbf;
    CPInt          _nbc;   
 }
--(id)            initCPCoreExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
+-(id)            initCPCoreExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
 -(void)                   dealloc;
 -(CPInt)              nbChoices;
 -(CPInt)              nbFailures;
@@ -75,7 +74,7 @@
 @interface CPExplorerI : CPCoreExplorerI <ORExplorer>
 {
 }
--(CPExplorerI*)initCPExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
+-(CPExplorerI*)initCPExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
 -(void)dealloc;
 // top level calls
 -(void)         search: (ORClosure) body;
@@ -93,7 +92,7 @@
 
 @interface CPSemExplorerI : CPCoreExplorerI<ORExplorer> {
 }
--(CPSemExplorerI*)initCPSemExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
+-(CPSemExplorerI*)initCPSemExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
 -(void)dealloc;
 // top level calls
 -(void)             search: (ORClosure) body;

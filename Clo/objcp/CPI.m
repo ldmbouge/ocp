@@ -26,7 +26,7 @@
 #import <ORFoundation/ORExplorerI.h>
 
 @implementation CPHeuristicStack
--(CPHeuristicStack*)initCPHStack
+-(CPHeuristicStack*)initCPHeuristicStack
 {
    self = [super init];
    _mx  = 2;
@@ -83,6 +83,7 @@
    _trail = [[ORTrail alloc] init];
    _solver = [[CPEngineI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
+   _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    return self;
@@ -93,6 +94,7 @@
    _solver = [fdm retain];
    _trail = [[fdm trail] retain];
    _pool = [[NSAutoreleasePool alloc] init];
+   _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    return self;
@@ -104,15 +106,15 @@
    [_trail release];
    [_solver release];
    [_search release];
-//   [_pool release];
+   [_hStack release];
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
    [super dealloc]; 
 }
--(void)addHeuristic:(id<CPHeuristic>)h
+-(void) addHeuristic: (id<CPHeuristic>)h
 {
- //  [_search addHeuristic:h];
+   [_hStack push:h];
 }
 
 -(id<CPEngine>) solver
@@ -256,13 +258,6 @@
       [_search fail];
 }
 
--(void) post: (id<CPConstraint>) c
-{
-    ORStatus status = [_solver post: c];
-    if (status == ORFailure)
-        [_search fail];
-    [ORConcurrency pumpEvents];
-}
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
    // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
@@ -283,6 +278,9 @@
 {
    if ([_solver close] == ORFailure)
       [_search fail];
+   [_hStack applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];}
+                  with: [_solver allVars]];
+   [ORConcurrency pumpEvents];
 }
 -(id<ORIdxIntInformer>) retLabel
 {

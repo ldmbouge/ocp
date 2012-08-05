@@ -13,7 +13,6 @@
 #import <ORFoundation/ORTrail.h>
 
 @protocol ORCommand;
-@protocol ORSolver;
 @class ORCommandList;
 
 @protocol ORTracer <NSObject>

@@ -177,7 +177,7 @@
          [proxies[k] release];
       return thePack;
    }
-   +(CPProblem*)unpack:(NSData*)msg forSolver:(id)cp
+   +(CPProblem*)unpack:(NSData*)msg fOREngine:(id)cp
    {
       id<CPEngine> fdm = [cp solver];
       CPUInt nbProxies = 0;
@@ -272,7 +272,7 @@
          [proxies[k] release];
       return thePack;
    }
-   +(Checkpoint*)unpack:(NSData*)msg forSolver:(id)cp
+   +(Checkpoint*)unpack:(NSData*)msg fOREngine:(id)cp
    {
       id arp = [[NSAutoreleasePool alloc] init];
       id<CPEngine> fdm = [cp solver];

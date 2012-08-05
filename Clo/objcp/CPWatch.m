@@ -109,7 +109,7 @@
 @implementation CPViewController
 -(CPViewController*)initCPViewController:(id<ORSearchController>)chain onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
-   self = [super initCPDefaultController];
+   self = [super initORDefaultController];
    [self setController:chain];
    _onChoose = [onc copy];
    _onFail = [onf copy];

@@ -1,5 +1,5 @@
 //
-//  ORSolver.h
+//  OREngine.h
 //  Clo
 //
 //  Created by Pascal Van Hentenryck on 8/3/12.

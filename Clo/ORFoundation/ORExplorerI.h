@@ -15,14 +15,14 @@
 
 @interface ORExplorerI : NSObject<ORExplorer>
 {
-   id<ORSolver> _solver;
+   id<OREngine> _solver;
    id<ORTracer> _tracer;
    TRId         _controller;
    ORInt        _nbf;
    ORInt        _nbc;
 }
 
--(ORExplorerI*) initORExplorer: (id<ORSolver>) solver withTracer: (id<ORTracer>) tracer;
+-(ORExplorerI*) initORExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
 -(void)                dealloc;
 -(ORInt)             nbChoices;
 -(ORInt)            nbFailures;

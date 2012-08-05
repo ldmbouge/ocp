@@ -35,7 +35,8 @@
    id<CPEngine>          _solver;
    id<ORExplorer>        _search;
    ORTrail*              _trail;
-   NSAutoreleasePool*    _pool;  
+   NSAutoreleasePool*    _pool;
+   CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
    @package
    id<ORIdxIntInformer>  _returnLabel;
@@ -52,11 +53,10 @@
 -(ORTrail*)               trail;
 -(id<ORSearchController>) controller;
 -(void) setController: (id<ORSearchController>) controller;
--(void)addHeuristic:(id<CPHeuristic>)h;
+-(void)               addHeuristic:(id<CPHeuristic>)h;
 
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                 add: (id<CPConstraint>) c;
--(void)                post: (id<CPConstraint>) c;
 -(void)               close;
 -(void)        saveSolution;
 -(void)     restoreSolution;

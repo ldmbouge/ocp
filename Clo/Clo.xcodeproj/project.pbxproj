@@ -1494,7 +1494,7 @@
 		5B8DA1FC15B98BC300684FD8 /* knapsackOpt-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "knapsackOpt-Prefix.pch"; sourceTree = "<group>"; };
 		5B8DA1FD15B98BC300684FD8 /* knapsackOpt.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = knapsackOpt.1; sourceTree = "<group>"; };
 		5B8E16C01505BB5700D3C698 /* CPParallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPParallel.h; sourceTree = "<group>"; };
-		5B8E16C11505BB5700D3C698 /* CPParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPParallel.m; sourceTree = "<group>"; };
+		5B8E16C11505BB5700D3C698 /* CPParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPParallel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B91C334159FAB2D00158EEA /* CPElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPElement.h; sourceTree = "<group>"; };
 		5B91C335159FAB2D00158EEA /* CPElement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPElement.m; sourceTree = "<group>"; };
 		5B920EA915A3DDA600AD0820 /* ORExpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORExpr.h; sourceTree = "<group>"; };
@@ -1691,7 +1691,7 @@
 		B1595B6413C218F9001FCB61 /* sudokuFile3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sudokuFile3.txt; sourceTree = SOURCE_ROOT; };
 		B15A2B4E13995F12002401A0 /* CPError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPError.h; sourceTree = "<group>"; };
 		B15A2B4F13995F12002401A0 /* CPError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPError.m; sourceTree = "<group>"; };
-		B15A2BED139990ED002401A0 /* CPTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTracer.h; sourceTree = "<group>"; };
+		B15A2BED139990ED002401A0 /* CPTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B15A2BEE139990ED002401A0 /* CPTracer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTracer.m; sourceTree = "<group>"; };
 		B15A2DA8139AB25F002401A0 /* CPLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLimit.h; sourceTree = "<group>"; };
 		B15A2DA9139AB25F002401A0 /* CPLimit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLimit.m; sourceTree = "<group>"; };

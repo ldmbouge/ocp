@@ -276,7 +276,7 @@
 
 -(void)setupWork:(NSData*)root forCP:(SemCP*)cp
 {
-   CPProblem* theSub = [[CPProblem unpack:root forSolver:cp] retain];
+   CPProblem* theSub = [[CPProblem unpack:root fOREngine:cp] retain];
    ORStatus status = [cp installProblem:theSub];
    [theSub release];
    if (status == ORFailure)
