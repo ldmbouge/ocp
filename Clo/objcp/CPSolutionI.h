@@ -14,13 +14,13 @@
 
 @protocol CPEngine;
 
-@interface CPSolutionI : NSObject<CPSolution,NSCoding> {
+@interface CPSolutionI : NSObject<ORSolution,NSCoding> {
    NSArray* _shots;
 }
--(CPSolutionI*)initCPSolution:(id<CPEngine>)solver;
--(void)dealloc;
--(int)intValue:(id)var;
--(BOOL)boolValue:(id)var;
--(CPULong)count;
--(void)restoreInto:(id<CPEngine>)solver;
+-(CPSolutionI*) initCPSolution: (id<OREngine>) solver;
+-(void) dealloc;
+-(int) intValue: (id) var;
+-(BOOL)boolValue: (id) var;
+-(ORULong) count;
+-(void) restoreInto: (id<OREngine>)solver;
 @end

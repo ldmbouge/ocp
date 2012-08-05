@@ -11,22 +11,3 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
-
-@protocol CPEngine;
-
-@protocol CPSnapshot
--(void)restoreInto:(NSArray*)av;
--(int)intValue;
--(BOOL)boolValue;
-@end
-
-@protocol CPSavable<NSObject>
--(id)snapshot;
-@end
-
-@protocol CPSolution <NSObject>
--(CPInt)intValue:(id)var;
--(BOOL)boolValue:(id)var;
--(NSUInteger)count;
--(void)restoreInto:(id<CPEngine>)solver;
-@end

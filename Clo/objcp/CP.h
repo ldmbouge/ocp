@@ -84,7 +84,7 @@
 
 -(id<CPPortal>) portal;
 -(id<ORTracer>) tracer;
--(id<CPSolution>) solution;
+-(id<ORSolution>) solution;
 
 
 @optional -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;

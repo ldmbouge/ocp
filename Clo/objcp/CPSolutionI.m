@@ -10,19 +10,21 @@
  ***********************************************************************/
 
 #import "CPSolutionI.h"
+#import <ORFoundation/ORFoundation.h>
 #import "CPEngine.h"
 
 
 // Not sure why this works if shot is null
 @implementation CPSolutionI
--(CPSolutionI*)initCPSolution:(id<CPEngine>)solver
+
+-(CPSolutionI*) initCPSolution: (id<CPEngine>) solver
 {
    self = [super init];
    NSArray* av = [solver allVars];
-   CPULong sz = [av count];
+   ORULong sz = [av count];
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
-   [av enumerateObjectsUsingBlock:^(id<CPSavable> obj, NSUInteger idx, BOOL *stop) {
-      id<CPSavable> shot = [obj snapshot];
+   [av enumerateObjectsUsingBlock:^(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+      id<ORSavable> shot = [obj snapshot];
       if (shot)
          [snapshots addObject: shot];
       [shot release];
@@ -30,37 +32,37 @@
    _shots = snapshots;
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    [_shots release];
    [super dealloc];   
 }
--(int)intValue:(id)var
+-(int) intValue: (id) var
 {
    return [[_shots objectAtIndex:[var getId]] intValue];   
 }
--(BOOL)boolValue:(id)var
+-(BOOL) boolValue: (id) var
 {
    return [[_shots objectAtIndex:[var getId]] boolValue];
 }
--(CPULong)count
+-(ORULong) count
 {
    return [_shots count];
 }
--(void)restoreInto:(id<CPEngine>)solver
+-(void) restoreInto: (id<OREngine>)solver
 {
    NSArray* av = [solver allVars];
-   [_shots enumerateObjectsUsingBlock:^(id<CPSnapshot> obj,NSUInteger idx,BOOL* stop) {
+   [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj,NSUInteger idx,BOOL* stop) {
       [obj restoreInto:av];
    }];
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder: (NSCoder *)aCoder
 {
    [aCoder encodeObject:_shots];
    
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
    _shots = [[aDecoder decodeObject] retain];

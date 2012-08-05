@@ -167,7 +167,7 @@
 {
    [_solver restoreSolution];
 }
--(id<CPSolution>) solution
+-(id<ORSolution>) solution
 {
    return [_solver solution];
 }

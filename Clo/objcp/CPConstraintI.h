@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPData.h>
+#import "CPEngine.h"
 
 @class CPEngineI;
 

@@ -605,7 +605,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    [_aSol restoreInto:self];
 }
--(id<CPSolution>) solution
+-(id<ORSolution>) solution
 {
    return _aSol;
 }

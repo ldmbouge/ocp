@@ -74,7 +74,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return rv;
 }
 
-@interface CPIntVarSnapshot : NSObject<CPSnapshot,NSCoding> {
+@interface CPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
    CPUInt    _name;
    union {
       CPInt _value;

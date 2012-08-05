@@ -9,9 +9,29 @@
  
  ***********************************************************************/
 
+@protocol OREngine;
+
+@protocol ORSnapshot
+-(void) restoreInto: (NSArray*) av;
+-(int)  intValue;
+-(BOOL) boolValue;
+@end
+
+@protocol ORSavable<NSObject>
+-(id) snapshot;
+@end
+
+@protocol ORSolution <NSObject>
+-(ORInt) intValue: (id) var;
+-(BOOL) boolValue: (id) var;
+-(NSUInteger) count;
+-(void) restoreInto: (id<OREngine>)solver;
+@end
+
 @protocol ORSolutionProtocol <NSObject>
 -(void)        saveSolution;
 -(void)     restoreSolution;
+-(id<ORSolution>) solution;
 @end
 
 @protocol OREngine <NSObject,ORTracker,ORSolutionProtocol>

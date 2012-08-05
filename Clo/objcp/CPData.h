@@ -59,7 +59,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 @protocol CPInteger <ORInteger,CPExpr>
 @end
 
-@protocol CPVar <CPExpr,CPSavable>
+@protocol CPVar <CPExpr,ORSavable>
 -(CPUInt)getId;
 -(id)snapshot;
 -(NSSet*)constraints;

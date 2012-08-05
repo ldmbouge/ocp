@@ -78,7 +78,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 -(id<CPPortal>)portal;
--(id<CPSolution>) solution;
+-(id<ORSolution>) solution;
 @end
 
 @interface CPI : CoreCPI<CPSolver> {
