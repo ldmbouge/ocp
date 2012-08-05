@@ -89,7 +89,8 @@
    
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
-
+   _objective = nil;
+   
    return self;
 }
 -(id) initFor:(CPEngineI*)fdm
@@ -103,6 +104,7 @@
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
+   _objective = nil;
    return self;
 }
 
@@ -131,6 +133,14 @@
 -(id<ORExplorer>) explorer
 {
    return _search;
+}
+-(id<ORObjective>) objective
+{
+   return _objective;
+}
+-(void) setObjective: (id<ORObjective>) o
+{
+   _objective = o;
 }
 -(id<ORSearchController>) controller
 {
@@ -222,7 +232,6 @@
                  onExit: onExit
    ];
    printf("Optimal Solution: %d \n",[cstr primalBound]);
-   //[cstr release]; // [ldm] Why Release? [this is tracked anyhow!]
 }
 -(void) nestedMaximize: (CPIntVarI*) x in: (ORClosure) body onSolution: onSolution onExit: onExit
 {
@@ -235,7 +244,6 @@
                  onExit: onExit
     ];
    printf("Optimal Solution: %d \n",[cstr primalBound]);
-   //[cstr release]; // [ldm] Why release? [this is tracked anyhow!]
 }
 
 -(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
@@ -264,6 +272,16 @@
    if (status == ORFailure)
       [_search fail];
 }
+
+-(void) minimize: (id<CPIntVar>) x
+{
+   
+}
+-(void) solveModel
+{
+   
+}
+
 
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -469,6 +487,29 @@
                             ]; }
      ];
 }
+
+//pvh temporary
+
+-(void) nestedMinimize: (id<CPIntVar>) x using: (ORClosure) body onSolution: onSolution onExit: onExit
+{
+   CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
+   [self add: cstr];
+   _objective = cstr;
+   [_search optimize: self using: body onSolution: onSolution onExit: onExit];
+   printf("Optimal Solution: %d \n",[cstr primalBound]);
+}
+
+-(void) minimize: (id<CPIntVar>) x using: (ORClosure) search
+{
+   [_search search: ^() { [self nestedMinimize: x
+                                  using: search
+                             onSolution: ^() { [_solver saveSolution]; }
+                                 onExit: ^() { [_solver restoreSolution]; }
+                           ];
+                  }
+    ];
+}
+
 -(void) maximize: (id<CPIntVar>) x in: (ORClosure) body 
 {
   [_search search: ^() { [self nestedMaximize: x 

@@ -31,7 +31,7 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol CPSolver <ORSolutionProtocol,ORTracker>
+@protocol CPSolver <ORSolver>
 
 -(id<ORSearchController>) controller;
 
@@ -45,12 +45,16 @@
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 
 -(void)                 add: (id<CPConstraint>) c;
--(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
+-(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
+-(void)            minimize: (id<CPIntVar>) x;
+-(void)          solveModel;
+
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
 -(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+
 
 -(void)              search: (ORClosure) body;
 -(void)               solve: (ORClosure) body;
@@ -61,6 +65,9 @@
 -(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
 -(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 -(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
+
+// pvh temporary
+-(void)            minimize: (id<CPIntVar>) x using: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

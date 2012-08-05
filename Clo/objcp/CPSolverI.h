@@ -36,6 +36,7 @@
 @protected
    id<CPEngine>          _solver;
    id<ORExplorer>        _search;
+   id<ORObjective>       _objective;
    ORTrail*              _trail;
    NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
@@ -43,7 +44,7 @@
    @package
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
-   DFSTracer* _tracer;
+   DFSTracer*            _tracer;
 }
 -(CPSolverI*)                init;
 -(CPSolverI*)             initFor:(CPEngineI*)fdm;
@@ -59,8 +60,12 @@
 -(void)                   setController: (id<ORSearchController>) controller;
 -(void)                   addHeuristic: (id<CPHeuristic>) h;
 
--(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
--(void)                 add: (id<CPConstraint>) c;
+-(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
+-(void)                  add: (id<CPConstraint>) c;
+-(void)             minimize: (id<CPIntVar>) x;
+-(void)           solveModel;
+-(id<ORObjective>) objective;
+
 -(void)               close;
 -(void)        saveSolution;
 -(void)     restoreSolution;
@@ -99,6 +104,9 @@
 -(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
 -(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 -(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
+
+//pvh temporary
+-(void)            minimize: (id<CPIntVar>) x using: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

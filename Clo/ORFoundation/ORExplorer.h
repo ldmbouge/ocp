@@ -12,6 +12,8 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol ORSolver;
+
 @protocol ORExplorer <NSObject>
 -(void) push: (id<ORSearchController>) c;
 
@@ -38,9 +40,10 @@
 -(void)               fail;
 -(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 -(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update;
--(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update
-                onSolution: (ORClosure) onSolution
-                    onExit: (ORClosure) onExit;
+-(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update onSolution: (ORClosure) onSolution
+                                                                                                                                          onExit: (ORClosure) onExit;
+-(void)           optimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+
 -(void)               once: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)     limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;

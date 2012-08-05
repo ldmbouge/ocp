@@ -205,6 +205,28 @@
    [self optimize: body post: post canImprove: canImprove update: update onSolution: NULL onExit: NULL];
 }
 
+-(void) optimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   NSCont* exit = [NSCont takeContinuation];
+   [_controller._val addChoice: exit];
+   id<ORObjective> obj = solver.objective;
+   if ([exit nbCalls]==0) {
+      OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: ^ORStatus(void) { return [obj check]; }];
+      [self push: controller];
+      [controller release];
+      [solver close];
+      if (search) search();
+      [obj updatePrimalBound];
+      if (onSolution) onSolution();
+      [_controller._val fail];
+   }
+   else {
+      if (onExit) onExit();
+      [exit letgo];
+   }
+   
+}
+
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
    [_controller._val startTry];

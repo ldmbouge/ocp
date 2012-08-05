@@ -53,6 +53,12 @@
                 onSolution: (ORClosure) onSolution
                     onExit: (ORClosure) onExit;
 
+-(void)           optimize: (id<ORSolver>) solver
+                     using: (ORClosure) search
+                onSolution: (ORClosure) onSolution
+                    onExit: (ORClosure) onExit;
+
+
 -(void)                try: (ORClosure) left or: (ORClosure) right;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
