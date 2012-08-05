@@ -42,7 +42,8 @@
 -(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update;
 -(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update onSolution: (ORClosure) onSolution
                                                                                                                                           onExit: (ORClosure) onExit;
--(void)           optimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
 
 -(void)               once: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;

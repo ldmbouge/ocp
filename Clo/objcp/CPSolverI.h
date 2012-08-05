@@ -45,6 +45,7 @@
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    DFSTracer*            _tracer;
+   BOOL                  _closed;
 }
 -(CPSolverI*)                init;
 -(CPSolverI*)             initFor:(CPEngineI*)fdm;
@@ -63,10 +64,12 @@
 -(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                  add: (id<CPConstraint>) c;
 -(void)             minimize: (id<CPIntVar>) x;
+-(void)             maximize: (id<CPIntVar>) x;
 -(void)           solveModel: (ORClosure) body;
 -(id<ORObjective>) objective;
 
 -(void)               close;
+-(BOOL)              closed;
 -(void)        saveSolution;
 -(void)     restoreSolution;
 -(void)                push: (id<ORSearchController>) c;
@@ -104,9 +107,6 @@
 -(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
 -(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 -(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
-
-//pvh temporary
--(void)            minimize: (id<CPIntVar>) x using: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

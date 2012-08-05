@@ -22,7 +22,7 @@
 -(ORStatus) lthen: (id<CPIntVar>) var with: (CPInt) val;
 -(ORStatus) gthen: (id<CPIntVar>) var with: (CPInt) val;
 -(ORStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
-//-(ORStatus) propagate;
+-(ORStatus) propagate;
 -(CPUInt) nbPropagation;
 -(id<ORSolution>) solution;
 -(CPUInt) nbVars;

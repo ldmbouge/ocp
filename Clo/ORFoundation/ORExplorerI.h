@@ -53,10 +53,8 @@
                 onSolution: (ORClosure) onSolution
                     onExit: (ORClosure) onExit;
 
--(void)           optimize: (id<ORSolver>) solver
-                     using: (ORClosure) search
-                onSolution: (ORClosure) onSolution
-                    onExit: (ORClosure) onExit;
+-(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
 
 
 -(void)                try: (ORClosure) left or: (ORClosure) right;

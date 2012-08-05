@@ -90,6 +90,7 @@
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    _objective = nil;
+   _closed = false;
    
    return self;
 }
@@ -105,6 +106,7 @@
    
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    _objective = nil;
+   _closed = false;
    return self;
 }
 
@@ -164,6 +166,10 @@
    return [_solver nbVars];
 }
 
+-(NSMutableArray*) allVars
+{
+   return [_solver allVars];
+}
 -(ORInt) nbChoices
 {
    return [_search nbChoices];
@@ -279,16 +285,22 @@
    [self add: cstr];
    _objective = cstr;
 }
--(void) solveModel: (ORClosure) body
+-(void) maximize: (id<CPIntVar>) x
+{
+   CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
+   [self add: cstr];
+   _objective = cstr;
+}
+-(void) solveModel: (ORClosure) search
 {
    if (_objective != nil) {
       [_search search: ^() {
-         [_search optimize: self using: body onSolution: ^() { [_solver saveSolution]; } onExit: ^() { [_solver restoreSolution]; }];
+         [_search optimizeModel: self using: search onSolution: ^() { [_solver saveSolution]; } onExit: ^() { [_solver restoreSolution]; }];
       }];
       printf("Optimal Solution: %d \n",[_objective primalBound]);
    }
    else {
-      
+      [_search solveModel: self using: search];
    }
 }
 
@@ -309,14 +321,20 @@
    _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
    return self;
 }
-
 -(void) close
 {
-   if ([_solver close] == ORFailure)
-      [_search fail];
-   [_hStack applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];}
-                  with: [_solver allVars]];
-   [ORConcurrency pumpEvents];
+   if (!_closed) {
+      _closed = true;
+      if ([_solver close] == ORFailure)
+         [_search fail];
+      [_hStack applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];}
+                     with: [_solver allVars]];
+      [ORConcurrency pumpEvents];
+   }
+}
+-(BOOL) closed
+{
+   return _closed;
 }
 -(id<ORIdxIntInformer>) retLabel
 {
@@ -495,25 +513,6 @@
                                          onExit: ^() { [_solver restoreSolution]; }
                             ]; }
      ];
-}
-
-//pvh temporary
-
--(void) nestedMinimize: (id<CPIntVar>) x using: (ORClosure) body onSolution: onSolution onExit: onExit
-{
-   [_search optimize: self using: body onSolution: onSolution onExit: onExit];
-   printf("Optimal Solution: %d \n",[_objective primalBound]);
-}
-
--(void) minimize: (id<CPIntVar>) x using: (ORClosure) search
-{
-   [_search search: ^() { [self nestedMinimize: x
-                                  using: search
-                             onSolution: ^() { [_solver saveSolution]; }
-                                 onExit: ^() { [_solver restoreSolution]; }
-                           ];
-                  }
-    ];
 }
 
 -(void) maximize: (id<CPIntVar>) x in: (ORClosure) body 

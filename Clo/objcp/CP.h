@@ -47,6 +47,7 @@
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
 -(void)            minimize: (id<CPIntVar>) x;
+-(void)            maximize: (id<CPIntVar>) x;
 -(void)          solveModel: (ORClosure) body;
 
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
@@ -65,9 +66,6 @@
 -(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
 -(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 -(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
-
-// pvh temporary
--(void)            minimize: (id<CPIntVar>) x using: (ORClosure) body;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

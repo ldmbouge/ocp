@@ -205,7 +205,7 @@
    [self optimize: body post: post canImprove: canImprove update: update onSolution: NULL onExit: NULL];
 }
 
--(void) optimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    NSCont* exit = [NSCont takeContinuation];
    [_controller._val addChoice: exit];
@@ -224,7 +224,18 @@
       if (onExit) onExit();
       [exit letgo];
    }
-   
+}
+
+-(void) solveModel: (id<ORSolver>) solver using: (ORClosure) search
+{
+   [self search: ^()
+    {
+       [self nestedSolve: ^() { [self close]; search(); }
+              onSolution: ^() { [_solver saveSolution]; }
+                  onExit: ^() { [_solver restoreSolution]; }
+                 control: [[ORNestedController alloc] initORNestedController:_controller._val]];
+    }
+    ];
 }
 
 -(void) try: (ORClosure) left or: (ORClosure) right
