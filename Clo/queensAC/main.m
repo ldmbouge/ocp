@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
    [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];
    [cp add: [CPFactory alldifferent: xn consistency:DomainConsistency]];
 
-   [cp solveAllModel:
+   [cp solveAll:
      ^() {
        [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [x[i] domsize];}];
        [nbSolutions incr];

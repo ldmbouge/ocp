@@ -92,7 +92,7 @@ int main(int argc, const char * argv[])
       //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
       //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
 
-      [cp solveModel: ^{
+      [cp solve: ^{
           NSLog(@"Search");
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@",costas);

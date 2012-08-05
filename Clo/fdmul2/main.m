@@ -47,7 +47,7 @@ int main(int argc, const char * argv[])
       BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
       NSLog(@"Writing ? %s",ok ? "OK" : "KO");
 
-      [cp solveModel: ^{
+      [cp solve: ^{
          @try {
             [CPLabel heuristic:h];
          } @catch(CPRemoveOnDenseDomainError* nsex) {

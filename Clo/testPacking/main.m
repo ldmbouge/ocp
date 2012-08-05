@@ -35,7 +35,7 @@ int main (int argc, const char * argv[])
    [itemSize set: 2 at: 1];
    [itemSize set: 1 at: 0];
    [cp add: [CPFactory packing: item itemSize: itemSize load: binSize]];   
-   [cp solveModel:
+   [cp solve:
     ^ {
        [CPLabel array: item];
        NSLog(@"%@",item);

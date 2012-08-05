@@ -52,7 +52,7 @@ int main (int argc, const char * argv[])
                                                             range: RANGE(cp,i*3+1,i*3+3)
                                                                  : RANGE(cp,j*3+1,j*3+3)
                                                              with: ^id<CPIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
-    [cp solveModel:
+    [cp solve:
      ^() {
          [CPLabel array: a orderedBy: ^CPInt(CPInt i) { return [[a at:i] domsize];}];
          show(x);

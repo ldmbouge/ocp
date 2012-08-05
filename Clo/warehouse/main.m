@@ -54,7 +54,7 @@ int main(int argc, const char * argv[])
          [cp add: [cost[i] eq:[row elt:supp[i]]]];
       }
       [cp minimize: obj];
-      [cp solveModel: ^{
+      [cp solve: ^{
          NSLog(@"Start...");
          [CPLabel array:cost orderedBy:^ORInt(ORInt i) { return [cost[i] domsize];}];
          [CPLabel array:supp orderedBy:^ORInt(ORInt i) { return [supp[i] domsize];}];

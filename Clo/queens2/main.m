@@ -46,7 +46,7 @@ int main (int argc, const char * argv[])
    [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
    [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
    [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
-   [cp solveModel:
+   [cp solveAll:
    ^() {
        //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
        [CPLabel heuristic:h];

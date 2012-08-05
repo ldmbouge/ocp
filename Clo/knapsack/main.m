@@ -69,7 +69,7 @@ int main(int argc, const char * argv[])
          id<CPIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
          [cp add:[CPFactory knapsack:x weight:w capacity:c]];
       }
-      [cp solveModel: ^{
+      [cp solve: ^{
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@",x);
          NSLog(@"Solver: %@",cp);

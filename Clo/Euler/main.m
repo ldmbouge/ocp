@@ -70,7 +70,7 @@ int main (int argc, const char * argv[])
    [cp add: [CPFactory alldifferent: jump consistency: DomainConsistency]];
    [cp add: [CPFactory circuit: jump]];
 
-    [cp solveModel:
+    [cp solve:
      ^() {
          [CPLabel array: jump orderedBy: ^CPInt(CPInt i) { return [[jump at:i] domsize];}];
          printCircuit(jump);

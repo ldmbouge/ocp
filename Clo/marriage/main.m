@@ -62,7 +62,7 @@ int main(int argc, const char * argv[])
          }
       }
 
-      [cp solveModel:^{
+      [cp solve:^{
          NSLog(@"Start...");
          [CPLabel array:husband orderedBy:^ORInt(ORInt i) { return [husband[i] domsize];}];
          [CPLabel array:wife orderedBy:^ORInt(ORInt i) { return [wife[i] domsize];}];

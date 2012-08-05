@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
                                    up: c
                           consistency:DomainConsistency]];
 
-   [cp solveModel:
+   [cp solve:
     ^() {
        [CPLabel array: allgames orderedBy: ^CPInt(CPInt i) { return [[allgames at:i] domsize];}];
        printf("Solution \n");

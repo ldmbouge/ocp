@@ -48,7 +48,7 @@ int main(int argc, const char * argv[])
       [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
       [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
       [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
-      [cp solveModel: ^{
+      [cp solve: ^{
          [CPLabel heuristic:h];
          [CPLabel array:sx orderedBy:^ORInt(ORInt i) {
             return [[sx at:i] domsize];

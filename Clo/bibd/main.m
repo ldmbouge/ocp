@@ -64,7 +64,7 @@ int main(int argc, const char * argv[])
                              leq:ALL(CPIntVar, i, Rows, [M at:i :j])]];
       }
          
-      [cp solveModel:^{
+      [cp solve:^{
          NSLog(@"Start...");
          [CPLabel array:[CPFactory flattenMatrix:M]];
          NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);

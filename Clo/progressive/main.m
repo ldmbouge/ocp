@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
    for(CPInt p = Periods.low; p <= Periods.up; p++)
       [cp add: [CPFactory packing: ALL(CPIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
 
-   [cp solveModel: ^{
+   [cp solve: ^{
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
           [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
                orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}

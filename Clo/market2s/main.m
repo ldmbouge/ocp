@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
          id<CPIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
          [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
       }
-      [cp solveModel: ^{
+      [cp solve: ^{
          [cp forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) { return -tw[i]; } do:^(ORInt i) {
             [cp try:^{
                //printf("BR:%d==%d\n",i+1,0);

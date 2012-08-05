@@ -179,7 +179,7 @@ int main (int argc, const char * argv[])
    [cp add: [CPFactory assignment: x matrix: cost cost:assignmentCost]];
 
    [cp minimize: assignmentCost ];
-   [cp solveModel: ^{
+   [cp solve: ^{
        [cp limitCondition: ^bool() { return [nbRestarts value] >= 30; } in:
         ^{
            [cp repeat:

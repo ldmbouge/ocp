@@ -1546,13 +1546,13 @@
 		5BB3835A13B3B624005B7D52 /* CPEquationBC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEquationBC.h; sourceTree = "<group>"; };
 		5BB3835B13B3B624005B7D52 /* CPEquationBC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEquationBC.m; sourceTree = "<group>"; };
 		5BB3836313B3C0E1005B7D52 /* magicserie */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = magicserie; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BB3836713B3C0E1005B7D52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BB3836713B3C0E1005B7D52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BB3836A13B3C0E1005B7D52 /* magicserie-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "magicserie-Prefix.pch"; sourceTree = "<group>"; };
 		5BB3836B13B3C0E1005B7D52 /* magicserie.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = magicserie.1; sourceTree = "<group>"; };
 		5BBA3F88151CCB0C00D6F6AD /* queensGui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = queensGui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBA56D4153F33E70089118E /* iQueens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iQueens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC116A01595067900E0F5C8 /* ais */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ais; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BC116A41595067900E0F5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BC116A41595067900E0F5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC116A71595067900E0F5C8 /* ais-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ais-Prefix.pch"; sourceTree = "<group>"; };
 		5BC116A81595067900E0F5C8 /* ais.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ais.1; sourceTree = "<group>"; };
 		5BC43CB413A13C56009119FF /* testCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testCard.h; path = ../testCard.h; sourceTree = "<group>"; };
@@ -1579,8 +1579,8 @@
 		5BE642EF139D49320056F448 /* cont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cont.m; sourceTree = "<group>"; };
 		5BE642F0139D49320056F448 /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
 		5BE642F1139D49320056F448 /* context.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = context.m; sourceTree = "<group>"; };
-		5BE642F2139D49320056F448 /* CPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSolverI.h; sourceTree = "<group>"; };
-		5BE642F3139D49320056F448 /* CPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSolverI.m; sourceTree = "<group>"; };
+		5BE642F2139D49320056F448 /* CPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSolverI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5BE642F3139D49320056F448 /* CPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPSolverI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BE642F4139D49320056F448 /* CPConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConstraintI.h; sourceTree = "<group>"; };
 		5BE642F5139D49320056F448 /* CPController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642F6139D49320056F448 /* CPController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPController.m; sourceTree = "<group>"; };
@@ -1600,7 +1600,7 @@
 		5BE7775B1594D27C00ADE34E /* costas-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "costas-Prefix.pch"; sourceTree = "<group>"; };
 		5BE7775C1594D27C00ADE34E /* costas.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = costas.1; sourceTree = "<group>"; };
 		5BE7C24B15A94BDF00B2CBC1 /* warehouse */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = warehouse; sourceTree = BUILT_PRODUCTS_DIR; };
-		5BE7C24F15A94BDF00B2CBC1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BE7C24F15A94BDF00B2CBC1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BE7C25215A94BDF00B2CBC1 /* warehouse-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "warehouse-Prefix.pch"; sourceTree = "<group>"; };
 		5BE7C25315A94BDF00B2CBC1 /* warehouse.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = warehouse.1; sourceTree = "<group>"; };
 		5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLexConstraint.h; sourceTree = "<group>"; };
@@ -1683,7 +1683,7 @@
 		B1583D3013A4CF7D0002FBD8 /* CPExprI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPExprI.h; sourceTree = "<group>"; };
 		B1583D3113A4CF7D0002FBD8 /* CPExprI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPExprI.m; sourceTree = "<group>"; };
 		B1595B3E13C11F2A001FCB61 /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1595B4213C11F2A001FCB61 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1595B4213C11F2A001FCB61 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1595B4513C11F2A001FCB61 /* Sudoku-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Sudoku-Prefix.pch"; sourceTree = "<group>"; };
 		B1595B4613C11F2A001FCB61 /* Sudoku.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Sudoku.1; sourceTree = "<group>"; };
 		B1595B4D13C1E812001FCB61 /* CPArrayI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPArrayI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1700,7 +1700,7 @@
 		B15B2F6615C4A86F0027A7E6 /* ORControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORControl.h; sourceTree = "<group>"; };
 		B15B2F6715C4A86F0027A7E6 /* ORControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORControl.m; sourceTree = "<group>"; };
 		B15F6DDE15B1361700158FA0 /* progressive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = progressive; sourceTree = BUILT_PRODUCTS_DIR; };
-		B15F6DE215B1361700158FA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B15F6DE215B1361700158FA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B15F6DE515B1361700158FA0 /* progressive-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "progressive-Prefix.pch"; sourceTree = "<group>"; };
 		B15F6DE615B1361700158FA0 /* progressive.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = progressive.1; sourceTree = "<group>"; };
 		B15F6DF515B136C700158FA0 /* progressive.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = progressive.txt; sourceTree = "<group>"; };
@@ -1711,7 +1711,7 @@
 		B1672FE015849EA300EFE5C3 /* CPCardinalityDC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCardinalityDC.h; sourceTree = "<group>"; };
 		B1672FE115849EA300EFE5C3 /* CPCardinalityDC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCardinalityDC.m; sourceTree = "<group>"; };
 		B1672FEC1584A7A500EFE5C3 /* CardinalityTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CardinalityTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1672FF01584A7A500EFE5C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1672FF01584A7A500EFE5C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1672FF31584A7A500EFE5C3 /* CardinalityTest-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CardinalityTest-Prefix.pch"; sourceTree = "<group>"; };
 		B1672FF41584A7A500EFE5C3 /* CardinalityTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CardinalityTest.1; sourceTree = "<group>"; };
 		B169F9C614EF87D500B2F3A6 /* CPConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConstraint.h; sourceTree = "<group>"; };
@@ -1761,7 +1761,7 @@
 		B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAssignmentI.h; sourceTree = "<group>"; };
 		B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPAssignmentI.m; sourceTree = "<group>"; };
 		B1B68C74159FC16E008BC463 /* TestAssignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAssignment; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1B68C78159FC16E008BC463 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1B68C78159FC16E008BC463 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1B68C7B159FC16E008BC463 /* TestAssignment-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestAssignment-Prefix.pch"; sourceTree = "<group>"; };
 		B1B68C7C159FC16E008BC463 /* TestAssignment.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestAssignment.1; sourceTree = "<group>"; };
 		B1C010EE15CDBC3A00ED7027 /* OREngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OREngine.h; sourceTree = "<group>"; };
@@ -1792,7 +1792,7 @@
 		B1F531D015AED1DB00E89F98 /* CPBinPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBinPacking.h; sourceTree = "<group>"; };
 		B1F531D115AED1DB00E89F98 /* CPBinPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBinPacking.m; sourceTree = "<group>"; };
 		B1F531D815AED4B100E89F98 /* testPacking */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testPacking; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1F531DC15AED4B100E89F98 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		B1F531DC15AED4B100E89F98 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
 /* End PBXFileReference section */

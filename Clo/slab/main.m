@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
       [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [cp minimize: obj];
    
-   [cp solveModel: ^{
+   [cp solve: ^{
       [ORControl forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
           CPInt ms = max(0,[CPLabel maxBound: slab]);

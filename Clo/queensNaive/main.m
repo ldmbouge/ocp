@@ -27,26 +27,23 @@ NSString* indent(int t)
 int main (int argc, const char * argv[])
 {
    int n = 5;
-   CPRange R = (CPRange){0,n-1};
    id<CPSolver> cp = [CPFactory createSolver];
+   id<ORIntRange> R = RANGE(cp,0,n-1);
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
 
    //id<CPHeuristic> h = [CPFactory createIBS:cp];
-   [cp solveAll: 
-    ^() {
-       for(CPUInt i =0;i < n; i++) {
-          for(CPUInt j=i+1;j< n;j++) {
-             id<CPIntVar> xi = [x at: i];
-             id<CPIntVar> xj = [x at: j];
-             [cp add: [CPFactory notEqual:xi  to:xj plus:0]];
-             [cp add: [CPFactory notEqual:xi  to:xj plus:i-j]];
-             [cp add: [CPFactory notEqual:xi  to:xj plus:j-i]];
-          }
-       }       
-    }   
-          using: 
+   for(CPUInt i =0;i < n; i++) {
+      for(CPUInt j=i+1;j< n;j++) {
+         id<CPIntVar> xi = [x at: i];
+         id<CPIntVar> xj = [x at: j];
+         [cp add: [CPFactory notEqual:xi  to:xj plus:0]];
+         [cp add: [CPFactory notEqual:xi  to:xj plus:i-j]];
+         [cp add: [CPFactory notEqual:xi  to:xj plus:j-i]];
+      }
+   }
+   [cp solveAll:
     ^() {
        //[CPLabel array: x ];// orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
       //[CPLabel heuristic:h];

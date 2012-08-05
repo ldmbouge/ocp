@@ -61,11 +61,9 @@ int main (int argc, const char * argv[])
          [table insert: i : j : i*5 + j];
    [table close];
    [table print];
+   [cp add: [CPFactory table: table on: x]];
+
    [cp solveAll:
-    ^() {
-       [cp add: [CPFactory table: table on: x]];
-    }
-          using:
     ^() {
        [CPLabel array: x];
        printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);

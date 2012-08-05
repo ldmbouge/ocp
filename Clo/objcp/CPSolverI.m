@@ -291,7 +291,7 @@
    [self add: cstr];
    _objective = cstr;
 }
--(void) solveModel: (ORClosure) search
+-(void) solve: (ORClosure) search
 {
    if (_objective != nil) {
       [_search search: ^() {
@@ -304,11 +304,11 @@
    }
 }
 
--(void) solveAllModel: (ORClosure) search
+-(void) solveAll: (ORClosure) search
 {
    [_search solveAllModel: self using: search];
 }
--(void) stateModel
+-(void) state
 {
    [_search solveModel: self using: ^{}];
 }
@@ -447,24 +447,6 @@
 }
 
 
--(void) solve: (ORClosure) body 
-{
-   [_search solve: ^{ body(); [self close]; } ];
-}
--(void) solve: (ORClosure) body using: (ORClosure) search    
-{
-   [_search solve: ^{ body(); [self close]; } using: search];
-}
-
--(void) solveAll: (ORClosure) body 
-{
-  [_search solveAll: ^{ body(); [self close]; }];
-}
-
--(void) solveAll: (ORClosure) body using: (ORClosure) search    
-{
-    [_search solveAll: ^{ body(); [self close]; } using: search];
-}
 
 -(void) nestedSolve: (ORClosure) body
 {

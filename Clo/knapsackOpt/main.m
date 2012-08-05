@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
          [cp add:[CPFactory knapsack:x weight:w capacity:c]];
       }
       [cp maximize: obj];
-      [cp solveModel: ^{
+      [cp solve: ^{
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@ -> obj = %@",x,obj);
       }];

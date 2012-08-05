@@ -45,9 +45,9 @@
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
 -(void)            minimize: (id<CPIntVar>) x;
 -(void)            maximize: (id<CPIntVar>) x;
--(void)          solveModel: (ORClosure) body;
--(void)       solveAllModel: (ORClosure) body;
--(void)          stateModel;
+-(void)               solve: (ORClosure) body;
+-(void)            solveAll: (ORClosure) body;
+-(void)               state;
 
 -(void)                push: (id<ORSearchController>) c;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (ORInt2Void) b;

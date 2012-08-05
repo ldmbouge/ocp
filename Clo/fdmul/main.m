@@ -51,7 +51,7 @@ int main(int argc, const char * argv[])
       [cp add: [lhs2              eq:[x[18] plus:[c[8] muli:10]]]];
       [cp add: [[x[14] plus:c[8]] eq:x[19]]];
 
-      [cp solveModel: ^{
+      [cp solve: ^{
          [CPLabel heuristic:h];
          NSLog(@"Solution: %@",x);
          NSLog(@"Solver: %@",cp);
