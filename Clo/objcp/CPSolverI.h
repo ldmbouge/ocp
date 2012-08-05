@@ -49,7 +49,7 @@
 }
 -(CPSolverI*)                init;
 -(CPSolverI*)             initFor:(CPEngineI*)fdm;
--(void)             dealloc;
+-(void)                   dealloc;
 
 -(NSString*)              description;
 -(ORInt)                  nbChoices;

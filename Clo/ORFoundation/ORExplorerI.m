@@ -69,12 +69,6 @@
    [_controller._val fail];
 }
 
--(void) close
-{
-   [_solver close];
-   [ORConcurrency pumpEvents];
-}
-
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
 {
    // clone the old controller chain in full. Must be done before creating the continuation
@@ -137,7 +131,7 @@
 {
    [self search: ^()
     {
-       [self nestedSolveAll: ^() { body(); [self close]; search(); }
+       [self nestedSolveAll: ^() { body(); search(); }
                  onSolution: nil
                      onExit: nil
                     control: [[ORNestedController alloc] initORNestedController:_controller._val]];
@@ -163,7 +157,7 @@
 {
    [self search: ^()
     {
-       [self nestedSolve: ^() { body(); [self close]; search(); }
+       [self nestedSolve: ^() { body(); search(); }
               onSolution: ^() { [_solver saveSolution]; }
                   onExit: ^() { [_solver restoreSolution]; }
                  control: [[ORNestedController alloc] initORNestedController:_controller._val]];
@@ -171,39 +165,6 @@
     ];
 }
 
-
--(void)           optimize: (ORClosure) body
-                      post: (ORClosure) post
-                canImprove: (Void2ORStatus) canImprove
-                    update: (ORClosure) update
-                onSolution: (ORClosure) onSolution
-                    onExit: (ORClosure) onExit
-{
-   NSCont* exit = [NSCont takeContinuation];
-   [_controller._val addChoice: exit];
-   if ([exit nbCalls]==0) {
-      OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: canImprove];
-      [self push: controller];
-      [controller release];
-      if (post) post();
-      if (body) body();
-      if (update) update();
-      if (onSolution) onSolution();
-      [_controller._val fail];
-   }
-   else {
-      if (onExit) onExit();
-      [exit letgo];
-   }
-}
-
--(void) optimize: (ORClosure) body
-            post: (ORClosure) post
-      canImprove: (Void2ORStatus) canImprove
-          update: (ORClosure) update
-{
-   [self optimize: body post: post canImprove: canImprove update: update onSolution: NULL onExit: NULL];
-}
 
 -(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
@@ -230,7 +191,7 @@
 {
    [self search: ^()
     {
-       [self nestedSolve: ^() { [self close]; search(); }
+       [self nestedSolve: ^() { [solver close]; search(); }
               onSolution: ^() { [_solver saveSolution]; }
                   onExit: ^() { [_solver restoreSolution]; }
                  control: [[ORNestedController alloc] initORNestedController:_controller._val]];

@@ -171,27 +171,23 @@ int main (int argc, const char * argv[])
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<CPIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
-   [cp minimize: assignmentCost subjectTo:
-   ^{
-      for(CPInt i = 0; i < nbCities; i++)
-         [cp add: [CPFactory notEqualc: [x at: i] to: i]];
-      [cp add: [CPFactory alldifferent: x]];
-      [cp add: [CPFactory circuit: x]];
-      [cp add: [CPFactory assignment: x matrix: cost cost:assignmentCost]];
-    }
-          using:
-    ^{
-//       [cp applyController: [[CPLimitCondition alloc] initCPLimitCondition: ^bool() { return [nbRestarts value] >= 30; }] in:
+   
+   for(CPInt i = 0; i < nbCities; i++)
+      [cp add: [CPFactory notEqualc: x[i] to: i]];
+   [cp add: [CPFactory alldifferent: x]];
+   [cp add: [CPFactory circuit: x]];
+   [cp add: [CPFactory assignment: x matrix: cost cost:assignmentCost]];
+
+   [cp minimize: assignmentCost ];
+   [cp solveModel: ^{
        [cp limitCondition: ^bool() { return [nbRestarts value] >= 30; } in:
         ^{
            [cp repeat:
             ^{
-//               [cp limitSolutions: [nbSolutions value] in:
                [cp limitFailures: 100 in:
                 ^{
                   [CPLabel array: x];
                    printf("Cost: %d \n",[assignmentCost min]);
-                   //             printCircuit(x);
                 }
                 ];
             }
@@ -199,8 +195,7 @@ int main (int argc, const char * argv[])
                ^{
                   printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
                   [nbSolutions incr];
-                  id<CPSolution> solution = [cp solution];
-//                  [cp add: [CPFactory lEqualc: assignmentCost to: [solution intValue: assignmentCost] - 1]];
+                  id<ORSolution> solution = [cp solution];
                   for(CPInt i = 0; i < nbCities; i++)
                      [mark set: 0 at: i];
                   
@@ -214,13 +209,12 @@ int main (int argc, const char * argv[])
                         [cp label: [x at: i] with: [solution intValue: [x at: i]]];
                   }
                }
-//               until: ^bool() { return [nbRestarts value] >= 35; }
             ];
         }
         ];
     }
     ];
-   id<CPSolution> solution = [cp solution];
+   id<ORSolution> solution = [cp solution];
    CPInt start = (int) [distr next];
    for(CPInt i = 0; i < 10; i++) {
       printf("%d->",start);

@@ -441,21 +441,21 @@
 
 -(void) solve: (ORClosure) body 
 {
-  [_search solve: body];
+   [_search solve: ^{ body(); [self close]; } ];
 }
 -(void) solve: (ORClosure) body using: (ORClosure) search    
 {
-    [_search solve: body using: search];
+   [_search solve: ^{ body(); [self close]; } using: search];
 }
 
 -(void) solveAll: (ORClosure) body 
 {
-  [_search solveAll: body];
+  [_search solveAll: ^{ body(); [self close]; }];
 }
 
 -(void) solveAll: (ORClosure) body using: (ORClosure) search    
 {
-    [_search solveAll: body using: search];
+    [_search solveAll: ^{ body(); [self close]; } using: search];
 }
 
 -(void) nestedSolve: (ORClosure) body

@@ -44,31 +44,23 @@ int main(int argc, const char * argv[])
       id<CPIntVarArray> open = [CPFactory intVarArray: cp range:Warehouses domain: RANGE(cp,0,1)];
       id<CPIntVar>      obj  = [CPFactory intVar:cp bounds:RANGE(cp,0,maxCost*sizeof(cap))];
       
-      [cp minimize:obj
-         subjectTo:^{
-
-            [cp add: obj equal: [SUM(s, Stores, cost[s]) plus: SUM(w, Warehouses, [open[w] muli:fixed]) ]];
-            for(CPUInt i=Warehouses.low;i <= Warehouses.up;i++) {
-               [cp add: SUM(s, Stores, [supp[s] eqi:i]) leqi:cap[i]];
-            }
-            for(CPUInt i=Stores.low;i <= Stores.up; i++) {
-               id<CPIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
-               [cp add: [open elt:supp[i]] eqi:YES];
-               [cp add: cost[i] equal:[row elt:supp[i]]];
-            }
-
-/*
-            NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-            BOOL ok = [archive writeToFile:@"ais.CParchive" atomically:NO];
-            NSLog(@"Writing ? %s",ok ? "OK" : "KO");            
- */
-         } using:^{
-            NSLog(@"Start...");
-            [CPLabel array:cost orderedBy:^ORInt(ORInt i) { return [cost[i] domsize];}];
-            [CPLabel array:supp orderedBy:^ORInt(ORInt i) { return [supp[i] domsize];}];
-            [CPLabel array:open orderedBy:^ORInt(ORInt i) { return [open[i] domsize];}];
-            [nbSolutions incr];
-            NSLog(@"Solution: %@  -- cost: %@",open,obj);
+      [cp add: [obj eq: [SUM(s, Stores, cost[s]) plus: SUM(w, Warehouses, [open[w] muli:fixed]) ]]];
+      for(CPUInt i=Warehouses.low;i <= Warehouses.up;i++) {
+         [cp add: [SUM(s, Stores, [supp[s] eqi:i]) leqi:cap[i]]];
+      }
+      for(CPUInt i=Stores.low;i <= Stores.up; i++) {
+         id<CPIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
+         [cp add: [[open elt:supp[i]] eqi:YES]];
+         [cp add: [cost[i] eq:[row elt:supp[i]]]];
+      }
+      [cp minimize: obj];
+      [cp solveModel: ^{
+         NSLog(@"Start...");
+         [CPLabel array:cost orderedBy:^ORInt(ORInt i) { return [cost[i] domsize];}];
+         [CPLabel array:supp orderedBy:^ORInt(ORInt i) { return [supp[i] domsize];}];
+         [CPLabel array:open orderedBy:^ORInt(ORInt i) { return [open[i] domsize];}];
+         [nbSolutions incr];
+         NSLog(@"Solution: %@  -- cost: %@",open,obj);
       }];
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);

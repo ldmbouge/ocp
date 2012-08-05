@@ -41,18 +41,6 @@
 -(void)          solve: (ORClosure) body using: (ORClosure) search;
 -(void)       solveAll: (ORClosure) body using: (ORClosure) search;
 
--(void)           optimize: (ORClosure) body
-                      post: (ORClosure) post
-                canImprove: (Void2ORStatus) canImprove
-                    update: (ORClosure) update;
-
--(void)           optimize: (ORClosure) body
-                      post: (ORClosure) post
-                canImprove: (Void2ORStatus) canImprove
-                    update: (ORClosure) update
-                onSolution: (ORClosure) onSolution
-                    onExit: (ORClosure) onExit;
-
 -(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
 
@@ -61,7 +49,6 @@
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)               fail;
--(void)              close;
 
 // top level calls
 -(void)         search: (ORClosure) body;
