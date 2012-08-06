@@ -41,14 +41,14 @@
    NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
-   @package
+@package
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    DFSTracer*            _tracer;
    BOOL                  _closed;
 }
--(CPSolverI*)                init;
--(CPSolverI*)             initFor:(CPEngineI*)fdm;
+-(CPSolverI*)             init;
+-(CPSolverI*)             initFor: (CPEngineI*) fdm;
 -(void)                   dealloc;
 
 -(NSString*)              description;
@@ -57,42 +57,32 @@
 -(CPUInt)                 nbPropagation;
 -(CPUInt)                 nbVars;
 -(ORTrail*)               trail;
+
 -(id<ORSearchController>) controller;
 -(void)                   setController: (id<ORSearchController>) controller;
--(void)                   addHeuristic: (id<CPHeuristic>) h;
+-(void)                   push: (id<ORSearchController>) c;
+
+-(id<CPEngine>)           solver;
+-(id<ORExplorer>)         explorer;
+-(DFSTracer*)             tracer;
+-(id<CPPortal>)           portal;
+-(id<ORSolution>)         solution;
 
 -(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                  add: (id<CPConstraint>) c;
 -(void)             minimize: (id<CPIntVar>) x;
 -(void)             maximize: (id<CPIntVar>) x;
+-(void)         addHeuristic: (id<CPHeuristic>) h;
+
+-(void)                close;
+-(BOOL)               closed;
+-(void)         saveSolution;
+-(void)      restoreSolution;
+
 -(void)                solve: (ORClosure) body;
 -(void)             solveAll: (ORClosure) body;
 -(void)                state;
 -(id<ORObjective>) objective;
-
--(void)               close;
--(BOOL)              closed;
--(void)        saveSolution;
--(void)     restoreSolution;
--(void)                push: (id<ORSearchController>) c;
--(void)      nestedMinimize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
--(void)      nestedMaximize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
--(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)                 try: (ORClosure) left or: (ORClosure) right;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
--(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
-
--(id)               virtual: (id) obj;
--(id<CPEngine>)        solver;
--(id<ORExplorer>)    explorer;
--(void)          trackObject: (id)object;
--(ORInt)       virtualOffset: (id)obj;
-- (void)     encodeWithCoder: (NSCoder *)aCoder;
-- (id)         initWithCoder: (NSCoder *)aDecoder;
--(id<CPPortal>)       portal;
--(id<ORSolution>)   solution;
 
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
@@ -100,12 +90,12 @@
 -(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
--(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
--(void)         nestedSolve: (ORClosure) body;
--(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
--(void)      nestedSolveAll: (ORClosure) body;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)                 try: (ORClosure) left or: (ORClosure) right;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
+-(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
@@ -116,7 +106,17 @@
 -(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
--(DFSTracer*)        tracer;
+
+-(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
+-(void)         nestedSolve: (ORClosure) body;
+-(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
+-(void)      nestedSolveAll: (ORClosure) body;
+
+-(void)         trackObject: (id)object;
+- (void)    encodeWithCoder: (NSCoder *)aCoder;
+- (id)        initWithCoder: (NSCoder *)aDecoder;
 @end
 
 /*

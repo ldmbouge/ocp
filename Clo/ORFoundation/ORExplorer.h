@@ -25,13 +25,8 @@
 -(id<ORSearchController>)    controller;
 -(void)                   setController: (id<ORSearchController>) controller;
 
-// top level calls
--(void)              search: (ORClosure) body;
--(void)               solve: (ORClosure) body;
--(void)            solveAll: (ORClosure) body;
--(void)               solve: (ORClosure) body using: (ORClosure) search;
--(void)            solveAll: (ORClosure) body using: (ORClosure) search;
 // combinators
+
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)                try: (ORClosure) left or: (ORClosure) right;
@@ -39,12 +34,6 @@
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)               fail;
 -(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
--(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update;
--(void)           optimize: (ORClosure) body post: (ORClosure) post canImprove: (Void2ORStatus) canImprove update: (ORClosure) update onSolution: (ORClosure) onSolution
-                                                                                                                                          onExit: (ORClosure) onExit;
--(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
--(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
 
 -(void)               once: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
@@ -53,5 +42,10 @@
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
+
+-(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
+-(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
+
 @end
 

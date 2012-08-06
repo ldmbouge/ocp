@@ -23,48 +23,24 @@
 }
 
 -(ORExplorerI*) initORExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
+
 -(void)                dealloc;
--(ORInt)             nbChoices;
--(ORInt)            nbFailures;
+-(ORInt)               nbChoices;
+-(ORInt)               nbFailures;
 
 -(id<ORSearchController>) controller;
--(void)                setController: (id<ORSearchController>) controller;
--(void)                         push: (id<ORSearchController>) controller;
-
--(void)             search: (ORClosure) body;
--(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
--(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
--(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
-
--(void)          solve: (ORClosure) body;
--(void)       solveAll: (ORClosure) body;
--(void)          solve: (ORClosure) body using: (ORClosure) search;
--(void)       solveAll: (ORClosure) body using: (ORClosure) search;
-
--(void)           optimize: (ORClosure) body
-                      post: (ORClosure) post
-                canImprove: (Void2ORStatus) canImprove
-                    update: (ORClosure) update;
-
--(void)           optimize: (ORClosure) body
-                      post: (ORClosure) post
-                canImprove: (Void2ORStatus) canImprove
-                    update: (ORClosure) update
-                onSolution: (ORClosure) onSolution
-                    onExit: (ORClosure) onExit;
+-(void)                   setController: (id<ORSearchController>) controller;
+-(void)                   push: (id<ORSearchController>) controller;
 
 -(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
 -(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
 
-
 -(void)                try: (ORClosure) left or: (ORClosure) right;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 -(void)               fail;
-
-// top level calls
--(void)         search: (ORClosure) body;
+-(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 
 // combinators
 -(void)               once: (ORClosure) cl;
@@ -75,4 +51,10 @@
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
+
+-(void)             search: (ORClosure) body;
+-(void)             search: (ORClosure) body;
+-(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
+-(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
+
 @end

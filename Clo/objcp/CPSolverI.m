@@ -227,30 +227,6 @@
 {
    [_search push: controller];
 }
--(void) nestedMinimize: (CPIntVarI*) x in: (ORClosure) body onSolution: onSolution onExit: onExit
-{
-   CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
-   [_search    optimize: body
-                   post: ^() {  [self add: cstr];  }
-             canImprove: ^ORStatus(void) { return [cstr check]; } 
-                 update: ^() { [cstr updatePrimalBound]; }
-             onSolution: onSolution
-                 onExit: onExit
-   ];
-   printf("Optimal Solution: %d \n",[cstr primalBound]);
-}
--(void) nestedMaximize: (CPIntVarI*) x in: (ORClosure) body onSolution: onSolution onExit: onExit
-{
-   CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
-   [_search    optimize: body
-                   post: ^() {  [self add: cstr];  }
-             canImprove: ^ORStatus(void) { return [cstr check]; } 
-                 update: ^() { [cstr updatePrimalBound]; }
-             onSolution: onSolution
-                 onExit: onExit
-    ];
-   printf("Optimal Solution: %d \n",[cstr primalBound]);
-}
 
 -(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
@@ -294,9 +270,7 @@
 -(void) solve: (ORClosure) search
 {
    if (_objective != nil) {
-      [_search search: ^() {
-         [_search optimizeModel: self using: search onSolution: ^() { [_solver saveSolution]; } onExit: ^() { [_solver restoreSolution]; }];
-      }];
+      [_search optimizeModel: self using: search onSolution: ^() { [_solver saveSolution]; } onExit: ^() { [_solver restoreSolution]; }];
       printf("Optimal Solution: %d \n",[_objective primalBound]);
    }
    else {
@@ -441,13 +415,9 @@
 {
    [_search applyController: controller in: cl];
 }
--(void) search: (ORClosure) body 
-{
-  [_search search: body];
-}
 
 
-
+// pvh: this nested controller should be created in the nested solve
 -(void) nestedSolve: (ORClosure) body
 {
   [_search nestedSolve: body onSolution:nil onExit:nil 
@@ -483,48 +453,6 @@
   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
                   control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
 }
-
-
--(void) minimize: (id<CPIntVar>) x in: (ORClosure) body 
-{
-  [_search search: ^() { [self nestedMinimize: x 
-                                           in: body 
-                                   onSolution: ^() { [_solver saveSolution]; }
-                                       onExit: ^() { [_solver restoreSolution]; }
-			  ]; }
-  ];
-}
-
--(void) minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
-{
-    [_search search: ^() { [self nestedMinimize: x 
-                                             in: ^() { body(); [self close]; search(); } 
-                                     onSolution: ^() { [_solver saveSolution]; }
-                                         onExit: ^() { [_solver restoreSolution]; }
-                            ]; }
-     ];
-}
-
--(void) maximize: (id<CPIntVar>) x in: (ORClosure) body 
-{
-  [_search search: ^() { [self nestedMaximize: x 
-                                           in: body 
-                                   onSolution: ^() { [_solver saveSolution]; }
-                                       onExit: ^() { [_solver restoreSolution]; }
-			  ]; }
-  ];
-}
-
--(void) maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
-{
-    [_search search: ^() { [self nestedMaximize: x 
-                                             in: ^() { body(); [self close]; search(); } 
-                                     onSolution: ^() { [_solver saveSolution]; }
-                                         onExit: ^() { [_solver restoreSolution]; }
-                            ]; }
-     ];
-}
-
 
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {

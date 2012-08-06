@@ -134,14 +134,14 @@
 
 @implementation ORNestedController
 {
-   id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (failAll).
+   id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (fail).
    BOOL                   _isFF;
 }
 -(id)initORNestedController:(id<ORSearchController>)chain
 {
    self = [super initORDefaultController];
    id<ORSearchController> theClone = [chain copy];
-   [self setController:theClone];
+   [self setController:theClone]; // pvh: Why is this done???
    _parent = [chain retain];
    [theClone release]; // We have a reference to it already. Caller does *NOT* keep track of it.
    _isFF = NO;
@@ -202,11 +202,13 @@
    free(_tab);
    [super dealloc];
 }
+
 -(void)setup
 {
    if (_atRoot==0)
       _atRoot = [_tracer pushNode];
 }
+
 -(void) cleanup
 {
    while (_sz > 0)
@@ -227,10 +229,12 @@
    _tab[_sz++] = k;
    return [_tracer pushNode];
 }
+
 -(void) trust
 {
    [_tracer trust];
 }
+
 -(void) fail
 {
    ORInt ofs = _sz-1;

@@ -82,7 +82,7 @@ int main(int argc, const char * argv[])
    [cp minimize: obj];
    
    [cp solve: ^{
-      [ORControl forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
+      [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
           CPInt ms = max(0,[CPLabel maxBound: slab]);
           [cp tryall: Slabs suchThat: ^bool(CPInt s) { return s <= ms + 1; } in: ^void(CPInt s)

@@ -33,7 +33,17 @@
 
 @protocol CPSolver <ORSolver>
 
--(id<ORSearchController>) controller;
+-(id<CPEngine>)      solver;
+-(id<ORExplorer>)  explorer;
+-(id<CPPortal>)      portal;
+-(id<ORTracer>)      tracer;
+-(id<ORSolution>)  solution;
+
+-(void)                 add: (id<CPConstraint>) c;
+-(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
+-(void)            minimize: (id<CPIntVar>) x;
+-(void)            maximize: (id<CPIntVar>) x;
+-(void)        addHeuristic: (id<CPHeuristic>) h;
 
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
@@ -41,15 +51,10 @@
 -(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
--(void)                 add: (id<CPConstraint>) c;
--(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
--(void)            minimize: (id<CPIntVar>) x;
--(void)            maximize: (id<CPIntVar>) x;
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;
 -(void)               state;
 
--(void)                push: (id<ORSearchController>) c;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
@@ -64,30 +69,13 @@
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)           limitTime: (CPLong) maxTime in: (ORClosure) cl;
--(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 
--(void)              search: (ORClosure) body;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)         nestedSolve: (ORClosure) body;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
--(void)      nestedMinimize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
--(void)      nestedMaximize: (id<CPIntVar>) x in: (ORClosure) body onSolution: onSolution onExit: onExit;
-
-
--(void)        addHeuristic: (id<CPHeuristic>) h;
--(id<CPPortal>)      portal;
--(id<ORTracer>)      tracer;
--(id<ORSolution>)  solution;
-
-
-@optional -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
--(id<CPEngine>)       solver;
--(id<ORExplorer>)   explorer;
-
-@optional -(id)virtual:(id)obj;
 @end
 
 
