@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "CPError.h"
-#import "DFSController.h"
 #import "ORTrail.h"
 #import "CPLimit.h"
 

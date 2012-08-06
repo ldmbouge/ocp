@@ -274,11 +274,63 @@
    }
 }
 
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  
+{
+   // clone the old controller chain in full. Must be done before creating the continuation
+   // to make sure that newCtrl is available when we "come back".
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
+   NSCont* exit = [NSCont takeContinuation];
+   if ([exit nbCalls]==0) {
+      [_controller._val addChoice: exit];                           // add the choice in the original controller
+      [self setController:newCtrl];                                 // install the new controller chain
+      if (body) body();
+      if (onSolution) onSolution();
+      [_controller._val succeeds];
+   }
+   else if ([newCtrl isFinitelyFailed]) {
+      [exit letgo];
+      [newCtrl release];
+      [_controller._val fail];
+   }
+   else {
+      [exit letgo];
+      [newCtrl release];
+      if (onExit) onExit();
+      // pvh: why is this failing?
+      [_controller._val fail];
+   }
+}
+
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; Each time a solution is found, execute onSolution; restore the state as before the call; execute onExit at the end
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>) newCtrl
 {
+   id<ORSearchController> oldCtrl = _controller._val;
+   NSCont* exit = [NSCont takeContinuation];
+   if ([exit nbCalls]==0) {
+      [_controller._val addChoice: exit];
+      [self setController:newCtrl];           // install the new controller
+      if (body) body();
+      if (onSolution) onSolution();
+      [_controller._val fail];                // If fail runs out of node, it will trigger finitelyFailed.
+   }
+   else if ([newCtrl isFinitelyFailed]) {
+      [exit letgo];
+      [newCtrl release];
+      [_controller._val fail];
+   }
+   else {
+      [exit letgo];
+      [newCtrl release];
+      [self setController:oldCtrl];
+      if (onExit) onExit();
+   }
+}
+
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit 
+{
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
    id<ORSearchController> oldCtrl = _controller._val;
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
@@ -336,8 +388,7 @@
     {
        [self nestedSolve: ^() { [solver close]; search(); }
               onSolution: ^() { [_solver saveSolution]; }
-                  onExit: ^() { [_solver restoreSolution]; }
-                 control: [[ORNestedController alloc] initORNestedController:_controller._val]];
+                  onExit: ^() { [_solver restoreSolution]; }];
     }
     ];
 }
@@ -347,8 +398,7 @@
     {
        [self nestedSolveAll: ^() { [solver close]; search(); }
                  onSolution: ^() { [_solver saveSolution]; }
-                     onExit: ^() { [_solver restoreSolution]; }
-                    control: [[ORNestedController alloc] initORNestedController:_controller._val]];
+                     onExit: ^() { [_solver restoreSolution]; }];
     }
     ];
 }

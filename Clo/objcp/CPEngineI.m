@@ -13,7 +13,6 @@
 #import "ORTrail.h"
 #import "CPIntVarI.h"
 #import "CPBasicConstraint.h"
-#import "DFSController.h"
 #import "CPTypes.h"
 #import "ORFoundation/ORSetI.h"
 #import "CPSolutionI.h"
