@@ -17,6 +17,7 @@
 #import "ORDataI.h"
 #import "ORArrayI.h"
 #import "ORSetI.h"
+#import "ORModel.h"
 #import "ORModelI.h"
 
 @implementation ORFactory
@@ -101,6 +102,21 @@
 {
    return [[ORModelI alloc]  initORModelI];
 }
+
++(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
+{
+   id<ORIntVar> o = [[ORIntVarI alloc]  initORIntVarI: model domain: r];
+   return o;
+}
+
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory intVar: tracker domain:domain] at:k];
+   return (id<ORIntVarArray>)o;
+}
+
 @end
 
 @implementation ORFactory (Expressions)

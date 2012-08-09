@@ -10,11 +10,11 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORSet.H"
-#import "ORModel.H"
+#import "ORSet.h"
+#import "ORModel.h"
 
-@interface ORIntVarI : NSObject
--(ORIntVarI*) initORIntVarI: (id<ORModel>) model domain: (id<ORIntRange>) domain;
+@interface ORIntVarI : NSObject<ORIntVar>
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 @end
 
 @interface ORObjectiveFunctionI : NSObject
@@ -34,4 +34,5 @@
 -(ORModelI*)              initORModelI;
 -(void)                   dealloc;
 -(NSString*)              description;
+-(void)                   setId: (ORUInt) name;
 @end

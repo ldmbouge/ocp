@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ORModelI.h"
+#import "ORError.h"
 
 @implementation ORModelI
 {
@@ -67,8 +68,88 @@
    
 }
 
--(ORInt)virtualOffset:(id)obj
+-(void) trackVariable: (id) var;
+{
+   [var setId: (ORUInt) [_vars count]];
+   [_vars addObject:var];
+   [var autorelease];
+}
+
+-(ORInt) virtualOffset: (id) obj
 {
    return 0;
+}
+@end
+
+@implementation ORIntVarI
+{
+   id<ORIntVar>   _impl;
+   id<ORTracker>  _tracker;
+   id<ORIntRange> _domain;
+   BOOL           _dense;
+   ORUInt         _name;
+}
+-(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
+{
+   self = [super init];
+   _tracker = track;
+   _domain = domain;
+   _dense = true;
+   [track trackVariable: self];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];   
+}
+-(void) setId: (ORUInt) name
+{
+   _name = name;
+}
+-(ORInt) getId
+{
+   return _name;
+}
+-(ORInt) value
+{
+   return 0;
+}
+-(ORInt) min
+{
+   if (_impl)
+      return [_impl min];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+-(ORInt) max
+{
+   if (_impl)
+      return [_impl min];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(ORInt) domsize
+{
+   if (_impl)
+      return [_impl min];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(bool) member: (ORInt) v
+{
+   if (_impl)
+      return [_impl min];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+-(BOOL) bound
+{
+   if (_impl)
+      return [_impl bound];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
 }
 @end
