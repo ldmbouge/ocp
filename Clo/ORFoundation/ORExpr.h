@@ -46,19 +46,19 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORExpr>) or: (id<ORRelation>) e;
 @end
 
-enum CPRelationType {
-   CPRBad = 0,
-   CPREq  = 1,
-   CPRNEq = 2,
-   CPRLEq = 3,
-   CPRDisj = 4,
-   CPRConj = 5,
-   CPRImply = 6
+enum ORRelationType {
+   ORRBad = 0,
+   ORREq  = 1,
+   ORRNEq = 2,
+   ORRLEq = 3,
+   ORRDisj = 4,
+   ORRConj = 5,
+   ORRImply = 6
 };
 
 @protocol ORRelation <ORExpr>
--(enum CPRelationType)type;
--(id<ORRelation>) and:(id<ORRelation>)e;
--(id<ORRelation>) or:(id<ORRelation>)e;
--(id<ORRelation>) imply:(id<ORRelation>)e;
+-(enum ORRelationType) type;
+-(id<ORRelation>) and: (id<ORRelation>) e;
+-(id<ORRelation>) or: (id<ORRelation>) e;
+-(id<ORRelation>) imply: (id<ORRelation>) e;
 @end

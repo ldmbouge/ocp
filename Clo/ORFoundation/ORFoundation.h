@@ -26,3 +26,4 @@
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORSolver.h>
+#import <ORFoundation/ORModel.h>

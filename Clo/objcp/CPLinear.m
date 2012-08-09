@@ -791,14 +791,14 @@ struct CPVarPair {
    ORStatus status = ORSuspend;
    @try {
       switch ([_expr type]) {
-         case CPRBad: assert(NO);
-         case CPREq: {
+         case ORRBad: assert(NO);
+         case ORREq: {
             if ([terms size] != 0) {
                status = [terms postEQZ:_fdm consistency:_c];
             }
          }break;
-         case CPRNEq: assert(NO);
-         case CPRLEq: {
+         case ORRNEq: assert(NO);
+         case ORRLEq: {
             status = [terms postLEQZ: _fdm consistency:_c];
          }break;
          default:

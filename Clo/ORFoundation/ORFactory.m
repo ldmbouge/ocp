@@ -17,6 +17,7 @@
 #import "ORDataI.h"
 #import "ORArrayI.h"
 #import "ORSetI.h"
+#import "ORModelI.h"
 
 @implementation ORFactory
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
@@ -94,6 +95,11 @@
    id<IntEnumerator> ite = [r enumerator];
    [tracker trackObject: ite];
    return ite;
+}
+
++(id<ORModel>) createModel
+{
+   return [[ORModelI alloc]  initORModelI];
 }
 @end
 

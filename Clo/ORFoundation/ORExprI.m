@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import "ORExpr.h"
 #import "ORExprI.h"
 #import "ORFactory.h"
 
@@ -33,9 +34,9 @@
 {
    return NO;
 }
--(enum CPRelationType)type
+-(enum ORRelationType) type
 {
-   return CPRBad;
+   return ORRBad;
 }
 -(id<ORExpr>) plus: (id<ORExpr>) e
 {
@@ -448,9 +449,9 @@
    [rv appendFormat:@"%@ == %@",[_left description],[_right description]];
    return rv;
 }
--(enum CPRelationType)type
+-(enum ORRelationType)type
 {
-   return CPREq;
+   return ORREq;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -494,9 +495,9 @@
    [rv appendFormat:@"%@ != %@",[_left description],[_right description]];
    return rv;
 }
--(enum CPRelationType)type
+-(enum ORRelationType)type
 {
-   return CPRNEq;
+   return ORRNEq;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -539,9 +540,9 @@
    [rv appendFormat:@"%@ <= %@",[_left description],[_right description]];
    return rv;
 }
--(enum CPRelationType)type
+-(enum ORRelationType)type
 {
-   return CPRLEq;
+   return ORRLEq;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -582,9 +583,9 @@
    [rv appendFormat:@"(%@ || %@)",[_left description],[_right description]];
    return rv;
 }
--(enum CPRelationType)type
+-(enum ORRelationType)type
 {
-   return CPRDisj;
+   return ORRDisj;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -625,9 +626,9 @@
    [rv appendFormat:@"(%@ && %@)",[_left description],[_right description]];
    return rv;
 }
--(enum CPRelationType)type
+-(enum ORRelationType)type
 {
-   return CPRConj;
+   return ORRConj;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -668,9 +669,9 @@
    [rv appendFormat:@"(%@ => %@)",[_left description],[_right description]];
    return rv;
 }
--(enum CPRelationType)type
+-(enum ORRelationType)type
 {
-   return CPRImply;
+   return ORRImply;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
