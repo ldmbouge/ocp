@@ -76,6 +76,8 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
+
+-(id<ORSolverConcretizer>) concretizer;
 @end
 
 

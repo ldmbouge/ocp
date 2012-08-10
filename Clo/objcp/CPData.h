@@ -25,7 +25,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 @protocol CPIntVar;
 @protocol CPRelation;
 
-@protocol CPConstraint <NSObject>
+@protocol CPConstraint <ORConstraint>
 @end
 
 @protocol CPExpr <ORExpr,CPConstraint>
@@ -66,7 +66,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 -(bool) bound;
 @end
 
-@protocol CPIntVar <CPVar>
+@protocol CPIntVar <ORIntVar,CPVar>
 -(CPUInt)getId;
 -(BOOL) isBool;
 -(bool) bound;

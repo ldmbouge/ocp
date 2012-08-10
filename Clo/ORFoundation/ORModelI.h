@@ -14,17 +14,23 @@
 #import "ORSet.h"
 #import "ORModel.h"
 
+
 @interface ORIntVarI : NSObject<ORIntVar>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
+-(id<ORIntVar>) impl;
+-(void) setImpl: (id<ORIntVar>) _impl;
 @end
 
 @interface ORConstraintI : NSObject<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;
+-(id<ORConstraint>) impl;
+-(void) setImpl: (id<ORConstraint>) _impl;
 @end
 
-@interface ORAlldifferentI : ORConstraintI
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x ;
+@interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
+-(id<ORIntVarArray>) array;
 @end
 
 @interface ORObjectiveFunctionI : NSObject

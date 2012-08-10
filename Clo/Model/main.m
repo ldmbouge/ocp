@@ -27,18 +27,26 @@ int main(int argc, const char * argv[])
       id<ORIntVar> y = [ORFactory intVar: model domain: R];
       id<ORIntVarArray> a = [ORFactory intVarArray: model range: R domain: R];
       id<ORConstraint> cstr = [ORFactory alldifferent: a];
+      
       [model add: cstr];
       printf("x.id = %d \n",x.getId);
       printf("x.id = %d \n",y.getId);
       printf("a[0].id = %d \n",a[0].getId);
       printf("a[1].id = %d \n",a[1].getId);
       printf("cstr.id = %d \n",cstr.getId);
-      
       id<CPSolver> cp = [CPFactory createSolver];
       [model instantiate: cp];
+      printf("x.min = %d \n",x.min);
+      printf("x.max = %d \n",y.max);
+      printf("x.bound = %d \n",y.bound);
        // insert code here...
        NSLog(@"Hello, World!");
-      
+      [cp solve: ^{
+         for(ORInt i = 0; i <= 10; i++)
+            [CPLabel var: (id<CPIntVar>) [a[i] impl]];
+      }];
+      for(ORInt i = 0; i <= 10; i++)
+         printf("x[%d] = %d \n",i,[a[i] value]);
    }
     return 0;
 }

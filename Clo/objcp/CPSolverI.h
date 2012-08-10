@@ -119,6 +119,13 @@
 - (id)        initWithCoder: (NSCoder *)aDecoder;
 @end
 
+
+@interface CPConcretizerI : NSObject<ORSolverConcretizer>
+-(CPConcretizerI*) initCPConcretizerI: (CPSolverI*) solver;
+-(void) intVar: (id<ORIntVar>) v;
+-(void) alldifferent: (id<ORAlldifferent>) cstr;
+@end
+
 /*
 @interface SemCP : CoreCPI {
    SemTracer* _tracer;

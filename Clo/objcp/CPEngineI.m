@@ -541,7 +541,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) label: (id) var with: (CPInt) val
 {
    @try {
-      ORStatus status = [var bind:val];
+      ORStatus status = [var bind: val];
       _status = internalPropagate(self,status);
    } @catch (CPFailException *exception) {
       CFRelease(exception);

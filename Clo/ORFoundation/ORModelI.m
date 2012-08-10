@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "ORModelI.h"
 #import "ORError.h"
+#import "ORSolver.H"
 
 
 @implementation ORModelI
@@ -87,7 +88,11 @@
 -(void) instantiate: (id<ORSolver>) solver
 {
    printf("I start instantiating this model \n");
-   
+   id<ORSolverConcretizer> concretizer = [solver concretizer];
+   for(id<ORAbstract> c in _vars)
+      [c concretize: concretizer];
+   for(id<ORAbstract> c in _mStore)
+      [c concretize: concretizer];
 }
 @end
 
@@ -122,7 +127,11 @@
 }
 -(ORInt) value
 {
-   return 0;
+   if (_impl)
+      return [_impl value];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+
 }
 -(ORInt) min
 {
@@ -134,7 +143,7 @@
 -(ORInt) max
 {
    if (_impl)
-      return [_impl min];
+      return [_impl max];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -142,7 +151,7 @@
 -(ORInt) domsize
 {
    if (_impl)
-      return [_impl min];
+      return [_impl domsize];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -150,7 +159,7 @@
 -(bool) member: (ORInt) v
 {
    if (_impl)
-      return [_impl min];
+      return [_impl member: v];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
@@ -166,10 +175,31 @@
 {
    return _tracker;
 }
+-(id<ORIntVar>) impl
+{
+   return _impl;
+}
+-(void) setImpl: (id<ORIntVar>) impl
+{
+   _impl = impl;
+}
+-(id<ORIntRange>) domain
+{
+   return _domain;
+}
+-(BOOL) hasDenseDomain
+{
+   return _dense;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   [concretizer intVar: self];
+}
 @end
 
 @implementation ORConstraintI
 {
+   id<ORConstraint> _impl;
    ORUInt _name;
 }
 -(ORConstraintI*) initORConstraintI
@@ -185,6 +215,15 @@
 {
    return _name;
 }
+-(id<ORConstraint>) impl
+{
+   return _impl;
+}
+-(void) setImpl: (id<ORConstraint>) impl
+{
+   _impl = impl;
+}
+
 @end
 
 @implementation ORAlldifferentI
@@ -196,6 +235,14 @@
    self = [super initORConstraintI];
    _x = x;
    return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   [concretizer alldifferent: self];
 }
 @end
 

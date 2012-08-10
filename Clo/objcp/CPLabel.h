@@ -15,7 +15,7 @@
 #import <objcp/CPHeuristic.h>
 
 @interface CPLabel : NSObject
-+(void) var: (id<CPIntVar>) x;
++(void) var: (id<ORIntVar>) x;
 +(void) array: (id<CPIntVarArray>) x;
 +(void) array: (id<CPIntVarArray>) x orderedBy: (CPInt2Int) orderedBy;
 +(void) heuristic:(id<CPHeuristic>)h;

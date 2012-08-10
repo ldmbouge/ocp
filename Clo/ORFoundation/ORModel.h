@@ -13,19 +13,29 @@
 #import "ORExpr.h"
 #import "ORTracker.h"
 #import "ORArray.h"
-#import "ORSolver.h"
 
-@protocol ORVar <ORExpr>
+@protocol ORSolver;
+@protocol ORSolverConcretizer;
+
+@protocol ORAbstract <ORExpr>
+-(void) concretize: (id<ORSolverConcretizer>) concretizer;
+@end
+
+
+@protocol ORVar <ORAbstract,ORExpr>
 -(ORUInt) getId;
 -(BOOL) bound;
 @end
 
 @protocol ORIntVar <ORVar>
+-(id<ORIntRange>) domain;
+-(BOOL) hasDenseDomain;
 -(ORInt) value;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
 -(bool) member: (ORInt) v;
+-(id<ORIntVar>) impl;
 @end
 
 @protocol ORVarArray <ORIdArray>
@@ -41,9 +51,12 @@
 -(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
-
-@protocol ORConstraint <NSObject>
+@protocol ORConstraint <ORAbstract,NSObject>
 -(ORUInt) getId;
+@end
+
+@protocol ORAlldifferent <ORConstraint>
+-(id<ORIntVarArray>) array;
 @end
 
 @protocol ORModel <NSObject,ORTracker>

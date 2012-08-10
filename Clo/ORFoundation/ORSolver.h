@@ -11,11 +11,17 @@
 
 #import <Foundation/Foundation.h>
 #import "OREngine.h"
+#import "ORModel.h"
 
 @protocol ORObjective <NSObject>
 -(ORStatus) check;
 -(void)     updatePrimalBound;
 -(ORInt)    primalBound;
+@end
+
+@protocol ORSolverConcretizer <NSObject>
+-(void) intVar: (id<ORIntVar>) v;
+-(void) alldifferent: (id<ORAlldifferent>) cstr;
 @end
 
 @protocol ORSolver <NSObject,ORTracker,ORSolutionProtocol>
@@ -24,4 +30,6 @@
 -(void)            trackObject:(id)obj;
 -(NSMutableArray*) allVars;
 -(id<ORObjective>) objective;
+-(id<ORSolverConcretizer>) concretizer;
 @end
+

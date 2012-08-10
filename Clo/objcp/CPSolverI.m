@@ -466,7 +466,13 @@
 {
    return _tracer;
 }
+-(CPConcretizerI*) concretizer
+{
+   return [[CPConcretizerI alloc] initCPConcretizerI: self];
+}
+
 @end
+
 
 /*
 @implementation SemCP
@@ -716,3 +722,33 @@ void printnl(id x)
    return [_solver propagateDone];
 }
 @end
+
+
+@implementation CPConcretizerI
+{
+   CPSolverI* _solver;
+}
+-(CPConcretizerI*) initCPConcretizerI: (CPSolverI*) solver
+{
+   self = [super init];
+   _solver = solver;
+   return self;
+}
+-(void) intVar: (ORIntVarI*) v
+{
+   id<ORIntVar> x = [CPFactory intVar: _solver domain: [v domain]];
+   [v setImpl: x];
+}
+-(void) alldifferent: (ORAlldifferentI*) cstr
+{
+   id<ORIntVarArray> x = [cstr array];
+   id<ORIntRange> R = [x range];
+   NSLog(@"%@",R);
+   id<CPIntVarArray> nx = [CPFactory intVarArray: _solver range: R with: ^id<CPIntVar>(CPInt i) { return (id<CPIntVar>) [((ORIntVarI*) x[i]) impl]; }];
+   id<CPConstraint> ncstr = [CPFactory alldifferent: nx];
+   [_solver add: ncstr];
+   [cstr setImpl: ncstr];
+}
+@end
+
+
