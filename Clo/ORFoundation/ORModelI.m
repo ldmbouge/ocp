@@ -13,6 +13,7 @@
 #import "ORModelI.h"
 #import "ORError.h"
 
+
 @implementation ORModelI
 {
    NSMutableArray*          _vars;
@@ -48,9 +49,11 @@
    return [NSString stringWithFormat:@"Model"];
 }
 
--(void) add: (id<ORConstraint>) cstr
+-(void) add: (id<ORConstraint>) c
 {
-   
+   ORConstraintI* cstr = (ORConstraintI*) c;
+   [cstr setId: (ORUInt) [_mStore count]];
+   [_mStore addObject:c];
 }
 
 -(void) minimize: (id<ORIntVar>) x
@@ -65,7 +68,8 @@
 
 -(void) trackObject: (id) obj;
 {
-   
+   [_oStore addObject:obj];
+   [obj autorelease];
 }
 
 -(void) trackVariable: (id) var;
@@ -78,6 +82,12 @@
 -(ORInt) virtualOffset: (id) obj
 {
    return 0;
+}
+
+-(void) instantiate: (id<ORSolver>) solver
+{
+   printf("I start instantiating this model \n");
+   
 }
 @end
 
@@ -152,4 +162,41 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
 @end
+
+@implementation ORConstraintI
+{
+   ORUInt _name;
+}
+-(ORConstraintI*) initORConstraintI
+{
+   self = [super init];
+   return self;
+}
+-(void) setId: (ORUInt) name;
+{
+   _name = name;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+@end
+
+@implementation ORAlldifferentI
+{
+   id<ORIntVarArray> _x;
+}
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   return self;
+}
+@end
+
+

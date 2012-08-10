@@ -10,11 +10,21 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORArray.h"
 #import "ORSet.h"
 #import "ORModel.h"
 
 @interface ORIntVarI : NSObject<ORIntVar>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
+@end
+
+@interface ORConstraintI : NSObject<ORConstraint>
+-(ORConstraintI*) initORConstraintI;
+-(void) setId: (ORUInt) name;
+@end
+
+@interface ORAlldifferentI : ORConstraintI
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x ;
 @end
 
 @interface ORObjectiveFunctionI : NSObject

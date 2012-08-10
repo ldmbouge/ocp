@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "OREngine.h"
 
 @protocol ORObjective <NSObject>
 -(ORStatus) check;

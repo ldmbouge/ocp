@@ -117,6 +117,13 @@
    return (id<ORIntVarArray>)o;
 }
 
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
+{
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
+   [[x tracker] trackObject: o];
+   return o;
+}
+
 @end
 
 @implementation ORFactory (Expressions)

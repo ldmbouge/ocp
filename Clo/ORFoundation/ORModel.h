@@ -13,6 +13,7 @@
 #import "ORExpr.h"
 #import "ORTracker.h"
 #import "ORArray.h"
+#import "ORSolver.h"
 
 @protocol ORVar <ORExpr>
 -(ORUInt) getId;
@@ -42,10 +43,13 @@
 
 
 @protocol ORConstraint <NSObject>
+-(ORUInt) getId;
 @end
 
 @protocol ORModel <NSObject,ORTracker>
 -(void) add: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
+
+-(void) instantiate: (id<ORSolver>) solver;
 @end

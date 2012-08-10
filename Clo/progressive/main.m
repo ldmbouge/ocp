@@ -12,10 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORFoundation.h>
-#import "objcp/CPFactory.h"
-#import "objcp/CPConstraint.h"
+#import <objcp/CPFactory.h>
+#import <objcp/CPConstraint.h>
 #import <objcp/CP.h>
-#import "objcp/CPLabel.h"
+#import <objcp/CPLabel.h>
 
 int main(int argc, const char * argv[])
 {
