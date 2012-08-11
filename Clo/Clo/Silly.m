@@ -14,7 +14,7 @@
 
 @implementation Silly
 
-- (id)init:(CPInt)x y:(CPInt)y;
+- (id)init:(ORInt)x y:(ORInt)y;
 {
     self = [super init];
     _x = x;

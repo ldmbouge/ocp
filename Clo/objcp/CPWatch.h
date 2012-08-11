@@ -25,7 +25,7 @@ enum CPDomValue {
    ORClosure _onFail;
 }
 -(CPViewController*)initCPViewController:(id<ORSearchController>)chain onChoose:(ORClosure)onc onFail:(ORClosure)onf;
--(CPInt)  addChoice: (NSCont*) k;
+-(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 @end
 

@@ -15,16 +15,16 @@
 #import "CPTypes.h"
 #import "CPIntVarI.h"
 
-@protocol CPExprVisitor;
 
-@interface CPExprVarSubI : ORExprI<CPExpr,NSCoding> {
+/*
+@interface ORExprVarSubI : ORExprI<ORExpr,NSCoding> {
    id<ORIntVarArray> _array;
    ORExprI*          _index;
 }
--(id<CPExpr>) initCPExprVarSubI: (id<ORIntVarArray>) array elt:(id<CPExpr>) op;
+-(id<ORExpr>) initORExprVarSubI: (id<ORIntVarArray>) array elt:(id<ORExpr>) op;
 -(id<ORTracker>) tracker;
--(CPInt) min;
--(CPInt) max;
+-(ORInt) min;
+-(ORInt) max;
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORIntVarArray>)array;
@@ -34,15 +34,14 @@
 
 
 @protocol CPExprVisitor <ORExprVisitor>
--(void) visitIntVarI:(CPIntVarI*)var;
--(void) visitExprVarSubI:(CPExprVarSubI*)e;
+
 @end
 
 @interface CPExprPrintI : NSObject<ORExprVisitor>
 -(CPExprPrintI*) initCPExprPrintI;
 -(void) dealloc;
 -(void) visitIntVarI: (id<ORIntVar>) e;
--(void) visitIntegerI: (id<CPInteger>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
@@ -61,4 +60,4 @@
 @interface CPIntVarI (visitor)
 -(void) visit:(id<CPExprVisitor>)v;
 @end;
-
+*/

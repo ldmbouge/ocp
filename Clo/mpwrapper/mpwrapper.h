@@ -44,7 +44,7 @@
 -(void) removeLastConstraint;
 -(void) removeLastVariable;
 
--(void) setIntParameter: (const char*) name val: (CPInt) val;
+-(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setFloatParameter: (const char*) name val: (double) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 

@@ -16,24 +16,24 @@
 
 @protocol CPDom <NSObject,NSCopying>
 -(void)dealloc;
--(ORStatus) updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
--(ORStatus) updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus) bind:(CPInt)val  for:(id<CPIntVarNotifier>)x;
--(ORStatus) remove:(CPInt)val  for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 
--(CPInt)min;
--(CPInt)max;
--(CPInt)imin;
--(CPInt)imax;
+-(ORInt)min;
+-(ORInt)max;
+-(ORInt)imin;
+-(ORInt)imax;
 -(bool)bound;
 -(CPBounds)bounds;
--(CPInt)domsize;
--(CPInt)countFrom:(CPInt)from to:(CPInt)to;
--(bool)get:(CPInt)b;
--(bool)member:(CPInt)v;
--(CPInt)findMin:(CPInt)from;
--(CPInt)findMax:(CPInt)from;
+-(ORInt)domsize;
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to;
+-(bool)get:(ORInt)b;
+-(bool)member:(ORInt)v;
+-(ORInt)findMin:(ORInt)from;
+-(ORInt)findMax:(ORInt)from;
 -(id)copy;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(CPInt)toRestore;
+-(void)restoreValue:(ORInt)toRestore;
 @end

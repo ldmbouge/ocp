@@ -236,16 +236,16 @@
                                orderedBy: order];    
 }
 
--(void) add: (id<CPConstraint>) c
+-(void) add: (id<ORConstraint>) c
 {
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [_solver wrapExpr:(id<CPRelation>)c consistency:ValueConsistency];
+    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
+      c = [_solver wrapExpr:(id<ORRelation>)c consistency:ValueConsistency];
    }
    ORStatus status = [_solver add: c];
    if (status == ORFailure)
       [_search fail];
 }
--(void) add: (id<CPConstraint>) c consistency:(CPConsistency)cons
+-(void) add: (id<ORConstraint>) c consistency:(CPConsistency)cons
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
       c = [_solver wrapExpr:(id<CPRelation>)c consistency:cons];

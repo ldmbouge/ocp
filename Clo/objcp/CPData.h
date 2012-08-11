@@ -19,7 +19,7 @@
 
 typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
-typedef void (^ConstraintIntCallBack)(CPInt);
+typedef void (^ConstraintIntCallBack)(ORInt);
 
 
 @protocol CPIntVar;
@@ -35,17 +35,17 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 -(id<CPExpr>) mul: (id<CPExpr>) e;
 -(id<CPExpr>) muli: (ORInt) e;
 -(id<CPRelation>) eq: (id<CPExpr>) e;
--(id<CPRelation>) eqi: (CPInt) e;
+-(id<CPRelation>) eqi: (ORInt) e;
 -(id<CPRelation>) neq: (id<CPExpr>) e;
--(id<CPRelation>) neqi: (CPInt) e;
+-(id<CPRelation>) neqi: (ORInt) e;
 -(id<CPRelation>) leq: (id<CPExpr>) e;
--(id<CPRelation>) leqi: (CPInt) e;
+-(id<CPRelation>) leqi: (ORInt) e;
 -(id<CPRelation>) geq: (id<CPExpr>) e;
--(id<CPRelation>) geqi: (CPInt) e;
+-(id<CPRelation>) geqi: (ORInt) e;
 -(id<CPRelation>) lt: (id<CPExpr>) e;
--(id<CPRelation>) lti: (CPInt) e;
+-(id<CPRelation>) lti: (ORInt) e;
 -(id<CPRelation>) gt: (id<CPExpr>) e;
--(id<CPRelation>) gti: (CPInt) e;
+-(id<CPRelation>) gti: (ORInt) e;
 -(id<CPRelation>) and:(id<CPExpr>)e;
 -(id<CPRelation>) or:(id<CPExpr>)e;
 -(id<CPRelation>) imply:(id<CPExpr>)e;
@@ -57,7 +57,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 -(id<CPRelation>)imply:(id<CPRelation>)e;
 @end
 */
-
+/*
 @protocol CPInteger <ORInteger,CPExpr>
 @end
 
@@ -72,21 +72,21 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 -(CPUInt)getId;
 -(BOOL) isBool;
 -(bool) bound;
--(CPInt)  min;
--(CPInt)  max;
--(CPInt)  value;
+-(ORInt)  min;
+-(ORInt)  max;
+-(ORInt)  value;
 -(id<CPSolver>) cp;
 -(void) bounds: (CPBounds*) bnd;
--(CPInt) domsize;
--(CPInt)countFrom:(CPInt)from to:(CPInt)to;
--(bool) member: (CPInt) v;
+-(ORInt) domsize;
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to;
+-(bool) member: (ORInt) v;
 -(NSSet*)constraints;
 -(id)snapshot;
 @end
-
+*/
 
 @protocol CPVirtual 
--(CPInt) virtualOffset;   
+-(ORInt) virtualOffset;   
 @end
 
 @protocol CPRandomStream <ORRandomStream>

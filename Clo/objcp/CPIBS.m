@@ -21,13 +21,13 @@
    CPInt _up;
    CPUInt _nbKilled;
 }
--(id)initCPKillRange:(CPInt)f to:(CPInt)to size:(CPUInt)sz;
+-(id)initCPKillRange:(ORInt)f to:(ORInt)to size:(CPUInt)sz;
 -(void)dealloc;
 -(BOOL)isEqual:(CPKillRange*)kr;
 @end
 
 @implementation CPKillRange 
--(id)initCPKillRange:(CPInt)f to:(CPInt)to  size:(CPUInt)sz
+-(id)initCPKillRange:(ORInt)f to:(ORInt)to  size:(CPUInt)sz
 {
    self = [super init];
    _low = f;
@@ -56,9 +56,9 @@
 }
 -(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar;
 -(void)dealloc;
--(void)addImpact:(double)i forValue:(CPInt)val;
--(void)setImpact:(double)i forValue:(CPInt)val;
--(double)impactForValue:(CPInt)val;
+-(void)addImpact:(double)i forValue:(ORInt)val;
+-(void)setImpact:(double)i forValue:(ORInt)val;
+-(double)impactForValue:(ORInt)val;
 -(double)impactForVariable;
 @end
 
@@ -102,7 +102,7 @@
    }
    [super dealloc];
 }
--(void)addImpact:(double)i forValue:(CPInt)val
+-(void)addImpact:(double)i forValue:(ORInt)val
 {
    if (_imps) {
       _imps[val] = (_imps[val] * (ALPHA - 1.0) + i) / ALPHA;
@@ -112,7 +112,7 @@
       _cnts[val] = _cnts[val] + 1;
    }
 }
--(void)setImpact:(double)i forValue:(CPInt)val
+-(void)setImpact:(double)i forValue:(ORInt)val
 {
    if (_imps) {
       _imps[val] = i;
@@ -122,7 +122,7 @@
    }
 }
 
--(double)impactForValue:(CPInt)val
+-(double)impactForValue:(ORInt)val
 {
    return _imps != NULL ? _imps[val] : 0.0;
 }
@@ -212,7 +212,7 @@
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
--(void)addKillSetFrom:(CPInt)from to:(CPInt)to size:(CPUInt)sz into:(NSMutableSet*)set
+-(void)addKillSetFrom:(ORInt)from to:(ORInt)to size:(CPUInt)sz into:(NSMutableSet*)set
 {
    for(CPKillRange* kr in set) {
       if (to+1 == kr->_low) {
@@ -235,7 +235,7 @@
    return;
 }
 
--(void)dichotomize:(id<ORIntVar>)x from:(CPInt)low to:(CPInt)up block:(CPInt)b sac:(NSMutableSet*)set 
+-(void)dichotomize:(id<ORIntVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set 
 {
    if (up - low + 1 <= b) {
       double ir = 1.0 - [_monitor reductionFromRoot];

@@ -44,8 +44,8 @@ int main(int argc, const char * argv[])
       
       id<ORIntVarArray> husband = [CPFactory intVarArray: cp range:RWomen domain: RMen];
       id<ORIntVarArray> wife    = [CPFactory intVarArray: cp range:RMen domain: RWomen];
-      id<CPIntArray>* rm = malloc(sizeof(id<CPIntArray>)*5);
-      id<CPIntArray>* rw = malloc(sizeof(id<CPIntArray>)*5);
+      id<ORIntArray>* rm = malloc(sizeof(id<ORIntArray>)*5);
+      id<ORIntArray>* rw = malloc(sizeof(id<ORIntArray>)*5);
       for(CPInt m=RMen.low;m <= RMen.up;m++)
          rm[m] = [CPFactory intArray:cp range:RWomen with:^ORInt(ORInt w) { return rankMPtr[(m-1) * 5 + w-1];}];
       for(CPInt w=RWomen.low;w <= RWomen.up;w++) 

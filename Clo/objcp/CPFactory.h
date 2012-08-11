@@ -38,25 +38,25 @@ void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
-+(id<CPInteger>) integer: (id<ORTracker>)tracker value: (CPInt) value;
++(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range;
 +(id<ORIntVar>) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range;
-+(id<ORIntVar>) intVar: (id<ORIntVar>) x shift: (CPInt) b;
-+(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (CPInt) a;
-+(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (CPInt) a shift:(CPInt) b;
++(id<ORIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
++(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
++(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
 +(id<ORIntVar>)boolVar: (id<CPSolver>)cp;
 +(id<ORIntVar>) negate:(id<ORIntVar>)x;
 
-+(id<CPIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<CPIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
-+(id<CPIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;
++(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
++(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 
 +(id<ORVarArray>) varArray: (id<CPSolver>) cp range: (id<ORIntRange>) range;
 +(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range;
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(CPInt)) clo;
-+(id<ORIntVarArray>) arrayORIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(CPInt)) clo;
++(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
++(id<ORIntVarArray>) arrayORIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
 +(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<ORIntVar>(^)(CPInt,CPInt)) clo;
 +(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<ORIntVar>(^)(CPInt,CPInt,CPInt)) clo;
 
@@ -73,7 +73,7 @@ void failNow();
 +(id<ORInformer>) informer: (id<CPSolver>) cp;
 +(id<ORVoidInformer>) voidInformer: (id<CPSolver>) cp;
 +(id<ORIntInformer>) intInformer: (id<CPSolver>) cp;
-+(id<ORBarrier>)  barrier: (id<CPSolver>) cp value: (CPInt) nb;
++(id<ORBarrier>)  barrier: (id<CPSolver>) cp value: (ORInt) nb;
 
 +(id<CPTable>) table: (id<CPSolver>) cp arity: (int) arity;
 
@@ -88,14 +88,14 @@ void failNow();
 @end
 
 @interface CPFactory (expression)
-+(id<CPExpr>) exprAbs: (id<CPExpr>) op;
-+(id<CPExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
-+(id<CPExpr>) sum: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<ORExpr>) exprAbs: (id<ORExpr>) op;
++(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
++(id<ORExpr>) sum: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<CPRelation>) or: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 
-#define SUM(P,R,E)         [CPFactory sum: cp over:(R) suchThat:nil of:^id<CPExpr>(ORInt P) { return (id<CPExpr>)(E);}]
-#define ALL(RT,P,RANGE,E)  [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(CPInt P) { return (E);}]
-#define OR(P,R,E)          [CPFactory or: cp over:(R) suchThat:nil of:^id<CPRelation>(ORInt P) { return (id<CPRelation>)(E);}]
+#define SUM(P,R,E)         [CPFactory sum: cp over:(R) suchThat:nil of:^id<ORExpr>(ORInt P) { return (id<ORExpr>)(E);}]
+#define ALL(RT,P,RANGE,E)  [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(ORInt P) { return (E);}]
+#define OR(P,R,E)          [CPFactory or: cp over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 

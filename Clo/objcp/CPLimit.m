@@ -16,7 +16,7 @@
 /*
 @implementation CPLimitSolutions
 
--(id)   initCPLimitSolutions: (CPInt) maxSolutions
+-(id)   initCPLimitSolutions: (ORInt) maxSolutions
 {
   self = [super initCPDefaultController];
   _nbSolutions = 0;
@@ -28,7 +28,7 @@
    NSLog(@"CPLimitSolution dealloc called...\n");
    [super dealloc];
 }
--(CPInt) addChoice: (NSCont*) k
+-(ORInt) addChoice: (NSCont*) k
 {
   if (_nbSolutions >= _maxSolutions)
     [_controller fail];
@@ -52,7 +52,7 @@
 
 @implementation CPLimitDiscrepancies
 
--(id) initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (ORTrail*) trail
+-(id) initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrail*) trail
 {
   self = [super initCPDefaultController];
   _trail = trail;
@@ -65,7 +65,7 @@
    NSLog(@"CPLimitSolution dealloc called...\n");
    [super dealloc];
 }
--(CPInt) addChoice: (NSCont*) k
+-(ORInt) addChoice: (NSCont*) k
 {
   if (_nbDiscrepancies._val < _maxDiscrepancies)
     return [_controller addChoice: k];
@@ -91,7 +91,7 @@
 
 @implementation CPLimitFailures
 
--(id) initCPLimitFailures: (CPInt) maxFailures
+-(id) initCPLimitFailures: (ORInt) maxFailures
 {
    self = [super initCPDefaultController];
    _nbFailures = 0;
@@ -103,7 +103,7 @@
    NSLog(@"CPLimitFailures dealloc called...\n");
    [super dealloc];
 }
--(CPInt) addChoice: (NSCont*) k
+-(ORInt) addChoice: (NSCont*) k
 {
    return [_controller addChoice: k];
 }
@@ -156,7 +156,7 @@
    NSLog(@"CPLimitTime dealloc called...\n");
    [super dealloc];
 }
--(CPInt) addChoice: (NSCont*) k
+-(ORInt) addChoice: (NSCont*) k
 {
    return [_controller addChoice: k];
 }
@@ -210,7 +210,7 @@
    [_canImprove release];
    [super dealloc];
 }
--(CPInt) addChoice: (NSCont*) k
+-(ORInt) addChoice: (NSCont*) k
 {
    if (_canImprove() == ORFailure)
       [_controller fail];
@@ -263,7 +263,7 @@
    [_condition release];
    [super dealloc];
 }
--(CPInt) addChoice:(NSCont*) k
+-(ORInt) addChoice:(NSCont*) k
 {
    if (_condition())
       [_controller fail];

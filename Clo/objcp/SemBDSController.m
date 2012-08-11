@@ -14,7 +14,7 @@
 #import "CPEngine.h"
 
 @implementation BDSStack
--(id)initBDSStack:(CPInt)mx
+-(id)initBDSStack:(ORInt)mx
 {
    self = [super init];
    _mx = mx;
@@ -31,7 +31,7 @@
    free(_tab);
    [super dealloc];
 }
--(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(CPInt)d
+-(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(ORInt)d
 {
    if (_sz >= _mx) {
       _mx <<= 1;      
@@ -44,7 +44,7 @@
 {
    return _tab[--_sz];
 }
--(CPInt)size 
+-(ORInt)size 
 {
    return _sz;
 }
@@ -95,7 +95,7 @@
    [_tracer restoreCheckpoint:_atRoot inSolver:_solver];
 }
 
--(CPInt) addChoice: (NSCont*)k 
+-(ORInt) addChoice: (NSCont*)k 
 {
    if (_nbDisc + 1 < _maxDisc) 
       [_tab  pushCont:k cp:[_tracer captureCheckpoint] discrepancies:_nbDisc+1];

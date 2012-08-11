@@ -13,9 +13,9 @@
 #import <objcp/CPTypes.h>
 
 @protocol CPTable <NSObject>
--(void) insert: (CPInt) i : (CPInt) j : (CPInt) k;
+-(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
--(void) fill: (CPInt) j with: (CPInt) val;
+-(void) fill: (ORInt) j with: (ORInt) val;
 -(void) print;
 -(void) close;
 @end

@@ -29,14 +29,14 @@
 }
 -(CPTRIntArrayI*) initCPTRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
--(CPInt) at: (CPInt) value;
--(void) set: (CPInt) value at: (CPInt) idx;
--(CPInt) low;
--(CPInt) up;
+-(ORInt) at: (ORInt) value;
+-(void) set: (ORInt) value at: (ORInt) idx;
+-(ORInt) low;
+-(ORInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<CPSolver>) cp;
--(CPInt) virtualOffset;   
+-(ORInt) virtualOffset;   
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
@@ -57,15 +57,15 @@
 -(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;  
--(CPInt) at: (CPInt) i0 : (CPInt) i1; 
--(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1; 
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
--(id<ORIntRange>) range: (CPInt) i;
+-(ORInt) at: (ORInt) i0 : (ORInt) i1; 
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1; 
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
+-(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
 -(id<CPSolver>) cp;
 -(id<CPEngine>) solver;
--(CPInt) virtualOffset;   
+-(ORInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end
@@ -87,17 +87,17 @@
 -(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;  
--(CPInt) at: (CPInt) i0 : (CPInt) i1; 
--(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1; 
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2; 
--(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1;
--(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2;
--(id<ORIntRange>) range: (CPInt) i;
+-(ORInt) at: (ORInt) i0 : (ORInt) i1; 
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1; 
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
+-(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1;
+-(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
 -(id<CPSolver>) cp;
 -(id<CPEngine>) solver;
--(CPInt) virtualOffset;   
+-(ORInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end

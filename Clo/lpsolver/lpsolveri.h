@@ -22,8 +22,8 @@
 @class LPVariableI;
 @class LPLinearTermI;
 
-#define MAXINT ((CPInt)0x7FFFFFFF)
-#define MININT ((CPInt)0x80000000)
+#define MAXINT ((ORInt)0x7FFFFFFF)
+#define MININT ((ORInt)0x80000000)
 
 
 @interface LPVariableI : NSObject <LPVariable>
@@ -48,8 +48,8 @@
 -(bool) hasBounds;
 -(double) low;
 -(double) up;
--(CPInt) idx;
--(void) setIdx: (CPInt) idx;
+-(ORInt) idx;
+-(void) setIdx: (ORInt) idx;
 
 -(void) addConstraint: (LPConstraintI*) c coef: (double) coef;
 -(void) delConstraint: (LPConstraintI*) c;
@@ -59,8 +59,8 @@
 -(LPColumnI*) column;
 -(double) value;
 -(double) reducedCost;
--(void) setNb: (CPInt) nb;
--(CPInt) nb;
+-(void) setNb: (ORInt) nb;
+-(ORInt) nb;
 @end
 
 @interface LPConstraintI : NSObject <LPConstraint>
@@ -80,37 +80,37 @@
     LPVariableI**       _tmpVar;
     double*             _tmpCoef;
 }
--(LPConstraintI*)      initLPConstraintI: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
+-(LPConstraintI*)      initLPConstraintI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
 -(void)                dealloc;
 -(LPConstraintType)    type;
--(CPInt)                 size;
+-(ORInt)                 size;
 -(LPVariableI**)       var;
--(id<LPVariable>)      var: (CPInt) i;
+-(id<LPVariable>)      var: (ORInt) i;
 -(CPInt*)                col;
--(CPInt)                 col: (CPInt) i;
+-(ORInt)                 col: (ORInt) i;
 -(double*)             coef;
--(double)              coef: (CPInt) i;
+-(double)              coef: (ORInt) i;
 -(double)              rhs;
--(CPInt)                 idx;
--(void)                setIdx: (CPInt) idx;
+-(ORInt)                 idx;
+-(void)                setIdx: (ORInt) idx;
 -(void)                del;
 -(void)                delVariable: (LPVariableI*) var;
 -(void)                addVariable: (LPVariableI*) var coef: (double) coef;
 -(double)              dual;
--(void) setNb: (CPInt) nb;
--(CPInt) nb;
+-(void) setNb: (ORInt) nb;
+-(ORInt) nb;
 @end
 
 @interface LPConstraintLEQ : LPConstraintI
--(LPConstraintI*) initLPConstraintLEQ: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
+-(LPConstraintI*) initLPConstraintLEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
 @end
 
 @interface LPConstraintGEQ : LPConstraintI
--(LPConstraintI*) initLPConstraintGEQ: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
+-(LPConstraintI*) initLPConstraintGEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
 @end
 
 @interface LPConstraintEQ : LPConstraintI
--(LPConstraintI*) initLPConstraintEQ: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
+-(LPConstraintI*) initLPConstraintEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs;
 @end
 
 @interface LPObjectiveI : NSObject <LPObjective>
@@ -129,10 +129,10 @@
     LPVariableI**       _tmpVar;
     double*             _tmpCoef;
 }
--(LPObjectiveI*) initLPObjectiveI: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef cst: (double) cst;
+-(LPObjectiveI*) initLPObjectiveI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef cst: (double) cst;
 -(void) dealloc;
 -(LPObjectiveType) type;
--(CPInt) size;
+-(ORInt) size;
 -(LPVariableI**) var;
 -(CPInt*) col;
 -(double*) coef;
@@ -142,19 +142,19 @@
 -(void) addCst: (double) cst;
 -(double) value;
 -(void) setPosted;
--(void) setNb: (CPInt) nb;
--(CPInt) nb;
+-(void) setNb: (ORInt) nb;
+-(ORInt) nb;
 @end
 
 @interface LPMinimize : LPObjectiveI
--(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef;
--(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef cst: (double) cst;
+-(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef;
+-(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef cst: (double) cst;
 -(void) print;
 @end
 
 @interface LPMaximize : LPObjectiveI
--(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef;
--(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (CPInt) size var: (LPVariableI**) var coef: (double*) coef cst: (double) cst;
+-(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef;
+-(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (double*) coef cst: (double) cst;
 -(void) print;
 @end
 
@@ -177,22 +177,22 @@
 
 }
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (double) low up: (double) up;
--(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (double) low up: (double) up size: (CPInt) size obj: (double) obj cstr: (LPConstraintI**) idx coef: (double*) coef;
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (double) low up: (double) up size: (ORInt) size obj: (double) obj cstr: (LPConstraintI**) idx coef: (double*) coef;
 -(void)      dealloc;
 
--(CPInt) idx;
--(void) setIdx: (CPInt) idx;
+-(ORInt) idx;
+-(void) setIdx: (ORInt) idx;
 -(double) low;
 -(double) up;
 -(double) objCoef;
--(CPInt) size;
+-(ORInt) size;
 -(CPInt*) cstrIdx;
 -(double*) coef;
 -(void) fill: (LPVariableI*) v obj: (LPObjectiveI*) obj;
 -(void) addObjCoef: (double) coef;
 -(void) addConstraint: (LPConstraintI*) cstr coef: (double) coef;
--(void) setNb: (CPInt) nb;
--(CPInt)  nb;
+-(void) setNb: (ORInt) nb;
+-(ORInt)  nb;
 @end
 
 @interface LPLinearTermI : NSObject
@@ -208,7 +208,7 @@
 -(LPLinearTermI*) initLPLinearTermI: (LPSolverI*) solver;
 -(LPLinearTermI*) initLPLinearTermI: (LPSolverI*) solver range: (IRange) R coef: (LPInt2Double) c var: (LPInt2Var) v;
 -(void) dealloc;
--(CPInt) size;
+-(ORInt) size;
 -(LPVariableI**) var;
 -(double*) coef;
 -(double) cst;
@@ -243,17 +243,17 @@
 +(id<LPSolver>)     create;
 -(id<LPVariable>)   createVariable;
 -(id<LPVariable>)   createVariable: (double) low up: (double) up;
--(id<LPColumn>)     createColumn: (double) low up: (double) up size: (CPInt) size obj: (double) obj cstr: (id<LPConstraint>*) idx coef: (double*) coef;
+-(id<LPColumn>)     createColumn: (double) low up: (double) up size: (ORInt) size obj: (double) obj cstr: (id<LPConstraint>*) idx coef: (double*) coef;
 -(id<LPColumn>)     createColumn: (double) low up: (double) up;
 
 -(id<LPLinearTerm>) createLinearTerm;
 -(id<LPLinearTerm>)  createLinearTerm:(IRange) R coef: (LPInt2Double) c var: (LPInt2Var) v;
 
--(id<LPConstraint>) createLEQ: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
--(id<LPConstraint>) createGEQ: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
--(id<LPConstraint>) createEQ: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
--(id<LPObjective>)  createMinimize: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef;
--(id<LPObjective>)  createMaximize: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef;
+-(id<LPConstraint>) createLEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
+-(id<LPConstraint>) createGEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
+-(id<LPConstraint>) createEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
+-(id<LPObjective>)  createMinimize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef;
+-(id<LPObjective>)  createMaximize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef;
 
 -(id<LPConstraint>) createLEQ: (id<LPLinearTerm>) t rhs: (double) rhs;
 -(id<LPConstraint>) createGEQ: (id<LPLinearTerm>) t rhs: (double) rhs;
@@ -287,7 +287,7 @@
 -(void) removeLastConstraint;
 -(void) removeLastVariable;
 
--(void) setIntParameter: (const char*) name val: (CPInt) val;
+-(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setFloatParameter: (const char*) name val: (double) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 

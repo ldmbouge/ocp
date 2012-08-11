@@ -22,7 +22,7 @@
    CPIntVarI* _x;
    CPInt  _c;
 }
--(id) initCPEqualc:(id)x and:(CPInt)c;
+-(id) initCPEqualc:(id)x and:(ORInt)c;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
@@ -34,7 +34,7 @@
    CPIntVarI* _x;
    CPInt      _c;
 }
--(id) initCPDiffc:(id)x and:(CPInt)c;
+-(id) initCPDiffc:(id)x and:(ORInt)c;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
@@ -47,7 +47,7 @@
    CPIntVarI*  _y;
    CPInt _c;
 }
--(id) initCPEqualBC: (id) x and: (id) y  and: (CPInt) c;
+-(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -61,7 +61,7 @@
    CPIntVarI*  _y;
    CPInt _c;
 }
--(id) initCPEqualDC: (id) x and: (id) y  and: (CPInt) c;
+-(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;
@@ -93,7 +93,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
    CPInt  _c;
 }
--(id) initCPNotEqual: (id) x and: (id) y  and: (CPInt) c;
+-(id) initCPNotEqual: (id) x and: (id) y  and: (ORInt) c;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
@@ -126,7 +126,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _x;
    CPInt      _c;
 }
--(id) initCPLEqualc:(id)x and:(CPInt) c;
+-(id) initCPLEqualc:(id)x and:(ORInt) c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -201,7 +201,7 @@ typedef int (^intgetter) (void) ;
    CPLong       _nb;
 }
 -(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<ORIntVarArray>) x;
--(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (CPInt) n;
+-(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (ORInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
 -(void) dealloc;
 -(ORStatus) post;
@@ -215,7 +215,7 @@ typedef int (^intgetter) (void) ;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
--(CPInt)       primalBound;
+-(ORInt)       primalBound;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
@@ -226,7 +226,7 @@ typedef int (^intgetter) (void) ;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
--(CPInt)       primalBound;
+-(ORInt)       primalBound;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end

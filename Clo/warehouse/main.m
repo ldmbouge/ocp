@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
          [cp add: [SUM(s, Stores, [supp[s] eqi:i]) leqi:cap[i]]];
       }
       for(CPUInt i=Stores.low;i <= Stores.up; i++) {
-         id<CPIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
+         id<ORIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
          [cp add: [[open elt:supp[i]] eqi:YES]];
          [cp add: [cost[i] eq:[row elt:supp[i]]]];
       }

@@ -20,7 +20,7 @@
    CPInt              _c;  // constant c in:: sum(i in S) x_i == c
    UBType* _updateBounds;
 }
--(CPEquationBC*)initCPEquationBC: (id) x equal:(CPInt) c;
+-(CPEquationBC*)initCPEquationBC: (id) x equal:(ORInt) c;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
@@ -34,7 +34,7 @@
    CPInt              _c;  // constant c in:: sum(i in S) x_i <= c
    UBType*    _updateMax;
 }
--(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(CPInt) c;
+-(CPINEquationBC*)initCPINEquationBC: (id) x lequal:(ORInt) c;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;

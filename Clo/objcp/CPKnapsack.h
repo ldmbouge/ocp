@@ -17,10 +17,10 @@
 @class CPIntVarI;
 @interface CPKnapsack : CPActiveConstraint<NSCoding> {
    id<ORIntVarArray> _x;
-   id<CPIntArray>    _w;
+   id<ORIntArray>    _w;
    CPIntVarI*        _c;
 }
--(id) initCPKnapsackDC:(id<ORIntVarArray>)x weights:(id<CPIntArray>)w capacity:(id<ORIntVar>)cap;
+-(id) initCPKnapsackDC:(id<ORIntVarArray>)x weights:(id<ORIntArray>)w capacity:(id<ORIntVar>)cap;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

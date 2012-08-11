@@ -20,7 +20,7 @@
 @implementation CPBinPackingI
 {
    id<ORIntVarArray>  _item;
-   id<CPIntArray>     _itemSize;
+   id<ORIntArray>     _itemSize;
    id<ORIntVarArray>  _binSize;
    BOOL               _posted;
 }
@@ -32,7 +32,7 @@
    _posted = false;
 }
 
--(CPBinPackingI*) initCPBinPackingI: (id<ORIntVarArray>) item itemSize: (id<CPIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
+-(CPBinPackingI*) initCPBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
 {
    self = [super initCPActiveConstraint: [[item cp] solver]];
    _item = item;
@@ -76,7 +76,7 @@
    _posted = true;
    id<ORIntRange> BR = [_binSize range];
    id<ORIntRange> IR = [_item range];
-   id<CPSolver> cp = [_item cp];
+   id<CP> cp = [_item tracker];
    
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
@@ -98,7 +98,7 @@
 @implementation CPOneBinPackingI
 {
    id<ORIntVarArray>  _item;
-   id<CPIntArray>     _itemSize;
+   id<ORIntArray>     _itemSize;
    CPInt              _bin;
    id<ORIntVar>       _binSize;
    BOOL               _posted;
@@ -131,7 +131,7 @@
    _posted = false;
 }
 
--(CPOneBinPackingI*) initCPOneBinPackingI: (id<ORIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<ORIntVar>) binSize;
+-(CPOneBinPackingI*) initCPOneBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
 {
    self = [super initCPActiveConstraint: [[item cp] solver]];
    _item = item;
@@ -159,7 +159,7 @@
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_item];
    [aCoder encodeObject:_itemSize];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_bin];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_bin];
    [aCoder encodeObject:_binSize];
 }
 
@@ -169,7 +169,7 @@
    [self initInstanceVariables];
    _item = [aDecoder decodeObject];
    _itemSize = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_bin];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_bin];
    _binSize = [aDecoder decodeObject];
    return self;
 }

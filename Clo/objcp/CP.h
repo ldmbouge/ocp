@@ -39,8 +39,8 @@
 -(id<ORTracer>)      tracer;
 -(id<ORSolution>)  solution;
 
--(void)                 add: (id<CPConstraint>) c;
--(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
+-(void)                 add: (id<ORConstraint>) c;
+-(void)                 add: (id<ORConstraint>) c consistency:(CPConsistency) cons;
 -(void)            minimize: (id<ORIntVar>) x;
 -(void)            maximize: (id<ORIntVar>) x;
 -(void)        addHeuristic: (id<CPHeuristic>) h;

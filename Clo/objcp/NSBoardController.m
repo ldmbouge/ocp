@@ -26,7 +26,7 @@
    enum CPDomValue* _values;
 }
 -(CPGrid*)initGrid:(id<ORIntRange>)rows by:(id<ORIntRange>)cols;
--(void)toggleRow:(CPInt)r col:(CPInt)c to:(enum CPDomValue)dv;
+-(void)toggleRow:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv;
 -(void)drawRect:(NSRect)dirtyRect inView:(NSView*)view;
 @end
 
@@ -52,7 +52,7 @@
    free(_values);
    [super dealloc];
 }
--(void)toggleRow:(CPInt)r col:(CPInt)c to:(enum CPDomValue)dv
+-(void)toggleRow:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv
 {
    CPInt nbCols = [_cols up] - [_cols low] + 1;
    _values[(r - [_rows low]) * nbCols + c - [_cols low]] = dv;
@@ -122,7 +122,7 @@
    }
    return g;
 }
--(void)toggleGrid:(CPGrid*)grid row:(CPInt)r col:(CPInt)c 
+-(void)toggleGrid:(CPGrid*)grid row:(ORInt)r col:(ORInt)c 
                to:(enum CPDomValue)dv
 {
    @synchronized(self) {

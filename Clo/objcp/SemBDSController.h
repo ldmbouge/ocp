@@ -27,10 +27,10 @@
    CPInt        _mx;
    CPInt        _sz;
 }
--(id)initBDSStack:(CPInt)mx;
--(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(CPInt)d;
+-(id)initBDSStack:(ORInt)mx;
+-(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(ORInt)d;
 -(struct BDSNode)pop;
--(CPInt)size;
+-(ORInt)size;
 -(bool)empty;
 @end
 
@@ -48,7 +48,7 @@
 -(void) dealloc;
 -(void)       setup;
 -(void)       cleanup;
--(CPInt) addChoice:(NSCont*)k;
+-(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;
 @end

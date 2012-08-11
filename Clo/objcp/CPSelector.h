@@ -21,10 +21,10 @@
 }
 -(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
--(CPInt)              min;
--(CPInt)              max;
--(CPInt)              any;
--(CPInt)           choose;
+-(ORInt)              min;
+-(ORInt)              max;
+-(ORInt)              any;
+-(ORInt)           choose;
 @end
 
 @interface CPSelect : NSObject {
@@ -32,9 +32,9 @@
 }
 -(CPSelect*) initCPSelect: (id<CPSolver>) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;
--(CPInt)              min;
--(CPInt)              max;
--(CPInt)              any;
+-(ORInt)              min;
+-(ORInt)              max;
+-(ORInt)              any;
 @end
 
 @interface CPSelectMinRandomized : NSObject {
@@ -45,7 +45,7 @@
 }
 -(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)            dealloc;
--(CPInt)           choose;
+-(ORInt)           choose;
 @end
 
 @interface CPSelectMax : NSObject {
@@ -55,5 +55,5 @@
 }
 -(CPSelectMax*) initSelectMax:(id<CPSolver>)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)         dealloc;
--(CPInt)        choose;
+-(ORInt)        choose;
 @end

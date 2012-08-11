@@ -20,9 +20,9 @@
 @private
    CPIntVarI*     _x;   
    CPIntVarI*     _y;
-   id<CPIntArray> _c;
+   id<ORIntArray> _c;
 }
--(id) initCPElementBC: (id) x indexCstArray:(id<CPIntArray>) c equal:(id)y;
+-(id) initCPElementBC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;

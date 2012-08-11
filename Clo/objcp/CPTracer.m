@@ -217,11 +217,11 @@
    {
       [_path pushCommandList:aList];
    }
-   -(void)setNode:(CPInt)nid
+   -(void)setNode:(ORInt)nid
    {
       _nodeId = nid;
    }
-   -(CPInt)nodeId
+   -(ORInt)nodeId
    {
       return _nodeId;
    }
@@ -309,7 +309,7 @@
       [_cmds release];
       [super dealloc];
    }
-   -(CPInt) pushNode
+   -(ORInt) pushNode
    {
       [_trStack pushNode: _lastNode];
       [_cmds pushList: _lastNode];     // add a list of constraint
@@ -330,7 +330,7 @@
       assert([_cmds size] == [_trStack size]);
       return theList;
    }
-   -(id) popToNode: (CPInt) n
+   -(id) popToNode: (ORInt) n
    {
       assert(false);
       [_trStack popNode: n];
@@ -342,7 +342,7 @@
    {
       assignTRInt(&_level,_level._val+1,_trail);
    }
-   -(CPInt)      level
+   -(ORInt)      level
    {
       return _level._val;
    }
@@ -465,12 +465,12 @@
    -(void)dealloc
    {
       //NSLog(@"dealloc command stack %p [%lu]\n",self,_sz);
-      for(CPInt i=(CPInt)_sz-1;i>=0;--i)
+      for(CPInt i=(ORInt)_sz-1;i>=0;--i)
          [_tab[i] release];
       free(_tab);
       [super dealloc];
    }
-   -(void)pushList:(CPInt)node
+   -(void)pushList:(ORInt)node
    {
       if (_sz >= _mxs) {
          _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);

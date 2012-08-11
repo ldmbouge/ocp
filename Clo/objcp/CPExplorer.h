@@ -21,8 +21,8 @@
 -(void)                push: (id<ORSearchController>) c;
 
 // Statistics
--(CPInt)       nbChoices;
--(CPInt)       nbFailures;
+-(ORInt)       nbChoices;
+-(ORInt)       nbFailures;
 
 // access 
 -(id<ORSearchController>)    controller;

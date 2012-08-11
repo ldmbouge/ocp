@@ -203,7 +203,7 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
     }
     if (_max == MAXINT)
         @throw [[ORExecutionError alloc] initORExecutionError: "AllDifferent constraint posted on variable with no or very large domain"]; 
-    _valMatch = (CPInt*) malloc((_max-_min + 1)*sizeof(CPInt));
+    _valMatch = (CPInt*) malloc((_max-_min + 1)*sizeof(ORInt));
     _valMatch -= _min;
     for(CPInt k = _min; k <= _max; k++)
         _valMatch[k] = MAXINT;
@@ -212,15 +212,15 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
 -(void) initMatching
 {
     _magic = 0;
-    _match = (CPInt*) malloc(sizeof(CPInt) * _varSize);
+    _match = (CPInt*) malloc(sizeof(ORInt) * _varSize);
     for(CPInt k = 0 ; k < _varSize; k++)
         _match[k] = MAXINT; 
     
-    _varSeen = (CPInt*) malloc(sizeof(CPInt) * _varSize);
+    _varSeen = (CPInt*) malloc(sizeof(ORInt) * _varSize);
     for(CPInt k = 0 ; k < _varSize; k++)
         _varSeen[k] = 0;
     
-    _valSeen = (CPInt*) malloc(sizeof(CPInt) * _valSize);
+    _valSeen = (CPInt*) malloc(sizeof(ORInt) * _valSize);
     _valSeen -= _min;
     for(CPInt k = _min ; k <= _max; k++)
         _valSeen[k] = 0;
@@ -296,19 +296,19 @@ static bool findMaximalMatching(CPAllDifferentDC* ad)
 }
 -(void) allocateSCC
 {
-    _varComponent = malloc(sizeof(CPInt)*_varSize*2);
-    _varDfs = malloc(sizeof(CPInt)*_varSize*2);
-    _varHigh = malloc(sizeof(CPInt)*_varSize*2);    
+    _varComponent = malloc(sizeof(ORInt)*_varSize*2);
+    _varDfs = malloc(sizeof(ORInt)*_varSize*2);
+    _varHigh = malloc(sizeof(ORInt)*_varSize*2);    
 
-    _valComponent = malloc(sizeof(CPInt)*_valSize);
-    _valDfs = malloc(sizeof(CPInt)*_valSize*2);
-    _valHigh = malloc(sizeof(CPInt)*_valSize*2);
+    _valComponent = malloc(sizeof(ORInt)*_valSize);
+    _valDfs = malloc(sizeof(ORInt)*_valSize*2);
+    _valHigh = malloc(sizeof(ORInt)*_valSize*2);
     _valComponent -= _min;
     _valDfs -= _min;
     _valHigh -= _min;
     
-    _stack = malloc(sizeof(CPInt)*(_varSize + _valSize)*2);
-    _type = malloc(sizeof(CPInt)*(_varSize + _valSize)*2);   
+    _stack = malloc(sizeof(ORInt)*(_varSize + _valSize)*2);
+    _type = malloc(sizeof(ORInt)*(_varSize + _valSize)*2);   
 }
 
 static void initSCC(CPAllDifferentDC* ad)

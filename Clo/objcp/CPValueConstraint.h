@@ -25,7 +25,7 @@
     CPIntVarI* _x;
     CPInt      _c;
 }
--(id) initCPReifyNotEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x neq:(CPInt)c;
+-(id) initCPReifyNotEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x neq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -37,7 +37,7 @@
     CPIntVarI* _x;
     CPInt      _c;
 }
--(id) initCPReifyEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x eq:(CPInt)c;
+-(id) initCPReifyEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x eq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -73,7 +73,7 @@
    CPIntVarI* _x;
    CPInt      _c;
 }
--(id) initCPReifyLEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x leq:(CPInt)c;
+-(id) initCPReifyLEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x leq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -85,7 +85,7 @@
    CPIntVarI* _x;
    CPInt      _c;
 }
--(id) initCPReifyGEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x geq:(CPInt)c;
+-(id) initCPReifyGEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x geq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
@@ -100,7 +100,7 @@
     CPInt* _notTriggered;
     CPLong         _last;
 }
--(id) initCPSumBool:(id)x geq:(CPInt)c;
+-(id) initCPSumBool:(id)x geq:(ORInt)c;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;
@@ -112,7 +112,7 @@
    CPLong           _nb;
    CPInt             _c;
 }
--(id) initCPSumBool:(id)x eq:(CPInt)c;
+-(id) initCPSumBool:(id)x eq:(ORInt)c;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;

@@ -32,8 +32,8 @@
 }
 -(id)            initCPCoreExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
 -(void)                   dealloc;
--(CPInt)              nbChoices;
--(CPInt)              nbFailures;
+-(ORInt)              nbChoices;
+-(ORInt)              nbFailures;
 -(id<ORSearchController>) controller;
 -(void)      setController: (id<ORSearchController>) controller;
 -(void)               push: (id<ORSearchController>) controller;
@@ -81,10 +81,10 @@
 
 // combinators
 -(void)               once: (ORClosure) cl;
--(void)     limitSolutions: (CPInt) masSolutions in: (ORClosure) cl;
+-(void)     limitSolutions: (ORInt) masSolutions in: (ORClosure) cl;
 -(void)     limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
--(void) limitDiscrepancies: (CPInt) maxDiscrepancies in: (ORClosure) cl;
--(void)      limitFailures: (CPInt) maxFailures in: (ORClosure) cl;
+-(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (CPLong) maxTime in: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;

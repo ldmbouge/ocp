@@ -16,7 +16,7 @@
    int _x;
    int _y;
 }
--(Silly*)init:(CPInt)x y:(CPInt)y;
+-(Silly*)init:(ORInt)x y:(ORInt)y;
 -(void)dealloc;
 -(long)callMe:(long) z;
 @end

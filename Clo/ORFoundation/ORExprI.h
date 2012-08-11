@@ -14,10 +14,12 @@
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORData.h"
 #import "ORFoundation/ORSet.h"
+#import "ORFoundation/ORModel.h"
 
 @protocol ORExprVisitor;
 
 @interface ORExprI: NSObject<ORExpr,NSCoding>
+
 -(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
@@ -38,10 +40,12 @@
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
-- (void) encodeWithCoder:(NSCoder *)aCoder;
-- (id) initWithCoder:(NSCoder *)aDecoder;
-- (void)visit:(id<ORExprVisitor>)v;
--(enum ORRelationType)type;
+
+
+- (void) encodeWithCoder:(NSCoder*) aCoder;
+- (id) initWithCoder:(NSCoder*) aDecoder;
+- (void) visit: (id<ORExprVisitor>)v;
+-(enum ORRelationType) type;
 @end
 
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding>
@@ -191,20 +195,38 @@
 -(void) visit: (id<ORExprVisitor>)v;
 @end
 
+@interface ORExprVarSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORIntVarArray> _array;
+   ORExprI*          _index;
+}
+-(id<ORExpr>) initORExprVarSubI: (id<ORIntVarArray>) array elt:(id<ORExpr>) op;
+-(id<ORTracker>) tracker;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORExprI*) index;
+-(id<ORIntVarArray>)array;
+-(BOOL) isConstant;
+-(void) visit:(id<ORExprVisitor>) v;
+@end
+
+
 @protocol ORExprVisitor
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
--(void) visitExprEqualI:(ORExprEqualI*)e;
--(void) visitExprNEqualI:(ORExprNotEqualI*)e;
--(void) visitExprLEqualI:(ORExprLEqualI*)e;
+-(void) visitExprEqualI: (ORExprEqualI*) e;
+-(void) visitExprNEqualI: (ORExprNotEqualI*) e;
+-(void) visitExprLEqualI: (ORExprLEqualI*) e;
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
--(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprDisjunctI:(ORDisjunctI*)e;
--(void) visitExprConjunctI:(ORConjunctI*)e;
--(void) visitExprImplyI:(ORImplyI*)e;
+-(void) visitExprCstSubI: (ORExprCstSubI*) e;
+-(void) visitExprDisjunctI:(ORDisjunctI*) e;
+-(void) visitExprConjunctI: (ORConjunctI*) e;
+-(void) visitExprImplyI: (ORImplyI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
+-(void) visitIntVarI: (id<ORIntVar>) var;
+-(void) visitExprVarSubI: (ORExprVarSubI*) e;
 @end
 

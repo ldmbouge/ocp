@@ -20,8 +20,8 @@ typedef enum { LPminimize, LPmaximize } LPObjectiveType;
 @protocol LPConstraint;
 @protocol LPVariable;
 
-typedef double (^LPInt2Double)(CPInt);
-typedef id<LPVariable> (^LPInt2Var)(CPInt);
+typedef double (^LPInt2Double)(ORInt);
+typedef id<LPVariable> (^LPInt2Var)(ORInt);
 
 typedef struct IRange {
     int low;
@@ -29,7 +29,7 @@ typedef struct IRange {
 } IRange;
 
 @protocol LPVariable <NSObject>
--(CPInt)    idx;
+-(ORInt)    idx;
 -(double) low;
 -(double) up;
 -(bool) hasBounds;
@@ -39,18 +39,18 @@ typedef struct IRange {
 
 @protocol LPConstraint <NSObject>
 -(LPConstraintType)    type;
--(CPInt)                 size;
+-(ORInt)                 size;
 -(id<LPVariable>*)     var;
 -(CPInt*)                col;
 -(double*)             coef;
 -(double)              rhs;
--(CPInt)                 idx;
+-(ORInt)                 idx;
 -(double)              dual;
 @end
 
 @protocol LPObjective  <NSObject>
 -(LPObjectiveType)     type;
--(CPInt)                 size;
+-(ORInt)                 size;
 -(CPInt*)                col;
 -(double*)             coef;
 -(double)              value;
@@ -58,17 +58,17 @@ typedef struct IRange {
 
 
 @protocol LPColumn <NSObject>
--(CPInt)    idx;
+-(ORInt)    idx;
 -(double) low;
 -(double) up;
 -(double) objCoef;
--(CPInt) size;
+-(ORInt) size;
 -(CPInt*) cstrIdx;
 -(double*) coef;
 @end
 
 @protocol LPLinearTerm <NSObject>
--(CPInt) size;
+-(ORInt) size;
 -(double) cst;
 -(void) add: (double) cst;
 -(void) add: (double) coef times: (id<LPVariable>) var;
@@ -77,17 +77,17 @@ typedef struct IRange {
 @protocol LPSolver <NSObject> 
 -(id<LPVariable>)   createVariable;
 -(id<LPVariable>)   createVariable: (double) low up: (double) up;
--(id<LPColumn>)     createColumn: (double) low up: (double) up size: (CPInt) size obj: (double) obj cstr: (id<LPConstraint>*) idx coef: (double*) coef;
+-(id<LPColumn>)     createColumn: (double) low up: (double) up size: (ORInt) size obj: (double) obj cstr: (id<LPConstraint>*) idx coef: (double*) coef;
 -(id<LPColumn>)     createColumn: (double) low up: (double) up;
 
 -(id<LPLinearTerm>) createLinearTerm;
 -(id<LPLinearTerm>) createLinearTerm:(IRange) R coef: (LPInt2Double) c var: (LPInt2Var) v;
 
--(id<LPConstraint>) createLEQ: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
--(id<LPConstraint>) createGEQ: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
--(id<LPConstraint>) createEQ: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
--(id<LPObjective>)  createMinimize: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef;
--(id<LPObjective>)  createMaximize: (CPInt) size var: (id<LPVariable>*) var coef: (double*) coef;
+-(id<LPConstraint>) createLEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
+-(id<LPConstraint>) createGEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
+-(id<LPConstraint>) createEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs;
+-(id<LPObjective>)  createMinimize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef;
+-(id<LPObjective>)  createMaximize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef;
 
 -(id<LPConstraint>) createLEQ: (id<LPLinearTerm>) t rhs: (double) rhs;
 -(id<LPConstraint>) createGEQ: (id<LPLinearTerm>) t rhs: (double) rhs;
@@ -106,7 +106,7 @@ typedef struct IRange {
 -(LPOutcome) solve;
 -(LPOutcome) status;
 
--(void) setIntParameter: (const char*) name val: (CPInt) val;
+-(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setFloatParameter: (const char*) name val: (double) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 

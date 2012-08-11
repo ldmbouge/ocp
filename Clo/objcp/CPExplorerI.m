@@ -53,12 +53,12 @@
    [_hStack push:h];
 }
 
--(CPInt) nbChoices
+-(ORInt) nbChoices
 {
    return _nbc;
 }
 
--(CPInt) nbFailures
+-(ORInt) nbFailures
 {
    return _nbf;
 }
@@ -334,7 +334,7 @@
   [self limitSolutions: 1 in: cl];
 }
 
--(void) limitSolutions: (CPInt) nb in: (ORClosure) cl
+-(void) limitSolutions: (ORInt) nb in: (ORClosure) cl
 {
   CPLimitSolutions* limit = [[CPLimitSolutions alloc] initCPLimitSolutions: nb];
   [self push: limit];
@@ -353,7 +353,7 @@
    [self popController];
 }
 
--(void) limitDiscrepancies: (CPInt) nb in: (ORClosure) cl
+-(void) limitDiscrepancies: (ORInt) nb in: (ORClosure) cl
 {
   CPLimitDiscrepancies* limit = [[CPLimitDiscrepancies alloc] initCPLimitDiscrepancies: nb withTrail: [_tracer trail]];
   [self push: limit];
@@ -361,7 +361,7 @@
   cl();
   [self popController]; 
 }
--(void) limitFailures: (CPInt) nb in: (ORClosure) cl
+-(void) limitFailures: (ORInt) nb in: (ORClosure) cl
 {
    CPLimitFailures* limit = [[CPLimitFailures alloc] initCPLimitFailures: nb];
    [self push: limit];

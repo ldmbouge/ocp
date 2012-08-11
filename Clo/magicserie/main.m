@@ -18,15 +18,17 @@
 
 int main (int argc, const char * argv[])
 {
-   const CPInt n = 128;  // 128 -> 494 fails
+   const CPInt n = 8;  // 128 -> 494 fails
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    for(CPInt i=0;i<n;i++)
-      [cp add: [SUM(j,R,[x[j] eqi: i]) eq: x[i] ]];
+     [cp add: [SUM(j,R,[x[j] eqi: i]) eq: x[i] ]];
    [cp add: [SUM(i,R,[x[i] muli: i]) eqi: n ]];
+
    [cp solve: ^{
       [CPLabel array: x];
+      printf("Succeeds \n");
       for(ORInt i = 0; i < n; i++)
          printf("%d ",[x[i] value]);
       printf("\n");

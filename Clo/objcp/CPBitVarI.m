@@ -122,7 +122,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) bounds:(CPBounds*) bnd
 {
-    *bnd = (CPBounds){(CPInt)[_dom min],(CPInt)[_dom max]};
+    *bnd = (CPBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
 }
 
 -(unsigned int)domsize
@@ -192,7 +192,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     if (_triggers == nil) {
         uint64 low = [_dom min];
         uint64 up = [_dom max];
-        _triggers = [CPTriggerMap triggerMapFrom:(CPInt)low to:(CPInt)up dense:(up-low+1)<256];
+        _triggers = [CPTriggerMap triggerMapFrom:(ORInt)low to:(ORInt)up dense:(up-low+1)<256];
     }
 }
 
@@ -398,8 +398,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_mx];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
    for(CPInt k=0;k<_nb;k++)
       [aCoder encodeObject:_tab[k]];
    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
@@ -407,8 +407,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_mx];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
    for(CPInt k=0;k<_nb;k++)
       _tab[k] = [aDecoder decodeObject];

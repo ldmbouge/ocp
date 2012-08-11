@@ -112,7 +112,7 @@
    id<ORIntRange> EWeeks = RANGE(cp,1,n);
    id<ORIntRange> HomeAway = RANGE(cp,0,1);
    id<ORIntRange> Games = RANGE(cp,0,n*n);
-   id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
+   id<ORIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
    id<ORIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
    id<ORIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
    id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway

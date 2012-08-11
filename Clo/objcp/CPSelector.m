@@ -38,22 +38,22 @@
     [super dealloc];
 }
 
--(CPInt) min 
+-(ORInt) min 
 {
     _direction = 1;
     return [self choose];
 }
--(CPInt) max
+-(ORInt) max
 {
     _direction = -1;
     return [self choose];
 }
--(CPInt) any
+-(ORInt) any
 {
     _direction = 0;
     return [self choose];
 }
--(CPInt) choose
+-(ORInt) choose
 {
    float bestFound = MAXFLOAT;
    float bestRand = MAXFLOAT;
@@ -99,15 +99,15 @@
     [super dealloc];
 }
 
--(CPInt) min 
+-(ORInt) min 
 {
     return [_select min];
 }
--(CPInt) max
+-(ORInt) max
 {
     return [_select max];
 }
--(CPInt) any
+-(ORInt) any
 {
     return [_select any];
 }
@@ -135,7 +135,7 @@
   [super dealloc];
 }
 
--(CPInt) choose
+-(ORInt) choose
 {
    float bestFound = MAXFLOAT;
    float bestRand = MAXFLOAT;
@@ -183,7 +183,7 @@
   [_order release];
   [super dealloc];
 }
--(CPInt) choose
+-(ORInt) choose
 {
    float bestFound = -MAXFLOAT;
    CPInt indexFound = MAXINT;

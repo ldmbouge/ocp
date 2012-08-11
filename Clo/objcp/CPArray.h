@@ -12,33 +12,34 @@
 #import "ORFoundation/ORArray.h"
 #import "objcp/CPData.h"
 
+/*
 @protocol CPIntArray <ORIntArray>
--(id<CPExpr>) elt: (id<CPExpr>) idx;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
 @end
 
-/*
+
 @protocol CPVarArray <ORIdArray>
--(id<CPVar>) at: (CPInt) value;
--(void) set: (id<CPVar>) x at: (CPInt) value;
+-(id<CPVar>) at: (ORInt) value;
+-(void) set: (id<CPVar>) x at: (ORInt) value;
 -(id<CPExpr>) elt: (id<CPExpr>) idx;
 -(id<CPSolver>) cp;
 @end
 
 @protocol CPIntVarArray <CPVarArray> 
--(id<ORIntVar>) at: (CPInt) value;
--(void) set: (id<ORIntVar>) x at: (CPInt) value;
+-(id<ORIntVar>) at: (ORInt) value;
+-(void) set: (id<ORIntVar>) x at: (ORInt) value;
 -(id<ORIntVar>)objectAtIndexedSubscript: (NSUInteger)key;
 -(void)setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol CPIntVarMatrix <ORIdMatrix>
 -(ORInt) arity;
--(id<ORIntVar>) flat:(CPInt)i;
--(id<ORIntVar>) at: (CPInt) i1 : (CPInt) i2;
--(id<ORIntVar>) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(void) set: (id) x at: (CPInt) i1 : (CPInt) i2;
--(void) set: (id) x at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(id<ORIntRange>) range: (CPInt) i;
+-(id<ORIntVar>) flat:(ORInt)i;
+-(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2;
+-(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<CPSolver>) cp;
@@ -46,10 +47,10 @@
 */
 
 @protocol CPTRIntArray <NSObject> 
--(CPInt)  at: (CPInt) value;
--(void)  set: (CPInt) value at: (CPInt) value;  
--(CPInt) low;
--(CPInt) up;
+-(ORInt)  at: (ORInt) value;
+-(void)  set: (ORInt) value at: (ORInt) value;  
+-(ORInt) low;
+-(ORInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<CPSolver>) cp;
@@ -57,13 +58,13 @@
 
 
 @protocol CPTRIntMatrix <NSObject> 
--(CPInt) at: (CPInt) i1 : (CPInt) i2;
--(CPInt) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2;
--(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(CPInt) add: (CPInt) delta at: (CPInt) i1 : (CPInt) i2;
--(CPInt) add: (CPInt) delta at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(id<ORIntRange>) range: (CPInt) i;
+-(ORInt) at: (ORInt) i1 : (ORInt) i2;
+-(ORInt) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(ORInt) add: (ORInt) delta at: (ORInt) i1 : (ORInt) i2;
+-(ORInt) add: (ORInt) delta at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<CPSolver>) cp;

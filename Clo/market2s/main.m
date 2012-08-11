@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
       }
       CPInt rrhs = 0;
       CPInt alpha = 1;
-      CPInt* wr = malloc(sizeof(CPInt)*n);
+      CPInt* wr = malloc(sizeof(ORInt)*n);
       for(CPInt v = 0; v < n;v++) wr[v] = 0;
       for(CPInt c = 0; c < m;++c) {
          for(CPInt v = 0; v < n;v++) {
@@ -51,7 +51,7 @@ int main(int argc, const char * argv[])
             alpha = alpha * 5;
          }
       }
-      CPInt* tw = malloc(sizeof(CPInt)*n);
+      CPInt* tw = malloc(sizeof(ORInt)*n);
       for (CPInt v=0; v < n; ++v) {
          tw[v] = 0;
          for(CPInt c =0;c < m;++c)
@@ -62,7 +62,7 @@ int main(int argc, const char * argv[])
       
       id<ORIntVarArray> x = ALL(ORIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
       for(int i=0;i<m;i++) {
-         id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
+         id<ORIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
          id<ORIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
          [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
       }

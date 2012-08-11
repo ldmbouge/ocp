@@ -22,7 +22,7 @@
    int                   _mx;
 }
 -(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq;
--(CPInt)  addChoice: (NSCont*) k;
+-(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(BOOL) isFinitelyFailed;
 -(void)       exitTryLeft;
@@ -38,7 +38,7 @@
    CPGenerator*            _gen;
 }
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq;
--(CPInt)  addChoice: (NSCont*) k;
+-(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;
 -(void)       startTry;
@@ -62,7 +62,7 @@
    [_pool release];
    [super dealloc];
 }
--(CPInt)  addChoice: (NSCont*) k
+-(ORInt)  addChoice: (NSCont*) k
 {
    return [_controller addChoice:k];
 }
@@ -147,7 +147,7 @@
    }
 }
 
--(CPInt)  addChoice: (NSCont*) k
+-(ORInt)  addChoice: (NSCont*) k
 {
    if (_sz >= _mx) {
       _tab = realloc(_tab,sizeof(NSCont*)*_mx*2);

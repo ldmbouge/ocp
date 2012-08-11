@@ -51,7 +51,7 @@
 #define LEX_S           (_s._val)
 #define STATE           (_u._val)
 
--(void)propagateFrom:(CPInt)k
+-(void)propagateFrom:(ORInt)k
 {
    if (_active._val == NO) return;
    CPLong up = _sz - 1;
@@ -141,7 +141,7 @@ STATE4:
    assignTRInt(&_u, 4, _trail);
 }
 
--(void) listenFrom:(CPInt)ofs
+-(void) listenFrom:(ORInt)ofs
 {
    for(CPInt k=ofs;k<_sz;k++) {
       if (!bound(_xa[k]))

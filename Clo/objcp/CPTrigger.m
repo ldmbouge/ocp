@@ -44,7 +44,7 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
-+(CPTriggerMap*)triggerMapFrom:(CPInt)low to:(CPInt)up dense:(bool)dense
++(CPTriggerMap*)triggerMapFrom:(ORInt)low to:(ORInt)up dense:(bool)dense
 {
     if (dense) {
         CPTriggerMap* tMap = [[CPDenseTriggerMap  alloc] initDenseTriggerMap:low size:up-low+1];
@@ -86,7 +86,7 @@ static void freeTriggers(CPTrigger* list)
 
 @implementation CPDenseTriggerMap
 
--(id)initDenseTriggerMap:(CPInt)low size:(CPInt)sz
+-(id)initDenseTriggerMap:(ORInt)low size:(ORInt)sz
 {
     self = [super init];
     _sz  = sz;
@@ -105,7 +105,7 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
--(void)linkTrigger:(CPTrigger*)trig forValue:(CPInt)value
+-(void)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
 {
     if (_tab[value] == 0) {
         CPTrigger* front = malloc(sizeof(CPTrigger));
@@ -123,7 +123,7 @@ static void freeTriggers(CPTrigger* list)
     front->_next = trig;
     trig->_next->_prev = trig;   
 }
--(void)loseValEvt:(CPInt)val solver:(CPEngineI*)fdm
+-(void)loseValEvt:(ORInt)val solver:(CPEngineI*)fdm
 {
     if (_tab[val]) {
         CPTrigger* front = _tab[val]->_next;
@@ -168,7 +168,7 @@ static void freeTriggers(CPTrigger* list)
     [_map release];
     [super dealloc];
 }
--(CPTrigger*) addTriggerFor: (CPInt) value
+-(CPTrigger*) addTriggerFor: (ORInt) value
 {
     ORAVLTreeNode* at = [_map findNodeForKey:value];
     if (at==nil) {
@@ -191,7 +191,7 @@ static void freeTriggers(CPTrigger* list)
     trig->_next->_prev = trig;
     return trig;
 }
--(void)linkTrigger:(CPTrigger*)trig forValue:(CPInt)value
+-(void)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
 {
     ORAVLTreeNode* at = [_map findNodeForKey:value];
     if (at==nil) {
@@ -212,7 +212,7 @@ static void freeTriggers(CPTrigger* list)
     front->_next = trig;
     trig->_next->_prev = trig;   
 }
--(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm
+-(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm
 {
     CPTriggerList* tList = [_map findObjectForKey:val];
     if (tList) {

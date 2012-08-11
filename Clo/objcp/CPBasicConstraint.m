@@ -16,7 +16,7 @@
 #import "CPEngineI.h"
 
 @implementation CPEqualc
--(id) initCPEqualc:(id)x and:(CPInt)c
+-(id) initCPEqualc:(id)x and:(ORInt)c
 {
    self = [super initCPActiveConstraint:[x solver]];
    _x = x;
@@ -52,20 +52,20 @@
 {
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];
    _x = [[aDecoder decodeObject] retain];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
 
 @implementation CPDiffc
--(id) initCPDiffc:(id)x and:(CPInt)c
+-(id) initCPDiffc:(id)x and:(ORInt)c
 {
    self = [super initCPActiveConstraint:[x solver]];
    _x = x;
@@ -102,21 +102,21 @@
 {
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
 
 @implementation CPEqualBC
 
--(id) initCPEqualBC: (id) x and: (id) y  and: (CPInt) c
+-(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c
 {
    self = [super initCPActiveConstraint:[x solver]];
    _x = x;
@@ -171,7 +171,7 @@
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
    [aCoder encodeObject:_y];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -179,14 +179,14 @@
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
 
 
 @implementation CPEqualDC
--(id) initCPEqualDC: (id) x and: (id) y  and: (CPInt) c
+-(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c
 {
    self = [super initCPActiveConstraint:[x solver]];
    _x = x;
@@ -267,7 +267,7 @@
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
    [aCoder encodeObject:_y];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -275,7 +275,7 @@
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
@@ -512,7 +512,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 @implementation CPNotEqual
 
--(id)initCPNotEqual:(id) x and:(id) y  and: (CPInt) c
+-(id)initCPNotEqual:(id) x and:(id) y  and: (ORInt) c
 {
    self = [super initCPActiveConstraint:[x solver]];
    _x = x;
@@ -566,7 +566,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
    [aCoder encodeObject:_y];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -574,7 +574,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
@@ -1052,7 +1052,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 
 @implementation CPLEqualc
--(id) initCPLEqualc:(id)x and:(CPInt) c
+-(id) initCPLEqualc:(id)x and:(ORInt) c
 {
    self = [super initCPActiveConstraint: [x solver]];
    _x = x;
@@ -1079,14 +1079,14 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 {
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
@@ -1368,7 +1368,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 
 @implementation CPAllDifferenceVC
--(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(CPInt) n
+-(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(ORInt) n
 {
    self = [super init];
    _x = x;
@@ -1438,9 +1438,9 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       minX = min(minX,[_x[k] min]);
       maxX = max(maxX,[_x[k] max]);
    }
-   CPInt* vCnt = alloca(sizeof(CPInt)*(maxX-minX+1));
-   CPInt* vUse = alloca(sizeof(CPInt)*(maxX-minX+1));
-   memset(vCnt,0,sizeof(CPInt)*(maxX-minX+1));
+   CPInt* vCnt = alloca(sizeof(ORInt)*(maxX-minX+1));
+   CPInt* vUse = alloca(sizeof(ORInt)*(maxX-minX+1));
+   memset(vCnt,0,sizeof(ORInt)*(maxX-minX+1));
    vCnt -= minX;
    CPInt nbBoundVal = 0;
    for(CPLong k=low;k<=up;k++) {
@@ -1464,7 +1464,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       IMP minIMP = [_x[k] methodForSelector:minSEL];
       [_x[k] whenBindDo: ^ {
          //int vk = [_x[k] min];
-         CPInt vk = (CPInt) minIMP(_x[k],minSEL);
+         CPInt vk = (ORInt) minIMP(_x[k],minSEL);
          for(CPLong i=up;i;--i) {
             if (i == k) 
                continue;
@@ -1546,7 +1546,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    }
    return ORSuspend;
 }
--(CPInt) primalBound
+-(ORInt) primalBound
 {
   return _primalBound;
 }
@@ -1607,7 +1607,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    return ORSuspend;  
 }
 
--(CPInt) primalBound
+-(ORInt) primalBound
 {
   return _primalBound;
 }

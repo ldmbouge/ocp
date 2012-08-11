@@ -121,7 +121,7 @@
    [_onFail release];
    [super dealloc];
 }
--(CPInt)addChoice: (NSCont*) k
+-(ORInt)addChoice: (NSCont*) k
 {
    if (_onChoose)
       _onChoose();

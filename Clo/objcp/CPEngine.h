@@ -14,13 +14,14 @@
 #import <objcp/CPData.h>
 
 @protocol CPEngine <OREngine,ORSolutionProtocol>
--(ORStatus) add: (id<CPConstraint>) c;
--(ORStatus) post: (id<CPConstraint>) c;
--(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency: (CPConsistency) cons;
--(ORStatus) label: (id) var with: (CPInt) val;
--(ORStatus) diff:  (id) var with: (CPInt) val;
--(ORStatus) lthen: (id<ORIntVar>) var with: (CPInt) val;
--(ORStatus) gthen: (id<ORIntVar>) var with: (CPInt) val;
+
+-(ORStatus) add: (id<ORConstraint>) c;
+-(ORStatus) post: (id<ORConstraint>) c;
+-(id<ORConstraint>) wrapExpr:(id<ORRelation>) e  consistency: (CPConsistency) cons;
+-(ORStatus) label: (id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus) diff:  (id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus) lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus) gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(ORStatus) propagate;
 -(CPUInt) nbPropagation;
@@ -28,6 +29,6 @@
 -(CPUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;
--(CPInt)virtualOffset:(id)obj;
+-(ORInt)virtualOffset:(id)obj;
 -(id)virtual:(id)obj;
 @end

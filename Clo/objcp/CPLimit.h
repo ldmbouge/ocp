@@ -20,9 +20,9 @@
    CPInt _maxSolutions;
    CPInt _nbSolutions;
 }
--(id)   initCPLimitSolutions: (CPInt) maxSolutions;
+-(id)   initCPLimitSolutions: (ORInt) maxSolutions;
 -(void) dealloc;
--(CPInt) addChoice:(NSCont*)k;
+-(ORInt) addChoice:(NSCont*)k;
 -(void) fail;
 -(void) succeeds;
 @end
@@ -33,9 +33,9 @@
   ORTrail*  _trail;
   TRInt     _nbDiscrepancies;
 }
--(id)        initCPLimitDiscrepancies: (CPInt) maxDiscrepancies withTrail: (ORTrail*) trail;
+-(id)        initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrail*) trail;
 -(void)      dealloc;
--(CPInt)     addChoice:(NSCont*) k;
+-(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryRight;
 @end
@@ -45,9 +45,9 @@
    CPInt     _maxFailures;
    CPInt     _nbFailures;
 }
--(id)        initCPLimitFailures: (CPInt) maxFailures;
+-(id)        initCPLimitFailures: (ORInt) maxFailures;
 -(void)      dealloc;
--(CPInt)     addChoice:(NSCont*) k;
+-(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryLeft;
 -(void)      startTryRight;
@@ -60,7 +60,7 @@
 }
 -(id)        initCPLimitTime: (CPLong) maxTime;
 -(void)      dealloc;
--(CPInt)     addChoice:(NSCont*) k;
+-(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryLeft;
 -(void)      startTryRight;
@@ -72,7 +72,7 @@
 }
 -(id)        initCPLimitCondition: (CPVoid2Bool) condition;
 -(void)      dealloc;
--(CPInt)     addChoice:(NSCont*) k;
+-(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryLeft;
 -(void)      startTryRight;
@@ -84,7 +84,7 @@
 }
 -(id)        initCPOptimizationController: (Void2ORStatus) canImprove;
 -(void)      dealloc;
--(CPInt)     addChoice:(NSCont*) k;
+-(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;
 -(void)      startTryRight;
 -(void)      startTryallOnFailure;

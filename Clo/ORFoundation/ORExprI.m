@@ -12,6 +12,7 @@
 #import "ORExpr.h"
 #import "ORExprI.h"
 #import "ORFactory.h"
+#import "ORError.h"
 
 @implementation ORExprI
 -(id<ORTracker>) tracker
@@ -123,6 +124,7 @@
 }
 - (void)visit:(id<ORExprVisitor>)v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
 @end
 
@@ -817,6 +819,69 @@
 }
 @end
 
+@implementation ORExprVarSubI
+-(id<ORExpr>) initORExprVarSubI: (id<ORIntVarArray>) array elt:(id<ORExpr>) op
+{
+   self = [super init];
+   _array = array;
+   _index = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_index tracker];
+}
+-(ORInt) min
+{
+   ORInt minOf = MAXINT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf < [_array[k] min] ? minOf : [_array[k] min];
+   return minOf;
+}
+-(ORInt) max
+{
+   ORInt maxOf = MININT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array[k] max] ? maxOf : [_array[k] max];
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@]",_array,_index];
+   return rv;
+}
+-(ORExprI*) index
+{
+   return  _index;
+}
+-(id<ORIntVarArray>)array
+{
+   return _array;
+}
+-(BOOL) isConstant
+{
+   return [_index isConstant];
+}
+-(void) visit:(id<ORExprVisitor>)visitor
+{
+   [visitor visitExprVarSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_array];
+   [aCoder encodeObject:_index];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _array = [aDecoder decodeObject];
+   _index = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
 id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r)
 {
    return [r muli: l];
@@ -825,3 +890,6 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r)
 {
    return [l mul: r];
 }
+
+
+

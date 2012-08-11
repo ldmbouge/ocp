@@ -15,12 +15,20 @@
 
 @protocol ORRelation;
 @protocol ORExpr;
+@protocol ORSolverConcretizer;
 
 id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r);
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
-@protocol ORExpr <NSObject,NSCoding>
--(id<ORTracker>)tracker;
+@protocol ORAbstract <NSObject>
+-(void) concretize: (id<ORSolverConcretizer>) concretizer;
+@end
+
+@protocol ORConstraint <ORAbstract,NSObject>
+@end
+
+@protocol ORExpr <ORConstraint,NSObject,NSCoding>
+-(id<ORTracker>) tracker;
 -(ORInt) min;
 -(ORInt) max;
 -(BOOL) isConstant;

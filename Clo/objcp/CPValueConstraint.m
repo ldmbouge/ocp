@@ -17,7 +17,7 @@
 #import "CPArrayI.h"
 
 @implementation CPReifyNotEqualcDC
--(id)initCPReifyNotEqualcDC:(CPIntVarI*)b when:(CPIntVarI*)x neq:(CPInt)c
+-(id)initCPReifyNotEqualcDC:(CPIntVarI*)b when:(CPIntVarI*)x neq:(ORInt)c
 {
     self = [super initCPCoreConstraint];
     _b = b;
@@ -66,20 +66,20 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_b];
     [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 - (id) initWithCoder:(NSCoder *)aDecoder;
 {
     self = [super initWithCoder:aDecoder];
     _b = [aDecoder decodeObject];
     _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
     return self;
 }
 @end
 
 @implementation CPReifyEqualcDC
--(id) initCPReifyEqualcDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPInt) c
+-(id) initCPReifyEqualcDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (ORInt) c
 {
    self = [super initCPCoreConstraint];
     _b = b;
@@ -129,7 +129,7 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_b];
     [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id) initWithCoder:(NSCoder *)aDecoder;
@@ -137,7 +137,7 @@
     self = [super initWithCoder:aDecoder];
     _b = [aDecoder decodeObject];
     _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
     return self;
 }
 @end
@@ -299,7 +299,7 @@
    } onBehalf:self];
    
 }
--(void)reifiedOp:(CPIntVarI*)a equal:(CPInt)c equiv:(CPIntVarI*)b
+-(void)reifiedOp:(CPIntVarI*)a equal:(ORInt)c equiv:(CPIntVarI*)b
 {
    if (!memberDom(a, c)) {                   // b <=> c == a & c NOTIN D(a)
       [b bind:NO];                           // -> b=NO
@@ -378,7 +378,7 @@
 @end
 
 @implementation CPReifyLEqualDC
--(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leq: (CPInt) c
+-(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leq: (ORInt) c
 {
    self = [super initCPCoreConstraint];
    _b = b;
@@ -434,7 +434,7 @@
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_b];
    [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id) initWithCoder:(NSCoder *)aDecoder;
@@ -442,14 +442,14 @@
    self = [super initWithCoder:aDecoder];
    _b = [aDecoder decodeObject];
    _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
 
 
 @implementation CPReifyGEqualDC
--(id) initCPReifyGEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x geq: (CPInt) c
+-(id) initCPReifyGEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x geq: (ORInt) c
 {
    self = [super initCPCoreConstraint];
    _b = b;
@@ -502,7 +502,7 @@
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_b];
    [aCoder encodeObject:_x];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id) initWithCoder:(NSCoder *)aDecoder;
@@ -510,14 +510,14 @@
    self = [super initWithCoder:aDecoder];
    _b = [aDecoder decodeObject];
    _x = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end
 
 @implementation CPSumBoolGeq
 
--(id) initCPSumBool: (id) x geq: (CPInt) c
+-(id) initCPSumBool: (id) x geq: (ORInt) c
 {
     if ([x isKindOfClass:[NSArray class]]) {
         self = [super initCPCoreConstraint];
@@ -554,7 +554,7 @@
 -(ORStatus) post
 {
     _at = malloc(sizeof(CPTrigger*)*(_c+1));
-    _notTriggered = malloc(sizeof(CPInt)*(_nb - _c - 1));
+    _notTriggered = malloc(sizeof(ORInt)*(_nb - _c - 1));
     int nbTrue = 0;
     int nbPos  = 0;
     for(CPInt i=0;i<_nb;i++) {
@@ -616,10 +616,10 @@
                                }
                            }
                            onBehalf:self];                           
-            _at[listen]->_vId = (CPInt)i; // local identifier of var being watched.
+            _at[listen]->_vId = (ORInt)i; // local identifier of var being watched.
         } 
         else 
-            _notTriggered[nbNW++] = (CPInt)i;
+            _notTriggered[nbNW++] = (ORInt)i;
     }   
     assert(nbNW == _nb - _c - 1);
     _last = _nb - _c - 2;  // where we will start the circular scan among the unWatched variables.
@@ -647,7 +647,7 @@
     [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
     for(CPInt k=0;k<_nb;k++) 
         [aCoder encodeObject:_x[k]];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -657,7 +657,7 @@
     _x = malloc(sizeof(CPIntVarI*)*_nb);   
     for(CPInt k=0;k<_nb;k++) 
         _x[k] = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
     return self;
 }
 @end
@@ -666,7 +666,7 @@
    TRInt _nbOne;
    TRInt _nbZero;   
 }
--(id) initCPSumBool:(id)x eq:(CPInt)c
+-(id) initCPSumBool:(id)x eq:(ORInt)c
 {
    if ([x isKindOfClass:[NSArray class]]) {
       self = [super initCPActiveConstraint:[[[x objectAtIndex:0] cp] solver]];
@@ -719,7 +719,7 @@
       return ORSuccess;
    }
    _nbOne  = makeTRInt(_trail, nbTrue);
-   _nbZero = makeTRInt(_trail, (CPInt)_nb - nbTrue - nbPos);
+   _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
    for(CPInt k=0;k < _nb;k++) {
       if (bound(_x[k])) continue;
       [_x[k] whenBindDo:^{
@@ -777,7 +777,7 @@
    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
    for(CPInt k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -787,7 +787,7 @@
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(CPInt k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end

@@ -19,7 +19,7 @@
 
 @implementation CPTableI
 
--(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (CPInt) arity
+-(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (ORInt) arity
 {
     self = [super init];    
     _cp = cp;
@@ -28,7 +28,7 @@
     _size = 2;
     _column = malloc(sizeof(CPInt*)*_arity);
     for(CPInt i = 0; i < _arity; i++) 
-        _column[i] = malloc(sizeof(CPInt)*_size);
+        _column[i] = malloc(sizeof(ORInt)*_size);
     _closed = false;
     return self;
 }
@@ -56,7 +56,7 @@
 -(void) resize
 {
     for(CPInt j = 0; j < _arity; j++) {
-        CPInt* nc = malloc(sizeof(CPInt)*2*_size);    
+        CPInt* nc = malloc(sizeof(ORInt)*2*_size);    
         for(CPInt i = 0; i < _nb; i++) 
             nc[i] = _column[j][i];
         free(_column[j]);
@@ -74,7 +74,7 @@
     _nb++;
 }
 
--(void) fill: (CPInt) j with: (CPInt) val
+-(void) fill: (ORInt) j with: (ORInt) val
 {
     if (_closed) 
         @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
@@ -85,7 +85,7 @@
     _column[j][_nb-1] = val;
 }
 
--(void) insert: (CPInt) i : (CPInt) j : (CPInt) k
+-(void) insert: (ORInt) i : (ORInt) j : (ORInt) k
 {
     if (_closed) 
         @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
@@ -97,7 +97,7 @@
     _nb++;
 }
 
--(void) index: (CPInt) j
+-(void) index: (ORInt) j
 {
     CPInt m = MAXINT;
     CPInt M = -MAXINT;
@@ -110,8 +110,8 @@
     _min[j] = m;
     _max[j] = M;
     CPInt nbValues = M - m + 1;
-    _nextSupport[j] = malloc(sizeof(CPInt)*_nb);
-    _support[j] = malloc(sizeof(CPInt)*nbValues);
+    _nextSupport[j] = malloc(sizeof(ORInt)*_nb);
+    _support[j] = malloc(sizeof(ORInt)*nbValues);
     _support[j] -= m;
     for(CPInt i = 0; i < _nb; i++)
         _nextSupport[j][i] = -1;
@@ -128,8 +128,8 @@
 {
     if (!_closed) {
         _closed = true;
-        _min = malloc(sizeof(CPInt)*_arity);
-        _max = malloc(sizeof(CPInt)*_arity);
+        _min = malloc(sizeof(ORInt)*_arity);
+        _max = malloc(sizeof(ORInt)*_arity);
         _nextSupport = malloc(sizeof(CPInt*)*_arity);
         _support = malloc(sizeof(CPInt*)*_arity);
         for(CPInt j = 0; j < _arity; j++)
@@ -157,25 +157,25 @@
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
     [aCoder encodeObject:_cp];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
     for(CPInt i = 0; i < _nb; i++) 
         for(CPInt j = 0; j < _arity; j++)
-            [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_column[j][i]]; 
+            [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_column[j][i]]; 
 }
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     id<CPSolver> cp = [[aDecoder decodeObject] retain];
     CPInt arity;
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&arity];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&arity];
     [self initCPTableI: cp arity: arity];
     CPInt size;
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&size]; 
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&size]; 
     for(CPInt i = 0; i < size; i++) {
         [self addEmptyTuple];
         for(CPInt j = 0; j < _arity; j++) 
-            [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_column[j][i]]; 
+            [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_column[j][i]]; 
     }
     return self;
 }
@@ -280,7 +280,7 @@ static ORStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
     return ORSuspend;
 }
 
--(ORStatus) initSupport: (CPInt) i
+-(ORStatus) initSupport: (ORInt) i
 {
     int nb = _table->_max[i] - _table->_min[i] + 1;
     _currentSupport[i] = makeTRIntArray(_trail,nb,_table->_min[i]);
@@ -327,7 +327,7 @@ static ORStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
 {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_table];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
     for(CPInt i=0;i<_arity;i++)
         [aCoder encodeObject:_var[i]];
 }
@@ -336,7 +336,7 @@ static ORStatus removeValue(CPTableCstrI* cstr,CPInt i,CPInt v)
 {
     self = [super initWithCoder:aDecoder];
     _table = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
     _var = malloc(_arity * sizeof(CPIntVarI*));
     for(CPInt i=0;i<_arity;i++)
         _var[i] = [aDecoder decodeObject];

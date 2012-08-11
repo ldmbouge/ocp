@@ -52,7 +52,7 @@
    [_tracer restoreCheckpoint:_atRoot inSolver:_solver];
 }
 
--(CPInt) addChoice: (NSCont*)k 
+-(ORInt) addChoice: (NSCont*)k 
 {
    if (_sz >= _mx) {
       _tab = realloc(_tab,sizeof(NSCont*)*_mx*2);

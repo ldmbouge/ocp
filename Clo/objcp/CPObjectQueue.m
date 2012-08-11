@@ -13,7 +13,7 @@
 #import "objcp/CPObjectQueue.h"
 
 @implementation CPObjectQueue 
--(id) initEvtQueue: (CPInt) sz {   
+-(id) initEvtQueue: (ORInt) sz {   
    self = [super init];
    _mxs = sz;
    _mask = _mxs - 1;
@@ -83,7 +83,7 @@
 @end
 
 @implementation PCObjectQueue 
--(id) initPCQueue: (CPInt) sz nbWorkers:(CPInt)nbw
+-(id) initPCQueue: (ORInt) sz nbWorkers:(ORInt)nbw
 {   
    self = [super init];
    _mxs = sz;

@@ -27,7 +27,7 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-   return [[CPExprVarSubI alloc] initCPExprVarSubI:(id<ORIntVarArray>)self elt:(id<CPExpr>)idx];
+   return [[ORExprVarSubI alloc] initORExprVarSubI:(id<ORIntVarArray>)self elt:(id<ORExpr>)idx];
    return nil;
 }
 @end
@@ -67,25 +67,25 @@
     [super dealloc];
 }
 
--(CPInt) at: (CPInt) value
+-(ORInt) at: (ORInt) value
 {
     if (value < _low || value > _up)
         @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPTRIntArrayElement"];
     return _array[value]._val;
 }
 
--(void) set: (CPInt) value at: (CPInt) idx
+-(void) set: (ORInt) value at: (ORInt) idx
 {
     if (idx < _low || idx > _up)
         @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPTRIntArrayElement"];
     assignTRInt(_array + idx,value,_trail);
 }
 
--(CPInt) low
+-(ORInt) low
 {
     return _low;
 }
--(CPInt) up
+-(ORInt) up
 {
     return _up;
 }
@@ -113,7 +113,7 @@
 {
     return [_cp solver];
 }
--(CPInt) virtualOffset
+-(ORInt) virtualOffset
 {
     return [[_cp solver] virtualOffset:self];
 }
@@ -121,11 +121,11 @@
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
     [aCoder encodeObject:_cp];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
     for(CPInt i=_low;i<=_up;i++) {
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_array[i]._val];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
         [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
     }
 }
@@ -133,13 +133,13 @@
 {
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
     _array =  malloc(sizeof(TRInt)*_nb);
     _array -= _low;
     for(CPInt i=_low;i<=_up;i++) {
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_array[i]._val];
+        [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
          [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
     }
     return self;
@@ -159,9 +159,9 @@
     _trail = [[cp solver] trail];
     _arity = 3;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
-    _low = malloc(sizeof(CPInt) * _arity);
-    _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);
+    _low = malloc(sizeof(ORInt) * _arity);
+    _up = malloc(sizeof(ORInt) * _arity);
+    _size = malloc(sizeof(ORInt) * _arity);
     _range[0] = r0;
     _range[1] = r1;
     _range[2] = r2;
@@ -188,9 +188,9 @@
     _trail = [[cp solver] trail];
     _arity = 2;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
-    _low = malloc(sizeof(CPInt) * _arity);
-    _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);
+    _low = malloc(sizeof(ORInt) * _arity);
+    _up = malloc(sizeof(ORInt) * _arity);
+    _size = malloc(sizeof(ORInt) * _arity);
     _range[0] = r0;
     _range[1] = r1;
     _low[0] = [r0 low];
@@ -226,20 +226,20 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
         idx = idx * m->_size[k] + (i[k] - m->_low[k]);
     return idx;
 }
--(id<ORIntRange>) range: (CPInt) i
+-(id<ORIntRange>) range: (ORInt) i
 {
     if (i < 0 || i >= _arity)
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPTRIntMatrix"]; 
     return _range[i];
 }
--(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {
     if (_arity != 3) 
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
    CPInt i[3] = {i0,i1,i2};
     return _flat[indexMatrix(self,i)]._val;
 }
--(CPInt) at: (CPInt) i0 : (CPInt) i1
+-(ORInt) at: (ORInt) i0 : (ORInt) i1
 {
     if (_arity != 2) 
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
@@ -247,21 +247,21 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     return _flat[indexMatrix(self,i)]._val;
 }
 
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {
    if (_arity != 3)
       @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
    CPInt i[3] = {i0,i1,i2};
    assignTRInt(_flat + indexMatrix(self,i),value,_trail);
 }
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1
 {
    if (_arity != 2)
       @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
    CPInt i[3] = {i0,i1};
    assignTRInt(_flat + indexMatrix(self,i),value,_trail);
 }
--(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1
+-(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1
 {
    if (_arity != 2)
       @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
@@ -270,7 +270,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    assignTRInt(ptr,ptr->_val + delta,_trail);
    return ptr->_val;
 }
--(CPInt) add:(CPInt) delta at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+-(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {
    if (_arity != 3)
       @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPTRIntMatrix"];
@@ -283,7 +283,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     return _nb;
 }
--(void) descriptionAux: (CPInt*) i depth:(CPInt)d string: (NSMutableString*) rv
+-(void) descriptionAux: (CPInt*) i depth:(ORInt)d string: (NSMutableString*) rv
 {
    if (d == _arity) {
       [rv appendString:@"<"];
@@ -302,7 +302,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 -(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   CPInt* i = alloca(sizeof(CPInt)*_arity);
+   CPInt* i = alloca(sizeof(ORInt)*_arity);
    [self descriptionAux: i depth:0 string: rv];
    return rv;
 }
@@ -314,21 +314,21 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     return [_cp solver];
 }
--(CPInt) virtualOffset
+-(ORInt) virtualOffset
 {
     return [[_cp solver] virtualOffset:self];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:_cp];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
     for(CPInt i = 0; i < _arity; i++) {
         [aCoder encodeObject:_range[i]];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
     }
     for(CPInt i=0 ; i < _nb ;i++) {
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_flat[i]._val];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_flat[i]._val];
         [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_flat[i]._mgc];
     }
 }
@@ -336,22 +336,22 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
-    _low = malloc(sizeof(CPInt) * _arity);
-    _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);
+    _low = malloc(sizeof(ORInt) * _arity);
+    _up = malloc(sizeof(ORInt) * _arity);
+    _size = malloc(sizeof(ORInt) * _arity);
     _nb = 1;
     for(CPInt i = 0; i < _arity; i++) {
        _range[i] = [[aDecoder decodeObject] retain];
-       [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
-       [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
+       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
        _size[i] = (_up[i] - _low[i] + 1);
        _nb *= _size[i];
     }
     _flat = malloc(sizeof(TRInt) * _nb);
     for(CPInt i=0 ; i < _nb ;i++) {
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_flat[i]._val];
+        [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_flat[i]._val];
         [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_flat[i]._mgc];
     }
     return self;
@@ -372,9 +372,9 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     _trail = [[cp solver] trail];
     _arity = 3;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
-    _low = malloc(sizeof(CPInt) * _arity);
-    _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);
+    _low = malloc(sizeof(ORInt) * _arity);
+    _up = malloc(sizeof(ORInt) * _arity);
+    _size = malloc(sizeof(ORInt) * _arity);
     _i = malloc(sizeof(ORRange) * _arity);
     _range[0] = r0;
     _range[1] = r1;
@@ -389,7 +389,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     _size[1] = (_up[1] - _low[1] + 1);
     _size[2] = (_up[2] - _low[2] + 1);
     _nb = _size[0] * _size[1] * _size[2];
-    _flat = malloc(sizeof(CPInt) * _nb);
+    _flat = malloc(sizeof(ORInt) * _nb);
     for (CPInt i=0 ; i < _nb; i++) 
         _flat[i] = 0;   
     return self;
@@ -402,9 +402,9 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    _trail = [[cp solver] trail];
    _arity = 2;
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
-   _low = malloc(sizeof(CPInt) * _arity);
-   _up = malloc(sizeof(CPInt) * _arity);
-   _size = malloc(sizeof(CPInt) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
    _i = malloc(sizeof(ORRange) * _arity);
    _range[0] = r0;
    _range[1] = r1;
@@ -415,7 +415,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    _size[0] = (_up[0] - _low[0] + 1);
    _size[1] = (_up[1] - _low[1] + 1);
    _nb = _size[0] * _size[1];
-   _flat = malloc(sizeof(CPInt) * _nb);
+   _flat = malloc(sizeof(ORInt) * _nb);
    for (CPInt i=0 ; i < _nb; i++)
       _flat[i] = 0;
    return self;
@@ -432,7 +432,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     free(_flat);
     [super dealloc];
 }
--(CPInt) getIndex
+-(ORInt) getIndex
 {
     for(CPInt k = 0; k < _arity; k++)
         if (_i[k] < _low[k] || _i[k] > _up[k])
@@ -442,13 +442,13 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
         idx = idx * _size[k] + (_i[k] - _low[k]);
     return idx;
 }
--(id<ORIntRange>) range: (CPInt) i
+-(id<ORIntRange>) range: (ORInt) i
 {
     if (i < 0 || i >= _arity)
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntMatrix"]; 
     return _range[i];
 }
--(CPInt) at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {
     if (_arity != 3) 
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntMatrix"];
@@ -457,7 +457,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     _i[2] = i2;
     return _flat[[self getIndex]];
 }
--(CPInt) at: (CPInt) i0 : (CPInt) i1
+-(ORInt) at: (ORInt) i0 : (ORInt) i1
 {
     if (_arity != 2) 
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntMatrix"];
@@ -466,7 +466,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     return _flat[[self getIndex]];
 }
 
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1 : (CPInt) i2
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {
     if (_arity != 3) 
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
@@ -475,7 +475,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     _i[2] = i2;
     _flat[[self getIndex]] = value;
 }
--(void) set: (CPInt) value at: (CPInt) i0 : (CPInt) i1
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1
 {
     if (_arity != 2) 
         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
@@ -488,7 +488,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     return _nb;
 }
--(void) descriptionAux: (CPInt) i string: (NSMutableString*) rv
+-(void) descriptionAux: (ORInt) i string: (NSMutableString*) rv
 {
     if (i == _arity) {
         [rv appendString:@"<"];
@@ -518,42 +518,42 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     return [_cp solver];
 }
--(CPInt) virtualOffset
+-(ORInt) virtualOffset
 {
     return [[_cp solver] virtualOffset:self];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:_cp];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
     for(CPInt i = 0; i < _arity; i++) {
         [aCoder encodeObject:_range[i]];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
     }
     for(CPInt i=0 ; i < _nb ;i++) 
-        [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_flat[i]];
+        [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_flat[i]];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
     _cp = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_arity];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
-    _low = malloc(sizeof(CPInt) * _arity);
-    _up = malloc(sizeof(CPInt) * _arity);
-    _size = malloc(sizeof(CPInt) * _arity);   
+    _low = malloc(sizeof(ORInt) * _arity);
+    _up = malloc(sizeof(ORInt) * _arity);
+    _size = malloc(sizeof(ORInt) * _arity);   
     _nb = 1;
     for(CPInt i = 0; i < _arity; i++) {
        _range[i] = [[aDecoder decodeObject] retain];
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_low[i]];
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_up[i]];
+        [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+        [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
         _size[i] = (_up[i] - _low[i] + 1);
         _nb *= _size[i];
     }
-    _flat = malloc(sizeof(CPInt) * _nb);
+    _flat = malloc(sizeof(ORInt) * _nb);
     for(CPInt i=0 ; i < _nb ;i++) 
-        [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_flat[i]];
+        [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_flat[i]];
     return self;
 }
 

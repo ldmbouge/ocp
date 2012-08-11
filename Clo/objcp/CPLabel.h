@@ -19,6 +19,6 @@
 +(void) array: (id<ORIntVarArray>) x;
 +(void) array: (id<ORIntVarArray>) x orderedBy: (CPInt2Int) orderedBy;
 +(void) heuristic:(id<CPHeuristic>)h;
-+(CPInt) maxBound: (id<ORIntVarArray>) x;
++(ORInt) maxBound: (id<ORIntVarArray>) x;
 @end;
 

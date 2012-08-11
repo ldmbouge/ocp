@@ -19,15 +19,15 @@
    int _min;
    int _max;
 }
--(SillyVar*)initWithLow:(CPInt)l up:(CPInt)u;
+-(SillyVar*)initWithLow:(ORInt)l up:(ORInt)u;
 - (void)dealloc;
--(CPInt)min;
--(CPInt)max;
--(CPInt)imin;
--(CPInt)imax;
--(void)set:(CPInt)v;
+-(ORInt)min;
+-(ORInt)max;
+-(ORInt)imin;
+-(ORInt)imax;
+-(void)set:(ORInt)v;
 -(void)reset;
--(CPInt)get;
+-(ORInt)get;
 -(bool)bound;
 - (NSString *)description;
 @end

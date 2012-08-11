@@ -20,9 +20,9 @@
 @class CPAC3Queue;
 @class CPAC5Queue;
 
-#define NBPRIORITIES ((CPInt)8)
-#define LOWEST_PRIO  ((CPInt)0)
-#define HIGHEST_PRIO ((CPInt)7)
+#define NBPRIORITIES ((ORInt)8)
+#define LOWEST_PRIO  ((ORInt)0)
+#define HIGHEST_PRIO ((ORInt)7)
 
 
 // PVH: This guy covers two cases: the case where this is really a constraint and the case where this is a callback
@@ -35,7 +35,7 @@
    CPCoreConstraint*     _cstr;
    CPInt             _priority;
 }
--(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (CPInt) prio;
+-(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
 -(void)dealloc;
 @end
 
@@ -75,25 +75,23 @@ enum CPEngineState {
 -(void)      trackVariable:(id)var;
 -(void)      trackObject:(id)obj;
 -(id)        trail;
--(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c;
+-(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (CPCoreConstraint*)c;
 -(void)      scheduleAC3:(VarEventNode**)mlist;
--(void)      scheduleAC5:(VarEventNode*)list with:(CPInt)val;
+-(void)      scheduleAC5:(VarEventNode*)list with: (ORInt)val;
 -(ORStatus)  propagate;
--(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency:(CPConsistency)cons;
--(ORStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
--(ORStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons;
--(ORStatus)  add:(id<CPConstraint>)c;
--(ORStatus)  post:(id<CPConstraint>)c;
--(ORStatus)  label:(id)var with:(CPInt)val;
--(ORStatus)  diff:(id)var with:(CPInt)val;
--(ORStatus)  lthen:(id)var with:(CPInt)val;
--(ORStatus)  gthen:(id)var with:(CPInt)val;
+-(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency: (CPConsistency)cons;
+-(ORStatus)  add:(id<ORConstraint>)c;
+-(ORStatus)  post:(id<ORConstraint>)c;
+-(ORStatus)  label:(id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus)  diff:(id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus)  lthen:(id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus)  gthen:(id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus)  restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(id)virtual:(id)obj;
--(CPInt)virtualOffset:(id)obj;
--(NSMutableArray*)allVars;
--(NSMutableArray*)allConstraints;
--(NSMutableArray*)allModelConstraints;
+-(ORInt)virtualOffset:(id)obj;
+-(NSMutableArray*) allVars;
+-(NSMutableArray*) allConstraints;
+-(NSMutableArray*) allModelConstraints;
 -(void)      saveSolution;
 -(void)      restoreSolution;
 -(id<ORSolution>) solution;

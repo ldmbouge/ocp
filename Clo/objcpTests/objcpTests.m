@@ -288,7 +288,7 @@
    ORAVLTree* tree = [[[ORAVLTree alloc] initEmptyAVL] autorelease];
    for(NSInteger i=0;i<20;i++) {
       CPInt k = random() % 1000;
-      [tree insertObject:[NSNumber numberWithLong:k] forKey:(CPInt)k];
+      [tree insertObject:[NSNumber numberWithLong:k] forKey:(ORInt)k];
    }
    NSLog(@"content: %@\n",tree);
    [pool release];
@@ -411,7 +411,7 @@
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
    id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(0,25)];
    int* coef = (int[]){3,4,10,30};
-   id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
+   id<ORIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
    [cp solveAll:^{
       [cp add:[CPFactory knapsack: x weight: w capacity:cap ]];
    } using:^{
@@ -429,7 +429,7 @@
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
    id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(3,25)];
    int* coef = (int[]){3,4,10,30};
-   id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
+   id<ORIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
    [cp solveAll:^{
       [cp add:[CPFactory knapsack: x weight: w capacity:cap ]];
    } using:^{
@@ -448,7 +448,7 @@
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
    id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(14,25)];
    int* coef = (int[]){3,4,10,30};
-   id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
+   id<ORIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
    [cp solveAll:^{
       [cp add:[CPFactory knapsack: x weight: w capacity:cap ]];
    } using:^{

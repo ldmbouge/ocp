@@ -209,7 +209,7 @@
   GRBdelvars(_model,1,todel);  
 }
 
--(void) setIntParameter: (const char*) name val: (CPInt) val
+-(void) setIntParameter: (const char*) name val: (ORInt) val
 {
   GRBsetintparam(_env,name,val);
 }

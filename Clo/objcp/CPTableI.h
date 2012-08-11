@@ -31,11 +31,11 @@
     CPInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
     CPInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
 }
--(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (CPInt) arity;
+-(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (ORInt) arity;
 -(void) dealloc;
--(void) insert: (CPInt) i : (CPInt) j : (CPInt) k;
+-(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
--(void) fill: (CPInt) j with: (CPInt) val;
+-(void) fill: (ORInt) j with: (ORInt) val;
 -(void) close;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;

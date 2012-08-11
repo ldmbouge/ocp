@@ -14,30 +14,30 @@
 
 @implementation SillyVar
 
--(SillyVar*)initWithLow:(CPInt)l up:(CPInt)u
+-(SillyVar*)initWithLow:(ORInt)l up:(ORInt)u
 {
    self = [super init];
    _imin = _min = l;
    _imax = _max = u;   
    return self;   
 }
--(CPInt)imin
+-(ORInt)imin
 {
    return _imin;
 }
--(CPInt)imax 
+-(ORInt)imax 
 {
    return _imax;
 }
--(CPInt)min
+-(ORInt)min
 {
    return _min;
 }
--(CPInt)max 
+-(ORInt)max 
 {
    return _max;
 }
--(void)set:(CPInt)v
+-(void)set:(ORInt)v
 {
    _min = _max = v;
 }
@@ -47,7 +47,7 @@
    _max = _imax;
 }
 
--(CPInt)get 
+-(ORInt)get 
 {
    return _min;
 }

@@ -36,12 +36,12 @@
     [super tearDown];
 }
 
--(NSInteger) setupCardWith:(CPInt)n size:(CPInt)s
+-(NSInteger) setupCardWith:(ORInt)n size:(ORInt)s
 {
    id<CPSolver> m = [CPFactory createSolver];
    id<ORIntVarArray> x = [CPFactory intVarArray:m range:(CPRange){0,s-1} domain:(CPRange){0,n-1}];
-   id<CPIntArray> lb = [CPFactory intArray:m range:(CPRange){0,n-1} value:2];
-   id<CPIntArray> ub = [CPFactory intArray:m range:(CPRange){0,n-1} value:3];
+   id<ORIntArray> lb = [CPFactory intArray:m range:(CPRange){0,n-1} value:2];
+   id<ORIntArray> ub = [CPFactory intArray:m range:(CPRange){0,n-1} value:3];
     
    int* cnt = alloca(sizeof(NSInteger)*n);
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];

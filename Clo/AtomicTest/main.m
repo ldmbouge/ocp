@@ -37,7 +37,7 @@
     return self;
 }
 
--(CPInt) setupCardWith:(CPInt)n size:(CPInt)s
+-(ORInt) setupCardWith:(ORInt)n size:(ORInt)s
 {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     CP* m = [[[CP alloc] init] autorelease];
@@ -60,7 +60,7 @@
 //                                                      up:ub]];
 // 
     [m post: [CPCardinality on: x low: lba up: uba]]; 
-    int* cnt = alloca(sizeof(CPInt)*n);
+    int* cnt = alloca(sizeof(ORInt)*n);
     CPIntegerI* nbSolutions = [[CPIntegerI alloc] initCPIntegerI: 0];
     [m solveAll: ^() {
         for(CPInt k=0;k<s;k++)

@@ -128,7 +128,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_asDom];
    if (_asDom) {
-      [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_rep._value];
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
    } else {
       [aCoder encodeObject:_rep._dom];
    }
@@ -139,7 +139,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_asDom];
    if (_asDom)
-      [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_rep._value];
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
    else {
       _rep._dom = [[aDecoder decodeObject] retain];
    }
@@ -153,7 +153,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntVarI
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
--(CPIntVarI*) initCPIntVarCore:(id<CPSolver>)cp low: (CPInt) low up: (CPInt)up
+-(CPIntVarI*) initCPIntVarCore:(id<CPSolver>)cp low: (ORInt) low up: (ORInt)up
 {
    self = [super init];
    _vc = CPVCBare;
@@ -226,7 +226,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         _recv = [d retain];
     }
 }
--(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
+-(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale==1 && shift==0)
       return self;
@@ -244,15 +244,15 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom bound];
 }
--(CPInt) min
+-(ORInt) min
 {
     return [_dom min];
 }
--(CPInt) max 
+-(ORInt) max 
 { 
     return [_dom max];
 }
--(CPInt) value
+-(ORInt) value
 {
    if ([_dom bound])
       return [_dom min];
@@ -266,29 +266,29 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    *bnd = domBounds((CPBoundsDom*)_dom);
 }
--(CPInt)domsize
+-(ORInt)domsize
 {
     return [_dom domsize];
 }
--(CPInt)countFrom:(CPInt)from to:(CPInt)to
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
    return [_dom countFrom:from to:to];
 }
--(bool)member:(CPInt)v
+-(bool)member:(ORInt)v
 {
     return [_dom member:v];
 }
--(CPRange)around:(CPInt)v
+-(CPRange)around:(ORInt)v
 {
    CPInt low = [_dom findMax:v-1];
    CPInt up  = [_dom findMin:v+1];
    return (CPRange){low,up};
 }
--(CPInt) shift
+-(ORInt) shift
 {
     return 0;
 }
--(CPInt) scale
+-(ORInt) scale
 {
     return 1;
 }
@@ -317,7 +317,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ConstraintCallback) todo priority: (CPInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._bindEvt._val
                                             trigger:todo
@@ -326,7 +326,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     assignTRId(&_net._bindEvt, evt, [_fdm trail]); 
     [evt release];
 }
--(void)whenChangeDo: (ConstraintCallback) todo priority: (CPInt) p onBehalf:(CPCoreConstraint*)c
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._domEvt._val
                                             trigger:todo
@@ -336,7 +336,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     [evt release];
 }
 
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (CPInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
                                             trigger:todo
@@ -345,7 +345,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     assignTRId(&_net._minEvt, evt, [_fdm trail]);
     [evt release];
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (CPInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
                                             trigger:todo
@@ -354,7 +354,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     assignTRId(&_net._maxEvt, evt, [_fdm trail]);
     [evt release];
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (CPInt) p onBehalf:(CPCoreConstraint*)c
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
                                             trigger:todo
@@ -387,7 +387,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 
 // Constraint-based Events
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (CPInt) p
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._bindEvt._val
                                             trigger:NULL
@@ -397,7 +397,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     [evt release];
     
 }
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (CPInt) p
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {
     id evt = [[VarEventNode alloc] initVarEventNode:_net._domEvt._val
                                             trigger:NULL
@@ -407,7 +407,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     [evt release];
     
 }
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (CPInt) p
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
                                            trigger:NULL
@@ -416,7 +416,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    assignTRId(&_net._minEvt, evt, [_fdm trail]);
    [evt release];    
 }
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (CPInt) p
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
                                            trigger:NULL
@@ -425,7 +425,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    assignTRId(&_net._maxEvt, evt, [_fdm trail]);
    [evt release];
 }
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (CPInt) p
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
    id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
                                            trigger:NULL
@@ -469,7 +469,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 
 
--(CPTrigger*) setLoseTrigger: (CPInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(CPTrigger*) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
@@ -478,7 +478,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     [_triggers linkTrigger:trig forValue:value];
     return trig;
 }
--(void) watch: (CPInt) val with: (CPTrigger*) t;
+-(void) watch: (ORInt) val with: (CPTrigger*) t;
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
@@ -522,7 +522,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    if (_triggers != nil)
       [_triggers bindEvt:_fdm];
 }
--(void) changeMinEvt: (CPInt) dsz
+-(void) changeMinEvt: (ORInt) dsz
 {
    VarEventNode* mList[5];
    CPUInt k = 0;
@@ -539,7 +539,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_fdm];
 }
--(void) changeMaxEvt: (CPInt) dsz
+-(void) changeMaxEvt: (ORInt) dsz
 {
    VarEventNode* mList[5];
    CPUInt k = 0;
@@ -556,7 +556,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    if (dsz==1 && _triggers != nil)
       [_triggers bindEvt:_fdm];
 }
--(void) loseValEvt: (CPInt) val
+-(void) loseValEvt: (ORInt) val
 {
    VarEventNode* mList[5];
    CPUInt k = 0;
@@ -569,27 +569,27 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     if (_triggers != nil)
         [_triggers loseValEvt:val solver:_fdm];
 }
--(ORStatus) updateMin: (CPInt) newMin
+-(ORStatus) updateMin: (ORInt) newMin
 {
     return [_dom updateMin:newMin for:_recv];
 }
 
--(ORStatus) updateMax: (CPInt) newMax
+-(ORStatus) updateMax: (ORInt) newMax
 {
     return [_dom updateMax:newMax for:_recv];
 }
--(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    ORStatus s = [_dom updateMin:newMin for:_recv];
    if (s)   s = [_dom updateMax:newMax for:_recv];
    return s;
 }
 
--(ORStatus) bind: (CPInt) val
+-(ORStatus) bind: (ORInt) val
 {
     return [_dom bind:val for:_recv];
 }
--(ORStatus) remove: (CPInt) val
+-(ORStatus) remove: (ORInt) val
 {
     return [_dom remove:val for:_recv];
 }
@@ -612,7 +612,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    [_dom restoreDomain:toRestore];
 }
--(void)restoreValue:(CPInt)toRestore
+-(void)restoreValue:(ORInt)toRestore
 {
    [_dom restoreValue:toRestore];
 }
@@ -628,14 +628,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return self;
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp low: (CPInt) low up: (CPInt) up
+-(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp low: (ORInt) low up: (ORInt) up
 {
     self = [self initCPIntVarCore: cp low:low up:up];
     _dom = [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:low up:up];
     return self;
 }
 
--(CPIntVarI*) initCPIntVarView: (id<CPSolver>) cp low: (CPInt) low up: (CPInt) up for: (CPIntVarI*) x
+-(CPIntVarI*) initCPIntVarView: (id<CPSolver>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x
 {
    self = [self initCPIntVarCore: cp low: low up: up];
    id<CPIntVarNotifier> xDeg = [x delegate];
@@ -663,7 +663,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return x;
 }
 
-+(CPIntVarI*) initCPIntVar: (id<CPSolver>) fdm low: (CPInt) low up: (CPInt) up
++(CPIntVarI*) initCPIntVar: (id<CPSolver>) fdm low: (ORInt) low up: (ORInt) up
 {
    CPIntVarI* x = nil;
    if (low==0 && up==1)
@@ -680,7 +680,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return x;
 }
 
-+(CPIntVarI*) initCPIntView: (CPIntVarI*) x withShift: (CPInt) b
++(CPIntVarI*) initCPIntView: (CPIntVarI*) x withShift: (ORInt) b
 {
    CPInt scale = [x scale];
    CPInt shift = [x shift];
@@ -693,7 +693,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       return view;
    }
 }
-+(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a
++(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (ORInt) a
 {
    CPInt scale = [x scale];
    CPInt shift = [x shift];
@@ -704,7 +704,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       rv = [[CPIntView alloc] initIVarAViewFor: nScale x: x b: nShift];
    return rv;
 }
-+(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (CPInt) a andShift: (CPInt) b
++(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (ORInt) a andShift: (ORInt) b
 {
    CPInt scale = [x scale];
    CPInt shift = [x shift];
@@ -729,7 +729,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_vc];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_vc];
    [aCoder encodeObject:_dom];
    [aCoder encodeObject:_fdm];
    [aCoder encodeObject:_cp];
@@ -739,7 +739,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_vc];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_vc];
    _dom = [[aDecoder decodeObject] retain];
    _fdm = [aDecoder decodeObject];
    _cp  = [aDecoder decodeObject];
@@ -758,7 +758,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // ---------------------------------------------------------------------
 
 @implementation CPIntShiftView
--(CPIntShiftView*)initIVarShiftView: (CPIntVarI*) x b: (CPInt) b
+-(CPIntShiftView*)initIVarShiftView: (CPIntVarI*) x b: (ORInt) b
 {
    self = [super initCPIntVarView:[x cp] low:[x min]+b up:[x max]+b for:x];
    _vc = CPVCShift;
@@ -774,11 +774,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return newDomain((CPBitDom*)_dom, 1, _b);
 }
--(CPInt)min
+-(ORInt)min
 {
     return [_dom min]+_b;
 }
--(CPInt)max
+-(ORInt)max
 {
     return [_dom max]+_b;
 }
@@ -788,53 +788,53 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    bnd->min += _b;
    bnd->max += _b;
 }
--(bool)member: (CPInt) v
+-(bool)member: (ORInt) v
 {
     return [_dom member:v-_b];
 }
--(CPRange)around:(CPInt)v
+-(CPRange)around:(ORInt)v
 {
    CPInt low = [_dom findMax:v - _b - 1];
    CPInt up  = [_dom findMin:v - _b + 1];
    return (CPRange){low + _b,up + _b};
 }
--(CPInt) shift
+-(ORInt) shift
 {
     return _b;
 }
--(CPInt) scale
+-(ORInt) scale
 {
     return 1;
 }
--(ORStatus)updateMin: (CPInt) newMin
+-(ORStatus)updateMin: (ORInt) newMin
 {
     return [_dom updateMin: newMin-_b for: _recv];
 }
--(ORStatus)updateMax: (CPInt) newMax
+-(ORStatus)updateMax: (ORInt) newMax
 {
     return [_dom updateMax: newMax-_b for: _recv];
 }
--(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    ORStatus s = [_dom updateMin:newMin-_b for:_recv];
    if (s)   s = [_dom updateMax:newMax-_b for:_recv];
    return s;
 }
 
--(ORStatus)bind: (CPInt) val
+-(ORStatus)bind: (ORInt) val
 {
     return [_dom bind: val-_b for: _recv];
 }
--(ORStatus) remove: (CPInt) val
+-(ORStatus) remove: (ORInt) val
 {
     return [_dom remove: val-_b for: _recv];
 }
 // get the notification from the underlying domain; need to shift it for the network
--(void) loseValEvt: (CPInt)  val
+-(void) loseValEvt: (ORInt)  val
 {
     [super loseValEvt: val+_b];
 }
--(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
+-(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale==1 && shift==_b)
       return self;
@@ -890,12 +890,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_b];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_b];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
     return self;
 }
 -(id)snapshot
@@ -909,7 +909,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // ---------------------------------------------------------------------
 
 @implementation CPIntView
--(CPIntView*)initIVarAViewFor: (CPInt) a  x: (CPIntVarI*) x b: (CPInt) b
+-(CPIntView*)initIVarAViewFor: (ORInt) a  x: (CPIntVarI*) x b: (ORInt) b
 {
    CPInt vLow = a < 0 ? a * [x max] + b : a * [x min] + b;
    CPInt vUp  = a < 0 ? a * [x min] + b : a * [x max] + b;
@@ -929,13 +929,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return newDomain((CPBitDom*)_dom, _a, _b);
 }
 
--(CPInt) min
+-(ORInt) min
 {
     if (_a > 0)
         return _a * [_dom min] + _b;
     else return _a * [_dom max] + _b;
 }
--(CPInt) max
+-(ORInt) max
 {
     if (_a > 0)
         return _a * [_dom max] + _b;
@@ -949,29 +949,29 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         _a > 0 ? b.max * _a + _b : b.min * _a + _b
     };
 }
--(bool)member: (CPInt) v
+-(bool)member: (ORInt) v
 {
     CPInt r = (v - _b) % _a;
     if (r != 0) return NO;
     CPInt dv = (v - _b) / _a;
     return [_dom member:dv];
 }
--(CPRange)around:(CPInt)v
+-(CPRange)around:(ORInt)v
 {
    CPInt low = [_dom findMax:(v - _b - 1) / _a];
    CPInt up  = [_dom findMin:(v - _b + 1) / _a];
    return (CPRange){low * _a + _b,up * _a  + _b};
 }
 
--(CPInt) shift
+-(ORInt) shift
 {
     return _b;
 }
--(CPInt) scale
+-(ORInt) scale
 {
     return _a;
 }
--(ORStatus) updateMin: (CPInt) newMin
+-(ORStatus) updateMin: (ORInt) newMin
 {
     CPInt r = (newMin - _b) % _a;
     CPInt om = (newMin - _b)/_a;
@@ -980,7 +980,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     else 
         return [_dom updateMax:om for:_recv]; 
 }
--(ORStatus) updateMax: (CPInt) newMax
+-(ORStatus) updateMax: (ORInt) newMax
 {
     CPInt r = (newMax - _b) % _a;
     CPInt om = (newMax - _b)/_a;
@@ -989,7 +989,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     else 
         return [_dom updateMin:om + (r!=0) for:_recv]; 
 }
--(ORStatus)updateMin:(CPInt) newMin andMax:(CPInt)newMax
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    ORStatus s;
    CPInt tMin = (newMin - _b) / _a;
@@ -1006,7 +1006,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return s;
 }
 
--(ORStatus)bind: (CPInt) val
+-(ORStatus)bind: (ORInt) val
 {
     CPInt r = (val - _b) % _a;
     if (r != 0)
@@ -1014,7 +1014,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     CPInt ov = (val - _b) / _a; 
     return [_dom bind:ov for:_recv];
 }
--(ORStatus)remove: (CPInt) val
+-(ORStatus)remove: (ORInt) val
 {
    CPInt ov;
    if (_a == -1)
@@ -1028,11 +1028,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }
    return [_dom remove:ov for:_recv];
 }
--(void) loseValEvt: (CPInt) val
+-(void) loseValEvt: (ORInt) val
 {
     [super loseValEvt:_a * val+_b];
 }
--(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
+-(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    if (scale == _a && shift == _b)
       return self;
@@ -1052,7 +1052,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         __block CPInt lastIn = min;
         __block CPInt frstIn = min;
         __block bool seq   = true;
-        void (^body)(CPInt) = ^(CPInt k) {
+        void (^body)(ORInt) = ^(CPInt k) {
             if ([_dom get:k]) {
                 CPInt tk = _a * k + _b;
                 if (!seq) {
@@ -1092,14 +1092,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
     [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_a];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_b];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_a];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
     self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_a];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_b];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_a];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
     return self;
 }
 -(id)snapshot
@@ -1116,7 +1116,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 @implementation CPIntVarMultiCast
 
--(id)initVarMC:(CPInt)n 
+-(id)initVarMC:(ORInt)n 
 {
    self = [super init];
    _mx  = n;
@@ -1152,7 +1152,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }];
    _nb++;
 }
--(CPIntVarI*)findAffine:(CPInt)scale shift:(CPInt)shift
+-(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    for(CPUInt i=0;i < _nb;i++) {
       CPIntVarI* sel = [_tab[i] findAffine:scale shift:shift];
@@ -1185,17 +1185,17 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     for(CPInt i=0;i<_nb;i++)
         [_tab[i] bindEvt];
 }
--(void) changeMinEvt:(CPInt)dsz
+-(void) changeMinEvt:(ORInt)dsz
 {
     for(CPInt i=0;i<_nb;i++)
         [_tab[i] changeMinEvt:dsz];
 }
--(void) changeMaxEvt:(CPInt)dsz
+-(void) changeMaxEvt:(ORInt)dsz
 {
     for(CPInt i=0;i<_nb;i++)
         [_tab[i] changeMaxEvt:dsz];
 }
--(void) loseValEvt:(CPInt)val
+-(void) loseValEvt:(ORInt)val
 {
     if (!_tracksLoseEvt) return;
     for(CPInt i=0;i<_nb;i++)
@@ -1204,8 +1204,8 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_mx];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
    for(CPInt k=0;k<_nb;k++)
       [aCoder encodeObject:_tab[k]];
    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
@@ -1213,8 +1213,8 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_mx];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
    for(CPInt k=0;k<_nb;k++) {

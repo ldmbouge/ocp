@@ -27,8 +27,8 @@ int main(int argc, const char * argv[])
    id<ORIntRange> Guests = RANGE(cp,1,29);
    ORInt nbPeriods = 7;
    id<ORIntRange> Periods = RANGE(cp,1,nbPeriods);
-   id<CPIntArray> cap = [CPFactory intArray: cp range: Hosts value: 0];
-   id<CPIntArray> crew = [CPFactory intArray: cp range: Guests value: 0];
+   id<ORIntArray> cap = [CPFactory intArray: cp range: Hosts value: 0];
+   id<ORIntArray> crew = [CPFactory intArray: cp range: Guests value: 0];
    
    id<ORIntSetArray> config = [ORFactory intSetArray: cp range: Configs];
    config[1] = COLLECT(cp,i,RANGE(cp,1,12),i);
@@ -70,12 +70,12 @@ int main(int argc, const char * argv[])
    
    id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    for(CPInt g = Guests.low; g <= Guests.up; g++)
-      [cp add: [CPFactory alldifferent: ALL(CPIntVar, p, Periods, [boat at:g :p]) ]];
+      [cp add: [CPFactory alldifferent: ALL(ORIntVar, p, Periods, [boat at:g :p]) ]];
    for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
-      for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++)
+     for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++)
          [cp add: [SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
    for(CPInt p = Periods.low; p <= Periods.up; p++)
-      [cp add: [CPFactory packing: ALL(CPIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
+         [cp add: [CPFactory packing: ALL(ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
 
    [cp solve: ^{
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
@@ -167,8 +167,8 @@ int real_main(int argc, const char * argv[])
    id<ORIntRange> Guests = RANGE(cp,1,29);
    ORInt nbPeriods = 7;
    id<ORIntRange> Periods = RANGE(cp,1,nbPeriods);
-   id<CPIntArray> cap = [CPFactory intArray: cp range: Hosts value: 0];
-   id<CPIntArray> crew = [CPFactory intArray: cp range: Guests value: 0];
+   id<ORIntArray> cap = [CPFactory intArray: cp range: Hosts value: 0];
+   id<ORIntArray> crew = [CPFactory intArray: cp range: Guests value: 0];
    
    id<ORIntSetArray> config = [ORFactory intSetArray: cp range: Configs];
    config[1] = COLLECT(cp,i,RANGE(cp,1,12),i);

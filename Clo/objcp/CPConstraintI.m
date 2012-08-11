@@ -62,17 +62,17 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_todo];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_todo];
     [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_priority];    
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_priority];    
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
     [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_todo];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_todo];
     [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_priority]; 
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_priority]; 
     return self;
 }
 @end
@@ -94,15 +94,15 @@
 {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_trail];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_active._val];
-    [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_active._mgc];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_active._val];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_active._mgc];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super initWithCoder:aDecoder];
     _trail = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_active._val];
-    [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_active._mgc];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._val];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._mgc];
     return self;
 }
 @end

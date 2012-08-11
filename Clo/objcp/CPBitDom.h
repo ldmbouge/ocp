@@ -32,26 +32,26 @@ enum CPDomClass {
    CPInt            _imax;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
--(CPBoundsDom*)initBoundsDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up;
--(ORStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
--(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
--(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x;
--(CPInt)min;
--(CPInt)max;
--(CPInt)imin;
--(CPInt)imax;
+-(CPBoundsDom*)initBoundsDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up;
+-(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(ORInt)min;
+-(ORInt)max;
+-(ORInt)imin;
+-(ORInt)imax;
 -(CPBounds)bounds;
 -(bool)bound;
--(CPInt)domsize;
--(bool)member:(CPInt)v;
--(CPInt)findMin:(CPInt)from;
--(CPInt)findMax:(CPInt)from;
+-(ORInt)domsize;
+-(bool)member:(ORInt)v;
+-(ORInt)findMin:(ORInt)from;
+-(ORInt)findMax:(ORInt)from;
 -(int(^)())getMin;
 -(NSString*)description;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(CPInt)toRestore;
+-(void)restoreValue:(ORInt)toRestore;
 @end
 
 static inline CPBounds domBounds(CPBoundsDom* dom)
@@ -66,25 +66,25 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
    UBType  _updateMin;
    UBType  _updateMax;   
 }
--(CPBitDom*)initBitDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up;
+-(CPBitDom*)initBitDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up;
 -(void)dealloc;
--(bool)get:(CPInt)b;
--(bool)member:(CPInt)b;
--(void)set:(CPInt)b at:(bool)v;
--(CPInt)setAllZeroFrom:(CPInt)from to:(CPInt)to;
--(CPInt)countFrom:(CPInt)from to:(CPInt)to;
--(CPInt)findMin:(CPInt)from;
--(CPInt)findMax:(CPInt)from;
--(CPInt)regret;
+-(bool)get:(ORInt)b;
+-(bool)member:(ORInt)b;
+-(void)set:(ORInt)b at:(bool)v;
+-(ORInt)setAllZeroFrom:(ORInt)from to:(ORInt)to;
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to;
+-(ORInt)findMin:(ORInt)from;
+-(ORInt)findMax:(ORInt)from;
+-(ORInt)regret;
 -(NSString*)description;
--(ORStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x;
--(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x;
--(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x;
--(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
+-(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(CPInt)toRestore;
--(void)translate:(CPInt)shift;
+-(void)restoreValue:(ORInt)toRestore;
+-(void)translate:(ORInt)shift;
 @end
 
 static const CPUInt __bitmasks[32] = {

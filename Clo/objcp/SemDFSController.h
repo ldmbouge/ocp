@@ -31,7 +31,7 @@
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;
--(CPInt) addChoice:(NSCont*)k;
+-(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;
 -(CPHeist*)steal;

@@ -25,7 +25,7 @@ int main(int argc, const char * argv[])
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    id<ORIntRange> Caps = RANGE(cp,1,nbCap);
-   id<CPIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
+   id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
    for(CPInt i = 2; i <= nbCap; i++) {
       CPInt c;
       fscanf(dta,"%d",&c);
@@ -37,8 +37,8 @@ int main(int argc, const char * argv[])
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
-   id<CPIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
-   id<CPIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
    for(CPInt o = 1; o <= nbOrders; o++) {
       CPInt w;
       CPInt c;
@@ -129,7 +129,7 @@ int main1(int argc, const char * argv[])
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    CPRange Caps = {1,nbCap};
-   id<CPIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
+   id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
    for(CPInt i = 2; i <= nbCap; i++) {
       CPInt c;
       fscanf(dta,"%d",&c);
@@ -141,8 +141,8 @@ int main1(int argc, const char * argv[])
    fscanf(dta,"%d",&nbOrders);
    CPRange Colors = {1,nbColors};
    CPRange Orders = {1,nbOrders};
-   id<CPIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
-   id<CPIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
    for(CPInt o = 1; o <= nbOrders; o++) {
       CPInt w;
       CPInt c;
@@ -238,7 +238,7 @@ int main1(int argc, const char * argv[])
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    id<ORIntRange> Caps = RANGE(cp,1,nbCap);
-   id<CPIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
+   id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
    for(CPInt i = 2; i <= nbCap; i++) {
       CPInt c;
       fscanf(dta,"%d",&c);
@@ -250,8 +250,8 @@ int main1(int argc, const char * argv[])
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
-   id<CPIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
-   id<CPIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
    for(CPInt o = 1; o <= nbOrders; o++) {
       CPInt w;
       CPInt c;
@@ -350,7 +350,7 @@ int realmain(int argc, const char * argv[])
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    id<ORIntRange> Caps = RANGE(cp,1,nbCap);
-   id<CPIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
+   id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
    for(CPInt i = 2; i <= nbCap; i++) {
       CPInt c;
       fscanf(dta,"%d",&c);
@@ -362,8 +362,8 @@ int realmain(int argc, const char * argv[])
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
-   id<CPIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
-   id<CPIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
    for(CPInt o = 1; o <= nbOrders; o++) {
       CPInt w;
       CPInt c;

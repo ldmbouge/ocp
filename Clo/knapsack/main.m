@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
       [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];
       for(int i=0;i<m;i++) {
          //[cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:r[i]] leq:b[i]]];
-         id<CPIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
+         id<ORIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
          id<ORIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
          [cp add:[CPFactory knapsack:x weight:w capacity:c]];
       }

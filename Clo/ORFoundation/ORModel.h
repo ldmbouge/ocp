@@ -17,10 +17,6 @@
 @protocol ORSolver;
 @protocol ORSolverConcretizer;
 
-@protocol ORAbstract <ORExpr>
--(void) concretize: (id<ORSolverConcretizer>) concretizer;
-@end
-
 
 @protocol ORVar <ORAbstract,ORExpr>
 -(ORUInt) getId;
@@ -60,10 +56,6 @@
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
-@end
-
-@protocol ORConstraint <ORAbstract,NSObject>
--(ORUInt) getId;
 @end
 
 @protocol ORAlldifferent <ORConstraint>

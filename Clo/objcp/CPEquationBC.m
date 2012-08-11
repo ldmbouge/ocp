@@ -17,7 +17,7 @@
 
 @implementation CPEquationBC
 
--(CPEquationBC*) initCPEquationBC: (id) x equal: (CPInt) c
+-(CPEquationBC*) initCPEquationBC: (id) x equal: (ORInt) c
 {
    self = [super initCPCoreConstraint];
    _idempotent = YES;
@@ -151,8 +151,8 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
     for(CPUInt i=0;i<_nb;i++) {
        if (terms[i].updated)
           terms[i].update(terms[i].var,@selector(updateMin:andMax:),
-                          (CPInt)terms[i].low,
-                          (CPInt)terms[i].up);
+                          (ORInt)terms[i].low,
+                          (ORInt)terms[i].up);
     }
 }
 -(NSString*) description
@@ -169,7 +169,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    [super encodeWithCoder:aCoder];   
    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
    for(int k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
 }
@@ -177,7 +177,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    self = [super initWithCoder:aDecoder];   
    [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(int k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
@@ -186,7 +186,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 @end
 
 @implementation CPINEquationBC 
--(CPINEquationBC*) initCPINEquationBC: (id) x lequal: (CPInt) c
+-(CPINEquationBC*) initCPINEquationBC: (id) x lequal: (ORInt) c
 {
    self = [super initCPCoreConstraint];
    _idempotent = YES;
@@ -295,7 +295,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    
    for(CPUInt i=0;i<_nb;i++) {
       if (terms[i].updated) 
-         terms[i].update(terms[i].var,@selector(updateMax:),(CPInt)terms[i].up);
+         terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
    }
 }
 -(NSString*) description
@@ -312,7 +312,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    [super encodeWithCoder:aCoder];   
    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
    for(int k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
 }
@@ -320,7 +320,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    self = [super initWithCoder:aDecoder];   
    [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_c];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(int k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];

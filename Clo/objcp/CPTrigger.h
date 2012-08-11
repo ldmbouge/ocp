@@ -32,10 +32,10 @@ typedef struct CPTrigger {
 
 @protocol CPTriggerMapInterface <NSObject>
 @optional
--(void)linkTrigger:(CPTrigger*)t forValue:(CPInt)value;
+-(void)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
 -(void)linkBindTrigger:(CPTrigger*)t;
 // Events for those triggers.
--(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm;
+-(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
 -(void) bindEvt:(CPEngineI*)fdm;
 @end
 
@@ -45,7 +45,7 @@ typedef struct CPTrigger {
     CPTrigger* _bind;
 }
 -(CPTriggerMap*) init;
-+(CPTriggerMap*) triggerMapFrom:(CPInt)low to:(CPInt)up dense:(bool)b;
++(CPTriggerMap*) triggerMapFrom:(ORInt)low to:(ORInt)up dense:(bool)b;
 -(void) linkBindTrigger:(CPTrigger*)t;
 -(void) bindEvt:(CPEngineI*)fdm;
 @end
@@ -56,9 +56,9 @@ typedef struct CPTrigger {
     CPInt         _low;
     CPInt          _sz;
 }
--(id) initDenseTriggerMap:(CPInt)low size:(CPInt)sz;
--(void)linkTrigger:(CPTrigger*)t forValue:(CPInt)value;
--(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm;
+-(id) initDenseTriggerMap:(ORInt)low size:(ORInt)sz;
+-(void)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
+-(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
 @end
 
 @interface CPSparseTriggerMap : CPTriggerMap {
@@ -66,7 +66,7 @@ typedef struct CPTrigger {
     ORAVLTree* _map;
 }
 -(id) initSparseTriggerMap;
--(void) linkTrigger:(CPTrigger*)t forValue:(CPInt)value;
--(void) loseValEvt:(CPInt)val solver:(CPEngineI*)fdm;
+-(void) linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
+-(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
 @end
 

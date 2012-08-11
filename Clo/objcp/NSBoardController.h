@@ -26,7 +26,7 @@
 -(void)pause;
 -(void)resume;
 -(void)neverStop;
--(void)toggleGrid:(id)grid row:(CPInt)r col:(CPInt)c to:(enum CPDomValue)dv;
+-(void)toggleGrid:(id)grid row:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv;
 -(void)drawRect:(NSRect)dirtyRect inView:(id)view;
 -(void)watchSearch:(id<CPSolver>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end

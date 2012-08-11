@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
       id<CPHeuristic> h = [CPFactory createIBS:cp restricted:x];
       [cp add: [SUM(i, N, [x[i] muli:p[i]]) eq: obj]];
       for(int i=0;i<m;i++) {
-         id<CPIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
+         id<ORIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
          id<ORIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
          [cp add:[CPFactory knapsack:x weight:w capacity:c]];
       }

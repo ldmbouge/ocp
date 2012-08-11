@@ -19,22 +19,22 @@
    id<CPLinear> _real;   
 }
 -(CPLinearFlip*)initCPLinearFlip:(id<CPLinear>)r;
--(void)setIndependent:(CPInt)idp;
--(void)addIndependent:(CPInt)idp;
--(void)addTerm:(id<ORIntVar>)x by:(CPInt)c;
+-(void)setIndependent:(ORInt)idp;
+-(void)addIndependent:(ORInt)idp;
+-(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
 @end
 
 
-@interface CPSubst   : NSObject<CPExprVisitor> {
+@interface CPSubst   : NSObject<ORExprVisitor> {
    id<ORIntVar>    _rv;
    id<CPEngine>   _fdm;
    CPConsistency    _c;
 }
--(id)initCPSubst:(id<CPEngine>)fdm consistency:(CPConsistency)c;
--(id)initCPSubst:(id<CPEngine>)fdm consistency:(CPConsistency)c by:(id<ORIntVar>)x;
+-(id)initCPSubst:(id<CPEngine>) fdm consistency:(CPConsistency)c;
+-(id)initCPSubst:(id<CPEngine>) fdm consistency:(CPConsistency)c by:(id<ORIntVar>)x;
 -(id<ORIntVar>)result;
 -(void) visitIntVarI: (id<ORIntVar>) e;
--(void) visitIntegerI: (id<CPInteger>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
@@ -45,7 +45,7 @@
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI *)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprVarSubI:(CPExprVarSubI*)e;
+-(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
@@ -61,21 +61,21 @@
    _real = r;
    return self;
 }
--(void)setIndependent:(CPInt)idp
+-(void)setIndependent:(ORInt)idp
 {
    [_real setIndependent:-idp];
 }
--(void)addIndependent:(CPInt)idp
+-(void)addIndependent:(ORInt)idp
 {
    [_real addIndependent:-idp];
 }
--(void)addTerm:(id<ORIntVar>)x by:(CPInt)c
+-(void)addTerm:(id<ORIntVar>) x by:(ORInt)c
 {
-   [_real addTerm:x by:-c];
+   [_real addTerm: x by:-c];
 }
 @end
 
-@interface CPRNormalizer : NSObject<CPExprVisitor> {
+@interface CPRNormalizer : NSObject<ORExprVisitor> {
    id<CPLinear> _terms;
    CPEngineI*     _fdm;
    CPConsistency _cons;
@@ -85,8 +85,8 @@
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
--(void) visitIntVarI: (CPIntVarI*) e;
--(void) visitIntegerI: (id<CPInteger>) e;
+-(void) visitIntVarI: (id<ORIntVar>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
@@ -94,13 +94,13 @@
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprVarSubI:(CPExprVarSubI*)e;
+-(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
 @end
 
-@interface CPLinearizer : NSObject<CPExprVisitor> {
+@interface CPLinearizer : NSObject<ORExprVisitor> {
    id<CPLinear> _terms;
    id<CPEngine>   _fdm;
    CPConsistency _cons;
@@ -108,8 +108,8 @@
 +(CPLinear*)linearFrom:(id<ORExpr>)e  solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
 +(CPLinear*)addToLinear:(id<CPLinear>)terms from:(id<ORExpr>)e  solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
 -(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPEngine>)fdm consistency:(CPConsistency)cons;
--(void) visitIntVarI: (CPIntVarI*) e;
--(void) visitIntegerI: (id<CPInteger>) e;
+-(void) visitIntVarI: (id<ORIntVar>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
@@ -120,7 +120,7 @@
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprVarSubI:(CPExprVarSubI*)e;
+-(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
@@ -197,8 +197,8 @@ struct CPVarPair {
    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
    [_fdm post:[CPFactory boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
 }
--(void) visitIntVarI: (CPIntVarI*) e       {}
--(void) visitIntegerI: (id<CPInteger>) e   {}
+-(void) visitIntVarI: (id<ORIntVar>) e     {}
+-(void) visitIntegerI: (id<ORInteger>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
@@ -206,7 +206,7 @@ struct CPVarPair {
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
--(void) visitExprVarSubI:(CPExprVarSubI*)e {}
+-(void) visitExprVarSubI:(ORExprVarSubI*)e {}
 @end
 
 @implementation CPLinearizer
@@ -218,11 +218,11 @@ struct CPVarPair {
    _cons  = cons;
    return self;
 }
--(void) visitIntVarI: (CPIntVarI*) e 
+-(void) visitIntVarI: (id<ORIntVar>) e
 {
    [_terms addTerm:e by:1];
 }
--(void) visitIntegerI: (id<CPInteger>) e 
+-(void) visitIntegerI: (id<ORInteger>) e
 {
    [_terms addIndependent:[e value]];
 }
@@ -307,7 +307,7 @@ struct CPVarPair {
    id<ORIntVar> alpha = [CPSubst substituteIn:_fdm expr:e consistency:_cons];
    [_terms addTerm:alpha by:1];   
 }
--(void) visitExprVarSubI:(CPExprVarSubI*)e
+-(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
    id<ORIntVar> alpha = [CPSubst substituteIn:_fdm expr:e consistency:_cons];
    [_terms addTerm:alpha by:1];
@@ -331,7 +331,7 @@ struct CPVarPair {
 @end
 
 @implementation CPLinear
--(CPLinear*)initCPLinear:(CPInt)mxs
+-(CPLinear*)initCPLinear:(ORInt)mxs
 {
    self = [super init];
    _max   = mxs;
@@ -345,19 +345,19 @@ struct CPVarPair {
    free(_terms);
    [super dealloc];
 }
--(void)setIndependent:(CPInt)idp
+-(void)setIndependent:(ORInt)idp
 {
    _indep = idp;
 }
--(void)addIndependent:(CPInt)idp
+-(void)addIndependent:(ORInt)idp
 {
    _indep += idp;
 }
--(CPInt)independent
+-(ORInt)independent
 {
    return _indep;
 }
--(void)addTerm:(id<ORIntVar>)x by:(CPInt)c
+-(void)addTerm:(id<ORIntVar>)x by:(ORInt)c
 {
    CPInt low = 0,up=_nb-1,mid=-1,kid;
    CPInt xid = [x  getId];
@@ -408,7 +408,7 @@ struct CPVarPair {
                                            with:^id<ORIntVar>(CPInt i) {
                                               return _terms[i]._var;
                                            }];
-   CPInt* coefs = alloca(sizeof(CPInt)*_nb);
+   CPInt* coefs = alloca(sizeof(ORInt)*_nb);
    for(int k=0;k<_nb;k++)
       coefs[k] = _terms[k]._coef;
    id<ORIntVarArray> sx = [CPFactory pointwiseProduct:x by:coefs];
@@ -421,11 +421,11 @@ struct CPVarPair {
                                  shift:_indep];
    return rv;
 }
--(CPInt)size
+-(ORInt)size
 { 
    return _nb;
 }
--(CPInt)min
+-(ORInt)min
 {
    CPLong lb = _indep;
    for(CPInt k=0;k < _nb;k++) {
@@ -437,7 +437,7 @@ struct CPVarPair {
    }
    return max(MININT,bindDown(lb));
 }
--(CPInt)max
+-(ORInt)max
 {
    CPLong ub = _indep;
    for(CPInt k=0;k < _nb;k++) {
@@ -527,6 +527,7 @@ struct CPVarPair {
 @end
 
 @implementation CPSubst
+
 +(id<ORIntVar>) substituteIn:(id<CPEngine>)fdm expr:(ORExprI*)expr consistency:(CPConsistency)c
 {
    CPSubst* subst = [[CPSubst alloc] initCPSubst:fdm consistency:c];
@@ -575,13 +576,14 @@ struct CPVarPair {
 {
    return _rv;
 }
--(void) visitIntVarI: (CPIntVarI*) e
+-(void) visitIntVarI: (id<ORIntVar>) e
 {
    if (_rv)
       [_fdm post:[CPFactory equal:_rv to:e plus:0]];
-   else _rv = e;
+   else
+      _rv = e;
 }
--(void) visitIntegerI: (id<CPInteger>) e
+-(void) visitIntegerI: (id<ORInteger>) e
 {
    id<ORTracker> cp = [e tracker];
    if (!_rv)
@@ -627,21 +629,21 @@ struct CPVarPair {
    [lT release];
    [rT release];
 }
--(void) reifyEQc:(CPIntVarI*)theVar constant:(CPInt)c
+-(void) reifyEQc:(CPIntVarI*)theVar constant:(ORInt)c
 {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
       _rv = [CPFactory intVar:cp bounds: RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar eqi:c]];
 }
--(void) reifyNEQc:(CPIntVarI*)theVar constant:(CPInt)c
+-(void) reifyNEQc:(CPIntVarI*)theVar constant:(ORInt)c
 {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
       _rv = [CPFactory intVar:cp bounds:RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar neq:c]];
 }
--(void) reifyLEQc:(ORExprI*)theOther constant:(CPInt)c
+-(void) reifyLEQc:(ORExprI*)theOther constant:(ORInt)c
 {
    CPLinear* linOther  = [CPLinearizer linearFrom:theOther solver:_fdm consistency:_c];
    id<ORIntVar> theVar = [CPSubst normSide:linOther for:_fdm consistency:_c];
@@ -650,7 +652,7 @@ struct CPVarPair {
       _rv = [CPFactory intVar:cp bounds:RANGE(cp,0,1)];
    [_fdm post: [CPFactory reify:_rv with:theVar leq:c]];
 }
--(void) reifyGEQc:(ORExprI*)theOther constant:(CPInt)c
+-(void) reifyGEQc:(ORExprI*)theOther constant:(ORInt)c
 {
    CPLinear* linOther  = [CPLinearizer linearFrom:theOther solver:_fdm consistency:_c];
    id<ORIntVar> theVar = [CPSubst normSide:linOther for:_fdm consistency:_c];
@@ -749,7 +751,7 @@ struct CPVarPair {
    [lT release];
 }
 
--(void) visitExprVarSubI:(CPExprVarSubI*)e
+-(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
    id<ORTracker> cp = [e tracker];
    CPLinear* lT = [CPLinearizer linearFrom:[e index] solver:_fdm consistency:_c];

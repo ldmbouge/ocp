@@ -75,7 +75,12 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
+-(void) visit: (id<ORExprVisitor>) visitor
+{
+   [visitor visitIntegerI: self];
+}
 @end
+
 
 static ORInt _nbStreams;
 static ORInt _deterministic;

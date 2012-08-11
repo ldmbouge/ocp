@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> c = [CPFactory intVarArray:cp range:RANGE(cp,0,8) domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       
-      id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
+      id<ORIntArray> lb = [CPFactory intArray:cp range:D value:2];
       [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
       
       [cp add: [[x[0] mul:x[3]]             eq:[x[6] plus:[c[0] muli:10]]]];

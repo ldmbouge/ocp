@@ -19,8 +19,8 @@
 @implementation CPCardinalityDC
 {
    id<ORIntVarArray> _x;
-   id<CPIntArray>  _lb;
-   id<CPIntArray>  _ub;
+   id<ORIntArray>  _lb;
+   id<ORIntArray>  _ub;
    
    CPIntVarI**     _var;
    CPInt           _varSize;
@@ -78,7 +78,7 @@ static void findSCCsink(CPCardinalityDC* card);
     _posted = false;
 }
 
--(CPCardinalityDC*) initCPCardinalityDC: (id<ORIntVarArray>) x low: (id<CPIntArray>) lb up: (id<CPIntArray>) ub
+-(CPCardinalityDC*) initCPCardinalityDC: (id<ORIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
     _x = x;
@@ -152,8 +152,8 @@ static void findValueRange(id<ORIntVarArray> x,CPInt* low,CPInt* up)
     findValueRange(_x,&_valMin,&_valMax);
     _valSize = _valMax - _valMin + 1;
 //    printf("_valSize: %d \n",_valSize);
-    _low = malloc(_valSize * sizeof(CPInt));
-    _up = malloc(_valSize * sizeof(CPInt));
+    _low = malloc(_valSize * sizeof(ORInt));
+    _up = malloc(_valSize * sizeof(ORInt));
     _low -= _valMin;
     _up -= _valMin;
     for(CPInt i = _valMin; i <= _valMax; i++) {
@@ -176,25 +176,25 @@ static void findValueRange(id<ORIntVarArray> x,CPInt* low,CPInt* up)
 {
     _magic = 0;
     
-    _flow = malloc(_valSize * sizeof(CPInt));
+    _flow = malloc(_valSize * sizeof(ORInt));
     _flow -= _valMin;
     for(CPInt v = _valMin; v <= _valMax; v++)
         _flow[v] = 0;
     
-    _valFirstMatch = malloc(_valSize * sizeof(CPInt));
+    _valFirstMatch = malloc(_valSize * sizeof(ORInt));
     _valFirstMatch -= _valMin;
     for(CPInt v = _valMin; v <= _valMax; v++)
         _valFirstMatch[v] = MAXINT;
 
-    _varMatch = malloc(_varSize * sizeof(CPInt));
+    _varMatch = malloc(_varSize * sizeof(ORInt));
     for(CPInt i = 0; i < _varSize; i++)
         _varMatch[i] = MAXINT;
     
-    _nextMatch = malloc(_varSize * sizeof(CPInt));
+    _nextMatch = malloc(_varSize * sizeof(ORInt));
     for(CPInt i = 0; i < _varSize; i++)
         _nextMatch[i] = MAXINT;
     
-    _prevMatch = malloc(_varSize * sizeof(CPInt));
+    _prevMatch = malloc(_varSize * sizeof(ORInt));
     for(CPInt i = 0; i < _varSize; i++)
         _prevMatch[i] = MAXINT;
     
@@ -372,18 +372,18 @@ static BOOL findFeasibleFlow(CPCardinalityDC* card)
 
 -(void) initializeSCCArrays
 {
-    _varComponent = malloc(sizeof(CPInt)*_varSize*2);
-    _varDfs = malloc(sizeof(CPInt)*_varSize*2);
-    _varHigh = malloc(sizeof(CPInt)*_varSize*2);    
-    _valComponent = malloc(sizeof(CPInt)*_valSize*2);
+    _varComponent = malloc(sizeof(ORInt)*_varSize*2);
+    _varDfs = malloc(sizeof(ORInt)*_varSize*2);
+    _varHigh = malloc(sizeof(ORInt)*_varSize*2);    
+    _valComponent = malloc(sizeof(ORInt)*_valSize*2);
     _valComponent -= _valMin;
-    _valDfs = malloc(sizeof(CPInt)*_valSize*2);
+    _valDfs = malloc(sizeof(ORInt)*_valSize*2);
     _valDfs -= _valMin;
-    _valHigh = malloc(sizeof(CPInt)*_valSize*2);
+    _valHigh = malloc(sizeof(ORInt)*_valSize*2);
     _valHigh -= _valMin;
         
-    _stack = malloc(sizeof(CPInt)*(_varSize + _valSize + 1)*2);
-    _type = malloc(sizeof(CPInt)*(_varSize + _valSize + 1)*2);   
+    _stack = malloc(sizeof(ORInt)*(_varSize + _valSize + 1)*2);
+    _type = malloc(sizeof(ORInt)*(_varSize + _valSize + 1)*2);   
 }
     
 static void initSCC(CPCardinalityDC* card)

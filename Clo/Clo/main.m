@@ -41,13 +41,13 @@ void Caller(void) {
    int _x;
    int _y;
 }
-   -(Foo*)initWith:(CPInt)x y:(CPInt)y;
+   -(Foo*)initWith:(ORInt)x y:(ORInt)y;
    -(void)bye;   
    -(void)finalize;
 @end
 
 @implementation Foo
--(Foo*)initWith:(CPInt) x y:(CPInt)y {
+-(Foo*)initWith:(ORInt) x y:(ORInt)y {
    [super init];
    _x = x;
    _y = y;
@@ -95,7 +95,7 @@ void traverseTree() {
    initContinuationLibrary(&x);
    ORDFSController* cp = [[ORDFSController alloc] init];
    id<CPSolver> m = [CPFactory createSolver];
-   int* cnt = NSAllocateCollectable(sizeof(CPInt), NSCollectorDisabledOption);
+   int* cnt = NSAllocateCollectable(sizeof(ORInt), NSCollectorDisabledOption);
    *cnt = 0;
    const CPInt nbv = 8;
    NSMutableArray* vars = [[NSMutableArray alloc] initWithCapacity:nbv];

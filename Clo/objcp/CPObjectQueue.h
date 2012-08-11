@@ -21,7 +21,7 @@
    CPInt     _exit;
    CPInt     _mask;
 }
--(id)initEvtQueue:(CPInt)sz;
+-(id)initEvtQueue:(ORInt)sz;
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)obj;
@@ -41,7 +41,7 @@
    CPInt    _nbWWaiting;
    NSCondition*      _avail;
 }
--(id)initPCQueue:(CPInt)sz nbWorkers:(CPInt)nbw;
+-(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)obj;

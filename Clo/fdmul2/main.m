@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       
-      id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];
+      id<ORIntArray> lb = [CPFactory intArray:cp range:D value:2];
       [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
       
       id<CPExpr> lhs1 = SUM(i,RANGE(cp,0,2),[x[i] muli:ipow(10,i)]);

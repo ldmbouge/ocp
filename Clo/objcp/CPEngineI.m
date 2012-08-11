@@ -38,7 +38,7 @@
 /*****************************************************************************************/
 
 @implementation VarEventNode
--(VarEventNode*)initVarEventNode:(VarEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(CPInt)prio
+-(VarEventNode*)initVarEventNode:(VarEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
 {
    self = [super init];
    _node = [next retain];
@@ -70,7 +70,7 @@ typedef struct AC3Entry {
    CPInt     _exit;
    CPInt     _mask;
 }
--(id)initAC3Queue:(CPInt)sz;
+-(id)initAC3Queue:(ORInt)sz;
 -(void)dealloc;
 -(AC3Entry)deQueue;
 -(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr;
@@ -81,7 +81,7 @@ typedef struct AC3Entry {
 
 
 @implementation CPAC3Queue
--(id) initAC3Queue: (CPInt) sz
+-(id) initAC3Queue: (ORInt) sz
 {
    self = [super init];
    _mxs = sz;
@@ -176,17 +176,17 @@ typedef struct {
    CPInt     _exit;
    CPInt     _mask;
 }
--(id) initAC5Queue: (CPInt) sz;
+-(id) initAC5Queue: (ORInt) sz;
 -(void) dealloc;
 -(AC5Event) deQueue;
--(void) enQueue: (VarEventNode*) cb with: (CPInt) val;
+-(void) enQueue: (VarEventNode*) cb with: (ORInt) val;
 -(void) reset;
 -(bool) loaded;
 @end
 
 
 @implementation CPAC5Queue
--(id) initAC5Queue:(CPInt)sz
+-(id) initAC5Queue:(ORInt)sz
 {
    self = [super init];
    _mxs = sz;
@@ -250,7 +250,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    } else return (AC5Event){0,0};
 }
 
--(void)enQueue:(VarEventNode*)cb with:(CPInt)val
+-(void)enQueue:(VarEventNode*)cb with:(ORInt)val
 {
    enQueueAC5(self, cb, val);
 }
@@ -348,7 +348,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    else
       return nil;
 }
--(CPInt)virtualOffset:(id)obj
+-(ORInt)virtualOffset:(id)obj
 {
    CPUInt idx = (CPUInt)[_oStore indexOfObjectIdenticalTo:obj];
    return idx;
@@ -384,7 +384,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 
 // PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses varEventNode; AC3 works with the trigger directly
 
--(void) scheduleAC5: (VarEventNode*) list  with: (CPInt) val
+-(void) scheduleAC5: (VarEventNode*) list  with: (ORInt) val
 {
    enQueueAC5(_ac5, list, val);
 }
@@ -486,7 +486,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return status;
 }
 
--(ORStatus) post: (id<CPConstraint>) c
+-(ORStatus) post: (id<ORConstraint>) c
 {
    @try {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
@@ -513,18 +513,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return wrapper;
 }
 
--(ORStatus)  add:(id<CPExpr>)lhs leq:(id<CPExpr>)rhs consistency:(CPConsistency)cons
-{
-   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs leq:rhs] consistency:cons];
-   [self trackObject:wrapper];
-   return [self add:wrapper];
-}
--(ORStatus)  add:(id<CPExpr>)lhs equal:(id<CPExpr>)rhs consistency:(CPConsistency)cons
-{
-   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI:self expr:[lhs eq:rhs] consistency:cons];
-   [self trackObject:wrapper];
-   return [self add:wrapper];
-}
 -(ORStatus) add: (id<CPConstraint>) c
 {
    if (_state != CPOpen) {
@@ -538,7 +526,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
 }
 
--(ORStatus) label: (id) var with: (CPInt) val
+-(ORStatus) label: (id) var with: (ORInt) val
 {
    @try {
       ORStatus status = [var bind: val];
@@ -550,7 +538,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
--(ORStatus) diff: (CPIntVarI*) var with: (CPInt) val
+-(ORStatus) diff: (CPIntVarI*) var with: (ORInt) val
 {
    @try {
       ORStatus status =  removeDom(var, val);
@@ -561,7 +549,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
--(ORStatus)  lthen:(id)var with:(CPInt)val
+-(ORStatus)  lthen:(id)var with:(ORInt)val
 {
    @try {
       ORStatus status = [var updateMax:val-1];
@@ -572,7 +560,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
--(ORStatus)  gthen:(id)var with:(CPInt)val
+-(ORStatus)  gthen:(id)var with:(ORInt)val
 {
    @try {
       ORStatus status = [var updateMin:val+1];
@@ -645,7 +633,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_state];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_state];
    [aCoder encodeObject:_vars];
    [aCoder encodeObject:_trail];
    [aCoder encodeObject:_mStore];
@@ -656,7 +644,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    self = [super init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_state];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_state];
    _vars = [[aDecoder decodeObject] retain];
    _trail = [[aDecoder decodeObject] retain];
    NSMutableArray* originalStore = [aDecoder decodeObject];

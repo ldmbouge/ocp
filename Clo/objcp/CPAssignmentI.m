@@ -171,16 +171,16 @@
    for(CPInt i = _lowr; i <= _upr; i++)
       [_columnOfRow set: MAXINT at: i];
    
-   _columnIsMarked = (CPInt*) malloc(sizeof(CPInt) * (_upc - _lowc + 1));
+   _columnIsMarked = (CPInt*) malloc(sizeof(ORInt) * (_upc - _lowc + 1));
    _columnIsMarked -= _lowc;
    
-   _rowIsMarked = (CPInt*) malloc(sizeof(CPInt) * (_upr - _lowr + 1));
+   _rowIsMarked = (CPInt*) malloc(sizeof(ORInt) * (_upr - _lowr + 1));
    _rowIsMarked -= _lowr;
    
-   _pathRowOfColumn = (CPInt*) malloc(sizeof(CPInt) * (_upc - _lowc + 1));
+   _pathRowOfColumn = (CPInt*) malloc(sizeof(ORInt) * (_upc - _lowc + 1));
    _pathRowOfColumn -= _lowc;
    
-   _pi = (CPInt*) malloc(sizeof(CPInt) * (_upc - _lowc + 1));
+   _pi = (CPInt*) malloc(sizeof(ORInt) * (_upc - _lowc + 1));
    _pi -= _lowc;
    
    [self reduceCostMatrix];
@@ -243,7 +243,7 @@
       }
 }
 
--(void) applyAugmentingPathFrom: (CPInt) r to: (CPInt) c
+-(void) applyAugmentingPathFrom: (ORInt) r to: (ORInt) c
 {
    CPInt currentRow;
    CPInt currentCol;
@@ -256,7 +256,7 @@
    } while (currentRow != r);
 }
 
--(CPInt) dualStep
+-(ORInt) dualStep
 {
    CPInt col;
    CPInt m = MAXINT;
@@ -276,7 +276,7 @@
    return col;
 }
 
--(CPInt) findAugmentingPathFrom: (CPInt) i 
+-(ORInt) findAugmentingPathFrom: (ORInt) i 
 {
    for(CPInt r = _lowr; r <= _upr; r++) 
       _rowIsMarked[r] = false;

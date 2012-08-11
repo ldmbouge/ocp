@@ -30,7 +30,7 @@
    return self;
 }
 
--(id<CPDom>)initBoundsDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up 
+-(id<CPDom>)initBoundsDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up 
 {
    self = [super init];
    _dc = DCBounds;
@@ -54,19 +54,19 @@
 {
     [super dealloc];
 }
--(CPInt)min
+-(ORInt)min
 {
    return _min._val;
 }
--(CPInt)max 
+-(ORInt)max 
 {
    return _max._val;
 }
--(CPInt)imin
+-(ORInt)imin
 {
    return _imin;
 }
--(CPInt)imax
+-(ORInt)imax
 {
    return _imax;
 }
@@ -79,27 +79,27 @@
 {
    return _sz._val == 1;
 }
--(CPInt)domsize
+-(ORInt)domsize
 {
    return _sz._val;
 }
--(bool)get:(CPInt)v
+-(bool)get:(ORInt)v
 {
    return _min._val <= v && v <= _max._val;
 }
--(bool)member:(CPInt)v
+-(bool)member:(ORInt)v
 {
    return _min._val <= v && v <= _max._val;
 }
--(CPInt)findMin:(CPInt)from // smallest value larger or equal to from
+-(ORInt)findMin:(ORInt)from // smallest value larger or equal to from
 {
    return from;
 }
--(CPInt)findMax:(CPInt)from // largest value smaller or equal to from
+-(ORInt)findMax:(ORInt)from // largest value smaller or equal to from
 {
    return from;
 }
--(CPInt)countFrom:(CPInt)from to:(CPInt)to
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
    from = max(_min._val,from);
    to   = min(_max._val,to);
@@ -120,7 +120,7 @@
    else
       return [NSString stringWithFormat:@"(%d)[%d .. %d]",_sz._val,_min._val,_max._val];
 }
--(ORStatus)updateMin:(CPInt)newMin for:(id<CPIntVarNotifier>)x
+-(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x
 {
    if (newMin <= _min._val) return ORSuspend;
    if (newMin > _max._val)
@@ -136,7 +136,7 @@
    [x changeMinEvt:nsz];
    return ORSuspend;
 }
--(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
+-(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    if (newMax >= _max._val) return ORSuspend;
    if (newMax < _min._val)
@@ -152,7 +152,7 @@
    [x changeMaxEvt:nsz];
    return ORSuspend;   
 }
--(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val)
       failNow();
@@ -169,7 +169,7 @@
    return ORSuspend;   
 }
 
--(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val <= _min._val) return [self updateMin:val+1 for:x];
    if (val >= _max._val) return [self updateMax:val-1 for:x];
@@ -182,7 +182,7 @@
    _max._val = [toRestore max];
    _sz._val  = [toRestore domsize];
 }
--(void)restoreValue:(CPInt)toRestore
+-(void)restoreValue:(ORInt)toRestore
 {
    _min._val = toRestore;
    _max._val = toRestore;
@@ -191,22 +191,22 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_dc];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_min._val];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_max._val];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_imin];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_imax];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_dc];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_min._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_max._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_sz._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imin];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imax];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_dc];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_min._val];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_max._val];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_imin];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_imax];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_dc];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_min._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_max._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_sz._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_imin];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_imax];
    return self;
 }
 @end
@@ -220,7 +220,7 @@
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(CPUInt)*nb);
-   _magic = malloc(sizeof(CPInt)*nb);
+   _magic = malloc(sizeof(ORInt)*nb);
    for(CPInt k=0;k<nb;k++) {
       _bits[k]  = 0xffffffff;
       _magic[k] = [_trail magic]-1;
@@ -230,14 +230,14 @@
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
 }
--(CPBitDom*) initBitDomFor:(ORTrail*)trail low:(CPInt)low up:(CPInt)up
+-(CPBitDom*) initBitDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up
 {
    self = [super initBoundsDomFor:trail low:low up:up];
    _dc = DCBits;
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(CPUInt)*nb);
-   _magic = malloc(sizeof(CPInt)*nb);
+   _magic = malloc(sizeof(ORInt)*nb);
    for(CPInt k=0;k<nb;k++) {
       _bits[k]  = 0xffffffff;
       _magic[k] = [trail magic]-1;
@@ -340,16 +340,16 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    return dom->_imin + ((mw << 5) + mb);   
 }
 
--(bool) get:(CPInt)b
+-(bool) get:(ORInt)b
 {
    return GETBIT(b);
 }
--(bool) member:(CPInt)b
+-(bool) member:(ORInt)b
 {
    return b >= _min._val && b <= _max._val && GETBIT(b);
 }
 
--(void)set:(CPInt)b at:(bool)v
+-(void)set:(ORInt)b at:(bool)v
 {
    if (b >=_imin && b<=_imax) {
       b -= _imin;
@@ -365,7 +365,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
          _bits[bw] &= ~(0x1 << (b & 0x1f));
    }    
 }
--(CPInt)setAllZeroFrom:(CPInt)from to:(CPInt)to
+-(ORInt)setAllZeroFrom:(ORInt)from to:(ORInt)to
 {
    assert(from >= _imin && from <= _imax);
    assert(to >= _imin && to <= _imax);
@@ -414,21 +414,21 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    return nbin;   
 }
 
--(CPInt)countFrom:(CPInt)from to:(CPInt)to
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
    return countFrom(self,from,to);
 }
 
--(CPInt)findMin:(CPInt)from
+-(ORInt)findMin:(ORInt)from
 {
    return findMin(self,from);
 }
 
--(CPInt)findMax:(CPInt)from
+-(ORInt)findMax:(ORInt)from
 {
    return findMax(self,from);
 }
--(CPInt)regret
+-(ORInt)regret
 {
    return [self findMin:_min._val+1] - _min._val;   
 }
@@ -475,7 +475,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    return s;
 }
 
--(ORStatus) updateMin: (CPInt) newMin for: (id<CPIntVarNotifier>)x
+-(ORStatus) updateMin: (ORInt) newMin for: (id<CPIntVarNotifier>)x
 {
     if (newMin <= _min._val) return ORSuspend;
    if (newMin > _max._val)
@@ -495,7 +495,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
     return ORSuspend;   
 }
 
--(ORStatus)updateMax:(CPInt)newMax for:(id<CPIntVarNotifier>)x
+-(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    if (newMax >= _max._val) return ORSuspend;
    if (newMax < _min._val)
@@ -514,7 +514,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    return ORSuspend;
 }
 
--(ORStatus)bind:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
     if (val < _min._val || val > _max._val)
        failNow();
@@ -531,7 +531,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
     return ORSuspend;      
 }
 
--(ORStatus)remove:(CPInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val) return ORSuspend;
    if (val == _min._val) return _updateMin(self,@selector(updateMin:for:),val+1,x);
@@ -557,14 +557,14 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       _bits[k] = toRestore->_bits[k];
    }
 }
--(void)restoreValue:(CPInt)toRestore
+-(void)restoreValue:(ORInt)toRestore
 {
    _min._val = toRestore;
    _max._val = toRestore;
    _sz._val  = 1;
 }
 
--(void)translate:(CPInt)shift
+-(void)translate:(ORInt)shift
 {
    _imin = _imin + shift;
    _imax = _imax + shift;
@@ -575,17 +575,17 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_dc];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_min._val];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_max._val];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_imin];
-   [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_imax];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_dc];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_min._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_max._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_sz._val];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imin];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imax];
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    for(CPInt k=0;k<nb;k++) {
       [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_bits[k]]; 
-      [aCoder encodeValueOfObjCType:@encode(CPInt) at:&_magic[k]]; 
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_magic[k]]; 
    }
    [aCoder encodeObject:_trail];
 }
@@ -593,21 +593,21 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_dc];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_min._val];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_max._val];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_sz._val];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_imin];
-   [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_imax];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_dc];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_min._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_max._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_sz._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_imin];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_imax];
    const CPInt sz = _imax - _imin + 1;
    const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    
    _bits  = malloc(sizeof(CPUInt)*nb);
-   _magic = malloc(sizeof(CPInt)*nb);
+   _magic = malloc(sizeof(ORInt)*nb);
 
    for(CPInt k=0;k<nb;k++) {
       [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_bits[k]];  
-      [aDecoder decodeValueOfObjCType:@encode(CPInt) at:&_magic[k]]; 
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_magic[k]]; 
    }
    _trail = [aDecoder decodeObject] ;
    _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
