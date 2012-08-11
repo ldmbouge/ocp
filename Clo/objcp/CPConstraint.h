@@ -17,6 +17,7 @@
 
 @interface CPFactory (Constraint)
 
++(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x;
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (CPConsistency) c;
 

@@ -617,6 +617,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_dom restoreValue:toRestore];
 }
 
+-(id<ORIntVar>) dereference
+{
+   return self;
+}
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp bounds:(id<ORIntRange>)b
 {
    self = [self initCPIntVarCore: cp low: [b low] up: [b up]];

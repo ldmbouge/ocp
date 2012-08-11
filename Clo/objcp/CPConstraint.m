@@ -31,6 +31,12 @@
 @implementation CPFactory (Constraint)
 
 // alldifferent
++(id<CPConstraint>) alldifferent: (id<CPSolver>) cp over: (id<ORIntVarArray>) x
+{
+   id<CPConstraint> o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: cp over: x];
+   [cp trackObject: o];
+   return o;
+}
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x
 {
     return [CPFactory alldifferent: x consistency: DomainConsistency];

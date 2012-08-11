@@ -179,6 +179,10 @@
 {
    return _impl;
 }
+-(id<ORIntVar>) dereference
+{
+   return [_impl dereference];
+}
 -(void) setImpl: (id<ORIntVar>) impl
 {
    _impl = impl;

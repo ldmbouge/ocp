@@ -106,7 +106,7 @@ enum CPVarClass {
    CPVCAffine = 2
 };
 
-@interface CPIntVarI : ORExprI<CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : ORExprI<ORIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
    enum CPVarClass                   _vc:16;
    CPUInt                        _isBool:16;
@@ -197,6 +197,8 @@ enum CPVarClass {
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(CPInt)a andShift:(CPInt)b;
 +(CPIntVarI*)    initCPNegateBoolView:(CPIntVarI*)x;
 +(CPTrigger*)    createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+
+-(id<ORIntVar>) dereference;
 @end
 
 // ---------------------------------------------------------------------

@@ -35,7 +35,7 @@
 -(ORInt) max;
 -(ORInt) domsize;
 -(bool) member: (ORInt) v;
--(id<ORIntVar>) impl;
+-(id<ORIntVar>) dereference;
 @end
 
 @protocol ORVarArray <ORIdArray>

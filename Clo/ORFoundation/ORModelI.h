@@ -17,6 +17,7 @@
 
 @interface ORIntVarI : NSObject<ORIntVar>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
+-(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
 @end

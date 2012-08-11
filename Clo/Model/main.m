@@ -42,8 +42,9 @@ int main(int argc, const char * argv[])
        // insert code here...
        NSLog(@"Hello, World!");
       [cp solve: ^{
-         for(ORInt i = 0; i <= 10; i++)
-            [CPLabel var: (id<CPIntVar>) [a[i] impl]];
+         for(ORInt i = 0; i <= 10; i++) 
+//            printf("instantiating variable %d \n",i);
+            [CPLabel var: (id<CPIntVar>) [a[i] dereference]];
       }];
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[a[i] value]);

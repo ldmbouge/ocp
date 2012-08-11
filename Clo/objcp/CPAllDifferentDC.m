@@ -9,6 +9,7 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPAllDifferentDC.h"
 #import "CPBasicConstraint.h"
 #import "CPEngineI.h"
@@ -18,7 +19,7 @@
 
 @implementation CPAllDifferentDC
 {
-   id<CPIntVarArray> _x;
+   id<ORIntVarArray> _x;
    CPIntVarI**     _var;
    UBType*         _member;
    CPInt           _varSize;
@@ -74,7 +75,15 @@ static void prune(CPAllDifferentDC* ad);
     return self;
 }
 
--(void) dealloc 
+-(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPSolver>) cp over: (id<ORIntVarArray>) x
+{
+   self = [super initCPActiveConstraint: [cp solver]];
+   _x = x;
+   [self initInstanceVariables];
+   return self;
+}
+
+-(void) dealloc
 {
 //   NSLog(@"AllDifferent dealloc called ...");
     if (_posted) {
@@ -159,7 +168,7 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,CPInt k)
     _varSize = (up - low + 1);
     _var = malloc(_varSize * sizeof(CPIntVarI*));
     for(CPInt i = 0; i < _varSize; i++) 
-        _var[i] = (CPIntVarI*) [_x at: low + i];
+        _var[i] = (CPIntVarI*) [[_x at: low + i] dereference];
 
     for(CPInt i = 0; i < _varSize; i++) 
         if ([_var[i] domsize] == 1) {
