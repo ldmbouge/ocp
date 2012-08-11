@@ -47,9 +47,9 @@
 
 // pvh: not sure why this is needed
 // pvh: why do we need vars and t and so on.
--(id<CPIntVarArray>)allIntVars
+-(id<ORIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 // pvh: see question below for the importance of _cv

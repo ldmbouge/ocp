@@ -31,7 +31,7 @@ int main (int argc, const char * argv[])
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
 
    //id<CPHeuristic> h = [CPFactory createIBS:cp];
    for(CPUInt i =0;i < n; i++) {

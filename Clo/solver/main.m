@@ -89,7 +89,7 @@ void labelFF2(CP* m,NSArray* x,int from,int to)
     ];
 }
 
-void labelFF3(CP* m,id<CPIntVarArray> x,int from,int to)
+void labelFF3(CP* m,id<ORIntVarArray> x,int from,int to)
 {
    CPInteger* nbSolutions = [[CPInteger alloc] initCPInteger: 0];
    [m solve: ^() {
@@ -103,7 +103,7 @@ void labelFF3(CP* m,id<CPIntVarArray> x,int from,int to)
    printf("NbSolutions: %ld \n",[nbSolutions value]);   
 }
 
-void labelFF4(CP* m,id<CPIntVarArray> x,int from,int to)
+void labelFF4(CP* m,id<ORIntVarArray> x,int from,int to)
 {
   [m search: ^() {
       [m maximize: [x at: 1] in:  ^() {
@@ -127,7 +127,7 @@ int main(int argc, const char * argv[])
     id pool = [[NSAutoreleasePool alloc] init];
    
    id<CPSolver> m = [CPFactory createSolver]; 
-   id<CPIntVarArray> x = [m createIntVarArray:(CPRange){0,n-1} domain:(CPRange){0,n-1}];
+   id<ORIntVarArray> x = [m createIntVarArray:(CPRange){0,n-1} domain:(CPRange){0,n-1}];
     [m solve: ^() 
      {
         [m post: [CPAllDifferent on:x]];

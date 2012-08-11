@@ -43,9 +43,9 @@
    CPRange R = (CPRange){1,n};
    id<CPSolver> m = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
-   id<CPIntVarArray> x  = [CPFactory intVarArray:m range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:m range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:m range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> x  = [CPFactory intVarArray:m range:R domain: R];
+   id<ORIntVarArray> xp = [CPFactory intVarArray:m range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:m range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
 
    [m solveAll: 
     ^() {
@@ -71,7 +71,7 @@
    int n = 2;
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    
    [m solveAll: ^() {
@@ -99,7 +99,7 @@
    int n = 2;
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
       [m add: [CPFactory sumbool:x geq:8]];
@@ -126,8 +126,8 @@
    int n = 2;
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
-   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(CPInt i) {
+   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(CPInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
@@ -165,7 +165,7 @@
    int s = 10;
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray: m range:R domain: RANGE(0,1)];
+   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: RANGE(0,1)];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    
    [m solveAll: ^() {
@@ -193,8 +193,8 @@
    int n = 2;
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
-   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(CPInt i) {
+   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(CPInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
@@ -299,7 +299,7 @@
    int s = 2;
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,10}];  
+   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,10}];  
    id<ORIntVar> zn = [CPFactory intVar:m domain:(CPRange){-10,0}];
    id<ORIntVar> z = [CPFactory intVar:zn scale:-1];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
@@ -371,9 +371,9 @@
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
    [CPFactory intArray:cp range:R with: ^CPInt(CPInt i) { return i; }];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
    
    [cp solveAll:
     ^() {
@@ -408,7 +408,7 @@
 {
    CPInt n = 4;
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
    id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(0,25)];
    int* coef = (int[]){3,4,10,30};
    id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
@@ -426,7 +426,7 @@
 {
    CPInt n = 4;
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
    id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(3,25)];
    int* coef = (int[]){3,4,10,30};
    id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
@@ -445,7 +445,7 @@
 {
    CPInt n = 4;
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
    id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(14,25)];
    int* coef = (int[]){3,4,10,30};
    id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];

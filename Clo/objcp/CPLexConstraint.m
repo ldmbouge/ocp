@@ -24,7 +24,7 @@
    CPULong       _sz; // size of xa/ya
    id<CPEngine> _fdm;
 }
--(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y
+-(id) initCPLexConstraint:(id<ORIntVarArray>)x and:(id<ORIntVarArray>)y
 {
    self = [super initCPActiveConstraint:[[x cp] solver]];
    _x = x;

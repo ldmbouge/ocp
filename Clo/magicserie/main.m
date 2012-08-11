@@ -21,7 +21,7 @@ int main (int argc, const char * argv[])
    const CPInt n = 128;  // 128 -> 494 fails
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    for(CPInt i=0;i<n;i++)
       [cp add: [SUM(j,R,[x[j] eqi: i]) eq: x[i] ]];
    [cp add: [SUM(i,R,[x[i] muli: i]) eqi: n ]];
@@ -49,7 +49,7 @@ int main (int argc, const char * argv[])
    id<ORIntSet> RS = [ORFactory intSet: cp];
    [R iterate: ^(ORInt e) { [RS insert: e]; } ];
    NSLog(@"%@",RS);
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    [cp solve: ^{
       for(CPInt i=0;i<n;i++)
          [cp add: [SUM(j,RS,[x[j] eqi: i]) eq: x[i] ]];

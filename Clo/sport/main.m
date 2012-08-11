@@ -64,8 +64,8 @@ int main(int argc, const char * argv[])
     ^() {
        /*
         for(CPInt p = 1; p <= n/2 ; p++) {
-        id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(CPInt w) { return [game at: p : w]; }];
-        id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(CPInt w) { return [game at: w : p]; }];
+        id<ORIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(CPInt w) { return [game at: p : w]; }];
+        id<ORIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(CPInt w) { return [game at: w : p]; }];
         [CPLabel array: ap orderedBy: ^CPInt(CPInt i) { return [[ap at:i] domsize];}];
         [CPLabel array: aw orderedBy: ^CPInt(CPInt i) { return [[aw at:i] domsize];}];
         }

@@ -33,7 +33,7 @@
 
 @protocol CPSolver <ORSolver>
 
--(id<CPEngine>)      solver;
+-(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
@@ -56,7 +56,7 @@
 -(void)               state;
 
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;

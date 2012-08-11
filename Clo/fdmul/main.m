@@ -22,8 +22,8 @@ int main(int argc, const char * argv[])
       id<ORIntRange> R = RANGE(cp,0,19);
       id<ORIntRange> D = RANGE(cp,0,9);
             
-      id<CPIntVarArray> x = [CPFactory intVarArray: cp range:R domain: D];         
-      id<CPIntVarArray> c = [CPFactory intVarArray:cp range:RANGE(cp,0,8) domain: D];
+      id<ORIntVarArray> x = [CPFactory intVarArray: cp range:R domain: D];         
+      id<ORIntVarArray> c = [CPFactory intVarArray:cp range:RANGE(cp,0,8) domain: D];
       id<CPHeuristic> h = [CPFactory createFF:cp];
       
       id<CPIntArray> lb = [CPFactory intArray:cp range:D value:2];

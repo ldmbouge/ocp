@@ -29,8 +29,8 @@
     TRInt*      _required; //_required[v]= how many variables are assigned to value v
     TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
 }
--(id) initCardinalityCst:(CPEngineI*)m values:(CPRange)r low:(CPInt*)low array:(id)ax up:(CPInt*)up;
--(id) initCardinalityCst:(id<CPIntVarArray>) ax low: (id<CPIntArray>)low up: (id<CPIntArray>) up;
+-(id) initCardinalityCst:(CPEngineI*)m values:(CPRange)r low:(ORInt*)low array:(id)ax up:(ORInt*)up;
+-(id) initCardinalityCst:(id<ORIntVarArray>) ax low: (id<ORIntArray>)low up: (id<ORIntArray>) up;
 -(void)dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

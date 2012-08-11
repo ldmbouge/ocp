@@ -14,7 +14,7 @@
 #import "objcp/CPBasicConstraint.h"
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding>
--(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPIntVarArray>) x;
+-(CPAllDifferentDC*) initCPAllDifferentDC: (id<ORIntVarArray>) x;
 -(CPAllDifferentDC*) initCPAllDifferentDC: (id<ORTracker>) tracker over: (id<ORIntVarArray>) x;
 -(void) dealloc;
 -(ORStatus) post;

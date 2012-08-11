@@ -10,8 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPHeuristic.h>
-#import <objcp/CPBaseHeuristic.h>
+#import <ORFoundation/ORFoundation.h>
+#import "CPHeuristic.h"
+#import "CPBaseHeuristic.h"
 
 @interface CPFirstFail : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>  _vars;
@@ -22,5 +23,5 @@
 -(float)varOrdering:(id<ORIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<ORIntVar>)x ;
 -(void)initInternal:(id<CPVarArray>)t;
--(id<CPIntVarArray>)allIntVars;
+-(id<ORIntVarArray>)allIntVars;
 @end

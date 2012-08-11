@@ -155,7 +155,7 @@ void failNow()
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
 
-+(id<CPIntMatrix>) intMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
++(id<ORIntMatrix>) intMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: cp range: r1 : r2];    
     [[((CPSolverI*) cp) solver] trackObject: o];
@@ -165,7 +165,7 @@ void failNow()
 {
    return (id<CPVarArray>)[ORFactory idArray:cp range: range];
 }
-+(id<ORIntVarArray>) arrayCPIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(CPInt)) clo
++(id<ORIntVarArray>) arrayORIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(CPInt)) clo
 {
    return [self intVarArray:cp range:range with:clo];
 }
@@ -211,54 +211,54 @@ void failNow()
             [o set:clo(i,j,k) at:l++];
    return (id<ORIntVarArray>)o;
 }
-+(id<CPIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
++(id<ORIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
    for(CPInt i=[r0 low];i <= [r0 up];i++)
       for(CPInt j= [r1 low];j <= [r1 up];j++)
          [o set:[CPFactory intVar:cp domain:domain] at:i :j];
-    return (id<CPIntVarMatrix>)o;
+    return (id<ORIntVarMatrix>)o;
 }
-+(id<CPIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
++(id<ORIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(CPInt i= [r0 low];i <= [r0 up]; i++)
       for(CPInt j= [r1 low]; j <= [r1 up]; j++)
          for(CPInt k= [r2 low]; k <= [r2 up];k++)
             [o set:[CPFactory intVar:cp domain:domain] at:i :j :k];
-   return (id<CPIntVarMatrix>)o;
+   return (id<ORIntVarMatrix>)o;
 }
-+(id<CPIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
++(id<ORIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
    for(CPInt i= [r0 low];i <= [r0 up]; i++)
       for(CPInt j= [r1 low]; j <= [r1 up];j++)
          [o set:[CPFactory boolVar:cp] at:i :j];
-   return (id<CPIntVarMatrix>)o;   
+   return (id<ORIntVarMatrix>)o;   
 }
-+(id<CPIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
++(id<ORIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(CPInt i= [r0 low]; i <= [r0 up]; i++)
       for(CPInt j= [r1 low]; j <= [r1 up]; j++)
          for(CPInt k= [r2 low]; k <= [r2 up]; k++)
             [o set:[CPFactory boolVar:cp] at:i :j :k];
-   return (id<CPIntVarMatrix>)o;
+   return (id<ORIntVarMatrix>)o;
 }
 
-+(id<CPIntVarArray>) flattenMatrix:(id<CPIntVarMatrix>)m
++(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m
 {
    id<ORTracker> tracker = [m tracker];
    CPInt sz = (CPInt)[m count];
    id<ORIdArray> flat = [ORFactory idArray: tracker range: RANGE(tracker,0,sz-1)];
    for(CPInt i=0;i<sz;i++)
       flat[i] = [m flat:i];
-   return (id<CPIntVarArray>)flat;
+   return (id<ORIntVarArray>)flat;
 }
 
-+(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c
++(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c
 {
-   id<CPIntVarArray> rv = [self intVarArray:[x cp] range: [x range] with:^id<ORIntVar>(CPInt i) {
+   id<ORIntVarArray> rv = [self intVarArray:[x cp] range: [x range] with:^id<ORIntVar>(CPInt i) {
       id<ORIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
       return theView;
    }];

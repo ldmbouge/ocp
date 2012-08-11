@@ -14,7 +14,7 @@
 #import "CPBasicConstraint.h"
 
 @interface CPAssignment : CPActiveConstraint<CPConstraint,NSCoding>
--(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<ORIntVar>) cost;
+-(CPAssignment*) initCPAssignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

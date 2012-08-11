@@ -43,7 +43,7 @@ id<ORIntSet> knightMoves(id<CPSolver> cp,int i)
     }
     return S;
 }
-void printCircuit(id<CPIntVarArray> jump)
+void printCircuit(id<ORIntVarArray> jump)
 {
     int curr = 1;
     printf("1");
@@ -58,7 +58,7 @@ int main (int argc, const char * argv[])
     id<CPSolver> cp = [CPFactory createSolver];
     id<ORIntRange> R = RANGE(cp,1,64);
    id<ORIntRange> D = RANGE(cp,1,64);
-    id<CPIntVarArray> jump = [CPFactory intVarArray:cp range: R domain: D];
+    id<ORIntVarArray> jump = [CPFactory intVarArray:cp range: R domain: D];
    
     NSLog(@"%@",jump[1]);
    printf("min %d \n",[jump[1] min]);

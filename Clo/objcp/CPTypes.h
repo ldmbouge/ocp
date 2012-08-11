@@ -35,6 +35,7 @@ typedef ORIntxInt2Int CPIntxInt2Int;
 typedef ORInt2Expr    CPInt2Expr;
 
 @protocol CPSolver;
+
 typedef void (^CPVirtualClosure)(id<CPSolver>);
 
 

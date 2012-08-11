@@ -400,10 +400,10 @@ struct CPVarPair {
    [buf appendFormat:@" (%d)",_indep];
    return buf;
 }
--(id<CPIntVarArray>)scaledViews
+-(id<ORIntVarArray>)scaledViews
 {
    id<CPSolver> cp = [_terms[0]._var cp];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp 
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp 
                                           range: RANGE(cp,0,_nb-1)
                                            with:^id<ORIntVar>(CPInt i) {
                                               return _terms[i]._var;
@@ -411,7 +411,7 @@ struct CPVarPair {
    CPInt* coefs = alloca(sizeof(CPInt)*_nb);
    for(int k=0;k<_nb;k++)
       coefs[k] = _terms[k]._coef;
-   id<CPIntVarArray> sx = [CPFactory pointwiseProduct:x by:coefs];
+   id<ORIntVarArray> sx = [CPFactory pointwiseProduct:x by:coefs];
    return sx;
 }
 -(id<ORIntVar>)oneView
@@ -510,10 +510,10 @@ struct CPVarPair {
             if ([_terms[k]._var isBool])
                sumCoefs += _terms[k]._coef;
          if (sumCoefs == _nb) {
-            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(fdm,0,_nb-1), _terms[i]._var);
+            id<ORIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(fdm,0,_nb-1), _terms[i]._var);
             return [fdm post:[CPFactory sumbool:boolVars eq: - _indep]];
          } else if (sumCoefs == - _nb) {
-            id<CPIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(fdm,0,_nb-1), _terms[i]._var);
+            id<ORIntVarArray> boolVars = ALL(CPIntVar, i, RANGE(fdm,0,_nb-1), _terms[i]._var);
             return [fdm post:[CPFactory sumbool:boolVars eq: _indep]];
          } else
             return [fdm post:[CPFactory sum:[self scaledViews] eq: - _indep consistency:cons]];

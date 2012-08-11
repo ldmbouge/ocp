@@ -35,7 +35,7 @@
     }
 }
 
-+(void) array: (id<CPIntVarArray>) x
++(void) array: (id<ORIntVarArray>) x
 {
     CPInt low = [x low];
     CPInt up = [x up];
@@ -43,7 +43,7 @@
         [CPLabel var: [x at: i]];
 }
 
-+(void) array: (id<CPIntVarArray>) x orderedBy: (CPInt2Int) orderedBy
++(void) array: (id<ORIntVarArray>) x orderedBy: (CPInt2Int) orderedBy
 {
     id<CPSolver> cp = [x cp];
     CPSolverI* cpi = (CPSolverI*) cp;
@@ -63,7 +63,7 @@
 
 +(void) heuristic:(id<CPHeuristic>)h
 {
-   id<CPIntVarArray> av = [h allIntVars];
+   id<ORIntVarArray> av = [h allIntVars];
    NSLog(@"Heuristic on: <%lu> %@",[av count],av);
    id<CPSolver> cp = [av cp];
    CPSolverI* cpi = (CPSolverI*) cp;
@@ -92,7 +92,7 @@
    } while (true);
 }
 
-+(CPInt) maxBound: (id<CPIntVarArray>) x
++(ORInt) maxBound: (id<ORIntVarArray>) x
 {
    CPInt low = [x low];
    CPInt up = [x up];

@@ -18,8 +18,8 @@
 
 @implementation CPAssignment
 {
-   id<CPIntVarArray>  _x;
-   id<CPIntMatrix>    _matrix;
+   id<ORIntVarArray>  _x;
+   id<ORIntMatrix>    _matrix;
    CPIntVarI**        _var;
    CPIntVarI*         _costVariable;
    
@@ -56,7 +56,7 @@
    _posted = false;
 }
 
--(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (CPIntMatrixI*) matrix cost: (CPIntVarI*) costVariable
+-(CPAssignment*) initCPAssignment: (id<ORIntVarArray>) x matrix: (CPIntMatrixI*) matrix cost: (CPIntVarI*) costVariable
 {
    self = [super initCPActiveConstraint: [[x cp] solver]];
    _x = x;

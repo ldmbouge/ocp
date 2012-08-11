@@ -1378,7 +1378,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 -(id) initCPAllDifferenceVC:(id) x
 {
    if ([x isKindOfClass:[NSArray class]]) {
-      id<CPEngine> fdm = [[x objectAtIndex:0] solver];
+      id<CPEngine> fdm = [[[x objectAtIndex:0] solver] solver];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
@@ -1386,7 +1386,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
          _x[k] = [x objectAtIndex:k];
    } 
    else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<CPIntVarArray> xa = x;
+      id<ORIntVarArray> xa = x;
       id<CPEngine> fdm = [[xa cp] solver];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];

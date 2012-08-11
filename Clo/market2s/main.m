@@ -60,7 +60,7 @@ int main(int argc, const char * argv[])
       
       
       
-      id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
+      id<ORIntVarArray> x = ALL(ORIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
       for(int i=0;i<m;i++) {
          id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
          id<ORIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];

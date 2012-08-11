@@ -15,7 +15,7 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
-void show(id<CPIntVarMatrix> m) 
+void show(id<ORIntVarMatrix> m) 
 {
     id<ORIntRange> R = [m range: 0];
     id<ORIntRange> C = [m range: 1];
@@ -36,8 +36,8 @@ int main (int argc, const char * argv[])
    printf("number of entries %d \n",nb);
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,1,9);
-   id<CPIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
-   id<CPIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<ORIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
+   id<ORIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
+   id<ORIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<ORIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
    for(CPInt i = 0; i < nb; i++) {
       fscanf(f,"%d%d%d",&r,&c,&v);
       [cp label: [x at: r : c] with:v];

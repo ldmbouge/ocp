@@ -30,7 +30,7 @@
          _x[k] = [x objectAtIndex:k];
    } 
    else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<CPIntVarArray> xa = x;
+      id<ORIntVarArray> xa = x;
       [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
@@ -199,7 +199,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
          _x[k] = [x objectAtIndex:k];
    } 
    else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<CPIntVarArray> xa = x;
+      id<ORIntVarArray> xa = x;
       [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

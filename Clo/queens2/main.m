@@ -19,7 +19,7 @@
 #import "objcp/CPHeuristic.h"
 #import "objcp/CPWDeg.h"
 
-CPInt labelFF3(id<CPSolver> m,id<CPIntVarArray> x,CPInt from,CPInt to)
+CPInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,CPInt from,CPInt to)
 {
    id<CPInteger> nbSolutions = [CPFactory integer:m value:0];
    [m solveAll: ^() {

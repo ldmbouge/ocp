@@ -16,8 +16,8 @@
 #import <objcp/CPConstraintI.h>
 
 @interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding>
--(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
--(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
+-(CPCircuitI*) initCPCircuitI: (id<ORIntVarArray>) x;
+-(CPCircuitI*) initCPNoCycleI: (id<ORIntVarArray>) x;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;

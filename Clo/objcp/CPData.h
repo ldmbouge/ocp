@@ -28,6 +28,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 @protocol CPConstraint <ORConstraint>
 @end
 
+/*
 @protocol CPExpr <ORExpr,CPConstraint>
 -(id<CPExpr>) plus: (id<CPExpr>) e;
 -(id<CPExpr>) sub: (id<CPExpr>) e;
@@ -55,6 +56,7 @@ typedef void (^ConstraintIntCallBack)(CPInt);
 -(id<CPRelation>)or:(id<CPRelation>)e;
 -(id<CPRelation>)imply:(id<CPRelation>)e;
 @end
+*/
 
 @protocol CPInteger <ORInteger,CPExpr>
 @end

@@ -41,7 +41,7 @@
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
 
-@interface CPIntMatrixI : NSObject<CPIntMatrix,CPVirtual,NSCoding> {
+@interface CPIntMatrixI : NSObject<ORIntMatrix,CPVirtual,NSCoding> {
 @private
     id<CPSolver>          _cp;
     ORTrail*        _trail;

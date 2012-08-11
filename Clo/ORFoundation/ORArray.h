@@ -65,3 +65,15 @@
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 @end
+
+@protocol ORIntMatrix <NSObject>
+-(ORInt) at: (ORInt) i1 : (ORInt) i2;
+-(ORInt) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+

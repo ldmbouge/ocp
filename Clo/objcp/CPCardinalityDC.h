@@ -15,7 +15,7 @@
 #import <objcp/CPConstraintI.h>
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 
--(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<CPIntArray>) lb up: (id<CPIntArray>) ub;
+-(CPCardinalityDC*) initCPCardinalityDC: (id<ORIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
 -(void) dealloc;
 
 -(ORStatus) post;

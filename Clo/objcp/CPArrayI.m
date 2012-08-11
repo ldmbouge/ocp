@@ -27,7 +27,7 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-   return [[CPExprVarSubI alloc] initCPExprVarSubI:(id<CPIntVarArray>)self elt:(id<CPExpr>)idx];
+   return [[CPExprVarSubI alloc] initCPExprVarSubI:(id<ORIntVarArray>)self elt:(id<CPExpr>)idx];
    return nil;
 }
 @end

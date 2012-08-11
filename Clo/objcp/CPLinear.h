@@ -41,7 +41,7 @@ typedef id<ORIntVar>(^CPRewriter)(id<CPExpr>);
 -(void)addTerm:(id<ORIntVar>)x by:(CPInt)c;
 -(CPInt)independent;
 -(NSString*)description;
--(id<CPIntVarArray>)scaledViews;
+-(id<ORIntVarArray>)scaledViews;
 -(id<ORIntVar>)oneView;
 -(CPInt)size;
 -(CPInt)min;

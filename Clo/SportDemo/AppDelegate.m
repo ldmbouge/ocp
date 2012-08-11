@@ -49,7 +49,7 @@
 {
    dispatch_async(_queue,cl);
 }
--(void)visualize:(id<CPIntVarMatrix>) game teams: (id<CPIntVarMatrix>) teams on: (id<CPSolver>)cp
+-(void)visualize:(id<ORIntVarMatrix>) game teams: (id<ORIntVarMatrix>) teams on: (id<CPSolver>)cp
 {
    id<ORIntRange> Periods = [game range: 0];
    id<ORIntRange> Weeks = [game range: 1];
@@ -113,8 +113,8 @@
    id<ORIntRange> HomeAway = RANGE(cp,0,1);
    id<ORIntRange> Games = RANGE(cp,0,n*n);
    id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
-   id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
-   id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
+   id<ORIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
+   id<ORIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
    id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
                                                    with: ^id<ORIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
    id<ORIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
@@ -145,8 +145,8 @@
     ^() {
        /*
         for(CPInt p = 1; p <= n/2 ; p++) {
-        id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(CPInt w) { return [game at: p : w]; }];
-        id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(CPInt w) { return [game at: w : p]; }];
+        id<ORIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(CPInt w) { return [game at: p : w]; }];
+        id<ORIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(CPInt w) { return [game at: w : p]; }];
         [CPLabel array: ap orderedBy: ^CPInt(CPInt i) { return [[ap at:i] domsize];}];
         [CPLabel array: aw orderedBy: ^CPInt(CPInt i) { return [[aw at:i] domsize];}];
         }

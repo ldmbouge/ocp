@@ -35,7 +35,7 @@
    _board = [[NSBoardController alloc] initBoardController:_theView];
 }
 
--(void)visualize:(id<CPIntVarArray>)x on:(id<CPSolver>)cp
+-(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
 {
    CPBounds dom;
    [[x at: [x low]] bounds:&dom];
@@ -71,9 +71,9 @@
    CPRange R = (CPRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    
    [cp solveAll: 
     ^() {

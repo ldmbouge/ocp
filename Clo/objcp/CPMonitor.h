@@ -23,9 +23,9 @@
    id<CPSolver>                    _cp;
    CPVarInfo**        _curActive;
    CPUInt              _nbActive;
-   id<CPVarArray>        _monVar;
+   id<ORVarArray>        _monVar;
 }
--(id)initCPMonitor:(id<CPSolver>)cp vars:(id<CPVarArray>)allVars;
+-(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars;
 -(ORStatus) post;
 -(NSString*)description;
 -(double)reduction;

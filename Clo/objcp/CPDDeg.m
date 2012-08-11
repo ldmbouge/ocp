@@ -29,9 +29,9 @@
 {
    [super dealloc];
 }
--(id<CPIntVarArray>)allIntVars
+-(id<ORIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 -(float)varOrdering:(id<ORIntVar>)x
 {

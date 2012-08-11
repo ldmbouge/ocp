@@ -71,8 +71,8 @@ int main(int argc, const char * argv[])
       [loss set: m at: c];
    }
    CPLong startTime = [CPRuntimeMonitor cputime];
-   id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
-   id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
+   id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
+   id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
    
    [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
@@ -175,8 +175,8 @@ int main1(int argc, const char * argv[])
       [loss set: m at: c];
    }
    CPLong startTime = [CPRuntimeMonitor cputime];
-   id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: IOrders domain: Slabs];
-   id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
+   id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: IOrders domain: Slabs];
+   id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: (ORRange){0,nbSize*maxCapacities}];
    
    [cp minimize: obj subjectTo: ^{
@@ -284,8 +284,8 @@ int main1(int argc, const char * argv[])
       [loss set: m at: c];
    }
    CPLong startTime = [CPRuntimeMonitor cputime];
-   id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
-   id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
+   id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
+   id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
    id<CPUniformDistribution> distr = [CPFactory uniformDistribution: cp range: RANGE(cp,1,100)];
    [cp minimize: obj subjectTo: ^{
@@ -396,8 +396,8 @@ int realmain(int argc, const char * argv[])
       [loss set: m at: c];
    }
    CPLong startTime = [CPRuntimeMonitor cputime];
-   id<CPIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
-   id<CPIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
+   id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
+   id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
    
 //   id<ORIntSet> SetSlabs = [ORFactory intSet: cp];

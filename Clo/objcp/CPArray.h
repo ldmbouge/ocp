@@ -16,6 +16,7 @@
 -(id<CPExpr>) elt: (id<CPExpr>) idx;
 @end
 
+/*
 @protocol CPVarArray <ORIdArray>
 -(id<CPVar>) at: (CPInt) value;
 -(void) set: (id<CPVar>) x at: (CPInt) value;
@@ -42,6 +43,7 @@
 -(NSString*) description;
 -(id<CPSolver>) cp;
 @end
+*/
 
 @protocol CPTRIntArray <NSObject> 
 -(CPInt)  at: (CPInt) value;
@@ -53,16 +55,6 @@
 -(id<CPSolver>) cp;
 @end
 
-@protocol CPIntMatrix <NSObject> 
--(CPInt) at: (CPInt) i1 : (CPInt) i2;
--(CPInt) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2;
--(void) set: (CPInt) value at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
--(id<ORIntRange>) range: (CPInt) i;
--(NSUInteger)count;
--(NSString*) description;
--(id<CPSolver>) cp;
-@end
 
 @protocol CPTRIntMatrix <NSObject> 
 -(CPInt) at: (CPInt) i1 : (CPInt) i2;

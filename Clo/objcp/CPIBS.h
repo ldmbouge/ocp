@@ -26,6 +26,6 @@
 -(float)varOrdering:(id<ORIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<ORIntVar>)x;
 -(void)initInternal:(id<CPVarArray>)t;
--(id<CPIntVarArray>)allIntVars;
+-(id<ORIntVarArray>)allIntVars;
 -(void)initImpacts;
 @end

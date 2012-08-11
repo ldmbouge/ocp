@@ -165,7 +165,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 @end
 
 @implementation CPElementVarBC
--(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y
+-(id) initCPElementBC: (id) x indexVarArray:(id<ORIntVarArray>)z equal:(id)y
 {
    self = [super initCPActiveConstraint:[x solver]];
    _x = x;

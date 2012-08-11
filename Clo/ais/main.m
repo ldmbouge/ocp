@@ -16,7 +16,7 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
-void labelFF(id<CPSolver> cp,id<CPIntVarArray> x)
+void labelFF(id<CPSolver> cp,id<ORIntVarArray> x)
 {
    id<ORIntRange> R = RANGE(cp,[x low],[x up]);
    [ORControl forall: R
@@ -36,8 +36,8 @@ int main(int argc, const char * argv[])
       id<ORIntRange> SD = RANGE(cp,1,n-1);
       
       id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
-      id<CPIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
-      id<CPIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
+      id<ORIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
+      id<ORIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
       //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
       //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
       id<CPHeuristic> h = [CPFactory createFF:cp restricted:sx];

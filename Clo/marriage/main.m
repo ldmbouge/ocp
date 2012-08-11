@@ -42,8 +42,8 @@ int main(int argc, const char * argv[])
       id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
       
       
-      id<CPIntVarArray> husband = [CPFactory intVarArray: cp range:RWomen domain: RMen];
-      id<CPIntVarArray> wife    = [CPFactory intVarArray: cp range:RMen domain: RWomen];
+      id<ORIntVarArray> husband = [CPFactory intVarArray: cp range:RWomen domain: RMen];
+      id<ORIntVarArray> wife    = [CPFactory intVarArray: cp range:RMen domain: RWomen];
       id<CPIntArray>* rm = malloc(sizeof(id<CPIntArray>)*5);
       id<CPIntArray>* rw = malloc(sizeof(id<CPIntArray>)*5);
       for(CPInt m=RMen.low;m <= RMen.up;m++)

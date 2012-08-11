@@ -16,9 +16,9 @@
 #import "CPArrayI.h"
 #import "CPCardinality.h"
 
-static void computeCardinalities(id<CPIntVarArray> ax,
-                                 id<CPIntArray> clow,
-                                 id<CPIntArray> cup,
+static void computeCardinalities(id<ORIntVarArray> ax,
+                                 id<ORIntArray> clow,
+                                 id<ORIntArray> cup,
                                  CPInt** lowArrayr,
                                  CPInt** upArrayr,
                                  CPInt* lr,
@@ -114,7 +114,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
         _sx = (CPInt)[ax count];
         _x  = malloc(sizeof(CPIntVarI*)*_sx);
         int i=0;
-        id<CPIntVarArray> xa = ax;
+        id<ORIntVarArray> xa = ax;
         for(CPInt k=[ax low];k<=[ax up];k++)
             _x[i++] = (CPIntVarI*) [xa at:k];
         _lx = 0;
@@ -124,7 +124,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     return self;
 }
 
--(id) initCardinalityCst: (id<CPIntVarArray>) ax low: (id<CPIntArray>) low up: (id<CPIntArray>) up
+-(id) initCardinalityCst: (id<ORIntVarArray>) ax low: (id<CPIntArray>) low up: (id<CPIntArray>) up
 {
    id<CPEngine> solver = [[ax cp] solver];
     self = [super initCPActiveConstraint: solver];
@@ -134,7 +134,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
     _sx = (CPInt)[ax count];
     _x  = malloc(sizeof(CPIntVarI*)*_sx);
     int i=0;
-    id<CPIntVarArray> xa = ax;
+    id<ORIntVarArray> xa = ax;
     for(CPInt k=[ax low];k<=[ax up];k++)
         _x[i++] = (CPIntVarI*) [xa at:k];
     _lx = 0;

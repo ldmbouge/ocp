@@ -207,9 +207,9 @@
    NSLog(@"IBS ready...");
 }
 
--(id<CPIntVarArray>)allIntVars
+-(id<ORIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
 -(void)addKillSetFrom:(CPInt)from to:(CPInt)to size:(CPUInt)sz into:(NSMutableSet*)set

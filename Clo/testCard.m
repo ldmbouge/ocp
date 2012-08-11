@@ -39,7 +39,7 @@
 -(NSInteger) setupCardWith:(CPInt)n size:(CPInt)s
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray:m range:(CPRange){0,s-1} domain:(CPRange){0,n-1}];
+   id<ORIntVarArray> x = [CPFactory intVarArray:m range:(CPRange){0,s-1} domain:(CPRange){0,n-1}];
    id<CPIntArray> lb = [CPFactory intArray:m range:(CPRange){0,n-1} value:2];
    id<CPIntArray> ub = [CPFactory intArray:m range:(CPRange){0,n-1} value:3];
     

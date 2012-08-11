@@ -50,7 +50,7 @@
     TRIntArray*     _currentSupport;
     bool            _posted;
 }
--(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (CPTableI*) table;
+-(CPTableCstrI*) initCPTableCstrI: (id<ORIntVarArray>) x table: (CPTableI*) table;
 -(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;

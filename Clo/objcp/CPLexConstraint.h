@@ -18,10 +18,10 @@
 @class CPEngine;
 
 @interface CPLexConstraint : CPActiveConstraint<NSCoding> {
-   id<CPIntVarArray>  _x;
-   id<CPIntVarArray>  _y;
+   id<ORIntVarArray>  _x;
+   id<ORIntVarArray>  _y;
 }
--(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y;
+-(id) initCPLexConstraint:(id<ORIntVarArray>)x and:(id<ORIntVarArray>)y;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

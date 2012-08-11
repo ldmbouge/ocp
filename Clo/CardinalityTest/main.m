@@ -33,11 +33,11 @@ int main(int argc, const char * argv[])
    id<ORIntRange> HomeAway = RANGE(cp,0,1);
    id<ORIntRange> Games = RANGE(cp,0,n*n);
    id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
-   id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
-   id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
-   id<CPIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
+   id<ORIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
+   id<ORIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
+   id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
                                                    with: ^id<ORIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
-   id<CPIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
+   id<ORIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
                                                    with: ^id<ORIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
    id<CPTable> table = [CPFactory table: cp arity: 3];
    for(CPInt i = 1; i <= n; i++)
@@ -81,7 +81,7 @@ int main(int argc, const char * argv[])
 }
 
 /*
-id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
+id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
 id<CPTable> table = [CPFactory table: cp arity: 3];
 for(CPInt i = 0; i < 5; i++)
 for(CPInt j = i+1; j < 5; j++)

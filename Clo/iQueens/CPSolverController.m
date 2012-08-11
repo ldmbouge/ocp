@@ -42,7 +42,7 @@
    return self;
 }
 
--(void)visualize:(id<CPIntVarArray>)x on:(id<CPSolver>)cp
+-(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
 {
    UIBoardController* board = [_view1 boardController];
    CPBounds dom;
@@ -80,9 +80,9 @@
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    [cp solveAll: 
     ^() {
        [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];

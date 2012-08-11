@@ -13,7 +13,7 @@
 
 
 @implementation CPExprVarSubI
--(id<CPExpr>) initCPExprVarSubI: (id<CPIntVarArray>) array elt:(id<CPExpr>) op
+-(id<CPExpr>) initCPExprVarSubI: (id<ORIntVarArray>) array elt:(id<CPExpr>) op
 {
    self = [super init];
    _array = array;
@@ -48,7 +48,7 @@
 {
    return  _index;
 }
--(id<CPIntVarArray>)array
+-(id<ORIntVarArray>)array
 {
    return _array;
 }

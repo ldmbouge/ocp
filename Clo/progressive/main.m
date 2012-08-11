@@ -68,7 +68,7 @@ int main(int argc, const char * argv[])
    }
    CPLong startTime = [CPRuntimeMonitor cputime];
    
-   id<CPIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
+   id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    for(CPInt g = Guests.low; g <= Guests.up; g++)
       [cp add: [CPFactory alldifferent: ALL(CPIntVar, p, Periods, [boat at:g :p]) ]];
    for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
@@ -210,7 +210,7 @@ int real_main(int argc, const char * argv[])
    //   NSLog(@"crew %@",crew);
    CPLong startTime = [CPRuntimeMonitor cputime];
    
-   id<CPIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
+   id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    [cp solve:
     ^{
        for(CPInt g = Guests.low; g <= Guests.up; g++)

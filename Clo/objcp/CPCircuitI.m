@@ -18,7 +18,7 @@
 #import "CPError.h"
 
 @implementation CPCircuitI {
-   id<CPIntVarArray>  _x;
+   id<ORIntVarArray>  _x;
    CPIntVarI**      _var;
    CPInt            _varSize;
    CPInt            _low;
@@ -37,19 +37,19 @@
     _posted = false;
 }
 
--(CPCircuitI*) initCPSubtourEliminationI: (id<CPIntVarArray>) x
+-(CPCircuitI*) initCPSubtourEliminationI: (id<ORIntVarArray>) x
 {
     self = [super initCPActiveConstraint: [[x cp] solver]];
     _x = x;
     [self initInstanceVariables];
     return self;
 }
--(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x
+-(CPCircuitI*) initCPNoCycleI: (id<ORIntVarArray>) x
 {
     _noCycle = true;
     return [self initCPSubtourEliminationI: x];
 }
--(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x
+-(CPCircuitI*) initCPCircuitI: (id<ORIntVarArray>) x
 {
     _noCycle = false;
     return [self initCPSubtourEliminationI: x];

@@ -15,7 +15,7 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
-void show(id<CPIntVarMatrix> M)
+void show(id<ORIntVarMatrix> M)
 {
    id<ORIntRange> r0 = [M range:0];
    id<ORIntRange> r1 = [M range:1];
@@ -47,7 +47,7 @@ int main(int argc, const char * argv[])
       id<ORIntRange> Rows = RANGE(cp,1,v);
       id<ORIntRange> Cols = RANGE(cp,1,b);
      
-      id<CPIntVarMatrix> M = [CPFactory boolVarMatrix:cp range:Rows :Cols];
+      id<ORIntVarMatrix> M = [CPFactory boolVarMatrix:cp range:Rows :Cols];
       for(CPInt i=Rows.low;i<=Rows.up;i++)
          [cp add: [SUM(x, Cols, [M at:i :x]) eqi:r]];
       for(CPInt i=Cols.low;i<=Cols.up;i++)

@@ -29,8 +29,8 @@ int main (int argc, const char * argv[])
    CPRange R = (CPRange){1,3};
    CPRange D = (CPRange){1,3};
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
-   id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
+   id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,36}];
    [cost set: 10 at: 1 : 1];
    [cost set: 15 at: 1 : 2];
@@ -81,8 +81,8 @@ int main (int argc, const char * argv[])
    CPRange R = (CPRange){1,3};
    CPRange D = (CPRange){1,3};
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
-   id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
+   id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,100}];
    [cost set: 10 at: 1 : 1];
    [cost set: 15 at: 1 : 2];
@@ -126,7 +126,7 @@ int main (int argc, const char * argv[])
    return 0;
 }
 */
-void printCircuit(id<CPIntVarArray> x)
+void printCircuit(id<ORIntVarArray> x)
 {
    int curr = 0;
    printf("1");
@@ -152,7 +152,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> Cities = RANGE(cp,0,nbCities-1);
 
-   id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
+   id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
    for(CPInt i = 0; i < nbCities; i++) {
       for(CPInt j = 0; j < nbCities; j++) {
          fscanf(dta, "%d",&tmp);
@@ -168,7 +168,7 @@ int main (int argc, const char * argv[])
       
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    
@@ -244,7 +244,7 @@ int main (int argc, const char * argv[])
    }
    CPRange Cities = (CPRange){0,nbCities-1};
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
+   id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
    for(CPInt i = 0; i < nbCities; i++) {
       for(CPInt j = 0; j < nbCities; j++) {
          fscanf(dta, "%d",&tmp);
@@ -260,7 +260,7 @@ int main (int argc, const char * argv[])
    
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:

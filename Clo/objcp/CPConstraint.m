@@ -37,11 +37,11 @@
    [cp trackObject: o];
    return o;
 }
-+(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x
++(id<CPConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
     return [CPFactory alldifferent: x consistency: DomainConsistency];
 }
-+(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (CPConsistency) c
++(id<CPConstraint>) alldifferent: (id<ORIntVarArray>) x consistency: (CPConsistency) c
 {
     id<CPConstraint> o;
     switch (c) {
@@ -81,11 +81,11 @@
    
 }
 // cardinality
-+(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<CPIntArray>) low up: (id<CPIntArray>) up
++(id<CPConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<CPIntArray>) low up: (id<CPIntArray>) up
 {
     return [CPFactory cardinality: x low: low up: up consistency: ValueConsistency];
 }
-+(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<CPIntArray>) low up: (id<CPIntArray>) up consistency: (CPConsistency) c
++(id<CPConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<CPIntArray>) low up: (id<CPIntArray>) up consistency: (CPConsistency) c
 { 
     id<CPConstraint> o;
     switch (c) {
@@ -164,33 +164,33 @@
    return o;
 }
 
-+(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (CPInt) c
++(id<CPConstraint>) sumbool: (id<ORIntVarArray>) x geq: (CPInt) c
 {
     id<CPConstraint> o = [[CPSumBoolGeq alloc] initCPSumBool: x geq: c];
     [[x tracker] trackObject: o];
     return o;
 }
 
-+(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (CPInt) c
++(id<CPConstraint>) sumbool: (id<ORIntVarArray>) x eq: (CPInt) c
 {
    id<CPConstraint> o = [[CPSumBoolEq alloc] initCPSumBool: x eq: c];
    [[x tracker] trackObject: o];
    return o;
 }
 
-+(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c
++(id<CPConstraint>) sum: (id<ORIntVarArray>) x eq: (CPInt) c
 {
    return [self sum:x eq:c consistency:RangeConsistency];
 }
 
-+(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons
++(id<CPConstraint>) sum: (id<ORIntVarArray>) x eq: (CPInt) c consistency: (CPConsistency)cons
 {
    id<CPConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
    [[x tracker] trackObject: o];
    return o;
 }
 
-+(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (CPInt) c
++(id<CPConstraint>) sum: (id<ORIntVarArray>) x leq: (CPInt) c
 {
    id<CPConstraint> o = [[CPINEquationBC alloc] initCPINEquationBC: x lequal: c];
    [[x tracker] trackObject: o];
@@ -216,17 +216,17 @@
    return o;   
 }
 
-+(id<CPConstraint>) circuit: (id<CPIntVarArray>) x
++(id<CPConstraint>) circuit: (id<ORIntVarArray>) x
 {
     id<CPConstraint> o = [[CPCircuitI alloc] initCPCircuitI:x];
     [[x tracker] trackObject: o];
     return o;
 }
 
-+(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
++(id<CPConstraint>) packing: (id<ORIntVarArray>) x itemSize: (id<CPIntArray>) itemSize binSize: (id<CPIntArray>) binSize;
 {
    id<ORIntRange> R = [binSize range];
-   id<CPIntVarArray> load = [CPFactory intVarArray: [x cp] range: R];
+   id<ORIntVarArray> load = [CPFactory intVarArray: [x cp] range: R];
    ORInt low = [R low];
    ORInt up = [R up];
    for(CPInt i = low; i <= up; i++) 
@@ -246,7 +246,7 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    return r2->_int - r1->_int;
 }
 
-+(void) sortIntVarInt: (id<CPIntVarArray>) x size: (id<CPIntArray>) size sorted: (id<CPIntVarArray>*) sx sortedSize: (id<CPIntArray>*) sortedSize
++(void) sortIntVarInt: (id<ORIntVarArray>) x size: (id<CPIntArray>) size sorted: (id<ORIntVarArray>*) sx sortedSize: (id<CPIntArray>*) sortedSize
 {
    id<ORIntRange> R = [x range];
    int nb = [R up] - [R low] + 1;
@@ -262,9 +262,9 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    *sortedSize = [CPFactory intArray:[x cp] range: R with: ^ORInt(ORInt i) { return toSort[i - low]._int; }];
 }
 
-+(id<CPConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize load: (id<CPIntArray>) load;
++(id<CPConstraint>) packing: (id<ORIntVarArray>) x itemSize: (id<CPIntArray>) itemSize load: (id<CPIntArray>) load;
 {
-   id<CPIntVarArray> sortedItem;
+   id<ORIntVarArray> sortedItem;
    id<CPIntArray> sortedSize;
    [CPFactory sortIntVarInt: x size: itemSize sorted: &sortedItem sortedSize: &sortedSize];
 //   NSLog(@"%@",sortedItem);
@@ -274,19 +274,19 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    return o;
 }
 
-+(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<ORIntVar>) binSize
++(id<CPConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<ORIntVar>) binSize
 {
    id<CPConstraint> o = [[CPOneBinPackingI alloc] initCPOneBinPackingI: item itemSize: itemSize bin: b binSize: binSize];
    [[item tracker] trackObject: o];
    return o;
 }
-+(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<CPIntArray>) w capacity:(id<ORIntVar>)c
++(id<CPConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<CPIntArray>) w capacity:(id<ORIntVar>)c
 {
    id<CPConstraint> o = [[CPKnapsack alloc] initCPKnapsackDC:x weights:w capacity:c];
    [[x tracker] trackObject: o];
    return o;
 }
-+(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x
++(id<CPConstraint>) nocycle: (id<ORIntVarArray>) x
 {
     id<CPConstraint> o = [[CPCircuitI alloc] initCPNoCycleI:x];
     [[x tracker] trackObject: o];
@@ -391,13 +391,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    [[[x cp] solver] trackObject:o];
    return o;
 }
-+(id<CPConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<ORIntVar>)y
++(id<CPConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y
 {
    id<CPConstraint> o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:c equal:y];
    [[[x cp] solver] trackObject:o];
    return o;
 }
-+(id<CPConstraint>) table: (CPTableI*) table on: (id<CPIntVarArray>) x
++(id<CPConstraint>) table: (CPTableI*) table on: (id<ORIntVarArray>) x
 {
     id<CPConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
     [[[x cp] solver] trackObject:o];
@@ -409,13 +409,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
     [[[x cp] solver] trackObject:o];
     return o;    
 }
-+(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<CPIntMatrix>) matrix cost: (id<ORIntVar>) cost
++(id<CPConstraint>) assignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost
 {
    id<CPConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix cost: cost];
    [[[x cp] solver] trackObject:o];
    return o;
 }
-+(id<CPConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y
++(id<CPConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y
 {
    id<CPConstraint> o = [[CPLexConstraint alloc] initCPLexConstraint:x and:y];
    [[[x cp] solver] trackObject:o];

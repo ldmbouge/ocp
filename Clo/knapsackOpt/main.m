@@ -60,10 +60,10 @@ int main(int argc, const char * argv[])
       id<CPSolver> cp = [CPFactory createSolver];
       id<ORIntRange> N = RANGE(cp,0,n-1);
       
-      id<CPIntVarArray> x = ALL(CPIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(cp,0,1)]);
+      id<ORIntVarArray> x = ALL(ORIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(cp,0,1)]);
       id<ORIntVar> obj = [CPFactory intVar:cp bounds:RANGE(cp,0,sp)];
       id<CPHeuristic> h = [CPFactory createIBS:cp restricted:x];
-      [cp add: [SUM(i, N, [x[i] muli:p[i]]) eq:obj]];
+      [cp add: [SUM(i, N, [x[i] muli:p[i]]) eq: obj]];
       for(int i=0;i<m;i++) {
          id<CPIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
          id<ORIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
