@@ -36,9 +36,9 @@ int main(int argc, const char * argv[])
    id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
    id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
    id<CPIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
-                                                   with: ^id<CPIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
+                                                   with: ^id<ORIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
    id<CPIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
-                                                   with: ^id<CPIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
+                                                   with: ^id<ORIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
    id<CPTable> table = [CPFactory table: cp arity: 3];
    for(CPInt i = 1; i <= n; i++)
       for(CPInt j = i+1; j <= n; j++)
@@ -50,10 +50,10 @@ int main(int argc, const char * argv[])
    [cp add: [CPFactory alldifferent:allgames]];
    for(CPInt w = 1; w <= n; w++)
       [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods : HomeAway
-                                                          with: ^id<CPIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
+                                                          with: ^id<ORIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
    for(CPInt p = 1; p <= n/2; p++)
       [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp range: EWeeks : HomeAway
-                                                         with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
+                                                         with: ^id<ORIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
                                   low: c
                                    up: c
                           consistency:DomainConsistency]];

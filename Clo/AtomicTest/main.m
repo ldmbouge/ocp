@@ -208,7 +208,7 @@ int main (int argc, const char * argv[])
     /*
     id<CPSolver> cp = [CPFactory createSolver];
     CPRange R = (CPRange){1,10};
-    id<CPIntVar> x = [CPFactory intVar: cp domain: R];
+    id<ORIntVar> x = [CPFactory intVar: cp domain: R];
     id<CPIntSet> S = [CPFactory intSet: cp];
     for(CPInt i = 2; i <= 10; i += 2)
         [S insert: i];

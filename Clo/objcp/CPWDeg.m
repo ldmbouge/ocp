@@ -54,7 +54,7 @@
 
 // pvh: see question below for the importance of _cv
 
--(float) varOrdering:(id<CPIntVar>)x
+-(float) varOrdering:(id<ORIntVar>)x
 {
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
@@ -66,7 +66,7 @@
    return h / [x domsize];
 }
 
--(float) valOrdering:(int) v forVar:(id<CPIntVar>)x
+-(float) valOrdering:(int) v forVar:(id<ORIntVar>)x
 {
    return -v;   
 }

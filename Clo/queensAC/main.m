@@ -31,7 +31,7 @@ int main (int argc, const char * argv[])
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
    [CPFactory intArray:cp range:R with: ^CPInt(CPInt i) { return i; }];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
-   id<CPIntVarArray> xp = ALL(CPIntVar,i,R,[CPFactory intVar:x[i] shift:i]);
+   id<CPIntVarArray> xp = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:i]);
    id<CPIntVarArray> xn = ALL(CPIntVar,i,R,[CPFactory intVar:x[i] shift:-i]);
    [cp add: [CPFactory alldifferent: x consistency: DomainConsistency]];
    [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];

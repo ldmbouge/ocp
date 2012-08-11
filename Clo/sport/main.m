@@ -34,28 +34,28 @@ int main(int argc, const char * argv[])
    id<ORIntRange> EWeeks = RANGE(cp,1,n);
    id<ORIntRange> HomeAway = RANGE(cp,0,1);
    id<ORIntRange> Games = RANGE(cp,0,n*n);
-   id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
-   id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
-   id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
-   id<CPIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
-                                                   with: ^id<CPIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
-   id<CPIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
-                                                   with: ^id<CPIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
+   id<ORIntArray> c = [CPFactory intArray:cp range:Teams with: ^ORInt(CPInt i) { return 2; }];
+   id<ORIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
+   id<ORIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
+   id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
+                                                   with: ^id<ORIntVar>(CPInt p,ORInt w,ORInt h) { return [team at: p : w : h]; }];
+   id<ORIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
+                                                   with: ^id<ORIntVar>(ORInt p,ORInt w) { return [game at: p : w]; }];
    id<CPTable> table = [CPFactory table: cp arity: 3];
-   for(CPInt i = 1; i <= n; i++)
-      for(CPInt j = i+1; j <= n; j++)
+   for(ORInt i = 1; i <= n; i++)
+      for(ORInt j = i+1; j <= n; j++)
          [table insert: i : j : (i-1)*n + j-1];
 
-   for(CPInt w = 1; w < n; w++)
-      for(CPInt p = 1; p <= n/2; p++)
+   for(ORInt w = 1; w < n; w++)
+      for(ORInt p = 1; p <= n/2; p++)
          [cp add: [CPFactory table: table on: [team at: p : w : 0] : [team at: p : w : 1] : [game at: p : w]]];
-   [cp add: [CPFactory alldifferent:allgames]];
-   for(CPInt w = 1; w <= n; w++)
+   [cp add: [CPFactory alldifferent: allgames]];
+   for(ORInt w = 1; w <= n; w++)
       [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods : HomeAway
-                                                          with: ^id<CPIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
-   for(CPInt p = 1; p <= n/2; p++)
+                                                          with: ^id<ORIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
+   for(ORInt p = 1; p <= n/2; p++)
       [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp range: EWeeks : HomeAway
-                                                         with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
+                                                         with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
                                   low: c
                                    up: c
                           consistency:DomainConsistency]];
@@ -64,8 +64,8 @@ int main(int argc, const char * argv[])
     ^() {
        /*
         for(CPInt p = 1; p <= n/2 ; p++) {
-        id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<CPIntVar>(CPInt w) { return [game at: p : w]; }];
-        id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<CPIntVar>(CPInt w) { return [game at: w : p]; }];
+        id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(CPInt w) { return [game at: p : w]; }];
+        id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(CPInt w) { return [game at: w : p]; }];
         [CPLabel array: ap orderedBy: ^CPInt(CPInt i) { return [[ap at:i] domsize];}];
         [CPLabel array: aw orderedBy: ^CPInt(CPInt i) { return [[aw at:i] domsize];}];
         }

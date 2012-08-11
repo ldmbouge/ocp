@@ -74,7 +74,7 @@
       CPInt i = [select max];
       if (i == MAXINT)
          return;
-      id<CPIntVar> x = [av at: i];
+      id<ORIntVar> x = [av at: i];
       CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMax:cp
                                                             range:RANGE(cp,[x min],[x max])
                                                          suchThat:^bool(CPInt v)  { return [x member:v];}

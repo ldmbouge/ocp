@@ -16,17 +16,17 @@
 
 @protocol CPIntVar;
 @protocol CPIntVarArray;
-typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
+typedef id<ORIntVar>(^CPRewriter)(id<CPExpr>);
 
 @protocol CPLinear<NSObject>
 -(void)setIndependent:(CPInt)idp;
 -(void)addIndependent:(CPInt)idp;
--(void)addTerm:(id<CPIntVar>)x by:(CPInt)c;
+-(void)addTerm:(id<ORIntVar>)x by:(CPInt)c;
 @end
 
 @interface CPLinear : NSObject<CPLinear> {
    struct CPTerm {
-      id<CPIntVar>  _var;
+      id<ORIntVar>  _var;
       CPInt        _coef;
    };
    struct CPTerm* _terms;
@@ -38,11 +38,11 @@ typedef id<CPIntVar>(^CPRewriter)(id<CPExpr>);
 -(void)dealloc;
 -(void)setIndependent:(CPInt)idp;
 -(void)addIndependent:(CPInt)idp;
--(void)addTerm:(id<CPIntVar>)x by:(CPInt)c;
+-(void)addTerm:(id<ORIntVar>)x by:(CPInt)c;
 -(CPInt)independent;
 -(NSString*)description;
 -(id<CPIntVarArray>)scaledViews;
--(id<CPIntVar>)oneView;
+-(id<ORIntVar>)oneView;
 -(CPInt)size;
 -(CPInt)min;
 -(CPInt)max;

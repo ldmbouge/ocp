@@ -255,13 +255,13 @@
       [_search fail];
 }
 
--(void) minimize: (id<CPIntVar>) x
+-(void) minimize: (id<ORIntVar>) x
 {
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [self add: cstr];
    _objective = cstr;
 }
--(void) maximize: (id<CPIntVar>) x
+-(void) maximize: (id<ORIntVar>) x
 {
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [self add: cstr];
@@ -360,7 +360,7 @@
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) lthen: (id<CPIntVar>) var with: (ORInt) val
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_solver lthen:var with: val];
    if (status == ORFailure) {
@@ -368,7 +368,7 @@
    }
    [ORConcurrency pumpEvents];
 }
--(void) gthen: (id<CPIntVar>) var with: (ORInt) val
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_solver gthen:var with:val];
    if (status == ORFailure) {
@@ -377,7 +377,7 @@
    [ORConcurrency pumpEvents];
 }
 
--(void) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S
+-(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
     ORStatus status = [_solver restrict: var to: S];  
     if (status == ORFailure)
@@ -620,7 +620,7 @@
    [_search nestedSolveAll: body onSolution: onSolution onExit: onExit control:sc];   
 }
 
--(void) minimize: (id<CPIntVar>) x in: (ORClosure) body 
+-(void) minimize: (id<ORIntVar>) x in: (ORClosure) body 
 {
    [_search search: ^() { [self nestedMinimize: x 
                                             in: body 
@@ -630,7 +630,7 @@
     ];
 }
 
--(void) minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
+-(void) minimize: (id<ORIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
 {
    [_search search: ^() { [self nestedMinimize: x 
                                             in: ^() { body(); [self close]; search(); } 
@@ -639,7 +639,7 @@
                            ]; }
     ];
 }
--(void) maximize: (id<CPIntVar>) x in: (ORClosure) body 
+-(void) maximize: (id<ORIntVar>) x in: (ORClosure) body 
 {
    [_search search: ^() { [self nestedMaximize: x 
                                             in: body 
@@ -649,7 +649,7 @@
     ];
 }
 
--(void) maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
+-(void) maximize: (id<ORIntVar>) x subjectTo: (ORClosure) body using: (ORClosure) search
 {
    [_search search: ^() { [self nestedMaximize: x 
                                             in: ^() { body(); [self close]; search(); } 

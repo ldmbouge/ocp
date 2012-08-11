@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
          for(ORInt i = 0; i <= 10; i++) 
 //            printf("instantiating variable %d \n",i);
-            [CPLabel var: (id<CPIntVar>) [a[i] dereference]];
+            [CPLabel var: (id<ORIntVar>) [a[i] dereference]];
       }];
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[a[i] value]);

@@ -69,7 +69,7 @@
             [[_mtxView cellAtRow:p-1 column:w-1] setAlignment: NSCenterTextAlignment];
             [[_mtxView cellAtRow:p-1 column:w-1] setFont: theFont];
          }];
-         id<CPIntVar> x = [game at:p:w];
+         id<ORIntVar> x = [game at:p:w];
          [cp add: [CPFactory watchVariable:x
                             onValueLost: nil
                             onValueBind:^void(CPInt val) {
@@ -115,10 +115,10 @@
    id<CPIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(CPInt i) { return 2; }];
    id<CPIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
    id<CPIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
-   id<CPIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
-                                                   with: ^id<CPIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
-   id<CPIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
-                                                   with: ^id<CPIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
+   id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
+                                                   with: ^id<ORIntVar>(CPInt p,CPInt w,CPInt h) { return [team at: p : w : h]; }];
+   id<ORIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
+                                                   with: ^id<ORIntVar>(CPInt p,CPInt w) { return [game at: p : w]; }];
    id<CPTable> table = [CPFactory table: cp arity: 3];
    for(CPInt i = 1; i <= n; i++)
       for(CPInt j = i+1; j <= n; j++)
@@ -132,10 +132,10 @@
        [cp add: [CPFactory alldifferent:allgames]];
        for(CPInt w = 1; w <= n; w++)
           [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: Periods : HomeAway
-                                                              with: ^id<CPIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
+                                                              with: ^id<ORIntVar>(CPInt p,CPInt h) { return [team at: p : w : h ]; } ]]];
        for(CPInt p = 1; p <= n/2; p++)
           [cp add: [CPFactory cardinality: [CPFactory intVarArray: cp range: EWeeks : HomeAway
-                                                             with: ^id<CPIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
+                                                             with: ^id<ORIntVar>(CPInt w,CPInt h) { return [team at: p : w : h ]; }]
                                       low: c
                                        up: c
                               consistency:DomainConsistency]];
@@ -145,8 +145,8 @@
     ^() {
        /*
         for(CPInt p = 1; p <= n/2 ; p++) {
-        id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<CPIntVar>(CPInt w) { return [game at: p : w]; }];
-        id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<CPIntVar>(CPInt w) { return [game at: w : p]; }];
+        id<CPIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(CPInt w) { return [game at: p : w]; }];
+        id<CPIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(CPInt w) { return [game at: w : p]; }];
         [CPLabel array: ap orderedBy: ^CPInt(CPInt i) { return [[ap at:i] domsize];}];
         [CPLabel array: aw orderedBy: ^CPInt(CPInt i) { return [[aw at:i] domsize];}];
         }

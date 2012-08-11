@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
       id<CPIntVarArray> cost = [CPFactory intVarArray: cp range:Stores domain: RANGE(cp,0,maxCost)];
       id<CPIntVarArray> supp = [CPFactory intVarArray: cp range:Stores domain: Warehouses];
       id<CPIntVarArray> open = [CPFactory intVarArray: cp range:Warehouses domain: RANGE(cp,0,1)];
-      id<CPIntVar>      obj  = [CPFactory intVar:cp bounds:RANGE(cp,0,maxCost*sizeof(cap))];
+      id<ORIntVar>      obj  = [CPFactory intVar:cp bounds:RANGE(cp,0,maxCost*sizeof(cap))];
       
       [cp add: [obj eq: [SUM(s, Stores, cost[s]) plus: SUM(w, Warehouses, [open[w] muli:fixed]) ]]];
       for(CPUInt i=Warehouses.low;i <= Warehouses.up;i++) {

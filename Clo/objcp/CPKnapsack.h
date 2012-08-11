@@ -20,7 +20,7 @@
    id<CPIntArray>    _w;
    CPIntVarI*        _c;
 }
--(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<CPIntArray>)w capacity:(id<CPIntVar>)cap;
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<CPIntArray>)w capacity:(id<ORIntVar>)cap;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

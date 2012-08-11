@@ -25,7 +25,7 @@
 
 @interface CPOneBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
 }
--(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
+-(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<ORIntVar>) binSize;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

@@ -36,8 +36,8 @@ int main (int argc, const char * argv[])
    //id<CPHeuristic> h = [CPFactory createIBS:cp];
    for(CPUInt i =0;i < n; i++) {
       for(CPUInt j=i+1;j< n;j++) {
-         id<CPIntVar> xi = [x at: i];
-         id<CPIntVar> xj = [x at: j];
+         id<ORIntVar> xi = [x at: i];
+         id<ORIntVar> xj = [x at: j];
          [cp add: [CPFactory notEqual:xi  to:xj plus:0]];
          [cp add: [CPFactory notEqual:xi  to:xj plus:i-j]];
          [cp add: [CPFactory notEqual:xi  to:xj plus:j-i]];

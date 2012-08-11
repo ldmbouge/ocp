@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/DFSController.h"
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPConstraint.h>
 #import "objcp/CPEngine.h"
 #import "objcp/CP.h"
 #import "objcp/CPFactory.h"
@@ -39,13 +39,13 @@ int main (int argc, const char * argv[])
  
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
-   id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: x[i] shift:i]; }];
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: x[i] shift:-i]; }];
    id<CPHeuristic> h = [CPFactory createFF:cp];
-   [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: cp over: x consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: cp over: xp consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: cp over: xn consistency:ValueConsistency]];
    [cp solveAll:
    ^() {
        //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];

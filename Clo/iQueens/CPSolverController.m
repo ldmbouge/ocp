@@ -51,7 +51,7 @@
    CPRange rows = {dom.min,dom.max};
    id grid = [board makeGrid:rows by: cols];
    for(CPInt i = [x low];i <= [x up];i++) {
-      id<CPIntVar> xi = [x at:i];
+      id<ORIntVar> xi = [x at:i];
       [cp add: [CPFactory watchVariable:xi 
                             onValueLost:^void(CPInt val) {
                                [board toggleGrid:grid row:val col:i to:Removed];
@@ -81,8 +81,8 @@
    id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    [cp solveAll: 
     ^() {
        [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];

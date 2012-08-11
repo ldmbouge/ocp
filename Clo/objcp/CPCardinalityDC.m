@@ -135,7 +135,7 @@ static void findValueRange(id<CPIntVarArray> x,CPInt* low,CPInt* up)
     CPInt l = [x low];
     CPInt u = [x up];
     for(CPInt i = l; i <= u; i++) {
-        id<CPIntVar> v = [x at: i];
+        id<ORIntVar> v = [x at: i];
         CPInt lb = [v min]; 
         if (lb < *low)
             *low = lb;

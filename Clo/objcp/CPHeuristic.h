@@ -15,8 +15,8 @@
 #import <objcp/CPArray.h>
 
 @protocol CPHeuristic <NSObject>
--(float) varOrdering: (id<CPIntVar>)x;
--(float) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x;
+-(float) varOrdering: (id<ORIntVar>)x;
+-(float) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
 -(void) initInternal: (id<CPVarArray>)t;
 -(void) initHeuristic: (NSMutableArray*)array;
 -(id<CPIntVarArray>) allIntVars;

@@ -200,6 +200,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI**   _x;
    CPLong       _nb;
 }
+-(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<ORIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (CPInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
 -(void) dealloc;
@@ -209,7 +210,7 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMinimize : CPCoreConstraint<ORObjective>
--(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
+-(id)        initCPIntVarMinimize: (id<ORIntVar>) x;
 -(void)      dealloc;
 -(ORStatus)  post;
 -(ORStatus)  check;
@@ -220,7 +221,7 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORObjective>
--(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
+-(id)        initCPIntVarMaximize: (id<ORIntVar>) x;
 -(void)      dealloc;
 -(ORStatus)  post;
 -(ORStatus)  check;

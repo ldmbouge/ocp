@@ -43,7 +43,7 @@
    CPRange rows = {dom.min,dom.max};
    id grid = [_board makeGrid:rows by: cols];
    for(CPInt i = [x low];i <= [x up];i++) {
-      id<CPIntVar> xi = x[i];
+      id<ORIntVar> xi = x[i];
       [cp add: [CPFactory watchVariable:xi 
                             onValueLost:^void(CPInt val) {
                                [_board toggleGrid:grid row:val col:i to:Removed];
@@ -72,8 +72,8 @@
    id<CPSolver> cp = [CPFactory createSolver];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    
    [cp solveAll: 
     ^() {

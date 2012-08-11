@@ -88,7 +88,7 @@ enum CPEngineState {
 -(ORStatus)  diff:(id)var with:(CPInt)val;
 -(ORStatus)  lthen:(id)var with:(CPInt)val;
 -(ORStatus)  gthen:(id)var with:(CPInt)val;
--(ORStatus)  restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(ORStatus)  restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(id)virtual:(id)obj;
 -(CPInt)virtualOffset:(id)obj;
 -(NSMutableArray*)allVars;

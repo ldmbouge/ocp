@@ -46,7 +46,7 @@
 @end
 
 @interface CPAssignImpact : NSObject {
-   id<CPIntVar>  _var;
+   id<ORIntVar>  _var;
    double*      _imps;
    CPUInt _nbVals;
    CPBounds      _dom;
@@ -54,7 +54,7 @@
    double*      _vari;
    CPUInt*   _cnts;
 }
--(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar;
+-(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar;
 -(void)dealloc;
 -(void)addImpact:(double)i forValue:(CPInt)val;
 -(void)setImpact:(double)i forValue:(CPInt)val;
@@ -63,7 +63,7 @@
 @end
 
 @implementation CPAssignImpact
--(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar
+-(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar
 {
    self = [super init];
    _var = theVar;
@@ -164,14 +164,14 @@
    [_impacts release];
    [super dealloc];
 }
--(float)varOrdering:(id<CPIntVar>)x
+-(float)varOrdering:(id<ORIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(float)valOrdering:(int)v forVar:(id<ORIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
@@ -188,7 +188,7 @@
    CPInt low = [_vars low],up = [_vars up];
    for(CPUInt i=low;i<=up;i++) {
       //NSLog(@"impacting: %@",[_vars at:i]);
-      CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<CPIntVar>)[_vars at:i]];
+      CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<ORIntVar>)[_vars at:i]];
       [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
@@ -235,7 +235,7 @@
    return;
 }
 
--(void)dichotomize:(id<CPIntVar>)x from:(CPInt)low to:(CPInt)up block:(CPInt)b sac:(NSMutableSet*)set 
+-(void)dichotomize:(id<ORIntVar>)x from:(CPInt)low to:(CPInt)up block:(CPInt)b sac:(NSMutableSet*)set 
 {
    if (up - low + 1 <= b) {
       double ir = 1.0 - [_monitor reductionFromRoot];
@@ -277,7 +277,7 @@
    NSMutableSet* sacs = nil;
    CPInt low = [_vars low],up = [_vars up];
    for(CPInt k=low; k <= up;k++) {
-      id<CPIntVar> v = (id<CPIntVar>)[_vars at:k];
+      id<ORIntVar> v = (id<ORIntVar>)[_vars at:k];
       CPBounds vb;
       [v bounds: &vb];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];

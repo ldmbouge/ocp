@@ -42,11 +42,11 @@ public:
    }
 };
 
-H operator-(id<CPIntVar> x,H y)
+H operator-(id<ORIntVar> x,H y)
 {
    return [x sub:y];
 }
-H operator==(id<CPIntVar> x,H y)
+H operator==(id<ORIntVar> x,H y)
 {
    return [x eq:y];
 }

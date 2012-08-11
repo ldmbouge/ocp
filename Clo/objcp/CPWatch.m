@@ -24,14 +24,14 @@
    ORInt2Void _rec;
    ORInt2Void _unb;
 }
--(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
+-(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(CPUInt)nbUVars;
 @end
 
 @implementation CPWatch
--(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost 
+-(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost 
            onValueBind:(ORInt2Void)bind 
         onValueRecover:(ORInt2Void)rec 
          onValueUnbind:(ORInt2Void)unb
@@ -86,7 +86,7 @@
 @end
 
 @implementation CPFactory(Visualize)
-+(id<CPConstraint>)watchVariable:(id<CPIntVar>)x 
++(id<CPConstraint>)watchVariable:(id<ORIntVar>)x 
                      onValueLost:(ORInt2Void)lost 
                      onValueBind:(ORInt2Void)bind 
                   onValueRecover:(ORInt2Void)rec 

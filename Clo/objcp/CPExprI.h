@@ -41,7 +41,7 @@
 @interface CPExprPrintI : NSObject<ORExprVisitor>
 -(CPExprPrintI*) initCPExprPrintI;
 -(void) dealloc;
--(void) visitIntVarI: (id<CPIntVar>) e;
+-(void) visitIntVarI: (id<ORIntVar>) e;
 -(void) visitIntegerI: (id<CPInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;

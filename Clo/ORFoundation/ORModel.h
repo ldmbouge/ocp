@@ -29,7 +29,6 @@
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
--(BOOL) hasDenseDomain;
 -(ORInt) value;
 -(ORInt) min;
 -(ORInt) max;
@@ -49,6 +48,18 @@
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
 -(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+@end
+
+@protocol ORIntVarMatrix <ORIdMatrix>
+-(ORInt) arity;
+-(id<ORIntVar>) flat:(ORInt)i;
+-(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2;
+-(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
 @end
 
 @protocol ORConstraint <ORAbstract,NSObject>

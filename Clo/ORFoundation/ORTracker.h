@@ -12,8 +12,11 @@
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
 
+@protocol OREngine;
+
 @protocol ORTracker <NSObject>
 -(void)trackObject:(id)obj;
 -(void)trackVariable:(id)obj;
 -(ORInt)virtualOffset:(id)obj;
+-(id<OREngine>) solver;
 @end

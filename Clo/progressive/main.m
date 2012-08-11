@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
 
    [cp solve: ^{
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
+          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; } ]
                orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
            ];
        }
@@ -147,7 +147,7 @@ int main(int argc, const char * argv[])
                 abort();
              }
           }
-       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
     ];
    NSLog(@"Solver status: %@\n",cp);
@@ -224,7 +224,7 @@ int real_main(int argc, const char * argv[])
        using:
     ^{
        for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; } ]
+          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; } ]
                orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
            ];
        }
@@ -310,7 +310,7 @@ int real_main(int argc, const char * argv[])
                 abort();
              }
           }
-       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<CPIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
     ];
    NSLog(@"Solver status: %@\n",cp);

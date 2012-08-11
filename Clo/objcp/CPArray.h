@@ -24,17 +24,17 @@
 @end
 
 @protocol CPIntVarArray <CPVarArray> 
--(id<CPIntVar>) at: (CPInt) value;
--(void) set: (id<CPIntVar>) x at: (CPInt) value;
--(id<CPIntVar>)objectAtIndexedSubscript: (NSUInteger)key;
--(void)setObject: (id<CPIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORIntVar>) at: (CPInt) value;
+-(void) set: (id<ORIntVar>) x at: (CPInt) value;
+-(id<ORIntVar>)objectAtIndexedSubscript: (NSUInteger)key;
+-(void)setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol CPIntVarMatrix <ORIdMatrix>
 -(ORInt) arity;
--(id<CPIntVar>) flat:(CPInt)i;
--(id<CPIntVar>) at: (CPInt) i1 : (CPInt) i2;
--(id<CPIntVar>) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
+-(id<ORIntVar>) flat:(CPInt)i;
+-(id<ORIntVar>) at: (CPInt) i1 : (CPInt) i2;
+-(id<ORIntVar>) at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
 -(void) set: (id) x at: (CPInt) i1 : (CPInt) i2;
 -(void) set: (id) x at: (CPInt) i1 : (CPInt) i2 : (CPInt) i3;
 -(id<ORIntRange>) range: (CPInt) i;

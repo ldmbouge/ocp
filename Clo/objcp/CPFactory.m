@@ -118,7 +118,7 @@ void failNow()
    return (id<CPIntArray>)[ORFactory intArray:cp range:r1 range: r2 with:clo];
 }
 
-+(id<CPIntVar>) intVar: (id<CPSolver>) cp bounds: (id<ORIntRange>) range
++(id<ORIntVar>) intVar: (id<CPSolver>) cp bounds: (id<ORIntRange>) range
 {
    return [CPIntVarI initCPIntVar:cp bounds: range];
 }
@@ -145,12 +145,12 @@ void failNow()
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
-+(id<CPIntVar>)boolVar: (id<CPSolver>)cp
++(id<ORIntVar>)boolVar: (id<CPSolver>)cp
 {
    return [CPIntVarI initCPBoolVar:cp];
 }
 
-+(id<CPIntVar>) negate:(id<CPIntVar>)x
++(id<ORIntVar>) negate:(id<ORIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
@@ -165,30 +165,30 @@ void failNow()
 {
    return (id<CPVarArray>)[ORFactory idArray:cp range: range];
 }
-+(id<CPIntVarArray>) arrayCPIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<CPIntVar>(^)(CPInt)) clo
++(id<ORIntVarArray>) arrayCPIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(CPInt)) clo
 {
    return [self intVarArray:cp range:range with:clo];
 }
-+(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
++(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    for(CPInt k=range.low;k <= range.up;k++)
       [o set:[CPFactory intVar:cp domain:domain] at:k];
-   return (id<CPIntVarArray>)o;
+   return (id<ORIntVarArray>)o;
 }
-+(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range 
++(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
-   return (id<CPIntVarArray>)o;
+   return (id<ORIntVarArray>)o;
 }
-+(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<CPIntVar>(^)(CPInt)) clo
++(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(CPInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    for(CPInt k= [range low];k <= [range up];k++)
       [o set:clo(k) at:k];
-   return (id<CPIntVarArray>)o;
+   return (id<ORIntVarArray>)o;
 }
-+(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<CPIntVar>(^)(CPInt,CPInt)) clo
++(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(CPInt,CPInt)) clo
 {
    CPInt nb = ([r1 up] - [r1 low] + 1) * ([r2 up] - [r2 low] + 1);
    id<ORIntRange> fr = [ORFactory intRange: cp low: 0 up: nb-1];
@@ -197,9 +197,9 @@ void failNow()
    for(CPInt i=[r1 low];i <= [r1 up];i++)
       for(CPInt j= [r2 low];j <= [r2 up];j++)
          [o set:clo(i,j) at:k++];
-   return (id<CPIntVarArray>)o;
+   return (id<ORIntVarArray>)o;
 }
-+(id<CPIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with: (id<CPIntVar>(^)(CPInt,CPInt,CPInt)) clo
++(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with: (id<ORIntVar>(^)(CPInt,CPInt,CPInt)) clo
 {
    CPInt nb = ([r1 up] - [r1 low] + 1) * ([r2 up] - [r2 low] + 1) * ([r3 up] - [r3 low] + 1);
    id<ORIntRange> fr = [ORFactory intRange: cp low: 0 up: nb-1]; 
@@ -209,7 +209,7 @@ void failNow()
       for(CPInt j= [r2 low]; j <= [r2 up]; j++)
          for(CPInt k= [r3 low];k <= [r3 up]; k++)
             [o set:clo(i,j,k) at:l++];
-   return (id<CPIntVarArray>)o;
+   return (id<ORIntVarArray>)o;
 }
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
@@ -258,8 +258,8 @@ void failNow()
 
 +(id<CPIntVarArray>) pointwiseProduct:(id<CPIntVarArray>)x by:(int*)c
 {
-   id<CPIntVarArray> rv = [self intVarArray:[x cp] range: [x range] with:^id<CPIntVar>(CPInt i) {
-      id<CPIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
+   id<CPIntVarArray> rv = [self intVarArray:[x cp] range: [x range] with:^id<ORIntVar>(CPInt i) {
+      id<ORIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
       return theView;
    }];
    return rv;
@@ -344,7 +344,7 @@ void failNow()
    return (id<CPExpr>)[ORFactory exprAbs:op];
 }
 
-+(id<CPExpr>) dotProduct:(id<CPIntVar>[])vars by:(int[])coefs
++(id<CPExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs
 {
    id<CPSolver> cp = [vars[0] cp];
    id<CPExpr> rv = nil;

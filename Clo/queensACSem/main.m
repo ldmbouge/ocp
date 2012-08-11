@@ -25,8 +25,8 @@ int main (int argc, const char * argv[])
    id<ORIntRange> R = RANGE(cp,1,n);
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
    id<CPIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    [cp solveParAll:4
        subjectTo: 
             ^() {

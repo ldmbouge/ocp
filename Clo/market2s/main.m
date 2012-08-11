@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
       id<CPIntVarArray> x = ALL(CPIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
       for(int i=0;i<m;i++) {
          id<CPIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
-         id<CPIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
+         id<ORIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
          [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
       }
       [cp solve: ^{

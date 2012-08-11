@@ -100,7 +100,7 @@
    id<CPIntVarArray>  _item;
    id<CPIntArray>     _itemSize;
    CPInt              _bin;
-   id<CPIntVar>       _binSize;
+   id<ORIntVar>       _binSize;
    BOOL               _posted;
    
    CPInt              _low;
@@ -131,7 +131,7 @@
    _posted = false;
 }
 
--(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<CPIntVar>) binSize;
+-(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) item itemSize: (id<CPIntArray>) itemSize bin: (CPInt) b binSize: (id<ORIntVar>) binSize;
 {
    self = [super initCPActiveConstraint: [[item cp] solver]];
    _item = item;

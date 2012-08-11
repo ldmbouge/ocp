@@ -41,15 +41,15 @@
 
 -(void)                 add: (id<CPConstraint>) c;
 -(void)                 add: (id<CPConstraint>) c consistency:(CPConsistency) cons;
--(void)            minimize: (id<CPIntVar>) x;
--(void)            maximize: (id<CPIntVar>) x;
+-(void)            minimize: (id<ORIntVar>) x;
+-(void)            maximize: (id<ORIntVar>) x;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 
--(void)               label: (id<CPIntVar>) var with: (ORInt) val;
--(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(void)               label: (id<ORIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;

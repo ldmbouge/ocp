@@ -44,8 +44,8 @@
    id<CPSolver> m = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    id<CPIntVarArray> x  = [CPFactory intVarArray:m range:R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:m range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<CPIntVarArray> xn = [CPFactory intVarArray:m range:R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<CPIntVarArray> xp = [CPFactory intVarArray:m range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<CPIntVarArray> xn = [CPFactory intVarArray:m range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
 
    [m solveAll: 
     ^() {
@@ -127,7 +127,7 @@
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
    id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
-   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<CPIntVar>(CPInt i) {
+   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(CPInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
@@ -194,7 +194,7 @@
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
    id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
-   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<CPIntVar>(CPInt i) {
+   id<CPIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(CPInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
@@ -214,8 +214,8 @@
 -(void)testReify1
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    NSArray* av = [NSArray arrayWithObjects:x,b,nil];
    
    [m solveAll:^() {
@@ -232,8 +232,8 @@
 -(void)testReify2
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [m solveAll:^() {
       [m add:[CPFactory reify:b with:x eqi:5]];
    } using: ^{
@@ -249,9 +249,9 @@
 -(void)testReify3
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [m solveAll:^() {
       [m add:[CPFactory reify:b with:x eq:y consistency:ValueConsistency]];
    } using: ^{
@@ -268,9 +268,9 @@
 -(void)testReify4
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [m solveAll:^() {
       [m add:[CPFactory reify:b with:x eq:y consistency:DomainConsistency]];
    } using: ^{
@@ -300,8 +300,8 @@
    CPRange R = (CPRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
    id<CPIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,10}];  
-   id<CPIntVar> zn = [CPFactory intVar:m domain:(CPRange){-10,0}];
-   id<CPIntVar> z = [CPFactory intVar:zn scale:-1];
+   id<ORIntVar> zn = [CPFactory intVar:m domain:(CPRange){-10,0}];
+   id<ORIntVar> z = [CPFactory intVar:zn scale:-1];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
       [m add: [CPFactory lEqualc:z to:5]];
@@ -324,8 +324,8 @@
    // First, setup  an "initial CP/Solver pair
    id<CPSolver> m = [CPFactory createSolver];
    // Add 2 variables and a constraint
-   id<CPIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<CPIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
    [CPFactory negate:b];
    
    [m add:[CPFactory reify:b with:x eq:5]];
@@ -351,8 +351,8 @@
    // variables in the original to show them unaffected). 
    // Check that the resolution works as expected (backtracking is working)
    [other solveAll:^() {
-      id<CPIntVar> xp = [ca objectAtIndex:0];
-      id<CPIntVar> bp = [ca objectAtIndex:1];
+      id<ORIntVar> xp = [ca objectAtIndex:0];
+      id<ORIntVar> bp = [ca objectAtIndex:1];
       [CPLabel var:xp];
       NSLog(@"solution : %@\n",ca);
       NSLog(@"originals: %@\n",[[m solver] allVars]);
@@ -372,8 +372,8 @@
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
    [CPFactory intArray:cp range:R with: ^CPInt(CPInt i) { return i; }];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
-   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
-   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<CPIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
+   id<CPIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
+   id<CPIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
    
    [cp solveAll:
     ^() {
@@ -409,7 +409,7 @@
    CPInt n = 4;
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
-   id<CPIntVar> cap = [CPFactory intVar:cp domain:RANGE(0,25)];
+   id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(0,25)];
    int* coef = (int[]){3,4,10,30};
    id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
    [cp solveAll:^{
@@ -427,7 +427,7 @@
    CPInt n = 4;
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
-   id<CPIntVar> cap = [CPFactory intVar:cp domain:RANGE(3,25)];
+   id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(3,25)];
    int* coef = (int[]){3,4,10,30};
    id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
    [cp solveAll:^{
@@ -446,7 +446,7 @@
    CPInt n = 4;
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range:RANGE(1,n) domain:RANGE(0,1)];
-   id<CPIntVar> cap = [CPFactory intVar:cp domain:RANGE(14,25)];
+   id<ORIntVar> cap = [CPFactory intVar:cp domain:RANGE(14,25)];
    int* coef = (int[]){3,4,10,30};
    id<CPIntArray> w = [CPFactory intArray:cp range:RANGE(1,n) with:^ORInt(ORInt i) {return coef[i-1];}];
    [cp solveAll:^{

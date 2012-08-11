@@ -30,7 +30,7 @@ enum CPDomValue {
 @end
 
 @interface CPFactory (Visualize)
-+(id<CPConstraint>)watchVariable:(id<CPIntVar>)x 
++(id<CPConstraint>)watchVariable:(id<ORIntVar>)x 
                      onValueLost:(ORInt2Void)lost 
                      onValueBind:(ORInt2Void)bind 
                   onValueRecover:(ORInt2Void)rec 

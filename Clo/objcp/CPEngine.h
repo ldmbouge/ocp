@@ -19,9 +19,9 @@
 -(id<CPConstraint>) wrapExpr:(id<CPRelation>) e  consistency: (CPConsistency) cons;
 -(ORStatus) label: (id) var with: (CPInt) val;
 -(ORStatus) diff:  (id) var with: (CPInt) val;
--(ORStatus) lthen: (id<CPIntVar>) var with: (CPInt) val;
--(ORStatus) gthen: (id<CPIntVar>) var with: (CPInt) val;
--(ORStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(ORStatus) lthen: (id<ORIntVar>) var with: (CPInt) val;
+-(ORStatus) gthen: (id<ORIntVar>) var with: (CPInt) val;
+-(ORStatus) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(ORStatus) propagate;
 -(CPUInt) nbPropagation;
 -(id<ORSolution>) solution;

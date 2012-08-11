@@ -19,8 +19,8 @@
    id<CPSolver>            _cp;
 }
 -(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
--(float)varOrdering:(id<CPIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
+-(float)varOrdering:(id<ORIntVar>)x;
+-(float)valOrdering:(int)v forVar:(id<ORIntVar>)x ;
 -(void)initInternal:(id<CPVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
 @end

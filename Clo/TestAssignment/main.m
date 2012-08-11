@@ -31,7 +31,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
-   id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,36}];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,36}];
    [cost set: 10 at: 1 : 1];
    [cost set: 15 at: 1 : 2];
    [cost set: 11 at: 1 : 3];
@@ -83,7 +83,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
    id<CPIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
-   id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,100}];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,100}];
    [cost set: 10 at: 1 : 1];
    [cost set: 15 at: 1 : 2];
    [cost set: 11 at: 1 : 3];
@@ -169,7 +169,7 @@ int main (int argc, const char * argv[])
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
-   id<CPIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    
    for(CPInt i = 0; i < nbCities; i++)
@@ -261,7 +261,7 @@ int main (int argc, const char * argv[])
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
    id<CPIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
-   id<CPIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:
     ^{

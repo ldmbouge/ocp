@@ -70,8 +70,8 @@
 
 -(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
 -(void)                  add: (id<CPConstraint>) c;
--(void)             minimize: (id<CPIntVar>) x;
--(void)             maximize: (id<CPIntVar>) x;
+-(void)             minimize: (id<ORIntVar>) x;
+-(void)             maximize: (id<ORIntVar>) x;
 -(void)         addHeuristic: (id<CPHeuristic>) h;
 
 -(void)                close;
@@ -84,11 +84,11 @@
 -(void)                state;
 -(id<ORObjective>) objective;
 
--(void)               label: (id<CPIntVar>) var with: (ORInt) val;
--(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(void)               label: (id<ORIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
@@ -157,10 +157,10 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 
 
--(void)            minimize: (id<CPIntVar>) x in: (ORClosure) body;
--(void)            maximize: (id<CPIntVar>) x in: (ORClosure) body;
--(void)            minimize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
--(void)            maximize: (id<CPIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
+-(void)            minimize: (id<ORIntVar>) x in: (ORClosure) body;
+-(void)            maximize: (id<ORIntVar>) x in: (ORClosure) body;
+-(void)            minimize: (id<ORIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
+-(void)            maximize: (id<ORIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 -(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
 -(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
 -(SemTracer*)tracer;
