@@ -14,7 +14,7 @@
 #import "objcp/CPBasicConstraint.h"
 #import "objcp/DFSController.h"
 #import "objcp/CPEngine.h"
-#import "objcp/cp.h"
+#import "objcp/CPSolver.h"
 #import "CPLabel.h"
 #import "CPData.h"
 #import "CPValueConstraint.h"

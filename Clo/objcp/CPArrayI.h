@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "CP.h"
+#import "CPSolver.h"
 #import "ORTrail.h"
 #import "CPTypes.h"
 #import "CPBitDom.h"

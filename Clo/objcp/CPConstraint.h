@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CP.h>
+#import <objcp/CPSolver.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPTable.h>
 #import <objcp/CPArray.h>

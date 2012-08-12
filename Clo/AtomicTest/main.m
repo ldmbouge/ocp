@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/Foundation.h>
-#import "objcp/CP.h"
+#import "objcp/CPSolver.h"
 #import "objcp/CPEquationBC.h"
 #import "objcp/CPBasicConstraint.h"
 #import "objcp/CPValueConstraint.h"
@@ -106,7 +106,7 @@
 */
 
 /*
-#import "objcp/CP.h"
+#import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
 
 typedef int (^Void2Int)(void);

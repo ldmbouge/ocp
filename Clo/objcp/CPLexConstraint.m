@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPLexConstraint.h"
-#import "objcp/CP.h"
+#import "objcp/CPSolver.h"
 #import "objcp/CPError.h"
 #import "CPIntVarI.h"
 

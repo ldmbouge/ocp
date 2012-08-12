@@ -20,7 +20,7 @@
 #import "SillyVar.h"
 #import "CPEngine.h"
 #import "CPBasicConstraint.h"
-#import "CP.h"
+#import "CPSolver.h"
 
 
 void EvalFuncOnGrid( float(^block)(float) ) {

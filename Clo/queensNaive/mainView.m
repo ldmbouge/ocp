@@ -13,7 +13,7 @@
 #import "objcp/CPConstraint.h"
 #import "objcp/DFSController.h"
 #import "objcp/CPEngine.h"
-#import "objcp/CP.h"
+#import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 
