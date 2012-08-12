@@ -49,14 +49,14 @@
 -(void)initInternal:(id<CPVarArray>)t
 {
    _vars = t;
-   CPLong len = [_vars count];
-   CPUInt maxID = 0;
+   ORLong len = [_vars count];
+   ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[[t at:k] getId]);   
    _cv = malloc(sizeof(NSSet*)*len);
-   _map = malloc(sizeof(CPUInt)*(maxID+1));
+   _map = malloc(sizeof(ORUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
-   memset(_map,sizeof(CPUInt)*(maxID+1),0);   
+   memset(_map,sizeof(ORUInt)*(maxID+1),0);   
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
       _map[[[_vars at:k] getId]] = k - low;

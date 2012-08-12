@@ -144,10 +144,10 @@
 
 @implementation CPLimitTime
 
--(id) initCPLimitTime: (CPLong) maxTime
+-(id) initCPLimitTime: (ORLong) maxTime
 {
    self = [super initCPDefaultController];
-   _startTime = [CPRuntimeMonitor cputime];
+   _startTime = [ORRuntimeMonitor cputime];
    _maxTime = _startTime + maxTime;
    return self;
 }
@@ -166,7 +166,7 @@
 }
 -(void) startTryLeft
 {
-   CPLong currentTime = [CPRuntimeMonitor cputime];
+   ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime < _maxTime)
       [_controller fail];
    else
@@ -174,7 +174,7 @@
 }
 -(void) startTryRight
 {
-   CPLong currentTime = [CPRuntimeMonitor cputime];
+   ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime < _maxTime)
       [_controller fail];
    else
@@ -182,7 +182,7 @@
 }
 -(void) startTryallOnFailure
 {
-   CPLong currentTime = [CPRuntimeMonitor cputime];
+   ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime < _maxTime)
       [_controller fail];
    else
@@ -251,7 +251,7 @@
 
 
 @implementation CPLimitCondition
--(id) initCPLimitCondition: (CPVoid2Bool) condition
+-(id) initCPLimitCondition: (ORVoid2Bool) condition
 {
    self = [super initCPDefaultController];
    _condition = [condition copy];

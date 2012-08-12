@@ -43,18 +43,18 @@
     CP* m = [[[CP alloc] init] autorelease];
     id<ORIntVarArray> x = [[[CPIntVarArrayI alloc] initCPIntVarArray: m 
                                                             size: s 
-                                                          domain: (CPRange){0,n-1}] autorelease];
+                                                          domain: (ORRange){0,n-1}] autorelease];
     //         0 1 2 3 4 5 6 7
     int lb[] = {2,2,2,2,2,2,2,2};
     int ub[] = {3,3,3,3,3,3,3,3};
-    CPRange R = (CPRange){0,n-1};
+    ORRange R = (ORRange){0,n-1};
     CPIntArray* lba = [m createIntArray: R value:2]; 
     CPIntArray* uba = [m createIntArray: R value:3];
     printf("%s \n",[[lba description] cStringUsingEncoding:NSASCIIStringEncoding]);
     
 //
 //    [m post:[[CPCardinalityCst alloc] initCardinalityCst:[m solver] 
-//                                                  values:(CPRange){0,n-1} 
+//                                                  values:(ORRange){0,n-1} 
 //                                                     low:lb 
 //                                                   array:x 
 //                                                      up:ub]];
@@ -150,7 +150,7 @@ int main (int argc, const char * argv[])
     NSMutableArray* array = [[NSMutableArray alloc] init];
     for(ORInt i = 1; i <= 10; i++)
         [array addObject: [CPCrFactory integer: 0]];
-    [ORConcurrency parall: (CPRange){1,10} 
+    [ORConcurrency parall: (ORRange){1,10} 
                        do: ^void(int i) { 
                            printf("The thread %p is printing %d \n",[NSThread currentThread],i); 
                            int sum = 0;
@@ -180,7 +180,7 @@ int main (int argc, const char * argv[])
 int main (int argc, const char * argv[])
 {
     id<CPInformer> informer = [CPConcurrency informer];
-    [CPConcurrency parall: (CPRange){1,2} 
+    [CPConcurrency parall: (ORRange){1,2} 
                        do: ^void(int i) { 
                            printf("The thread %p is printing %d \n",[NSThread currentThread],i); 
                            if (i == 1) {
@@ -207,7 +207,7 @@ int main (int argc, const char * argv[])
    
     /*
     id<CPSolver> cp = [CPFactory createSolver];
-    CPRange R = (CPRange){1,10};
+    ORRange R = (ORRange){1,10};
     id<ORIntVar> x = [CPFactory intVar: cp domain: R];
     id<CPIntSet> S = [CPFactory intSet: cp];
     for(ORInt i = 2; i <= 10; i += 2)

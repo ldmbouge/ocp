@@ -25,5 +25,5 @@
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end

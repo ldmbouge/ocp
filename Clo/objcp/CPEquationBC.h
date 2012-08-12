@@ -16,7 +16,7 @@
 @interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c
 @private
    CPIntVarI**        _x;  // array of vars
-   CPLong            _nb;  // size
+   ORLong            _nb;  // size
    ORInt              _c;  // constant c in:: sum(i in S) x_i == c
    UBType* _updateBounds;
 }
@@ -24,13 +24,13 @@
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPINEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i <= c
 @private
    CPIntVarI**        _x;  // array of vars
-   CPLong            _nb;  // size
+   ORLong            _nb;  // size
    ORInt              _c;  // constant c in:: sum(i in S) x_i <= c
    UBType*    _updateMax;
 }
@@ -38,5 +38,5 @@
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end

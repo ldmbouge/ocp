@@ -75,7 +75,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 
 @interface CPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   CPUInt    _name;
+   ORUInt    _name;
    union {
       ORInt _value;
       id<CPDom>   _dom;
@@ -125,7 +125,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_asDom];
    if (_asDom) {
       [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
@@ -136,7 +136,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_asDom];
    if (_asDom)
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
@@ -179,11 +179,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         [_triggers release];    
     [super dealloc];
 }
--(void) setId:(CPUInt)name
+-(void) setId:(ORUInt)name
 {
     _name = name;
 }
--(CPUInt)getId
+-(ORUInt)getId
 {
    return _name;
 }
@@ -263,7 +263,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }
 }
 
--(void) bounds:(CPBounds*) bnd
+-(void) bounds:(ORBounds*) bnd
 {
    *bnd = domBounds((CPBoundsDom*)_dom);
 }
@@ -279,11 +279,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom member:v];
 }
--(CPRange)around:(ORInt)v
+-(ORRange)around:(ORInt)v
 {
    ORInt low = [_dom findMax:v-1];
    ORInt up  = [_dom findMin:v+1];
-   return (CPRange){low,up};
+   return (ORRange){low,up};
 }
 -(ORInt) shift
 {
@@ -507,7 +507,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(void) bindEvt
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._minEvt._val;
@@ -526,7 +526,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(void) changeMinEvt: (ORInt) dsz
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._minEvt._val;
@@ -543,7 +543,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(void) changeMaxEvt: (ORInt) dsz
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._maxEvt._val;
@@ -560,7 +560,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(void) loseValEvt: (ORInt) val
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._domEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
@@ -729,7 +729,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-   [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_vc];
    [aCoder encodeObject:_dom];
    [aCoder encodeObject:_fdm];
@@ -739,7 +739,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
    self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_vc];
    _dom = [[aDecoder decodeObject] retain];
    _fdm = [aDecoder decodeObject];
@@ -783,7 +783,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom max]+_b;
 }
--(void)bounds: (CPBounds*) bnd
+-(void)bounds: (ORBounds*) bnd
 {
    *bnd = domBounds((CPBitDom*)_dom);
    bnd->min += _b;
@@ -793,11 +793,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom member:v-_b];
 }
--(CPRange)around:(ORInt)v
+-(ORRange)around:(ORInt)v
 {
    ORInt low = [_dom findMax:v - _b - 1];
    ORInt up  = [_dom findMin:v - _b + 1];
-   return (CPRange){low + _b,up + _b};
+   return (ORRange){low + _b,up + _b};
 }
 -(ORInt) shift
 {
@@ -942,10 +942,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         return _a * [_dom max] + _b;
     else return _a * [_dom min] + _b;   
 }
--(void)bounds: (CPBounds*) bnd
+-(void)bounds: (ORBounds*) bnd
 {
-   CPBounds b = domBounds((CPBoundsDom*)_dom);
-    *bnd = (CPBounds){
+   ORBounds b = domBounds((CPBoundsDom*)_dom);
+    *bnd = (ORBounds){
         _a > 0 ? b.min * _a + _b : b.max * _a + _b,
         _a > 0 ? b.max * _a + _b : b.min * _a + _b
     };
@@ -957,11 +957,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     ORInt dv = (v - _b) / _a;
     return [_dom member:dv];
 }
--(CPRange)around:(ORInt)v
+-(ORRange)around:(ORInt)v
 {
    ORInt low = [_dom findMax:(v - _b - 1) / _a];
    ORInt up  = [_dom findMin:(v - _b + 1) / _a];
-   return (CPRange){low * _a + _b,up * _a  + _b};
+   return (ORRange){low * _a + _b,up * _a  + _b};
 }
 
 -(ORInt) shift
@@ -1155,7 +1155,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
-   for(CPUInt i=0;i < _nb;i++) {
+   for(ORUInt i=0;i < _nb;i++) {
       CPIntVarI* sel = [_tab[i] findAffine:scale shift:shift];
       if (sel)
          return sel;
@@ -1168,7 +1168,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    static const char* classes[] = {"Bare","Shift","Affine"};
    NSMutableString* buf = [NSMutableString stringWithCapacity:64];
    [buf appendFormat:@"MC:<%d>[",_nb];
-   for(CPUInt k=0;k<_nb;k++) {
+   for(ORUInt k=0;k<_nb;k++) {
       [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[_tab[k]->_vc],k < _nb -1 ? ',' : ']'];
    }
    return buf;

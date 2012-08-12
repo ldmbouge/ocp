@@ -16,9 +16,9 @@
 @interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
    id<CPVarArray>  _vars;
    id<CPVarArray> _rvars;
-   CPUInt*          _map; 
+   ORUInt*          _map; 
    id<CPSolver>            _cp;
-   CPULong          _nbv;
+   ORULong          _nbv;
    NSSet**           _cv;
 }
 -(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;

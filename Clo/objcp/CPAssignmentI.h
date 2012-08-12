@@ -19,5 +19,5 @@
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end

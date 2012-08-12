@@ -102,7 +102,7 @@
 
 -(void) main
 {
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    ORInt n = 14;
     
    id<CPSolver> cp = [CPFactory createSolver];
@@ -112,7 +112,7 @@
    id<ORIntRange> EWeeks = RANGE(cp,1,n);
    id<ORIntRange> HomeAway = RANGE(cp,0,1);
    id<ORIntRange> Games = RANGE(cp,0,n*n);
-   id<ORIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(ORInt i) { return 2; }];
+   id<ORIntArray> c = [CPFactory intArray:cp range:Teams with: ^ORInt(ORInt i) { return 2; }];
    id<ORIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
    id<ORIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
    id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
@@ -147,13 +147,13 @@
         for(ORInt p = 1; p <= n/2 ; p++) {
         id<ORIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(ORInt w) { return [game at: p : w]; }];
         id<ORIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(ORInt w) { return [game at: w : p]; }];
-        [CPLabel array: ap orderedBy: ^CPInt(ORInt i) { return [[ap at:i] domsize];}];
-        [CPLabel array: aw orderedBy: ^CPInt(ORInt i) { return [[aw at:i] domsize];}];
+        [CPLabel array: ap orderedBy: ^ORInt(ORInt i) { return [[ap at:i] domsize];}];
+        [CPLabel array: aw orderedBy: ^ORInt(ORInt i) { return [[aw at:i] domsize];}];
         }
         */
-       [CPLabel array: allgames orderedBy: ^CPInt(ORInt i) { return [[allgames at:i] domsize];}];
-       [CPLabel array: allteams orderedBy: ^CPInt(ORInt i) { return [[allteams at:i] domsize];}];
-       CPLong endTime = [CPRuntimeMonitor cputime];
+       [CPLabel array: allgames orderedBy: ^ORInt(ORInt i) { return [[allgames at:i] domsize];}];
+       [CPLabel array: allteams orderedBy: ^ORInt(ORInt i) { return [[allteams at:i] domsize];}];
+       ORLong endTime = [ORRuntimeMonitor cputime];
        printf("Solution \n");
        for(ORInt p = 1; p <= n/2; p++) {
           for(ORInt w = 1; w < n; w++)

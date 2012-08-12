@@ -42,7 +42,7 @@ int main(int argc, const char * argv[])
       //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
       id<CPHeuristic> h = [CPFactory createFF:cp restricted:sx];
       [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
-      for(CPUInt i=SD.low;i<=SD.up;i++) {
+      for(ORUInt i=SD.low;i<=SD.up;i++) {
          [cp add:[[dx at:i] eq:[CPFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]]] consistency: DomainConsistency];
       }
       [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];

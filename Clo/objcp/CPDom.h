@@ -26,7 +26,7 @@
 -(ORInt)imin;
 -(ORInt)imax;
 -(bool)bound;
--(CPBounds)bounds;
+-(ORBounds)bounds;
 -(ORInt)domsize;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(bool)get:(ORInt)b;

@@ -26,12 +26,12 @@
 /*
 int main (int argc, const char * argv[])
 {
-   CPRange R = (CPRange){1,3};
-   CPRange D = (CPRange){1,3};
+   ORRange R = (ORRange){1,3};
+   ORRange D = (ORRange){1,3};
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
    id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
-   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,36}];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (ORRange){0,36}];
    [cost set: 10 at: 1 : 1];
    [cost set: 15 at: 1 : 2];
    [cost set: 11 at: 1 : 3];
@@ -78,12 +78,12 @@ int main (int argc, const char * argv[])
 /*
 int main (int argc, const char * argv[])
 {
-   CPRange R = (CPRange){1,3};
-   CPRange D = (CPRange){1,3};
+   ORRange R = (ORRange){1,3};
+   ORRange D = (ORRange){1,3};
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];
    id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: R : R];
-   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,100}];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (ORRange){0,100}];
    [cost set: 10 at: 1 : 1];
    [cost set: 15 at: 1 : 2];
    [cost set: 11 at: 1 : 3];
@@ -242,7 +242,7 @@ int main (int argc, const char * argv[])
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
    }
-   CPRange Cities = (CPRange){0,nbCities-1};
+   ORRange Cities = (ORRange){0,nbCities-1};
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
    for(ORInt i = 0; i < nbCities; i++) {
@@ -261,7 +261,7 @@ int main (int argc, const char * argv[])
    id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
-   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (CPRange){0,10000}];
+   id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (ORRange){0,10000}];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:
     ^{

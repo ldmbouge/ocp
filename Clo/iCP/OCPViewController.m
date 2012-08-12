@@ -54,7 +54,7 @@
 - (IBAction)redo:(id)sender 
 {
    int n = 8;
-   CPRange R = (CPRange){1,n};
+   ORRange R = (ORRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 

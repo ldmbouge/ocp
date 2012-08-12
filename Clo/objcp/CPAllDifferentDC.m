@@ -118,11 +118,11 @@ static void prune(CPAllDifferentDC* ad);
     return NULL;
 }
 
--(CPUInt) nbUVars
+-(ORUInt) nbUVars
 {
     if (_posted) {
-        CPUInt nb=0;
-        for(CPUInt k=0;k<_varSize;k++)
+        ORUInt nb=0;
+        for(ORUInt k=0;k<_varSize;k++)
             nb += ![_var[k] bound];
         return nb;
     }
@@ -457,7 +457,7 @@ static void prune(CPAllDifferentDC* ad)
    findSCC(ad);
    for(ORInt k = 0; k < ad->_varSize; k++) {
       CPIntVarI* x = ad->_var[k];
-      CPBounds bx;
+      ORBounds bx;
       [x bounds:&bx];
       for(ORInt w = bx.min; w <= bx.max; w++) {
          if (_match[k] != w && _varComponent[k] != _valComponent[w]) {

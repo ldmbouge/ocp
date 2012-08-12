@@ -55,7 +55,7 @@
 -(void)            solveAll: (ORClosure) body;
 -(void)               state;
 
--(void)              forall: (id<ORIntIterator>) S orderedBy: (CPInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
@@ -68,7 +68,7 @@
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
--(void)           limitTime: (CPLong) maxTime in: (ORClosure) cl;
+-(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;

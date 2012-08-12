@@ -23,7 +23,7 @@
 }
 -(UIBoardController*)initBoardController:(UIView*)theView;
 -(void)dealloc;
--(id)makeGrid:(CPRange) rows by:(CPRange)cols;
+-(id)makeGrid:(ORRange) rows by:(ORRange)cols;
 -(void)pause;
 -(void)resume;
 -(void)neverStop;

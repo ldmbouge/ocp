@@ -21,7 +21,7 @@
    TRInt          _u; // identifier of state we are in (incremental)
    CPIntVarI**   _xa; // 0-based version of _x
    CPIntVarI**   _ya; // 0-based version of _y
-   CPULong       _sz; // size of xa/ya
+   ORULong       _sz; // size of xa/ya
    id<CPEngine> _fdm;
 }
 -(id) initCPLexConstraint:(id<ORIntVarArray>) x and:(id<ORIntVarArray>)y
@@ -54,7 +54,7 @@
 -(void)propagateFrom:(ORInt)k
 {
    if (_active._val == NO) return;
-   CPLong up = _sz - 1;
+   ORLong up = _sz - 1;
    ORInt  i = k;
    if (k == LEX_Q) goto STATE1;
    else if (k == LEX_R) goto STATE2;
@@ -167,7 +167,7 @@ STATE4:
    _ya= malloc(sizeof(CPIntVarI*)*_sz);
    for(ORInt k=[_x low]; k<= [_x up];k++) _xa[k - [_x low]] = (CPIntVarI*)_x[k];
    for(ORInt k=[_y low]; k<= [_y up];k++) _ya[k - [_y low]] = (CPIntVarI*)_y[k];
-   CPLong up = _sz - 1;
+   ORLong up = _sz - 1;
    ORInt  i = 0;
    while (i <= up && LEX_XEQ_GEQY(i)) { // STATE 1 (x_i = y_i OR x_i >= y_i)
       ORInt xi = minDom(_xa[i]);
@@ -238,9 +238,9 @@ STATE4:
    return rv;
 }
 
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb = 0;
+   ORUInt nb = 0;
    for(ORInt k=0; k < _sz;k++)
       nb += !bound(_xa[k]);
    for(ORInt k=0; k < _sz;k++)

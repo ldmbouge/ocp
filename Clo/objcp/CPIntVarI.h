@@ -110,8 +110,8 @@ enum CPVarClass {
 @interface CPIntVarI : ORExprI<ORIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
    enum CPVarClass                   _vc:16;
-   CPUInt                        _isBool:16;
-   CPUInt                             _name;
+   ORUInt                        _isBool:16;
+   ORUInt                             _name;
    id<CPSolver>                         _cp;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
@@ -122,8 +122,8 @@ enum CPVarClass {
 -(CPIntVarI*) initCPIntVarCore:(CPSolverI*) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (CPSolverI*) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
--(void) setId:(CPUInt)name;
--(CPUInt)getId;
+-(void) setId:(ORUInt)name;
+-(ORUInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
@@ -171,10 +171,10 @@ enum CPVarClass {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
--(void) bounds:(CPBounds*)bnd;
+-(void) bounds:(ORBounds*)bnd;
 -(ORInt) domsize;
 -(bool) member:(ORInt)v;
--(CPRange) around:(ORInt)v;
+-(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -214,9 +214,9 @@ enum CPVarClass {
 -(CPBitDom*)flatDomain;
 -(ORInt) min;
 -(ORInt) max;
--(void)bounds:(CPBounds*)bnd;
+-(void)bounds:(ORBounds*)bnd;
 -(bool)member:(ORInt)v;
--(CPRange)around:(ORInt)v;
+-(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
 -(ORStatus)updateMin:(ORInt)newMin;
@@ -238,9 +238,9 @@ enum CPVarClass {
 -(CPBitDom*)flatDomain;
 -(ORInt) min;
 -(ORInt) max;
--(void)bounds:(CPBounds*)bnd;
+-(void)bounds:(ORBounds*)bnd;
 -(bool)member:(ORInt)v;
--(CPRange)around:(ORInt)v;
+-(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
 -(ORStatus)updateMin:(ORInt)newMin;
@@ -286,29 +286,29 @@ static inline ORInt maxDom(CPIntVarI* x)
 }
 
 #define DOMX ((CPBoundsDom*)x->_dom)
-static inline CPBounds bounds(CPIntVarI* x)
+static inline ORBounds bounds(CPIntVarI* x)
 {
    switch (x->_vc) {
-      case CPVCBare:  return (CPBounds){DOMX->_min._val,DOMX->_max._val};
-      case CPVCShift: return (CPBounds){DOMX->_min._val + ((CPIntShiftView*)x)->_b,
+      case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
+      case CPVCShift: return (ORBounds){DOMX->_min._val + ((CPIntShiftView*)x)->_b,
                                         DOMX->_max._val + ((CPIntShiftView*)x)->_b};
       case CPVCAffine: {
          ORInt fmin = DOMX->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
          ORInt fmax = DOMX->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
          if (((CPIntView*)x)->_a > 0)
-            return (CPBounds){fmin,fmax};
+            return (ORBounds){fmin,fmax};
          else
-            return (CPBounds){fmax,fmin};
+            return (ORBounds){fmax,fmin};
       }
    }
 }
 #undef DOMX
 
-static inline CPBounds negBounds(CPIntVarI* x)
+static inline ORBounds negBounds(CPIntVarI* x)
 {
-   CPBounds b;
+   ORBounds b;
    [x bounds:&b];
-   return (CPBounds){- b.max, -b.min};
+   return (ORBounds){- b.max, -b.min};
 }
 
 

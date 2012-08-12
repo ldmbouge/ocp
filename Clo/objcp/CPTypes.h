@@ -14,25 +14,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-typedef ORInt CPInt;
-typedef ORUInt CPUInt;
-typedef ORLong  CPLong;
-typedef ORULong CPULong;
-
 typedef enum {
    DomainConsistency,
    RangeConsistency,
    ValueConsistency
 } CPConsistency;
-
-typedef ORRange CPRange;
-typedef ORBounds CPBounds;
-typedef ORRuntimeMonitor CPRuntimeMonitor;
-
-typedef ORVoid2Bool   CPVoid2Bool;
-typedef ORInt2Int     CPInt2Int;
-typedef ORIntxInt2Int CPIntxInt2Int;
-typedef ORInt2Expr    CPInt2Expr;
 
 @protocol CPSolver;
 

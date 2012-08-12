@@ -16,10 +16,10 @@
     id<ORRandomStream> _stream;
     id<ORIntIterator>  _range;
     ORInt2Bool         _filter;
-    CPInt2Int          _order;
+    ORInt2Int          _order;
     ORInt              _direction;
 }
--(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 -(void)           dealloc;
 -(ORInt)              min;
 -(ORInt)              max;
@@ -30,7 +30,7 @@
 @interface CPSelect : NSObject {
     OPTSelect* _select;
 }
--(CPSelect*) initCPSelect: (id<CPSolver>) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelect*) initCPSelect: (id<CPSolver>) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 -(void)           dealloc;
 -(ORInt)              min;
 -(ORInt)              max;
@@ -41,9 +41,9 @@
   id<ORRandomStream> _stream;
   id<ORIntIterator>  _range;
   ORInt2Bool         _filter;
-  CPInt2Int          _order;
+  ORInt2Int          _order;
 }
--(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 -(void)            dealloc;
 -(ORInt)           choose;
 @end
@@ -51,9 +51,9 @@
 @interface CPSelectMax : NSObject {
    id<ORIntIterator> _range;
    ORInt2Bool        _filter;
-   CPInt2Int         _order;
+   ORInt2Int         _order;
 }
--(CPSelectMax*) initSelectMax:(id<CPSolver>)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
+-(CPSelectMax*) initSelectMax:(id<CPSolver>)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 -(void)         dealloc;
 -(ORInt)        choose;
 @end

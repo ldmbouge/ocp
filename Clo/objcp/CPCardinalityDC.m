@@ -39,9 +39,9 @@
    ORInt*          _nextMatch;      // The next variable matched to a value; indexed by variable id
    ORInt*          _prevMatch;      // The previous variable matched to a value; indexed by variable id
    
-   CPULong         _magic;
-   CPULong*        _varMagic;
-   CPULong*        _valueMagic;
+   ORULong         _magic;
+   ORULong*        _varMagic;
+   ORULong*        _valueMagic;
    
    ORInt           _dfs;
    ORInt           _component;
@@ -198,11 +198,11 @@ static void findValueRange(id<ORIntVarArray> x,ORInt* low,ORInt* up)
     for(ORInt i = 0; i < _varSize; i++)
         _prevMatch[i] = MAXINT;
     
-    _varMagic = malloc(_varSize * sizeof(CPULong));
+    _varMagic = malloc(_varSize * sizeof(ORULong));
     for(ORInt i = 0; i < _varSize; i++)
         _varMagic[i] = 0;
     
-    _valueMagic = malloc(_valSize * sizeof(CPULong));
+    _valueMagic = malloc(_valSize * sizeof(ORULong));
     _valueMagic -= _valMin;
     for(ORInt v = _valMin; v <= _valMax; v++)
         _valueMagic[v] = 0;
@@ -435,7 +435,7 @@ static void findSCCvar(CPCardinalityDC* card,ORInt k)
     card->_top++;
     
     CPIntVarI* x = card->_var[k];
-    CPBounds bx;
+    ORBounds bx;
     [x bounds:&bx];
     for(ORInt w = bx.min; w <= bx.max; w++) {
         if (_varMatch[k] != w) {
@@ -646,11 +646,11 @@ static void findSCCsink(CPCardinalityDC* card)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: allVars called before the constraints is posted"];
     return NULL;
 }
--(CPUInt) nbUVars
+-(ORUInt) nbUVars
 {
     if (_posted) {
-        CPUInt nb=0;
-        for(CPUInt k=0;k<_varSize;k++)
+        ORUInt nb=0;
+        for(ORUInt k=0;k<_varSize;k++)
             nb += ![_var[k] bound];
         return nb;
     }

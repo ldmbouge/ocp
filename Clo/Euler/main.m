@@ -72,7 +72,7 @@ int main (int argc, const char * argv[])
 
     [cp solve:
      ^() {
-         [CPLabel array: jump orderedBy: ^CPInt(ORInt i) { return [[jump at:i] domsize];}];
+         [CPLabel array: jump orderedBy: ^ORInt(ORInt i) { return [[jump at:i] domsize];}];
          printCircuit(jump);
      }
      ];

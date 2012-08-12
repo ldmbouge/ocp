@@ -17,7 +17,7 @@
 @interface CPLabel : NSObject
 +(void) var: (id<ORIntVar>) x;
 +(void) array: (id<ORIntVarArray>) x;
-+(void) array: (id<ORIntVarArray>) x orderedBy: (CPInt2Int) orderedBy;
++(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Int) orderedBy;
 +(void) heuristic:(id<CPHeuristic>)h;
 +(ORInt) maxBound: (id<ORIntVarArray>) x;
 @end;

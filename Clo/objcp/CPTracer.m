@@ -52,9 +52,9 @@
    
    @interface CPProxyVar : NSObject<NSCoding> {
    @private
-      CPUInt _id;
+      ORUInt _id;
    }
-   -(id)initProxyVar:(CPUInt)vid;
+   -(id)initProxyVar:(ORUInt)vid;
    @end
    
    @implementation CPProxyTrail
@@ -80,7 +80,7 @@
    @end
    
    @implementation CPProxyVar
-   -(id)initProxyVar:(CPUInt)vid
+   -(id)initProxyVar:(ORUInt)vid
    {
       self = [super init];
       _id = vid;
@@ -92,12 +92,12 @@
    }
    -(void)encodeWithCoder:(NSCoder *)aCoder
    {
-      [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_id];
+      [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_id];
    }
    -(id)initWithCoder:(CPUnarchiver*)aDecoder
    {
       self = [super init];
-      [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_id];
+      [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_id];
       id<CPEngine> fdm = [aDecoder solver];
       id theVar = [[[fdm allVars] objectAtIndex:_id] retain];
       [self release];
@@ -153,11 +153,11 @@
       NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
       NSArray* dico = [fdm allVars];
-      CPULong nbProxies = [[fdm allVars] count] + 1; // 1 extra for the trail proxy
+      ORULong nbProxies = [[fdm allVars] count] + 1; // 1 extra for the trail proxy
       __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
-      [archiver encodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
+      [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
       [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-         proxies[idx] = [[CPProxyVar alloc] initProxyVar:(CPUInt)idx];  // create a proxy
+         proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
          [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
       }];
       proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];
@@ -180,12 +180,12 @@
    +(CPProblem*)unpack:(NSData*)msg fOREngine:(id<ORSolver>)cp
    {
       CPEngineI* fdm = (CPEngineI*) [cp engine];
-      CPUInt nbProxies = 0;
+      ORUInt nbProxies = 0;
       id arp  = [[NSAutoreleasePool alloc] init];
       CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
-      [decoder decodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
+      [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
       id* proxies = alloca(sizeof(id)*nbProxies);
-      for(CPUInt k = 0;k<nbProxies;k++) {
+      for(ORUInt k = 0;k<nbProxies;k++) {
          proxies[k] = [decoder decodeObject];
       }
       CPProblem* theProblem = [[decoder decodeObject] retain];
@@ -196,7 +196,7 @@
    @end
    
    @implementation Checkpoint
-   -(Checkpoint*)initCheckpoint:(CPUInt)sz
+   -(Checkpoint*)initCheckpoint:(ORUInt)sz
    {
       self = [super init];
       _path = [[CPCmdStack alloc] initCPCmdStack:sz];
@@ -248,11 +248,11 @@
       NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
       NSArray* dico = [solver allVars];
-      CPULong nbProxies = [[solver allVars] count] + 1; // 1 extra for the trail proxy
+      ORULong nbProxies = [[solver allVars] count] + 1; // 1 extra for the trail proxy
       __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
-      [archiver encodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
+      [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
       [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-         proxies[idx] = [[CPProxyVar alloc] initProxyVar:(CPUInt)idx];  // create a proxy
+         proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
          [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
       }];
       proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];
@@ -276,11 +276,11 @@
    {
       id arp = [[NSAutoreleasePool alloc] init];
       id<CPEngine> fdm = (id<CPEngine>) [solver engine];
-      CPUInt nbProxies = 0;
+      ORUInt nbProxies = 0;
       CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
-      [decoder decodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];
+      [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
       id* proxies = alloca(sizeof(id)*nbProxies);
-      for(CPUInt k = 0;k<nbProxies;k++) {
+      for(ORUInt k = 0;k<nbProxies;k++) {
          proxies[k] = [decoder decodeObject];
       }
       Checkpoint* theCP = [[decoder decodeObject] retain];
@@ -368,7 +368,7 @@
    }
    -(Checkpoint*)captureCheckpoint
    {
-      CPUInt ub = [_cmds size];
+      ORUInt ub = [_cmds size];
       //bool isEmpty = [[_cmds peekAt:ub-1] empty];
       Checkpoint* ncp = [[Checkpoint alloc] initCheckpoint:[_cmds size]];
       for(ORInt i=0;i< ub;i++)
@@ -378,7 +378,7 @@
    }
    -(CPProblem*)captureProblem
    {
-      CPUInt ub = [_cmds size];
+      ORUInt ub = [_cmds size];
       CPProblem* np = [[CPProblem alloc] init];
       for(ORInt i=0;i< ub;i++) {
          [[_cmds peekAt:i] apply:^bool(id<ORCommand> theCommand) {
@@ -454,7 +454,7 @@
    @end
    
    @implementation CPCmdStack
-   -(CPCmdStack*)initCPCmdStack:(CPUInt)mx
+   -(CPCmdStack*)initCPCmdStack:(ORUInt)mx
    {
       self = [super init];
       _mxs = mx;
@@ -496,18 +496,18 @@
       assert(_sz > 0);
       return _tab[--_sz];
    }
-   -(ORCommandList*)peekAt:(CPUInt)d
+   -(ORCommandList*)peekAt:(ORUInt)d
    {
       return _tab[d];
    }
-   -(CPUInt)size
+   -(ORUInt)size
    {
       return _sz;
    }
    -(NSString*)description
    {
       NSMutableString* buf = [NSMutableString stringWithCapacity:512];
-      for(CPUInt i = 0;i<_sz;i++) {
+      for(ORUInt i = 0;i<_sz;i++) {
          [buf appendFormat:@"d:%d = ",i];
          [buf appendString:[_tab[i] description]];
          [buf appendString:@"\n"];
@@ -516,18 +516,18 @@
    }
    -(void)encodeWithCoder:(NSCoder *)aCoder
    {
-      [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_mxs];
-      [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_sz];
-      for (CPUInt i = 0; i < _sz; i++)
+      [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_mxs];
+      [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_sz];
+      for (ORUInt i = 0; i < _sz; i++)
          [aCoder encodeObject:_tab[i]];
    }
    -(id)initWithCoder:(NSCoder *)aDecoder
    {
       self = [super init];
-      [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_mxs];
-      [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_sz];
+      [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_mxs];
+      [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_sz];
       _tab = malloc(sizeof(ORCommandList*)*_mxs);
-      for (CPUInt i =0; i<_sz; i++) {
+      for (ORUInt i =0; i<_sz; i++) {
          _tab[i] = [[aDecoder decodeObject] retain];
       }
       return self;

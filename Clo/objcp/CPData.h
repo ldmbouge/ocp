@@ -62,21 +62,21 @@ typedef void (^ConstraintIntCallBack)(ORInt);
 @end
 
 @protocol CPVar <CPExpr,ORSavable>
--(CPUInt)getId;
+-(ORUInt)getId;
 -(id)snapshot;
 -(NSSet*)constraints;
 -(bool) bound;
 @end
 
 @protocol CPIntVar <ORIntVar,CPVar>
--(CPUInt)getId;
+-(ORUInt)getId;
 -(BOOL) isBool;
 -(bool) bound;
 -(ORInt)  min;
 -(ORInt)  max;
 -(ORInt)  value;
 -(id<CPSolver>) cp;
--(void) bounds: (CPBounds*) bnd;
+-(void) bounds: (ORBounds*) bnd;
 -(ORInt) domsize;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(bool) member: (ORInt) v;

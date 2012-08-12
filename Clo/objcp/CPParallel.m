@@ -214,7 +214,7 @@
 // =================================================================================================
 
 @implementation SemParallel
--(id)initSemParallel:(SemCP*)orig  nbWorkers:(CPUInt)nbt
+-(id)initSemParallel:(SemCP*)orig  nbWorkers:(ORUInt)nbt
 {
    self = [super init];
    _original = orig;
@@ -244,7 +244,7 @@
 -(void)runSearcher:(NSArray*)array
 {
    id arp = [[NSAutoreleasePool alloc] init];
-   CPUInt i   = [[array objectAtIndex:0] intValue];
+   ORUInt i   = [[array objectAtIndex:0] intValue];
    NSData*  model = [array objectAtIndex:1];
    CPVirtualClosure body = [array objectAtIndex:2];
    _clones[i] = [[NSKeyedUnarchiver unarchiveObjectWithData:model] retain];

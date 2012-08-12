@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
          g++;
       }
    }
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    
    id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    for(ORInt g = Guests.low; g <= Guests.up; g++)
@@ -80,10 +80,10 @@ int main(int argc, const char * argv[])
    [cp solve: ^{
        for(ORInt p = Periods.low; p <= Periods.up; p++) {
           [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; } ]
-               orderedBy: ^CPInt(ORInt g) { return [[boat at:g : p] domsize];}
+               orderedBy: ^ORInt(ORInt g) { return [[boat at:g : p] domsize];}
            ];
        }
-       CPLong endTime = [CPRuntimeMonitor cputime];
+       ORLong endTime = [ORRuntimeMonitor cputime];
        
        for(ORInt p = Periods.low; p <= Periods.up; p++) {
           NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];
@@ -208,7 +208,7 @@ int real_main(int argc, const char * argv[])
    }
    //   NSLog(@"cap: %@",cap);
    //   NSLog(@"crew %@",crew);
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    
    id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    [cp solve:
@@ -225,7 +225,7 @@ int real_main(int argc, const char * argv[])
     ^{
        for(ORInt p = Periods.low; p <= Periods.up; p++) {
           [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; } ]
-               orderedBy: ^CPInt(ORInt g) { return [[boat at:g : p] domsize];}
+               orderedBy: ^ORInt(ORInt g) { return [[boat at:g : p] domsize];}
            ];
        }
        /*
@@ -246,7 +246,7 @@ int real_main(int argc, const char * argv[])
         ];
         }
         */
-       CPLong endTime = [CPRuntimeMonitor cputime];
+       ORLong endTime = [ORRuntimeMonitor cputime];
        
        for(ORInt p = Periods.low; p <= Periods.up; p++) {
           NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];

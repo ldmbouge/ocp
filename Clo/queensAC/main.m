@@ -29,7 +29,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,1,n);
    id<ORInteger> nbSolutions = [ORFactory integer: cp value: 0];
-   [CPFactory intArray:cp range:R with: ^CPInt(ORInt i) { return i; }];
+   [CPFactory intArray:cp range:R with: ^ORInt(ORInt i) { return i; }];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    id<ORIntVarArray> xp = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:i]);
    id<ORIntVarArray> xn = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:-i]);
@@ -39,7 +39,7 @@ int main (int argc, const char * argv[])
 
    [cp solveAll:
      ^() {
-       [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return [x[i] domsize];}];
+       [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [x[i] domsize];}];
        [nbSolutions incr];
     }
     ];

@@ -36,11 +36,11 @@
 }
 -(void) propagate
 {}
--(void) setId:(CPUInt)name
+-(void) setId:(ORUInt)name
 {
    _name = name;
 }
--(CPUInt)getId
+-(ORUInt)getId
 { 
    return _name;
 }
@@ -48,10 +48,10 @@
 {
    return [[NSSet alloc] init];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    NSSet* av = [self allVars];
-   CPUInt nbu = 0;
+   ORUInt nbu = 0;
    for(id aVar in av) {
       nbu += ![aVar bound];
    }
@@ -61,7 +61,7 @@
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
+    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_todo];
     [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_priority];    
@@ -69,7 +69,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
+    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_todo];
     [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_priority]; 

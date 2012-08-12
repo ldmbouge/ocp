@@ -41,7 +41,7 @@ enum CPDomClass {
 -(ORInt)max;
 -(ORInt)imin;
 -(ORInt)imax;
--(CPBounds)bounds;
+-(ORBounds)bounds;
 -(bool)bound;
 -(ORInt)domsize;
 -(bool)member:(ORInt)v;
@@ -54,9 +54,9 @@ enum CPDomClass {
 -(void)restoreValue:(ORInt)toRestore;
 @end
 
-static inline CPBounds domBounds(CPBoundsDom* dom)
+static inline ORBounds domBounds(CPBoundsDom* dom)
 {
-   return (CPBounds){dom->_min._val,dom->_max._val};
+   return (ORBounds){dom->_min._val,dom->_max._val};
 }
 
 @interface CPBitDom : CPBoundsDom {
@@ -87,7 +87,7 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 -(void)translate:(ORInt)shift;
 @end
 
-static const CPUInt __bitmasks[32] = {
+static const ORUInt __bitmasks[32] = {
       0x00000001,0x00000002,0x00000004,0x00000008,
       0x00000010,0x00000020,0x00000040,0x00000080,
       0x00000100,0x00000200,0x00000400,0x00000800,
@@ -130,7 +130,7 @@ static inline ORInt maxCPDom(CPBitDom* d)
 }
 static inline ORInt getCPDom(CPBitDom* d,ORInt v)
 {
-   const CPUInt ofs = v - d->_imin;
+   const ORUInt ofs = v - d->_imin;
    //return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
    return (d->_bits[ofs>>5] & (0x1 << (ofs & 0x1f)));
 }

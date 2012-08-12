@@ -19,10 +19,10 @@
 
 @interface CPMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
-   CPLong                  _nbVI;
+   ORLong                  _nbVI;
    id<CPSolver>                    _cp;
    CPVarInfo**        _curActive;
-   CPUInt              _nbActive;
+   ORUInt              _nbActive;
    id<ORVarArray>        _monVar;
 }
 -(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars;

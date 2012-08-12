@@ -126,7 +126,7 @@
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
     for(ORInt i=_low;i<=_up;i++) {
         [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
-        [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
+        [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_array[i]._mgc];
     }
 }
 -(id) initWithCoder: (NSCoder*) aDecoder
@@ -140,7 +140,7 @@
     _array -= _low;
     for(ORInt i=_low;i<=_up;i++) {
         [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_array[i]._val];
-         [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_array[i]._mgc];
+         [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_array[i]._mgc];
     }
     return self;
 }
@@ -329,7 +329,7 @@ static inline ORInt indexMatrix(CPTRIntMatrixI* m,ORInt* i)
     }
     for(ORInt i=0 ; i < _nb ;i++) {
         [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_flat[i]._val];
-        [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_flat[i]._mgc];
+        [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_flat[i]._mgc];
     }
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -352,7 +352,7 @@ static inline ORInt indexMatrix(CPTRIntMatrixI* m,ORInt* i)
     _flat = malloc(sizeof(TRInt) * _nb);
     for(ORInt i=0 ; i < _nb ;i++) {
         [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_flat[i]._val];
-        [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_flat[i]._mgc];
+        [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_flat[i]._mgc];
     }
     return self;
 }

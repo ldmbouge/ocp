@@ -432,24 +432,24 @@ struct CPVarPair {
 }
 -(ORInt)min
 {
-   CPLong lb = _indep;
+   ORLong lb = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
-      CPLong vlb = [_terms[k]._var min];
-      CPLong vub = [_terms[k]._var max];
-      CPLong svlb = c > 0 ? vlb * c : vub * c;
+      ORLong vlb = [_terms[k]._var min];
+      ORLong vub = [_terms[k]._var max];
+      ORLong svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
    return max(MININT,bindDown(lb));
 }
 -(ORInt)max
 {
-   CPLong ub = _indep;
+   ORLong ub = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
-      CPLong vlb = [_terms[k]._var min];
-      CPLong vub = [_terms[k]._var max];
-      CPLong svub = c > 0 ? vub * c : vlb * c;
+      ORLong vlb = [_terms[k]._var min];
+      ORLong vub = [_terms[k]._var max];
+      ORLong svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }
    return min(MAXINT,bindUp(ub));
@@ -495,7 +495,7 @@ struct CPVarPair {
             } else { // exactly 1 negative coef
                ORInt nc = _terms[0]._coef == -1 ? 0 : (_terms[1]._coef == -1 ? 1 : 2);
                ORInt pc[3] = {0,1,2};
-               for(CPUInt i=0;i<3;i++)
+               for(ORUInt i=0;i<3;i++)
                   if (pc[i] == nc)
                      pc[i] = pc[2];
                id<ORIntVar> zp = [CPFactory intVar:_terms[nc]._var scale:1 shift:-_indep];
@@ -618,16 +618,16 @@ struct CPVarPair {
    CPLinear* rT = [CPLinearizer linearFrom:[e right] solver:_solver consistency:_c];
    id<ORIntVar> lV = [CPSubst normSide:lT for:_solver consistency:_c];
    id<ORIntVar> rV = [CPSubst normSide:rT for:_solver consistency:_c];
-   CPLong llb = [lV min];
-   CPLong lub = [lV max];
-   CPLong rlb = [rV min];
-   CPLong rub = [rV max];
-   CPLong a = minOf(llb * rlb,llb * rub);
-   CPLong b = minOf(lub * rlb,lub * rub);
-   CPLong lb = minOf(a,b);
-   CPLong c = maxOf(llb * rlb,llb * rub);
-   CPLong d = maxOf(lub * rlb,lub * rub);
-   CPLong ub = maxOf(c,d);
+   ORLong llb = [lV min];
+   ORLong lub = [lV max];
+   ORLong rlb = [rV min];
+   ORLong rub = [rV max];
+   ORLong a = minOf(llb * rlb,llb * rub);
+   ORLong b = minOf(lub * rlb,lub * rub);
+   ORLong lb = minOf(a,b);
+   ORLong c = maxOf(llb * rlb,llb * rub);
+   ORLong d = maxOf(lub * rlb,lub * rub);
+   ORLong ub = maxOf(c,d);
    if (_rv==nil)
       _rv = [CPFactory intVar:cp domain: RANGE(cp,bindDown(lb),bindUp(ub))];
    [_engine post: [CPFactory mult:lV by:rV equal:_rv]];
@@ -824,7 +824,7 @@ struct CPVarPair {
 {
    return [[NSSet alloc] init];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return 0;
 }

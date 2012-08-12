@@ -27,17 +27,17 @@ typedef enum {
    CPTodo _todo;
    bool   _idempotent;
    int    _priority;
-   CPUInt _name;
+   ORUInt _name;
    IMP    _propagate;
 }
 -(CPCoreConstraint*) initCPCoreConstraint;
 -(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;
--(void) setId:(CPUInt)name;
--(CPUInt)getId;
+-(void) setId:(ORUInt)name;
+-(ORUInt)getId;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPActiveConstraint : CPCoreConstraint {

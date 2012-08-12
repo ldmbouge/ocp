@@ -32,7 +32,7 @@ typedef struct  {
 @interface CPBitVarI : NSObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
 @protected
-    CPUInt                         _name;
+    ORUInt                         _name;
     CPEngineI*                          _fdm;
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
@@ -42,7 +42,7 @@ typedef struct  {
 -(void) initCPBitVarCore:(id<CPEngine>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 //-(CPBitVarI*) initCPBitVarView: (id<CPEngine>) fdm low: (int) low up: (int) up for: (CPBitVarI*) x;
 -(void) dealloc;
--(void) setId:(CPUInt)name;
+-(void) setId:(ORUInt)name;
 -(NSString*) description;
 -(id<CPEngine>) engine;
 
@@ -69,7 +69,7 @@ typedef struct  {
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
 -(unsigned int) getWordLength;
--(void) bounds:(CPBounds*)bnd;
+-(void) bounds:(ORBounds*)bnd;
 -(unsigned int) domsize;
 -(bool) member:(unsigned int*)v;
 // update
@@ -105,6 +105,6 @@ typedef struct  {
 -(void) dealloc;
 -(void) addVar:(CPBitVarI*) v;
 -(void) bindEvt;
--(void) bitFixedEvt:(CPUInt) dsz;
+-(void) bitFixedEvt:(ORUInt) dsz;
 @end
 

@@ -54,10 +54,10 @@
    NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
    return theSet;
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb=0;
-   for(CPUInt k=0;k<_nb;k++)
+   ORUInt nb=0;
+   for(ORUInt k=0;k<_nb;k++)
       nb += ![_x[k] bound];
    return nb;
 }
@@ -67,18 +67,18 @@ struct Bounds {
    long long _bndUp;
    long long _sumLow;
    long long _sumUp;
-   CPULong     _nb;
+   ORULong     _nb;
 };
 
 struct CPTerm {
    UBType  update;
    CPIntVarI* var;
-   CPLong     low;
-   CPLong      up;
+   ORLong     low;
+   ORLong      up;
    BOOL   updated;
 };
 
-static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
+static void sumBounds(struct CPTerm* terms,ORLong nb,struct Bounds* bnd)
 {
    long long slow = 0,sup = 0;
    int k=0;
@@ -118,7 +118,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
     struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
     for(ORInt k=0;k<_nb;k++) {
-       CPBounds b = bounds(_x[k]);
+       ORBounds b = bounds(_x[k]);
        terms[k] = (struct CPTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
     }
     struct Bounds b;
@@ -148,7 +148,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
     } while (changed && feasible);
     if (!feasible)
        failNow();    
-    for(CPUInt i=0;i<_nb;i++) {
+    for(ORUInt i=0;i<_nb;i++) {
        if (terms[i].updated)
           terms[i].update(terms[i].var,@selector(updateMin:andMax:),
                           (ORInt)terms[i].low,
@@ -168,7 +168,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
    for(int k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
@@ -176,7 +176,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(int k=0;k<_nb;k++)
@@ -222,17 +222,17 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
    return theSet;
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb=0;
-   for(CPUInt k=0;k<_nb;k++)
+   ORUInt nb=0;
+   for(ORUInt k=0;k<_nb;k++)
       nb += ![_x[k] bound];
    return nb;
 }
 
-static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
+static void sumLowerBound(struct CPTerm* terms,ORLong nb,struct Bounds* bnd)
 {
-   CPLong slow = 0;
+   ORLong slow = 0;
    int k=0;
    while(k < nb) {
       if (terms[k].low == terms[k].up) {         
@@ -265,7 +265,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
    for(ORInt k=0;k<_nb;k++) {
-      CPBounds b = bounds(_x[k]);
+      ORBounds b = bounds(_x[k]);
       terms[k] = (struct CPTerm){_updateMax[k],_x[k],b.min,b.max,NO};
    }
    struct Bounds b;
@@ -280,8 +280,8 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
          failNow();      
       changed=false;
       for (int i=0; i < b._nb && feasible; i++) {         
-         CPLong slowi = b._sumLow - terms[i].low;
-         CPLong nSupi = - slowi;
+         ORLong slowi = b._sumLow - terms[i].low;
+         ORLong nSupi = - slowi;
          BOOL updateNow = nSupi < terms[i].up;
          changed |= updateNow;
          terms[i].updated |= updateNow;
@@ -293,7 +293,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
    if (!feasible)
       failNow();
    
-   for(CPUInt i=0;i<_nb;i++) {
+   for(ORUInt i=0;i<_nb;i++) {
       if (terms[i].updated) 
          terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
    }
@@ -311,7 +311,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   
-   [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
    for(int k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
@@ -319,7 +319,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];   
-   [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(int k=0;k<_nb;k++)

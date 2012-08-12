@@ -83,7 +83,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    CPEngineI*            _fdm;
    CPIntVarI**            _xb;
    TRInt*            _support;
-   CPLong                 _nb;
+   ORLong                 _nb;
    ORInt                 _low;
    ORInt                  _up;
    KSColumn**         _column;
@@ -284,9 +284,9 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    [rv addObject:_c];
    return rv;
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb = 0;
+   ORUInt nb = 0;
    for(ORInt i=0;i< _nb;i++)
       nb += !bound(_xb[i]);
    nb += !bound(_c);

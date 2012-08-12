@@ -20,8 +20,8 @@
 
 @interface CPHeuristicStack : NSObject {
    id<CPHeuristic>* _tab;
-   CPUInt       _sz;
-   CPUInt       _mx;
+   ORUInt       _sz;
+   ORUInt       _mx;
 }
 -(CPHeuristicStack*)initCPHeuristicStack;
 -(void)push:(id<CPHeuristic>)h;
@@ -54,8 +54,8 @@
 -(NSString*)              description;
 -(ORInt)                  nbChoices;
 -(ORInt)                  nbFailures;
--(CPUInt)                 nbPropagation;
--(CPUInt)                 nbVars;
+-(ORUInt)                 nbPropagation;
+-(ORUInt)                 nbVars;
 -(ORTrail*)               trail;
 
 -(id<ORSearchController>) controller;
@@ -100,13 +100,13 @@
 
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
--(void)      limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
+-(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
--(void)           limitTime: (CPLong) maxTime in: (ORClosure) cl;
+-(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
--(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
@@ -165,8 +165,8 @@
 -(void)            maximize: (id<ORIntVar>) x in: (ORClosure) body;
 -(void)            minimize: (id<ORIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
 -(void)            maximize: (id<ORIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
--(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
--(void) solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
+-(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
+-(void) solveParAll:(ORUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
 -(SemTracer*)tracer;
 @end
 */

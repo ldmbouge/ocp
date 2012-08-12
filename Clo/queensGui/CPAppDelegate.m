@@ -37,10 +37,10 @@
 
 -(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
 {
-   CPBounds dom;
+   ORBounds dom;
    [[x at: [x low]] bounds:&dom];
-   CPRange cols = {[x low],[x up]};
-   CPRange rows = {dom.min,dom.max};
+   ORRange cols = {[x low],[x up]};
+   ORRange rows = {dom.min,dom.max};
    id grid = [_board makeGrid:rows by: cols];
    for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = x[i];
@@ -68,9 +68,9 @@
 -(void)runModel
 {
    int n = 8;
-   CPRange R = (CPRange){1,n};
+   ORRange R = (ORRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
-   [CPFactory intArray:cp range: R with: ^CPInt(ORInt i) { return i; }]; 
+   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
@@ -85,7 +85,7 @@
     }   
           using: 
     ^() {
-       [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return [[x at:i] domsize];}];
+       [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
        [_board neverStop];
        [_board pause];
     }

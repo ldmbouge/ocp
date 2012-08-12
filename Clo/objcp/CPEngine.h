@@ -24,9 +24,9 @@
 -(ORStatus) gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(ORStatus) propagate;
--(CPUInt) nbPropagation;
+-(ORUInt) nbPropagation;
 -(id<ORSolution>) solution;
--(CPUInt) nbVars;
+-(ORUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;
 -(ORInt)virtualOffset:(id)obj;

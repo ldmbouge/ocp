@@ -59,7 +59,7 @@ int main(int argc, const char * argv[])
       id<ORIntRange> N = RANGE(cp,0,n-1);
       
       id<ORIntVarArray> x = ALL(ORIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(cp,0,1)]);
-      // id<ORIntVarArray> x = [CPFactory intVarArray: cp range: N domain: (CPRange){0,1}];
+      // id<ORIntVarArray> x = [CPFactory intVarArray: cp range: N domain: (ORRange){0,1}];
       id<CPHeuristic> h = [CPFactory createIBS:cp restricted:x];
       
       [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];

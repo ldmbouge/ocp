@@ -313,18 +313,18 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 {
    return _mStore;
 }
--(CPUInt) nbPropagation
+-(ORUInt) nbPropagation
 {
    return _nbpropag;
 }
--(CPUInt) nbVars
+-(ORUInt) nbVars
 {
-   return (CPUInt)[_vars count];
+   return (ORUInt)[_vars count];
 }
 
 -(void) trackVariable: (id) var
 {
-   [var setId:(CPUInt)[_vars count]];
+   [var setId:(ORUInt)[_vars count]];
    if (_state != CPClosed) {
       [_vars addObject:var];
       [var autorelease];
@@ -350,7 +350,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 }
 -(ORInt)virtualOffset:(id)obj
 {
-   CPUInt idx = (CPUInt)[_oStore indexOfObjectIdenticalTo:obj];
+   ORUInt idx = (ORUInt)[_oStore indexOfObjectIdenticalTo:obj];
    return idx;
 }
 
@@ -493,7 +493,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       ORStatus status = [cstr post];
       _status = internalPropagate(self,status);
       if (_status && status != ORSkip) {
-         [cstr setId:(CPUInt)[_cStore count]];
+         [cstr setId:(ORUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -520,7 +520,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    else {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId:(CPUInt)[_mStore count]];
+      [cstr setId:(ORUInt)[_mStore count]];
       [_mStore addObject:c];
       return ORSuspend;
    }

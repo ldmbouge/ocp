@@ -27,7 +27,7 @@
 -(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @implementation CPWatch
@@ -57,7 +57,7 @@
 {
    return [[NSSet alloc] initWithObjects:_theVar,nil];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_theVar bound];
 }

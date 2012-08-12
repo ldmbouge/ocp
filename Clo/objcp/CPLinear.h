@@ -60,5 +60,5 @@ typedef id<ORIntVar>(^CPRewriter)(id<ORExpr>);
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end

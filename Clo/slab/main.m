@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
             m = [cap at: i] - c;
       [loss set: m at: c];
    }
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
@@ -104,7 +104,7 @@ int main(int argc, const char * argv[])
       printf("\n");
    }];
    
-   CPLong endTime = [CPRuntimeMonitor cputime];
+   ORLong endTime = [ORRuntimeMonitor cputime];
    NSLog(@"Execution Time: %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
@@ -128,7 +128,7 @@ int main1(int argc, const char * argv[])
    ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
-   CPRange Caps = {1,nbCap};
+   ORRange Caps = {1,nbCap};
    id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
    for(ORInt i = 2; i <= nbCap; i++) {
       ORInt c;
@@ -139,8 +139,8 @@ int main1(int argc, const char * argv[])
    ORInt nbOrders;
    fscanf(dta,"%d",&nbColors);
    fscanf(dta,"%d",&nbOrders);
-   CPRange Colors = {1,nbColors};
-   CPRange Orders = {1,nbOrders};
+   ORRange Colors = {1,nbColors};
+   ORRange Orders = {1,nbOrders};
    id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
    id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
    for(ORInt o = 1; o <= nbOrders; o++) {
@@ -153,8 +153,8 @@ int main1(int argc, const char * argv[])
    }
    
    ORInt nbSize = 111;
-   CPRange IOrders = {1,nbSize};
-   CPRange Slabs = {1,nbSize};
+   ORRange IOrders = {1,nbSize};
+   ORRange Slabs = {1,nbSize};
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
    for(int o = 1; o <= nbSize; o++)
       coloredOrder[[color at: o]] = [CPFactory intSet: cp];
@@ -165,7 +165,7 @@ int main1(int argc, const char * argv[])
       if ([cap at: c] > maxCapacities)
          maxCapacities = [cap at: c];
    
-   CPRange Capacities = {0,maxCapacities};
+   ORRange Capacities = {0,maxCapacities};
    id<ORIntArray> loss = [ORFactory intArray: cp range: Capacities value: 0];
    for(ORInt c = 0; c <= maxCapacities; c++) {
       ORInt m = MAXINT;
@@ -174,7 +174,7 @@ int main1(int argc, const char * argv[])
             m = [cap at: i] - c;
       [loss set: m at: c];
    }
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: IOrders domain: Slabs];
    id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: (ORRange){0,nbSize*maxCapacities}];
@@ -214,7 +214,7 @@ int main1(int argc, const char * argv[])
       printf("\n");
    }
    ];
-   CPLong endTime = [CPRuntimeMonitor cputime];
+   ORLong endTime = [ORRuntimeMonitor cputime];
    NSLog(@"Execution Time: %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
@@ -283,7 +283,7 @@ int main1(int argc, const char * argv[])
             m = [cap at: i] - c;
       [loss set: m at: c];
    }
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
@@ -325,7 +325,7 @@ int main1(int argc, const char * argv[])
              printf("\n");
           }
     ];
-   CPLong endTime = [CPRuntimeMonitor cputime];
+   ORLong endTime = [ORRuntimeMonitor cputime];
    NSLog(@"Execution Time: %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
@@ -395,7 +395,7 @@ int realmain(int argc, const char * argv[])
             m = [cap at: i] - c;
       [loss set: m at: c];
    }
-   CPLong startTime = [CPRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor cputime];
    id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
    id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
@@ -434,7 +434,7 @@ int realmain(int argc, const char * argv[])
          printf("\n");
       }
     ];
-   CPLong endTime = [CPRuntimeMonitor cputime];
+   ORLong endTime = [ORRuntimeMonitor cputime];
    NSLog(@"Execution Time: %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");

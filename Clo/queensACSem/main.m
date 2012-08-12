@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
              using: 
            ^void(id<CPSolver> cp) {
                id<ORIntVarArray> y = [cp virtual:x]; 
-               [CPLabel array: y orderedBy: ^CPInt(ORInt i) { return [[y at:i] domsize];}];              
+               [CPLabel array: y orderedBy: ^ORInt(ORInt i) { return [[y at:i] domsize];}];              
                 @synchronized(nbSolutions) {
                    [nbSolutions incr];  
                 }

@@ -18,21 +18,21 @@
 
 
 @interface CPGrid : NSObject {
-   CPRange _rows;
-   CPRange _cols;
+   ORRange _rows;
+   ORRange _cols;
    UIColor* _red;
    UIColor* _green;
    UIColor* _back;
    enum CPDomValue* _values;
 }
--(CPGrid*)initGrid:(CPRange)rows by:(CPRange)cols;
+-(CPGrid*)initGrid:(ORRange)rows by:(ORRange)cols;
 -(void)toggleRow:(NSInteger)r col:(NSInteger)c to:(enum CPDomValue)dv;
 -(void)drawRect:(CGRect)dirtyRect inView:(UIView*)view;
 @end
 
 
 @implementation CPGrid
--(CPGrid*)initGrid:(CPRange)rows by:(CPRange)cols
+-(CPGrid*)initGrid:(ORRange)rows by:(ORRange)cols
 {
    self = [super init];
    _rows = rows;
@@ -110,7 +110,7 @@
    }];
 }
 
--(id)makeGrid:(CPRange) rows by:(CPRange)cols
+-(id)makeGrid:(ORRange) rows by:(ORRange)cols
 {
    CPGrid* g = nil;
    @synchronized(self) {

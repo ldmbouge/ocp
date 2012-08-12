@@ -71,9 +71,9 @@
    return _imax;
 }
 
--(CPBounds)bounds
+-(ORBounds)bounds
 {
-   return (CPBounds){_min._val,_max._val};
+   return (ORBounds){_min._val,_max._val};
 }
 -(bool)bound
 {
@@ -219,7 +219,7 @@
    _dc = DCBits;
    const ORInt sz = _imax - _imin + 1;
    const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
-   _bits  = malloc(sizeof(CPUInt)*nb);
+   _bits  = malloc(sizeof(ORUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
    for(ORInt k=0;k<nb;k++) {
       _bits[k]  = 0xffffffff;
@@ -236,7 +236,7 @@
    _dc = DCBits;
    const ORInt sz = _imax - _imin + 1;
    const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
-   _bits  = malloc(sizeof(CPUInt)*nb);
+   _bits  = malloc(sizeof(ORUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
    for(ORInt k=0;k<nb;k++) {
       _bits[k]  = 0xffffffff;
@@ -252,7 +252,7 @@
    CPBitDom* copy = [[CPBitDom alloc] initBitDomFor:self];
    const ORInt sz = _imax - _imin + 1;
    const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
-   for(CPUInt k=0;k<nb;k++) {
+   for(ORUInt k=0;k<nb;k++) {
       copy->_bits[k] = _bits[k];
       copy->_magic[k] = _magic[k];
    }
@@ -276,7 +276,7 @@ static inline int countFrom(CPBitDom* dom,ORInt from,ORInt to)
    int tw = to >> 5;
    int tb = to & 0x1f;
    int cnt = 0;
-   CPUInt mask = 0x1 << fb;
+   ORUInt mask = 0x1 << fb;
    while (fw != tw || fb != tb) {
       cnt += ((dom->_bits[fw] & mask)!=0);
       mask <<= 1;
@@ -294,7 +294,7 @@ inline static void resetBit(CPBitDom* dom,ORInt b)
 {
    b -= dom->_imin;
    const ORInt bw = b >> 5;
-   const CPUInt magic = trailMagic(dom->_trail);
+   const ORUInt magic = trailMagic(dom->_trail);
    if (dom->_magic[bw] != magic) {
       dom->_magic[bw] = magic;
       [dom->_trail trailUnsigned:(dom->_bits + bw)];
@@ -307,7 +307,7 @@ static inline ORInt findMin(CPBitDom* dom,ORInt from)
    from -= dom->_imin;
    ORInt mw = from >> 5;
    ORInt mb = from & 0x1f;
-   CPUInt mask = 0x1 << mb;
+   ORUInt mask = 0x1 << mb;
    while ((dom->_bits[mw] & mask) == 0) {
       mask <<= 1;
       ++mb;
@@ -326,7 +326,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    from -= dom->_imin;
    int mw = from >> 5;
    int mb = from & 0x1f;
-   CPUInt mask = 0x1 << mb;
+   ORUInt mask = 0x1 << mb;
    while ((dom->_bits[mw] & mask) == 0) {
       mask >>= 1;
       --mb;
@@ -354,7 +354,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    if (b >=_imin && b<=_imax) {
       b -= _imin;
       const ORInt bw = b >> 5;
-      const CPUInt magic = trailMagic(_trail);
+      const ORUInt magic = trailMagic(_trail);
       if (_magic[bw] != magic) {
          _magic[bw] = magic;
          trailUIntFun(_trail,_bits+bw);
@@ -369,7 +369,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 {
    assert(from >= _imin && from <= _imax);
    assert(to >= _imin && to <= _imax);
-   const CPUInt magic = [_trail magic];
+   const ORUInt magic = [_trail magic];
    from -= _imin;
    to    = to + 1 - _imin;
    ORInt fw = from >> 5;
@@ -378,9 +378,9 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    ORInt tb = to & 0x1f;
    ORInt nbin = 0;
    for(ORInt k=fw;k<tw;k++) {
-      CPUInt bits = _bits[k];
-      CPUInt mask = 0x1 << fb;
-      CPUInt nmsk = ~mask;
+      ORUInt bits = _bits[k];
+      ORUInt mask = 0x1 << fb;
+      ORUInt nmsk = ~mask;
       while(mask) {
          nbin += ((bits & mask) == mask);
          bits &= nmsk;
@@ -394,10 +394,10 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       _bits[k] = bits;
       fb = 0;
    }
-   const CPUInt tomask = 0x1 << tb;
-   CPUInt bits = _bits[tw];
-   CPUInt mask = 0x1 << fb;
-   CPUInt nmsk = ~mask;
+   const ORUInt tomask = 0x1 << tb;
+   ORUInt bits = _bits[tw];
+   ORUInt mask = 0x1 << fb;
+   ORUInt nmsk = ~mask;
    while(mask != tomask) {
       nbin += ((bits & mask) == mask);
       bits &= nmsk;
@@ -553,7 +553,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    _sz._val  = [toRestore domsize];
    const ORInt sz = _imax - _imin + 1;
    const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
-   for(CPUInt k=0;k< nb ; k++) {
+   for(ORUInt k=0;k< nb ; k++) {
       _bits[k] = toRestore->_bits[k];
    }
 }
@@ -584,7 +584,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    const ORInt sz = _imax - _imin + 1;
    const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    for(ORInt k=0;k<nb;k++) {
-      [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_bits[k]]; 
+      [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_bits[k]]; 
       [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_magic[k]]; 
    }
    [aCoder encodeObject:_trail];
@@ -602,11 +602,11 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    const ORInt sz = _imax - _imin + 1;
    const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    
-   _bits  = malloc(sizeof(CPUInt)*nb);
+   _bits  = malloc(sizeof(ORUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
 
    for(ORInt k=0;k<nb;k++) {
-      [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_bits[k]];  
+      [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_bits[k]];  
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_magic[k]]; 
    }
    _trail = [aDecoder decodeObject] ;

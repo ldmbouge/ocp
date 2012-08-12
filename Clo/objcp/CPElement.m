@@ -58,7 +58,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       ORInt yv   = [_y min];
-      CPBounds xb = bounds(_x);
+      ORBounds xb = bounds(_x);
       ORStatus ok = ORSuspend;
       for(ORInt k=xb.min;k <= xb.max && ok;k++)
          if (k < cLow || k > cUp || [_c at:k] != yv)
@@ -72,7 +72,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       for(ORInt k=cLow;k <= cUp;k++) 
          _tab[k - cLow] = (CPEltRecord){k,[_c at:k]};
       qsort(_tab, _sz,sizeof(CPEltRecord),(int(*)(const void*,const void*)) &compareCPEltRecords);
-      CPBounds yb = bounds(_y);
+      ORBounds yb = bounds(_y);
       ORStatus ok = ORSuspend;
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
@@ -119,7 +119,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       }
       else
          failNow();
-      CPBounds yb = bounds(_y);
+      ORBounds yb = bounds(_y);
       k = _from._val;
       while (k < _sz && _tab[k]._val < yb.min) 
          removeDom(_x, _tab[k++]._idx);
@@ -134,7 +134,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 {
    return [[NSSet alloc] initWithObjects:_x,_y,nil];   
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return !bound(_x) && !bound(_y);
 }
@@ -182,7 +182,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    [self propagate];
    [_x whenChangePropagate:self];
    [_y whenChangeBoundsPropagate:self];
-   CPBounds xb = bounds(_x);
+   ORBounds xb = bounds(_x);
    for(ORInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVarI*)[_z at:k] whenChangeBoundsPropagate:self];
@@ -190,21 +190,21 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(void) propagate
 {
-   CPBounds bx = bounds(_x);
+   ORBounds bx = bounds(_x);
    ORInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
-         CPBounds zk = bounds((CPIntVarI*)[_z at:k]);
+         ORBounds zk = bounds((CPIntVarI*)[_z at:k]);
          minZ = minZ < zk.min ? minZ : zk.min;
          maxZ = maxZ > zk.max ? maxZ : zk.max;
       }
    }
    [_y updateMin:minZ andMax:maxZ]; // D(y) <- D(y) INTER [minZ,maxZ]
-   CPBounds yb = bounds(_y);
+   ORBounds yb = bounds(_y);
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
          CPIntVarI* zk = (CPIntVarI*) [_z at: k];
-         CPBounds zkb = bounds(zk);
+         ORBounds zkb = bounds(zk);
          if (zkb.min > yb.max || zkb.max < yb.min)  // D(z[k]) INTER D(y) = EMPTY -> k NOTIN D(x)
             removeDom(_x, k);
       }
@@ -217,7 +217,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(NSSet*)allVars
 {
-   CPULong sz = [_z count] + 2;
+   ORULong sz = [_z count] + 2;
    id<ORIntVar>* t = alloca(sizeof(id<ORIntVar>)*sz);
    ORInt i = 0;
    for(ORInt k=[_z low];k<=[_z up];k++)
@@ -226,7 +226,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    t[i++] = _y;
    return [[NSSet alloc] initWithObjects:t count:sz];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    ORInt nbuv = 0;
    for(ORInt k=[_z low];k<=[_z up];k++)

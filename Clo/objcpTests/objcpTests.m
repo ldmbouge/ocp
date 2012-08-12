@@ -40,7 +40,7 @@
 - (void)testQueens
 {
    int n = 8;
-   CPRange R = (CPRange){1,n};
+   ORRange R = (ORRange){1,n};
    id<CPSolver> m = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    id<ORIntVarArray> x  = [CPFactory intVarArray:m range:R domain: R];
@@ -55,7 +55,7 @@
     } 
          using:
     ^() {
-       [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return [[x at:i] domsize];}];
+       [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
        [nbSolutions incr];
    }
     ];
@@ -69,15 +69,15 @@
 {
    int s = 10;
    int n = 2;
-   CPRange R = (CPRange){0,s-1};
+   ORRange R = (ORRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: (ORRange){0,n-1}];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    
    [m solveAll: ^() {
       [m add: [CPFactory sumbool:x geq:2]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return i;}];
+      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -97,14 +97,14 @@
 {
    int s = 10;
    int n = 2;
-   CPRange R = (CPRange){0,s-1};
+   ORRange R = (ORRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: (ORRange){0,n-1}];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
       [m add: [CPFactory sumbool:x geq:8]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return i;}];
+      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
@@ -124,9 +124,9 @@
 {
    int s = 10;
    int n = 2;
-   CPRange R = (CPRange){0,s-1};
+   ORRange R = (ORRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (ORRange){0,n-1}];
    id<ORIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(ORInt i) {
       return [CPFactory negate:[x at:i]];
    }];
@@ -137,7 +137,7 @@
       [m add:[CPFactory sumbool:x geq:2]];
       [m add:[CPFactory sumbool:nx geq:8]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return i;}];
+      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return i;}];
       int nbOne = 0;
       int nbZero = 0;
       for(ORInt k=0;k<s;k++) {
@@ -163,7 +163,7 @@
 - (void) testWLSBEqc
 {
    int s = 10;
-   CPRange R = (CPRange){0,s-1};
+   ORRange R = (ORRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
    id<ORIntVarArray> x = [CPFactory intVarArray: m range:R domain: RANGE(0,1)];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
@@ -171,7 +171,7 @@
    [m solveAll: ^() {
       [m add: [CPFactory sumbool:x eq:4]];
    } using: ^() {
-      [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return i;}];
+      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++)
          nbOne += [x[k] min] == 1;
@@ -191,16 +191,16 @@
 {
    int s = 8;
    int n = 2;
-   CPRange R = (CPRange){0,s-1};
+   ORRange R = (ORRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,n-1}];
+   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (ORRange){0,n-1}];
    id<ORIntVarArray> nx = [CPFactory intVarArray: m range:R with:^id<ORIntVar>(ORInt i) {
       return [CPFactory negate:[x at:i]];
    }];
    
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
-      [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return i;}];
+      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return i;}];
       for(ORInt k=0;k<s;k++) {
          STAssertTrue([[x at:k] min] == ![[nx at:k] min], @"x and nx should be negations of each other");
       }
@@ -214,8 +214,8 @@
 -(void)testReify1
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(ORRange){0,1}];
    NSArray* av = [NSArray arrayWithObjects:x,b,nil];
    
    [m solveAll:^() {
@@ -232,8 +232,8 @@
 -(void)testReify2
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(ORRange){0,1}];
    [m solveAll:^() {
       [m add:[CPFactory reify:b with:x eqi:5]];
    } using: ^{
@@ -249,9 +249,9 @@
 -(void)testReify3
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> y = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(ORRange){0,1}];
    [m solveAll:^() {
       [m add:[CPFactory reify:b with:x eq:y consistency:ValueConsistency]];
    } using: ^{
@@ -268,9 +268,9 @@
 -(void)testReify4
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> y = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> y = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(ORRange){0,1}];
    [m solveAll:^() {
       [m add:[CPFactory reify:b with:x eq:y consistency:DomainConsistency]];
    } using: ^{
@@ -297,10 +297,10 @@
 -(void)testEQ3
 {
    int s = 2;
-   CPRange R = (CPRange){0,s-1};
+   ORRange R = (ORRange){0,s-1};
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (CPRange){0,10}];  
-   id<ORIntVar> zn = [CPFactory intVar:m domain:(CPRange){-10,0}];
+   id<ORIntVarArray> x  = [CPFactory intVarArray: m range:R domain: (ORRange){0,10}];  
+   id<ORIntVar> zn = [CPFactory intVar:m domain:(ORRange){-10,0}];
    id<ORIntVar> z = [CPFactory intVar:zn scale:-1];
    id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
    [m solveAll: ^() {
@@ -308,7 +308,7 @@
       [m add: [CPFactory equal3:[x at:0] to:[x at: 1] plus:z consistency:DomainConsistency]];
    }
          using:^{
-            [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return i;}];
+            [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return i;}];
             NSLog(@"Solution: %@ = %@",x,z);
             [nbSolutions  incr];
          }
@@ -324,8 +324,8 @@
    // First, setup  an "initial CP/Solver pair
    id<CPSolver> m = [CPFactory createSolver];
    // Add 2 variables and a constraint
-   id<ORIntVar> x = [CPFactory intVar:m domain:(CPRange){0,10}];
-   id<ORIntVar> b = [CPFactory intVar:m domain:(CPRange){0,1}];
+   id<ORIntVar> x = [CPFactory intVar:m domain:(ORRange){0,10}];
+   id<ORIntVar> b = [CPFactory intVar:m domain:(ORRange){0,1}];
    [CPFactory negate:b];
    
    [m add:[CPFactory reify:b with:x eq:5]];
@@ -367,10 +367,10 @@
 -(void)testRetractConstraintInSearch
 {
    ORInt n = 8;
-   CPRange R = (CPRange){1,n};
+   ORRange R = (ORRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
-   [CPFactory intArray:cp range:R with: ^CPInt(ORInt i) { return i; }];
+   [CPFactory intArray:cp range:R with: ^ORInt(ORInt i) { return i; }];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];

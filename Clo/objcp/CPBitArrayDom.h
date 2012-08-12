@@ -35,7 +35,7 @@
 
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
--(CPUInt)           getSize;
+-(ORUInt)           getSize;
 -(int)                  domsize;
 -(void)                 updateFreeBitCount;
 -(bool)                 bound;
@@ -60,5 +60,5 @@
 -(void)                 setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x;
 -(void)                 setUp: (unsigned int*) newUp for:(id<CPBitVarNotifier>)x;
 -(NSString*)            description;
--(void)                 enumerateWith:(void(^)(unsigned int*,CPInt))body;
+-(void)                 enumerateWith:(void(^)(unsigned int*,ORInt))body;
 @end

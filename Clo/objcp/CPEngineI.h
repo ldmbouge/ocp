@@ -60,7 +60,7 @@ enum CPEngineState {
    CPAC5Queue*              _ac5;
    ORStatus                 _status;
    ORInt                _propagating;
-   CPUInt               _nbpropag;
+   ORUInt               _nbpropag;
    CPCoreConstraint*        _last;
    UBType                   _propagIMP;
    id<ORSolution>           _aSol;
@@ -98,8 +98,8 @@ enum CPEngineState {
 -(ORStatus)  close;
 -(ORStatus)  status;
 -(bool)      closed;
--(CPUInt) nbPropagation;
--(CPUInt) nbVars;
+-(ORUInt) nbPropagation;
+-(ORUInt) nbVars;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end

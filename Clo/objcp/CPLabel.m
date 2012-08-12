@@ -44,7 +44,7 @@
         [CPLabel var: x[i]];
 }
 
-+(void) array: (id<ORIntVarArray>) x orderedBy: (CPInt2Int) orderedBy
++(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Int) orderedBy
 {
     CPSolverI* cp = (CPSolverI*) [x solver];
     CPSelect* select = [cp selectInRange: RANGE(cp,[x low],[x up])
@@ -68,7 +68,7 @@
    CPSolverI* cp = (CPSolverI*) [av solver];
    CPSelect* select = [cp selectInRange: RANGE(cp,[av low],[av up])
                                 suchThat: ^bool(ORInt i)      { return [[av at: i] bound]; }
-                               orderedBy: ^CPInt(ORInt i) { return [h varOrdering:av[i]]; }];
+                               orderedBy: ^ORInt(ORInt i) { return [h varOrdering:av[i]]; }];
    do {      
       ORInt i = [select max];
       if (i == MAXINT)
@@ -77,7 +77,7 @@
       CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMax:cp
                                                             range:RANGE(cp,[x min],[x max])
                                                          suchThat:^bool(ORInt v)  { return [x member:v];}
-                                                        orderedBy:^CPInt(ORInt v) { return [h valOrdering:v forVar:x];}];
+                                                        orderedBy:^ORInt(ORInt v) { return [h valOrdering:v forVar:x];}];
       do {
          ORInt curVal = [valSelect choose];
          if (curVal == MAXINT)

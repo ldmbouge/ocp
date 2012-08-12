@@ -43,7 +43,7 @@
 -(void)             search: (ORClosure) body;
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
--(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 
 -(void)          solve: (ORClosure) body;
 -(void)       solveAll: (ORClosure) body;
@@ -82,12 +82,12 @@
 // combinators
 -(void)               once: (ORClosure) cl;
 -(void)     limitSolutions: (ORInt) masSolutions in: (ORClosure) cl;
--(void)     limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl;
+-(void)     limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
--(void)          limitTime: (CPLong) maxTime in: (ORClosure) cl;
+-(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
--(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 @end
 
 @interface CPSemExplorerI : CPCoreExplorerI<ORExplorer> {
@@ -97,7 +97,7 @@
 // top level calls
 -(void)             search: (ORClosure) body;
 // combinators
--(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void)            repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 -(ORStatus)restoreCheckpoint:(Checkpoint*)cp;
 -(Checkpoint*)captureCheckpoint;
 -(NSData*)packCheckpoint:(Checkpoint*)cp;

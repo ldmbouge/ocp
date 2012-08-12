@@ -19,15 +19,15 @@
 @package
    ORInt _low;
    ORInt _up;
-   CPUInt _nbKilled;
+   ORUInt _nbKilled;
 }
--(id)initCPKillRange:(ORInt)f to:(ORInt)to size:(CPUInt)sz;
+-(id)initCPKillRange:(ORInt)f to:(ORInt)to size:(ORUInt)sz;
 -(void)dealloc;
 -(BOOL)isEqual:(CPKillRange*)kr;
 @end
 
 @implementation CPKillRange 
--(id)initCPKillRange:(ORInt)f to:(ORInt)to  size:(CPUInt)sz
+-(id)initCPKillRange:(ORInt)f to:(ORInt)to  size:(ORUInt)sz
 {
    self = [super init];
    _low = f;
@@ -48,11 +48,11 @@
 @interface CPAssignImpact : NSObject {
    id<ORIntVar>  _var;
    double*      _imps;
-   CPUInt _nbVals;
-   CPBounds      _dom;
+   ORUInt _nbVals;
+   ORBounds      _dom;
    double*        _mu;
    double*      _vari;
-   CPUInt*   _cnts;
+   ORUInt*   _cnts;
 }
 -(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar;
 -(void)dealloc;
@@ -79,9 +79,9 @@
       _mu -= _dom.min;
       _vari = malloc(sizeof(double)*_nbVals);
       _vari -= _dom.min;
-      _cnts = malloc(sizeof(CPUInt)*_nbVals);
+      _cnts = malloc(sizeof(ORUInt)*_nbVals);
       _cnts -= _dom.min;
-      for(CPUInt k=_dom.min;k<=_dom.max;k++) {
+      for(ORUInt k=_dom.min;k<=_dom.max;k++) {
          _cnts[k] = 0;
          _imps[k] = _mu[k] = _vari[k] = 0.0;
       }
@@ -129,7 +129,7 @@
 -(double)impactForVariable
 {
    if (_imps) {
-      CPBounds cb;
+      ORBounds cb;
       [_var bounds:&cb];
       double rv = 0.0;
       for(ORInt i = cb.min;i <= cb.max;i++) {
@@ -144,7 +144,7 @@
 @implementation CPIBS {
    CPEngineI*     _solver;
    CPMonitor*    _monitor;
-   CPULong           _nbv;
+   ORULong           _nbv;
    NSMutableDictionary*  _impacts;
 }
 
@@ -186,7 +186,7 @@
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    ORInt low = [_vars low],up = [_vars up];
-   for(CPUInt i=low;i<=up;i++) {
+   for(ORUInt i=low;i<=up;i++) {
       //NSLog(@"impacting: %@",[_vars at:i]);
       CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<ORIntVar>)[_vars at:i]];
       [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
@@ -212,7 +212,7 @@
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
--(void)addKillSetFrom:(ORInt)from to:(ORInt)to size:(CPUInt)sz into:(NSMutableSet*)set
+-(void)addKillSetFrom:(ORInt)from to:(ORInt)to size:(ORUInt)sz into:(NSMutableSet*)set
 {
    for(CPKillRange* kr in set) {
       if (to+1 == kr->_low) {
@@ -278,7 +278,7 @@
    ORInt low = [_vars low],up = [_vars up];
    for(ORInt k=low; k <= up;k++) {
       id<ORIntVar> v = (id<ORIntVar>)[_vars at:k];
-      CPBounds vb;
+      ORBounds vb;
       [v bounds: &vb];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
    }

@@ -53,7 +53,7 @@
 {
    return [[NSSet alloc] initWithObjects:_x,_b, nil];   
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
 }
@@ -116,7 +116,7 @@
 {
    return [[NSSet alloc] initWithObjects:_x,_b, nil];   
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
 }
@@ -218,7 +218,7 @@
 {
    return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
 }
@@ -329,7 +329,7 @@
       else {                    // TRUE <=> (x == y)
          [_x updateMin:minDom(_y) andMax:maxDom(_y)];
          [_y updateMin:minDom(_x) andMax:maxDom(_x)];
-         CPBounds b = bounds(_x);
+         ORBounds b = bounds(_x);
          for(ORInt i = b.min;i <= b.max; i++) {
             if (!memberBitDom(_x, i))
                [_y remove:i];
@@ -354,7 +354,7 @@
 {
    return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_x bound] + ![_y bound] + ![_b bound];
 }
@@ -421,7 +421,7 @@
 {
    return [[NSSet alloc] initWithObjects:_x,_b, nil];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
 }
@@ -492,7 +492,7 @@
 {
    return [[NSSet alloc] initWithObjects:_x,_b, nil];
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
    return ![_x bound] + ![_b bound];
 }
@@ -578,13 +578,13 @@
     }
     ORInt listen = _c+1;
     ORInt nbNW   = 0;
-    for(CPLong i=_nb-1;i >= 0;--i) {
+    for(ORLong i=_nb-1;i >= 0;--i) {
         if (listen > 0 && [_x[i] max] == true) { // Still in the domain and in need of more watches
             --listen; // the closure must capture the correct value of listen!
             _at[listen] = [_x[i] setLoseTrigger: true do: ^ 
                            {
                                // Look for another support among the non-tracked variables.
-                               CPLong j = _last;
+                               ORLong j = _last;
                                bool jOk = false;
                                do {
                                    j=(j+1) % (_nb - _c - 1);
@@ -633,10 +633,10 @@
       [rv addObject:_x[k]];
    return rv;
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb=0;
-   for(CPUInt k=0;k<_nb;k++) 
+   ORUInt nb=0;
+   for(ORUInt k=0;k<_nb;k++) 
       nb += ![_x[k] bound];
    return nb;
 }
@@ -644,7 +644,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [super encodeWithCoder:aCoder];   
-    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
+    [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
     for(ORInt k=0;k<_nb;k++) 
         [aCoder encodeObject:_x[k]];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
@@ -653,7 +653,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
     self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
+    [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
     _x = malloc(sizeof(CPIntVarI*)*_nb);   
     for(ORInt k=0;k<_nb;k++) 
         _x[k] = [aDecoder decodeObject];
@@ -766,10 +766,10 @@
       [rv addObject:_x[k]];
    return rv;
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb=0;
-   for(CPUInt k=0;k<_nb;k++)
+   ORUInt nb=0;
+   for(ORUInt k=0;k<_nb;k++)
       nb += ![_x[k] bound];
    return nb;
 }
@@ -777,7 +777,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
-   [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORLong) at:&_nb];
    for(ORInt k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
@@ -786,7 +786,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super initWithCoder:aDecoder];
-   [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORLong) at:&_nb];
    _x = malloc(sizeof(CPIntVarI*)*_nb);
    for(ORInt k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];

@@ -55,10 +55,10 @@
 
 @interface CPLimitTime : ORDefaultController <NSCopying,ORSearchController>
 {
-   CPLong    _maxTime;
-   CPLong    _startTime;
+   ORLong    _maxTime;
+   ORLong    _startTime;
 }
--(id)        initCPLimitTime: (CPLong) maxTime;
+-(id)        initCPLimitTime: (ORLong) maxTime;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;
@@ -68,9 +68,9 @@
 
 @interface CPLimitCondition : ORDefaultController <NSCopying,ORSearchController>
 {
-   CPVoid2Bool _condition;
+   ORVoid2Bool _condition;
 }
--(id)        initCPLimitCondition: (CPVoid2Bool) condition;
+-(id)        initCPLimitCondition: (ORVoid2Bool) condition;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;

@@ -68,7 +68,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(void)dealloc
 {
-   for(CPUInt i=0;i<_nbVI;i++)
+   for(ORUInt i=0;i<_nbVI;i++)
       [_varInfo[i] release];
    free(_varInfo);
    free(_curActive);
@@ -77,7 +77,7 @@ BOOL refresh(CPVarInfo* vi)
 -(ORStatus) post
 {
    ORTrail* trail = [[_cp engine] trail];
-   CPUInt nbW = 0;
+   ORUInt nbW = 0;
    for(ORInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
@@ -88,7 +88,7 @@ BOOL refresh(CPVarInfo* vi)
    }
    [[[_cp portal] propagateDone] wheneverNotifiedDo:^{
       _nbActive = 0;
-      for(CPUInt i=0;i<_nbVI;i++) {
+      for(ORUInt i=0;i<_nbVI;i++) {
          CPVarInfo* vInfo = _varInfo[i];
          if (refresh(vInfo))
             _curActive[_nbActive++] = vInfo;
@@ -118,14 +118,14 @@ BOOL refresh(CPVarInfo* vi)
 -(double)reduction
 {
    double product = 1.0;
-   for(CPUInt k = 0;k<_nbActive;k++)
+   for(ORUInt k = 0;k<_nbActive;k++)
       product *= _curActive[k]->_final / _curActive[k]->_initial;
    return product;
 }
 -(double)reductionFromRoot
 {
    double product = 1.0;
-   for(CPUInt i=0;i<_nbVI;i++) {
+   for(ORUInt i=0;i<_nbVI;i++) {
       CPVarInfo* vInfo = _varInfo[i];
       product *= vInfo->_final / vInfo->_root;
    }
@@ -133,7 +133,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(void)scanActive:(void(^)(CPVarInfo*))block
 {
-   for(CPUInt i=0;i<_nbActive;i++) 
+   for(ORUInt i=0;i<_nbActive;i++) 
       block(_curActive[i]);   
 }
 @end

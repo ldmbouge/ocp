@@ -253,7 +253,7 @@
    return (1 << _freebits._val)-1;
 }
 
--(CPUInt) getSize
+-(ORUInt) getSize
 {
    return (1 << _freebits._val)-1;
 }
@@ -508,7 +508,7 @@
     
     if(up < newMax64){
         if (_wordLength == 1)
-           assignTRUInt(&_max[0],(CPUInt) up, _trail);
+           assignTRUInt(&_max[0],(ORUInt) up, _trail);
         else{
             assignTRUInt(&_max[0], up>>32, _trail);
             assignTRUInt(&_max[1], (up << 32)>>32, _trail);
@@ -516,7 +516,7 @@
     }
     else{
         if (_wordLength == 1)
-           assignTRUInt(&_max[0], (CPUInt)newMax64, _trail); 
+           assignTRUInt(&_max[0], (ORUInt)newMax64, _trail); 
         else{
             assignTRUInt(&_max[0], newMax64>>32, _trail);
             assignTRUInt(&_max[1], (newMax64 << 32)>>32, _trail);
@@ -614,15 +614,15 @@
     [x bitFixedEvt:_freebits._val];    
 }
 
--(void)enumerateWith:(void(^)(unsigned int*,CPInt))body
+-(void)enumerateWith:(void(^)(unsigned int*,ORInt))body
 {
-   CPUInt sz = [self getSize];
+   ORUInt sz = [self getSize];
    unsigned int* bits = alloca(sizeof(unsigned int)*_wordLength);
-   for(CPUInt rank=0;rank < sz;rank++) {
+   for(ORUInt rank=0;rank < sz;rank++) {
       memset(bits,0,sizeof(unsigned int)*_wordLength);
       ORInt k = _freebits._val;
       unsigned int idx = 0;
-      CPUInt rc = rank;
+      ORUInt rc = rank;
       while(k) {
          unsigned int isFree = BITFREE(idx); // has a 1 at the proper bit position if free(b_idx)
          if (isFree) {

@@ -16,7 +16,7 @@
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)
 @interface CPCardinalityCst : CPActiveConstraint<NSCoding> {  
     CPEngineI*        _fdm;
-    CPRange       _values;
+    ORRange       _values;
     CPIntVarI**         _x;  // CPIntVar[_lx .. _ux] 
     ORInt*             _low;  // raw version of _low
     ORInt*              _up;  // raw version of _up
@@ -24,16 +24,16 @@
     ORInt               _uo;
     ORInt               _lx; 
     ORInt               _ux;
-    CPUInt        _so; // size of low/up
-    CPUInt        _sx; // size of ax
+    ORUInt        _so; // size of low/up
+    ORUInt        _sx; // size of ax
     TRInt*      _required; //_required[v]= how many variables are assigned to value v
     TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
 }
--(id) initCardinalityCst:(CPEngineI*)m values:(CPRange)r low:(ORInt*)low array:(id)ax up:(ORInt*)up;
+-(id) initCardinalityCst:(CPEngineI*)m values:(ORRange)r low:(ORInt*)low array:(id)ax up:(ORInt*)up;
 -(id) initCardinalityCst:(id<ORIntVarArray>) ax low: (id<ORIntArray>)low up: (id<ORIntArray>) up;
 -(void)dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 

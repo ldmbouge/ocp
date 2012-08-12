@@ -199,7 +199,7 @@
     ];
 }
 
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 {
 }
 
@@ -344,7 +344,7 @@
   [self popController]; 
 }
 
--(void) limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl
+-(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
    CPLimitCondition* limit = [[CPLimitCondition alloc] initCPLimitCondition: condition];
    [self push: limit];
@@ -369,7 +369,7 @@
    cl();
    [self popController];
 }
--(void) limitTime: (CPLong) maxTime in: (ORClosure) cl
+-(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
    CPLimitTime* limit = [[CPLimitTime alloc] initCPLimitTime: maxTime];
    [self push: limit];
@@ -409,7 +409,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; when a solution is found, execute onSolution; restore the state as before the call
 
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone;
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 {
 //   id<CPInteger> nbRestarts = [CPFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
@@ -470,7 +470,7 @@
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; when a solution is found, execute onSolution; restore the state as before the call
 
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
    NSCont* enter = [NSCont takeContinuation];
    if (isDone) 

@@ -54,7 +54,7 @@ int main (int argc, const char * argv[])
                                                              with: ^id<ORIntVar>(ORInt r,ORInt c) { return [x at: r : c]; }]]];
     [cp solve:
      ^() {
-         [CPLabel array: a orderedBy: ^CPInt(ORInt i) { return [[a at:i] domsize];}];
+         [CPLabel array: a orderedBy: ^ORInt(ORInt i) { return [[a at:i] domsize];}];
          show(x);
      }
      ];

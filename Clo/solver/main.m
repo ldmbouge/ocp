@@ -121,13 +121,13 @@ void labelFF4(CP* m,id<ORIntVarArray> x,int from,int to)
 int main(int argc, const char * argv[])
 {
 //  [CPStreamManager setRandomized];
-    long startTime = [CPRuntimeMonitor cputime];
+    long startTime = [ORRuntimeMonitor cputime];
     int n = 5;
    
     id pool = [[NSAutoreleasePool alloc] init];
    
    id<CPSolver> m = [CPFactory createSolver]; 
-   id<ORIntVarArray> x = [m createIntVarArray:(CPRange){0,n-1} domain:(CPRange){0,n-1}];
+   id<ORIntVarArray> x = [m createIntVarArray:(ORRange){0,n-1} domain:(ORRange){0,n-1}];
     [m solve: ^() 
      {
         [m post: [CPAllDifferent on:x]];
@@ -147,7 +147,7 @@ int main(int argc, const char * argv[])
     NSLog(@"Quitting");
     [pool release];
   
-    long endTime = [CPRuntimeMonitor cputime];
+    long endTime = [ORRuntimeMonitor cputime];
     printf("Time: %ld \n",endTime - startTime);
     return 0;
 }
@@ -156,12 +156,12 @@ int main(int argc, const char * argv[])
 int main(int argc, const char * argv[])
 {
 //  [CPStreamManager setRandomized];
-    long startTime = [CPRuntimeMonitor cputime];
+    long startTime = [ORRuntimeMonitor cputime];
     int n = 8;
    
     id pool = [[NSAutoreleasePool alloc] init];
     CP* m = [[[CP alloc] init] autorelease];
-    CPIntVarArray* x = [[[CPIntVarArray alloc] initCPIntVarArray: m size: n domain: (CPRange){0,n-1}] autorelease];
+    CPIntVarArray* x = [[[CPIntVarArray alloc] initCPIntVarArray: m size: n domain: (ORRange){0,n-1}] autorelease];
     for(ORInt i=0;i<n;i++) {
         id xi = [x at: i];
         for(ORInt j=i+1;j<n;j++) {
@@ -175,7 +175,7 @@ int main(int argc, const char * argv[])
     CPExpr* e2 = [CPExpr var: [x at: 1]];
     CPExpr* e3 = [e1 plus: e2];
     [e3 print];
-    CPExpr* es = [CPExpr sum: (CPRange){0,n-1} suchThat: ^bool(int i) { return i < 3; } of: ^CPExpr*(int i) { return [CPExpr var: [x at: i]]; }];
+    CPExpr* es = [CPExpr sum: (ORRange){0,n-1} suchThat: ^bool(int i) { return i < 3; } of: ^CPExpr*(int i) { return [CPExpr var: [x at: i]]; }];
     printf("Sum: ");
     [es print];
     
@@ -197,7 +197,7 @@ int main(int argc, const char * argv[])
     NSLog(@"Quitting");
     [pool release];
   
-    long endTime = [CPRuntimeMonitor cputime];
+    long endTime = [ORRuntimeMonitor cputime];
     printf("Time: %ld \n",endTime - startTime);
     return 0;
 }

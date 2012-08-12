@@ -45,10 +45,10 @@ int main(int argc, const char * argv[])
       id<ORIntVar>      obj  = [CPFactory intVar:cp bounds:RANGE(cp,0,maxCost*sizeof(cap))];
       
       [cp add: [obj eq: [SUM(s, Stores, cost[s]) plus: SUM(w, Warehouses, [open[w] muli:fixed]) ]]];
-      for(CPUInt i=Warehouses.low;i <= Warehouses.up;i++) {
+      for(ORUInt i=Warehouses.low;i <= Warehouses.up;i++) {
          [cp add: [SUM(s, Stores, [supp[s] eqi:i]) leqi:cap[i]]];
       }
-      for(CPUInt i=Stores.low;i <= Stores.up; i++) {
+      for(ORUInt i=Stores.low;i <= Stores.up; i++) {
          id<ORIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
          [cp add: [[open elt:supp[i]] eqi:YES]];
          [cp add: [cost[i] eq:[row elt:supp[i]]]];

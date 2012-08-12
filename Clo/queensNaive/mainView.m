@@ -20,11 +20,11 @@
 int main (int argc, const char * argv[])
 {
    int n = 13;
-   CPRange R = (CPRange){0,n-1};
-   long startTime = [CPRuntimeMonitor cputime];
+   ORRange R = (ORRange){0,n-1};
+   long startTime = [ORRuntimeMonitor cputime];
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^CPInt(ORInt i) { return i; }]; 
+   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
@@ -34,8 +34,8 @@ int main (int argc, const char * argv[])
 //   id<CPHeuristic> h2 = [CPFactory createFF:cp];
    [cp solveAll: 
     ^() {
-       for(CPUInt i =0;i < n; i++) {
-          for(CPUInt j=i+1;j< n;j++) {
+       for(ORUInt i =0;i < n; i++) {
+          for(ORUInt j=i+1;j< n;j++) {
              [cp add: [CPFactory notEqual:[x at:i]    to:[x at: j]]];
              [cp add: [CPFactory notEqual:[xp at: i]  to:[xp at: j]]];
              [cp add: [CPFactory notEqual:[xn at: i]  to:[xn at: j]]];
@@ -52,7 +52,7 @@ int main (int argc, const char * argv[])
     }
     ];
    printf("GOT %d solutions\n",[nbSolutions value]);
-   long endTime = [CPRuntimeMonitor cputime];
+   long endTime = [ORRuntimeMonitor cputime];
    NSLog(@"Solution restored: %@",x);
    
    NSLog(@"Solver status: %@\n",cp);

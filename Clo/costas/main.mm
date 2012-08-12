@@ -64,8 +64,8 @@ int main(int argc, const char * argv[])
       id<CPHeuristic> h = [CPFactory createFF:cp];
       
       [cp add:[CPFactory alldifferent:costas]];
-      for(CPUInt i=R.low;i<=R.up;i++) {
-         for(CPUInt j=R.low;j<=R.up;j++) {
+      for(ORUInt i=R.low;i<=R.up;i++) {
+         for(ORUInt j=R.low;j<=R.up;j++) {
             if (i < j)
                [cp add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
             else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
@@ -76,8 +76,8 @@ int main(int argc, const char * argv[])
          [cp add:[CPFactory alldifferent:slice]];
       }
       [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
-      for(CPUInt i=R.low;i<=R.up;i++) {
-         for(CPUInt j=i+1;j<=R.up;j++) {
+      for(ORUInt i=R.low;i<=R.up;i++) {
+         for(ORUInt j=i+1;j<=R.up;j++) {
             [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
          }
       }

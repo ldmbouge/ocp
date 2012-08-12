@@ -32,7 +32,7 @@ int main(int argc, const char * argv[])
    id<ORIntRange> EWeeks = RANGE(cp,1,n);
    id<ORIntRange> HomeAway = RANGE(cp,0,1);
    id<ORIntRange> Games = RANGE(cp,0,n*n);
-   id<ORIntArray> c = [CPFactory intArray:cp range:Teams with: ^CPInt(ORInt i) { return 2; }];
+   id<ORIntArray> c = [CPFactory intArray:cp range:Teams with: ^ORInt(ORInt i) { return 2; }];
    id<ORIntVarMatrix> team = [CPFactory intVarMatrix:cp range: Periods : EWeeks : HomeAway domain:Teams];
    id<ORIntVarMatrix> game = [CPFactory intVarMatrix:cp range: Periods : Weeks domain:Games];
    id<ORIntVarArray> allteams =  [CPFactory intVarArray:cp range: Periods : EWeeks : HomeAway
@@ -60,14 +60,14 @@ int main(int argc, const char * argv[])
 
    [cp solve:
     ^() {
-       [CPLabel array: allgames orderedBy: ^CPInt(ORInt i) { return [[allgames at:i] domsize];}];
+       [CPLabel array: allgames orderedBy: ^ORInt(ORInt i) { return [[allgames at:i] domsize];}];
        printf("Solution \n");
        for(ORInt p = 1; p <= n/2; p++) {
           for(ORInt w = 1; w < n; w++)
              printf("%2d-%2d [%3d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game at: p : w] min]);
           printf("\n");
        }
-       [CPLabel array: allteams orderedBy: ^CPInt(ORInt i) { return [[allteams at:i] domsize];}];
+       [CPLabel array: allteams orderedBy: ^ORInt(ORInt i) { return [[allteams at:i] domsize];}];
        //         [cp label:[x at: 1] with: 2];
        printf("matrix: %s\n",[[team description] cStringUsingEncoding:NSASCIIStringEncoding]);
        //         [CPLabel array: x];

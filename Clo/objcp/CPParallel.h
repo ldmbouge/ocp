@@ -22,14 +22,14 @@
 // ====================================================================================================
 
 @interface SemParallel : NSObject {
-   CPUInt           _nbt;
+   ORUInt           _nbt;
    SemCP*          _original;
    PCObjectQueue*     _queue;
    SemCP**           _clones;
    NSCondition*  _terminated;
    ORInt         _nbDone;
 }
--(id)initSemParallel:(SemCP*)orig nbWorkers:(CPUInt)nbt;
+-(id)initSemParallel:(SemCP*)orig nbWorkers:(ORUInt)nbt;
 -(void)runSearcher:(NSData*)model;
 -(void)parallel:(CPVirtualClosure)body;
 -(void)setupAndGo:(NSData*)root forCP:(SemCP*)cp searchWith:(CPVirtualClosure)body;

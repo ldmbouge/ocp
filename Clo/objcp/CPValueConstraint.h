@@ -28,7 +28,7 @@
 -(id) initCPReifyNotEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x neq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPReifyEqualcDC : CPCoreConstraint<NSCoding> {
@@ -40,7 +40,7 @@
 -(id) initCPReifyEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x eq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPReifyEqualBC : CPCoreConstraint<NSCoding> {
@@ -52,7 +52,7 @@
 -(id) initCPReifyEqualBC:(id<ORIntVar>)b when:(id<ORIntVar>)x eq:(id<ORIntVar>)y;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPReifyEqualDC : CPCoreConstraint<NSCoding> {
@@ -64,7 +64,7 @@
 -(id) initCPReifyEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x eq:(id<ORIntVar>)y;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPReifyLEqualDC : CPCoreConstraint<NSCoding> {
@@ -76,7 +76,7 @@
 -(id) initCPReifyLEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x leq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPReifyGEqualDC : CPCoreConstraint<NSCoding> {
@@ -88,33 +88,33 @@
 -(id) initCPReifyGEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x geq:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 
 @interface CPSumBoolGeq : CPCoreConstraint<NSCoding> {
     CPIntVarI**       _x;
-    CPLong           _nb;
+    ORLong           _nb;
     ORInt             _c;
     CPTrigger**      _at; // the c+1 triggers.
     ORInt* _notTriggered;
-    CPLong         _last;
+    ORLong         _last;
 }
 -(id) initCPSumBool:(id)x geq:(ORInt)c;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPSumBoolEq : CPActiveConstraint<NSCoding> {
    CPIntVarI**       _x;
-   CPLong           _nb;
+   ORLong           _nb;
    ORInt             _c;
 }
 -(id) initCPSumBool:(id)x eq:(ORInt)c;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end

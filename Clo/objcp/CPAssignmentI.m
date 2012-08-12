@@ -86,11 +86,11 @@
    return NULL;
 }
 
--(CPUInt) nbUVars
+-(ORUInt) nbUVars
 {
    if (_posted) {
-      CPUInt nb=0;
-      for(CPUInt k=0;k<_varSize;k++)
+      ORUInt nb=0;
+      for(ORUInt k=0;k<_varSize;k++)
          nb += ![_var[k] bound];
       return nb;
    }

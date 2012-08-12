@@ -26,7 +26,7 @@
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPDiffc : CPActiveConstraint<NSCoding> {
@@ -38,7 +38,7 @@
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPEqualBC : CPActiveConstraint<NSCoding> {
@@ -52,7 +52,7 @@
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPEqualDC : CPActiveConstraint<NSCoding> {
@@ -65,7 +65,7 @@
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPEqual3DC : CPActiveConstraint<NSCoding> {
@@ -82,7 +82,7 @@
 -(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 typedef int (^intgetter) (void) ;
@@ -97,7 +97,7 @@ typedef int (^intgetter) (void) ;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPBasicNotEqual : CPActiveConstraint<NSCoding> {
@@ -107,7 +107,7 @@ typedef int (^intgetter) (void) ;
 -(id) initCPBasicNotEqual:(id)x and:(id) y;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPLEqualBC : CPActiveConstraint<NSCoding> {  // x <= y
@@ -118,7 +118,7 @@ typedef int (^intgetter) (void) ;
 -(id) initCPLEqualBC:(id)x and:(id) y;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPLEqualc : CPActiveConstraint<NSCoding> { // x <= c
@@ -129,7 +129,7 @@ typedef int (^intgetter) (void) ;
 -(id) initCPLEqualc:(id)x and:(ORInt) c;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPMultBC : CPActiveConstraint<NSCoding> { // z == x * y
@@ -140,7 +140,7 @@ typedef int (^intgetter) (void) ;
 -(id) initCPMultBC:(id)x times:(id)y equal:(id)z;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPAbsBC : CPActiveConstraint<NSCoding> { // abs(x)==y
@@ -150,7 +150,7 @@ typedef int (^intgetter) (void) ;
 -(id)initCPAbsBC:(id)x equal:(id)y;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPAbsDC : CPActiveConstraint<NSCoding> { // abs(x)==y
@@ -160,7 +160,7 @@ typedef int (^intgetter) (void) ;
 -(id)initCPAbsDC:(id)x equal:(id)y;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPOrDC : CPActiveConstraint<NSCoding> { // b == (x || y)
@@ -171,7 +171,7 @@ typedef int (^intgetter) (void) ;
 -(id)initCPOrDC:(id)b equal:(id)x or:(id)y;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPAndDC : CPActiveConstraint<NSCoding> { // b == (x && y)
@@ -182,7 +182,7 @@ typedef int (^intgetter) (void) ;
 -(id)initCPAndDC:(id)b equal:(id)x and:(id)y;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPImplyDC : CPActiveConstraint<NSCoding> { // b == (x => y)
@@ -193,12 +193,12 @@ typedef int (^intgetter) (void) ;
 -(id)initCPImplyDC:(id)b equal:(id)x imply:(id)y;
 -(ORStatus)post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPAllDifferenceVC : CPActiveConstraint<NSCoding> {
    CPIntVarI**   _x;
-   CPLong       _nb;
+   ORLong       _nb;
 }
 -(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<ORIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (ORInt) n;
@@ -206,7 +206,7 @@ typedef int (^intgetter) (void) ;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPIntVarMinimize : CPCoreConstraint<ORObjective>
@@ -217,7 +217,7 @@ typedef int (^intgetter) (void) ;
 -(void)      updatePrimalBound;
 -(ORInt)       primalBound;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORObjective>
@@ -228,5 +228,5 @@ typedef int (^intgetter) (void) ;
 -(void)      updatePrimalBound;
 -(ORInt)       primalBound;
 -(NSSet*)allVars;
--(CPUInt)nbUVars;
+-(ORUInt)nbUVars;
 @end

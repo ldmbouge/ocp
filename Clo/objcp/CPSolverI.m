@@ -48,7 +48,7 @@
 }
 -(void)reset
 {
-   for(CPUInt k=0;k<_sz;k++)
+   for(ORUInt k=0;k<_sz;k++)
       [_tab[k] release];
    _sz = 0;
 }
@@ -60,7 +60,7 @@
 }
 -(void)applyToAll:(void(^)(id<CPHeuristic>,NSMutableArray*))closure with:(NSMutableArray*)av;
 {
-   for(CPUInt k=0;k<_sz;k++)
+   for(ORUInt k=0;k<_sz;k++)
       closure(_tab[k],av);
 }
 @end
@@ -161,11 +161,11 @@
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_engine nbVars],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
 }
--(CPUInt) nbPropagation
+-(ORUInt) nbPropagation
 {
    return [_engine nbPropagation];
 }
--(CPUInt) nbVars
+-(ORUInt) nbVars
 {
    return [_engine nbVars];
 }
@@ -398,7 +398,7 @@
   [_search once: cl];
 }
 
--(void) limitCondition: (CPVoid2Bool) condition in: (ORClosure) cl
+-(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
    [_search limitCondition: condition in:cl];
 }
@@ -415,7 +415,7 @@
 {
   [_search limitFailures: maxFailures in: cl];
 }
--(void) limitTime: (CPLong) maxTime in: (ORClosure) cl
+-(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
   [_search limitTime: maxTime in: cl];
 }
@@ -466,7 +466,7 @@
 {
   [_search repeat: body onRepeat: onRepeat until: nil];
 }
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
   [_search repeat: body onRepeat: onRepeat until: isDone];
 }
@@ -580,7 +580,7 @@
    [_search solveAll: body using: search];
 }
 
--(void)solveParAll:(CPUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)search
+-(void)solveParAll:(ORUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)search
 {
    [self search:^() {
       body();
@@ -673,7 +673,7 @@
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
 }
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (CPVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
    [_search repeat: body onRepeat: onRepeat until: isDone];
 }

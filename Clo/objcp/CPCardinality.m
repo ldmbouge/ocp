@@ -88,7 +88,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
     _up  = ub - _lo;
 }
 
--(id)initCardinalityCst:(CPEngineI*)m values:(CPRange) r low:(ORInt*)low array:(id)ax up:(ORInt*)up
+-(id)initCardinalityCst:(CPEngineI*)m values:(ORRange) r low:(ORInt*)low array:(id)ax up:(ORInt*)up
 {
     self = [super initCPActiveConstraint: m];
     _fdm = m;
@@ -166,11 +166,11 @@ static void computeCardinalities(id<ORIntVarArray> ax,
    NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_up - _low + 1];
    return theSet;
 }
--(CPUInt)nbUVars
+-(ORUInt)nbUVars
 {
-   CPUInt nb=0;
-   CPUInt sz = (CPUInt)(_up - _low + 1);
-   for(CPUInt k=0;k<sz;k++)
+   ORUInt nb=0;
+   ORUInt sz = (ORUInt)(_up - _low + 1);
+   for(ORUInt k=0;k<sz;k++)
       nb += ![_x[k] bound];
    return nb;
 }

@@ -16,14 +16,14 @@
 @implementation CPBaseHeuristic
 -(void)initHeuristic:(NSMutableArray*)array
 {
-   __block CPUInt nbViews = 0;
+   __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       nbViews += ([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]);
    }];
-   CPULong l = [array count] - nbViews;
+   ORULong l = [array count] - nbViews;
    id<CPSolver> cp = [[array objectAtIndex:0] solver];
    id<CPVarArray> direct = [CPFactory varArray:cp range: RANGE(cp,0,(ORInt)l-1)];
-   __block CPUInt k = 0;
+   __block ORUInt k = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       if (!([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]))
          [direct set:obj at:k++];

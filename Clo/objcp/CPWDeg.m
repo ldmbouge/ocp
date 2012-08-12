@@ -76,14 +76,14 @@
 
 -(void)initInternal:(id<CPVarArray>)t
 {
-   CPLong len = [t count];
+   ORLong len = [t count];
    _vars = t;
    _cv = malloc(sizeof(NSSet*)*len);
    memset(_cv,sizeof(NSSet*)*len,0);
-   CPUInt maxID = 0;
+   ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[[t at:k] getId]);   
-   _map = malloc(sizeof(CPUInt)*(maxID+1));
+   _map = malloc(sizeof(ORUInt)*(maxID+1));
    ORInt low = [t low],up = [t up];
    for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
@@ -93,9 +93,9 @@
    _nbv = len;
    NSArray* allC = [_solver allConstraints];
    _nbc = [allC count];
-   _w   = malloc(sizeof(CPUInt)*_nbc);
+   _w   = malloc(sizeof(ORUInt)*_nbc);
    _vOfC = malloc(sizeof(id)*_nbc);
-   for(CPUInt k=0;k < _nbc;k++) {
+   for(ORUInt k=0;k < _nbc;k++) {
       _w[k] = 1;
       _vOfC[k] = [[allC objectAtIndex:k] allVars];
    }

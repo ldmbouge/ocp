@@ -45,10 +45,10 @@
 -(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
 {
    UIBoardController* board = [_view1 boardController];
-   CPBounds dom;
+   ORBounds dom;
    [[x at: [x low]] bounds:&dom];
-   CPRange cols = {[x low],[x up]};
-   CPRange rows = {dom.min,dom.max};
+   ORRange cols = {[x low],[x up]};
+   ORRange rows = {dom.min,dom.max};
    id grid = [board makeGrid:rows by: cols];
    for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = [x at:i];
@@ -76,9 +76,9 @@
 -(void)runModel 
 {
    int n = 8;
-   CPRange R = (CPRange){1,n};
+   ORRange R = (ORRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
-   id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
+   id<ORInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 

@@ -68,7 +68,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
         [_triggers release];    
     [super dealloc];
 }
--(void) setId:(CPUInt)name
+-(void) setId:(ORUInt)name
 {
     _name = name;
 }
@@ -120,9 +120,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom getWordLength];
 }
 
--(void) bounds:(CPBounds*) bnd
+-(void) bounds:(ORBounds*) bnd
 {
-    *bnd = (CPBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
+    *bnd = (ORBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
 }
 
 -(unsigned int)domsize
@@ -199,7 +199,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) bindEvt
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._minEvt._val;
@@ -215,7 +215,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) changeMinEvt: (int) dsz
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._minEvt._val;
@@ -228,7 +228,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) changeMaxEvt: (int) dsz
 {
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = _net._maxEvt._val;
@@ -243,7 +243,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     //Empty implementation
    VarEventNode* mList[5];
-   CPUInt k = 0;
+   ORUInt k = 0;
    mList[k] = _net._bitFixedEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
@@ -339,7 +339,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
  
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
-    [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_name];
+    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
     [aCoder encodeObject:_dom];
     [aCoder encodeObject:_fdm];
     [aCoder encodeObject:_recv];
@@ -347,7 +347,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
     self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_name];
+    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
     _dom = [[aDecoder decodeObject] retain];
     _fdm = [aDecoder decodeObject];
     setUpNetwork(&_net, [_fdm trail]);
@@ -390,7 +390,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     for(int i=0;i<_nb;i++)
         [_tab[i] bindEvt];
 }
--(void)bitFixedEvt: (CPUInt) dsz
+-(void)bitFixedEvt: (ORUInt) dsz
 {
     for(int i=0;i<_nb;i++)
         [_tab[i] bitFixedEvt:dsz];

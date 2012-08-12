@@ -19,7 +19,7 @@
 
 @implementation OPTSelect
 
--(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
     self = [super init];
     _range = range;
@@ -85,7 +85,7 @@
 @end
 
 @implementation CPSelect
--(CPSelect*) initCPSelect: (CPSolverI*) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelect*) initCPSelect: (CPSolverI*) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
     self = [super init];
     _select = [[OPTSelect alloc] initOPTSelectWithRange:range suchThat: filter orderedBy:order];
@@ -117,7 +117,7 @@
 
 @implementation CPSelectMinRandomized
 
--(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
    self = [super init];
    _range = range;
@@ -167,7 +167,7 @@
 
 @implementation CPSelectMax
 
--(CPSelectMax*) initSelectMax:(CPSolverI*)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order
+-(CPSelectMax*) initSelectMax:(CPSolverI*)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
    self = [super init];
    _range = range;
