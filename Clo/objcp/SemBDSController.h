@@ -20,12 +20,12 @@
    struct BDSNode {
       NSCont*     _cont;
       Checkpoint*   _cp;
-      CPInt         _disc;
+      ORInt         _disc;
    }; 
 @private   
    struct BDSNode* _tab;
-   CPInt        _mx;
-   CPInt        _sz;
+   ORInt        _mx;
+   ORInt        _sz;
 }
 -(id)initBDSStack:(ORInt)mx;
 -(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(ORInt)d;
@@ -38,8 +38,8 @@
 @private
    BDSStack*        _tab;
    BDSStack*       _next;
-   CPInt          _maxDisc;
-   CPInt           _nbDisc;
+   ORInt          _maxDisc;
+   ORInt           _nbDisc;
    SemTracer*    _tracer;
    Checkpoint*   _atRoot;
    id<CPEngine> _solver;   

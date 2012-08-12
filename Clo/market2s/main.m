@@ -40,21 +40,21 @@ int main(int argc, const char * argv[])
             printf("%d ",w[i][j]);
          printf(" <= %d\n",rhs[i]);
       }
-      CPInt rrhs = 0;
-      CPInt alpha = 1;
-      CPInt* wr = malloc(sizeof(ORInt)*n);
-      for(CPInt v = 0; v < n;v++) wr[v] = 0;
-      for(CPInt c = 0; c < m;++c) {
-         for(CPInt v = 0; v < n;v++) {
+      ORInt rrhs = 0;
+      ORInt alpha = 1;
+      ORInt* wr = malloc(sizeof(ORInt)*n);
+      for(ORInt v = 0; v < n;v++) wr[v] = 0;
+      for(ORInt c = 0; c < m;++c) {
+         for(ORInt v = 0; v < n;v++) {
             wr[v] = wr[v] + alpha * w[c][v];
             rrhs = rrhs + alpha * rhs[c];
             alpha = alpha * 5;
          }
       }
-      CPInt* tw = malloc(sizeof(ORInt)*n);
-      for (CPInt v=0; v < n; ++v) {
+      ORInt* tw = malloc(sizeof(ORInt)*n);
+      for (ORInt v=0; v < n; ++v) {
          tw[v] = 0;
-         for(CPInt c =0;c < m;++c)
+         for(ORInt c =0;c < m;++c)
             tw[v] += w[c][v];
       }
       
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
                //printf("BR:%d==%d\n",i+1,0);
                [cp label:x[i] with:0];
                /*
-               for(CPInt k=V.low;k<=V.up;k++)
+               for(ORInt k=V.low;k<=V.up;k++)
                   if ([x[k] bound])
                      printf("%d ",[x[k] value]);
                   else printf("? ");
@@ -82,7 +82,7 @@ int main(int argc, const char * argv[])
                //printf("BR:%d==%d\n",i+1,1);
                [cp label:x[i] with:1];
                /*
-               for(CPInt k=V.low;k<=V.up;k++)
+               for(ORInt k=V.low;k<=V.up;k++)
                   if ([x[k] bound])
                      printf("%d ",[x[k] value]);
                   else printf("? ");
@@ -94,8 +94,8 @@ int main(int argc, const char * argv[])
       }];
       
       for(int k=0;k < m;k++) {
-         CPInt sum = 0;
-         for(CPInt i=V.low;i <= V.up;++i)
+         ORInt sum = 0;
+         for(ORInt i=V.low;i <= V.up;++i)
             sum += w[k][i] * [x[i] value];
          NSLog(@"got: %d == %d",sum,rhs[k]);
          assert(sum == rhs[k]);

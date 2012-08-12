@@ -30,11 +30,11 @@
     if (_maxSize == 0)
         _maxSize = 1;
     _var = (LPVariableI**) malloc(_maxSize * sizeof(LPVariableI*));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _var[i] = [var[i] retain];
     _col = NULL;
     _coef = (double*) malloc(_maxSize * sizeof(double));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _coef[i] = coef[i];
     _rhs = rhs;
     
@@ -44,7 +44,7 @@
 }
 -(void) dealloc
 {
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_var[i] release];
     free(_var);
     if (_col)
@@ -61,7 +61,7 @@
     if (_size == _maxSize) {
         LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxSize * sizeof(LPVariableI*));
         double* ncoef = (double*) malloc(2 * _maxSize * sizeof(double));
-        for(CPInt i = 0; i < _size; i++) {
+        for(ORInt i = 0; i < _size; i++) {
             nvar[i] = _var[i];
             ncoef[i] = _coef[i];  
         }
@@ -85,7 +85,7 @@
     if (_tmpVar)
         free(_tmpVar);
     _tmpVar = (LPVariableI**) malloc(_size * sizeof(LPVariableI*));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _tmpVar[i] = _var[i];
     return _tmpVar;
 }
@@ -93,12 +93,12 @@
 {
     return _var[i];
 }
--(CPInt*) col
+-(ORInt*) col
 {
     if (_col)
         free(_col);
-    _col = (CPInt*) malloc(_size * sizeof(ORInt));
-    for(CPInt i = 0; i < _size; i++)
+    _col = (ORInt*) malloc(_size * sizeof(ORInt));
+    for(ORInt i = 0; i < _size; i++)
         _col[i] = [_var[i] idx];
     return _col;
 }
@@ -111,7 +111,7 @@
     if (_tmpCoef)
         free(_tmpCoef);
     _tmpCoef = (double*) malloc(_size * sizeof(double));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _tmpCoef[i] = _coef[i];
     return _tmpCoef;
 }
@@ -134,7 +134,7 @@
 }
 -(void) del
 {
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_var[i] delConstraint: self];
     _idx = -1;
 }
@@ -142,7 +142,7 @@
 {
     // linear algorithm: could be replaced by log(n)
     int k = -1;
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         if (_var[i] == var) {
             k = i;
             break;
@@ -150,7 +150,7 @@
     if (k >= 0) {
         [_var[k] release];
         _size--;
-        for(CPInt i = k; i < _size; i++) {
+        for(ORInt i = k; i < _size; i++) {
             _coef[i] = _coef[i+1];
             _var[i] = _var[i+1];
         }
@@ -165,7 +165,7 @@
 }
 -(void) print: (char*) o
 {
-    for(CPInt i = 0; i < _size; i++) {
+    for(ORInt i = 0; i < _size; i++) {
         printf("%f x%d",_coef[i],[_var[i] idx]);
         if (i < _size - 1)
             printf(" + ");
@@ -251,11 +251,11 @@
     if (_maxSize == 0)
         _maxSize++;
     _var = (LPVariableI**) malloc(_maxSize * sizeof(LPVariableI*));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _var[i] = [var[i] retain];
     _col = NULL;
     _coef = (double*) malloc(_maxSize * sizeof(double));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _coef[i] = coef[i];
     _cst = cst;
     _tmpVar = NULL;
@@ -267,7 +267,7 @@
     if (_size == _maxSize) {
         LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxSize * sizeof(LPVariableI*));
         double* ncoef = (double*) malloc(2 * _maxSize * sizeof(double));
-        for(CPInt i = 0; i < _size; i++) {
+        for(ORInt i = 0; i < _size; i++) {
             nvar[i] = _var[i];
             ncoef[i] = _coef[i];  
         }
@@ -283,7 +283,7 @@
 {
     if (_col)
         free(_col);
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_var[i] release];
     free(_var);
     free(_coef);
@@ -306,14 +306,14 @@
     if (_tmpVar)
         free(_tmpVar);
     _tmpVar = (LPVariableI**) malloc(_size * sizeof(LPVariableI*));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _tmpVar[i] = _var[i];
     return _tmpVar;
 }
--(CPInt*) col
+-(ORInt*) col
 {
-    _col = (CPInt*) malloc(_size * sizeof(ORInt));
-    for(CPInt i = 0; i < _size; i++)
+    _col = (ORInt*) malloc(_size * sizeof(ORInt));
+    for(ORInt i = 0; i < _size; i++)
         _col[i] = [_var[i] idx];
     return _col;
 }
@@ -322,13 +322,13 @@
     if (_tmpCoef)
         free(_tmpCoef);
     _tmpCoef = (double*) malloc(_size * sizeof(double));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _tmpCoef[i] = _coef[i];
     return _tmpCoef;   
 }
 -(void) print
 {
-    for(CPInt i = 0; i < _size; i++) {
+    for(ORInt i = 0; i < _size; i++) {
         printf("%f x%d",_coef[i],[_var[i] idx]);
         if (i < _size - 1)
             printf(" + ");
@@ -339,7 +339,7 @@
 {
     // linear algorithm: could be replaced by log(n)
     int k = -1;
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         if (_var[i] == var) {
             k = i;
             break;
@@ -347,7 +347,7 @@
     if (k >= 0) {
         [_var[k] release];
         _size--;
-        for(CPInt i = k; i < _size; i++) {
+        for(ORInt i = k; i < _size; i++) {
             _coef[i] = _coef[i+1];
             _var[i] = _var[i+1];
         }
@@ -463,7 +463,7 @@
 }
 -(void) dealloc
 {
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_cstr[i] release];
     free(_cstr);
     if (_cstrIdx)
@@ -501,7 +501,7 @@
     if (_size == _maxSize) {
         LPConstraintI** ncstr = (LPConstraintI**) malloc(2 * _maxSize * sizeof(LPConstraintI*));
         double* ncoef = (double*) malloc(2 * _maxSize * sizeof(double));
-        for(CPInt i = 0; i < _size; i++) {
+        for(ORInt i = 0; i < _size; i++) {
             ncstr[i] = _cstr[i];
             ncoef[i] = _coef[i];
         }
@@ -522,7 +522,7 @@
 -(void) delConstraint: (LPConstraintI*) c
 {
     int k;
-    for(CPInt i = 0; i < _size; i++) {
+    for(ORInt i = 0; i < _size; i++) {
         if (_cstr[i] == c) {
             k = i;
             break;
@@ -531,7 +531,7 @@
     if (k < _size) {
         [_cstr[k] release];
         _size--;
-        for(CPInt i = k; i < _size; i++) {
+        for(ORInt i = k; i < _size; i++) {
             _cstr[i] = _cstr[i+1];
             _coef[i] = _coef[i+1];
         }
@@ -540,7 +540,7 @@
 -(void) del
 {
     [_obj delVariable: self];
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_cstr[i] delVariable: self];
     _idx = -1;
 }
@@ -554,7 +554,7 @@
     printf("variable %d:",_idx);
     printf(" obj: %f",_objCoef);
     printf(" cstrs: ");
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         printf("(%d,%f)",[_cstr[i] idx],_coef[i]);
 }
 -(LPColumnI*) column
@@ -593,11 +593,11 @@
         _maxSize++;
     _objCoef = obj;
     _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _cstr[i] = [cstr[i] retain];
     _cstrIdx = NULL;
     _coef = (double*) malloc(_maxSize * sizeof(double));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _coef[i] = coef[i];
     _tmpCstr = NULL;
     _tmpCoef = NULL;
@@ -623,7 +623,7 @@
 {
     if (_cstrIdx)
         free(_cstrIdx);
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_cstr[i] release];
     free(_cstr);
     free(_coef);
@@ -638,7 +638,7 @@
     if (_size == _maxSize) {
         LPConstraintI** ncstr = (LPConstraintI**) malloc(2 * _maxSize * sizeof(LPConstraintI*));
         double* ncoef = (double*) malloc(2 * _maxSize * sizeof(double));
-        for(CPInt i = 0; i < _size; i++) {
+        for(ORInt i = 0; i < _size; i++) {
             ncstr[i] = _cstr[i];
             ncoef[i] = _coef[i];
         }
@@ -679,16 +679,16 @@
     if (_tmpCstr)
         free(_tmpCstr);
     _tmpCstr = (LPConstraintI**) malloc(_size * sizeof(LPConstraintI*));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _tmpCstr[i] = _cstr[i];
     return _tmpCstr;   
 }
--(CPInt*) cstrIdx
+-(ORInt*) cstrIdx
 {
     if (_cstrIdx)
         free(_cstrIdx);
-    _cstrIdx = (CPInt*) malloc(_size * sizeof(ORInt));
-    for(CPInt i = 0; i < _size; i++) 
+    _cstrIdx = (ORInt*) malloc(_size * sizeof(ORInt));
+    for(ORInt i = 0; i < _size; i++) 
         _cstrIdx[i] = [_cstr[i] idx];
     return _cstrIdx;
 }
@@ -697,7 +697,7 @@
     if (_tmpCoef)
         free(_tmpCoef);
     _tmpCoef = (double*) malloc(_size * sizeof(double));
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         _tmpCoef[i] = _coef[i];
     return _tmpCoef;   
 }
@@ -706,7 +706,7 @@
     // Fill the variables
     if (obj)
         [v addObjective: obj coef: _objCoef];
-    for(CPInt i = 0; i < _size; i++) {
+    for(ORInt i = 0; i < _size; i++) {
         if ([_cstr[i] idx] < 0)
             @throw [[NSException alloc] initWithName:@"LPSolver Error" 
                                               reason:@"Constraint is not present when adding column" 
@@ -718,7 +718,7 @@
         [obj addVariable: v coef: _objCoef];
     }
     // fill the constraints
-    for(CPInt i = 0; i < _size; i++) 
+    for(ORInt i = 0; i < _size; i++) 
         [_cstr[i] addVariable: v coef: _coef[i]];
 }
 -(void) addObjCoef: (double) coef
@@ -778,7 +778,7 @@
 }
 -(void) dealloc
 {
-    for(CPInt i = 0; i < _size; i++)
+    for(ORInt i = 0; i < _size; i++)
         [_var[i] release];
     free(_var);
     free(_coef);
@@ -789,7 +789,7 @@
     if (_size == _maxSize) {
         LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxSize * sizeof(LPVariableI*));
         double* ncoef = (double*) malloc(2 * _maxSize * sizeof(double));
-        for(CPInt i = 0; i < _size; i++) {
+        for(ORInt i = 0; i < _size; i++) {
             nvar[i] = _var[i];
             ncoef[i] = _coef[i];
         }
@@ -831,7 +831,7 @@
 {
     int lidx = MAXINT;
     int uidx = -1;
-    for(CPInt i = 0; i < _size; i++) {
+    for(ORInt i = 0; i < _size; i++) {
         int idx = [_var[i] idx];
         if (idx < lidx)
             lidx = idx;
@@ -842,15 +842,15 @@
     double* bucket = (double*) alloca(sizeIdx * sizeof(double));
     LPVariableI** bucketVar = (LPVariableI**) alloca(sizeIdx * sizeof(LPVariableI*));
     bucket -= lidx;
-    for(CPInt i = lidx; i <= uidx; i++) 
+    for(ORInt i = lidx; i <= uidx; i++) 
         bucket[i] = 0.0;
-    for(CPInt i = 0; i < _size; i++) {
+    for(ORInt i = 0; i < _size; i++) {
         int idx = [_var[i] idx];
         bucket[idx] += _coef[idx];
         bucketVar[idx] = _var[i];
     }
     int nb = 0;
-    for(CPInt i = lidx; i <= uidx; i++) {
+    for(ORInt i = lidx; i <= uidx; i++) {
         if (bucket[i] != 0) {
             _var[nb] = bucketVar[i];
             _coef[nb] = bucket[i];
@@ -887,9 +887,9 @@
 }
 -(void) dealloc
 {
-    for(CPInt i = 0; i < _nbVars; i++) 
+    for(ORInt i = 0; i < _nbVars; i++) 
         [_var[i] release];
-    for(CPInt i = 0; i < _nbCstrs; i++) 
+    for(ORInt i = 0; i < _nbCstrs; i++) 
         [_cstr[i] release];
     free(_var);
     free(_cstr);
@@ -899,7 +899,7 @@
 {
     if (_nbVars == _maxVars) {
         LPVariableI** nvar = (LPVariableI**) malloc(2 * _maxVars * sizeof(LPVariableI*));
-        for(CPInt i = 0; i < _nbVars; i++) 
+        for(ORInt i = 0; i < _nbVars; i++) 
             nvar[i] = _var[i];
         free(_var);
         _var = nvar;
@@ -947,7 +947,7 @@
 {
     if (_nbCstrs == _maxCstrs) {
         LPConstraintI** ncstr = (LPConstraintI**) malloc(2 * _maxCstrs * sizeof(LPConstraintI*));
-        for(CPInt i = 0; i < _nbCstrs; i++) 
+        for(ORInt i = 0; i < _nbCstrs; i++) 
             ncstr[i] = _cstr[i];
         free(_cstr);
         _cstr = ncstr;
@@ -958,21 +958,21 @@
     int size = [cstr size];
     LPVariableI** var = [cstr var];
     double* coef = [cstr coef];
-    for(CPInt i = 0; i < size; i++)
+    for(ORInt i = 0; i < size; i++)
         [var[i] addConstraint: cstr coef: coef[i]];
     
 }
 -(id<LPConstraint>) createLEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs
 {
     id<LPLinearTerm> t = [self createLinearTerm];
-    for(CPInt i = 0; i < size; i++) 
+    for(ORInt i = 0; i < size; i++) 
         [t add: coef[i] times: var[i]];
     return [self createLEQ: t rhs: rhs];
 }
 -(id<LPConstraint>) createGEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs
 {
     id<LPLinearTerm> t = [self createLinearTerm];
-    for(CPInt i = 0; i < size; i++) 
+    for(ORInt i = 0; i < size; i++) 
         [t add: coef[i] times: var[i]];
     return [self createGEQ: t rhs: rhs];
    
@@ -980,21 +980,21 @@
 -(id<LPConstraint>) createEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs
 {
     id<LPLinearTerm> t = [self createLinearTerm];
-    for(CPInt i = 0; i < size; i++) 
+    for(ORInt i = 0; i < size; i++) 
         [t add: coef[i] times: var[i]];
     return [self createEQ: t rhs: rhs];
 }
 -(id<LPObjective>) createMinimize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef 
 {
     id<LPLinearTerm> t = [self createLinearTerm];
-    for(CPInt i = 0; i < size; i++) 
+    for(ORInt i = 0; i < size; i++) 
         [t add: coef[i] times: var[i]];
     return [self createMinimize: t];
 }
 -(id<LPObjective>) createMaximize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef 
 {
     id<LPLinearTerm> t = [self createLinearTerm];
-    for(CPInt i = 0; i < size; i++) 
+    for(ORInt i = 0; i < size; i++) 
         [t add: coef[i] times: var[i]];
     return [self createMaximize: t];
 }
@@ -1099,7 +1099,7 @@
                                           reason:@"Constraint is not present" 
                                         userInfo:nil];     
     int k = -1;
-    for(CPInt i = 0; i < _nbCstrs; i++) 
+    for(ORInt i = 0; i < _nbCstrs; i++) 
         if (_cstr[i] == cstr) {
             k = i;
             break;
@@ -1109,7 +1109,7 @@
         [cstr del];
         [_cstr[k] release];
         _nbCstrs--;
-        for(CPInt i = k; i < _nbCstrs; i++) {
+        for(ORInt i = k; i < _nbCstrs; i++) {
             _cstr[i] = _cstr[i+1];
             [_cstr[i] setIdx: i];
         }
@@ -1131,7 +1131,7 @@
                                           reason:@"Variable is not present" 
                                         userInfo:nil];     
     int k = -1;
-    for(CPInt i = 0; i < _nbVars; i++) 
+    for(ORInt i = 0; i < _nbVars; i++) 
         if (_var[i] == var) {
             k = i;
             break;
@@ -1141,7 +1141,7 @@
         [var del];
         [_var[k] release];
         _nbVars--;
-        for(CPInt i = k; i < _nbVars; i++) {
+        for(ORInt i = k; i < _nbVars; i++) {
             _var[i] = _var[i+1];
             [_var[i] setIdx: i];
         }
@@ -1167,7 +1167,7 @@
     int size = [obj size];
     LPVariableI** var = [obj var];
     double* coef = [obj coef];
-    for(CPInt i = 0; i < size; i++)
+    for(ORInt i = 0; i < size; i++)
         [var[i] addObjective: obj coef: coef[i]];
     return _obj;
 }
@@ -1194,9 +1194,9 @@
 {
     if (!_isClosed) {
         _isClosed = true;
-        for(CPInt i = 0; i < _nbVars; i++)
+        for(ORInt i = 0; i < _nbVars; i++)
             [_lp addVariable: _var[i]];
-        for(CPInt i = 0; i < _nbCstrs; i++)
+        for(ORInt i = 0; i < _nbCstrs; i++)
             [_lp addConstraint: _cstr[i]];
         [_lp addObjective: _obj];
     }
@@ -1284,7 +1284,7 @@
 -(void) print;
 {
     /*
-    for(CPInt i = 0; i < _nbVars; i++) {
+    for(ORInt i = 0; i < _nbVars; i++) {
         [_var[i] print];
         printf("\n");
     }
@@ -1294,7 +1294,7 @@
         if (_obj) 
             [_obj print];
         printf("subject to \n");
-        for(CPInt i = 0; i < _nbCstrs; i++) {
+        for(ORInt i = 0; i < _nbCstrs; i++) {
             printf("\t");
             [_cstr[i] print];
         }

@@ -27,8 +27,8 @@
    id<ORTracer>       _tracer;
    TRId               _controller;
    CPHStack*          _hStack;
-   CPInt          _nbf;
-   CPInt          _nbc;   
+   ORInt          _nbf;
+   ORInt          _nbc;   
 }
 -(id)            initCPCoreExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer;
 -(void)                   dealloc;

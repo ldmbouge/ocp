@@ -50,19 +50,19 @@
    CPRange cols = {[x low],[x up]};
    CPRange rows = {dom.min,dom.max};
    id grid = [board makeGrid:rows by: cols];
-   for(CPInt i = [x low];i <= [x up];i++) {
+   for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = [x at:i];
       [cp add: [CPFactory watchVariable:xi 
-                            onValueLost:^void(CPInt val) {
+                            onValueLost:^void(ORInt val) {
                                [board toggleGrid:grid row:val col:i to:Removed];
                             } 
-                            onValueBind:^void(CPInt val) {
+                            onValueBind:^void(ORInt val) {
                                [board toggleGrid:grid row:val col:i to:Required];
                             } 
-                         onValueRecover:^void(CPInt val) {
+                         onValueRecover:^void(ORInt val) {
                             [board toggleGrid:grid row:val col:i to:Possible];
                          }
-                          onValueUnbind:^void(CPInt val) {
+                          onValueUnbind:^void(ORInt val) {
                              [board toggleGrid:grid row:val col:i to:Possible];
                           }
                 ]];

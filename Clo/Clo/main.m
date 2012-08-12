@@ -97,13 +97,13 @@ void traverseTree() {
    id<CPSolver> m = [CPFactory createSolver];
    int* cnt = NSAllocateCollectable(sizeof(ORInt), NSCollectorDisabledOption);
    *cnt = 0;
-   const CPInt nbv = 8;
+   const ORInt nbv = 8;
    NSMutableArray* vars = [[NSMutableArray alloc] initWithCapacity:nbv];
-   for(CPInt i=0;i< nbv;i++)
+   for(ORInt i=0;i< nbv;i++)
       [vars addObject: [[SillyVar alloc] initWithLow:0 up:10]];
    NSLog(@"Array before starting: %@\n",vars);
    [m solveAll: ^() {
-      for(CPInt i=0;i<nbv;i++) {
+      for(ORInt i=0;i<nbv;i++) {
          SillyVar* cv = [vars objectAtIndex:i];
          int v = 0;
          while (![cv bound] && v < [cv imax]) {
@@ -122,7 +122,7 @@ void traverseTree() {
 int main (int argc, const char * argv[])
 {
    //objc_startCollectorThread();
-/*   for(CPInt i=0;i<1000;i++) {
+/*   for(ORInt i=0;i<1000;i++) {
       silly(i);
    }
    
@@ -137,7 +137,7 @@ int main (int argc, const char * argv[])
    
 /*   Silly* os = [[Silly alloc] init:10 y:2];
    double t = 0;
-   for(CPInt i=0;i<500000000;i++) {
+   for(ORInt i=0;i<500000000;i++) {
       t += [os callMe:i];
    } 
    NSLog(@"Method call: %f\n",t);

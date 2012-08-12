@@ -41,7 +41,7 @@ typedef struct IRange {
 -(LPConstraintType)    type;
 -(ORInt)                 size;
 -(id<LPVariable>*)     var;
--(CPInt*)                col;
+-(ORInt*)                col;
 -(double*)             coef;
 -(double)              rhs;
 -(ORInt)                 idx;
@@ -51,7 +51,7 @@ typedef struct IRange {
 @protocol LPObjective  <NSObject>
 -(LPObjectiveType)     type;
 -(ORInt)                 size;
--(CPInt*)                col;
+-(ORInt*)                col;
 -(double*)             coef;
 -(double)              value;
 @end
@@ -63,7 +63,7 @@ typedef struct IRange {
 -(double) up;
 -(double) objCoef;
 -(ORInt) size;
--(CPInt*) cstrIdx;
+-(ORInt*) cstrIdx;
 -(double*) coef;
 @end
 

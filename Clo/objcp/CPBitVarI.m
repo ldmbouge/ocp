@@ -400,7 +400,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   for(CPInt k=0;k<_nb;k++)
+   for(ORInt k=0;k<_nb;k++)
       [aCoder encodeObject:_tab[k]];
    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
 }
@@ -410,7 +410,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
-   for(CPInt k=0;k<_nb;k++)
+   for(ORInt k=0;k<_nb;k++)
       _tab[k] = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];   
    return self;

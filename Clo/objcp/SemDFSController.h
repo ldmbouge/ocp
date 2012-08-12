@@ -20,8 +20,8 @@
 @interface SemDFSController : ORDefaultController <NSCopying,ORSearchController,CPStealing> {
 @private
    NSCont**        _tab;
-   CPInt              _sz;
-   CPInt             _mx;
+   ORInt              _sz;
+   ORInt             _mx;
    Checkpoint**  _cpTab;
    SemTracer*   _tracer;
    Checkpoint*  _atRoot;

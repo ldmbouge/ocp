@@ -27,7 +27,7 @@
    PCObjectQueue*     _queue;
    SemCP**           _clones;
    NSCondition*  _terminated;
-   CPInt         _nbDone;
+   ORInt         _nbDone;
 }
 -(id)initSemParallel:(SemCP*)orig nbWorkers:(CPUInt)nbt;
 -(void)runSearcher:(NSData*)model;

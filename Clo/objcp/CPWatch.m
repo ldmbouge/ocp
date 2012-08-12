@@ -64,7 +64,7 @@
 
 -(ORStatus) post
 {
-   [_theVar whenLoseValue:self do:^(CPInt val) {
+   [_theVar whenLoseValue:self do:^(ORInt val) {
       if (_lost) _lost(val);
       if (_rec) {
          [_trail trailClosure:^{
@@ -73,7 +73,7 @@
       }
    }];
    [_theVar setBindTrigger: ^ { 
-      CPInt val = [_theVar min];
+      ORInt val = [_theVar min];
       if (_bind) _bind(val);
       if (_unb) {
          [_trail trailClosure:^{
@@ -125,7 +125,7 @@
 {
    if (_onChoose)
       _onChoose();
-   CPInt cn = [_controller addChoice:k];
+   ORInt cn = [_controller addChoice:k];
    return cn;
 }
 -(void)fail

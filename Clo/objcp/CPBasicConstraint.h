@@ -20,7 +20,7 @@
 @interface CPEqualc : CPActiveConstraint<NSCoding> {
    @private
    CPIntVarI* _x;
-   CPInt  _c;
+   ORInt  _c;
 }
 -(id) initCPEqualc:(id)x and:(ORInt)c;
 -(void) dealloc;
@@ -32,7 +32,7 @@
 @interface CPDiffc : CPActiveConstraint<NSCoding> {
 @private
    CPIntVarI* _x;
-   CPInt      _c;
+   ORInt      _c;
 }
 -(id) initCPDiffc:(id)x and:(ORInt)c;
 -(void) dealloc;
@@ -45,7 +45,7 @@
 @private
    CPIntVarI*  _x;
    CPIntVarI*  _y;
-   CPInt _c;
+   ORInt _c;
 }
 -(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c;
 -(void) dealloc;
@@ -59,7 +59,7 @@
 @private
    CPIntVarI*  _x;
    CPIntVarI*  _y;
-   CPInt _c;
+   ORInt _c;
 }
 -(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c;
 -(void) dealloc;
@@ -91,7 +91,7 @@ typedef int (^intgetter) (void) ;
 @private
    CPIntVarI* _x;
    CPIntVarI* _y;
-   CPInt  _c;
+   ORInt  _c;
 }
 -(id) initCPNotEqual: (id) x and: (id) y  and: (ORInt) c;
 -(ORStatus) post;
@@ -124,7 +124,7 @@ typedef int (^intgetter) (void) ;
 @interface CPLEqualc : CPActiveConstraint<NSCoding> { // x <= c
 @private
    CPIntVarI* _x;
-   CPInt      _c;
+   ORInt      _c;
 }
 -(id) initCPLEqualc:(id)x and:(ORInt) c;
 -(ORStatus) post;

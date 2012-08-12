@@ -26,7 +26,7 @@ typedef struct CPTrigger {
    struct CPTrigger*  _next;
    ConstraintCallback   _cb;       // var/val held inside the closure (captured).
    CPCoreConstraint*  _cstr;
-   CPInt _vId;               // local variable identifier (var being watched)
+   ORInt _vId;               // local variable identifier (var being watched)
 } CPTrigger;
 
 
@@ -53,8 +53,8 @@ typedef struct CPTrigger {
 @interface CPDenseTriggerMap : CPTriggerMap {
 @private
     CPTrigger** _tab;
-    CPInt         _low;
-    CPInt          _sz;
+    ORInt         _low;
+    ORInt          _sz;
 }
 -(id) initDenseTriggerMap:(ORInt)low size:(ORInt)sz;
 -(void)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;

@@ -17,8 +17,8 @@
 
 @interface CPLimitSolutions : ORDefaultController <NSCopying,ORSearchController> {
 @private
-   CPInt _maxSolutions;
-   CPInt _nbSolutions;
+   ORInt _maxSolutions;
+   ORInt _nbSolutions;
 }
 -(id)   initCPLimitSolutions: (ORInt) maxSolutions;
 -(void) dealloc;
@@ -29,7 +29,7 @@
 
 @interface CPLimitDiscrepancies : ORDefaultController <NSCopying,ORSearchController> 
 {
-  CPInt     _maxDiscrepancies;
+  ORInt     _maxDiscrepancies;
   ORTrail*  _trail;
   TRInt     _nbDiscrepancies;
 }
@@ -42,8 +42,8 @@
 
 @interface CPLimitFailures : ORDefaultController <NSCopying,ORSearchController>
 {
-   CPInt     _maxFailures;
-   CPInt     _nbFailures;
+   ORInt     _maxFailures;
+   ORInt     _nbFailures;
 }
 -(id)        initCPLimitFailures: (ORInt) maxFailures;
 -(void)      dealloc;

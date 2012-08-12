@@ -265,8 +265,8 @@
 
 -(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
-   CPInt curIte;
-   CPInt foundIte;
+   ORInt curIte;
+   ORInt foundIte;
    [_controller._val startTryall];
    NSCont* exit = [NSCont takeContinuation];
    NSCont* next = nil;

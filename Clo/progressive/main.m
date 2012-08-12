@@ -50,10 +50,10 @@ int main(int argc, const char * argv[])
    NSLog(@"%@",config);
    
    FILE* dta = fopen("progressive.txt","r");
-   CPInt h = 1;
-   CPInt g = 1;
-   for(CPInt i = 1; i <= 42; i++) {
-      CPInt id, bcap, sz;
+   ORInt h = 1;
+   ORInt g = 1;
+   for(ORInt i = 1; i <= 42; i++) {
+      ORInt id, bcap, sz;
       fscanf(dta, "%d",&id);
       fscanf(dta, "%d",&bcap);
       fscanf(dta, "%d",&sz);
@@ -69,26 +69,26 @@ int main(int argc, const char * argv[])
    CPLong startTime = [CPRuntimeMonitor cputime];
    
    id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
-   for(CPInt g = Guests.low; g <= Guests.up; g++)
+   for(ORInt g = Guests.low; g <= Guests.up; g++)
       [cp add: [CPFactory alldifferent: ALL(ORIntVar, p, Periods, [boat at:g :p]) ]];
-   for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
-     for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++)
+   for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
+     for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
          [cp add: [SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
-   for(CPInt p = Periods.low; p <= Periods.up; p++)
+   for(ORInt p = Periods.low; p <= Periods.up; p++)
          [cp add: [CPFactory packing: ALL(ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
 
    [cp solve: ^{
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; } ]
-               orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
+       for(ORInt p = Periods.low; p <= Periods.up; p++) {
+          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; } ]
+               orderedBy: ^CPInt(ORInt g) { return [[boat at:g : p] domsize];}
            ];
        }
        CPLong endTime = [CPRuntimeMonitor cputime];
        
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {
+       for(ORInt p = Periods.low; p <= Periods.up; p++) {
           NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];
           [line appendFormat:@"p=%2d : ",p];
-          for(CPInt g = Guests.low; g <= Guests.up; g++) {
+          for(ORInt g = Guests.low; g <= Guests.up; g++) {
              if ([[boat at: g : p] bound])
                 [line appendFormat:@"%2d ",[[boat at: g :p] value]];
              else [line appendFormat:@"%@",[boat at: g :p] ];
@@ -99,22 +99,22 @@ int main(int argc, const char * argv[])
        NSLog(@"Execution Time: %lld \n",endTime - startTime);
        
        int use[14];
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          for(CPInt h = 1; h <= 13; h++)
+       for(ORInt p = Periods.low; p <= Periods.up; p++) {
+          for(ORInt h = 1; h <= 13; h++)
              use[h] = 0;
           
-          for(CPInt g = Guests.low; g <= Guests.up; g++)
+          for(ORInt g = Guests.low; g <= Guests.up; g++)
              use[[[boat at: g : p] value]] += [crew at: g];
-          for(CPInt h = 1; h <= 13; h++)
+          for(ORInt h = 1; h <= 13; h++)
              if (use[h] > [cap at: h]) {
                 printf("Bad capacity at %d - %d: %d instead of %d \n",p,h,use[h],[cap at: h]);
                 abort();
              }
        }
-       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++) {
-          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-             CPInt nbEq = 0;
-             for(CPInt p=Periods.low;p <= Periods.up;p++) {
+       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
+          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+             ORInt nbEq = 0;
+             for(ORInt p=Periods.low;p <= Periods.up;p++) {
                 nbEq += [[boat at: g1 : p] value] == [[boat at: g2 :p] value];
                 if (nbEq >= 2) {
                    NSLog(@"Violation of social: g1=%d g2=%d p=%d  %@   -  %@",g1,g2,p,[boat at:g1:p],[boat at:g2 :p]);
@@ -125,9 +125,9 @@ int main(int argc, const char * argv[])
           }
        }
        
-       for(CPInt g = Guests.low; g <= Guests.up; g++) {
-          for(CPInt p1 = Periods.low; p1 <= Periods.up; p1++)
-             for(CPInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
+       for(ORInt g = Guests.low; g <= Guests.up; g++) {
+          for(ORInt p1 = Periods.low; p1 <= Periods.up; p1++)
+             for(ORInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
                 if ([[boat at: g : p1] value] == [[boat at: g : p2] value]) {
                    printf("boat[%d,%d] = %d and boat[%d,%d] = %d \n",g,p1,g,p2,[[boat at:g : p1] value],[[boat at: g : p2] value]);
                    printf("all different is wrong \n");
@@ -136,10 +136,10 @@ int main(int argc, const char * argv[])
              }
        }
        
-       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
-          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-             CPInt s = 0;
-             for(CPInt p = Periods.low; p <= Periods.up; p++)
+       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
+          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+             ORInt s = 0;
+             for(ORInt p = Periods.low; p <= Periods.up; p++)
                 s += [[boat at: g1 : p] value] == [[boat at:g2 : p] value];
              if (s > 1) {
                 printf("guest %d and guest %d \n",g1,g2);
@@ -147,7 +147,7 @@ int main(int argc, const char * argv[])
                 abort();
              }
           }
-       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
     ];
    NSLog(@"Solver status: %@\n",cp);
@@ -190,10 +190,10 @@ int real_main(int argc, const char * argv[])
    NSLog(@"%@",config);
    
    FILE* dta = fopen("progressive.txt","r");
-   CPInt h = 1;
-   CPInt g = 1;
-   for(CPInt i = 1; i <= 42; i++) {
-      CPInt id, bcap, sz;
+   ORInt h = 1;
+   ORInt g = 1;
+   for(ORInt i = 1; i <= 42; i++) {
+      ORInt id, bcap, sz;
       fscanf(dta, "%d",&id);
       fscanf(dta, "%d",&bcap);
       fscanf(dta, "%d",&sz);
@@ -213,23 +213,23 @@ int real_main(int argc, const char * argv[])
    id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
    [cp solve:
     ^{
-       for(CPInt g = Guests.low; g <= Guests.up; g++)
+       for(ORInt g = Guests.low; g <= Guests.up; g++)
           [cp add: [CPFactory alldifferent: ALL(CPIntVar, p, Periods, [boat at:g :p]) ]];
-       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
-          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++)
+       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
+          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
              [cp add: [SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
-       for(CPInt p = Periods.low; p <= Periods.up; p++)
+       for(ORInt p = Periods.low; p <= Periods.up; p++)
           [cp add: [CPFactory packing: ALL(CPIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
     }
        using:
     ^{
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; } ]
-               orderedBy: ^CPInt(CPInt g) { return [[boat at:g : p] domsize];}
+       for(ORInt p = Periods.low; p <= Periods.up; p++) {
+          [CPLabel array: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; } ]
+               orderedBy: ^CPInt(ORInt g) { return [[boat at:g : p] domsize];}
            ];
        }
        /*
-        for(CPInt p = Periods.low; p <= Periods.up; p++) {
+        for(ORInt p = Periods.low; p <= Periods.up; p++) {
         [cp forall: Guests suchThat:^bool(ORInt g) { return ![[boat at: g :p] bound];}
         orderedBy:^ORInt(ORInt g) { return [[boat at:g :p] domsize];}
         //                              orderedBy:^ORInt(ORInt g) { return g;}
@@ -248,10 +248,10 @@ int real_main(int argc, const char * argv[])
         */
        CPLong endTime = [CPRuntimeMonitor cputime];
        
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {
+       for(ORInt p = Periods.low; p <= Periods.up; p++) {
           NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];
           [line appendFormat:@"p=%2d : ",p];
-          for(CPInt g = Guests.low; g <= Guests.up; g++) {
+          for(ORInt g = Guests.low; g <= Guests.up; g++) {
              if ([[boat at: g : p] bound])
                 [line appendFormat:@"%2d ",[[boat at: g :p] value]];
              else [line appendFormat:@"%@",[boat at: g :p] ];
@@ -262,22 +262,22 @@ int real_main(int argc, const char * argv[])
        NSLog(@"Execution Time: %lld \n",endTime - startTime);
        
        int use[14];
-       for(CPInt p = Periods.low; p <= Periods.up; p++) {
-          for(CPInt h = 1; h <= 13; h++)
+       for(ORInt p = Periods.low; p <= Periods.up; p++) {
+          for(ORInt h = 1; h <= 13; h++)
              use[h] = 0;
           
-          for(CPInt g = Guests.low; g <= Guests.up; g++)
+          for(ORInt g = Guests.low; g <= Guests.up; g++)
              use[[[boat at: g : p] value]] += [crew at: g];
-          for(CPInt h = 1; h <= 13; h++)
+          for(ORInt h = 1; h <= 13; h++)
              if (use[h] > [cap at: h]) {
                 printf("Bad capacity at %d - %d: %d instead of %d \n",p,h,use[h],[cap at: h]);
                 abort();
              }
        }
-       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++) {
-          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-             CPInt nbEq = 0;
-             for(CPInt p=Periods.low;p <= Periods.up;p++) {
+       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++) {
+          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+             ORInt nbEq = 0;
+             for(ORInt p=Periods.low;p <= Periods.up;p++) {
                 nbEq += [[boat at: g1 : p] value] == [[boat at: g2 :p] value];
                 if (nbEq >= 2) {
                    NSLog(@"Violation of social: g1=%d g2=%d p=%d  %@   -  %@",g1,g2,p,[boat at:g1:p],[boat at:g2 :p]);
@@ -288,9 +288,9 @@ int real_main(int argc, const char * argv[])
           }
        }
        
-       for(CPInt g = Guests.low; g <= Guests.up; g++) {
-          for(CPInt p1 = Periods.low; p1 <= Periods.up; p1++)
-             for(CPInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
+       for(ORInt g = Guests.low; g <= Guests.up; g++) {
+          for(ORInt p1 = Periods.low; p1 <= Periods.up; p1++)
+             for(ORInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
                 if ([[boat at: g : p1] value] == [[boat at: g : p2] value]) {
                    printf("boat[%d,%d] = %d and boat[%d,%d] = %d \n",g,p1,g,p2,[[boat at:g : p1] value],[[boat at: g : p2] value]);
                    printf("all different is wrong \n");
@@ -299,10 +299,10 @@ int real_main(int argc, const char * argv[])
              }
        }
        
-       for(CPInt g1 = Guests.low; g1 <= Guests.up; g1++)
-          for(CPInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
-             CPInt s = 0;
-             for(CPInt p = Periods.low; p <= Periods.up; p++)
+       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
+          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
+             ORInt s = 0;
+             for(ORInt p = Periods.low; p <= Periods.up; p++)
                 s += [[boat at: g1 : p] value] == [[boat at:g2 : p] value];
              if (s > 1) {
                 printf("guest %d and guest %d \n",g1,g2);
@@ -310,7 +310,7 @@ int real_main(int argc, const char * argv[])
                 abort();
              }
           }
-       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(CPInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
+       //          [cp add: [CPFactory packing: [CPFactory intVarArray: cp range: Guests with: ^id<ORIntVar>(ORInt g) { return [boat at: g : p]; }] itemSize: crew binSize:cap]];
     }
     ];
    NSLog(@"Solver status: %@\n",cp);

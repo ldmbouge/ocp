@@ -250,7 +250,7 @@ struct CPVarPair {
    BOOL cv = [[e left] isConstant] && [[e right] isVariable];
    BOOL vc = [[e left] isVariable] && [[e right] isConstant];
    if (cv || vc) {      
-      CPInt coef = cv ? [[e left] min] : [[e right] min];
+      ORInt coef = cv ? [[e left] min] : [[e right] min];
       id       x = cv ? [e right] : [e left];
       [_terms addTerm:x by:coef];
    } else if ([[e left] isConstant]) {
@@ -364,8 +364,8 @@ struct CPVarPair {
 }
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c
 {
-   CPInt low = 0,up=_nb-1,mid=-1,kid;
-   CPInt xid = [x  getId];
+   ORInt low = 0,up=_nb-1,mid=-1,kid;
+   ORInt xid = [x  getId];
    BOOL found = NO;
    while (low <= up) {
       mid = (low+up)/2;
@@ -399,7 +399,7 @@ struct CPVarPair {
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:128] autorelease];
-   for(CPInt k=0;k<_nb;k++) {
+   for(ORInt k=0;k<_nb;k++) {
       [buf appendFormat:@"(%d * %@) + ",_terms[k]._coef,[_terms[k]._var description]];
    }
    [buf appendFormat:@" (%d)",_indep];
@@ -410,10 +410,10 @@ struct CPVarPair {
    id<CPSolver> cp = (id<CPSolver>) [_terms[0]._var solver];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp 
                                           range: RANGE(cp,0,_nb-1)
-                                           with:^id<ORIntVar>(CPInt i) {
+                                           with:^id<ORIntVar>(ORInt i) {
                                               return _terms[i]._var;
                                            }];
-   CPInt* coefs = alloca(sizeof(ORInt)*_nb);
+   ORInt* coefs = alloca(sizeof(ORInt)*_nb);
    for(int k=0;k<_nb;k++)
       coefs[k] = _terms[k]._coef;
    id<ORIntVarArray> sx = [CPFactory pointwiseProduct:x by:coefs];
@@ -433,8 +433,8 @@ struct CPVarPair {
 -(ORInt)min
 {
    CPLong lb = _indep;
-   for(CPInt k=0;k < _nb;k++) {
-      CPInt c = _terms[k]._coef;
+   for(ORInt k=0;k < _nb;k++) {
+      ORInt c = _terms[k]._coef;
       CPLong vlb = [_terms[k]._var min];
       CPLong vub = [_terms[k]._var max];
       CPLong svlb = c > 0 ? vlb * c : vub * c;
@@ -445,8 +445,8 @@ struct CPVarPair {
 -(ORInt)max
 {
    CPLong ub = _indep;
-   for(CPInt k=0;k < _nb;k++) {
-      CPInt c = _terms[k]._coef;
+   for(ORInt k=0;k < _nb;k++) {
+      ORInt c = _terms[k]._coef;
       CPLong vlb = [_terms[k]._var min];
       CPLong vub = [_terms[k]._var max];
       CPLong svub = c > 0 ? vub * c : vlb * c;
@@ -468,8 +468,8 @@ struct CPVarPair {
             return [fdm post:[CPFactory equalc:_terms[0]._var to:_indep]];
          } else {
             assert(_terms[0]._coef != 0);
-            CPInt nc = - _indep / _terms[0]._coef;   
-            CPInt cr = - _indep % _terms[0]._coef;
+            ORInt nc = - _indep / _terms[0]._coef;   
+            ORInt cr = - _indep % _terms[0]._coef;
             if (cr != 0)
                return ORFailure;
             else
@@ -493,8 +493,8 @@ struct CPVarPair {
                id<ORIntVar> zp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef shift: _indep];
                return [fdm post:[CPFactory equal3:zp to:_terms[1]._var plus:_terms[2]._var consistency:cons]];
             } else { // exactly 1 negative coef
-               CPInt nc = _terms[0]._coef == -1 ? 0 : (_terms[1]._coef == -1 ? 1 : 2);
-               CPInt pc[3] = {0,1,2};
+               ORInt nc = _terms[0]._coef == -1 ? 0 : (_terms[1]._coef == -1 ? 1 : 2);
+               ORInt pc[3] = {0,1,2};
                for(CPUInt i=0;i<3;i++)
                   if (pc[i] == nc)
                      pc[i] = pc[2];
@@ -509,9 +509,9 @@ struct CPVarPair {
          }
       }break;
       default: {
-         CPInt sumCoefs = 0;
+         ORInt sumCoefs = 0;
          id<CPSolver> cp = (id<CPSolver>) [_terms[0]._var solver];
-         for(CPInt k=0;k<_nb;k++)
+         for(ORInt k=0;k<_nb;k++)
             if ([_terms[k]._var isBool])
                sumCoefs += (_terms[k]._coef == 1);
          if (sumCoefs == _nb) {
@@ -736,8 +736,8 @@ struct CPVarPair {
    id<ORTracker> cp = [e tracker];
    CPLinear* lT = [CPLinearizer linearFrom:[e operand] solver:_solver consistency:_c];
    id<ORIntVar> oV = [CPSubst normSide:lT for:_solver consistency:_c];
-   CPInt lb = [lT min];
-   CPInt ub = [lT max];
+   ORInt lb = [lT min];
+   ORInt ub = [lT max];
    if (_rv == nil)
       _rv = [CPFactory intVar:cp domain:RANGE(cp,lb,ub)];
    [_engine post:[CPFactory abs:oV equal:_rv consistency:_c]];
@@ -748,8 +748,8 @@ struct CPVarPair {
    id<ORTracker> cp = [e tracker];
    CPLinear* lT = [CPLinearizer linearFrom:[e index] solver:_solver consistency:_c];
    id<ORIntVar> oV = [CPSubst normSide:lT for:_solver consistency:_c];
-   CPInt lb = [e min];
-   CPInt ub = [e max];
+   ORInt lb = [e min];
+   ORInt ub = [e max];
    if (_rv == nil)
       _rv = [CPFactory intVar:cp domain: RANGE(cp,lb,ub)];
    [_engine post:[CPFactory element:oV idxCstArray:[e array] equal:_rv]];
@@ -761,8 +761,8 @@ struct CPVarPair {
    id<ORTracker> cp = [e tracker];
    CPLinear* lT = [CPLinearizer linearFrom:[e index] solver:_solver consistency:_c];
    id<ORIntVar> oV = [CPSubst normSide:lT for:_solver consistency:_c];
-   CPInt lb = [e min];
-   CPInt ub = [e max];
+   ORInt lb = [e min];
+   ORInt ub = [e max];
    if (_rv == nil)
       _rv = [CPFactory intVar:cp domain: RANGE(cp,lb,ub)];
    [_engine post:[CPFactory element:oV idxVarArray:[e array] equal:_rv]];

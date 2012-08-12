@@ -233,7 +233,7 @@
       @throw[[ORExecutionError alloc] initORExecutionError:"CPBitArrayDom::atRank does not support bit arrays with length > 64 bits.\n"];    
    unsigned int* bits = malloc(sizeof(unsigned int) * _wordLength);
    memset(bits,0,sizeof(unsigned int)*_wordLength);
-   CPInt k = _freebits._val;
+   ORInt k = _freebits._val;
    unsigned int idx = 0;
    unsigned long long rc = rank;
    while(k) {
@@ -620,7 +620,7 @@
    unsigned int* bits = alloca(sizeof(unsigned int)*_wordLength);
    for(CPUInt rank=0;rank < sz;rank++) {
       memset(bits,0,sizeof(unsigned int)*_wordLength);
-      CPInt k = _freebits._val;
+      ORInt k = _freebits._val;
       unsigned int idx = 0;
       CPUInt rc = rank;
       while(k) {

@@ -15,11 +15,11 @@
 
 @interface CPObjectQueue : NSObject {
    @package
-   CPInt      _mxs;
+   ORInt      _mxs;
    id*            _tab;
-   CPInt    _enter;
-   CPInt     _exit;
-   CPInt     _mask;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
 }
 -(id)initEvtQueue:(ORInt)sz;
 -(void)dealloc;
@@ -31,14 +31,14 @@
 
 // Producer-Consumer queue
 @interface PCObjectQueue  : NSObject {
-   CPInt           _mxs;
+   ORInt           _mxs;
    id*                 _tab;
-   CPInt         _enter;
-   CPInt          _exit;
-   CPInt          _mask;  
-   CPInt        _nbUsed;
-   CPInt     _nbWorkers;
-   CPInt    _nbWWaiting;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;  
+   ORInt        _nbUsed;
+   ORInt     _nbWorkers;
+   ORInt    _nbWWaiting;
    NSCondition*      _avail;
 }
 -(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;

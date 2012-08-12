@@ -37,18 +37,18 @@ int main(int argc, const char * argv[])
         [lp print];
         
         id<LPVariable> x[nbColumns];
-        for(CPInt i = 0; i < nbColumns; i++) 
+        for(ORInt i = 0; i < nbColumns; i++) 
             x[i] = [lp createVariable];
         
         id<LPLinearTerm> obj = [lp createLinearTerm];
-        for(CPInt i = 0; i < nbColumns; i++)
+        for(ORInt i = 0; i < nbColumns; i++)
             [obj add: c[i] times: x[i]];
         id<LPObjective> o = [lp postObjective: [lp createMaximize: obj]];
         
         id<LPConstraint> c[nbRows];
-        for(CPInt i = 0; i < nbRows; i++) {
+        for(ORInt i = 0; i < nbRows; i++) {
             id<LPLinearTerm> t = [lp createLinearTerm];
-            for(CPInt j = 0; j < nbColumns; j++)
+            for(ORInt j = 0; j < nbColumns; j++)
                 [t add: coef[i][j] times: x[j]];
             c[i] = [lp postConstraint: [lp createLEQ: t rhs: b[i]]];
         }
@@ -58,9 +58,9 @@ int main(int argc, const char * argv[])
         
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[o value]);
-        for(CPInt i = 0; i < nbColumns; i++) 
+        for(ORInt i = 0; i < nbColumns; i++) 
             printf("Value of %d is %f \n",i,[x[i] value]);
-        for(CPInt i = 0; i < nbRows; i++) 
+        for(ORInt i = 0; i < nbRows; i++) 
             printf("Dual of %d is %f \n",i,[c[i] dual]);
         
         [lp release];
@@ -91,7 +91,7 @@ int mainb(int argc, const char * argv[])
         [lp print];
         
         LPVariable* var[3];
-        for(CPInt i = 0; i < 3; i++) {
+        for(ORInt i = 0; i < 3; i++) {
             var[i] = [lp createVariable: 0 up: 1];
         }
         
@@ -132,7 +132,7 @@ int mainb(int argc, const char * argv[])
         
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 3; i++) 
+        for(ORInt i = 0; i < 3; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
         
         [lp release];
@@ -162,7 +162,7 @@ int main0(int argc, const char * argv[])
         [lp print];
         
         LPVariable* var[3];
-        for(CPInt i = 0; i < 3; i++) {
+        for(ORInt i = 0; i < 3; i++) {
             var[i] = [lp createVariable: 0 up: 1];
         }
         
@@ -193,7 +193,7 @@ int main0(int argc, const char * argv[])
         
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 3; i++) 
+        for(ORInt i = 0; i < 3; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
    
 
@@ -203,7 +203,7 @@ int main0(int argc, const char * argv[])
         
 //        printf("Status: %d \n",[lp status]);
 //        printf("objective: %f \n",[lp objectiveValue]);
-//        for(CPInt i = 0; i < 3; i++) 
+//        for(ORInt i = 0; i < 3; i++) 
 //            printf("Value of %d is %f \n",i,[lp value: var[i]]);
         
         
@@ -214,7 +214,7 @@ int main0(int argc, const char * argv[])
         printf("Identifier of cstr[0]: %d \n",[cstr[0] idx]);
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 3; i++) 
+        for(ORInt i = 0; i < 3; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
 
         
@@ -222,7 +222,7 @@ int main0(int argc, const char * argv[])
         printf("Identifier of cstr[0]: %d \n",[cstr[0] idx]);
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 3; i++) 
+        for(ORInt i = 0; i < 3; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
         [lp print];
         
@@ -231,7 +231,7 @@ int main0(int argc, const char * argv[])
         printf("Identifier of cstr[0]: %d \n",[cstr[0] idx]);
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 3; i++) 
+        for(ORInt i = 0; i < 3; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
         
         [lp print];
@@ -263,7 +263,7 @@ int main1(int argc, const char * argv[])
         [lp print];
         
         LPVariable* var[3];
-        for(CPInt i = 0; i < 2; i++) {
+        for(ORInt i = 0; i < 2; i++) {
             var[i] = [lp createVariable: 0 up: 1];
          }
         
@@ -293,7 +293,7 @@ int main1(int argc, const char * argv[])
         [lp solve];
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 2; i++) 
+        for(ORInt i = 0; i < 2; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
         [lp print];
         
@@ -306,7 +306,7 @@ int main1(int argc, const char * argv[])
         
         printf("Status: %d \n",[lp status]);
         printf("objective: %f \n",[lp objectiveValue]);
-        for(CPInt i = 0; i < 3; i++) 
+        for(ORInt i = 0; i < 3; i++) 
             printf("Value of %d is %f \n",i,[lp value: var[i]]);
    
          

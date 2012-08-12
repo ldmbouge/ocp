@@ -21,34 +21,34 @@ int main(int argc, const char * argv[])
 {
    id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
-   CPInt nbCap;
+   ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    id<ORIntRange> Caps = RANGE(cp,1,nbCap);
    id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
-   for(CPInt i = 2; i <= nbCap; i++) {
-      CPInt c;
+   for(ORInt i = 2; i <= nbCap; i++) {
+      ORInt c;
       fscanf(dta,"%d",&c);
       [cap set: c at: i];
    }
-   CPInt nbColors;
-   CPInt nbOrders;
+   ORInt nbColors;
+   ORInt nbOrders;
    fscanf(dta,"%d",&nbColors);
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
    id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
    id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
-   for(CPInt o = 1; o <= nbOrders; o++) {
-      CPInt w;
-      CPInt c;
+   for(ORInt o = 1; o <= nbOrders; o++) {
+      ORInt w;
+      ORInt c;
       fscanf(dta,"%d",&w);
       fscanf(dta,"%d",&c);
       [weight set: w at: o];
       [color set: c at: o];
    }
    
-   CPInt nbSize = 111;
+   ORInt nbSize = 111;
    id<ORIntRange> SetOrders = RANGE(cp,1,nbSize);
    id<ORIntRange> Slabs = RANGE(cp,1,nbSize);
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
@@ -56,16 +56,16 @@ int main(int argc, const char * argv[])
       coloredOrder[[color at: o]] = [CPFactory intSet: cp];
    for(int o = 1; o <= nbSize; o++)
       [coloredOrder[[color at: o]] insert: o];
-   CPInt maxCapacities = 0;
+   ORInt maxCapacities = 0;
    for(int c = 1; c <= nbCap; c++)
       if ([cap at: c] > maxCapacities)
          maxCapacities = [cap at: c];
    
    id<ORIntRange> Capacities = RANGE(cp,0,maxCapacities);
    id<ORIntArray> loss = [ORFactory intArray: cp range: Capacities value: 0];
-   for(CPInt c = 0; c <= maxCapacities; c++) {
-      CPInt m = MAXINT;
-      for(CPInt i = Caps.low; i <= Caps.up; i++)
+   for(ORInt c = 0; c <= maxCapacities; c++) {
+      ORInt m = MAXINT;
+      for(ORInt i = Caps.low; i <= Caps.up; i++)
          if ([cap at: i] >= c && [cap at: i] - c < m)
             m = [cap at: i] - c;
       [loss set: m at: c];
@@ -77,19 +77,19 @@ int main(int argc, const char * argv[])
    
    [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
    [cp add: [CPFactory packing: slab itemSize: weight load: load]];
-   for(CPInt s = Slabs.low; s <= Slabs.up; s++)
+   for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [cp minimize: obj];
    
    [cp solve: ^{
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
-          CPInt ms = max(0,[CPLabel maxBound: slab]);
-          [cp tryall: Slabs suchThat: ^bool(CPInt s) { return s <= ms + 1; } in: ^void(CPInt s)
+          ORInt ms = max(0,[CPLabel maxBound: slab]);
+          [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1; } in: ^void(ORInt s)
            {
               [cp label: slab[o] with: s];
            }
-           onFailure: ^void(CPInt s)
+           onFailure: ^void(ORInt s)
            {
               [cp diff: slab[o] with: s];
            }
@@ -125,34 +125,34 @@ int main1(int argc, const char * argv[])
 {
    id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
-   CPInt nbCap;
+   ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    CPRange Caps = {1,nbCap};
    id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
-   for(CPInt i = 2; i <= nbCap; i++) {
-      CPInt c;
+   for(ORInt i = 2; i <= nbCap; i++) {
+      ORInt c;
       fscanf(dta,"%d",&c);
       [cap set: c at: i];
    }
-   CPInt nbColors;
-   CPInt nbOrders;
+   ORInt nbColors;
+   ORInt nbOrders;
    fscanf(dta,"%d",&nbColors);
    fscanf(dta,"%d",&nbOrders);
    CPRange Colors = {1,nbColors};
    CPRange Orders = {1,nbOrders};
    id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
    id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
-   for(CPInt o = 1; o <= nbOrders; o++) {
-      CPInt w;
-      CPInt c;
+   for(ORInt o = 1; o <= nbOrders; o++) {
+      ORInt w;
+      ORInt c;
       fscanf(dta,"%d",&w);
       fscanf(dta,"%d",&c);
       [weight set: w at: o];
       [color set: c at: o];
    }
    
-   CPInt nbSize = 111;
+   ORInt nbSize = 111;
    CPRange IOrders = {1,nbSize};
    CPRange Slabs = {1,nbSize};
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
@@ -160,16 +160,16 @@ int main1(int argc, const char * argv[])
       coloredOrder[[color at: o]] = [CPFactory intSet: cp];
    for(int o = 1; o <= nbSize; o++) 
       [coloredOrder[[color at: o]] insert: o];
-   CPInt maxCapacities = 0;
+   ORInt maxCapacities = 0;
    for(int c = 1; c <= nbCap; c++)
       if ([cap at: c] > maxCapacities)
          maxCapacities = [cap at: c];
    
    CPRange Capacities = {0,maxCapacities};
    id<ORIntArray> loss = [ORFactory intArray: cp range: Capacities value: 0];
-   for(CPInt c = 0; c <= maxCapacities; c++) {
-      CPInt m = MAXINT;
-      for(CPInt i = Caps.low; i <= Caps.up; i++)
+   for(ORInt c = 0; c <= maxCapacities; c++) {
+      ORInt m = MAXINT;
+      for(ORInt i = Caps.low; i <= Caps.up; i++)
          if ([cap at: i] >= c && [cap at: i] - c < m)
             m = [cap at: i] - c;
       [loss set: m at: c];
@@ -182,7 +182,7 @@ int main1(int argc, const char * argv[])
    [cp minimize: obj subjectTo: ^{
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
       [cp add: [CPFactory packing: slab itemSize: weight load: load]];
-      for(CPInt s = Slabs.low; s <= Slabs.up; s++)
+      for(ORInt s = Slabs.low; s <= Slabs.up; s++)
 //         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
          [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    }
@@ -193,12 +193,12 @@ int main1(int argc, const char * argv[])
          orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];}
                 do: ^(ORInt o)
        {
-          CPInt ms = max(0,[CPLabel maxBound: slab]);
-          [cp tryall: Slabs suchThat: ^bool(CPInt s) { return s <= ms + 1; } in: ^void(CPInt s)
+          ORInt ms = max(0,[CPLabel maxBound: slab]);
+          [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1; } in: ^void(ORInt s)
            {
               [cp label: slab[o] with: s];
            }
-           onFailure: ^void(CPInt s)
+           onFailure: ^void(ORInt s)
            {
               [cp diff: slab[o] with: s];
            }
@@ -234,34 +234,34 @@ int main1(int argc, const char * argv[])
 {
    id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
-   CPInt nbCap;
+   ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    id<ORIntRange> Caps = RANGE(cp,1,nbCap);
    id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
-   for(CPInt i = 2; i <= nbCap; i++) {
-      CPInt c;
+   for(ORInt i = 2; i <= nbCap; i++) {
+      ORInt c;
       fscanf(dta,"%d",&c);
       [cap set: c at: i];
    }
-   CPInt nbColors;
-   CPInt nbOrders;
+   ORInt nbColors;
+   ORInt nbOrders;
    fscanf(dta,"%d",&nbColors);
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
    id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
    id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
-   for(CPInt o = 1; o <= nbOrders; o++) {
-      CPInt w;
-      CPInt c;
+   for(ORInt o = 1; o <= nbOrders; o++) {
+      ORInt w;
+      ORInt c;
       fscanf(dta,"%d",&w);
       fscanf(dta,"%d",&c);
       [weight set: w at: o];
       [color set: c at: o];
    }
    
-   CPInt nbSize = 111;
+   ORInt nbSize = 111;
    id<ORIntRange> SetOrders = RANGE(cp,1,nbSize);
    id<ORIntRange> Slabs = RANGE(cp,1,nbSize);
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
@@ -269,16 +269,16 @@ int main1(int argc, const char * argv[])
       coloredOrder[[color at: o]] = [CPFactory intSet: cp];
    for(int o = 1; o <= nbSize; o++)
       [coloredOrder[[color at: o]] insert: o];
-   CPInt maxCapacities = 0;
+   ORInt maxCapacities = 0;
    for(int c = 1; c <= nbCap; c++)
       if ([cap at: c] > maxCapacities)
          maxCapacities = [cap at: c];
    
    id<ORIntRange> Capacities = RANGE(cp,0,maxCapacities);
    id<ORIntArray> loss = [ORFactory intArray: cp range: Capacities value: 0];
-   for(CPInt c = 0; c <= maxCapacities; c++) {
-      CPInt m = MAXINT;
-      for(CPInt i = Caps.low; i <= Caps.up; i++)
+   for(ORInt c = 0; c <= maxCapacities; c++) {
+      ORInt m = MAXINT;
+      for(ORInt i = Caps.low; i <= Caps.up; i++)
          if ([cap at: i] >= c && [cap at: i] - c < m)
             m = [cap at: i] - c;
       [loss set: m at: c];
@@ -291,7 +291,7 @@ int main1(int argc, const char * argv[])
    [cp minimize: obj subjectTo: ^{
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
       [cp add: [CPFactory packing: slab itemSize: weight load: load]];
-      for(CPInt s = Slabs.low; s <= Slabs.up; s++)
+      for(ORInt s = Slabs.low; s <= Slabs.up; s++)
          //         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
          [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    }
@@ -311,7 +311,7 @@ int main1(int argc, const char * argv[])
              }
                onRepeat: ^{
                   id<ORSolution> solution = [cp solution];
-                  for(CPInt i = 1; i <= nbSize; i++) {
+                  for(ORInt i = 1; i <= nbSize; i++) {
                      if ([distr next] <= 90)
                         [cp label: slab[i] with: [solution intValue: slab[i]]];
                   }
@@ -346,34 +346,34 @@ int realmain(int argc, const char * argv[])
 {
    id<CPSolver> cp = [CPFactory createSolver];
    FILE* dta = fopen("slab.dat","r");
-   CPInt nbCap;
+   ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
    id<ORIntRange> Caps = RANGE(cp,1,nbCap);
    id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
-   for(CPInt i = 2; i <= nbCap; i++) {
-      CPInt c;
+   for(ORInt i = 2; i <= nbCap; i++) {
+      ORInt c;
       fscanf(dta,"%d",&c);
       [cap set: c at: i];
    }
-   CPInt nbColors;
-   CPInt nbOrders;
+   ORInt nbColors;
+   ORInt nbOrders;
    fscanf(dta,"%d",&nbColors);
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
    id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
    id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
-   for(CPInt o = 1; o <= nbOrders; o++) {
-      CPInt w;
-      CPInt c;
+   for(ORInt o = 1; o <= nbOrders; o++) {
+      ORInt w;
+      ORInt c;
       fscanf(dta,"%d",&w);
       fscanf(dta,"%d",&c);
       [weight set: w at: o];
       [color set: c at: o];
    }
    
-   CPInt nbSize = 111;
+   ORInt nbSize = 111;
    id<ORIntRange> SetOrders = RANGE(cp,1,nbSize);
    id<ORIntRange> Slabs = RANGE(cp,1,nbSize);
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
@@ -381,16 +381,16 @@ int realmain(int argc, const char * argv[])
       coloredOrder[[color at: o]] = [CPFactory intSet: cp];
    for(int o = 1; o <= nbSize; o++)
       [coloredOrder[[color at: o]] insert: o];
-   CPInt maxCapacities = 0;
+   ORInt maxCapacities = 0;
    for(int c = 1; c <= nbCap; c++)
       if ([cap at: c] > maxCapacities)
          maxCapacities = [cap at: c];
    
    id<ORIntRange> Capacities = RANGE(cp,0,maxCapacities);
    id<ORIntArray> loss = [ORFactory intArray: cp range: Capacities value: 0];
-   for(CPInt c = 0; c <= maxCapacities; c++) {
-      CPInt m = MAXINT;
-      for(CPInt i = Caps.low; i <= Caps.up; i++)
+   for(ORInt c = 0; c <= maxCapacities; c++) {
+      ORInt m = MAXINT;
+      for(ORInt i = Caps.low; i <= Caps.up; i++)
          if ([cap at: i] >= c && [cap at: i] - c < m)
             m = [cap at: i] - c;
       [loss set: m at: c];
@@ -406,7 +406,7 @@ int realmain(int argc, const char * argv[])
    [cp minimize: obj subjectTo: ^{
       [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
       [cp add: [CPFactory packing: slab itemSize: weight load: load]];
-      for(CPInt s = Slabs.low; s <= Slabs.up; s++)
+      for(ORInt s = Slabs.low; s <= Slabs.up; s++)
          //         [cp add: [SUM(c,Colors,[ISSUM(o,coloredOrder[c],[slab[o] eqi: c]) gti: 0]) lti: 3]];
          [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
       }
@@ -414,12 +414,12 @@ int realmain(int argc, const char * argv[])
  
          [ORControl forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
           {
-             CPInt ms = max(0,[CPLabel maxBound: slab]);
-             [cp tryall: Slabs suchThat: ^bool(CPInt s) { return s <= ms + 1; } in: ^void(CPInt s)
+             ORInt ms = max(0,[CPLabel maxBound: slab]);
+             [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1; } in: ^void(ORInt s)
               {
                  [cp label: slab[o] with: s];
               }
-              onFailure: ^void(CPInt s)
+              onFailure: ^void(ORInt s)
               {
                  [cp diff: slab[o] with: s];
               }

@@ -25,8 +25,8 @@ int main (int argc, const char * argv[])
    id<ORIntRange> R = RANGE(cp,1,n);
    id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
    id<ORIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    [cp solveParAll:4
        subjectTo: 
             ^() {
@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
              using: 
            ^void(id<CPSolver> cp) {
                id<ORIntVarArray> y = [cp virtual:x]; 
-               [CPLabel array: y orderedBy: ^CPInt(CPInt i) { return [[y at:i] domsize];}];              
+               [CPLabel array: y orderedBy: ^CPInt(ORInt i) { return [[y at:i] domsize];}];              
                 @synchronized(nbSolutions) {
                    [nbSolutions incr];  
                 }

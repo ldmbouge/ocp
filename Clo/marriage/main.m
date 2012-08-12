@@ -24,19 +24,19 @@ int main(int argc, const char * argv[])
       enum Women { Helen = 1,Tracy = 2, Linda = 3,Sally = 4,Wanda = 5 };
       id<ORIntRange> RMen   = RANGE(cp,1,5);
       id<ORIntRange> RWomen = RANGE(cp,1,5);
-      CPInt  rankM[5][5] = {{5,1,2,4,3},
+      ORInt  rankM[5][5] = {{5,1,2,4,3},
          {4,1,3,2,5},
          {5,3,2,4,1},
          {1,5,4,3,2},
          {4,3,2,1,5}};
       
-      CPInt rankW[5][5] = {{1,2,4,3,5},
+      ORInt rankW[5][5] = {{1,2,4,3,5},
          {3,5,1,2,4},
          {5,4,2,1,3},
          {1,3,5,4,2},
          {4,2,3,5,1}};
-      CPInt* rankMPtr = (CPInt*)rankM;
-      CPInt* rankWPtr = (CPInt*)rankW;
+      ORInt* rankMPtr = (ORInt*)rankM;
+      ORInt* rankWPtr = (ORInt*)rankW;
       
      
       id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
@@ -46,17 +46,17 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> wife    = [CPFactory intVarArray: cp range:RMen domain: RWomen];
       id<ORIntArray>* rm = malloc(sizeof(id<ORIntArray>)*5);
       id<ORIntArray>* rw = malloc(sizeof(id<ORIntArray>)*5);
-      for(CPInt m=RMen.low;m <= RMen.up;m++)
+      for(ORInt m=RMen.low;m <= RMen.up;m++)
          rm[m] = [CPFactory intArray:cp range:RWomen with:^ORInt(ORInt w) { return rankMPtr[(m-1) * 5 + w-1];}];
-      for(CPInt w=RWomen.low;w <= RWomen.up;w++) 
+      for(ORInt w=RWomen.low;w <= RWomen.up;w++) 
          rw[w] = [CPFactory intArray:cp range:RMen with:^ORInt(ORInt m) { return rankWPtr[(w-1) * 5 + m-1];}];
-      for(CPInt i=RMen.low;i <= RMen.up;i++)
+      for(ORInt i=RMen.low;i <= RMen.up;i++)
          [cp add: [[husband elt: wife[i]] eqi: i]];
-      for(CPInt i=RWomen.low;i <= RWomen.up;i++)
+      for(ORInt i=RWomen.low;i <= RWomen.up;i++)
          [cp add: [[wife elt: husband[i]] eqi: i]];
       
-      for(CPInt m=RMen.low;m <= RMen.up;m++) {
-         for(CPInt w=RWomen.low;w <= RWomen.up;w++) {
+      for(ORInt m=RMen.low;m <= RMen.up;m++) {
+         for(ORInt w=RWomen.low;w <= RWomen.up;w++) {
             [cp add: [[[rm[m] elt:wife[m]] gti: [rm[m] at:w]] imply: [[rw[w] elt:husband[w]] lti: [rw[w] at:m]]]];
             [cp add: [[[rw[w] elt:husband[w]] gti: [rw[w] at:m]] imply: [[rm[m] elt:wife[m]] lti: [rm[m] at:w]]]];
          }

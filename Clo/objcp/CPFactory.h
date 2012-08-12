@@ -27,23 +27,25 @@
 +(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
-+(id<CPHeuristic>)createFF:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createFF:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createIBS:(id<CPSolver>)cp;
-+(id<CPHeuristic>)createFF:(id<CPSolver>)cp;
++(id<CPHeuristic>) createFF:(id<CPSolver>)cp;
 @end;
 
 void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
++(id<ORInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
+
 +(id<ORIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range;
 +(id<ORIntVar>) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
-+(id<ORIntVar>)boolVar: (id<ORSolver>)cp;
++(id<ORIntVar>) boolVar: (id<ORSolver>)cp;
 +(id<ORIntVar>) negate:(id<ORIntVar>)x;
 
 +(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;

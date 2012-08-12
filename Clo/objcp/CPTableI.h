@@ -21,15 +21,15 @@
 @interface CPTableI : NSObject<CPTable,NSCoding> {
     @package
     id<CPSolver>  _cp;
-    CPInt   _arity; 
-    CPInt   _nb;
-    CPInt   _size;
-    CPInt** _column;
+    ORInt   _arity; 
+    ORInt   _nb;
+    ORInt   _size;
+    ORInt** _column;
     bool    _closed;
-    CPInt*  _min;          // _min[j] is the minimum value in column[j]
-    CPInt*  _max;          // _max[j] is the maximun value in column[j]
-    CPInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
-    CPInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
+    ORInt*  _min;          // _min[j] is the minimum value in column[j]
+    ORInt*  _max;          // _max[j] is the maximun value in column[j]
+    ORInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
+    ORInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
 }
 -(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (ORInt) arity;
 -(void) dealloc;
@@ -45,7 +45,7 @@
 
 @interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
     CPIntVarI**     _var;
-    CPInt           _arity;  
+    ORInt           _arity;  
     CPTableI*       _table;
     TRIntArray*     _currentSupport;
     bool            _posted;

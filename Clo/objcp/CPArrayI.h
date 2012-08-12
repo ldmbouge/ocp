@@ -23,9 +23,9 @@
     id<CPSolver>       _cp;
     ORTrail*     _trail;
     TRInt*       _array;
-    CPInt        _low;
-    CPInt        _up;
-    CPInt        _nb;
+    ORInt        _low;
+    ORInt        _up;
+    ORInt        _nb;
 }
 -(CPTRIntArrayI*) initCPTRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
@@ -45,14 +45,14 @@
 @private
     id<CPSolver>          _cp;
     ORTrail*        _trail;
-    CPInt*          _flat;
-    CPInt           _arity;
+    ORInt*          _flat;
+    ORInt           _arity;
     id<ORIntRange>* _range;
-    CPInt*          _low;
-    CPInt*          _up;
-    CPInt*          _size;
-    CPInt*          _i;
-    CPInt           _nb;
+    ORInt*          _low;
+    ORInt*          _up;
+    ORInt*          _size;
+    ORInt*          _i;
+    ORInt           _nb;
 }
 -(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
@@ -76,13 +76,13 @@
     id<CPSolver>    _cp;
     ORTrail*        _trail;
     TRInt*          _flat;
-    CPInt           _arity;
+    ORInt           _arity;
     id<ORIntRange>* _range;
-    CPInt*          _low;
-    CPInt*          _up;
-    CPInt*          _size;
-    CPInt*          _i;
-    CPInt           _nb;
+    ORInt*          _low;
+    ORInt*          _up;
+    ORInt*          _size;
+    ORInt*          _i;
+    ORInt           _nb;
 }
 -(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;

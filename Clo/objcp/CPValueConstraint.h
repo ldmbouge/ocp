@@ -23,7 +23,7 @@
 @private
     CPIntVarI* _b;
     CPIntVarI* _x;
-    CPInt      _c;
+    ORInt      _c;
 }
 -(id) initCPReifyNotEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x neq:(ORInt)c;
 -(ORStatus) post;
@@ -35,7 +35,7 @@
 @private
     CPIntVarI* _b;
     CPIntVarI* _x;
-    CPInt      _c;
+    ORInt      _c;
 }
 -(id) initCPReifyEqualcDC:(id<ORIntVar>)b when:(id<ORIntVar>)x eq:(ORInt)c;
 -(ORStatus) post;
@@ -71,7 +71,7 @@
 @private
    CPIntVarI* _b;
    CPIntVarI* _x;
-   CPInt      _c;
+   ORInt      _c;
 }
 -(id) initCPReifyLEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x leq:(ORInt)c;
 -(ORStatus) post;
@@ -83,7 +83,7 @@
 @private
    CPIntVarI* _b;
    CPIntVarI* _x;
-   CPInt      _c;
+   ORInt      _c;
 }
 -(id) initCPReifyGEqualDC:(id<ORIntVar>)b when:(id<ORIntVar>)x geq:(ORInt)c;
 -(ORStatus) post;
@@ -95,9 +95,9 @@
 @interface CPSumBoolGeq : CPCoreConstraint<NSCoding> {
     CPIntVarI**       _x;
     CPLong           _nb;
-    CPInt             _c;
+    ORInt             _c;
     CPTrigger**      _at; // the c+1 triggers.
-    CPInt* _notTriggered;
+    ORInt* _notTriggered;
     CPLong         _last;
 }
 -(id) initCPSumBool:(id)x geq:(ORInt)c;
@@ -110,7 +110,7 @@
 @interface CPSumBoolEq : CPActiveConstraint<NSCoding> {
    CPIntVarI**       _x;
    CPLong           _nb;
-   CPInt             _c;
+   ORInt             _c;
 }
 -(id) initCPSumBool:(id)x eq:(ORInt)c;
 -(void) dealloc;

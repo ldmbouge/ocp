@@ -30,7 +30,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
+   [CPFactory intArray:cp range: R with: ^CPInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
 
    //id<CPHeuristic> h = [CPFactory createIBS:cp];
@@ -45,12 +45,12 @@ int main (int argc, const char * argv[])
    }
    [cp solveAll:
     ^() {
-       //[CPLabel array: x ];// orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+       //[CPLabel array: x ];// orderedBy: ^CPInt(ORInt i) { return [[x at:i] domsize];}];
       //[CPLabel heuristic:h];
        NSLog(@"LEVEL START: %d",[[cp tracer] level]);
-       for(CPInt i=0;i<n;i++) {
+       for(ORInt i=0;i<n;i++) {
           while (![x[i] bound]) {
-             CPInt min = [x[i] min];
+             ORInt min = [x[i] min];
              [cp try:^{
                 NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,min,[[cp tracer] level]);
                 [cp label:x[i] with:min];

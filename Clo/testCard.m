@@ -48,7 +48,7 @@
    [m solveAll: ^() {
       [m add:[CPFactory cardinality:x low:lb up:ub]];      
    } using: ^() {
-      [CPLabel array:x orderedBy:^CPInt(CPInt i) {
+      [CPLabel array:x orderedBy:^CPInt(ORInt i) {
          return i;
       }];
       /*for(NSInteger k=0;k<s;k++)
@@ -56,7 +56,7 @@
       printf("]\n");
        */
       for(NSInteger k=0;k<n;k++)cnt[k]=0;
-      for(CPInt k=0;k<s;k++)
+      for(ORInt k=0;k<s;k++)
          cnt[[[x at:k] min]]++;
       for(NSInteger k=0;k<n;k++)
          STAssertTrue(cnt[k]>=2 && cnt[k] <=3, @"cnt should always be in 2..3");

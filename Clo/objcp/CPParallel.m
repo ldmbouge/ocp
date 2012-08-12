@@ -228,7 +228,7 @@
 {
    NSLog(@"SemParallel dealloc");
    [_queue release];
-   for(CPInt i = 0;i < _nbt;i++)
+   for(ORInt i = 0;i < _nbt;i++)
       assert(_clones[i] == nil);
    free(_clones);
    [super dealloc];
@@ -301,7 +301,7 @@
    NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:_original];
 #endif
    _clones = malloc(sizeof(SemCP*)*_nbt);   
-   for(CPInt i=0;i<_nbt;i++) {
+   for(ORInt i=0;i<_nbt;i++) {
       CPVirtualClosure copy = [body copy];
       [NSThread detachNewThreadSelector:@selector(runSearcher:) 
                                toTarget:self 

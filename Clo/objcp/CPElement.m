@@ -16,13 +16,13 @@
 #import "CPIntVarI.h"
 
 typedef struct CPEltRecordTag {
-   CPInt _idx;
-   CPInt _val;
+   ORInt _idx;
+   ORInt _val;
 } CPEltRecord;
 
 @implementation CPElementCstBC {
    CPEltRecord* _tab;
-   CPInt        _sz;
+   ORInt        _sz;
    TRInt        _from;
    TRInt        _to;
 }
@@ -44,7 +44,7 @@ typedef struct CPEltRecordTag {
 }
 int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 {
-   CPInt d1 = r1->_val - r2->_val;
+   ORInt d1 = r1->_val - r2->_val;
    if (d1==0)
       return r1->_idx - r2->_idx;
    else
@@ -55,28 +55,28 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    if (bound(_x)) {
        return [_y bind:[_x min]];
    } else if (bound(_y)) {
-      CPInt cLow = [_c low];
-      CPInt cUp  = [_c up];
-      CPInt yv   = [_y min];
+      ORInt cLow = [_c low];
+      ORInt cUp  = [_c up];
+      ORInt yv   = [_y min];
       CPBounds xb = bounds(_x);
       ORStatus ok = ORSuspend;
-      for(CPInt k=xb.min;k <= xb.max && ok;k++)
+      for(ORInt k=xb.min;k <= xb.max && ok;k++)
          if (k < cLow || k > cUp || [_c at:k] != yv)
             ok = removeDom(_x, k);
       return ok;
    } else {
-      CPInt cLow = [_c low];
-      CPInt cUp  = [_c up];
+      ORInt cLow = [_c low];
+      ORInt cUp  = [_c up];
       _sz = cUp - cLow + 1;
       _tab = malloc(sizeof(CPEltRecord)*_sz);
-      for(CPInt k=cLow;k <= cUp;k++) 
+      for(ORInt k=cLow;k <= cUp;k++) 
          _tab[k - cLow] = (CPEltRecord){k,[_c at:k]};
       qsort(_tab, _sz,sizeof(CPEltRecord),(int(*)(const void*,const void*)) &compareCPEltRecords);
       CPBounds yb = bounds(_y);
       ORStatus ok = ORSuspend;
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
-      for(CPInt k=0;k < _sz && ok;k++) {
+      for(ORInt k=0;k < _sz && ok;k++) {
          if (_tab[k]._val < yb.min || _tab[k]._val > yb.max)
             ok = removeDom(_x, _tab[k]._idx);
          else {
@@ -101,7 +101,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    if (bound(_x)) {
       [_y bind:[_c at:[_x min]]];
    } else {
-      CPInt k = _from._val;
+      ORInt k = _from._val;
       while (k < _sz && !memberDom(_x, _tab[k]._idx))
          ++k;
       if (k < _sz) {
@@ -183,7 +183,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    [_x whenChangePropagate:self];
    [_y whenChangeBoundsPropagate:self];
    CPBounds xb = bounds(_x);
-   for(CPInt k=xb.min; k <= xb.max;k++)
+   for(ORInt k=xb.min; k <= xb.max;k++)
       if (memberDom(_x, k))
          [(CPIntVarI*)[_z at:k] whenChangeBoundsPropagate:self];
    return ORSuspend;
@@ -191,7 +191,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 -(void) propagate
 {
    CPBounds bx = bounds(_x);
-   CPInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
+   ORInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
          CPBounds zk = bounds((CPIntVarI*)[_z at:k]);
@@ -219,8 +219,8 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 {
    CPULong sz = [_z count] + 2;
    id<ORIntVar>* t = alloca(sizeof(id<ORIntVar>)*sz);
-   CPInt i = 0;
-   for(CPInt k=[_z low];k<=[_z up];k++)
+   ORInt i = 0;
+   for(ORInt k=[_z low];k<=[_z up];k++)
       t[i++] = [_z at: k];
    t[i++] = _x;
    t[i++] = _y;
@@ -228,8 +228,8 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(CPUInt)nbUVars
 {
-   CPInt nbuv = 0;
-   for(CPInt k=[_z low];k<=[_z up];k++)
+   ORInt nbuv = 0;
+   for(ORInt k=[_z low];k<=[_z up];k++)
       nbuv += !bound((CPIntVarI*)[_z at: k]);
    nbuv += !bound(_x) + !bound(_y);
    return nbuv;

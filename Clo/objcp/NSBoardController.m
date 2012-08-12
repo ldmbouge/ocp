@@ -37,10 +37,10 @@
    self = [super init];
    _rows = rows;
    _cols = cols;
-   CPInt nbRows = [_rows up] - [_rows low] + 1;
-   CPInt nbCols = [_cols up] - [_cols low] + 1;
+   ORInt nbRows = [_rows up] - [_rows low] + 1;
+   ORInt nbCols = [_cols up] - [_cols low] + 1;
    _values = malloc(sizeof(enum CPDomValue)*nbRows*nbCols);
-   for(CPInt i=0;i<nbRows*nbCols;i++)
+   for(ORInt i=0;i<nbRows*nbCols;i++)
       _values[i] = Possible;
    _red = [NSColor redColor];
    _green  = [NSColor greenColor];
@@ -54,20 +54,20 @@
 }
 -(void)toggleRow:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv
 {
-   CPInt nbCols = [_cols up] - [_cols low] + 1;
+   ORInt nbCols = [_cols up] - [_cols low] + 1;
    _values[(r - [_rows low]) * nbCols + c - [_cols low]] = dv;
 }
 -(void)drawRect:(NSRect)dirtyRect inView:(NSView*)view
 {
    NSRect bnds  = [view frame];
-   CPInt nbRows = [_rows size];
-   CPInt nbCols = [_cols size];
+   ORInt nbRows = [_rows size];
+   ORInt nbCols = [_cols size];
    float stripW = bnds.size.width / nbCols;
    float stripH = bnds.size.height/ nbRows;
    float colW = stripW - 6;
    float rowH = stripH - 6;
-   for(CPInt i=[_rows low];i<=[_rows up];i++) {
-      for(CPInt j=[_cols low]; j <= [_cols up];j++) {      
+   for(ORInt i=[_rows low];i<=[_rows up];i++) {
+      for(ORInt j=[_cols low]; j <= [_cols up];j++) {      
          enum CPDomValue dv = _values[(i - [_rows low]) * nbCols + j - [_cols low]];
          switch(dv) {
             case Possible: [_back setFill];break;

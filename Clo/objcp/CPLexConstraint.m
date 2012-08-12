@@ -55,7 +55,7 @@
 {
    if (_active._val == NO) return;
    CPLong up = _sz - 1;
-   CPInt  i = k;
+   ORInt  i = k;
    if (k == LEX_Q) goto STATE1;
    else if (k == LEX_R) goto STATE2;
    else if (STATE == 3 && (k == LEX_S || (k < LEX_S && maxDom(_xa[k]) != minDom(_ya[k])))) goto STATE3;
@@ -63,7 +63,7 @@
    else return;
 STATE1:
    while (i <= up && LEX_XEQ_GEQY(i)) { // STATE 1 (x_i = y_i OR x_i >= y_i)
-      CPInt xi = minDom(_xa[i]);
+      ORInt xi = minDom(_xa[i]);
       [_xa[i] bind:xi];
       [_ya[i] bind:xi];
       i = i + 1;
@@ -143,7 +143,7 @@ STATE4:
 
 -(void) listenFrom:(ORInt)ofs
 {
-   for(CPInt k=ofs;k<_sz;k++) {
+   for(ORInt k=ofs;k<_sz;k++) {
       if (!bound(_xa[k]))
          [_xa[k] whenChangeBoundsDo:^{
             [self propagateFrom:k];
@@ -165,12 +165,12 @@ STATE4:
    _sz = [_x count];
    _xa= malloc(sizeof(CPIntVarI*)*_sz);
    _ya= malloc(sizeof(CPIntVarI*)*_sz);
-   for(CPInt k=[_x low]; k<= [_x up];k++) _xa[k - [_x low]] = (CPIntVarI*)_x[k];
-   for(CPInt k=[_y low]; k<= [_y up];k++) _ya[k - [_y low]] = (CPIntVarI*)_y[k];
+   for(ORInt k=[_x low]; k<= [_x up];k++) _xa[k - [_x low]] = (CPIntVarI*)_x[k];
+   for(ORInt k=[_y low]; k<= [_y up];k++) _ya[k - [_y low]] = (CPIntVarI*)_y[k];
    CPLong up = _sz - 1;
-   CPInt  i = 0;
+   ORInt  i = 0;
    while (i <= up && LEX_XEQ_GEQY(i)) { // STATE 1 (x_i = y_i OR x_i >= y_i)
-      CPInt xi = minDom(_xa[i]);
+      ORInt xi = minDom(_xa[i]);
       [_xa[i] bind:xi];
       [_ya[i] bind:xi];
       i = i + 1;
@@ -231,9 +231,9 @@ STATE4:
 -(NSSet*)allVars
 {
    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:[_x count] + [_y count]];
-   for(CPInt k=[_x low];k <= [_x up];k++)
+   for(ORInt k=[_x low];k <= [_x up];k++)
       [rv addObject:_x[k]];
-   for(CPInt k=[_y low];k <= [_y up];k++)
+   for(ORInt k=[_y low];k <= [_y up];k++)
       [rv addObject:_y[k]];
    return rv;
 }
@@ -241,9 +241,9 @@ STATE4:
 -(CPUInt)nbUVars
 {
    CPUInt nb = 0;
-   for(CPInt k=0; k < _sz;k++)
+   for(ORInt k=0; k < _sz;k++)
       nb += !bound(_xa[k]);
-   for(CPInt k=0; k < _sz;k++)
+   for(ORInt k=0; k < _sz;k++)
       nb += !bound(_ya[k]);
    return nb;
 }

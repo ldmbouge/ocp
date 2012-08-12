@@ -19,8 +19,8 @@ void show(id<ORIntVarMatrix> M)
 {
    id<ORIntRange> r0 = [M range:0];
    id<ORIntRange> r1 = [M range:1];
-   for(CPInt i = r0.low ; i <= r0.up;i++) {
-      for(CPInt j = r1.low ; j <= r1.up;j++) {
+   for(ORInt i = r0.low ; i <= r0.up;i++) {
+      for(ORInt j = r1.low ; j <= r1.up;j++) {
          if ([[M at:i :j] bound])
             printf("%d ",[[M at:i :j] min]);
          else printf("? ");
@@ -33,33 +33,33 @@ void show(id<ORIntVarMatrix> M)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      CPInt a = 0;
-      CPInt instances[14][3] = {
+      ORInt a = 0;
+      ORInt instances[14][3] = {
          {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
          {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},
          {7,3,300},{8,4,5},{8,4,6},{8,4,7}
       };
-      CPInt v = instances[a][0],k = instances[a][1],l = instances[a][2];
-      CPInt b = (v*(v-1)*l)/(k*(k-1));
-      CPInt r = l*(v-1)/(k-1);
+      ORInt v = instances[a][0],k = instances[a][1],l = instances[a][2];
+      ORInt b = (v*(v-1)*l)/(k*(k-1));
+      ORInt r = l*(v-1)/(k-1);
       
       id<CPSolver> cp = [CPFactory createSolver];
       id<ORIntRange> Rows = RANGE(cp,1,v);
       id<ORIntRange> Cols = RANGE(cp,1,b);
      
       id<ORIntVarMatrix> M = [CPFactory boolVarMatrix:cp range:Rows :Cols];
-     for(CPInt i=Rows.low;i<=Rows.up;i++)
+     for(ORInt i=Rows.low;i<=Rows.up;i++)
          [cp add: [SUM(x, Cols, [M at:i :x]) eqi:r]];
-      for(CPInt i=Cols.low;i<=Cols.up;i++)
+      for(ORInt i=Cols.low;i<=Cols.up;i++)
          [cp add: [SUM(x, Rows, [M at:x :i]) eqi:k]];
-      for(CPInt i=Rows.low;i<=Rows.up;i++)
-         for(CPInt j=i+1;j <= v;j++)
+      for(ORInt i=Rows.low;i<=Rows.up;i++)
+         for(ORInt j=i+1;j <= v;j++)
             [cp add: [SUM(x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
-      for(CPInt i=1;i <= v-1;i++) {
+      for(ORInt i=1;i <= v-1;i++) {
          [cp add: [CPFactory lex:ALL(ORIntVar, j, Cols, [M at:i+1 :j])
                              leq:ALL(ORIntVar, j, Cols, [M at:i   :j])]];
       }
-      for(CPInt j=1;j <= b-1;j++) {
+      for(ORInt j=1;j <= b-1;j++) {
 //         [cp add: [CPFactory lex:ALL(ORIntVar, i, Rows, [M at:i :j+1])
 //                             leq:ALL(ORIntVar, i, Rows, [M at:i :j])]];
       }

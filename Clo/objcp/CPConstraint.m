@@ -229,7 +229,7 @@
    id<ORIntVarArray> load = [CPFactory intVarArray: [x solver] range: R];
    ORInt low = [R low];
    ORInt up = [R up];
-   for(CPInt i = low; i <= up; i++) 
+   for(ORInt i = low; i <= up; i++) 
       load[i] = [CPFactory intVar: [x solver] domain: RANGE([x tracker],0,[binSize at:i])];
    id<CPConstraint> o = [CPFactory packing: x itemSize: itemSize load: load];
    [[x tracker] trackObject: o];
@@ -237,7 +237,7 @@
 }
 
 typedef struct _CPPairIntId {
-   CPInt        _int;
+   ORInt        _int;
    id           _id;
 } CPPairIntId;
 
@@ -254,7 +254,7 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    ORInt up = [R up];
    CPPairIntId* toSort = (CPPairIntId*) alloca(sizeof(CPPairIntId) * nb);
    int k = 0;
-   for(CPInt i = low; i <= up; i++)
+   for(ORInt i = low; i <= up; i++)
       toSort[k++] = (CPPairIntId){[size at: i],x[i]};
    qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);
    

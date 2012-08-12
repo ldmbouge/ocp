@@ -80,15 +80,15 @@
    
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   for(CPInt b = brlow; b <= brup; b++)
+   for(ORInt b = brlow; b <= brup; b++)
       [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
-   CPInt s = 0;
+   ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
-   for(CPInt i = irlow; i <= irup; i++)
+   for(ORInt i = irlow; i <= irup; i++)
       s += [_itemSize at: i];
    [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
-   for(CPInt b = brlow; b <= brup; b++)
+   for(ORInt b = brlow; b <= brup; b++)
       [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return ORSkip;
 }
@@ -99,27 +99,27 @@
 {
    id<ORIntVarArray>  _item;
    id<ORIntArray>     _itemSize;
-   CPInt              _bin;
+   ORInt              _bin;
    id<ORIntVar>       _binSize;
    BOOL               _posted;
    
-   CPInt              _low;
-   CPInt              _up;
+   ORInt              _low;
+   ORInt              _up;
    
    CPIntVarI**        _var;
-   CPInt              _nbVar;
-   CPInt*             _size;
+   ORInt              _nbVar;
+   ORInt*             _size;
    CPIntVarI*         _load;
    
    int                _nbCandidates;
    CPIntVarI**        _candidate;
-   CPInt*             _candidateSize;
+   ORInt*             _candidateSize;
    
    int                _nbX;
-   CPInt*             _s;
+   ORInt*             _s;
 
-   CPInt              _maxLoad;
-   CPInt              _p;
+   ORInt              _maxLoad;
+   ORInt              _p;
    BOOL               _changed;
    
 }
@@ -186,18 +186,18 @@
    _up = [_item range].up;
    _nbVar = _up - _low + 1;
    _var = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
-   _size = (CPInt*) malloc(sizeof(CPInt*) * _nbVar);
-   _s = (CPInt*) malloc(sizeof(CPInt*) * _nbVar);
+   _size = (ORInt*) malloc(sizeof(ORInt*) * _nbVar);
+   _s = (ORInt*) malloc(sizeof(ORInt*) * _nbVar);
    _candidate = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
-   _candidateSize = (CPInt*) malloc(sizeof(CPInt*) * _nbVar);
-   for(CPInt i = _low; i <= _up; i++) {
+   _candidateSize = (ORInt*) malloc(sizeof(ORInt*) * _nbVar);
+   for(ORInt i = _low; i <= _up; i++) {
       _var[i-_low] = (CPIntVarI*) _item[i];
       _size[i-_low] = [_itemSize at: i];
    }
    _load = (CPIntVarI*) _binSize;
    [self propagate];
    
-   for(CPInt i = 0; i < _nbVar; i++)
+   for(ORInt i = 0; i < _nbVar; i++)
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
@@ -213,15 +213,15 @@
    } while (_changed);
 }
 
-static BOOL noSumAlphaBeta(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt* alphaPrime,CPInt* betaPrime)
+static BOOL noSumAlphaBeta(CPOneBinPackingI* cstr,ORInt alpha,ORInt beta,ORInt* alphaPrime,ORInt* betaPrime)
 {
    if (alpha <= 0 || beta >= cstr->_maxLoad)
       return false;
-   CPInt sumA = 0;
-   CPInt sumB = 0;
-   CPInt sumC = 0;
-   CPInt k = -1;
-   CPInt kp = cstr->_nbX - 1;
+   ORInt sumA = 0;
+   ORInt sumB = 0;
+   ORInt sumC = 0;
+   ORInt k = -1;
+   ORInt kp = cstr->_nbX - 1;
    while (sumC + cstr->_s[kp] < alpha) {
       sumC += cstr->_s[kp];
       kp--;
@@ -251,17 +251,17 @@ static BOOL noSumAlphaBeta(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt* 
    return sumA < alpha;
 }
 
-static BOOL noSum(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta)
+static BOOL noSum(CPOneBinPackingI* cstr,ORInt alpha,ORInt beta)
 {
-   CPInt alphaPrime;
-   CPInt betaPrime;
+   ORInt alphaPrime;
+   ORInt betaPrime;
    return noSumAlphaBeta(cstr,alpha,beta,&alphaPrime,&betaPrime);
 }
 
-static void noSumForCandidatesWithout(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt item)
+static void noSumForCandidatesWithout(CPOneBinPackingI* cstr,ORInt alpha,ORInt beta,ORInt item)
 {
    cstr->_nbX = 0;
-   for(CPInt i = 0; i < cstr->_nbCandidates; i++)
+   for(ORInt i = 0; i < cstr->_nbCandidates; i++)
       if (i != item) {
          cstr->_s[cstr->_nbX++] = cstr->_candidateSize[i];
          cstr->_maxLoad += cstr->_s[i];
@@ -272,10 +272,10 @@ static void noSumForCandidatesWithout(CPOneBinPackingI* cstr,CPInt alpha,CPInt b
    }
 }
 
-static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt item)
+static void noSumForCandidatesWith(CPOneBinPackingI* cstr,ORInt alpha,ORInt beta,ORInt item)
 {
    cstr->_nbX = 0;
-   for(CPInt i = 0; i < cstr->_nbCandidates; i++)
+   for(ORInt i = 0; i < cstr->_nbCandidates; i++)
       if (i != item) {
          cstr->_s[cstr->_nbX++] = cstr->_candidateSize[i];
          cstr->_maxLoad += cstr->_s[i];
@@ -293,7 +293,7 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
    _nbCandidates = 0;
    _p = 0;
    _maxLoad = 0;
-   for(CPInt i = 0; i < _nbVar; i++) 
+   for(ORInt i = 0; i < _nbVar; i++) 
       if (memberDom(_var[i],_bin)) {
          if (bound(_var[i]))
             _p += _size[i];
@@ -306,10 +306,10 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
       }
    [_load updateMin: _p];
    [_load updateMax: _maxLoad + _p];
-   CPInt alpha = minDom(_load) - _p;
-   CPInt beta = maxDom(_load) - _p;
-   CPInt alphaPrime;
-   CPInt betaPrime;
+   ORInt alpha = minDom(_load) - _p;
+   ORInt beta = maxDom(_load) - _p;
+   ORInt alphaPrime;
+   ORInt betaPrime;
 
    if (noSumForCandidates(self,alpha,beta,&alphaPrime,&betaPrime))
       failNow();
@@ -320,14 +320,14 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
    
    alpha = minDom(_load) - _p;
    beta = maxDom(_load) - _p;
-   CPInt lastSize = MAXINT;
-   for(CPInt i = 0; i < _nbCandidates && !_changed; i++) {
+   ORInt lastSize = MAXINT;
+   for(ORInt i = 0; i < _nbCandidates && !_changed; i++) {
       if (_candidateSize[i] != lastSize)
          noSumForCandidatesWithout(self,alpha,beta,i);
       lastSize = _candidateSize[i];
    }
    lastSize = MAXINT;
-   for(CPInt i = 0; i < _nbCandidates && !_changed; i++) {
+   for(ORInt i = 0; i < _nbCandidates && !_changed; i++) {
       if (_candidateSize[i] != lastSize)
          noSumForCandidatesWith(self,alpha,beta,i);
       lastSize = _candidateSize[i];
@@ -335,11 +335,11 @@ static void noSumForCandidatesWith(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta
 
 }
 
-static BOOL noSumForCandidates(CPOneBinPackingI* cstr,CPInt alpha,CPInt beta,CPInt* alphaPrime,CPInt* betaPrime)
+static BOOL noSumForCandidates(CPOneBinPackingI* cstr,ORInt alpha,ORInt beta,ORInt* alphaPrime,ORInt* betaPrime)
 {
    cstr->_nbX = cstr->_nbCandidates;
    cstr->_maxLoad = 0;
-   for(CPInt i = 0; i < cstr->_nbX; i++) {
+   for(ORInt i = 0; i < cstr->_nbX; i++) {
       cstr->_s[i] = cstr->_candidateSize[i];
       cstr->_maxLoad += cstr->_s[i];
    }

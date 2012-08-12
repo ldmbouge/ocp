@@ -219,18 +219,18 @@
       if (ok) {
          CPBounds bx = bounds(_x);
          CPBounds by = bounds(_y);
-         for(CPInt i = bx.min; (i <= bx.max) && ok; i++)
+         for(ORInt i = bx.min; (i <= bx.max) && ok; i++)
             if (![_x member:i])
                ok = [_y remove:i - _c];
-         for(CPInt i = by.min; (i <= by.max) && ok; i++)
+         for(ORInt i = by.min; (i <= by.max) && ok; i++)
             if (![_y member:i])
                ok = [_x remove:i + _c];
       }
       if (ok) {
-         [_x whenLoseValue:self do:^(CPInt val) {
+         [_x whenLoseValue:self do:^(ORInt val) {
             [_y remove: val - _c];
          }];
-         [_y whenLoseValue:self do:^(CPInt val) {
+         [_y whenLoseValue:self do:^(ORInt val) {
             [_x remove: val + _c];
          }];
          [_x whenBindDo:^{
@@ -312,14 +312,14 @@ static inline TRIntArray createSupport(CPIntVarI* v)
 {
    return makeTRIntArray([[v engine] trail], [v max] - [v min] + 1, [v min]);
 }
-static ORStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
+static ORStatus constAddScanB(ORInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a + D(b) IN D(c)
 {   
-   CPInt min = minCPDom(bd),max = maxCPDom(bd);
-   for(CPInt j=min;j<=max;++j) {
+   ORInt min = minCPDom(bd),max = maxCPDom(bd);
+   for(ORInt j=min;j<=max;++j) {
       if (!getCPDom(bd,j)) continue;
-      CPInt t = a + j;
+      ORInt t = a + j;
       if (memberCPDom(cd, t)) {
-         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
             removeDom(c, t);            
          }         
@@ -327,14 +327,14 @@ static ORStatus constAddScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRI
    }
    return ORSuspend;
 }
-static ORStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
+static ORStatus constSubScanB(ORInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRIntArray cs) // a - D(b) IN D(c)
 {
-   CPInt min = minCPDom(bd),max = maxCPDom(bd);
-   for(CPInt j=min;j<=max;j++) {
+   ORInt min = minCPDom(bd),max = maxCPDom(bd);
+   for(ORInt j=min;j<=max;j++) {
       if (!getCPDom(bd,j)) continue;
-      CPInt t = a - j;
+      ORInt t = a - j;
       if (memberCPDom(cd, t)) {
-         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) { 
             removeDom(c, t);
          }         
@@ -342,14 +342,14 @@ static ORStatus constSubScanB(CPInt a,CPBitDom* bd,CPBitDom* cd,CPIntVarI* c,TRI
    }
    return ORSuspend;
 }
-static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
+static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TRIntArray cs)  // D(a) - b IN D(c)
 {
-   CPInt min = minCPDom(ad),max = maxCPDom(ad);
-   for(CPInt j=min;j<=max;j++) {
+   ORInt min = minCPDom(ad),max = maxCPDom(ad);
+   for(ORInt j=min;j<=max;j++) {
       if (!getCPDom(ad,j)) continue;
-      CPInt t = j - b;
+      ORInt t = j - b;
       if (memberCPDom(cd, t)) {
-         CPInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
+         ORInt cv = assignTRIntArray(cs, t, getTRIntArray(cs, t) - 1);
          if (cv == 0) {
             removeDom(c, t);
          }         
@@ -360,29 +360,29 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 -(ORStatus)pruneVar:(CPIntVarI*) v flat:(CPBitDom*) vd support:(TRIntArray) vs
 {
-   CPInt min = minCPDom(vd),max = maxCPDom(vd);
-   for(CPInt i = min;i <= max;i++) {
+   ORInt min = minCPDom(vd),max = maxCPDom(vd);
+   for(ORInt i = min;i <= max;i++) {
       if (memberCPDom(vd, i) && getTRIntArray(vs, i) == 0) {
          setCPDom(vd, i, NO);
          [v remove:i];
       }
    }
    if (v == _x) {
-      [_x whenLoseValue:self do:^(CPInt val) {
+      [_x whenLoseValue:self do:^(ORInt val) {
          setCPDom(_fx, val, NO);
          assignTRIntArray(_xs, val, 0);            
          constAddScanB(val,_fy,_fz,_z,_zs);   // xc + D(y) in D(z)
          scanASubConstB(_fz,val,_fy,_y,_ys);   // D(z) - xc in D(y)
       }];      
    } else if (v == _y) {
-      [_y whenLoseValue:self do:^(CPInt val) {
+      [_y whenLoseValue:self do:^(ORInt val) {
          setCPDom(_fy, val, NO);
          assignTRIntArray(_ys, val, 0);            
          constAddScanB(val,_fx,_fz,_z,_zs);  // yc + D(x) in D(z)
          scanASubConstB(_fz,val,_fx,_x,_xs);  // D(z) - yc in D(x)
       }];
    } else {
-      [_z whenLoseValue:self do:^(CPInt val) {
+      [_z whenLoseValue:self do:^(ORInt val) {
          setCPDom(_fz, val, NO);
          assignTRIntArray(_zs, val, 0);            
          constSubScanB(val,_fx,_fy,_y,_ys);  // zc - D(x) in D(y)
@@ -401,32 +401,32 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    _xs = createSupport(_x);
    _ys = createSupport(_y);
    _zs = createSupport(_z);
-   CPInt minX = minCPDom(_fx),maxX = maxCPDom(_fx);
-   CPInt minY = minCPDom(_fy),maxY = maxCPDom(_fy);
-   CPInt minZ = minCPDom(_fz),maxZ = maxCPDom(_fz);
-   for(CPInt i = minX;i <= maxX;i++) {
+   ORInt minX = minCPDom(_fx),maxX = maxCPDom(_fx);
+   ORInt minY = minCPDom(_fy),maxY = maxCPDom(_fy);
+   ORInt minZ = minCPDom(_fz),maxZ = maxCPDom(_fz);
+   for(ORInt i = minX;i <= maxX;i++) {
       if (memberCPDom(_fx, i)) {
-         for(CPInt j=minY;j <= maxY;j++) {
+         for(ORInt j=minY;j <= maxY;j++) {
             if (memberCPDom(_fy, j)) {
-               CPInt v = i + j;
+               ORInt v = i + j;
                if (memberCPDom(_fz, v)) 
                   assignTRIntArray(_zs, v, getTRIntArray(_zs, v) + 1);
             }
          }
       }
    }   
-   for(CPInt i = minZ;i <= maxZ;i++) {
+   for(ORInt i = minZ;i <= maxZ;i++) {
       if (memberCPDom(_fz, i)) {
-         for(CPInt j=minX;j <= maxX;j++) {
+         for(ORInt j=minX;j <= maxX;j++) {
             if (memberCPDom(_fx, j)) {
-               CPInt v = i - j;
+               ORInt v = i - j;
                if (memberCPDom(_fy, v)) 
                   assignTRIntArray(_ys, v, getTRIntArray(_ys, v) + 1);
             }
          }
-         for(CPInt j=minY;j <= maxY;j++) {
+         for(ORInt j=minY;j <= maxY;j++) {
             if (memberCPDom(_fy, j)) {
-               CPInt v = i - j;
+               ORInt v = i - j;
                if (memberCPDom(_fx, v)) 
                   assignTRIntArray(_xs, v, getTRIntArray(_xs, v) + 1);
             }
@@ -473,8 +473,8 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
       } else { 
          _todo = CPChecked;
          CPBounds xb = bounds(_x),yb = bounds(_y),zb = bounds(_z);      
-         CPInt lb = xb.min + yb.min;
-         CPInt ub = xb.max + yb.max;
+         ORInt lb = xb.min + yb.min;
+         ORInt ub = xb.max + yb.max;
          if (lb > zb.min || ub < zb.max)
             [_z updateMin:lb andMax:ub];
          lb = zb.min - yb.max;
@@ -729,7 +729,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
          [_x remove:-k];
    }
    if (!bound(_x)) {
-      [_x whenLoseValue:self do:^(CPInt val) {
+      [_x whenLoseValue:self do:^(ORInt val) {
          if (!memberDom(_x, -val)) { 
             [_y remove:abs(val)];
          } 
@@ -739,12 +739,12 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
       } onBehalf:self];
    }
    if (!bound(_y)) {
-      [_y whenLoseValue:self do:^(CPInt val) {
+      [_y whenLoseValue:self do:^(ORInt val) {
          [_x remove:val];
          [_x remove:-val];
       }];
       [_y whenBindDo:^{
-         CPInt val = minDom(_y);
+         ORInt val = minDom(_y);
          if (!memberDom(_x, val) && !memberDom(_x, -val)) {
             failNow();
          }
@@ -809,11 +809,11 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
    do {
       _todo = CPChecked;
       CPBounds xb = bounds(_x);
-      CPInt  ub = - xb.min > xb.max ? -xb.min  : xb.max;
+      ORInt  ub = - xb.min > xb.max ? -xb.min  : xb.max;
       BOOL  cZ = xb.min < 0 && xb.max > 0;
       if (cZ) {
          CPRange aZ = [_x around:0];
-         CPInt lb = min(-aZ.low,aZ.up);
+         ORInt lb = min(-aZ.low,aZ.up);
          [_y updateMin:lb andMax:ub];
       } else if (xb.min >= 0) {
          [_y updateMin:xb.min andMax:xb.max];
@@ -1105,13 +1105,13 @@ static ORStatus scanASubConstB(CPBitDom* ad,CPInt b,CPBitDom* cd,CPIntVarI* c,TR
 {
    [super dealloc];
 }
-static inline CPInt minDiv(CPLong c,CPLong d1,CPLong d2)  {
+static inline ORInt minDiv(CPLong c,CPLong d1,CPLong d2)  {
    const CPLong rd1 = c % d1,rd2 = c % d2;
    const CPLong q1 = c / d1 + (rd1 && d1*c>0); 
    const CPLong q2 = c / d2 + (rd2 && d2*c>0);
    return bindDown(q1 < q2 ? q1 : q2);
 }
-static inline CPInt maxDiv(CPLong c,CPLong d1,CPLong d2)  { 
+static inline ORInt maxDiv(CPLong c,CPLong d1,CPLong d2)  { 
    const CPLong rd1 = c % d1,rd2 = c % d2;
    const CPLong q1 = c / d1 - (rd1 && d1*c<0); 
    const CPLong q2 = c / d2 - (rd2 && d2*c<0); 
@@ -1144,9 +1144,9 @@ static inline int maxDiv4(CPLong a,CPLong b,CPLong c,CPLong d) {
    return bindUp(maxSeq((CPLong[4]){a/c-acr,a/d-adr,b/c-bcr,b/d-bdr}));
 }
 // RXC:  Range | Variable | Constant
-static ORStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
+static ORStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,ORInt c)
 {
-   CPInt a = r.min,b = r.max;
+   ORInt a = r.min,b = r.max;
    if (a > 0 || b < 0) {
       [x updateMin:minDiv(c,a,b) andMax:maxDiv(c,a,b)];
    } else if (a==0 || b == 0) {
@@ -1156,12 +1156,12 @@ static ORStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
       [x updateMin:minDiv(c,s,l) andMax:maxDiv(c,s,l)];
    } else {
       CPRange az = [x around:0];
-      CPInt xm1 = minDiv(c,az.low,az.up);
-      CPInt xM1 = maxDiv(c,az.low,az.up);
-      CPInt xm2 = minDiv(c,a,b);
-      CPInt xM2 = maxDiv(c,a,b);
-      CPInt xm = xm1 < xm2 ? xm1 : xm2;
-      CPInt xM = xM1 > xM2 ? xM1 : xM2;
+      ORInt xm1 = minDiv(c,az.low,az.up);
+      ORInt xM1 = maxDiv(c,az.low,az.up);
+      ORInt xm2 = minDiv(c,a,b);
+      ORInt xM2 = maxDiv(c,a,b);
+      ORInt xm = xm1 < xm2 ? xm1 : xm2;
+      ORInt xM = xM1 > xM2 ? xM1 : xM2;
       [x updateMin:xm andMax:xM];
    }
    return ORSuspend;
@@ -1179,8 +1179,8 @@ static ORStatus propagateRXC(CPMultBC* mc,CPBounds r,CPIntVarI* x,CPInt c)
       return [z bind:bindDown(c * [x min])];
    else {
       if (c > 0) {
-         CPInt newMax  = bindUp(c * [x max]);
-         CPInt newMin  = bindDown(c * [x min]);
+         ORInt newMax  = bindUp(c * [x max]);
+         ORInt newMin  = bindDown(c * [x min]);
          [z updateMin:newMin andMax:newMax];
          [self propagateCXZ:c mult:x equal:bounds(z)];
          [z whenChangeBoundsPropagate:self];
@@ -1204,8 +1204,8 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       return [z bind:bindDown(c * [x min])];
    } else {
       if (c > 0) {
-         CPInt newMax  = bindUp(c * [x max]);
-         CPInt newMin  = bindDown(c * [x min]);
+         ORInt newMax  = bindUp(c * [x max]);
+         ORInt newMin  = bindDown(c * [x min]);
          [z updateMin:newMin andMax:newMax];
          [mc propagateCXZ:c mult:x equal:bounds(z)];
       } else if (c == 0) {
@@ -1220,8 +1220,8 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(void) propagateXCR:(CPIntVarI*)x mult:(CPIntVarI*)y equal:(CPBounds)r
 {
-   CPInt a = r.min,b=r.max;
-   CPInt c = [y min],d = [y max];
+   ORInt a = r.min,b=r.max;
+   ORInt c = [y min],d = [y max];
    if (c==0 && d==0)  {
       [_z bind:0];
    } else if (c>0) {
@@ -1240,12 +1240,12 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
             [x updateMin:minDiv4(a,b,s,l) andMax:maxDiv4(a,b,s,l)];
          } else {
             CPRange az = [y around:0]; // around zero
-            CPInt xm1 = minDiv4(a,b,az.low,az.up);
-            CPInt xM1 = maxDiv4(a,b,az.low,az.up);
-            CPInt xm2 = minDiv4(a,b,c,d);
-            CPInt xM2 = maxDiv4(a,b,c,d);
-            CPInt xm = xm1 < xm2 ? xm1 : xm2;
-            CPInt xM = xM1 > xM2 ? xM1 : xM2;
+            ORInt xm1 = minDiv4(a,b,az.low,az.up);
+            ORInt xM1 = maxDiv4(a,b,az.low,az.up);
+            ORInt xm2 = minDiv4(a,b,c,d);
+            ORInt xM2 = maxDiv4(a,b,c,d);
+            ORInt xm = xm1 < xm2 ? xm1 : xm2;
+            ORInt xM = xM1 > xM2 ? xM1 : xM2;
             [x updateMin:xm andMax:xM];
          }
       }
@@ -1382,7 +1382,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(CPInt k=0;k<_nb;k++)
+      for(ORInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    }
    else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
@@ -1392,7 +1392,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
-      for(CPInt k=[x low];k <= [x up];k++)
+      for(ORInt k=[x low];k <= [x up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }      
    return self;
@@ -1405,7 +1405,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    _nb = [x count];
    _x  = malloc(sizeof(CPIntVarI*)*_nb);
    int i=0;
-   for(CPInt k=[x low];k <= [x up];k++)
+   for(ORInt k=[x low];k <= [x up];k++)
       _x[i++] = (CPIntVarI*) [x[k] dereference];
    return self;
 }
@@ -1433,19 +1433,19 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 {
    bool ok = true;
    CPLong low  = 0,up = _nb - 1;
-   CPInt minX = MAXINT,maxX = MININT;
-   for(CPInt k=0;k<_nb;k++) {
+   ORInt minX = MAXINT,maxX = MININT;
+   for(ORInt k=0;k<_nb;k++) {
       minX = min(minX,[_x[k] min]);
       maxX = max(maxX,[_x[k] max]);
    }
-   CPInt* vCnt = alloca(sizeof(ORInt)*(maxX-minX+1));
-   CPInt* vUse = alloca(sizeof(ORInt)*(maxX-minX+1));
+   ORInt* vCnt = alloca(sizeof(ORInt)*(maxX-minX+1));
+   ORInt* vUse = alloca(sizeof(ORInt)*(maxX-minX+1));
    memset(vCnt,0,sizeof(ORInt)*(maxX-minX+1));
    vCnt -= minX;
-   CPInt nbBoundVal = 0;
+   ORInt nbBoundVal = 0;
    for(CPLong k=low;k<=up;k++) {
       if ([_x[k] bound]) {
-         CPInt to = [_x[k] min];
+         ORInt to = [_x[k] min];
          vCnt[to]++;
          ok &= vCnt[to] < 2;
          vUse[nbBoundVal++] = to;
@@ -1457,14 +1457,14 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    for(CPLong k=low;k<=up && ok;k++) {
       if ([_x[k] bound])
          continue;
-      for(CPInt j=0;j<nbBoundVal;j++) {
+      for(ORInt j=0;j<nbBoundVal;j++) {
          [_x[k] remove: vUse[j]];
       }
       SEL minSEL = @selector(min);
       IMP minIMP = [_x[k] methodForSelector:minSEL];
       [_x[k] whenBindDo: ^ {
          //int vk = [_x[k] min];
-         CPInt vk = (ORInt) minIMP(_x[k],minSEL);
+         ORInt vk = (ORInt) minIMP(_x[k],minSEL);
          for(CPLong i=up;i;--i) {
             if (i == k) 
                continue;
@@ -1479,7 +1479,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 {
    [super encodeWithCoder:aCoder];   
    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
-   for(CPInt k=0;k<_nb;k++) 
+   for(ORInt k=0;k<_nb;k++) 
       [aCoder encodeObject:_x[k]];
 }
 
@@ -1488,7 +1488,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
    self = [super initWithCoder:aDecoder];
    [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
    _x = malloc(sizeof(CPIntVarI*)*_nb);   
-   for(CPInt k=0;k<_nb;k++) 
+   for(ORInt k=0;k<_nb;k++) 
       _x[k] = [aDecoder decodeObject];
    return self;
 }
@@ -1498,7 +1498,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 @implementation CPIntVarMinimize
 {
    CPIntVarI*  _x;
-   CPInt        _primalBound;
+   ORInt        _primalBound;
 }
 -(CPIntVarMinimize*) initCPIntVarMinimize: (CPIntVarI*) x
 {
@@ -1530,7 +1530,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(void) updatePrimalBound
 {
-  CPInt bound = [_x min];
+  ORInt bound = [_x min];
   if (bound < _primalBound) 
     _primalBound = bound; 
 
@@ -1556,7 +1556,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 @implementation CPIntVarMaximize
 {
    CPIntVarI*  _x;
-   CPInt        _primalBound;
+   ORInt        _primalBound;
 }
 
 -(CPIntVarMaximize*) initCPIntVarMaximize: (CPIntVarI*) x
@@ -1590,7 +1590,7 @@ static ORStatus propagateCX(CPMultBC* mc,CPLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(void) updatePrimalBound
 {
-  CPInt bound = [_x max];
+  ORInt bound = [_x max];
   if (bound > _primalBound) 
     _primalBound = bound;
 }

@@ -56,8 +56,8 @@ int main (int argc, const char * argv[])
    NSLog(@"%@",x);
    printf("%d \n",[x[0] domsize]);
    id<CPTable> table = [CPFactory table: cp arity: 3];
-   for(CPInt i = 0; i < 5; i++)
-      for(CPInt j = i+1; j < 5; j++)
+   for(ORInt i = 0; i < 5; i++)
+      for(ORInt j = i+1; j < 5; j++)
          [table insert: i : j : i*5 + j];
    [table close];
    [table print];

@@ -24,10 +24,10 @@ int main (int argc, const char * argv[])
    long startTime = [CPRuntimeMonitor cputime];
    id<CPSolver> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
+   [CPFactory intArray:cp range: R with: ^CPInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
 //   id<CPHeuristic> h2 = [CPFactory createDDeg:cp];
 //   id<CPHeuristic> h2  = [CPFactory createWDeg:cp];
    id<CPHeuristic> h2 = [CPFactory createIBS:cp];

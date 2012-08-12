@@ -173,7 +173,7 @@
       [archiver finishEncoding];
 #endif
       [archiver release];
-      for(CPInt k=0;k<nbProxies;k++)
+      for(ORInt k=0;k<nbProxies;k++)
          [proxies[k] release];
       return thePack;
    }
@@ -268,7 +268,7 @@
       [archiver finishEncoding];
 #endif
       [archiver release];
-      for(CPInt k=0;k<nbProxies;k++)
+      for(ORInt k=0;k<nbProxies;k++)
          [proxies[k] release];
       return thePack;
    }
@@ -371,7 +371,7 @@
       CPUInt ub = [_cmds size];
       //bool isEmpty = [[_cmds peekAt:ub-1] empty];
       Checkpoint* ncp = [[Checkpoint alloc] initCheckpoint:[_cmds size]];
-      for(CPInt i=0;i< ub;i++)
+      for(ORInt i=0;i< ub;i++)
          [ncp pushCommandList: [_cmds peekAt:i]];
       [ncp setNode: [self pushNode]];
       return ncp;
@@ -380,7 +380,7 @@
    {
       CPUInt ub = [_cmds size];
       CPProblem* np = [[CPProblem alloc] init];
-      for(CPInt i=0;i< ub;i++) {
+      for(ORInt i=0;i< ub;i++) {
          [[_cmds peekAt:i] apply:^bool(id<ORCommand> theCommand) {
             [np addCommand:[theCommand retain]];
             return true;
@@ -410,7 +410,7 @@
          //NSLog(@"SemTracer AFTER SUFFIXUNDO: %@ - in thread %p",[self description],[NSThread currentThread]);
          //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
          [_trail incMagic];
-         for(CPInt j=i;j < [toRestore size];j++) {
+         for(ORInt j=i;j < [toRestore size];j++) {
             ORCommandList* theList = [toRestore peekAt:j];
             [_trStack pushNode:[theList getNodeId]];
             [_trail incMagic];
@@ -465,7 +465,7 @@
    -(void)dealloc
    {
       //NSLog(@"dealloc command stack %p [%lu]\n",self,_sz);
-      for(CPInt i=(ORInt)_sz-1;i>=0;--i)
+      for(ORInt i=(ORInt)_sz-1;i>=0;--i)
          [_tab[i] release];
       free(_tab);
       [super dealloc];

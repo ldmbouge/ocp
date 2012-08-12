@@ -207,7 +207,7 @@ enum CPVarClass {
 
 @interface CPIntShiftView : CPIntVarI {
    @package
-   CPInt _b;
+   ORInt _b;
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
@@ -230,8 +230,8 @@ enum CPVarClass {
 
 @interface CPIntView : CPIntVarI { // Affine View
    @package
-    CPInt _a;
-    CPInt _b;
+    ORInt _a;
+    ORInt _b;
 }
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
@@ -257,7 +257,7 @@ static inline BOOL bound(CPIntVarI* x)
    return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
 }
 
-static inline CPInt minDom(CPIntVarI* x)
+static inline ORInt minDom(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_min._val;
@@ -271,7 +271,7 @@ static inline CPInt minDom(CPIntVarI* x)
    }
 }
 
-static inline CPInt maxDom(CPIntVarI* x)
+static inline ORInt maxDom(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_max._val;
@@ -293,8 +293,8 @@ static inline CPBounds bounds(CPIntVarI* x)
       case CPVCShift: return (CPBounds){DOMX->_min._val + ((CPIntShiftView*)x)->_b,
                                         DOMX->_max._val + ((CPIntShiftView*)x)->_b};
       case CPVCAffine: {
-         CPInt fmin = DOMX->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
-         CPInt fmax = DOMX->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         ORInt fmin = DOMX->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         ORInt fmax = DOMX->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
          if (((CPIntView*)x)->_a > 0)
             return (CPBounds){fmin,fmax};
          else
@@ -312,9 +312,9 @@ static inline CPBounds negBounds(CPIntVarI* x)
 }
 
 
-static inline CPInt memberDom(CPIntVarI* x,CPInt value)
+static inline ORInt memberDom(CPIntVarI* x,ORInt value)
 {
-   CPInt target;
+   ORInt target;
    switch (x->_vc) {
       case CPVCBare: target = value;
          break;
@@ -322,14 +322,14 @@ static inline CPInt memberDom(CPIntVarI* x,CPInt value)
          target = value - ((CPIntShiftView*)x)->_b;
          break;
       case CPVCAffine: {
-         const CPInt a = ((CPIntView*)x)->_a;
-         const CPInt b = ((CPIntView*)x)->_b;
+         const ORInt a = ((CPIntView*)x)->_a;
+         const ORInt b = ((CPIntView*)x)->_b;
          if (a == 1) 
             target = value - b;
          else if (a== -1)
             target = b - value;
          else {
-            const CPInt r = (value - b) % a;
+            const ORInt r = (value - b) % a;
             if (r != 0) return NO;
             target = (value - b) / a;
          }
@@ -338,9 +338,9 @@ static inline CPInt memberDom(CPIntVarI* x,CPInt value)
    return domMember((CPBoundsDom*)x->_dom, target);
 }
 
-static inline CPInt memberBitDom(CPIntVarI* x,CPInt value)
+static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
 {
-   CPInt target;
+   ORInt target;
    switch (x->_vc) {
       case CPVCBare: target = value;
          break;
@@ -348,14 +348,14 @@ static inline CPInt memberBitDom(CPIntVarI* x,CPInt value)
          target = value - ((CPIntShiftView*)x)->_b;
          break;
       case CPVCAffine: {
-         const CPInt a = ((CPIntView*)x)->_a;
-         const CPInt b = ((CPIntView*)x)->_b;
+         const ORInt a = ((CPIntView*)x)->_a;
+         const ORInt b = ((CPIntView*)x)->_b;
          if (a == 1) 
             target = value - b;
          else if (a== -1)
             target = b - value;
          else {
-            const CPInt r = (value - b) % a;
+            const ORInt r = (value - b) % a;
             if (r != 0) return NO;
             target = (value - b) / a;
          }
@@ -364,21 +364,21 @@ static inline CPInt memberBitDom(CPIntVarI* x,CPInt value)
    return getCPDom((CPBitDom*)x->_dom, target);   
 }
 
-static inline ORStatus removeDom(CPIntVarI* x,CPInt v)
+static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
 {
-   CPInt target;
+   ORInt target;
    switch (x->_vc) {
       case CPVCBare:  target = v;break;
       case CPVCShift: target = v - ((CPIntShiftView*)x)->_b;break;
       case CPVCAffine: {
-         CPInt a = ((CPIntView*)x)->_a;
-         CPInt b = ((CPIntView*)x)->_b;
+         ORInt a = ((CPIntView*)x)->_a;
+         ORInt b = ((CPIntView*)x)->_b;
          if (a == -1)
             target = b - v;
          else if (a== 1)
             target = v - b;
          else {
-            CPInt r = (v - b) % a;
+            ORInt r = (v - b) % a;
             if (r != 0) return ORSuspend;
             target = (v - b) / a; 
          }
@@ -394,8 +394,8 @@ static inline ORStatus removeDom(CPIntVarI* x,CPInt v)
 @interface CPIntVarMultiCast : NSObject<CPIntVarNotifier,NSCoding> {
    CPIntVarI**           _tab;
    BOOL        _tracksLoseEvt;
-   CPInt                  _nb;
-   CPInt                  _mx;
+   ORInt                  _nb;
+   ORInt                  _mx;
    IMP*           _loseValIMP;
 }
 -(id)initVarMC:(ORInt)n;

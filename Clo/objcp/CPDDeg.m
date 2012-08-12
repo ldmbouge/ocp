@@ -57,8 +57,8 @@
    _map = malloc(sizeof(CPUInt)*(maxID+1));
    memset(_cv,sizeof(NSSet*)*len,0);
    memset(_map,sizeof(CPUInt)*(maxID+1),0);   
-   CPInt low = [t low],up = [t up];
-   for(int k=low;k <= up;k++) {
+   ORInt low = [t low],up = [t up];
+   for(ORInt k=low;k <= up;k++) {
       _map[[[_vars at:k] getId]] = k - low;
       _cv[k-low] = [[_vars at:k] constraints];
    }

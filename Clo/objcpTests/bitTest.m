@@ -50,7 +50,7 @@
    ORTrail*   dummyTrail = [[ORTrail alloc] init];   
    CPBitArrayDom* bitDomain = [[CPBitArrayDom alloc] initWithBitPat:64 withLow:min andUp:max andTrail:dummyTrail];
    NSLog(@"Iterating over: %@\n",bitDomain);
-   [bitDomain enumerateWith:^(unsigned int* bits,CPInt idx) {
+   [bitDomain enumerateWith:^(unsigned int* bits,ORInt idx) {
       unsigned long long rank = [bitDomain getRank:bits];
       unsigned int* pat = [bitDomain atRank:rank];
       NSLog(@"Value [%llu] is %x%x : %x%x",rank,bits[0],bits[1],pat[0],pat[1]);

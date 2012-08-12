@@ -42,19 +42,19 @@
    CPRange cols = {[x low],[x up]};
    CPRange rows = {dom.min,dom.max};
    id grid = [_board makeGrid:rows by: cols];
-   for(CPInt i = [x low];i <= [x up];i++) {
+   for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = x[i];
       [cp add: [CPFactory watchVariable:xi 
-                            onValueLost:^void(CPInt val) {
+                            onValueLost:^void(ORInt val) {
                                [_board toggleGrid:grid row:val col:i to:Removed];
                             } 
-                            onValueBind:^void(CPInt val) {
+                            onValueBind:^void(ORInt val) {
                                [_board toggleGrid:grid row:val col:i to:Required];
                             } 
-                         onValueRecover:^void(CPInt val) {
+                         onValueRecover:^void(ORInt val) {
                             [_board toggleGrid:grid row:val col:i to:Possible];
                          }
-                          onValueUnbind:^void(CPInt val) {
+                          onValueUnbind:^void(ORInt val) {
                              [_board toggleGrid:grid row:val col:i to:Possible];
                           }
                 ]];
@@ -70,10 +70,10 @@
    int n = 8;
    CPRange R = (CPRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
-   [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
+   [CPFactory intArray:cp range: R with: ^CPInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    
    [cp solveAll: 
     ^() {
@@ -85,7 +85,7 @@
     }   
           using: 
     ^() {
-       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+       [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return [[x at:i] domsize];}];
        [_board neverStop];
        [_board pause];
     }

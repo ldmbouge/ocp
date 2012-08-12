@@ -28,8 +28,8 @@ enum CPDomClass {
    TRInt             _min;
    TRInt             _max;
    TRInt              _sz;
-   CPInt            _imin;
-   CPInt            _imax;
+   ORInt            _imin;
+   ORInt            _imax;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
 -(CPBoundsDom*)initBoundsDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up;
@@ -62,7 +62,7 @@ static inline CPBounds domBounds(CPBoundsDom* dom)
 @interface CPBitDom : CPBoundsDom {
 @package
    unsigned*    _bits;
-   CPInt*      _magic;
+   ORInt*      _magic;
    UBType  _updateMin;
    UBType  _updateMax;   
 }
@@ -100,14 +100,14 @@ static const CPUInt __bitmasks[32] = {
 #define GETBIT(b) ((_bits[((b) - _imin)>>5] & (0x1 << (((b)-_imin) & 0x1f)))!=0)
 #define GETBITPTR(x,b) ((((CPBitDom*)x)->_bits[((b) - ((CPBitDom*)x)->_imin)>>5] & (0x1 << (((b)-((CPBitDom*)x)->_imin) & 0x1f)))!=0)
 
-static inline CPInt domMember(CPBoundsDom* x,CPInt value)
+static inline ORInt domMember(CPBoundsDom* x,ORInt value)
 {
    switch(x->_dc) {
       case DCBounds:
          return x->_min._val <= value && value <= x->_max._val;
       case DCBits: {
          if (x->_min._val <= value && value <= x->_max._val) {
-            const CPInt ofs = value - x->_imin;
+            const ORInt ofs = value - x->_imin;
             return (((CPBitDom*)x)->_bits[ofs>>5] & (0x1 << (ofs & 0x1f))) != 0;
          } else return 0;         
       }
@@ -115,30 +115,30 @@ static inline CPInt domMember(CPBoundsDom* x,CPInt value)
    }
 }
 
-CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b);
-static inline CPInt memberCPDom(CPBitDom* d,CPInt v) 
+CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b);
+static inline ORInt memberCPDom(CPBitDom* d,ORInt v) 
 {
    return domMember(d, v);
 }
-static inline CPInt minCPDom(CPBitDom* d)
+static inline ORInt minCPDom(CPBitDom* d)
 {
    return d->_min._val;
 }
-static inline CPInt maxCPDom(CPBitDom* d)
+static inline ORInt maxCPDom(CPBitDom* d)
 {
    return d->_max._val;
 }
-static inline CPInt getCPDom(CPBitDom* d,CPInt v)
+static inline ORInt getCPDom(CPBitDom* d,ORInt v)
 {
    const CPUInt ofs = v - d->_imin;
    //return (d->_bits[ofs>>5] & __bitmasks[ofs & 0x1f]);
    return (d->_bits[ofs>>5] & (0x1 << (ofs & 0x1f)));
 }
-static inline void setCPDom(CPBitDom* d,CPInt b,BOOL v)
+static inline void setCPDom(CPBitDom* d,ORInt b,BOOL v)
 {
    return [d set:b at:v];
 }
-static inline CPInt sizeCPDom(CPBitDom* d)
+static inline ORInt sizeCPDom(CPBitDom* d)
 {
    return d->_sz._val;
 }

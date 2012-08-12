@@ -19,11 +19,11 @@
 #import "objcp/CPHeuristic.h"
 #import "objcp/CPWDeg.h"
 
-CPInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,CPInt from,CPInt to)
+ORInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,ORInt from,ORInt to)
 {
    id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
    [m solveAll: ^() {
-      [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+      [CPLabel array: x orderedBy: ^CPInt(ORInt i) { return [[x at:i] domsize];}];
       [nbSolutions incr];
    }
     ];
@@ -38,17 +38,17 @@ int main (int argc, const char * argv[])
    id<ORIntRange> R = RANGE(cp,1,n);
  
    id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
+   [CPFactory intArray:cp range: R with: ^CPInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: x[i] shift:i]; }];
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: x[i] shift:-i]; }];
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: x[i] shift:i]; }];
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: x[i] shift:-i]; }];
    id<CPHeuristic> h = [CPFactory createFF:cp];
    [cp add: [CPFactory alldifferent: cp over: x consistency:ValueConsistency]];
    [cp add: [CPFactory alldifferent: cp over: xp consistency:ValueConsistency]];
    [cp add: [CPFactory alldifferent: cp over: xn consistency:ValueConsistency]];
    [cp solveAll:
    ^() {
-       //[CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
+       //[CPLabel array: x orderedBy: ^CPInt(ORInt i) { return [[x at:i] domsize];}];
        [CPLabel heuristic:h];
        printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];

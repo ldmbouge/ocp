@@ -63,12 +63,12 @@ typedef struct AC3Entry {
 
 @interface CPAC3Queue : NSObject {
    @package
-   CPInt      _mxs;
-   CPInt      _csz;
+   ORInt      _mxs;
+   ORInt      _csz;
    AC3Entry*  _tab;
-   CPInt    _enter;
-   CPInt     _exit;
-   CPInt     _mask;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
 }
 -(id)initAC3Queue:(ORInt)sz;
 -(void)dealloc;
@@ -103,14 +103,14 @@ typedef struct AC3Entry {
 }
 -(bool) loaded
 {
-   //CPInt nb = (_mxs + _enter - _exit)  & _mask;
+   //ORInt nb = (_mxs + _enter - _exit)  & _mask;
    return _csz > 0;
 }
 -(void) resize
 {
    AC3Entry* nt = malloc(sizeof(AC3Entry)*_mxs*2);
    AC3Entry* ptr = nt;
-   CPInt cur = _exit;
+   ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
       cur = (cur+1) & _mask;
@@ -163,18 +163,18 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 // PVH: This may need to be generalized to cope with different types of events
 typedef struct {
    VarEventNode* _list;
-   CPInt        _value;
+   ORInt        _value;
 } AC5Event;
 
 
 @interface CPAC5Queue : NSObject {
    @package
-   CPInt      _mxs;
-   CPInt      _csz;
+   ORInt      _mxs;
+   ORInt      _csz;
    AC5Event*  _tab;
-   CPInt    _enter;
-   CPInt     _exit;
-   CPInt     _mask;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
 }
 -(id) initAC5Queue: (ORInt) sz;
 -(void) dealloc;
@@ -214,7 +214,7 @@ typedef struct {
 {
    AC5Event* nt = malloc(sizeof(AC5Event)*_mxs*2);
    AC5Event* ptr = nt;
-   CPInt cur = _exit;
+   ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
       cur = (cur+1) & _mask;
@@ -231,11 +231,11 @@ inline static void AC5reset(CPAC5Queue* q)
    q->_enter = q->_exit = 0;
    q->_csz = 0;
 }
-inline static void enQueueAC5(CPAC5Queue* q,VarEventNode* cb,CPInt val)
+inline static void enQueueAC5(CPAC5Queue* q,VarEventNode* cb,ORInt val)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
-   CPInt enter = q->_enter;
+   ORInt enter = q->_enter;
    q->_tab[enter]  = (AC5Event){cb,val};
    q->_enter = (enter+1) & q->_mask;
    ++q->_csz;
@@ -243,7 +243,7 @@ inline static void enQueueAC5(CPAC5Queue* q,VarEventNode* cb,CPInt val)
 inline static AC5Event deQueueAC5(CPAC5Queue* q)
 {
    if (q->_enter != q->_exit) {
-      CPInt oe = q->_exit;
+      ORInt oe = q->_exit;
       q->_exit = (oe+1) & q->_mask;
       --q->_csz;
       return q->_tab[oe];
@@ -270,7 +270,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
-   for(CPInt i=0;i<NBPRIORITIES;i++)
+   for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
    _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
    _status = ORSuspend;
@@ -292,7 +292,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    [_ac5 release];
    [_propagFail release];
    [_propagDone release];
-   for(CPInt i=0;i<NBPRIORITIES;i++)
+   for(ORInt i=0;i<NBPRIORITIES;i++)
       [_ac3[i] release];
    [super dealloc];
 }
@@ -342,7 +342,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 }
 -(id)virtual:(id<CPVirtual>)obj
 {
-   CPInt oOfs = [obj virtualOffset];
+   ORInt oOfs = [obj virtualOffset];
    if (oOfs != NSNotFound)
       return [_oStore objectAtIndex:oOfs];
    else
@@ -454,7 +454,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       return _status;
    }
    @catch (CPFailException *exception) {
-      for(CPInt p=NBPRIORITIES-1;p>=0;--p)
+      for(ORInt p=NBPRIORITIES-1;p>=0;--p)
          AC3reset(_ac3[p]);
       AC5reset(_ac5);
       if (_propagFail)
@@ -470,7 +470,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    switch (status) {
       case ORFailure:
-         for(CPInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
+         for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
             AC3reset(fdm->_ac3[p]);
          break;
       case ORSuccess:
@@ -649,7 +649,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    _trail = [[aDecoder decodeObject] retain];
    NSMutableArray* originalStore = [aDecoder decodeObject];
    _oStore = [[aDecoder decodeObject] retain];
-   for(CPInt i=0;i<NBPRIORITIES;i++)
+   for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[[CPAC3Queue alloc] initAC3Queue:512] retain];
    _ac5 = [[[CPAC5Queue alloc] initAC5Queue:512] retain];
    _status = ORSuspend;

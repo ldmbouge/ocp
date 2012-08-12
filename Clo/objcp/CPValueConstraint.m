@@ -281,7 +281,7 @@
 }
 -(void)listenOn:(CPIntVarI*)a inferOn:(CPIntVarI*)other
 {
-   [a whenLoseValue:self do:^(CPInt c) {  // c NOTIN(a)
+   [a whenLoseValue:self do:^(ORInt c) {  // c NOTIN(a)
       if (bound(other) && minDom(other)==c) // FALSE <=> other==c & c NOTIN(a)
             [_b bind:NO];
    }];
@@ -304,7 +304,7 @@
    if (!memberDom(a, c)) {                   // b <=> c == a & c NOTIN D(a)
       [b bind:NO];                           // -> b=NO
    } else {                                  // b <=> c == a & c IN D(a)
-      [a whenLoseValue:self do:^(CPInt v) {
+      [a whenLoseValue:self do:^(ORInt v) {
          if (v == c)
             [b bind:NO];
       }];
@@ -330,7 +330,7 @@
          [_x updateMin:minDom(_y) andMax:maxDom(_y)];
          [_y updateMin:minDom(_x) andMax:maxDom(_x)];
          CPBounds b = bounds(_x);
-         for(CPInt i = b.min;i <= b.max; i++) {
+         for(ORInt i = b.min;i <= b.max; i++) {
             if (!memberBitDom(_x, i))
                [_y remove:i];
             if (!memberBitDom(_x, i))
@@ -523,7 +523,7 @@
       self = [super initCPCoreConstraint];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(CPInt k=0;k<_nb;k++)
+      for(ORInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    }
    else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
@@ -531,10 +531,10 @@
       self = [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
-      CPInt low = [x low];
-      CPInt up = [x up];
-      CPInt i = 0;
-      for(CPInt k=low;k <= up;k++)
+      ORInt low = [x low];
+      ORInt up = [x up];
+      ORInt i = 0;
+      for(ORInt k=low;k <= up;k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
    _c = c;
@@ -557,7 +557,7 @@
     _notTriggered = malloc(sizeof(ORInt)*(_nb - _c - 1));
     int nbTrue = 0;
     int nbPos  = 0;
-    for(CPInt i=0;i<_nb;i++) {
+    for(ORInt i=0;i<_nb;i++) {
        [_x[i] updateMin:0];
        [_x[i] updateMax:1];
        nbTrue += ([_x[i] bound] && [_x[i] min] == true);
@@ -569,15 +569,15 @@
        failNow();
     if (nbTrue + nbPos == _c) {
         // We already know that all the possible should be true. Do it.
-        for(CPInt i=0;i<_nb;++i) {
+        for(ORInt i=0;i<_nb;++i) {
             if ([_x[i] bound]) 
                 continue;
            [_x[i] updateMin:true];
         }
         return ORSuccess;      
     }
-    CPInt listen = _c+1;
-    CPInt nbNW   = 0;
+    ORInt listen = _c+1;
+    ORInt nbNW   = 0;
     for(CPLong i=_nb-1;i >= 0;--i) {
         if (listen > 0 && [_x[i] max] == true) { // Still in the domain and in need of more watches
             --listen; // the closure must capture the correct value of listen!
@@ -591,7 +591,7 @@
                                    jOk = [_x[_notTriggered[j]] member:true];
                                } while (j != _last && !jOk);
                                if (jOk) {
-                                   CPInt nextVar = _notTriggered[j];
+                                   ORInt nextVar = _notTriggered[j];
                                    // This is manipulating the list directly: very dangerous
                                    // We should abstract the triggers
                                    CPTrigger* toMove = _at[listen];
@@ -606,7 +606,7 @@
                                    _last = j;
                                } 
                                else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
-                                   for(CPInt k=0;k<_c+1;k++) {
+                                   for(ORInt k=0;k<_c+1;k++) {
                                        if (k != listen) {
                                            ORStatus ok = [_x[_at[k]->_vId] updateMin:true];
                                            if (!ok) 
@@ -629,7 +629,7 @@
 -(NSSet*)allVars
 {
    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb];
-   for(CPInt k = 0;k < _nb;k++)
+   for(ORInt k = 0;k < _nb;k++)
       [rv addObject:_x[k]];
    return rv;
 }
@@ -645,7 +645,7 @@
 {
     [super encodeWithCoder:aCoder];   
     [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
-    for(CPInt k=0;k<_nb;k++) 
+    for(ORInt k=0;k<_nb;k++) 
         [aCoder encodeObject:_x[k]];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
@@ -655,7 +655,7 @@
     self = [super initWithCoder:aDecoder];
     [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
     _x = malloc(sizeof(CPIntVarI*)*_nb);   
-    for(CPInt k=0;k<_nb;k++) 
+    for(ORInt k=0;k<_nb;k++) 
         _x[k] = [aDecoder decodeObject];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
     return self;
@@ -675,7 +675,7 @@
       self = [super initCPActiveConstraint: [solver engine]];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(CPInt k=0;k<_nb;k++)
+      for(ORInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    }
    else {
@@ -683,10 +683,10 @@
       self = [super initCPActiveConstraint:[[x solver] engine]];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
-      CPInt low = [x low];
-      CPInt up = [x up];
-      CPInt i = 0;
-      for(CPInt k=low;k <= up;k++)
+      ORInt low = [x low];
+      ORInt up = [x up];
+      ORInt i = 0;
+      for(ORInt k=low;k <= up;k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
    _c = c;
@@ -701,14 +701,14 @@
 {
    int nbTrue = 0;
    int nbPos  = 0;
-   for(CPInt i=0;i<_nb;i++) {
+   for(ORInt i=0;i<_nb;i++) {
       nbTrue += minDom(_x[i])==1;
       nbPos  += !bound(_x[i]);
    }
    if (nbTrue > _c)               // too many are true already. Fail.
       failNow();
    if (nbTrue == _c) {            // All the possible should be FALSE
-      for(CPInt i=0;i<_nb;++i)
+      for(ORInt i=0;i<_nb;++i)
          if (!bound(_x[i]))
             [_x[i] bind:NO];
       return ORSuccess;
@@ -716,20 +716,20 @@
    if (nbTrue + nbPos < _c)      // We can't possibly make it to _c. fail.
       failNow();
    if (nbTrue + nbPos == _c) {   // All the possible should be TRUE
-      for(CPInt i=0;i<_nb;++i)
+      for(ORInt i=0;i<_nb;++i)
          if (!bound(_x[i]))
              [_x[i] bind:YES];
       return ORSuccess;
    }
    _nbOne  = makeTRInt(_trail, nbTrue);
    _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
-   for(CPInt k=0;k < _nb;k++) {
+   for(ORInt k=0;k < _nb;k++) {
       if (bound(_x[k])) continue;
       [_x[k] whenBindDo:^{
          if (minDom(_x[k])) {  // ONE more TRUE
             if (_nbOne._val + 1 == _c) {
-               CPInt nb1 = 0;
-               for(CPInt i=0;i<_nb;i++) {
+               ORInt nb1 = 0;
+               for(ORInt i=0;i<_nb;i++) {
                   nb1 += (minDom(_x[i])==YES);   // already a ONE
                   if (!bound(_x[i]))
                      [_x[i] bind:FALSE];
@@ -741,8 +741,8 @@
                assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
          } else { // ONE more FALSE
             if (_nb - _nbZero._val -  1 == _c) { // we have maxed out the # of FALSE
-               CPInt nb1 = 0;
-               for(CPInt i=0;i < _nb;i++) {
+               ORInt nb1 = 0;
+               for(ORInt i=0;i < _nb;i++) {
                   nb1 += (minDom(_x[i])==YES);   // already a ONE
                   if (!bound(_x[i])) {
                      [_x[i] bind:TRUE];
@@ -762,7 +762,7 @@
 -(NSSet*)allVars
 {
    NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb];
-   for(CPInt k = 0;k < _nb;k++)
+   for(ORInt k = 0;k < _nb;k++)
       [rv addObject:_x[k]];
    return rv;
 }
@@ -778,7 +778,7 @@
 {
    [super encodeWithCoder:aCoder];
    [aCoder encodeValueOfObjCType:@encode(CPLong) at:&_nb];
-   for(CPInt k=0;k<_nb;k++)
+   for(ORInt k=0;k<_nb;k++)
       [aCoder encodeObject:_x[k]];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
@@ -788,7 +788,7 @@
    self = [super initWithCoder:aDecoder];
    [aDecoder decodeValueOfObjCType:@encode(CPLong) at:&_nb];
    _x = malloc(sizeof(CPIntVarI*)*_nb);
-   for(CPInt k=0;k<_nb;k++)
+   for(ORInt k=0;k<_nb;k++)
       _x[k] = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;

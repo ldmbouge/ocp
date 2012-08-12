@@ -19,12 +19,12 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       id<CPSolver> cp = [CPFactory createSolver];
-      CPInt fixed = 30;
-      CPInt maxCost = 100;
+      ORInt fixed = 30;
+      ORInt maxCost = 100;
       id<ORIntRange> Stores     = RANGE(cp,0,9);
       id<ORIntRange> Warehouses = RANGE(cp,0,4);
-      CPInt* cap = (CPInt[]){1,4,2,1,3};
-      CPInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
+      ORInt* cap = (CPInt[]){1,4,2,1,3};
+      ORInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
                                  { 28, 27, 82, 83, 74 },
                                  { 74, 97, 71, 96, 70 },
                                  {  2, 55, 73, 69, 61 },
@@ -34,7 +34,7 @@ int main(int argc, const char * argv[])
                                  { 10, 73, 13, 43, 96 },
                                  { 93, 35, 63, 85, 46 },
                                  { 47, 65, 55, 71, 95 }};
-      CPInt* conn = (CPInt*)connection;
+      ORInt* conn = (ORInt*)connection;
 
     
       id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];

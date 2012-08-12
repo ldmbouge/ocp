@@ -78,7 +78,7 @@ BOOL refresh(CPVarInfo* vi)
 {
    ORTrail* trail = [[_cp engine] trail];
    CPUInt nbW = 0;
-   for(CPInt k = [_monVar low];k <= [_monVar up];k++) {
+   for(ORInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
       _varInfo[nbW++] = vInfo; // [ldm] vInfo is in the _varInfo dico with refcnt = 1 from here on.

@@ -19,8 +19,8 @@ void show(id<ORIntVarMatrix> m)
 {
     id<ORIntRange> R = [m range: 0];
     id<ORIntRange> C = [m range: 1];
-    for(CPInt i = [R low] ; i <= [R up]; i++) {
-        for(CPInt j = C.low ; j <= C.up; j++) 
+    for(ORInt i = [R low] ; i <= [R up]; i++) {
+        for(ORInt j = C.low ; j <= C.up; j++) 
             printf("%d  ",[[m at: i : j] min]);
         printf("\n");   
     }
@@ -37,24 +37,24 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,1,9);
    id<ORIntVarMatrix> x =  [CPFactory intVarMatrix: cp range: R : R domain: R];
-   id<ORIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<ORIntVar>(CPInt i,CPInt j) { return [x at: i : j]; }];
-   for(CPInt i = 0; i < nb; i++) {
+   id<ORIntVarArray> a = [CPFactory intVarArray: cp range: R : R with: ^id<ORIntVar>(ORInt i,ORInt j) { return [x at: i : j]; }];
+   for(ORInt i = 0; i < nb; i++) {
       fscanf(f,"%d%d%d",&r,&c,&v);
       [cp label: [x at: r : c] with:v];
    }
-   for(CPInt i = 1; i <= 9; i++)
-      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<ORIntVar>(CPInt j) { return [x at: i : j]; }]]];
-   for(CPInt j = 1; j <= 9; j++)
-      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<ORIntVar>(CPInt i) { return [x at: i : j]; }]]];
-   for(CPInt i = 0; i <= 2; i++)
-      for(CPInt j = 0; j <= 2; j++)
+   for(ORInt i = 1; i <= 9; i++)
+      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<ORIntVar>(ORInt j) { return [x at: i : j]; }]]];
+   for(ORInt j = 1; j <= 9; j++)
+      [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp range: R with: ^id<ORIntVar>(ORInt i) { return [x at: i : j]; }]]];
+   for(ORInt i = 0; i <= 2; i++)
+      for(ORInt j = 0; j <= 2; j++)
          [cp add: [CPFactory alldifferent: [CPFactory intVarArray: cp
                                                             range: RANGE(cp,i*3+1,i*3+3)
                                                                  : RANGE(cp,j*3+1,j*3+3)
-                                                             with: ^id<ORIntVar>(CPInt r,CPInt c) { return [x at: r : c]; }]]];
+                                                             with: ^id<ORIntVar>(ORInt r,ORInt c) { return [x at: r : c]; }]]];
     [cp solve:
      ^() {
-         [CPLabel array: a orderedBy: ^CPInt(CPInt i) { return [[a at:i] domsize];}];
+         [CPLabel array: a orderedBy: ^CPInt(ORInt i) { return [[a at:i] domsize];}];
          show(x);
      }
      ];

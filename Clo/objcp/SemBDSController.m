@@ -24,7 +24,7 @@
 }
 -(void)dealloc 
 {
-   for(CPInt i = 0;i  < _sz;i++) {
+   for(ORInt i = 0;i  < _sz;i++) {
       [_tab[i]._cont release];
       [_tab[i]._cp release];
    }

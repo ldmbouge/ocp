@@ -67,7 +67,7 @@
     int* idx = [obj col];
     double* coef = [obj coef];
     _objectiveType = [obj type];
-    for(CPInt i = 0; i < s; i++) 
+    for(ORInt i = 0; i < s; i++) 
         if (_objectiveType == LPminimize)
             GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
         else

@@ -126,11 +126,11 @@
    if (newMin > _max._val)
       failNow();
    if ([x tracksLoseEvt]) {
-      for(CPInt k=_min._val;k< newMin;k++)
+      for(ORInt k=_min._val;k< newMin;k++)
          [x loseValEvt:k];
    }
-   CPInt nbr = newMin - _min._val;
-   CPInt nsz = _sz._val - nbr;
+   ORInt nbr = newMin - _min._val;
+   ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_min, newMin, _trail);
    [x changeMinEvt:nsz];
@@ -142,11 +142,11 @@
    if (newMax < _min._val)
       failNow();
    if ([x tracksLoseEvt]) {
-      for(CPInt k=newMax+1;k<= _max._val;k++)
+      for(ORInt k=newMax+1;k<= _max._val;k++)
          [x loseValEvt:k];
    }
-   CPInt nbr = _max._val - newMax;
-   CPInt nsz = _sz._val - nbr;
+   ORInt nbr = _max._val - newMax;
+   ORInt nsz = _sz._val - nbr;
    assignTRInt(&_max, newMax, _trail);
    assignTRInt(&_sz, nsz, _trail);
    [x changeMaxEvt:nsz];
@@ -158,7 +158,7 @@
       failNow();
    if (_sz._val == 1 && val == _min._val) return ORSuccess;
    if ([x tracksLoseEvt]) {
-      for(CPInt k=_min._val;k<=_max._val;k++)
+      for(ORInt k=_min._val;k<=_max._val;k++)
          if (k != val)
             [x loseValEvt:k];
    };
@@ -217,11 +217,11 @@
 {
    self = [super initBoundsDomFor:dom];
    _dc = DCBits;
-   const CPInt sz = _imax - _imin + 1;
-   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(CPUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
-   for(CPInt k=0;k<nb;k++) {
+   for(ORInt k=0;k<nb;k++) {
       _bits[k]  = 0xffffffff;
       _magic[k] = [_trail magic]-1;
    }
@@ -234,11 +234,11 @@
 {
    self = [super initBoundsDomFor:trail low:low up:up];
    _dc = DCBits;
-   const CPInt sz = _imax - _imin + 1;
-   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(CPUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
-   for(CPInt k=0;k<nb;k++) {
+   for(ORInt k=0;k<nb;k++) {
       _bits[k]  = 0xffffffff;
       _magic[k] = [trail magic]-1;
    }
@@ -250,8 +250,8 @@
 - (id)copyWithZone:(NSZone *)zone
 {
    CPBitDom* copy = [[CPBitDom alloc] initBitDomFor:self];
-   const CPInt sz = _imax - _imin + 1;
-   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    for(CPUInt k=0;k<nb;k++) {
       copy->_bits[k] = _bits[k];
       copy->_magic[k] = _magic[k];
@@ -267,7 +267,7 @@
    [super dealloc];
 }
 
-static inline int countFrom(CPBitDom* dom,CPInt from,CPInt to)
+static inline int countFrom(CPBitDom* dom,ORInt from,ORInt to)
 {
    from -= dom->_imin;
    int fw = from >> 5;
@@ -290,10 +290,10 @@ static inline int countFrom(CPBitDom* dom,CPInt from,CPInt to)
    return cnt;   
 }
 
-inline static void resetBit(CPBitDom* dom,CPInt b) 
+inline static void resetBit(CPBitDom* dom,ORInt b) 
 {
    b -= dom->_imin;
-   const CPInt bw = b >> 5;
+   const ORInt bw = b >> 5;
    const CPUInt magic = trailMagic(dom->_trail);
    if (dom->_magic[bw] != magic) {
       dom->_magic[bw] = magic;
@@ -302,11 +302,11 @@ inline static void resetBit(CPBitDom* dom,CPInt b)
    dom->_bits[bw] &= ~(0x1 << (b & 0x1f));
 }
 
-static inline CPInt findMin(CPBitDom* dom,CPInt from)
+static inline ORInt findMin(CPBitDom* dom,ORInt from)
 {
    from -= dom->_imin;
-   CPInt mw = from >> 5;
-   CPInt mb = from & 0x1f;
+   ORInt mw = from >> 5;
+   ORInt mb = from & 0x1f;
    CPUInt mask = 0x1 << mb;
    while ((dom->_bits[mw] & mask) == 0) {
       mask <<= 1;
@@ -321,7 +321,7 @@ static inline CPInt findMin(CPBitDom* dom,CPInt from)
    return dom->_imin + ((mw << 5) + mb);   
 }
 
-static inline CPInt findMax(CPBitDom* dom,CPInt from)
+static inline ORInt findMax(CPBitDom* dom,ORInt from)
 {
    from -= dom->_imin;
    int mw = from >> 5;
@@ -353,7 +353,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 {
    if (b >=_imin && b<=_imax) {
       b -= _imin;
-      const CPInt bw = b >> 5;
+      const ORInt bw = b >> 5;
       const CPUInt magic = trailMagic(_trail);
       if (_magic[bw] != magic) {
          _magic[bw] = magic;
@@ -372,12 +372,12 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    const CPUInt magic = [_trail magic];
    from -= _imin;
    to    = to + 1 - _imin;
-   CPInt fw = from >> 5;
-   CPInt fb = from & 0x1f;
-   CPInt tw = to >> 5;
-   CPInt tb = to & 0x1f;
-   CPInt nbin = 0;
-   for(CPInt k=fw;k<tw;k++) {
+   ORInt fw = from >> 5;
+   ORInt fb = from & 0x1f;
+   ORInt tw = to >> 5;
+   ORInt tb = to & 0x1f;
+   ORInt nbin = 0;
+   for(ORInt k=fw;k<tw;k++) {
       CPUInt bits = _bits[k];
       CPUInt mask = 0x1 << fb;
       CPUInt nmsk = ~mask;
@@ -439,10 +439,10 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       [s appendFormat:@"%d",_min._val];
    else {
       [s appendFormat:@"(%d)[%d",_sz._val,_min._val];
-      CPInt lastIn = _min._val;
-      CPInt frstIn = _min._val;
+      ORInt lastIn = _min._val;
+      ORInt frstIn = _min._val;
       bool seq   = true;
-      for(CPInt k=_min._val+1;k<=_max._val;k++) {
+      for(ORInt k=_min._val+1;k<=_max._val;k++) {
          if ([self get:k]) {
             if (!seq) {
                [s appendFormat:@",%d",k];
@@ -482,12 +482,12 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
       failNow();
     int nbr = countFrom(self,_min._val,newMin-1);
    if ([x tracksLoseEvt]) {
-      for(CPInt k=_min._val;k< newMin;k++) 
+      for(ORInt k=_min._val;k< newMin;k++) 
          if (GETBIT(k)) 
             [x loseValEvt:k];         
    }
     // need to send AC5 notifications still
-    CPInt nsz = _sz._val - nbr;
+    ORInt nsz = _sz._val - nbr;
     assignTRInt(&_sz, nsz, _trail);
     newMin = findMin(self,newMin);
     assignTRInt(&_min, newMin, _trail);
@@ -500,13 +500,13 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    if (newMax >= _max._val) return ORSuspend;
    if (newMax < _min._val)
       failNow();
-   CPInt nbr = countFrom(self,newMax+1,_max._val);
+   ORInt nbr = countFrom(self,newMax+1,_max._val);
    if ([x tracksLoseEvt]) {
-      for(CPInt k=newMax+1;k<= _max._val;k++)
+      for(ORInt k=newMax+1;k<= _max._val;k++)
          if (GETBIT(k))
             [x loseValEvt:k];
    }
-   CPInt nsz = _sz._val - nbr;
+   ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    newMax = findMax(self,newMax);
    assignTRInt(&_max, newMax, _trail);
@@ -520,7 +520,7 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
        failNow();
     if (_sz._val == 1 && val == _min._val) return ORSuccess;
     if ([x tracksLoseEvt]) {
-        for(CPInt k=_min._val;k<=_max._val;k++) 
+        for(ORInt k=_min._val;k<=_max._val;k++) 
             if (GETBIT(k) && k != val) 
                 [x loseValEvt:k];         
     };
@@ -551,8 +551,8 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    _min._val = [toRestore min];
    _max._val = [toRestore max];
    _sz._val  = [toRestore domsize];
-   const CPInt sz = _imax - _imin + 1;
-   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    for(CPUInt k=0;k< nb ; k++) {
       _bits[k] = toRestore->_bits[k];
    }
@@ -581,9 +581,9 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_sz._val];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imin];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imax];
-   const CPInt sz = _imax - _imin + 1;
-   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
-   for(CPInt k=0;k<nb;k++) {
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   for(ORInt k=0;k<nb;k++) {
       [aCoder encodeValueOfObjCType:@encode(CPUInt) at:&_bits[k]]; 
       [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_magic[k]]; 
    }
@@ -599,13 +599,13 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_sz._val];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_imin];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_imax];
-   const CPInt sz = _imax - _imin + 1;
-   const CPInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   const ORInt sz = _imax - _imin + 1;
+   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
    
    _bits  = malloc(sizeof(CPUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
 
-   for(CPInt k=0;k<nb;k++) {
+   for(ORInt k=0;k<nb;k++) {
       [aDecoder decodeValueOfObjCType:@encode(CPUInt) at:&_bits[k]];  
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_magic[k]]; 
    }
@@ -616,11 +616,11 @@ static inline CPInt findMax(CPBitDom* dom,CPInt from)
 }
 @end
 
-CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
+CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
 {
    if (a == 1 && b == 0) {
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
-      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+      for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [nDom set:-v at:NO];
          }
@@ -629,7 +629,7 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
       //return [bd copyWithZone:NULL];
    } else if (a==1) {
       CPBitDom* clone = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
-      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+      for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [clone set:-v at:NO];
          }
@@ -639,7 +639,7 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
       return clone;      
    } else if (a== -1 && b == 0) {
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
-      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+      for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [nDom set:-v at:NO];
          }
@@ -647,19 +647,19 @@ CPBitDom* newDomain(CPBitDom* bd,CPInt a,CPInt b)
       return nDom;
    } else if (a == -1) {
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
-      for(CPInt v =bd->_imin;v <= bd->_imax;v++) {
+      for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [nDom set:-v+b at:NO];
          }
       }
       return nDom;
    } else {
-      CPInt newLow = (a > 0 ? [bd min] : [bd max]) * a + b;
-      CPInt newUp  = (a > 0 ? [bd max] : [bd min]) * a + b;
+      ORInt newLow = (a > 0 ? [bd min] : [bd max]) * a + b;
+      ORInt newUp  = (a > 0 ? [bd max] : [bd min]) * a + b;
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:newLow up:newUp];
       [nDom setAllZeroFrom:newLow to:newUp];
-      for(CPInt i = [bd min];i  <= [bd max];i++) {
-         CPInt k = a * i + b;
+      for(ORInt i = [bd min];i  <= [bd max];i++) {
+         ORInt k = a * i + b;
          [nDom set:k at:YES];
       }
       return nDom;

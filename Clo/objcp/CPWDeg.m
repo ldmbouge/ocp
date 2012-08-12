@@ -59,7 +59,7 @@
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
-      CPInt cid = [obj getId];
+      ORInt cid = [obj getId];
       assert(cid >=0 && cid < _nbc);
       h += ([obj nbUVars] - 1 > 0) * _w[cid];
    }
@@ -84,7 +84,7 @@
    for(int k=0;k<len;k++) 
       maxID = max(maxID,[[t at:k] getId]);   
    _map = malloc(sizeof(CPUInt)*(maxID+1));
-   CPInt low = [t low],up = [t up];
+   ORInt low = [t low],up = [t up];
    for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
       _map[[[_vars at:k] getId]] = k - low;

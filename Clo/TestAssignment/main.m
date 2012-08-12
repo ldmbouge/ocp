@@ -42,8 +42,8 @@ int main (int argc, const char * argv[])
    [cost set: 21 at: 3 : 2];
    [cost set: 16 at: 3 : 3];
    
-   for(CPInt i = 1; i <= 3; i++) {
-      for(CPInt j = 1; j <= 3; j++)
+   for(ORInt i = 1; i <= 3; i++) {
+      for(ORInt j = 1; j <= 3; j++)
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
@@ -57,11 +57,11 @@ int main (int argc, const char * argv[])
           using:
     ^() {        
        [CPLabel array: x];
-       for(CPInt i = 1; i <= 3; i++)
+       for(ORInt i = 1; i <= 3; i++)
           printf("%d ",[[x at: i] min]);
        printf("\n");
-       CPInt acost = 0;
-       for(CPInt i = 1; i <= 3; i++)
+       ORInt acost = 0;
+       for(ORInt i = 1; i <= 3; i++)
           acost += [cost at: i : [[x at: i] min]];
        printf("Cost: %d \n",acost);
        printf("Cost: %d \n",[assignmentCost min]);
@@ -94,8 +94,8 @@ int main (int argc, const char * argv[])
    [cost set: 21 at: 3 : 2];
    [cost set: 16 at: 3 : 3];
    
-   for(CPInt i = 1; i <= 3; i++) {
-      for(CPInt j = 1; j <= 3; j++)
+   for(ORInt i = 1; i <= 3; i++) {
+      for(ORInt j = 1; j <= 3; j++)
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
@@ -109,11 +109,11 @@ int main (int argc, const char * argv[])
           using:
     ^{        
        [CPLabel array: x];
-       for(CPInt i = 1; i <= 3; i++)
+       for(ORInt i = 1; i <= 3; i++)
           printf("%d ",[[x at: i] min]);
        printf("\n");
-       CPInt acost = 0;
-       for(CPInt i = 1; i <= 3; i++)
+       ORInt acost = 0;
+       for(ORInt i = 1; i <= 3; i++)
           acost += [cost at: i : [[x at: i] min]];
        printf("Cost: %d \n",acost);
        printf("Cost: %d \n",[assignmentCost min]);
@@ -140,11 +140,11 @@ void printCircuit(id<ORIntVarArray> x)
 int main (int argc, const char * argv[])
 {
    FILE* dta = fopen("rbg040a.tw","r");
-   CPInt nbCities;
-   CPInt tmp;
+   ORInt nbCities;
+   ORInt tmp;
    fscanf(dta, "%d",&nbCities);
    printf("NbCities: %d \n",nbCities);
-   for(CPInt i = 0; i < nbCities; i++) {
+   for(ORInt i = 0; i < nbCities; i++) {
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
@@ -153,14 +153,14 @@ int main (int argc, const char * argv[])
    id<ORIntRange> Cities = RANGE(cp,0,nbCities-1);
 
    id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
-   for(CPInt i = 0; i < nbCities; i++) {
-      for(CPInt j = 0; j < nbCities; j++) {
+   for(ORInt i = 0; i < nbCities; i++) {
+      for(ORInt j = 0; j < nbCities; j++) {
          fscanf(dta, "%d",&tmp);
          [cost set: tmp at: i : j ];
       }
    }
-   for(CPInt i = 0; i < nbCities; i++) {
-      for(CPInt j = 0; j < nbCities; j++) 
+   for(ORInt i = 0; i < nbCities; i++) {
+      for(ORInt j = 0; j < nbCities; j++) 
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
@@ -172,7 +172,7 @@ int main (int argc, const char * argv[])
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    
-   for(CPInt i = 0; i < nbCities; i++)
+   for(ORInt i = 0; i < nbCities; i++)
       [cp add: [CPFactory notEqualc: x[i] to: i]];
    [cp add: [CPFactory alldifferent: x]];
    [cp add: [CPFactory circuit: x]];
@@ -196,15 +196,15 @@ int main (int argc, const char * argv[])
                   printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
                   [nbSolutions incr];
                   id<ORSolution> solution = [cp solution];
-                  for(CPInt i = 0; i < nbCities; i++)
+                  for(ORInt i = 0; i < nbCities; i++)
                      [mark set: 0 at: i];
                   
-                  CPInt start = (int) [distr next];
-                  for(CPInt i = 0; i < 19; i++) {
+                  ORInt start = (int) [distr next];
+                  for(ORInt i = 0; i < 19; i++) {
                      [mark set: 1 at: start];
                      start = [solution intValue: [x at: start]];
                   }
-                  for(CPInt i = 0; i < nbCities; i++) {
+                  for(ORInt i = 0; i < nbCities; i++) {
                      if ([mark at: i] == 0)
                         [cp label: [x at: i] with: [solution intValue: [x at: i]]];
                   }
@@ -215,8 +215,8 @@ int main (int argc, const char * argv[])
     }
     ];
    id<ORSolution> solution = [cp solution];
-   CPInt start = (int) [distr next];
-   for(CPInt i = 0; i < 10; i++) {
+   ORInt start = (int) [distr next];
+   for(ORInt i = 0; i < 10; i++) {
       printf("%d->",start);
       start = [solution intValue: [x at: start]];
    }
@@ -233,11 +233,11 @@ int main (int argc, const char * argv[])
 int main (int argc, const char * argv[])
 {
    FILE* dta = fopen("/Users/ldm/work/langExp/benchdata/ATSPTW/rbg040a.tw","r");
-   CPInt nbCities;
-   CPInt tmp;
+   ORInt nbCities;
+   ORInt tmp;
    fscanf(dta, "%d",&nbCities);
    printf("NbCities: %d \n",nbCities);
-   for(CPInt i = 0; i < nbCities; i++) {
+   for(ORInt i = 0; i < nbCities; i++) {
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
@@ -245,14 +245,14 @@ int main (int argc, const char * argv[])
    CPRange Cities = (CPRange){0,nbCities-1};
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
-   for(CPInt i = 0; i < nbCities; i++) {
-      for(CPInt j = 0; j < nbCities; j++) {
+   for(ORInt i = 0; i < nbCities; i++) {
+      for(ORInt j = 0; j < nbCities; j++) {
          fscanf(dta, "%d",&tmp);
          [cost set: tmp at: i : j ];
       }
    }
-   for(CPInt i = 0; i < nbCities; i++) {
-      for(CPInt j = 0; j < nbCities; j++)
+   for(ORInt i = 0; i < nbCities; i++) {
+      for(ORInt j = 0; j < nbCities; j++)
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
@@ -265,7 +265,7 @@ int main (int argc, const char * argv[])
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:
     ^{
-       for(CPInt i = 0; i < nbCities; i++)
+       for(ORInt i = 0; i < nbCities; i++)
           [cp add: [CPFactory notEqualc: [x at: i] to: i]];
        [cp add: [CPFactory alldifferent: x]];
        [cp add: [CPFactory circuit: x]];
@@ -283,8 +283,8 @@ int main (int argc, const char * argv[])
     ];
                 
    id<CPSolution> solution = [cp solution];
-   CPInt start = (int) [distr next];
-   for(CPInt i = 0; i < 10; i++) {
+   ORInt start = (int) [distr next];
+   for(ORInt i = 0; i < 10; i++) {
       printf("%d->",start);
       start = [solution intValue: [x at: start]];
    }

@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
             else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
          }
       }
-      for(CPInt i=1;i<=n-1;i++) {
+      for(ORInt i=1;i<=n-1;i++) {
          id<ORIntVarArray> slice = ALL(ORIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
          [cp add:[CPFactory alldifferent:slice]];
       }
@@ -81,8 +81,8 @@ int main(int argc, const char * argv[])
             [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
          }
       }
-      for (CPInt k=3; k<=n; k++) {
-         for (CPInt l=k+1; l<=n; l++) {
+      for (ORInt k=3; k<=n; k++) {
+         for (ORInt l=k+1; l<=n; l++) {
             [cp add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
              H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
          }

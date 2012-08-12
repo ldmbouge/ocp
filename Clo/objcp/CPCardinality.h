@@ -18,12 +18,12 @@
     CPEngineI*        _fdm;
     CPRange       _values;
     CPIntVarI**         _x;  // CPIntVar[_lx .. _ux] 
-    CPInt*             _low;  // raw version of _low
-    CPInt*              _up;  // raw version of _up
-    CPInt               _lo; // int low[lo..uo] && int up[lo..uo]
-    CPInt               _uo;
-    CPInt               _lx; 
-    CPInt               _ux;
+    ORInt*             _low;  // raw version of _low
+    ORInt*              _up;  // raw version of _up
+    ORInt               _lo; // int low[lo..uo] && int up[lo..uo]
+    ORInt               _uo;
+    ORInt               _lx; 
+    ORInt               _ux;
     CPUInt        _so; // size of low/up
     CPUInt        _sx; // size of ax
     TRInt*      _required; //_required[v]= how many variables are assigned to value v

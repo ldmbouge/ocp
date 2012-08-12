@@ -75,13 +75,13 @@ int main(int argc, const char * argv[])
          NSLog(@"Solution: %@ -> obj = %@",x,obj);
       }];
 
-      CPInt tot = 0;
+      ORInt tot = 0;
       for(int k=0;k<n;k++)
          tot += p[k] * [[x at: k] min];
       assert(tot == opt);
       NSLog(@"objective: %d == %d",tot,opt);
       for(int i=0;i<m;i++) {
-         CPInt lhs = 0;
+         ORInt lhs = 0;
          for(int j=0;j<n;j++)
             lhs += r[i][j] * [[x at:j] min];
          assert(lhs <= b[i]);

@@ -19,38 +19,38 @@
 static void computeCardinalities(id<ORIntVarArray> ax,
                                  id<ORIntArray> clow,
                                  id<ORIntArray> cup,
-                                 CPInt** lowArrayr,
-                                 CPInt** upArrayr,
-                                 CPInt* lr,
-                                 CPInt* ur)
+                                 ORInt** lowArrayr,
+                                 ORInt** upArrayr,
+                                 ORInt* lr,
+                                 ORInt* ur)
 {
-    CPInt l1 = [clow low];
-    CPInt u1 = [clow up];
-    CPInt l2 = [cup low];
-    CPInt u2 = [cup up];
-    CPInt l = min(l1,l2);
-    CPInt u = max(u1,u2);
-    CPInt lx = [ax low];
-    CPInt ux = [ax up];
-    CPInt sx = ux - lx + 1;
-    for(CPInt i=lx; i <= ux; i++) {
-        CPInt m = [[ax at: i] min];
-        CPInt M = [[ax at: i] max];
+    ORInt l1 = [clow low];
+    ORInt u1 = [clow up];
+    ORInt l2 = [cup low];
+    ORInt u2 = [cup up];
+    ORInt l = min(l1,l2);
+    ORInt u = max(u1,u2);
+    ORInt lx = [ax low];
+    ORInt ux = [ax up];
+    ORInt sx = ux - lx + 1;
+    for(ORInt i=lx; i <= ux; i++) {
+        ORInt m = [[ax at: i] min];
+        ORInt M = [[ax at: i] max];
         l = min(l,m);
         u = max(u,M);
     }
-    CPInt s = u - l + 1;
-    CPInt* lowArray = (CPInt*) malloc(sizeof(ORInt)*s); 
-    CPInt* upArray = (CPInt*) malloc(sizeof(ORInt)*s); 
+    ORInt s = u - l + 1;
+    ORInt* lowArray = (ORInt*) malloc(sizeof(ORInt)*s); 
+    ORInt* upArray = (ORInt*) malloc(sizeof(ORInt)*s); 
     lowArray -= l;
     upArray -= l;
-    for(CPInt i = l; i <= u; i++) {
+    for(ORInt i = l; i <= u; i++) {
         lowArray[i] = 0;
         upArray[i] = sx;
     }
-    for(CPInt i = l1; i <= u1; i++) 
+    for(ORInt i = l1; i <= u1; i++) 
         lowArray[i] = [clow at: i];
-    for(CPInt i = l2; i <= u2; i++)
+    for(ORInt i = l2; i <= u2; i++)
         upArray[i] = [cup at: i];
     *lr = l;
     *ur = u;
@@ -64,9 +64,9 @@ static void computeCardinalities(id<ORIntVarArray> ax,
 {
     _lo = MAXINT;
     _uo = -MAXINT;
-    for(CPInt i=_lx;i<=_ux; i++) {
-        CPInt m = [_x[i] min];
-        CPInt M = [_x[i] max];
+    for(ORInt i=_lx;i<=_ux; i++) {
+        ORInt m = [_x[i] min];
+        ORInt M = [_x[i] max];
         _lo = _lo < m ? _lo : m;
         _uo = _uo > M ? _uo : M;
     }
@@ -74,9 +74,9 @@ static void computeCardinalities(id<ORIntVarArray> ax,
     _uo = _uo > _values.up ? _values.up   : _uo;
     _so = _uo - _lo + 1;
     
-    CPInt* lb = malloc(sizeof(ORInt)*_so);
-    CPInt* ub = malloc(sizeof(ORInt)*_so);
-    for(CPInt k = _so - 1;k>=0;--k) {
+    ORInt* lb = malloc(sizeof(ORInt)*_so);
+    ORInt* ub = malloc(sizeof(ORInt)*_so);
+    for(ORInt k = _so - 1;k>=0;--k) {
         lb[k] = _low[k] < 0   ? 0   : _low[k];
         ub[k] = _up[k]  > _sx ? (ORInt)_sx : _up[k];
         if (lb[k] > ub[k])
@@ -88,7 +88,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
     _up  = ub - _lo;
 }
 
--(id)initCardinalityCst:(CPEngineI*)m values:(CPRange) r low:(CPInt*)low array:(id)ax up:(CPInt*)up
+-(id)initCardinalityCst:(CPEngineI*)m values:(CPRange) r low:(ORInt*)low array:(id)ax up:(ORInt*)up
 {
     self = [super initCPActiveConstraint: m];
     _fdm = m;
@@ -103,7 +103,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
         _x = malloc(sizeof(CPIntVarI*)*_sx);
         NSEnumerator* k = [ax objectEnumerator];
         id xi;
-        CPInt i=0;
+        ORInt i=0;
         while ((xi = [k nextObject])) 
             _x[i++] = xi;
         _lx = 0;
@@ -115,7 +115,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
         _x  = malloc(sizeof(CPIntVarI*)*_sx);
         int i=0;
         id<ORIntVarArray> xa = ax;
-        for(CPInt k=[ax low];k<=[ax up];k++)
+        for(ORInt k=[ax low];k<=[ax up];k++)
             _x[i++] = (CPIntVarI*) [xa at:k];
         _lx = 0;
         _ux = (ORInt)_sx -1;
@@ -134,7 +134,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
    _x  = malloc(sizeof(CPIntVarI*)*_sx);
    int i=0;
    id<ORIntVarArray> xa = ax;
-   for(CPInt k=[ax low];k<=[ax up];k++)
+   for(ORInt k=[ax low];k<=[ax up];k++)
       _x[i++] = (CPIntVarI*) [xa at:k];
    _lx = 0;
    _ux = (ORInt)_sx-1;
@@ -178,7 +178,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
 -(ORStatus) bindRemainingTo: (ORInt) val
 {
     int count = 0;
-    for(CPInt i = _lx; i <= _ux; i++) {
+    for(ORInt i = _lx; i <= _ux; i++) {
         if (bound(_x[i]))
             count += ([_x[i] min] == val);
         else if ([_x[i] member: val]) {
@@ -192,10 +192,10 @@ static void computeCardinalities(id<ORIntVarArray> ax,
 }
 
 
-static ORStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
+static ORStatus removeFromRemaining(CPCardinalityCst* cc,ORInt val)
 {
     int count = 0;
-    for(CPInt i =cc->_lx; i <= cc->_ux ;i++) {
+    for(ORInt i =cc->_lx; i <= cc->_ux ;i++) {
         if (bound(cc->_x[i]))
             count += ([cc->_x[i] min] == val);
         else if ([cc->_x[i] member: val]) {
@@ -209,7 +209,7 @@ static ORStatus removeFromRemaining(CPCardinalityCst* cc,CPInt val)
 
 static ORStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
 {
-   CPInt val = [v min];
+   ORInt val = [v min];
    assignTRInt(cc->_required+val, cc->_required[val]._val+1, cc->_trail);
    if (cc->_required[val]._val > cc->_up[val])
       failNow();
@@ -218,7 +218,7 @@ static ORStatus valBind(CPCardinalityCst* cc,CPIntVarI* v)
    return ORSuspend;
 }
 
-static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val)
+static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,ORInt i,ORInt val)
 {
    assignTRInt(cc->_possible+val, cc->_possible[val]._val-1, cc->_trail);
    if (cc->_possible[val]._val < cc->_low[val])
@@ -232,34 +232,34 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
 {
     _required = malloc(sizeof(TRInt)*_so);
     _possible = malloc(sizeof(TRInt)*_so);
-    for(CPInt i=0; i<_so; i++) {
+    for(ORInt i=0; i<_so; i++) {
         _required[i] = makeTRInt(_trail, 0);
         _possible[i] = makeTRInt(_trail, 0);
     }
     _required -= _lo;
     _possible -= _lo;
-    for(CPInt i=_lx;i<=_ux;i++) {
-        CPInt m = [_x[i] min];
-        CPInt M = [_x[i] max];
+    for(ORInt i=_lx;i<=_ux;i++) {
+        ORInt m = [_x[i] min];
+        ORInt M = [_x[i] max];
         if (m == M) {
             assignTRInt(_possible+m,_possible[m]._val+1,_trail);
             assignTRInt(_required+m,_required[m]._val+1,_trail);
         } 
         else {
-            for(CPInt v=m;v<=M;++v) 
+            for(ORInt v=m;v<=M;++v) 
                 if ([_x[i] member:v])
                     assignTRInt(_possible+v, _possible[v]._val+1, _trail);
         }
     }
     // AC5 events
-    for(CPInt i=_lx;i<=_ux;i++) {
+    for(ORInt i=_lx;i<=_ux;i++) {
         if ([_x[i] bound]) 
             continue;
-        [_x[i] whenLoseValue: self do: ^(CPInt val) { valRemoveIdx(self,_x[i],i,val);}];
+        [_x[i] whenLoseValue: self do: ^(ORInt val) { valRemoveIdx(self,_x[i],i,val);}];
         [_x[i] whenBindDo: ^ { valBind(self,_x[i]);} onBehalf:self];
     }  
     // Need to test the condition at least once
-    for(CPInt i=_lo;i<=_uo;i++) {
+    for(ORInt i=_lo;i<=_uo;i++) {
         if (_required[i]._val > _up[i] || _possible[i]._val < _low[i])
             failNow();
         if (_required[i]._val == _up[i])
@@ -272,7 +272,7 @@ static ORStatus valRemoveIdx(CPCardinalityCst* cc,CPIntVarI* v,CPInt i,CPInt val
 -(ORInt) nbFreeVars
 {
     int t = 0;
-    for(CPInt i=0;i<_sx;i++)
+    for(ORInt i=0;i<_sx;i++)
         t += ![_x[i] bound];
     return t;
 }

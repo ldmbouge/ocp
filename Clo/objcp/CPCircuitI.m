@@ -20,9 +20,9 @@
 @implementation CPCircuitI {
    id<ORIntVarArray>  _x;
    CPIntVarI**      _var;
-   CPInt            _varSize;
-   CPInt            _low;
-   CPInt            _up;
+   ORInt            _varSize;
+   ORInt            _low;
+   ORInt            _up;
    id<CPTRIntArray> _pred;
    id<CPTRIntArray> _succ;
    id<CPTRIntArray> _length;
@@ -83,10 +83,10 @@
 
 ORStatus assign(CPCircuitI* cstr,int i)
 {
-    CPInt val = [cstr->_var[i] min];
-    CPInt end = [cstr->_succ at: val];
-    CPInt start = [cstr->_pred at: i];
-    CPInt l = [cstr->_length at: start] + [cstr->_length at: val] + 1; 
+    ORInt val = [cstr->_var[i] min];
+    ORInt end = [cstr->_succ at: val];
+    ORInt start = [cstr->_pred at: i];
+    ORInt l = [cstr->_length at: start] + [cstr->_length at: val] + 1; 
     [cstr->_pred set: start at: end];
     [cstr->_succ set: end at: start];
     [cstr->_length set: l at: start];
@@ -105,7 +105,7 @@ ORStatus assign(CPCircuitI* cstr,int i)
     _up = [_x up];
     _varSize = (_up - _low + 1);
     _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(CPInt i = 0; i < _varSize; i++)
+    for(ORInt i = 0; i < _varSize; i++)
         _var[i] = (CPIntVarI*) [_x at: _low + i];
     _var -= _low;
     

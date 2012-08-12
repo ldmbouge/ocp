@@ -100,7 +100,10 @@ void failNow()
 {
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
-
++(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
+{
+   return [ORFactory integer: tracker value: value];
+}
 +(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range value: (ORInt) value
 {
    return (id<ORIntArray>)[ORFactory intArray:cp range: range value:value];

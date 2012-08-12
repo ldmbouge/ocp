@@ -17,7 +17,7 @@
     id<ORIntIterator>  _range;
     ORInt2Bool         _filter;
     CPInt2Int          _order;
-    CPInt              _direction;
+    ORInt              _direction;
 }
 -(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (CPInt2Int) order;
 -(void)           dealloc;

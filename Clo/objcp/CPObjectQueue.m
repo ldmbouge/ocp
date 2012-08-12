@@ -44,7 +44,7 @@
 {
    id* nt = malloc(sizeof(id)*_mxs*2);
    id* ptr = nt;
-   CPInt cur = _exit;
+   ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
       cur = (cur+1) & _mask;
@@ -60,7 +60,7 @@
 -(void)enQueue:(id)obj
 {
    @synchronized(self) {
-      CPInt nb = (_mxs + _enter - _exit)  & _mask;
+      ORInt nb = (_mxs + _enter - _exit)  & _mask;
       if (nb == _mxs-1) 
          [self resize];   
       _tab[_enter] = [obj retain];
@@ -121,7 +121,7 @@
 {
    id* nt = malloc(sizeof(id)*_mxs*2);
    id* ptr = nt;
-   CPInt cur = _exit;
+   ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
       cur = (cur+1) & _mask;
@@ -165,7 +165,7 @@
    while (loop) {
       _nbWWaiting++;
       if (_nbWWaiting == _nbWorkers) {
-         for(CPInt k=0;k < _nbWorkers;k++) 
+         for(ORInt k=0;k < _nbWorkers;k++) 
             [self safeEnQueue:nil];
       } else       
          [_avail wait];

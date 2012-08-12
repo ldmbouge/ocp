@@ -98,8 +98,8 @@ typedef struct  {
 @interface CPBitVarMultiCast : NSObject<CPBitVarNotifier,NSCoding> {
     CPBitVarI**       _tab;
     BOOL    _tracksLoseEvt;
-    CPInt          _nb;
-    CPInt          _mx;
+    ORInt          _nb;
+    ORInt          _mx;
 }
 -(id)initVarMC:(int)n;
 -(void) dealloc;

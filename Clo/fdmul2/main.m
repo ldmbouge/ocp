@@ -15,9 +15,9 @@
 #import "objcp/CPLabel.h"
 #import "objcp/CPError.h"
 
-CPInt ipow(CPInt b,CPInt e)
+ORInt ipow(ORInt b,ORInt e)
 {
-   CPInt r = 1;
+   ORInt r = 1;
    while (e--)
       r *= b;
    return r;

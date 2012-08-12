@@ -33,7 +33,7 @@
    //NSLog(@"SemDFSController dealloc called...\n");
    [_tracer release];
    free(_tab);
-   for(CPInt i = 0;i  < _sz;i++)
+   for(ORInt i = 0;i  < _sz;i++)
       [_cpTab[i] release];
    free(_cpTab);
    [super dealloc];
@@ -70,7 +70,7 @@
 }
 -(void) fail
 {
-   CPInt ofs = _sz-1;
+   ORInt ofs = _sz-1;
    if (ofs >= 0) {      
       Checkpoint* cp = _cpTab[ofs];
       [_tracer restoreCheckpoint:cp inSolver:_solver];
@@ -98,7 +98,7 @@
    if (_sz >= 1) {
       NSCont* c      = _tab[0];
       Checkpoint* cp = _cpTab[0];
-      for(CPInt i=1;i<_sz;i++) {
+      for(ORInt i=1;i<_sz;i++) {
          _tab[i-1] = _tab[i];
          _cpTab[i-1] = _cpTab[i];
       }

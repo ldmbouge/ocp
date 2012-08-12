@@ -33,7 +33,7 @@
    VarEventNode*         _node;
    id                 _trigger;  // type is {ConstraintCallback}
    CPCoreConstraint*     _cstr;
-   CPInt             _priority;
+   ORInt             _priority;
 }
 -(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
 -(void)dealloc;
@@ -59,7 +59,7 @@ enum CPEngineState {
    CPAC3Queue*              _ac3[NBPRIORITIES];
    CPAC5Queue*              _ac5;
    ORStatus                 _status;
-   CPInt                _propagating;
+   ORInt                _propagating;
    CPUInt               _nbpropag;
    CPCoreConstraint*        _last;
    UBType                   _propagIMP;

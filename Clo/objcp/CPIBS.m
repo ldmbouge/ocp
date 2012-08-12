@@ -17,8 +17,8 @@
 
 @interface CPKillRange : NSObject {
 @package
-   CPInt _low;
-   CPInt _up;
+   ORInt _low;
+   ORInt _up;
    CPUInt _nbKilled;
 }
 -(id)initCPKillRange:(ORInt)f to:(ORInt)to size:(CPUInt)sz;
@@ -132,7 +132,7 @@
       CPBounds cb;
       [_var bounds:&cb];
       double rv = 0.0;
-      for(CPInt i = cb.min;i <= cb.max;i++) {
+      for(ORInt i = cb.min;i <= cb.max;i++) {
          if (![_var member:i]) continue;
          rv += 1.0 - _imps[i];
       }
@@ -185,7 +185,7 @@
    _monitor = [[CPMonitor alloc] initCPMonitor:_cp vars:_vars];
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
-   CPInt low = [_vars low],up = [_vars up];
+   ORInt low = [_vars low],up = [_vars up];
    for(CPUInt i=low;i<=up;i++) {
       //NSLog(@"impacting: %@",[_vars at:i]);
       CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<ORIntVar>)[_vars at:i]];
@@ -194,12 +194,12 @@
    }
    [_solver post:_monitor];
    [self initImpacts];       // [ldm] init called _after_ adding the monitor so that the reduction is tracked (but before watching label)
-   [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,CPInt val) {
+   [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       [[_impacts objectForKey:key] addImpact:1.0 - [_monitor reduction] forValue:val];
       [key release];      
    }];
-   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var,CPInt val) {
+   [[[_cp portal] failLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
       [key release];
@@ -242,12 +242,12 @@
       NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
       //NSLog(@"base: %ld - %ld impact (%@) = %lf",low,up,key,ir);
       CPAssignImpact* vImpact = [_impacts objectForKey:key];
-      for(CPInt c = low ; c <= up;c++) {
+      for(ORInt c = low ; c <= up;c++) {
          [vImpact setImpact:ir forValue:c];
       }
       [key release];
    } else {
-      CPInt mid = low + (up - low)/2;
+      ORInt mid = low + (up - low)/2;
       id<ORTracer> tracer = [_cp tracer];
       [tracer pushNode];
       ORStatus s1 = [_solver lthen:x with:mid+1];
@@ -273,10 +273,10 @@
 }
 -(void)initImpacts
 {
-   CPInt blockWidth = 1;
+   ORInt blockWidth = 1;
    NSMutableSet* sacs = nil;
-   CPInt low = [_vars low],up = [_vars up];
-   for(CPInt k=low; k <= up;k++) {
+   ORInt low = [_vars low],up = [_vars up];
+   for(ORInt k=low; k <= up;k++) {
       id<ORIntVar> v = (id<ORIntVar>)[_vars at:k];
       CPBounds vb;
       [v bounds: &vb];

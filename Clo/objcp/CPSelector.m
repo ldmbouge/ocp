@@ -139,7 +139,7 @@
 {
    float bestFound = MAXFLOAT;
    float bestRand = MAXFLOAT;
-   CPInt indexFound = MAXINT;
+   ORInt indexFound = MAXINT;
    id<IntEnumerator> ite = [_range enumerator];
    while ([ite more]) {
       ORInt i = [ite next];
@@ -186,7 +186,7 @@
 -(ORInt) choose
 {
    float bestFound = -MAXFLOAT;
-   CPInt indexFound = MAXINT;
+   ORInt indexFound = MAXINT;
    id<IntEnumerator> ite = [_range enumerator];
    while ([ite more]) {
       ORInt i = [ite next];

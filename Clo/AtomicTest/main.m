@@ -63,17 +63,17 @@
     int* cnt = alloca(sizeof(ORInt)*n);
     CPIntegerI* nbSolutions = [[CPIntegerI alloc] initCPIntegerI: 0];
     [m solveAll: ^() {
-        for(CPInt k=0;k<s;k++)
+        for(ORInt k=0;k<s;k++)
             printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
         printf("]\n");
         [m labelArray: x orderedBy: ^int(int i) { return i;}];
-    //    for(CPInt k=0;k<s;k++)
+    //    for(ORInt k=0;k<s;k++)
     //     printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
    //     printf("]\n");
-        for(CPInt k=0;k<n;k++)cnt[k]=0;
-        for(CPInt k=0;k<s;k++)
+        for(ORInt k=0;k<n;k++)cnt[k]=0;
+        for(ORInt k=0;k<s;k++)
             cnt[[[x at:k] min]]++;
-        for(CPInt k=0;k<n;k++)
+        for(ORInt k=0;k<n;k++)
             if (!(cnt[k]>=2 && cnt[k] <=3)) {
                 printf("cnt should always be in 2..3\n");
                 assert(false);
@@ -82,7 +82,7 @@
     }
      ];
     printf("GOT %ld solutions\n",[nbSolutions value]);   
-    CPInt rv =  [nbSolutions value];
+    ORInt rv =  [nbSolutions value];
     [pool release];   
     return rv;
 }
@@ -134,7 +134,7 @@ Void2Int makeAdd(int i)
 
 void foo() {
    //Void2Int theClosure = makeC1(3);
-   for(CPInt k=0;k < 10000000;k++) {
+   for(ORInt k=0;k < 10000000;k++) {
       Void2Int theAdd = makeAdd(3);
       NSLog(@"Calling: %d",theAdd());
       [theAdd release];
@@ -148,7 +148,7 @@ int main (int argc, const char * argv[])
     id<CPSolver> cp = [CPFactory createSolver];
     id<ORVoidInformer> informer = [ORConcurrency voidInformer];
     NSMutableArray* array = [[NSMutableArray alloc] init];
-    for(CPInt i = 1; i <= 10; i++)
+    for(ORInt i = 1; i <= 10; i++)
         [array addObject: [CPCrFactory integer: 0]];
     [ORConcurrency parall: (CPRange){1,10} 
                        do: ^void(int i) { 
@@ -167,7 +167,7 @@ int main (int argc, const char * argv[])
                        }
         untilNotifiedBy: informer
      ];
-    for(CPInt i = 0; i < 10; i++)
+    for(ORInt i = 0; i < 10; i++)
         printf("thread %d terminates with value %d \n",i+1,[(id<CPInteger>)[array objectAtIndex: i] value]);
     [informer release];
     [cp release];
@@ -184,13 +184,13 @@ int main (int argc, const char * argv[])
                        do: ^void(int i) { 
                            printf("The thread %p is printing %d \n",[NSThread currentThread],i); 
                            if (i == 1) {
-                               for(CPInt k = 1; k <= 1000; k++);
+                               for(ORInt k = 1; k <= 1000; k++);
                                printf("I am going to sleep \n");
                                [informer sleepUntilNotified];
                                printf("I am back from my sleep \n");
                            }
                            else {
-                               for(CPInt k = 1; k <= 1000000; k++);
+                               for(ORInt k = 1; k <= 1000000; k++);
                                printf("I am about to notify \n");
                                [informer notify];
                                printf("I am done notifying \n");
@@ -210,7 +210,7 @@ int main (int argc, const char * argv[])
     CPRange R = (CPRange){1,10};
     id<ORIntVar> x = [CPFactory intVar: cp domain: R];
     id<CPIntSet> S = [CPFactory intSet: cp];
-    for(CPInt i = 2; i <= 10; i += 2)
+    for(ORInt i = 2; i <= 10; i += 2)
         [S insert: i];
     [cp restrict: x to: S];
     [CPFactory print: x];

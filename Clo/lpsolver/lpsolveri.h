@@ -86,7 +86,7 @@
 -(ORInt)                 size;
 -(LPVariableI**)       var;
 -(id<LPVariable>)      var: (ORInt) i;
--(CPInt*)                col;
+-(ORInt*)                col;
 -(ORInt)                 col: (ORInt) i;
 -(double*)             coef;
 -(double)              coef: (ORInt) i;
@@ -134,7 +134,7 @@
 -(LPObjectiveType) type;
 -(ORInt) size;
 -(LPVariableI**) var;
--(CPInt*) col;
+-(ORInt*) col;
 -(double*) coef;
 -(void) print;
 -(void) delVariable: (LPVariableI*) var;
@@ -186,7 +186,7 @@
 -(double) up;
 -(double) objCoef;
 -(ORInt) size;
--(CPInt*) cstrIdx;
+-(ORInt*) cstrIdx;
 -(double*) coef;
 -(void) fill: (LPVariableI*) v obj: (LPObjectiveI*) obj;
 -(void) addObjCoef: (double) coef;

@@ -94,7 +94,7 @@ void labelFF3(CP* m,id<ORIntVarArray> x,int from,int to)
    CPInteger* nbSolutions = [[CPInteger alloc] initCPInteger: 0];
    [m solve: ^() {
       [m labelArray: x orderedBy: ^int(int i) { return [[x at:i] domsize];}];
-      for(CPInt i = from; i <= to; i++) 
+      for(ORInt i = from; i <= to; i++) 
          printf("%s %d:%s",(i>1 ? "," : " "),i,[[[x at: i] description] cStringUsingEncoding:NSASCIIStringEncoding]);
       printf("\n");
       [nbSolutions incr];
@@ -108,7 +108,7 @@ void labelFF4(CP* m,id<ORIntVarArray> x,int from,int to)
   [m search: ^() {
       [m maximize: [x at: 1] in:  ^() {
 	  [m labelArray: x orderedBy: ^int(int i) { return [[x at:i] domsize];}];
-	  for(CPInt i = from; i <= to; i++) 
+	  for(ORInt i = from; i <= to; i++) 
 	    printf("%s %d:%s",(i>1 ? "," : " "),i,[[[x at: i] description] cStringUsingEncoding:NSASCIIStringEncoding]);
 	  printf("\n");
 	}
@@ -131,7 +131,7 @@ int main(int argc, const char * argv[])
     [m solve: ^() 
      {
         [m post: [CPAllDifferent on:x]];
-         for(CPInt k = 0; k < 3; k++) {
+         for(ORInt k = 0; k < 3; k++) {
              [m diff: [x at: k] with: 3];
              [m diff: [x at: k] with: 4];
          }
@@ -162,9 +162,9 @@ int main(int argc, const char * argv[])
     id pool = [[NSAutoreleasePool alloc] init];
     CP* m = [[[CP alloc] init] autorelease];
     CPIntVarArray* x = [[[CPIntVarArray alloc] initCPIntVarArray: m size: n domain: (CPRange){0,n-1}] autorelease];
-    for(CPInt i=0;i<n;i++) {
+    for(ORInt i=0;i<n;i++) {
         id xi = [x at: i];
-        for(CPInt j=i+1;j<n;j++) {
+        for(ORInt j=i+1;j<n;j++) {
             id xj = [x at: j];
             [m post:[[[AC3NEqual alloc] initAC3NEqualOn:xi and:xj and:0] autorelease]];
             [m post:[[[AC3NEqual alloc] initAC3NEqualOn:xi and:xj and:i-j] autorelease]];
@@ -182,14 +182,14 @@ int main(int argc, const char * argv[])
     
     typedef ORStatus (^AC3Callback)(void);
   
-    for(CPInt i = 0; i < n-1; i++) 
+    for(ORInt i = 0; i < n-1; i++) 
         printf("%s %d:%s",(i>1 ? "," : " "),i,[[[x at: i] description] cStringUsingEncoding:NSASCIIStringEncoding]);
     printf("\n");
   
     //labelStatic([[DFSTracer alloc] initDFSTracer:m], m, x, 0, n-1);
     //labelStatic2( m, x, 0, n-1);
     labelFF4( m, x, 0, n-1);
-    for(CPInt i = 0; i < n-1; i++) 
+    for(ORInt i = 0; i < n-1; i++) 
         printf("%s %d:%s",(i>1 ? "," : " "),i,[[[x at: i] description] cStringUsingEncoding:NSASCIIStringEncoding]);
     printf("\n");
   

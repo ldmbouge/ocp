@@ -26,7 +26,7 @@
       [super initCPCoreConstraint];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(CPInt k=0;k<_nb;k++)
+      for(ORInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    } 
    else if ([x isKindOfClass:[ORIdArrayI class]]) {
@@ -35,7 +35,7 @@
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
-      for(CPInt k=[x low];k <= [x up];k++)
+      for(ORInt k=[x low];k <= [x up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
    _c = c;
@@ -104,10 +104,10 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 -(ORStatus) post
 {
    _updateBounds = malloc(sizeof(UBType)*_nb);
-   for(CPInt k=0;k<_nb;k++)
+   for(ORInt k=0;k<_nb;k++)
       _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
    [self propagate];
-   for(CPInt k=0;k<_nb;k++) {
+   for(ORInt k=0;k<_nb;k++) {
       if (![_x[k] bound])
          [_x[k] whenChangeBoundsPropagate: self];
    }
@@ -117,7 +117,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 -(void) propagate
 {
     struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
-    for(CPInt k=0;k<_nb;k++) {
+    for(ORInt k=0;k<_nb;k++) {
        CPBounds b = bounds(_x[k]);
        terms[k] = (struct CPTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
     }
@@ -159,7 +159,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<CPEquationBC:%02d [%lld] ",_name,_nb];
-   for(CPInt k=0;k < _nb;k++) {
+   for(ORInt k=0;k < _nb;k++) {
       [buf appendFormat:@"%@ %c", [_x[k] description], k<_nb-1 ? ',' : ' '];
    }
    [buf appendFormat:@" == %d >",_c];
@@ -195,7 +195,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
       [super initCPCoreConstraint];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(CPInt k=0;k<_nb;k++)
+      for(ORInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    } 
    else if ([x isKindOfClass:[ORIdArrayI class]]) {
@@ -204,7 +204,7 @@ static void sumBounds(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
-      for(CPInt k=[x low];k <= [x up];k++)
+      for(ORInt k=[x low];k <= [x up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
    _c = c;
@@ -251,10 +251,10 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 -(ORStatus) post
 {
    _updateMax = malloc(sizeof(UBType)*_nb);
-   for(CPInt k=0;k<_nb;k++)
+   for(ORInt k=0;k<_nb;k++)
       _updateMax[k] = (UBType)[_x[k] methodForSelector:@selector(updateMax:)];
    [self propagate];
-   for(CPInt k=0;k<_nb;k++) {
+   for(ORInt k=0;k<_nb;k++) {
       if (![_x[k] bound])
          [_x[k] whenChangeMinPropagate: self];
    }
@@ -264,7 +264,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 -(void) propagate
 {
    struct CPTerm* terms = alloca(sizeof(struct CPTerm)*_nb);
-   for(CPInt k=0;k<_nb;k++) {
+   for(ORInt k=0;k<_nb;k++) {
       CPBounds b = bounds(_x[k]);
       terms[k] = (struct CPTerm){_updateMax[k],_x[k],b.min,b.max,NO};
    }
@@ -302,7 +302,7 @@ static void sumLowerBound(struct CPTerm* terms,CPLong nb,struct Bounds* bnd)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<CPINEquationBC:%02d [%lld] ",_name,_nb];
-   for(CPInt k=0;k < _nb;k++) {
+   for(ORInt k=0;k < _nb;k++) {
       [buf appendFormat:@"%@ %c", [_x[k] description], k<_nb-1 ? ',' : ' '];
    }
    [buf appendFormat:@" <= %d >",_c];

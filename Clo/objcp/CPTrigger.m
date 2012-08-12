@@ -99,7 +99,7 @@ static void freeTriggers(CPTrigger* list)
 -(void)dealloc 
 {
     _tab += _low;
-    for(CPInt i=0;i<_sz;i++)
+    for(ORInt i=0;i<_sz;i++)
         freeTriggers(_tab[i]);
     free(_tab);
     [super dealloc];
