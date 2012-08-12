@@ -44,8 +44,8 @@ int main(int argc, const char * argv[])
       [cp add: [x[6]             eq:x[15]]];
       [cp add: [[x[7] plus:x[9]] eq:[x[16] plus:[c[6] muli:10]]]];
       
-      id<CPExpr> lhs1 = [CPFactory dotProduct:(id<ORIntVar>[]){x[8],x[10],x[12],c[6],nil} by:(int[]){1,1,1,1}];
-      id<CPExpr> lhs2 = [CPFactory dotProduct:(id<ORIntVar>[]){x[11],x[13],c[7],nil} by:(int[]){1,1,1}];
+      id<ORExpr> lhs1 = [CPFactory dotProduct:(id<ORIntVar>[]){x[8],x[10],x[12],c[6],nil} by:(int[]){1,1,1,1}];
+      id<ORExpr> lhs2 = [CPFactory dotProduct:(id<ORIntVar>[]){x[11],x[13],c[7],nil} by:(int[]){1,1,1}];
       
       [cp add: [lhs1              eq:[x[17] plus:[c[7] muli:10]]]];
       [cp add: [lhs2              eq:[x[18] plus:[c[8] muli:10]]]];

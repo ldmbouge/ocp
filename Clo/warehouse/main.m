@@ -37,7 +37,7 @@ int main(int argc, const char * argv[])
       CPInt* conn = (CPInt*)connection;
 
     
-      id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
+      id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
       
       id<ORIntVarArray> cost = [CPFactory intVarArray: cp range:Stores domain: RANGE(cp,0,maxCost)];
       id<ORIntVarArray> supp = [CPFactory intVarArray: cp range:Stores domain: Warehouses];

@@ -52,7 +52,7 @@ typedef id<ORIntVar>(^CPRewriter)(id<ORExpr>);
 
 @interface CPExprConstraintI : CPActiveConstraint<NSCoding> {
    id<ORSolver>    _solver;
-   CPEngineI*      _fdm;
+   CPEngineI*      _engine;
    id<ORRelation> _expr;
    CPConsistency     _c;
 }

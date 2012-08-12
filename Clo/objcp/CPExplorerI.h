@@ -14,7 +14,7 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPError.h>
 #import <objcp/CPController.h>
-#import <objcp/CPExplorer.h>
+
 
 /*
 @protocol CPHeuristic;

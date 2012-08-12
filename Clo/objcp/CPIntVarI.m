@@ -1145,7 +1145,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
-   ORTrail* theTrail = [[v solver] trail];
+   ORTrail* theTrail = [[v engine] trail];
    CPInt toFix = _nb;
    [theTrail trailClosure:^{
       _tab[toFix] = nil;

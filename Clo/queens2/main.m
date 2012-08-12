@@ -21,7 +21,7 @@
 
 CPInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,CPInt from,CPInt to)
 {
-   id<CPInteger> nbSolutions = [CPFactory integer:m value:0];
+   id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
    [m solveAll: ^() {
       [CPLabel array: x orderedBy: ^CPInt(CPInt i) { return [[x at:i] domsize];}];
       [nbSolutions incr];
@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,1,n);
  
-   id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
+   id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^CPInt(CPInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(CPInt i) { return [CPFactory intVar: x[i] shift:i]; }];

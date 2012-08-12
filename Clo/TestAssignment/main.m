@@ -166,8 +166,8 @@ int main (int argc, const char * argv[])
    }
    id<CPUniformDistribution> distr = [CPFactory uniformDistribution: cp range: Cities];
       
-   id<CPInteger> nbRestarts = [CPFactory integer: cp value:0];
-   id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
+   id<ORInteger> nbRestarts = [ORFactory integer: cp value:0];
+   id<ORInteger> nbSolutions = [ORFactory integer: cp value:1];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
    id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];

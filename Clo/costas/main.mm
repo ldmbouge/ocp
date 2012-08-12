@@ -16,10 +16,10 @@
 #import "objcp/CPLabel.h"
 
 class H {
-   id<CPExpr> _h;
+   id<ORExpr> _h;
 public:
-   H(id<CPExpr> v) { _h = v;}
-   operator id<CPExpr>() { return _h;}
+   H(id<ORExpr> v) { _h = v;}
+   operator id<ORExpr>() { return _h;}
    H operator+(H e2)
    {
       return [_h plus:e2];
@@ -32,7 +32,7 @@ public:
    {
       return [_h mul:e2];
    }
-   H operator==(id<CPExpr> e2)
+   H operator==(id<ORExpr> e2)
    {
       return [_h eq:e2];
    }
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
          }
       }
       for(CPInt i=1;i<=n-1;i++) {
-         id<ORIntVarArray> slice = ALL(CPIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
+         id<ORIntVarArray> slice = ALL(ORIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
          [cp add:[CPFactory alldifferent:slice]];
       }
       [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];

@@ -28,11 +28,11 @@ int main (int argc, const char * argv[])
    CPInt n = 8;
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,1,n);
-   id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
+   id<ORInteger> nbSolutions = [ORFactory integer: cp value: 0];
    [CPFactory intArray:cp range:R with: ^CPInt(CPInt i) { return i; }];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    id<ORIntVarArray> xp = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:i]);
-   id<ORIntVarArray> xn = ALL(CPIntVar,i,R,[CPFactory intVar:x[i] shift:-i]);
+   id<ORIntVarArray> xn = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:-i]);
    [cp add: [CPFactory alldifferent: x consistency: DomainConsistency]];
    [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];
    [cp add: [CPFactory alldifferent: xn consistency:DomainConsistency]];

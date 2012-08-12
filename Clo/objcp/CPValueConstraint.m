@@ -668,6 +668,8 @@
 }
 -(id) initCPSumBool:(id) x eq:(ORInt)c
 {
+   NSLog(@"%@",x);
+   NSLog(@"%@",[x class]);
    if ([x isKindOfClass:[NSArray class]]) {
       id<ORSolver> solver = [[x objectAtIndex:0] solver];
       self = [super initCPActiveConstraint: [solver engine]];
@@ -676,7 +678,7 @@
       for(CPInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    }
-   else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
+   else {
       id<ORIntVarArray> xa = x;
       self = [super initCPActiveConstraint:[[x solver] engine]];
       _nb = [x count];
