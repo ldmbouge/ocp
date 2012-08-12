@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'sportModel' target in the 'sportModel' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

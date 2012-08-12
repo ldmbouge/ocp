@@ -17,10 +17,10 @@
 @interface CPSolutionI : NSObject<ORSolution,NSCoding> {
    NSArray* _shots;
 }
--(CPSolutionI*) initCPSolution: (id<OREngine>) solver;
+-(CPSolutionI*) initCPSolution: (id<CPEngine>) solver;
 -(void) dealloc;
 -(int) intValue: (id) var;
 -(BOOL)boolValue: (id) var;
 -(ORULong) count;
--(void) restoreInto: (id<OREngine>) engine;
+-(void) restoreInto: (id<CPEngine>) engine;
 @end

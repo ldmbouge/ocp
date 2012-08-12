@@ -49,7 +49,7 @@
 {
    return [_shots count];
 }
--(void) restoreInto: (id<OREngine>) engine
+-(void) restoreInto: (id<CPEngine>) engine
 {
    NSArray* av = [engine allVars];
    [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj,NSUInteger idx,BOOL* stop) {
