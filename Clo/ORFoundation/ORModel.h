@@ -21,6 +21,7 @@
 @protocol ORVar <ORAbstract,ORExpr>
 -(ORUInt) getId;
 -(BOOL) bound;
+-(id<ORSolver>) solver;
 @end
 
 @protocol ORIntVar <ORVar>
@@ -29,7 +30,8 @@
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
--(bool) member: (ORInt) v;
+-(BOOL) member: (ORInt) v;
+-(BOOL) isBool;
 -(id<ORIntVar>) dereference;
 @end
 
@@ -44,6 +46,7 @@
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
 -(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORSolver>) solver;
 @end
 
 @protocol ORIntVarMatrix <ORIdMatrix>
@@ -56,6 +59,7 @@
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
+-(id<ORSolver>) solver;
 @end
 
 @protocol ORAlldifferent <ORConstraint>

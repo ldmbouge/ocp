@@ -76,7 +76,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(ORStatus) post
 {
-   ORTrail* trail = [[_cp solver] trail];
+   ORTrail* trail = [[_cp engine] trail];
    CPUInt nbW = 0;
    for(CPInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];

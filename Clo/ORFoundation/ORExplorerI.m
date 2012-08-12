@@ -15,10 +15,10 @@
 #import "ORExplorerI.h"
 
 @implementation ORExplorerI
--(id) initORExplorer: (id<OREngine>) solver withTracer: (id<ORTracer>) tracer
+-(id) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer
 {
    self = [super init];
-   _solver = solver;
+   _engine = engine;
    _tracer = [tracer retain];
    _nbc = _nbf = 0;
    return self;
@@ -103,7 +103,7 @@
    [_controller._val startTryall];
    NSCont* exit = [NSCont takeContinuation];
    NSCont* next = nil;
-   id<IntEnumerator> ite = [ORFactory intEnumerator: _solver over: range];
+   id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
    if ([exit nbCalls] == 0) {
       [_controller._val addChoice: exit];
       next = [NSCont takeContinuation];
@@ -387,8 +387,8 @@
    [self search: ^()
     {
        [self nestedSolve: ^() { [solver close]; search(); }
-              onSolution: ^() { [_solver saveSolution]; }
-                  onExit: ^() { [_solver restoreSolution]; }];
+              onSolution: ^() { [_engine saveSolution]; }
+                  onExit: ^() { [_engine restoreSolution]; }];
     }
     ];
 }
@@ -397,8 +397,8 @@
    [self search: ^()
     {
        [self nestedSolveAll: ^() { [solver close]; search(); }
-                 onSolution: ^() { [_solver saveSolution]; }
-                     onExit: ^() { [_solver restoreSolution]; }];
+                 onSolution: ^() { [_engine saveSolution]; }
+                     onExit: ^() { [_engine restoreSolution]; }];
     }
     ];
 }

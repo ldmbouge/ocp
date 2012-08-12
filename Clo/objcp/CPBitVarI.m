@@ -72,7 +72,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     _name = name;
 }
--(id<CPEngine>)solver
+-(id<CPEngine>) engine
 {
     return _fdm;
 }

@@ -49,9 +49,9 @@
 {
    return [_shots count];
 }
--(void) restoreInto: (id<OREngine>)solver
+-(void) restoreInto: (id<OREngine>) engine
 {
-   NSArray* av = [solver allVars];
+   NSArray* av = [engine allVars];
    [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj,NSUInteger idx,BOOL* stop) {
       [obj restoreInto:av];
    }];

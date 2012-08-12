@@ -18,6 +18,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPConstraintI.h>
+#import "objcp/CPSolverI.h"
 
 @protocol CPIntVarSubscriber <NSObject>
 
@@ -111,22 +112,22 @@ enum CPVarClass {
    enum CPVarClass                   _vc:16;
    CPUInt                        _isBool:16;
    CPUInt                             _name;
-   id<CPSolver>                               _cp;
+   id<CPSolver>                         _cp;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    CPTriggerMap*                  _triggers;
    id<CPIntVarNotifier,NSCoding>      _recv;
 }
--(CPIntVarI*) initCPIntVarCore:(id<CPSolver>) cp low:(ORInt)low up:(ORInt)up;
--(CPIntVarI*) initCPIntVarView: (id<CPSolver>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
+-(CPIntVarI*) initCPIntVarCore:(CPSolverI*) cp low:(ORInt)low up:(ORInt)up;
+-(CPIntVarI*) initCPIntVarView: (CPSolverI*) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(void) setId:(CPUInt)name;
 -(CPUInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
--(CPEngineI*) solver;
--(id<CPSolver>) cp;
+-(CPEngineI*) engine;
+-(id<CPSolver>) solver;
 -(id<ORTracker>) tracker;
 -(NSSet*)constraints;
 -(CPBitDom*)flatDomain;
@@ -189,9 +190,9 @@ enum CPVarClass {
 -(ORStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
-+(CPIntVarI*)    initCPIntVar: (id<CPSolver>)fdm bounds:(id<ORIntRange>)b;
-+(CPIntVarI*)    initCPIntVar: (id<CPSolver>)fdm low:(ORInt)low up:(ORInt)up;
-+(CPIntVarI*)    initCPBoolVar:(id<CPSolver>)fdm;
++(CPIntVarI*)    initCPIntVar: (CPSolverI*) fdm bounds:(id<ORIntRange>)b;
++(CPIntVarI*)    initCPIntVar: (CPSolverI*) fdm low:(ORInt)low up:(ORInt)up;
++(CPIntVarI*)    initCPBoolVar:(CPSolverI*) fdm;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withShift:(ORInt)b;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(ORInt)a;
 +(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(ORInt)a andShift:(ORInt)b;

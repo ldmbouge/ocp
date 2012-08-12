@@ -78,6 +78,7 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 
 -(id<ORSolverConcretizer>) concretizer;
+-(void)           addModel: (id<ORModel>) model;
 @end
 
 

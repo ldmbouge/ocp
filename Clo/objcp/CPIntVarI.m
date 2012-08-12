@@ -153,13 +153,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntVarI
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
--(CPIntVarI*) initCPIntVarCore:(id<CPSolver>)cp low: (ORInt) low up: (ORInt)up
+
+-(CPIntVarI*) initCPIntVarCore: (CPSolverI*) cp low: (ORInt) low up: (ORInt)up
 {
    self = [super init];
    _vc = CPVCBare;
    _isBool = NO;
    _cp = cp;
-   _fdm  = (CPEngineI*) [cp solver];
+   _fdm  = (CPEngineI*) [cp engine];
    [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;
@@ -190,11 +191,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return _isBool;
 }
--(CPEngineI*)solver
+-(CPEngineI*) engine
 {
     return _fdm;
 }
--(id<CPSolver>) cp
+-(id<CPSolver>) solver
 {
     return _cp;
 }
@@ -760,7 +761,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntShiftView
 -(CPIntShiftView*)initIVarShiftView: (CPIntVarI*) x b: (ORInt) b
 {
-   self = [super initCPIntVarView:[x cp] low:[x min]+b up:[x max]+b for:x];
+   self = [super initCPIntVarView:[x solver] low:[x min]+b up:[x max]+b for:x];
    _vc = CPVCShift;
    _dom  = (CPBoundsDom*)[[x domain] retain];
    _b = b;
@@ -913,7 +914,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    CPInt vLow = a < 0 ? a * [x max] + b : a * [x min] + b;
    CPInt vUp  = a < 0 ? a * [x min] + b : a * [x max] + b;
-   self = [super initCPIntVarView: [x cp] low:vLow up:vUp for:x];
+   self = [super initCPIntVarView: [x solver] low:vLow up:vUp for:x];
    _vc = CPVCAffine;
    _dom = (CPBoundsDom*)[[x domain] retain];
    _a = a;

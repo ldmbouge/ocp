@@ -50,7 +50,7 @@
 {
     self = [super init];
     _cp = cp;
-    _trail = [[cp solver] trail];
+    _trail = [[cp engine] trail];
     _low = [R low];
     _up = [R up];
     _nb = (_up - _low + 1);
@@ -109,13 +109,13 @@
 {
     return _cp;
 }
--(id<CPEngine>) solver
+-(id<CPEngine>) engine
 {
-    return [_cp solver];
+    return [_cp engine];
 }
 -(ORInt) virtualOffset
 {
-    return [[_cp solver] virtualOffset:self];
+    return [[_cp engine] virtualOffset:self];
 }
 
 - (void) encodeWithCoder: (NSCoder *)aCoder
@@ -156,7 +156,7 @@
 {
     self = [super init];
     _cp = cp;  
-    _trail = [[cp solver] trail];
+    _trail = [[cp engine] trail];
     _arity = 3;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(ORInt) * _arity);
@@ -185,7 +185,7 @@
 {
     self = [super init];
     _cp = cp;  
-    _trail = [[cp solver] trail];
+    _trail = [[cp engine] trail];
     _arity = 2;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(ORInt) * _arity);
@@ -306,17 +306,17 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
    [self descriptionAux: i depth:0 string: rv];
    return rv;
 }
--(id<CPSolver>) cp
+-(id<CPSolver>) solver
 {
     return _cp;
 }
--(id<CPEngine>) solver
+-(id<CPEngine>) engine
 {
-    return [_cp solver];
+    return [_cp engine];
 }
 -(ORInt) virtualOffset
 {
-    return [[_cp solver] virtualOffset:self];
+    return [[_cp engine] virtualOffset:self];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -369,7 +369,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
     self = [super init];
     _cp = cp;  
-    _trail = [[cp solver] trail];
+    _trail = [[cp engine] trail];
     _arity = 3;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(ORInt) * _arity);
@@ -399,7 +399,7 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
 {
    self = [super init];
    _cp = cp;
-   _trail = [[cp solver] trail];
+   _trail = [[cp engine] trail];
    _arity = 2;
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
@@ -510,17 +510,21 @@ static inline CPInt indexMatrix(CPTRIntMatrixI* m,CPInt* i)
     [self descriptionAux: 0 string: rv];
     return rv;   
 }
--(id<CPSolver>) cp
+-(id<CPSolver>) solver
 {
     return _cp;
 }
--(id<CPEngine>) solver
+-(id<CPEngine>) engine
 {
-    return [_cp solver];
+    return [_cp engine];
+}
+-(id<ORTracker>) tracker
+{
+   return _cp;
 }
 -(ORInt) virtualOffset
 {
-    return [[_cp solver] virtualOffset:self];
+    return [[_cp engine] virtualOffset:self];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

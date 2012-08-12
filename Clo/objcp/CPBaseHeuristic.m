@@ -21,7 +21,7 @@
       nbViews += ([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]);
    }];
    CPULong l = [array count] - nbViews;
-   id<CPSolver> cp = [[array objectAtIndex:0] cp];
+   id<CPSolver> cp = [[array objectAtIndex:0] solver];
    id<CPVarArray> direct = [CPFactory varArray:cp range: RANGE(cp,0,(ORInt)l-1)];
    __block CPUInt k = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {

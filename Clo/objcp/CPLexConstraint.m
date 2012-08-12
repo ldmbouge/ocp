@@ -24,12 +24,12 @@
    CPULong       _sz; // size of xa/ya
    id<CPEngine> _fdm;
 }
--(id) initCPLexConstraint:(id<ORIntVarArray>)x and:(id<ORIntVarArray>)y
+-(id) initCPLexConstraint:(id<ORIntVarArray>) x and:(id<ORIntVarArray>)y
 {
-   self = [super initCPActiveConstraint:[[x cp] solver]];
+   self = [super initCPActiveConstraint:[ [x solver] engine]];
    _x = x;
    _y = y;
-   _fdm = [[x cp] solver];
+   _fdm = (id<CPEngine>) [[x solver] engine];
    if ([_x count] != [_y count])
       @throw [[CPInternalError alloc] initCPInternalError:"incompatible sizes in lex constraint"];
    return self;

@@ -46,10 +46,10 @@
 -(void) dealloc;
 -(NSString*) description;
 -(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<OREngine>)solver;
+-(NSData*) packFromSolver: (id<OREngine>) engine;
 -(bool) apply: (bool(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
-+(CPProblem*) unpack: (NSData*)msg fOREngine:(id)cp;
++(CPProblem*) unpack: (NSData*)msg fOREngine:(id<ORSolver>) solver;
 @end
 
 @interface Checkpoint : NSObject<NSCoding> {
@@ -62,8 +62,8 @@
 -(void)pushCommandList:(ORCommandList*)aList;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<OREngine>) solver;
-+(Checkpoint*)unpack:(NSData*)msg fOREngine:(id)solver;
+-(NSData*)packFromSolver: (id<OREngine>) engine;
++(Checkpoint*)unpack:(NSData*)msg fOREngine:(id<ORSolver>) solver;
 @end
 
 @protocol CPSemTracer <NSObject>
@@ -76,8 +76,8 @@
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;
 @optional -(Checkpoint*) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(Checkpoint*)acp  inSolver:(id<OREngine>)solver;
-@optional -(ORStatus) restoreProblem:(CPProblem*)p inSolver:(id<OREngine>)solver;
+@optional -(ORStatus) restoreCheckpoint:(Checkpoint*)acp  inSolver:(id<OREngine>) engine;
+@optional -(ORStatus) restoreProblem:(CPProblem*)p inSolver:(id<OREngine>) engine;
 @optional -(CPProblem*) captureProblem;
 @end
 
@@ -98,8 +98,8 @@
 -(ORTrail*)   trail;
 -(void)       addCommand:(id<ORCommand>)com;
 -(Checkpoint*)captureCheckpoint;
--(ORStatus)   restoreCheckpoint:(Checkpoint*)acp  inSolver: (id<OREngine>)solver;
--(ORStatus)   restoreProblem:(CPProblem*)p  inSolver: (id<OREngine>)solver;
+-(ORStatus)   restoreCheckpoint:(Checkpoint*)acp  inSolver: (id<OREngine>) engine;
+-(ORStatus)   restoreProblem:(CPProblem*)p  inSolver: (id<OREngine>) engine;
 -(CPProblem*)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;

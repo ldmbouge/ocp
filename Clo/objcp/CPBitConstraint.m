@@ -16,7 +16,7 @@
 
 -(id) initCPBitEqual:(id) x and:(id) y 
 {
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint: [[x solver] engine]];
     _x = x;
     _y = y;
     return self;
@@ -85,7 +85,7 @@
 
 -(id) initCPBitNOT:(id) x equals:(id) y 
 {
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _x = x;
     _y = y;
     return self;
@@ -171,7 +171,7 @@
 
 @implementation CPBitAND
 -(id) initCPBitAND:(id)x and:(id)y equals:(id)z{
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;
@@ -273,7 +273,7 @@
 
 @implementation CPBitOR
 -(id) initCPBitOR:(id)x or:(id)y equals:(id)z{
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;
@@ -373,7 +373,7 @@
 
 @implementation CPBitXOR
 -(id) initCPBitXOR:(id)x xor:(id)y equals:(id)z{
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;
@@ -480,7 +480,7 @@
 
 @implementation CPBitIF
 -(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z{
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _w = w;
     _x = x;
     _y = y;
@@ -600,7 +600,7 @@
  
 @implementation CPBitShiftL
 -(id) initCPBitShiftL:(id)x shiftLBy:(int)places equals:(id)y{
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _x = x;
     _y = y;
     _places = places;
@@ -716,7 +716,7 @@
 
 @implementation CPBitADD
 -(id) initCPBitAdd:(id)x plus:(id)y equals:(id)z withCarryIn:(id)cin andCarryOut:(id)cout{
-    self = [super initCPActiveConstraint:[x solver]];
+    self = [super initCPActiveConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;

@@ -17,7 +17,7 @@
 
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(id<ORConstraint>) wrapExpr:(id<ORRelation>) e  consistency: (CPConsistency) cons;
+-(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency) cons;
 -(ORStatus) label: (id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus) diff:  (id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus) lthen: (id<ORIntVar>) var with: (ORInt) val;

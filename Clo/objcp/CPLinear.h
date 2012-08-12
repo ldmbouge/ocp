@@ -51,11 +51,12 @@ typedef id<ORIntVar>(^CPRewriter)(id<ORExpr>);
 @end
 
 @interface CPExprConstraintI : CPActiveConstraint<NSCoding> {
+   id<ORSolver>    _solver;
    CPEngineI*      _fdm;
    id<ORRelation> _expr;
    CPConsistency     _c;
 }
--(id) initCPExprConstraintI:(id<CPEngine>)fdm expr:(id<CPRelation>)x  consistency: (CPConsistency) c;
+-(id) initCPExprConstraintI:(id<ORSolver>) solver expr:(id<CPRelation>)x  consistency: (CPConsistency) c;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

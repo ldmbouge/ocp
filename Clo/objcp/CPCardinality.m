@@ -126,22 +126,21 @@ static void computeCardinalities(id<ORIntVarArray> ax,
 
 -(id) initCardinalityCst: (id<ORIntVarArray>) ax low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
-   id<CPEngine> solver = [[ax cp] solver];
-    self = [super initCPActiveConstraint: solver];
-    _required = _possible = 0;   
-    _fdm = (CPEngineI*)solver;
-
-    _sx = (ORInt)[ax count];
-    _x  = malloc(sizeof(CPIntVarI*)*_sx);
-    int i=0;
-    id<ORIntVarArray> xa = ax;
-    for(CPInt k=[ax low];k<=[ax up];k++)
-        _x[i++] = (CPIntVarI*) [xa at:k];
-    _lx = 0;
-    _ux = (ORInt)_sx-1;
-    computeCardinalities(ax,low,up,&_low,&_up,&_lo,&_uo);
-    _so = _uo - _lo + 1;
-    return self;
+   _fdm = (CPEngineI*) [[ax solver] engine];
+   self = [super initCPActiveConstraint: _fdm];
+   _required = _possible = 0;
+   
+   _sx = (ORInt)[ax count];
+   _x  = malloc(sizeof(CPIntVarI*)*_sx);
+   int i=0;
+   id<ORIntVarArray> xa = ax;
+   for(CPInt k=[ax low];k<=[ax up];k++)
+      _x[i++] = (CPIntVarI*) [xa at:k];
+   _lx = 0;
+   _ux = (ORInt)_sx-1;
+   computeCardinalities(ax,low,up,&_low,&_up,&_lo,&_uo);
+   _so = _uo - _lo + 1;
+   return self;
 }
 
 -(void) dealloc

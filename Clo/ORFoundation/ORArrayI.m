@@ -153,6 +153,10 @@
 {
    return _tracker;
 }
+-(id<ORSolver>) solver
+{
+   return [_tracker solver];
+}
 
 -(ORInt)virtualOffset
 {
@@ -259,6 +263,10 @@
 -(id<ORTracker>) tracker
 {
    return _tracker;
+}
+-(id<ORSolver>) solver
+{
+   return [_tracker solver];
 }
 -(ORInt) virtualOffset
 {
@@ -442,6 +450,10 @@
 -(id<ORTracker>) tracker
 {
    return _tracker;
+}
+-(id<ORSolver>) solver
+{
+   return [_tracker solver];
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {

@@ -81,14 +81,14 @@
 {
    self = [super init];
    _trail = [[ORTrail alloc] init];
-   _solver = [[CPEngineI alloc] initSolver: _trail];
+   _engine = [[CPEngineI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer];
    _objective = nil;
    _closed = false;
    
@@ -97,14 +97,14 @@
 -(id) initFor:(CPEngineI*)fdm
 {
    self = [super init];
-   _solver = [fdm retain];
+   _engine = [fdm retain];
    _trail = [[fdm trail] retain];
    _pool = [[NSAutoreleasePool alloc] init];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    
-   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer];
    _objective = nil;
    _closed = false;
    return self;
@@ -114,7 +114,7 @@
 {
    NSLog(@"CP dealloc called...\n");    
    [_trail release];
-   [_solver release];
+   [_engine release];
    [_search release];
    [_hStack release];
    [_portal release];
@@ -128,9 +128,13 @@
    [_hStack push:h];
 }
 
--(id<CPEngine>) solver
+-(id<ORSolver>) solver
 {
-   return _solver;
+   return self;
+}
+-(id<CPEngine>) engine
+{
+   return _engine;
 }
 -(id<ORExplorer>) explorer
 {
@@ -150,25 +154,25 @@
 }
 -(id)virtual:(id)obj
 {
-   return [_solver virtual:obj];
+   return [_engine virtual:obj];
 }
 
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_solver nbVars],[_search nbChoices],[_search nbFailures],[_solver nbPropagation]];
+   return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_engine nbVars],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
 }
 -(CPUInt) nbPropagation
 {
-   return [_solver nbPropagation];
+   return [_engine nbPropagation];
 }
 -(CPUInt) nbVars
 {
-   return [_solver nbVars];
+   return [_engine nbVars];
 }
 
 -(NSMutableArray*) allVars
 {
-   return [_solver allVars];
+   return [_engine allVars];
 }
 -(ORInt) nbChoices
 {
@@ -184,15 +188,15 @@
 }
 -(void) saveSolution
 {
-   [_solver saveSolution];
+   [_engine saveSolution];
 }
 -(void) restoreSolution;
 {
-   [_solver restoreSolution];
+   [_engine restoreSolution];
 }
 -(id<ORSolution>) solution
 {
-   return [_solver solution];
+   return [_engine solution];
 }
 -(void) try: (ORClosure) left or: (ORClosure) right 
 {
@@ -239,18 +243,18 @@
 -(void) add: (id<ORConstraint>) c
 {
     if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [_solver wrapExpr:(id<ORRelation>)c consistency:ValueConsistency];
+       c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:ValueConsistency];
    }
-   ORStatus status = [_solver add: c];
+   ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
 }
 -(void) add: (id<ORConstraint>) c consistency:(CPConsistency)cons
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [_solver wrapExpr:(id<CPRelation>)c consistency:cons];
+      c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:cons];
    }
-   ORStatus status = [_solver add: c];
+   ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
 }
@@ -270,7 +274,7 @@
 -(void) solve: (ORClosure) search
 {
    if (_objective != nil) {
-      [_search optimizeModel: self using: search onSolution: ^() { [_solver saveSolution]; } onExit: ^() { [_solver restoreSolution]; }];
+      [_search optimizeModel: self using: search onSolution: ^() { [_engine saveSolution]; } onExit: ^() { [_engine restoreSolution]; }];
       printf("Optimal Solution: %d \n",[_objective primalBound]);
    }
    else {
@@ -290,27 +294,27 @@
 {
    // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
    // The decoding recreates the pool. 
-   [aCoder encodeObject:_solver];
+   [aCoder encodeObject:_engine];
    [aCoder encodeObject:_trail];
 }
 - (id) initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super init];
-   _solver = [[aDecoder decodeObject] retain];
+   _engine = [[aDecoder decodeObject] retain];
    _trail  = [[aDecoder decodeObject] retain];
    _pool = [[NSAutoreleasePool alloc] init];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[ORExplorerI alloc] initORExplorer: _solver withTracer: _tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer];
    return self;
 }
 -(void) close
 {
    if (!_closed) {
       _closed = true;
-      if ([_solver close] == ORFailure)
+      if ([_engine close] == ORFailure)
          [_search fail];
       [_hStack applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];}
-                     with: [_solver allVars]];
+                     with: [_engine allVars]];
       [ORConcurrency pumpEvents];
    }
 }
@@ -334,18 +338,22 @@
 {
    return _portal;
 }
--(void)trackObject:(id)object
+-(void) trackObject:(id)object
 {
-   [_solver trackObject:object];
+   [_engine trackObject:object];
+}
+-(void) trackVariable:(id)object
+{
+   [_engine trackVariable:object];
 }
 -(ORInt)virtualOffset:(id)obj
 {
-   return [_solver virtualOffset:obj];
+   return [_engine virtualOffset:obj];
 }
 
 -(void) label: (CPIntVarI*) var with: (ORInt) val
 {
-   ORStatus status = [_solver label: var with: val];  
+   ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -355,14 +363,14 @@
 }
 -(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
-   ORStatus status = [_solver diff: var with: val];  
+   ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_solver lthen:var with: val];
+   ORStatus status = [_engine lthen:var with: val];
    if (status == ORFailure) {
       [_search fail];
    }
@@ -370,7 +378,7 @@
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_solver gthen:var with:val];
+   ORStatus status = [_engine gthen:var with:val];
    if (status == ORFailure) {
       [_search fail];
    }
@@ -379,7 +387,7 @@
 
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-    ORStatus status = [_solver restrict: var to: S];  
+    ORStatus status = [_engine restrict: var to: S];
     if (status == ORFailure)
         [_search fail]; 
     [ORConcurrency pumpEvents];   
@@ -470,7 +478,10 @@
 {
    return [[CPConcretizerI alloc] initCPConcretizerI: self];
 }
-
+-(void) addModel: (id<ORModel>) model
+{
+   [model instantiate: self];
+}
 @end
 
 
@@ -698,7 +709,7 @@ void printnl(id x)
 {
    self = [super init];
    _cp = cp;
-   _solver = (CPEngineI*)[cp solver];
+   _solver = (CPEngineI*)[cp engine];
    return self;
 }
 -(void)dealloc
@@ -745,6 +756,10 @@ void printnl(id x)
    id<CPConstraint> ncstr = [CPFactory alldifferent: _solver over: x];
    [_solver add: ncstr];
    [cstr setImpl: ncstr];
+}
+-(void) expr: (id<ORExpr>) e
+{
+   
 }
 @end
 

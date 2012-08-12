@@ -44,6 +44,6 @@ typedef enum {
    ORTrail* _trail;
    TRInt    _active;
 }
--(id) initCPActiveConstraint: (id<CPEngine>) m;
+-(id) initCPActiveConstraint: (id<OREngine>) m;
 @end
 

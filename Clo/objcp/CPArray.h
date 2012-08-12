@@ -67,7 +67,7 @@
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
--(id<CPSolver>) cp;
+-(id<CPSolver>) solver;
 @end
 
 

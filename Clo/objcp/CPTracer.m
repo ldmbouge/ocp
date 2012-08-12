@@ -177,9 +177,9 @@
          [proxies[k] release];
       return thePack;
    }
-   +(CPProblem*)unpack:(NSData*)msg fOREngine:(id)cp
+   +(CPProblem*)unpack:(NSData*)msg fOREngine:(id<ORSolver>)cp
    {
-      id<CPEngine> fdm = [cp solver];
+      CPEngineI* fdm = (CPEngineI*) [cp engine];
       CPUInt nbProxies = 0;
       id arp  = [[NSAutoreleasePool alloc] init];
       CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
@@ -272,10 +272,10 @@
          [proxies[k] release];
       return thePack;
    }
-   +(Checkpoint*)unpack:(NSData*)msg fOREngine:(id)cp
+   +(Checkpoint*)unpack:(NSData*)msg fOREngine:(id<ORSolver>) solver
    {
       id arp = [[NSAutoreleasePool alloc] init];
-      id<CPEngine> fdm = [cp solver];
+      id<CPEngine> fdm = (id<CPEngine>) [solver engine];
       CPUInt nbProxies = 0;
       CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
       [decoder decodeValueOfObjCType:@encode(CPUInt) at:&nbProxies];

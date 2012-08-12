@@ -152,7 +152,7 @@
 {
    self = [super init];
    _cp = cp;
-   _solver = (CPEngineI*)[cp solver];
+   _solver = (CPEngineI*)[cp engine];
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;

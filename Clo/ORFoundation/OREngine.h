@@ -25,7 +25,7 @@
 -(ORInt) intValue: (id) var;
 -(BOOL) boolValue: (id) var;
 -(NSUInteger) count;
--(void) restoreInto: (id<OREngine>)solver;
+-(void) restoreInto: (id<OREngine>) engine;
 @end
 
 @protocol ORSolutionProtocol <NSObject>

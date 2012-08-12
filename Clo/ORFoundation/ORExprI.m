@@ -13,6 +13,8 @@
 #import "ORExprI.h"
 #import "ORFactory.h"
 #import "ORError.h"
+#import "ORSolver.h"
+#import "ORModel.h"
 
 @implementation ORExprI
 -(id<ORTracker>) tracker
@@ -125,6 +127,10 @@
 - (void)visit:(id<ORExprVisitor>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   [concretizer expr: self];
 }
 @end
 

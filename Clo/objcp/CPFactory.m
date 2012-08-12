@@ -101,26 +101,26 @@ void failNow()
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
 
-+(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value
++(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range value: (ORInt) value
 {
    return (id<ORIntArray>)[ORFactory intArray:cp range: range value:value];
 }
-+(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
++(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
 {
    return (id<ORIntArray>)[ORFactory intArray:cp range: range with:clo];
 }
-+(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 {
    return (id<ORIntArray>)[ORFactory intArray:cp range:r1 range: r2 with:clo];
 }
 
-+(id<ORIntVar>) intVar: (id<CPSolver>) cp bounds: (id<ORIntRange>) range
++(id<ORIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range
 {
-   return [CPIntVarI initCPIntVar:cp bounds: range];
+   return [CPIntVarI initCPIntVar: (CPSolverI*) cp bounds: range];
 }
-+(CPIntVarI*) intVar: (id<CPSolver>) cp domain: (id<ORIntRange>) range
++(CPIntVarI*) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range
 {
-    return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
+    return [CPIntVarI initCPIntVar: (CPSolverI*) cp low: [range low] up: [range up]];
 }
 +(CPIntVarI*) intVar: (CPIntVarI*) x shift: (ORInt) b
 {
@@ -141,9 +141,9 @@ void failNow()
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
 }
-+(id<ORIntVar>)boolVar: (id<CPSolver>)cp
++(id<ORIntVar>)boolVar: (id<ORTracker>)cp
 {
-   return [CPIntVarI initCPBoolVar:cp];
+   return [CPIntVarI initCPBoolVar: (CPSolverI*) cp];
 }
 
 +(id<ORIntVar>) negate:(id<ORIntVar>)x
@@ -151,40 +151,40 @@ void failNow()
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
 
-+(id<ORIntMatrix>) intMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
++(id<ORIntMatrix>) intMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
-    CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: cp range: r1 : r2];    
+    CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: (CPSolverI*) cp range: r1 : r2];
     [[((CPSolverI*) cp) solver] trackObject: o];
     return o;   
 }
-+(id<CPVarArray>) varArray: (id<CPSolver>) cp range: (id<ORIntRange>) range
++(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
    return (id<CPVarArray>)[ORFactory idArray:cp range: range];
 }
-+(id<ORIntVarArray>) arrayORIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
++(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
 {
    return [self intVarArray:cp range:range with:clo];
 }
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    for(CPInt k=range.low;k <= range.up;k++)
       [o set:[CPFactory intVar:cp domain:domain] at:k];
    return (id<ORIntVarArray>)o;
 }
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    return (id<ORIntVarArray>)o;
 }
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    for(CPInt k= [range low];k <= [range up];k++)
       [o set:clo(k) at:k];
    return (id<ORIntVarArray>)o;
 }
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(CPInt,CPInt)) clo
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(CPInt,CPInt)) clo
 {
    CPInt nb = ([r1 up] - [r1 low] + 1) * ([r2 up] - [r2 low] + 1);
    id<ORIntRange> fr = [ORFactory intRange: cp low: 0 up: nb-1];
@@ -195,7 +195,7 @@ void failNow()
          [o set:clo(i,j) at:k++];
    return (id<ORIntVarArray>)o;
 }
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with: (id<ORIntVar>(^)(CPInt,CPInt,CPInt)) clo
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with: (id<ORIntVar>(^)(CPInt,CPInt,CPInt)) clo
 {
    CPInt nb = ([r1 up] - [r1 low] + 1) * ([r2 up] - [r2 low] + 1) * ([r3 up] - [r3 low] + 1);
    id<ORIntRange> fr = [ORFactory intRange: cp low: 0 up: nb-1]; 
@@ -207,7 +207,7 @@ void failNow()
             [o set:clo(i,j,k) at:l++];
    return (id<ORIntVarArray>)o;
 }
-+(id<ORIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
    for(CPInt i=[r0 low];i <= [r0 up];i++)
@@ -215,7 +215,7 @@ void failNow()
          [o set:[CPFactory intVar:cp domain:domain] at:i :j];
     return (id<ORIntVarMatrix>)o;
 }
-+(id<ORIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(CPInt i= [r0 low];i <= [r0 up]; i++)
@@ -224,21 +224,21 @@ void failNow()
             [o set:[CPFactory intVar:cp domain:domain] at:i :j :k];
    return (id<ORIntVarMatrix>)o;
 }
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
++(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
    for(CPInt i= [r0 low];i <= [r0 up]; i++)
       for(CPInt j= [r1 low]; j <= [r1 up];j++)
-         [o set:[CPFactory boolVar:cp] at:i :j];
+         [o set:[CPFactory boolVar: (CPSolverI*) cp] at:i :j];
    return (id<ORIntVarMatrix>)o;   
 }
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
++(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(CPInt i= [r0 low]; i <= [r0 up]; i++)
       for(CPInt j= [r1 low]; j <= [r1 up]; j++)
          for(CPInt k= [r2 low]; k <= [r2 up]; k++)
-            [o set:[CPFactory boolVar:cp] at:i :j :k];
+            [o set:[CPFactory boolVar: (CPSolverI*) cp] at:i :j :k];
    return (id<ORIntVarMatrix>)o;
 }
 
@@ -254,76 +254,76 @@ void failNow()
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c
 {
-   id<ORIntVarArray> rv = [self intVarArray:[x cp] range: [x range] with:^id<ORIntVar>(CPInt i) {
+   id<ORIntVarArray> rv = [self intVarArray:[x solver] range: [x range] with:^id<ORIntVar>(CPInt i) {
       id<ORIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
       return theView;
    }];
    return rv;
 }
-+(id<ORIntSet>) intSet: (id<CPSolver>) cp 
++(id<ORIntSet>) intSet: (id<ORTracker>) cp 
 {
     ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI]; 
     [[cp solver] trackObject: o];
     return o;
 }
-+(id<CPTable>) table: (id<CPSolver>) cp arity: (int) arity
++(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity
 {
-    CPTableI* o = [[CPTableI alloc] initCPTableI: cp arity: arity]; 
+    CPTableI* o = [[CPTableI alloc] initCPTableI: (CPSolverI*) cp arity: arity];
     [[cp solver] trackObject: o];
     return o;
 }
-+(id<ORInformer>) informer: (id<CPSolver>) cp
++(id<ORInformer>) informer: (id<ORTracker>) cp
 {
     id<ORInformer> o = [ORConcurrency intInformer];
     [[cp solver] trackObject: o];
     return o;    
 }
-+(id<ORVoidInformer>) voidInformer: (id<CPSolver>) cp
++(id<ORVoidInformer>) voidInformer: (id<ORTracker>) cp
 {
    id<ORVoidInformer> o = [ORConcurrency voidInformer];
    [[cp solver] trackObject: o];
    return o;       
 }
-+(id<ORIntInformer>) intInformer: (id<CPSolver>) cp
++(id<ORIntInformer>) intInformer: (id<ORTracker>) cp
 {
    id<ORIntInformer> o = [ORConcurrency intInformer];
    [[cp solver] trackObject: o];
    return o;          
 }
-+(id<ORBarrier>)  barrier: (id<CPSolver>) cp value: (ORInt) nb
++(id<ORBarrier>)  barrier: (id<ORTracker>) cp value: (ORInt) nb
 {
     id<ORBarrier> o = [ORConcurrency barrier: nb];
     [[cp solver] trackObject: o];
     return o;    
 }
 
-+(CPTRIntArrayI*) TRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R
++(CPTRIntArrayI*) TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R
 {
-    CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: cp range: R];    
+    CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: (CPSolverI*) cp range: R];    
     [[((CPSolverI*) cp) solver] trackObject: o];
     return o;    
 }
 
-+(id<CPTRIntMatrix>) TRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
++(id<CPTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
-    CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: cp range: R1 : R2];    
+    CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: (CPSolverI*) cp range: R1 : R2];    
     [[((CPSolverI*) cp) solver] trackObject: o];
     return o;    
 }
 
-+(id<CPRandomStream>) randomStream: (id<CPSolver>) cp
++(id<CPRandomStream>) randomStream: (id<ORTracker>) cp
 {
    id<CPRandomStream> o = (id<CPRandomStream>) [ORCrFactory randomStream];
    [[cp solver] trackObject: o];
    return o;
 }
-+(id<CPZeroOneStream>) zeroOneStream: (id<CPSolver>) cp
++(id<CPZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
 {
    id<CPZeroOneStream> o = (id<CPZeroOneStream>) [ORCrFactory zeroOneStream];
    [[cp solver] trackObject: o];
    return o;
 }
-+(id<CPUniformDistribution>) uniformDistribution: (id<CPSolver>) cp range: (id<ORIntRange>) r
++(id<CPUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
 {
    id<CPUniformDistribution> o = (id<CPUniformDistribution>) [ORCrFactory uniformDistribution:r];
    [[cp solver] trackObject: o];
@@ -352,11 +352,11 @@ void failNow()
    }
    return rv;
 }
-+(id<ORExpr>) sum: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    return [ORFactory sum:cp over: S suchThat:f of:e];
 }
-+(id<ORRelation>) or: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    return [ORFactory or:cp over: S suchThat:f of:e];
 }

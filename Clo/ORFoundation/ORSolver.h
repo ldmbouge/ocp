@@ -22,14 +22,19 @@
 @protocol ORSolverConcretizer <NSObject>
 -(void) intVar: (id<ORIntVar>) v;
 -(void) alldifferent: (id<ORAlldifferent>) cstr;
+-(void) expr: (id<ORExpr>) e;
 @end
 
 @protocol ORSolver <NSObject,ORTracker,ORSolutionProtocol>
+
+-(id<OREngine>)    engine;
+-(id<ORObjective>) objective;
+
+-(id<ORSolverConcretizer>) concretizer;
+-(void)            addModel: (id<ORModel>) model;
+
 -(ORStatus)        close;
 -(bool)            closed;
--(void)            trackObject:(id)obj;
 -(NSMutableArray*) allVars;
--(id<ORObjective>) objective;
--(id<ORSolverConcretizer>) concretizer;
 @end
 

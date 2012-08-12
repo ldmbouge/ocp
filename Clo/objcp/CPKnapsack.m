@@ -80,7 +80,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 }
 
 @implementation CPKnapsack {
-   id<CPEngine>          _fdm;
+   CPEngineI*            _fdm;
    CPIntVarI**            _xb;
    TRInt*            _support;
    CPLong                 _nb;
@@ -93,9 +93,9 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 -(id) initCPKnapsackDC:(id<ORIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
 {
-   self = [super initCPActiveConstraint:[[x cp] solver]];
+   self = [super initCPActiveConstraint:[[x solver] engine]];
    _priority = HIGHEST_PRIO - 2;
-   _fdm = [[x cp] solver];
+   _fdm = (CPEngineI*) [[x solver] engine];
    _x = x;
    _w = w;
    _c = cap;

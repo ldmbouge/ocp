@@ -38,60 +38,59 @@ void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
-+(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range;
 +(id<ORIntVar>) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
-+(id<ORIntVar>)boolVar: (id<CPSolver>)cp;
++(id<ORIntVar>)boolVar: (id<ORSolver>)cp;
 +(id<ORIntVar>) negate:(id<ORIntVar>)x;
 
-+(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
-+(id<ORIntArray>) intArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;
++(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 
-+(id<ORVarArray>) varArray: (id<CPSolver>) cp range: (id<ORIntRange>) range;
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range;
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORIntVarArray>) arrayORIntVar: (id<CPSolver>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<ORIntVar>(^)(CPInt,CPInt)) clo;
-+(id<ORIntVarArray>) intVarArray: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<ORIntVar>(^)(CPInt,CPInt,CPInt)) clo;
++(id<ORVarArray>) varArray: (id<ORSolver>) cp range: (id<ORIntRange>) range;
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
++(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<ORIntVar>(^)(CPInt,CPInt)) clo;
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<ORIntVar>(^)(CPInt,CPInt,CPInt)) clo;
 
 
-+(id<ORIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
-+(id<ORIntVarMatrix>) intVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;
++(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
++(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 +(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>) m;
 
-+(id<ORIntMatrix>) intMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
++(id<ORIntMatrix>) intMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 
-+(id<ORIntSet>) intSet: (id<CPSolver>) cp;
-+(id<ORInformer>) informer: (id<CPSolver>) cp;
-+(id<ORVoidInformer>) voidInformer: (id<CPSolver>) cp;
-+(id<ORIntInformer>) intInformer: (id<CPSolver>) cp;
-+(id<ORBarrier>)  barrier: (id<CPSolver>) cp value: (ORInt) nb;
++(id<ORIntSet>) intSet: (id<ORTracker>) cp;
++(id<ORInformer>) informer: (id<ORTracker>) cp;
++(id<ORVoidInformer>) voidInformer: (id<ORTracker>) cp;
++(id<ORIntInformer>) intInformer: (id<ORTracker>) cp;
++(id<ORBarrier>)  barrier: (id<ORTracker>) cp value: (ORInt) nb;
 
-+(id<CPTable>) table: (id<CPSolver>) cp arity: (int) arity;
++(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity;
 
-+(id<CPTRIntArray>)  TRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R;
-+(id<CPTRIntMatrix>) TRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
++(id<CPTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
++(id<CPTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
 
-+(id<CPRandomStream>) randomStream: (id<CPSolver>) cp ;
-+(id<CPZeroOneStream>) zeroOneStream: (id<CPSolver>) cp ;
-+(id<CPUniformDistribution>) uniformDistribution: (id<CPSolver>) cp range: (id<ORIntRange>) r;
++(id<CPRandomStream>) randomStream: (id<ORTracker>) cp ;
++(id<CPZeroOneStream>) zeroOneStream: (id<ORTracker>) cp ;
++(id<CPUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r;
 @end
 
 @interface CPFactory (expression)
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
-+(id<ORExpr>) sum: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<CPRelation>) or: (id<CPSolver>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<CPRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 

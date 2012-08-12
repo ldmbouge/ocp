@@ -44,7 +44,7 @@ typedef struct  {
 -(void) dealloc;
 -(void) setId:(CPUInt)name;
 -(NSString*) description;
--(id<CPEngine>) solver;
+-(id<CPEngine>) engine;
 
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;

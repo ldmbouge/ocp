@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
       CPInt* rankWPtr = (CPInt*)rankW;
       
      
-      id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
+      id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
       
       
       id<ORIntVarArray> husband = [CPFactory intVarArray: cp range:RWomen domain: RMen];

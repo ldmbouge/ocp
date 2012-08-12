@@ -75,10 +75,14 @@
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_priority]; 
     return self;
 }
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "This constraint is already concrete"];
+}
 @end
 
 @implementation CPActiveConstraint
--(id) initCPActiveConstraint:(id<CPEngine>) m
+-(id) initCPActiveConstraint: (CPEngineI*) m
 {
     self = [super initCPCoreConstraint];
     _trail = [[m trail] retain];

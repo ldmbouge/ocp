@@ -22,5 +22,5 @@
 -(int) intValue: (id) var;
 -(BOOL)boolValue: (id) var;
 -(ORULong) count;
--(void) restoreInto: (id<OREngine>)solver;
+-(void) restoreInto: (id<OREngine>) engine;
 @end

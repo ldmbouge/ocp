@@ -117,6 +117,13 @@
 {
    [super dealloc];   
 }
+-(id<ORSolver>) solver
+{
+   if (_impl)
+      return [_impl solver];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
 -(void) setId: (ORUInt) name
 {
    _name = name;
@@ -156,7 +163,7 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
--(bool) member: (ORInt) v
+-(BOOL) member: (ORInt) v
 {
    if (_impl)
       return [_impl member: v];
@@ -167,6 +174,14 @@
 {
    if (_impl)
       return [_impl bound];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(BOOL) isBool
+{
+   if (_impl)
+      return [_impl isBool];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    

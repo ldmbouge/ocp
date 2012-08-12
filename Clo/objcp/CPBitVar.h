@@ -18,7 +18,7 @@
 -(uint64)max;
 -(unsigned int)  domsize;
 -(bool) member: (unsigned int*) v;
--(id<CPEngine>) solver;
+-(id<CPEngine>) engine;
 @end
 
 @class CPCoreConstraint;

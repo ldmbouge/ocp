@@ -34,7 +34,7 @@
 @interface CPSolverI : NSObject<CPSolver>
 {
 @protected
-   id<CPEngine>          _solver;
+   id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
    ORTrail*              _trail;
@@ -62,7 +62,8 @@
 -(void)                   setController: (id<ORSearchController>) controller;
 -(void)                   push: (id<ORSearchController>) c;
 
--(id<CPEngine>)           solver;
+-(id<CPSolver>)           solver;
+-(id<CPEngine>)           engine;
 -(id<ORExplorer>)         explorer;
 -(DFSTracer*)             tracer;
 -(id<CPPortal>)           portal;
@@ -115,8 +116,11 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 
 -(void)         trackObject: (id)object;
+-(void)         trackVariable: (id) object;
 - (void)    encodeWithCoder: (NSCoder *)aCoder;
 - (id)        initWithCoder: (NSCoder *)aDecoder;
+
+-(void)           addModel: (id<ORModel>) model;
 @end
 
 

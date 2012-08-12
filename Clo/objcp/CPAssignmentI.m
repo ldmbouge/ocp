@@ -58,7 +58,7 @@
 
 -(CPAssignment*) initCPAssignment: (id<ORIntVarArray>) x matrix: (CPIntMatrixI*) matrix cost: (CPIntVarI*) costVariable
 {
-   self = [super initCPActiveConstraint: [[x cp] solver]];
+   self = [super initCPActiveConstraint: [[x solver] engine]];
    _x = x;
    _matrix = matrix;
    _costVariable = costVariable;
@@ -123,7 +123,7 @@
       return ORSuspend;
    _posted = true;
    
-   id<CPSolver> cp = [_x cp];
+   id<CPSolver> cp = (id<CPSolver>) [_x solver];
    _low = [_x low];
    _up = [_x up];
 

@@ -34,7 +34,7 @@
 
 -(CPBinPackingI*) initCPBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
 {
-   self = [super initCPActiveConstraint: [[item cp] solver]];
+   self = [super initCPActiveConstraint: [[item solver] engine]];
    _item = item;
    _itemSize = itemSize;
    _binSize = binSize;
@@ -76,7 +76,7 @@
    _posted = true;
    id<ORIntRange> BR = [_binSize range];
    id<ORIntRange> IR = [_item range];
-   id<CP> cp = [_item tracker];
+   id<CPSolver> cp = (id<CPSolver>)[_item solver];
    
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
@@ -133,7 +133,7 @@
 
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
 {
-   self = [super initCPActiveConstraint: [[item cp] solver]];
+   self = [super initCPActiveConstraint: [[item solver] engine]];
    _item = item;
    _itemSize = itemSize;
    _bin = b;

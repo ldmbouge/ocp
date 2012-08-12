@@ -22,7 +22,7 @@
     CPBitVarI*  _y;
 
 }
--(id) initCPBitEqual: (id) x and: (id) y ;
+-(id) initCPBitEqual: (CPBitVarI*) x and: (CPBitVarI*) y ;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -34,7 +34,7 @@
     CPBitVarI* _y;
     
 }
--(id) initCPBitNOT: (id) x equals: (id) y;
+-(id) initCPBitNOT: (CPBitVarI*) x equals: (CPBitVarI*) y;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -47,7 +47,7 @@
     CPBitVarI* _z;
 
 }
--(id) initCPBitAND: (id) x and: (id) y equals: (id) z;
+-(id) initCPBitAND: (CPBitVarI*) x and: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -60,7 +60,7 @@
     CPBitVarI* _z;
     
 }
--(id) initCPBitOR: (id) x or: (id) y equals: (id) z;
+-(id) initCPBitOR: (CPBitVarI*) x or: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -73,7 +73,7 @@
     CPBitVarI* _z;
     
 }
--(id) initCPBitXOR: (id) x xor: (id) y equals: (id) z;
+-(id) initCPBitXOR: (CPBitVarI*) x xor: (CPBitVarI*) y equals: (CPBitVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -87,7 +87,7 @@
     CPBitVarI* _z;
     
 }
--(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z;
+-(id) initCPBitIF: (CPBitVarI*) w equalsOneIf:(CPBitVarI*) x equals: (CPBitVarI*) y andZeroIfXEquals: (CPBitVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -100,7 +100,7 @@
     CPBitVarI*      _y;
     unsigned int    _places;
 }
--(id) initCPBitShiftL: (id) x shiftLBy:(int) places equals:(id) y;
+-(id) initCPBitShiftL: (CPBitVarI*) x shiftLBy:(int) places equals: (CPBitVarI*) y;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -112,7 +112,7 @@
     CPBitVarI*      _y;
     unsigned int    _places;
     
-}-(id) initCPBitShiftR: (id) x shiftRBy:(int) places equals:(id) y;
+}-(id) initCPBitShiftR: (CPBitVarI*) x shiftRBy:(int) places equals:(CPBitVarI*) y;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
@@ -127,7 +127,7 @@
     CPBitVarI*      _cout;
     
 }
--(id) initCPBitAdd: (id) x plus:(id) y equals:(id) z withCarryIn:(id) cin andCarryOut:cout;
+-(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:cout;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

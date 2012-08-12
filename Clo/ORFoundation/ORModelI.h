@@ -20,6 +20,7 @@
 -(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
+-(id<ORSolver>) solver;
 @end
 
 @interface ORConstraintI : NSObject<ORConstraint>

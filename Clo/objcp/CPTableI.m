@@ -196,7 +196,7 @@
 {
     [table close];
     
-    self = [super initCPActiveConstraint: [[x cp] solver]];
+    self = [super initCPActiveConstraint: [[x solver] engine]];
     [self initInstanceVariables];
     _table = table;
     
@@ -212,7 +212,7 @@
 {
     [table close];
     
-    self = [super initCPActiveConstraint: [[x cp] solver]];
+    self = [super initCPActiveConstraint: [[x solver] engine]];
     [self initInstanceVariables];    
     _table = table;
 

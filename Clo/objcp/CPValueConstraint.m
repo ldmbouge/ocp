@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 
+#import "ORFoundation/ORFoundation.h"
 #import "CPValueConstraint.h"
-#import "ORFoundation/ORArrayI.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPArrayI.h"
@@ -156,21 +156,21 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [[_b cp] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         [[_b solver] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
          return ORSkip;
       } else {
-         [[_b cp] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         [[_b solver] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
          return ORSkip;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
-      [[_b cp] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      [[_b solver] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
       return ORSkip;
    }
    else if (bound(_y)) {
-      [[_b cp] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      [[_b solver] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
       return ORSkip;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
@@ -255,10 +255,10 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [[_b cp] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         [[_b solver] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
          return ORSkip;
       } else {
-         [[_b cp] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         [[_b solver] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
          return ORSkip;
       }
    }
@@ -519,28 +519,28 @@
 
 -(id) initCPSumBool: (id) x geq: (ORInt) c
 {
-    if ([x isKindOfClass:[NSArray class]]) {
-        self = [super initCPCoreConstraint];
-        _nb = [x count];
-        _x = malloc(sizeof(CPIntVarI*)*_nb);
-        for(CPInt k=0;k<_nb;k++)
-            _x[k] = [x objectAtIndex:k];
-    } 
-    else if ([x isKindOfClass:[ORIdArrayI class]]) {
-        id<ORIntVarArray> xa = x;
-        self = [super initCPCoreConstraint];
-        _nb = [x count];
-        _x  = malloc(sizeof(CPIntVarI*)*_nb);
-        CPInt low = [x low];
-        CPInt up = [x up];
-        CPInt i = 0;
-        for(CPInt k=low;k <= up;k++)
-            _x[i++] = (CPIntVarI*) [xa at:k];
-    }      
-    _c = c;
-    _at = 0;
-    _notTriggered = 0;
-    return self;
+   if ([x isKindOfClass:[NSArray class]]) {
+      self = [super initCPCoreConstraint];
+      _nb = [x count];
+      _x = malloc(sizeof(CPIntVarI*)*_nb);
+      for(CPInt k=0;k<_nb;k++)
+         _x[k] = [x objectAtIndex:k];
+   }
+   else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
+      id<ORIntVarArray> xa = x;
+      self = [super initCPCoreConstraint];
+      _nb = [x count];
+      _x  = malloc(sizeof(CPIntVarI*)*_nb);
+      CPInt low = [x low];
+      CPInt up = [x up];
+      CPInt i = 0;
+      for(CPInt k=low;k <= up;k++)
+         _x[i++] = (CPIntVarI*) [xa at:k];
+   }
+   _c = c;
+   _at = 0;
+   _notTriggered = 0;
+   return self;
 }
 
 -(void) dealloc
@@ -666,18 +666,19 @@
    TRInt _nbOne;
    TRInt _nbZero;   
 }
--(id) initCPSumBool:(id)x eq:(ORInt)c
+-(id) initCPSumBool:(id) x eq:(ORInt)c
 {
    if ([x isKindOfClass:[NSArray class]]) {
-      self = [super initCPActiveConstraint:[[[x objectAtIndex:0] cp] solver]];
+      id<ORSolver> solver = [[x objectAtIndex:0] solver];
+      self = [super initCPActiveConstraint: [solver engine]];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
       for(CPInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    }
-   else if ([x isKindOfClass:[ORIdArrayI class]]) {
+   else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
       id<ORIntVarArray> xa = x;
-      self = [super initCPActiveConstraint:[[x cp] solver]];
+      self = [super initCPActiveConstraint:[[x solver] engine]];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       CPInt low = [x low];

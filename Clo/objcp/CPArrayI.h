@@ -63,8 +63,8 @@
 -(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
--(id<CPSolver>) cp;
--(id<CPEngine>) solver;
+-(id<CPSolver>) solver;
+-(id<CPEngine>) engine;
 -(ORInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
@@ -73,7 +73,7 @@
 
 @interface CPTRIntMatrixI : NSObject<CPTRIntMatrix,CPVirtual,NSCoding> {
 @private
-    id<CPSolver>          _cp;
+    id<CPSolver>    _cp;
     ORTrail*        _trail;
     TRInt*          _flat;
     CPInt           _arity;
@@ -95,8 +95,8 @@
 -(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
--(id<CPSolver>) cp;
--(id<CPEngine>) solver;
+-(id<CPSolver>) solver;
+-(id<CPEngine>) engine;
 -(ORInt) virtualOffset;   
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;

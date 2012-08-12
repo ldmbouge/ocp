@@ -21,18 +21,19 @@
 
 @implementation CPLabel
 
-+(void) var: (CPIntVarI*) x
++(void) var: (id<ORIntVar>) mx
 {
-    id<CPSolver> cp = [x cp];
-    while (!bound(x)) {
-       CPInt m = minDom(x);
-       [cp try: ^() {
-          [cp label:x with:m];
-       }
-            or: ^() {
-               [cp diff:x with:m];
-            }];
-    }
+   id<CPSolver> cp = (id<CPSolver>) [mx solver];
+   CPIntVarI* x = (CPIntVarI*) [mx dereference];
+   while (!bound(x)) {
+      CPInt m = minDom(x);
+      [cp try: ^() {
+         [cp label:x with:m];
+      }
+           or: ^() {
+              [cp diff:x with:m];
+           }];
+   }
 }
 
 +(void) array: (id<ORIntVarArray>) x
@@ -40,18 +41,17 @@
     CPInt low = [x low];
     CPInt up = [x up];
     for(CPInt i = low; i <= up; i++) 
-        [CPLabel var: [x at: i]];
+        [CPLabel var: x[i]];
 }
 
 +(void) array: (id<ORIntVarArray>) x orderedBy: (CPInt2Int) orderedBy
 {
-    id<CPSolver> cp = [x cp];
-    CPSolverI* cpi = (CPSolverI*) cp;
-    CPSelect* select = [cpi selectInRange: RANGE(cp,[x low],[x up])
+    CPSolverI* cp = (CPSolverI*) [x solver];
+    CPSelect* select = [cp selectInRange: RANGE(cp,[x low],[x up])
                               suchThat: ^bool(CPInt i) { return [[x at: i] bound]; }
                                orderedBy: orderedBy];
     do {
-        CPInt i = [select min];
+        ORInt i = [select min];
         if (i == MAXINT) {
             return;
         }
@@ -64,14 +64,13 @@
 +(void) heuristic:(id<CPHeuristic>)h
 {
    id<ORIntVarArray> av = [h allIntVars];
-   NSLog(@"Heuristic on: <%lu> %@",[av count],av);
-   id<CPSolver> cp = [av cp];
-   CPSolverI* cpi = (CPSolverI*) cp;
-   CPSelect* select = [cpi selectInRange: RANGE(cp,[av low],[av up])
+//   NSLog(@"Heuristic on: <%lu> %@",[av count],av);
+   CPSolverI* cp = (CPSolverI*) [av solver];
+   CPSelect* select = [cp selectInRange: RANGE(cp,[av low],[av up])
                                 suchThat: ^bool(CPInt i)      { return [[av at: i] bound]; }
                                orderedBy: ^CPInt(CPInt i) { return [h varOrdering:av[i]]; }];
    do {      
-      CPInt i = [select max];
+      ORInt i = [select max];
       if (i == MAXINT)
          return;
       id<ORIntVar> x = [av at: i];
@@ -80,7 +79,7 @@
                                                          suchThat:^bool(CPInt v)  { return [x member:v];}
                                                         orderedBy:^CPInt(CPInt v) { return [h valOrdering:v forVar:x];}];
       do {
-         CPInt curVal = [valSelect choose];
+         ORInt curVal = [valSelect choose];
          if (curVal == MAXINT)
             break;
          [cp try:^{
