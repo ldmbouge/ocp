@@ -154,11 +154,9 @@ void failNow()
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
 
-+(id<ORIntMatrix>) intMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
++(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
-    CPIntMatrixI* o = [[CPIntMatrixI alloc] initCPIntMatrix: (CPSolverI*) cp range: r1 : r2];
-    [[((CPSolverI*) cp) solver] trackObject: o];
-    return o;   
+   return [ORFactory intMatrix: tracker range: r1 : r2];
 }
 +(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {

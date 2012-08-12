@@ -77,6 +77,13 @@
    [tracker trackObject:o];
    return o;
 }
++(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+{
+   ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker range: r1 : r2];
+   [tracker trackObject: o];
+   return o;
+}
+
 +(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    return (id<ORIntSetArray>)[ORFactory idArray: tracker range: range];

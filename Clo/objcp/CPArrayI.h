@@ -41,34 +41,6 @@
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
 
-@interface CPIntMatrixI : NSObject<ORIntMatrix,CPVirtual,NSCoding> {
-@private
-    id<CPSolver>          _cp;
-    ORTrail*        _trail;
-    ORInt*          _flat;
-    ORInt           _arity;
-    id<ORIntRange>* _range;
-    ORInt*          _low;
-    ORInt*          _up;
-    ORInt*          _size;
-    ORInt*          _i;
-    ORInt           _nb;
-}
--(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(CPIntMatrixI*) initCPIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
--(void) dealloc;  
--(ORInt) at: (ORInt) i0 : (ORInt) i1; 
--(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
--(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1; 
--(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 
--(id<ORIntRange>) range: (ORInt) i;
--(NSUInteger) count;
--(id<CPSolver>) solver;
--(id<CPEngine>) engine;
--(ORInt) virtualOffset;   
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id)initWithCoder: (NSCoder*) aDecoder;
-@end
 
 
 @interface CPTRIntMatrixI : NSObject<CPTRIntMatrix,CPVirtual,NSCoding> {

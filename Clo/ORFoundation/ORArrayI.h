@@ -57,6 +57,23 @@
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end
 
+@interface ORIntMatrixI : NSObject<ORIntMatrix,NSCoding>
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(void) dealloc;
+-(ORInt) at: (ORInt) i0 : (ORInt) i1;
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1;
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger) count;
+-(id<ORTracker>) tracker;
+-(id<ORSolver>) solver;
+-(void) encodeWithCoder: (NSCoder*) aCoder;
+-(id)initWithCoder: (NSCoder*) aDecoder;
+@end
+
+
 @interface ORIdMatrixI : NSObject<NSCoding,ORIdMatrix>
 {
    id<ORTracker>  _tracker;
@@ -72,7 +89,7 @@
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
--(id<ORTracker>) tracker;
+
 -(id<ORSolver>) solver;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;

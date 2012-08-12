@@ -492,3 +492,208 @@
 }
 @end
 
+
+/*********************************************************************************/
+/*             Multi-Dimensional Matrix of Int                                   */
+/*********************************************************************************/
+
+@implementation ORIntMatrixI
+{
+   id<ORTracker>   _tracker;
+   ORInt*          _flat;
+   ORInt           _arity;
+   id<ORIntRange>* _range;
+   ORInt*          _low;
+   ORInt*          _up;
+   ORInt*          _size;
+   ORInt*          _i;
+   ORInt           _nb;
+}
+-(ORIntMatrixI*) initORIntMatrix:(id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+{
+   self = [super init];
+   _tracker = tracker;
+   _arity = 3;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _i = malloc(sizeof(ORRange) * _arity);
+   _range[0] = r0;
+   _range[1] = r1;
+   _range[2] = r2;
+   _low[0] = [r0 low];
+   _low[1] = [r1 low];
+   _low[2] = [r2 low];
+   _up[0] = [r0 up];
+   _up[1] = [r1 up];
+   _up[2] = [r2 up];
+   _size[0] = (_up[0] - _low[0] + 1);
+   _size[1] = (_up[1] - _low[1] + 1);
+   _size[2] = (_up[2] - _low[2] + 1);
+   _nb = _size[0] * _size[1] * _size[2];
+   _flat = malloc(sizeof(ORInt) * _nb);
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = 0;
+   return self;
+}
+
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+{
+   self = [super init];
+   _tracker = tracker;
+   _arity = 2;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _i = malloc(sizeof(ORRange) * _arity);
+   _range[0] = r0;
+   _range[1] = r1;
+   _low[0] = [r0 low];
+   _low[1] = [r1 low];
+   _up[0] = [r0 up];
+   _up[1] = [r1 up];
+   _size[0] = (_up[0] - _low[0] + 1);
+   _size[1] = (_up[1] - _low[1] + 1);
+   _nb = _size[0] * _size[1];
+   _flat = malloc(sizeof(ORInt) * _nb);
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = 0;
+   return self;
+}
+
+-(void) dealloc
+{
+   //   NSLog(@"CPIntVarMatrix dealloc called...\n");
+   free(_range);
+   free(_low);
+   free(_up);
+   free(_size);
+   free(_i);
+   free(_flat);
+   [super dealloc];
+}
+-(ORInt) getIndex
+{
+   for(ORInt k = 0; k < _arity; k++)
+      if (_i[k] < _low[k] || _i[k] > _up[k])
+         @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntMatrix"];
+   int idx = _i[0] - _low[0];
+   for(ORInt k = 1; k < _arity; k++)
+      idx = idx * _size[k] + (_i[k] - _low[k]);
+   return idx;
+}
+-(id<ORIntRange>) range: (ORInt) i
+{
+   if (i < 0 || i >= _arity)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in CPIntMatrix"];
+   return _range[i];
+}
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
+{
+   if (_arity != 3)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntMatrix"];
+   _i[0] = i0;
+   _i[1] = i1;
+   _i[2] = i2;
+   return _flat[[self getIndex]];
+}
+-(ORInt) at: (ORInt) i0 : (ORInt) i1
+{
+   if (_arity != 2)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntMatrix"];
+   _i[0] = i0;
+   _i[1] = i1;
+   return _flat[[self getIndex]];
+}
+
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
+{
+   if (_arity != 3)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
+   _i[0] = i0;
+   _i[1] = i1;
+   _i[2] = i2;
+   _flat[[self getIndex]] = value;
+}
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1
+{
+   if (_arity != 2)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Wrong arity in CPIntVarMatrix"];
+   _i[0] = i0;
+   _i[1] = i1;
+   _flat[[self getIndex]] = value;
+}
+
+-(NSUInteger) count
+{
+   return _nb;
+}
+-(void) descriptionAux: (ORInt) i string: (NSMutableString*) rv
+{
+   if (i == _arity) {
+      [rv appendString:@"<"];
+      for(ORInt k = 0; k < _arity; k++)
+         [rv appendFormat:@"%d,",_i[k]];
+      [rv appendString:@"> ="];
+      [rv appendFormat:@"%d \n",_flat[[self getIndex]]];
+   }
+   else {
+      for(ORInt k = _low[i]; k <= _up[i]; k++) {
+         _i[i] = k;
+         [self descriptionAux: i+1 string: rv];
+      }
+   }
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [self descriptionAux: 0 string: rv];
+   return rv;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(id<ORSolver>) solver
+{
+   return [_tracker solver];
+}
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
+   for(ORInt i = 0; i < _arity; i++) {
+      [aCoder encodeObject:_range[i]];
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
+   }
+   for(ORInt i=0 ; i < _nb ;i++)
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_flat[i]];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _tracker = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _nb = 1;
+   for(ORInt i = 0; i < _arity; i++) {
+      _range[i] = [[aDecoder decodeObject] retain];
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low[i]];
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up[i]];
+      _size[i] = (_up[i] - _low[i] + 1);
+      _nb *= _size[i];
+   }
+   _flat = malloc(sizeof(ORInt) * _nb);
+   for(ORInt i=0 ; i < _nb ;i++)
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_flat[i]];
+   return self;
+}
+
+@end
+
