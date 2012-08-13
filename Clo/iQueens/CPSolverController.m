@@ -45,8 +45,7 @@
 -(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
 {
    UIBoardController* board = [_view1 boardController];
-   ORBounds dom;
-   [[x at: [x low]] bounds:&dom];
+   ORBounds dom = [[x at: [x low]] bounds];
    ORRange cols = {[x low],[x up]};
    ORRange rows = {dom.min,dom.max};
    id grid = [board makeGrid:rows by: cols];

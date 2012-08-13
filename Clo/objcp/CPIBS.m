@@ -67,7 +67,7 @@
 {
    self = [super init];
    _var = theVar;
-   [theVar bounds:&_dom];
+   _dom = [theVar bounds];
    _nbVals = _dom.max - _dom.min + 1;
    if (_nbVals >= 8192) {
       _imps = _mu = _vari = NULL;
@@ -129,8 +129,7 @@
 -(double)impactForVariable
 {
    if (_imps) {
-      ORBounds cb;
-      [_var bounds:&cb];
+      ORBounds cb = [_var bounds];
       double rv = 0.0;
       for(ORInt i = cb.min;i <= cb.max;i++) {
          if (![_var member:i]) continue;
@@ -148,7 +147,7 @@
    NSMutableDictionary*  _impacts;
 }
 
--(id)initCPIBS:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
+-(id)initCPIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
@@ -179,7 +178,7 @@
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initInternal:(id<CPVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;   
    _monitor = [[CPMonitor alloc] initCPMonitor:_cp vars:_vars];
@@ -235,7 +234,7 @@
    return;
 }
 
--(void)dichotomize:(id<ORIntVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set 
+-(void)dichotomize:(CPIntVarI*)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
    if (up - low + 1 <= b) {
       double ir = 1.0 - [_monitor reductionFromRoot];
@@ -277,9 +276,8 @@
    NSMutableSet* sacs = nil;
    ORInt low = [_vars low],up = [_vars up];
    for(ORInt k=low; k <= up;k++) {
-      id<ORIntVar> v = (id<ORIntVar>)[_vars at:k];
-      ORBounds vb;
-      [v bounds: &vb];
+      CPIntVarI* v = (CPIntVarI*)_vars[k];
+      ORBounds vb = [v bounds];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
    }
 }

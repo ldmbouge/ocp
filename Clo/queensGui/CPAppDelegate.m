@@ -12,7 +12,7 @@
 
 #import "CPAppDelegate.h"
 #import "objcp/CPConstraint.h"
-#import "objcp/DFSController.h"
+#import "ORFoundation/ORController.h"
 #import "objcp/CPEngine.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
@@ -37,10 +37,9 @@
 
 -(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
 {
-   ORBounds dom;
-   [[x at: [x low]] bounds:&dom];
-   ORRange cols = {[x low],[x up]};
-   ORRange rows = {dom.min,dom.max};
+   ORBounds dom =  [[x at: [x low]] bounds];
+   id<ORIntRange> cols = RANGE(cp,[x low],[x up]);
+   id<ORIntRange> rows = RANGE(cp,dom.min,dom.max);
    id grid = [_board makeGrid:rows by: cols];
    for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = x[i];
@@ -68,25 +67,23 @@
 -(void)runModel
 {
    int n = 8;
-   ORRange R = (ORRange){1,n};
    id<CPSolver> cp = [CPFactory createSolver];
-   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
+   id<ORIntRange> R = RANGE(cp,1,n);
+   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   
-   [cp solveAll: 
-    ^() {
-       [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
 
-       [self visualize:x on:cp];
-    }   
-          using: 
+   [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
+   
+   [cp solveAll:
     ^() {
+       [self visualize:x on:cp];
+       
        [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
-       [_board neverStop];
+       //[_board neverStop];
        [_board pause];
     }
     ];

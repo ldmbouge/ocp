@@ -15,7 +15,7 @@
 
 @implementation CPWDeg
 
--(CPWDeg*)initCPWDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
+-(CPWDeg*)initCPWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
@@ -74,7 +74,7 @@
 // pvh: we should really use our arrays for consistency in the interfaces [ldm:done]
 // pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable [ldm:caching]
 
--(void)initInternal:(id<CPVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t
 {
    ORLong len = [t count];
    _vars = t;
@@ -88,7 +88,7 @@
    for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
       _map[[[_vars at:k] getId]] = k - low;
-      _cv[k - low] = [[_vars at:k] constraints];
+      _cv[k - low] = [_vars[k] constraints];
    }
    _nbv = len;
    NSArray* allC = [_solver allConstraints];

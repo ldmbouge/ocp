@@ -16,7 +16,7 @@
 @implementation CPFirstFail {
    CPEngineI*    _solver;
 }
--(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
+-(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
@@ -43,7 +43,7 @@
 {
    return -v;   
 }
--(void)initInternal:(id<CPVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;
 }

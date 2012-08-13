@@ -164,6 +164,11 @@
 			<key>orderHint</key>
 			<integer>38</integer>
 		</dict>
+		<key>model.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>47</integer>
+		</dict>
 		<key>mpinterface.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -233,6 +238,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>34</integer>
+		</dict>
+		<key>sportModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>48</integer>
 		</dict>
 		<key>testLPWrapper.xcscheme</key>
 		<dict>
@@ -482,6 +492,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>B181E11515D7465300AB44DA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>B1935C5D15B90ECE00107399</key>
 		<dict>
 			<key>primary</key>
@@ -498,6 +513,11 @@
 			<true/>
 		</dict>
 		<key>B1C9DF1215A8045C00EE924C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B1CC831F15D3BEC4008DE335</key>
 		<dict>
 			<key>primary</key>
 			<true/>

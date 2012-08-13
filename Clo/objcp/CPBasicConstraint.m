@@ -1257,12 +1257,10 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       [_x remove:0];
       [_y remove:0];
    }
-   ORBounds xb,yb,zb;
-   [_x bounds:&xb];
-   [_y bounds:&yb];
+   ORBounds xb = [_x bounds],yb  = [_y bounds],zb;
    ORLong t[4] = {xb.min*yb.min,xb.min*yb.max,xb.max*yb.min,xb.max*yb.max};
    [_z updateMin:bindDown(minSeq(t)) andMax:bindUp(maxSeq(t))];
-   [_z bounds:&zb];
+   zb = [_z bounds];
    [self propagateXCR:_x mult:_y equal:zb];
    [self propagateXCR:_y mult:_x equal:zb];
 }

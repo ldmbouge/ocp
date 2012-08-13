@@ -14,16 +14,16 @@
 #import <objcp/CPBaseHeuristic.h>
 
 @interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
-   id<CPVarArray>  _vars;
-   id<CPVarArray> _rvars;
+   id<ORVarArray>  _vars;
+   id<ORVarArray> _rvars;
    ORUInt*          _map; 
-   id<CPSolver>            _cp;
+   id<CPSolver>      _cp;
    ORULong          _nbv;
    NSSet**           _cv;
 }
--(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
+-(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 -(float)varOrdering:(id<ORIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<ORIntVar>)x;
--(void)initInternal:(id<CPVarArray>)t;
+-(void)initInternal:(id<ORVarArray>)t;
 -(id<ORIntVarArray>)allIntVars;
 @end

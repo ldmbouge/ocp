@@ -18,6 +18,7 @@ int main(int argc, const char * argv[])
 
    @autoreleasepool {
 
+      @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: 10];
       id<ORIntVarArray> a = [ORFactory intVarArray: model range: R domain: R];
@@ -34,7 +35,7 @@ int main(int argc, const char * argv[])
       }];
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[a[i] value]);
-
+      }
       ORLong startTime = [ORRuntimeMonitor cputime];
       ORInt n = 14;
       id<CPSolver> cp = [CPFactory createSolver];

@@ -16,7 +16,7 @@
 @implementation CPDDeg {
    CPEngineI*    _solver;
 }
--(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars
+-(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
@@ -46,7 +46,7 @@
 {
    return -v;   
 }
--(void)initInternal:(id<CPVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;
    ORLong len = [_vars count];
@@ -59,8 +59,8 @@
    memset(_map,sizeof(ORUInt)*(maxID+1),0);   
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
-      _map[[[_vars at:k] getId]] = k - low;
-      _cv[k-low] = [[_vars at:k] constraints];
+      _map[[_vars[k] getId]] = k - low;
+      _cv[k-low] = [_vars[k] constraints];
    }
    _nbv = len;
 }

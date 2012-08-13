@@ -10,11 +10,11 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORFoundation/ORFoundation.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPController.h"
-#import "objcp/ORTracer.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 
@@ -23,7 +23,7 @@ int main (int argc, const char * argv[])
    int n = 12;
    id<CPSolver> cp = [CPFactory createSemSolver];
    id<ORIntRange> R = RANGE(cp,1,n);
-   id<CPInteger> nbSolutions = [CPFactory integer: cp value: 0];
+   id<ORInteger> nbSolutions = [CPFactory integer: cp value: 0];
    id<ORIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 

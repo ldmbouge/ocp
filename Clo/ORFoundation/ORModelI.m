@@ -160,8 +160,14 @@
    if (_impl)
       return [_impl domsize];
    else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];   
+}
+-(ORBounds)bounds
+{
+   if (_impl)
+      return [_impl bounds];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
 -(BOOL) member: (ORInt) v
 {

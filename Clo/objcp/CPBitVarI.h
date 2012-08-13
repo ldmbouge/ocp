@@ -69,7 +69,7 @@ typedef struct  {
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
 -(unsigned int) getWordLength;
--(void) bounds:(ORBounds*)bnd;
+-(ORBounds) bounds;
 -(unsigned int) domsize;
 -(bool) member:(unsigned int*)v;
 // update

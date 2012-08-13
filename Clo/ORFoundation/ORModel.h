@@ -30,6 +30,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
+-(ORBounds)bounds;
 -(BOOL) member: (ORInt) v;
 -(BOOL) isBool;
 -(id<ORIntVar>) dereference;

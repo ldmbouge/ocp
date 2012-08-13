@@ -11,9 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-@protocol CPVarArray;
-
 @interface CPBaseHeuristic : NSObject 
 -(void)initHeuristic:(NSMutableArray*)array;
--(void)initInternal:(id<CPVarArray>)t;
+-(void)initInternal:(id<ORVarArray>)t;
 @end

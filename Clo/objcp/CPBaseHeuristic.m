@@ -21,8 +21,8 @@
       nbViews += ([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]);
    }];
    ORULong l = [array count] - nbViews;
-   id<CPSolver> cp = [[array objectAtIndex:0] solver];
-   id<CPVarArray> direct = [CPFactory varArray:cp range: RANGE(cp,0,(ORInt)l-1)];
+   id<ORSolver> cp = [[array objectAtIndex:0] solver];
+   id<ORVarArray> direct = [CPFactory varArray:cp range: RANGE(cp,0,(ORInt)l-1)];
    __block ORUInt k = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       if (!([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]))
@@ -30,7 +30,7 @@
    }];
    [self initInternal:direct];   
 }
--(void)initInternal:(id<CPVarArray>)t 
+-(void)initInternal:(id<ORVarArray>)t
 {
    
 }

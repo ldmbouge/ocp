@@ -171,13 +171,14 @@ enum CPVarClass {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
--(void) bounds:(ORBounds*)bnd;
+-(ORBounds)bounds;
 -(ORInt) domsize;
 -(bool) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
 -(ORInt) scale;
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
 
@@ -214,7 +215,7 @@ enum CPVarClass {
 -(CPBitDom*)flatDomain;
 -(ORInt) min;
 -(ORInt) max;
--(void)bounds:(ORBounds*)bnd;
+-(ORBounds)bounds;
 -(bool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -238,7 +239,7 @@ enum CPVarClass {
 -(CPBitDom*)flatDomain;
 -(ORInt) min;
 -(ORInt) max;
--(void)bounds:(ORBounds*)bnd;
+-(ORBounds)bounds;
 -(bool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -306,8 +307,7 @@ static inline ORBounds bounds(CPIntVarI* x)
 
 static inline ORBounds negBounds(CPIntVarI* x)
 {
-   ORBounds b;
-   [x bounds:&b];
+   ORBounds b = [x bounds];
    return (ORBounds){- b.max, -b.min};
 }
 

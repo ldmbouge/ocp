@@ -435,8 +435,7 @@ static void findSCCvar(CPCardinalityDC* card,ORInt k)
     card->_top++;
     
     CPIntVarI* x = card->_var[k];
-    ORBounds bx;
-    [x bounds:&bx];
+    ORBounds bx = [x bounds];
     for(ORInt w = bx.min; w <= bx.max; w++) {
         if (_varMatch[k] != w) {
             if (memberBitDom(x,w)) {

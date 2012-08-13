@@ -45,6 +45,8 @@
 @protocol ORIdArray <NSObject>
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
+-(id)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) low;
 -(ORInt) up;
 -(id<ORIntRange>) range;

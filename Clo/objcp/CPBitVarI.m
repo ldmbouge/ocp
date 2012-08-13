@@ -120,9 +120,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom getWordLength];
 }
 
--(void) bounds:(ORBounds*) bnd
+-(ORBounds) bounds
 {
-    *bnd = (ORBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
+    return (ORBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
 }
 
 -(unsigned int)domsize

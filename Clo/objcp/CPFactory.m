@@ -57,19 +57,19 @@ void failNow()
 //{
 //   return [[SemCP alloc] initFor:fdm];
 //}
-+(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 {
    return [[CPWDeg alloc] initCPWDeg:cp restricted:rvars];
 }
-+(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars; 
++(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 {
    return [[CPDDeg alloc] initCPDDeg:cp restricted:rvars];
 }
-+(id<CPHeuristic>) createIBS:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>) createIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 {
    return [[CPIBS alloc] initCPIBS:cp restricted:rvars];
 }
-+(id<CPHeuristic>)createFF:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
++(id<CPHeuristic>)createFF:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 {
    return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
 }
@@ -158,9 +158,9 @@ void failNow()
 {
    return [ORFactory intMatrix: tracker range: r1 : r2];
 }
-+(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
++(id<ORVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
-   return (id<CPVarArray>)[ORFactory idArray:cp range: range];
+   return (id<ORVarArray>)[ORFactory idArray:cp range: range];
 }
 +(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
 {

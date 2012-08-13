@@ -15,13 +15,13 @@
 #import "CPBaseHeuristic.h"
 
 @interface CPFirstFail : CPBaseHeuristic<CPHeuristic> {
-   id<CPVarArray>  _vars;
-   id<CPVarArray> _rvars;
+   id<ORVarArray>  _vars;
+   id<ORVarArray> _rvars;
    id<CPSolver>            _cp;
 }
--(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<CPVarArray>)rvars;
+-(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 -(float)varOrdering:(id<ORIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<ORIntVar>)x ;
--(void)initInternal:(id<CPVarArray>)t;
+-(void)initInternal:(id<ORVarArray>)t;
 -(id<ORIntVarArray>)allIntVars;
 @end

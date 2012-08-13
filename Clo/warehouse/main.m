@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
       ORInt maxCost = 100;
       id<ORIntRange> Stores     = RANGE(cp,0,9);
       id<ORIntRange> Warehouses = RANGE(cp,0,4);
-      ORInt* cap = (CPInt[]){1,4,2,1,3};
+      ORInt* cap = (ORInt[]){1,4,2,1,3};
       ORInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
                                  { 28, 27, 82, 83, 74 },
                                  { 74, 97, 71, 96, 70 },

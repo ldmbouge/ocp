@@ -13,10 +13,19 @@
 #import "ORArray.h"
 #import "ORSet.h"
 #import "ORModel.h"
+#import "ORExprI.h"
 
-
-@interface ORIntVarI : NSObject<ORIntVar>
+@interface ORIntVarI : ORExprI<ORIntVar>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
+// [ldm] All the methods below were missing??????
+-(id<ORIntRange>) domain;
+-(ORInt) value;
+-(ORInt) min;
+-(ORInt) max;
+-(ORInt) domsize;
+-(ORBounds)bounds;
+-(BOOL) member: (ORInt) v;
+-(BOOL) isBool;
 -(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;

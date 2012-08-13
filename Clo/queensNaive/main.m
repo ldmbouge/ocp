@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import "objcp/CPConstraint.h"
-#import "objcp/DFSController.h"
 #import "objcp/CPEngine.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
@@ -29,7 +28,7 @@ int main (int argc, const char * argv[])
    int n = 5;
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
-   id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
+   id<ORInteger> nbSolutions = [CPFactory integer: cp value:0];
    [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
 

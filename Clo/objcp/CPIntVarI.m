@@ -263,9 +263,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }
 }
 
--(void) bounds:(ORBounds*) bnd
+-(ORBounds) bounds
 {
-   *bnd = domBounds((CPBoundsDom*)_dom);
+   return domBounds((CPBoundsDom*)_dom);
 }
 -(ORInt)domsize
 {
@@ -783,11 +783,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom max]+_b;
 }
--(void)bounds: (ORBounds*) bnd
+-(ORBounds)bounds
 {
-   *bnd = domBounds((CPBitDom*)_dom);
-   bnd->min += _b;
-   bnd->max += _b;
+   ORBounds bnd;
+   bnd = domBounds((CPBitDom*)_dom);
+   bnd.min += _b;
+   bnd.max += _b;
+   return bnd;
 }
 -(bool)member: (ORInt) v
 {
@@ -942,13 +944,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         return _a * [_dom max] + _b;
     else return _a * [_dom min] + _b;   
 }
--(void)bounds: (ORBounds*) bnd
+-(ORBounds)bounds
 {
    ORBounds b = domBounds((CPBoundsDom*)_dom);
-    *bnd = (ORBounds){
-        _a > 0 ? b.min * _a + _b : b.max * _a + _b,
-        _a > 0 ? b.max * _a + _b : b.min * _a + _b
-    };
+   return (ORBounds){
+      _a > 0 ? b.min * _a + _b : b.max * _a + _b,
+      _a > 0 ? b.max * _a + _b : b.min * _a + _b
+   };
 }
 -(bool)member: (ORInt) v
 {
