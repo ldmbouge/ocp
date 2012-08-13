@@ -11,7 +11,7 @@
 
 #import "CPError.h"
 #import "CPController.h"
-#import "ORTrail.h"
+#import "ORTrailI.h"
 
 @implementation CPHeist
 -(CPHeist*)initCPProblem:(NSCont*)c from:(Checkpoint*)cp

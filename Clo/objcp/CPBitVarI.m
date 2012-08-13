@@ -21,7 +21,7 @@
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
 
-static void setUpNetwork(CPBitEventNetwork* net,ORTrail* t) 
+static void setUpNetwork(CPBitEventNetwork* net,ORTrailI* t) 
 {
     net->_boundsEvt = makeTRId(t,nil);
     net->_bitFixedEvt = makeTRId(t, nil);

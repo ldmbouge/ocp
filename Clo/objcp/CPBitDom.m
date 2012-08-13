@@ -30,7 +30,7 @@
    return self;
 }
 
--(id<CPDom>)initBoundsDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up 
+-(id<CPDom>)initBoundsDomFor:(ORTrailI*)trail low:(ORInt)low up:(ORInt)up 
 {
    self = [super init];
    _dc = DCBounds;
@@ -230,7 +230,7 @@
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
 }
--(CPBitDom*) initBitDomFor:(ORTrail*)trail low:(ORInt)low up:(ORInt)up
+-(CPBitDom*) initBitDomFor:(ORTrailI*)trail low:(ORInt)low up:(ORInt)up
 {
    self = [super initBoundsDomFor:trail low:low up:up];
    _dc = DCBits;

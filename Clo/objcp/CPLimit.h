@@ -11,7 +11,7 @@
 
 #import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
 #import <objcp/CPController.h>
 
 
@@ -30,10 +30,10 @@
 @interface CPLimitDiscrepancies : ORDefaultController <NSCopying,ORSearchController> 
 {
   ORInt     _maxDiscrepancies;
-  ORTrail*  _trail;
+  ORTrailI*  _trail;
   TRInt     _nbDiscrepancies;
 }
--(id)        initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrail*) trail;
+-(id)        initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrailI*) trail;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;

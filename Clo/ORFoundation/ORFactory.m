@@ -19,12 +19,20 @@
 #import "ORSetI.h"
 #import "ORModel.h"
 #import "ORModelI.h"
+#import "ORTrailI.h" 
+#import "ORSolver.h" 
 
 @implementation ORFactory
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
    [tracker trackObject: o];
+   return o;
+}
++(id<ORTrailIableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
+{
+   ORTrailIableIntI* o = [[ORTrailIableIntI alloc] initORTrailIableIntI: [solver trail] value:value];
+   [solver trackObject: o];
    return o;
 }
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker

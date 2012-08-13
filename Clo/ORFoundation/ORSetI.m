@@ -90,8 +90,8 @@
 -(BOOL) more;
 @end
 
-@interface ORTrailableIntRangeEnumerator : NSObject<IntEnumerator>
--(ORTrailableIntRangeEnumerator*) initORTrailableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up;
+@interface ORTrailIableIntRangeEnumerator : NSObject<IntEnumerator>
+-(ORTrailIableIntRangeEnumerator*) initORTrailIableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up;
 -(ORInt) next;
 -(BOOL) more;
 @end

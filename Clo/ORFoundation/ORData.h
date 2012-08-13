@@ -23,6 +23,12 @@
 @end
 
 
+@protocol ORTrailIableInt <NSObject>
+-(ORInt) value;
+-(void)  setValue: (ORInt) value;
+-(void)  incr;
+-(void)  decr;
+@end
 
 
 @interface ORRuntimeMonitor : NSObject

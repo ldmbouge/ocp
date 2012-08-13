@@ -293,11 +293,11 @@
    
    
    @implementation SemTracer
-   -(SemTracer*) initSemTracer: (ORTrail*) trail
+   -(SemTracer*) initSemTracer: (ORTrailI*) trail
    {
       self = [super init];
       _trail = trail;
-      _trStack = [[ORTrailStack alloc] initTrailStack: _trail];
+      _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
       _lastNode = 0;
       _cmds = [[CPCmdStack alloc] initCPCmdStack:32];
       return self;
@@ -358,7 +358,7 @@
       assert(_level._val == 0);
       [self pushNode];
    }
-   -(ORTrail*)   trail
+   -(ORTrailI*)   trail
    {
       return _trail;
    }

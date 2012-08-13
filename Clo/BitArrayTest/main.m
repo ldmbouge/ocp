@@ -89,7 +89,7 @@ int main (int argc, const char * argv[])
     NSLog( @"%@\n\n\n", longMax);
     */
    
-   ORTrail*   dummyTrail = [[ORTrail alloc] init];
+   ORTrailI*   dummyTrail = [[ORTrailI alloc] init];
    CPBitArrayDom*  bitDomain = [[CPBitArrayDom alloc] initWithLength:32 withTrail: dummyTrail];
    
    NSLog(@"%@\n", bitDomain);

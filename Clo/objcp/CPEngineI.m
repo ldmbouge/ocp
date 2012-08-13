@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPEngineI.h"
-#import "ORTrail.h"
+#import "ORTrailI.h"
 #import "CPIntVarI.h"
 #import "CPBasicConstraint.h"
 #import "CPTypes.h"
@@ -261,7 +261,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 @end
 
 @implementation CPEngineI
--(CPEngineI*) initSolver: (ORTrail*) trail
+-(CPEngineI*) initSolver: (ORTrailI*) trail
 {
    self = [super init];
    _trail = trail;

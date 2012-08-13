@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPEngine.h>

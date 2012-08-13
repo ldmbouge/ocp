@@ -11,7 +11,7 @@
 
 #import "ORCrFactory.h"
 #import "CPSelector.h"
-#import "ORTrail.h"
+#import "ORTrailI.h"
 #import "CPSolverI.h"
 #if !defined(__APPLE__)
 #import <values.h>
