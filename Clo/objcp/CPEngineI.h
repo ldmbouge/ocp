@@ -15,8 +15,8 @@
 #import <objcp/CPSolution.h>
 #import <objcp/CPConstraintI.h>
 
-@class ORTrail;
-@class ORTrailStack;
+@class ORTrailI;
+@class ORTrailIStack;
 @class CPAC3Queue;
 @class CPAC5Queue;
 
@@ -51,7 +51,7 @@ enum CPEngineState {
 
 @interface CPEngineI : NSObject <CPEngine,NSCoding> {
    enum CPEngineState       _state;
-   ORTrail*                 _trail;
+   ORTrailI*                 _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
@@ -69,7 +69,7 @@ enum CPEngineState {
    id<ORVoidInformer>       _propagDone;
    CPFailException*         _fex;
 }
--(CPEngineI*) initSolver: (ORTrail*) trail;
+-(CPEngineI*) initSolver: (ORTrailI*) trail;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
 -(void)      trackVariable:(id)var;

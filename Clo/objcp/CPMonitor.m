@@ -14,7 +14,7 @@
 #import "CPIntVarI.h"
 
 @implementation CPVarInfo
--(CPVarInfo*)initCPVarInfo:(id)v trail:(ORTrail*)trail
+-(CPVarInfo*)initCPVarInfo:(id)v trail:(ORTrailI*)trail
 {
    self = [super init];
    _theVar = v;
@@ -76,7 +76,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(ORStatus) post
 {
-   ORTrail* trail = [[_cp engine] trail];
+   ORTrailI* trail = [[_cp engine] trail];
    ORUInt nbW = 0;
    for(ORInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];

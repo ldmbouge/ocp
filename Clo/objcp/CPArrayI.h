@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CPSolver.h"
-#import "ORTrail.h"
+#import "ORTrailI.h"
 #import "CPTypes.h"
 #import "CPBitDom.h"
 #import "CPConstraintI.h"
@@ -20,8 +20,8 @@
 
 @interface CPTRIntArrayI : NSObject<CPTRIntArray,CPVirtual,NSCoding> {
     @package
-    id<CPSolver>       _cp;
-    ORTrail*     _trail;
+    id<CPSolver> _cp;
+    ORTrailI*     _trail;
     TRInt*       _array;
     ORInt        _low;
     ORInt        _up;
@@ -46,7 +46,7 @@
 @interface CPTRIntMatrixI : NSObject<CPTRIntMatrix,CPVirtual,NSCoding> {
 @private
     id<CPSolver>    _cp;
-    ORTrail*        _trail;
+    ORTrailI*        _trail;
     TRInt*          _flat;
     ORInt           _arity;
     id<ORIntRange>* _range;

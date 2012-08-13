@@ -10,29 +10,31 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTrail.h>
+
 
 @protocol ORCommand;
 @class ORCommandList;
+@class ORTrailI;
+
 
 @protocol ORTracer <NSObject>
 -(ORInt)      pushNode;
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrail*)   trail;
+-(ORTrailI*)   trail;
 -(void)       trust;
 -(ORInt)      level;
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
--(DFSTracer*) initDFSTracer: (ORTrail*) trail;
+-(DFSTracer*) initDFSTracer: (ORTrailI*) trail;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrail*)   trail;
+-(ORTrailI*)   trail;
 -(void)       trust;
 -(ORInt)      level;
 @end

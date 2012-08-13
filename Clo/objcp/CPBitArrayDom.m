@@ -22,7 +22,7 @@
 
 @implementation CPBitArrayDom
 
--(CPBitArrayDom*)      initWithLength: (int) len withTrail:(ORTrail*) tr
+-(CPBitArrayDom*)      initWithLength: (int) len withTrail:(ORTrailI*) tr
 {
    self = [super init];
    _trail = tr;
@@ -43,7 +43,7 @@
    return self;
 }
 
--(CPBitArrayDom*)initWithBitPat:(int)len withLow:(unsigned int *)low andUp:(unsigned int *)up andTrail:(ORTrail*) tr
+-(CPBitArrayDom*)initWithBitPat:(int)len withLow:(unsigned int *)low andUp:(unsigned int *)up andTrail:(ORTrailI*) tr
 {
     self = [super init];
     _trail = tr;

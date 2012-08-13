@@ -11,7 +11,7 @@
 
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
 #import <objcp/CPTypes.h>
 #import "CPIntVarI.h"
 #import "CPConstraintI.h"

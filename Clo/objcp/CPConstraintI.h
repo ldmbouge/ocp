@@ -41,7 +41,7 @@ typedef enum {
 @end
 
 @interface CPActiveConstraint : CPCoreConstraint {
-   ORTrail* _trail;
+   ORTrailI* _trail;
    TRInt    _active;
 }
 -(id) initCPActiveConstraint: (id<OREngine>) m;

@@ -37,7 +37,7 @@
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
-   ORTrail*              _trail;
+   ORTrailI*              _trail;
    NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
@@ -56,7 +56,7 @@
 -(ORInt)                  nbFailures;
 -(ORUInt)                 nbPropagation;
 -(ORUInt)                 nbVars;
--(ORTrail*)               trail;
+-(ORTrailI*)               trail;
 
 -(id<ORSearchController>) controller;
 -(void)                   setController: (id<ORSearchController>) controller;

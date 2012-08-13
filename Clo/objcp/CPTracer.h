@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORTrailI.h>
 
 @protocol ORCommand;
 @class ORCommandList;
@@ -71,7 +71,7 @@
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrail*)   trail;
+-(ORTrailI*)   trail;
 -(void)       trust;
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;
@@ -83,19 +83,19 @@
 
 @interface SemTracer : NSObject<ORTracer> {
 @private
-   ORTrail*          _trail;
-   ORTrailStack*   _trStack;
+   ORTrailI*          _trail;
+   ORTrailIStack*   _trStack;
    ORInt          _lastNode;
    CPCmdStack*        _cmds;
    TRInt             _level;
 }
--(SemTracer*) initSemTracer: (ORTrail*) trail;
+-(SemTracer*) initSemTracer: (ORTrailI*) trail;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrail*)   trail;
+-(ORTrailI*)   trail;
 -(void)       addCommand:(id<ORCommand>)com;
 -(Checkpoint*)captureCheckpoint;
 -(ORStatus)   restoreCheckpoint:(Checkpoint*)acp  inSolver: (id<OREngine>) engine;

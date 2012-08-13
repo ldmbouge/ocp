@@ -15,16 +15,16 @@
 @implementation DFSTracer
 {
 @private
-   ORTrail*          _trail;
-   ORTrailStack*   _trStack;
+   ORTrailI*          _trail;
+   ORTrailIStack*   _trStack;
    ORInt          _lastNode;
    TRInt             _level;
 }
--(DFSTracer*) initDFSTracer: (ORTrail*) trail
+-(DFSTracer*) initDFSTracer: (ORTrailI*) trail
 {
    self = [super init];
    _trail = [trail retain];
-   _trStack = [[ORTrailStack alloc] initTrailStack: _trail];
+   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
    _lastNode = 0;
    _level = makeTRInt(_trail, 0);
    return self;
@@ -67,7 +67,7 @@
    }
    [self pushNode];
 }
--(ORTrail*)   trail
+-(ORTrailI*)   trail
 {
    return _trail;
 }

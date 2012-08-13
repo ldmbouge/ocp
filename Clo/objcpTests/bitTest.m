@@ -47,7 +47,7 @@
    min[1] = 0;
    max[0] = 0;
    max[1] = 0xF0F;
-   ORTrail*   dummyTrail = [[ORTrail alloc] init];   
+   ORTrailI*   dummyTrail = [[ORTrailI alloc] init];   
    CPBitArrayDom* bitDomain = [[CPBitArrayDom alloc] initWithBitPat:64 withLow:min andUp:max andTrail:dummyTrail];
    NSLog(@"Iterating over: %@\n",bitDomain);
    [bitDomain enumerateWith:^(unsigned int* bits,ORInt idx) {

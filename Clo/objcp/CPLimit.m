@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPError.h"
-#import "ORTrail.h"
+#import "ORTrailI.h"
 #import "CPLimit.h"
 
 /*
@@ -52,7 +52,7 @@
 
 @implementation CPLimitDiscrepancies
 
--(id) initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrail*) trail
+-(id) initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrailI*) trail
 {
   self = [super initCPDefaultController];
   _trail = trail;

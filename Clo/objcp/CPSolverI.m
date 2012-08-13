@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "ORTrail.h"
+#import "ORTrailI.h"
 #import "CPTypes.h"
 #import "CPCommand.h"
 #import "CPConstraintI.h"
@@ -80,7 +80,7 @@
 -(id) init
 {
    self = [super init];
-   _trail = [[ORTrail alloc] init];
+   _trail = [[ORTrailI alloc] init];
    _engine = [[CPEngineI alloc] initSolver: _trail];
    _pool = [[NSAutoreleasePool alloc] init];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
@@ -182,7 +182,7 @@
 {
    return [_search nbFailures];
 }
--(ORTrail*) trail
+-(ORTrailI*) trail
 {
    return _trail;
 }
