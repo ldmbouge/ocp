@@ -37,7 +37,7 @@
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
-   ORTrailI*              _trail;
+   ORTrailI*             _trail;
    NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;

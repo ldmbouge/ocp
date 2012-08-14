@@ -16,10 +16,7 @@
 @class ORCommandList;
 @class Checkpoint;
 @class CPProblem;
-
-
-
-
+@class SemTracer;
 
 @interface CPCmdStack : NSObject<NSCoding> {
 @private
@@ -36,8 +33,6 @@
 -(ORCommandList*) peekAt:(ORUInt)d;
 -(ORUInt) size;
 @end
-
-@class SemTracer;
 
 @interface CPProblem : NSObject<NSCoding> {
    ORCommandList* _cstrs;
@@ -71,7 +66,7 @@
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrailI*)   trail;
+-(ORTrailI*)  trail;
 -(void)       trust;
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;

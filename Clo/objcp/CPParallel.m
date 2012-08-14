@@ -50,7 +50,7 @@
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue *)pcq
 {
-   self = [super initCPNestedController:chain];
+   self = [super initORNestedController:chain];
    _explorer = explorer;
    _pool = [pcq retain];
    _publishing = NO;
@@ -120,7 +120,7 @@
 
 -(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq
 {
-   self = [super initCPDefaultController];
+   self = [super initORDefaultController];
    [self setController:chain];
    _explorer = explorer;
    _pool = [pcq retain];   

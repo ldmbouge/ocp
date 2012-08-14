@@ -16,7 +16,6 @@
 @class ORCommandList;
 @class ORTrailI;
 
-
 @protocol ORTracer <NSObject>
 -(ORInt)      pushNode;
 -(id)         popNode;

@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
   
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel: model];
-
+   
       [cp solve: ^{
          for(ORInt i = 0; i <= 10; i++) 
             [CPLabel var: a[i]];
