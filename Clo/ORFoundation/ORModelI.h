@@ -31,6 +31,17 @@
 -(void) setImpl: (id<ORIntVar>) _impl;
 -(id<ORSolver>) solver;
 -(NSSet*)constraints;
+-(ORInt)scale;
+-(ORInt)shift;
+-(id<ORIntVar>)base;
+@end
+
+
+@interface ORIntVarAffineI : ORIntVarI
+-(ORIntVarAffineI*)initORIntVarAffineI:(id<ORTracker>)tracker var:(id<ORIntVar>)x scale:(ORInt)a shift:(ORInt)b;
+-(ORInt)scale;
+-(ORInt)shift;
+-(id<ORIntVar>)base;
 @end
 
 @interface ORConstraintI : NSObject<ORConstraint>

@@ -745,11 +745,18 @@ void printnl(id x)
    _solver = solver;
    return self;
 }
--(void) intVar: (ORIntVarI*) v
+-(id<ORIntVar>) intVar: (ORIntVarI*) v
 {
-   id<ORIntVar> x = [CPFactory intVar: _solver domain: [v domain]];
-   [v setImpl: x];
+   return [CPFactory intVar: _solver domain: [v domain]];
 }
+-(id<ORIntVar>) affineVar:(id<ORIntVar>) v
+{
+   id<ORIntVar> mBase = [v base];
+   ORInt a = [v scale];
+   ORInt b = [v shift];
+   return [CPFactory intVar:[mBase dereference] scale:a shift:b];
+}
+
 -(void) alldifferent: (ORAlldifferentI*) cstr
 {
    id<ORIntVarArray> x = [cstr array];

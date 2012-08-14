@@ -36,6 +36,9 @@
 -(BOOL) member: (ORInt) v;
 -(BOOL) isBool;
 -(id<ORIntVar>) dereference;
+-(ORInt)scale;
+-(ORInt)shift;
+-(id<ORIntVar>)base;
 @end
 
 @protocol ORVarArray <ORIdArray>
@@ -72,6 +75,7 @@
 @end
 
 @protocol ORModel <NSObject,ORTracker>
+-(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;

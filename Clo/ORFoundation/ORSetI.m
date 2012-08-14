@@ -161,7 +161,7 @@
 -(NSString*) description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [rv appendFormat:@"[%d,%d]",_low,_up];
+   [rv appendFormat:@"[%2d,%2d]",_low,_up];
    return rv;
 }
 -(id<IntEnumerator>) enumerator

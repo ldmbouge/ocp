@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORFoundation/ORFoundation.h"
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORSolver.H"
@@ -56,10 +57,19 @@
    return nil;
 }
 
-
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Model"];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
+   [buf appendFormat:@"vars[%ld] = {\n",[_vars count]];
+   for(id<ORVar> v in _vars)
+      [buf appendFormat:@"\t%@\n",v];
+   [buf appendFormat:@"}\n"];
+
+   [buf appendFormat:@"cstr[%ld] = {\n",[_mStore count]];
+   for(id<ORConstraint> c in _mStore)
+      [buf appendFormat:@"\t%@\n",c];
+   [buf appendFormat:@"}\n"];
+   return buf;
 }
 
 -(void) add: (id<ORConstraint>) c
@@ -110,6 +120,7 @@
 
 @implementation ORIntVarI
 {
+   @protected
    id<ORIntVar>   _impl;
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
@@ -129,6 +140,11 @@
 {
    [super dealloc];   
 }
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"intVar(%@,%c,[%3d])",[_domain description],_dense ? 'D':'S',_name];
+}
+
 -(id<ORSolver>) solver
 {
    if (_impl)
@@ -238,7 +254,60 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   [concretizer intVar: self];
+   _impl = [concretizer intVar: self];
+}
+-(ORInt)scale
+{
+   return 1;
+}
+-(ORInt)shift
+{
+   return 0;
+}
+-(id<ORIntVar>)base
+{
+   return self;
+}
+@end
+
+@implementation ORIntVarAffineI {
+   ORInt        _a;
+   id<ORIntVar> _x;
+   ORInt        _b;
+}
+-(ORIntVarAffineI*)initORIntVarAffineI:(id<ORTracker>)tracker var:(id<ORIntVar>)x scale:(ORInt)a shift:(ORInt)b
+{
+   id<ORIntRange> xr = [x domain];
+   id<ORIntRange> ar;
+   if (a > 0)
+      ar = [ORFactory intRange:tracker low:a * [xr low] + b up:a * [xr up] + b];
+   else
+      ar = [ORFactory intRange:tracker low:a * [xr up] + b up:a * [xr low] + b];
+   self = [super initORIntVarI:tracker domain:ar];
+   _a = a;
+   _x = x;
+   _b = b;
+   return self;
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"affine(%@,%c,[%3d],a=%d,x=%@,b=%d)",[_domain description],_dense ? 'D':'S',_name,_a,[_x description],_b];
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   _impl = [concretizer affineVar: self];
+}
+-(ORInt)scale
+{
+   return _a;
+}
+-(ORInt)shift
+{
+   return _b;
+}
+-(id<ORIntVar>)base
+{
+   return _x;
 }
 @end
 

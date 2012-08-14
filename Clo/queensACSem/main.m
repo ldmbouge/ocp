@@ -20,12 +20,43 @@
 
 int main (int argc, const char * argv[])
 {
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      int n = 7;
+      id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n];
+      id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
+      id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
+      id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i]; }];
+      [model add: [ORFactory alldifferent: x]];
+      [model add: [ORFactory alldifferent: xp]];
+      [model add: [ORFactory alldifferent: xn]];
+
+      NSLog(@"Model: %@",model);
+      id<CPSolver> cp = [CPFactory createSolver];
+      [cp addModel: model];
+      
+      [cp solveAll: ^{
+         for(ORInt i = 0; i <= n; i++)
+            [CPLabel var: x[i]];
+         printf("x = [");
+         for(ORInt i = 0; i <= n; i++)
+            printf("%d%c",[x[i] value],i < n ? ',' : ']');
+         printf("\n");
+      }];
+      NSLog(@"Quitting");
+      [cp release];
+      [CPFactory shutdown];
+   }
+   return 0;
+   
+/*
+   
    int n = 12;
    id<CPSolver> cp = [CPFactory createSemSolver];
    id<ORIntRange> R = RANGE(cp,1,n);
    id<ORInteger> nbSolutions = [CPFactory integer: cp value: 0];
    id<ORIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
+   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    [cp solveParAll:4
        subjectTo: 
@@ -49,5 +80,6 @@ int main (int argc, const char * argv[])
    [cp release];
    [CPFactory shutdown];
    return 0;
+ */
 }
 

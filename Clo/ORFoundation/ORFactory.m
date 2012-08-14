@@ -120,8 +120,19 @@
 
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
 {
-   id<ORIntVar> o = [[ORIntVarI alloc]  initORIntVarI: model domain: r];
-   return o;
+   return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
+{
+   return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:1 shift:b];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a
+{
+   return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
+{
+   return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:b];
 }
 
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
@@ -129,6 +140,14 @@
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
       [o set: [ORFactory intVar: tracker domain:domain] at:k];
+   return (id<ORIntVarArray>)o;
+}
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      o[k] = clo(k);
+   }
    return (id<ORIntVarArray>)o;
 }
 

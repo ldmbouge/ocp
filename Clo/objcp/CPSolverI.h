@@ -126,7 +126,7 @@
 
 @interface CPConcretizerI : NSObject<ORSolverConcretizer>
 -(CPConcretizerI*) initCPConcretizerI: (CPSolverI*) solver;
--(void) intVar: (id<ORIntVar>) v;
+-(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(void) alldifferent: (id<ORAlldifferent>) cstr;
 @end
 
