@@ -316,8 +316,6 @@
 		5B9EE57115175D4F00619B47 /* CPSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A312D13A018A9002401A0 /* CPSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE57215175D4F00619B47 /* CPSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A312E13A018A9002401A0 /* CPSelector.m */; };
 		5B9EE57315175D4F00619B47 /* CPEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642FD139D49320056F448 /* CPEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE57615175D4F00619B47 /* CPTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A2BED139990ED002401A0 /* CPTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE57715175D4F00619B47 /* CPTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A2BEE139990ED002401A0 /* CPTracer.m */; };
 		5B9EE57815175D4F00619B47 /* ORTrail.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE64311139D49610056F448 /* ORTrail.m */; };
 		5B9EE57915175D4F00619B47 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE57A15175D4F00619B47 /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -482,8 +480,6 @@
 		B1595B6513C21917001FCB61 /* sudokuFile3.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1595B6413C218F9001FCB61 /* sudokuFile3.txt */; };
 		B15A2B5013995F12002401A0 /* CPError.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A2B4E13995F12002401A0 /* CPError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15A2B5113995F12002401A0 /* CPError.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A2B4F13995F12002401A0 /* CPError.m */; };
-		B15A2BEF139990ED002401A0 /* CPTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A2BED139990ED002401A0 /* CPTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B15A2BF0139990ED002401A0 /* CPTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A2BEE139990ED002401A0 /* CPTracer.m */; };
 		B15A2DAA139AB25F002401A0 /* CPLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A2DA8139AB25F002401A0 /* CPLimit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15A2DAB139AB25F002401A0 /* CPLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A2DA9139AB25F002401A0 /* CPLimit.m */; };
 		B15A312F13A018A9002401A0 /* CPSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A312D13A018A9002401A0 /* CPSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1745,8 +1741,6 @@
 		B1595B6413C218F9001FCB61 /* sudokuFile3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sudokuFile3.txt; sourceTree = SOURCE_ROOT; };
 		B15A2B4E13995F12002401A0 /* CPError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPError.h; sourceTree = "<group>"; };
 		B15A2B4F13995F12002401A0 /* CPError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPError.m; sourceTree = "<group>"; };
-		B15A2BED139990ED002401A0 /* CPTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B15A2BEE139990ED002401A0 /* CPTracer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPTracer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B15A2DA8139AB25F002401A0 /* CPLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPLimit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B15A2DA9139AB25F002401A0 /* CPLimit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPLimit.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B15A312D13A018A9002401A0 /* CPSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSelector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -2847,8 +2841,6 @@
 				B17715B71557EC1600BA14BF /* CPTable.h */,
 				B17715B31557D9D200BA14BF /* CPTableI.h */,
 				B17715B41557D9D200BA14BF /* CPTableI.m */,
-				B15A2BED139990ED002401A0 /* CPTracer.h */,
-				B15A2BEE139990ED002401A0 /* CPTracer.m */,
 				B189033D142C266D007F6EAD /* CPTrigger.h */,
 				B189033E142C266E007F6EAD /* CPTrigger.m */,
 				5BFD5A6715A3B92300825BC3 /* CPTypes.h */,
@@ -3567,7 +3559,6 @@
 			files = (
 				5B3606911392A8DA008B0EE8 /* CPDom.h in Headers */,
 				5B3606951392A9C5008B0EE8 /* CPBitDom.h in Headers */,
-				B15A2BEF139990ED002401A0 /* CPTracer.h in Headers */,
 				5BE642FE139D49320056F448 /* CPBasicConstraint.h in Headers */,
 				B19ABA26146DC7FA004EB77E /* CPCardinality.h in Headers */,
 				5B92975713A01F45002AA188 /* CPValueConstraint.h in Headers */,
@@ -3658,7 +3649,6 @@
 				5B9EE56D15175D4F00619B47 /* CPObjectQueue.h in Headers */,
 				5B9EE56F15175D4F00619B47 /* CPParallel.h in Headers */,
 				5B9EE57115175D4F00619B47 /* CPSelector.h in Headers */,
-				5B9EE57615175D4F00619B47 /* CPTracer.h in Headers */,
 				5B9EE57A15175D4F00619B47 /* CPTrigger.h in Headers */,
 				5B9EE54E15175D4F00619B47 /* CPConstraint.h in Headers */,
 				5B9EE54015175D4F00619B47 /* CPAllDifferentDC.h in Headers */,
@@ -4943,7 +4933,6 @@
 				B1C010ED15CDAFEB00ED7027 /* CPFactory.m in Sources */,
 				5B3606961392A9C5008B0EE8 /* CPBitDom.m in Sources */,
 				B15A2B5113995F12002401A0 /* CPError.m in Sources */,
-				B15A2BF0139990ED002401A0 /* CPTracer.m in Sources */,
 				B15A2DAB139AB25F002401A0 /* CPLimit.m in Sources */,
 				5BE642FF139D49320056F448 /* CPBasicConstraint.m in Sources */,
 				5BE64305139D49320056F448 /* CPSolverI.m in Sources */,
@@ -5073,7 +5062,6 @@
 				5B9EE56E15175D4F00619B47 /* CPObjectQueue.m in Sources */,
 				5B9EE57015175D4F00619B47 /* CPParallel.m in Sources */,
 				5B9EE57215175D4F00619B47 /* CPSelector.m in Sources */,
-				5B9EE57715175D4F00619B47 /* CPTracer.m in Sources */,
 				5B9EE57815175D4F00619B47 /* ORTrail.m in Sources */,
 				5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */,
 				5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */,

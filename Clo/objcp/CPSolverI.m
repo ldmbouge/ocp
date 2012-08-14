@@ -404,7 +404,7 @@
 }
 -(void) limitSolutions: (ORInt) nb in: (ORClosure) cl
 {
-  [_search limitSolutions: nb in: cl];
+   [_search limitSolutions: nb in: cl];
 }
 
 -(void) limitDiscrepancies: (ORInt) nb in: (ORClosure) cl

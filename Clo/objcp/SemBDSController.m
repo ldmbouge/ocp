@@ -31,7 +31,7 @@
    free(_tab);
    [super dealloc];
 }
--(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(ORInt)d
+-(void)pushCont:(NSCont*)k cp:(ORCheckpoint*)cp discrepancies:(ORInt)d
 {
    if (_sz >= _mx) {
       _mx <<= 1;      

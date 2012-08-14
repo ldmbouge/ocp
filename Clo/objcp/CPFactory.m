@@ -29,8 +29,8 @@
 
 void failNow()
 {
-   static CPFailException* fex = nil;
-   if (fex==nil) fex = [CPFailException new];
+   static ORFailException* fex = nil;
+   if (fex==nil) fex = [ORFailException new];
    @throw  CFRetain(fex);
 }
 

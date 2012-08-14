@@ -178,6 +178,7 @@ enum CPVarClass {
 -(id<CPDom>) domain;
 -(ORInt) shift;
 -(ORInt) scale;
+-(id<ORIntVar>)base;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;

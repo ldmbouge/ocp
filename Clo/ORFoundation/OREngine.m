@@ -9,3 +9,16 @@
  
  ***********************************************************************/
 
+#import "ORFoundation/OREngine.h"
+
+@implementation ORFailException
+-(ORFailException*)init
+{
+   self = [super init];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+@end

@@ -22,9 +22,9 @@
    NSCont**        _tab;
    ORInt              _sz;
    ORInt             _mx;
-   Checkpoint**  _cpTab;
+   ORCheckpoint**  _cpTab;
    SemTracer*   _tracer;
-   Checkpoint*  _atRoot;
+   ORCheckpoint*  _atRoot;
    id<CPEngine> _solver;
 }
 -(id)   initSemController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver;

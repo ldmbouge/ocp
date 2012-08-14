@@ -19,7 +19,7 @@
 @interface BDSStack : NSObject {
    struct BDSNode {
       NSCont*     _cont;
-      Checkpoint*   _cp;
+      ORCheckpoint*   _cp;
       ORInt         _disc;
    }; 
 @private   
@@ -28,7 +28,7 @@
    ORInt        _sz;
 }
 -(id)initBDSStack:(ORInt)mx;
--(void)pushCont:(NSCont*)k cp:(Checkpoint*)cp discrepancies:(ORInt)d;
+-(void)pushCont:(NSCont*)k cp:(ORCheckpoint*)cp discrepancies:(ORInt)d;
 -(struct BDSNode)pop;
 -(ORInt)size;
 -(bool)empty;
@@ -41,7 +41,7 @@
    ORInt          _maxDisc;
    ORInt           _nbDisc;
    SemTracer*    _tracer;
-   Checkpoint*   _atRoot;
+   ORCheckpoint*   _atRoot;
    id<CPEngine> _solver;   
 }
 -(id)   initSemBDSController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver;

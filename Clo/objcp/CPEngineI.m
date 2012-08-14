@@ -21,18 +21,6 @@
 #define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
 
-@implementation CPFailException
--(CPFailException*)init
-{
-   self = [super init];
-   return self;
-}
--(void)dealloc
-{
-   [super dealloc];
-}
-@end
-
 /*****************************************************************************************/
 /*                        VarEventNode                                                   */
 /*****************************************************************************************/
@@ -453,7 +441,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       --_propagating;
       return _status;
    }
-   @catch (CPFailException *exception) {
+   @catch (ORFailException *exception) {
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
          AC3reset(_ac3[p]);
       AC5reset(_ac5);
@@ -500,7 +488,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
             [_cStore removeObjectAtIndex:ofs];
          }];
       }
-   } @catch (CPFailException* ex) {
+   } @catch (ORFailException* ex) {
       CFRelease(ex);
       _status = ORFailure;
    }
@@ -531,7 +519,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       ORStatus status = [var bind: val];
       _status = internalPropagate(self,status);
-   } @catch (CPFailException *exception) {
+   } @catch (ORFailException *exception) {
       CFRelease(exception);
       _status = ORFailure;
    }
@@ -543,7 +531,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       ORStatus status =  removeDom(var, val);
       _status = internalPropagate(self,status);
-   } @catch (CPFailException *exception) {
+   } @catch (ORFailException *exception) {
       CFRelease(exception);
       _status = ORFailure;
    }
@@ -554,7 +542,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       ORStatus status = [var updateMax:val-1];
       _status = internalPropagate(self,status);
-   } @catch (CPFailException *exception) {
+   } @catch (ORFailException *exception) {
       CFRelease(exception);
       _status = ORFailure;
    }
@@ -565,7 +553,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       ORStatus status = [var updateMin:val+1];
       _status = internalPropagate(self,status);
-   } @catch (CPFailException *exception) {
+   } @catch (ORFailException *exception) {
       CFRelease(exception);
       _status = ORFailure;
    }
@@ -576,7 +564,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       ORStatus status = [var inside: S];
       _status = internalPropagate(self,status);
-   } @catch (CPFailException *exception) {
+   } @catch (ORFailException *exception) {
       CFRelease(exception);
       _status = ORFailure;
    }

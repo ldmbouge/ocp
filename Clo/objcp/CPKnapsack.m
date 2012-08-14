@@ -243,7 +243,7 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       // F[i][j] is true if it sits on a path from f[-1][0] to one of the F[up][L .. U]
       // with D(_c) = {L..U}
       return f;
-   } @catch(CPFailException* x) {
+   } @catch(ORFailException* x) {
       f -= 1;
       g -= 1;
       for(ORInt k=0;k<_nb+1;k++) {

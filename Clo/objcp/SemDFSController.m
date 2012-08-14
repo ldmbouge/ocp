@@ -23,7 +23,7 @@
    _solver = solver;
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
-   _cpTab = malloc(sizeof(Checkpoint*)*_mx);
+   _cpTab = malloc(sizeof(ORCheckpoint*)*_mx);
    _sz  = 0;
    return self;
 }
@@ -56,7 +56,7 @@
 {
    if (_sz >= _mx) {
       _tab = realloc(_tab,sizeof(NSCont*)*_mx*2);
-      _cpTab = realloc(_cpTab,sizeof(Checkpoint*)*_mx*2);
+      _cpTab = realloc(_cpTab,sizeof(ORCheckpoint*)*_mx*2);
       _mx <<= 1;      
    }
    _tab[_sz]   = k;
@@ -72,7 +72,7 @@
 {
    ORInt ofs = _sz-1;
    if (ofs >= 0) {      
-      Checkpoint* cp = _cpTab[ofs];
+      ORCheckpoint* cp = _cpTab[ofs];
       [_tracer restoreCheckpoint:cp inSolver:_solver];
       [cp release];
       NSCont* k = _tab[ofs];
@@ -97,7 +97,7 @@
 {
    if (_sz >= 1) {
       NSCont* c      = _tab[0];
-      Checkpoint* cp = _cpTab[0];
+      ORCheckpoint* cp = _cpTab[0];
       for(ORInt i=1;i<_sz;i++) {
          _tab[i-1] = _tab[i];
          _cpTab[i-1] = _cpTab[i];

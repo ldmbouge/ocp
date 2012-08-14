@@ -16,15 +16,15 @@
 @protocol CPEngine;
 @protocol ORTracer;
 @protocol ORExplorer;
-@class Checkpoint;
+@class ORCheckpoint;
 
 @interface CPHeist : NSObject {
    NSCont*        _cont;
-   Checkpoint*   _theCP;
+   ORCheckpoint*   _theCP;
 }
--(CPHeist*)initCPProblem:(NSCont*)c from:(Checkpoint*)cp;
+-(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp;
 -(NSCont*)cont;
--(Checkpoint*)theCP;
+-(ORCheckpoint*)theCP;
 @end
 
 @protocol CPStealing
@@ -33,9 +33,9 @@
 @end
 
 
-@class Checkpoint;
+@class ORCheckpoint;
 @protocol ControllerEvt 
-@optional -(void)newChoice:(Checkpoint*)cp onSolver:(id<CPEngine>)solver;
+@optional -(void)newChoice:(ORCheckpoint*)cp onSolver:(id<CPEngine>)solver;
 @end
 
 

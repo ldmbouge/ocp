@@ -14,7 +14,7 @@
 #import "ORTrailI.h"
 
 @implementation CPHeist
--(CPHeist*)initCPProblem:(NSCont*)c from:(Checkpoint*)cp
+-(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp
 {
    self = [super init];
    _cont = [c retain];
@@ -31,7 +31,7 @@
 {
    return _cont;
 }
--(Checkpoint*)theCP
+-(ORCheckpoint*)theCP
 {
    return _theCP;
 }

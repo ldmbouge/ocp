@@ -293,6 +293,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return 1;
 }
+-(id<ORIntVar>)base
+{
+   return self;
+}
 -(NSString*)description
 {
    NSString* dom = [_dom description];

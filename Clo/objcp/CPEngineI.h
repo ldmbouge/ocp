@@ -39,10 +39,6 @@
 -(void)dealloc;
 @end
 
-@interface CPFailException : NSObject
--(CPFailException*)init;
-@end
-
 enum CPEngineState {
    CPOpen    = 0,
    CPClosing = 1,
@@ -67,7 +63,7 @@ enum CPEngineState {
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
-   CPFailException*         _fex;
+   ORFailException*         _fex;
 }
 -(CPEngineI*) initSolver: (ORTrailI*) trail;
 -(void)      dealloc;

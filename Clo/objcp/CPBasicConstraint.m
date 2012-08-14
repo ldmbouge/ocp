@@ -1538,7 +1538,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    @try {
       [_x updateMax: _primalBound - 1];
    }
-   @catch (CPFailException* e) {
+   @catch (ORFailException* e) {
       [e release];
       return ORFailure;
    }
@@ -1598,7 +1598,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    @try {
       [_x updateMin: _primalBound + 1];   
    }
-   @catch (CPFailException* e) {
+   @catch (ORFailException* e) {
       [e release];
       return ORFailure;
    }

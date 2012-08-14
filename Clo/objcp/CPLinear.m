@@ -815,7 +815,7 @@ struct CPVarPair {
       }
       [terms release];
       return status ? ORSkip : ORFailure;
-   } @catch(CPFailException* ex) {
+   } @catch(ORFailException* ex) {
       [terms release];
       @throw;
    }

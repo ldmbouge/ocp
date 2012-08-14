@@ -9,6 +9,10 @@
  
  ***********************************************************************/
 
+#import "Foundation/Foundation.h"
+#import "ORUtilities/ORUtilities.h"
+#import "ORFoundation/ORTracker.h"
+
 @protocol OREngine;
 
 @protocol ORSnapshot
@@ -34,9 +38,15 @@
 -(id<ORSolution>) solution;
 @end
 
+@interface ORFailException : NSObject
+-(ORFailException*)init;
+@end
+
 @protocol OREngine <NSObject,ORTracker,ORSolutionProtocol>
 -(ORStatus)        close;
 -(bool)            closed;
 -(void)            trackObject:(id)obj;
 -(NSMutableArray*) allVars;
+-(id) trail;
+-(void)propagate;
 @end
