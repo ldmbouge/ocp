@@ -11,6 +11,7 @@
 
 #import "CPWDeg.h"
 #import "CPEngineI.h"
+#import "ORFoundation/ORModel.h"
 #import "CPIntVarI.h"
 
 @implementation CPWDeg
@@ -76,7 +77,7 @@
 
 -(void)initInternal:(id<ORVarArray>)t
 {
-   ORLong len = [t count];
+   ORUInt len = (ORUInt) [t count];
    _vars = t;
    _cv = malloc(sizeof(NSSet*)*len);
    memset(_cv,sizeof(NSSet*)*len,0);
@@ -87,12 +88,12 @@
    ORInt low = [t low],up = [t up];
    for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
-      _map[[[_vars at:k] getId]] = k - low;
-      _cv[k - low] = [_vars[k] constraints];
+      _map[[_vars[k] getId]] = k - low;
+      _cv[k - low] = [[_vars at:k] constraints];
    }
    _nbv = len;
    NSArray* allC = [_solver allConstraints];
-   _nbc = [allC count];
+   _nbc = (ORUInt)[allC count];
    _w   = malloc(sizeof(ORUInt)*_nbc);
    _vOfC = malloc(sizeof(id)*_nbc);
    for(ORUInt k=0;k < _nbc;k++) {

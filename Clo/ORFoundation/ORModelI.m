@@ -22,6 +22,7 @@
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
    ORObjectiveFunctionI*    _objective;
+   ORUInt                   _name;
 }
 -(ORModelI*) initORModelI
 {
@@ -31,6 +32,7 @@
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
+   _name = 0;
    return self;
 }
 
@@ -44,6 +46,16 @@
    [_objective release];
    [super dealloc];
 }
+
+-(void) setId: (ORUInt) name
+{
+   _name = name;
+}
+-(id<ORSolver>) solver
+{
+   return nil;
+}
+
 
 -(NSString*) description
 {
@@ -192,6 +204,14 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
+-(NSSet*)constraints
+{
+   if (_impl)
+      return [_impl constraints];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -248,7 +268,10 @@
 {
    _impl = impl;
 }
-
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"Can't concretize an abstract constraint"];
+}
 @end
 
 @implementation ORAlldifferentI

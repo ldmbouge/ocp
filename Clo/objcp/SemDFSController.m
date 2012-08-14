@@ -18,7 +18,7 @@
 
 - (id) initSemController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver
 {
-   self = [super initCPDefaultController];
+   self = [super initORDefaultController];
    _tracer = [tracer retain];
    _solver = solver;
    _mx  = 100;

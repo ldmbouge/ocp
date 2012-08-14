@@ -36,4 +36,9 @@
    [_delegate drawRect:dirtyRect inView:self];
 }
 
+-(void)refresh
+{
+   [self setNeedsDisplay:YES];
+}
+
 @end

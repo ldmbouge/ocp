@@ -28,7 +28,6 @@
 -(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) neq: (id<ORExpr>) e;
 -(id<ORRelation>) neqi: (ORInt) e;
--(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) leq: (id<ORExpr>) e;
 -(id<ORRelation>) leqi: (ORInt) e;
 -(id<ORRelation>) geq: (id<ORExpr>) e;
@@ -40,8 +39,6 @@
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
-
-
 - (void) encodeWithCoder:(NSCoder*) aCoder;
 - (id) initWithCoder:(NSCoder*) aDecoder;
 - (void) visit: (id<ORExprVisitor>)v;

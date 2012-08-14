@@ -19,4 +19,5 @@
 -(void)dealloc;
 -(void)drawRect:(NSRect)dirtyRect;
 -(void)setDelegate:(id)delegate;
+-(void)refresh;
 @end

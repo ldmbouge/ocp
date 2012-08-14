@@ -1383,15 +1383,15 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       for(ORInt k=0;k<_nb;k++)
          _x[k] = [x objectAtIndex:k];
    }
-   else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
-      id<ORIntVarArray> xa = x;
-      id<CPEngine> fdm = (id<CPEngine>) [[xa solver] engine];
+   else if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
+      id<ORIdArray> xa = x;
+      id<CPEngine> fdm = (id<CPEngine>) [[[xa tracker] solver] engine];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
       for(ORInt k=[x low];k <= [x up];k++)
-         _x[i++] = (CPIntVarI*) [xa at:k];
+         _x[i++] = [xa at:k];
    }      
    return self;
 }

@@ -47,7 +47,6 @@
       buildConfiguration = "Release"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
-      enableOpenGLFrameCaptureMode = "0"
       allowLocationSimulation = "YES">
       <BuildableProductRunnable>
          <BuildableReference

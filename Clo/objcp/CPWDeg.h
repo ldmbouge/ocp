@@ -23,8 +23,8 @@
    ORUInt*           _map; 
    id<CPSolver>             _cp;
    CPEngineI*     _solver;
-   ORULong           _nbc;
-   ORULong           _nbv;
+   ORUInt            _nbc;
+   ORUInt            _nbv;
    ORUInt*             _w;
    NSSet**            _cv;
    id*              _vOfC;

@@ -128,7 +128,8 @@
    @synchronized(self) {
       [grid toggleRow:r col:c to:dv];
    }
-   [_drawOn setNeedsDisplay:TRUE];
+   [_drawOn performSelectorOnMainThread:@selector(refresh) withObject:nil waitUntilDone:NO];
+//   [_drawOn setNeedsDisplay:TRUE];
 }
 -(void)watchSearch: (CPSolverI*)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
 {

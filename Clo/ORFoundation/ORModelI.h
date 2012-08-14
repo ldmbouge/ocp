@@ -30,6 +30,7 @@
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
 -(id<ORSolver>) solver;
+-(NSSet*)constraints;
 @end
 
 @interface ORConstraintI : NSObject<ORConstraint>
@@ -57,7 +58,6 @@
 @end
 
 @interface ORModelI : NSObject<ORModel>
-
 -(ORModelI*)              initORModelI;
 -(void)                   dealloc;
 -(NSString*)              description;

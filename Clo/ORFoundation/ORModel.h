@@ -22,7 +22,9 @@
 -(ORUInt) getId;
 -(BOOL) bound;
 -(id<ORSolver>) solver;
+-(NSSet*)constraints;
 @end
+
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
@@ -40,6 +42,8 @@
 -(id<ORVar>) at: (ORInt) value;
 -(void) set: (id<ORVar>) x at: (ORInt) value;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 @end
 
 @protocol ORIntVarArray <ORVarArray>
