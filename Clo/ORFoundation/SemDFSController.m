@@ -9,14 +9,14 @@
 
  ***********************************************************************/
 
-#import "SemDFSController.h"
+#import "ORSemDFSController.h"
 #import "CPError.h"
 #import "CPEngine.h"
 
 
-@implementation SemDFSController 
+@implementation ORSemDFSController
 
-- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver
+- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<OREngine>)solver
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -81,14 +81,14 @@
       if (k!=NULL) 
          [k call];      
       else {
-      	@throw [[CPSearchError alloc] initCPSearchError: "Empty Continuation in backtracking"];
+      	@throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
       }
    }
 }
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   SemDFSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer andSolver:_solver];
+   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer andSolver:_solver];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

@@ -17,17 +17,17 @@
 #import <objcp/CPTracer.h>
 
 
-@interface SemDFSController : ORDefaultController <NSCopying,ORSearchController,CPStealing> {
+@interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,CPStealing> {
 @private
-   NSCont**        _tab;
+   NSCont**          _tab;
    ORInt              _sz;
-   ORInt             _mx;
+   ORInt              _mx;
    ORCheckpoint**  _cpTab;
-   SemTracer*   _tracer;
+   SemTracer*     _tracer;
    ORCheckpoint*  _atRoot;
-   id<CPEngine> _solver;
+   id<OREngine>   _solver;
 }
--(id)   initSemController:(id<ORTracer>)tracer andSolver:(id<CPEngine>)solver;
+-(id)   initSemController:(id<ORTracer>)tracer andSolver:(id<OREngine>)solver;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

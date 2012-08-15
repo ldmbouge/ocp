@@ -15,6 +15,17 @@
 
 @protocol ORTracer;
 
+
+@interface CPHeist : NSObject {
+   NSCont*        _cont;
+   ORCheckpoint*   _theCP;
+}
+-(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp;
+-(NSCont*)cont;
+-(ORCheckpoint*)theCP;
+@end
+
+
 @protocol ORSearchController <NSObject,NSCopying>
 -(void)                      setController: (id<ORSearchController>) controller;
 -(id<ORSearchController>)    controller;

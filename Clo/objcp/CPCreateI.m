@@ -38,27 +38,25 @@
 }
 @end
 
-/*
-@implementation SemCP(Create)
-+(SemCP*) create
+@implementation CPSemSolverI(Create)
++(CPSemSolverI*) create
 {
-   return [[SemCP alloc] init];
+   return [[CPSemSolverI alloc] init];
 }
-+(SemCP*) createRandomized
++(CPSemSolverI*) createRandomized
 {
    [ORStreamManager setRandomized];
-   return [[SemCP alloc] init];
+   return [[CPSemSolverI alloc] init];
 }
-+(SemCP*) createDeterministic
++(CPSemSolverI*) createDeterministic
 {
-   return [[SemCP alloc] init];
+   return [[CPSemSolverI alloc] init];
 }
 
-+(SemCP*) createFor:(CPEngineI*)fdm
++(CPSemSolverI*) createFor:(CPEngineI*)fdm
 {
-   return [[SemCP alloc] initFor:fdm];
+   return [[CPSemSolverI alloc] initFor:fdm];
 }
 @end
-*/
 
 

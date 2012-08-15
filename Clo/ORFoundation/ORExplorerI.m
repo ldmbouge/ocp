@@ -15,12 +15,13 @@
 #import "ORExplorerI.h"
 
 @implementation ORExplorerI
--(id) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer
+-(id) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
 {
    self = [super init];
    _engine = engine;
-   _tracer = [tracer retain];
+   _trail = [[tracer trail] retain];
    _nbc = _nbf = 0;
+   _cFact = [cFact retain];
    return self;
 }
 -(void) dealloc
@@ -28,7 +29,8 @@
    NSLog(@"ORCoreExplorer dealloc called...\n");
    id ctrl = _controller._val;
    [ctrl release];
-   [_tracer release];
+   [_trail release];
+   [_cFact release];
    [super dealloc];
 }
 
@@ -43,20 +45,20 @@
 }
 -(void) setController: (id<ORSearchController>) controller
 {
-   assignTRId(&_controller,controller,[_tracer trail]);
+   assignTRId(&_controller,controller,_trail);
    [controller setup];
 }
 
 -(void) push: (id<ORSearchController>) controller
 {
    [controller setController: _controller._val];
-   assignTRId(&_controller,controller,[_tracer trail]);
+   assignTRId(&_controller,controller,_trail);
 }
 
 -(void) popController
 {
    id<ORSearchController> controller = [_controller._val controller];
-   assignTRId(&_controller,controller,[_tracer trail]);
+   assignTRId(&_controller,controller,_trail);
 }
 -(id<ORSearchController>) controller
 {
@@ -171,7 +173,7 @@
 
 -(void) limitDiscrepancies: (ORInt) nb in: (ORClosure) cl
 {
-   ORLimitDiscrepancies* limit = [[ORLimitDiscrepancies alloc] initORLimitDiscrepancies: nb withTrail: [_tracer trail]];
+   ORLimitDiscrepancies* limit = [[ORLimitDiscrepancies alloc] initORLimitDiscrepancies: nb withTrail: _trail];
    [self push: limit];
    [limit release];
    cl();
@@ -231,11 +233,11 @@
    int to;
    initContinuationLibrary(&to);
    @try {
-      ORDFSController* dfs = [[ORDFSController alloc] initDFSController:_tracer];
+      id<ORSearchController> dfs = [_cFact makeController];
       NSCont* exit = [NSCont takeContinuation];
       if ([exit nbCalls]==0) {
          [dfs addChoice: exit];
-         _controller = makeTRId([_tracer trail],dfs);
+         _controller = makeTRId(_trail,dfs);
          [dfs setup];
          body();
       } else {

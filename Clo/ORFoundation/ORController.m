@@ -12,6 +12,32 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
 
+@implementation CPHeist
+-(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp
+{
+   self = [super init];
+   _cont = [c retain];
+   _theCP = [cp retain];
+   return self;
+}
+-(void)dealloc
+{
+   [_cont letgo];
+   [_theCP release];
+   [super dealloc];
+}
+-(NSCont*)cont
+{
+   return _cont;
+}
+-(ORCheckpoint*)theCP
+{
+   return _theCP;
+}
+@end
+
+
+
 @implementation ORDefaultController
 - (id) initORDefaultController
 {

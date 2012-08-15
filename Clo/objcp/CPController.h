@@ -18,15 +18,6 @@
 @protocol ORExplorer;
 @class ORCheckpoint;
 
-@interface CPHeist : NSObject {
-   NSCont*        _cont;
-   ORCheckpoint*   _theCP;
-}
--(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp;
--(NSCont*)cont;
--(ORCheckpoint*)theCP;
-@end
-
 @protocol CPStealing
 -(CPHeist*) steal;
 -(BOOL)willingToShare;

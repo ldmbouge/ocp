@@ -31,7 +31,7 @@
 @end
 
 
-@interface CPSolverI : NSObject<CPSolver>
+@interface CPCoreSolverI : NSObject<CPSolver>
 {
 @protected
    id<CPEngine>          _engine;
@@ -44,11 +44,10 @@
 @package
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
-   DFSTracer*            _tracer;
    BOOL                  _closed;
 }
--(CPSolverI*)             init;
--(CPSolverI*)             initFor: (CPEngineI*) fdm;
+-(CPCoreSolverI*)         init;
+-(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
 -(void)                   dealloc;
 
 -(NSString*)              description;
@@ -65,7 +64,7 @@
 -(id<CPSolver>)           solver;
 -(id<CPEngine>)           engine;
 -(id<ORExplorer>)         explorer;
--(DFSTracer*)             tracer;
+-(id<ORTracer>)           tracer;
 -(id<CPPortal>)           portal;
 -(id<ORSolution>)         solution;
 
@@ -123,12 +122,29 @@
 -(void)           addModel: (id<ORModel>) model;
 @end
 
+@interface CPSolverI : CPCoreSolverI<CPSolver> {
+   DFSTracer*            _tracer;
+}
+-(CPSolverI*)             init;
+-(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
+-(id<ORTracer>)           tracer;
+@end
+
+@interface CPSemSolverI : CPCoreSolverI<CPSolver> {
+   SemTracer*          _tracer;
+}
+-(CPSemSolverI*)          init;
+-(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
+-(id<ORTracer>)           tracer;
+@end
+
 
 @interface CPConcretizerI : NSObject<ORSolverConcretizer>
--(CPConcretizerI*) initCPConcretizerI: (CPSolverI*) solver;
+-(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(void) alldifferent: (id<ORAlldifferent>) cstr;
 @end
+
 
 /*
 @interface SemCP : CoreCPI {

@@ -41,10 +41,10 @@ void failNow()
 {
     return [CPSolverI create];
 }
-//+(SemCP*) createSemSolver
-//{
-//   return [SemCP create];
-//}
++(id<CPSolver>) createSemSolver
+{
+   return [CPSemSolverI create];
+}
 +(CPSolverI*) createRandomizedSolver
 {
     return [CPSolverI createRandomized];

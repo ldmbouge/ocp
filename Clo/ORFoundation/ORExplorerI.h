@@ -11,18 +11,23 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
+#import <ORFoundation/ORController.h>
 
+@protocol ORControllerFactory<NSObject>
+-(id<ORSearchController>)makeController;
+@end
 
 @interface ORExplorerI : NSObject<ORExplorer>
 {
-   id<OREngine> _engine;
-   id<ORTracer> _tracer;
-   TRId         _controller;
-   ORInt        _nbf;
-   ORInt        _nbc;
+   id<OREngine>           _engine;
+   ORTrailI*               _trail;
+   TRId               _controller;
+   ORInt                     _nbf;
+   ORInt                     _nbc;
+   id<ORControllerFactory> _cFact;
 }
 
--(ORExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer;
+-(ORExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 
 -(void)                dealloc;
 -(ORInt)               nbChoices;

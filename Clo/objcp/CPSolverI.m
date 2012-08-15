@@ -24,6 +24,8 @@
 #import "ORUtilities/ORUtilities.h"
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORExplorerI.h>
+#import <ORFoundation/ORController.h>
+#import <ORFoundation/ORSemDFSController.h>
 
 @implementation CPHeuristicStack
 -(CPHeuristicStack*)initCPHeuristicStack
@@ -66,17 +68,17 @@
 @end
 
 @interface CPInformerPortal : NSObject<CPPortal> {
-   CPSolverI*       _cp;
-   CPEngineI* _solver;
+   CPCoreSolverI*  _cp;
+   CPEngineI*  _solver;
 }
--(CPInformerPortal*) initCPInformerPortal:(CPSolverI*) cp;
+-(CPInformerPortal*) initCPInformerPortal:(id<CPSolver>) cp;
 -(id<ORIdxIntInformer>) retLabel;
 -(id<ORIdxIntInformer>) failLabel;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
 
-@implementation CPSolverI
+@implementation CPCoreSolverI
 -(id) init
 {
    self = [super init];
@@ -86,9 +88,6 @@
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
-   
-   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer];
    _objective = nil;
    _closed = false;
    
@@ -103,8 +102,6 @@
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
-   
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer];
    _objective = nil;
    _closed = false;
    return self;
@@ -120,7 +117,6 @@
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
-   [_tracer release];
    [super dealloc]; 
 }
 -(void) addHeuristic: (id<CPHeuristic>)h
@@ -303,8 +299,6 @@
    _engine = [[aDecoder decodeObject] retain];
    _trail  = [[aDecoder decodeObject] retain];
    _pool = [[NSAutoreleasePool alloc] init];
-   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer];
    return self;
 }
 -(void) close
@@ -470,9 +464,9 @@
 {
   [_search repeat: body onRepeat: onRepeat until: isDone];
 }
--(DFSTracer*)tracer
+-(id<ORTracer>)tracer
 {
-   return _tracer;
+   return nil;
 }
 -(CPConcretizerI*) concretizer
 {
@@ -484,6 +478,175 @@
 }
 @end
 
+@interface ORDFSControllerFactory : NSObject<ORControllerFactory> {
+   id<ORTracer> _tracer;
+}
+-(id)initORDFSController:(id<ORTracer>)tr;
+-(id<ORSearchController>)makeController;
+@end
+
+@implementation ORDFSControllerFactory
+-(id)initORDFSController:(id<ORTracer>)tr
+{
+   self = [super init];
+   _tracer = tr;
+   return self;
+}
+-(id<ORSearchController>)makeController
+{
+   return [[ORDFSController alloc] initDFSController:_tracer];
+}
+@end
+   
+@implementation CPSolverI
+-(CPSolverI*)             init
+{
+   self = [super init];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   id<ORControllerFactory> cFact = [[ORDFSControllerFactory alloc] initORDFSController:_tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   [cFact release];
+   return self;
+}
+-(CPCoreSolverI*)         initFor: (CPEngineI*) fdm
+{
+   self = [super initFor:fdm];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   id<ORControllerFactory> cFact = [[ORDFSControllerFactory alloc] initORDFSController:_tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   [cFact release];
+   return self;
+}
+-(id<ORTracer>)           tracer
+{
+   return _tracer;
+}
+-(void)dealloc
+{
+   [_tracer release];
+   [super dealloc];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
+   // The decoding recreates the pool.
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   id<ORControllerFactory> cFact = [[ORDFSControllerFactory alloc] initORDFSController:_tracer];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   [cFact release];
+   return self;
+}
+@end
+
+
+@interface ORSemDFSControllerFactory : NSObject<ORControllerFactory> {
+   id<ORTracer> _tracer;
+   id<OREngine> _engine;
+}
+-(id)init:(id<ORTracer>)tr engine:(id<OREngine>)engine;
+-(id<ORSearchController>)makeController;
+@end
+
+@implementation ORSemDFSControllerFactory
+-(id)init:(id<ORTracer>)tr engine:(id<OREngine>)engine
+{
+   self = [super init];
+   _tracer = tr;
+   _engine = engine;
+   return self;
+}
+-(id<ORSearchController>)makeController
+{
+   return [[ORSemDFSController alloc] initSemController:_tracer andSolver:_engine];
+}
+@end
+
+@implementation CPSemSolverI
+-(CPSemSolverI*) init
+{
+   self = [super init];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   id<ORControllerFactory> cFact = [[ORSemDFSControllerFactory alloc] init:_tracer engine:_engine];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   [cFact release];
+   return self;
+}
+-(CPCoreSolverI*) initFor: (CPEngineI*) fdm
+{
+   self = [super initFor:fdm];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   id<ORControllerFactory> cFact = [[ORSemDFSControllerFactory alloc] init:_tracer engine:_engine];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   [cFact release];
+   return self;
+}
+-(id<ORTracer>) tracer
+{
+   return _tracer;
+}
+-(void)dealloc
+{
+   [_tracer release];
+   [super dealloc];
+}
+-(void) label: (CPIntVarI*) var with: (ORInt) val
+{
+   ORStatus status = [_engine label: var with: val];
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   [_tracer addCommand:[[CPEqualc alloc] initCPEqualc:var and:val]];    // add after the fail (so if we fail, we don't bother adding it!]
+   [_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) diff: (CPIntVarI*) var with: (ORInt) val
+{
+   ORStatus status = [_engine diff: var with: val];
+   if (status == ORFailure)
+      [_search fail];
+   // add after the fail (so if we fail, we don't bother adding it!]
+   [_tracer addCommand:[[CPDiffc alloc] initCPDiffc:var and:val]];
+   [ORConcurrency pumpEvents];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   id<ORControllerFactory> cFact = [[ORSemDFSControllerFactory alloc] init:_tracer engine:_engine];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   [cFact release];
+   return self;
+}
+-(ORStatus)installCheckpoint:(ORCheckpoint*)cp
+{
+   return [_tracer restoreCheckpoint:cp inSolver:_engine];
+}
+-(ORStatus)installProblem:(ORProblem*)problem
+{
+   return [_tracer restoreProblem:problem inSolver:_engine];
+}
+-(ORCheckpoint*)captureCheckpoint
+{
+   return [_tracer captureCheckpoint];
+}
+-(NSData*)packCheckpoint:(ORCheckpoint*)cp
+{
+   ORCheckpoint* theCP = [_tracer captureCheckpoint];
+   NSData* thePack = [theCP packFromSolver:_engine];
+   [theCP release];
+   return thePack;
+}
+@end
 
 /*
 @implementation SemCP
@@ -705,7 +868,7 @@ void printnl(id x)
 */
 
 @implementation CPInformerPortal
--(CPInformerPortal*) initCPInformerPortal: (CPSolverI*) cp
+-(CPInformerPortal*) initCPInformerPortal: (id<CPSolver>) cp
 {
    self = [super init];
    _cp = cp;
@@ -737,9 +900,9 @@ void printnl(id x)
 
 @implementation CPConcretizerI
 {
-   CPSolverI* _solver;
+   id<CPSolver> _solver;
 }
--(CPConcretizerI*) initCPConcretizerI: (CPSolverI*) solver
+-(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver
 {
    self = [super init];
    _solver = solver;

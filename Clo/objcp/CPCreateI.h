@@ -19,11 +19,9 @@
 +(CPSolverI*) createFor:(CPEngineI*)fdm;
 @end
 
-/*
-@interface SemCP (Create)
-+(SemCP*)            create;
-+(SemCP*)            createRandomized;
-+(SemCP*)            createDeterministic;
-+(SemCP*)            createFor:(CPEngineI*)fdm;
+@interface CPSemSolverI (Create)
++(CPSemSolverI*)            create;
++(CPSemSolverI*)            createRandomized;
++(CPSemSolverI*)            createDeterministic;
++(CPSemSolverI*)            createFor:(CPEngineI*)fdm;
 @end
-*/

@@ -17,7 +17,7 @@
 #import "CPEngine.h"
 #import "CPExplorerI.h"
 #import "CPController.h"
-#import "SemDFSController.h"
+#import "ORSemDFSController.h"
 #import "CPLimit.h"
 #import "CPSolverI.h"
 #import "objcp/CPFactory.h"
