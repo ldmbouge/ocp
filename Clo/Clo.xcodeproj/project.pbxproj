@@ -322,7 +322,7 @@
 		5B9EE57D15175D4F00619B47 /* CPValueConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B92975513A01F45002AA188 /* CPValueConstraint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B92975613A01F45002AA188 /* CPValueConstraint.m */; };
 		5B9EE58115175D4F00619B47 /* ORSemDFSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B074A26142E5B2D0055B72D /* ORSemDFSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE58215175D4F00619B47 /* SemDFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A27142E5B2D0055B72D /* SemDFSController.m */; };
+		5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A27142E5B2D0055B72D /* ORSemDFSController.m */; };
 		5B9EE58315175D4F00619B47 /* SemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* SemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE58415175D4F00619B47 /* SemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* SemBDSController.m */; };
 		5B9EE5871517BE3700619B47 /* libCPLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE52815175CF900619B47 /* libCPLib.a */; };
@@ -403,7 +403,7 @@
 		5BEAD79615ABE39600A012FE /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5BEAD79715ABE39C00A012FE /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B074A26142E5B2D0055B72D /* ORSemDFSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BEC256115DBF60F0084DEE8 /* SemDFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A27142E5B2D0055B72D /* SemDFSController.m */; };
+		5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A27142E5B2D0055B72D /* ORSemDFSController.m */; };
 		5BEC4A6A156E5F3A0085F2B0 /* CPIBS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BEC4A68156E5F3A0085F2B0 /* CPIBS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BEC4A6B156E5F3A0085F2B0 /* CPIBS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEC4A69156E5F3A0085F2B0 /* CPIBS.m */; };
 		5BEEF61213970B6F002ADBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1413,7 +1413,7 @@
 
 /* Begin PBXFileReference section */
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B074A27142E5B2D0055B72D /* SemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B074A27142E5B2D0055B72D /* ORSemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
 		5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPWDeg.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPWDeg.m; sourceTree = "<group>"; };
@@ -3123,7 +3123,7 @@
 				B10ECF15150C38CB00B82836 /* ORSetI.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				5B074A26142E5B2D0055B72D /* ORSemDFSController.h */,
-				5B074A27142E5B2D0055B72D /* SemDFSController.m */,
+				5B074A27142E5B2D0055B72D /* ORSemDFSController.m */,
 				B1A0124A15CCAE71001ED0D4 /* ORTracer.h */,
 				B1A0124B15CCAE72001ED0D4 /* ORTracer.m */,
 				5BE64310139D49610056F448 /* ORTrail.h */,
@@ -5064,7 +5064,7 @@
 				5B9EE57815175D4F00619B47 /* ORTrail.m in Sources */,
 				5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */,
 				5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */,
-				5B9EE58215175D4F00619B47 /* SemDFSController.m in Sources */,
+				5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */,
 				5B9EE58415175D4F00619B47 /* SemBDSController.m in Sources */,
 				5B8C7E551586801F007042CA /* UIBoardController.m in Sources */,
 			);
@@ -5200,7 +5200,7 @@
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
 				B1CC82F815D27C66008DE335 /* ORModelI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
-				5BEC256115DBF60F0084DEE8 /* SemDFSController.m in Sources */,
+				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -32,7 +32,7 @@ int main (int argc, const char * argv[])
       [model add: [ORFactory alldifferent: xn]];
 
       NSLog(@"Model: %@",model);
-      id<CPSolver> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSemSolver];
       [cp addModel: model];
       
       [cp solveAll: ^{
