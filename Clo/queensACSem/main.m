@@ -11,6 +11,8 @@
 
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
@@ -30,20 +32,39 @@ int main (int argc, const char * argv[])
       [model add: [ORFactory alldifferent: x]];
       [model add: [ORFactory alldifferent: xp]];
       [model add: [ORFactory alldifferent: xn]];
+      id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
       id<CPSolver> cp = [CPFactory createSemSolver];
       [cp addModel: model];
-      
-      [cp solveAll: ^{
-         for(ORInt i = 0; i <= n; i++)
-            [CPLabel var: x[i]];
-         printf("x = [");
-         for(ORInt i = 0; i <= n; i++)
-            printf("%d%c",[x[i] value],i < n ? ',' : ']');
-         printf("\n");
+      [cp solve: ^{
+         [[cp explorer] applyController: [[ORSemBDSController alloc] initSemController:[cp tracer] andSolver:[cp engine]]
+                                     in: ^ {
+                                        [cp nestedSolveAll:^{
+                                           for(ORInt i = 0; i <= n; i++) {
+                                              id<ORIntVar> xi = [x[i] dereference];
+                                              while (![xi bound]) {
+                                                 int v = [xi min];
+                                                 [cp try:^{
+                                                    //NSLog(@"?x[%d] == %d with x[%d] def %@",i,v,i,xi);
+                                                    [cp label:xi with:v];
+                                                    //NSLog(@"+x[%d] == %d with x[%d] def %@",i,v,i,xi);
+                                                 } or:^{
+                                                    //NSLog(@"?x[%d] != %d with x[%d] def %@",i,v,i,xi);
+                                                    [cp diff:xi with:v];
+                                                    //NSLog(@"-x[%d] != %d with x[%d] def %@",i,v,i,xi);
+                                                 }];
+                                              }
+                                           }
+                                           printf("x = [");
+                                           for(ORInt i = 0; i <= n; i++)
+                                              printf("%d%c",[x[i] value],i < n ? ',' : ']');
+                                           printf("\n");
+                                           [nbSol incr];
+                                        }];
+                                     }];
       }];
-      NSLog(@"Quitting");
+      NSLog(@"Quitting #SOL=%d",[nbSol value]);
       [cp release];
       [CPFactory shutdown];
    }

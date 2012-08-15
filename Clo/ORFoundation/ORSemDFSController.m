@@ -10,9 +10,6 @@
  ***********************************************************************/
 
 #import "ORSemDFSController.h"
-#import "CPError.h"
-#import "CPEngine.h"
-
 
 @implementation ORSemDFSController
 
@@ -21,7 +18,7 @@
    self = [super initORDefaultController];
    _tracer = [tracer retain];
    _solver = solver;
-   _mx  = 100;
+   _mx  = 64;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _cpTab = malloc(sizeof(ORCheckpoint*)*_mx);
    _sz  = 0;
@@ -93,7 +90,7 @@
    return ctrl;
 }
 
--(CPHeist*)steal
+-(ORHeist*)steal
 {
    if (_sz >= 1) {
       NSCont* c      = _tab[0];
@@ -103,7 +100,7 @@
          _cpTab[i-1] = _cpTab[i];
       }
       --_sz;
-      CPHeist* rv = [[CPHeist alloc] initCPProblem:c from:cp];
+      ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
       [c release];
       [cp release];
       return rv;

@@ -12,12 +12,10 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTrailI.h>
 #import <ORFoundation/cont.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPController.h>
-#import <objcp/CPTracer.h>
+#import <ORFoundation/ORController.h>
+#import <ORFoundation/ORTracer.h>
 
-
-@interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,CPStealing> {
+@interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> {
 @private
    NSCont**          _tab;
    ORInt              _sz;
@@ -34,5 +32,5 @@
 -(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;
--(CPHeist*)steal;
+-(ORHeist*)steal;
 @end

@@ -18,12 +18,6 @@
 @protocol ORExplorer;
 @class ORCheckpoint;
 
-@protocol CPStealing
--(CPHeist*) steal;
--(BOOL)willingToShare;
-@end
-
-
 @class ORCheckpoint;
 @protocol ControllerEvt 
 @optional -(void)newChoice:(ORCheckpoint*)cp onSolver:(id<CPEngine>)solver;

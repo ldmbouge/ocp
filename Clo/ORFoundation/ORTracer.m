@@ -588,21 +588,22 @@
          ORCommandList* theList = [toRestore peekAt:j];
          [_trStack pushNode:[theList getNodeId]];
          [_trail incMagic];
-         bool pOk = [theList apply:^bool(id<ORCommand> c) {
-            return [c doIt];
-         }];
-         if (!pOk) {
-            //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
-            return ORFailure;
-         }
          @try {
+            bool pOk = [theList apply:^bool(id<ORCommand> c) {
+               return [c doIt];
+            }];
+            if (!pOk) {
+               //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
+               return ORFailure;
+            }
             [fdm propagate];
-         } @catch(ORFailException* ex) {
-            @throw ex;
-         } @finally {
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
-         }
+         } @catch(ORFailException* ex) {
+            [_cmds pushCommandList:theList];
+            assert([_cmds size] == [_trStack size]);
+            return ORFailure;
+         } 
       }
    }
    return ORSuspend;

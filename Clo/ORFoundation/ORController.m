@@ -12,8 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/cont.h>
 
-@implementation CPHeist
--(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp
+@implementation ORHeist
+-(ORHeist*)initORHeist:(NSCont*)c from:(ORCheckpoint*)cp
 {
    self = [super init];
    _cont = [c retain];

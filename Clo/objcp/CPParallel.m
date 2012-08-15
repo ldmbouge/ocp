@@ -75,7 +75,7 @@
 {
    _publishing = YES;
    ORCheckpoint* theCP = [_explorer captureCheckpoint];
-   CPHeist* stolen = [_controller steal];
+   ORHeist* stolen = [_controller steal];
    id<ORSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_explorer onPool:_pool];
    [_explorer restoreCheckpoint:[stolen theCP]];
    [_explorer nestedSolveAll:^() { [[stolen cont] call];} 

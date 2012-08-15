@@ -14,13 +14,18 @@
 #import <ORFoundation/ORTracer.h>
 
 @protocol ORTracer;
+@class ORHeist;
 
+@protocol ORStealing
+-(ORHeist*) steal;
+-(BOOL)willingToShare;
+@end
 
-@interface CPHeist : NSObject {
-   NSCont*        _cont;
+@interface ORHeist : NSObject {
+   NSCont*          _cont;
    ORCheckpoint*   _theCP;
 }
--(CPHeist*)initCPProblem:(NSCont*)c from:(ORCheckpoint*)cp;
+-(ORHeist*)initORHeist:(NSCont*)c from:(ORCheckpoint*)cp;
 -(NSCont*)cont;
 -(ORCheckpoint*)theCP;
 @end

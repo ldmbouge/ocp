@@ -134,8 +134,6 @@
 		5B815B1F15A2E4FD0063ECD7 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; };
 		5B815B2015A2E4FD0063ECD7 /* CPBitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7408B015628C1400C05277 /* CPBitMacros.h */; };
 		5B815B2115A2E4FD0063ECD7 /* CPFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F251582654F008DF214 /* CPFirstFail.h */; };
-		5B85DE131438B2D500E4E133 /* SemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* SemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B85DE141438B2D500E4E133 /* SemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* SemBDSController.m */; };
 		5B896B5A158933B4002E145B /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
 		5B896B5B158933B4002E145B /* CPLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B896B59158933B4002E145B /* CPLinear.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
@@ -323,8 +321,8 @@
 		5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B92975613A01F45002AA188 /* CPValueConstraint.m */; };
 		5B9EE58115175D4F00619B47 /* ORSemDFSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B074A26142E5B2D0055B72D /* ORSemDFSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B074A27142E5B2D0055B72D /* ORSemDFSController.m */; };
-		5B9EE58315175D4F00619B47 /* SemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* SemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE58415175D4F00619B47 /* SemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* SemBDSController.m */; };
+		5B9EE58315175D4F00619B47 /* ORSemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* ORSemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5B9EE5871517BE3700619B47 /* libCPLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE52815175CF900619B47 /* libCPLib.a */; };
 		5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAEE08415AE9883006CEE1E /* ORParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAEE08515AE9883006CEE1E /* ORParallel.m */; };
@@ -413,6 +411,8 @@
 		5BF8F02C1520E2BA00821CE2 /* ORConcurrency.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178B151DC9CB008AB289 /* ORConcurrency.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BF8F02D1520E2BA00821CE2 /* ORConcurrencyI.h in Headers */ = {isa = PBXBuildFile; fileRef = B12B178D151DCA16008AB289 /* ORConcurrencyI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5BF8F02E1520E31A00821CE2 /* ORCrFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B149BF5C151E759600FC5887 /* ORCrFactory.m */; };
+		5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* ORSemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5BFD594415A3ACA500825BC3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5BFD594A15A3ACA500825BC3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5BFD594815A3ACA500825BC3 /* InfoPlist.strings */; };
 		5BFD594E15A3ACA500825BC3 /* ORFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BFD594D15A3ACA500825BC3 /* ORFoundation.m */; };
@@ -1494,8 +1494,8 @@
 		5B7D695D15B9C91D00C9A10C /* market2s-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "market2s-Prefix.pch"; sourceTree = "<group>"; };
 		5B7D695E15B9C91D00C9A10C /* market2s.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = market2s.1; sourceTree = "<group>"; };
 		5B7D696C15B9C99200C9A10C /* market.dta */ = {isa = PBXFileReference; lastKnownFileType = text; path = market.dta; sourceTree = "<group>"; };
-		5B85DE111438B2D500E4E133 /* SemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B85DE121438B2D500E4E133 /* SemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = SemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B85DE111438B2D500E4E133 /* ORSemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5B85DE121438B2D500E4E133 /* ORSemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B896B58158933B3002E145B /* CPLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPLinear.h; sourceTree = "<group>"; };
 		5B896B59158933B4002E145B /* CPLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLinear.m; sourceTree = "<group>"; };
 		5B8B12DB15A3BF8000300385 /* ORError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORError.m; sourceTree = "<group>"; };
@@ -2850,8 +2850,6 @@
 				5B729C40153F79A4001BE95A /* CPWatch.m */,
 				5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */,
 				5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */,
-				5B85DE111438B2D500E4E133 /* SemBDSController.h */,
-				5B85DE121438B2D500E4E133 /* SemBDSController.m */,
 				5B73E55B151F45F60043192D /* NSBoardController.h */,
 				5B73E55C151F45F60043192D /* NSBoardController.m */,
 				5B9ABCF71391329D000997E5 /* Supporting Files */,
@@ -3122,6 +3120,8 @@
 				B10ECF14150C38CB00B82836 /* ORSetI.h */,
 				B10ECF15150C38CB00B82836 /* ORSetI.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
+				5B85DE111438B2D500E4E133 /* ORSemBDSController.h */,
+				5B85DE121438B2D500E4E133 /* ORSemBDSController.m */,
 				5B074A26142E5B2D0055B72D /* ORSemDFSController.h */,
 				5B074A27142E5B2D0055B72D /* ORSemDFSController.m */,
 				B1A0124A15CCAE71001ED0D4 /* ORTracer.h */,
@@ -3587,7 +3587,6 @@
 				B189033F142C266F007F6EAD /* CPTrigger.h in Headers */,
 				5B7408B115628C1400C05277 /* CPBitMacros.h in Headers */,
 				B11ADE6F14C00310003DA748 /* CPArray.h in Headers */,
-				5B85DE131438B2D500E4E133 /* SemBDSController.h in Headers */,
 				5B0ECEBE1562C4FB000D1A08 /* CPHeuristic.h in Headers */,
 				5B0ECEC11562C5E3000D1A08 /* CPWDeg.h in Headers */,
 				B181E12815D7B62800AB44DA /* CPSolver.h in Headers */,
@@ -3654,7 +3653,7 @@
 				5B9EE54415175D4F00619B47 /* CPBasicConstraint.h in Headers */,
 				5B9EE57D15175D4F00619B47 /* CPValueConstraint.h in Headers */,
 				5B9EE54B15175D4F00619B47 /* CPBitDom.h in Headers */,
-				5B9EE58315175D4F00619B47 /* SemBDSController.h in Headers */,
+				5B9EE58315175D4F00619B47 /* ORSemBDSController.h in Headers */,
 				5BF8F02C1520E2BA00821CE2 /* ORConcurrency.h in Headers */,
 				5B729C43153F89E6001BE95A /* CPWatch.h in Headers */,
 				5B8C7E3E15867E8B007042CA /* CPBitArray.h in Headers */,
@@ -3735,6 +3734,7 @@
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
 				B1CC82F715D27C66008DE335 /* ORModelI.h in Headers */,
 				5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */,
+				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4947,7 +4947,6 @@
 				B1595B5013C1E813001FCB61 /* CPArrayI.m in Sources */,
 				B17ABE9313CC852C00DC7288 /* CPIntVarI.m in Sources */,
 				B1890340142C266F007F6EAD /* CPTrigger.m in Sources */,
-				5B85DE141438B2D500E4E133 /* SemBDSController.m in Sources */,
 				B17EB196146C55010097E18D /* CPConstraintI.m in Sources */,
 				B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */,
 				B169F9C914EF87D500B2F3A6 /* CPConstraint.m in Sources */,
@@ -5065,7 +5064,7 @@
 				5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */,
 				5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */,
 				5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */,
-				5B9EE58415175D4F00619B47 /* SemBDSController.m in Sources */,
+				5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */,
 				5B8C7E551586801F007042CA /* UIBoardController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5201,6 +5200,7 @@
 				B1CC82F815D27C66008DE335 /* ORModelI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
+				5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
