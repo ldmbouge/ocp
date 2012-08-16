@@ -23,15 +23,20 @@
 #import "ORSolver.h" 
 
 @implementation ORFactory
++(id<ORTrail>) trail
+{
+   return [[ORTrailI alloc] init];
+}
+
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
    [tracker trackObject: o];
    return o;
 }
-+(id<ORTrailIableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
++(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
 {
-   ORTrailIableIntI* o = [[ORTrailIableIntI alloc] initORTrailIableIntI: [solver trail] value:value];
+   ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [solver trail] value:value];
    [solver trackObject: o];
    return o;
 }

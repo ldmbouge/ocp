@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import "ORTrail.h"
 #import "ORTrailI.h"
 #import <assert.h>
 
@@ -242,6 +243,8 @@
 }
 @end
 
+@implementation ORTrailFunction
+
 TRInt makeTRInt(ORTrailI* trail,int val)
 {
    return (TRInt){val,[trail magic]-1};
@@ -270,6 +273,121 @@ TRDouble  makeTRDouble(ORTrailI* trail,double val)
 {
    return (TRDouble){val,[trail magic]-1};
 }
+
+ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
+{
+   TRInt* ei = a._entries + i;
+   if (ei->_mgc != [a._trail magic]) {
+      trailIntFun(a._trail, & ei->_val);
+      ei->_mgc = [a._trail magic];
+   }
+   return ei->_val = val;
+}
+
+void trailIntFun(ORTrailI* t,int* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGInt;
+   s->intVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
+
+void trailUIntFun(ORTrailI* t,unsigned* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGUnsigned;
+   s->uintVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
+void trailIdNCFun(ORTrailI* t,id* ptr)
+{
+   id obj = *ptr;
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGIdNC;
+   s->idVal = obj;
+   ++(t->_seg[t->_cSeg]->top);
+}
+
+void assignTRInt(TRInt* v,int val,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      trailIntFun(trail, &v->_val);
+   }
+   v->_val = val;
+}
+
+void  assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      trailUIntFun(trail, &v->_val);
+   }
+   v->_val = val;
+}
+void  assignTRLong(TRLong* v,long long val,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      [trail trailLong:&v->_val];
+   }
+   v->_val = val;
+}
+void  assignTRDouble(TRDouble* v,double val,ORTrailI* trail)
+{
+   if (v->_mgc != [trail magic]) {
+      v->_mgc = [trail magic];
+      [trail trailDouble:&v->_val];
+   }
+   v->_val = val;
+}
+void  assignTRId(TRId* v,id val,ORTrailI* trail)
+{
+   [trail trailId:&v->_val];
+   [v->_val release];
+   v->_val = [val retain];
+}
+void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
+{
+   trailIdNCFun(trail, &v->_val);
+   v->_val = val;
+}
+ORInt getTRIntArray(TRIntArray a,int i)
+{
+   return a._entries[i]._val;
+}
+void  incrFXInt(FXInt* v,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      v->_val = 0;
+   }
+   v->_val++;
+}
+int getFXInt(FXInt* v,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      v->_val = 0;
+   }
+   return v->_val;
+}
+ORInt trailMagic(ORTrailI* trail)
+{
+   return trail->_magic;
+}
+@end
 
 @implementation ORTrailIStack
 -(ORTrailIStack*) initTrailStack: (ORTrailI*)tr
@@ -342,12 +460,12 @@ void freeTRIntArray(TRIntArray a)
    free(a._entries);
 }
 
-@implementation ORTrailIableIntI
+@implementation ORTrailableIntI
 {
    TRInt    _trint;
    ORTrailI* _trail;
 }
--(ORTrailIableIntI*) initORTrailIableIntI: (ORTrailI*) trail value:(ORInt) value
+-(ORTrailableIntI*) initORTrailableIntI: (ORTrailI*) trail value:(ORInt) value
 {
    self = [super init];
    _trail = trail;

@@ -15,9 +15,12 @@
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORSet.h"
 #import "ORModelI.h"
+#import "ORTrail.h"
+
 @protocol ORSearchController;
 
 @interface ORFactory : NSObject
++(id<ORTrail>) trail;
 +(id<ORInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
@@ -47,7 +50,7 @@
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo;
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
 
-+(id<ORTrailIableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value;
++(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value;
 @end
 
 #define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]
