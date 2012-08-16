@@ -130,7 +130,7 @@
 -(id<ORTracer>)           tracer;
 @end
 
-@interface CPSemSolverI : CPCoreSolverI<CPSolver> {
+@interface CPSemSolverI : CPCoreSolverI<CPSemSolver> {
    SemTracer*          _tracer;
 }
 -(CPSemSolverI*)          init;

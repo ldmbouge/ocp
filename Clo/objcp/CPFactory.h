@@ -19,7 +19,7 @@
 
 @interface CPFactory : NSObject
 +(id<CPSolver>) createSolver;
-+(id<CPSolver>) createSemSolver;
++(id<CPSemSolver>) createSemSolver;
 +(id<CPSolver>) createRandomizedSolver;
 +(id<CPSolver>) createDeterministicSolver;
 //+(id<CPSolver>) createSemSolverFor:(id<CPEngine>)fdm;

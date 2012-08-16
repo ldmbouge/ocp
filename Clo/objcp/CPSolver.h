@@ -81,3 +81,7 @@
 -(void)           addModel: (id<ORModel>) model;
 @end
 
+@protocol CPSemSolver <CPSolver>
+@end
+
+

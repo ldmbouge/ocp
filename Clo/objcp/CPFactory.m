@@ -41,7 +41,7 @@ void failNow()
 {
     return [CPSolverI create];
 }
-+(id<CPSolver>) createSemSolver
++(id<CPSemSolver>) createSemSolver
 {
    return [CPSemSolverI create];
 }
