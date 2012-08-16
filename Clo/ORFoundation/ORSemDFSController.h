@@ -17,13 +17,13 @@
 
 @interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> {
 @private
-   NSCont**          _tab;
-   ORInt              _sz;
-   ORInt              _mx;
-   ORCheckpoint**  _cpTab;
-   SemTracer*     _tracer;
-   ORCheckpoint*  _atRoot;
-   id<OREngine>   _solver;
+   NSCont**            _tab;
+   ORInt                _sz;
+   ORInt                _mx;
+   id<ORCheckpoint>* _cpTab;
+   SemTracer*       _tracer;
+   id<ORCheckpoint> _atRoot;
+   id<OREngine>     _solver;
 }
 -(id)   initSemController:(id<ORTracer>)tracer andSolver:(id<OREngine>)solver;
 -(void) dealloc;

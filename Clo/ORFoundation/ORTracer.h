@@ -14,10 +14,10 @@
 
 @protocol ORCommand;
 @protocol OREngine;
+@protocol ORProblem;
+@protocol ORCheckpoint;
 @class ORCommandList;
 @class ORTrailI;
-@class ORCheckpoint;
-@class ORProblem;
 @class SemTracer;
 @class ORCmdStack;
 
@@ -30,10 +30,24 @@
 -(void)       trust;
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;
-@optional -(ORCheckpoint*) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(ORCheckpoint*)acp  inSolver:(id<OREngine>) engine;
-@optional -(ORStatus) restoreProblem:(ORProblem*)p inSolver:(id<OREngine>) engine;
-@optional -(ORProblem*) captureProblem;
+@optional -(id<ORCheckpoint>) captureCheckpoint;
+@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<OREngine>) engine;
+@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<OREngine>) engine;
+@optional -(id<ORProblem>) captureProblem;
+@end
+
+@protocol ORProblem <NSObject>
+-(void) addCommand: (id<ORCommand>) c;
+-(NSData*) packFromSolver: (id<OREngine>) engine;
+-(bool) apply: (bool(^)(id<ORCommand>))clo;
+-(ORCommandList*) theList;
+@end
+
+@protocol ORCheckpoint <NSObject>
+-(void)pushCommandList:(ORCommandList*)aList;
+-(void)setNode:(ORInt)nid;
+-(ORInt)nodeId;
+-(NSData*)packFromSolver: (id<OREngine>) engine;
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
@@ -48,33 +62,6 @@
 -(ORInt)      level;
 @end
 
-@interface ORProblem : NSObject<NSCoding> {    // a semantic sub-problem description (as a set of constraints aka commands)
-   ORCommandList* _cstrs;
-}
--(ORProblem*) init;
--(void) dealloc;
--(NSString*) description;
--(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<OREngine>) engine;
--(bool) apply: (bool(^)(id<ORCommand>))clo;
--(ORCommandList*) theList;
-+(ORProblem*) unpack: (NSData*)msg fOREngine:(id<ORSolver>) solver;
-@end
-
-@interface ORCheckpoint : NSObject<NSCoding> { // a semantic path description (for incremental jumping around).
-   ORCmdStack* _path;
-   ORInt     _nodeId;
-}
--(ORCheckpoint*)initCheckpoint: (ORUInt) sz;
--(void)dealloc;
--(NSString*)description;
--(void)pushCommandList:(ORCommandList*)aList;
--(void)setNode:(ORInt)nid;
--(ORInt)nodeId;
--(NSData*)packFromSolver: (id<OREngine>) engine;
-+(ORCheckpoint*)unpack:(NSData*)msg fOREngine:(id<ORSolver>) solver;
-@end
-
 @interface SemTracer : NSObject<ORTracer>
 -(SemTracer*) initSemTracer: (ORTrailI*) trail;
 -(void)       dealloc;
@@ -84,10 +71,15 @@
 -(void)       reset;
 -(ORTrailI*)   trail;
 -(void)       addCommand:(id<ORCommand>)com;
--(ORCheckpoint*)captureCheckpoint;
--(ORStatus)   restoreCheckpoint:(ORCheckpoint*)acp  inSolver: (id<OREngine>) engine;
--(ORStatus)   restoreProblem:(ORProblem*)p  inSolver: (id<OREngine>) engine;
--(ORProblem*)  captureProblem;
+-(id<ORCheckpoint>)captureCheckpoint;
+-(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<OREngine>) engine;
+-(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<OREngine>) engine;
+-(id<ORProblem>)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;
+@end
+
+@interface SemTracer (Packing)
++(id<ORProblem>)      unpackProblem:(NSData*)msg fOREngine:(id<ORSolver>) solver;
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<ORSolver>) solver;
 @end

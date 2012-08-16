@@ -13,7 +13,7 @@
 #import <ORFoundation/cont.h>
 
 @implementation ORHeist
--(ORHeist*)initORHeist:(NSCont*)c from:(ORCheckpoint*)cp
+-(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp
 {
    self = [super init];
    _cont = [c retain];
@@ -30,7 +30,7 @@
 {
    return _cont;
 }
--(ORCheckpoint*)theCP
+-(id<ORCheckpoint>)theCP
 {
    return _theCP;
 }

@@ -19,18 +19,18 @@
 
 @interface ORSemBDSController : ORDefaultController<NSCopying,ORSearchController> {
 @private
-   BDSStack*        _tab;
-   BDSStack*       _next;
-   ORInt          _maxDisc;
-   ORInt           _nbDisc;
-   SemTracer*    _tracer;
-   ORCheckpoint*   _atRoot;
-   id<OREngine> _solver;
+   BDSStack*             _tab;
+   BDSStack*            _next;
+   ORInt             _maxDisc;
+   ORInt              _nbDisc;
+   SemTracer*         _tracer;
+   id<ORCheckpoint>   _atRoot;
+   id<OREngine>       _solver;
 }
 -(id)   initSemController:(id<ORTracer>)tracer andSolver:(id<OREngine>)solver;
 -(void) dealloc;
--(void)       setup;
--(void)       cleanup;
+-(void) setup;
+-(void) cleanup;
 -(ORInt) addChoice:(NSCont*)k;
 -(void) trust;
 -(void) fail;

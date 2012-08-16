@@ -627,21 +627,21 @@
    [cFact release];
    return self;
 }
--(ORStatus)installCheckpoint:(ORCheckpoint*)cp
+-(ORStatus)installCheckpoint:(id<ORCheckpoint>)cp
 {
    return [_tracer restoreCheckpoint:cp inSolver:_engine];
 }
--(ORStatus)installProblem:(ORProblem*)problem
+-(ORStatus)installProblem:(id<ORProblem>)problem
 {
    return [_tracer restoreProblem:problem inSolver:_engine];
 }
--(ORCheckpoint*)captureCheckpoint
+-(id<ORCheckpoint>)captureCheckpoint
 {
    return [_tracer captureCheckpoint];
 }
--(NSData*)packCheckpoint:(ORCheckpoint*)cp
+-(NSData*)packCheckpoint:(id<ORCheckpoint>)cp
 {
-   ORCheckpoint* theCP = [_tracer captureCheckpoint];
+   id<ORCheckpoint> theCP = [_tracer captureCheckpoint];
    NSData* thePack = [theCP packFromSolver:_engine];
    [theCP release];
    return thePack;

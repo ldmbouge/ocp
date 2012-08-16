@@ -12,6 +12,32 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTracer.h>
 
+@interface ORProblemI : NSObject<NSCoding,ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
+   ORCommandList* _cstrs;
+}
+-(ORProblemI*) init;
+-(void) dealloc;
+-(NSString*) description;
+-(void) addCommand: (id<ORCommand>) c;
+-(NSData*) packFromSolver: (id<OREngine>) engine;
+-(bool) apply: (bool(^)(id<ORCommand>))clo;
+-(ORCommandList*) theList;
+@end
+
+@interface ORCheckpointI : NSObject<NSCoding,ORCheckpoint> { // a semantic path description (for incremental jumping around).
+   ORCmdStack* _path;
+   ORInt     _nodeId;
+}
+-(ORCheckpointI*)initCheckpoint: (ORUInt) sz;
+-(void)dealloc;
+-(NSString*)description;
+-(void)pushCommandList:(ORCommandList*)aList;
+-(void)setNode:(ORInt)nid;
+-(ORInt)nodeId;
+-(NSData*)packFromSolver: (id<OREngine>) engine;
+@end
+
+
 @interface ORCmdStack : NSObject<NSCoding> {
 @private
    ORCommandList** _tab;
@@ -202,8 +228,8 @@
 }
 @end
 
-@implementation ORProblem
--(ORProblem*)init
+@implementation ORProblemI
+-(ORProblemI*)init
 {
    self = [super init];
    _cstrs = [[ORCommandList alloc] initCPCommandList];
@@ -274,8 +300,10 @@
       [proxies[k] release];
    return thePack;
 }
+@end
 
-+(ORProblem*)unpack:(NSData*)msg fOREngine:(id<ORSolver>)cp
+@implementation SemTracer (Packing)
++(id<ORProblem>)unpackProblem:(NSData*)msg fOREngine:(id<ORSolver>)cp
 {
    id<OREngine> fdm = [cp engine];
    ORUInt nbProxies = 0;
@@ -286,15 +314,31 @@
    for(ORUInt k = 0;k<nbProxies;k++) {
       proxies[k] = [decoder decodeObject];
    }
-   ORProblem* theProblem = [[decoder decodeObject] retain];
+   id<ORProblem> theProblem = [[decoder decodeObject] retain];
    [decoder release];
    [arp release];
    return theProblem;
 }
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<ORSolver>) solver
+{
+   id arp = [[NSAutoreleasePool alloc] init];
+   id<OREngine> fdm = [solver engine];
+   ORUInt nbProxies = 0;
+   CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
+   [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
+   id* proxies = alloca(sizeof(id)*nbProxies);
+   for(ORUInt k = 0;k<nbProxies;k++) {
+      proxies[k] = [decoder decodeObject];
+   }
+   id<ORCheckpoint> theCP = [[decoder decodeObject] retain];
+   [decoder release];
+   [arp release];
+   return theCP;
+}
 @end
 
-@implementation ORCheckpoint
--(ORCheckpoint*)initCheckpoint:(ORUInt)sz
+@implementation ORCheckpointI
+-(ORCheckpointI*)initCheckpoint:(ORUInt)sz
 {
    self = [super init];
    _path = [[ORCmdStack alloc] initCPCmdStack:sz];
@@ -369,22 +413,6 @@
    for(ORInt k=0;k<nbProxies;k++)
       [proxies[k] release];
    return thePack;
-}
-+(ORCheckpoint*)unpack:(NSData*)msg fOREngine:(id<ORSolver>) solver
-{
-   id arp = [[NSAutoreleasePool alloc] init];
-   id<OREngine> fdm = [solver engine];
-   ORUInt nbProxies = 0;
-   CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
-   [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   id* proxies = alloca(sizeof(id)*nbProxies);
-   for(ORUInt k = 0;k<nbProxies;k++) {
-      proxies[k] = [decoder decodeObject];
-   }
-   ORCheckpoint* theCP = [[decoder decodeObject] retain];
-   [decoder release];
-   [arp release];
-   return theCP;
 }
 @end
 
@@ -540,20 +568,20 @@
 {
    [_cmds addCommand:com];
 }
--(ORCheckpoint*)captureCheckpoint
+-(id<ORCheckpoint>)captureCheckpoint
 {
    ORUInt ub = [_cmds size];
    //bool isEmpty = [[_cmds peekAt:ub-1] empty];
-   ORCheckpoint* ncp = [[ORCheckpoint alloc] initCheckpoint:[_cmds size]];
+   id<ORCheckpoint> ncp = [[ORCheckpointI alloc] initCheckpoint:[_cmds size]];
    for(ORInt i=0;i< ub;i++)
       [ncp pushCommandList: [_cmds peekAt:i]];
    [ncp setNode: [self pushNode]];
    return ncp;
 }
--(ORProblem*)captureProblem
+-(id<ORProblem>)captureProblem
 {
    ORUInt ub = [_cmds size];
-   ORProblem* np = [[ORProblem alloc] init];
+   ORProblemI* np = [[ORProblemI alloc] init];
    for(ORInt i=0;i< ub;i++) {
       [[_cmds peekAt:i] apply:^bool(id<ORCommand> theCommand) {
          [np addCommand:[theCommand retain]];
@@ -563,7 +591,7 @@
    return np;
 }
 
--(ORStatus)restoreCheckpoint:(ORCheckpoint*)acp inSolver:(id<OREngine>)fdm
+-(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<OREngine>)fdm
 {
    //NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
    ORCmdStack* toRestore = [acp commands];
@@ -609,7 +637,7 @@
    return ORSuspend;
 }
 
--(ORStatus)restoreProblem:(ORProblem*)p inSolver:(id<OREngine>)fdm
+-(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<OREngine>)fdm
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];

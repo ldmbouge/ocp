@@ -22,12 +22,12 @@
 @end
 
 @interface ORHeist : NSObject {
-   NSCont*          _cont;
-   ORCheckpoint*   _theCP;
+   NSCont*             _cont;
+   id<ORCheckpoint>   _theCP;
 }
--(ORHeist*)initORHeist:(NSCont*)c from:(ORCheckpoint*)cp;
+-(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp;
 -(NSCont*)cont;
--(ORCheckpoint*)theCP;
+-(id<ORCheckpoint>)theCP;
 @end
 
 

@@ -16,11 +16,10 @@
 @protocol CPEngine;
 @protocol ORTracer;
 @protocol ORExplorer;
-@class ORCheckpoint;
+@protocol ORCheckpoint;
 
-@class ORCheckpoint;
-@protocol ControllerEvt 
-@optional -(void)newChoice:(ORCheckpoint*)cp onSolver:(id<CPEngine>)solver;
+@protocol ControllerEvt
+@optional -(void)newChoice:(id<ORCheckpoint>)cp onSolver:(id<CPEngine>)solver;
 @end
 
 

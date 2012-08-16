@@ -13,9 +13,9 @@
 
 @interface BDSStack : NSObject {
    struct BDSNode {
-      NSCont*     _cont;
-      ORCheckpoint*   _cp;
-      ORInt         _disc;
+      NSCont*          _cont;
+      id<ORCheckpoint>   _cp;
+      ORInt            _disc;
    };
 @private
    struct BDSNode* _tab;
@@ -23,7 +23,7 @@
    ORInt        _sz;
 }
 -(id)initBDSStack:(ORInt)mx;
--(void)pushCont:(NSCont*)k cp:(ORCheckpoint*)cp discrepancies:(ORInt)d;
+-(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d;
 -(struct BDSNode)pop;
 -(ORInt)size;
 -(bool)empty;
@@ -47,7 +47,7 @@
    free(_tab);
    [super dealloc];
 }
--(void)pushCont:(NSCont*)k cp:(ORCheckpoint*)cp discrepancies:(ORInt)d
+-(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d
 {
    if (_sz >= _mx) {
       _mx <<= 1;      

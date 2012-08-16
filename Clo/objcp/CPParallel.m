@@ -17,7 +17,7 @@
    id<ORExplorer>  _explorer;
    PCObjectQueue*      _pool;   
    NSCont**             _tab;
-   ORCheckpoint**       _cpTab;
+   id<ORCheckpoint>*  _cpTab;
    int                   _sz;
    int                   _mx;
 }
@@ -74,7 +74,7 @@
 -(void) publishWork
 {
    _publishing = YES;
-   ORCheckpoint* theCP = [_explorer captureCheckpoint];
+   id<ORCheckpoint> theCP = [_explorer captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    id<ORSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_explorer onPool:_pool];
    [_explorer restoreCheckpoint:[stolen theCP]];
@@ -126,7 +126,7 @@
    _pool = [pcq retain];   
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
-   _cpTab = malloc(sizeof(ORCheckpoint*)*_mx);
+   _cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
    _sz  = 0;
    return self;
 }
@@ -151,7 +151,7 @@
 {
    if (_sz >= _mx) {
       _tab = realloc(_tab,sizeof(NSCont*)*_mx*2);
-      _cpTab = realloc(_cpTab,sizeof(ORCheckpoint*)*_mx*2);
+      _cpTab = realloc(_cpTab,sizeof(id<ORCheckpoint>)*_mx*2);
       _mx <<= 1;      
    }
    _tab[_sz]   = k;
@@ -163,7 +163,7 @@
 {
    long ofs = _sz-1;
    if (ofs >= 0) {      
-      ORCheckpoint* cp = _cpTab[ofs];
+      id<ORCheckpoint> cp = _cpTab[ofs];
       [_explorer restoreCheckpoint:cp];
       [cp release];
       NSCont* k = _tab[ofs];
@@ -276,7 +276,7 @@
 
 -(void)setupWork:(NSData*)root forCP:(SemCP*)cp
 {
-   ORProblem* theSub = [[ORProblem unpack:root fOREngine:cp] retain];
+   id<ORProblem> theSub = [[SemTracer unpackProblem:root fOREngine:cp] retain];
    ORStatus status = [cp installProblem:theSub];
    [theSub release];
    if (status == ORFailure)
