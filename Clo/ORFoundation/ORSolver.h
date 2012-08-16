@@ -31,6 +31,7 @@
 -(id<OREngine>)    engine;
 -(id<ORObjective>) objective;
 
+
 -(id<ORSolverConcretizer>) concretizer;
 -(void)            addModel: (id<ORModel>) model;
 

@@ -21,7 +21,6 @@
 #import <ORFoundation/ORControl.h>
 #import <ORFoundation/ORCommand.h>
 #import <ORFoundation/ORTracer.h>
-#import <ORFoundation/ORTrailI.h>
 #import <ORFoundation/ORTrail.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORExplorer.h>

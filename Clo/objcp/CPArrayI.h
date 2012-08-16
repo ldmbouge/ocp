@@ -21,7 +21,7 @@
 @interface CPTRIntArrayI : NSObject<CPTRIntArray,CPVirtual,NSCoding> {
     @package
     id<CPSolver> _cp;
-    ORTrailI*     _trail;
+    ORTrailI*    _trail;
     TRInt*       _array;
     ORInt        _low;
     ORInt        _up;
@@ -46,7 +46,7 @@
 @interface CPTRIntMatrixI : NSObject<CPTRIntMatrix,CPVirtual,NSCoding> {
 @private
     id<CPSolver>    _cp;
-    ORTrailI*        _trail;
+    id<ORTrail>        _trail;
     TRInt*          _flat;
     ORInt           _arity;
     id<ORIntRange>* _range;

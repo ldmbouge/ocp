@@ -52,7 +52,7 @@
 
 @implementation CPLimitDiscrepancies
 
--(id) initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrailI*) trail
+-(id) initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (id<ORTrail>) trail
 {
   self = [super initCPDefaultController];
   _trail = trail;

@@ -24,7 +24,7 @@ enum CPDomClass {
 @interface CPBoundsDom : NSObject<CPDom,NSCoding,NSCopying> {
 @package
    enum CPDomClass    _dc;
-   ORTrailI*        _trail;
+   id<ORTrail>        _trail;
    TRInt             _min;
    TRInt             _max;
    TRInt              _sz;
@@ -32,7 +32,7 @@ enum CPDomClass {
    ORInt            _imax;
 }
 -(CPBoundsDom*)initBoundsDomFor:(CPBoundsDom*)dom;
--(CPBoundsDom*)initBoundsDomFor:(ORTrailI*)trail low:(ORInt)low up:(ORInt)up;
+-(CPBoundsDom*)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
@@ -66,7 +66,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
    UBType  _updateMin;
    UBType  _updateMax;   
 }
--(CPBitDom*)initBitDomFor:(ORTrailI*)trail low:(ORInt)low up:(ORInt)up;
+-(CPBitDom*)initBitDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(void)dealloc;
 -(bool)get:(ORInt)b;
 -(bool)member:(ORInt)b;

@@ -19,6 +19,7 @@
 #import "CPArrayI.h"
 #import "CPExprI.h"
 #import "ORFoundation/ORArrayI.h"
+#import "ORFoundation/ORTrailI.h"
 
 @implementation ORIdArrayI (CP)
 -(id<CPSolver>) cp 
@@ -78,7 +79,7 @@
 {
     if (idx < _low || idx > _up)
         @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in CPTRIntArrayElement"];
-    assignTRInt(_array + idx,value,_trail);
+    inline_assignTRInt(_array + idx,value,_trail);
 }
 
 -(ORInt) low

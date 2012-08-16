@@ -36,7 +36,7 @@
 }
 +(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
 {
-   ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [solver trail] value:value];
+   ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [[solver engine] trail] value:value];
    [solver trackObject: o];
    return o;
 }

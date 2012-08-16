@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTracer.h>
+#import "ORTrailI.h"
 
 @interface ORProblemI : NSObject<NSCoding,ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
    ORCommandList* _cstrs;
@@ -420,7 +421,7 @@
 @implementation DFSTracer
 {
 @private
-   ORTrailI*          _trail;
+   ORTrailI*        _trail;
    ORTrailIStack*   _trStack;
    ORInt          _lastNode;
    TRInt             _level;
@@ -472,7 +473,7 @@
    }
    [self pushNode];
 }
--(ORTrailI*)   trail
+-(id<ORTrail>)   trail
 {
    return _trail;
 }
@@ -560,7 +561,7 @@
    assert(_level._val == 0);
    [self pushNode];
 }
--(ORTrailI*)   trail
+-(id<ORTrail>)   trail
 {
    return _trail;
 }

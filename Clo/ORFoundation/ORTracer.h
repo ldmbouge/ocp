@@ -26,7 +26,7 @@
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrailI*)   trail;
+-(id<ORTrail>)   trail;
 -(void)       trust;
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;
@@ -51,25 +51,25 @@
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
--(DFSTracer*) initDFSTracer: (ORTrailI*) trail;
+-(DFSTracer*) initDFSTracer: (id<ORTrail>) trail;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrailI*)   trail;
+-(id<ORTrail>)   trail;
 -(void)       trust;
 -(ORInt)      level;
 @end
 
 @interface SemTracer : NSObject<ORTracer>
--(SemTracer*) initSemTracer: (ORTrailI*) trail;
+-(SemTracer*) initSemTracer: (id<ORTrail>) trail;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
 -(id)         popToNode: (ORInt) n;
 -(void)       reset;
--(ORTrailI*)   trail;
+-(id<ORTrail>)   trail;
 -(void)       addCommand:(id<ORCommand>)com;
 -(id<ORCheckpoint>)captureCheckpoint;
 -(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<OREngine>) engine;

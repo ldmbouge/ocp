@@ -104,3 +104,148 @@
 -(void)  incr;
 -(void)  decr;
 @end
+
+@implementation ORTrailI (InlineTrailFunction)
+static inline TRInt inline_makeTRInt(ORTrailI* trail,int val)
+{
+   return (TRInt){val,[trail magic]-1};
+}
+static inline FXInt inline_makeFXInt(ORTrailI* trail)
+{
+   return (FXInt){0,[trail magic]-1};
+}
+static inline TRUInt inline_makeTRUInt(ORTrailI* trail,unsigned val)
+{
+   return (TRUInt) {val,[trail magic]-1};
+}
+static inline TRLong inline_makeTRLong(ORTrailI* trail,long long val)
+{
+   return (TRLong) {val,[trail magic]-1};
+}
+static inline TRId  inline_makeTRId(ORTrailI* trail,id val)
+{
+   return (TRId) {val};
+}
+static inline TRIdNC  inline_makeTRIdNC(ORTrailI* trail,id val)
+{
+   return (TRIdNC) {val};
+}
+static inline TRDouble  inline_makeTRDouble(ORTrailI* trail,double val)
+{
+   return (TRDouble){val,[trail magic]-1};
+}
+
+static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
+{
+   TRInt* ei = a._entries + i;
+   if (ei->_mgc != [a._trail magic]) {
+      trailIntFun(a._trail, & ei->_val);
+      ei->_mgc = [a._trail magic];
+   }
+   return ei->_val = val;
+}
+
+static inline void inline_trailIntFun(ORTrailI* t,int* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGInt;
+   s->intVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
+
+static inline void inline_trailUIntFun(ORTrailI* t,unsigned* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGUnsigned;
+   s->uintVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
+static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
+{
+   id obj = *ptr;
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGIdNC;
+   s->idVal = obj;
+   ++(t->_seg[t->_cSeg]->top);
+}
+
+static inline void inline_assignTRInt(TRInt* v,int val,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      trailIntFun(trail, &v->_val);
+   }
+   v->_val = val;
+}
+
+static inline void  inline_assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      trailUIntFun(trail, &v->_val);
+   }
+   v->_val = val;
+}
+static inline void  inline_assignTRLong(TRLong* v,long long val,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      [trail trailLong:&v->_val];
+   }
+   v->_val = val;
+}
+static inline void  inline_assignTRDouble(TRDouble* v,double val,ORTrailI* trail)
+{
+   if (v->_mgc != [trail magic]) {
+      v->_mgc = [trail magic];
+      [trail trailDouble:&v->_val];
+   }
+   v->_val = val;
+}
+static inline void  inline_assignTRId(TRId* v,id val,ORTrailI* trail)
+{
+   [trail trailId:&v->_val];
+   [v->_val release];
+   v->_val = [val retain];
+}
+static inline void  inline_assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
+{
+   trailIdNCFun(trail, &v->_val);
+   v->_val = val;
+}
+static inline ORInt inline_getTRIntArray(TRIntArray a,int i)
+{
+   return a._entries[i]._val;
+}
+static inline void  inline_incrFXInt(FXInt* v,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      v->_val = 0;
+   }
+   v->_val++;
+}
+static inline int inline_getFXInt(FXInt* v,ORTrailI* trail)
+{
+   ORInt cmgc = trail->_magic;
+   if (v->_mgc != cmgc) {
+      v->_mgc = cmgc;
+      v->_val = 0;
+   }
+   return v->_val;
+}
+static inline ORInt inline_trailMagic(ORTrailI* trail)
+{
+   return trail->_magic;
+}
+@end

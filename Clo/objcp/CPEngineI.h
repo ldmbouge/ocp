@@ -47,7 +47,7 @@ enum CPEngineState {
 
 @interface CPEngineI : NSObject <CPEngine,NSCoding> {
    enum CPEngineState       _state;
-   ORTrailI*                 _trail;
+   id<ORTrail>                 _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
@@ -65,7 +65,7 @@ enum CPEngineState {
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
 }
--(CPEngineI*) initSolver: (ORTrailI*) trail;
+-(CPEngineI*) initSolver: (id<ORTrail>) trail;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
 -(void)      trackVariable:(id)var;

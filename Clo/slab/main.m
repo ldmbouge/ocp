@@ -230,6 +230,7 @@ int main1(int argc, const char * argv[])
     return 0;
 }
 */
+/*
 int main1(int argc, const char * argv[])
 {
    id<CPSolver> cp = [CPFactory createSolver];
@@ -449,5 +450,5 @@ int realmain(int argc, const char * argv[])
    }
    return 0;
 }
-
+*/
 

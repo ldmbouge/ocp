@@ -30,10 +30,10 @@
 @interface CPLimitDiscrepancies : ORDefaultController <NSCopying,ORSearchController> 
 {
   ORInt     _maxDiscrepancies;
-  ORTrailI*  _trail;
+  id<ORTrail>  _trail;
   TRInt     _nbDiscrepancies;
 }
--(id)        initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrailI*) trail;
+-(id)        initCPLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (id<ORTrail>) trail;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
 -(void)      fail;

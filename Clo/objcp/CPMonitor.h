@@ -35,7 +35,7 @@
 
 @interface CPVarInfo : NSObject {
    id       _theVar;
-   ORTrailI* _trail;
+   id<ORTrail> _trail;
    TRDouble _oldDSize;
    FXInt    _active;
    @package
@@ -43,6 +43,6 @@
    double   _final;
    double   _root;
 }
--(CPVarInfo*)initCPVarInfo:(id)v trail:(ORTrailI*)trail;
+-(CPVarInfo*)initCPVarInfo:(id)v trail:(id<ORTrail>)trail;
 -(void)makeActive;
 @end

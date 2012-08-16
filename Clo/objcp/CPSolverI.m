@@ -178,7 +178,7 @@
 {
    return [_search nbFailures];
 }
--(ORTrailI*) trail
+-(id<ORTrail>) trail
 {
    return _trail;
 }
