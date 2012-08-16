@@ -32,6 +32,8 @@
 +(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createIBS:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createFF:(id<CPSolver>)cp;
++(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp;
++(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp;
 @end;
 
 void failNow();

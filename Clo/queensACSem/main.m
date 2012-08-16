@@ -35,10 +35,10 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      id<CPSolver> cp = [CPFactory createSemSolver];
+      id<CPSemSolver> cp = [CPFactory createSemSolver];
       [cp addModel: model];
       [cp solve: ^{
-         [[cp explorer] applyController: [[ORSemBDSController alloc] initSemController:[cp tracer] andSolver:[cp engine]]
+         [[cp explorer] applyController: [CPFactory bdsController:cp]
                                      in: ^ {
                                         [cp nestedSolveAll:^{
                                            for(ORInt i = 0; i <= n; i++) {

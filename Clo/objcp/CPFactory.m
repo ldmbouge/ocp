@@ -26,6 +26,8 @@
 #import "CPFirstFail.h"
 #import "CPEngineI.h"
 #import "CPArrayI.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import "ORFoundation/ORSemBDSController.h"
 
 void failNow()
 {
@@ -89,7 +91,15 @@ void failNow()
 {
    return [[CPFirstFail alloc] initCPFirstFail:cp restricted:nil];
 }
-+(void) shutdown 
++(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp
+{
+   return [[ORSemDFSController alloc] initSemController:[cp tracer] andSolver:[cp engine]];
+}
++(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp
+{
+   return [[ORSemBDSController alloc] initSemController:[cp tracer] andSolver:[cp engine]];
+}
++(void) shutdown
 {
    [NSCont shutdown];
 }

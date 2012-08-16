@@ -15,6 +15,7 @@
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORSet.h"
 #import "ORModelI.h"
+@protocol ORSearchController;
 
 @interface ORFactory : NSObject
 +(id<ORInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
