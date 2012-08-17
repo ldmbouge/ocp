@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORUtilities.h"
+#import "ORSolver.h"
 
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;
@@ -93,4 +94,30 @@ ORInt getTRIntArray(TRIntArray a,int i);
 void  incrFXInt(FXInt* v,id<ORTrail> trail);
 int   getFXInt(FXInt* v,id<ORTrail> trail);
 ORInt trailMagic(id<ORTrail> trail);
+@end
+
+// Struct-Based array of trailable Integers
+@protocol ORTRIntArray <NSObject>
+-(ORInt)  at: (ORInt) value;
+-(void)  set: (ORInt) value at: (ORInt) value;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORSolver>) solver;
+@end
+
+// Struct-Based matrix of trailable Integers
+
+@protocol ORTRIntMatrix <NSObject>
+-(ORInt) at: (ORInt) i1 : (ORInt) i2;
+-(ORInt) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2;
+-(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(ORInt) add: (ORInt) delta at: (ORInt) i1 : (ORInt) i2;
+-(ORInt) add: (ORInt) delta at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<ORSolver>) solver;
 @end

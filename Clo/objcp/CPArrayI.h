@@ -18,16 +18,16 @@
 #import "CPIntVarI.h"
 #import "CPError.h"
 
-@interface CPTRIntArrayI : NSObject<CPTRIntArray,CPVirtual,NSCoding> {
+@interface CPTRIntArrayI : NSObject<ORTRIntArray,CPVirtual,NSCoding> {
     @package
-    id<CPSolver> _cp;
+    id<ORSolver> _cp;
     ORTrailI*    _trail;
     TRInt*       _array;
     ORInt        _low;
     ORInt        _up;
     ORInt        _nb;
 }
--(CPTRIntArrayI*) initCPTRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R;
+-(CPTRIntArrayI*) initCPTRIntArray: (id<ORSolver>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
@@ -43,10 +43,10 @@
 
 
 
-@interface CPTRIntMatrixI : NSObject<CPTRIntMatrix,CPVirtual,NSCoding> {
+@interface CPTRIntMatrixI : NSObject<ORTRIntMatrix,CPVirtual,NSCoding> {
 @private
-    id<CPSolver>    _cp;
-    id<ORTrail>        _trail;
+    id<ORSolver>    _cp;
+    id<ORTrail>     _trail;
     TRInt*          _flat;
     ORInt           _arity;
     id<ORIntRange>* _range;
@@ -56,8 +56,8 @@
     ORInt*          _i;
     ORInt           _nb;
 }
--(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(CPTRIntMatrixI*) initCPTRIntMatrix: (id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(CPTRIntMatrixI*) initCPTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(CPTRIntMatrixI*) initCPTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;  
 -(ORInt) at: (ORInt) i0 : (ORInt) i1; 
 -(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2; 

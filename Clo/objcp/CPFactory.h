@@ -80,8 +80,8 @@ void failNow();
 
 +(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity;
 
-+(id<CPTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
-+(id<CPTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
++(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
 
