@@ -14,7 +14,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORUtilities/ORUtilities.h>
 #import <objcp/CPData.h>
-#import <objcp/CPArray.h>
 #import <objcp/CPHeuristic.h>
 
 @protocol ORSearchController;

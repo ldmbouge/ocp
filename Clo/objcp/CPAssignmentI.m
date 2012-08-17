@@ -13,7 +13,6 @@
 #import "CPBasicConstraint.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
-#import "CPArrayI.h"
 #import "CPError.h"
 
 @implementation CPAssignment

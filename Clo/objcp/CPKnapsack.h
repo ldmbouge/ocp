@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
 #import "CPBitDom.h"
-#import "objcp/CPArray.h"
 
 @class CPIntVarI;
 @interface CPKnapsack : CPActiveConstraint<NSCoding> {

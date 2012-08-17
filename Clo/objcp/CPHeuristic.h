@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPEngine.h>
 #import <objcp/CPData.h>
-#import <objcp/CPArray.h>
 
 @protocol CPHeuristic <NSObject>
 -(float) varOrdering: (id<ORIntVar>)x;

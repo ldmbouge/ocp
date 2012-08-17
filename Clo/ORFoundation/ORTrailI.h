@@ -13,6 +13,7 @@
 #import <ORUtilities/ORUtilities.h>
 #import "ORData.h"
 #import "ORTrail.h"
+#import "ORSet.h"
 
 #define NBSLOT 8192
 
@@ -249,3 +250,60 @@ static inline ORInt inline_trailMagic(ORTrailI* trail)
    return trail->_magic;
 }
 @end
+
+@interface ORTRIntArrayI : NSObject<ORTRIntArray,NSCoding> {
+   @package
+   id<ORSolver> _solver;
+   ORTrailI*    _trail;
+   TRInt*       _array;
+   ORInt        _low;
+   ORInt        _up;
+   ORInt        _nb;
+}
+-(ORTRIntArrayI*) initORTRIntArray: (id<ORSolver>) cp range: (id<ORIntRange>) R;
+-(void) dealloc;
+-(ORInt) at: (ORInt) value;
+-(void) set: (ORInt) value at: (ORInt) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORSolver>) solver;
+-(ORInt) virtualOffset;
+- (void) encodeWithCoder:(NSCoder *) aCoder;
+- (id) initWithCoder:(NSCoder *) aDecoder;
+@end
+
+
+
+@interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> {
+@private
+   id<ORSolver>    _solver;
+   ORTrailI*       _trail;
+   TRInt*          _flat;
+   ORInt           _arity;
+   id<ORIntRange>* _range;
+   ORInt*          _low;
+   ORInt*          _up;
+   ORInt*          _size;
+   ORInt*          _i;
+   ORInt           _nb;
+}
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(void) dealloc;
+-(ORInt) at: (ORInt) i0 : (ORInt) i1;
+-(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1;
+-(void) set: (ORInt) value at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1;
+-(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(id<ORIntRange>) range: (ORInt) i;
+-(NSUInteger) count;
+-(id<ORSolver>) solver;
+-(id<OREngine>) engine;
+-(ORInt) virtualOffset;
+-(void) encodeWithCoder: (NSCoder*) aCoder;
+-(id) initWithCoder: (NSCoder*) aDecoder;
+@end
+

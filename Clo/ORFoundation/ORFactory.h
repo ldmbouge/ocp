@@ -51,6 +51,9 @@
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
 
 +(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value;
++(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
+
 @end
 
 #define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]

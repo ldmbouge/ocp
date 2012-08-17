@@ -11,7 +11,6 @@
 
 #import "CPKnapsack.h"
 #import "CPIntVarI.h"
-#import "CPArray.h"
 #import "CPEngineI.h"
 
 @interface KSNode : NSObject {

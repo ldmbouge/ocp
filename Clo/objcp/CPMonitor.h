@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPArray.h>
 
 @class CPVarInfo;
 

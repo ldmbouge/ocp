@@ -19,7 +19,6 @@
 #import "CPExplorerI.h"
 #import "CPBasicConstraint.h"
 #import "CPSelector.h"
-#import "CPArrayI.h"
 #import "CPIntVarI.h"
 #import "ORUtilities/ORUtilities.h"
 #import <ORFoundation/ORFoundation.h>

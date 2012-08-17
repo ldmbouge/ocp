@@ -80,14 +80,15 @@ void failNow();
 
 +(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity;
 
-+(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
-+(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
 
 +(id<CPRandomStream>) randomStream: (id<ORTracker>) cp ;
 +(id<CPZeroOneStream>) zeroOneStream: (id<ORTracker>) cp ;
 +(id<CPUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r;
+
++(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 @end
 
 @interface CPFactory (expression)

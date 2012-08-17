@@ -13,7 +13,6 @@
 #import "CPTypes.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
-#import "CPArrayI.h"
 #import "CPCardinality.h"
 
 static void computeCardinalities(id<ORIntVarArray> ax,

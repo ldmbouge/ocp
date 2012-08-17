@@ -25,7 +25,6 @@
 #import "CPIBS.h"
 #import "CPFirstFail.h"
 #import "CPEngineI.h"
-#import "CPArrayI.h"
 #import "ORFoundation/ORSemDFSController.h"
 #import "ORFoundation/ORSemBDSController.h"
 
@@ -310,16 +309,12 @@ void failNow()
 
 +(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R
 {
-    CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: (CPSolverI*) cp range: R];    
-    [[((CPSolverI*) cp) solver] trackObject: o];
-    return o;    
+   return [ORFactory TRIntArray: cp range: R];   
 }
 
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
-    CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: (CPSolverI*) cp range: R1 : R2];    
-    [[((CPSolverI*) cp) solver] trackObject: o];
-    return o;    
+   return [ORFactory TRIntMatrix: cp range: R1 : R2];
 }
 
 +(id<CPRandomStream>) randomStream: (id<ORTracker>) cp

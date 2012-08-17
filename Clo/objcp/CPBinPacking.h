@@ -11,7 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
-#import <objcp/CPArray.h>
 #import <objcp/CPConstraintI.h>
 
 @interface CPBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {

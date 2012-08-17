@@ -163,6 +163,20 @@
    return o;
 }
 
++(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) solver range: (id<ORIntRange>) R
+{
+   ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: (id<ORSolver>) solver range: R];
+   [solver trackObject: o];
+   return o;
+}
+
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) solver range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
+{
+   ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: (id<ORSolver>) solver range: R1 : R2];
+   [solver trackObject: o];
+   return o;
+}
+
 @end
 
 @implementation ORFactory (Expressions)
