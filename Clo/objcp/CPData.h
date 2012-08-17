@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPSolution.h>
 
 @protocol CP;
 @protocol CPExprVisitor;

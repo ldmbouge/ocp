@@ -201,7 +201,6 @@
 		5B8F1A2315A2D464009CCE42 /* CPLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B896B59158933B4002E145B /* CPLinear.m */; };
 		5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B91C335159FAB2D00158EEA /* CPElement.m */; };
 		5B8F1A2515A2D495009CCE42 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B8F1A2C15A2D495009CCE42 /* CPSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9B63E81578C6FB00441452 /* CPSolution.h */; };
 		5B8F1A2F15A2D495009CCE42 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8F1A3515A2D495009CCE42 /* CPElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B91C334159FAB2D00158EEA /* CPElement.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B91C336159FAB2D00158EEA /* CPElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B91C334159FAB2D00158EEA /* CPElement.h */; };
@@ -249,7 +248,6 @@
 		5B9ABD0F1391329D000997E5 /* objcpTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 5B9ABD0E1391329D000997E5 /* objcpTests.h */; };
 		5B9ABD111391329D000997E5 /* objcpTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9ABD101391329D000997E5 /* objcpTests.m */; };
 		5B9ABD2C13913495000997E5 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B9B63E91578C6FB00441452 /* CPSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9B63E81578C6FB00441452 /* CPSolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9B63EC1578C76B00441452 /* CPSolutionI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9B63EA1578C76B00441452 /* CPSolutionI.h */; };
 		5B9B63ED1578C76B00441452 /* CPSolutionI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B63EB1578C76B00441452 /* CPSolutionI.m */; };
 		5B9EE50815175CCC00619B47 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
@@ -1560,7 +1558,6 @@
 		5B9ABD0D1391329D000997E5 /* objcpTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objcpTests-Prefix.pch"; sourceTree = "<group>"; };
 		5B9ABD0E1391329D000997E5 /* objcpTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objcpTests.h; sourceTree = "<group>"; };
 		5B9ABD101391329D000997E5 /* objcpTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = objcpTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5B9B63E81578C6FB00441452 /* CPSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSolution.h; sourceTree = "<group>"; };
 		5B9B63EA1578C76B00441452 /* CPSolutionI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSolutionI.h; sourceTree = "<group>"; };
 		5B9B63EB1578C76B00441452 /* CPSolutionI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPSolutionI.m; sourceTree = "<group>"; };
 		5B9EE50515175CCB00619B47 /* iCP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCP.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2788,7 +2785,6 @@
 				5B8E16C11505BB5700D3C698 /* CPParallel.m */,
 				B15A312D13A018A9002401A0 /* CPSelector.h */,
 				B15A312E13A018A9002401A0 /* CPSelector.m */,
-				5B9B63E81578C6FB00441452 /* CPSolution.h */,
 				5B9B63EB1578C76B00441452 /* CPSolutionI.m */,
 				5B9B63EA1578C76B00441452 /* CPSolutionI.h */,
 				B181E12715D7B62600AB44DA /* CPSolver.h */,
@@ -3546,7 +3542,6 @@
 				5B63C2D4156DB05E00C65B2A /* CPStatisticsMonitor.h in Headers */,
 				5BEC4A6A156E5F3A0085F2B0 /* CPIBS.h in Headers */,
 				5B150018156EB0E800897252 /* CPBaseHeuristic.h in Headers */,
-				5B9B63E91578C6FB00441452 /* CPSolution.h in Headers */,
 				5BE19F2715826550008DF214 /* CPFirstFail.h in Headers */,
 				B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */,
 				5B8E16C21505BB5700D3C698 /* CPParallel.h in Headers */,
@@ -3635,7 +3630,6 @@
 				5B9EE56515175D4F00619B47 /* ORFactoryI.h in Headers */,
 				5B9EE56715175D4F00619B47 /* CPIntVarI.h in Headers */,
 				5BF8F02D1520E2BA00821CE2 /* ORConcurrencyI.h in Headers */,
-				5B8F1A2C15A2D495009CCE42 /* CPSolution.h in Headers */,
 				5B8C7E531586801F007042CA /* CPLib-Prefix.pch in Headers */,
 				5B8C7E541586801F007042CA /* UIBoardController.h in Headers */,
 			);

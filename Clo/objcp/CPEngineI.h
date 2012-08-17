@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPEngine.h>
-#import <objcp/CPSolution.h>
 #import <objcp/CPConstraintI.h>
 
 @class ORTrailI;
