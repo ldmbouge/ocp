@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORTrailI.h>
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>

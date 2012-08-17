@@ -16,7 +16,6 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"
-#import "ORTrailI.h"
 #import "CPBitDom.h"
 
 
