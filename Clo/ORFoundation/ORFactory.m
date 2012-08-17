@@ -181,6 +181,12 @@
    [[x tracker] trackObject: o];
    return o;
 }
++(id<ORConstraint>) algebraicConstraint:(id<ORModel>) model expr: (id<ORRelation>) exp
+{
+   id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
+   [model trackObject: o];
+   return o;
+}
 
 +(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) solver range: (id<ORIntRange>) R
 {

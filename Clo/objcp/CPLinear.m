@@ -226,6 +226,10 @@ struct CPVarPair {
 {
    [_terms addTerm:e by:1];
 }
+-(void) visitORIntVarI: (id<ORIntVar>) e
+{
+   [self visitIntVarI: [e dereference]];
+}
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    [_terms addIndependent:[e value]];

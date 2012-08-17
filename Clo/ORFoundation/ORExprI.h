@@ -224,6 +224,7 @@
 -(void) visitExprImplyI: (ORImplyI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitIntVarI: (id<ORIntVar>) var;
+-(void) visitORIntVarI: (id<ORIntVar>) var;
 -(void) visitExprVarSubI: (ORExprVarSubI*) e;
 @end
 

@@ -74,6 +74,10 @@
 -(id<ORIntVarArray>) array;
 @end
 
+@protocol ORAlgebraicConstraint <ORConstraint>
+-(id<ORExpr>) expr;
+@end
+
 @protocol ORModel <NSObject,ORTracker>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;

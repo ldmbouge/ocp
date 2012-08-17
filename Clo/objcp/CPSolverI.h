@@ -141,6 +141,7 @@
 -(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(void) alldifferent: (id<ORAlldifferent>) cstr;
+-(void) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 @end
 
 

@@ -32,8 +32,9 @@ int main(int argc, const char * argv[])
       [cp addModel: model];
    
       [cp solve: ^{
-         for(ORInt i = 0; i <= 10; i++) 
-            [CPLabel var: a[i]];
+         [CPLabel array: a];
+//         for(ORInt i = 0; i <= 10; i++)
+//            [CPLabel var: a[i]];
       }];
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[a[i] value]);

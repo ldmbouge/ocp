@@ -915,6 +915,12 @@ void printnl(id x)
    [_solver add: ncstr];
    [cstr setImpl: ncstr];
 }
+-(void) algebraicConstraint: (ORAlgebraicConstraintI*) cstr
+{
+   // I need to create the wrapper in the factory and then send it to keep the implementation
+   [_solver add: [cstr expr]];
+//   [cstr setImpl: ncstr];
+}
 -(void) expr: (id<ORExpr>) e
 {
    

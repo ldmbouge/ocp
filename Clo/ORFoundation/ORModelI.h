@@ -34,6 +34,7 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
+-(void) visit: (id<ORExprVisitor>)v;
 @end
 
 
@@ -54,6 +55,11 @@
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
 -(id<ORIntVarArray>) array;
+@end
+
+@interface ORAlgebraicConstraintI : ORConstraintI<ORAlgebraicConstraint>
+-(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr;
+-(id<ORRelation>) expr;
 @end
 
 @interface ORObjectiveFunctionI : NSObject

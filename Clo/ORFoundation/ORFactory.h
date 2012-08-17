@@ -54,6 +54,7 @@
 +(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
 
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
++(id<ORConstraint>) algebraicConstraint: (id<ORModel>) model expr: (id<ORRelation>) exp;
 
 +(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value;
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
@@ -79,4 +80,7 @@
 +(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterator>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
-#define RANGE(cp,a,b)      [ORFactory intRange: cp low: a up: b]
+#define RANGE(track,a,b)      [ORFactory intRange: track low: a up: b]
+#define Sum(track,P,R,E) [ORFactory sum: track over:(R) suchThat:nil of:^id<ORExpr>(ORInt P) { return (id<ORExpr>)(E);}]
+#define All(track,RT,P,RANGE,E)  [ORFactory array##RT: track range:(RANGE) with:^id<RT>(ORInt P) { return (E);}]
+#define Or(track,P,R,E)          [ORFactory or: track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]

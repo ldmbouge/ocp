@@ -74,6 +74,9 @@
 
 -(void) add: (id<ORConstraint>) c
 {
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) 
+      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c];
+
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
    [_mStore addObject:c];
@@ -268,6 +271,10 @@
 {
    return self;
 }
+-(void) visit: (id<ORExprVisitor>) v
+{
+   [((ORExprI*)[_impl dereference]) visit: v];
+}
 @end
 
 @implementation ORIntVarAffineI {
@@ -363,4 +370,22 @@
 }
 @end
 
-
+@implementation ORAlgebraicConstraintI
+{
+   id<ORRelation> _expr;
+}
+-(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr
+{
+   self = [super initORConstraintI];
+   _expr = expr;
+   return self;
+}
+-(id<ORRelation>) expr
+{
+   return _expr;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   [concretizer algebraicConstraint: self];
+}
+@end

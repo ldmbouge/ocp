@@ -23,6 +23,7 @@
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(void) alldifferent: (id<ORAlldifferent>) cstr;
+-(void) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) expr: (id<ORExpr>) e;
 @end
 
