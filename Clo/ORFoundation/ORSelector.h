@@ -9,3 +9,11 @@
  
  ***********************************************************************/
 
+#import <Foundation/Foundation.h>
+#import "ORTypes.h"
+
+@protocol ORSelect <NSObject>
+-(ORInt)              min;
+-(ORInt)              max;
+-(ORInt)              any;
+@end

@@ -11,7 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPArray.h>
 
 @class CPIntVarI;
 @class CPEngine;

@@ -30,7 +30,7 @@
    return self;
 }
 
--(id<CPDom>)initBoundsDomFor:(ORTrailI*)trail low:(ORInt)low up:(ORInt)up 
+-(id<CPDom>)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up 
 {
    self = [super init];
    _dc = DCBounds;
@@ -50,77 +50,77 @@
    return copy;
 }
 
-- (void)dealloc
+- (void) dealloc
 {
     [super dealloc];
 }
--(ORInt)min
+-(ORInt) min
 {
    return _min._val;
 }
--(ORInt)max 
+-(ORInt) max 
 {
    return _max._val;
 }
--(ORInt)imin
+-(ORInt) imin
 {
    return _imin;
 }
--(ORInt)imax
+-(ORInt) imax
 {
    return _imax;
 }
 
--(ORBounds)bounds
+-(ORBounds) bounds
 {
    return (ORBounds){_min._val,_max._val};
 }
--(bool)bound
+-(bool) bound
 {
    return _sz._val == 1;
 }
--(ORInt)domsize
+-(ORInt) domsize
 {
    return _sz._val;
 }
--(bool)get:(ORInt)v
+-(bool) get:(ORInt)v
 {
    return _min._val <= v && v <= _max._val;
 }
--(bool)member:(ORInt)v
+-(bool) member:(ORInt) v
 {
    return _min._val <= v && v <= _max._val;
 }
--(ORInt)findMin:(ORInt)from // smallest value larger or equal to from
+-(ORInt) findMin:(ORInt) from // smallest value larger or equal to from
 {
    return from;
 }
--(ORInt)findMax:(ORInt)from // largest value smaller or equal to from
+-(ORInt) findMax:(ORInt) from // largest value smaller or equal to from
 {
    return from;
 }
--(ORInt)countFrom:(ORInt)from to:(ORInt)to
+-(ORInt) countFrom:(ORInt) from to:(ORInt) to
 {
    from = max(_min._val,from);
    to   = min(_max._val,to);
    return to - from + 1;
 }
 
--(int(^)())getMin
+-(int(^)()) getMin
 {
    return [^int() {
       return self->_min._val;
    } copy];
 }
 
--(NSString*)description
+-(NSString*) description
 {
    if (_min._val == _max._val)
       return [NSString stringWithFormat:@"%d",_min._val];
    else
       return [NSString stringWithFormat:@"(%d)[%d .. %d]",_sz._val,_min._val,_max._val];
 }
--(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x
+-(ORStatus) updateMin:(ORInt) newMin for:(id<CPIntVarNotifier>) x
 {
    if (newMin <= _min._val) return ORSuspend;
    if (newMin > _max._val)
@@ -136,7 +136,7 @@
    [x changeMinEvt:nsz];
    return ORSuspend;
 }
--(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(ORStatus) updateMax:(ORInt) newMax for:(id<CPIntVarNotifier>) x
 {
    if (newMax >= _max._val) return ORSuspend;
    if (newMax < _min._val)
@@ -152,7 +152,7 @@
    [x changeMaxEvt:nsz];
    return ORSuspend;   
 }
--(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)  bind:(ORInt)  val for:(id<CPIntVarNotifier>) x
 {
    if (val < _min._val || val > _max._val)
       failNow();
@@ -169,27 +169,27 @@
    return ORSuspend;   
 }
 
--(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x
+-(ORStatus) remove:(ORInt) val for:(id<CPIntVarNotifier>) x
 {
    if (val <= _min._val) return [self updateMin:val+1 for:x];
    if (val >= _max._val) return [self updateMax:val-1 for:x];
    @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
 }
 
--(void)restoreDomain:(id<CPDom>)toRestore
+-(void) restoreDomain:(id<CPDom>) toRestore
 {
    _min._val = [toRestore min];
    _max._val = [toRestore max];
    _sz._val  = [toRestore domsize];
 }
--(void)restoreValue:(ORInt)toRestore
+-(void) restoreValue:(ORInt) toRestore
 {
    _min._val = toRestore;
    _max._val = toRestore;
    _sz._val  = 1;
 }
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder:(NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_dc];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_min._val];
@@ -198,7 +198,7 @@
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imin];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_imax];
 }
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (id) initWithCoder:(NSCoder *) aDecoder
 {
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_dc];
@@ -213,12 +213,12 @@
 
 @implementation CPBitDom
 
--(CPBitDom*)initBitDomFor:(CPBitDom*)dom
+-(CPBitDom*) initBitDomFor:(CPBitDom*) dom
 {
    self = [super initBoundsDomFor:dom];
    _dc = DCBits;
    const ORInt sz = _imax - _imin + 1;
-   const ORInt nb = (sz >> 5) + ((sz & 0x1f)!=0);
+   const ORInt nb = (sz >> 5)  + ((sz & 0x1f)!=0);
    _bits  = malloc(sizeof(ORUInt)*nb);
    _magic = malloc(sizeof(ORInt)*nb);
    for(ORInt k=0;k<nb;k++) {
@@ -230,7 +230,7 @@
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
 }
--(CPBitDom*) initBitDomFor:(ORTrailI*)trail low:(ORInt)low up:(ORInt)up
+-(CPBitDom*) initBitDomFor:(id<ORTrail>) trail low:(ORInt) low up:(ORInt) up
 {
    self = [super initBoundsDomFor:trail low:low up:up];
    _dc = DCBits;
@@ -247,7 +247,7 @@
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;
 }
-- (id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(NSZone *) zone
 {
    CPBitDom* copy = [[CPBitDom alloc] initBitDomFor:self];
    const ORInt sz = _imax - _imin + 1;

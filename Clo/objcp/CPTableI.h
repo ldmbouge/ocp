@@ -14,9 +14,7 @@
 #import "CPTypes.h"
 #import "CPIntVarI.h"
 #import "CPConstraintI.h"
-#import "ORTrailI.h"
 #import "CPTable.h"
-#import <objcp/CPArray.h>
 
 @interface CPTableI : NSObject<CPTable,NSCoding> {
     @package

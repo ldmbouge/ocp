@@ -50,7 +50,7 @@
 
 @implementation ORLimitDiscrepancies
 
--(id) initORLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (ORTrailI*) trail
+-(id) initORLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (id<ORTrail>) trail
 {
    self = [super initORDefaultController];
    _trail = trail;

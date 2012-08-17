@@ -12,7 +12,6 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
-#import <objcp/CPArray.h>
 #import <objcp/CPConstraintI.h>
 
 @interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding>

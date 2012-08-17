@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPEngine.h>
-#import <objcp/CPSolution.h>
 #import <objcp/CPConstraintI.h>
 
 @class ORTrailI;
@@ -47,7 +46,7 @@ enum CPEngineState {
 
 @interface CPEngineI : NSObject <CPEngine,NSCoding> {
    enum CPEngineState       _state;
-   ORTrailI*                 _trail;
+   id<ORTrail>                 _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
@@ -65,7 +64,7 @@ enum CPEngineState {
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
 }
--(CPEngineI*) initSolver: (ORTrailI*) trail;
+-(CPEngineI*) initSolver: (id<ORTrail>) trail;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
 -(void)      trackVariable:(id)var;
@@ -75,7 +74,7 @@ enum CPEngineState {
 -(void)      scheduleAC3:(VarEventNode**)mlist;
 -(void)      scheduleAC5:(VarEventNode*)list with: (ORInt)val;
 -(ORStatus)  propagate;
--(id<CPConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<CPRelation>) e  consistency: (CPConsistency)cons;
+-(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency)cons;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  label:(id<ORIntVar>) var with: (ORInt) val;

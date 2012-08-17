@@ -20,7 +20,7 @@
 @interface ORExplorerI : NSObject<ORExplorer>
 {
    id<OREngine>           _engine;
-   ORTrailI*               _trail;
+   id<ORTrail>               _trail;
    TRId               _controller;
    ORInt                     _nbf;
    ORInt                     _nbc;

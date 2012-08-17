@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPSolution.h>
+#import <ORFoundation/ORFoundation.h>
 
 @protocol CPEngine;
 

@@ -11,7 +11,6 @@
 
 #import "CPKnapsack.h"
 #import "CPIntVarI.h"
-#import "CPArray.h"
 #import "CPEngineI.h"
 
 @interface KSNode : NSObject {
@@ -22,9 +21,9 @@
    TRIdNC    _down;  // "vertical" down link
    TRIdNC _succ[2];  // "successors" for {0,1}
    TRIdNC _pred[2];  // "predecessors" for {0,1}
-   ORTrailI* _trail;
+   id<ORTrail> _trail;
 }
--(KSNode*)initKSNode:(ORInt)cid weight:(ORInt)w trail:(ORTrailI*)trail;
+-(KSNode*)initKSNode:(ORInt)cid weight:(ORInt)w trail:(id<ORTrail>)trail;
 -(void)dealloc;
 -(void)setSucc:(ORInt)v as:(KSNode*)n;
 -(void)pushKSNode:(KSNode*)top;
@@ -36,9 +35,9 @@
    ORInt      _col;
    TRIdNC   _first;
    TRIdNC    _last;
-   ORTrailI* _trail;
+   id<ORTrail> _trail;
 }
--(KSColumn*)initKSColumn:(ORInt)cid trail:(ORTrailI*)trail;
+-(KSColumn*)initKSColumn:(ORInt)cid trail:(id<ORTrail>)trail;
 -(void)makeSource;
 -(void)pushOnColumn:(KSNode*)c;
 -(void)insert:(KSNode*)n below:(KSNode*)spot;
@@ -62,7 +61,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 {
    KSNode* below = node->_down._val;
    KSNode* above = node->_up._val;
-   ORTrailI* trail = col->_trail;
+   id<ORTrail> trail = col->_trail;
    if (col->_first._val == node) {
       assert(below == nil);
       assignTRIdNC(&col->_first,above,trail);
@@ -314,7 +313,7 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 @end
 
 @implementation KSNode
--(KSNode*)initKSNode:(ORInt)cid weight:(ORInt)w trail:(ORTrailI*)trail
+-(KSNode*)initKSNode:(ORInt)cid weight:(ORInt)w trail:(id<ORTrail>)trail
 {
    self = [super init];
    _col = cid;
@@ -375,7 +374,7 @@ static inline BOOL unreachableFromRight(KSNode* n)
 @end
 
 @implementation KSColumn
--(KSColumn*)initKSColumn:(ORInt)cid trail:(ORTrailI*)trail
+-(KSColumn*)initKSColumn:(ORInt)cid trail:(id<ORTrail>)trail
 {
    self = [super init];
    _trail = trail;

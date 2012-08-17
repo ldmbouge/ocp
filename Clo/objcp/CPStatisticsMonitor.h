@@ -11,13 +11,12 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPArray.h>
 
 @class CPVarInfo;
 
 // PVH: Need another name for this baby
 
-@interface CPMonitor : CPCoreConstraint {
+@interface CPStatisticsMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
    ORLong                  _nbVI;
    id<CPSolver>                    _cp;
@@ -27,15 +26,15 @@
 }
 -(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars;
 -(ORStatus) post;
--(NSString*)description;
--(double)reduction;
--(double)reductionFromRoot;
+-(NSString*) description;
+-(double) reduction;
+-(double) reductionFromRoot;
 -(void)scanActive:(void(^)(CPVarInfo*))block;
 @end
 
 @interface CPVarInfo : NSObject {
    id       _theVar;
-   ORTrailI* _trail;
+   id<ORTrail> _trail;
    TRDouble _oldDSize;
    FXInt    _active;
    @package
@@ -43,6 +42,6 @@
    double   _final;
    double   _root;
 }
--(CPVarInfo*)initCPVarInfo:(id)v trail:(ORTrailI*)trail;
+-(CPVarInfo*)initCPVarInfo:(id)v trail:(id<ORTrail>)trail;
 -(void)makeActive;
 @end

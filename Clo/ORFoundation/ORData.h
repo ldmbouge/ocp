@@ -23,7 +23,7 @@
 @end
 
 
-@protocol ORTrailIableInt <NSObject>
+@protocol ORTrailableInt <NSObject>
 -(ORInt) value;
 -(void)  setValue: (ORInt) value;
 -(void)  incr;

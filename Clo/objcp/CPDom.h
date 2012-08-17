@@ -21,19 +21,19 @@
 -(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 -(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 
--(ORInt)min;
--(ORInt)max;
--(ORInt)imin;
--(ORInt)imax;
--(bool)bound;
--(ORBounds)bounds;
--(ORInt)domsize;
--(ORInt)countFrom:(ORInt)from to:(ORInt)to;
--(bool)get:(ORInt)b;
--(bool)member:(ORInt)v;
+-(ORInt) min;
+-(ORInt) max;
+-(ORInt) imin;
+-(ORInt) imax;
+-(bool) bound;
+-(ORBounds) bounds;
+-(ORInt) domsize;
+-(ORInt) countFrom:(ORInt)from to:(ORInt)to;
+-(bool) get:(ORInt)b;
+-(bool) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
--(ORInt)findMax:(ORInt)from;
--(id)copy;
--(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore;
+-(ORInt) findMax:(ORInt)from;
+-(id) copy;
+-(void) restoreDomain:(id<CPDom>)toRestore;
+-(void) restoreValue:(ORInt)toRestore;
 @end

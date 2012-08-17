@@ -86,13 +86,13 @@
 @end
 
 @implementation CPFactory(Visualize)
-+(id<CPConstraint>)watchVariable:(id<ORIntVar>)x 
++(id<ORConstraint>)watchVariable:(id<ORIntVar>)x 
                      onValueLost:(ORInt2Void)lost 
                      onValueBind:(ORInt2Void)bind 
                   onValueRecover:(ORInt2Void)rec 
                    onValueUnbind:(ORInt2Void)unb
 {
-   id<CPConstraint> c = nil;
+   id<ORConstraint> c = nil;
    c = [[CPWatch alloc] initCPWatch:x 
                         onValueLost:lost 
                         onValueBind:bind

@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
-#import <objcp/CPArray.h>
 #import <objcp/CPConstraintI.h>
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 

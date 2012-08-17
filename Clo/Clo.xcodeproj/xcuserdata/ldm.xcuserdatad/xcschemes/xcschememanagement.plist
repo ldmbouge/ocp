@@ -154,6 +154,11 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
+		<key>magicseriesModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>49</integer>
+		</dict>
 		<key>market2s.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -493,6 +498,11 @@
 			<true/>
 		</dict>
 		<key>B181E11515D7465300AB44DA</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B189512515DE52D100B77813</key>
 		<dict>
 			<key>primary</key>
 			<true/>

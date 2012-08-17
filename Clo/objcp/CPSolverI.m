@@ -20,10 +20,7 @@
 #import "CPSolverI.h"
 #import "CPEngineI.h"
 #import "ORExplorer.h"
-#import "CPExplorerI.h"
 #import "CPBasicConstraint.h"
-#import "CPSelector.h"
-#import "CPArrayI.h"
 #import "CPIntVarI.h"
 #import "pthread.h"
 #import "CPObjectQueue.h"
@@ -179,7 +176,7 @@
 {
    return [_search nbFailures];
 }
--(ORTrailI*) trail
+-(id<ORTrail>) trail
 {
    return _trail;
 }
@@ -227,14 +224,6 @@
 -(void) push: (id<ORSearchController>) controller
 {
    [_search push: controller];
-}
-
--(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
-{
-   return [[CPSelect alloc] initCPSelect: (id<CPSolver>)self
-                               withRange: range
-                              suchThat: filter
-                               orderedBy: order];    
 }
 
 -(void) add: (id<ORConstraint>) c
@@ -1126,10 +1115,15 @@ void printnl(id x)
 -(id<ORConstraint>) alldifferent: (ORAlldifferentI*) cstr
 {
    id<ORIntVarArray> x = [cstr array];
-   id<CPConstraint> ncstr = [CPFactory alldifferent: _solver over: x];
+   id<ORConstraint> ncstr = [CPFactory alldifferent: _solver over: x];
    [_solver add: ncstr];
-   [cstr setImpl: ncstr];
    return ncstr;
+}
+-(id<ORConstraint>) algebraicConstraint: (ORAlgebraicConstraintI*) cstr
+{
+   id<ORConstraint> c = [CPFactory relation2Constraint:_solver expr: [cstr expr]];
+   [_solver add: c];
+   return c;
 }
 -(void) expr: (id<ORExpr>) e
 {
@@ -1329,6 +1323,10 @@ void printnl(id x)
    int nbw = [_solver nbWorkers];
    ORParConstraintI* pCons = [[ORParConstraintI alloc] initORParConstraintI:nbw];
    return pCons;
+}
+-(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr
+{
+   return nil;
 }
 -(void) expr: (id<ORExpr>) e
 {

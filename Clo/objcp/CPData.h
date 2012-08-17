@@ -10,18 +10,13 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPSolution.h>
 
 @protocol CP;
 @protocol CPExprVisitor;
 
-
-
 typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(ORInt);
-
-@protocol CPRelation;
 
 @protocol CPConstraint <ORConstraint>
 @end
@@ -30,8 +25,8 @@ typedef void (^ConstraintIntCallBack)(ORInt);
 -(ORInt) virtualOffset;   
 @end
 
-@protocol CPRandomStream <ORRandomStream>
-@end;
+//@protocol CPRandomStream <ORRandomStream>
+//@end;
 
 @protocol CPZeroOneStream <ORZeroOneStream>
 @end;

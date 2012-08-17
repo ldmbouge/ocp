@@ -46,8 +46,6 @@ static inline ORInt bindDown(ORLong a) { return (a > (ORLong)MININT) ? (ORInt)a 
 @protocol ORExpr;
 @protocol ORRelation;
 
-
-
 typedef struct ORRange {
    ORInt low;
    ORInt up;

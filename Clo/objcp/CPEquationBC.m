@@ -12,7 +12,6 @@
 #import "CPEquationBC.h"
 #import "ORFoundation/ORArrayI.h"
 #import "CPIntVarI.h"
-#import "CPArrayI.h"
 #import "CPEngineI.h"
 
 @implementation CPEquationBC

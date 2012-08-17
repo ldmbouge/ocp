@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "CPLinear.h"
-#import "CPExprI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 #import <objcp/CPData.h>

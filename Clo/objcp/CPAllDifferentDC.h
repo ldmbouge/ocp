@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "ORFoundation/ORFoundation.h"
-#import "objcp/CPArray.h"
 #import "objcp/CPBasicConstraint.h"
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding>

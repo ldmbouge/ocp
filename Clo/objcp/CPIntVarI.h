@@ -122,6 +122,7 @@ enum CPVarClass {
 -(CPIntVarI*) initCPIntVarCore:(CPSolverI*) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (CPSolverI*) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
+
 -(void) setId:(ORUInt)name;
 -(ORUInt)getId;
 -(BOOL) isBool;
@@ -132,17 +133,17 @@ enum CPVarClass {
 -(NSSet*)constraints;
 -(CPBitDom*)flatDomain;
 
-// need for speeding the code when not using AC5
+// needed for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 
 // subscription
 
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c; 
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c; 
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c; 
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c; 
+-(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
+-(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c; 
 
 // PVH: Why is this thing not with the same syntax
 -(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo;
@@ -157,9 +158,10 @@ enum CPVarClass {
 // notification
 
 -(void) bindEvt;
--(void) changeMinEvt:(ORInt)dsz;
--(void) changeMaxEvt:(ORInt)dsz;
--(void) loseValEvt:(ORInt)val;
+-(void) changeMinEvt: (ORInt) dsz;
+-(void) changeMaxEvt: (ORInt) dsz;
+-(void) loseValEvt: (ORInt)val;
+
 // delegation
 
 -(id<CPIntVarNotifier>) delegate;

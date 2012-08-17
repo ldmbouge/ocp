@@ -79,3 +79,16 @@
 -(id<ORTracker>) tracker;
 @end
 
+@protocol ORTrailableIntArray <NSObject>
+-(id<ORTrailableInt>) at: (ORInt) idx;
+-(void) set: (id<ORTrailableInt>) value at: (ORInt)idx;
+-(id<ORTrailableInt>)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id<ORIntSet>)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+

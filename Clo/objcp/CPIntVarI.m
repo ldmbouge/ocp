@@ -16,7 +16,6 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"
-#import "ORTrailI.h"
 #import "CPBitDom.h"
 
 
@@ -24,7 +23,7 @@
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
 
-static void setUpNetwork(CPEventNetwork* net,ORTrailI* t,ORInt low,ORInt sz) 
+static void setUpNetwork(CPEventNetwork* net,id<ORTrail> t,ORInt low,ORInt sz) 
 {
     net->_boundsEvt = makeTRId(t,nil);
     net->_bindEvt   = makeTRId(t,nil);
@@ -1151,7 +1150,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
    _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
-   ORTrailI* theTrail = [[v engine] trail];
+   id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
       _tab[toFix] = nil;

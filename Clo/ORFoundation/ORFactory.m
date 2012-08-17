@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORFoundation.h>
 #import "ORFactory.h"
 #import "ORError.h"
 #import "ORExprI.h"
@@ -20,18 +21,24 @@
 #import "ORModel.h"
 #import "ORModelI.h"
 #import "ORTrailI.h" 
-#import "ORSolver.h" 
+#import "ORSolver.h"
+#import "ORSelectorI.h" 
 
 @implementation ORFactory
++(id<ORTrail>) trail
+{
+   return [[ORTrailI alloc] init];
+}
+
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
    [tracker trackObject: o];
    return o;
 }
-+(id<ORTrailIableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
++(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
 {
-   ORTrailIableIntI* o = [[ORTrailIableIntI alloc] initORTrailIableIntI: [solver trail] value:value];
+   ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [[solver engine] trail] value:value];
    [solver trackObject: o];
    return o;
 }
@@ -112,7 +119,18 @@
    [tracker trackObject: ite];
    return ite;
 }
-
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: false];
+   [tracker trackObject: o];
+   return o;
+}
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: true];
+   [tracker trackObject: o];
+   return o;
+}
 +(id<ORModel>) createModel
 {
    return [[ORModelI alloc]  initORModelI];
@@ -150,11 +168,37 @@
    }
    return (id<ORIntVarArray>)o;
 }
-
++(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory trailableInt: tracker value: value] at:k];
+   return (id<ORTrailableIntArray>) o;
+}
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
    [[x tracker] trackObject: o];
+   return o;
+}
++(id<ORConstraint>) algebraicConstraint:(id<ORModel>) model expr: (id<ORRelation>) exp
+{
+   id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
+   [model trackObject: o];
+   return o;
+}
+
++(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) solver range: (id<ORIntRange>) R
+{
+   ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: (id<ORSolver>) solver range: R];
+   [solver trackObject: o];
+   return o;
+}
+
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) solver range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
+{
+   ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: (id<ORSolver>) solver range: R1 : R2];
+   [solver trackObject: o];
    return o;
 }
 

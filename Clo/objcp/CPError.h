@@ -12,24 +12,6 @@
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORError.h"
 
-@interface CPSearchError : NSObject <ORError>
-{
-@private
-	const char* _message;
-}
--(CPSearchError*) initCPSearchError: (const char*) msg;
--(const char*) msg;
-@end  
-
-@interface CPInternalError : NSObject <ORError>
-{
-@private
-	const char* _message;
-}
--(CPInternalError*) initCPInternalError: (const char*) msg;
--(const char*) msg;
-@end  
-
 @interface CPRemoveOnDenseDomainError : ORExecutionError <ORError>
 {
 }

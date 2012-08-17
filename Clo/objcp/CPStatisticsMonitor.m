@@ -9,12 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPMonitor.h"
+#import "CPStatisticsMonitor.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
 
 @implementation CPVarInfo
--(CPVarInfo*)initCPVarInfo:(id)v trail:(ORTrailI*)trail
+-(CPVarInfo*)initCPVarInfo:(id)v trail:(id<ORTrail>)trail
 {
    self = [super init];
    _theVar = v;
@@ -54,7 +54,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 @end
 
-@implementation CPMonitor
+@implementation CPStatisticsMonitor
 -(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars
 {
    self = [super initCPCoreConstraint];
@@ -76,7 +76,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(ORStatus) post
 {
-   ORTrailI* trail = [[_cp engine] trail];
+   id<ORTrail> trail = [[_cp engine] trail];
    ORUInt nbW = 0;
    for(ORInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];

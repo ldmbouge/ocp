@@ -14,7 +14,6 @@
 #import "CPValueConstraint.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
-#import "CPArrayI.h"
 
 @implementation CPReifyNotEqualcDC
 -(id)initCPReifyNotEqualcDC:(CPIntVarI*)b when:(CPIntVarI*)x neq:(ORInt)c

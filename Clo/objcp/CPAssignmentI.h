@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPArray.h>
 #import "CPBasicConstraint.h"
 
 @interface CPAssignment : CPActiveConstraint<CPConstraint,NSCoding>

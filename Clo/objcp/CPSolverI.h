@@ -10,11 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import "CPSolver.h"
 #import "CPTypes.h"
 #import "CPConstraintI.h"
-#import "CPExplorerI.h"
-#import "CPSelector.h"
 #import "ORUtilities/ORUtilities.h"
 
 
@@ -37,7 +36,7 @@
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
-   ORTrailI*             _trail;
+   id<ORTrail>             _trail;
    NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
@@ -55,7 +54,7 @@
 -(ORInt)                  nbFailures;
 -(ORUInt)                 nbPropagation;
 -(ORUInt)                 nbVars;
--(ORTrailI*)               trail;
+-(id<ORTrail>)               trail;
 
 -(id<ORSearchController>) controller;
 -(void)                   setController: (id<ORSearchController>) controller;
@@ -68,8 +67,8 @@
 -(id<CPPortal>)           portal;
 -(id<ORSolution>)         solution;
 
--(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
--(void)                  add: (id<CPConstraint>) c;
+-(void)                  add: (id<ORConstraint>) c consistency:(CPConsistency)cons;
+-(void)                  add: (id<ORConstraint>) c;
 -(void)             minimize: (id<ORIntVar>) x;
 -(void)             maximize: (id<ORIntVar>) x;
 -(void)         addHeuristic: (id<CPHeuristic>) h;
@@ -95,7 +94,6 @@
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
--(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
@@ -150,7 +148,9 @@
 @interface CPConcretizerI : NSObject<ORSolverConcretizer>
 -(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
+-(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
+-(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 @end
 
 @interface CPParConcretizerI : NSObject<ORSolverConcretizer>
@@ -158,7 +158,7 @@
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
--(void) expr: (id<ORExpr>) e;
+-(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 @end
 
 
