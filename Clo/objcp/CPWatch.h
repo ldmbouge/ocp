@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "objcp/CPFactory.h"
-#import "objcp/CPController.h"
 
 @class CPIntVarI;
 

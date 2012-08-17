@@ -13,7 +13,6 @@
 #import <Foundation/Foundation.h>
 #import "objcp/CPEngine.h"
 #import "objcp/CPObjectQueue.h"
-#import "objcp/CPController.h"
 
 @class SemTracer;
 @class SemCP;

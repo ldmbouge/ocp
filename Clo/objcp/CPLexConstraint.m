@@ -31,7 +31,7 @@
    _y = y;
    _fdm = (id<CPEngine>) [[x solver] engine];
    if ([_x count] != [_y count])
-      @throw [[CPInternalError alloc] initCPInternalError:"incompatible sizes in lex constraint"];
+      @throw [[ORExecutionError alloc] initORExecutionError:"incompatible sizes in lex constraint"];
    return self;
 }
 -(void) dealloc

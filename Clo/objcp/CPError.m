@@ -11,32 +11,6 @@
 
 #import "CPError.h"
 
-@implementation CPSearchError 
--(CPSearchError*) initCPSearchError: (const char*) msg
-{
-	self = [super init];
-	_message = msg;
-	return self;
-}
--(const char*) msg 
-{
-	return _message;
-}
-@end  
-
-@implementation CPInternalError 
--(CPInternalError*) initCPInternalError: (const char*) msg
-{
-	self = [super init];
-	_message = msg;
-	return self;
-}
--(const char*) msg 
-{
-	return _message;
-}
-@end  
-
 @implementation CPRemoveOnDenseDomainError 
 -(CPRemoveOnDenseDomainError*) initCPRemoveOnDenseDomainError
 {

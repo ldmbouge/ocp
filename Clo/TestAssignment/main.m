@@ -16,8 +16,7 @@
 #import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPlabel.h"
-#import "objcp/CPController.h"
-#import "objcp/CPLimit.h"
+
 
 #import "objcp/CPArray.h"
 

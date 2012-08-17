@@ -15,7 +15,6 @@
 #import "CPSelector.h"
 #import "CPEngineI.h"
 #import "ORExplorer.h"
-#import "CPExplorerI.h"
 #import "CPSolverI.h"
 #import "CPIntVarI.h"
 

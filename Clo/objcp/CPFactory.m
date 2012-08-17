@@ -18,7 +18,6 @@
 #import "CPSolverI.h"
 #import "CPCreateI.h"
 #import "cont.h"
-#import "CPExprI.h"
 #import "CPTableI.h"
 #import "CPDDeg.h"
 #import "CPWDeg.h"

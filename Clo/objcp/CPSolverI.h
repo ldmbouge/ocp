@@ -13,7 +13,6 @@
 #import "CPSolver.h"
 #import "CPTypes.h"
 #import "CPConstraintI.h"
-#import "CPExplorerI.h"
 #import "CPSelector.h"
 #import "ORUtilities/ORUtilities.h"
 
