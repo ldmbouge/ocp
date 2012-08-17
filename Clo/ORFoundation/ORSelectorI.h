@@ -16,7 +16,7 @@
 
 @interface OROPTSelect : NSObject
 
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order randomized: (BOOL) randomized;
 -(void)           dealloc;
 -(ORInt)              min;
 -(ORInt)              max;
@@ -33,14 +33,3 @@
 -(ORInt)              any;
 @end
 
-@interface ORSelectMinRandomizedI : NSObject
--(ORSelectMinRandomizedI*) initORSelectMinRandomizedI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
--(void)            dealloc;
--(ORInt)           choose;
-@end
-
-@interface ORSelectMaxI : NSObject
--(ORSelectMaxI*) initORSelectMaxI:  (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
--(void)         dealloc;
--(ORInt)        choose;
-@end
