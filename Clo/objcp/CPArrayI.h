@@ -20,7 +20,7 @@
 
 @interface CPTRIntArrayI : NSObject<ORTRIntArray,CPVirtual,NSCoding> {
     @package
-    id<ORSolver> _cp;
+    id<ORSolver> _solver;
     ORTrailI*    _trail;
     TRInt*       _array;
     ORInt        _low;
@@ -35,7 +35,7 @@
 -(ORInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
--(id<CPSolver>) cp;
+-(id<CPSolver>) solver;
 -(ORInt) virtualOffset;   
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
@@ -45,7 +45,7 @@
 
 @interface CPTRIntMatrixI : NSObject<ORTRIntMatrix,CPVirtual,NSCoding> {
 @private
-    id<ORSolver>    _cp;
+    id<ORSolver>    _solver;
     id<ORTrail>     _trail;
     TRInt*          _flat;
     ORInt           _arity;

@@ -46,12 +46,12 @@
 /**********************************************************************************************/
 
 
-@implementation CPTRIntArrayI 
--(CPTRIntArrayI*) initCPTRIntArray: (id<CPSolver>) cp range: (id<ORIntRange>) R
+@implementation CPTRIntArrayI
+-(CPTRIntArrayI*) initCPTRIntArray: (id<ORSolver>) solver range: (id<ORIntRange>) R
 {
     self = [super init];
-    _cp = cp;
-    _trail = [[cp engine] trail];
+    _solver = solver;
+    _trail = [[solver engine] trail];
     _low = [R low];
     _up = [R up];
     _nb = (_up - _low + 1);
@@ -106,22 +106,22 @@
     [rv appendString:@"]"];
     return rv;   
 }
--(id<CPSolver>) cp
+-(id<ORSolver>) solver
 {
-    return _cp;
+    return _solver;
 }
--(id<CPEngine>) engine
+-(id<OREngine>) engine
 {
-    return [_cp engine];
+    return [_solver engine];
 }
 -(ORInt) virtualOffset
 {
-    return [[_cp engine] virtualOffset:self];
+    return [[_solver engine] virtualOffset:self];
 }
 
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
-    [aCoder encodeObject:_cp];
+    [aCoder encodeObject:_solver];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -133,7 +133,7 @@
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super init];
-    _cp = [[aDecoder decodeObject] retain];
+    _solver = [[aDecoder decodeObject] retain];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -156,7 +156,7 @@
 -(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
     self = [super init];
-    _cp = cp;  
+    _solver = cp;  
     _trail = [[cp engine] trail];
     _arity = 3;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
@@ -185,7 +185,7 @@
 -(CPTRIntMatrixI*) initCPTRIntMatrix:(id<CPSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
     self = [super init];
-    _cp = cp;  
+    _solver = cp;  
     _trail = [[cp engine] trail];
     _arity = 2;
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
@@ -307,21 +307,21 @@ static inline ORInt indexMatrix(CPTRIntMatrixI* m,ORInt* i)
    [self descriptionAux: i depth:0 string: rv];
    return rv;
 }
--(id<CPSolver>) solver
+-(id<ORSolver>) solver
 {
-    return _cp;
+    return _solver;
 }
--(id<CPEngine>) engine
+-(id<OREngine>) engine
 {
-    return [_cp engine];
+    return [_solver engine];
 }
 -(ORInt) virtualOffset
 {
-    return [[_cp engine] virtualOffset:self];
+    return [[_solver engine] virtualOffset:self];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:_cp];
+    [aCoder encodeObject:_solver];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
     for(ORInt i = 0; i < _arity; i++) {
         [aCoder encodeObject:_range[i]];
@@ -336,7 +336,7 @@ static inline ORInt indexMatrix(CPTRIntMatrixI* m,ORInt* i)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
     self = [super init];
-    _cp = [[aDecoder decodeObject] retain];
+    _solver = [[aDecoder decodeObject] retain];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
     _range = malloc(sizeof(id<ORIntRange>) * _arity);
     _low = malloc(sizeof(ORInt) * _arity);
