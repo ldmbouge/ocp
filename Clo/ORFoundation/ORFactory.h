@@ -50,6 +50,9 @@
 
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORIntVar>(^)(ORInt)) clo;
+
++(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
+
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
 
 +(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value;

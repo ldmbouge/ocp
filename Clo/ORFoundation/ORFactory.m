@@ -168,7 +168,13 @@
    }
    return (id<ORIntVarArray>)o;
 }
-
++(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set: [ORFactory trailableInt: tracker value: value] at:k];
+   return (id<ORTrailableIntArray>) o;
+}
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
