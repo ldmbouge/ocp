@@ -507,7 +507,8 @@
 		B189033F142C266F007F6EAD /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1890340142C266F007F6EAD /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
 		B189511C15DE25D800B77813 /* ORSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B189511A15DE25D800B77813 /* ORSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B189511D15DE25D800B77813 /* ORSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511B15DE25D800B77813 /* ORSelector.m */; };
+		B189512015DE434A00B77813 /* ORSelectorI.h in Headers */ = {isa = PBXBuildFile; fileRef = B189511E15DE434900B77813 /* ORSelectorI.h */; };
+		B189512115DE434A00B77813 /* ORSelectorI.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511F15DE434900B77813 /* ORSelectorI.m */; };
 		B1935C6015B90ECE00107399 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1935C6315B90ECE00107399 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1935C6215B90ECE00107399 /* main.m */; };
 		B1935C7115B90EEA00107399 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -1752,7 +1753,8 @@
 		B189033D142C266D007F6EAD /* CPTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrigger.h; sourceTree = "<group>"; };
 		B189033E142C266E007F6EAD /* CPTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrigger.m; sourceTree = "<group>"; };
 		B189511A15DE25D800B77813 /* ORSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSelector.h; sourceTree = "<group>"; };
-		B189511B15DE25D800B77813 /* ORSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSelector.m; sourceTree = "<group>"; };
+		B189511E15DE434900B77813 /* ORSelectorI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSelectorI.h; sourceTree = "<group>"; };
+		B189511F15DE434900B77813 /* ORSelectorI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSelectorI.m; sourceTree = "<group>"; };
 		B1935C5E15B90ECE00107399 /* slab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = slab; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1935C6215B90ECE00107399 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1935C6515B90ECE00107399 /* slab-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slab-Prefix.pch"; sourceTree = "<group>"; };
@@ -3062,7 +3064,8 @@
 				5BAEE08415AE9883006CEE1E /* ORParallel.h */,
 				5BAEE08515AE9883006CEE1E /* ORParallel.m */,
 				B189511A15DE25D800B77813 /* ORSelector.h */,
-				B189511B15DE25D800B77813 /* ORSelector.m */,
+				B189511E15DE434900B77813 /* ORSelectorI.h */,
+				B189511F15DE434900B77813 /* ORSelectorI.m */,
 				5B85DE111438B2D500E4E133 /* ORSemBDSController.h */,
 				5B85DE121438B2D500E4E133 /* ORSemBDSController.m */,
 				5B074A26142E5B2D0055B72D /* ORSemDFSController.h */,
@@ -3664,6 +3667,7 @@
 				5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */,
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
 				B198E75A15D90768000BE64A /* ORTrailI.h in Headers */,
+				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5118,7 +5122,7 @@
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
 				5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */,
-				B189511D15DE25D800B77813 /* ORSelector.m in Sources */,
+				B189512115DE434A00B77813 /* ORSelectorI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

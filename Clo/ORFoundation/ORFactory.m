@@ -21,7 +21,8 @@
 #import "ORModel.h"
 #import "ORModelI.h"
 #import "ORTrailI.h" 
-#import "ORSolver.h" 
+#import "ORSolver.h"
+#import "ORSelectorI.h" 
 
 @implementation ORFactory
 +(id<ORTrail>) trail
@@ -120,7 +121,13 @@
 }
 +(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
-   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order];
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: false];
+   [tracker trackObject: o];
+   return o;
+}
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: true];
    [tracker trackObject: o];
    return o;
 }

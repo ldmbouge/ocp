@@ -9,13 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORCrFactory.h"
-#import "ORSelector.h"
-
-#import "CPSolverI.h"
-#if !defined(__APPLE__)
-#import <values.h>
-#endif
+#import "ORFoundation.h"
+#import "ORSelectorI.h"
 
 @implementation OROPTSelect
 {
@@ -24,8 +19,9 @@
    ORInt2Bool         _filter;
    ORInt2Int          _order;
    ORInt              _direction;
+   BOOL               _randomized;
 }
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order randomized: (BOOL) randomized
 {
    self = [super init];
    _range = range;
@@ -33,6 +29,7 @@
    _order = [order copy];
    _stream = [ORCrFactory randomStream];
    _direction = 1;
+   _randomized = randomized;
    return self;
 }
 
@@ -74,15 +71,13 @@
             indexFound = i;
             bestRand = [_stream next];
          }
-         /*
-          else if (val == bestFound) {
-          float r = [_stream next];
-          if (r < bestRand) {
-          indexFound = i;
-          bestRand = r;
-          }
-          }
-          */
+         else if (_randomized && val == bestFound) {
+            float r = [_stream next];
+            if (r < bestRand) {
+               indexFound = i;
+               bestRand = r;
+            }
+         }
       }
    }
    return indexFound;
@@ -94,10 +89,10 @@
 {
    OROPTSelect* _select;
 }
--(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+-(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order randomized: (BOOL) randomized
 {
    self = [super init];
-   _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order];
+   _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order randomized: randomized];
    return self;
 }
 -(void) dealloc

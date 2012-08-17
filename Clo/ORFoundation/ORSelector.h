@@ -10,43 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORTracker.h"
-#import "ORSet.h"
-
-
-@interface OROPTSelect : NSObject
-
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
--(void)           dealloc;
--(ORInt)              min;
--(ORInt)              max;
--(ORInt)              any;
--(ORInt)           choose;
-@end
+#import "ORTypes.h"
 
 @protocol ORSelect <NSObject>
 -(ORInt)              min;
 -(ORInt)              max;
 -(ORInt)              any;
-@end
-
-
-@interface ORSelectI : NSObject<ORSelect>
--(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
--(void)           dealloc;
--(ORInt)              min;
--(ORInt)              max;
--(ORInt)              any;
-@end
-
-@interface ORSelectMinRandomizedI : NSObject
--(ORSelectMinRandomizedI*) initORSelectMinRandomizedI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
--(void)            dealloc;
--(ORInt)           choose;
-@end
-
-@interface ORSelectMaxI : NSObject
--(ORSelectMaxI*) initORSelectMaxI:  (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
--(void)         dealloc;
--(ORInt)        choose;
 @end

@@ -72,12 +72,18 @@
       if (i == MAXINT)
          return;
       id<ORIntVar> x = [av at: i];
+      /*
       ORSelectMaxI* valSelect = [[ORSelectMaxI alloc] initORSelectMaxI:cp
                                                             range:RANGE(cp,[x min],[x max])
                                                          suchThat:^bool(ORInt v)  { return [x member:v];}
                                                         orderedBy:^ORInt(ORInt v) { return [h valOrdering:v forVar:x];}];
+       */
+      id<ORSelect> valSelect = [ORFactory select: cp
+                                           range:RANGE(cp,[x min],[x max])
+                                        suchThat:^bool(ORInt v)  { return [x member:v];}
+                                       orderedBy:^ORInt(ORInt v) { return [h valOrdering:v forVar:x];}];
       do {
-         ORInt curVal = [valSelect choose];
+         ORInt curVal = [valSelect max];
          if (curVal == MAXINT)
             break;
          [cp try:^{
