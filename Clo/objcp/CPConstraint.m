@@ -27,6 +27,7 @@
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
+#import "CPLinear.h"
 
 @implementation CPFactory (Constraint)
 
@@ -422,5 +423,18 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    return o;
 }
 
++(id<CPConstraint>) relation2Constraint: (id<ORSolver>) solver expr: (id<ORRelation>) e consistency: (CPConsistency) c
+{
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr: e consistency: c];
+   [solver trackObject:wrapper];
+   return wrapper;
+}
++(id<CPConstraint>) relation2Constraint: (id<ORSolver>) solver expr: (id<ORRelation>) e
+{
+   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr:e consistency: RangeConsistency];
+   [solver trackObject:wrapper];
+   return wrapper;
+
+}
 @end
 

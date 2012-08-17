@@ -66,8 +66,8 @@
 +(id<CPConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y;
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<ORIntVarArray>) x;
 +(id<CPConstraint>) table: (id<CPTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
-//+(id<CPConstraint>) expr: (id<CPExpr>)e  consistency: (CPConsistency) c;
-//+(id<CPConstraint>) expr: (id<CPExpr>)e;
++(id<CPConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e consistency: (CPConsistency) c;
++(id<CPConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e;
 
 +(id<CPConstraint>) assignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
 +(id<CPConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;

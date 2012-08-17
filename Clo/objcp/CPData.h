@@ -18,8 +18,6 @@ typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(ORInt);
 
-@protocol CPRelation;
-
 @protocol CPConstraint <ORConstraint>
 @end
 

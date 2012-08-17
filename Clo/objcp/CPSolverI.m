@@ -917,9 +917,9 @@ void printnl(id x)
 }
 -(void) algebraicConstraint: (ORAlgebraicConstraintI*) cstr
 {
-   // I need to create the wrapper in the factory and then send it to keep the implementation
-   [_solver add: [cstr expr]];
-//   [cstr setImpl: ncstr];
+   id<CPConstraint> c = [CPFactory relation2Constraint:_solver expr: [cstr expr]];
+   [_solver add: c];
+   [cstr setImpl: c];
 }
 -(void) expr: (id<ORExpr>) e
 {

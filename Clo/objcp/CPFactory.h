@@ -80,7 +80,6 @@ void failNow();
 
 +(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity;
 
-
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
 
 +(id<CPRandomStream>) randomStream: (id<ORTracker>) cp ;
@@ -89,13 +88,14 @@ void failNow();
 
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
+
 @end
 
 @interface CPFactory (expression)
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
 +(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<CPRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 
