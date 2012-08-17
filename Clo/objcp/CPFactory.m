@@ -316,21 +316,21 @@ void failNow()
    return [ORFactory TRIntMatrix: cp range: R1 : R2];
 }
 
-+(id<CPRandomStream>) randomStream: (id<ORTracker>) cp
++(id<ORRandomStream>) randomStream: (id<ORTracker>) cp
 {
-   id<CPRandomStream> o = (id<CPRandomStream>) [ORCrFactory randomStream];
+   id<ORRandomStream> o = [ORCrFactory randomStream];
    [[cp solver] trackObject: o];
    return o;
 }
-+(id<CPZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
++(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
 {
-   id<CPZeroOneStream> o = (id<CPZeroOneStream>) [ORCrFactory zeroOneStream];
+   id<ORZeroOneStream> o = (id<ORZeroOneStream>) [ORCrFactory zeroOneStream];
    [[cp solver] trackObject: o];
    return o;
 }
-+(id<CPUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
++(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
 {
-   id<CPUniformDistribution> o = (id<CPUniformDistribution>) [ORCrFactory uniformDistribution:r];
+   id<ORUniformDistribution> o = (id<ORUniformDistribution>) [ORCrFactory uniformDistribution:r];
    [[cp solver] trackObject: o];
    return o;
 }

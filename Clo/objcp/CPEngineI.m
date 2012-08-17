@@ -493,14 +493,14 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
--(id<CPConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency:(CPConsistency)cons
+-(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency:(CPConsistency)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr:e consistency:cons];
    [self trackObject:wrapper];
    return wrapper;
 }
 
--(ORStatus) add: (id<CPConstraint>) c
+-(ORStatus) add: (id<ORConstraint>) c
 {
    if (_state != CPOpen) {
       return [self post: c];
@@ -587,7 +587,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (_state == CPOpen) {
       _state = CPClosing;
-      for(id<CPConstraint> c in _mStore) {
+      for(id<ORConstraint> c in _mStore) {
          [self post:c];
          if (_status == ORFailure)
             return ORFailure;
@@ -643,7 +643,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
-   for(id<CPConstraint> c in originalStore) {
+   for(id<ORConstraint> c in originalStore) {
       // The retain is necessary given that the post will release it after storing in cStore.
       [self add:[c retain]];
    }

@@ -67,8 +67,8 @@
 -(id<CPPortal>)           portal;
 -(id<ORSolution>)         solution;
 
--(void)                  add: (id<CPConstraint>) c consistency:(CPConsistency)cons;
--(void)                  add: (id<CPConstraint>) c;
+-(void)                  add: (id<ORConstraint>) c consistency:(CPConsistency)cons;
+-(void)                  add: (id<ORConstraint>) c;
 -(void)             minimize: (id<ORIntVar>) x;
 -(void)             maximize: (id<ORIntVar>) x;
 -(void)         addHeuristic: (id<CPHeuristic>) h;

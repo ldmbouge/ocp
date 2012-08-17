@@ -911,13 +911,13 @@ void printnl(id x)
 -(void) alldifferent: (ORAlldifferentI*) cstr
 {
    id<ORIntVarArray> x = [cstr array];
-   id<CPConstraint> ncstr = [CPFactory alldifferent: _solver over: x];
+   id<ORConstraint> ncstr = [CPFactory alldifferent: _solver over: x];
    [_solver add: ncstr];
    [cstr setImpl: ncstr];
 }
 -(void) algebraicConstraint: (ORAlgebraicConstraintI*) cstr
 {
-   id<CPConstraint> c = [CPFactory relation2Constraint:_solver expr: [cstr expr]];
+   id<ORConstraint> c = [CPFactory relation2Constraint:_solver expr: [cstr expr]];
    [_solver add: c];
    [cstr setImpl: c];
 }

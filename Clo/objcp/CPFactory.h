@@ -82,9 +82,9 @@ void failNow();
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
 
-+(id<CPRandomStream>) randomStream: (id<ORTracker>) cp ;
-+(id<CPZeroOneStream>) zeroOneStream: (id<ORTracker>) cp ;
-+(id<CPUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r;
++(id<ORRandomStream>) randomStream: (id<ORTracker>) cp ;
++(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp ;
++(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r;
 
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;

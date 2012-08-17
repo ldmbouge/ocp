@@ -16,61 +16,61 @@
 
 @interface CPFactory (Constraint)
 
-+(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x consistency: (CPConsistency) c;
-+(id<CPConstraint>) alldifferent: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) alldifferent: (id<ORIntVarArray>) x consistency: (CPConsistency) c;
++(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x;
++(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x consistency: (CPConsistency) c;
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x consistency: (CPConsistency) c;
 
-+(id<CPConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
-+(id<CPConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up consistency: (CPConsistency) c;
++(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
++(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up consistency: (CPConsistency) c;
 
-+(id<CPConstraint>) minimize: (id<ORIntVar>) x;
-+(id<CPConstraint>) maximize: (id<ORIntVar>) x;
++(id<ORConstraint>) minimize: (id<ORIntVar>) x;
++(id<ORConstraint>) maximize: (id<ORIntVar>) x;
 
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(CPConsistency)c;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neq: (ORInt) i;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leq: (ORInt) i;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geq: (ORInt) i;
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(CPConsistency)c;
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i;
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neq: (ORInt) i;
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leq: (ORInt) i;
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geq: (ORInt) i;
 
-+(id<CPConstraint>) sumbool: (id<ORIntVarArray>) x geq: (ORInt) c;
-+(id<CPConstraint>) sumbool: (id<ORIntVarArray>) x eq: (ORInt) c;
-+(id<CPConstraint>) sum: (id<ORIntVarArray>) x eq: (ORInt) c consistency: (CPConsistency)cons;
-+(id<CPConstraint>) sum: (id<ORIntVarArray>) x eq: (ORInt) c;
-+(id<CPConstraint>) sum: (id<ORIntVarArray>) x leq: (ORInt) c;
++(id<ORConstraint>) sumbool: (id<ORIntVarArray>) x geq: (ORInt) c;
++(id<ORConstraint>) sumbool: (id<ORIntVarArray>) x eq: (ORInt) c;
++(id<ORConstraint>) sum: (id<ORIntVarArray>) x eq: (ORInt) c consistency: (CPConsistency)cons;
++(id<ORConstraint>) sum: (id<ORIntVarArray>) x eq: (ORInt) c;
++(id<ORConstraint>) sum: (id<ORIntVarArray>) x leq: (ORInt) c;
 
-+(id<CPConstraint>) boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
-+(id<CPConstraint>) boolean:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
-+(id<CPConstraint>) boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
++(id<ORConstraint>) boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
++(id<ORConstraint>) boolean:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
++(id<ORConstraint>) boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
 
-+(id<CPConstraint>) circuit: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) nocycle: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
-+(id<CPConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
-+(id<CPConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
-+(id<CPConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
++(id<ORConstraint>) circuit: (id<ORIntVarArray>) x;
++(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x;
++(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
++(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
++(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
++(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
 
-+(id<CPConstraint>) equal3: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z consistency: (CPConsistency)cons;
-+(id<CPConstraint>) equal: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(ORInt) c consistency: (CPConsistency)cons;
-+(id<CPConstraint>) equal: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
-+(id<CPConstraint>) equalc: (id<ORIntVar>) x to:(ORInt) c;
-+(id<CPConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
-+(id<CPConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y;
-+(id<CPConstraint>) notEqualc:(id<ORIntVar>)x to:(ORInt)c;
-+(id<CPConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y;
-+(id<CPConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c;
-+(id<CPConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y;
-+(id<CPConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
-+(id<CPConstraint>) abs: (id<ORIntVar>)x equal:(id<ORIntVar>)y consistency:(CPConsistency)c;
-+(id<CPConstraint>) element:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y;
-+(id<CPConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y;
-+(id<CPConstraint>) table: (id<CPTable>) table on: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) table: (id<CPTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
-+(id<CPConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e consistency: (CPConsistency) c;
-+(id<CPConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e;
++(id<ORConstraint>) equal3: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z consistency: (CPConsistency)cons;
++(id<ORConstraint>) equal: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(ORInt) c consistency: (CPConsistency)cons;
++(id<ORConstraint>) equal: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
++(id<ORConstraint>) equalc: (id<ORIntVar>) x to:(ORInt) c;
++(id<ORConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
++(id<ORConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y;
++(id<ORConstraint>) notEqualc:(id<ORIntVar>)x to:(ORInt)c;
++(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y;
++(id<ORConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c;
++(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y;
++(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
++(id<ORConstraint>) abs: (id<ORIntVar>)x equal:(id<ORIntVar>)y consistency:(CPConsistency)c;
++(id<ORConstraint>) element:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y;
++(id<ORConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y;
++(id<ORConstraint>) table: (id<CPTable>) table on: (id<ORIntVarArray>) x;
++(id<ORConstraint>) table: (id<CPTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
++(id<ORConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e consistency: (CPConsistency) c;
++(id<ORConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e;
 
-+(id<CPConstraint>) assignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
-+(id<CPConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
++(id<ORConstraint>) assignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
++(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
 @end
 
 

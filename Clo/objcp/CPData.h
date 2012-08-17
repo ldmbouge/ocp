@@ -25,8 +25,8 @@ typedef void (^ConstraintIntCallBack)(ORInt);
 -(ORInt) virtualOffset;   
 @end
 
-@protocol CPRandomStream <ORRandomStream>
-@end;
+//@protocol CPRandomStream <ORRandomStream>
+//@end;
 
 @protocol CPZeroOneStream <ORZeroOneStream>
 @end;
