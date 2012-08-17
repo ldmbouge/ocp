@@ -31,15 +31,15 @@
    ORInt              _upr;
    ORInt              _lowc;
    ORInt              _upc;
-   id<CPTRIntMatrix>  _cost;
+   id<ORTRIntMatrix>  _cost;
    
    ORInt              _bigM;
    
-   id<CPTRIntArray>   _lc;
-   id<CPTRIntArray>   _lr;
+   id<ORTRIntArray>   _lc;
+   id<ORTRIntArray>   _lr;
    
-   id<CPTRIntArray>   _rowOfColumn;
-   id<CPTRIntArray>   _columnOfRow;
+   id<ORTRIntArray>   _rowOfColumn;
+   id<ORTRIntArray>   _columnOfRow;
    
    ORInt*             _columnIsMarked;
    ORInt*             _rowIsMarked;

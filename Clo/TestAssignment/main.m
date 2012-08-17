@@ -170,7 +170,7 @@ int main (int argc, const char * argv[])
    id<ORInteger> nbSolutions = [ORFactory integer: cp value:1];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
-   id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
+   id<ORTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    
    for(ORInt i = 0; i < nbCities; i++)
       [cp add: [CPFactory notEqualc: x[i] to: i]];
@@ -262,7 +262,7 @@ int main (int argc, const char * argv[])
    id<CPInteger> nbSolutions = [CPFactory integer: cp value:1];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [CPFactory intVar:cp domain: (ORRange){0,10000}];
-   id<CPTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
+   id<ORTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
    [cp minimize: assignmentCost subjectTo:
     ^{
        for(ORInt i = 0; i < nbCities; i++)

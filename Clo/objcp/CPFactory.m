@@ -308,14 +308,14 @@ void failNow()
     return o;    
 }
 
-+(CPTRIntArrayI*) TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R
++(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R
 {
     CPTRIntArrayI* o = [[CPTRIntArrayI alloc] initCPTRIntArray: (CPSolverI*) cp range: R];    
     [[((CPSolverI*) cp) solver] trackObject: o];
     return o;    
 }
 
-+(id<CPTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
     CPTRIntMatrixI* o = [[CPTRIntMatrixI alloc] initCPTRIntMatrix: (CPSolverI*) cp range: R1 : R2];    
     [[((CPSolverI*) cp) solver] trackObject: o];

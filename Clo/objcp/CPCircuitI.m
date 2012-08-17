@@ -23,9 +23,9 @@
    ORInt            _varSize;
    ORInt            _low;
    ORInt            _up;
-   id<CPTRIntArray> _pred;
-   id<CPTRIntArray> _succ;
-   id<CPTRIntArray> _length;
+   id<ORTRIntArray> _pred;
+   id<ORTRIntArray> _succ;
+   id<ORTRIntArray> _length;
    bool             _noCycle;
    bool             _posted;
 }
