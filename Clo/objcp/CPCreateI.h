@@ -20,8 +20,8 @@
 @end
 
 @interface CPSemSolverI (Create)
-+(CPSemSolverI*)            create;
-+(CPSemSolverI*)            createRandomized;
-+(CPSemSolverI*)            createDeterministic;
-+(CPSemSolverI*)            createFor:(CPEngineI*)fdm;
++(CPSemSolverI*) create;
++(CPSemSolverI*) createRandomized;
++(CPSemSolverI*) createDeterministic;
++(CPSemSolverI*) createFor:(CPEngineI*)fdm;
 @end

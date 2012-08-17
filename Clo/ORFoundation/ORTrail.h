@@ -108,7 +108,6 @@ ORInt trailMagic(id<ORTrail> trail);
 @end
 
 // Struct-Based matrix of trailable Integers
-
 @protocol ORTRIntMatrix <NSObject>
 -(ORInt) at: (ORInt) i1 : (ORInt) i2;
 -(ORInt) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
