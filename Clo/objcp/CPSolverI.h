@@ -10,10 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import "CPSolver.h"
 #import "CPTypes.h"
 #import "CPConstraintI.h"
-#import "CPSelector.h"
 #import "ORUtilities/ORUtilities.h"
 
 
@@ -94,7 +94,6 @@
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
--(CPSelect*)  selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;

@@ -16,9 +16,8 @@
 #import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPBasicConstraint.h"
-#import "CPSelector.h"
 #import "CPIntVarI.h"
-#import "ORUtilities/ORUtilities.h"
+#import <ORUtilities/ORUtilities.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORExplorerI.h>
 #import <ORFoundation/ORController.h>
@@ -223,14 +222,6 @@
 -(void) push: (id<ORSearchController>) controller
 {
    [_search push: controller];
-}
-
--(CPSelect*) selectInRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
-{
-   return [[CPSelect alloc] initCPSelect: (id<CPSolver>)self
-                               withRange: range
-                              suchThat: filter
-                               orderedBy: order];    
 }
 
 -(void) add: (id<ORConstraint>) c

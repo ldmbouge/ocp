@@ -47,7 +47,6 @@
 		5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B40C21014F80A7D0041D162 /* CPObjectQueue.m */; };
 		5B43634115AECE4D00E9458D /* CPDDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B43634015AECE4D00E9458D /* CPDDeg.m */; };
 		5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B48FEA815A3D79D00141BB1 /* ORTrail.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE64311139D49610056F448 /* ORTrail.m */; };
 		5B48FEA915A3DB2A00141BB1 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B558C071563F01000D2BCD7 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B558C0A1563F01000D2BCD7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B558C091563F01000D2BCD7 /* main.m */; };
@@ -296,10 +295,7 @@
 		5B9EE56E15175D4F00619B47 /* CPObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B40C21014F80A7D0041D162 /* CPObjectQueue.m */; };
 		5B9EE56F15175D4F00619B47 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE57015175D4F00619B47 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
-		5B9EE57115175D4F00619B47 /* CPSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A312D13A018A9002401A0 /* CPSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE57215175D4F00619B47 /* CPSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A312E13A018A9002401A0 /* CPSelector.m */; };
 		5B9EE57315175D4F00619B47 /* CPEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642FD139D49320056F448 /* CPEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE57815175D4F00619B47 /* ORTrail.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE64311139D49610056F448 /* ORTrail.m */; };
 		5B9EE57915175D4F00619B47 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE57A15175D4F00619B47 /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
@@ -459,8 +455,6 @@
 		B1595B6513C21917001FCB61 /* sudokuFile3.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1595B6413C218F9001FCB61 /* sudokuFile3.txt */; };
 		B15A2B5013995F12002401A0 /* CPError.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A2B4E13995F12002401A0 /* CPError.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15A2B5113995F12002401A0 /* CPError.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A2B4F13995F12002401A0 /* CPError.m */; };
-		B15A312F13A018A9002401A0 /* CPSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B15A312D13A018A9002401A0 /* CPSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B15A313013A018A9002401A0 /* CPSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B15A312E13A018A9002401A0 /* CPSelector.m */; };
 		B15B2F6815C4A86F0027A7E6 /* ORControl.h in Headers */ = {isa = PBXBuildFile; fileRef = B15B2F6615C4A86F0027A7E6 /* ORControl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B15B2F6915C4A86F0027A7E6 /* ORControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B15B2F6715C4A86F0027A7E6 /* ORControl.m */; };
 		B15F6DB215B10C1100158FA0 /* CPDDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B43634015AECE4D00E9458D /* CPDDeg.m */; };
@@ -512,6 +506,8 @@
 		B181E12815D7B62800AB44DA /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B181E12715D7B62600AB44DA /* CPSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B189033F142C266F007F6EAD /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1890340142C266F007F6EAD /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
+		B189511C15DE25D800B77813 /* ORSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B189511A15DE25D800B77813 /* ORSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B189511D15DE25D800B77813 /* ORSelector.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511B15DE25D800B77813 /* ORSelector.m */; };
 		B1935C6015B90ECE00107399 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1935C6315B90ECE00107399 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1935C6215B90ECE00107399 /* main.m */; };
 		B1935C7115B90EEA00107399 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -1612,7 +1608,6 @@
 		5BE642F4139D49320056F448 /* CPConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConstraintI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642FD139D49320056F448 /* CPEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngine.h; sourceTree = "<group>"; };
 		5BE64310139D49610056F448 /* ORTrail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTrail.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5BE64311139D49610056F448 /* ORTrail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORTrail.m; sourceTree = "<group>"; };
 		5BE64312139D49610056F448 /* ORTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORTypes.h; sourceTree = "<group>"; };
 		5BE777401594C9E500ADE34E /* fdmul */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = fdmul; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BE777441594C9E500ADE34E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -1708,8 +1703,6 @@
 		B1595B6413C218F9001FCB61 /* sudokuFile3.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sudokuFile3.txt; sourceTree = SOURCE_ROOT; };
 		B15A2B4E13995F12002401A0 /* CPError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPError.h; sourceTree = "<group>"; };
 		B15A2B4F13995F12002401A0 /* CPError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPError.m; sourceTree = "<group>"; };
-		B15A312D13A018A9002401A0 /* CPSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSelector.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B15A312E13A018A9002401A0 /* CPSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPSelector.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B15B2F6615C4A86F0027A7E6 /* ORControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORControl.h; sourceTree = "<group>"; };
 		B15B2F6715C4A86F0027A7E6 /* ORControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORControl.m; sourceTree = "<group>"; };
 		B15F6DDE15B1361700158FA0 /* progressive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = progressive; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1758,6 +1751,8 @@
 		B181E12715D7B62600AB44DA /* CPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPSolver.h; sourceTree = "<group>"; };
 		B189033D142C266D007F6EAD /* CPTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrigger.h; sourceTree = "<group>"; };
 		B189033E142C266E007F6EAD /* CPTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrigger.m; sourceTree = "<group>"; };
+		B189511A15DE25D800B77813 /* ORSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSelector.h; sourceTree = "<group>"; };
+		B189511B15DE25D800B77813 /* ORSelector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORSelector.m; sourceTree = "<group>"; };
 		B1935C5E15B90ECE00107399 /* slab */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = slab; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1935C6215B90ECE00107399 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1935C6515B90ECE00107399 /* slab-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slab-Prefix.pch"; sourceTree = "<group>"; };
@@ -2783,8 +2778,6 @@
 				5B40C21014F80A7D0041D162 /* CPObjectQueue.m */,
 				5B8E16C01505BB5700D3C698 /* CPParallel.h */,
 				5B8E16C11505BB5700D3C698 /* CPParallel.m */,
-				B15A312D13A018A9002401A0 /* CPSelector.h */,
-				B15A312E13A018A9002401A0 /* CPSelector.m */,
 				5B9B63EB1578C76B00441452 /* CPSolutionI.m */,
 				5B9B63EA1578C76B00441452 /* CPSolutionI.h */,
 				B181E12715D7B62600AB44DA /* CPSolver.h */,
@@ -3068,18 +3061,19 @@
 				B1CC82F615D27C66008DE335 /* ORModelI.m */,
 				5BAEE08415AE9883006CEE1E /* ORParallel.h */,
 				5BAEE08515AE9883006CEE1E /* ORParallel.m */,
-				B10ECF12150C382000B82836 /* ORSet.h */,
-				B10ECF14150C38CB00B82836 /* ORSetI.h */,
-				B10ECF15150C38CB00B82836 /* ORSetI.m */,
-				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
+				B189511A15DE25D800B77813 /* ORSelector.h */,
+				B189511B15DE25D800B77813 /* ORSelector.m */,
 				5B85DE111438B2D500E4E133 /* ORSemBDSController.h */,
 				5B85DE121438B2D500E4E133 /* ORSemBDSController.m */,
 				5B074A26142E5B2D0055B72D /* ORSemDFSController.h */,
 				5B074A27142E5B2D0055B72D /* ORSemDFSController.m */,
+				B10ECF12150C382000B82836 /* ORSet.h */,
+				B10ECF14150C38CB00B82836 /* ORSetI.h */,
+				B10ECF15150C38CB00B82836 /* ORSetI.m */,
+				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				B1A0124A15CCAE71001ED0D4 /* ORTracer.h */,
 				B1A0124B15CCAE72001ED0D4 /* ORTracer.m */,
 				5BE64310139D49610056F448 /* ORTrail.h */,
-				5BE64311139D49610056F448 /* ORTrail.m */,
 				5B920EAB15A3F4A800AD0820 /* ORTracker.h */,
 				5BFD594615A3ACA500825BC3 /* Supporting Files */,
 				B198E75815D90768000BE64A /* ORTrailI.h */,
@@ -3518,7 +3512,6 @@
 				B15A2B5013995F12002401A0 /* CPError.h in Headers */,
 				5BE64304139D49320056F448 /* CPSolverI.h in Headers */,
 				5BE64306139D49320056F448 /* CPConstraintI.h in Headers */,
-				B15A312F13A018A9002401A0 /* CPSelector.h in Headers */,
 				B152BE2E13BB541E00531FD5 /* CPAllDifferentDC.h in Headers */,
 				5BB3835C13B3B624005B7D52 /* CPEquationBC.h in Headers */,
 				B103536413BCFF2400627058 /* CPCreateI.h in Headers */,
@@ -3584,7 +3577,6 @@
 				5B9EE55A15175D4F00619B47 /* CPError.h in Headers */,
 				5B9EE56D15175D4F00619B47 /* CPObjectQueue.h in Headers */,
 				5B9EE56F15175D4F00619B47 /* CPParallel.h in Headers */,
-				5B9EE57115175D4F00619B47 /* CPSelector.h in Headers */,
 				5B9EE57A15175D4F00619B47 /* CPTrigger.h in Headers */,
 				5B9EE54E15175D4F00619B47 /* CPConstraint.h in Headers */,
 				5B9EE54015175D4F00619B47 /* CPAllDifferentDC.h in Headers */,
@@ -3664,6 +3656,7 @@
 				B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */,
 				B1CC82F415D27A57008DE335 /* ORModel.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
+				B189511C15DE25D800B77813 /* ORSelector.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
@@ -4872,7 +4865,6 @@
 				5BE642FF139D49320056F448 /* CPBasicConstraint.m in Sources */,
 				5BE64305139D49320056F448 /* CPSolverI.m in Sources */,
 				5B92975813A01F45002AA188 /* CPValueConstraint.m in Sources */,
-				B15A313013A018A9002401A0 /* CPSelector.m in Sources */,
 				B1583D3313A4CF7D0002FBD8 /* CPExprI.m in Sources */,
 				B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */,
 				5BB3835D13B3B624005B7D52 /* CPEquationBC.m in Sources */,
@@ -4987,8 +4979,6 @@
 				5B9EE56A15175D4F00619B47 /* CPLabel.m in Sources */,
 				5B9EE56E15175D4F00619B47 /* CPObjectQueue.m in Sources */,
 				5B9EE57015175D4F00619B47 /* CPParallel.m in Sources */,
-				5B9EE57215175D4F00619B47 /* CPSelector.m in Sources */,
-				5B9EE57815175D4F00619B47 /* ORTrail.m in Sources */,
 				5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */,
 				5B9EE57E15175D4F00619B47 /* CPValueConstraint.m in Sources */,
 				5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */,
@@ -5111,7 +5101,6 @@
 				5B8B12DC15A3BF8000300385 /* ORError.m in Sources */,
 				5BD2DFC915A3CEC700D4C616 /* ORSetI.m in Sources */,
 				5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */,
-				5B48FEA815A3D79D00141BB1 /* ORTrail.m in Sources */,
 				5B920EB015A3F5B000AD0820 /* ORExprI.m in Sources */,
 				5B920EB415A3F6DD00AD0820 /* ORFactory.m in Sources */,
 				5B920EBC15A3FDB800AD0820 /* ORDataI.m in Sources */,
@@ -5129,6 +5118,7 @@
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
 				5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */,
+				B189511D15DE25D800B77813 /* ORSelector.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

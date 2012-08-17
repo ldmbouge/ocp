@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORFoundation.h>
 #import "ORFactory.h"
 #import "ORError.h"
 #import "ORExprI.h"
@@ -117,7 +118,12 @@
    [tracker trackObject: ite];
    return ite;
 }
-
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+{
+   ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order];
+   [tracker trackObject: o];
+   return o;
+}
 +(id<ORModel>) createModel
 {
    return [[ORModelI alloc]  initORModelI];

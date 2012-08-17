@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import "CPData.h"
 #import "CPLabel.h"
-#import "CPSelector.h"
 #import "CPEngineI.h"
 #import "ORExplorer.h"
 #import "CPSolverI.h"
@@ -45,18 +45,17 @@
 
 +(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Int) orderedBy
 {
-    CPSolverI* cp = (CPSolverI*) [x solver];
-    CPSelect* select = [cp selectInRange: RANGE(cp,[x low],[x up])
-                              suchThat: ^bool(ORInt i) { return [[x at: i] bound]; }
-                               orderedBy: orderedBy];
-    do {
-        ORInt i = [select min];
-        if (i == MAXINT) {
-            return;
-        }
- //      printf("(%d)",[[x at: i] getId]);
-        [CPLabel var: [x at: i]];
-    } while (true);    
+   CPSolverI* cp = (CPSolverI*) [x solver];
+   id<ORSelect> select = [ORFactory select: cp range: RANGE(cp,[x low],[x up]) suchThat: ^bool(ORInt i) { return [[x at: i] bound]; } orderedBy: orderedBy];
+
+   do {
+      ORInt i = [select min];
+      if (i == MAXINT) {
+         return;
+      }
+      //      printf("(%d)",[[x at: i] getId]);
+      [CPLabel var: [x at: i]];
+   } while (true);
 }
 
 
@@ -65,15 +64,15 @@
    id<ORIntVarArray> av = [h allIntVars];
 //   NSLog(@"Heuristic on: <%lu> %@",[av count],av);
    CPSolverI* cp = (CPSolverI*) [av solver];
-   CPSelect* select = [cp selectInRange: RANGE(cp,[av low],[av up])
-                                suchThat: ^bool(ORInt i)      { return [[av at: i] bound]; }
-                               orderedBy: ^ORInt(ORInt i) { return [h varOrdering:av[i]]; }];
+   id<ORSelect> select = [ORFactory select: cp range: RANGE(cp,[av low],[av up])
+                                  suchThat: ^bool(ORInt i)      { return [[av at: i] bound]; }
+                                 orderedBy: ^ORInt(ORInt i) { return [h varOrdering:av[i]]; }];
    do {      
       ORInt i = [select max];
       if (i == MAXINT)
          return;
       id<ORIntVar> x = [av at: i];
-      CPSelectMax* valSelect = [[CPSelectMax alloc] initSelectMax:cp
+      ORSelectMaxI* valSelect = [[ORSelectMaxI alloc] initORSelectMaxI:cp
                                                             range:RANGE(cp,[x min],[x max])
                                                          suchThat:^bool(ORInt v)  { return [x member:v];}
                                                         orderedBy:^ORInt(ORInt v) { return [h valOrdering:v forVar:x];}];

@@ -2,55 +2,62 @@
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
 #import "ORCrFactory.h"
-#import "CPSelector.h"
+#import "ORSelector.h"
+
 #import "CPSolverI.h"
 #if !defined(__APPLE__)
 #import <values.h>
 #endif
 
-@implementation OPTSelect
-
--(OPTSelect*) initOPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+@implementation OROPTSelect
 {
-    self = [super init];
-    _range = range;
-    _filter = [filter copy];
-    _order = [order copy];
-    _stream = [ORCrFactory randomStream];
-    _direction = 1;
-    return self;
+   id<ORRandomStream> _stream;
+   id<ORIntIterator>  _range;
+   ORInt2Bool         _filter;
+   ORInt2Int          _order;
+   ORInt              _direction;
+}
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+{
+   self = [super init];
+   _range = range;
+   _filter = [filter copy];
+   _order = [order copy];
+   _stream = [ORCrFactory randomStream];
+   _direction = 1;
+   return self;
 }
 
 -(void) dealloc
 {
-    [_filter release];
-    [_order release];
-    [_stream release];
-    [super dealloc];
+   [_filter release];
+   [_order release];
+   [_stream release];
+   [super dealloc];
 }
 
--(ORInt) min 
+-(ORInt) min
 {
-    _direction = 1;
-    return [self choose];
+   _direction = 1;
+   return [self choose];
 }
 -(ORInt) max
 {
-    _direction = -1;
-    return [self choose];
+   _direction = -1;
+   return [self choose];
 }
 -(ORInt) any
 {
-    _direction = 0;
-    return [self choose];
+   _direction = 0;
+   return [self choose];
 }
 -(ORInt) choose
 {
@@ -83,40 +90,47 @@
 
 @end
 
-@implementation CPSelect
--(CPSelect*) initCPSelect: (CPSolverI*) cp withRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+@implementation ORSelectI
 {
-    self = [super init];
-    _select = [[OPTSelect alloc] initOPTSelectWithRange:range suchThat: filter orderedBy:order];
-    [[cp trail] trailClosure: ^() { [self release]; }];
-    return self;
+   OROPTSelect* _select;
 }
-
+-(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+{
+   self = [super init];
+   _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order];
+   return self;
+}
 -(void) dealloc
 {
-    [_select release];
-    [super dealloc];
+   [_select release];
+   [super dealloc];
 }
 
--(ORInt) min 
+-(ORInt) min
 {
-    return [_select min];
+   return [_select min];
 }
 -(ORInt) max
 {
-    return [_select max];
+   return [_select max];
 }
 -(ORInt) any
 {
-    return [_select any];
+   return [_select any];
 }
 @end
 
 
 
-@implementation CPSelectMinRandomized
+@implementation ORSelectMinRandomizedI
+{
+   id<ORRandomStream> _stream;
+   id<ORIntIterator>  _range;
+   ORInt2Bool         _filter;
+   ORInt2Int          _order;
+}
 
--(CPSelectMinRandomized*) initWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+-(ORSelectMinRandomizedI*) initORSelectMinRandomizedI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
    self = [super init];
    _range = range;
@@ -128,10 +142,10 @@
 
 -(void) dealloc
 {
-  [_filter release];
-  [_order release];
-  [_stream release];
-  [super dealloc];
+   [_filter release];
+   [_order release];
+   [_stream release];
+   [super dealloc];
 }
 
 -(ORInt) choose
@@ -164,23 +178,26 @@
 @end
 
 
-@implementation CPSelectMax
-
--(CPSelectMax*) initSelectMax:(CPSolverI*)cp range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
+@implementation ORSelectMaxI
+{
+   id<ORIntIterator> _range;
+   ORInt2Bool        _filter;
+   ORInt2Int         _order;
+}
+-(ORSelectMaxI*) initORSelectMaxI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order
 {
    self = [super init];
    _range = range;
    _filter = [filter copy];
    _order = [order copy];
-   [[cp trail] trailRelease:self];
    return self;
 }
 
 -(void) dealloc
 {
-  [_filter release];
-  [_order release];
-  [super dealloc];
+   [_filter release];
+   [_order release];
+   [super dealloc];
 }
 -(ORInt) choose
 {

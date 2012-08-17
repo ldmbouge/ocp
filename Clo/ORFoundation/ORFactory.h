@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORExpr.h"
 #import "ORFoundation/ORData.h"
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORSet.h"
@@ -18,6 +17,7 @@
 #import "ORTrail.h"
 
 @protocol ORSearchController;
+@protocol ORSelect;
 
 @interface ORFactory : NSObject
 +(id<ORTrail>) trail;
@@ -38,6 +38,7 @@
 +(id<ORIntSet>) collect: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e;
 
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) cp over: (id<ORIntIterator>) r;
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order;
 
 +(id<ORModel>) createModel;
 
