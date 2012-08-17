@@ -21,7 +21,6 @@ typedef enum {
    CPOff
 } CPTodo;
 
-
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @package
    CPTodo _todo;

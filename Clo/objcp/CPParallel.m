@@ -13,40 +13,6 @@
 #import "CPSolverI.h"
 #import "CPFactory.h"
 
-@interface CPGenerator : ORDefaultController<ORSearchController> {
-   id<ORExplorer>  _explorer;
-   PCObjectQueue*      _pool;   
-   NSCont**             _tab;
-   id<ORCheckpoint>*  _cpTab;
-   int                   _sz;
-   int                   _mx;
-}
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq;
--(ORInt)  addChoice: (NSCont*) k;
--(void)       fail;
--(BOOL) isFinitelyFailed;
--(void)       exitTryLeft;
--(void)       exitTryRight;
--(void)       exitTryallBody;
--(void)       exitTryallOnFailure;
-@end
-
-@interface CPParallelAdapter : ORNestedController<ORSearchController> {
-   id<ORExplorer>     _explorer;
-   PCObjectQueue*         _pool;
-   BOOL             _publishing;
-   CPGenerator*            _gen;
-}
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq;
--(ORInt)  addChoice: (NSCont*) k;
--(void)       fail;
--(void)       succeeds;
--(void)       startTry;
--(void)       startTryall;
--(void) publishWork;
--(BOOL) isFinitelyFailed;
-@end
-
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue *)pcq
 {

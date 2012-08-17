@@ -35,40 +35,61 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      id<CPSemSolver> cp = [CPFactory createSemSolver];
+      id<CPParSolver> cp = [CPFactory createParSolver:2];
       [cp addModel: model];
-      [cp solve: ^{
-         [[cp explorer] applyController: [CPFactory bdsController:cp]
-                                     in: ^ {
-                                        [cp nestedSolveAll:^{
-                                           for(ORInt i = 0; i <= n; i++) {
-                                              id<ORIntVar> xi = [x[i] dereference];
-                                              while (![xi bound]) {
-                                                 int v = [xi min];
-                                                 [cp try:^{
-                                                    //NSLog(@"?x[%d] == %d with x[%d] def %@",i,v,i,xi);
-                                                    [cp label:xi with:v];
-                                                    //NSLog(@"+x[%d] == %d with x[%d] def %@",i,v,i,xi);
-                                                 } or:^{
-                                                    //NSLog(@"?x[%d] != %d with x[%d] def %@",i,v,i,xi);
-                                                    [cp diff:xi with:v];
-                                                    //NSLog(@"-x[%d] != %d with x[%d] def %@",i,v,i,xi);
-                                                 }];
-                                              }
-                                           }
-                                           printf("x = [");
-                                           for(ORInt i = 0; i <= n; i++)
-                                              printf("%d%c",[x[i] value],i < n ? ',' : ']');
-                                           printf("\n");
-                                           [nbSol incr];
-                                        }];
-                                     }];
+      [cp solveAll: ^{
+         for(ORInt i = 0; i <= n; i++) {
+            id<ORIntVar> xi = [x[i] dereference];
+            while (![xi bound]) {
+               int v = [xi min];
+               [cp try:^{
+                  [cp label:xi with:v];
+               } or:^{
+                  [cp diff:xi with:v];
+               }];
+            }
+         }
+         printf("x = [");
+         for(ORInt i = 0; i <= n; i++)
+            printf("%d%c",[x[i] value],i < n ? ',' : ']');
+         printf("\n");
+         [nbSol incr];
       }];
       NSLog(@"Quitting #SOL=%d",[nbSol value]);
       [cp release];
       [CPFactory shutdown];
    }
    return 0;
+
+   /*
+    [cp solve: ^{
+    [[cp explorer] applyController: [CPFactory bdsController:cp]
+    in: ^ {
+    [cp nestedSolveAll:^{
+    for(ORInt i = 0; i <= n; i++) {
+    id<ORIntVar> xi = [x[i] dereference];
+    while (![xi bound]) {
+    int v = [xi min];
+    [cp try:^{
+    //NSLog(@"?x[%d] == %d with x[%d] def %@",i,v,i,xi);
+    [cp label:xi with:v];
+    //NSLog(@"+x[%d] == %d with x[%d] def %@",i,v,i,xi);
+    } or:^{
+    //NSLog(@"?x[%d] != %d with x[%d] def %@",i,v,i,xi);
+    [cp diff:xi with:v];
+    //NSLog(@"-x[%d] != %d with x[%d] def %@",i,v,i,xi);
+    }];
+    }
+    }
+    printf("x = [");
+    for(ORInt i = 0; i <= n; i++)
+    printf("%d%c",[x[i] value],i < n ? ',' : ']');
+    printf("\n");
+    [nbSol incr];
+    }];
+    }];
+    }];
+    */
    
 /*
    
@@ -78,18 +99,18 @@ int main (int argc, const char * argv[])
    id<ORInteger> nbSolutions = [CPFactory integer: cp value: 0];
    id<ORIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
+   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
    [cp solveParAll:4
-       subjectTo: 
+       subjectTo:
             ^() {
                 [cp add: [CPFactory alldifferent: x]];
                 [cp add: [CPFactory alldifferent: xp]];
                 [cp add: [CPFactory alldifferent: xn]];
-            }   
-             using: 
+            }
+             using:
            ^void(id<CPSolver> cp) {
-               id<ORIntVarArray> y = [cp virtual:x]; 
-               [CPLabel array: y orderedBy: ^ORInt(ORInt i) { return [[y at:i] domsize];}];              
+               id<ORIntVarArray> y = [cp virtual:x];
+               [CPLabel array: y orderedBy: ^ORInt(ORInt i) { return [[y at:i] domsize];}];
                 @synchronized(nbSolutions) {
                    [nbSolutions incr];  
                 }

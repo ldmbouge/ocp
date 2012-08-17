@@ -19,7 +19,6 @@
 @implementation ORModelI
 {
    NSMutableArray*          _vars;
-   NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
    ORObjectiveFunctionI*    _objective;
@@ -29,7 +28,6 @@
 {
    self = [super init];
    _vars  = [[NSMutableArray alloc] init];
-   _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
@@ -41,7 +39,6 @@
 {
    NSLog(@"Solver [%p] dealloc called...\n",self);
    [_vars release];
-   [_cStore release];
    [_mStore release];
    [_oStore release];
    [_objective release];
@@ -109,12 +106,19 @@
 
 -(void) instantiate: (id<ORSolver>) solver
 {
-   printf("I start instantiating this model \n");
+   NSLog(@"I start instantiating this model...");
    id<ORSolverConcretizer> concretizer = [solver concretizer];
    for(id<ORAbstract> c in _vars)
       [c concretize: concretizer];
    for(id<ORAbstract> c in _mStore)
       [c concretize: concretizer];
+}
+-(void)applyOnVar:(void(^)(id<ORAbstract>))doVar onConstraints:(void(^)(id<ORAbstract>))doCons
+{
+   for(id<ORAbstract> c in _vars)
+      doVar(c);
+   for(id<ORAbstract> c in _mStore)
+      doCons(c);
 }
 @end
 
@@ -142,7 +146,10 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"intVar(%@,%c,[%3d])",[_domain description],_dense ? 'D':'S',_name];
+   if (_impl == nil)
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_dense ? 'D':'S'];
+   else
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_dense ? 'D':'S',_impl];
 }
 
 -(id<ORSolver>) solver
@@ -291,7 +298,11 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"affine(%@,%c,[%3d],a=%d,x=%@,b=%d)",[_domain description],_dense ? 'D':'S',_name,_a,[_x description],_b];
+   char d = _dense ? 'D':'S';
+   if (_impl == nil)
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d)",_name,[_domain description],d,_a,_x,_b];
+   else
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d,%@)",_name,[_domain description],d,_a,_x,_b,_impl];
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
@@ -313,6 +324,7 @@
 
 @implementation ORConstraintI
 {
+   @protected
    id<ORConstraint> _impl;
    ORUInt _name;
 }
@@ -333,6 +345,10 @@
 {
    return _impl;
 }
+-(id<ORConstraint>) dereference
+{
+   return _impl;  // [ldm] should probably be [_impl dereference] but must add [dereference] message on all concrete constraints (self)
+}
 -(void) setImpl: (id<ORConstraint>) impl
 {
    _impl = impl;
@@ -341,6 +357,13 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"Can't concretize an abstract constraint"];
 }
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> = %@",[self class],self,_impl];
+   return buf;
+}
+
 @end
 
 @implementation ORAlldifferentI
@@ -359,7 +382,7 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   [concretizer alldifferent: self];
+   _impl = [concretizer alldifferent: self];
 }
 @end
 

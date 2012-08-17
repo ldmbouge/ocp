@@ -138,11 +138,27 @@
 -(id<ORTracer>)           tracer;
 @end
 
+@interface CPParSolverI : CPSemSolverI<CPParSolver> {
+   ORInt              _nbWorkers;
+}
+-(CPSemSolverI*)          initForWorkers:(ORInt)nbt;
+-(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
+-(id<ORSolverConcretizer>) concretizer;
+-(ORInt)nbWorkers;
+@end
 
 @interface CPConcretizerI : NSObject<ORSolverConcretizer>
 -(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
--(void) alldifferent: (id<ORAlldifferent>) cstr;
+-(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
+@end
+
+@interface CPParConcretizerI : NSObject<ORSolverConcretizer>
+-(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;
+-(id<ORIntVar>) intVar: (id<ORIntVar>) v;
+-(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
+-(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
+-(void) expr: (id<ORExpr>) e;
 @end
 
 

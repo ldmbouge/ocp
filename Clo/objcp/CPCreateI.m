@@ -59,4 +59,9 @@
 }
 @end
 
-
+@implementation CPParSolverI (Create)
++(CPParSolverI*)            create:(int)nbt
+{
+   return [[CPParSolverI alloc] initForWorkers:nbt];
+}
+@end

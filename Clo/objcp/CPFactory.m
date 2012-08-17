@@ -47,6 +47,10 @@ void failNow()
 {
    return [CPSemSolverI create];
 }
++(id<CPParSolver>) createParSolver:(int)nbt
+{
+   return [CPParSolverI create:nbt];
+}
 +(CPSolverI*) createRandomizedSolver
 {
     return [CPSolverI createRandomized];

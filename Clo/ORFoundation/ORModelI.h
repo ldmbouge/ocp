@@ -48,7 +48,9 @@
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;
 -(id<ORConstraint>) impl;
+-(id<ORConstraint>) dereference;
 -(void) setImpl: (id<ORConstraint>) _impl;
+-(NSString*) description;
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
@@ -73,4 +75,5 @@
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
+-(void)applyOnVar:(void(^)(id<ORAbstract>))doVar onConstraints:(void(^)(id<ORAbstract>))doCons;
 @end

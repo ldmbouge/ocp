@@ -79,6 +79,6 @@
 -(void) add: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
-
 -(void) instantiate: (id<ORSolver>) solver;
+-(void)applyOnVar:(void(^)(id<ORAbstract>))doVar onConstraints:(void(^)(id<ORAbstract>))doCons;
 @end

@@ -84,4 +84,8 @@
 @protocol CPSemSolver <CPSolver>
 @end
 
+@protocol CPParSolver <CPSemSolver>
+-(ORInt)nbWorkers;
+@end
+
 
