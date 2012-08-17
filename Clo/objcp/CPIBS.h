@@ -13,7 +13,7 @@
 #import <objcp/CPHeuristic.h>
 #import <objcp/CPBaseHeuristic.h>
 
-@class CPMonitor;
+@class CPStatisticsMonitor;
 
 #define ALPHA 8.0L
 

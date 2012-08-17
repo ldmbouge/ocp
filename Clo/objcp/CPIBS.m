@@ -12,7 +12,7 @@
 #import <CPIBS.h>
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
-#import "CPMonitor.h"
+#import "CPStatisticsMonitor.h"
 #import "ORTracer.h"
 
 @interface CPKillRange : NSObject {
@@ -142,7 +142,7 @@
 
 @implementation CPIBS {
    CPEngineI*     _solver;
-   CPMonitor*    _monitor;
+   CPStatisticsMonitor*    _monitor;
    ORULong           _nbv;
    NSMutableDictionary*  _impacts;
 }
@@ -181,7 +181,7 @@
 -(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;   
-   _monitor = [[CPMonitor alloc] initCPMonitor:_cp vars:_vars];
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:_cp vars:_vars];
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    ORInt low = [_vars low],up = [_vars up];

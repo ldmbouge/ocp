@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "CPMonitor.h"
+#import "CPStatisticsMonitor.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
 
@@ -54,7 +54,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 @end
 
-@implementation CPMonitor
+@implementation CPStatisticsMonitor
 -(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars
 {
    self = [super initCPCoreConstraint];

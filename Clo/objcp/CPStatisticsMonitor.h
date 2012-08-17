@@ -16,7 +16,7 @@
 
 // PVH: Need another name for this baby
 
-@interface CPMonitor : CPCoreConstraint {
+@interface CPStatisticsMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
    ORLong                  _nbVI;
    id<CPSolver>                    _cp;
@@ -26,9 +26,9 @@
 }
 -(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars;
 -(ORStatus) post;
--(NSString*)description;
--(double)reduction;
--(double)reductionFromRoot;
+-(NSString*) description;
+-(double) reduction;
+-(double) reductionFromRoot;
 -(void)scanActive:(void(^)(CPVarInfo*))block;
 @end
 
