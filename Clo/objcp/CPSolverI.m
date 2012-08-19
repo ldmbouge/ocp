@@ -336,7 +336,7 @@
 
 -(void) label: (CPIntVarI*) var with: (ORInt) val
 {
-   ORStatus status = [_engine label: var with: val];
+   ORStatus status = [_engine label: [var dereference] with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -346,7 +346,7 @@
 }
 -(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
-   ORStatus status = [_engine diff: var with: val];
+   ORStatus status = [_engine diff: [var dereference] with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
@@ -1111,11 +1111,18 @@ void printnl(id x)
    ORInt b = [v shift];
    return [CPFactory intVar:[mBase dereference] scale:a shift:b];
 }
-
 -(id<ORConstraint>) alldifferent: (ORAlldifferentI*) cstr
 {
-   id<ORIntVarArray> x = [cstr array];
-   id<ORConstraint> ncstr = [CPFactory alldifferent: _solver over: x];
+   id<ORIntVarArray> dx = [ORFactory intVarArrayDereference: _solver array: [cstr array]];
+   id<ORConstraint> ncstr = [CPFactory alldifferent: _solver over: dx];
+   [_solver add: ncstr];
+   return ncstr;
+}
+-(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr
+{
+   id<ORIntVarArray> ditem = [ORFactory intVarArrayDereference: _solver array: [cstr item]];
+   id<ORIntVarArray> dbinSize = [ORFactory intVarArrayDereference: _solver array: [cstr binSize]];
+   id<ORConstraint> ncstr = [CPFactory packing: ditem itemSize: [cstr itemSize] load: dbinSize];
    [_solver add: ncstr];
    return ncstr;
 }

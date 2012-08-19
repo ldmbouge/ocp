@@ -393,6 +393,38 @@
 }
 @end
 
+@implementation ORBinPackingI
+{
+   id<ORIntVarArray> _item;
+   id<ORIntArray>    _itemSize;
+   id<ORIntArray>    _binSize;
+}
+-(ORBinPackingI*) initORBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
+{
+   self = [super initORConstraintI];
+   _item = item;
+   _itemSize = itemSize;
+   _binSize = binSize;
+   return self;
+}
+-(id<ORIntVarArray>) item
+{
+   return _item;
+}
+-(id<ORIntArray>) itemSize
+{
+   return _itemSize;
+}
+-(id<ORIntArray>) binSize
+{
+   return _binSize;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   _impl = [concretizer binPacking: self];
+}
+@end
+
 @implementation ORAlgebraicConstraintI
 {
    id<ORRelation> _expr;

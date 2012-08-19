@@ -74,6 +74,13 @@
 -(id<ORIntVarArray>) array;
 @end
 
+@protocol ORBinPacking <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) itemSize;
+-(id<ORIntVarArray>) binSize;
+@end
+
+
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
 @end

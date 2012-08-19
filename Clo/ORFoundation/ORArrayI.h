@@ -40,7 +40,6 @@
 {
    id<ORTracker>  _tracker;
 }
-
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;

@@ -168,6 +168,10 @@
    }
    return (id<ORIntVarArray>)o;
 }
++(id<ORIntVarArray>) intVarArrayDereference: (id<ORTracker>) tracker array: (id<ORIntVarArray>) x
+{
+   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([x[i] dereference]); }];
+}
 +(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -179,6 +183,12 @@
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
    [[x tracker] trackObject: o];
+   return o;
+}
++(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize
+{
+   id<ORConstraint> o = [[ORBinPackingI alloc] initORBinPackingI: item itemSize: itemSize binSize: binSize];
+   [[item tracker] trackObject: o];
    return o;
 }
 +(id<ORConstraint>) algebraicConstraint:(id<ORModel>) model expr: (id<ORRelation>) exp

@@ -18,14 +18,6 @@
 @end
 
 @interface ORExplorerI : NSObject<ORExplorer>
-{
-   id<OREngine>           _engine;
-   id<ORTrail>               _trail;
-   TRId               _controller;
-   ORInt                     _nbf;
-   ORInt                     _nbc;
-   id<ORControllerFactory> _cFact;
-}
 
 -(ORExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 

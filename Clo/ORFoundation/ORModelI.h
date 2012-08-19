@@ -59,6 +59,13 @@
 -(id<ORIntVarArray>) array;
 @end
 
+@interface ORBinPackingI : ORConstraintI<ORBinPacking>
+-(ORBinPackingI*) initORBinPackingI: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) itemSize;
+-(id<ORIntArray>) binSize;
+@end
+
 @interface ORAlgebraicConstraintI : ORConstraintI<ORAlgebraicConstraint>
 -(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr;
 -(id<ORRelation>) expr;

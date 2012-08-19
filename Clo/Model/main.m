@@ -38,7 +38,10 @@ int main(int argc, const char * argv[])
       }];
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[a[i] value]);
+      NSLog(@"Solver status: %@\n",cp);
+      [cp release];
+      [CPFactory shutdown];
    }
-    return 0;
+   return 0;
 }
 
