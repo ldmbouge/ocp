@@ -43,7 +43,7 @@
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
--(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search; 
 -(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
 -(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
 

@@ -260,7 +260,7 @@
 -(void) solve: (ORClosure) search
 {
    if (_objective != nil) {
-      [_search optimizeModel: self using: search onSolution: ^() { [_engine saveSolution]; } onExit: ^() { [_engine restoreSolution]; }];
+      [_search optimizeModel: self using: search];
       printf("Optimal Solution: %d \n",[_objective primalBound]);
    }
    else {

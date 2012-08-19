@@ -28,7 +28,7 @@ int main (int argc, const char * argv[])
    
    id<CPSolver> cp = [CPFactory createSolver];
    [cp addModel: model];
-   [cp solve: ^{
+   [cp solveAll: ^{
       [CPLabel array: x];
       printf("Succeeds \n");
       for(ORInt i = 0; i < n; i++)

@@ -43,9 +43,9 @@ int main (int argc, const char * argv[])
             while (![xi bound]) {
                int v = [xi min];
                [cp try:^{
-                  [cp label:xi with:v];
+                  [cp label: xi with:v];
                } or:^{
-                  [cp diff:xi with:v];
+                  [cp diff: xi with:v];
                }];
             }
          }

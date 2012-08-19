@@ -240,10 +240,14 @@
          _controller = makeTRId(_trail,dfs);
          [dfs setup];
          body();
-      } else {
-         NSLog(@"back from search...\n");
+         [exit letgo];
+         NSLog(@"Solution Found");
+      }
+      else {
+         NSLog(@"Search Space Explored");
          [exit letgo];
       }
+      
    }
    @catch (ORSearchError* ee) {
       printf("Execution Error: %s \n",[ee msg]);
@@ -252,8 +256,6 @@
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  control:(id<ORSearchController>)newCtrl
 {
-   // clone the old controller chain in full. Must be done before creating the continuation
-   // to make sure that newCtrl is available when we "come back".
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       [_controller._val addChoice: exit];                           // add the choice in the original controller
@@ -271,15 +273,11 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      // pvh: why is this failing?
-      [_controller._val fail];
    }
 }
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  
 {
-   // clone the old controller chain in full. Must be done before creating the continuation
-   // to make sure that newCtrl is available when we "come back".
    id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
@@ -298,8 +296,6 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      // pvh: why is this failing?
-      [_controller._val fail];
    }
 }
 
@@ -308,7 +304,6 @@
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>) newCtrl
 {
-   id<ORSearchController> oldCtrl = _controller._val;
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       [_controller._val addChoice: exit];
@@ -317,23 +312,17 @@
       if (onSolution) onSolution();
       [_controller._val fail];                // If fail runs out of node, it will trigger finitelyFailed.
    }
-   else if ([newCtrl isFinitelyFailed]) {
+   else { // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
       [newCtrl release];
-      [_controller._val fail];
-   }
-   else {
-      [exit letgo];
-      [newCtrl release];
-      [self setController:oldCtrl];
       if (onExit) onExit();
+      [_controller._val fail];
    }
 }
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit 
 {
    id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
-   id<ORSearchController> oldCtrl = _controller._val;
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       [_controller._val addChoice: exit];
@@ -342,45 +331,46 @@
       if (onSolution) onSolution();
       [_controller._val fail];                // If fail runs out of node, it will trigger finitelyFailed.
    }
-   else if ([newCtrl isFinitelyFailed]) {
+   else {  // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
       [newCtrl release];
-      [_controller._val fail];
-   }
-   else {
-      [exit letgo];
-      [newCtrl release];
-      [self setController:oldCtrl];
       if (onExit) onExit();
+      [_controller._val fail];
    }
 }
 
-
--(void) optimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
    NSCont* exit = [NSCont takeContinuation];
-   [_controller._val addChoice: exit];
-   id<ORObjective> obj = solver.objective;
    if ([exit nbCalls]==0) {
+      [_controller._val addChoice: exit];
+      [self setController:newCtrl];           // install the new controller
+      id<ORObjective> obj = solver.objective;
       OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: ^ORStatus(void) { return [obj check]; }];
       [self push: controller];
       [controller release];
-      [solver close];
       if (search) search();
       [obj updatePrimalBound];
       if (onSolution) onSolution();
       [_controller._val fail];
    }
-   else {
-      if (onExit) onExit();
+   else { // if ([newCtrl isFinitelyFailed]) {
       [exit letgo];
+      [newCtrl release];
+      if (onExit) onExit();
+      [_controller._val fail];
    }
 }
 
--(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search 
 {
    [self search: ^{
-      [self optimize: solver using: search onSolution: onSolution onExit: onExit];
+      [self nestedOptimize: solver
+                     using: ^ { [solver close]; search(); }
+                onSolution: ^ { [_engine saveSolution]; }
+                    onExit: ^ { [_engine restoreSolution]; }
+       ];
    }];
 }
 
