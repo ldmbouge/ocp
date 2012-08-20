@@ -1875,7 +1875,7 @@
 		B1C9DF3215A8078400EE924C /* SportView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SportView.m; sourceTree = "<group>"; };
 		B1CC82F315D27A57008DE335 /* ORModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModel.h; sourceTree = "<group>"; };
 		B1CC82F515D27C66008DE335 /* ORModelI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelI.h; sourceTree = "<group>"; };
-		B1CC82F615D27C66008DE335 /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORModelI.m; sourceTree = "<group>"; };
+		B1CC82F615D27C66008DE335 /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORModelI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1CC832015D3BEC4008DE335 /* model */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = model; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1CC832415D3BEC4008DE335 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
@@ -8421,6 +8421,7 @@
 				B189513215DE52D100B77813 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B189514715E0FA5F00B77813 /* Build configuration list for PBXNativeTarget "slabModel" */ = {
 			isa = XCConfigurationList;
@@ -8429,6 +8430,7 @@
 				B189514915E0FA5F00B77813 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B1935C6A15B90ECF00107399 /* Build configuration list for PBXNativeTarget "slab" */ = {
 			isa = XCConfigurationList;

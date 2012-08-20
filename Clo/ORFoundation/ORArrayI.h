@@ -52,6 +52,7 @@
 -(id<ORSolver>) solver;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end

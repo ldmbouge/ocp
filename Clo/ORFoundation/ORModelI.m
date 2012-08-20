@@ -111,16 +111,19 @@
 {
    NSLog(@"I start instantiating this model...");
    id<ORSolverConcretizer> concretizer = [solver concretizer];
-   for(id<ORAbstract> c in _vars)
+   for(id<ORObject> c in _vars)
       [c concretize: concretizer];
-   for(id<ORAbstract> c in _mStore)
+   for(id c in _oStore)
       [c concretize: concretizer];
+   for(id<ORObject> c in _mStore)
+      [c concretize: concretizer];
+
 }
--(void)applyOnVar:(void(^)(id<ORAbstract>))doVar onConstraints:(void(^)(id<ORAbstract>))doCons
+-(void)applyOnVar: (void(^)(id<ORObject>)) doVar onConstraints:(void(^)(id<ORObject>)) doCons
 {
-   for(id<ORAbstract> c in _vars)
+   for(id<ORObject> c in _vars)
       doVar(c);
-   for(id<ORAbstract> c in _mStore)
+   for(id<ORObject> c in _mStore)
       doCons(c);
 }
 @end
@@ -137,6 +140,7 @@
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
+   _impl = nil;
    _tracker = track;
    _domain = domain;
    _dense = true;
@@ -264,7 +268,8 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   _impl = [concretizer intVar: self];
+   if (_impl == nil)
+      _impl = [concretizer intVar: self];
 }
 -(ORInt)scale
 {
@@ -301,6 +306,7 @@
    _a = a;
    _x = x;
    _b = b;
+   _impl = nil;
    return self;
 }
 -(NSString*) description
@@ -313,7 +319,8 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   _impl = [concretizer affineVar: self];
+   if (_impl == nil)
+      _impl = [concretizer affineVar: self];
 }
 -(ORInt)scale
 {
@@ -338,6 +345,7 @@
 -(ORConstraintI*) initORConstraintI
 {
    self = [super init];
+   _impl = nil;   
    return self;
 }
 -(void) setId: (ORUInt) name;
@@ -354,7 +362,7 @@
 }
 -(id<ORConstraint>) dereference
 {
-   return _impl;  // [ldm] should probably be [_impl dereference] but must add [dereference] message on all concrete constraints (self)
+   return [_impl dereference];  
 }
 -(void) setImpl: (id<ORConstraint>) impl
 {
@@ -389,7 +397,8 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   _impl = [concretizer alldifferent: self];
+   if (_impl == nil)
+      _impl = [concretizer alldifferent: self];
 }
 @end
 
@@ -421,7 +430,8 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   _impl = [concretizer binPacking: self];
+   if (_impl == nil)
+      _impl = [concretizer binPacking: self];
 }
 @end
 
@@ -441,6 +451,7 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   _impl = [concretizer algebraicConstraint: self];
+   if (_impl == nil)
+      _impl = [concretizer algebraicConstraint: self];
 }
 @end

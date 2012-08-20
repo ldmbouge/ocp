@@ -277,6 +277,18 @@
    id<ORExpr> o = [[ORImplyI alloc] initORImplyI:left imply:right];
    return [self validate:o onError:"No CP Solver in => Expression"];
 }
++(id<ORExpr>) elt: (id<ORTracker>) tracker intVarArray: (id<ORIntVarArray>) a index: (id<ORExpr>) index
+{
+   id<ORExpr> o = [[ORExprVarSubI alloc] initORExprVarSubI: a elt: index];
+   [tracker trackObject: o];
+   return o;
+}
++(id<ORExpr>) elt: (id<ORTracker>) tracker intArray: (id<ORIntArray>) a index: (id<ORExpr>) index
+{
+   id<ORExpr> o = [[ORExprCstSubI alloc] initORExprCstSubI: a index: index];
+   [tracker trackObject: o];
+   return o;
+}
 
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op
 {

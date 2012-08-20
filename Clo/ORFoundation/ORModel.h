@@ -18,7 +18,7 @@
 @protocol ORSolverConcretizer;
 
 
-@protocol ORVar <ORAbstract,ORExpr>
+@protocol ORVar <ORObject,ORExpr>
 -(ORUInt) getId;
 -(BOOL) bound;
 -(id<ORSolver>) solver;
@@ -91,5 +91,5 @@
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
 -(void) instantiate: (id<ORSolver>) solver;
--(void)applyOnVar:(void(^)(id<ORAbstract>))doVar onConstraints:(void(^)(id<ORAbstract>))doCons;
+-(void)applyOnVar:(void(^)(id<ORObject>))doVar onConstraints:(void(^)(id<ORObject>))doCons;
 @end

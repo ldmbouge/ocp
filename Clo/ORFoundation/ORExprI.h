@@ -83,7 +83,7 @@
 -(ORExprI*) index;
 -(id<ORIntArray>)array;
 -(BOOL) isConstant;
--(void) visit:(id<ORExprVisitor>)v;
+-(void) visit:(id<ORExprVisitor>) v;
 @end
 
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
@@ -208,22 +208,4 @@
 @end
 
 
-@protocol ORExprVisitor
--(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitExprPlusI: (ORExprPlusI*) e;
--(void) visitExprMinusI: (ORExprMinusI*) e;
--(void) visitExprMulI: (ORExprMulI*) e;
--(void) visitExprEqualI: (ORExprEqualI*) e;
--(void) visitExprNEqualI: (ORExprNotEqualI*) e;
--(void) visitExprLEqualI: (ORExprLEqualI*) e;
--(void) visitExprSumI: (ORExprSumI*) e;
--(void) visitExprAbsI:(ORExprAbsI*) e;
--(void) visitExprCstSubI: (ORExprCstSubI*) e;
--(void) visitExprDisjunctI:(ORDisjunctI*) e;
--(void) visitExprConjunctI: (ORConjunctI*) e;
--(void) visitExprImplyI: (ORImplyI*) e;
--(void) visitExprAggOrI: (ORExprAggOrI*) e;
--(void) visitIntVarI: (id<ORIntVar>) var;
--(void) visitExprVarSubI: (ORExprVarSubI*) e;
-@end
 

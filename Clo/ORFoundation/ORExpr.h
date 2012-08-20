@@ -16,15 +16,14 @@
 @protocol ORRelation;
 @protocol ORExpr;
 @protocol ORSolverConcretizer;
+@protocol ORIntArray;
+@protocol ORIntVarArray;
 
 id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r);
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
-@protocol ORAbstract <NSObject>
--(void) concretize: (id<ORSolverConcretizer>) concretizer;
-@end
 
-@protocol ORConstraint <ORAbstract,NSObject>
+@protocol ORConstraint <ORObject>
 @end
 
 @protocol ORExpr <ORConstraint,NSObject,NSCoding>
@@ -53,6 +52,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) and: (id<ORExpr>) e;
 -(id<ORRelation>) or: (id<ORExpr>) e;
 -(id<ORRelation>) imply:(id<ORExpr>)e;
+
+
 @end
 
 enum ORRelationType {
@@ -70,4 +71,23 @@ enum ORRelationType {
 -(id<ORRelation>) and: (id<ORRelation>) e;
 -(id<ORRelation>) or: (id<ORRelation>) e;
 -(id<ORRelation>) imply: (id<ORRelation>) e;
+@end
+
+@protocol ORExprVisitor
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitExprPlusI: (id<ORExpr>) e;
+-(void) visitExprMinusI: (id<ORExpr>) e;
+-(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprEqualI: (id<ORExpr>) e;
+-(void) visitExprNEqualI: (id<ORExpr>) e;
+-(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprSumI: (id<ORExpr>) e;
+-(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprCstSubI: (id<ORExpr>) e;
+-(void) visitExprDisjunctI:(id<ORExpr>) e;
+-(void) visitExprConjunctI: (id<ORExpr>) e;
+-(void) visitExprImplyI: (id<ORExpr>) e;
+-(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitIntVarI: (id<ORExpr>) var;
+-(void) visitExprVarSubI: (id<ORExpr>) e;
 @end

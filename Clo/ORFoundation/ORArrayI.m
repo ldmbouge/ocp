@@ -123,7 +123,8 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
+//   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
+   return [ORFactory elt: _tracker intArray: self index: idx];
 }
 -(ORInt) low
 {
@@ -196,6 +197,7 @@
    ORInt               _up;
    ORInt               _nb;
    id<ORIntRange>   _range;
+   id<ORIdArray>     _impl;
 }
 
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
@@ -209,6 +211,7 @@
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);
    _array -= _low;
+   _impl = nil;
    return self;
 }
 -(void) dealloc
@@ -281,6 +284,11 @@
 {
    _array[key] = newValue;
 }
+-(id<ORExpr>)elt:(id<ORExpr>)idx
+{
+   return [ORFactory elt: _tracker intVarArray: (id<ORIntVarArray>) self index: idx];
+}
+
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -302,6 +310,18 @@
    for(ORInt i=_low;i<=_up;i++)
       _array[i] = [aDecoder decodeObject];
    return self;   
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (_impl != nil)
+      _impl = [concretizer idArray: self];
+}
+-(id<ORIdArray>) dereference
+{
+   if (_impl != nil)
+      return [_impl dereference];
+   else
+      return self;
 }
 @end
 

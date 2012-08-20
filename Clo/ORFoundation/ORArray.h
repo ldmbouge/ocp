@@ -17,7 +17,7 @@
 @protocol ORIntSet;
 @protocol ORIntRange;
 
-@protocol ORIntArray <NSObject> 
+@protocol ORIntArray <ORObject>
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
 -(ORInt) low;
@@ -29,7 +29,7 @@
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 @end
 
-@protocol ORIntSetArray <NSObject>
+@protocol ORIntSetArray <ORObject>
 -(id<ORIntSet>) at: (ORInt) idx;
 -(void) set: (id<ORIntSet>) value at: (ORInt)idx;
 -(id<ORIntSet>)objectAtIndexedSubscript:(NSUInteger)key;
@@ -42,7 +42,7 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORIdArray <NSObject>
+@protocol ORIdArray <ORObject>
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
 -(id)objectAtIndexedSubscript:(NSUInteger)key;
@@ -55,7 +55,7 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORIdMatrix <NSObject>
+@protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;
 -(id) at: (ORInt) i1 : (ORInt) i2;
 -(id) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
@@ -68,7 +68,7 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORIntMatrix <NSObject>
+@protocol ORIntMatrix <ORObject>
 -(ORInt) at: (ORInt) i1 : (ORInt) i2;
 -(ORInt) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
 -(void) set: (ORInt) value at: (ORInt) i1 : (ORInt) i2;
@@ -79,7 +79,7 @@
 -(id<ORTracker>) tracker;
 @end
 
-@protocol ORTrailableIntArray <NSObject>
+@protocol ORTrailableIntArray <ORObject>
 -(id<ORTrailableInt>) at: (ORInt) idx;
 -(void) set: (id<ORTrailableInt>) value at: (ORInt)idx;
 -(id<ORTrailableInt>)objectAtIndexedSubscript:(NSUInteger)key;

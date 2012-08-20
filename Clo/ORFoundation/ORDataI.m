@@ -12,6 +12,17 @@
 #import "ORDataI.h"
 #import "ORSet.h"
 
+@implementation NSObject (Concretization)
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   
+}
+-(id) dereference
+{
+   return self;
+}
+@end;
+
 @implementation ORIntegerI
 {
 	ORInt           _value;

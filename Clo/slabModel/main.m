@@ -80,8 +80,8 @@ int main(int argc, const char * argv[])
 //   [model add: [obj eq: Sum(model,s,Slabs,[load at: s])]];
    [model add: [ORFactory packing: slab itemSize: weight binSize: load]];
 //   for(ORInt s = Slabs.low; s <= Slabs.up; s++)
- //     [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
- //  [model add: [obj eqi: 0]];
+//     [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
+   [model add: [obj eqi: 0]];
    
    id<CPSolver> cp = [CPFactory createSolver];
    [cp addModel: model];

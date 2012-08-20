@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
+#import "ORData.h"
 
 @protocol ORSolver;
 

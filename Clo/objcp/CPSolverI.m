@@ -1132,6 +1132,18 @@ void printnl(id x)
    [_solver add: c];
    return c;
 }
+-(id<ORIdArray>) idArray: (id<ORIdArray>) a
+{
+   id<ORIntRange> R = [a range];
+   id<ORIdArray> impl = [ORFactory idArray: _solver range: R];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++) {
+      [a[i] concretize: self];
+      impl[i] = [a[i] dereference];
+   }
+   return impl;
+}
 -(void) expr: (id<ORExpr>) e
 {
    

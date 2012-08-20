@@ -14,8 +14,19 @@
 
 @protocol ORExpr;
 @protocol ORIntRange;
+@protocol ORSolverConcretizer;
 
-@protocol ORInteger <NSObject,ORExpr>
+@protocol ORObject <NSObject>
+-(id) dereference;
+-(void) concretize: (id<ORSolverConcretizer>) concretizer;
+@end;
+
+@interface NSObject (Concretization)
+-(id) dereference;
+-(void) concretize: (id<ORSolverConcretizer>) concretizer;
+@end;
+
+@protocol ORInteger <ORObject,ORExpr>
 -(ORInt)  value;
 -(void) setValue: (ORInt) value;
 -(void) incr;
@@ -23,7 +34,7 @@
 @end
 
 
-@protocol ORTrailableInt <NSObject>
+@protocol ORTrailableInt <ORObject>
 -(ORInt) value;
 -(void)  setValue: (ORInt) value;
 -(void)  incr;
@@ -44,15 +55,15 @@
 +(void) initSeed: (unsigned short*) seed;
 @end
 
-@protocol ORRandomStream <NSObject>
+@protocol ORRandomStream <ORObject>
 -(ORLong) next;
 @end;
 
-@protocol ORZeroOneStream <NSObject>
+@protocol ORZeroOneStream <ORObject>
 -(double) next;
 @end;
 
-@protocol ORUniformDistribution <NSObject>
+@protocol ORUniformDistribution <ORObject>
 -(ORInt) next;
 @end;
 
