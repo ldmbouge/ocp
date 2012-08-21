@@ -324,7 +324,7 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      //[_controller._val fail];
+      // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
    }
 }
 
@@ -343,7 +343,7 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      //[_controller._val fail];
+      // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
    }
 }
 
@@ -367,7 +367,8 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      [_controller._val fail];
+      // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
+      //[_controller._val fail];
    }
 }
 

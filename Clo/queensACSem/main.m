@@ -98,39 +98,6 @@ int main (int argc, const char * argv[])
     }];
     }];
     }];
-    */
-   
-/*
-   
-   int n = 12;
-   id<CPSolver> cp = [CPFactory createSemSolver];
-   id<ORIntRange> R = RANGE(cp,1,n);
-   id<ORInteger> nbSolutions = [CPFactory integer: cp value: 0];
-   id<ORIntVarArray> x  = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }];
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range:R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }];
-   [cp solveParAll:4
-       subjectTo:
-            ^() {
-                [cp add: [CPFactory alldifferent: x]];
-                [cp add: [CPFactory alldifferent: xp]];
-                [cp add: [CPFactory alldifferent: xn]];
-            }
-             using:
-           ^void(id<CPSolver> cp) {
-               id<ORIntVarArray> y = [cp virtual:x];
-               [CPLabel array: y orderedBy: ^ORInt(ORInt i) { return [[y at:i] domsize];}];
-                @synchronized(nbSolutions) {
-                   [nbSolutions incr];  
-                }
-            }        
-   ];
-   NSLog(@"GOT %d solutions\n",[nbSolutions value]);
-   NSLog(@"Solver status: %@\n",cp);
-   NSLog(@"Quitting");
-   [cp release];
-   [CPFactory shutdown];
-   return 0;
- */
+    */   
 }
 

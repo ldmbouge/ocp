@@ -17,26 +17,6 @@
 @class SemTracer;
 @class SemCP;
 @protocol CPSemSolver;
-// ====================================================================================================
-// SemParallel
-// ====================================================================================================
-
-/*
-@interface SemParallel : NSObject {
-   ORUInt           _nbt;
-   SemCP*          _original;
-   PCObjectQueue*     _queue;
-   SemCP**           _clones;
-   NSCondition*  _terminated;
-   ORInt         _nbDone;
-}
--(id)initSemParallel:(SemCP*)orig nbWorkers:(ORUInt)nbt;
--(void)runSearcher:(NSData*)model;
--(void)parallel:(CPVirtualClosure)body;
--(void)setupAndGo:(NSData*)root forCP:(SemCP*)cp searchWith:(CPVirtualClosure)body;
--(void)waitWorkers;
-@end
-*/
 
 @interface CPGenerator : ORDefaultController<ORSearchController> {
    id<CPSemSolver>   _solver;
