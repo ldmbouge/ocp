@@ -13,11 +13,23 @@
 
 @implementation ORSemDFSController
 
-- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<OREngine>)solver
+- (id) initSemController:(id<ORSolver>)solver
+{
+   self = [super initORDefaultController];
+   _tracer = [[solver tracer] retain];
+   _engine = [solver engine];
+   _mx  = 64;
+   _tab = malloc(sizeof(NSCont*)* _mx);
+   _cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
+   _sz  = 0;
+   return self;
+}
+
+- (id) initSemController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
-   _solver = solver;
+   _engine = engine;
    _mx  = 64;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
@@ -46,7 +58,7 @@
       [_tab[_sz] letgo];
       [_cpTab[_sz] release];
    }
-   [_tracer restoreCheckpoint:_atRoot inSolver:_solver];
+   [_tracer restoreCheckpoint:_atRoot inSolver:_engine];
 }
 
 -(ORInt) addChoice: (NSCont*)k 
@@ -70,7 +82,7 @@
    ORInt ofs = _sz-1;
    if (ofs >= 0) {      
       id<ORCheckpoint> cp = _cpTab[ofs];
-      [_tracer restoreCheckpoint:cp inSolver:_solver];
+      [_tracer restoreCheckpoint:cp inSolver:_engine];
       [cp release];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
@@ -85,7 +97,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer andSolver:_solver];
+   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer engine:_engine];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

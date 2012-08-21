@@ -13,6 +13,8 @@
 #import "OREngine.h"
 #import "ORModel.h"
 
+@protocol ORTracer;
+
 @protocol ORObjective <NSObject>
 -(ORStatus) check;
 -(void)     updatePrimalBound;
@@ -30,7 +32,7 @@
 @end
 
 @protocol ORSolver <NSObject,ORTracker,ORSolutionProtocol>
-
+-(id<ORTracer>)    tracer;
 -(id<OREngine>)    engine;
 -(id<ORObjective>) objective;
 

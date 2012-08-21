@@ -255,7 +255,6 @@
          NSLog(@"Search Space Explored");
          [exit letgo];
       }
-      
    }
    @catch (ORSearchError* ee) {
       printf("Execution Error: %s \n",[ee msg]);

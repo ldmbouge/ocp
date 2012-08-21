@@ -41,7 +41,7 @@
 -(void)dealloc 
 {
    for(ORInt i = 0;i  < _sz;i++) {
-      [_tab[i]._cont release];
+      [_tab[i]._cont letgo];
       [_tab[i]._cp release];
    }
    free(_tab);
@@ -72,14 +72,25 @@
 
 @implementation ORSemBDSController
 
-- (id) initSemController:(id<ORTracer>)tracer andSolver:(id<OREngine>)solver
+- (id) initSemController:(id<ORSolver>)solver
 {
    self = [super initORDefaultController];
-   _tracer = [tracer retain];
-   _solver = solver;
+   _tracer = [[solver tracer] retain];
+   _solver = [solver engine];
    _tab  = [[BDSStack alloc] initBDSStack:32];
    _next = [[BDSStack alloc] initBDSStack:32];
    _nbDisc = _maxDisc = 0;   
+   return self;
+}
+
+- (id) initSemController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+{
+   self = [super initORDefaultController];
+   _tracer = [tracer retain];
+   _solver = engine;
+   _tab  = [[BDSStack alloc] initBDSStack:32];
+   _next = [[BDSStack alloc] initBDSStack:32];
+   _nbDisc = _maxDisc = 0;
    return self;
 }
 
@@ -146,8 +157,22 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer andSolver:_solver];
+   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer engine:_solver];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
+}
+
+-(ORHeist*)steal
+{
+   if ([_next size] >=1) {
+      struct BDSNode node = [_next pop];
+      ORHeist* rv = [[ORHeist alloc] initORHeist:node._cont from:node._cp];
+      return rv;
+   } else return nil;
+}
+
+-(BOOL)willingToShare
+{
+   return [_tab size] + [_next size] >= 1;
 }
 @end

@@ -468,32 +468,20 @@
 }
 @end
 
-@interface ORDFSControllerFactory : NSObject<ORControllerFactory> {
-   id<ORTracer> _tracer;
+@interface ORControllerFactory : NSObject<ORControllerFactory> {
+   CPSemSolverI* _solver;
+   Class         _ctrlClass;
 }
--(id)initORDFSController:(id<ORTracer>)tr;
+-(id)initFactory:(CPCoreSolverI*)solver controllerClass:(Class)class;
 -(id<ORSearchController>)makeController;
 @end
 
-@implementation ORDFSControllerFactory
--(id)initORDFSController:(id<ORTracer>)tr
-{
-   self = [super init];
-   _tracer = tr;
-   return self;
-}
--(id<ORSearchController>)makeController
-{
-   return [[ORDFSController alloc] initDFSController:_tracer];
-}
-@end
-   
 @implementation CPSolverI
 -(CPSolverI*)             init
 {
    self = [super init];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORDFSControllerFactory alloc] initORDFSController:_tracer];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:[ORDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -502,12 +490,12 @@
 {
    self = [super initFor:fdm];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORDFSControllerFactory alloc] initORDFSController:_tracer];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self  controllerClass:[ORDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
 }
--(id<ORTracer>)           tracer
+-(id<ORTracer>) tracer
 {
    return _tracer;
 }
@@ -526,7 +514,7 @@
 {
    self = [super initWithCoder:aDecoder];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORDFSControllerFactory alloc] initORDFSController:_tracer];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:[ORDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -534,43 +522,21 @@
 @end
 
 
-@interface ORSemDFSControllerFactory : NSObject<ORControllerFactory> {
-   id<ORTracer> _tracer;
-   id<OREngine> _engine;
-}
--(id)init:(id<ORTracer>)tr engine:(id<OREngine>)engine;
--(id<ORSearchController>)makeController;
-@end
-
-@implementation ORSemDFSControllerFactory
--(id)init:(id<ORTracer>)tr engine:(id<OREngine>)engine
-{
-   self = [super init];
-   _tracer = tr;
-   _engine = engine;
-   return self;
-}
--(id<ORSearchController>)makeController
-{
-   return [[ORSemDFSController alloc] initSemController:_tracer andSolver:_engine];
-}
-@end
-
-@implementation CPSemSolverI
--(CPSemSolverI*) init
+@implementation CPSemSolverI 
+-(CPSemSolverI*) initWithController:(Class)ctrlClass
 {
    self = [super init];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORSemDFSControllerFactory alloc] init:_tracer engine:_engine];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:ctrlClass];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
 }
--(CPCoreSolverI*) initFor: (CPEngineI*) fdm
+-(CPCoreSolverI*) initFor: (CPEngineI*) fdm withController:(Class)ctrlClass
 {
    self = [super initFor:fdm];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORSemDFSControllerFactory alloc] init:_tracer engine:_engine];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:ctrlClass];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -612,7 +578,7 @@
 {
    self = [super initWithCoder:aDecoder];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORSemDFSControllerFactory alloc] init:_tracer engine:_engine];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:[ORSemDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -635,6 +601,21 @@
    NSData* thePack = [theCP packFromSolver:_engine];
    [theCP release];
    return thePack;
+}
+@end
+
+
+@implementation ORControllerFactory
+-(id)initFactory:(CPSemSolverI*)solver controllerClass:(Class)class
+{
+   self = [super init];
+   _solver = solver;
+   _ctrlClass = class;
+   return self;
+}
+-(id<ORSearchController>)makeController
+{
+   return [[_ctrlClass alloc] initSemController:_solver];
 }
 @end
 
@@ -718,14 +699,16 @@ static void init_pthreads_key()
    PCObjectQueue*     _queue;
    NSCondition*  _terminated;
    ORInt             _nbDone;
+   Class             _defCon;
 }
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt
+-(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass
 {
    self = [super init];
    _nbWorkers = nbt;
    _workers   = malloc(sizeof(id<CPSemSolver>)*_nbWorkers);
    _queue = [[PCObjectQueue alloc] initPCQueue:128 nbWorkers:_nbWorkers];
    _terminated = [[NSCondition alloc] init];
+   _defCon     = ctrlClass;
    _nbDone     = 0;
    return self;
 }
@@ -773,7 +756,7 @@ static void init_pthreads_key()
    }];
    // Now loop _nbWorkers times and instantiate using a bare concretizer
    for(ORInt i=0;i<_nbWorkers;i++) {
-      _workers[i] = [CPFactory createSemSolver];
+      _workers[i] = [CPFactory createSemSolver:_defCon];
       [model instantiate:_workers[i]];
       [model applyOnVar:^(id v) {
          ORParIntVarI* pari = [vars objectAtIndex:[v getId]];
@@ -838,11 +821,10 @@ static void init_pthreads_key()
 {
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
-   SEL todo = [[input objectAtIndex:2] pointerValue];
    [NSThread setThreadID:myID];
    //[[_workers[myID] explorer] solveModel:_workers[myID] using:mySearch];
-//   [[_workers[myID] explorer] performSelector:todo withObject:_workers[myID] withObject:mySearch];
-  [[_workers[myID] explorer] search: ^() {
+   //[[_workers[myID] explorer] performSelector:todo withObject:_workers[myID] withObject:mySearch];
+   [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
       if (myID == 0) {
          // The first guy produces a sub-problem that is the root of the whole tree.
@@ -876,9 +858,7 @@ static void init_pthreads_key()
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                         [search copy],
-                                         [NSValue valueWithPointer:@selector(solveAllModel:using:)],
-                                         nil]];
+                                         [search copy],nil]];
    }
    [self waitWorkers]; // wait until all the workers are done.
    
@@ -890,9 +870,7 @@ static void init_pthreads_key()
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                                                  [search copy],
-                                                                  [NSValue valueWithPointer:@selector(solveModel:using:)],
-                                                                  nil]];
+                                                                  [search copy],nil]];
    }
    [self waitWorkers]; // wait until all the workers are done. 
 /*
@@ -937,7 +915,6 @@ static void init_pthreads_key()
    return [_solver propagateDone];
 }
 @end
-
 
 @implementation CPConcretizerI
 {

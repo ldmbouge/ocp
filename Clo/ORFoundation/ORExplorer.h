@@ -46,6 +46,6 @@
 -(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search; 
 -(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
 -(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
-
+-(void)             search: (ORClosure) block;
 @end
 

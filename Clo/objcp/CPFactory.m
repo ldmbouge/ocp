@@ -41,13 +41,13 @@ void failNow()
 {
     return [CPSolverI create];
 }
-+(id<CPSemSolver>) createSemSolver
++(id<CPSemSolver>) createSemSolver:(Class)ctrlClass
 {
-   return [CPSemSolverI create];
+   return [CPSemSolverI createWithController:ctrlClass];
 }
-+(id<CPParSolver>) createParSolver:(int)nbt
++(id<CPParSolver>) createParSolver:(int)nbt withController:(Class)ctrlClass
 {
-   return [CPParSolverI create:nbt];
+   return [CPParSolverI create:nbt withController:ctrlClass];
 }
 +(CPSolverI*) createRandomizedSolver
 {
@@ -95,11 +95,11 @@ void failNow()
 }
 +(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp
 {
-   return [[ORSemDFSController alloc] initSemController:[cp tracer] andSolver:[cp engine]];
+   return [[ORSemDFSController alloc] initSemController:cp];
 }
 +(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp
 {
-   return [[ORSemBDSController alloc] initSemController:[cp tracer] andSolver:[cp engine]];
+   return [[ORSemBDSController alloc] initSemController:cp];
 }
 +(void) shutdown
 {

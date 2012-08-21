@@ -85,6 +85,7 @@
 -(ORStatus)installProblem:(id<ORProblem>)problem;
 -(id<ORCheckpoint>)captureCheckpoint;
 -(NSData*)packCheckpoint:(id<ORCheckpoint>)cp;
+-(void)setController:(id<ORSearchController>)ctrl;
 @end
 
 @protocol CPParSolver <CPSemSolver>

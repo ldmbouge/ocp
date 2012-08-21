@@ -20,12 +20,12 @@
 @end
 
 @interface CPSemSolverI (Create)
-+(CPSemSolverI*)            create;
++(CPSemSolverI*)            createWithController:(Class)ctrlClass;
 +(CPSemSolverI*)            createRandomized;
 +(CPSemSolverI*)            createDeterministic;
 +(CPSemSolverI*)            createFor:(CPEngineI*)fdm;
 @end
 
 @interface CPParSolverI (Create)
-+(CPParSolverI*)            create:(int)nbt;
++(CPParSolverI*)            create:(int)nbt withController:(Class)ctrlClass;
 @end

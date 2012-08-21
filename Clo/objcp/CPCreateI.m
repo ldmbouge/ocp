@@ -39,9 +39,9 @@
 @end
 
 @implementation CPSemSolverI(Create)
-+(CPSemSolverI*) create
++(CPSemSolverI*) createWithController:(Class)ctrlClass
 {
-   return [[CPSemSolverI alloc] init];
+   return [[CPSemSolverI alloc] initWithController:ctrlClass];
 }
 +(CPSemSolverI*) createRandomized
 {
@@ -60,8 +60,8 @@
 @end
 
 @implementation CPParSolverI (Create)
-+(CPParSolverI*)            create:(int)nbt
++(CPParSolverI*)            create:(int)nbt withController:(Class)ctrlClass
 {
-   return [[CPParSolverI alloc] initForWorkers:nbt];
+   return [[CPParSolverI alloc] initForWorkers:nbt withController:ctrlClass];
 }
 @end

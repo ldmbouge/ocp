@@ -131,15 +131,15 @@
 @interface CPSemSolverI : CPCoreSolverI<CPSemSolver> {
    SemTracer*          _tracer;
 }
--(CPSemSolverI*)          init;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
+-(CPSemSolverI*)          initWithController:(Class)ctrlClass;
+-(CPCoreSolverI*)         initFor: (CPEngineI*) fdm withController:(Class)ctrlClass;
 -(id<ORTracer>)           tracer;
 @end
 
 @interface CPParSolverI : CPSemSolverI<CPParSolver> {
    ORInt              _nbWorkers;
 }
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt;
+-(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
 -(id<ORSolverConcretizer>) concretizer;
 -(ORInt)nbWorkers;
@@ -163,50 +163,5 @@
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
 @end
-
-
-/*
-@interface SemCP : CoreCPI {
-   SemTracer* _tracer;
-}
--(SemCP*)                   init;
--(SemCP*)                   initFor:(id<CPEngine>)fdm;
--(void)dealloc;
--(ORStatus)installCheckpoint:(Checkpoint*)cp;
--(Checkpoint*)captureCheckpoint;
--(NSData*)packCheckpoint:(Checkpoint*)cp;
--(ORStatus)installProblem:(CPProblem*)problem;
-
--(void)               label: (id) var with: (ORInt) val;
--(void)                diff: (id) var with: (ORInt) val;
-
-
--(void)              search: (ORClosure) body;
--(void)               solve: (ORClosure) body;
--(void)               solve: (ORClosure) body using:(ORClosure) search;
--(void)            solveAll: (ORClosure) body;
--(void)            solveAll: (ORClosure) body using:(ORClosure) search;
-
--(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
--(void)         nestedSolve: (ORClosure) body;
--(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
--(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
--(void)      nestedSolveAll: (ORClosure) body;
-
-
--(void)            minimize: (id<ORIntVar>) x in: (ORClosure) body;
--(void)            maximize: (id<ORIntVar>) x in: (ORClosure) body;
--(void)            minimize: (id<ORIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
--(void)            maximize: (id<ORIntVar>) x subjectTo: (ORClosure) body using:(ORClosure) search;
--(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
--(void) solveParAll:(ORUInt)nbt subjectTo:(ORClosure)body using:(CPVirtualClosure)body;
--(SemTracer*)tracer;
-@end
-*/
-
-
-
 
 

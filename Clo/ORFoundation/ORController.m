@@ -210,7 +210,18 @@
 
 @implementation ORDFSController
 
-- (id) initDFSController:(id<ORTracer>)tracer;
+- (id) initDFSController:(id<ORSolver>)solver
+{
+   self = [super initORDefaultController];
+   _tracer = [[solver tracer] retain];
+   _mx  = 100;
+   _tab = malloc(sizeof(NSCont*)* _mx);
+   _sz  = 0;
+   _atRoot = 0;
+   return self;
+}
+
+- (id) initDFSControllerWithTracer:(id<ORTracer>)tracer
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -278,7 +289,7 @@
 }
 - (id) copyWithZone: (NSZone*) zone
 {
-   ORDFSController* ctrl = [[[self class] allocWithZone:zone] initDFSController:_tracer];
+   ORDFSController* ctrl = [[[self class] allocWithZone:zone] initDFSControllerWithTracer:_tracer];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
