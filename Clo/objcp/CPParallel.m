@@ -12,6 +12,8 @@
 #import "CPParallel.h"
 #import "CPSolverI.h"
 #import "CPFactory.h"
+#import "ORSemDFSController.h"
+
 
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
@@ -39,16 +41,18 @@
 
 -(void) publishWork
 {
-   _publishing = YES;
-   
+   _publishing = YES;   
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
-   id<ORSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_solver onPool:_pool];
    [_solver installCheckpoint:[stolen theCP]];
-   [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
-                           onSolution:nil
-                               onExit:nil
-                              control:genc];
+   id<ORSearchController> base = [[ORSemDFSController alloc] initSemController:_solver];
+   [[_solver explorer] applyController: base
+                                    in: ^ {
+                                       [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
+                                                               onSolution:nil
+                                                                   onExit:nil
+                                                                  control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
+                                    }];
    [stolen release];
    [_solver installCheckpoint:theCP];
    _publishing = NO;
@@ -176,4 +180,12 @@
 {
    [self packAndFail];
 }
+
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPGenerator* ctrl = [[[self class] allocWithZone:zone] initCPGenerator:_controller explorer:_solver onPool:_pool];
+   [ctrl setController:[_controller copyWithZone:zone]];
+   return ctrl;
+}
+
 @end

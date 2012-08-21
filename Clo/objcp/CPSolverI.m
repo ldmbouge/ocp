@@ -807,6 +807,7 @@ static void init_pthreads_key()
 }
 -(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
 {
+   //id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:_workers[myID]];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:[[_workers[myID] explorer] controller] explorer:_workers[myID] onPool:_queue];
    [[_workers[myID] explorer] nestedSolveAll:^() {  [self setupWork:root
                                                               forCP:_workers[myID]];
@@ -815,6 +816,8 @@ static void init_pthreads_key()
                                   onSolution:nil
                                       onExit:nil
                                      control:parc];
+   //NSLog(@"BACK from subproblem [%@]",theSub);
+   //[theSub release];
 }
 
 -(void) workerSolve:(NSArray*)input

@@ -35,8 +35,8 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
+      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
          for(ORInt i = 0; i <= n; i++) {

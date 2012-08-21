@@ -136,6 +136,7 @@
 }
 -(void)safeEnQueue:(id)obj
 {
+   //NSLog(@"ENQUEUE: %16p by %16p",obj,[NSThread currentThread]);
    bool full;
    @synchronized(self) {
       full = _mxs == _nbUsed;

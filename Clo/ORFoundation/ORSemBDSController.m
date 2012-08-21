@@ -27,6 +27,7 @@
 -(struct BDSNode)pop;
 -(ORInt)size;
 -(bool)empty;
+-(NSString*)description;
 @end
 
 @implementation BDSStack
@@ -68,6 +69,15 @@
 {
    return _sz == 0;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"queue(%d)=[",_sz];
+   for(ORInt i=0;i<_sz;i++)
+      [buf appendFormat:@"%@%c",_tab[i]._cp,i < _sz -1 ? ',' : ']'];
+   return buf;
+}
+
 @end
 
 @implementation ORSemBDSController
@@ -173,6 +183,6 @@
 
 -(BOOL)willingToShare
 {
-   return [_tab size] + [_next size] >= 1;
+   return [_next size] >= 1;
 }
 @end
