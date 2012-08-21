@@ -143,6 +143,7 @@
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
 -(id<ORSolverConcretizer>) concretizer;
 -(ORInt)nbWorkers;
+-(id<CPSolver>)dereference;
 @end
 
 @interface CPConcretizerI : NSObject<ORSolverConcretizer>
@@ -157,8 +158,10 @@
 -(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
+-(id<ORIdArray>) idArray: (id<ORIdArray>) a;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
 @end
 
 

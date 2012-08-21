@@ -14,10 +14,10 @@
 #import "CPFactory.h"
 
 @implementation CPParallelAdapter
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue *)pcq
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
 {
    self = [super initORNestedController:chain];
-   _explorer = explorer;
+   _solver = solver;
    _pool = [pcq retain];
    _publishing = NO;
    return self;
@@ -40,16 +40,17 @@
 -(void) publishWork
 {
    _publishing = YES;
-   id<ORCheckpoint> theCP = [_explorer captureCheckpoint];
+   
+   id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
-   id<ORSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_explorer onPool:_pool];
-   [_explorer restoreCheckpoint:[stolen theCP]];
-   [_explorer nestedSolveAll:^() { [[stolen cont] call];} 
-                  onSolution:nil 
-                      onExit:nil
-                     control:genc];
+   id<ORSearchController> genc = [[CPGenerator alloc] initCPGenerator:self explorer:_solver onPool:_pool];
+   [_solver installCheckpoint:[stolen theCP]];
+   [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
+                           onSolution:nil
+                               onExit:nil
+                              control:genc];
    [stolen release];
-   [_explorer restoreCheckpoint:theCP];
+   [_solver installCheckpoint:theCP];
    _publishing = NO;
 }
 
@@ -84,11 +85,11 @@
 
 @implementation CPGenerator
 
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<ORExplorer>)explorer onPool:(PCObjectQueue*)pcq
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue*)pcq
 {
    self = [super initORDefaultController];
    [self setController:chain];
-   _explorer = explorer;
+   _solver = solver;
    _pool = [pcq retain];   
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
@@ -121,7 +122,7 @@
       _mx <<= 1;      
    }
    _tab[_sz]   = k;
-   _cpTab[_sz] = [_explorer captureCheckpoint];
+   _cpTab[_sz] = [_solver captureCheckpoint];
    _sz++;
    return [_cpTab[_sz-1] nodeId];
 }
@@ -130,7 +131,7 @@
    long ofs = _sz-1;
    if (ofs >= 0) {      
       id<ORCheckpoint> cp = _cpTab[ofs];
-      [_explorer restoreCheckpoint:cp];
+      [_solver installCheckpoint:cp];
       [cp release];
       NSCont* k = _tab[ofs];
       _tab[ofs] = 0;
@@ -151,7 +152,9 @@
 
 -(void)packAndFail
 {
-   NSData* theData = [_explorer captureAndPackProblem];
+   id<ORProblem> p = [[_solver tracer] captureProblem];
+   NSData* theData = [p packFromSolver:[_solver engine]];
+   [p release];
    [_pool enQueue:theData];
    [self fail];
    [self finitelyFailed];   
@@ -179,6 +182,7 @@
 // Sem Parallel
 // =================================================================================================
 
+/*
 @implementation SemParallel
 -(id)initSemParallel:(SemCP*)orig  nbWorkers:(ORUInt)nbt
 {
@@ -275,5 +279,5 @@
    }   
    [self waitWorkers];
 }
-
 @end
+ */

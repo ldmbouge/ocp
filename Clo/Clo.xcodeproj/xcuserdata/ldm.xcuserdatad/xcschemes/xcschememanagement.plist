@@ -239,6 +239,11 @@
 			<key>orderHint</key>
 			<integer>46</integer>
 		</dict>
+		<key>slabModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>50</integer>
+		</dict>
 		<key>sport.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -503,6 +508,11 @@
 			<true/>
 		</dict>
 		<key>B189512515DE52D100B77813</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B189513C15E0FA5E00B77813</key>
 		<dict>
 			<key>primary</key>
 			<true/>

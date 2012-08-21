@@ -48,5 +48,5 @@
 -(void)            trackObject:(id)obj;
 -(NSMutableArray*) allVars;
 -(id) trail;
--(void)propagate;
+-(ORStatus)propagate;
 @end

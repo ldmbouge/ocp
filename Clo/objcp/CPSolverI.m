@@ -24,6 +24,7 @@
 #import "CPIntVarI.h"
 #import "pthread.h"
 #import "CPObjectQueue.h"
+#import "CPParallel.h"
 
 @implementation CPHeuristicStack
 -(CPHeuristicStack*)initCPHeuristicStack
@@ -107,7 +108,7 @@
 
 -(void) dealloc
 {
-   NSLog(@"CP dealloc called...\n");    
+   NSLog(@"CP dealloc called... (%p)\n",self);
    [_trail release];
    [_engine release];
    [_search release];
@@ -692,6 +693,26 @@ static void init_pthreads_key()
 -(void) concretize: (id<ORSolverConcretizer>) concretizer;
 @end
 
+@interface ORParIdArrayI : NSObject<ORIdArray> {
+   id<ORIdArray>*    _concrete;
+   ORInt                   _nb;
+}
+-(ORParIdArrayI*) initORParIdArrayI:(ORInt)nb;
+-(void)setConcrete:(ORInt)k to:(id<ORIdArray>)c;
+-(id<ORIdArray>)dereference;
+-(void) concretize: (id<ORSolverConcretizer>) concretizer;
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(id)objectAtIndexedSubscript:(NSUInteger)key;
+-(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntRange>) range;
+-(NSUInteger)count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+@end
+
 @implementation CPParSolverI {
    id<CPSemSolver>* _workers;
    PCObjectQueue*     _queue;
@@ -738,47 +759,79 @@ static void init_pthreads_key()
 -(void) addModel: (id<ORModel>) model
 {
    [model instantiate: self];
-   NSMutableArray* _vars = [[NSMutableArray alloc] initWithCapacity:8];
-   NSMutableArray* _cons = [[NSMutableArray alloc] initWithCapacity:8];
+   NSMutableArray* vars = [[NSMutableArray alloc] initWithCapacity:8];
+   NSMutableArray* cons = [[NSMutableArray alloc] initWithCapacity:8];
    // First, copy the "parallel" variables / constraints into a data structure on the side.
    [model applyOnVar:^(id v) {
-      [_vars addObject:[v impl]];
+      [vars addObject:[v impl]];
+      [v setImpl:nil];
+   }  onObjects:^(id o) {
+      
    } onConstraints:^(id c) {
-      [_cons addObject:[c impl]];
+      [cons addObject:[c impl]];
+      [c setImpl:nil];
    }];
    // Now loop _nbWorkers times and instantiate using a bare concretizer
    for(ORInt i=0;i<_nbWorkers;i++) {
       _workers[i] = [CPFactory createSemSolver];
       [model instantiate:_workers[i]];
       [model applyOnVar:^(id v) {
-         ORParIntVarI* pari = [_vars objectAtIndex:[v getId]];
+         ORParIntVarI* pari = [vars objectAtIndex:[v getId]];
          [pari setConcrete:i to:(id<ORIntVar>)[v dereference]];
+         [v setImpl:nil];
+      }  onObjects:^(id o) {
+         
       } onConstraints:^(id c) {
-         ORParConstraintI* parc = [_cons objectAtIndex:[c getId]];
+         ORParConstraintI* parc = [cons objectAtIndex:[c getId]];
          [parc setConcrete:i to:(id<ORConstraint>)[c dereference]];
+         [c setImpl:nil];
       }];
    }
    // Now put the parallel dispatchers back inside the modeling objects.
    [model applyOnVar:^(id v) {
-      [v setImpl:[_vars objectAtIndex:[v getId]]];
+      [v setImpl:[vars objectAtIndex:[v getId]]];
+   }  onObjects:^(id o) {
+      
    } onConstraints:^(id c) {
-      [c setImpl:[_cons objectAtIndex:[c getId]]];
+      [c setImpl:[cons objectAtIndex:[c getId]]];
    }];
-   [_vars release];
-   [_cons release];
+   [vars release];
+   [cons release];
 }
-
+-(id<CPSolver>)dereference
+{
+   return _workers[[NSThread threadID]];
+}
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
-   [[_workers[[NSThread threadID]] explorer] try: left or: right];
+   [[[self dereference] explorer] try: left or: right];
 }
 -(void) label: (CPIntVarI*) var with: (ORInt) val
 {
-   [_workers[[NSThread threadID]] label:var with:val];
+   [[self dereference] label:var with:val];
 }
 -(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
-   [_workers[[NSThread threadID]] diff:var with:val];
+   [[self dereference] diff:var with:val];
+}
+-(void)setupWork:(NSData*)root forCP:(id<CPSemSolver>)cp
+{
+   id<ORProblem> theSub = [[SemTracer unpackProblem:root fOREngine:cp] retain];
+   ORStatus status = [cp installProblem:theSub];
+   [theSub release];
+   if (status == ORFailure)
+      [[cp explorer] fail];
+}
+-(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
+{
+   id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:[[_workers[myID] explorer] controller] explorer:_workers[myID] onPool:_queue];
+   [[_workers[myID] explorer] nestedSolveAll:^() {  [self setupWork:root
+                                                              forCP:_workers[myID]];
+                                                     body();
+                                                 }
+                                  onSolution:nil
+                                      onExit:nil
+                                     control:parc];
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -788,7 +841,22 @@ static void init_pthreads_key()
    SEL todo = [[input objectAtIndex:2] pointerValue];
    [NSThread setThreadID:myID];
    //[[_workers[myID] explorer] solveModel:_workers[myID] using:mySearch];
-   [[_workers[myID] explorer] performSelector:todo withObject:_workers[myID] withObject:mySearch];
+//   [[_workers[myID] explorer] performSelector:todo withObject:_workers[myID] withObject:mySearch];
+  [[_workers[myID] explorer] search: ^() {
+      [_workers[myID] close];
+      if (myID == 0) {
+         // The first guy produces a sub-problem that is the root of the whole tree.
+         id<ORProblem> root = [[_workers[myID] tracer] captureProblem];
+         NSData* rootSerial = [root packFromSolver:[_workers[myID] engine]];
+         [root release];
+         [_queue enQueue:rootSerial];
+      }
+      NSData* cpRoot = nil;
+      while ((cpRoot = [_queue deQueue]) !=nil) {
+         [self setupAndGo:cpRoot forCP:myID searchWith:mySearch];
+         [cpRoot release];
+      }      
+   }];
    // Final tear down. The worker is done with the model.
    [_workers[myID] release];
    _workers[myID] = nil;
@@ -1306,7 +1374,75 @@ void printnl(id x)
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"Should never concrete a par-constraint"];
 }
+@end
 
+@implementation ORParIdArrayI
+-(ORParIdArrayI*) initORParIdArrayI:(ORInt)nbc
+{
+   self = [super init];
+   _nb = nbc;
+   _concrete = malloc(sizeof(id<ORIdArray>)*_nb);
+   return self;
+}
+-(void)setConcrete:(ORInt)k to:(id<ORIdArray>)c
+{
+   _concrete[k] = c;
+}
+-(id<ORIdArray>)dereference
+{
+   ORInt tid = [NSThread threadID];
+   assert(tid >= 0 && tid < _nb);
+   return _concrete[tid];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"PAR(%d)[",_nb];
+   for(int k=0;k<_nb;k++)
+      [buf appendFormat:@"%@%c",_concrete[k],k<_nb-1 ? ',' : ']'];
+   return buf;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"Should never concrete a par-constraint"];
+}
+
+-(id) at: (ORInt) value
+{
+   return [[self dereference] at:value];
+}
+-(void) set: (id) x at: (ORInt) value
+{
+   [[self dereference] set:x at:value];
+}
+-(id)objectAtIndexedSubscript:(NSUInteger)key
+{
+   return [[self dereference] objectAtIndexedSubscript:key];
+}
+-(void)setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx
+{
+   [[self dereference] setObject:newValue atIndexedSubscript:idx];
+}
+-(ORInt) low
+{
+   return [[self dereference] low];
+}
+-(ORInt) up
+{
+   return [[self dereference] up];
+}
+-(id<ORIntRange>) range
+{
+   return [[self dereference] range];
+}
+-(NSUInteger)count
+{
+   return [[self dereference] count];
+}
+-(id<ORTracker>) tracker
+{
+   return [[self dereference] tracker];
+}
 @end
 
 @implementation CPParConcretizerI {
@@ -1337,15 +1473,21 @@ void printnl(id x)
    ORParIntVarI* pVar = [[ORParIntVarI alloc] init:nbw];
    return pVar;
 }
+-(id<ORIdArray>) idArray: (id<ORIdArray>) a
+{
+   return [[ORParIdArrayI alloc] initORParIdArrayI:[_solver nbWorkers]];
+}
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr
 {
-   int nbw = [_solver nbWorkers];
-   ORParConstraintI* pCons = [[ORParConstraintI alloc] initORParConstraintI:nbw];
-   return pCons;
+   return [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+}
+-(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr
+{
+   return [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
 }
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   return nil;
+   return [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
 }
 -(void) expr: (id<ORExpr>) e
 {

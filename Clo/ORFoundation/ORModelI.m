@@ -111,18 +111,19 @@
 {
    NSLog(@"I start instantiating this model...");
    id<ORSolverConcretizer> concretizer = [solver concretizer];
-   for(id<ORObject> c in _vars)
+   for(id c in _vars)
       [c concretize: concretizer];
    for(id c in _oStore)
       [c concretize: concretizer];
-   for(id<ORObject> c in _mStore)
+   for(id c in _mStore)
       [c concretize: concretizer];
-
 }
--(void)applyOnVar: (void(^)(id<ORObject>)) doVar onConstraints:(void(^)(id<ORObject>)) doCons
+-(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs  onConstraints:(void(^)(id<ORObject>)) doCons
 {
    for(id<ORObject> c in _vars)
       doVar(c);
+   for(id<ORObject> c in _oStore)
+      doObjs(c);
    for(id<ORObject> c in _mStore)
       doCons(c);
 }
@@ -306,7 +307,7 @@
    _a = a;
    _x = x;
    _b = b;
-   _impl = nil;
+   //_impl = nil; // [ldm] not necessary. Done in initORIntVarI already.
    return self;
 }
 -(NSString*) description
@@ -378,7 +379,6 @@
    [buf appendFormat:@"<%@ : %p> = %@",[self class],self,_impl];
    return buf;
 }
-
 @end
 
 @implementation ORAlldifferentI

@@ -81,6 +81,10 @@
 @end
 
 @protocol CPSemSolver <CPSolver>
+-(ORStatus)installCheckpoint:(id<ORCheckpoint>)cp;
+-(ORStatus)installProblem:(id<ORProblem>)problem;
+-(id<ORCheckpoint>)captureCheckpoint;
+-(NSData*)packCheckpoint:(id<ORCheckpoint>)cp;
 @end
 
 @protocol CPParSolver <CPSemSolver>

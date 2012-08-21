@@ -88,5 +88,5 @@
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
--(void)applyOnVar:(void(^)(id<ORObject>))doVar onConstraints:(void(^)(id<ORObject>))doCons;
+-(void)applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs onConstraints:(void(^)(id<ORObject>))doCons;
 @end

@@ -313,7 +313,7 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   if (_impl != nil)
+   if (_impl == nil)
       _impl = [concretizer idArray: self];
 }
 -(id<ORIdArray>) dereference

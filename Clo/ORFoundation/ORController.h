@@ -61,7 +61,7 @@
 
 @interface ORDefaultController : NSObject <NSCopying,ORSearchController>
 {
-   id<ORSearchController> _controller;    // Delegation chain for stackable limits
+   id<ORSearchController,ORStealing> _controller;    // Delegation chain for stackable limits
 }
 -(id) initORDefaultController;
 -(void) setController: (id<ORSearchController>) controller;

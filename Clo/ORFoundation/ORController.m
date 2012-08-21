@@ -66,7 +66,7 @@
 }
 -(void) setController: (id<ORSearchController>) controller
 {
-   _controller = [controller retain];
+   _controller = (id<ORSearchController,ORStealing>)[controller retain];
 }
 -(void) setup
 {

@@ -324,7 +324,7 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      [_controller._val fail];
+      //[_controller._val fail];
    }
 }
 
@@ -343,7 +343,7 @@
       [exit letgo];
       [newCtrl release];
       if (onExit) onExit();
-      [_controller._val fail];
+      //[_controller._val fail];
    }
 }
 

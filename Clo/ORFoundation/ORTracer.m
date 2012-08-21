@@ -648,8 +648,7 @@
    if (!ok) return ORFailure;
    [_cmds pushCommandList:[p theList]];
    assert([_cmds size] == [_trStack size]);
-   [fdm propagate];
-   return ORSuspend;
+   return [fdm propagate];
 }
 
 -(NSString*)description

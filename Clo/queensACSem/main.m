@@ -24,7 +24,7 @@ int main (int argc, const char * argv[])
 {
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
-      int n = 7;
+      int n = 11;
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n];
       id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
@@ -35,7 +35,8 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      id<CPParSolver> cp = [CPFactory createParSolver:2];
+      id<CPParSolver> cp = [CPFactory createParSolver:4];
+//      id<CPSemSolver> cp = [CPFactory createSemSolver];
       [cp addModel: model];
       [cp solveAll: ^{
          for(ORInt i = 0; i <= n; i++) {
@@ -49,11 +50,19 @@ int main (int argc, const char * argv[])
                }];
             }
          }
-         printf("x = [");
-         for(ORInt i = 0; i <= n; i++)
-            printf("%d%c",[x[i] value],i < n ? ',' : ']');
-         printf("\n");
-         [nbSol incr];
+         /*
+         @autoreleasepool {
+            NSMutableString* buf = [NSMutableString stringWithCapacity:64];
+            [buf appendFormat:@"x = (%p)[",[NSThread currentThread]];
+            for(ORInt i = 0; i <= n; i++)
+               [buf appendFormat:@"%d%c",[x[i] value],i < n ? ',' : ']' ];
+            @synchronized(nbSol) {
+               NSLog(@"SOL[%d] = %@",[nbSol value],buf);
+            }
+         }*/
+         @synchronized(nbSol) {
+            [nbSol incr];
+         }
       }];
       NSLog(@"Quitting #SOL=%d",[nbSol value]);
       [cp release];

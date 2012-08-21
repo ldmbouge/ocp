@@ -27,7 +27,7 @@
 
 - (void) dealloc
 {
-   NSLog(@"SemDFSController dealloc called...\n");
+   //NSLog(@"SemDFSController dealloc called...\n");
    [_tracer release];
    free(_tab);
    for(ORInt i = 0;i  < _sz;i++)
