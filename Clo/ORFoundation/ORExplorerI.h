@@ -14,7 +14,8 @@
 #import <ORFoundation/ORController.h>
 
 @protocol ORControllerFactory<NSObject>
--(id<ORSearchController>)makeController;
+-(id<ORSearchController>)makeRootController;
+-(id<ORSearchController>)makeNestedController;
 @end
 
 @interface ORExplorerI : NSObject<ORExplorer>
@@ -22,6 +23,8 @@
 -(ORExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 
 -(void)                dealloc;
+-(id<ORControllerFactory>) controllerFactory;
+
 -(ORInt)               nbChoices;
 -(ORInt)               nbFailures;
 

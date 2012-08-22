@@ -36,7 +36,7 @@ int main (int argc, const char * argv[])
 
       NSLog(@"Model: %@",model);
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
          for(ORInt i = 0; i <= n; i++) {
@@ -50,6 +50,7 @@ int main (int argc, const char * argv[])
                }];
             }
          }
+         /*
          @autoreleasepool {
             NSMutableString* buf = [NSMutableString stringWithCapacity:64];
             [buf appendFormat:@"x = (%p)[",[NSThread currentThread]];
@@ -59,6 +60,7 @@ int main (int argc, const char * argv[])
                NSLog(@"SOL[%d] = %@",[nbSol value],buf);
             }
          }
+          */
          @synchronized(nbSol) {
             [nbSol incr];
          }

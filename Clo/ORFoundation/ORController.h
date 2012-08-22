@@ -90,8 +90,7 @@
 @end
 
 @interface ORNestedController : ORDefaultController
-
--(id)initORNestedController:(id<ORSearchController>)chain;
+-(id)init:(id<ORSearchController>)chain parent:(id<ORSearchController>)par;
 -(void) setParent:(id<ORSearchController>) controller;
 -(void) fail;
 -(void) succeeds;

@@ -18,7 +18,7 @@
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
 {
-   self = [super initORNestedController:chain];
+   self = [super init:chain parent:[[solver explorer] controller]];
    _solver = solver;
    _pool = [pcq retain];
    _publishing = NO;
@@ -26,7 +26,7 @@
 }
 -(void)dealloc
 {
-   //NSLog(@"CPParallel adapter dealloc %p  - %d",self,[_pool retainCount]);
+   NSLog(@"CPParallel adapter dealloc %p  - %ld",self,[_pool retainCount]);
    [_pool release];
    [super dealloc];
 }
@@ -45,7 +45,7 @@
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    [_solver installCheckpoint:[stolen theCP]];
-   id<ORSearchController> base = [[ORSemDFSController alloc] initSemController:_solver];
+ /*  id<ORSearchController> base = [[ORSemDFSController alloc] initSemController:_solver];
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
@@ -53,6 +53,12 @@
                                                                    onExit:nil
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
+  */
+   [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
+                           onSolution:nil
+                               onExit:nil
+                              control:[[CPGenerator alloc] initCPGenerator:[[_solver explorer] controller] explorer:_solver onPool:_pool]];
+
    [stolen release];
    [_solver installCheckpoint:theCP];
    _publishing = NO;

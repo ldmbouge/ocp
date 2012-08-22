@@ -48,8 +48,8 @@
 
 -(void) dealloc
 {
+   NSLog(@"ORDefaultController %p dealloc called...\n",self);
    [_controller release];
-   //NSLog(@"ORDefaultController %p dealloc called...\n",self);
    [super dealloc];
 }
 
@@ -64,9 +64,9 @@
 {
    return _controller;
 }
--(void) setController: (id<ORSearchController>) controller
+-(void) setController: (id<ORSearchController,ORStealing>) controller
 {
-   _controller = (id<ORSearchController,ORStealing>)[controller retain];
+   _controller = [controller retain];
 }
 -(void) setup
 {
@@ -163,19 +163,17 @@
    id<ORSearchController> _parent;        // This is not a mistake. Delegation chain for NESTED controllers (fail).
    BOOL                   _isFF;
 }
--(id)initORNestedController:(id<ORSearchController>)chain
+-(id)init:(id<ORSearchController>)chain parent:(id<ORSearchController>)par
 {
    self = [super initORDefaultController];
-   id<ORSearchController> theClone = [chain copy];
-   [self setController:theClone]; // pvh: Why is this done???
-   _parent = [chain retain];
-   [theClone release]; // We have a reference to it already. Caller does *NOT* keep track of it.
+   [self setController:chain];
+   _parent = [par retain];
    _isFF = NO;
    return self;
 }
 -(void)dealloc
 {
-   //NSLog(@"ORNestedController %p dealloc called...\n",self);
+   NSLog(@"ORNestedController %p dealloc called...\n",self);
    [_parent release];
    [super dealloc];
 }

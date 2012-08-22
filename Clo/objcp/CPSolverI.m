@@ -108,7 +108,7 @@
 
 -(void) dealloc
 {
-   NSLog(@"CP dealloc called... (%p)\n",self);
+   NSLog(@"CPCoreSolver (%p) dealloc called...\n",self);
    [_trail release];
    [_engine release];
    [_search release];
@@ -408,42 +408,41 @@
    [_search applyController: controller in: cl];
 }
 
-
 // pvh: this nested controller should be created in the nested solve
 -(void) nestedSolve: (ORClosure) body
 {
   [_search nestedSolve: body onSolution:nil onExit:nil 
-               control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
+               control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
   [_search nestedSolve: body onSolution: onSolution onExit:nil 
-               control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
+               control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
    [_search nestedSolve: body onSolution: onSolution onExit: onExit 
-                control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
+                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (ORClosure) body
 {
   [_search nestedSolveAll: body onSolution:nil onExit:nil 
-                  control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
+                  control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 {
    [_search nestedSolveAll: body onSolution: onSolution onExit:nil 
-                   control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
+                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit 
-                  control:[[ORNestedController alloc] initORNestedController:[_search controller]]];
+                  control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
@@ -471,17 +470,25 @@
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
    CPSemSolverI* _solver;
    Class         _ctrlClass;
+   Class         _nestedClass;
 }
--(id)initFactory:(CPCoreSolverI*)solver controllerClass:(Class)class;
--(id<ORSearchController>)makeController;
+-(id)initFactory:(CPCoreSolverI*)solver rootControllerClass:(Class)class nestedControllerClass:(Class)nc;
+-(id<ORSearchController>)makeRootController;
+-(id<ORSearchController>)makeNestedController;
 @end
+
+// *********************************************************************************************************
+// CPSolver
+// *********************************************************************************************************
 
 @implementation CPSolverI
 -(CPSolverI*)             init
 {
    self = [super init];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:[ORDFSController class]];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+                                                        rootControllerClass:[ORDFSController class]
+                                                      nestedControllerClass:[ORDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -490,7 +497,9 @@
 {
    self = [super initFor:fdm];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self  controllerClass:[ORDFSController class]];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+                                                        rootControllerClass:[ORDFSController class]
+                                                      nestedControllerClass:[ORDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -514,20 +523,27 @@
 {
    self = [super initWithCoder:aDecoder];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:[ORDFSController class]];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+                                                        rootControllerClass:[ORDFSController class]
+                                                      nestedControllerClass:[ORDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
 }
 @end
 
+// ****************************************************************************************************************************
+// Semantic Solver
+// ****************************************************************************************************************************
 
 @implementation CPSemSolverI 
 -(CPSemSolverI*) initWithController:(Class)ctrlClass
 {
    self = [super init];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:ctrlClass];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+                                                        rootControllerClass:[ORSemDFSController class]
+                                                      nestedControllerClass:ctrlClass];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -536,7 +552,9 @@
 {
    self = [super initFor:fdm];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:ctrlClass];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+                                                        rootControllerClass:[ORSemDFSController class]
+                                                      nestedControllerClass:ctrlClass];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -578,7 +596,9 @@
 {
    self = [super initWithCoder:aDecoder];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
-   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self controllerClass:[ORSemDFSController class]];
+   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+                                                        rootControllerClass:[ORSemDFSController class]
+                                                      nestedControllerClass:[ORSemDFSController class]];
    _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
@@ -604,18 +624,26 @@
 }
 @end
 
+// *********************************************************************************************************
+// Controller Factory
+// *********************************************************************************************************
 
 @implementation ORControllerFactory
--(id)initFactory:(CPSemSolverI*)solver controllerClass:(Class)class
+-(id)initFactory:(CPSemSolverI*)solver rootControllerClass:(Class)class nestedControllerClass:(Class)nc
 {
    self = [super init];
    _solver = solver;
    _ctrlClass = class;
+   _nestedClass = nc;
    return self;
 }
--(id<ORSearchController>)makeController
+-(id<ORSearchController>)makeRootController
 {
    return [[_ctrlClass alloc] initSemController:_solver];
+}
+-(id<ORSearchController>)makeNestedController
+{
+   return [[_nestedClass alloc] initSemController:_solver];
 }
 @end
 
@@ -695,13 +723,13 @@ static void init_pthreads_key()
 @end
 
 @implementation CPParSolverI {
-   id<CPSemSolver>* _workers;
-   PCObjectQueue*     _queue;
-   NSCondition*  _terminated;
-   ORInt             _nbDone;
-   Class             _defCon;
+   id<CPSemSolver>*  _workers;
+   PCObjectQueue*      _queue;
+   NSCondition*   _terminated;
+   ORInt              _nbDone;
+   Class              _defCon;
 }
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass
+-(CPParSolverI*) initForWorkers:(ORInt)nbt withController:(Class)ctrlClass
 {
    self = [super init];
    _nbWorkers = nbt;
@@ -756,7 +784,7 @@ static void init_pthreads_key()
    }];
    // Now loop _nbWorkers times and instantiate using a bare concretizer
    for(ORInt i=0;i<_nbWorkers;i++) {
-      _workers[i] = [CPFactory createSemSolver:_defCon];
+      _workers[i] = [CPFactory createSemSolver:_defCon];     // _defCon will be the nested controller factory for _workers[i]
       [model instantiate:_workers[i]];
       [model applyOnVar:^(id v) {
          ORParIntVarI* pari = [vars objectAtIndex:[v getId]];
@@ -807,17 +835,22 @@ static void init_pthreads_key()
 }
 -(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
 {
-   //id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:_workers[myID]];
-   id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:[[_workers[myID] explorer] controller] explorer:_workers[myID] onPool:_queue];
-   [[_workers[myID] explorer] nestedSolveAll:^() {  [self setupWork:root
-                                                              forCP:_workers[myID]];
-                                                     body();
-                                                 }
+   id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:_workers[myID]];
+   id<CPSemSolver> me  = _workers[myID];
+   ORExplorerI* ex = [me explorer];
+   id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
+   id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested
+                                                                         explorer:me
+                                                                           onPool:_queue];
+   [nested release];
+   [[me explorer] nestedSolveAll:^() {  [self setupWork:root forCP:me];
+                                          body();
+                                     }
                                   onSolution:nil
                                       onExit:nil
                                      control:parc];
    //NSLog(@"BACK from subproblem [%@]",theSub);
-   //[theSub release];
+   [theSub release];
 }
 
 -(void) workerSolve:(NSArray*)input

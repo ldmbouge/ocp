@@ -126,6 +126,7 @@
 -(CPSolverI*)             init;
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
 -(id<ORTracer>)           tracer;
+-(void)                   dealloc;
 @end
 
 @interface CPSemSolverI : CPCoreSolverI<CPSemSolver> {
@@ -134,6 +135,7 @@
 -(CPSemSolverI*)          initWithController:(Class)ctrlClass;
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm withController:(Class)ctrlClass;
 -(id<ORTracer>)           tracer;
+-(void)                   dealloc;
 @end
 
 @interface CPParSolverI : CPSemSolverI<CPParSolver> {

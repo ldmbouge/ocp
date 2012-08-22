@@ -199,7 +199,7 @@
 {
    self = [super init];
    [self dealloc];
-   return [[[aDecoder solver] trail] retain];
+   return [[aDecoder solver] trail];
 }
 @end
 
@@ -503,11 +503,13 @@
    _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
    _lastNode = 0;
    _cmds = [[ORCmdStack alloc] initCPCmdStack:32];
+   _level = makeTRInt(_trail, 0);
    return self;
 }
 -(void) dealloc
 {
    NSLog(@"Releasing SemTracer %p\n",self);
+   [self reset];
    [_trStack release];
    [_cmds release];
    [super dealloc];

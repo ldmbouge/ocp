@@ -17,7 +17,7 @@
 @implementation ORExplorerI
 {
    id<OREngine>           _engine;
-   id<ORTrail>               _trail;
+   id<ORTrail>             _trail;
    TRId               _controller;
    ORInt                     _nbf;
    ORInt                     _nbc;
@@ -42,6 +42,10 @@
    [super dealloc];
 }
 
+-(id<ORControllerFactory>) controllerFactory
+{
+   return _cFact;
+}
 -(ORInt) nbChoices
 {
    return _nbc;
@@ -78,7 +82,6 @@
    _nbf++;
    [_controller._val fail];
 }
-
 
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
@@ -241,7 +244,7 @@
    int to;
    initContinuationLibrary(&to);
    @try {
-      id<ORSearchController> dfs = [_cFact makeController];
+      id<ORSearchController> dfs = [_cFact makeRootController];
       NSCont* exit = [NSCont takeContinuation];
       if ([exit nbCalls]==0) {
          [dfs addChoice: exit];
@@ -249,6 +252,8 @@
          [dfs setup];
          body();
          [exit letgo];
+         [_controller._val release];
+         _controller._val = nil;
          NSLog(@"Solution Found");
       }
       else {
@@ -285,25 +290,10 @@
 
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  
 {
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
-   NSCont* exit = [NSCont takeContinuation];
-   if ([exit nbCalls]==0) {
-      [_controller._val addChoice: exit];                           // add the choice in the original controller
-      [self setController:newCtrl];                                 // install the new controller chain
-      if (body) body();
-      if (onSolution) onSolution();
-      [_controller._val succeeds];
-   }
-   else if ([newCtrl isFinitelyFailed]) {
-      [exit letgo];
-      [newCtrl release];
-      [_controller._val fail];
-   }
-   else {
-      [exit letgo];
-      [newCtrl release];
-      if (onExit) onExit();
-   }
+   id<ORSearchController> base    = [_cFact makeNestedController];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
+   [base release];
+   [self nestedSolve:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
 
 // combinator (hence needs to be embedded in top-level search)
@@ -329,26 +319,15 @@
 
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit 
 {
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
-   NSCont* exit = [NSCont takeContinuation];
-   if ([exit nbCalls]==0) {
-      [_controller._val addChoice: exit];
-      [self setController:newCtrl];           // install the new controller
-      if (body) body();
-      if (onSolution) onSolution();
-      [_controller._val fail];                // If fail runs out of node, it will trigger finitelyFailed.
-   }
-   else {  // if ([newCtrl isFinitelyFailed]) {
-      [exit letgo];
-      [newCtrl release];
-      if (onExit) onExit();
-      // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
-   }
+   id<ORSearchController> base    = [_cFact makeNestedController];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
+   [base release];
+   [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
 
 -(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] initORNestedController:_controller._val];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:[_cFact makeNestedController] parent:_controller._val];
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       [_controller._val addChoice: exit];
