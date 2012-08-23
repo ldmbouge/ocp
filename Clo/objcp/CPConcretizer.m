@@ -299,12 +299,12 @@
    }
    return impl;
 }
--(void) expr: (id<ORExpr>) e
-{
-   
-}
 -(void) minimize: (id<ORIntVar>) v
 {
    [_solver minimize: [v dereference]];
+}
+-(void) maximize: (id<ORIntVar>) v
+{
+   [_solver maximize: [v dereference]];
 }
 @end

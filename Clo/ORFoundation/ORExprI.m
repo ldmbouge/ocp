@@ -128,10 +128,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   [concretizer expr: self];
-}
 @end
 
 // --------------------------------------------------------------------------------

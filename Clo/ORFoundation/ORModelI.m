@@ -497,3 +497,17 @@
 }
 @end
 
+@implementation ORMaximizeI
+-(ORMaximizeI*) initORMaximizeI: (id<ORModel>) model obj: (id<ORIntVar>) x
+{
+   self = [super initORObjectiveFunctionI: model obj:x];
+   return self;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (!_concretized) {
+      _concretized = true;
+      [concretizer maximize: _var];
+   }
+}
+@end
