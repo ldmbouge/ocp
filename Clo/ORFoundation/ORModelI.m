@@ -81,7 +81,8 @@
 
 -(void) minimize: (id<ORIntVar>) x
 {
-   
+   _objective = [[ORMinimizeI alloc] initORMinimizeI: self obj: x];
+   [self trackObject: _objective];
 }
 
 -(void) maximize: (id<ORIntVar>) x
@@ -117,6 +118,7 @@
       [c concretize: concretizer];
    for(id c in _mStore)
       [c concretize: concretizer];
+   [_objective concretize: concretizer];
 }
 -(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs  onConstraints:(void(^)(id<ORObject>)) doCons
 {
@@ -455,3 +457,43 @@
       _impl = [concretizer algebraicConstraint: self];
 }
 @end
+
+@implementation ORObjectiveFunctionI
+{
+   @protected
+   id<ORIntVar> _var;
+   BOOL _concretized;
+}
+-(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x
+{
+   self = [super init];
+   _var = x;
+   _concretized = false;
+   return self;
+}
+-(id<ORIntVar>) var
+{
+   return _var;
+}
+-(BOOL) concretized
+{
+   return _concretized;
+}
+@end
+
+
+@implementation ORMinimizeI
+-(ORMinimizeI*) initORMinimizeI: (id<ORModel>) model obj: (id<ORIntVar>) x
+{
+   self = [super initORObjectiveFunctionI: model obj:x];
+   return self;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (!_concretized) {
+      _concretized = true;
+      [concretizer minimize: _var];
+   }
+}
+@end
+

@@ -303,4 +303,8 @@
 {
    
 }
+-(void) minimize: (id<ORIntVar>) v
+{
+   [_solver minimize: [v dereference]];
+}
 @end

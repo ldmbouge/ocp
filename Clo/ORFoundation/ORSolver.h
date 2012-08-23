@@ -29,6 +29,7 @@
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) expr: (id<ORExpr>) e;
+-(void) minimize: (id<ORIntVar>) v;
 @end
 
 @protocol ORSolver <NSObject,ORTracker,ORSolutionProtocol>

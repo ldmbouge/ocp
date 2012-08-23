@@ -43,6 +43,7 @@
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
+-(void) minimize: (id<ORIntVar>) v;
 @end
 
 @interface ORExprConcretizer : NSObject<ORExprVisitor>
