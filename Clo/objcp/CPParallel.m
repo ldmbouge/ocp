@@ -61,6 +61,7 @@
 
    [stolen release];
    [_solver installCheckpoint:theCP];
+   [theCP release];
    _publishing = NO;
 }
 
@@ -109,6 +110,8 @@
 }
 -(void)dealloc
 {
+   free(_tab);
+   free(_cpTab);
    [_pool release];
    [super dealloc];
 }

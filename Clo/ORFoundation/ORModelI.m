@@ -87,7 +87,8 @@
 
 -(void) maximize: (id<ORIntVar>) x
 {
-   
+   _objective = [[ORMaximizeI alloc] initORMaximizeI: self obj: x];
+   [self trackObject: _objective];
 }
 
 -(void) trackObject: (id) obj;
@@ -119,6 +120,7 @@
    for(id c in _mStore)
       [c concretize: concretizer];
    [_objective concretize: concretizer];
+   [concretizer release];
 }
 -(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs  onConstraints:(void(^)(id<ORObject>)) doCons
 {
@@ -309,7 +311,6 @@
    _a = a;
    _x = x;
    _b = b;
-   //_impl = nil; // [ldm] not necessary. Done in initORIntVarI already.
    return self;
 }
 -(NSString*) description

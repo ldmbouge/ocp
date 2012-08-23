@@ -252,6 +252,7 @@
          [dfs setup];
          body();
          [exit letgo];
+         [_controller._val cleanup];
          [_controller._val release];
          _controller._val = nil;
          NSLog(@"Solution Found");

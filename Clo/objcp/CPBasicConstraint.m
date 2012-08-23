@@ -57,7 +57,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super initWithCoder:aDecoder];
-   _x = [[aDecoder decodeObject] retain];
+   _x = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }

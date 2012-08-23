@@ -133,7 +133,7 @@
 }
 +(id<ORModel>) createModel
 {
-   return [[ORModelI alloc]  initORModelI];
+   return [[[ORModelI alloc]  initORModelI] autorelease];
 }
 
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r

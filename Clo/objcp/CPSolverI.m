@@ -828,7 +828,7 @@ static void init_pthreads_key()
 }
 -(void)setupWork:(NSData*)root forCP:(id<CPSemSolver>)cp
 {
-   id<ORProblem> theSub = [[SemTracer unpackProblem:root fOREngine:cp] retain];
+   id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:cp];
    ORStatus status = [cp installProblem:theSub];
    [theSub release];
    if (status == ORFailure)
@@ -836,7 +836,6 @@ static void init_pthreads_key()
 }
 -(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
 {
-   id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:_workers[myID]];
    id<CPSemSolver> me  = _workers[myID];
    ORExplorerI* ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
@@ -850,8 +849,6 @@ static void init_pthreads_key()
                                   onSolution:nil
                                       onExit:nil
                                      control:parc];
-   //NSLog(@"BACK from subproblem [%@]",theSub);
-   [theSub release];
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -1120,6 +1117,11 @@ static void init_pthreads_key()
    _concrete = malloc(sizeof(id<ORIdArray>)*_nb);
    return self;
 }
+-(void)dealloc
+{
+   free(_concrete);
+   [super dealloc];
+}
 -(void)setConcrete:(ORInt)k to:(id<ORIdArray>)c
 {
    _concrete[k] = c;
@@ -1201,29 +1203,39 @@ static void init_pthreads_key()
 {
    int nbw = [_solver nbWorkers];
    ORParIntVarI* pVar = [[ORParIntVarI alloc] init:nbw];
+   [_solver trackObject:pVar];
    return pVar;
 }
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v
 {
    int nbw = [_solver nbWorkers];
    ORParIntVarI* pVar = [[ORParIntVarI alloc] init:nbw];
+   [_solver trackObject:pVar];
    return pVar;
 }
 -(id<ORIdArray>) idArray: (id<ORIdArray>) a
 {
-   return [[ORParIdArrayI alloc] initORParIdArrayI:[_solver nbWorkers]];
+   ORParIdArrayI* rv = [[ORParIdArrayI alloc] initORParIdArrayI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
 }
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr
 {
-   return [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   ORParConstraintI* rv = [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
 }
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr
 {
-   return [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   ORParConstraintI* rv = [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
 }
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   return [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   ORParConstraintI* rv = [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
 }
 -(void) expr: (id<ORExpr>) e
 {

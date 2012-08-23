@@ -103,11 +103,11 @@
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
-    self = [super initWithCoder:aDecoder];
-    _trail = [[aDecoder decodeObject] retain];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._val];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._mgc];
-    return self;
+   self = [super initWithCoder:aDecoder];
+   _trail = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._val];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._mgc];
+   return self;
 }
 @end
 

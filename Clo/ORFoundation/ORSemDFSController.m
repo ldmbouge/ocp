@@ -59,6 +59,7 @@
       [_cpTab[_sz] release];
    }
    [_tracer restoreCheckpoint:_atRoot inSolver:_engine];
+   [_atRoot release];
 }
 
 -(ORInt) addChoice: (NSCont*)k 

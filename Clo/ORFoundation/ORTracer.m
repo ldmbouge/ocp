@@ -199,7 +199,7 @@
 {
    self = [super init];
    [self dealloc];
-   return [[aDecoder solver] trail];
+   return [[[aDecoder solver] trail] retain];
 }
 @end
 
