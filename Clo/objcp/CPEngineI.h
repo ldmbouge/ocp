@@ -82,8 +82,6 @@ enum CPEngineState {
 -(ORStatus)  lthen:(id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus)  gthen:(id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus)  restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
--(id)virtual:(id)obj;
--(ORInt)virtualOffset:(id)obj;
 -(NSMutableArray*) allVars;
 -(NSMutableArray*) allConstraints;
 -(NSMutableArray*) allModelConstraints;

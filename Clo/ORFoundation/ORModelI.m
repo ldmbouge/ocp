@@ -104,11 +104,6 @@
    [var autorelease];
 }
 
--(ORInt) virtualOffset: (id) obj
-{
-   return 0;
-}
-
 -(void) instantiate: (id<ORSolver>) solver
 {
    NSLog(@"I start instantiating this model...");

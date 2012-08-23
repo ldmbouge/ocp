@@ -21,10 +21,6 @@ typedef void (^ConstraintIntCallBack)(ORInt);
 @protocol CPConstraint <ORConstraint>
 @end
 
-@protocol CPVirtual 
--(ORInt) virtualOffset;   
-@end
-
 //@protocol CPRandomStream <ORRandomStream>
 //@end;
 

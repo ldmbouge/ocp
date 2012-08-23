@@ -48,7 +48,7 @@
 
 -(void) dealloc
 {
-   NSLog(@"ORDefaultController %p dealloc called...\n",self);
+   //NSLog(@"ORDefaultController %p dealloc called...\n",self);
    [_controller release];
    [super dealloc];
 }
@@ -173,7 +173,7 @@
 }
 -(void)dealloc
 {
-   NSLog(@"ORNestedController %p dealloc called...\n",self);
+   //NSLog(@"ORNestedController %p dealloc called...\n",self);
    [_parent release];
    [super dealloc];
 }
@@ -232,7 +232,7 @@
 
 - (void) dealloc
 {
-   NSLog(@"DFSController dealloc called...\n");
+   //NSLog(@"DFSController dealloc called...\n");
    [_tracer release];
    free(_tab);
    [super dealloc];

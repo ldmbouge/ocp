@@ -565,11 +565,6 @@ void freeTRIntArray(TRIntArray a)
 {
    return [_solver engine];
 }
--(ORInt) virtualOffset
-{
-   return [[_solver engine] virtualOffset:self];
-}
-
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
    [aCoder encodeObject:_solver];
@@ -765,10 +760,6 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
 -(id<OREngine>) engine
 {
    return [_solver engine];
-}
--(ORInt) virtualOffset
-{
-   return [[_solver engine] virtualOffset:self];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

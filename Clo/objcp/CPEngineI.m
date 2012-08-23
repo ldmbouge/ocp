@@ -270,7 +270,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 }
 -(void) dealloc
 {
-   NSLog(@"CPEngine [%p] dealloc called...\n",self);
+   //NSLog(@"CPEngine [%p] dealloc called...\n",self);
    [_vars release];
    [_cStore release];
    [_mStore release];
@@ -327,19 +327,6 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
       //[obj autorelease];
    } else
       [_trail trailRelease:obj];
-}
--(id)virtual:(id<CPVirtual>)obj
-{
-   ORInt oOfs = [obj virtualOffset];
-   if (oOfs != NSNotFound)
-      return [_oStore objectAtIndex:oOfs];
-   else
-      return nil;
-}
--(ORInt)virtualOffset:(id)obj
-{
-   ORUInt idx = (ORUInt)[_oStore indexOfObjectIdenticalTo:obj];
-   return idx;
 }
 
 -(NSString*) description

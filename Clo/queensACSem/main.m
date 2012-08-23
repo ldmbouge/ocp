@@ -40,13 +40,12 @@ int main (int argc, const char * argv[])
       [cp addModel: model];
       [cp solveAll: ^{
          for(ORInt i = 0; i <= n; i++) {
-            id<ORIntVar> xi = [x[i] dereference];
-            while (![xi bound]) {
-               int v = [xi min];
+            while (![x[i] bound]) {
+               int v = [x[i] min];
                [cp try:^{
-                  [cp label: xi with:v];
+                  [cp label: x[i] with:v];
                } or:^{
-                  [cp diff: xi with:v];
+                  [cp diff: x[i] with:v];
                }];
             }
          }

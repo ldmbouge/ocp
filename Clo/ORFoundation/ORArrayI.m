@@ -159,11 +159,6 @@
    return [_tracker solver];
 }
 
--(ORInt)virtualOffset
-{
-   return [_tracker virtualOffset:self];
-}
-
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -271,11 +266,6 @@
 {
    return [_tracker solver];
 }
--(ORInt) virtualOffset
-{
-   return [_tracker virtualOffset:self];
-}
-
 -(id) objectAtIndexedSubscript: (NSUInteger)key
 {
    return _array[key];

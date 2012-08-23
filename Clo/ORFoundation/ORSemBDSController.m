@@ -106,7 +106,7 @@
 
 - (void) dealloc
 {
-   NSLog(@"SemBDSController dealloc called...\n");
+   //NSLog(@"SemBDSController dealloc called...\n");
    [_tracer release];
    [_tab release];
    [_next release];

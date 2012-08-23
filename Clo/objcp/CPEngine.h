@@ -29,6 +29,4 @@
 -(ORUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;
--(ORInt)virtualOffset:(id)obj;
--(id)virtual:(id)obj;
 @end

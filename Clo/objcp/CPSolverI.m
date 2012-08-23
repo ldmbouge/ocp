@@ -148,11 +148,6 @@
 {
     return [_search controller];
 }
--(id)virtual:(id)obj
-{
-   return [_engine virtual:obj];
-}
-
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_engine nbVars],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
@@ -331,13 +326,9 @@
 {
    [_engine trackVariable:object];
 }
--(ORInt)virtualOffset:(id)obj
+-(void) label: (ORIntVarI*) var with: (ORInt) val
 {
-   return [_engine virtualOffset:obj];
-}
-
--(void) label: (CPIntVarI*) var with: (ORInt) val
-{
+   var = [var dereference];
    ORStatus status = [_engine label: [var dereference] with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
@@ -346,8 +337,9 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents]; 
 }
--(void) diff: (CPIntVarI*) var with: (ORInt) val
+-(void) diff: (ORIntVarI*) var with: (ORInt) val
 {
+   var = [var dereference];
    ORStatus status = [_engine diff: [var dereference] with: val];
    if (status == ORFailure)
       [_search fail];
@@ -545,7 +537,7 @@
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
                                                         rootControllerClass:[ORSemDFSController class]
                                                       nestedControllerClass:ctrlClass];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
 }
@@ -556,7 +548,7 @@
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
                                                         rootControllerClass:[ORSemDFSController class]
                                                       nestedControllerClass:ctrlClass];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
 }
@@ -569,8 +561,9 @@
    [_tracer release];
    [super dealloc];
 }
--(void) label: (CPIntVarI*) var with: (ORInt) val
+-(void) label: (ORIntVarI*) var with: (ORInt) val
 {
+   var = [var dereference];
    ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
@@ -580,8 +573,9 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
--(void) diff: (CPIntVarI*) var with: (ORInt) val
+-(void) diff: (ORIntVarI*) var with: (ORInt) val
 {
+   var = [var dereference];
    ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];
@@ -600,7 +594,7 @@
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
                                                         rootControllerClass:[ORSemDFSController class]
                                                       nestedControllerClass:[ORSemDFSController class]];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
    return self;
 }
@@ -820,11 +814,11 @@ static void init_pthreads_key()
 }
 -(void) label: (CPIntVarI*) var with: (ORInt) val
 {
-   [[self dereference] label:var with:val];
+   [[self dereference] label:[var dereference] with:val];
 }
 -(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
-   [[self dereference] diff:var with:val];
+   [[self dereference] diff:[var dereference] with:val];
 }
 -(void)setupWork:(NSData*)root forCP:(id<CPSemSolver>)cp
 {
@@ -843,12 +837,10 @@ static void init_pthreads_key()
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   [[me explorer] nestedSolveAll:^() {  [self setupWork:root forCP:me];
-                                          body();
-                                     }
-                                  onSolution:nil
-                                      onExit:nil
-                                     control:parc];
+   [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
+                      onSolution:nil
+                          onExit:nil
+                         control:parc];
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -1237,6 +1229,27 @@ static void init_pthreads_key()
    [_solver trackObject:rv];
    return rv;
 }
+-(id<ORConstraint>) cardinality: (ORCardinalityI*) cstr
+{
+   ORParConstraintI* rv = [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
+}
+-(id<ORConstraint>) tableConstraint: (ORTableConstraintI*) cstr
+{
+   ORParConstraintI* rv = [[ORParConstraintI alloc] initORParConstraintI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
+}
+-(void) minimize: (id<ORIntVar>) v
+{
+   assert(FALSE);
+}
+-(void) maximize: (id<ORIntVar>) v
+{
+   assert(FALSE);
+}
+
 -(void) expr: (id<ORExpr>) e
 {
    

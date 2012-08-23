@@ -14,8 +14,9 @@
 #import "ORLimit.h"
 #import "ORExplorerI.h"
 
-@implementation ORExplorerI
+@implementation ORCoreExplorerI
 {
+   @protected
    id<OREngine>           _engine;
    id<ORTrail>             _trail;
    TRId               _controller;
@@ -70,6 +71,8 @@
 -(void) popController
 {
    id<ORSearchController> controller = [_controller._val controller];
+   //[_controller._val release];
+   //_controller._val = controller;
    assignTRId(&_controller,controller,_trail);
 }
 -(id<ORSearchController>) controller
@@ -247,18 +250,18 @@
       id<ORSearchController> dfs = [_cFact makeRootController];
       NSCont* exit = [NSCont takeContinuation];
       if ([exit nbCalls]==0) {
-         [dfs addChoice: exit];
          _controller = makeTRId(_trail,dfs);
+         [dfs addChoice: exit];
          [dfs setup];
          body();
          [exit letgo];
          [_controller._val cleanup];
          [_controller._val release];
          _controller._val = nil;
-         NSLog(@"Solution Found");
+         NSLog(@"top-level success");
       }
       else {
-         NSLog(@"Search Space Explored");
+         NSLog(@"top-level fail");
          [exit letgo];
       }
    }
@@ -289,14 +292,6 @@
    }
 }
 
--(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit  
-{
-   id<ORSearchController> base    = [_cFact makeNestedController];
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
-   [base release];
-   [self nestedSolve:body onSolution:onSolution onExit:onExit control:newCtrl];
-}
-
 // combinator (hence needs to be embedded in top-level search)
 // solve the body; Each time a solution is found, execute onSolution; restore the state as before the call; execute onExit at the end
 
@@ -316,14 +311,6 @@
       if (onExit) onExit();
       // [ldm] we *cannot* fail here. A solveAll always succeeds. This is expected for the parallel code to work fine.
    }
-}
-
--(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit 
-{
-   id<ORSearchController> base    = [_cFact makeNestedController];
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
-   [base release];
-   [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
 
 -(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
@@ -350,6 +337,12 @@
       //[_controller._val fail];
    }
 }
+
+-(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{}
+-(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{}
+
 
 -(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search 
 {
@@ -381,5 +374,57 @@
                      onExit: ^() { [_engine restoreSolution]; }];
     }
     ];
+}
+@end
+
+@implementation ORExplorerI
+-(ORExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
+{
+   self = [super initORExplorer:engine withTracer:tracer ctrlFactory:cFact];
+   return self;
+}
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   id<ORSearchController> base    = [_cFact makeNestedController];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
+   [base release];
+   [self nestedSolve:body onSolution:onSolution onExit:onExit control:newCtrl];
+}
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   id<ORSearchController> base    = [_cFact makeNestedController];
+   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:base parent:_controller._val];
+   [base release];
+   [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
+}
+@end
+
+@implementation ORSemExplorerI
+-(ORSemExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
+{
+   self = [super initORExplorer:engine withTracer:tracer ctrlFactory:cFact];
+   return self;
+}
+-(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   id<ORSearchController> new     = [_cFact makeNestedController];  // The controller to use in the nested search
+   id<ORSearchController> root    = [_cFact makeRootController];    // The chronological controller to guarantee correct nesting of nested search
+   [self push:root];                                                // Install chronological controller
+   id<ORSearchController> nested  = [[ORNestedController alloc] init:new parent:root]; // Setup a nested delegation controller.
+   [new release];
+   [self nestedSolve:body onSolution:onSolution onExit:onExit control:nested];         // do the nested search controlled by nested(new)
+   [self popController];                                                               // pop the chronological controller now that we are done.
+   [root release];
+}
+-(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   id<ORSearchController> new     = [_cFact makeNestedController];
+   id<ORSearchController> root    = [_cFact makeRootController];
+   [self push:root];
+   id<ORSearchController> nested  = [[ORNestedController alloc] init:new parent:root];
+   [new release];
+   [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:nested];
+   [self popController];
+   [root release];
 }
 @end

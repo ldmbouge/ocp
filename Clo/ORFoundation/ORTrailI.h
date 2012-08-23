@@ -269,7 +269,6 @@ static inline ORInt inline_trailMagic(ORTrailI* trail)
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORSolver>) solver;
--(ORInt) virtualOffset;
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
@@ -302,7 +301,6 @@ static inline ORInt inline_trailMagic(ORTrailI* trail)
 -(NSUInteger) count;
 -(id<ORSolver>) solver;
 -(id<OREngine>) engine;
--(ORInt) virtualOffset;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end
