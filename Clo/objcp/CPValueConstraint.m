@@ -530,8 +530,8 @@
       self = [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
-      ORInt low = [x low];
-      ORInt up = [x up];
+      ORInt low = [xa low];
+      ORInt up = [xa up];
       ORInt i = 0;
       for(ORInt k=low;k <= up;k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
@@ -682,8 +682,8 @@
       self = [super initCPActiveConstraint:[[x solver] engine]];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
-      ORInt low = [x low];
-      ORInt up = [x up];
+      ORInt low = [xa low];
+      ORInt up = [xa up];
       ORInt i = 0;
       for(ORInt k=low;k <= up;k++)
          _x[i++] = (CPIntVarI*) [xa at:k];

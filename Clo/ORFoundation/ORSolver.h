@@ -26,8 +26,10 @@
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(id<ORIdArray>) idArray: (id<ORIdArray>) a;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
+-(id<ORConstraint>) cardinality: (id<ORCardinality>) cstr;
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(id<ORConstraint>) tableConstraint: (id<ORTableConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) v;
 -(void) maximize: (id<ORIntVar>) v;
 @end

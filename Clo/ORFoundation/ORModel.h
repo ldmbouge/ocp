@@ -86,7 +86,16 @@
 @end
 
 @protocol ORTableConstraint <ORConstraint>
+-(id<ORIntVarArray>) array;
+-(id<ORTable>) table;
 @end
+
+@protocol ORCardinality <ORConstraint>
+-(id<ORIntVarArray>) array;
+-(id<ORIntArray>) low;
+-(id<ORIntArray>) up;
+@end
+
 
 @protocol ORModel <NSObject,ORTracker>
 -(NSString*)description;

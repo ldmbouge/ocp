@@ -271,6 +271,13 @@
    [_solver add: ncstr];
    return ncstr;
 }
+-(id<ORConstraint>) cardinality: (ORCardinalityI*) cstr
+{
+   id<ORIntVarArray> dx = [ORFactory intVarArrayDereference: _solver array: [cstr array]];
+   id<ORConstraint> ncstr = [CPFactory cardinality: dx low: [cstr low] up: [cstr up] consistency: DomainConsistency];
+   [_solver add: ncstr];
+   return ncstr;
+}
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr
 {
    id<ORIntVarArray> ditem = [ORFactory intVarArrayDereference: _solver array: [cstr item]];
@@ -284,6 +291,13 @@
    ORExprConcretizer* ec = [[ORExprConcretizer alloc] initORExprConcretizer: _solver concretizer: self];
    [((ORExprI*) [cstr expr]) visit: ec];
    id<ORConstraint> c = [CPFactory relation2Constraint:_solver expr: [ec result]];
+   [_solver add: c];
+   return c;
+}
+-(id<ORConstraint>) tableConstraint: (ORTableConstraintI*) cstr
+{
+   id<ORIntVarArray> x = [ORFactory intVarArrayDereference: _solver array: [cstr array]];
+   id<ORConstraint> c = [CPFactory table: [cstr table] on: x];
    [_solver add: c];
    return c;
 }

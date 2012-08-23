@@ -1389,7 +1389,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
-      for(ORInt k=[x low];k <= [x up];k++)
+      for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = [xa at:k];
    }      
    return self;

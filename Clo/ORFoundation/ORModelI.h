@@ -59,6 +59,13 @@
 -(id<ORIntVarArray>) array;
 @end
 
+@interface ORCardinalityI : ORConstraintI<ORCardinality>
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
+-(id<ORIntVarArray>) array;
+-(id<ORIntArray>) low;
+-(id<ORIntArray>) up;
+@end;
+
 @interface ORBinPackingI : ORConstraintI<ORBinPacking>
 -(ORBinPackingI*) initORBinPackingI: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
 -(id<ORIntVarArray>) item;
@@ -73,6 +80,8 @@
 
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>
 -(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (ORTableI*) table;
+-(id<ORIntVarArray>) array;
+-(id<ORTable>) table;
 @end
 
 @interface ORObjectiveFunctionI : NSObject

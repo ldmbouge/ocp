@@ -114,7 +114,7 @@ static void computeCardinalities(id<ORIntVarArray> ax,
         _x  = malloc(sizeof(CPIntVarI*)*_sx);
         int i=0;
         id<ORIntVarArray> xa = ax;
-        for(ORInt k=[ax low];k<=[ax up];k++)
+        for(ORInt k=[xa low];k<=[xa up];k++)
             _x[i++] = (CPIntVarI*) [xa at:k];
         _lx = 0;
         _ux = (ORInt)_sx -1;

@@ -34,7 +34,7 @@
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
-      for(ORInt k=[x low];k <= [x up];k++)
+      for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
    _c = c;
@@ -203,7 +203,7 @@ static void sumBounds(struct CPTerm* terms,ORLong nb,struct Bounds* bnd)
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
-      for(ORInt k=[x low];k <= [x up];k++)
+      for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
    _c = c;

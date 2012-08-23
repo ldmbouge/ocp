@@ -404,6 +404,40 @@
 }
 @end
 
+@implementation ORCardinalityI
+{
+   id<ORIntVarArray> _x;
+   id<ORIntArray>    _low;
+   id<ORIntArray>    _up;
+}
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _low = low;
+   _up = up;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(id<ORIntArray>) low
+{
+   return _low;
+}
+-(id<ORIntArray>) up
+{
+   return _up;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (_impl == nil)
+      _impl = [concretizer cardinality: self];
+}
+
+@end;
+
 @implementation ORBinPackingI
 {
    id<ORIntVarArray> _item;
@@ -455,6 +489,33 @@
 {
    if (_impl == nil)
       _impl = [concretizer algebraicConstraint: self];
+}
+@end
+
+@implementation ORTableConstraintI
+{
+   id<ORIntVarArray> _x;
+   id<ORTable> _table;
+}
+-(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (id<ORTable>) table
+{
+   self = [super init];
+   _x = x;
+   _table = table;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(id<ORTable>) table
+{
+   return _table;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (_impl == nil)
+      _impl = [concretizer tableConstraint: self];
 }
 @end
 
@@ -512,16 +573,3 @@
 }
 @end
 
-@implementation ORTableConstraintI
-{
-   id<ORIntVarArray> _x;
-   id<ORTable> _table;
-}
--(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (id<ORTable>) table
-{
-   self = [super init];
-   _x = x;
-   _table = table;
-   return self;
-}
-@end

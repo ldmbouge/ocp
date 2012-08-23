@@ -231,7 +231,28 @@
    [model trackObject: o];
    return o;
 }
-
++(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (ORTableI*) table
+{
+   id<ORConstraint> o = [[ORTableConstraintI alloc] initORTableConstraintI: x table: table];
+   [[x tracker] trackObject: o];
+   return o;
+}
++(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
+{
+   id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up];
+   [[x tracker] trackObject: o];
+   return o;
+}
++(id<ORConstraint>) tableConstraint: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z
+{
+   id<ORTracker> tracker = [x tracker];
+   id<ORIntRange> R = RANGE(tracker,0,2);
+   id<ORIdArray> a = [ORFactory idArray:tracker range:R];
+   a[0] = x;
+   a[1] = y;
+   a[2] = z;
+   return [self tableConstraint: (id<ORIntVarArray>) a table: table];
+}
 +(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) solver range: (id<ORIntRange>) R
 {
    ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: (id<ORSolver>) solver range: R];
