@@ -22,6 +22,7 @@
 #import "ORExplorer.h"
 #import "CPBasicConstraint.h"
 #import "CPIntVarI.h"
+#import "CPConcretizer.h"
 #import "pthread.h"
 #import "CPObjectQueue.h"
 #import "CPParallel.h"
@@ -615,7 +616,7 @@
 }
 -(id<ORSearchController>)makeController
 {
-   return [[_ctrlClass alloc] initSemController:_solver];
+   return [[_ctrlClass alloc] initTheController:_solver];
 }
 @end
 
@@ -919,65 +920,6 @@ static void init_pthreads_key()
 }
 @end
 
-@implementation CPConcretizerI
-{
-   id<CPSolver> _solver;
-}
--(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver
-{
-   self = [super init];
-   _solver = solver;
-   return self;
-}
--(id<ORIntVar>) intVar: (ORIntVarI*) v
-{
-   return [CPFactory intVar: _solver domain: [v domain]];
-}
--(id<ORIntVar>) affineVar:(id<ORIntVar>) v
-{
-   id<ORIntVar> mBase = [v base];
-   ORInt a = [v scale];
-   ORInt b = [v shift];
-   return [CPFactory intVar:[mBase dereference] scale:a shift:b];
-}
--(id<ORConstraint>) alldifferent: (ORAlldifferentI*) cstr
-{
-   id<ORIntVarArray> dx = [ORFactory intVarArrayDereference: _solver array: [cstr array]];
-   id<ORConstraint> ncstr = [CPFactory alldifferent: _solver over: dx];
-   [_solver add: ncstr];
-   return ncstr;
-}
--(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr
-{
-   id<ORIntVarArray> ditem = [ORFactory intVarArrayDereference: _solver array: [cstr item]];
-   id<ORIntVarArray> dbinSize = [ORFactory intVarArrayDereference: _solver array: [cstr binSize]];
-   id<ORConstraint> ncstr = [CPFactory packing: ditem itemSize: [cstr itemSize] load: dbinSize];
-   [_solver add: ncstr];
-   return ncstr;
-}
--(id<ORConstraint>) algebraicConstraint: (ORAlgebraicConstraintI*) cstr
-{
-   id<ORConstraint> c = [CPFactory relation2Constraint:_solver expr: [cstr expr]];
-   [_solver add: c];
-   return c;
-}
--(id<ORIdArray>) idArray: (id<ORIdArray>) a
-{
-   id<ORIntRange> R = [a range];
-   id<ORIdArray> impl = [ORFactory idArray: _solver range: R];
-   ORInt low = R.low;
-   ORInt up = R.up;
-   for(ORInt i = low; i <= up; i++) {
-      [a[i] concretize: self];
-      impl[i] = [a[i] dereference];
-   }
-   return impl;
-}
--(void) expr: (id<ORExpr>) e
-{
-   
-}
-@end
 // =======================================================================
 
 @implementation ORParIntVarI

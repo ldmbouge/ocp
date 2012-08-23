@@ -764,7 +764,7 @@ struct CPVarPair {
    ORInt ub = [e max];
    if (_rv == nil)
       _rv = [CPFactory intVar:cp domain: RANGE(cp,lb,ub)];
-   [_engine post:[CPFactory element:oV idxVarArray:[[e array] dereference] equal:_rv]];
+   [_engine post:[CPFactory element:oV idxVarArray: [e array] equal:_rv]];
    [lT release];   
 }
 
@@ -794,7 +794,7 @@ struct CPVarPair {
 }
 -(ORStatus) post
 {
-    NSLog(@"%@",_solver);
+ //   NSLog(@"%@",_solver);
    CPLinear* terms = [CPRNormalizer normalize:_expr solver: _solver consistency:_c];
    ORStatus status = ORSuspend;
    @try {

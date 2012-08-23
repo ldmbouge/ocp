@@ -141,6 +141,7 @@
    id<ORExpr> _e;
 }
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;
@@ -155,6 +156,7 @@
    id<ORExpr> _e;
 }
 -(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAggOrI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;

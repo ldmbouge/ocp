@@ -45,7 +45,7 @@
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    [_solver installCheckpoint:[stolen theCP]];
-   id<ORSearchController> base = [[ORSemDFSController alloc] initSemController:_solver];
+   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}

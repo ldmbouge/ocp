@@ -95,11 +95,11 @@ void failNow()
 }
 +(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp
 {
-   return [[ORSemDFSController alloc] initSemController:cp];
+   return [[ORSemDFSController alloc] initTheController:cp];
 }
 +(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp
 {
-   return [[ORSemBDSController alloc] initSemController:cp];
+   return [[ORSemBDSController alloc] initTheController:cp];
 }
 +(void) shutdown
 {

@@ -27,7 +27,7 @@
    id<ORCheckpoint>   _atRoot;
    id<OREngine>       _solver;
 }
--(id)   initSemController:(id<ORSolver>)solver;
+-(id)   initTheController:(id<ORSolver>)solver;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

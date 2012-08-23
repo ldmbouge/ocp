@@ -82,7 +82,7 @@
 
 @implementation ORSemBDSController
 
-- (id) initSemController:(id<ORSolver>)solver
+- (id) initTheController:(id<ORSolver>)solver
 {
    self = [super initORDefaultController];
    _tracer = [[solver tracer] retain];

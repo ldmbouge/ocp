@@ -9,12 +9,14 @@
 
  ***********************************************************************/
 
+#import "ORUtilities/ORUtilities.h"
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import "CPSolver.h"
 #import "CPTypes.h"
 #import "CPConstraintI.h"
-#import "ORUtilities/ORUtilities.h"
+#import "CPConcretizer.h"
+
 
 
 @interface CPHeuristicStack : NSObject {
@@ -146,13 +148,6 @@
 -(id<CPSolver>)dereference;
 @end
 
-@interface CPConcretizerI : NSObject<ORSolverConcretizer>
--(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver;
--(id<ORIntVar>) intVar: (id<ORIntVar>) v;
--(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
--(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
--(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
-@end
 
 @interface CPParConcretizerI : NSObject<ORSolverConcretizer>
 -(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;

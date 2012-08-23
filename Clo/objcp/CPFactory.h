@@ -92,6 +92,7 @@ void failNow();
 
 @end
 
+// pvh: should be merged with below
 @interface CPFactory (expression)
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;

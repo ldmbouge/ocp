@@ -79,14 +79,15 @@ int main(int argc, const char * argv[])
    [model add: [obj eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
 //   [model add: [obj eq: Sum(model,s,Slabs,[load at: s])]];
    [model add: [ORFactory packing: slab itemSize: weight binSize: load]];
-//   for(ORInt s = Slabs.low; s <= Slabs.up; s++)
-//     [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
+   for(ORInt s = Slabs.low; s <= Slabs.up; s++)
+      [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [model add: [obj eqi: 0]];
    
    id<CPSolver> cp = [CPFactory createSolver];
    [cp addModel: model];
    
    [cp solve: ^{
+      NSLog(@"In the search ...");
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
           ORInt ms = max(0,[CPLabel maxBound: slab]);

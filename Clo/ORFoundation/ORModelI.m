@@ -286,7 +286,7 @@
 }
 -(void) visit: (id<ORExprVisitor>) v
 {
-   [((ORExprI*)[_impl dereference]) visit: v];
+   [v visitIntVarI: self];
 }
 @end
 

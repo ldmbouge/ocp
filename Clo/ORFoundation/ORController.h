@@ -107,7 +107,7 @@
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
 }
--(id)   initDFSController:(id<ORSolver>) solver;
+-(id)   initTheController:(id<ORSolver>) solver;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

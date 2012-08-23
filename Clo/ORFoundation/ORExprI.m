@@ -715,6 +715,13 @@
    }
    return self;
 }
+-(id<ORExpr>) initORExprSumI: (id<ORExpr>) e
+{
+   self = [super init];
+   _e = e;
+   return self;
+}
+
 -(void) dealloc
 {   
    [super dealloc];
@@ -778,6 +785,12 @@
          _e = [_e or: e(i)];
       }
    }
+   return self;
+}
+-(id<ORRelation>) initORExprAggOrI: (id<ORExpr>) e
+{
+   self = [super init];
+   _e = e;
    return self;
 }
 

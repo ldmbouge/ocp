@@ -210,7 +210,7 @@
 
 @implementation ORDFSController
 
-- (id) initDFSController:(id<ORSolver>)solver
+- (id) initTheController:(id<ORSolver>)solver
 {
    self = [super initORDefaultController];
    _tracer = [[solver tracer] retain];
@@ -221,7 +221,7 @@
    return self;
 }
 
-- (id) initDFSControllerWithTracer:(id<ORTracer>)tracer
+- (id) initTheControllerWithTracer:(id<ORTracer>)tracer
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -289,7 +289,7 @@
 }
 - (id) copyWithZone: (NSZone*) zone
 {
-   ORDFSController* ctrl = [[[self class] allocWithZone:zone] initDFSControllerWithTracer:_tracer];
+   ORDFSController* ctrl = [[[self class] allocWithZone:zone] initTheControllerWithTracer:_tracer];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
