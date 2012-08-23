@@ -268,10 +268,9 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    _propagDone = nil;
    return self;
 }
-
 -(void) dealloc
 {
-   NSLog(@"Solver [%p] dealloc called...\n",self);
+   NSLog(@"CPEngine [%p] dealloc called...\n",self);
    [_vars release];
    [_cStore release];
    [_mStore release];

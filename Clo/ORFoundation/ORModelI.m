@@ -37,7 +37,7 @@
 
 -(void) dealloc
 {
-   NSLog(@"Solver [%p] dealloc called...\n",self);
+   NSLog(@"ORModelI [%p] dealloc called...\n",self);
    [_vars release];
    [_mStore release];
    [_oStore release];
