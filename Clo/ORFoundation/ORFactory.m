@@ -152,6 +152,10 @@
 {
    return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:b];
 }
++(id<ORIntVar>) boolVar: (id<ORTracker>) model
+{
+   return [[ORIntVarI alloc] initORIntVarI: model domain: RANGE(model,0,1)];
+}
 
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
@@ -172,6 +176,36 @@
 {
    return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([x[i] dereference]); }];
 }
+
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(ORInt,ORInt)) clo
+{
+   ORInt nb = ([r1 up] - [r1 low] + 1) * ([r2 up] - [r2 low] + 1);
+   id<ORIntRange> fr = [ORFactory intRange: cp low: 0 up: nb-1];
+   id<ORIdArray> o = [ORFactory idArray:cp range:fr];
+   ORInt k = 0;
+   for(ORInt i=[r1 low];i <= [r1 up];i++)
+      for(ORInt j= [r2 low];j <= [r2 up];j++)
+         [o set:clo(i,j) at:k++];
+   return (id<ORIntVarArray>)o;
+}
++(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with: (id<ORIntVar>(^)(ORInt,ORInt,ORInt)) clo
+{
+   ORInt nb = ([r1 up] - [r1 low] + 1) * ([r2 up] - [r2 low] + 1) * ([r3 up] - [r3 low] + 1);
+   id<ORIntRange> fr = [ORFactory intRange: cp low: 0 up: nb-1];
+   id<ORIdArray> o = [ORFactory idArray:cp range:fr];
+   ORInt l = 0;
+   for(ORInt i= [r1 low] ;i <= [r1 up]; i++)
+      for(ORInt j= [r2 low]; j <= [r2 up]; j++)
+         for(ORInt k= [r3 low];k <= [r3 up]; k++)
+            [o set:clo(i,j,k) at:l++];
+   return (id<ORIntVarArray>)o;
+}
+
++(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
+{
+   return [self intVarArray:cp range:range with:clo];
+}
+
 +(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -218,6 +252,42 @@
    [solver trackObject: o];
    return o;
 }
+
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
+   for(ORInt i=[r0 low];i <= [r0 up];i++)
+      for(ORInt j= [r1 low];j <= [r1 up];j++)
+         [o set:[ORFactory intVar:cp domain:domain] at:i :j];
+   return (id<ORIntVarMatrix>)o;
+}
++(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
+   for(ORInt i= [r0 low];i <= [r0 up]; i++)
+      for(ORInt j= [r1 low]; j <= [r1 up]; j++)
+         for(ORInt k= [r2 low]; k <= [r2 up];k++)
+            [o set:[ORFactory intVar:cp domain:domain] at:i :j :k];
+   return (id<ORIntVarMatrix>)o;
+}
++(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
+   for(ORInt i= [r0 low];i <= [r0 up]; i++)
+      for(ORInt j= [r1 low]; j <= [r1 up];j++)
+         [o set: [ORFactory boolVar: cp] at:i :j];
+   return (id<ORIntVarMatrix>)o;
+}
++(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+{
+   id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
+   for(ORInt i= [r0 low]; i <= [r0 up]; i++)
+      for(ORInt j= [r1 low]; j <= [r1 up]; j++)
+         for(ORInt k= [r2 low]; k <= [r2 up]; k++)
+            [o set: [ORFactory boolVar: cp] at:i :j :k];
+   return (id<ORIntVarMatrix>) o;
+}
+
 @end
 
 @implementation ORFactory (Expressions)

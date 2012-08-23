@@ -71,6 +71,7 @@ int main(int argc, const char * argv[])
         }
         */
        [CPLabel array: allgames orderedBy: ^ORInt(ORInt i) { return [[allgames at:i] domsize];}];
+       NSLog(@"after");
        [CPLabel array: allteams orderedBy: ^ORInt(ORInt i) { return [[allteams at:i] domsize];}];
        ORLong endTime = [ORRuntimeMonitor cputime];
        printf("Solution \n");

@@ -21,7 +21,6 @@ int main(int argc, const char * argv[])
 
    @autoreleasepool {
 
-      @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
       ORLong startTime = [ORRuntimeMonitor cputime];
       ORInt n = 14;
@@ -53,9 +52,9 @@ int main(int argc, const char * argv[])
                                                              with: ^id<ORIntVar>(ORInt p,ORInt h) { return [team at: p : w : h ]; } ]]];
       for(ORInt p = 1; p <= n/2; p++)
          [model add: [ORFactory cardinality: [ORFactory intVarArray: model range: EWeeks : HomeAway
-                                                            with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
-                                     low: c
-                                      up: c]];
+                                                               with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
+                                        low: c
+                                         up: c]];
       
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel: model];
@@ -71,8 +70,8 @@ int main(int argc, const char * argv[])
              printf("\n");
           }
           printf("Execution Time: %lld \n",endTime - startTime);
-       }
-       ];
+      }
+      ];
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];

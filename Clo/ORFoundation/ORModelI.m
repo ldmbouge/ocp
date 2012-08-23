@@ -511,3 +511,17 @@
    }
 }
 @end
+
+@implementation ORTableConstraintI
+{
+   id<ORIntVarArray> _x;
+   id<ORTable> _table;
+}
+-(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (id<ORTable>) table
+{
+   self = [super init];
+   _x = x;
+   _table = table;
+   return self;
+}
+@end

@@ -85,6 +85,9 @@
 -(id<ORExpr>) expr;
 @end
 
+@protocol ORTableConstraint <ORConstraint>
+@end
+
 @protocol ORModel <NSObject,ORTracker>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;

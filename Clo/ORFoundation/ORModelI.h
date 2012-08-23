@@ -71,6 +71,10 @@
 -(id<ORRelation>) expr;
 @end
 
+@interface ORTableConstraintI : ORConstraintI<ORTableConstraint>
+-(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (ORTableI*) table;
+@end
+
 @interface ORObjectiveFunctionI : NSObject
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
