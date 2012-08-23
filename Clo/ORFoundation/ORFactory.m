@@ -212,6 +212,12 @@
    return o;
 }
 
++(id<ORTable>) table: (id<ORSolver>) solver arity: (int) arity
+{
+   ORTableI* o = [[ORTableI alloc] initORTableI: solver arity: arity];
+   [solver trackObject: o];
+   return o;
+}
 @end
 
 @implementation ORFactory (Expressions)

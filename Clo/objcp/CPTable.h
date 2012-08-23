@@ -12,10 +12,3 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 
-@protocol CPTable <NSObject>
--(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
--(void) addEmptyTuple;
--(void) fill: (ORInt) j with: (ORInt) val;
--(void) print;
--(void) close;
-@end

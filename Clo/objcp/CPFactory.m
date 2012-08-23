@@ -279,11 +279,9 @@ void failNow()
     [[cp solver] trackObject: o];
     return o;
 }
-+(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity
++(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity
 {
-    CPTableI* o = [[CPTableI alloc] initCPTableI: (CPSolverI*) cp arity: arity];
-    [[cp solver] trackObject: o];
-    return o;
+   return [ORFactory table: cp arity: arity];
 }
 +(id<ORInformer>) informer: (id<ORTracker>) cp
 {

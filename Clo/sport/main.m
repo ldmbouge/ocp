@@ -41,7 +41,7 @@ int main(int argc, const char * argv[])
                                                    with: ^id<ORIntVar>(ORInt p,ORInt w,ORInt h) { return [team at: p : w : h]; }];
    id<ORIntVarArray> allgames =  [CPFactory intVarArray:cp range: Periods : Weeks
                                                    with: ^id<ORIntVar>(ORInt p,ORInt w) { return [game at: p : w]; }];
-   id<CPTable> table = [CPFactory table: cp arity: 3];
+   id<ORTable> table = [CPFactory table: cp arity: 3];
    for(ORInt i = 1; i <= n; i++)
       for(ORInt j = i+1; j <= n; j++)
          [table insert: i : j : (i-1)*n + j-1];

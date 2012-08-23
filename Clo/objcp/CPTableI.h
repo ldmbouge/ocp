@@ -11,45 +11,22 @@
 
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORData.h>
 #import "CPTypes.h"
 #import "CPIntVarI.h"
 #import "CPConstraintI.h"
-#import "CPTable.h"
 
-@interface CPTableI : NSObject<CPTable,NSCoding> {
-    @package
-    id<CPSolver>  _cp;
-    ORInt   _arity; 
-    ORInt   _nb;
-    ORInt   _size;
-    ORInt** _column;
-    bool    _closed;
-    ORInt*  _min;          // _min[j] is the minimum value in column[j]
-    ORInt*  _max;          // _max[j] is the maximun value in column[j]
-    ORInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
-    ORInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
-}
--(CPTableI*) initCPTableI: (id<CPSolver>) cp arity: (ORInt) arity;
--(void) dealloc;
--(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
--(void) addEmptyTuple;
--(void) fill: (ORInt) j with: (ORInt) val;
--(void) close;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
--(void) print;
-@end
 
 
 @interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
     CPIntVarI**     _var;
     ORInt           _arity;  
-    CPTableI*       _table;
+    ORTableI*       _table;
     TRIntArray*     _currentSupport;
     bool            _posted;
 }
--(CPTableCstrI*) initCPTableCstrI: (id<ORIntVarArray>) x table: (CPTableI*) table;
--(CPTableCstrI*) initCPTableCstrI: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
+-(CPTableCstrI*) initCPTableCstrI: (id<ORIntVarArray>) x table: (ORTableI*) table;
+-(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;

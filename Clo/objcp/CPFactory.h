@@ -79,7 +79,7 @@ void failNow();
 +(id<ORIntInformer>) intInformer: (id<ORTracker>) cp;
 +(id<ORBarrier>)  barrier: (id<ORTracker>) cp value: (ORInt) nb;
 
-+(id<CPTable>) table: (id<ORTracker>) cp arity: (int) arity;
++(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
 

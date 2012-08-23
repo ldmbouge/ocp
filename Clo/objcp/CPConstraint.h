@@ -64,8 +64,8 @@
 +(id<ORConstraint>) abs: (id<ORIntVar>)x equal:(id<ORIntVar>)y consistency:(CPConsistency)c;
 +(id<ORConstraint>) element:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y;
 +(id<ORConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y;
-+(id<ORConstraint>) table: (id<CPTable>) table on: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) table: (id<CPTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
++(id<ORConstraint>) table: (id<ORTable>) table on: (id<ORIntVarArray>) x;
++(id<ORConstraint>) table: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
 +(id<ORConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e consistency: (CPConsistency) c;
 +(id<ORConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e;
 

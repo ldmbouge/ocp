@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "ORData.h"
 #import "ORExprI.h"
+#import "ORError.h"
 
 @interface ORObjectI : NSObject<ORObject>
 @end;

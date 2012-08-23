@@ -398,13 +398,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    [[x solver] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) table: (CPTableI*) table on: (id<ORIntVarArray>) x
++(id<ORConstraint>) table: (ORTableI*) table on: (id<ORIntVarArray>) x
 {
     id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
     [[x solver] trackObject:o];
     return o;
 }
-+(id<ORConstraint>) table: (CPTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
++(id<ORConstraint>) table: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 {
     id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: table on: x : y : z];
     [[x solver] trackObject:o];
