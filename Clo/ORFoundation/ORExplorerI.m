@@ -313,9 +313,11 @@
    }
 }
 
--(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+-(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search
+            onSolution: (ORClosure) onSolution
+                onExit: (ORClosure) onExit
+               control:(id<ORSearchController>) newCtrl
 {
-   id<ORSearchController> newCtrl = [[ORNestedController alloc] init:[_cFact makeNestedController] parent:_controller._val];
    NSCont* exit = [NSCont takeContinuation];
    if ([exit nbCalls]==0) {
       [_controller._val addChoice: exit];
@@ -342,7 +344,8 @@
 {}
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
-
+-(void)     nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{}
 
 -(void) optimizeModel: (id<ORSolver>) solver using: (ORClosure) search 
 {
@@ -397,6 +400,13 @@
    [base release];
    [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:newCtrl];
 }
+-(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   id<ORSearchController> new    = [_cFact makeNestedController];
+   id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
+   [new release];
+   [self nestedOptimize:solver using:search onSolution:onSolution onExit:onExit control:nested];
+}
 @end
 
 @implementation ORSemExplorerI
@@ -424,6 +434,17 @@
    id<ORSearchController> nested  = [[ORNestedController alloc] init:new parent:root];
    [new release];
    [self nestedSolveAll:body onSolution:onSolution onExit:onExit control:nested];
+   [self popController];
+   [root release];
+}
+-(void) nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
+{
+   id<ORSearchController> new     = [_cFact makeNestedController];
+   id<ORSearchController> root    = [_cFact makeRootController];
+   [self push:root];
+   id<ORSearchController> nested = [[ORNestedController alloc] init:new parent:_controller._val];
+   [new release];
+   [self nestedOptimize:solver using:search onSolution:onSolution onExit:onExit control:nested];
    [self popController];
    [root release];
 }

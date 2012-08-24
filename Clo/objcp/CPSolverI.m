@@ -812,6 +812,14 @@ static void init_pthreads_key()
 {
    [[[self dereference] explorer] try: left or: right];
 }
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+{
+   [[[self dereference] explorer] tryall: range suchThat: filter in: body];
+}
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+{
+   [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
+}
 -(void) label: (CPIntVarI*) var with: (ORInt) val
 {
    [[self dereference] label:[var dereference] with:val];
@@ -1243,15 +1251,8 @@ static void init_pthreads_key()
 }
 -(void) minimize: (id<ORIntVar>) v
 {
-   assert(FALSE);
 }
 -(void) maximize: (id<ORIntVar>) v
 {
-   assert(FALSE);
-}
-
--(void) expr: (id<ORExpr>) e
-{
-   
 }
 @end

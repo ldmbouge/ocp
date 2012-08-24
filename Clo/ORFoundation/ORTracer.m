@@ -277,8 +277,9 @@
    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
    NSArray* dico = [fdm allVars];
+   //NSLog(@"DICO: %@",dico);
    ORULong nbProxies = [[fdm allVars] count] + 1; // 1 extra for the trail proxy
-   __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
+   id* proxies = malloc(sizeof(CPProxyVar*)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
@@ -299,6 +300,7 @@
    [archiver release];
    for(ORInt k=0;k<nbProxies;k++)
       [proxies[k] release];
+   free(proxies);
    return thePack;
 }
 @end
@@ -311,13 +313,14 @@
    id arp  = [[NSAutoreleasePool alloc] init];
    CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
    [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   id* proxies = alloca(sizeof(id)*nbProxies);
+   id* proxies = malloc(sizeof(id)*nbProxies);
    for(ORUInt k = 0;k<nbProxies;k++) {
       proxies[k] = [decoder decodeObject];
    }
    id<ORProblem> theProblem = [[decoder decodeObject] retain];
    [decoder release];
    [arp release];
+   free(proxies);
    return theProblem;
 }
 +(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<ORSolver>) solver

@@ -13,6 +13,8 @@
 #import <ORFoundation/ORSet.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORSemBDSController.h>
 #import "objcp/CPFactory.h"
 #import "objcp/CPConstraint.h"
 #import <objcp/CPSolver.h>
@@ -83,6 +85,9 @@ int main(int argc, const char * argv[])
    [model minimize: obj];
    
    id<CPSolver> cp = [CPFactory createSolver];
+   //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
+   //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
+   //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
    [cp addModel: model];
    
    [cp solve: ^{
