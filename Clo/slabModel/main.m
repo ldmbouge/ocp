@@ -89,9 +89,10 @@ int main(int argc, const char * argv[])
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
    //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
    [cp addModel: model];
-   
    [cp solve: ^{
       NSLog(@"In the search ...");
+      NSMutableArray* av = [cp allVars];
+      NSLog(@"VARS: %@",av);
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
           ORInt ms = max(0,[CPLabel maxBound: slab]);

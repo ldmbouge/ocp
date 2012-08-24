@@ -229,7 +229,7 @@
 }
 -(void) visitIntVarI: (id<ORIntVar>) var
 {
-   [_concretizer intVar: var];
+   [var concretize:_concretizer];
    _result = [var dereference];
 }
 -(void) visitExprVarSubI: (ORExprVarSubI*) e

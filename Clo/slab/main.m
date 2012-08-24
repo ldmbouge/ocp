@@ -85,6 +85,10 @@ int main(int argc, const char * argv[])
       [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [cp minimize: obj];
    
+   NSMutableArray* av = [cp allVars];
+   NSLog(@"VARS: %@",av);
+
+   
    [cp solve: ^{
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
