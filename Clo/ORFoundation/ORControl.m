@@ -17,14 +17,13 @@
    ORInt sz = [S size];
    ORInt* value = alloca(sizeof(ORInt)*sz);
    bool* used = alloca(sizeof(bool)*sz);
+   memset(used,0,sizeof(bool)*sz);
    id<IntEnumerator> ite = [S enumerator];
    ORInt nb = 0;
    while ([ite more]) {
       value[nb] = [ite next];
-      if (!suchThat || suchThat(value[nb])) {
-         used[nb] = false;
+      if (!suchThat || suchThat(value[nb]))
          nb++;
-      }
    }
    bool done = false;
    while (!done) {

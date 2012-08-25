@@ -122,13 +122,6 @@
    next = [NSCont takeContinuation];
    [next setFieldId:ite];
    BOOL resume = [next nbCalls] != 0;
-   
-   if (resume) {
-      [_controller._val startTryallOnFailure];
-      if (onFailure)
-         onFailure([next field]);
-      [_controller._val exitTryallOnFailure];
-   }
    foundIte = [ite more];
    if (foundIte) {
       curIte = [ite next];
@@ -140,6 +133,19 @@
             }
             curIte = [ite next];
          }
+   }
+   if (resume) {
+      ORInt lastValue = [next field];
+      if (!foundIte) {
+         [next setFieldId:nil];
+         [next letgo];
+      }
+      if (onFailure) {
+         [_controller._val startTryallOnFailure];
+         [_controller._val trust];
+         onFailure(lastValue);
+         [_controller._val exitTryallOnFailure];
+      }
    }
    if (foundIte) {
       [next setField: curIte];

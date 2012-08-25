@@ -19,6 +19,14 @@
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+#define TESTTA 1
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -34,20 +42,26 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSecmDFSController class]];
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
+      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
+      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
+         __block ORInt depth = 0;
          [cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
+#if TESTTA==1
             [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
                     in:^(ORInt v) {
+                       //NSLog(@"%@?x[%d] == %d   --> %@",tab(depth),i,v,[x[i] dereference]);
                        [cp label: x[i] with:v];
+                       //NSLog(@"%@*x[%d] == %d   --> %@",tab(depth),i,v,[x[i] dereference]);
                     } onFailure:^(ORInt v) {
+                       //NSLog(@"%@?x[%d] != %d   --> %@",tab(depth),i,v,[x[i] dereference]);
                        [cp diff: x[i] with:v];
+                       //NSLog(@"%@*x[%d] != %d   --> %@",tab(depth),i,v,[x[i] dereference]);
                     }];
-            
- /*
+            depth++;
+#else
             while (![x[i] bound]) {
                int v = [x[i] min];
                [cp try:^{
@@ -56,7 +70,7 @@ int main (int argc, const char * argv[])
                   [cp diff: x[i] with:v];
                }];
             }
-  */
+#endif
            }];
 
 /*         for(ORInt i = 0; i <= n; i++) {

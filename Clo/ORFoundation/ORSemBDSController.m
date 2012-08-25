@@ -141,7 +141,7 @@
       NSLog(@"adding snaphot to current wave: %@",snap);
    else
       NSLog(@"adding snaphot to next    wave: %@",snap);
-  */    
+*/
    if (_nbDisc + 1 < _maxDisc)
       [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1];
    else [_next pushCont:k cp:snap discrepancies:_nbDisc+1];
@@ -154,7 +154,7 @@
          return;  // Nothing left to process. Go back!
       else {
          if ([_tab empty]) {
-            //NSLog(@"next wave... %@",_next);
+            //NSLog(@"next wave: %@",_next);
             BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;
@@ -162,6 +162,7 @@
          }
          struct BDSNode node = [_tab pop];
          _nbDisc = node._disc;
+         //NSLog(@"********** RESTORING: %@",node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
          [node._cp release];
          if (status != ORFailure)
