@@ -74,7 +74,7 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"queue(%d)=[",_sz];
    for(ORInt i=0;i<_sz;i++)
-      [buf appendFormat:@"%@%c",_tab[i]._cp,i < _sz -1 ? ',' : ']'];
+      [buf appendFormat:@"%@%c",_tab[i]._cp,(i < _sz - 1) ? ',' : ']'];
    return buf;
 }
 
@@ -135,9 +135,16 @@
 
 -(ORInt) addChoice: (NSCont*)k 
 {
-   if (_nbDisc + 1 < _maxDisc) 
-      [_tab  pushCont:k cp:[_tracer captureCheckpoint] discrepancies:_nbDisc+1];
-   else [_next pushCont:k cp:[_tracer captureCheckpoint] discrepancies:_nbDisc+1];  
+   id<ORCheckpoint> snap = [_tracer captureCheckpoint];
+/*
+   if (_nbDisc + 1 < _maxDisc)
+      NSLog(@"adding snaphot to current wave: %@",snap);
+   else
+      NSLog(@"adding snaphot to next    wave: %@",snap);
+  */    
+   if (_nbDisc + 1 < _maxDisc)
+      [_tab  pushCont:k cp:snap discrepancies:_nbDisc+1];
+   else [_next pushCont:k cp:snap discrepancies:_nbDisc+1];
    return -1;
 }
 -(void) fail
@@ -147,6 +154,7 @@
          return;  // Nothing left to process. Go back!
       else {
          if ([_tab empty]) {
+            //NSLog(@"next wave... %@",_next);
             BDSStack* tmp = _tab;
             _tab = _next;
             _next = tmp;

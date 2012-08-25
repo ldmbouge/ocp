@@ -313,12 +313,14 @@
    }
    return impl;
 }
--(void) minimize: (id<ORIntVar>) v
+-(id<ORObjectiveFunction>) minimize: (id<ORObjectiveFunction>) v
 {
-   [_solver minimize: [v dereference]];
+   id<ORObjective> rv = [_solver minimize: [[v var] dereference]];
+   return rv;
 }
--(void) maximize: (id<ORIntVar>) v
+-(id<ORObjectiveFunction>) maximize: (id<ORObjectiveFunction>) v
 {
-   [_solver maximize: [v dereference]];
+   id<ORObjective> rv = [_solver maximize: [[v var] dereference]];
+   return rv;
 }
 @end

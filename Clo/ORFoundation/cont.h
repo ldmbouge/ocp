@@ -51,7 +51,7 @@ typedef struct  {
 +(NSCont*) takeContinuation;
 +(void)shutdown;
 @property (readwrite,assign) ORInt field;
-@property (readwrite,assign) id  fieldId;
+@property (readwrite,retain) id  fieldId;
 @end 
 
 

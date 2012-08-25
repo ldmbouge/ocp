@@ -16,7 +16,6 @@
 #import "objcp/CPSolver.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPController.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 
@@ -35,11 +34,20 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
+      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSecmDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
-         for(ORInt i = 0; i <= n; i++) {
+         [cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
+            [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
+                    in:^(ORInt v) {
+                       [cp label: x[i] with:v];
+                    } onFailure:^(ORInt v) {
+                       [cp diff: x[i] with:v];
+                    }];
+            
+ /*
             while (![x[i] bound]) {
                int v = [x[i] min];
                [cp try:^{
@@ -48,8 +56,20 @@ int main (int argc, const char * argv[])
                   [cp diff: x[i] with:v];
                }];
             }
-         }
-         /*
+  */
+           }];
+
+/*         for(ORInt i = 0; i <= n; i++) {
+            while (![x[i] bound]) {
+               int v = [x[i] min];
+               [cp try:^{
+                  [cp label: x[i] with:v];
+               } or:^{
+                  [cp diff: x[i] with:v];
+               }];
+            }
+         }*/
+ 
          @autoreleasepool {
             NSMutableString* buf = [NSMutableString stringWithCapacity:64];
             [buf appendFormat:@"x = (%p)[",[NSThread currentThread]];
@@ -58,8 +78,7 @@ int main (int argc, const char * argv[])
             @synchronized(nbSol) {
                NSLog(@"SOL[%d] = %@",[nbSol value],buf);
             }
-         }
-          */
+         }         
          @synchronized(nbSol) {
             [nbSol incr];
          }

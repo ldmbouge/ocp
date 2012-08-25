@@ -117,47 +117,40 @@
    ORInt curIte;
    ORInt foundIte;
    [_controller._val startTryall];
-   NSCont* exit = [NSCont takeContinuation];
    NSCont* next = nil;
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
-   if ([exit nbCalls] == 0) {
-      [_controller._val addChoice: exit];
-      next = [NSCont takeContinuation];
-      [exit setFieldId: next];
-      if ([next nbCalls] != 0) {
-         [_controller._val startTryallOnFailure];
-         if (onFailure)
-            onFailure([next field]);
-         [_controller._val exitTryallOnFailure];
-      }
-      foundIte = [ite more];
-      if (foundIte) {
-         curIte = [ite next];
-         if (filter)
-            while (!filter(curIte)) {
-               if (![ite more]) {
-                  foundIte = false;
-                  break;
-               }
-               curIte = [ite next];
+   next = [NSCont takeContinuation];
+   [next setFieldId:ite];
+   BOOL resume = [next nbCalls] != 0;
+   
+   if (resume) {
+      [_controller._val startTryallOnFailure];
+      if (onFailure)
+         onFailure([next field]);
+      [_controller._val exitTryallOnFailure];
+   }
+   foundIte = [ite more];
+   if (foundIte) {
+      curIte = [ite next];
+      if (filter)
+         while (!filter(curIte)) {
+            if (![ite more]) {
+               foundIte = false;
+               break;
             }
-      }
-      if (foundIte) {
-         [next setField: curIte];
-         _nbc++;
-         [_controller._val addChoice: next];
-         [_controller._val startTryallBody];
-         body(curIte);
-         [_controller._val exitTryallBody];
-      }
-      else
-         [_controller._val fail];
+            curIte = [ite next];
+         }
    }
-   else {
-      [[exit fieldId] letgo];
-      [exit letgo];
+   if (foundIte) {
+      [next setField: curIte];
+      _nbc++;
+      [_controller._val addChoice: next];
+      [_controller._val startTryallBody];
+      body(curIte);
+      [_controller._val exitTryallBody];
+   }
+   else
       [_controller._val fail];
-   }
    [_controller._val exitTryall];
 }
 

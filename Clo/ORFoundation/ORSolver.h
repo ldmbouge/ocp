@@ -15,7 +15,7 @@
 
 @protocol ORTracer;
 
-@protocol ORObjective <NSObject>
+@protocol ORObjective <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
 -(void)     updatePrimalBound;
 -(ORInt)    primalBound;
@@ -30,8 +30,8 @@
 -(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(id<ORConstraint>) tableConstraint: (id<ORTableConstraint>) cstr;
--(void) minimize: (id<ORIntVar>) v;
--(void) maximize: (id<ORIntVar>) v;
+-(id<ORObjective>) minimize: (id<ORObjectiveFunction>) v;
+-(id<ORObjective>) maximize: (id<ORObjectiveFunction>) v;
 @end
 
 @protocol ORSolver <NSObject,ORTracker,ORSolutionProtocol>

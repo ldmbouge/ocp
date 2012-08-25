@@ -37,6 +37,27 @@
    }
    [super dealloc];
 }
+- (id)copyWithZone:(NSZone *)zone
+{
+   ORCommandList* nList = [[ORCommandList alloc] initCPCommandList:_ndId];
+   struct CNode* cur = _head;
+   struct CNode* first = nil;
+   struct CNode* last  = nil;
+   while (cur) {
+      struct CNode* cpy = malloc(sizeof(struct CNode));
+      cpy->_next = nil;
+      cpy->_c = [cur->_c retain];
+      if (last) {
+         last->_next = cpy;
+         last = cpy;
+      } else
+         first = last = cpy;
+      cur = cur->_next;
+   }
+   nList->_head = first;
+   return nList;
+}
+
 -(void)insert:(id<ORCommand>)c
 {
    struct CNode* new = malloc(sizeof(struct CNode*));
@@ -128,5 +149,4 @@
    }
    return self;
 }
-
 @end

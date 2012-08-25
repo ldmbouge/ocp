@@ -22,7 +22,7 @@
 -(ORStatus) doIt;
 @end
 
-@interface ORCommandList : NSObject<NSCoding> {
+@interface ORCommandList : NSObject<NSCoding,NSCopying> {
    struct CNode {
       id<ORCommand>    _c;
       struct CNode*    _next;

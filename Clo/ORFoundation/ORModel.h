@@ -96,6 +96,10 @@
 -(id<ORIntArray>) up;
 @end
 
+@protocol ORObjectiveFunction
+-(id<ORIntVar>) var;
+-(BOOL)isMinimize;
+@end
 
 @protocol ORModel <NSObject,ORTracker>
 -(NSString*)description;
@@ -104,4 +108,5 @@
 -(void) maximize: (id<ORIntVar>) x;
 -(void) instantiate: (id<ORSolver>) solver;
 -(void)applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs onConstraints:(void(^)(id<ORObject>))doCons;
+-(id<ORObjectiveFunction>)objective;
 @end

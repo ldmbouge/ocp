@@ -15,6 +15,8 @@
 #import "ORModel.h"
 #import "ORExprI.h"
 
+@protocol ORObjective;
+
 @interface ORIntVarI : ORExprI<ORIntVar>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 // [ldm] All the methods below were missing??????
@@ -84,18 +86,22 @@
 -(id<ORTable>) table;
 @end
 
-@interface ORObjectiveFunctionI : NSObject
+@interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(BOOL) concretized;
+-(BOOL) isMinimize;
+-(void) setImpl:(id<ORObjective>)impl;
 @end
 
-@interface ORMinimizeI : ORObjectiveFunctionI
+@interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMinimizeI*) initORMinimizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
+-(BOOL)isMinimize;
 @end
 
-@interface ORMaximizeI : ORObjectiveFunctionI
+@interface ORMaximizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMaximizeI*) initORMaximizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
+-(BOOL)isMinimize;
 @end
 
 @interface ORModelI : NSObject<ORModel>
@@ -104,4 +110,5 @@
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs onConstraints:(void(^)(id<ORObject>))doCons;
+-(id<ORObjectiveFunction>)objective;
 @end

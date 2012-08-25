@@ -40,8 +40,8 @@
 
 -(void)                 add: (id<ORConstraint>) c;
 -(void)                 add: (id<ORConstraint>) c consistency:(CPConsistency) cons;
--(void)            minimize: (id<ORIntVar>) x;
--(void)            maximize: (id<ORIntVar>) x;
+-(id<ORObjective>) minimize: (id<ORIntVar>) x;
+-(id<ORObjective>) maximize: (id<ORIntVar>) x;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;

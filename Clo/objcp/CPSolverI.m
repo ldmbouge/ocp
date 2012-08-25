@@ -160,7 +160,6 @@
 {
    return [_engine nbVars];
 }
-
 -(NSMutableArray*) allVars
 {
    return [_engine allVars];
@@ -242,17 +241,19 @@
       [_search fail];
 }
 
--(void) minimize: (id<ORIntVar>) x
+-(id<ORObjective>) minimize: (id<ORIntVar>) x
 {
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [self add: cstr];
    _objective = cstr;
+   return _objective;
 }
--(void) maximize: (id<ORIntVar>) x
+-(id<ORObjective>) maximize: (id<ORIntVar>) x
 {
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [self add: cstr];
    _objective = cstr;
+   return _objective;
 }
 -(void) solve: (ORClosure) search
 {
@@ -777,6 +778,7 @@ static void init_pthreads_key()
       [cons addObject:[c impl]];
       [c setImpl:nil];
    }];
+   [(id)[model objective] setImpl:nil];
    // Now loop _nbWorkers times and instantiate using a bare concretizer
    for(ORInt i=0;i<_nbWorkers;i++) {
       _workers[i] = [CPFactory createSemSolver:_defCon];     // _defCon will be the nested controller factory for _workers[i]
@@ -807,6 +809,10 @@ static void init_pthreads_key()
 -(id<CPSolver>)dereference
 {
    return _workers[[NSThread threadID]];
+}
+-(NSMutableArray*) allVars
+{
+   return [[[self dereference] engine] allVars];
 }
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
@@ -845,10 +851,18 @@ static void init_pthreads_key()
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
-                      onSolution:nil
-                          onExit:nil
-                         control:parc];
+   if (_objective != nil) {            
+      [[me explorer] nestedOptimize: me
+                              using: ^ { [self setupWork:root forCP:me]; body(); }
+                         onSolution: ^ { [[me engine] saveSolution];}
+                             onExit: ^ { [[me engine] restoreSolution];}
+                            control: parc];
+   } else {
+      [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
+                         onSolution:nil
+                             onExit:nil
+                            control:parc];
+   }
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -899,7 +913,6 @@ static void init_pthreads_key()
 }
 -(void) solve: (ORClosure) search
 {
-   assert(_objective == nil); // [ldm] why is the objective embedded in the solver and *not* in the model?
    for(ORInt i=0;i<_nbWorkers;i++) {
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
@@ -907,16 +920,6 @@ static void init_pthreads_key()
                                                                   [search copy],nil]];
    }
    [self waitWorkers]; // wait until all the workers are done. 
-/*
-   if (_objective != nil) {
-      [_search optimizeModel: self using: search
-                  onSolution: ^() { [_engine saveSolution]; }
-                      onExit: ^() { [_engine restoreSolution]; }];
-      NSLog(@"Optimal Solution: %d \n",[_objective primalBound]);
-   }
-   else {
-      [_search solveModel: self using: search];
-   }*/
 }
 @end
 
@@ -1249,10 +1252,14 @@ static void init_pthreads_key()
    [_solver trackObject:rv];
    return rv;
 }
--(void) minimize: (id<ORIntVar>) v
+-(id<ORObjectiveFunction>) minimize: (id<ORObjectiveFunction>) obj
 {
+   [_solver minimize:[obj var]];
+   return obj;
 }
--(void) maximize: (id<ORIntVar>) v
+-(id<ORObjectiveFunction>) maximize: (id<ORObjectiveFunction>) obj
 {
+   [_solver maximize:[obj var]];
+   return obj;
 }
 @end

@@ -53,6 +53,10 @@
 {
    return nil;
 }
+-(id<ORObjectiveFunction>)objective
+{
+   return _objective;
+}
 
 -(NSString*) description
 {
@@ -518,23 +522,33 @@
 @implementation ORObjectiveFunctionI
 {
    @protected
-   id<ORIntVar> _var;
-   BOOL _concretized;
+   id<ORIntVar>     _var;
+   id<ORObjective> _impl;
 }
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x
 {
    self = [super init];
    _var = x;
-   _concretized = false;
+   _impl = nil;
    return self;
 }
+-(BOOL) isMinimize
+{
+   assert(FALSE);
+   return YES;
+}
+
 -(id<ORIntVar>) var
 {
    return _var;
 }
 -(BOOL) concretized
 {
-   return _concretized;
+   return _impl != nil;
+}
+-(void) setImpl:(id<ORObjective>)impl
+{
+   _impl = impl;
 }
 @end
 
@@ -547,10 +561,14 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   if (!_concretized) {
-      _concretized = true;
-      [concretizer minimize: _var];
+   if (_impl==nil) {
+      [_var concretize:concretizer];
+      _impl = [concretizer minimize: self];
    }
+}
+-(BOOL)isMinimize
+{
+   return YES;
 }
 @end
 
@@ -562,10 +580,14 @@
 }
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
-   if (!_concretized) {
-      _concretized = true;
-      [concretizer maximize: _var];
+   if (_impl==nil) {
+      [_var concretize:concretizer];
+      _impl = [concretizer maximize: self];
    }
+}
+-(BOOL)isMinimize
+{
+   return NO;
 }
 @end
 

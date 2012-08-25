@@ -20,6 +20,14 @@
 #import <objcp/CPSolver.h>
 #import "objcp/CPLabel.h"
 
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+
 int main(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
@@ -84,27 +92,51 @@ int main(int argc, const char * argv[])
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [model minimize: obj];
    
-   id<CPSolver> cp = [CPFactory createSolver];
+   //id<CPSolver> cp = [CPFactory createSolver];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
-   //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
+   id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
    [cp addModel: model];
    [cp solve: ^{
-      NSLog(@"In the search ...");
       NSMutableArray* av = [cp allVars];
-      NSLog(@"VARS: %@",av);
+      NSLog(@"In the search ... #VARS: %ld",[av count]);
+      __block ORInt depth = 0;
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
+          
           ORInt ms = max(0,[CPLabel maxBound: slab]);
+          int low = [Slabs low];
+          int up  = ms + 1;
+          int cur = low;
+          while (![slab[o] bound] && cur <= up) {
+             [cp try:^{
+                [cp label: slab[o] with:cur];
+             } or:^{
+                [cp diff: slab[o] with:cur];
+             }];
+             cur = cur + 1;
+          }
+          if (![slab[o] bound])
+             [[cp explorer] fail];
+          
+          /*
+          ORInt ms = max(0,[CPLabel maxBound: slab]);
+         //NSLog(@"%@MAX bound for tryall: %d",tab(depth),ms+1);
           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1; } in: ^void(ORInt s)
            {
+              //NSLog(@"%@slab[%d] ?== %d -- dom = %@   obj = %@",tab(depth),o,s,[slab[o] dereference],[obj dereference]);
               [cp label: slab[o] with: s];
+              //NSLog(@"%@slab[%d]  == %d",tab(depth),o,s);
            }
            onFailure: ^void(ORInt s)
            {
+              //NSLog(@"%@slab[%d] ?!= %d",tab(depth),o,s);
               [cp diff: slab[o] with: s];
+              //NSLog(@"%@slab[%d]  != %d",tab(depth),o,s);
            }
-           ];
+           ];*/
+ 
+          depth++;
        }
        ];
       printf("\n");
@@ -121,13 +153,6 @@ int main(int argc, const char * argv[])
    NSLog(@"Quitting");
    [cp release];
    [CPFactory shutdown];
-   
-   @autoreleasepool {
-      
-      // insert code here...
-      NSLog(@"Hello, World!");
-      
-   }
    return 0;
 }
 

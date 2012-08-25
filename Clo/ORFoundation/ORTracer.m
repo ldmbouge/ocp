@@ -357,7 +357,9 @@
 }
 -(NSString*)description
 {
-   return [_path description];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"snap (%p) = %@",self,_path];
+   return buf;
 }
 -(void)pushCommandList:(ORCommandList*)aList
 {
@@ -580,7 +582,7 @@
    //bool isEmpty = [[_cmds peekAt:ub-1] empty];
    id<ORCheckpoint> ncp = [[ORCheckpointI alloc] initCheckpoint:[_cmds size]];
    for(ORInt i=0;i< ub;i++)
-      [ncp pushCommandList: [_cmds peekAt:i]];
+      [ncp pushCommandList: [[_cmds peekAt:i] copy]];
    [ncp setNode: [self pushNode]];
    return ncp;
 }
@@ -600,6 +602,11 @@
 -(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<OREngine>)fdm
 {
    //NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
+   /*
+    NSLog(@"restoreCP  : %@",acp);
+   NSLog(@"into tracer: %@",_cmds);
+   NSLog(@"-----------------------------");
+   */
    ORCmdStack* toRestore = [acp commands];
    int i=0;
    bool pfxEq = true;
@@ -631,10 +638,10 @@
                return ORFailure;
             }
             [fdm propagate];
-            [_cmds pushCommandList:theList];
+            [_cmds pushCommandList:[theList copy]];
             assert([_cmds size] == [_trStack size]);
          } @catch(ORFailException* ex) {
-            [_cmds pushCommandList:theList];
+            [_cmds pushCommandList:[theList copy]];
             assert([_cmds size] == [_trStack size]);
             return ORFailure;
          } 
@@ -653,7 +660,7 @@
    if (!ok) return ORFailure;
    [_cmds pushCommandList:[p theList]];
    assert([_cmds size] == [_trStack size]);
-   return [fdm propagate];
+   return [fdm propagate];gi
 }
 
 -(NSString*)description
