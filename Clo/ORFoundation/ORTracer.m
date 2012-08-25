@@ -654,13 +654,17 @@
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
-   bool ok = [p apply:^bool(id<ORCommand> c) {
-      return [c doIt];
-   }];
-   if (!ok) return ORFailure;
-   [_cmds pushCommandList:[p theList]];
-   assert([_cmds size] == [_trStack size]);
-   return [fdm propagate];
+   @try {
+      [p apply:^bool(id<ORCommand> c) {
+         return [c doIt];
+      }];
+      [_cmds pushCommandList:[p theList]];
+      assert([_cmds size] == [_trStack size]);
+      return [fdm propagate];
+   } @catch(ORFailException* ex) {
+      [_cmds pushCommandList:[p theList]];
+      return ORFailure;
+   }
 }
 
 -(NSString*)description

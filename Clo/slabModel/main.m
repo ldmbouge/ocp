@@ -97,7 +97,7 @@ int main(int argc, const char * argv[])
    //id<CPSolver> cp = [CPFactory createSolver];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
-   id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+   id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
    [cp addModel: model];
    [cp solve: ^{
       NSMutableArray* av = [cp allVars];
@@ -105,7 +105,7 @@ int main(int argc, const char * argv[])
       __block ORInt depth = 0;
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
-          
+          /*
           ORInt ms = max(0,[CPLabel maxBound: slab]);
           int low = [Slabs low];
           int up  = ms + 1;
@@ -120,8 +120,8 @@ int main(int argc, const char * argv[])
           }
           if (![slab[o] bound])
              [[cp explorer] fail];
+          */
           
-          /*
           ORInt ms = max(0,[CPLabel maxBound: slab]);
          //NSLog(@"%@MAX bound for tryall: %d",tab(depth),ms+1);
           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1; } in: ^void(ORInt s)
@@ -136,8 +136,8 @@ int main(int argc, const char * argv[])
               [cp diff: slab[o] with: s];
               //NSLog(@"%@slab[%d]  != %d",tab(depth),o,s);
            }
-           ];*/
- 
+           ];
+          
           depth++;
        }
        ];
