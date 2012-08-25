@@ -660,7 +660,7 @@
    if (!ok) return ORFailure;
    [_cmds pushCommandList:[p theList]];
    assert([_cmds size] == [_trStack size]);
-   return [fdm propagate];gi
+   return [fdm propagate];
 }
 
 -(NSString*)description

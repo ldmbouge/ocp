@@ -81,6 +81,7 @@
 		5B73E55E151F45F60043192D /* NSBoardController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B73E55C151F45F60043192D /* NSBoardController.m */; };
 		5B7408AF156286C700C05277 /* bitTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B7408AE156286C700C05277 /* bitTest.m */; };
 		5B7408B115628C1400C05277 /* CPBitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7408B015628C1400C05277 /* CPBitMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B76304715E91A3300B9B9FE /* slab.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1935C7415B90FFB00107399 /* slab.dat */; };
 		5B76D99015AAADBE00F8B445 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B76D99315AAADBE00F8B445 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B76D99215AAADBE00F8B445 /* main.m */; };
 		5B76D99715AAADBE00F8B445 /* marriage.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B76D99615AAADBE00F8B445 /* marriage.1 */; };
@@ -514,7 +515,6 @@
 		B189513815DE530400B77813 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B189513F15E0FA5E00B77813 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B189514215E0FA5F00B77813 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B189514115E0FA5F00B77813 /* main.m */; };
-		B189514615E0FA5F00B77813 /* slabModel.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B189514515E0FA5F00B77813 /* slabModel.1 */; };
 		B189515015E0FA7C00B77813 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B189515115E0FA8100B77813 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B189515215E0FA8500B77813 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -1391,13 +1391,13 @@
 		};
 		B189513B15E0FA5E00B77813 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
-				B189514615E0FA5F00B77813 /* slabModel.1 in CopyFiles */,
+				5B76304715E91A3300B9B9FE /* slab.dat in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		B1935C5C15B90ECE00107399 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
