@@ -140,9 +140,9 @@
          [next setFieldId:nil];
          [next letgo];
       }
+      [_controller._val trust];
       if (onFailure) {
          [_controller._val startTryallOnFailure];
-         [_controller._val trust];
          onFailure(lastValue);
          [_controller._val exitTryallOnFailure];
       }

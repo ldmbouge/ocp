@@ -1773,7 +1773,7 @@
 		B15B2F6615C4A86F0027A7E6 /* ORControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORControl.h; sourceTree = "<group>"; };
 		B15B2F6715C4A86F0027A7E6 /* ORControl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORControl.m; sourceTree = "<group>"; };
 		B15F6DDE15B1361700158FA0 /* progressive */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = progressive; sourceTree = BUILT_PRODUCTS_DIR; };
-		B15F6DE215B1361700158FA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B15F6DE215B1361700158FA0 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; };
 		B15F6DE515B1361700158FA0 /* progressive-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "progressive-Prefix.pch"; sourceTree = "<group>"; };
 		B15F6DE615B1361700158FA0 /* progressive.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = progressive.1; sourceTree = "<group>"; };
 		B15F6DF515B136C700158FA0 /* progressive.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = progressive.txt; sourceTree = "<group>"; };
