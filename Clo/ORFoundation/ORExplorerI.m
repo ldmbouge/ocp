@@ -112,51 +112,71 @@
    [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
 
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+struct TAOutput {
+   ORInt value;
+   BOOL  found;
+};
+
+struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
-   ORInt curIte;
-   ORInt foundIte;
-   [_controller._val startTryall];
-   NSCont* next = nil;
-   id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
-   next = [NSCont takeContinuation];
-   [next setFieldId:ite];
-   BOOL resume = [next nbCalls] != 0;
-   foundIte = [ite more];
-   if (foundIte) {
-      curIte = [ite next];
+   ORInt value;
+   BOOL found = [ite more];
+   if(found) {
+      value = [ite next];
       if (filter)
-         while (!filter(curIte)) {
+         while (!filter(value)) {
             if (![ite more]) {
-               foundIte = false;
+               found = NO;
                break;
             }
-            curIte = [ite next];
+            value = [ite next];
          }
    }
-   if (resume) {
-      ORInt lastValue = [next field];
-      if (!foundIte) {
-         [next setFieldId:nil];
-         [next letgo];
+   return (struct TAOutput){value,found};
+}
+
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+{
+   [_controller._val startTryall];
+   id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
+   // The [ite release] inserted on the trail will _not_ necessarily occur last but it will
+   // consume one reference to ite, so it matches the "initial" reference.
+   // Every subsequence "try" retains (increases by 1) and is matched by a trailRelease that
+   // releases (decreased by 1) upon failure. So if the onfailure succeeds, it remembers it will
+   // have to eventually release and it proceeds to the next iteration where the number of references
+   // increases again. Naturally the subsequent retain are matched by their own releases, so it all
+   // pans out. 
+   struct TAOutput nv = nextTAValue(ite, filter);
+   while (nv.found) {
+      NSCont* k = [NSCont takeContinuation];
+      if ([k nbCalls] == 0) {
+         [_controller._val startTryallBody];
+         _nbc++;
+         // We must retain the iterator here so that the failure block can have an unconditional release.
+         [ite retain];
+         [_controller._val addChoice: k];
+         body(nv.value);
+         [_controller._val exitTryallBody];
+         break;
       }
-      [_controller._val trust];
-      if (onFailure) {
+      else {
+         // We must trust to increase the choice point identifier or the semantic path are all busted and the suffix
+         // deconstruction fails.
+         [_controller._val trust];
          [_controller._val startTryallOnFailure];
-         onFailure(lastValue);
+         // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
+         [k letgo];
+         [_trail trailRelease:ite];
+         onFailure(nv.value);
+         // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"
+         // It all depends on the semantics we assign to this pair. Do we wish to guarantee that both are called? or that
+         // the exit is called only when the onFailure succeeded?
          [_controller._val exitTryallOnFailure];
+         nv = nextTAValue(ite, filter);
       }
    }
-   if (foundIte) {
-      [next setField: curIte];
-      _nbc++;
-      [_controller._val addChoice: next];
-      [_controller._val startTryallBody];
-      body(curIte);
-      [_controller._val exitTryallBody];
-   }
-   else
-      [_controller._val fail];
+   // A release here *should not* be necessary. Even if the filtered range is empty, the initial delayed release
+   // will occur upon backtrack.
    [_controller._val exitTryall];
 }
 
