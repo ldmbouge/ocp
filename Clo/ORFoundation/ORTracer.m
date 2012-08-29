@@ -582,7 +582,7 @@
    //bool isEmpty = [[_cmds peekAt:ub-1] empty];
    id<ORCheckpoint> ncp = [[ORCheckpointI alloc] initCheckpoint:[_cmds size]];
    for(ORInt i=0;i< ub;i++)
-      [ncp pushCommandList: [[_cmds peekAt:i] copy]];
+      [ncp pushCommandList: [_cmds peekAt:i]];
    [ncp setNode: [self pushNode]];
    return ncp;
 }
@@ -638,10 +638,10 @@
                return ORFailure;
             }
             [fdm propagate];
-            [_cmds pushCommandList:[theList copy]];
+            [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
          } @catch(ORFailException* ex) {
-            [_cmds pushCommandList:[theList copy]];
+            [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
             return ORFailure;
          } 
@@ -669,7 +669,9 @@
 
 -(NSString*)description
 {
-   return [_cmds description];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"TRACER(%p) = %@",self,_cmds];
+   return buf;
 }
 @end
 

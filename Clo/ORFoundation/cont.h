@@ -47,7 +47,7 @@ typedef struct  {
 -(ORInt)nbCalls;
 -(void)dealloc;
 -(void)letgo;
--(void)grab;
+-(NSCont*) grab;
 +(NSCont*) takeContinuation;
 +(void)shutdown;
 @property (readwrite,assign) ORInt field;

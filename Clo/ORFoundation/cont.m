@@ -149,13 +149,15 @@ static void init_pthreads()
    [super dealloc];
 }
 
--(void)grab
+-(NSCont*)grab
 {
    ++_cnt;
+   return self;
 }
 
 -(void)letgo 
 {
+   assert(_cnt > 0);
    if (--_cnt == 0) {
       ContPool* pool = [isa instancePool];
       ORUInt next = (pool->high + 1) % pool->sz;

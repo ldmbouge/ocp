@@ -37,6 +37,9 @@
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORExprVisitor>)v;
+-(ORStatus) updateMin: (ORInt) newMin;
+-(ORStatus) updateMax: (ORInt) newMax;
+-(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
 @end
 
 

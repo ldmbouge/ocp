@@ -44,7 +44,7 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<CPEqualc: %@ == %d>",_x,_c];
+   return [NSString stringWithFormat:@"<x[%d] == %d>",[_x getId],_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -94,7 +94,7 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<CPDiffc: %@ != %d>",_x,_c];
+   return [NSString stringWithFormat:@"<x[%d] != %d>",[_x getId],_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

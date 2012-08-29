@@ -16,7 +16,7 @@
 -(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp
 {
    self = [super init];
-   _cont = [c retain];
+   _cont = [c grab];
    _theCP = [cp retain];
    return self;
 }

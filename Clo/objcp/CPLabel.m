@@ -100,9 +100,11 @@
    ORInt low = [x low];
    ORInt up = [x up];
    ORInt M = -MAXINT;
-   for(ORInt i = low; i <= up; i++)
-      if ([x[i] bound] && [x[i] value] > M)
-         M = [x[i] value];
+   for(ORInt i = low; i <= up; i++) {
+      id<ORIntVar> xi = [x[i] dereference];
+      if ([xi bound] && [xi value] > M)
+         M = [xi value];
+   }
    return M;
 }
 @end;
