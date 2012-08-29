@@ -105,7 +105,7 @@ int main(int argc, const char * argv[])
       __block ORInt depth = 0;
       [cp forall: SetOrders suchThat: ^bool(ORInt o){ return ![slab[o] bound];} orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
-#define TESTTA 0
+#define TESTTA 1
 #if TESTTA==0
           ORInt ms = max(0,[CPLabel maxBound: slab]);
           int low = [slab[o] min];

@@ -245,28 +245,6 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
--(ORStatus) updateMin: (ORInt) newMin
-{
-   if (_impl)
-      return [_impl updateMin:newMin];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
--(ORStatus) updateMax: (ORInt) newMax;
-{
-   if (_impl)
-      return [_impl updateMax:newMax];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
--(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
-{
-   if (_impl)
-      return [_impl updateMin:newMin andMax:newMax];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
-
 -(id<ORTracker>) tracker
 {
    return _tracker;

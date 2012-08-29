@@ -834,6 +834,14 @@ static void init_pthreads_key()
 {
    [[self dereference] diff:[var dereference] with:val];
 }
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [[self dereference] lthen:[var dereference] with:val];
+}
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [[self dereference] gthen:[var dereference] with:val];
+}
 -(void) fail
 {
    [[[self dereference] explorer] fail];
