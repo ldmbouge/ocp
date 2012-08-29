@@ -41,7 +41,9 @@
 
 -(void) publishWork
 {
-   _publishing = YES;   
+   _publishing = YES;
+   NSLog(@"Start GENERATION.");
+   //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    [_solver installCheckpoint:[stolen theCP]];
@@ -57,9 +59,14 @@
    [stolen release];
    [_solver installCheckpoint:theCP];
    [theCP release];
+   //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
+   NSLog(@"End GENERATION.");
    _publishing = NO;
 }
-
+-(void)trust
+{
+   [[_solver tracer] pushNode];
+}
 -(void)startTry
 {
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
@@ -105,6 +112,7 @@
 }
 -(void)dealloc
 {
+   assert(_sz == 0);
    free(_tab);
    free(_cpTab);
    [_pool release];
@@ -120,6 +128,18 @@
       [_tab[_sz] letgo];
       [_cpTab[_sz] release];
    }
+}
+-(void) startTryRight
+{
+}
+-(void) startTryLeft
+{
+}
+-(void) startTryallBody
+{
+}
+-(void) startTryallOnFailure
+{
 }
 
 -(ORInt)  addChoice: (NSCont*) k
@@ -149,6 +169,10 @@
       else return;
    } else return;
 }
+-(void) trust
+{
+   [[_solver tracer] pushNode];
+}
 -(void) finitelyFailed
 {
    [_controller fail];   
@@ -163,6 +187,8 @@
    id<ORProblem> p = [[_solver tracer] captureProblem];
    NSData* theData = [p packFromSolver:[_solver engine]];
    [p release];
+   assert(theData != nil);
+   NSLog(@"PACKING: %p",theData);
    [_pool enQueue:theData];
    [self fail];
    [self finitelyFailed];   

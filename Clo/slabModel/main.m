@@ -95,20 +95,20 @@ int main(int argc, const char * argv[])
    [model minimize: obj];
    
    //id<CPSolver> cp = [CPFactory createSolver];
-   id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
+   //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
-   //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+   id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
    [cp addModel: model];
    [cp solve: ^{
       NSMutableArray* av = [cp allVars];
       NSLog(@"In the search ... #VARS: %ld",[av count]);
       __block ORInt depth = 0;
-      [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
+      [cp forall: SetOrders suchThat: ^bool(ORInt o){ return ![slab[o] bound];} orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
-#define TESTTA 1
+#define TESTTA 0
 #if TESTTA==0
           ORInt ms = max(0,[CPLabel maxBound: slab]);
-          int low = [Slabs low];
+          int low = [slab[o] min];
           int up  = ms + 1;
           int cur = low;
           while (![slab[o] bound] && cur <= up) {
@@ -120,10 +120,11 @@ int main(int argc, const char * argv[])
              cur = cur + 1;
           }
           if (![slab[o] bound])
-             [[cp explorer] fail];
+             [cp fail];
 #else
           ORInt ms = max(0,[CPLabel maxBound: slab]);
          //NSLog(@"%@MAX bound for tryall: %d",tab(depth),ms+1);
+          [cp lthen:slab[o] with:ms+2];
           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1; } in: ^void(ORInt s)
            {
               //NSLog(@"%@slab[%d] ?== %d -- dom = %@   obj = %@",tab(depth),o,s,[slab[o] dereference],[obj dereference]);

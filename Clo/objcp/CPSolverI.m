@@ -834,9 +834,14 @@ static void init_pthreads_key()
 {
    [[self dereference] diff:[var dereference] with:val];
 }
+-(void) fail
+{
+   [[[self dereference] explorer] fail];
+}
 -(void)setupWork:(NSData*)root forCP:(id<CPSemSolver>)cp
 {
    id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:cp];
+   //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
    ORStatus status = [cp installProblem:theSub];
    [theSub release];
    if (status == ORFailure)
@@ -851,7 +856,7 @@ static void init_pthreads_key()
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   if (_objective != nil) {            
+   if (_objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ { [[me engine] saveSolution];}

@@ -98,8 +98,11 @@
       [_controller._val exitTryLeft];
    }
    else {
-      [_controller._val startTryRight];
+      // [ldm] In the case of an optimization, the startTryRight will enforce the primalBound and _may_ fail as as
+      // result. Hence, we are not even guaranteed to reach the call to right() and we must letgo of the continuation
+      // now or face memory leaks. *do not move the letgo further down*
       [k letgo];
+      [_controller._val startTryRight];
       [_controller._val trust];
       right();
       [_controller._val exitTryRight];
@@ -160,12 +163,15 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          break;
       }
       else {
+         // [ldm] In the case of an optimization, the startTryRight will enforce the primalBound and _may_ fail as as
+         // result. Hence, we are not even guaranteed to reach the call to right() and we must letgo of the continuation
+         // now or face memory leaks. *do not move the letgo further down*
+         [k letgo];
          // We must trust to increase the choice point identifier or the semantic path are all busted and the suffix
          // deconstruction fails.
          [_controller._val trust];
          [_controller._val startTryallOnFailure];
          // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
-         [k letgo];
          [_trail trailRelease:ite];
          onFailure(nv.value);
          // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"
@@ -273,7 +279,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [dfs addChoice: exit];
          [dfs setup];
          body();
-         [exit letgo];
+         // [ldm] Do *not* letgo of exit here. The cleanup call will do this automatically.
+         //[exit letgo];
          [_controller._val cleanup];
          [_controller._val release];
          _controller._val = nil;
