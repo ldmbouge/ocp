@@ -146,8 +146,8 @@
       --_sz;
       if (k!=NULL) 
          [k call];      
-      else return;
-   } else return;
+   }
+   [self finitelyFailed];
 }
 -(void) finitelyFailed
 {
@@ -182,6 +182,7 @@
 }
 -(void)exitTryallOnFailure
 {
+   //[super exitTryallOnFailure];
    [self packAndFail];
 }
 

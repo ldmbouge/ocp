@@ -173,6 +173,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          // the exit is called only when the onFailure succeeded?
          [_controller._val exitTryallOnFailure];
          nv = nextTAValue(ite, filter);
+         if (!nv.found)
+            [_controller._val fail];
       }
    }
    // A release here *should not* be necessary. Even if the filtered range is empty, the initial delayed release
