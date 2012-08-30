@@ -194,6 +194,25 @@
 }
 @end
 
+@interface NSThread (ORData)
++(ORInt)threadID;
+@end
+
+static BOOL __isGenerating[2] = {NO,NO};
+
+extern void startGenerating()
+{
+   __isGenerating[[NSThread threadID]] = YES;
+}
+extern void stopGenerating()
+{
+   __isGenerating[[NSThread threadID]] = NO;
+}
+extern BOOL isGenerating()
+{
+   return __isGenerating[[NSThread threadID]];
+}
+
 @implementation OROptimizationController
 
 -(id) initOROptimizationController: (Void2ORStatus) canImprove
@@ -216,27 +235,31 @@
 }
 -(void) fail
 {
+   assert(!isGenerating());
    [_controller fail];
 }
 -(void) startTryLeft
 {
-   if (_canImprove() == ORFailure)
+   if (_canImprove() == ORFailure) {
+      assert(!isGenerating());
       [_controller fail];
-   else
+   }else
       [_controller startTryLeft];
 }
 -(void) startTryRight
 {
-   if (_canImprove() == ORFailure)
+   if (_canImprove() == ORFailure) {
+      assert(!isGenerating());
       [_controller fail];
-   else
+   } else
       [_controller startTryRight];
 }
 -(void) startTryallOnFailure
 {
-   if (_canImprove() == ORFailure)
+   if (_canImprove() == ORFailure) {
+      assert(!isGenerating());
       [_controller fail];
-   else
+   }   else
       [_controller startTryallOnFailure];
 }
 - (id)copyWithZone:(NSZone *)zone

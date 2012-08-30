@@ -13,7 +13,7 @@
 #import "CPSolverI.h"
 #import "CPFactory.h"
 #import "ORSemDFSController.h"
-
+#import "CPSolverI.h"
 
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
@@ -48,6 +48,9 @@
    ORHeist* stolen = [_controller steal];
    [_solver installCheckpoint:[stolen theCP]];
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
+   
+   startGenerating();
+   
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
@@ -55,6 +58,8 @@
                                                                    onExit:nil
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
+   
+   stopGenerating();
 
    [stolen release];
    [_solver installCheckpoint:theCP];

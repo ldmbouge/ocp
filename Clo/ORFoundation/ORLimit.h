@@ -11,6 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 
+
+extern void startGenerating();
+extern void stopGenerating();
+extern BOOL isGenerating();
+
 @interface ORLimitSolutions : ORDefaultController <NSCopying,ORSearchController> {
 @private
    ORInt _maxSolutions;

@@ -17,8 +17,6 @@
 #import "CPConstraintI.h"
 #import "CPConcretizer.h"
 
-
-
 @interface CPHeuristicStack : NSObject {
    id<CPHeuristic>* _tab;
    ORUInt       _sz;

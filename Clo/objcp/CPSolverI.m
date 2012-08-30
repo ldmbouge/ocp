@@ -348,7 +348,7 @@
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine lthen:var with: val];
+   ORStatus status = [_engine lthen:[var dereference] with: val];
    if (status == ORFailure) {
       [_search fail];
    }
@@ -356,7 +356,7 @@
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine gthen:var with:val];
+   ORStatus status = [_engine gthen:[var dereference] with:val];
    if (status == ORFailure) {
       [_search fail];
    }
@@ -365,7 +365,7 @@
 
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-    ORStatus status = [_engine restrict: var to: S];
+    ORStatus status = [_engine restrict: [var dereference] to: S];
     if (status == ORFailure)
         [_search fail]; 
     [ORConcurrency pumpEvents];   
