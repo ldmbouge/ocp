@@ -42,7 +42,6 @@
 -(void) publishWork
 {
    _publishing = YES;
-   NSLog(@"Start GENERATION.");
    //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
@@ -65,7 +64,6 @@
    [_solver installCheckpoint:theCP];
    [theCP release];
    //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
-   NSLog(@"End GENERATION.");
    _publishing = NO;
 }
 -(void)trust
@@ -193,27 +191,17 @@
    NSData* theData = [p packFromSolver:[_solver engine]];
    [p release];
    assert(theData != nil);
-   NSLog(@"PACKING: %p",theData);
    [_pool enQueue:theData];
    [self fail];
    [self finitelyFailed];   
 }
 
--(void)exitTryLeft
+-(void)exitTry
 {
    [self packAndFail];
 }
--(void)exitTryRight
+-(void)exitTryall
 {
-   [self packAndFail];
-}
--(void)exitTryallBody
-{
-   [self packAndFail];
-}
--(void)exitTryallOnFailure
-{
-   //[super exitTryallOnFailure];
    [self packAndFail];
 }
 
