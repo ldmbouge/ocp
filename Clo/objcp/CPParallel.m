@@ -13,7 +13,7 @@
 #import "CPSolverI.h"
 #import "CPFactory.h"
 #import "ORSemDFSController.h"
-
+#import "CPSolverI.h"
 
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
@@ -41,11 +41,15 @@
 
 -(void) publishWork
 {
-   _publishing = YES;   
+   _publishing = YES;
+   //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    [_solver installCheckpoint:[stolen theCP]];
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
+   
+   startGenerating();
+   
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
@@ -53,13 +57,19 @@
                                                                    onExit:nil
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
+   
+   stopGenerating();
 
    [stolen release];
    [_solver installCheckpoint:theCP];
    [theCP release];
+   //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
    _publishing = NO;
 }
-
+-(void)trust
+{
+   [[_solver tracer] pushNode];
+}
 -(void)startTry
 {
    bool pe = !_publishing && [_pool empty] && [_controller willingToShare];
@@ -105,6 +115,7 @@
 }
 -(void)dealloc
 {
+   assert(_sz == 0);
    free(_tab);
    free(_cpTab);
    [_pool release];
@@ -120,6 +131,18 @@
       [_tab[_sz] letgo];
       [_cpTab[_sz] release];
    }
+}
+-(void) startTryRight
+{
+}
+-(void) startTryLeft
+{
+}
+-(void) startTryallBody
+{
+}
+-(void) startTryallOnFailure
+{
 }
 
 -(ORInt)  addChoice: (NSCont*) k
@@ -146,8 +169,12 @@
       --_sz;
       if (k!=NULL) 
          [k call];      
-      else return;
-   } else return;
+   }
+   [self finitelyFailed];
+}
+-(void) trust
+{
+   [[_solver tracer] pushNode];
 }
 -(void) finitelyFailed
 {
@@ -163,24 +190,17 @@
    id<ORProblem> p = [[_solver tracer] captureProblem];
    NSData* theData = [p packFromSolver:[_solver engine]];
    [p release];
+   assert(theData != nil);
    [_pool enQueue:theData];
    [self fail];
    [self finitelyFailed];   
 }
 
--(void)exitTryLeft
+-(void)exitTry
 {
    [self packAndFail];
 }
--(void)exitTryRight
-{
-   [self packAndFail];
-}
--(void)exitTryallBody
-{
-   [self packAndFail];
-}
--(void)exitTryallOnFailure
+-(void)exitTryall
 {
    [self packAndFail];
 }

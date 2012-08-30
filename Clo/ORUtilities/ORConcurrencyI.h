@@ -51,7 +51,6 @@
 }
 -(ORInformerI*) initORInformerI;
 -(void) whenNotifiedDo: (id) closure;
--(void) wheneverNotifiedDo: (id) closure;
 -(void) sleepUntilNotified;
 -(void) notify;
 -(void) notifyWith:(int)a0;

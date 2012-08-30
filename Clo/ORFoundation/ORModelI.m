@@ -245,7 +245,6 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
-
 -(id<ORTracker>) tracker
 {
    return _tracker;
