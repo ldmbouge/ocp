@@ -96,12 +96,12 @@
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMinimizeI*) initORMinimizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
--(BOOL)isMinimize;
+-(BOOL) isMinimize;
 @end
 
 @interface ORMaximizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMaximizeI*) initORMaximizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
--(BOOL)isMinimize;
+-(BOOL) isMinimize;
 @end
 
 @interface ORModelI : NSObject<ORModel>

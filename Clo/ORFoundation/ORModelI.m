@@ -523,7 +523,7 @@
 {
    @protected
    id<ORIntVar>     _var;
-   id<ORObjective> _impl;
+   id<ORObjective>  _impl;
 }
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x
 {

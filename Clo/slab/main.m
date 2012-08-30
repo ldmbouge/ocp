@@ -38,6 +38,7 @@ int main(int argc, const char * argv[])
    ORInt nbColors;
    ORInt nbOrders;
    fscanf(dta,"%d",&nbColors);
+   NSLog(@"Nb Colors: %d",nbColors);
    fscanf(dta,"%d",&nbOrders);
    id<ORIntRange> Colors = RANGE(cp,1,nbColors);
    id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
@@ -90,6 +91,8 @@ int main(int argc, const char * argv[])
 
    
    [cp solve: ^{
+      NSMutableArray* av = [cp allVars];
+      NSLog(@"In the search ... #VARS: %ld",[av count]);
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
           ORInt ms = max(0,[CPLabel maxBound: slab]);
