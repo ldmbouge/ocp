@@ -80,20 +80,25 @@
 }
 -(void) fail
 {
-   ORInt ofs = _sz-1;
-   if (ofs >= 0) {      
-      id<ORCheckpoint> cp = _cpTab[ofs];
-      [_tracer restoreCheckpoint:cp inSolver:_engine];
-      [cp release];
-      NSCont* k = _tab[ofs];
-      _tab[ofs] = 0;
-      --_sz;
-      if (k!=NULL) 
-         [k call];      
-      else {
-      	@throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
-      }
-   }
+   do {
+      ORInt ofs = _sz-1;
+      if (ofs >= 0) {
+         id<ORCheckpoint> cp = _cpTab[ofs];
+         ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine];
+         [cp release];
+         NSCont* k = _tab[ofs];
+         _tab[ofs] = 0;
+         --_sz;
+         if (k)// && status != ORFailure)
+            [k call];
+         else {
+            if (k==nil)
+               @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
+            else [k letgo];
+         }
+      } else
+         return;
+   } while(true);
 }
 
 - (id)copyWithZone:(NSZone *)zone

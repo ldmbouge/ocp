@@ -245,6 +245,7 @@
 {
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [self add: cstr];
+   [_engine setObjective:cstr];
    _objective = cstr;
    return _objective;
 }
@@ -252,6 +253,7 @@
 {
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [self add: cstr];
+   [_engine setObjective:cstr];
    _objective = cstr;
    return _objective;
 }
@@ -806,6 +808,18 @@ static void init_pthreads_key()
    [vars release];
    [cons release];
 }
+-(id<ORObjective>) minimize: (id<ORIntVar>) x
+{
+   _objective = [[ORMinimizeI alloc] initORMinimizeI: nil obj: x];
+   [self trackObject: _objective];
+   return _objective;
+}
+-(id<ORObjective>) maximize: (id<ORIntVar>) x
+{
+   _objective = [[ORMaximizeI alloc] initORMaximizeI: nil obj: x];
+   [self trackObject: _objective];
+   return _objective;
+}
 -(id<CPSolver>)dereference
 {
    return _workers[[NSThread threadID]];
@@ -1267,12 +1281,10 @@ static void init_pthreads_key()
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORObjectiveFunction>) obj
 {
-   [_solver minimize:[obj var]];
-   return obj;
+   return [_solver minimize:[obj var]];
 }
 -(id<ORObjectiveFunction>) maximize: (id<ORObjectiveFunction>) obj
 {
-   [_solver maximize:[obj var]];
-   return obj;
+   return [_solver maximize:[obj var]];
 }
 @end

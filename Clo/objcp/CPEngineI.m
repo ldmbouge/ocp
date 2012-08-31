@@ -257,6 +257,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _objective = nil;
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
    _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
@@ -275,6 +276,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    [_cStore release];
    [_mStore release];
    [_oStore release];
+   [_objective release];
    [_ac5 release];
    [_propagFail release];
    [_propagDone release];
@@ -459,6 +461,15 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return status;
 }
 
+-(ORStatus)enforceObjective
+{
+   if (_objective != nil) {
+      return [_objective check];
+   }
+   else
+      return ORSuspend;
+}
+
 -(ORStatus) post: (id<ORConstraint>) c
 {
    @try {
@@ -497,6 +508,12 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       [_mStore addObject:c];
       return ORSuspend;
    }
+}
+
+-(void) setObjective: (id<ORObjective>) obj
+{
+   [_objective release];
+   _objective = [obj retain];
 }
 
 -(ORStatus) label: (id) var with: (ORInt) val

@@ -646,6 +646,7 @@
             return ORFailure;
          } 
       }
+      return [fdm enforceObjective];
    }
    return ORSuspend;
 }

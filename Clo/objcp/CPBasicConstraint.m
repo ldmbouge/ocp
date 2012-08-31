@@ -1504,10 +1504,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    _primalBound = MAXINT;
    return self;
 }
--(BOOL)isMinimize
-{
-   return YES;
-}
 -(id<ORIntVar>)var
 {
    return _x;
@@ -1520,7 +1516,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 -(ORStatus) post
 {
   if (![_x bound]) 
-    [_x whenChangeMinDo: ^ { [_x updateMax: _primalBound]; } onBehalf:self];
+    [_x whenChangeMinDo: ^ {
+       [_x updateMax: _primalBound];
+    } onBehalf:self];
   return ORSuspend;
 }
 -(NSSet*)allVars
@@ -1574,10 +1572,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 - (void) dealloc
 {
     [super dealloc];
-}
--(BOOL)isMinimize
-{
-   return NO;
 }
 -(id<ORIntVar>)var
 {

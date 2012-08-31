@@ -86,22 +86,22 @@
 -(id<ORTable>) table;
 @end
 
-@interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction>
+@interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {
+   id<ORIntVar>     _var;
+   id<ORObjective>  _impl;
+}
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(BOOL) concretized;
--(BOOL) isMinimize;
 -(void) setImpl:(id<ORObjective>)impl;
 @end
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMinimizeI*) initORMinimizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
--(BOOL) isMinimize;
 @end
 
 @interface ORMaximizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMaximizeI*) initORMaximizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
--(BOOL) isMinimize;
 @end
 
 @interface ORModelI : NSObject<ORModel>

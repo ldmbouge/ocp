@@ -173,7 +173,8 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller._val startTryallOnFailure];
          // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
          [_trail trailRelease:ite];
-         onFailure(nv.value);
+         if (onFailure)
+            onFailure(nv.value);
          // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"
          // It all depends on the semantics we assign to this pair. Do we wish to guarantee that both are called? or that
          // the exit is called only when the onFailure succeeded?

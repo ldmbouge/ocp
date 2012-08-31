@@ -46,11 +46,12 @@ enum CPEngineState {
 
 @interface CPEngineI : NSObject <CPEngine,NSCoding> {
    enum CPEngineState       _state;
-   id<ORTrail>                 _trail;
+   id<ORTrail>              _trail;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
+   id<ORObjective>          _objective;
    CPAC3Queue*              _ac3[NBPRIORITIES];
    CPAC5Queue*              _ac5;
    ORStatus                 _status;
@@ -75,6 +76,7 @@ enum CPEngineState {
 -(void)      scheduleAC5:(VarEventNode*)list with: (ORInt)val;
 -(ORStatus)  propagate;
 -(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency)cons;
+-(void) setObjective: (id<ORObjective>) obj;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  label:(id<ORIntVar>) var with: (ORInt) val;
@@ -95,4 +97,5 @@ enum CPEngineState {
 -(ORUInt) nbVars;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
+-(ORStatus)enforceObjective;
 @end

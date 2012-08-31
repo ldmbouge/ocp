@@ -41,7 +41,6 @@
    [_vars release];
    [_mStore release];
    [_oStore release];
-   [_objective release];
    [super dealloc];
 }
 
@@ -489,6 +488,12 @@
    if (_impl == nil)
       _impl = [concretizer algebraicConstraint: self];
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORAlgebraicConstraintI : %p IS %@>",self,_expr];
+   return buf;
+}
 @end
 
 @implementation ORTableConstraintI
@@ -519,11 +524,6 @@
 @end
 
 @implementation ORObjectiveFunctionI
-{
-   @protected
-   id<ORIntVar>     _var;
-   id<ORObjective>  _impl;
-}
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x
 {
    self = [super init];
@@ -531,12 +531,6 @@
    _impl = nil;
    return self;
 }
--(BOOL) isMinimize
-{
-   assert(FALSE);
-   return YES;
-}
-
 -(id<ORIntVar>) var
 {
    return _var;
@@ -558,6 +552,11 @@
    self = [super initORObjectiveFunctionI: model obj:x];
    return self;
 }
+-(void)dealloc
+{
+   NSLog(@"ORMinimizeI dealloc'd (%p)...",self);
+   [super dealloc];
+}
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
    if (_impl==nil) {
@@ -565,9 +564,11 @@
       _impl = [concretizer minimize: self];
    }
 }
--(BOOL)isMinimize
+-(NSString*)description
 {
-   return YES;
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_var];
+   return buf;
 }
 @end
 
@@ -577,6 +578,11 @@
    self = [super initORObjectiveFunctionI: model obj:x];
    return self;
 }
+-(void)dealloc
+{
+   NSLog(@"ORMaximizeI dealloc'd (%p)...",self);
+   [super dealloc];
+}
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
    if (_impl==nil) {
@@ -584,9 +590,11 @@
       _impl = [concretizer maximize: self];
    }
 }
--(BOOL)isMinimize
+-(NSString*)description
 {
-   return NO;
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_var];
+   return buf;
 }
 @end
 

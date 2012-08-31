@@ -98,7 +98,6 @@
 
 @protocol ORObjectiveFunction
 -(id<ORIntVar>) var;
--(BOOL) isMinimize;
 @end
 
 @protocol ORModel <NSObject,ORTracker>
