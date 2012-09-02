@@ -64,7 +64,7 @@ int main(int argc, const char * argv[])
 
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
       //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
       

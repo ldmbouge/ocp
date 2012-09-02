@@ -711,6 +711,7 @@ static void init_pthreads_key()
 -(id<ORIntVar>) var;
 -(ORStatus) check;
 -(void)     updatePrimalBound;
+-(void) tightenPrimalBound:(ORInt)newBound;
 -(ORInt)    primalBound;
 @end
 
@@ -907,7 +908,11 @@ static void init_pthreads_key()
    if (_objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
-                         onSolution: ^ { [[me engine] saveSolution];}
+                         onSolution: ^ {
+                            [[me engine] saveSolution];
+                            ORInt myBound = [[me objective] primalBound];
+                            [_objective tightenPrimalBound:myBound];
+                         }
                              onExit: ^ { [[me engine] restoreSolution];}
                             control: parc];
    } else {
@@ -1209,6 +1214,15 @@ static void init_pthreads_key()
 {
    [[self dereference] updatePrimalBound];
 }
+-(void) tightenPrimalBound:(ORInt)newBound
+{
+   @synchronized(self) {
+      for(ORInt i=0;i<_nb;i++) {
+         [_concrete[i] tightenPrimalBound:newBound];
+      }
+   }
+}
+
 -(ORInt)    primalBound
 {
    return [[self dereference] primalBound];

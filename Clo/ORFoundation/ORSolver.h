@@ -18,6 +18,7 @@
 @protocol ORObjective <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
 -(void)     updatePrimalBound;
+-(void) tightenPrimalBound:(ORInt)newBound;
 -(ORInt)    primalBound;
 @end
 

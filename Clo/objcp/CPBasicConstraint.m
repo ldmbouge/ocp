@@ -1537,6 +1537,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
     _primalBound = bound; 
 
 }
+-(void) tightenPrimalBound:(ORInt)newBound
+{
+   if (newBound < _primalBound)
+      _primalBound = newBound;
+}
+
 -(ORStatus) check 
 {
    @try {
@@ -1598,6 +1604,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
   ORInt bound = [_x max];
   if (bound > _primalBound) 
     _primalBound = bound;
+}
+
+-(void) tightenPrimalBound:(ORInt)newBound
+{
+   if (newBound > _primalBound)
+      _primalBound = newBound;
 }
 
 -(ORStatus) check 
