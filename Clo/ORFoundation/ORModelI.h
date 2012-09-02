@@ -87,13 +87,15 @@
 @end
 
 @interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {
-   id<ORIntVar>     _var;
-   id<ORObjective>  _impl;
+   id<ORIntVar>             _var;
+   id<ORObjectiveFunction>  _impl;
 }
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(BOOL) concretized;
--(void) setImpl:(id<ORObjective>)impl;
+-(void) setImpl:(id<ORObjectiveFunction>)impl;
+-(id<ORObjectiveFunction>)impl;
+-(id<ORObjectiveFunction>) dereference;
 @end
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
@@ -109,6 +111,9 @@
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
--(void)                   applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs onConstraints:(void(^)(id<ORObject>))doCons;
+-(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
+                           onObjects:(void(^)(id<ORObject>))doObjs
+                       onConstraints:(void(^)(id<ORObject>))doCons
+                         onObjective:(void(^)(id<ORObject>))doObjective;
 -(id<ORObjectiveFunction>)objective;
 @end

@@ -30,10 +30,8 @@
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(BOOL) isFinitelyFailed;
--(void)       exitTryLeft;
--(void)       exitTryRight;
--(void)       exitTryallBody;
--(void)       exitTryallOnFailure;
+-(void)       exitTry;
+-(void)       exitTryall;
 @end
 
 @interface CPParallelAdapter : ORNestedController<ORSearchController> {
