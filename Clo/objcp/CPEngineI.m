@@ -261,7 +261,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
    _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
-   _status = ORSuspend;
+   _status = makeTRInt(_trail,ORSuspend);
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];
@@ -424,9 +424,10 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       }
       if (_propagDone)
          [_propagDone notify];
-      _status = status;
+      //_status = status;
+      assignTRInt(&_status, status, _trail);
       --_propagating;
-      return _status;
+      return _status._val;
    }
    @catch (ORFailException *exception) {
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
@@ -435,9 +436,9 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       if (_propagFail)
          [_propagFail notifyWith:[_last getId]];
       CFRelease(exception);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
       --_propagating;
-      return _status;
+      return _status._val;
    }
 }
 
@@ -475,8 +476,9 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
-      _status = internalPropagate(self,status);
-      if (_status && status != ORSkip) {
+      ORStatus pstatus = internalPropagate(self,status);
+      assignTRInt(&_status, pstatus, _trail);
+      if (pstatus && status != ORSkip) {
          [cstr setId:(ORUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
@@ -486,9 +488,9 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       }
    } @catch (ORFailException* ex) {
       CFRelease(ex);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
    }
-   return _status;
+   return _status._val;
 }
 -(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency:(CPConsistency)cons
 {
@@ -519,58 +521,65 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) label: (id) var with: (ORInt) val
 {
    @try {
+      assert(_status._val != ORFailure);
       ORStatus status = [var bind: val];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
    }
-   return _status;
+   return _status._val;
 }
 
 -(ORStatus) diff: (CPIntVarI*) var with: (ORInt) val
 {
    @try {
+      assert(_status._val != ORFailure);
       ORStatus status =  removeDom(var, val);
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
    }
-   return _status;
+   return _status._val;
 }
 -(ORStatus)  lthen:(id)var with:(ORInt)val
 {
    @try {
       ORStatus status = [var updateMax:val-1];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
    }
-   return _status;
+   return _status._val;
 }
 -(ORStatus)  gthen:(id)var with:(ORInt)val
 {
    @try {
       ORStatus status = [var updateMin:val+1];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
    }
-   return _status;
+   return _status._val;
 }
 -(ORStatus) restrict: (CPIntVarI*) var to: (ORIntSetI*) S
 {
    @try {
       ORStatus status = [var inside: S];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
-      _status = ORFailure;
+      assignTRInt(&_status, ORFailure, _trail);
    }
-   return _status;
+   return _status._val;
 }
 -(void) saveSolution
 {
@@ -592,7 +601,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _state = CPClosing;
       for(id<ORConstraint> c in _mStore) {
          [self post:c];
-         if (_status == ORFailure)
+         if (_status._val == ORFailure)
             return ORFailure;
       }
       _state = CPClosed;
@@ -602,7 +611,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 }
 -(ORStatus)  status
 {
-   return _status;
+   return _status._val;
 }
 -(bool) closed
 {
@@ -642,7 +651,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[[CPAC3Queue alloc] initAC3Queue:512] retain];
    _ac5 = [[[CPAC5Queue alloc] initAC5Queue:512] retain];
-   _status = ORSuspend;
+   _status = makeTRInt(_trail,ORSuspend);
    _propagating = 0;
    _nbpropag = 0;
    _propagIMP = (UBType)[self methodForSelector:@selector(propagate)];

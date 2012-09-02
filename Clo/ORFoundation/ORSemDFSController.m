@@ -85,11 +85,12 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine];
+         //assert(status != ORFailure);
          [cp release];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-         if (k)// && status != ORFailure)
+         if (k) // && status != ORFailure)
             [k call];
          else {
             if (k==nil)

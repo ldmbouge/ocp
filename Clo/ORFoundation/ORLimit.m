@@ -254,6 +254,14 @@ extern BOOL isGenerating()
    } else
       [_controller startTryRight];
 }
+-(void) startTryallBody
+{
+   if (_canImprove() == ORFailure) {
+      assert(!isGenerating());
+      [_controller fail];
+   } else
+      [_controller startTryallBody];
+}
 -(void) startTryallOnFailure
 {
    if (_canImprove() == ORFailure) {

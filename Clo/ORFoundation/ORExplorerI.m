@@ -83,7 +83,9 @@
 {
    [ORConcurrency pumpEvents];
    _nbf++;
+   //[_engine clearStatus];
    [_controller._val fail];
+   assert(FALSE);
 }
 
 -(void) try: (ORClosure) left or: (ORClosure) right
@@ -140,7 +142,9 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
+   assert([_engine status] != ORFailure);
    [_controller._val startTryall];
+   assert([_engine status] != ORFailure);
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];
    // The [ite release] inserted on the trail will _not_ necessarily occur last but it will
    // consume one reference to ite, so it matches the "initial" reference.
@@ -153,6 +157,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    while (nv.found) {
       NSCont* k = [NSCont takeContinuation];
       if ([k nbCalls] == 0) {
+         assert([_engine status] != ORFailure);
          [_controller._val startTryallBody];
          _nbc++;
          // We must retain the iterator here so that the failure block can have an unconditional release.
@@ -163,6 +168,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          break;
       }
       else {
+         assert([_engine status] != ORFailure);
          // [ldm] In the case of an optimization, the startTryRight will enforce the primalBound and _may_ fail as as
          // result. Hence, we are not even guaranteed to reach the call to right() and we must letgo of the continuation
          // now or face memory leaks. *do not move the letgo further down*
@@ -352,6 +358,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [_controller._val addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORObjective> obj = solver.objective;
+      assert(obj);
       OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: ^ORStatus(void) { return [obj check]; }];
       [self push: controller];
       [controller release];

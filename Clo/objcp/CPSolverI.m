@@ -749,6 +749,7 @@ static void init_pthreads_key()
 }
 -(void)dealloc
 {
+   NSLog(@"CPParSolverI (%p) dealloc'd...",self);
    free(_workers);
    [_queue release];
    [_terminated release];
@@ -780,10 +781,10 @@ static void init_pthreads_key()
       [cons addObject:[c impl]];
       [c setImpl:nil];
    }];
-   [(id)[model objective] setImpl:nil];
    // Now loop _nbWorkers times and instantiate using a bare concretizer
    for(ORInt i=0;i<_nbWorkers;i++) {
       _workers[i] = [CPFactory createSemSolver:_defCon];     // _defCon will be the nested controller factory for _workers[i]
+      [(id)[model objective] setImpl:nil];
       [model instantiate:_workers[i]];
       [model applyOnVar:^(id v) {
          ORParIntVarI* pari = [vars objectAtIndex:[v getId]];

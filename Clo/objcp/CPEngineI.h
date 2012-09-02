@@ -54,7 +54,7 @@ enum CPEngineState {
    id<ORObjective>          _objective;
    CPAC3Queue*              _ac3[NBPRIORITIES];
    CPAC5Queue*              _ac5;
-   ORStatus                 _status;
+   TRInt                  _status;
    ORInt                _propagating;
    ORUInt               _nbpropag;
    CPCoreConstraint*        _last;

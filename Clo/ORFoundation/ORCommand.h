@@ -38,5 +38,6 @@
 -(bool)empty;
 -(bool)equalTo:(ORCommandList*)cList;
 -(ORInt) getNodeId;
+-(void) setNodeId:(ORInt)nid;
 -(bool)apply:(bool(^)(id<ORCommand>))clo;
 @end
