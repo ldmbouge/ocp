@@ -1222,6 +1222,11 @@ static void init_pthreads_key()
    [_solver trackObject:pVar];
    return pVar;
 }
+-(id<ORFloatVar>) floatVar: (ORFloatVarI*) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for floatVar"];
+   return nil;
+}
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v
 {
    int nbw = [_solver nbWorkers];

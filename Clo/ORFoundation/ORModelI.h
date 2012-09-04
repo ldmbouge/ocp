@@ -47,6 +47,20 @@
 -(id<ORIntVar>)base;
 @end
 
+@interface ORFloatVarI : ORExprI<ORFloatVar>
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+-(ORFloat) value;
+-(ORFloat) min;
+-(ORFloat) max;
+-(id<ORIntVar>) dereference;
+-(id<ORIntVar>) impl;
+-(void) setImpl: (id<ORIntVar>) _impl;
+-(id<ORSolver>) solver;
+-(NSSet*) constraints;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
+
+
 @interface ORConstraintI : NSObject<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;

@@ -338,6 +338,119 @@
 }
 @end
 
+
+@implementation ORFloatVarI
+{
+@protected
+   id<ORFloatVar>   _impl;
+   id<ORTracker>    _tracker;
+   ORFloat          _low;
+   ORFloat          _up;
+   ORUInt           _name;
+}
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
+{
+   self = [super init];
+   _impl = nil;
+   _tracker = track;
+   _low = low;
+   _up = up;
+   [track trackVariable: self];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(NSString*) description
+{
+   if (_impl == nil)
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f)",_name,_low,_up];
+   else
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
+}
+
+-(id<ORSolver>) solver
+{
+   if (_impl)
+      return [_impl solver];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+-(void) setId: (ORUInt) name
+{
+   _name = name;
+}
+-(ORInt) getId
+{
+   return _name;
+}
+-(ORFloat) value
+{
+   if (_impl)
+      return [_impl value];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(BOOL) bound
+{
+   if (_impl)
+      return [_impl bound];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+
+-(ORFloat) min
+{
+   if (_impl)
+      return [_impl min];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+-(ORFloat) max
+{
+   if (_impl)
+      return [_impl max];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(NSSet*) constraints
+{
+   if (_impl)
+      return [_impl constraints];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(id<ORFloatVar>) impl
+{
+   return _impl;
+}
+-(id<ORFloatVar>) dereference
+{
+   return [_impl dereference];
+}
+-(void) setImpl: (id<ORFloatVar>) impl
+{
+   _impl = impl;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (_impl == nil)
+      _impl = [concretizer floatVar: self];
+}
+-(void) visit: (id<ORExprVisitor>) v
+{
+   [v visitFloatVarI: self];
+}
+@end
+
 @implementation ORConstraintI
 {
    @protected

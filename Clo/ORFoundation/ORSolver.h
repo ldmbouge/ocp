@@ -23,6 +23,7 @@
 
 @protocol ORSolverConcretizer <NSObject>
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
+-(id<ORFloatVar>) floatVar: (id<ORFloatVar>) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(id<ORIdArray>) idArray: (id<ORIdArray>) a;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;

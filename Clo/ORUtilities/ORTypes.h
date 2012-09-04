@@ -27,6 +27,7 @@ typedef sint32 ORInt;
 typedef uint32 ORUInt;
 typedef sint64 ORLong;
 typedef uint64 ORULong;
+typedef double ORFloat;
 
 static inline ORLong minOf(ORLong a,ORLong b) { return a < b ? a : b;}
 static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
