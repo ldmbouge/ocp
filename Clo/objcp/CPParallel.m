@@ -45,7 +45,8 @@
    //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
-   [_solver installCheckpoint:[stolen theCP]];
+   ORStatus ok = [_solver installCheckpoint:[stolen theCP]];
+   assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
    
    startGenerating();
@@ -61,7 +62,8 @@
    stopGenerating();
 
    [stolen release];
-   [_solver installCheckpoint:theCP];
+   ok = [_solver installCheckpoint:theCP];
+   assert(ok != ORFailure);
    [theCP release];
    //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
    _publishing = NO;
@@ -87,11 +89,13 @@
       [self publishWork];
    }
    [_controller startTryall];
+   assert([[_solver engine] status] != ORFailure);
 }
 -(void)fail
 {
    [_controller fail];
    [self finitelyFailed];  // [ldm] This is necessary since we *are* a nested controller after all (finitelyFailed is inherited)
+   assert(FALSE);
 }
 -(BOOL) isFinitelyFailed
 {
@@ -159,18 +163,22 @@
 }
 -(void)fail
 {
-   long ofs = _sz-1;
-   if (ofs >= 0) {      
-      id<ORCheckpoint> cp = _cpTab[ofs];
-      [_solver installCheckpoint:cp];
-      [cp release];
-      NSCont* k = _tab[ofs];
-      _tab[ofs] = 0;
-      --_sz;
-      if (k!=NULL) 
-         [k call];      
-   }
+   do {
+      long ofs = _sz-1;
+      if (ofs >= 0) {
+         id<ORCheckpoint> cp = _cpTab[ofs];
+         ORStatus ok = [_solver installCheckpoint:cp];
+         assert(ok != ORFailure);
+         [cp release];
+         NSCont* k = _tab[ofs];
+         _tab[ofs] = 0;
+         --_sz;
+         if (k && ok)
+            [k call];
+      } else break;
+   } while(true);
    [self finitelyFailed];
+   assert(FALSE);
 }
 -(void) trust
 {
@@ -178,7 +186,8 @@
 }
 -(void) finitelyFailed
 {
-   [_controller fail];   
+   [_controller fail];
+   assert(FALSE);
 }
 -(BOOL) isFinitelyFailed
 {
@@ -188,12 +197,14 @@
 -(void)packAndFail
 {
    id<ORProblem> p = [[_solver tracer] captureProblem];
+   //NSLog(@"PACKING: %@",p);
    NSData* theData = [p packFromSolver:[_solver engine]];
    [p release];
    assert(theData != nil);
    [_pool enQueue:theData];
    [self fail];
-   [self finitelyFailed];   
+   [self finitelyFailed];
+   assert(FALSE);
 }
 
 -(void)exitTry

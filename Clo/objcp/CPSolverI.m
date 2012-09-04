@@ -245,6 +245,7 @@
 {
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [self add: cstr];
+   [_engine setObjective:cstr];
    _objective = cstr;
    return _objective;
 }
@@ -252,6 +253,7 @@
 {
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [self add: cstr];
+   [_engine setObjective:cstr];
    _objective = cstr;
    return _objective;
 }
@@ -698,6 +700,21 @@ static void init_pthreads_key()
 -(void) concretize: (id<ORSolverConcretizer>) concretizer;
 @end
 
+@interface ORParObjectiveI : NSObject<ORObjective> {
+   id<ORObjective>*  _concrete;
+   ORInt                   _nb;   
+}
+-(ORParObjectiveI*)initORParObjectiveI:(ORInt)nb;
+-(void)setConcrete:(ORInt)k to:(id<ORObjective>)c;
+-(id<ORObjective>)dereference;
+-(void) concretize: (id<ORSolverConcretizer>) concretizer;
+-(id<ORIntVar>) var;
+-(ORStatus) check;
+-(void)     updatePrimalBound;
+-(void) tightenPrimalBound:(ORInt)newBound;
+-(ORInt)    primalBound;
+@end
+
 @interface ORParIdArrayI : NSObject<ORIdArray> {
    id<ORIdArray>*    _concrete;
    ORInt                   _nb;
@@ -747,6 +764,7 @@ static void init_pthreads_key()
 }
 -(void)dealloc
 {
+   NSLog(@"CPParSolverI (%p) dealloc'd...",self);
    free(_workers);
    [_queue release];
    [_terminated release];
@@ -768,17 +786,19 @@ static void init_pthreads_key()
    [model instantiate: self];
    NSMutableArray* vars = [[NSMutableArray alloc] initWithCapacity:8];
    NSMutableArray* cons = [[NSMutableArray alloc] initWithCapacity:8];
+   __block id obj = nil;
    // First, copy the "parallel" variables / constraints into a data structure on the side.
    [model applyOnVar:^(id v) {
       [vars addObject:[v impl]];
       [v setImpl:nil];
    }  onObjects:^(id o) {
-      
    } onConstraints:^(id c) {
       [cons addObject:[c impl]];
       [c setImpl:nil];
+   } onObjective:^(id o) {
+      obj = [o impl];
+      [o setImpl:nil];
    }];
-   [(id)[model objective] setImpl:nil];
    // Now loop _nbWorkers times and instantiate using a bare concretizer
    for(ORInt i=0;i<_nbWorkers;i++) {
       _workers[i] = [CPFactory createSemSolver:_defCon];     // _defCon will be the nested controller factory for _workers[i]
@@ -793,6 +813,10 @@ static void init_pthreads_key()
          ORParConstraintI* parc = [cons objectAtIndex:[c getId]];
          [parc setConcrete:i to:(id<ORConstraint>)[c dereference]];
          [c setImpl:nil];
+      }onObjective:^(id o) {
+         ORParObjectiveI* pobj = obj;
+         [pobj setConcrete:i to:(id<ORObjective>)[o dereference]];
+         [o setImpl:nil];
       }];
    }
    // Now put the parallel dispatchers back inside the modeling objects.
@@ -802,10 +826,27 @@ static void init_pthreads_key()
       
    } onConstraints:^(id c) {
       [c setImpl:[cons objectAtIndex:[c getId]]];
+   } onObjective:^(id o) {
+      [o setImpl: obj];
    }];
+   _objective = obj;
    [vars release];
    [cons release];
 }
+/*
+ -(id<ORObjective>) minimize: (id<ORIntVar>) x
+{
+   _objective = [[ORMinimizeI alloc] initORMinimizeI: nil obj: x];
+   [self trackObject: _objective];
+   return _objective;
+}
+-(id<ORObjective>) maximize: (id<ORIntVar>) x
+{
+   _objective = [[ORMaximizeI alloc] initORMaximizeI: nil obj: x];
+   [self trackObject: _objective];
+   return _objective;
+}
+ */
 -(id<CPSolver>)dereference
 {
    return _workers[[NSThread threadID]];
@@ -867,7 +908,11 @@ static void init_pthreads_key()
    if (_objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
-                         onSolution: ^ { [[me engine] saveSolution];}
+                         onSolution: ^ {
+                            [[me engine] saveSolution];
+                            ORInt myBound = [[me objective] primalBound];
+                            [_objective tightenPrimalBound:myBound];
+                         }
                              onExit: ^ { [[me engine] restoreSolution];}
                             control: parc];
    } else {
@@ -1093,6 +1138,11 @@ static void init_pthreads_key()
    _concrete = malloc(sizeof(id<ORConstraint>)*_nb);
    return self;
 }
+-(void)dealloc
+{
+   free(_concrete);
+   [super dealloc];
+}
 -(void) setId: (ORUInt) name
 {
    _id = name;
@@ -1122,6 +1172,60 @@ static void init_pthreads_key()
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"Should never concrete a par-constraint"];
+}
+@end
+
+@implementation ORParObjectiveI
+-(ORParObjectiveI*)initORParObjectiveI:(ORInt)nbo
+{
+   self = [super init];
+   _nb = nbo;
+   _concrete = malloc(sizeof(id<ORObjective>)*_nb);
+   return self;
+}
+-(void)dealloc
+{
+   free(_concrete);
+   [super dealloc];
+}
+-(void)setConcrete:(ORInt)k to:(id<ORObjective>)c
+{
+   _concrete[k] = c;   
+}
+-(id<ORObjective>)dereference
+{
+   ORInt tid = [NSThread threadID];
+   assert(tid >= 0 && tid < _nb);
+   return _concrete[tid];
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"Should never concrete a par-objective"];   
+}
+-(id<ORIntVar>) var
+{
+   return [[self dereference] var];
+}
+-(ORStatus) check
+{
+   return [[self dereference] check];
+}
+-(void) updatePrimalBound
+{
+   [[self dereference] updatePrimalBound];
+}
+-(void) tightenPrimalBound:(ORInt)newBound
+{
+   @synchronized(self) {
+      for(ORInt i=0;i<_nb;i++) {
+         [_concrete[i] tightenPrimalBound:newBound];
+      }
+   }
+}
+
+-(ORInt)    primalBound
+{
+   return [[self dereference] primalBound];
 }
 @end
 
@@ -1272,12 +1376,14 @@ static void init_pthreads_key()
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORObjectiveFunction>) obj
 {
-   [_solver minimize:[obj var]];
-   return obj;
+   ORParObjectiveI* rv = [[ORParObjectiveI alloc] initORParObjectiveI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
 }
 -(id<ORObjectiveFunction>) maximize: (id<ORObjectiveFunction>) obj
 {
-   [_solver maximize:[obj var]];
-   return obj;
+   ORParObjectiveI* rv = [[ORParObjectiveI alloc] initORParObjectiveI:[_solver nbWorkers]];
+   [_solver trackObject:rv];
+   return rv;
 }
 @end

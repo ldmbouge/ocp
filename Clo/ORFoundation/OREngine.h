@@ -49,4 +49,5 @@
 -(NSMutableArray*) allVars;
 -(id) trail;
 -(ORStatus)propagate;
+-(ORStatus)enforceObjective;
 @end

@@ -297,6 +297,7 @@
    [((ORExprI*) [cstr expr]) visit: ec];
    id<ORConstraint> c = [CPFactory relation2Constraint:_solver expr: [ec result]];
    [_solver add: c];
+   [ec release];
    return c;
 }
 -(id<ORConstraint>) tableConstraint: (ORTableConstraintI*) cstr

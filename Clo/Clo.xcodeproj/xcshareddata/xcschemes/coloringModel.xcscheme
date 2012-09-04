@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B189513C15E0FA5E00B77813"
-               BuildableName = "slabModel"
-               BlueprintName = "slabModel"
+               BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
+               BuildableName = "coloringModel"
+               BlueprintName = "coloringModel"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,16 +32,16 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B189513C15E0FA5E00B77813"
-            BuildableName = "slabModel"
-            BlueprintName = "slabModel"
+            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
+            BuildableName = "coloringModel"
+            BlueprintName = "coloringModel"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
    <LaunchAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       buildConfiguration = "Debug"
@@ -51,9 +51,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B189513C15E0FA5E00B77813"
-            BuildableName = "slabModel"
-            BlueprintName = "slabModel"
+            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
+            BuildableName = "coloringModel"
+            BlueprintName = "coloringModel"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -69,9 +69,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B189513C15E0FA5E00B77813"
-            BuildableName = "slabModel"
-            BlueprintName = "slabModel"
+            BlueprintIdentifier = "5B7B476915F0E4AD005FF875"
+            BuildableName = "coloringModel"
+            BlueprintName = "coloringModel"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

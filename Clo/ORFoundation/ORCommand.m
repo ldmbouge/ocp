@@ -91,6 +91,10 @@
 {
    return _ndId == cList->_ndId;
 }
+-(void) setNodeId:(ORInt)nid
+{
+   _ndId = nid;
+}
 -(ORInt) getNodeId
 {
    return _ndId;
