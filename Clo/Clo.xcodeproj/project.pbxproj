@@ -583,6 +583,9 @@
 		B1D3BCD915048D2B0036AB23 /* CPLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D3BCD715048D2B0036AB23 /* CPLabel.m */; };
 		B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */; };
 		B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
+		B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
+		B1F3804B15F035C0007C6A4A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1F3804915F035C0007C6A4A /* InfoPlist.strings */; };
+		B1F3804F15F035C0007C6A4A /* objlp.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F3804E15F035C0007C6A4A /* objlp.m */; };
 		B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = B1F531D015AED1DB00E89F98 /* CPBinPacking.h */; };
 		B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
 		B1F531DA15AED4B100E89F98 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1937,6 +1940,12 @@
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OREngine.h; path = ORFoundation/OREngine.h; sourceTree = "<group>"; };
+		B1F3804415F035C0007C6A4A /* objlp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = objlp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1F3804815F035C0007C6A4A /* objlp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objlp-Info.plist"; sourceTree = "<group>"; };
+		B1F3804A15F035C0007C6A4A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B1F3804C15F035C0007C6A4A /* objlp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objlp-Prefix.pch"; sourceTree = "<group>"; };
+		B1F3804D15F035C0007C6A4A /* objlp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objlp.h; sourceTree = "<group>"; };
+		B1F3804E15F035C0007C6A4A /* objlp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objlp.m; sourceTree = "<group>"; };
 		B1F531D015AED1DB00E89F98 /* CPBinPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPBinPacking.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1F531D115AED1DB00E89F98 /* CPBinPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBinPacking.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531D815AED4B100E89F98 /* testPacking */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testPacking; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2430,6 +2439,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1F3804015F035C0007C6A4A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B1F531D515AED4B100E89F98 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2538,6 +2555,7 @@
 				5B60E5D815AE907E002FF2B3 /* ORUtilities */,
 				5B9ABCF61391329D000997E5 /* objcp */,
 				5B9ABD071391329D000997E5 /* objcpTests */,
+				B1F3804615F035C0007C6A4A /* objlp */,
 				B17ABF7B13CE4E7700DC7288 /* gurobiwrapper */,
 				B111FC0213CF3D10003C5119 /* testLPWrapper */,
 				B178F62813E89CFA00D59B31 /* lpsolver */,
@@ -2603,6 +2621,7 @@
 				B181E11615D7465300AB44DA /* sportModel */,
 				B189512615DE52D100B77813 /* magicseriesModel */,
 				B189513D15E0FA5E00B77813 /* slabModel */,
+				B1F3804415F035C0007C6A4A /* objlp.framework */,
 				5B7B476A15F0E4AD005FF875 /* coloringModel */,
 			);
 			name = Products;
@@ -3690,6 +3709,26 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		B1F3804615F035C0007C6A4A /* objlp */ = {
+			isa = PBXGroup;
+			children = (
+				B1F3804D15F035C0007C6A4A /* objlp.h */,
+				B1F3804E15F035C0007C6A4A /* objlp.m */,
+				B1F3804715F035C0007C6A4A /* Supporting Files */,
+			);
+			path = objlp;
+			sourceTree = "<group>";
+		};
+		B1F3804715F035C0007C6A4A /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B1F3804815F035C0007C6A4A /* objlp-Info.plist */,
+				B1F3804915F035C0007C6A4A /* InfoPlist.strings */,
+				B1F3804C15F035C0007C6A4A /* objlp-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		B1F531DB15AED4B100E89F98 /* testPacking */ = {
 			isa = PBXGroup;
 			children = (
@@ -3929,6 +3968,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1571F0613EEBF9C007B5E88 /* lpgurobi.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1F3804115F035C0007C6A4A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4830,6 +4876,24 @@
 			productReference = B1CC832015D3BEC4008DE335 /* model */;
 			productType = "com.apple.product-type.tool";
 		};
+		B1F3804315F035C0007C6A4A /* objlp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1F3805215F035C0007C6A4A /* Build configuration list for PBXNativeTarget "objlp" */;
+			buildPhases = (
+				B1F3803F15F035C0007C6A4A /* Sources */,
+				B1F3804015F035C0007C6A4A /* Frameworks */,
+				B1F3804115F035C0007C6A4A /* Headers */,
+				B1F3804215F035C0007C6A4A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = objlp;
+			productName = objlp;
+			productReference = B1F3804415F035C0007C6A4A /* objlp.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		B1F531D715AED4B100E89F98 /* testPacking */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B1F531E215AED4B100E89F98 /* Build configuration list for PBXNativeTarget "testPacking" */;
@@ -4920,6 +4984,7 @@
 				B181E11515D7465300AB44DA /* sportModel */,
 				B189512515DE52D100B77813 /* magicseriesModel */,
 				B189513C15E0FA5E00B77813 /* slabModel */,
+				B1F3804315F035C0007C6A4A /* objlp */,
 				5B7B476915F0E4AD005FF875 /* coloringModel */,
 			);
 		};
@@ -5044,6 +5109,14 @@
 				B1C9DF1B15A8045C00EE924C /* InfoPlist.strings in Resources */,
 				B1C9DF2115A8045C00EE924C /* Credits.rtf in Resources */,
 				B1C9DF2715A8045C00EE924C /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1F3804215F035C0007C6A4A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1F3804B15F035C0007C6A4A /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5586,6 +5659,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1CC832515D3BEC4008DE335 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1F3803F15F035C0007C6A4A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1F3804F15F035C0007C6A4A /* objlp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6154,6 +6235,14 @@
 				B1C9DF2615A8045C00EE924C /* en */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		B1F3804915F035C0007C6A4A /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B1F3804A15F035C0007C6A4A /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -8165,6 +8254,60 @@
 			};
 			name = Release;
 		};
+		B1F3805015F035C0007C6A4A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objlp/objlp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "objlp/objlp-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		B1F3805115F035C0007C6A4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "objlp/objlp-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "objlp/objlp-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
 		B1F531E315AED4B100E89F98 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8656,6 +8799,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		B1F3805215F035C0007C6A4A /* Build configuration list for PBXNativeTarget "objlp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1F3805015F035C0007C6A4A /* Debug */,
+				B1F3805115F035C0007C6A4A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		B1F531E215AED4B100E89F98 /* Build configuration list for PBXNativeTarget "testPacking" */ = {
 			isa = XCConfigurationList;

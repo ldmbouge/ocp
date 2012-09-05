@@ -22,9 +22,8 @@
 -(ORUInt) getId;
 -(BOOL) bound;
 -(id<ORSolver>) solver;
--(NSSet*)constraints;
+-(NSSet*) constraints;
 @end
-
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
@@ -32,13 +31,20 @@
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
--(ORBounds)bounds;
+-(ORBounds) bounds;
 -(BOOL) member: (ORInt) v;
 -(BOOL) isBool;
 -(id<ORIntVar>) dereference;
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
+@end
+
+@protocol ORFloatVar <ORVar>
+-(ORFloat) value;
+-(ORFloat) min;
+-(ORFloat) max;
+-(id<ORFloatVar>) dereference;
 @end
 
 @protocol ORVarArray <ORIdArray>

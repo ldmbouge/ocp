@@ -22,19 +22,35 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       
       id<ORModel> model = [ORFactory createModel];
+      id<ORFloatVar> x = [ORFactory floatVar: model low: 0 up: 100];
+      id<ORFloatVar> y = [ORFactory floatVar: model low: 0 up: 100];      
+      
+      [model add: [x leq: y]];
+      NSLog(@"x id: %d",[x getId]);
+      NSLog(@"y id: %d",[y getId]);
+   }
+  
+   return 0;
+}
+
+int oldMain(int argc, const char * argv[])
+{
+   
+   @autoreleasepool {
+      
+      id<ORModel> model = [ORFactory createModel];
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: 10];
       id<ORIntVarArray> a = [ORFactory intVarArray: model range: R domain: R];
       id<ORConstraint> cstr = [ORFactory alldifferent: a];
       
+      
       [model add: cstr];
-  
+      
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel: model];
-   
+      
       [cp solve: ^{
          [CPLabel array: a];
-//         for(ORInt i = 0; i <= 10; i++)
-//            [CPLabel var: a[i]];
       }];
       for(ORInt i = 0; i <= 10; i++)
          printf("x[%d] = %d \n",i,[a[i] value]);
@@ -44,4 +60,5 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
+
 

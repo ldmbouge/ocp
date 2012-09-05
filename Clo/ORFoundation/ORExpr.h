@@ -87,5 +87,6 @@ enum ORRelationType {
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
 -(void) visitIntVarI: (id<ORExpr>) var;
+-(void) visitFloatVarI: (id<ORExpr>) var;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 @end

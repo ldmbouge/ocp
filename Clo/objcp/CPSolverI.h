@@ -152,6 +152,7 @@
 @interface CPParConcretizerI : NSObject<ORSolverConcretizer>
 -(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
+-(id<ORFloatVar>) floatVar: (ORFloatVarI*) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(id<ORIdArray>) idArray: (id<ORIdArray>) a;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
