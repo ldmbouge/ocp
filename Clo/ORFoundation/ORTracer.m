@@ -614,6 +614,7 @@
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
    */
+   [fdm clearStatus];
    ORCmdStack* toRestore = [acp commands];
    int i=0;
    bool pfxEq = true;

@@ -223,7 +223,7 @@ extern BOOL isGenerating()
 }
 -(void) dealloc
 {
-   NSLog(@"OROptimizationController dealloc called...\n");
+   //NSLog(@"OROptimizationController dealloc called...\n");
    [_canImprove release];
    [super dealloc];
 }
@@ -288,7 +288,7 @@ extern BOOL isGenerating()
 }
 -(void) dealloc
 {
-   NSLog(@"OROptimizationController dealloc called...\n");
+   NSLog(@"ORLimitCondition dealloc called...\n");
    [_condition release];
    [super dealloc];
 }

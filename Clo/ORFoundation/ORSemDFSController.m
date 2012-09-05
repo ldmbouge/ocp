@@ -91,7 +91,7 @@
          _tab[ofs] = 0;
          --_sz;
          if (k &&  status != ORFailure) {
-            NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
+            //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
             [k call];
          } else {
             if (k==nil)
@@ -144,7 +144,7 @@
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
-         NSLog(@"backtracking from ORSemDFSControllerCSP %p",[NSThread currentThread]);
+         //NSLog(@"backtracking from ORSemDFSControllerCSP %p",[NSThread currentThread]);
          if (k)
             [k call];
          else {

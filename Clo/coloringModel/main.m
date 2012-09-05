@@ -63,9 +63,9 @@ int main(int argc, const char * argv[])
       //NSLog(@"Model: %@",model);
 
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
-      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemBDSController class]];
+      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
       
       [cp solve: ^{

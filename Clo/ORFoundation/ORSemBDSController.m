@@ -165,7 +165,7 @@
          //NSLog(@"********** RESTORING: %@",node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
          [node._cp release];
-         NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
+         //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
          if (status != ORFailure)
             [node._cont call];
          else
