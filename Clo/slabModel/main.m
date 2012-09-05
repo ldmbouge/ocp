@@ -97,7 +97,7 @@ int main(int argc, const char * argv[])
    //id<CPSolver> cp = [CPFactory createSolver];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
-   id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+   id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
    [cp addModel: model];
    [cp solve: ^{
       NSMutableArray* av = [cp allVars];

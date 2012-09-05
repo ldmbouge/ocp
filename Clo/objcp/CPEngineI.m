@@ -425,6 +425,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       if (_propagDone)
          [_propagDone notify];
       //_status = status;
+      assert(!([_trail magic] > _status._mgc && _status._val==0));
       assignTRInt(&_status, status, _trail);
       --_propagating;
       return _status._val;
@@ -436,6 +437,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       if (_propagFail)
          [_propagFail notifyWith:[_last getId]];
       CFRelease(exception);
+      assert(!([_trail magic] > _status._mgc && _status._val==0));
       assignTRInt(&_status, ORFailure, _trail);
       --_propagating;
       return _status._val;
@@ -477,6 +479,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
       ORStatus pstatus = internalPropagate(self,status);
+      assert(!([_trail magic] == _status._mgc && _status._val==0));
       assignTRInt(&_status, pstatus, _trail);
       if (pstatus && status != ORSkip) {
          [cstr setId:(ORUInt)[_cStore count]];
@@ -488,6 +491,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       }
    } @catch (ORFailException* ex) {
       CFRelease(ex);
+      assert(!([_trail magic] == _status._mgc && _status._val==0));
       assignTRInt(&_status, ORFailure, _trail);
    }
    return _status._val;
@@ -524,9 +528,11 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       assert(_status._val != ORFailure);
       ORStatus status = [var bind: val];
       ORStatus pstatus = internalPropagate(self,status);
+      assert(!([_trail magic] > _status._mgc && _status._val==0));
       assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
+      assert(!([_trail magic] > _status._mgc && _status._val==0));
       assignTRInt(&_status, ORFailure, _trail);
    }
    return _status._val;
@@ -538,9 +544,11 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       assert(_status._val != ORFailure);
       ORStatus status =  removeDom(var, val);
       ORStatus pstatus = internalPropagate(self,status);
+      assert(!([_trail magic] > _status._mgc && _status._val==0));
       assignTRInt(&_status, pstatus, _trail);
    } @catch (ORFailException *exception) {
       CFRelease(exception);
+      assert(!([_trail magic] > _status._mgc && _status._val==0));
       assignTRInt(&_status, ORFailure, _trail);
    }
    return _status._val;

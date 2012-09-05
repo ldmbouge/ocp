@@ -538,7 +538,7 @@
    self = [super init];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-                                                        rootControllerClass:[ORSemDFSController class]
+                                                        rootControllerClass:[ORSemDFSControllerCSP class]
                                                       nestedControllerClass:ctrlClass];
    _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
@@ -549,7 +549,7 @@
    self = [super initFor:fdm];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-                                                        rootControllerClass:[ORSemDFSController class]
+                                                        rootControllerClass:[ORSemDFSControllerCSP class]
                                                       nestedControllerClass:ctrlClass];
    _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
@@ -595,7 +595,7 @@
    self = [super initWithCoder:aDecoder];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-                                                        rootControllerClass:[ORSemDFSController class]
+                                                        rootControllerClass:[ORSemDFSControllerCSP class]
                                                       nestedControllerClass:[ORSemDFSController class]];
    _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];

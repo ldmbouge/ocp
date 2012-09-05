@@ -63,9 +63,9 @@ int main(int argc, const char * argv[])
       //NSLog(@"Model: %@",model);
 
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
+      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemBDSController class]];
       [cp addModel: model];
       
       [cp solve: ^{
@@ -75,8 +75,6 @@ int main(int argc, const char * argv[])
             if ([c[i] bound])
                maxc = maxc > [c[i] value] ? maxc : [c[i] value];
          }
-         ORStatus startStatus = [[[cp dereference] engine] status];
-         assert(startStatus != ORFailure);
          NSLog(@"Initial MAXC  = %d",maxc);
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
             [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member:v];} in:^(ORInt v) {

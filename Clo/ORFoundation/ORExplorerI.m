@@ -168,6 +168,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          break;
       }
       else {
+         NSThread* me = [NSThread currentThread];
          assert([_engine status] != ORFailure);
          // [ldm] In the case of an optimization, the startTryRight will enforce the primalBound and _may_ fail as as
          // result. Hence, we are not even guaranteed to reach the call to right() and we must letgo of the continuation

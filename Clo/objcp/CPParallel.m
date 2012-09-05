@@ -42,7 +42,7 @@
 -(void) publishWork
 {
    _publishing = YES;
-   //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
+   NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    ORStatus ok = [_solver installCheckpoint:[stolen theCP]];
@@ -65,7 +65,8 @@
    ok = [_solver installCheckpoint:theCP];
    assert(ok != ORFailure);
    [theCP release];
-   //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
+   assert([[_solver engine] status] != ORFailure);
+   NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    _publishing = NO;
 }
 -(void)trust
