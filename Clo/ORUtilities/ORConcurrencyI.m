@@ -231,6 +231,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
       [event release];  // event is now owned by the whenList.
    }
 }
+
 -(void) wheneverNotifiedDo: (id) closure
 {
    ORInformerEventI* event = [[ORInformerEventI alloc] initORInformerEventI: [ORConcurrency eventList] closure: closure];

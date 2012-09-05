@@ -234,10 +234,20 @@
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
+		<key>slab.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>10</integer>
+		</dict>
+		<key>slabModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
 		</dict>
 		<key>slabModel.xcscheme_^#shared#^_</key>
 		<dict>
@@ -277,7 +287,7 @@
 		<key>warehouse.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>37</integer>
+			<integer>11</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>

@@ -187,8 +187,8 @@
    if ([_next size] >=1) {
       struct BDSNode node = [_next pop];
       ORHeist* rv = [[ORHeist alloc] initORHeist:node._cont from:node._cp];
-      [node._cont release];  // [ldm] no longer in the controller
-      [node._cp release];    // [ldm] no longer in the controller
+      [node._cont letgo];  // [ldm] no longer in the controller
+      [node._cp release];  // [ldm] no longer in the controller
       return rv;
    } else return nil;
 }

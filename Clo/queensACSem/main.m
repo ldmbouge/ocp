@@ -43,8 +43,8 @@ int main (int argc, const char * argv[])
 
       NSLog(@"Model: %@",model);
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
-      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
+      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
          __block ORInt depth = 0;

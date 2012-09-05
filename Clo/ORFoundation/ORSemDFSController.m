@@ -114,7 +114,6 @@
       }
       --_sz;
       ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
-      [c release];
       [cp release];
       return rv;
    } else return nil;
