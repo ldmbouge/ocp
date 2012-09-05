@@ -430,7 +430,6 @@
 		B12ED8C5159E0C2200713C8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B12ED8C4159E0C2200713C8E /* main.m */; };
 		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
 		B12ED8CF159E0CAD00713C8E /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		B1357F7A14AE73EE007AD73C /* libgurobi.so.4.6.1 in Frameworks */ = {isa = PBXBuildFile; fileRef = B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */; };
 		B139DEA115CCE3F8007D523E /* ORController.h in Headers */ = {isa = PBXBuildFile; fileRef = B139DE9F15CCE3F8007D523E /* ORController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B139DEA215CCE3F8007D523E /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
 		B152BE2C13BB541100531FD5 /* CPAllDifferentDC.m in Sources */ = {isa = PBXBuildFile; fileRef = B152BE2B13BB541100531FD5 /* CPAllDifferentDC.m */; };
@@ -581,8 +580,14 @@
 		B1CC833515D3BEFC008DE335 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1D3BCD815048D2B0036AB23 /* CPLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D3BCD615048D2A0036AB23 /* CPLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1D3BCD915048D2B0036AB23 /* CPLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D3BCD715048D2B0036AB23 /* CPLabel.m */; };
+		B1E2361615F812AB00AB8DB6 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
+		B1E2361C15F812AB00AB8DB6 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1E2361A15F812AB00AB8DB6 /* InfoPlist.strings */; };
+		B1E2362715F8140000AB8DB6 /* LPGurobiWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E2362515F8140000AB8DB6 /* LPGurobiWrapper.m */; };
+		B1E2362815F8152300AB8DB6 /* LPWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E2361E15F812AB00AB8DB6 /* LPWrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */; };
 		B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
+		B1EB8CD015F8194600A3662D /* LPGurobiWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E2362415F8140000AB8DB6 /* LPGurobiWrapper.h */; };
+		B1EB8CD115F81E2A00A3662D /* libgurobi.so.4.6.1 in Frameworks */ = {isa = PBXBuildFile; fileRef = B1EB8CCE15F818CA00A3662D /* libgurobi.so.4.6.1 */; };
 		B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B1F3804B15F035C0007C6A4A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1F3804915F035C0007C6A4A /* InfoPlist.strings */; };
 		B1F3804F15F035C0007C6A4A /* objlp.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F3804E15F035C0007C6A4A /* objlp.m */; };
@@ -594,6 +599,9 @@
 		B1F531E715AED50000E89F98 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1F531EC15AED52200E89F98 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1F531ED15AED52700E89F98 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		B1FCB33C15F6BD2500F8446A /* LPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33A15F6BD2500F8446A /* LPSolver.h */; };
+		B1FCB34015F6BD6100F8446A /* LPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33E15F6BD6100F8446A /* LPSolverI.h */; };
+		B1FCB34115F6BD6100F8446A /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1FCB33F15F6BD6100F8446A /* LPSolverI.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1114,6 +1122,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		B1E2362B15F8156700AB8DB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
 		};
 		B1F531E515AED4F100E89F98 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1789,7 +1804,6 @@
 		B12ED8C4159E0C2200713C8E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B12ED8C7159E0C2200713C8E /* sport-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sport-Prefix.pch"; sourceTree = "<group>"; };
 		B12ED8C8159E0C2200713C8E /* sport.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = sport.1; sourceTree = "<group>"; };
-		B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = libgurobi.so.4.6.1; path = ../../../../../Library/gurobi461/mac64/lib/libgurobi.so.4.6.1; sourceTree = "<group>"; };
 		B139DE9F15CCE3F8007D523E /* ORController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORController.h; sourceTree = "<group>"; };
 		B139DEA015CCE3F8007D523E /* ORController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORController.m; sourceTree = "<group>"; };
 		B149BF5B151E759600FC5887 /* ORCrFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCrFactory.h; sourceTree = "<group>"; };
@@ -1937,9 +1951,18 @@
 		B1D3BCD615048D2A0036AB23 /* CPLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPLabel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1D3BCD715048D2B0036AB23 /* CPLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPLabel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1DA97E713EC714F00BA7244 /* lpsolveri.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lpsolveri.h; sourceTree = "<group>"; };
+		B1E2361515F812AB00AB8DB6 /* LPWrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = LPWrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B1E2361915F812AB00AB8DB6 /* LPWrapper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LPWrapper-Info.plist"; sourceTree = "<group>"; };
+		B1E2361B15F812AB00AB8DB6 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B1E2361D15F812AB00AB8DB6 /* LPWrapper-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LPWrapper-Prefix.pch"; sourceTree = "<group>"; };
+		B1E2361E15F812AB00AB8DB6 /* LPWrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LPWrapper.h; sourceTree = "<group>"; };
+		B1E2362415F8140000AB8DB6 /* LPGurobiWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPGurobiWrapper.h; path = lpwrapper/LPGurobiWrapper.h; sourceTree = SOURCE_ROOT; };
+		B1E2362515F8140000AB8DB6 /* LPGurobiWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPGurobiWrapper.m; path = lpwrapper/LPGurobiWrapper.m; sourceTree = SOURCE_ROOT; };
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OREngine.h; path = ORFoundation/OREngine.h; sourceTree = "<group>"; };
+		B1EB8CCC15F817F500A3662D /* libgurobi.so.4.5.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.4.5.0; path = ../../../../../../Library/gurobi450/mac64/lib/libgurobi.so.4.5.0; sourceTree = "<group>"; };
+		B1EB8CCE15F818CA00A3662D /* libgurobi.so.4.6.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = libgurobi.so.4.6.1; path = ../../../../../../Library/gurobi461/mac64/lib/libgurobi.so.4.6.1; sourceTree = "<group>"; };
 		B1F3804415F035C0007C6A4A /* objlp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = objlp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1F3804815F035C0007C6A4A /* objlp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objlp-Info.plist"; sourceTree = "<group>"; };
 		B1F3804A15F035C0007C6A4A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -1952,6 +1975,9 @@
 		B1F531DC15AED4B100E89F98 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
+		B1FCB33A15F6BD2500F8446A /* LPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolver.h; sourceTree = "<group>"; };
+		B1FCB33E15F6BD6100F8446A /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolverI.h; sourceTree = "<group>"; };
+		B1FCB33F15F6BD6100F8446A /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolverI.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2349,7 +2375,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1357F7A14AE73EE007AD73C /* libgurobi.so.4.6.1 in Frameworks */,
 				B1571EDB13EE0A3D007B5E88 /* mpwrapper.framework in Frameworks */,
 				B1571EB613EDF26E007B5E88 /* mpinterface.framework in Frameworks */,
 				B111FBFA13CF3C81003C5119 /* Foundation.framework in Frameworks */,
@@ -2436,6 +2461,15 @@
 				B1CC833415D3BEF8008DE335 /* objcp.framework in Frameworks */,
 				B1CC833315D3BEEF008DE335 /* ORUtilities.framework in Frameworks */,
 				B1CC832215D3BEC4008DE335 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1E2361115F812AB00AB8DB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1E2361615F812AB00AB8DB6 /* Cocoa.framework in Frameworks */,
+				B1EB8CD115F81E2A00A3662D /* libgurobi.so.4.6.1 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2542,8 +2576,9 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				B1EB8CCE15F818CA00A3662D /* libgurobi.so.4.6.1 */,
+				B1EB8CCC15F817F500A3662D /* libgurobi.so.4.5.0 */,
 				B1EADBD215CDC0590032A6C7 /* OREngine.h */,
-				B1357F7914AE73EE007AD73C /* libgurobi.so.4.6.1 */,
 				5BCD970013FE807A00AB2589 /* libgurobi_g++4.2.a */,
 				B1571F0713EEC144007B5E88 /* gurobi_c.h */,
 				B17ABF7913CE4E7700DC7288 /* gurobiwrapper.framework */,
@@ -2555,6 +2590,7 @@
 				5B60E5D815AE907E002FF2B3 /* ORUtilities */,
 				5B9ABCF61391329D000997E5 /* objcp */,
 				5B9ABD071391329D000997E5 /* objcpTests */,
+				B1E2361715F812AB00AB8DB6 /* LPWrapper */,
 				B1F3804615F035C0007C6A4A /* objlp */,
 				B17ABF7B13CE4E7700DC7288 /* gurobiwrapper */,
 				B111FC0213CF3D10003C5119 /* testLPWrapper */,
@@ -2623,6 +2659,7 @@
 				B189513D15E0FA5E00B77813 /* slabModel */,
 				B1F3804415F035C0007C6A4A /* objlp.framework */,
 				5B7B476A15F0E4AD005FF875 /* coloringModel */,
+				B1E2361515F812AB00AB8DB6 /* LPWrapper.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3709,11 +3746,35 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		B1E2361715F812AB00AB8DB6 /* LPWrapper */ = {
+			isa = PBXGroup;
+			children = (
+				B1E2361E15F812AB00AB8DB6 /* LPWrapper.h */,
+				B1E2361815F812AB00AB8DB6 /* Supporting Files */,
+				B1E2362415F8140000AB8DB6 /* LPGurobiWrapper.h */,
+				B1E2362515F8140000AB8DB6 /* LPGurobiWrapper.m */,
+			);
+			path = LPWrapper;
+			sourceTree = "<group>";
+		};
+		B1E2361815F812AB00AB8DB6 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				B1E2361915F812AB00AB8DB6 /* LPWrapper-Info.plist */,
+				B1E2361A15F812AB00AB8DB6 /* InfoPlist.strings */,
+				B1E2361D15F812AB00AB8DB6 /* LPWrapper-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		B1F3804615F035C0007C6A4A /* objlp */ = {
 			isa = PBXGroup;
 			children = (
 				B1F3804D15F035C0007C6A4A /* objlp.h */,
 				B1F3804E15F035C0007C6A4A /* objlp.m */,
+				B1FCB33A15F6BD2500F8446A /* LPSolver.h */,
+				B1FCB33E15F6BD6100F8446A /* LPSolverI.h */,
+				B1FCB33F15F6BD6100F8446A /* LPSolverI.m */,
 				B1F3804715F035C0007C6A4A /* Supporting Files */,
 			);
 			path = objlp;
@@ -3971,10 +4032,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1E2361215F812AB00AB8DB6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1E2362815F8152300AB8DB6 /* LPWrapper.h in Headers */,
+				B1EB8CD015F8194600A3662D /* LPGurobiWrapper.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B1F3804115F035C0007C6A4A /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1FCB33C15F6BD2500F8446A /* LPSolver.h in Headers */,
+				B1FCB34015F6BD6100F8446A /* LPSolverI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4876,6 +4948,25 @@
 			productReference = B1CC832015D3BEC4008DE335 /* model */;
 			productType = "com.apple.product-type.tool";
 		};
+		B1E2361415F812AB00AB8DB6 /* LPWrapper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B1E2362315F812AB00AB8DB6 /* Build configuration list for PBXNativeTarget "LPWrapper" */;
+			buildPhases = (
+				B1E2361015F812AB00AB8DB6 /* Sources */,
+				B1E2361115F812AB00AB8DB6 /* Frameworks */,
+				B1E2361215F812AB00AB8DB6 /* Headers */,
+				B1E2361315F812AB00AB8DB6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1E2362C15F8156700AB8DB6 /* PBXTargetDependency */,
+			);
+			name = LPWrapper;
+			productName = LPWrapper;
+			productReference = B1E2361515F812AB00AB8DB6 /* LPWrapper.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		B1F3804315F035C0007C6A4A /* objlp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B1F3805215F035C0007C6A4A /* Build configuration list for PBXNativeTarget "objlp" */;
@@ -4986,6 +5077,7 @@
 				B189513C15E0FA5E00B77813 /* slabModel */,
 				B1F3804315F035C0007C6A4A /* objlp */,
 				5B7B476915F0E4AD005FF875 /* coloringModel */,
+				B1E2361415F812AB00AB8DB6 /* LPWrapper */,
 			);
 		};
 /* End PBXProject section */
@@ -5109,6 +5201,14 @@
 				B1C9DF1B15A8045C00EE924C /* InfoPlist.strings in Resources */,
 				B1C9DF2115A8045C00EE924C /* Credits.rtf in Resources */,
 				B1C9DF2715A8045C00EE924C /* MainMenu.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B1E2361315F812AB00AB8DB6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1E2361C15F812AB00AB8DB6 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5662,11 +5762,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B1E2361015F812AB00AB8DB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1E2362715F8140000AB8DB6 /* LPGurobiWrapper.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		B1F3803F15F035C0007C6A4A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				B1F3804F15F035C0007C6A4A /* objlp.m in Sources */,
+				B1FCB34115F6BD6100F8446A /* LPSolverI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6051,6 +6160,11 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B1CC833115D3BEE1008DE335 /* PBXContainerItemProxy */;
 		};
+		B1E2362C15F8156700AB8DB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = B1E2362B15F8156700AB8DB6 /* PBXContainerItemProxy */;
+		};
 		B1F531E615AED4F100E89F98 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -6235,6 +6349,14 @@
 				B1C9DF2615A8045C00EE924C /* en */,
 			);
 			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		B1E2361A15F812AB00AB8DB6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B1E2361B15F812AB00AB8DB6 /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 		B1F3804915F035C0007C6A4A /* InfoPlist.strings */ = {
@@ -7850,7 +7972,7 @@
 				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
 				INFOPLIST_FILE = "lpsolver/lpsolver-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -7874,7 +7996,7 @@
 				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
 				INFOPLIST_FILE = "lpsolver/lpsolver-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -8254,6 +8376,72 @@
 			};
 			name = Release;
 		};
+		B1E2362115F812AB00AB8DB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "LPWrapper/LPWrapper-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = /Library/gurobi461/mac64/include;
+				INFOPLIST_FILE = "LPWrapper/LPWrapper-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		B1E2362215F812AB00AB8DB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "LPWrapper/LPWrapper-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				HEADER_SEARCH_PATHS = /Library/gurobi461/mac64/include;
+				INFOPLIST_FILE = "LPWrapper/LPWrapper-Info.plist";
+				LD_DYLIB_INSTALL_NAME = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
 		B1F3805015F035C0007C6A4A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -8439,6 +8627,7 @@
 				5B7B477515F0E4AD005FF875 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B7D696015B9C91D00C9A10C /* Build configuration list for PBXNativeTarget "market2s" */ = {
 			isa = XCConfigurationList;
@@ -8800,6 +8989,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		B1E2362315F812AB00AB8DB6 /* Build configuration list for PBXNativeTarget "LPWrapper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B1E2362115F812AB00AB8DB6 /* Debug */,
+				B1E2362215F812AB00AB8DB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		B1F3805215F035C0007C6A4A /* Build configuration list for PBXNativeTarget "objlp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -8807,6 +9005,7 @@
 				B1F3805115F035C0007C6A4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B1F531E215AED4B100E89F98 /* Build configuration list for PBXNativeTarget "testPacking" */ = {
 			isa = XCConfigurationList;
