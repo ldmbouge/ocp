@@ -456,7 +456,7 @@ struct CPVarPair {
 -(ORStatus)postNEQZ:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    switch(_nb) {
-      case 0: assert(NO);break;
+      case 0: assert(NO);return ORFailure;
       case 1: {
          if (_terms[0]._coef == 1) {
             return [fdm post:[CPFactory notEqualc:_terms[0]._var to:- _indep]];

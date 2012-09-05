@@ -945,6 +945,7 @@ static void init_pthreads_key()
       }      
    }];
    // Final tear down. The worker is done with the model.
+   NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
    [_workers[myID] release];
    _workers[myID] = nil;
    [mySearch release];

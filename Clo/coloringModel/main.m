@@ -77,14 +77,15 @@ int main(int argc, const char * argv[])
          }
          NSLog(@"Initial MAXC  = %d",maxc);
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
-            [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member:v];} in:^(ORInt v) {
+            id<ORIntVar> ci = [c[i] dereference]; // [ldm] this line alone saves 3 seconds over 20s of runtime in //.
+            [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [ci member:v];} in:^(ORInt v) {
                //NSLog(@"%@?c[%d]==%d  (var:%@)",tab(depth),i,v,c[i]);
-               [cp label:c[i] with:v];
+               [cp label:ci with:v];
                //NSLog(@"%@ c[%d]==%d  (var:%@)",tab(depth),i,v,c[i]);
                maxc = maxc > v ? maxc : v;
-            } /*onFailure:^(ORInt v) {
-               [cp diff:c[i] with:v];
-            }*/];
+            } onFailure:^(ORInt v) {
+               [cp diff:ci with:v];
+            }];
             depth++;
          }];
          [cp label:m with:[m min]];

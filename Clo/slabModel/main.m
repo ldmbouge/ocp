@@ -123,18 +123,13 @@ int main(int argc, const char * argv[])
              [cp fail];
 #else
           ORInt ms = max(0,[CPLabel maxBound: slab]);
-         //NSLog(@"%@MAX bound for tryall: %d",tab(depth),ms+1);
           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [slab[o] member:s]; } in: ^void(ORInt s)
            {
-              //NSLog(@"%@slab[%d] ?== %d -- dom = %@   obj = %@",tab(depth),o,s,[slab[o] dereference],[obj dereference]);
               [cp label: slab[o] with: s];
-              //NSLog(@"%@slab[%d]  == %d",tab(depth),o,s);
            }
            onFailure: ^void(ORInt s)
            {
-              //NSLog(@"%@slab[%d] ?!= %d",tab(depth),o,s);
               [cp diff: slab[o] with: s];
-              //NSLog(@"%@slab[%d]  != %d",tab(depth),o,s);
            }
            ];
 #endif
