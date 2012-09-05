@@ -434,7 +434,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       AC5reset(_ac5);
       if (_propagFail)
          [_propagFail notifyWith:[_last getId]];
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
       --_propagating;
       return _status;
@@ -527,7 +527,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -536,12 +536,12 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) diff: (CPIntVarI*) var with: (ORInt) val
 {
    @try {
-      assert(_status != ORFailure);
+      //assert(_status != ORFailure);
       ORStatus status =  removeDom(var, val);
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -553,7 +553,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -565,7 +565,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -577,7 +577,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;

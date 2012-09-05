@@ -20,7 +20,7 @@ NSString* tab(int d);
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      ORLong startTime = [ORRuntimeMonitor cputime];
+      ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
       //FILE* dta = fopen("smallColoring.col","r");
       //FILE* dta = fopen("test-n30-e50.col","r");
@@ -91,8 +91,8 @@ int main(int argc, const char * argv[])
          NSLog(@"coloring with: %d colors",[m value]);
       }];
 
-      ORLong endTime = [ORRuntimeMonitor cputime];
-      NSLog(@"Execution Time: %lld \n",endTime - startTime);
+      ORLong endTime = [ORRuntimeMonitor wctime];
+      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];

@@ -661,7 +661,6 @@ static void init_pthreads_key()
 }
 +(ORInt)threadID
 {
-   pthread_once(&block,init_pthreads_key);
    ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
    return tid;
 }
@@ -909,11 +908,11 @@ static void init_pthreads_key()
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
-                            [[me engine] saveSolution];
+                            //[[me engine] saveSolution];
                             ORInt myBound = [[me objective] primalBound];
                             [_objective tightenPrimalBound:myBound];
                          }
-                             onExit: ^ { [[me engine] restoreSolution];}
+                             onExit: nil //^ { [[me engine] restoreSolution];}
                             control: parc];
    } else {
       [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}

@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
             m = [cap at: i] - c;
       [loss set: m at: c];
    }
-   ORLong startTime = [ORRuntimeMonitor cputime];
+   ORLong startTime = [ORRuntimeMonitor wctime];
    id<ORIntVarArray> slab = [ORFactory intVarArray: model range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [ORFactory intVarArray: model range: Slabs domain: Capacities];
    id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,nbSize*maxCapacities)];
@@ -97,7 +97,7 @@ int main(int argc, const char * argv[])
    //id<CPSolver> cp = [CPFactory createSolver];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
-   id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
+   id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
    [cp addModel: model];
    [cp solve: ^{
       NSMutableArray* av = [cp allVars];
@@ -149,8 +149,8 @@ int main(int argc, const char * argv[])
       printf("\n");
    }];
    
-   ORLong endTime = [ORRuntimeMonitor cputime];
-   NSLog(@"Execution Time: %lld \n",endTime - startTime);
+   ORLong endTime = [ORRuntimeMonitor wctime];
+   NSLog(@"Execution Time (WC): %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
