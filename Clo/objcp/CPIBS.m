@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import <CPIBS.h>
+#import <objcp/CPIBS.h>
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
 #import "CPStatisticsMonitor.h"

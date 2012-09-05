@@ -581,6 +581,7 @@
 		B1F531E715AED50000E89F98 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1F531EC15AED52200E89F98 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1F531ED15AED52700E89F98 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		F53EA56315F106D200494A7A /* testBitConstraints.m in Sources */ = {isa = PBXBuildFile; fileRef = F53EA56215F106D200494A7A /* testBitConstraints.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1893,6 +1894,8 @@
 		B1F531DC15AED4B100E89F98 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
+		F53EA56115F106D200494A7A /* testBitConstraints.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testBitConstraints.h; sourceTree = "<group>"; };
+		F53EA56215F106D200494A7A /* testBitConstraints.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = testBitConstraints.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2924,6 +2927,8 @@
 				5B9ABD101391329D000997E5 /* objcpTests.m */,
 				5B7408AD156286C700C05277 /* bitTest.h */,
 				5B7408AE156286C700C05277 /* bitTest.m */,
+				F53EA56115F106D200494A7A /* testBitConstraints.h */,
+				F53EA56215F106D200494A7A /* testBitConstraints.m */,
 				5B9ABD081391329D000997E5 /* Supporting Files */,
 			);
 			path = objcpTests;
@@ -5092,6 +5097,7 @@
 				5B9ABD111391329D000997E5 /* objcpTests.m in Sources */,
 				5BC43CB613A13C56009119FF /* testCard.m in Sources */,
 				5B7408AF156286C700C05277 /* bitTest.m in Sources */,
+				F53EA56315F106D200494A7A /* testBitConstraints.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

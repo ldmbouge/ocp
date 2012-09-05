@@ -12,6 +12,8 @@
 #import "CPBitConstraint.h"
 #import "CPEngineI.h"
 
+#define ISTRUE(up, low) (*up & *low)
+
 @implementation CPBitEqual
 
 -(id) initCPBitEqual:(id) x and:(id) y 
@@ -745,6 +747,7 @@
 -(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
+    bool change = false;
     
     TRUInt* xLow = [_x getLow];
     TRUInt* xUp = [_x getUp];
@@ -756,6 +759,18 @@
     TRUInt* cinUp = [_z getUp];
     TRUInt* coutLow = [_z getLow];
     TRUInt* coutUp = [_z getUp];
+
+    unsigned int* prevXUp = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevXLow  = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevYUp = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevYLow  = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevZUp = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevZLow  = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevCinUp = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevCinLow  = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevCoutUp = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* prevCoutLow  = alloca(sizeof(unsigned int)*wordLength);
+    
     
     unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -768,20 +783,104 @@
     unsigned int* newCoutUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newCoutLow  = alloca(sizeof(unsigned int)*wordLength);
     
+    unsigned int upXORlow;
+    
     bool    inconsistencyFound = false;
 
-    for(int i=wordLength-1;i>=0;i--){
+    for(int i = 0; i<wordLength;i++){
+        prevXUp[i] = xUp[i]._val;
+        prevXLow[i] = xLow[i]._val;
+        prevYUp[i] = yUp[i]._val;
+        prevYLow[i] = yLow[i]._val;
+        prevZUp[i] = zUp[i]._val;
+        prevZLow[i] = zLow[i]._val;
         
-        newXUp[i] = ~((~zUp[i]._val & ~coutUp[i]._val) | (~coutUp[i]._val & yLow[i]._val & ~cinUp[i]._val) | (~coutUp[i]._val & cinLow[i]._val & ~yUp[i]._val) | (~zUp[i]._val & coutLow[i]._val & yLow[i]._val & cinLow[i]._val) | ~xUp[i]._val);
-        newXLow[i] = (zLow[i]._val & coutLow[i]._val) | (zLow[i]._val & ~coutUp[i]._val & ~yUp[i]._val & ~cinUp[i]._val) | (coutLow[i]._val & yLow[i]._val & ~coutUp[i]._val) | (coutLow[i]._val & ~yUp[i]._val & cinLow[i]._val);
+        //Using the previous propagation's Carry in and Carry out as a seed. Not sure if we should start 
+        //without assigning values to these variables. But, this allows us to check for overflow in Cout.
+        prevCinUp[i] = cinUp[i]._val;
+        prevCinLow[i] = cinLow[i]._val;
+        prevCoutUp[i] = coutUp[i]._val;
+        prevCoutLow[i] = coutLow[i]._val;
+    }
+    
+    while (change) {
+        change = false;
+        for(int i=wordLength-1;i>=0;i--){
+/*        
+            newXUp[i] = ~((~zUp[i]._val & ~coutUp[i]._val) | (~coutUp[i]._val & yLow[i]._val & ~cinUp[i]._val) | (~coutUp[i]._val & cinLow[i]._val & ~yUp[i]._val) | (~zUp[i]._val & coutLow[i]._val & yLow[i]._val & cinLow[i]._val) | ~xUp[i]._val);
+            newXLow[i] = (zLow[i]._val & coutLow[i]._val) | (zLow[i]._val & ~coutUp[i]._val & ~yUp[i]._val & ~cinUp[i]._val) | (coutLow[i]._val & yLow[i]._val & ~coutUp[i]._val) | (coutLow[i]._val & ~yUp[i]._val & cinLow[i]._val);
         
-        newYUp[i] = ~((~zUp[i]._val & ~coutUp[i]._val) | (~coutUp[i]._val & ~xUp[i]._val & cinLow[i]._val) | (~coutUp[i]._val & xLow[i]._val & ~cinUp[i]._val) | (~zUp[i]._val & coutLow[i]._val & xLow[i]._val & cinLow[i]._val));
-        newYLow[i] = (zLow[i]._val & coutLow[i]._val) | (zLow[i]._val & ~coutUp[i]._val & ~xUp[i]._val & ~cinUp[i]._val) | (coutLow[i]._val & ~xUp[i]._val & cinLow[i]._val) | (~coutUp[i]._val & xLow[i]._val & ~cinUp[i]._val);
+            newYUp[i] = ~((~zUp[i]._val & ~coutUp[i]._val) | (~coutUp[i]._val & ~xUp[i]._val & cinLow[i]._val) | (~coutUp[i]._val & xLow[i]._val & ~cinUp[i]._val) | (~zUp[i]._val & coutLow[i]._val & xLow[i]._val & cinLow[i]._val));
+            newYLow[i] = (zLow[i]._val & coutLow[i]._val) | (zLow[i]._val & ~coutUp[i]._val & ~xUp[i]._val & ~cinUp[i]._val) | (coutLow[i]._val & ~xUp[i]._val & cinLow[i]._val) | (~coutUp[i]._val & xLow[i]._val & ~cinUp[i]._val);
         
+            newZLow[i] = zLow[i]._val| (~(xLow[i]._val ^ yLow[i]._val) & ~(cinLow[i]._val & coutLow[i]._val)) | (~(xLow[i]._val | yLow[i]._val) & cinLow[i]._val);
         
+            newCinLow[i] = newCinLow[i] | 0 ;
         
-        if (inconsistencyFound)
-            failNow();
+            newCoutLow[i] = newCoutLow[i] | 0;
+*/
+        
+            newXUp[i] = prevXUp[i] & ~ ((~prevZUp[i] & ~prevCoutUp[i])|(prevCinLow[i] & ~prevCoutUp[i])|(prevYLow[i] & ~prevCoutUp[i])|(prevYLow[i] & prevCinLow[i] & ~prevCoutUp[i]));
+            newXLow[i] = prevXLow[i] | ((prevZLow[i] & prevCoutLow[i]) | (~prevYUp[i] & prevCoutLow[i]) | (~prevCinUp[i] & prevCoutLow[i]) | (~prevYUp[i] & ~prevCinUp[i] & prevZLow[i]));
+            
+            upXORlow = newXUp[i] ^ newXLow[i];
+            inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
+        
+            newYUp[i] = prevYUp[i] & ~ ((~prevZUp[i] & ~prevCoutUp[i])|(prevCinLow[i] & ~prevCoutUp[i])|(prevXLow[i] & ~prevCoutUp[i])|(prevXLow[i] & prevCinLow[i] & ~prevCoutUp[i]));
+            newYLow[i] = prevYLow[i] | ((prevZLow[i] & prevCoutLow[i]) | (~prevXUp[i] & prevCoutLow[i]) | (~prevCinUp[i] & prevCoutLow[i]) | (~prevXUp[i] & ~prevCinUp[i] & prevZLow[i]));
+
+            upXORlow = newYUp[i] ^ newYLow[i];
+            inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
+
+            
+            newZUp[i] = prevZUp[i] & ~ ((~prevCinUp[i] & prevCoutLow[i])|(~prevXUp[i] & prevCoutLow[i])|(~prevYUp[i] & prevCoutLow[i])|(~prevXUp[i] & ~prevYUp[i] & ~prevCinUp[i]));
+            newZLow[i] = prevZUp[i] | ((prevCinLow[i] & ~prevCoutUp[i])|(prevYLow[i] & ~prevCoutUp[i])|(prevXLow[i]&~prevCoutUp[i])|(prevXLow[i]&prevYLow[i]&prevCinLow[i]));
+            
+            upXORlow = newZUp[i] ^ newZLow[i];
+            inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
+
+        
+            newCinUp[i] = prevCinUp[i] & ~((~prevCoutUp[i] & (~prevZUp[i] | prevXLow[i] | prevYLow[i]))|(prevXLow[i] & prevYLow[i] & ~prevZUp[i]));
+            newCinLow[i] = prevCinLow[i] | ((prevCoutLow[i] & (prevZLow[i]|~prevXUp[i] | ~prevYUp[i])) | (~prevXUp[i] & ~prevYUp[i] & prevCoutLow[i]));
+            
+            upXORlow = newCinUp[i] ^ newCinLow[i];
+            inconsistencyFound |= (upXORlow&(~newCinUp[i]))&(upXORlow & newCinLow[i]);
+
+            newCoutUp[i] = prevCoutUp[i] & ~((prevXUp[i] & ~prevYUp[i])|(~prevCinUp[i] & prevZLow[i]));
+            newCoutLow[i] = prevCoutLow[i] | ((prevXLow[i] & prevYLow[i])|(prevCinLow[i] & ~prevZUp[i]));
+            
+            upXORlow = newCoutUp[i] ^ newCoutLow[i];
+            inconsistencyFound |= (upXORlow&(~newCoutUp[i]))&(upXORlow & newCoutLow[i]);
+
+            //connect cout of i to cin of i+1
+        
+            if (inconsistencyFound)
+                failNow();
+            
+            change |= newXUp[i] ^ prevXUp[i];
+            change |= newXLow[i] ^ prevXLow[i];
+            change |= newYUp[i] ^ prevYUp[i];
+            change |= newYLow[i] ^ prevYLow[i];
+            change |= newZUp[i] ^ prevZUp[i];
+            change |= newZLow[i] ^ prevZLow[i];
+            change |= newCinUp[i] ^ prevCinUp[i];
+            change |= newCinLow[i] ^ prevCinLow[i];
+            change |= newCoutUp[i] ^ prevCoutUp[i];
+            change |= newCoutLow[i] ^ prevCoutLow[i];
+            
+            prevXUp[i] = newXUp[i];
+            prevXLow[i] = newXLow[i];
+            prevYUp[i] = newYUp[i];
+            prevYLow[i] = newYLow[i];
+            prevZUp[i] = newZUp[i];
+            prevZLow[i] = newZLow[i];
+            prevCinUp[i] = newCinUp[i];
+            prevCinLow[i] = newCinLow[i];
+            prevCoutUp[i] = newCoutUp[i];
+            prevCoutLow[i] = newCoutLow[i];
+            
+            
+        }   
     }
     
     [_x setLow:newXLow];

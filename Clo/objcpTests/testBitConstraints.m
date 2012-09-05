@@ -7,14 +7,14 @@
 //
 
 #import "testBitConstraints.h"
-#import "objcp/CP.h"
+//#import "objcp/CP.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPController.h"
-#import "objcp/CPTracer.h"
+//#import "objcp/CPController.h"
+//#import "objcp/CPTracer.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
-#import "objcp/CPAVLTree.h"
+//#import "objcp/CPAVLTree.h"
 
 #import "objcp/CPBitArray.h"
 #import "objcp/CPBitArrayDom.h"
@@ -239,7 +239,7 @@
 
 -(void) testSumConstraint{
     NSLog(@"Begin testing bitwise Sum constraint\n");
-    /*    
+        
      id<CP> m = [CPFactory createSolver];
      unsigned int min[4];
      unsigned int max[4];
@@ -254,7 +254,7 @@
      max[2] = 0xFFFFFFFF;
      max[3] = 0xFFFFFF00;
      
-     
+     id<CPBitVar> x = [CPFactory bitVar:m withLow: min andUp:max andLength:128];
      
      min[0] = 0x0003FFF8;//
      min[1] = 0x00F00000;
@@ -266,7 +266,7 @@
      max[2] = 0x7FFFFFFF;
      max[3] = 0xF0000000;
      
-     
+     id<CPBitVar> y = [CPFactory bitVar:m withLow: min andUp:max andLength:128];     
      
      min[0] = 0x0F003C00;//
      min[1] = 0x1FC003C0;
@@ -278,6 +278,8 @@
      max[2] = 0x87FD03FF;
      max[3] = 0xF03FFF00;
      
+     id<CPBitVar> ci = [CPFactory bitVar:m withLow: min andUp:max andLength:128];
+     
      min[0] = 0x0C3C00C1;//
      min[1] = 0x8606300C; 
      min[2] = 0x061860C3; 
@@ -287,6 +289,9 @@
      max[1] = 0xE7C7FCCF;
      max[2] = 0x9F9D7CF3;
      max[3] = 0xF3CF8F00;
+
+     id<CPBitVar> z = [CPFactory bitVar:m withLow: min andUp:max andLength:128];
+
      
      min[0] = 0x00002A10;//
      min[1] = 0x109082A1;
@@ -298,8 +303,22 @@
      max[2] = 0xFFFFAFFD;
      max[3] = 0xB575B500;
      
-     
-     */    
+     id<CPBitVar> co = [CPFactory bitVar:m withLow: min andUp:max andLength:128];
+    
+    NSLog(@"x = %@\n", x);
+    NSLog(@"y = %@\n", y);
+    NSLog(@"cin = %@\n", ci);
+    NSLog(@"z = %@\n", z);
+    NSLog(@"cout = %@\n", cout);
+    //[m add:[CPFactory bitAdd: ]];
+    NSLog(@"x = %@\n", x);
+    NSLog(@"y = %@\n", y);
+    NSLog(@"cin = %@\n", ci);
+    NSLog(@"z = %@\n", z);
+    NSLog(@"cout = %@\n", cout);
+    
+
+         
     NSLog(@"End testing bitwise Sum constraint.\n");
     
 }
