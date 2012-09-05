@@ -49,8 +49,6 @@
    assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
    
-   startGenerating();
-   
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
@@ -59,13 +57,10 @@
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
    
-   stopGenerating();
-
    [stolen release];
    ok = [_solver installCheckpoint:theCP];
    assert(ok != ORFailure);
    [theCP release];
-   assert([[_solver engine] status] != ORFailure);
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    _publishing = NO;
 }
@@ -90,7 +85,6 @@
       [self publishWork];
    }
    [_controller startTryall];
-   assert([[_solver engine] status] != ORFailure);
 }
 -(void)fail
 {

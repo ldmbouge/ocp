@@ -198,21 +198,6 @@
 +(ORInt)threadID;
 @end
 
-static BOOL __isGenerating[2] = {NO,NO};
-
-extern void startGenerating()
-{
-   __isGenerating[[NSThread threadID]] = YES;
-}
-extern void stopGenerating()
-{
-   __isGenerating[[NSThread threadID]] = NO;
-}
-extern BOOL isGenerating()
-{
-   return __isGenerating[[NSThread threadID]];
-}
-
 @implementation OROptimizationController
 
 -(id) initOROptimizationController: (Void2ORStatus) canImprove
@@ -235,13 +220,11 @@ extern BOOL isGenerating()
 }
 -(void) fail
 {
-   assert(!isGenerating());
    [_controller fail];
 }
 -(void) startTryLeft
 {
    if (_canImprove() == ORFailure) {
-      assert(!isGenerating());
       [_controller fail];
    }else
       [_controller startTryLeft];
@@ -249,7 +232,6 @@ extern BOOL isGenerating()
 -(void) startTryRight
 {
    if (_canImprove() == ORFailure) {
-      assert(!isGenerating());
       [_controller fail];
    } else
       [_controller startTryRight];
@@ -257,7 +239,6 @@ extern BOOL isGenerating()
 -(void) startTryallBody
 {
    if (_canImprove() == ORFailure) {
-      assert(!isGenerating());
       [_controller fail];
    } else
       [_controller startTryallBody];
@@ -265,7 +246,6 @@ extern BOOL isGenerating()
 -(void) startTryallOnFailure
 {
    if (_canImprove() == ORFailure) {
-      assert(!isGenerating());
       [_controller fail];
    }   else
       [_controller startTryallOnFailure];
