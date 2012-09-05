@@ -257,6 +257,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _objective = nil;
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
    _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
@@ -275,6 +276,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    [_cStore release];
    [_mStore release];
    [_oStore release];
+   [_objective release];
    [_ac5 release];
    [_propagFail release];
    [_propagDone release];
@@ -389,7 +391,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       return ORDelay;
    _last = nil;
    ++_propagating;
-   ORStatus status = ORSuspend;
+   ORStatus status = _status = ORSuspend;
    bool done = false;
    @try {
       while (!done) {
@@ -432,7 +434,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       AC5reset(_ac5);
       if (_propagFail)
          [_propagFail notifyWith:[_last getId]];
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
       --_propagating;
       return _status;
@@ -459,13 +461,25 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return status;
 }
 
+-(ORStatus)enforceObjective
+{
+   if (_objective != nil) {
+      if (_status)
+         return [_objective check];
+      else return _status;
+   }
+   else
+      return _status;
+}
+
 -(ORStatus) post: (id<ORConstraint>) c
 {
    @try {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
-      _status = internalPropagate(self,status);
-      if (_status && status != ORSkip) {
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
+      if (pstatus && status != ORSkip) {
          [cstr setId:(ORUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
@@ -499,13 +513,21 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
 }
 
+-(void) setObjective: (id<ORObjective>) obj
+{
+   [_objective release];
+   _objective = [obj retain];
+}
+
 -(ORStatus) label: (id) var with: (ORInt) val
 {
    @try {
+      assert(_status != ORFailure);
       ORStatus status = [var bind: val];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -514,10 +536,12 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) diff: (CPIntVarI*) var with: (ORInt) val
 {
    @try {
+      //assert(_status != ORFailure);
       ORStatus status =  removeDom(var, val);
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -526,9 +550,10 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       ORStatus status = [var updateMax:val-1];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -537,9 +562,10 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       ORStatus status = [var updateMin:val+1];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -548,9 +574,10 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       ORStatus status = [var inside: S];
-      _status = internalPropagate(self,status);
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
    } @catch (ORFailException *exception) {
-      CFRelease(exception);
+      [exception release];
       _status = ORFailure;
    }
    return _status;
@@ -582,6 +609,10 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    //printf("Closing CPEngine\n");
    return ORSuspend;
+}
+-(void) clearStatus
+{
+   _status = ORSuspend;
 }
 -(ORStatus)  status
 {

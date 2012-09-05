@@ -17,8 +17,6 @@
 #import "CPConstraintI.h"
 #import "CPConcretizer.h"
 
-
-
 @interface CPHeuristicStack : NSObject {
    id<CPHeuristic>* _tab;
    ORUInt       _sz;
@@ -38,7 +36,7 @@
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
-   id<ORTrail>             _trail;
+   id<ORTrail>           _trail;
    NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
@@ -103,7 +101,7 @@
 -(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
--(void)     applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
+-(void)     applyController: (id<ORSearchController>) cOORSemontroller in: (ORClosure) cl;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 
@@ -154,6 +152,7 @@
 @interface CPParConcretizerI : NSObject<ORSolverConcretizer>
 -(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
+-(id<ORFloatVar>) floatVar: (ORFloatVarI*) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
 -(id<ORIdArray>) idArray: (id<ORIdArray>) a;
 -(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;

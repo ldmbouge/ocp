@@ -165,8 +165,11 @@
          //NSLog(@"********** RESTORING: %@",node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
          [node._cp release];
+         //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
          if (status != ORFailure)
-            [node._cont call];      
+            [node._cont call];
+         else
+            [node._cont letgo]; // we must deallocate this continuation since it will never be used again.
       }
    } while (true);
 }
@@ -187,7 +190,7 @@
    if ([_next size] >=1) {
       struct BDSNode node = [_next pop];
       ORHeist* rv = [[ORHeist alloc] initORHeist:node._cont from:node._cp];
-      [node._cont letgo];  // [ldm] no longer in the controller
+      //[node._cont letgo];  // [ldm] no longer in the controller
       [node._cp release];  // [ldm] no longer in the controller
       return rv;
    } else return nil;

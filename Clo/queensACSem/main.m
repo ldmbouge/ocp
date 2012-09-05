@@ -19,13 +19,8 @@
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 
-NSString* tab(int d)
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   for(int i=0;i<d;i++)
-      [buf appendString:@"   "];
-   return buf;
-}
+NSString* tab(int d);
+
 #define TESTTA 1
 int main (int argc, const char * argv[])
 {
@@ -43,8 +38,8 @@ int main (int argc, const char * argv[])
 
       NSLog(@"Model: %@",model);
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
          __block ORInt depth = 0;
@@ -104,3 +99,11 @@ int main (int argc, const char * argv[])
    return 0;
 }
 
+
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}

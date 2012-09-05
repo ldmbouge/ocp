@@ -83,7 +83,9 @@
 {
    [ORConcurrency pumpEvents];
    _nbf++;
+   //[_engine clearStatus];
    [_controller._val fail];
+   assert(FALSE);
 }
 
 -(void) try: (ORClosure) left or: (ORClosure) right
@@ -173,12 +175,15 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller._val startTryallOnFailure];
          // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
          [_trail trailRelease:ite];
-         onFailure(nv.value);
+         if (onFailure)
+            onFailure(nv.value);
          // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"
          // It all depends on the semantics we assign to this pair. Do we wish to guarantee that both are called? or that
          // the exit is called only when the onFailure succeeded?
          [_controller._val exitTryallOnFailure];
          nv = nextTAValue(ite, filter);
+         if (!nv.found)
+            [_controller._val fail];
       }
    }
    // A release here *should not* be necessary. Even if the filtered range is empty, the initial delayed release
@@ -349,6 +354,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [_controller._val addChoice: exit];
       [self setController:newCtrl];           // install the new controller
       id<ORObjective> obj = solver.objective;
+      assert(obj);
       OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: ^ORStatus(void) { return [obj check]; }];
       [self push: controller];
       [controller release];

@@ -11,6 +11,7 @@
 
 #import "ORDataI.h"
 #import "ORSet.h"
+#import <sys/time.h>
 
 @implementation NSObject (Concretization)
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
@@ -212,6 +213,17 @@ static ORInt _deterministic;
    struct timeval t;
    t = r.ru_utime;
    return t.tv_usec;
+}
++(ORLong) wctime
+{
+   struct timeval now;
+   struct timezone tz;
+   int st = gettimeofday(&now,&tz);
+   if (st==0) {
+      now.tv_sec -= (0xfff << 20);
+      return 1000 * now.tv_sec + now.tv_usec/1000;
+   }
+   else return 0;
 }
 @end;
 

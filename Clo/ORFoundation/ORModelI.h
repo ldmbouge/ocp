@@ -37,9 +37,6 @@
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORExprVisitor>)v;
--(ORStatus) updateMin: (ORInt) newMin;
--(ORStatus) updateMax: (ORInt) newMax;
--(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
 @end
 
 
@@ -49,6 +46,20 @@
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 @end
+
+@interface ORFloatVarI : ORExprI<ORFloatVar>
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+-(ORFloat) value;
+-(ORFloat) min;
+-(ORFloat) max;
+-(id<ORIntVar>) dereference;
+-(id<ORIntVar>) impl;
+-(void) setImpl: (id<ORIntVar>) _impl;
+-(id<ORSolver>) solver;
+-(NSSet*) constraints;
+-(void) visit: (id<ORExprVisitor>)v;
+@end
+
 
 @interface ORConstraintI : NSObject<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
@@ -89,22 +100,24 @@
 -(id<ORTable>) table;
 @end
 
-@interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction>
+@interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {
+   id<ORIntVar>             _var;
+   id<ORObjectiveFunction>  _impl;
+}
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(BOOL) concretized;
--(BOOL) isMinimize;
--(void) setImpl:(id<ORObjective>)impl;
+-(void) setImpl:(id<ORObjectiveFunction>)impl;
+-(id<ORObjectiveFunction>)impl;
+-(id<ORObjectiveFunction>) dereference;
 @end
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMinimizeI*) initORMinimizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
--(BOOL)isMinimize;
 @end
 
 @interface ORMaximizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMaximizeI*) initORMaximizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
--(BOOL)isMinimize;
 @end
 
 @interface ORModelI : NSObject<ORModel>
@@ -112,6 +125,9 @@
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
--(void)                   applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs onConstraints:(void(^)(id<ORObject>))doCons;
+-(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
+                           onObjects:(void(^)(id<ORObject>))doObjs
+                       onConstraints:(void(^)(id<ORObject>))doCons
+                         onObjective:(void(^)(id<ORObject>))doObjective;
 -(id<ORObjectiveFunction>)objective;
 @end

@@ -453,6 +453,47 @@ struct CPVarPair {
    }
    return min(MAXINT,bindUp(ub));
 }
+-(ORStatus)postNEQZ:(id<CPEngine>)fdm consistency:(CPConsistency)cons
+{
+   switch(_nb) {
+      case 0: assert(NO);break;
+      case 1: {
+         if (_terms[0]._coef == 1) {
+            return [fdm post:[CPFactory notEqualc:_terms[0]._var to:- _indep]];
+         } else if (_terms[0]._coef == -1) {
+            return [fdm post:[CPFactory notEqualc:_terms[0]._var to:_indep]];
+         } else {
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (cr != 0)
+               return ORSuccess;
+            else
+               return [fdm post:[CPFactory notEqualc:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            return [fdm post:[CPFactory notEqual:_terms[0]._var to:_terms[1]._var plus:-_indep]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
+            return [fdm post:[CPFactory notEqual:_terms[1]._var to:_terms[0]._var plus:-_indep]];
+         } else {
+            id<ORIntVar> xp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef];
+            id<ORIntVar> yp = [CPFactory intVar:_terms[1]._var scale:- _terms[1]._coef];
+            return [fdm post:[CPFactory notEqual:xp to:yp plus:- _indep]];
+         }         
+      }break;
+      default: {
+         ORInt lb = [self min];
+         ORInt ub = [self max];
+         id<ORIntVar> alpha = [CPFactory intVar:[_terms[0]._var tracker] domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
+         [self addTerm:alpha by:-1];
+         ORStatus ok = [fdm post:[CPFactory sum:[self scaledViews] eq:-_indep]];
+         if (ok) ok  = [fdm post:[CPFactory notEqualc:alpha to:0]];
+         return ok;
+      }break;
+   }
+}
 -(ORStatus)postEQZ:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
    // [ldm] This should *never* raise an exception, but return a ORFailure.
@@ -805,7 +846,9 @@ struct CPVarPair {
                status = [terms postEQZ:_engine consistency:_c];
             }
          }break;
-         case ORRNEq: assert(NO);
+         case ORRNEq: {
+            status = [terms postNEQZ:_engine consistency:_c];
+         }break;
          case ORRLEq: {
             status = [terms postLEQZ: _engine consistency:_c];
          }break;

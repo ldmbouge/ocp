@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 
+
 @interface ORLimitSolutions : ORDefaultController <NSCopying,ORSearchController> {
 @private
    ORInt _maxSolutions;

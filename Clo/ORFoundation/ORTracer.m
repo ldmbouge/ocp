@@ -15,6 +15,7 @@
 
 @interface ORProblemI : NSObject<NSCoding,ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
    ORCommandList* _cstrs;
+   ORInt          _id;
 }
 -(ORProblemI*) init;
 -(void) dealloc;
@@ -232,18 +233,16 @@
 @implementation ORProblemI
 -(ORProblemI*)init
 {
+   static ORInt _counter = 0;
    self = [super init];
    _cstrs = [[ORCommandList alloc] initCPCommandList];
+   _id = _counter++;
    return self;
 }
 -(void)dealloc
 {
    [_cstrs release];
    [super dealloc];
-}
--(NSString*)description
-{
-   return [_cstrs description];
 }
 -(void)addCommand:(id<ORCommand>)c
 {
@@ -259,15 +258,22 @@
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_id];
    [aCoder encodeObject:_cstrs];
 }
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_id];
    _cstrs = [[aDecoder decodeObject] retain];
    return self;
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORProblemI: %p @  %d  = %@>",self,_id,_cstrs];
+   return buf;
+}
 -(NSData*)packFromSolver:(id<OREngine>)fdm
 {
    NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
@@ -292,7 +298,8 @@
       [archiver replaceObject:obj withObject:proxies[idx]];  // setup proxying between real and fake
    }];
    [archiver replaceObject:[fdm trail] withObject:proxies[nbProxies-1]];
-   [archiver encodeRootObject:self];                         // encode the path.
+   [archiver encodeRootObject:self]; // encode the path.
+//   [self release]; // somehow the encodeRootObject retains us twice?
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
 #else
    [archiver finishEncoding];
@@ -607,6 +614,7 @@
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
    */
+   [fdm clearStatus];
    ORCmdStack* toRestore = [acp commands];
    int i=0;
    bool pfxEq = true;
@@ -646,6 +654,7 @@
             return ORFailure;
          } 
       }
+      return [fdm enforceObjective];
    }
    return ORSuspend;
 }
@@ -655,9 +664,11 @@
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
    @try {
-      [p apply:^bool(id<ORCommand> c) {
+      bool ok = [p apply:^bool(id<ORCommand> c) {
          return [c doIt];
       }];
+      assert(ok);
+      [[p theList] setNodeId:_lastNode-1];
       [_cmds pushCommandList:[p theList]];
       assert([_cmds size] == [_trStack size]);
       return [fdm propagate];

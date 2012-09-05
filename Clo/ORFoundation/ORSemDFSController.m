@@ -80,20 +80,27 @@
 }
 -(void) fail
 {
-   ORInt ofs = _sz-1;
-   if (ofs >= 0) {      
-      id<ORCheckpoint> cp = _cpTab[ofs];
-      [_tracer restoreCheckpoint:cp inSolver:_engine];
-      [cp release];
-      NSCont* k = _tab[ofs];
-      _tab[ofs] = 0;
-      --_sz;
-      if (k!=NULL) 
-         [k call];      
-      else {
-      	@throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
-      }
-   }
+   do {
+      ORInt ofs = _sz-1;
+      if (ofs >= 0) {
+         id<ORCheckpoint> cp = _cpTab[ofs];
+         ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine];
+         //assert(status != ORFailure);
+         [cp release];
+         NSCont* k = _tab[ofs];
+         _tab[ofs] = 0;
+         --_sz;
+         if (k &&  status != ORFailure) {
+            //NSLog(@"backtracking from ORSemDFSController %p",[NSThread currentThread]);
+            [k call];
+         } else {
+            if (k==nil)
+               @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
+            else [k letgo];
+         }
+      } else
+         return;
+   } while(true);
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -123,6 +130,31 @@
 {
    return _sz >= 1;
 }
+@end
 
+@implementation ORSemDFSControllerCSP
+-(void) fail
+{
+   do {
+      ORInt ofs = _sz-1;
+      if (ofs >= 0) {
+         id<ORCheckpoint> cp = _cpTab[ofs];
+         [_tracer restoreCheckpoint:cp inSolver:_engine];
+         [cp release];
+         NSCont* k = _tab[ofs];
+         _tab[ofs] = 0;
+         --_sz;
+         //NSLog(@"backtracking from ORSemDFSControllerCSP %p",[NSThread currentThread]);
+         if (k)
+            [k call];
+         else {
+            if (k==nil)
+               @throw [[ORSearchError alloc] initORSearchError: "Empty Continuation in backtracking"];
+            else [k letgo];
+         }
+      } else
+         return;
+   } while(true);
+}
 @end
 

@@ -257,6 +257,11 @@
 {
    return [CPFactory intVar: _solver domain: [v domain]];
 }
+-(id<ORFloatVar>) floatVar: (ORFloatVarI*) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for floatVar"];
+   return nil;
+}
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v
 {
    id<ORIntVar> mBase = [v base];
@@ -292,6 +297,7 @@
    [((ORExprI*) [cstr expr]) visit: ec];
    id<ORConstraint> c = [CPFactory relation2Constraint:_solver expr: [ec result]];
    [_solver add: c];
+   [ec release];
    return c;
 }
 -(id<ORConstraint>) tableConstraint: (ORTableConstraintI*) cstr

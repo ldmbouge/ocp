@@ -191,7 +191,7 @@
                break;
             case TAGId: {
                if (*((id*)cs->ptr))
-                  CFRelease(*((id*)cs->ptr));// release];
+                  [(*((id*)cs->ptr)) release];
                *((id*)cs->ptr) = cs->idVal;
             }break;
             case TAGFloat:
@@ -205,7 +205,7 @@
                [cs->cloVal release];
                break;
             case TAGRelease:
-               CFRelease(cs->idVal);
+               [cs->idVal release];
                break;
             case TAGFree:
                free(cs->ptrVal);

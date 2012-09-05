@@ -22,9 +22,8 @@
 -(ORUInt) getId;
 -(BOOL) bound;
 -(id<ORSolver>) solver;
--(NSSet*)constraints;
+-(NSSet*) constraints;
 @end
-
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
@@ -32,13 +31,20 @@
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
--(ORBounds)bounds;
+-(ORBounds) bounds;
 -(BOOL) member: (ORInt) v;
 -(BOOL) isBool;
 -(id<ORIntVar>) dereference;
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
+@end
+
+@protocol ORFloatVar <ORVar>
+-(ORFloat) value;
+-(ORFloat) min;
+-(ORFloat) max;
+-(id<ORFloatVar>) dereference;
 @end
 
 @protocol ORVarArray <ORIdArray>
@@ -96,9 +102,8 @@
 -(id<ORIntArray>) up;
 @end
 
-@protocol ORObjectiveFunction
+@protocol ORObjectiveFunction <ORObject>
 -(id<ORIntVar>) var;
--(BOOL)isMinimize;
 @end
 
 @protocol ORModel <NSObject,ORTracker>
@@ -107,6 +112,8 @@
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
 -(void) instantiate: (id<ORSolver>) solver;
--(void)applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs onConstraints:(void(^)(id<ORObject>))doCons;
+-(void) applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs
+     onConstraints:(void(^)(id<ORObject>))doCons
+       onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>)objective;
 @end

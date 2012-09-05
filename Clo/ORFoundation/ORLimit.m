@@ -194,6 +194,10 @@
 }
 @end
 
+@interface NSThread (ORData)
++(ORInt)threadID;
+@end
+
 @implementation OROptimizationController
 
 -(id) initOROptimizationController: (Void2ORStatus) canImprove
@@ -204,7 +208,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"OROptimizationController dealloc called...\n");
+   //NSLog(@"OROptimizationController dealloc called...\n");
    [_canImprove release];
    [super dealloc];
 }
@@ -220,23 +224,30 @@
 }
 -(void) startTryLeft
 {
-   if (_canImprove() == ORFailure)
+   if (_canImprove() == ORFailure) {
       [_controller fail];
-   else
+   }else
       [_controller startTryLeft];
 }
 -(void) startTryRight
 {
-   if (_canImprove() == ORFailure)
+   if (_canImprove() == ORFailure) {
       [_controller fail];
-   else
+   } else
       [_controller startTryRight];
+}
+-(void) startTryallBody
+{
+   if (_canImprove() == ORFailure) {
+      [_controller fail];
+   } else
+      [_controller startTryallBody];
 }
 -(void) startTryallOnFailure
 {
-   if (_canImprove() == ORFailure)
+   if (_canImprove() == ORFailure) {
       [_controller fail];
-   else
+   }   else
       [_controller startTryallOnFailure];
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -257,7 +268,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"OROptimizationController dealloc called...\n");
+   NSLog(@"ORLimitCondition dealloc called...\n");
    [_condition release];
    [super dealloc];
 }

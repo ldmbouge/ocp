@@ -41,7 +41,6 @@
    [_vars release];
    [_mStore release];
    [_oStore release];
-   [_objective release];
    [super dealloc];
 }
 
@@ -121,7 +120,9 @@
    [_objective concretize: concretizer];
    [concretizer release];
 }
--(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs  onConstraints:(void(^)(id<ORObject>)) doCons
+-(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs
+    onConstraints:(void(^)(id<ORObject>)) doCons
+      onObjective:(void(^)(id<ORObject>)) doObjective
 {
    for(id<ORObject> c in _vars)
       doVar(c);
@@ -129,6 +130,7 @@
       doObjs(c);
    for(id<ORObject> c in _mStore)
       doCons(c);
+   doObjective(_objective);
 }
 @end
 
@@ -245,28 +247,6 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
--(ORStatus) updateMin: (ORInt) newMin
-{
-   if (_impl)
-      return [_impl updateMin:newMin];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
--(ORStatus) updateMax: (ORInt) newMax;
-{
-   if (_impl)
-      return [_impl updateMax:newMax];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
--(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
-{
-   if (_impl)
-      return [_impl updateMin:newMin andMax:newMax];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
-
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -357,6 +337,119 @@
 -(id<ORIntVar>)base
 {
    return _x;
+}
+@end
+
+
+@implementation ORFloatVarI
+{
+@protected
+   id<ORFloatVar>   _impl;
+   id<ORTracker>    _tracker;
+   ORFloat          _low;
+   ORFloat          _up;
+   ORUInt           _name;
+}
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
+{
+   self = [super init];
+   _impl = nil;
+   _tracker = track;
+   _low = low;
+   _up = up;
+   [track trackVariable: self];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(NSString*) description
+{
+   if (_impl == nil)
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f)",_name,_low,_up];
+   else
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
+}
+
+-(id<ORSolver>) solver
+{
+   if (_impl)
+      return [_impl solver];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+-(void) setId: (ORUInt) name
+{
+   _name = name;
+}
+-(ORInt) getId
+{
+   return _name;
+}
+-(ORFloat) value
+{
+   if (_impl)
+      return [_impl value];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(BOOL) bound
+{
+   if (_impl)
+      return [_impl bound];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+
+-(ORFloat) min
+{
+   if (_impl)
+      return [_impl min];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+-(ORFloat) max
+{
+   if (_impl)
+      return [_impl max];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+   
+}
+-(NSSet*) constraints
+{
+   if (_impl)
+      return [_impl constraints];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(id<ORFloatVar>) impl
+{
+   return _impl;
+}
+-(id<ORFloatVar>) dereference
+{
+   return [_impl dereference];
+}
+-(void) setImpl: (id<ORFloatVar>) impl
+{
+   _impl = impl;
+}
+-(void) concretize: (id<ORSolverConcretizer>) concretizer
+{
+   if (_impl == nil)
+      _impl = [concretizer floatVar: self];
+}
+-(void) visit: (id<ORExprVisitor>) v
+{
+   [v visitFloatVarI: self];
 }
 @end
 
@@ -511,6 +604,12 @@
    if (_impl == nil)
       _impl = [concretizer algebraicConstraint: self];
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORAlgebraicConstraintI : %p IS %@>",self,_expr];
+   return buf;
+}
 @end
 
 @implementation ORTableConstraintI
@@ -541,11 +640,6 @@
 @end
 
 @implementation ORObjectiveFunctionI
-{
-   @protected
-   id<ORIntVar>     _var;
-   id<ORObjective> _impl;
-}
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x
 {
    self = [super init];
@@ -553,12 +647,6 @@
    _impl = nil;
    return self;
 }
--(BOOL) isMinimize
-{
-   assert(FALSE);
-   return YES;
-}
-
 -(id<ORIntVar>) var
 {
    return _var;
@@ -567,9 +655,17 @@
 {
    return _impl != nil;
 }
--(void) setImpl:(id<ORObjective>)impl
+-(void) setImpl:(id<ORObjectiveFunction>)impl
 {
    _impl = impl;
+}
+-(id<ORObjectiveFunction>)impl
+{
+   return _impl;
+}
+-(id<ORObjectiveFunction>) dereference
+{
+   return [_impl dereference];
 }
 @end
 
@@ -580,6 +676,11 @@
    self = [super initORObjectiveFunctionI: model obj:x];
    return self;
 }
+-(void)dealloc
+{
+   NSLog(@"ORMinimizeI dealloc'd (%p)...",self);
+   [super dealloc];
+}
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
    if (_impl==nil) {
@@ -587,9 +688,11 @@
       _impl = [concretizer minimize: self];
    }
 }
--(BOOL)isMinimize
+-(NSString*)description
 {
-   return YES;
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_var];
+   return buf;
 }
 @end
 
@@ -599,6 +702,11 @@
    self = [super initORObjectiveFunctionI: model obj:x];
    return self;
 }
+-(void)dealloc
+{
+   NSLog(@"ORMaximizeI dealloc'd (%p)...",self);
+   [super dealloc];
+}
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
    if (_impl==nil) {
@@ -606,9 +714,11 @@
       _impl = [concretizer maximize: self];
    }
 }
--(BOOL)isMinimize
+-(NSString*)description
 {
-   return NO;
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_var];
+   return buf;
 }
 @end
 

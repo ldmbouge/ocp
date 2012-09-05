@@ -43,6 +43,7 @@
 @interface ORRuntimeMonitor : NSObject
 +(ORLong) cputime;
 +(ORLong) microseconds;
++(ORLong) wctime;
 @end;
 
 @interface ORStreamManager : NSObject

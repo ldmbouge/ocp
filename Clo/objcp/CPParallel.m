@@ -13,7 +13,7 @@
 #import "CPSolverI.h"
 #import "CPFactory.h"
 #import "ORSemDFSController.h"
-
+#import "CPSolverI.h"
 
 @implementation CPParallelAdapter
 -(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
@@ -42,12 +42,13 @@
 -(void) publishWork
 {
    _publishing = YES;
-   NSLog(@"Start GENERATION.");
-   //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
+   //NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
-   [_solver installCheckpoint:[stolen theCP]];
+   ORStatus ok = [_solver installCheckpoint:[stolen theCP]];
+   assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
+   
    [[_solver explorer] applyController: base
                                     in: ^ {
                                        [[_solver explorer] nestedSolveAll:^() { [[stolen cont] call];}
@@ -55,12 +56,12 @@
                                                                    onExit:nil
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
-
+   
    [stolen release];
-   [_solver installCheckpoint:theCP];
+   ok = [_solver installCheckpoint:theCP];
+   assert(ok != ORFailure);
    [theCP release];
-   //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
-   NSLog(@"End GENERATION.");
+   //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    _publishing = NO;
 }
 -(void)trust
@@ -89,6 +90,7 @@
 {
    [_controller fail];
    [self finitelyFailed];  // [ldm] This is necessary since we *are* a nested controller after all (finitelyFailed is inherited)
+   assert(FALSE);
 }
 -(BOOL) isFinitelyFailed
 {
@@ -156,18 +158,22 @@
 }
 -(void)fail
 {
-   long ofs = _sz-1;
-   if (ofs >= 0) {      
-      id<ORCheckpoint> cp = _cpTab[ofs];
-      [_solver installCheckpoint:cp];
-      [cp release];
-      NSCont* k = _tab[ofs];
-      _tab[ofs] = 0;
-      --_sz;
-      if (k!=NULL) 
-         [k call];      
-      else return;
-   } else return;
+   do {
+      long ofs = _sz-1;
+      if (ofs >= 0) {
+         id<ORCheckpoint> cp = _cpTab[ofs];
+         ORStatus ok = [_solver installCheckpoint:cp];
+         assert(ok != ORFailure);
+         [cp release];
+         NSCont* k = _tab[ofs];
+         _tab[ofs] = 0;
+         --_sz;
+         if (k && ok)
+            [k call];
+      } else break;
+   } while(true);
+   [self finitelyFailed];
+   assert(FALSE);
 }
 -(void) trust
 {
@@ -175,7 +181,8 @@
 }
 -(void) finitelyFailed
 {
-   [_controller fail];   
+   [_controller fail];
+   assert(FALSE);
 }
 -(BOOL) isFinitelyFailed
 {
@@ -185,28 +192,21 @@
 -(void)packAndFail
 {
    id<ORProblem> p = [[_solver tracer] captureProblem];
+   //NSLog(@"PACKING: %@",p);
    NSData* theData = [p packFromSolver:[_solver engine]];
    [p release];
    assert(theData != nil);
-   NSLog(@"PACKING: %p",theData);
    [_pool enQueue:theData];
    [self fail];
-   [self finitelyFailed];   
+   [self finitelyFailed];
+   assert(FALSE);
 }
 
--(void)exitTryLeft
+-(void)exitTry
 {
    [self packAndFail];
 }
--(void)exitTryRight
-{
-   [self packAndFail];
-}
--(void)exitTryallBody
-{
-   [self packAndFail];
-}
--(void)exitTryallOnFailure
+-(void)exitTryall
 {
    [self packAndFail];
 }
