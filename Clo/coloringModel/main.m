@@ -20,7 +20,7 @@ NSString* tab(int d);
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      ORLong startTime = [ORRuntimeMonitor cputime];
+      ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
       //FILE* dta = fopen("smallColoring.col","r");
       //FILE* dta = fopen("test-n30-e50.col","r");
@@ -64,7 +64,7 @@ int main(int argc, const char * argv[])
 
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
       
@@ -75,26 +75,25 @@ int main(int argc, const char * argv[])
             if ([c[i] bound])
                maxc = maxc > [c[i] value] ? maxc : [c[i] value];
          }
-         ORStatus startStatus = [[[cp dereference] engine] status];
-         assert(startStatus != ORFailure);
          NSLog(@"Initial MAXC  = %d",maxc);
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
-            [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member:v];} in:^(ORInt v) {
+            id<ORIntVar> ci = [c[i] dereference]; // [ldm] this line alone saves 3 seconds over 20s of runtime in //.
+            [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [ci member:v];} in:^(ORInt v) {
                //NSLog(@"%@?c[%d]==%d  (var:%@)",tab(depth),i,v,c[i]);
-               [cp label:c[i] with:v];
+               [cp label:ci with:v];
                //NSLog(@"%@ c[%d]==%d  (var:%@)",tab(depth),i,v,c[i]);
                maxc = maxc > v ? maxc : v;
-            } /*onFailure:^(ORInt v) {
-               [cp diff:c[i] with:v];
-            }*/];
+            } onFailure:^(ORInt v) {
+               [cp diff:ci with:v];
+            }];
             depth++;
          }];
          [cp label:m with:[m min]];
          NSLog(@"coloring with: %d colors",[m value]);
       }];
 
-      ORLong endTime = [ORRuntimeMonitor cputime];
-      NSLog(@"Execution Time: %lld \n",endTime - startTime);
+      ORLong endTime = [ORRuntimeMonitor wctime];
+      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];

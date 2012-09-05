@@ -123,8 +123,7 @@ static void sumBounds(struct CPTerm* terms,ORLong nb,struct Bounds* bnd)
     struct Bounds b;
     b._bndLow = b._bndUp = - _c;
     b._nb = _nb;
-    
-    bool changed;   
+    bool changed;
     bool feasible = true;
     do {        
         sumBounds(terms, b._nb, &b);

@@ -538,7 +538,7 @@
    self = [super init];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-                                                        rootControllerClass:[ORSemDFSController class]
+                                                        rootControllerClass:[ORSemDFSControllerCSP class]
                                                       nestedControllerClass:ctrlClass];
    _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
@@ -549,7 +549,7 @@
    self = [super initFor:fdm];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-                                                        rootControllerClass:[ORSemDFSController class]
+                                                        rootControllerClass:[ORSemDFSControllerCSP class]
                                                       nestedControllerClass:ctrlClass];
    _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
@@ -595,7 +595,7 @@
    self = [super initWithCoder:aDecoder];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-                                                        rootControllerClass:[ORSemDFSController class]
+                                                        rootControllerClass:[ORSemDFSControllerCSP class]
                                                       nestedControllerClass:[ORSemDFSController class]];
    _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
    [cFact release];
@@ -661,7 +661,6 @@ static void init_pthreads_key()
 }
 +(ORInt)threadID
 {
-   pthread_once(&block,init_pthreads_key);
    ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
    return tid;
 }
@@ -909,11 +908,11 @@ static void init_pthreads_key()
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
-                            [[me engine] saveSolution];
+                            //[[me engine] saveSolution];
                             ORInt myBound = [[me objective] primalBound];
                             [_objective tightenPrimalBound:myBound];
                          }
-                             onExit: ^ { [[me engine] restoreSolution];}
+                             onExit: nil //^ { [[me engine] restoreSolution];}
                             control: parc];
    } else {
       [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
@@ -946,6 +945,7 @@ static void init_pthreads_key()
       }      
    }];
    // Final tear down. The worker is done with the model.
+   NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
    [_workers[myID] release];
    _workers[myID] = nil;
    [mySearch release];

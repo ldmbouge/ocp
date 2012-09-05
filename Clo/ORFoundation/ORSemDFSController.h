@@ -16,7 +16,7 @@
 #import "ORTrailI.h"
 
 @interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> {
-@private
+@protected
    NSCont**            _tab;
    ORInt                _sz;
    ORInt                _mx;
@@ -33,4 +33,8 @@
 -(void) trust;
 -(void) fail;
 -(ORHeist*)steal;
+@end
+
+@interface ORSemDFSControllerCSP : ORSemDFSController
+-(void) fail;
 @end

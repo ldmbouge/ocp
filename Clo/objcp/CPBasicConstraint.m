@@ -551,10 +551,10 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 {
    if (!_active._val) return;
    assignTRInt(&_active, NO, _trail);
-   if ([_x bound])
-      [_y remove:[_x min] - _c];
-   else 
-      [_x remove:[_y min] + _c];
+   if (bound(_x))
+      removeDom(_y,minDom(_x)-_c);
+   else
+      removeDom(_x,minDom(_y)-_c);
 }
 -(NSString*)description
 {

@@ -42,14 +42,12 @@
 -(void) publishWork
 {
    _publishing = YES;
-   //NSLog(@"BEFORE PUBLISH: %@",[_solver tracer]);
+   //NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    id<ORCheckpoint> theCP = [_solver captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    ORStatus ok = [_solver installCheckpoint:[stolen theCP]];
    assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
-   
-   startGenerating();
    
    [[_solver explorer] applyController: base
                                     in: ^ {
@@ -59,13 +57,11 @@
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
    
-   stopGenerating();
-
    [stolen release];
    ok = [_solver installCheckpoint:theCP];
    assert(ok != ORFailure);
    [theCP release];
-   //NSLog(@"AFTER  PUBLISH: %@",[_solver tracer]);
+   //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    _publishing = NO;
 }
 -(void)trust
@@ -89,7 +85,6 @@
       [self publishWork];
    }
    [_controller startTryall];
-   assert([[_solver engine] status] != ORFailure);
 }
 -(void)fail
 {
