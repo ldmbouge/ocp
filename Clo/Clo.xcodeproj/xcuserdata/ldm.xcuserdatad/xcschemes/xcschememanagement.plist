@@ -29,6 +29,11 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
+		<key>LPWrapper.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>15</integer>
+		</dict>
 		<key>ORFoundation.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -122,7 +127,7 @@
 		<key>gurobiwrapper.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>22</integer>
+			<integer>16</integer>
 		</dict>
 		<key>iCP.xcscheme</key>
 		<dict>
@@ -553,6 +558,11 @@
 			<true/>
 		</dict>
 		<key>B1CC831F15D3BEC4008DE335</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B1E2361415F812AB00AB8DB6</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -12,6 +12,7 @@
 
 #import <objc/objc-auto.h>
 #import <Foundation/NSObject.h>
+#import <ORUtilities/ORUtilities.h>
 
 typedef enum { LPinfeasible, LPoptimal, LPsuboptimal, LPunbounded, LPerror} LPOutcome;
 typedef enum { LPgeq, LPleq, LPeq } LPConstraintType;
