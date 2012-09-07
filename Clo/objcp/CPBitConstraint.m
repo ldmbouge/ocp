@@ -822,13 +822,22 @@
         
             newXUp[i] = prevXUp[i] & ~ ((~prevZUp[i] & ~prevCoutUp[i])|(prevCinLow[i] & ~prevCoutUp[i])|(prevYLow[i] & ~prevCoutUp[i])|(prevYLow[i] & prevCinLow[i] & ~prevCoutUp[i]));
             newXLow[i] = prevXLow[i] | ((prevZLow[i] & prevCoutLow[i]) | (~prevYUp[i] & prevCoutLow[i]) | (~prevCinUp[i] & prevCoutLow[i]) | (~prevYUp[i] & ~prevCinUp[i] & prevZLow[i]));
+
+            //testing for inconsistency between variables
+            inconsistencyFound |= (~prevYUp[i] & ((~prevCinUp[i] & prevCoutLow[i]) | (prevZLow[i] & prevCoutLow[i]))) | (~prevCinUp[i] & prevZLow[i] & prevCoutLow[i]);
             
+            //testing for internal consistency
             upXORlow = newXUp[i] ^ newXLow[i];
             inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-        
+
+            
             newYUp[i] = prevYUp[i] & ~ ((~prevZUp[i] & ~prevCoutUp[i])|(prevCinLow[i] & ~prevCoutUp[i])|(prevXLow[i] & ~prevCoutUp[i])|(prevXLow[i] & prevCinLow[i] & ~prevCoutUp[i]));
             newYLow[i] = prevYLow[i] | ((prevZLow[i] & prevCoutLow[i]) | (~prevXUp[i] & prevCoutLow[i]) | (~prevCinUp[i] & prevCoutLow[i]) | (~prevXUp[i] & ~prevCinUp[i] & prevZLow[i]));
 
+            //testing for inconsistency between variables
+            inconsistencyFound |= (~prevXUp[i] & ((~prevCinUp[i] & prevCoutLow[i]) | (prevZLow[i] & prevCoutLow[i]))) | (~prevCinUp[i] & prevZLow[i] & prevCoutLow[i]);
+            
+            //testing for internal consistency
             upXORlow = newYUp[i] ^ newYLow[i];
             inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
 
@@ -836,6 +845,10 @@
             newZUp[i] = prevZUp[i] & ~ ((~prevCinUp[i] & prevCoutLow[i])|(~prevXUp[i] & prevCoutLow[i])|(~prevYUp[i] & prevCoutLow[i])|(~prevXUp[i] & ~prevYUp[i] & ~prevCinUp[i]));
             newZLow[i] = prevZUp[i] | ((prevCinLow[i] & ~prevCoutUp[i])|(prevYLow[i] & ~prevCoutUp[i])|(prevXLow[i]&~prevCoutUp[i])|(prevXLow[i]&prevYLow[i]&prevCinLow[i]));
             
+            //testing for consistency between variables
+            inconsistencyFound |= (~prevXUp[i] & ~prevYUp[i] &prevCoutLow[i]) | (prevXLow[i] & prevYLow[i] & ~prevCoutUp[i]) | (~prevXUp[i] & ~prevCinUp[i] & prevCoutLow[i]) | (prevYLow[i] & prevCinLow[i] & ~prevCoutUp[i]) | (prevXLow[i] & prevCinLow[i] & ~prevCoutUp[i]) | (~prevYUp[i] & ~prevCinUp[i] & prevCoutLow[i]);
+            
+            //testing for internal consistency
             upXORlow = newZUp[i] ^ newZLow[i];
             inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
 
@@ -843,19 +856,35 @@
             newCinUp[i] = prevCinUp[i] & ~((~prevCoutUp[i] & (~prevZUp[i] | prevXLow[i] | prevYLow[i]))|(prevXLow[i] & prevYLow[i] & ~prevZUp[i]));
             newCinLow[i] = prevCinLow[i] | ((prevCoutLow[i] & (prevZLow[i]|~prevXUp[i] | ~prevYUp[i])) | (~prevXUp[i] & ~prevYUp[i] & prevCoutLow[i]));
             
+            //testing for inconsistency between variables
+            inconsistencyFound |= (~prevXUp[i] & ((~prevYUp[i] & prevCoutLow[i]) | (prevZLow[i] & prevCoutLow[i]))) |
+                                  (prevXLow[i] & ((prevYLow[i] & ~prevCoutUp[i]) | (~prevZUp[i] & ~prevCoutUp[i]))) |
+                                  (prevYLow[i] & ~prevZUp[i] & ~prevCoutUp[i]) |
+                                  (~prevYUp[i] & prevZLow[i] & prevCoutLow[i]);
+             
+            //testing for internal consistency
             upXORlow = newCinUp[i] ^ newCinLow[i];
             inconsistencyFound |= (upXORlow&(~newCinUp[i]))&(upXORlow & newCinLow[i]);
 
             newCoutUp[i] = prevCoutUp[i] & ~((prevXUp[i] & ~prevYUp[i])|(~prevCinUp[i] & prevZLow[i]));
             newCoutLow[i] = prevCoutLow[i] | ((prevXLow[i] & prevYLow[i])|(prevCinLow[i] & ~prevZUp[i]));
             
+            //testing for consistency between variables
+            inconsistencyFound |=   ((~prevCinUp[i] & ~prevZUp[i]) & ((~prevXUp[i] & prevYLow[i]) | (prevXLow[i] & ~prevYUp[i]))) |
+                                    ((prevCinLow[i] & prevZLow[i]) & ((~prevXUp[i] & prevYLow[i]) | (prevXLow[i] & ~prevYUp[i]))) |
+                                    ((~prevXUp[i] & ~prevYUp[i]) & ((~prevCinUp[i] & prevZLow[i]) | (prevCinLow[i] & ~prevZUp[i]))) |
+                                    ((prevXLow[i] & prevYLow[i]) & ((~prevCinUp[i] & prevZLow[i]) | (prevCinLow[i] & ~prevZUp[i])));
+        
+            //testing for internal consistency
             upXORlow = newCoutUp[i] ^ newCoutLow[i];
             inconsistencyFound |= (upXORlow&(~newCoutUp[i]))&(upXORlow & newCoutLow[i]);
-
-            //connect cout of i to cin of i+1
         
             if (inconsistencyFound)
                 failNow();
+            
+            newCinLow[i] |= newCoutLow[i] << 1;
+            if (i<wordLength-1)
+                newCinLow[i] |= newCoutLow[i] >> 31;
             
             change |= newXUp[i] ^ prevXUp[i];
             change |= newXLow[i] ^ prevXLow[i];
