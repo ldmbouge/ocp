@@ -376,10 +376,13 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       if (cstr->_todo == CPChecked)
          return ORSkip;
       else {
-         cstr->_todo = cstr->_idempotent == NO ? CPChecked : cstr->_todo;
-         //[cstr propagate];
-         cstr->_propagate(cstr,@selector(propagate));
-         cstr->_todo = cstr->_idempotent == YES ? CPChecked : cstr->_todo;
+         if (cstr->_idempotent) {
+            cstr->_propagate(cstr,@selector(propagate));
+            cstr->_todo = CPChecked;
+         } else {
+            cstr->_todo = CPChecked;
+            cstr->_propagate(cstr,@selector(propagate));
+         }
       }
    }
    return ORSuspend;
