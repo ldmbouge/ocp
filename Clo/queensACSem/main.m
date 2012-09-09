@@ -21,12 +21,13 @@
 
 NSString* tab(int d);
 
+
 #define TESTTA 1
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
-      int n = 7;
+      int n = 11;
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n];
       id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
@@ -38,12 +39,13 @@ int main (int argc, const char * argv[])
 
       NSLog(@"Model: %@",model);
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
-      id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
+      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
          __block ORInt depth = 0;
-         [cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
+         //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
+         FORALL(i,R,![x[i] bound],[x[i] domsize], ^(ORInt i) {
 #if TESTTA==1
             [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
                     in:^(ORInt v) {
@@ -66,7 +68,9 @@ int main (int argc, const char * argv[])
                }];
             }
 #endif
-           }];
+         });
+
+//           }];
 
 /*         for(ORInt i = 0; i <= n; i++) {
             while (![x[i] bound]) {
@@ -78,7 +82,7 @@ int main (int argc, const char * argv[])
                }];
             }
          }*/
- 
+ /*
          @autoreleasepool {
             NSMutableString* buf = [NSMutableString stringWithCapacity:64];
             [buf appendFormat:@"x = (%p)[",[NSThread currentThread]];
@@ -88,6 +92,7 @@ int main (int argc, const char * argv[])
                NSLog(@"SOL[%d] = %@",[nbSol value],buf);
             }
          }         
+  */
          @synchronized(nbSol) {
             [nbSol incr];
          }

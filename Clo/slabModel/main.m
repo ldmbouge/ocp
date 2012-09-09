@@ -103,8 +103,7 @@ int main(int argc, const char * argv[])
       NSMutableArray* av = [cp allVars];
       NSLog(@"In the search ... #VARS: %ld",[av count]);
       __block ORInt depth = 0;
-      [cp forall: SetOrders suchThat: ^bool(ORInt o){ return ![slab[o] bound];} orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
-       {
+      FORALL(o, SetOrders, ![slab[o] bound], [slab[o] domsize], ^(ORInt o) {
 #define TESTTA 1
 #if TESTTA==0
           ORInt ms = max(0,[CPLabel maxBound: slab]);
@@ -134,8 +133,7 @@ int main(int argc, const char * argv[])
            ];
 #endif
           depth++;
-       }
-       ];
+      });
       printf("\n");
       printf("obj: %d \n",[obj min]);
       printf("Slab: ");
