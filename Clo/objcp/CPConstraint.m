@@ -232,8 +232,7 @@
    ORInt up = [R up];
    for(ORInt i = low; i <= up; i++) 
       load[i] = [CPFactory intVar: [x solver] domain: RANGE([x tracker],0,[binSize at:i])];
-   id<ORConstraint> o = [CPFactory packing: x itemSize: itemSize load: load];
-   [[x tracker] trackObject: o];
+   id<ORConstraint> o = [CPFactory packing: x itemSize: itemSize load: load];  // [ldm] this already tracks o.
    return o;
 }
 

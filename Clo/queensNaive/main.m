@@ -25,7 +25,7 @@ NSString* indent(int t)
 }
 int main (int argc, const char * argv[])
 {
-   int n = 5;
+   int n = 8;
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<ORInteger> nbSolutions = [CPFactory integer: cp value:0];
@@ -56,6 +56,7 @@ int main (int argc, const char * argv[])
              } or:^{
                 NSLog(@"%@x[%d]!=%d -- | %d |",indent(i),i,min,[[cp tracer] level]);
                 [cp diff:x[i] with:min];
+                //[cp add:[x[i] neqi: min]];
              }];
           }
        }

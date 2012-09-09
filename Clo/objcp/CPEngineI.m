@@ -446,6 +446,14 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
+   if (status == ORSuspend || status == ORSuccess)
+      return fdm->_propagIMP(fdm,@selector(propagate));
+   else if (status== ORFailure) {
+      for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
+         AC3reset(fdm->_ac3[p]);
+      return ORFailure;
+   } else return status;
+/*
    switch (status) {
       case ORFailure:
          for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
@@ -462,6 +470,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
          break;
    }
    return status;
+ */
 }
 
 -(ORStatus)enforceObjective
@@ -526,9 +535,9 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       assert(_status != ORFailure);
-      ORStatus status = [var bind: val];
-      ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
+         //ORStatus status = [var bind: val];
+      ORStatus status = bindDom(var,val);
+      _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];
       _status = ORFailure;
@@ -541,8 +550,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       //assert(_status != ORFailure);
       ORStatus status =  removeDom(var, val);
-      ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
+      _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];
       _status = ORFailure;
@@ -553,8 +561,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       ORStatus status = [var updateMax:val-1];
-      ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
+      _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];
       _status = ORFailure;
@@ -565,8 +572,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       ORStatus status = [var updateMin:val+1];
-      ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
+      _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];
       _status = ORFailure;
@@ -577,8 +583,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       ORStatus status = [var inside: S];
-      ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
+      _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];
       _status = ORFailure;

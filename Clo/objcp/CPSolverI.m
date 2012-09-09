@@ -332,7 +332,7 @@
 -(void) label: (ORIntVarI*) var with: (ORInt) val
 {
    var = [var dereference];
-   ORStatus status = [_engine label: [var dereference] with: val];
+   ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -343,7 +343,7 @@
 -(void) diff: (ORIntVarI*) var with: (ORInt) val
 {
    var = [var dereference];
-   ORStatus status = [_engine diff: [var dereference] with: val];
+   ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   

@@ -32,7 +32,7 @@
       ORInt i = 0;
       while (i < nb) {
          if (!used[i] && (!suchThat || suchThat(value[i]))) {
-            ORInt efi = order(value[i]);
+            ORInt efi = order? order(value[i]) : i;
             if (efi < best) {
                chosen = i;
                best = efi;

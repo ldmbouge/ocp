@@ -187,7 +187,7 @@
 -(void)propagate
 {
    if (minDom(_b)) {            // b is TRUE
-      if (bound(_x))            // TRUE <=> (y == c)
+      if (bound(_x))            // TRUE <=> (y == c)         
          [_y bind:minDom(_x)];
       else  if (bound(_y))      // TRUE <=> (x == c)
          [_x bind:minDom(_y)];

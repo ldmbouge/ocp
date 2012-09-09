@@ -390,6 +390,24 @@ static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
    return [x->_dom remove:target for:x->_recv];
 }
 
+static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
+{
+   ORInt target;
+   switch(x->_vc) {
+      case CPVCBare: target = v;break;
+      case CPVCShift: target = v - ((CPIntShiftView*)x)->_b;break;
+      case CPVCAffine: {
+         ORInt a = ((CPIntView*)x)->_a;
+         ORInt b = ((CPIntView*)x)->_b;
+         ORInt r = (v - b) % a;
+         if (r != 0)
+            failNow();
+         target = (v - b) / a;
+      }
+   }
+   return [x->_dom bind:target for:x->_recv];
+}
+
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/

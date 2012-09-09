@@ -1722,7 +1722,7 @@
 		5BC794C91389D81900EC7B21 /* SillyVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SillyVar.h; sourceTree = "<group>"; };
 		5BC794CA1389D81900EC7B21 /* SillyVar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SillyVar.m; sourceTree = "<group>"; };
 		5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libgurobi_g++4.2.a"; path = "../../../../../Library/gurobi461/mac64/lib/libgurobi_g++4.2.a"; sourceTree = "<group>"; };
-		5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi46.so; path = ../../../../../Library/gurobi461/mac64/lib/libgurobi46.so; sourceTree = "<group>"; };
+		5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgurobi46.so; path = /Users/ldm/work/platform/Clo/../../../../../Library/gurobi461/mac64/lib/libgurobi46.so; sourceTree = "<absolute>"; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
