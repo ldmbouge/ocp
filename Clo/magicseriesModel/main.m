@@ -18,7 +18,7 @@
 
 int main (int argc, const char * argv[])
 {
-   const ORInt n = 8;  // 128 -> 494 fails
+   const ORInt n = 64;  // 128 -> 494 fails
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];

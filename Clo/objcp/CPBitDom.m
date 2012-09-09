@@ -225,7 +225,9 @@
       _bits[k]  = 0xffffffff;
       _magic[k] = [_trail magic]-1;
    }
-//   _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits
+   const BOOL partialLast = sz & 0x1f;
+   if (partialLast)
+      _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits of the last partially filled word.
    _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;   
@@ -242,7 +244,9 @@
       _bits[k]  = 0xffffffff;
       _magic[k] = [trail magic]-1;
    }
-//   _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits
+   const BOOL partialLast = sz & 0x1f;
+   if (partialLast)
+      _bits[nb-1]  &= ~(0xffffffff << (_imax - _imin + 1) % 32); // clear the unused high bits of the last partially filled word.
    _updateMin = (UBType)[self methodForSelector:@selector(updateMin:for:)];
    _updateMax = (UBType)[self methodForSelector:@selector(updateMax:for:)];
    return self;

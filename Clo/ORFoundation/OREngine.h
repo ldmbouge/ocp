@@ -50,4 +50,5 @@
 -(id) trail;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;
+-(void)clearStatus;
 @end

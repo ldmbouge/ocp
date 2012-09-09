@@ -664,10 +664,13 @@
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
    @try {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORCommand> c) {
          return [c doIt];
       }];
       assert(ok);
+#pragma clang diagnostic pop
       [[p theList] setNodeId:_lastNode-1];
       [_cmds pushCommandList:[p theList]];
       assert([_cmds size] == [_trStack size]);
