@@ -674,12 +674,22 @@ struct CPVarPair {
    [lT release];
    [rT release];
 }
+#define OLDREIFY 0
 -(void) reifyEQc:(CPIntVarI*)theVar constant:(ORInt)c
 {
-   id<ORTracker> cp = [theVar tracker];
-   if (_rv==nil)
+#if OLDREIFY==1
+   if (_rv==nil) {
+      id<ORTracker> cp = [theVar tracker];
       _rv = [CPFactory intVar:cp bounds: RANGE(cp,0,1)];
+   }
    [_engine post: [CPFactory reify:_rv with:theVar eqi:c]];
+#else
+   if (_rv!=nil) {
+      [_engine post: [CPFactory reify:_rv with:theVar eqi:c]];
+   } else {
+      _rv = [CPFactory reifyView:theVar eqi:c];
+   }
+#endif
 }
 -(void) reifyNEQc:(CPIntVarI*)theVar constant:(ORInt)c
 {

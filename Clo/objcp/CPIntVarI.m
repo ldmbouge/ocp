@@ -202,6 +202,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return _cp;
 }
+-(void) addVar:(CPIntVarI*)var
+{
+   assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
+}
+
 -(NSSet*)constraints
 {
    NSSet* rv = collectConstraints(&_net);
@@ -217,14 +222,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(void) setDelegate:(id<CPIntVarNotifier,NSCoding>) d
 {
-    if (_recv != d) {
-        if (_recv != self) {
-            @throw [[NSException alloc] initWithName:@"Internal Error" 
-                                              reason:@"Trying to set a delegate that already exists" 
-                                            userInfo:nil];
-        }
-        _recv = [d retain];
-    }
+   if (_recv != d) {
+      if (_recv != self) {
+         @throw [[NSException alloc] initWithName:@"Internal Error"
+                                           reason:@"Trying to set a delegate that already exists"
+                                         userInfo:nil];
+      }
+      _recv = [d retain];
+   }
 }
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
@@ -310,7 +315,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     return _dom;
 }
 
--(bool) tracksLoseEvt
+-(bool) tracksLoseEvt:(id<CPDom>)sender
 {
     return _net._ac5._val != nil || _triggers != nil;
 }
@@ -507,7 +512,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     }
 }
 
--(void) bindEvt
+-(ORStatus) bindEvt:(id<CPDom>)sender
 {
    VarEventNode* mList[5];
    ORUInt k = 0;
@@ -525,8 +530,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_fdm scheduleAC3:mList];
    if (_triggers != nil)
       [_triggers bindEvt:_fdm];
+   return ORSuspend;
 }
--(void) changeMinEvt: (ORInt) dsz
+-(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
    VarEventNode* mList[5];
    ORUInt k = 0;
@@ -542,8 +548,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_fdm scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_fdm];
+   return ORSuspend;
 }
--(void) changeMaxEvt: (ORInt) dsz
+-(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
    VarEventNode* mList[5];
    ORUInt k = 0;
@@ -559,8 +566,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [_fdm scheduleAC3:mList];
    if (dsz==1 && _triggers != nil)
       [_triggers bindEvt:_fdm];
+   return ORSuspend;
 }
--(void) loseValEvt: (ORInt) val
+-(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
    VarEventNode* mList[5];
    ORUInt k = 0;
@@ -572,6 +580,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         [_fdm scheduleAC5:_net._ac5._val with:val];
     if (_triggers != nil)
         [_triggers loseValEvt:val solver:_fdm];
+   return ORSuspend;
 }
 -(ORStatus) updateMin: (ORInt) newMin
 {
@@ -836,9 +845,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     return [_dom remove: val-_b for: _recv];
 }
 // get the notification from the underlying domain; need to shift it for the network
--(void) loseValEvt: (ORInt)  val
+-(ORStatus) loseValEvt: (ORInt)  val sender:(id<CPDom>)sender
 {
-    [super loseValEvt: val+_b];
+   return [super loseValEvt: val+_b sender:sender];
 }
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
@@ -1034,9 +1043,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }
    return [_dom remove:ov for:_recv];
 }
--(void) loseValEvt: (ORInt) val
+-(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-    [super loseValEvt:_a * val+_b];
+   return [super loseValEvt:_a * val+_b sender:sender];
 }
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
@@ -1114,7 +1123,284 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 @end
 
+@implementation CPEQLitView
 
+-(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v
+{
+   assert(x->_vc == CPVCBare);
+   self = [self initCPIntVarCore:[x solver] low: 0 up: 1];   
+   id<CPIntVarNotifier> xDeg = [x delegate];
+   if (xDeg == x) {
+      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2];
+      [mc addVar: x];
+      [mc addVar: self];
+      [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
+   }
+   else {
+      [xDeg addVar:self];
+   }
+   _recv = self;    // I am my own receiver. (Merely hijacking the receiver list of x above!)
+   _secondary = x;
+   _v = v;
+   _vc = CPVCEQLiteral;
+   _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: [self minSecondary] up: [self maxSecondary]];
+   return self;
+}
+
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(CPBitDom*)flatDomain
+{
+   return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:0 up:1];
+}
+-(ORInt) minSecondary
+{
+   if (bound(_secondary))
+      return minDom(_secondary)==_v;
+   else return 0;
+}
+-(ORInt) maxSecondary
+{
+   if (bound(_secondary))
+      return minDom(_secondary)==_v;
+   else {
+      ORBounds b = bounds(_secondary);
+      if (_v < b.min || _v > b.max || ! memberBitDom(_secondary, _v))
+         return 0;
+      else return 1;
+   }
+}
+-(bool)memberSecondary:(ORInt)val
+{
+   ORInt lb = [_secondary min];
+   ORInt ub = [_secondary max];
+   // [ldm] v should be a boolean (0,1)
+   // Case 1: lit IN    D(x)         => 0 IN D(self) AND 1 in D(self) : always say yes.
+   // Case 2: lit NOTIN D(x)         => 0 in D(self) AND 1 NOTIN D(self).
+   // Case 3: lit IN D(x) & |D(x)|=1 => 1 in D(self) AND 0 NOTIN D(self).
+   if (lb == ub && lb == _v) {
+      return val;
+   } else {
+      if (_v < lb || _v > ub || !memberBitDom(_secondary, _v))
+         return !val;
+      else {
+         return YES;
+      }
+   }
+}
+-(ORInt) min
+{
+   return [super min];
+}
+-(ORInt) max
+{
+   return [super max];
+}
+-(ORBounds)bounds
+{
+   return [super bounds];
+}
+-(bool)member:(ORInt)v
+{
+   return [super member:v];
+}
+-(ORRange)around:(ORInt)v
+{
+   return (ORRange){0,1};
+}
+-(ORInt) shift
+{
+   return 0;
+}
+-(ORInt) scale
+{
+   return 1;
+}
+-(ORStatus)updateMin:(ORInt)newMin
+{
+   // newMin>=1 => x==v
+   // newMin==0 => nothing
+   if (newMin) {
+      ORStatus s = [_dom bind:1 for:_recv];
+      if (s)
+         return [_secondary bind:_v];
+      else return s;
+   } else return ORSuspend;
+}
+-(ORStatus)updateMax:(ORInt)newMax
+{
+   // newMax == 0 => x != v
+   // newMax >= 1 => nothing
+   if (newMax==0) {
+      ORStatus s = [_dom bind:0 for:_recv];
+      if (s)
+         return [_secondary remove:_v];
+      else return s;
+   } else
+      return ORSuspend;
+}
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+{
+   ORStatus ok = ORSuspend;
+   if (newMin) {
+      ok = [_dom bind:1 for:_recv];
+      if (ok)
+         ok = [_secondary bind:_v];
+   }
+   if (ok && newMax==0) {
+      ok = [_dom bind:0 for:_recv];
+      if (ok)
+         ok = [_secondary remove:_v];
+   }
+   return ok;
+}
+-(ORStatus)bind:(ORInt)val
+{
+   assert(val==0 || val==1);
+   // self=0 => x must loose _lit
+   // self=1 => x must be bound to _lit
+   if (val==0) {
+      ORStatus ok = [_dom bind:0 for:_recv];
+      if (ok)
+         return [_secondary remove:_v];
+      return ok;
+   } else {
+      ORStatus ok = [_dom bind:1 for:_recv];
+      if (ok)
+         return [_secondary bind:_v];
+      return ok;
+   }
+}
+-(ORStatus)remove:(ORInt)val
+{
+   assert(val==0 || val==1);
+   // val==0 -> bind to 1 -> x must be bound to _lit
+   // val==1 -> bind to 0 -> x must loose _lit
+   if (val==0) {
+      ORStatus ok = [_dom bind:1 for:_recv];
+      if (ok)
+         return [_secondary bind:_v];
+      return ok;
+   } else {
+      ORStatus ok = [_dom bind:0 for:_recv];
+      if (ok)
+         return [_secondary remove:_v];
+      return ok;
+   }
+}
+-(ORStatus)bindEvt:(id<CPDom>)sender
+{
+   if (sender==_dom) {
+      ORStatus ok = [super bindEvt:sender];
+      if (ok) {
+         ORInt vv = [_dom min];
+         if (vv)
+            return [_secondary bind:_v];
+         else return [_secondary remove:_v];
+      }
+      return ok;
+   } else {
+      // we were just told that x was bound to a value!
+      ORInt xv = minDom(_secondary);
+      return [_dom bind:xv==_v for:_recv];
+   }
+}
+
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+{
+   if (sender == _dom) {
+      // This notification is coming from the boolean domain. We lost val (0 or 1)
+      ORStatus ok = [super loseValEvt:val sender:sender];
+      if (ok) {
+         if (val) // we lost 1, so 0 <-> x == v => x != v
+            return [_secondary remove:_v];
+         else     // we lost 0, so 1 <-> x == v => x == v
+            return [_secondary bind:_v];
+      }
+      return ok;
+   } else {
+      // This notification must be coming from the discrete domain. We lost a value (maybe _v?)
+      // This is our sole opportunity to "echo" the change on the boolean domain.
+      if (val == _v) {
+         return [_dom bind:0 for:_recv];
+      } else return ORSuspend;
+   }
+}
+-(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+{
+   if (sender == _dom) {
+      ORStatus ok = [super changeMinEvt:dsz sender:sender];
+      if (ok) {
+         if ([_dom bound]) {
+            if ([_dom min]==1) // b==1 <-> x == v => x == v
+               return [_secondary bind:_v];
+            else               // b==0 <-> x == v => x != v
+               return [_secondary remove:_v];
+         }
+      }
+      return ok;
+   } else {
+      ORInt myMin = [self minSecondary];
+      ORInt myMax = [self maxSecondary];
+      if (myMin)
+         return [_dom bind:myMin for:self];
+      else if (myMax==0)
+         return [_dom bind:myMax for:self];
+      else return ORSuspend;
+   }
+}
+-(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
+{
+   if (sender == _dom) {
+      ORStatus ok = [super changeMinEvt:dsz sender:sender];
+      if (ok) {
+         if ([_dom bound]) {
+            if ([_dom min]==1) // b==1 <-> x == v => x == v
+               return [_secondary bind:_v];
+            else               // b==0 <-> x == v => x != v
+               return [_secondary remove:_v];
+         }
+      }
+      return ok;
+   } else {
+      ORInt myMin = [self minSecondary];
+      ORInt myMax = [self maxSecondary];
+      if (myMin)
+         return [_dom bind:myMin for:self];
+      else if (myMax==0)
+         return [_dom bind:myMax for:self];
+      else return ORSuspend;
+   }
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   if ([self bound])
+      [buf appendFormat:@"var<%d>+=%d",_name,[self min]];
+   else
+      [buf appendFormat:@"var<%d>+={0,1}",_name];
+   return buf;
+}
+-(id) snapshot
+{
+   return nil;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_v];
+   [aCoder encodeObject:_secondary];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_v];
+   _secondary = [aDecoder decodeObject];
+   return self;
+}
+@end
 
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
@@ -1148,8 +1434,8 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
    [_tab[_nb] setDelegate:self];
-   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt];    
-   _loseValIMP[_nb] = [v methodForSelector:@selector(loseValEvt:)];
+   _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
+   _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
@@ -1170,7 +1456,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(NSString*)description
 {
-   static const char* classes[] = {"Bare","Shift","Affine"};
+   static const char* classes[] = {"Bare","Shift","Affine","EQLit","NEQLit"};
    NSMutableString* buf = [NSMutableString stringWithCapacity:64];
    [buf appendFormat:@"MC:<%d>[",_nb];
    for(ORUInt k=0;k<_nb;k++) {
@@ -1182,31 +1468,43 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     _tracksLoseEvt = true;
 }
--(bool) tracksLoseEvt
+-(bool) tracksLoseEvt:(id<CPDom>)sender
 {
     return _tracksLoseEvt;
 }
--(void)bindEvt
+-(ORStatus)bindEvt:(id<CPDom>)sender
 {
-    for(ORInt i=0;i<_nb;i++)
-        [_tab[i] bindEvt];
+   for(ORInt i=0;i<_nb;i++) {
+       ORStatus ok = [_tab[i] bindEvt:sender];
+      if (!ok) return ok;
+   }
+   return ORSuspend;
 }
--(void) changeMinEvt:(ORInt)dsz
+-(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-    for(ORInt i=0;i<_nb;i++)
-        [_tab[i] changeMinEvt:dsz];
+   for(ORInt i=0;i<_nb;i++) {
+      ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
+      if (!ok) return ok;
+   }
+   return ORSuspend;
 }
--(void) changeMaxEvt:(ORInt)dsz
+-(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
-    for(ORInt i=0;i<_nb;i++)
-        [_tab[i] changeMaxEvt:dsz];
+   for(ORInt i=0;i<_nb;i++) {
+      ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
+      if (!ok) return ok;
+   }
+   return ORSuspend;
 }
--(void) loseValEvt:(ORInt)val
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
-    if (!_tracksLoseEvt) return;
-    for(ORInt i=0;i<_nb;i++)
-        //[_tab[i] loseValEvt:val];
-       _loseValIMP[i](_tab[i],@selector(loseValEvt:),val);
+   if (!_tracksLoseEvt) return ORSuspend;
+   for(ORInt i=0;i<_nb;i++) {
+      //[_tab[i] loseValEvt:val];
+      ORStatus ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
+      if (!ok) return ok;
+   }
+   return ORSuspend;
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
@@ -1225,7 +1523,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
    for(ORInt k=0;k<_nb;k++) {
       _tab[k] = [aDecoder decodeObject];
-      _loseValIMP[k] = [_tab[k] methodForSelector:@selector(loseValEvt:)];
+      _loseValIMP[k] = (UBType)[_tab[k] methodForSelector:@selector(loseValEvt:sender:)];
    }
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
    return self;

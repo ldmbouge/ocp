@@ -89,22 +89,21 @@ typedef struct  {
 // PVH: my recommendation is to have an interface and this becomes the implementation class
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
-@optional -(void) addVar:(CPIntVarI*)var;
--(void) setTracksLoseEvt;
--(bool) tracksLoseEvt;
--(void) bindEvt;
--(void) changeMinEvt:(ORInt) dsz;
--(void) changeMaxEvt:(ORInt) dsz;
--(void) loseValEvt: (ORInt) val;
-
--(void) loseRangeEvt:(ORClosure) clo;
+-(void) addVar:(CPIntVarI*)var;
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
+-(void) setTracksLoseEvt;
+-(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORStatus) bindEvt:(id<CPDom>)sender;
+-(ORStatus) changeMinEvt:(ORInt) dsz sender:(id<CPDom>)sender;
+-(ORStatus) changeMaxEvt:(ORInt) dsz sender:(id<CPDom>)sender;
+-(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
 @end
 
 enum CPVarClass {
    CPVCBare = 0,
    CPVCShift = 1,
-   CPVCAffine = 2
+   CPVCAffine = 2,
+   CPVCEQLiteral = 3
 };
 
 @interface CPIntVarI : ORExprI<ORIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
@@ -134,7 +133,7 @@ enum CPVarClass {
 -(CPBitDom*)flatDomain;
 
 // needed for speeding the code when not using AC5
--(bool) tracksLoseEvt;
+-(bool) tracksLoseEvt:(id<CPDom>)sender;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -157,10 +156,10 @@ enum CPVarClass {
 
 // notification
 
--(void) bindEvt;
--(void) changeMinEvt: (ORInt) dsz;
--(void) changeMaxEvt: (ORInt) dsz;
--(void) loseValEvt: (ORInt)val;
+-(ORStatus) bindEvt:(id<CPDom>)sender;
+-(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender;
+-(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender;
+-(ORStatus) loseValEvt: (ORInt)val sender:(id<CPDom>)sender;
 
 // delegation
 
@@ -228,7 +227,7 @@ enum CPVarClass {
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
--(void) loseValEvt:(ORInt)val;
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 -(id)           snapshot;
 @end
 
@@ -252,8 +251,31 @@ enum CPVarClass {
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
--(void) loseValEvt:(ORInt)val;
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 -(id)           snapshot;
+@end
+
+@interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
+   @package
+   ORInt              _v;
+   CPIntVarI* _secondary;  // pointer to the original variable (x)
+}
+-(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
+-(void)dealloc;
+-(CPBitDom*)flatDomain;
+-(ORInt) min;
+-(ORInt) max;
+-(ORBounds)bounds;
+-(bool)member:(ORInt)v;
+-(ORRange)around:(ORInt)v;
+-(ORInt) shift;
+-(ORInt) scale;
+-(ORStatus)updateMin:(ORInt)newMin;
+-(ORStatus)updateMax:(ORInt)newMax;
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORStatus)bind:(ORInt)val;
+-(ORStatus)remove:(ORInt)val;
+-(id) snapshot;
 @end
 
 static inline BOOL bound(CPIntVarI* x)
@@ -272,6 +294,7 @@ static inline ORInt minDom(CPIntVarI* x)
          else 
             return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
+      case CPVCEQLiteral: return [x min];
    }
 }
 
@@ -286,6 +309,7 @@ static inline ORInt maxDom(CPIntVarI* x)
          else 
             return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
+      case CPVCEQLiteral: return [x max];
    }
 }
 
@@ -304,6 +328,7 @@ static inline ORBounds bounds(CPIntVarI* x)
          else
             return (ORBounds){fmax,fmin};
       }
+      case CPVCEQLiteral: return [x bounds];
    }
 }
 #undef DOMX
@@ -337,6 +362,7 @@ static inline ORInt memberDom(CPIntVarI* x,ORInt value)
             target = (value - b) / a;
          }
       }break;
+      case CPVCEQLiteral: return [x member:value];
    }
    return domMember((CPBoundsDom*)x->_dom, target);
 }
@@ -363,6 +389,7 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
             target = (value - b) / a;
          }
       }break;
+      case CPVCEQLiteral: return [x member:value];
    }
    return getCPDom((CPBitDom*)x->_dom, target);   
 }
@@ -386,6 +413,7 @@ static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
             target = (v - b) / a; 
          }
       }
+      case CPVCEQLiteral: return [x remove:v];
    }
    return [x->_dom remove:target for:x->_recv];
 }
@@ -404,6 +432,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
             failNow();
          target = (v - b) / a;
       }
+      case CPVCEQLiteral: return [x bind:v];
    }
    return [x->_dom bind:target for:x->_recv];
 }
@@ -417,14 +446,14 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
    BOOL        _tracksLoseEvt;
    ORInt                  _nb;
    ORInt                  _mx;
-   IMP*           _loseValIMP;
+   UBType*        _loseValIMP;
 }
 -(id)initVarMC:(ORInt)n;
 -(void) dealloc;
 -(void) addVar:(CPIntVarI*) v;
--(void) bindEvt;
--(void) changeMinEvt:(ORInt)dsz;
--(void) changeMaxEvt:(ORInt)dsz;
--(void) loseValEvt:(ORInt)val;
+-(ORStatus) bindEvt:(id<CPDom>)sender;
+-(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 

@@ -127,6 +127,12 @@
    return o;
 }
 
++(id<ORIntVar>) reifyView: (CPIntVarI*) x eqi:(ORInt)c
+{
+   id<ORIntVar> litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
+   return litView;
+}
+
 +(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(CPConsistency)c
 {
    switch(c) {
