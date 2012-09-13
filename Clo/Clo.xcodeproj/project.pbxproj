@@ -2543,7 +2543,8 @@
 				5B60E5E015AE907F002FF2B3 /* ORUtilities.m */,
 				5B60E5D915AE907F002FF2B3 /* Supporting Files */,
 			);
-			path = ORUtilities;
+			name = ORUtilities;
+			path = ../ORUtilities;
 			sourceTree = "<group>";
 		};
 		5B60E5D915AE907F002FF2B3 /* Supporting Files */ = {
@@ -2587,7 +2588,6 @@
 				B1943A1015B0E33C00E1771B /* data */,
 				5B7408AC1562828000C05277 /* Objective-CP Examples */,
 				5BFD594515A3ACA500825BC3 /* ORFoundation */,
-				5B60E5D815AE907E002FF2B3 /* ORUtilities */,
 				5B9ABCF61391329D000997E5 /* objcp */,
 				5B9ABD071391329D000997E5 /* objcpTests */,
 				B1E2361715F812AB00AB8DB6 /* LPWrapper */,
@@ -3450,6 +3450,7 @@
 		B1595B4113C11F2A001FCB61 /* Sudoku */ = {
 			isa = PBXGroup;
 			children = (
+				5B60E5D815AE907E002FF2B3 /* ORUtilities */,
 				B1595B4213C11F2A001FCB61 /* main.m */,
 				B1595B4613C11F2A001FCB61 /* Sudoku.1 */,
 				B1595B4413C11F2A001FCB61 /* Supporting Files */,

@@ -674,7 +674,7 @@ struct CPVarPair {
    [lT release];
    [rT release];
 }
-#define OLDREIFY 0
+#define OLDREIFY 1
 -(void) reifyEQc:(CPIntVarI*)theVar constant:(ORInt)c
 {
 #if OLDREIFY==1

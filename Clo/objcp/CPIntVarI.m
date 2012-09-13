@@ -178,6 +178,15 @@ static NSSet* collectConstraints(CPEventNetwork* net)
         [_triggers release];    
     [super dealloc];
 }
+-(enum CPVarClass)varClass
+{
+   return _vc;
+}
+-(CPLiterals*)findLiterals:(CPIntVarI*)ref
+{
+   return nil;
+}
+
 -(void) setId:(ORUInt)name
 {
     _name = name;
@@ -206,7 +215,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    assert(FALSE); // [ldm] should never be called on real vars. Only on multicast
 }
-
+-(CPLiterals*)literals
+{
+   return nil;
+}
 -(NSSet*)constraints
 {
    NSSet* rv = collectConstraints(&_net);
@@ -1129,17 +1141,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    assert(x->_vc == CPVCBare);
    self = [self initCPIntVarCore:[x solver] low: 0 up: 1];   
-   id<CPIntVarNotifier> xDeg = [x delegate];
-   if (xDeg == x) {
-      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2];
-      [mc addVar: x];
-      [mc addVar: self];
-      [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
-   }
-   else {
-      [xDeg addVar:self];
-   }
-   _recv = self;    // I am my own receiver. (Merely hijacking the receiver list of x above!)
+   _isBool = YES;
    _secondary = x;
    _v = v;
    _vc = CPVCEQLiteral;
@@ -1345,9 +1347,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       ORInt myMin = [self minSecondary];
       ORInt myMax = [self maxSecondary];
       if (myMin)
-         return [_dom bind:myMin for:self];
+         return [_dom bind:myMin for:_recv];
       else if (myMax==0)
-         return [_dom bind:myMax for:self];
+         return [_dom bind:myMax for:_recv];
       else return ORSuspend;
    }
 }
@@ -1368,9 +1370,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       ORInt myMin = [self minSecondary];
       ORInt myMax = [self maxSecondary];
       if (myMin)
-         return [_dom bind:myMin for:self];
+         return [_dom bind:myMin for:_recv];
       else if (myMax==0)
-         return [_dom bind:myMax for:self];
+         return [_dom bind:myMax for:_recv];
       else return ORSuspend;
    }
 }
@@ -1418,11 +1420,22 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    _nb  = 0;
    return self;
 }
+-(ORInt)getId
+{
+   assert(FALSE);
+   return 0;
+}
+-(void)setDelegate:(id<CPIntVarNotifier>)delegate
+{}
 -(void) dealloc
 {
    //NSLog(@"multicast object %p dealloc'd\n",self);
    free(_tab);
    [super dealloc];
+}
+-(enum CPVarClass)varClass
+{
+   return CPVCLiterals;
 }
 -(void) addVar:(CPIntVarI*)v
 {
@@ -1444,6 +1457,35 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }];
    _nb++;
 }
+-(CPLiterals*)findLiterals:(CPIntVarI*)ref
+{
+   for(ORUInt i=0;i < _nb;i++) {
+      CPLiterals* found = [_tab[i] literals];
+      if (found)
+         return found;
+   }
+   CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
+   if (_nb >= _mx) {
+      _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
+      _mx <<= 1;
+   }
+   _tab[_nb] = newLits;
+   _loseValIMP[_nb] = (UBType)[newLits methodForSelector:@selector(loseValEvt:sender:)];
+   _tracksLoseEvt = YES;
+   ORInt toFix = _nb;
+   id<ORTrail> theTrail = [[ref engine] trail];
+   [theTrail trailClosure:^{
+      _tab[toFix] = nil;
+      _loseValIMP[toFix] = nil;
+   }];
+   _nb++;
+   return newLits;
+}
+-(CPLiterals*)literals
+{
+   return nil;
+}
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
 {
    for(ORUInt i=0;i < _nb;i++) {
@@ -1456,11 +1498,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(NSString*)description
 {
-   static const char* classes[] = {"Bare","Shift","Affine","EQLit","NEQLit"};
+   static const char* classes[] = {"Bare","Shift","Affine","EQLit","Literals","NEQLit"};
    NSMutableString* buf = [NSMutableString stringWithCapacity:64];
    [buf appendFormat:@"MC:<%d>[",_nb];
    for(ORUInt k=0;k<_nb;k++) {
-      [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[_tab[k]->_vc],k < _nb -1 ? ',' : ']'];
+      [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
    }
    return buf;
 }
@@ -1519,16 +1561,120 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   _tab = malloc(sizeof(CPIntVarI*)*_mx);
+   _tab = malloc(sizeof(id<CPIntVarNotifier>)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
    for(ORInt k=0;k<_nb;k++) {
       _tab[k] = [aDecoder decodeObject];
-      _loseValIMP[k] = (UBType)[_tab[k] methodForSelector:@selector(loseValEvt:sender:)];
+      _loseValIMP[k] = (UBType)[(id)_tab[k] methodForSelector:@selector(loseValEvt:sender:)];
    }
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
    return self;
 }
 @end
 
+@implementation CPLiterals
+-(id)initCPLiterals:(CPIntVarI*)ref
+{
+   self = [super init];
+   _nb  = [[ref domain] imax] - [[ref domain] imin] + 1;
+   _ofs = [[ref domain] imin];
+   _ref = ref;
+   _pos = malloc(sizeof(CPIntVarI*)*_nb);
+   for(ORInt i=0;i<_nb;i++)
+      _pos[i] = nil;
+   _tracksLoseEvt = NO;
+   return self;
+}
+-(void)dealloc
+{
+   free(_pos);
+   [super dealloc];
+}
+-(ORInt)getId
+{
+   return 0;
+}
+-(void)setDelegate:(id<CPIntVarNotifier>)delegate
+{}
+-(void) addVar:(CPIntVarI*)var
+{}
+-(enum CPVarClass)varClass
+{
+   return CPVCLiterals;
+}
+-(CPLiterals*)findLiterals:(CPIntVarI*)ref
+{
+   return self;
+}
+-(CPLiterals*)literals
+{
+   return self;
+}
+-(void) setTracksLoseEvt
+{
+   _tracksLoseEvt = YES;
+}
+-(bool) tracksLoseEvt:(id<CPDom>)sender
+{
+   return _tracksLoseEvt;
+}
+-(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
+{
+   return nil;
+}
+-(void)addPositive:(CPIntVarI*)x forValue:(ORInt)value
+{
+   _pos[value - _ofs] = x;
+}
 
+-(ORStatus) bindEvt:(id<CPDom>)sender
+{
+   ORInt idx = [sender min];
+   return [_pos[idx - _ofs] bindEvt:sender];
+}
+-(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
+{
+   ORInt min = [_ref min];
+   for(ORInt i=_ofs;i <min;i++) {
+      ORStatus ok = [_pos[i - _ofs] changeMinEvt:dsz sender:sender];
+      if (!ok) return ok;
+   }
+   return ORSuspend;
+}
+-(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
+{
+   ORInt max = [_ref max];
+   for(ORInt i = max+1;i<_ofs+_nb;i++) {
+      ORStatus ok = [_pos[i - _ofs] changeMaxEvt:dsz sender:sender];
+      if (!ok) return ok;
+   }
+   return ORSuspend;
+}
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+{
+   return [_pos[val - _ofs] loseValEvt:val sender:sender];
+}
 
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeObject:_ref];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_ofs];
+   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
+   for(ORInt k=0;k<_nb;k++)
+      [aCoder encodeObject:_pos[k]];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   _ref = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_ofs];
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
+   _pos = malloc(sizeof(CPIntVarI*)*_nb);
+   for(ORInt k=0;k<_nb;k++) {
+      _pos[k] = [aDecoder decodeObject];
+   }
+   return self;
+}
+@end

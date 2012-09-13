@@ -82,15 +82,28 @@ typedef struct  {
 
 @class CPIntVarI;
 @class CPTriggerMap;
-
+@class CPLiterals;
 // This is really an implementation protocol
+
+enum CPVarClass {
+   CPVCBare = 0,
+   CPVCShift = 1,
+   CPVCAffine = 2,
+   CPVCEQLiteral = 3,
+   CPVCLiterals = 4
+};
 
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
 // PVH: my recommendation is to have an interface and this becomes the implementation class
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
+-(ORInt)getId;
+-(void)setDelegate:(id<CPIntVarNotifier>)delegate;
 -(void) addVar:(CPIntVarI*)var;
+-(enum CPVarClass)varClass;
+-(CPLiterals*)findLiterals:(CPIntVarI*)ref;
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
+-(CPLiterals*)literals;
 -(void) setTracksLoseEvt;
 -(bool) tracksLoseEvt:(id<CPDom>)sender;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
@@ -99,12 +112,7 @@ typedef struct  {
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
 @end
 
-enum CPVarClass {
-   CPVCBare = 0,
-   CPVCShift = 1,
-   CPVCAffine = 2,
-   CPVCEQLiteral = 3
-};
+
 
 @interface CPIntVarI : ORExprI<ORIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
@@ -121,7 +129,7 @@ enum CPVarClass {
 -(CPIntVarI*) initCPIntVarCore:(CPSolverI*) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (CPSolverI*) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
-
+-(enum CPVarClass)varClass;
 -(void) setId:(ORUInt)name;
 -(ORUInt)getId;
 -(BOOL) isBool;
@@ -131,6 +139,7 @@ enum CPVarClass {
 -(id<ORTracker>) tracker;
 -(NSSet*)constraints;
 -(CPBitDom*)flatDomain;
+-(CPLiterals*)literals;
 
 // needed for speeding the code when not using AC5
 -(bool) tracksLoseEvt:(id<CPDom>)sender;
@@ -295,6 +304,7 @@ static inline ORInt minDom(CPIntVarI* x)
             return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
       case CPVCEQLiteral: return [x min];
+      default:assert(NO);
    }
 }
 
@@ -310,6 +320,7 @@ static inline ORInt maxDom(CPIntVarI* x)
             return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
       case CPVCEQLiteral: return [x max];
+      default:assert(NO);
    }
 }
 
@@ -329,6 +340,7 @@ static inline ORBounds bounds(CPIntVarI* x)
             return (ORBounds){fmax,fmin};
       }
       case CPVCEQLiteral: return [x bounds];
+      default:assert(NO);
    }
 }
 #undef DOMX
@@ -363,6 +375,7 @@ static inline ORInt memberDom(CPIntVarI* x,ORInt value)
          }
       }break;
       case CPVCEQLiteral: return [x member:value];
+      default:assert(NO);
    }
    return domMember((CPBoundsDom*)x->_dom, target);
 }
@@ -390,6 +403,7 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
          }
       }break;
       case CPVCEQLiteral: return [x member:value];
+      default:assert(NO);
    }
    return getCPDom((CPBitDom*)x->_dom, target);   
 }
@@ -414,6 +428,7 @@ static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
          }
       }
       case CPVCEQLiteral: return [x remove:v];
+      default:assert(NO);
    }
    return [x->_dom remove:target for:x->_recv];
 }
@@ -433,6 +448,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
          target = (v - b) / a;
       }
       case CPVCEQLiteral: return [x bind:v];
+      default:assert(NO);
    }
    return [x->_dom bind:target for:x->_recv];
 }
@@ -442,7 +458,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 /*****************************************************************************************/
 
 @interface CPIntVarMultiCast : NSObject<CPIntVarNotifier,NSCoding> {
-   CPIntVarI**           _tab;
+   id<CPIntVarNotifier>* _tab;
    BOOL        _tracksLoseEvt;
    ORInt                  _nb;
    ORInt                  _mx;
@@ -450,7 +466,27 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 }
 -(id)initVarMC:(ORInt)n;
 -(void) dealloc;
+-(enum CPVarClass)varClass;
+-(CPLiterals*)literals;
 -(void) addVar:(CPIntVarI*) v;
+-(ORStatus) bindEvt:(id<CPDom>)sender;
+-(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+@end
+
+@interface CPLiterals : NSObject<CPIntVarNotifier,NSCoding> {
+   CPIntVarI*  _ref;
+   CPIntVarI** _pos;
+   ORInt        _nb;
+   ORInt       _ofs;
+   BOOL        _tracksLoseEvt;
+}
+-(id)initCPLiterals:(CPIntVarI*)ref;
+-(void)dealloc;
+-(enum CPVarClass)varClass;
+-(CPLiterals*)literals;
+-(void)addPositive:(id<ORIntVar>)x forValue:(ORInt)value;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

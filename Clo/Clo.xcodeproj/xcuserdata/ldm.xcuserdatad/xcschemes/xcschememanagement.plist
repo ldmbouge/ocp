@@ -27,7 +27,7 @@
 		<key>Euler.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>26</integer>
+			<integer>20</integer>
 		</dict>
 		<key>LPWrapper.xcscheme</key>
 		<dict>
@@ -57,7 +57,7 @@
 		<key>Sudoku.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>24</integer>
+			<integer>19</integer>
 		</dict>
 		<key>TableTest.xcscheme</key>
 		<dict>
@@ -142,7 +142,7 @@
 		<key>knapsack.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>17</integer>
+			<integer>21</integer>
 		</dict>
 		<key>knapsackOpt.xcscheme</key>
 		<dict>

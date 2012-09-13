@@ -203,6 +203,7 @@
       [[_impacts objectForKey:key] addImpact: 1.0 forValue:val];
       [key release];
    }];
+   [[_cp engine] clearStatus];
    NSLog(@"IBS ready...");
 }
 
