@@ -699,7 +699,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
 {
    if (a == 1 && b == 0) {
-      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
+      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up: bd->_imax];
       for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [nDom set:-v at:NO];

@@ -35,7 +35,7 @@ int main(int argc, const char * argv[])
       id<ORIntRange> D = RANGE(cp,0,n-1);
       id<ORIntRange> SD = RANGE(cp,1,n-1);
       
-      id<CPInteger> nbSolutions = [CPFactory integer: cp value:0];
+      id<ORInteger> nbSolutions = [CPFactory integer: cp value:0];
       id<ORIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
       id<ORIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
       //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
@@ -48,13 +48,13 @@ int main(int argc, const char * argv[])
       [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
       [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
       [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
-      [cp solve: ^{
+      [cp solveAll: ^{
          [CPLabel heuristic:h];
          [CPLabel array:sx orderedBy:^ORInt(ORInt i) {
             return [[sx at:i] domsize];
          }];
          [nbSolutions incr];
-         //NSLog(@"Solution: %@",sx);
+         NSLog(@"Solution: %@",sx);
       }];
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);
