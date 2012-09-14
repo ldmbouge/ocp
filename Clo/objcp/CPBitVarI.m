@@ -106,6 +106,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
 { 
     return [_dom max];
 }
+
+-(CPBitArrayDom*) domain
+{
+   return _dom;
+}
+
 -(unsigned int*) maxArray
 {
     return [_dom maxArray];
@@ -139,6 +145,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom description];
 }
+-(id<CPBitVar>) dereference
+{
+   return self;
+}
+
 -(bool) tracksLoseEvt
 {
     return _triggers != nil;
@@ -295,10 +306,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return self;
 }
 
--(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)fdm withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
+-(CPBitVarI*) initCPExplicitBitVarPat: (CPSolverI*)fdm withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
 {
     self = [super init];
-    _fdm  = fdm;
+    _fdm  = (CPEngineI*)[fdm engine];
     [_fdm trackVariable: self];
     setUpNetwork(&_net, [fdm trail]);
     _triggers = nil;
@@ -311,7 +322,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 //Integer interpretation of BitVar
-+(CPBitVarI*) initCPBitVar: (id<CPEngine>) fdm low: (int)low up: (int) up len: (unsigned int) len
++(CPBitVarI*) initCPBitVar: (id<CPSolver>) fdm low: (int)low up: (int) up len: (unsigned int) len
 {
     unsigned int uLow[2];
     unsigned int uUp[2];
@@ -324,7 +335,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 
 //Binary bit pattern interpretation of BitVar
-+(CPBitVarI*) initCPBitVarWithPat:(CPEngineI*)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
++(CPBitVarI*) initCPBitVarWithPat:(CPSolverI*)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
     
     CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVarPat: fdm withLow: low andUp: up andLen: len];
     return x;

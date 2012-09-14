@@ -80,6 +80,7 @@ enum CPEngineState {
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  label:(id<ORIntVar>) var with: (ORInt) val;
+-(ORStatus)  labelBitVar: (id) var at:(ORUInt) i with: (bool) val;
 -(ORStatus)  diff:(id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus)  lthen:(id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus)  gthen:(id<ORIntVar>) var with: (ORInt) val;

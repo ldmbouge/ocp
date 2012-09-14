@@ -89,6 +89,8 @@
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
+-(void)         labelBitVar: (id<CPBitVar>) var at:(int) i with:(bool) bit;
+
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
@@ -127,6 +129,10 @@
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
 -(id<ORTracer>)           tracer;
 -(void)                   dealloc;
+@end
+
+@interface CPSolverI (BitVar)
+-(void)               labelBitVar: (id<ORIntVar>) var with: (CPBitArrayDom*) val;
 @end
 
 @interface CPSemSolverI : CPCoreSolverI<CPSemSolver> {

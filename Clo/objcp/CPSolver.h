@@ -15,6 +15,7 @@
 #import <ORUtilities/ORUtilities.h>
 #import <objcp/CPData.h>
 #import <objcp/CPHeuristic.h>
+#import <objcp/CPBitVar.h>
 
 @protocol ORSearchController;
 @protocol CPEngine;
@@ -49,6 +50,8 @@
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
+
+-(void)         labelBitVar: (id<CPBitVar>) var at:(int) i with:(bool) bit;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;

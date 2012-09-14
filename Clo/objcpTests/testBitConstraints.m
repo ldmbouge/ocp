@@ -38,7 +38,7 @@
 -(void)testEqualityConstriant{
     NSLog(@"Begin testing bitwise equality constraint\n");
     
-    id<CP> m = [CPFactory createSolver];
+    id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
     
@@ -56,13 +56,22 @@
     NSLog(@"x = %@\n", x);
     NSLog(@"y = %@\n", y);
     NSLog(@"z = %@\n", z);
-    
-    [m add:[CPFactory bitEqual:x to:y]];  
-    [m add:[CPFactory bitEqual:y to:z]];
-    
-    NSLog(@"x = %@\n", x);
-    NSLog(@"y = %@\n", y);
-    NSLog(@"z = %@\n", z);
+   [m add:[CPFactory bitEqual:x to:y]];
+   [m add:[CPFactory bitEqual:y to:z]];
+    [m solve: ^() {
+       //for(int i=0;i<log2([x domsize]);i++)
+       @try {
+         [CPLabel bit: 2 ofVar:z];
+       }
+       @catch (NSException *exception) {
+          
+          NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+          
+       }
+         NSLog(@"x = %@\n", x);
+         NSLog(@"y = %@\n", y);
+         NSLog(@"z = %@\n", z);
+    }];
     
     NSLog(@"End testing bitwise equality constraint.\n");
     
@@ -71,7 +80,7 @@
 - (void)testANDConstraint{
     NSLog(@"Begin testing bitwise AND constraint\n");
     
-    id<CP> m = [CPFactory createSolver];
+    id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
     
@@ -98,6 +107,20 @@
     NSLog(@"c = %@\n", c);
     
     [m add:[CPFactory bitAND:a and:b equals:c]];
+   [m solve: ^() {
+      //for(int i=0;i<log2([x domsize]);i++)
+      @try {
+         [CPLabel bit: 2 ofVar:c];
+      }
+      @catch (NSException *exception) {
+         
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+         
+      }
+      NSLog(@"a = %@\n", a);
+      NSLog(@"b = %@\n", b);
+      NSLog(@"c = %@\n", c);
+   }];
     
     NSLog(@"a = %@\n", a);
     NSLog(@"b = %@\n", b);
@@ -110,7 +133,7 @@
 -(void) testORConstraint{
     NSLog(@"Begin testing bitwise OR constraint\n");
     
-    id<CP> m = [CPFactory createSolver];
+    id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
     
@@ -148,7 +171,7 @@
 -(void) testNOTConstraint{
     NSLog(@"Begin testing bitwise NOT constraint\n");
     
-    id<CP> m = [CPFactory createSolver];
+    id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
     
@@ -164,6 +187,19 @@
     NSLog(@"h = %@\n", h);
     
     [m add:[CPFactory bitNOT:g equals:h]];
+   [m solve: ^() {
+      //for(int i=0;i<log2([x domsize]);i++)
+      @try {
+         [CPLabel bit: 2 ofVar:h];
+      }
+      @catch (NSException *exception) {
+         
+         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+         
+      }
+      NSLog(@"x = %@\n", g);
+      NSLog(@"z = %@\n", h);
+   }];
     
     NSLog(@"g = %@\n", g);
     NSLog(@"h = %@\n", h);
@@ -176,7 +212,7 @@
 -(void) testXORConstraint{
     NSLog(@"Begin testing bitwise XOR constraint\n");
     
-    id<CP> m = [CPFactory createSolver];
+    id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
     
@@ -213,7 +249,7 @@
 -(void) testShiftLConstraint{
     NSLog(@"Begin testing bitwise ShiftL constraint\n");
     
-    id<CP> m = [CPFactory createSolver];
+    id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
     
@@ -230,6 +266,7 @@
     NSLog(@"p = %@\n", p);
     NSLog(@"q = %@\n", q);
     [m add:[CPFactory bitShiftL:p by:3 equals:q]];
+
     NSLog(@"p = %@\n", p);
     NSLog(@"q = %@\n", q);
     
@@ -240,7 +277,7 @@
 -(void) testSumConstraint{
     NSLog(@"Begin testing bitwise Sum constraint\n");
         
-     id<CP> m = [CPFactory createSolver];
+     id<CPSolver> m = [CPFactory createSolver];
      unsigned int min[4];
      unsigned int max[4];
      
@@ -305,17 +342,17 @@
      
      id<CPBitVar> co = [CPFactory bitVar:m withLow: min andUp:max andLength:128];
     
-    NSLog(@"x = %@\n", x);
-    NSLog(@"y = %@\n", y);
-    NSLog(@"cin = %@\n", ci);
-    NSLog(@"z = %@\n", z);
-    NSLog(@"cout = %@\n", cout);
-    //[m add:[CPFactory bitAdd: ]];
-    NSLog(@"x = %@\n", x);
-    NSLog(@"y = %@\n", y);
-    NSLog(@"cin = %@\n", ci);
-    NSLog(@"z = %@\n", z);
-    NSLog(@"cout = %@\n", cout);
+    NSLog(@"x    = %@\n", x);
+    NSLog(@"y    = %@\n", y);
+    NSLog(@"cin  = %@\n", ci);
+    NSLog(@"z    = %@\n", z);
+    NSLog(@"cout = %@\n", co);
+    //[m add:[CPFactory ]];
+    NSLog(@"x    = %@\n", x);
+    NSLog(@"y    = %@\n", y);
+    NSLog(@"cin  = %@\n", ci);
+    NSLog(@"z    = %@\n", z);
+    NSLog(@"cout = %@\n", co);
     
 
          

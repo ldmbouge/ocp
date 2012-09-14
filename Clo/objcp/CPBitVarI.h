@@ -43,6 +43,7 @@ typedef struct  {
 -(void) dealloc;
 -(void) setId:(ORUInt)name;
 -(NSString*) description;
+-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 
 // need for speeding the code when not using AC5
@@ -65,6 +66,7 @@ typedef struct  {
 -(bool) bound;
 -(uint64) min;
 -(uint64) max;
+-(CPBitArrayDom*) domain;
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
 -(unsigned int) getWordLength;
@@ -81,11 +83,11 @@ typedef struct  {
 -(ORStatus)     bind:(unsigned int*) val;
 -(ORStatus)     bindUInt64:(uint64) val;
 //-(ORStatus)     remove:(int) val;
--(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
--(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
+-(CPBitVarI*)    initCPExplicitBitVar: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
+-(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods
-+(CPBitVarI*)   initCPBitVar: (id<CPEngine>)fdm low:(int)low up:(int)up len:(unsigned int)len;
-+(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
++(CPBitVarI*)   initCPBitVar: (id<CPSolver>)fdm low:(int)low up:(int)up len:(unsigned int)len;
++(CPBitVarI*)   initCPBitVarWithPat:(id<CPSolver>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
 +(CPTrigger*)   createTrigger: (ConstraintCallback) todo;
 @end
 

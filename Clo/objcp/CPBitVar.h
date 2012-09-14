@@ -11,13 +11,16 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPEngine.h>
+#import "objcp/CPBitArrayDom.h"
 
 @protocol CPBitVar <NSObject>
 -(bool) bound;
+-(CPBitArrayDom*) domain;
 -(uint64)min;
 -(uint64)max;
 -(unsigned int)  domsize;
 -(bool) member: (unsigned int*) v;
+-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end
 

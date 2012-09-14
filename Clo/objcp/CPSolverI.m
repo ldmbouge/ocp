@@ -373,6 +373,19 @@
     [ORConcurrency pumpEvents];   
 }
 
+
+-(void) labelBitVar: (id<CPBitVar>) var at:(int) i with:(bool) bit
+{
+   var = [var dereference];
+   ORStatus status = [_engine labelBitVar:var at: i with: bit];
+   if (status == ORFailure) {
+   //   [_failLabel notify];
+      [_search fail];
+   }
+   //[_returnLabel notify];
+   [ORConcurrency pumpEvents];
+}
+
 -(void) once: (ORClosure) cl
 {
   [_search once: cl];

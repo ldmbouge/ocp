@@ -107,4 +107,23 @@
    }
    return M;
 }
-@end;
+@end
+
+@implementation CPLabel (BitVar)
+
++(void) bit:(int)i ofVar:(id<CPBitVar>)x
+{
+   id<CPSolver> cp = (id<CPSolver>) [[x engine] solver];
+
+//   while (![x bound]) {
+      [cp try: ^() {
+         [cp labelBitVar:x at:i with:false];
+      }
+           or: ^() {
+              [cp labelBitVar:x at:i with:true];
+           }];
+//   }
+   
+}
+
+@end

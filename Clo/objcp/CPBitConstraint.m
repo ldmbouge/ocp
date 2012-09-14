@@ -14,11 +14,59 @@
 
 #define ISTRUE(up, low) (*up & *low)
 
+@implementation CPFactory (BitConstraint)
+//Bit Vector Constraints
++(id<CPConstraint>) bitEqual:(CPBitVarI*)x to:(CPBitVarI*)y
+{
+    id<CPConstraint> o = [[CPBitEqual alloc] initCPBitEqual:x and:y];
+    [[x engine] trackObject:o];
+    return o;
+}
+
++(id<CPConstraint>) bitAND:(CPBitVarI*)x and:(CPBitVarI*)y equals:(CPBitVarI*)z
+{
+    id<CPConstraint> o = [[CPBitAND alloc] initCPBitAND:x and:y equals:z];
+    [[x engine] trackObject:o];
+    return o;
+}
+
++(id<CPConstraint>) bitOR:(CPBitVarI*)x or:(CPBitVarI*) y equals:(CPBitVarI*)z
+{
+    id<CPConstraint> o = [[CPBitOR alloc] initCPBitOR:x or:y equals:z];
+    [[x engine] trackObject:o];
+    return o;
+}
++(id<CPConstraint>) bitXOR:(CPBitVarI*)x xor:(CPBitVarI*)y equals:(CPBitVarI*) z
+{
+    id<CPConstraint> o = [[CPBitXOR alloc] initCPBitXOR:x xor:y equals:z];
+    [[x engine] trackObject:o];
+    return o;
+    
+}
++(id<CPConstraint>) bitNOT:(CPBitVarI*)x equals:(CPBitVarI*) y
+{
+    id<CPConstraint> o = [[CPBitNOT alloc] initCPBitNOT:x equals:y];
+    [[x engine] trackObject:o];
+    return o;
+    
+}
+
++(id<CPConstraint>) bitShiftL:(CPBitVarI*)x by:(int) p equals:(CPBitVarI*) y
+{
+    id<CPConstraint> o = [[CPBitShiftL alloc] initCPBitShiftL:x shiftLBy:p equals:y];
+    [[x engine] trackObject:o];
+    return o;
+    
+}
+
+
+@end
+
 @implementation CPBitEqual
 
--(id) initCPBitEqual:(id) x and:(id) y 
+-(id) initCPBitEqual:(CPBitVarI*) x and:(CPBitVarI*) y
 {
-    self = [super initCPActiveConstraint: [[x solver] engine]];
+    self = [super initCPActiveConstraint: [x engine]];
     _x = x;
     _y = y;
     return self;
@@ -938,3 +986,5 @@
     return self;
 }
 @end
+
+

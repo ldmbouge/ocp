@@ -15,6 +15,8 @@
 #import <objcp/CPSolver.h>
 #import <objcp/CPHeuristic.h>
 #import <objcp/CPData.h>
+#import <objcp/CPBitVar.h>
+
 
 @interface CPFactory : NSObject
 +(id<CPSolver>) createSolver;
@@ -88,6 +90,12 @@ void failNow();
 
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
+
+@end
+
+@interface CPFactory (bitvector)
++(id<CPBitVar>) bitVar:(id<CPSolver>) cp withLow: (unsigned int*) low andUp:(unsigned int*) up andLength:(int) len;
+
 
 @end
 

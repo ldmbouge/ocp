@@ -12,7 +12,8 @@
 
 #import "testCard.h"
 #import "objcp/CPBasicConstraint.h"
-#import "objcp/DFSController.h"
+#import "ORFoundation/ORFactory.h"
+#import "ORFoundation/ORController.h"
 #import "objcp/CPEngine.h"
 #import "objcp/CPSolver.h"
 #import "CPLabel.h"
@@ -39,15 +40,18 @@
 -(NSInteger) setupCardWith:(ORInt)n size:(ORInt)s
 {
    id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x = [CPFactory intVarArray:m range:(ORRange){0,s-1} domain:(ORRange){0,n-1}];
-   id<ORIntArray> lb = [CPFactory intArray:m range:(ORRange){0,n-1} value:2];
-   id<ORIntArray> ub = [CPFactory intArray:m range:(ORRange){0,n-1} value:3];
+//   id<ORIntVarArray> x = [CPFactory intVarArray:m range:(ORRange){0,s-1} domain:(ORRange){0,n-1}];
+//   id<ORIntArray> lb = [CPFactory intArray:m range:(ORRange){0,n-1} value:2];
+//   id<ORIntArray> ub = [CPFactory intArray:m range:(ORRange){0,n-1} value:3];
+
+    id<ORIntVarArray> x = [CPFactory intVarArray:m range:[ORFactory intRange:m low:0 up:s-1]  domain:[ORFactory intRange:m low:0 up:n-1]];
+   id<ORIntArray> lb = [CPFactory intArray:m range:[ORFactory intRange:m low:0 up:n-1] value:2];
+   id<ORIntArray> ub = [CPFactory intArray:m range:[ORFactory intRange:m low:0 up:n-1] value:3];
     
    int* cnt = alloca(sizeof(NSInteger)*n);
-   id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
+   id<ORInteger> nbSolutions = [CPFactory integer: m value: 0];
+   [m add:[CPFactory cardinality:x low:lb up:ub]];
    [m solveAll: ^() {
-      [m add:[CPFactory cardinality:x low:lb up:ub]];      
-   } using: ^() {
       [CPLabel array:x orderedBy:^ORInt(ORInt i) {
          return i;
       }];

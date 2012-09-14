@@ -11,10 +11,20 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPConstraint.h>
-#import <objcp/CPBitVarI.h>
+#import "CPBitVarI.h"
 #import <objcp/CPConstraintI.h>
 
 #define UP_MASK 0xFFFFFFFF
+
+@interface CPFactory (BitConstraint)
+//Bit Constraints
++(id<CPConstraint>) bitEqual:(id<CPBitVar>)x to:(id<CPBitVar>)y;
++(id<CPConstraint>) bitAND:(id<CPBitVar>)x and:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
++(id<CPConstraint>) bitOR:(id<CPBitVar>)x or:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
++(id<CPConstraint>) bitXOR:(id<CPBitVar>)x xor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
++(id<CPConstraint>) bitNOT:(id<CPBitVar>)x equals:(id<CPBitVar>) y;
++(id<CPConstraint>) bitShiftL:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
+@end
 
 @interface CPBitEqual : CPActiveConstraint<NSCoding> {
 @private
@@ -132,4 +142,6 @@
 -(ORStatus) post;
 -(void) propagate;
 @end
+
+
 

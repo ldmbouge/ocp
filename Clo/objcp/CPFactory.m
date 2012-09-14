@@ -26,6 +26,7 @@
 #import "CPEngineI.h"
 #import "ORFoundation/ORSemDFSController.h"
 #import "ORFoundation/ORSemBDSController.h"
+#import "CPBitVarI.h"
 
 void failNow()
 {
@@ -321,6 +322,15 @@ void failNow()
 }
 @end
 
+@implementation CPFactory (bitvar)
++(id<CPBitVar>) bitVar:(id<CPSolver>) cp withLow: (unsigned int*) low andUp:(unsigned int*) up andLength:(int) len
+{
+    //CPBitVarI* o = [[CPBitVarI alloc] initCPBitVarWithPat:cp withLow:low andUp:up andLen:len];
+//    CPBitVarI* o = [[CPBitVarI alloc] initCPExplicitBitVarPat:cp withLow:low andUp:up andLen:len];
+    id<CPBitVar> o = [[CPBitVarI alloc] initCPExplicitBitVarPat:cp withLow:low andUp:up andLen:len];
+    return o;
+}
+@end
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)

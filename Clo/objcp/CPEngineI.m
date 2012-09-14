@@ -533,6 +533,19 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
+-(ORStatus) labelBitVar: (id<CPBitVar>) var at:(ORUInt) i with: (bool) val
+{
+   @try {
+      assert(_status != ORFailure);
+      ORStatus status = [[var domain] setBit:i to:val];
+      ORStatus pstatus = internalPropagate(self,status);
+      _status = pstatus;
+   } @catch (ORFailException *exception) {
+      [exception release];
+      _status = ORFailure;
+   }
+   return _status;
+}
 -(ORStatus) diff: (CPIntVarI*) var with: (ORInt) val
 {
    @try {

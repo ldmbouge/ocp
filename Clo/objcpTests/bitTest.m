@@ -13,12 +13,13 @@
 #import "objcp/CPSolver.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPController.h"
-#import "objcp/ORTracer.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
+//#import "objcp/CPController.h"
+#import "ORFoundation/ORTracer.h"
+#import "ORFoundation/ORTrail.h"
+#import "ORTrailI.h"
 #import "ORFoundation/ORAVLTree.h"
-
 #import "objcp/CPBitArray.h"
 #import "objcp/CPBitArrayDom.h"
 
