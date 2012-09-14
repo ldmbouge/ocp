@@ -121,13 +121,6 @@ int main(int argc, const char * argv[])
    NSLog(@"Quitting");
    [cp release];
    [CPFactory shutdown];
-   
-   @autoreleasepool {
-      
-      // insert code here...
-      NSLog(@"Hello, World!");
-      
-   }
    return 0;
 }
 

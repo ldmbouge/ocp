@@ -126,12 +126,6 @@
    if (newMin > _max._val)
       failNow();
    ORInt oldMin = _min._val;
-/*   if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=_min._val;k< newMin && ok;k++)
-         ok = [x loseValEvt:k sender:self];
-      if (!ok) return ok;
-   }*/
    ORInt nbr = newMin - _min._val;
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
@@ -143,8 +137,6 @@
          ok = [x loseValEvt:k sender:self];
       if (!ok) return ok;
    }
-      
-   if (nsz == 1) [x bindEvt:self];
    return [x changeMinEvt:nsz sender:self];
 }
 -(ORStatus) updateMax:(ORInt) newMax for:(id<CPIntVarNotifier>) x
@@ -153,14 +145,6 @@
    if (newMax < _min._val)
       failNow();
    ORInt oldMax = _max._val;
-/*
-   if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=newMax+1;k<= _max._val && ok;k++)
-         ok = [x loseValEvt:k sender:self];
-      if (!ok) return ok;
-   }
- */
    ORInt nbr = _max._val - newMax;
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_max, newMax, _trail);
@@ -172,8 +156,6 @@
          ok = [x loseValEvt:k sender:self];
       if (!ok) return ok;
    }
-
-   if (nsz == 1) [x bindEvt:self];
    return [x changeMaxEvt:nsz sender:self];
 }
 -(ORStatus)  bind:(ORInt)  val for:(id<CPIntVarNotifier>) x
@@ -181,15 +163,6 @@
    if (val < _min._val || val > _max._val)
       failNow();
    if (_sz._val == 1 && val == _min._val) return ORSuccess;
-/*
- if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=_min._val;k<=_max._val && ok;k++)
-         if (k != val)
-            ok = [x loseValEvt:k sender:self];
-      if (!ok) return  ok;
-   };
- */
    ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
    assignTRInt(&_min, val, _trail);
@@ -203,7 +176,6 @@
             ok = [x loseValEvt:k sender:self];
       if (!ok) return  ok;
    };
-
    return [x bindEvt:self];
 }
 
@@ -248,6 +220,10 @@
    return self;
 }
 @end
+
+// ========================================================================================
+// Bit Dom Representation
+// ========================================================================================
 
 @implementation CPBitDom
 
@@ -524,14 +500,6 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       failNow();
    ORInt oldMin = _min._val;
    int nbr = countFrom(self,_min._val,newMin-1);
-/*   if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=_min._val;k< newMin && ok;k++)
-         if (GETBIT(k))
-            ok = [x loseValEvt:k sender:self];
-      if (!ok) return ok;
-   }
- */
    // need to send AC5 notifications still
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
@@ -545,7 +513,6 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
             ok = [x loseValEvt:k sender:self];
       if (!ok) return ok;
    }
-   if (nsz==1) [x bindEvt:self];
    return [x changeMinEvt:nsz sender:self];
 }
 
@@ -556,14 +523,6 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       failNow();
    ORInt oldMax = _max._val;
    ORInt nbr = countFrom(self,newMax+1,_max._val);
-/*   if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=newMax+1;k<= _max._val && ok;k++)
-         if (GETBIT(k))
-            ok = [x loseValEvt:k sender:self];
-      if (!ok) return ok;
-   }
- */
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    newMax = findMax(self,newMax);
@@ -576,7 +535,6 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
             ok = [x loseValEvt:k sender:self];
       if (!ok) return ok;
    }
-   if (nsz==1) [x bindEvt:self];
    return [x changeMaxEvt:nsz sender:self];
 }
 
@@ -584,16 +542,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 {
    if (val < _min._val || val > _max._val)
       failNow();
-   if (_sz._val == 1 && val == _min._val) return ORSuccess;
-   /*
-    if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=_min._val;k<=_max._val && ok;k++)
-         if (GETBIT(k) && k != val)
-            ok = [x loseValEvt:k sender:self];
-      if (!ok) return ok;
-   };
-    */
+   if (_sz._val == 1 && val == _min._val)
+      return ORSuccess;
    ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
    assignTRInt(&_min, val, _trail);
@@ -619,8 +569,12 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    if (GETBIT(val)) {
       resetBit(self,val);
       assignTRInt(&_sz, _sz._val -  1, _trail);
-      if (_sz._val==1) [x bindEvt:self];
-      return [x loseValEvt:val sender:self];
+      ORStatus ok = ORSuspend;
+      if (_sz._val==1)
+         ok = [x bindEvt:self];
+      if (ok)
+         return [x loseValEvt:val sender:self];
+      else return ok;
    }
    else
       return ORSuspend;

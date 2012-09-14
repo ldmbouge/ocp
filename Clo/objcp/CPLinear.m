@@ -674,7 +674,7 @@ struct CPVarPair {
    [lT release];
    [rT release];
 }
-#define OLDREIFY 1
+#define OLDREIFY 0
 -(void) reifyEQc:(CPIntVarI*)theVar constant:(ORInt)c
 {
 #if OLDREIFY==1
@@ -688,6 +688,7 @@ struct CPVarPair {
       [_engine post: [CPFactory reify:_rv with:theVar eqi:c]];
    } else {
       _rv = [CPFactory reifyView:theVar eqi:c];
+      //[_engine post: [CPFactory reify:_rv with:theVar eqi:c]];
    }
 #endif
 }

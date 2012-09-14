@@ -487,6 +487,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
 -(void)addPositive:(id<ORIntVar>)x forValue:(ORInt)value;
+-(id<ORIntVar>)positiveForValue:(ORInt)value;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

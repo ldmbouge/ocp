@@ -18,7 +18,7 @@
 
 int main (int argc, const char * argv[])
 {
-   const ORInt n = 5;  // 128 -> 494 fails
+   const ORInt n = 40;  // 128 -> 494 fails
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
@@ -32,13 +32,13 @@ int main (int argc, const char * argv[])
          while (![x[i] bound]) {
             ORInt v = [x[i] min];
             [cp try:^{
-               NSLog(@"try    x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
+               //NSLog(@"try    x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
                [cp label:x[i] with:v];
-               NSLog(@"tryok  x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
+               //NSLog(@"tryok  x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
             } or:^{
-               NSLog(@"diff   x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
+               //NSLog(@"diff   x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
                [cp diff:x[i] with:v];
-               NSLog(@"diffok x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
+               //NSLog(@"diffok x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
             }];
          }
       }

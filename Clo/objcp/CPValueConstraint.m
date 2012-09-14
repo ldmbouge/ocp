@@ -101,13 +101,22 @@
         return [_b bind:false];
     else {
         [_b setBindTrigger: ^ {
-            if ([_b min] == true)
+           if ([_b min] == true) {
+               assert([_x bound]);
                 [_x bind:_c];
-            else 
-                [_x remove:_c];
+           } else {
+              assert([_x member:_c]==FALSE);
+              [_x remove:_c];
+           }
         } onBehalf:self];
-        [_x setLoseTrigger: _c do: ^ { [_b bind:false]; } onBehalf:self];
-        [_x setBindTrigger: ^ { [_b bind:[_x min] == _c]; } onBehalf:self];
+        [_x setLoseTrigger: _c do: ^ {
+           assert([_b bound]);
+           [_b bind:false];
+        } onBehalf:self];
+        [_x setBindTrigger: ^ {
+           assert([_b bound]);
+           [_b bind:[_x min] == _c];
+        } onBehalf:self];
         return ORSuspend;
     }   
 } 

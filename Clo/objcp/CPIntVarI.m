@@ -1624,13 +1624,17 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(void)addPositive:(CPIntVarI*)x forValue:(ORInt)value
 {
+   assert(_pos[value - _ofs] == 0);
    _pos[value - _ofs] = x;
+}
+-(id<ORIntVar>)positiveForValue:(ORInt)value
+{
+   return _pos[value - _ofs];
 }
 
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
-   ORInt idx = [sender min];
-   return [_pos[idx - _ofs] bindEvt:sender];
+   return [_pos[[sender min] - _ofs] bindEvt:sender];
 }
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
@@ -1639,7 +1643,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       ORStatus ok = [_pos[i - _ofs] changeMinEvt:dsz sender:sender];
       if (!ok) return ok;
    }
-   return ORSuspend;
+   if (dsz==1)
+      return [_pos[[sender min] - _ofs] bindEvt:sender];
+   else
+      return ORSuspend;
 }
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
@@ -1648,7 +1655,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       ORStatus ok = [_pos[i - _ofs] changeMaxEvt:dsz sender:sender];
       if (!ok) return ok;
    }
-   return ORSuspend;
+   if (dsz==1)
+      return [_pos[[sender min] - _ofs] bindEvt:sender];
+   else
+      return ORSuspend;
 }
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
