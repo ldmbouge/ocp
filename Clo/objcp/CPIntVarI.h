@@ -304,7 +304,7 @@ static inline ORInt minDom(CPIntVarI* x)
             return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
       case CPVCEQLiteral: return [x min];
-      default:assert(NO);
+      default:assert(NO);return 0;
    }
 }
 
@@ -320,7 +320,7 @@ static inline ORInt maxDom(CPIntVarI* x)
             return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
       case CPVCEQLiteral: return [x max];
-      default:assert(NO);
+      default:assert(NO);return 0;
    }
 }
 
@@ -340,7 +340,7 @@ static inline ORBounds bounds(CPIntVarI* x)
             return (ORBounds){fmax,fmin};
       }
       case CPVCEQLiteral: return [x bounds];
-      default:assert(NO);
+      default:assert(NO);return (ORBounds){0,0};
    }
 }
 #undef DOMX

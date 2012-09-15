@@ -11,9 +11,9 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORUtilities.h>
-#import "ORData.h"
-#import "ORTrail.h"
-#import "ORSet.h"
+#import "ORFoundation/ORData.h"
+#import "ORFoundation/ORTrail.h"
+#import "ORFoundation/ORSet.h"
 
 #define NBSLOT 8192
 
@@ -25,10 +25,11 @@
 #define TAGDouble       0x6
 #define TAGLong         0x7
 #define TAGUnsignedLong 0x8
-#define TAGClosure      0x9
-#define TAGRelease      0xA
-#define TAGFree         0xB
-#define TAGIdNC         0xC
+#define TAGPointer      0x9
+#define TAGClosure      0xA
+#define TAGRelease      0xB
+#define TAGFree         0xC
+#define TAGIdNC         0xD
 
 @interface ORTrailI : NSObject<NSCoding,ORTrail>
 {
@@ -71,6 +72,7 @@
 -(void) trailIdNC:(id*) ptr;
 -(void) trailFloat:(float*) ptr;
 -(void) trailDouble:(double*) ptr;
+-(void) trailPointer:(void**) ptr;
 -(void) trailClosure:(void(^) (void) ) clo;
 -(void) trailRelease:(id)obj;
 -(void) trailFree:(void*)ptr;
@@ -156,6 +158,16 @@ static inline void inline_trailIntFun(ORTrailI* t,int* ptr)
    ++(t->_seg[t->_cSeg]->top);
 }
 
+static inline void inline_trailPointerFun(ORTrailI* t,void** ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGPointer;
+   s->ptrVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
+
 static inline void inline_trailUIntFun(ORTrailI* t,unsigned* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
@@ -175,6 +187,7 @@ static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
    s->idVal = obj;
    ++(t->_seg[t->_cSeg]->top);
 }
+
 
 static inline void inline_assignTRInt(TRInt* v,int val,ORTrailI* trail)
 {
@@ -249,6 +262,29 @@ static inline ORInt inline_trailMagic(ORTrailI* trail)
 {
    return trail->_magic;
 }
+
+
+#define MAKETRPointer(T,V) \
+typedef struct { \
+   V*      _val; \
+   ORUInt _mgc; \
+} T; \
+static inline T inline_make##T(ORTrailI* trail,V* val) \
+{ \
+   return (T) { val, [trail magic]-1}; \
+} \
+static inline void inline_assign##T(T* v,V* val,ORTrailI* trail) \
+{ \
+   ORInt cmgc = trail->_magic; \
+   if (v->_mgc != cmgc) { \
+      v->_mgc = cmgc; \
+      inline_trailPointerFun(trail, (void**)&v->_val); \
+   } \
+   v->_val = val; \
+} \
+static inline V* get##T(T* v) { return v->_val;}
+
+
 @end
 
 @interface ORTRIntArrayI : NSObject<ORTRIntArray,NSCoding> {

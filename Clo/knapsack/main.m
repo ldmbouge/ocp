@@ -26,7 +26,7 @@ int main(int argc, const char * argv[])
                             "mknap1-5.txt",
                             "mknap1-6.txt"};
       char buf[512];
-      sprintf(buf,"%s/%s",src,afn[2]);
+      sprintf(buf,"%s/%s",src,afn[4]);
       FILE* dta = fopen(buf,"r");
       int n,m,opt;
       fscanf(dta, "%d %d %d",&n,&m,&opt);
@@ -59,15 +59,16 @@ int main(int argc, const char * argv[])
       id<ORIntRange> N = RANGE(cp,0,n-1);
       
       id<ORIntVarArray> x = ALL(ORIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(cp,0,1)]);
-      // id<ORIntVarArray> x = [CPFactory intVarArray: cp range: N domain: (ORRange){0,1}];
       id<CPHeuristic> h = [CPFactory createIBS:cp restricted:x];
       
       [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];
       for(int i=0;i<m;i++) {
-         //[cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:r[i]] leq:b[i]]];
+         [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:r[i]] leq:b[i]]];
+         /*
          id<ORIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
          id<ORIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
          [cp add:[CPFactory knapsack:x weight:w capacity:c]];
+          */
       }
       [cp solve: ^{
          [CPLabel heuristic:h];

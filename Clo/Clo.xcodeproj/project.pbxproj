@@ -536,7 +536,7 @@
 		B1935C7315B90EF100107399 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1935C7515B910C700107399 /* slab.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1935C7415B90FFB00107399 /* slab.dat */; };
 		B1943A1115B0E34400E1771B /* rbg040a.tw in Copy Files */ = {isa = PBXBuildFile; fileRef = B1943A0F15B0E33C00E1771B /* rbg040a.tw */; };
-		B198E75A15D90768000BE64A /* ORTrailI.h in Headers */ = {isa = PBXBuildFile; fileRef = B198E75815D90768000BE64A /* ORTrailI.h */; settings = {ATTRIBUTES = (); }; };
+		B198E75A15D90768000BE64A /* ORTrailI.h in Headers */ = {isa = PBXBuildFile; fileRef = B198E75815D90768000BE64A /* ORTrailI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B198E75B15D90768000BE64A /* ORTrailI.m in Sources */ = {isa = PBXBuildFile; fileRef = B198E75915D90768000BE64A /* ORTrailI.m */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B19ABA0E146D68FE004EB77E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B19ABA0D146D68FE004EB77E /* main.m */; };
@@ -3983,11 +3983,11 @@
 				B189511C15DE25D800B77813 /* ORSelector.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
+				B198E75A15D90768000BE64A /* ORTrailI.h in Headers */,
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
 				B1CC82F715D27C66008DE335 /* ORModelI.h in Headers */,
 				5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */,
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
-				B198E75A15D90768000BE64A /* ORTrailI.h in Headers */,
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
