@@ -134,22 +134,23 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 }
 
 -(void) propagate
-{
+{   
    ORInt i = 0;
    ORInt lastUsed = _used._val - 1;
    ORLong ec = _ec._val;
    while (i <= lastUsed) {
-      ORBounds b = bounds(_inUse[i]._val->var);
+      CPEQTerm* cur = _inUse[i]._val;
+      ORBounds b = bounds(cur->var);
       if (b.min == b.max) {
          ec += b.min;
          CPEQTerm* last = _inUse[lastUsed]._val;
-         inline_assignTRCPEQTerm(&_inUse[lastUsed],_inUse[i]._val,_trail);
+         inline_assignTRCPEQTerm(&_inUse[lastUsed],cur,_trail);
          inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
          lastUsed--;
       } else {
-         _inUse[i]._val->low = b.min;
-         _inUse[i]._val->up  = b.max;
-         _inUse[i]._val->updated = NO;
+         cur->low = b.min;
+         cur->up  = b.max;
+         cur->updated = NO;
          i++;
       }
    }
@@ -161,15 +162,12 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    do {
       long long slow = 0,sup = 0;
       ORInt k=0;
-      struct Bounds b;
       while(k < _used._val) {
          CPEQTerm* cur = _inUse[k++]._val;
          slow += cur->low;
          sup  += cur->up;
       }
-      b._sumLow = slow + _ec._val;
-      b._sumUp  = sup  + _ec._val;
-      b._nb     = _used._val;
+      struct Bounds b = (struct Bounds){0,0,slow + _ec._val,sup + _ec._val,_used._val};
       if (b._sumLow > 0 || b._sumUp < 0)
          failNow();
       changed=false;
@@ -187,7 +185,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          if (cur->low == cur->up) {
             assignTRLong(&_ec, _ec._val + cur->low, _trail);
             CPEQTerm* last = _inUse[_used._val-1]._val;
-            inline_assignTRCPEQTerm(&_inUse[_used._val - 1],_inUse[i]._val,_trail);
+            inline_assignTRCPEQTerm(&_inUse[_used._val - 1],cur,_trail);
             inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
             assignTRInt(&_used,_used._val - 1,_trail);
          } else ++i;

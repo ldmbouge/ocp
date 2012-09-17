@@ -76,6 +76,7 @@ typedef bool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
+typedef ORFloat (^ORInt2Float)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 typedef id<ORRelation> (^ORInt2Relation)(ORInt);
 typedef ORStatus (^Void2ORStatus)(void);

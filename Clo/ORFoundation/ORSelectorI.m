@@ -15,13 +15,13 @@
 @implementation OROPTSelect
 {
    id<ORRandomStream> _stream;
-   id<ORIntIterator>  _range;
+   id<ORIntIterator>   _range;
    ORInt2Bool         _filter;
-   ORInt2Int          _order;
-   ORInt              _direction;
-   BOOL               _randomized;
+   ORInt2Float         _order;
+   ORFloat         _direction;
+   BOOL           _randomized;
 }
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order randomized: (BOOL) randomized
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (BOOL) randomized
 {
    self = [super init];
    _range = range;
@@ -43,17 +43,17 @@
 
 -(ORInt) min
 {
-   _direction = 1;
+   _direction = 1.0;
    return [self choose];
 }
 -(ORInt) max
 {
-   _direction = -1;
+   _direction = -1.0;
    return [self choose];
 }
 -(ORInt) any
 {
-   _direction = 0;
+   _direction = 0.0;
    return [self choose];
 }
 -(ORInt) choose
@@ -89,7 +89,7 @@
 {
    OROPTSelect* _select;
 }
--(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order randomized: (BOOL) randomized
+-(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (BOOL) randomized
 {
    self = [super init];
    _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order randomized: randomized];

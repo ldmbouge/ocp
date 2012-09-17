@@ -516,6 +516,16 @@
    if (_impl == nil)
       _impl = [concretizer alldifferent: self];
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORAlldifferentI: %p IS [ ",self];
+   for(ORInt i = [_x low];i <= [_x up];i++) {
+      [buf appendFormat:@"%@%c",_x[i],i < [_x up] ? ',' : ' '];
+   }
+   [buf appendString:@"]>"];
+   return buf;
+}
 @end
 
 @implementation ORCardinalityI

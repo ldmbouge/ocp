@@ -565,7 +565,37 @@ struct CPVarPair {
 }
 -(ORStatus)postLEQZ:(id<CPEngine>)fdm consistency:(CPConsistency)cons
 {
-   return [fdm post:[CPFactory sum:[self scaledViews] leq:- _indep]];
+   switch(_nb) {
+      case 0: assert(FALSE);return ORFailure;
+      case 1: {  // x <= c
+         if (_terms[0]._coef == 1)
+            return [fdm post: [CPFactory lEqualc:_terms[0]._var to:- _indep]];
+         else if (_terms[0]._coef == -1)
+            return [fdm post: [CPFactory lEqualc:_terms[0]._var to: _indep]];
+         else {
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (nc < 0 && cr != 0)
+               return [fdm post:[CPFactory lEqualc:_terms[0]._var to:nc - 1]];
+            else
+               return [fdm post:[CPFactory lEqualc:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {  // x <= y
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            return [fdm post:[CPFactory lEqual: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
+            return [fdm post:[CPFactory lEqual:_terms[1]._var to:_terms[0]._var plus:- _indep]];
+         } else {
+            id<ORIntVar> xp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef];
+            id<ORIntVar> yp = [CPFactory intVar:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
+            return [fdm post:[CPFactory lEqual:xp to:yp]];
+         }
+      }break;
+      default:
+         return [fdm post:[CPFactory sum:[self scaledViews] leq:- _indep]];
+   }
 }
 @end
 

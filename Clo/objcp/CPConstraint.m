@@ -367,7 +367,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
 }
 +(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
-   id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y];
+   id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y plus:0];
+   [[x solver] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c
+{
+   id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y plus:c];
    [[x solver] trackObject:o];
    return o;   
 }
@@ -380,7 +386,7 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
 +(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
    id<ORIntVar> yp = [self intVar:y shift:-1];
-   return [self lEqual:x to:yp];
+   return [self lEqual:x to:yp plus:0];
 }
 +(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {

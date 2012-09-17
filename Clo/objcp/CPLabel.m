@@ -43,7 +43,7 @@
         [CPLabel var: x[i]];
 }
 
-+(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Int) orderedBy
++(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
    CPSolverI* cp = (CPSolverI*) [x solver];
    id<ORSelect> select = [ORFactory select: cp range: RANGE(cp,[x low],[x up]) suchThat: ^bool(ORInt i) { return [[x at: i] bound]; } orderedBy: orderedBy];
@@ -66,24 +66,31 @@
    CPSolverI* cp = (CPSolverI*) [av solver];
    id<ORSelect> select = [ORFactory select: cp
                                      range: RANGE(cp,[av low],[av up])
-                                  suchThat: ^bool(ORInt i)  { return [[av at: i] bound]; }
-                                 orderedBy: ^ORInt(ORInt i) { return [h varOrdering:av[i]]; }];
+                                  suchThat: ^bool(ORInt i)    { return [[av at: i] bound]; }
+                                 orderedBy: ^ORFloat(ORInt i) {
+                             
+                                    NSLog(@"\t variable %i was : %f",i,[h varOrdering:av[i]]);
+                                    return [h varOrdering:av[i]];
+                                 }];
    do {      
       ORInt i = [select max];
       if (i == MAXINT)
          return;
+      NSLog(@"Chose variable: %d",i);
       id<ORIntVar> x = [av at: i];
       id<ORSelect> valSelect = [ORFactory select: cp
                                            range:RANGE(cp,[x min],[x max])
-                                        suchThat:^bool(ORInt v)  { return ![x member:v];}
-                                       orderedBy:^ORInt(ORInt v) { return [h valOrdering:v forVar:x];}];
+                                        suchThat:^bool(ORInt v)    { return ![x member:v];}
+                                       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
       do {
          ORInt curVal = [valSelect max];
          if (curVal == MAXINT)
             break;
          [cp try:^{
+            NSLog(@"try x[%d] == %d",i,curVal);
             [cp label:x with:curVal];
          } or:^{
+            NSLog(@"try x[%d] != %d",i,curVal);
             [cp diff:x with:curVal];
          }];
       } while(![x bound]);       

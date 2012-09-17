@@ -59,6 +59,7 @@
 +(id<ORConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y;
 +(id<ORConstraint>) notEqualc:(id<ORIntVar>)x to:(ORInt)c;
 +(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y;
++(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c;
 +(id<ORConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c;
 +(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y;
 +(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
