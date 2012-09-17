@@ -23,8 +23,9 @@ int main(int argc, const char * argv[])
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
       ORLong endTime = [ORRuntimeMonitor wctime];
+      [ORStreamManager setRandomized];
       
-      ORInt n = 5;
+      ORInt n = 6;
       id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
       id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
       ORInt T = n * (n*n + 1)/2;

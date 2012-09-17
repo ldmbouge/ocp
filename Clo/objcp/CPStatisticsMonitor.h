@@ -28,11 +28,13 @@
 -(ORStatus) post;
 -(NSString*) description;
 -(double) reduction;
--(double) reductionFromRoot;
+-(double) reductionFromRootForVar:(id)x extraLosses:(ORInt)ks;
+-(void)rootRefresh;
 -(void)scanActive:(void(^)(CPVarInfo*))block;
 @end
 
 @interface CPVarInfo : NSObject {
+   @package
    id       _theVar;
    id<ORTrail> _trail;
    TRDouble _oldDSize;

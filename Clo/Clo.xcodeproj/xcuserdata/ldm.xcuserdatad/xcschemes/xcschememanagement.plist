@@ -84,6 +84,11 @@
 			<key>orderHint</key>
 			<integer>12</integer>
 		</dict>
+		<key>bibd.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>30</integer>
+		</dict>
 		<key>bibd.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -109,10 +114,20 @@
 			<key>orderHint</key>
 			<integer>15</integer>
 		</dict>
+		<key>fdmul.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>31</integer>
+		</dict>
 		<key>fdmul.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>22</integer>
+		</dict>
+		<key>fdmul2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>32</integer>
 		</dict>
 		<key>fdmul2.xcscheme_^#shared#^_</key>
 		<dict>
@@ -172,7 +187,7 @@
 		<key>magicsquareModel.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>30</integer>
+			<integer>33</integer>
 		</dict>
 		<key>market2s.xcscheme</key>
 		<dict>

@@ -26,6 +26,7 @@
 -(BOOL)isEqual:(CPKillRange*)kr;
 -(ORInt) low;
 -(ORInt) up;
+-(ORInt) killed;
 @end
 
 @implementation CPKillRange 
@@ -52,6 +53,10 @@
 -(ORInt) up
 {
    return _up;
+}
+-(ORInt) killed
+{
+   return _nbKilled;
 }
 @end
 
@@ -131,7 +136,12 @@
       _cnts[val] = 1;
    }
 }
-
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"impact[%3d] = %f",[_var getId],[self impactForVariable]];   
+   return buf;
+}
 -(double)impactForValue:(ORInt)val
 {
    return _imps != NULL ? _imps[val] : 0.0;
@@ -151,10 +161,10 @@
 @end
 
 @implementation CPIBS {
-   CPEngineI*     _solver;
+   CPEngineI*               _solver;
    CPStatisticsMonitor*    _monitor;
-   ORULong           _nbv;
-   NSMutableDictionary*  _impacts;
+   ORULong                     _nbv;
+   NSMutableDictionary*    _impacts;
 }
 
 -(id)initCPIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
@@ -214,7 +224,8 @@
       [key release];
    }];
    [[_cp engine] clearStatus];
-   NSLog(@"IBS ready...");
+   
+   NSLog(@"IBS ready... ");
 }
 
 -(id<ORIntVarArray>)allIntVars
@@ -248,9 +259,13 @@
 -(void)dichotomize:(CPIntVarI*)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
    if (up - low + 1 <= b) {
-      double ir = 1.0 - [_monitor reductionFromRoot];
+      float ks = 0.0;
+      for(CPKillRange* kr in set)
+         ks += [kr killed];
+      
+      double ir = 1.0 - [_monitor reductionFromRootForVar:x extraLosses:ks];
       NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
-      NSLog(@"base: [%d .. %d]impact (%@) = %lf",low,up,key,ir);
+      //NSLog(@"base: [%d .. %d]impact (%@) = %lf",low,up,key,ir);
       CPAssignImpact* vImpact = [_impacts objectForKey:key];
       for(ORInt c = low ; c <= up;c++) {
          [vImpact setImpact:ir forValue:c];
@@ -284,11 +299,12 @@
 -(void)initImpacts
 {
    ORInt blockWidth = 1;
-   NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
    ORInt low = [_vars low],up = [_vars up];
    for(ORInt k=low; k <= up;k++) {
+      NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
       CPIntVarI* v = (CPIntVarI*)_vars[k];
       ORBounds vb = [v bounds];
+      [_monitor rootRefresh];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];
       ORInt rank = 0;
       ORInt lastRank = (ORInt)[sacs count]-1;
@@ -303,6 +319,9 @@
          }
          rank++;
       }
+      [sacs release];
+      //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
    }
+   //NSLog(@"VARS AT END OF INIT:%@ ",_vars);
 }
 @end

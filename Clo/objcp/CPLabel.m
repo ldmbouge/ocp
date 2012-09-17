@@ -68,15 +68,14 @@
                                      range: RANGE(cp,[av low],[av up])
                                   suchThat: ^bool(ORInt i)    { return [[av at: i] bound]; }
                                  orderedBy: ^ORFloat(ORInt i) {
-                             
-                                    NSLog(@"\t variable %i was : %f",i,[h varOrdering:av[i]]);
+                                    //NSLog(@"\t variable %i was : %f",i,[h varOrdering:av[i]]);
                                     return [h varOrdering:av[i]];
                                  }];
    do {      
       ORInt i = [select max];
       if (i == MAXINT)
          return;
-      NSLog(@"Chose variable: %d",i);
+      //NSLog(@"Chose variable: %d",i);
       id<ORIntVar> x = [av at: i];
       id<ORSelect> valSelect = [ORFactory select: cp
                                            range:RANGE(cp,[x min],[x max])
@@ -87,10 +86,10 @@
          if (curVal == MAXINT)
             break;
          [cp try:^{
-            NSLog(@"try x[%d] == %d",i,curVal);
+            //NSLog(@"try x[%d] == %d",i,curVal);
             [cp label:x with:curVal];
          } or:^{
-            NSLog(@"try x[%d] != %d",i,curVal);
+            //NSLog(@"try x[%d] != %d",i,curVal);
             [cp diff:x with:curVal];
          }];
       } while(![x bound]);       
