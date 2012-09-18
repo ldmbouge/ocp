@@ -64,7 +64,7 @@
    id<IntEnumerator> ite = [_range enumerator];
    while ([ite more]) {
       ORInt i = [ite next];
-      if (!_filter(i)) {
+      if (_filter(i)) {
          float val = _direction * _order(i);
          if (val < bestFound) {
             bestFound = val;
