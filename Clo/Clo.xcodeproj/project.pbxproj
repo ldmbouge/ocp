@@ -150,6 +150,8 @@
 		5B815B1F15A2E4FD0063ECD7 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; };
 		5B815B2015A2E4FD0063ECD7 /* CPBitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7408B015628C1400C05277 /* CPBitMacros.h */; };
 		5B815B2115A2E4FD0063ECD7 /* CPFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F251582654F008DF214 /* CPFirstFail.h */; };
+		5B8259861608BB04006CE539 /* CPABS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8259841608BB04006CE539 /* CPABS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B8259871608BB04006CE539 /* CPABS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8259851608BB04006CE539 /* CPABS.m */; };
 		5B896B5A158933B4002E145B /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
 		5B896B5B158933B4002E145B /* CPLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B896B59158933B4002E145B /* CPLinear.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
@@ -1643,6 +1645,8 @@
 		5B80561416076DFE00659ECC /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B80561716076DFE00659ECC /* magicsquareModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "magicsquareModel-Prefix.pch"; sourceTree = "<group>"; };
 		5B80561816076DFE00659ECC /* magicsquareModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = magicsquareModel.1; sourceTree = "<group>"; };
+		5B8259841608BB04006CE539 /* CPABS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPABS.h; sourceTree = "<group>"; };
+		5B8259851608BB04006CE539 /* CPABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPABS.m; sourceTree = "<group>"; };
 		5B85DE111438B2D500E4E133 /* ORSemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B85DE121438B2D500E4E133 /* ORSemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B896B58158933B3002E145B /* CPLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPLinear.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -3110,6 +3114,8 @@
 				5B73E55B151F45F60043192D /* NSBoardController.h */,
 				5B73E55C151F45F60043192D /* NSBoardController.m */,
 				5B9ABCF71391329D000997E5 /* Supporting Files */,
+				5B8259841608BB04006CE539 /* CPABS.h */,
+				5B8259851608BB04006CE539 /* CPABS.m */,
 			);
 			path = objcp;
 			sourceTree = "<group>";
@@ -3930,6 +3936,7 @@
 				B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */,
 				5B63C2D4156DB05E00C65B2A /* CPStatisticsMonitor.h in Headers */,
 				5BEC4A6A156E5F3A0085F2B0 /* CPIBS.h in Headers */,
+				5B8259861608BB04006CE539 /* CPABS.h in Headers */,
 				5B150018156EB0E800897252 /* CPBaseHeuristic.h in Headers */,
 				5BE19F2715826550008DF214 /* CPFirstFail.h in Headers */,
 				B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */,
@@ -5472,6 +5479,7 @@
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
 				B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */,
 				B1A453E715E594C800A6171E /* CPConcretizer.m in Sources */,
+				5B8259871608BB04006CE539 /* CPABS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8802,6 +8810,7 @@
 				5B80561B16076DFE00659ECC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B8DA20115B98BC300684FD8 /* Build configuration list for PBXNativeTarget "knapsackOpt" */ = {
 			isa = XCConfigurationList;
