@@ -22,10 +22,10 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
-      ORLong endTime = [ORRuntimeMonitor wctime];
       [ORStreamManager setRandomized];
-      
       ORInt n = 6;
+      if (argc >= 2)
+         n = atoi(argv[1]);
       id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
       id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
       ORInt T = n * (n*n + 1)/2;
@@ -65,6 +65,7 @@ int main(int argc, const char * argv[])
          
       }];
       
+      ORLong endTime = [ORRuntimeMonitor wctime];
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
