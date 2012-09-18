@@ -46,7 +46,7 @@
 +(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
    CPSolverI* cp = (CPSolverI*) [x solver];
-   id<ORSelect> select = [ORFactory select: cp range: RANGE(cp,[x low],[x up]) suchThat: ^bool(ORInt i) { return [[x at: i] bound]; } orderedBy: orderedBy];
+   id<ORSelect> select = [ORFactory select: cp range: RANGE(cp,[x low],[x up]) suchThat: ^bool(ORInt i) { return ![[x at: i] bound]; } orderedBy: orderedBy];
 
    do {
       ORInt i = [select min];
@@ -66,7 +66,7 @@
    CPSolverI* cp = (CPSolverI*) [av solver];
    id<ORSelect> select = [ORFactory select: cp
                                      range: RANGE(cp,[av low],[av up])
-                                  suchThat: ^bool(ORInt i)    { return [[av at: i] bound]; }
+                                  suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
                                  orderedBy: ^ORFloat(ORInt i) {
                                     //NSLog(@"\t variable %i was : %f",i,[h varOrdering:av[i]]);
                                     return [h varOrdering:av[i]];
@@ -79,7 +79,7 @@
       id<ORIntVar> x = [av at: i];
       id<ORSelect> valSelect = [ORFactory select: cp
                                            range:RANGE(cp,[x min],[x max])
-                                        suchThat:^bool(ORInt v)    { return ![x member:v];}
+                                        suchThat:^bool(ORInt v)    { return [x member:v];}
                                        orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
       do {
          ORInt curVal = [valSelect max];
