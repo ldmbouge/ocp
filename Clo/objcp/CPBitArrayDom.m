@@ -378,13 +378,13 @@
             assignTRUInt(_low+0,curMin>>BITSPERWORD,_trail);
             assignTRUInt(_low+1,curMin & CP_BITMASK,_trail);
             assignTRInt(&_freebits,_freebits._val - 1,_trail);
-            [x bitFixedEvt:oldDS];
+            [x bitFixedEvt:oldDS sender:self];
          } else if (curMin + (0x1 << msbIndex) > curMax) {
             curMax = curMax & ~(0x1 << msbIndex);
             assignTRUInt(_up+0,curMax>>BITSPERWORD,_trail);
             assignTRUInt(_up+1,curMax & CP_BITMASK,_trail);
             assignTRInt(&_freebits,_freebits._val - 1,_trail);
-            [x bitFixedEvt:oldDS];
+            [x bitFixedEvt:oldDS sender:self];
          } else break;
       }
       msbIndex--;
@@ -392,9 +392,9 @@
    uint64 finalMin = INTERPRETATION(_low);
    uint64 finalMax = INTERPRETATION(_up);
    if (finalMin > oldMin)
-      [x changeMinEvt:oldDS];
+      [x changeMinEvt:oldDS sender:self];
    if (finalMax < oldMax)
-      [x changeMaxEvt:oldDS];
+      [x changeMaxEvt:oldDS sender:self];
    return ORSuspend;
 }
 
@@ -523,7 +523,7 @@
         }
     }
     if (newMax64 < originalMax)
-        [x changeMaxEvt:pow(2,_freebits._val)];
+        [x changeMaxEvt:pow(2,_freebits._val) sender:self];
 
     newMax64 = _max[0]._val;
     if(_wordLength > 1){
@@ -535,7 +535,7 @@
    return ORSuspend;
 }
 
--(ORStatus)bind:(uint64)val for:(id<CPIntVarNotifier>)x
+-(ORStatus)bind:(uint64)val for:(id<CPBitVarNotifier>)x
 {
     if ((val < [self min]) || (val > [self max]))
        failNow();
@@ -546,11 +546,11 @@
     assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
     assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
     assignTRInt(&_freebits, 0, _trail);
-    [x bindEvt];
+   [x bindEvt:self];
     return ORSuspend;   
 }
 
--(ORStatus) bindToPat:(unsigned int*) pat for:(id<CPIntVarNotifier>)x
+-(ORStatus) bindToPat:(unsigned int*) pat for:(id<CPBitVarNotifier>)x
 {
    uint64  val = (((unsigned long long)pat[0]) << BITSPERWORD) | pat[1];
    if(_wordLength > 1){
@@ -567,7 +567,7 @@
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
    assignTRInt(&_freebits, 0, _trail);
-   [x bindEvt];
+   [x bindEvt:self];
    return ORSuspend;   
 }
 
@@ -598,7 +598,7 @@
         assignTRUInt(&_low[1], newLow[1], _trail);
     [self updateFreeBitCount];
     if (lmod)
-        [x bitFixedEvt:_freebits._val];    
+        [x bitFixedEvt:_freebits._val sender:self];
 }
 
 -(void) setUp: (unsigned int*) newUp  for:(id<CPBitVarNotifier>)x
@@ -611,7 +611,7 @@
         assignTRUInt(&_up[1], newUp[1], _trail);
     [self updateFreeBitCount];
     if (umod)
-    [x bitFixedEvt:_freebits._val];    
+    [x bitFixedEvt:_freebits._val sender:self];
 }
 
 -(void)enumerateWith:(void(^)(unsigned int*,ORInt))body

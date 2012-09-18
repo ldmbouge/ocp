@@ -52,6 +52,10 @@ BOOL refresh(CPVarInfo* vi)
    }
    return active;
 }
+-(void)rootRefresh
+{
+   _root = [_theVar domsize];
+}
 @end
 
 @implementation CPStatisticsMonitor
@@ -122,14 +126,22 @@ BOOL refresh(CPVarInfo* vi)
       product *= _curActive[k]->_final / _curActive[k]->_initial;
    return product;
 }
--(double)reductionFromRoot
+-(double) reductionFromRootForVar:(CPIntVarI*)x extraLosses:(ORInt)ks
 {
    double product = 1.0;
    for(ORUInt i=0;i<_nbVI;i++) {
       CPVarInfo* vInfo = _varInfo[i];
-      product *= vInfo->_final / vInfo->_root;
+      ORInt realInitial = vInfo->_root - (vInfo->_theVar == x ? ks : 0);
+      product *= vInfo->_final / realInitial;
    }
    return product;   
+}
+-(void)rootRefresh
+{
+   for(ORUInt i=0;i<_nbVI;i++) {
+      CPVarInfo* vInfo = _varInfo[i];
+      [vInfo rootRefresh];
+   }
 }
 -(void)scanActive:(void(^)(CPVarInfo*))block
 {

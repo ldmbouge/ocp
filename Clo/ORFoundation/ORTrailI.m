@@ -97,7 +97,8 @@
 }
 -(void) trailLong:(ORLong*) ptr
 {
-   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
    s->ptr = ptr;
    s->code = TAGLong;
    s->longVal = *ptr;
@@ -131,6 +132,16 @@
    s->doubleVal = *ptr;
    ++_seg[_cSeg]->top;
 }
+-(void) trailPointer:(void**) ptr
+{
+   if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
+   struct Slot* s = _seg[_cSeg]->tab + _seg[_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGPointer;
+   s->ptrVal = *ptr;
+   ++_seg[_cSeg]->top;
+}
+
 -(void)trailClosure:(void(^)(void))clo
 {
    if (_seg[_cSeg]->top >= NBSLOT-1) [self resize];
@@ -199,6 +210,9 @@
                break;
             case TAGDouble:
                *((double*)cs->ptr) = cs->doubleVal;
+               break;
+            case TAGPointer:
+               *((void**)cs->ptr) = cs->ptrVal;
                break;
             case TAGClosure:
                cs->cloVal();

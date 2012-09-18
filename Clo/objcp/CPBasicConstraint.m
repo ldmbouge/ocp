@@ -639,18 +639,19 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @end
 
 @implementation CPLEqualBC
--(id) initCPLEqualBC:(id)x and:(id) y
+-(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c
 {
    self = [super initCPActiveConstraint:[[x solver] engine]];
    _x = x;
    _y = y;
+   _c = c;
    return self;   
 }
 -(void)dealloc
 {
    [super dealloc];
 }
--(ORStatus) post  // x <= y
+-(ORStatus) post  // x <= y + c
 {
    [self propagate];
    if (!bound(_x))
@@ -662,8 +663,8 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(void) propagate
 {
-   [_x updateMax:[_y max]];
-   [_y updateMin:[_x min]];
+   [_x updateMax:[_y max] + _c];
+   [_y updateMin:[_x min] - _c];
 }
 -(NSSet*)allVars
 {
@@ -675,13 +676,14 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSString*)description
 {
-   return [NSMutableString stringWithFormat:@"<CPLEqualBC: %02d %@ <= %@>",_name,_x,_y];
+   return [NSMutableString stringWithFormat:@"<CPLEqualBC: %02d %@ <= %@ + %d>",_name,_x,_y,_c];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];
    [aCoder encodeObject:_x];
    [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -689,6 +691,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    self = [super initWithCoder:aDecoder];
    _x = [aDecoder decodeObject];
    _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
 }
 @end

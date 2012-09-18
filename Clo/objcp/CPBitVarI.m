@@ -222,8 +222,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_fdm scheduleAC3:mList];
-    if (dsz==1 && _triggers != nil)
-        [_triggers bindEvt:_fdm];
+   if (dsz==1 && _triggers != nil)
+      [_triggers bindEvt:_fdm];
 }
 -(void) changeMaxEvt: (int) dsz
 {

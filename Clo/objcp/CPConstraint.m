@@ -127,6 +127,23 @@
    return o;
 }
 
++(id<ORIntVar>) reifyView: (CPIntVarI*) x eqi:(ORInt)c
+{
+   id<CPIntVarNotifier> mc = [x delegate];
+   if (mc == x) {
+      mc = [[CPIntVarMultiCast alloc] initVarMC:2];
+      [mc addVar: x];
+      [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
+   }
+   CPLiterals* literals = [mc findLiterals:x];
+   id<ORIntVar> litView = [literals positiveForValue:c];
+   if (!litView) {
+      litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
+      [literals addPositive: litView forValue:c];
+   }
+   return litView;
+}
+
 +(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(CPConsistency)c
 {
    switch(c) {
@@ -350,7 +367,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
 }
 +(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
-   id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y];
+   id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y plus:0];
+   [[x solver] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c
+{
+   id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y plus:c];
    [[x solver] trackObject:o];
    return o;   
 }
@@ -363,7 +386,7 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
 +(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
    id<ORIntVar> yp = [self intVar:y shift:-1];
-   return [self lEqual:x to:yp];
+   return [self lEqual:x to:yp plus:0];
 }
 +(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {

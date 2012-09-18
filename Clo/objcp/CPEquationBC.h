@@ -11,14 +11,32 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPConstraintI.h>
+#import "ORFoundation/ORTrailI.h"
+
+@class CPIntVarI;
+typedef struct CPEQTerm {
+   UBType  update;
+   CPIntVarI* var;
+   ORLong     low;
+   ORLong      up;
+   BOOL   updated;
+} CPEQTerm;
+
+
+MAKETRPointer(TRCPEQTerm,CPEQTerm);
 
 @class CPIntVarI;
 @interface CPEquationBC : CPCoreConstraint<NSCoding> { // sum(i in S) x_i == c
 @private
-   CPIntVarI**        _x;  // array of vars
-   ORLong            _nb;  // size
-   ORInt              _c;  // constant c in:: sum(i in S) x_i == c
-   UBType* _updateBounds;
+   CPIntVarI**               _x;  // array of vars
+   ORLong                   _nb;  // size
+   ORInt                     _c;  // constant c in:: sum(i in S) x_i == c
+   UBType*        _updateBounds;
+   CPEQTerm*          _allTerms;
+   TRCPEQTerm*           _inUse;
+   ORTrailI*             _trail;
+   TRInt                  _used;
+   TRLong                   _ec; // expanded constant c (including the bound terms)
 }
 -(CPEquationBC*)initCPEquationBC: (id) x equal:(ORInt) c;
 -(ORStatus) post;

@@ -32,8 +32,8 @@
 
 @protocol CPBitVarNotifier <NSObject>
 @optional -(void) addVar:(CPBitVarI*)var;
--(void) bindEvt;
--(void) bitFixedEvt:(unsigned int) dsz;
--(void) changeMinEvt:(unsigned int) dsz;
--(void) changeMaxEvt:(unsigned int) dsz;
+-(void) bindEvt:(id)sender;
+-(void) bitFixedEvt:(unsigned int) dsz sender:(id)sender;
+-(void) changeMinEvt:(unsigned int) dsz sender:(id)sender;
+-(void) changeMaxEvt:(unsigned int) dsz sender:(id)sender;
 @end

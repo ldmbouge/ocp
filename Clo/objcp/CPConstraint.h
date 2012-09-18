@@ -26,6 +26,8 @@
 +(id<ORConstraint>) minimize: (id<ORIntVar>) x;
 +(id<ORConstraint>) maximize: (id<ORIntVar>) x;
 
++(id<ORIntVar>) reifyView: (id<ORIntVar>) x eqi:(ORInt)c;
+
 +(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(CPConsistency)c;
 +(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i;
 +(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neq: (ORInt) i;
@@ -57,6 +59,7 @@
 +(id<ORConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y;
 +(id<ORConstraint>) notEqualc:(id<ORIntVar>)x to:(ORInt)c;
 +(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y;
++(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c;
 +(id<ORConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c;
 +(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y;
 +(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z;

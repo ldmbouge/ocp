@@ -110,12 +110,13 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPLEqualBC : CPActiveConstraint<NSCoding> {  // x <= y
+@interface CPLEqualBC : CPActiveConstraint<NSCoding> {  // x <= y + c
 @private
    CPIntVarI*  _x;
-   CPIntVarI*  _y;   
+   CPIntVarI*  _y;
+   ORInt       _c;
 }
--(id) initCPLEqualBC:(id)x and:(id) y;
+-(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
