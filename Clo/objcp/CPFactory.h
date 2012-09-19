@@ -27,10 +27,12 @@
 +(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createABS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createFF:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createIBS:(id<CPSolver>)cp;
++(id<CPHeuristic>) createABS:(id<CPSolver>)cp;
 +(id<CPHeuristic>) createFF:(id<CPSolver>)cp;
 +(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp;
 +(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp;

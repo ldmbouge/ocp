@@ -19,7 +19,7 @@
 @interface CPStatisticsMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
    ORLong                  _nbVI;
-   id<CPSolver>                    _cp;
+   id<CPSolver>              _cp;
    CPVarInfo**        _curActive;
    ORUInt              _nbActive;
    id<ORVarArray>        _monVar;
@@ -46,4 +46,6 @@
 }
 -(CPVarInfo*)initCPVarInfo:(id)v trail:(id<ORTrail>)trail;
 -(void)makeActive;
+-(ORInt)getVarID;
+-(id<ORVar>)getVar;
 @end

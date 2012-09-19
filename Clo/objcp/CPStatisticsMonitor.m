@@ -34,6 +34,14 @@
 {
    [super dealloc];
 }
+-(ORInt)getVarID
+{
+   return [_theVar getId];
+}
+-(id<ORVar>)getVar
+{
+   return _theVar;
+}
 -(void)makeActive
 {
    incrFXInt(&_active, _trail);

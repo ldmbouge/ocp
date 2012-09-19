@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
       [ORStreamManager setRandomized];
-      ORInt n = 6;
+      ORInt n = 4;
       if (argc >= 2)
          n = atoi(argv[1]);
       id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
@@ -47,8 +47,9 @@ int main(int argc, const char * argv[])
       
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel:model];
-      id<CPHeuristic> h = [CPFactory createIBS:cp];
+      //id<CPHeuristic> h = [CPFactory createIBS:cp];
       //id<CPHeuristic> h = [CPFactory createFF:cp];
+      id<CPHeuristic> h = [CPFactory createABS:cp];
       
       [cp solve:^{
          NSLog(@"Searching...");
