@@ -53,6 +53,7 @@
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(void)enumerateWith:(void(^)(id obj,int idx))block;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end

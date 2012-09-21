@@ -15,6 +15,7 @@
 
 @protocol CPEngine <OREngine,ORSolutionProtocol>
 -(void) setObjective: (id<ORObjective>) obj;
+-(id<ORObjective>)objective;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
 -(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency) cons;

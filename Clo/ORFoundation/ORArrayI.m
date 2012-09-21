@@ -258,6 +258,12 @@
    [rv appendString:@"]"];
    return rv;      
 }
+-(void)enumerateWith:(void(^)(id obj,int idx))block
+{
+   for(ORInt i=_low;i<=_up;i++)
+      block(_array[i],i);
+}
+
 -(id<ORTracker>) tracker
 {
    return _tracker;

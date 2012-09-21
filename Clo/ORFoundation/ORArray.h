@@ -53,6 +53,7 @@
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+-(void)enumerateWith:(void(^)(id obj,int idx))block;
 @end
 
 @protocol ORIdMatrix <ORObject>

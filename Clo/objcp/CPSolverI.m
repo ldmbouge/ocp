@@ -1260,6 +1260,11 @@ static void init_pthreads_key()
       [buf appendFormat:@"%@%c",_concrete[k],k<_nb-1 ? ',' : ']'];
    return buf;
 }
+-(void)enumerateWith:(void(^)(id obj,int idx))block
+{
+   for(int k=0;k<_nb;k++)
+      block(_concrete[k],k);
+}
 -(void) concretize: (id<ORSolverConcretizer>) concretizer
 {
    @throw [[ORExecutionError alloc] initORExecutionError:"Should never concrete a par-constraint"];

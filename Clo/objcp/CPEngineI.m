@@ -531,6 +531,11 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    _objective = [obj retain];
 }
 
+-(id<ORObjective>)objective
+{
+   return _objective;
+}
+
 -(ORStatus) label: (id) var with: (ORInt) val
 {
    @try {
