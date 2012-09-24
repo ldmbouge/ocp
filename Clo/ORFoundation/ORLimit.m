@@ -98,7 +98,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitFailures dealloc called...\n");
+   //NSLog(@"ORLimitFailures dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
@@ -165,7 +165,7 @@
 -(void) startTryLeft
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
-   if (currentTime < _maxTime)
+   if (currentTime > _maxTime)
       [_controller fail];
    else
       [_controller startTryLeft];
@@ -173,7 +173,7 @@
 -(void) startTryRight
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
-   if (currentTime < _maxTime)
+   if (currentTime > _maxTime)
       [_controller fail];
    else
       [_controller startTryRight];
@@ -181,7 +181,7 @@
 -(void) startTryallOnFailure
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
-   if (currentTime < _maxTime)
+   if (currentTime > _maxTime)
       [_controller fail];
    else
       [_controller startTryallOnFailure];

@@ -31,7 +31,7 @@
 @end
 
 @protocol CPSolver <ORSolver>
-
+-(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
 -(id<CPPortal>)      portal;

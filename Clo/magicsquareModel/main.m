@@ -44,7 +44,9 @@ int main(int argc, const char * argv[])
       [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
       [model add:[[s at:1 :1] lt: [s at: n :1]]];
       NSLog(@"Model is: %@",model);
-      
+      id<ORInteger> nbRestarts = [ORFactory integer: model value:0];
+      id<ORInteger> nbFailures = [ORFactory integer: model value:3 * n];
+      ORLong maxTime =  100;
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel:model];
       //id<CPHeuristic> h = [CPFactory createIBS:cp];
@@ -53,16 +55,26 @@ int main(int argc, const char * argv[])
       
       [cp solve:^{
          NSLog(@"Searching...");
-         [CPLabel heuristic:h];
-         @autoreleasepool {
-            for(ORInt i =1;i <= n;i++) {
-               NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-               for (ORInt j=1; j<=n; j++) {
-                  [buf appendFormat:@"%3d ",[[s at:i :j] value]];
-               }
-               NSLog(@"%@",buf);
-            }
-         }
+         [cp limitTime:maxTime in: ^ {
+            [cp repeat:^{
+               [cp limitFailures:[nbFailures value] in: ^ {
+                  [CPLabel heuristic:h];
+                  @autoreleasepool {
+                     for(ORInt i =1;i <= n;i++) {
+                        NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+                        for (ORInt j=1; j<=n; j++) {
+                           [buf appendFormat:@"%3d ",[[s at:i :j] value]];
+                        }
+                        NSLog(@"%@",buf);
+                     }
+                  }
+               }];
+            } onRepeat:^{
+               [nbFailures setValue:(float)[nbFailures value] * 1.1];
+               [nbRestarts incr];
+               NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
+            }];
+         }];
          
       }];
       

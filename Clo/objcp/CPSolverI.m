@@ -380,24 +380,29 @@
 
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
+   [_engine clearStatus];
    [_search limitCondition: condition in:cl];
 }
 -(void) limitSolutions: (ORInt) nb in: (ORClosure) cl
 {
+   [_engine clearStatus];
    [_search limitSolutions: nb in: cl];
 }
 
 -(void) limitDiscrepancies: (ORInt) nb in: (ORClosure) cl
 {
+   [_engine clearStatus];
   [_search limitDiscrepancies: nb in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
-  [_search limitFailures: maxFailures in: cl];
+   [_engine clearStatus];
+   [_search limitFailures: maxFailures in: cl];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
-  [_search limitTime: maxTime in: cl];
+   [_engine clearStatus];
+   [_search limitTime: maxTime in: cl];
 }
 -(void) applyController: (id<ORSearchController>) controller in: (ORClosure) cl
 {
@@ -443,11 +448,11 @@
 
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
-  [_search repeat: body onRepeat: onRepeat until: nil];
+   [_search repeat: body onRepeat: onRepeat until: nil];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
-  [_search repeat: body onRepeat: onRepeat until: isDone];
+   [_search repeat: body onRepeat: onRepeat until: isDone];
 }
 -(id<ORTracer>)tracer
 {
