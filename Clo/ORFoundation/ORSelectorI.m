@@ -113,10 +113,13 @@
       }
    }
    ORFloat r = [_stream next];
-   double w = 1.0L/nbSeen;
-   indexFound = seen[(ORInt)floor(r/w)];
-   free(seen);
-   return indexFound;
+   if (nbSeen != 0) {
+      assert(nbSeen != 0);
+      double w = 1.0L/nbSeen;
+      indexFound = seen[(ORInt)floor(r/w)];
+      free(seen);
+      return indexFound;
+   } else return MAXINT;
 }
 
 @end

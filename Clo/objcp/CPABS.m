@@ -16,11 +16,11 @@
 #import "ORTracer.h"
 
 
-@interface ABSBinding : NSObject {
+@interface ABSNogood : NSObject {
    id<ORIntVar> _var;
    ORInt        _val;
 }
--(id)initABSBinding:(id<ORIntVar>)var value:(ORInt)val;
+-(id)initABSNogood:(id<ORIntVar>)var value:(ORInt)val;
 -(id<ORIntVar>)variable;
 -(ORInt)value;
 @end
@@ -38,20 +38,24 @@
 @end
 
 @interface ABSProbeAggregator : NSObject {
+   id<ORVarArray>    _vars;
    ORInt*            _sum;
    ORInt*          _sumsq;
    int                _sz;
    int               _low;
    NSMutableSet* _inProbe;
    ORInt        _nbProbes;
+   NSMutableDictionary* _values;
 }
 -(ABSProbeAggregator*)initABSProbeAggregator:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addProbe:(ABSProbe*)p;
+-(void)addAssignment:(id<ORIntVar>)x toValue:(ORInt)v withActivity:(ORFloat)act;
 -(ORInt)nbProbes;
 -(ORFloat)avgActivity:(ORInt)x;
 -(ORFloat)avgSQActivity:(ORInt)x;
 -(NSSet*)variableIDs;
+-(void)enumerateForVariabe:(ORInt)x using:(void(^)(id value,id activity,BOOL* stop))block;
 @end
 
 @interface ABSVariableActivity : NSObject {
@@ -74,8 +78,9 @@
 -(void)dealloc;
 -(void)setActivity:(ORFloat)a forValue:(ORInt)v;
 -(void)addActivity:(ORFloat)a forValue:(ORInt)v;
+-(void)addProbeActivity:(ORFloat)a forValue:(ORInt)v;
 -(ORFloat)activityForValue:(ORInt)v;
--(NSSet*)valuesWithActivities;
+-(void)enumerate:(void(^)(id value,id activity,BOOL* stop))block;
 -(NSString*)description;
 @end
 
@@ -83,6 +88,7 @@
 -(ABSProbeAggregator*)initABSProbeAggregator:(id<ORVarArray>)vars
 {
    self = [super init];
+   _vars = vars;
    _sz  = (ORInt)[vars count];
    _low = [vars low];
    _sum   = malloc(sizeof(ORInt)*_sz);
@@ -93,6 +99,7 @@
    _sumsq -= _low;
    _inProbe = [[NSMutableSet alloc] initWithCapacity:32];
    _nbProbes = 0;
+   _values = [[NSMutableDictionary alloc] initWithCapacity:32];
    return self;
 }
 -(void)dealloc
@@ -102,6 +109,7 @@
    free(_sum);
    free(_sumsq);
    [_inProbe release];
+   [_values release];
    [super dealloc];
 }
 -(void)addProbe:(ABSProbe*)p
@@ -115,6 +123,25 @@
    }];
    _nbProbes++;
 }
+-(void)addAssignment:(id<ORIntVar>)x toValue:(ORInt)v withActivity:(ORFloat)act
+{
+   NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
+   ABSValueActivity* valueActivity = [_values objectForKey:key];
+   if (valueActivity == nil) {
+      valueActivity = [[ABSValueActivity alloc] initABSActivity:x];
+      [_values setObject:valueActivity forKey:key];
+   }
+   [key release];
+   [valueActivity addProbeActivity:act forValue:v];
+}
+
+-(void)enumerateForVariabe:(ORInt)x using:(void(^)(id value,id activity,BOOL* stop))block
+{
+   NSNumber* key = [[NSNumber alloc] initWithInt:x];
+   [[_values objectForKey:key] enumerate:block];
+   [key release];
+}
+
 -(ORInt)nbProbes
 {
    return _nbProbes;
@@ -126,7 +153,6 @@
 -(ORFloat)avgSQActivity:(ORInt)x
 {
    return ((ORFloat)_sumsq[x - _low]) / _nbProbes;
-   
 }
 -(NSSet*)variableIDs
 {
@@ -134,8 +160,8 @@
 }
 @end
 
-@implementation ABSBinding
--(id)initABSBinding:(id<ORIntVar>)var value:(ORInt)val
+@implementation ABSNogood
+-(id)initABSNogood:(id<ORIntVar>)var value:(ORInt)val
 {
    self = [super init];
    _var = var;
@@ -149,6 +175,12 @@
 -(ORInt)value
 {
    return _val;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<Nogood var(%d) ** %d>",[_var getId],_val];
+   return buf;
 }
 @end
 
@@ -191,7 +223,7 @@
 {
    self = [super init];
    _theVar = var;
-   _activity = 0;
+   _activity = initial;
    return self;
 }
 -(void)dealloc
@@ -234,8 +266,6 @@
 -(void)setActivity:(ORFloat)a forValue:(ORInt)v
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:v];
-   id valAct = [_values objectForKey:key];
-   assert(valAct == nil);
    [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
    [key release];
 }
@@ -251,23 +281,42 @@
    }
    [key release];
 }
+-(void)addProbeActivity:(ORFloat)a forValue:(ORInt)v
+{
+   NSNumber* key = [[NSNumber alloc] initWithInt:v];
+   NSNumber* valAct = [_values objectForKey:key];
+   if (valAct==nil) {
+      [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
+   } else {
+      ORFloat nv = [valAct floatValue]   + a;
+      [_values setObject:[[NSNumber alloc] initWithFloat:nv] forKey:key];
+   }
+   [key release];
+}
 -(ORFloat)activityForValue:(ORInt)v
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:v];
    NSNumber* valAct = [_values objectForKey:key];
    [key release];
-   return [valAct floatValue];
+   if (valAct == nil)
+      return 0.0;
+   else
+      return [valAct floatValue];
+}
+-(void)enumerate:(void(^)(id value,id activity,BOOL* stop))block
+{
+   [_values enumerateKeysAndObjectsUsingBlock:block];
 }
 
--(NSSet*)valuesWithActivities
-{
-   return [_values keysOfEntriesPassingTest:^BOOL(id key, id obj, BOOL *stop) {
-      return YES;
-   }];
-}
 -(NSString*)description
 {
-   return [_values description];
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ValueActivity(%@) = [",_theVar];
+   [_values enumerateKeysAndObjectsUsingBlock:^(NSNumber* value, NSNumber* act, BOOL *stop) {
+      [buf appendFormat:@"%@ : %@,",value,act];
+   }];
+   [buf appendFormat:@"]"];
+   return buf;
 }
 @end
 
@@ -291,7 +340,7 @@
    _vars = nil;
    _rvars = rvars;
    _agingRate = 0.999;
-   _conf      = 0.2;
+   _conf      = 0.1;
    [cp addHeuristic:self];
    return self;
 }
@@ -358,6 +407,7 @@
    _valActivity = [[NSMutableDictionary alloc] initWithCapacity:32];
    
    [self initActivities];
+   [self installActivities];
    
    [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id<ORVar> var,ORInt val) {
       [self updateActivities:var andVal:val];
@@ -407,6 +457,26 @@
    NSLog(@"|PROBEs| = %d more = %s",nbProbes,more ? "YES" : "NO");
    return more;
 }
+-(void)installActivities
+{
+   NSSet* varIDs = [_aggregator variableIDs];
+   id<ORIntVarArray> vars = [self allIntVars];
+   ORInt nbProbes = [_aggregator nbProbes];
+   for(NSNumber* key in varIDs) {
+      id<ORIntVar> x = vars[[key intValue]];
+      ORFloat act = [_aggregator avgActivity:[key intValue]];
+      ABSVariableActivity* xAct = [[ABSVariableActivity alloc] initABSVariableActivity:x activity:act];
+      [_varActivity setObject:xAct forKey:key];
+      [xAct release];
+      
+      ABSValueActivity*  valAct = [[ABSValueActivity alloc] initABSActivity:x];
+      [_valActivity setObject:valAct forKey:key];
+      [valAct release];
+      [_aggregator enumerateForVariabe:[key intValue] using:^(NSNumber* value, NSNumber* activity, BOOL *stop) {
+         [valAct setActivity:[activity floatValue] / nbProbes forValue:[value intValue]];
+      }];
+   }
+}
 
 -(void)initActivities
 {
@@ -445,10 +515,11 @@
                   nbActive++;
                   [probe addVar:[vInfo getVar]];
                }];
-               // aggregator addAssign
+               [_aggregator addAssignment:xi toValue:v withActivity:nbActive];
                if (s == ORFailure) {
                   if (depth == 0) {
-                     ABSBinding* nogood = [[ABSBinding alloc] initABSBinding:xi value:v];
+                     ABSNogood* nogood = [[ABSNogood alloc] initABSNogood:xi value:v];
+                     NSLog(@"Adding SAC %@",nogood);
                      [killSet addObject:nogood];
                      [nogood release];
                   }
@@ -467,11 +538,12 @@
          [_aggregator addProbe:probe];
          [probe release];
       }
-      for(ABSBinding* b in killSet) {
-         [_solver diff:[b variable] with:[b value]];
-      }
       carryOn = [self moreProbes];
-   } while (carryOn && cntProbes < maxProbes);
+   } while (carryOn && cntProbes < 10 * maxProbes);
+   for(ABSNogood* b in killSet) {
+      [_solver diff:[b variable] with:[b value]];
+      NSLog(@"Imposing SAC %@",b);
+   }
    [killSet release];
    [varSel release];
    [_valPr release];
