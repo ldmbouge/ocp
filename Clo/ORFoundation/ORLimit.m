@@ -156,7 +156,17 @@
 }
 -(ORInt) addChoice: (NSCont*) k
 {
-   return [_controller addChoice: k];
+   // Checking in addChoice is necessary since some combinators (e.g., repeat)
+   // do not rely on the try combinator but directly use addChoice.
+   // Without it, the repeat can proceed and fail on the first branching decision
+   // which sends it back to the onRepeat and into an infinite loop (calling onRepeat
+   // forever).
+   ORLong currentTime = [ORRuntimeMonitor cputime];
+   if (currentTime > _maxTime) {
+      [_controller fail];
+      return 0;
+   } else
+      return [_controller addChoice: k];
 }
 -(void) fail
 {

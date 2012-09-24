@@ -21,6 +21,7 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
+      ORLong startCPU = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
       [ORStreamManager setRandomized];
       ORInt n = 4;
@@ -46,12 +47,12 @@ int main(int argc, const char * argv[])
       NSLog(@"Model is: %@",model);
       id<ORInteger> nbRestarts = [ORFactory integer: model value:0];
       id<ORInteger> nbFailures = [ORFactory integer: model value:3 * n];
-      ORLong maxTime =  100;
+      ORLong maxTime =  200;
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel:model];
-      //id<CPHeuristic> h = [CPFactory createIBS:cp];
+      id<CPHeuristic> h = [CPFactory createIBS:cp];
       //id<CPHeuristic> h = [CPFactory createFF:cp];
-      id<CPHeuristic> h = [CPFactory createABS:cp];
+      //id<CPHeuristic> h = [CPFactory createABS:cp];
       
       [cp solve:^{
          NSLog(@"Searching...");
@@ -79,7 +80,8 @@ int main(int argc, const char * argv[])
       }];
       
       ORLong endTime = [ORRuntimeMonitor wctime];
-      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
+      NSLog(@"Execution Time(WC) : %lld \n",endTime - startTime);
+      NSLog(@"Execution Time(CPU): %lld \n",[ORRuntimeMonitor cputime] - startCPU);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];
