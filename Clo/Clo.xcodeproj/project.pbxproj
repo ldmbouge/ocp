@@ -2926,8 +2926,8 @@
 				5B778B91154EF67C0078EB07 /* CPBitArray.m */,
 				5B778B92154EF67C0078EB07 /* CPBitArrayDom.h */,
 				5B778B93154EF67C0078EB07 /* CPBitArrayDom.m */,
-				5B778B94154EF67C0078EB07 /* CPBitConstraint.h */,
 				5B778B95154EF67C0078EB07 /* CPBitConstraint.m */,
+				5B778B94154EF67C0078EB07 /* CPBitConstraint.h */,
 				5B778BA0154EF7DA0078EB07 /* CPBitVar.h */,
 				5B778B96154EF67C0078EB07 /* CPBitVarI.h */,
 				5B778B97154EF67C0078EB07 /* CPBitVarI.m */,
@@ -3285,8 +3285,6 @@
 				5BE64310139D49610056F448 /* ORTrail.h */,
 				5B920EAB15A3F4A800AD0820 /* ORTracker.h */,
 				5BFD594615A3ACA500825BC3 /* Supporting Files */,
-				B198E75815D90768000BE64A /* ORTrailI.h */,
-				B198E75915D90768000BE64A /* ORTrailI.m */,
 			);
 			path = ORFoundation;
 			sourceTree = "<group>";
@@ -3294,6 +3292,8 @@
 		5BFD594615A3ACA500825BC3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B198E75815D90768000BE64A /* ORTrailI.h */,
+				B198E75915D90768000BE64A /* ORTrailI.m */,
 				5BFD594715A3ACA500825BC3 /* ORFoundation-Info.plist */,
 				5BFD594815A3ACA500825BC3 /* InfoPlist.strings */,
 				5BFD594B15A3ACA500825BC3 /* ORFoundation-Prefix.pch */,
@@ -8445,6 +8445,7 @@
 				5B7B477515F0E4AD005FF875 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B7D696015B9C91D00C9A10C /* Build configuration list for PBXNativeTarget "market2s" */ = {
 			isa = XCConfigurationList;
@@ -8813,6 +8814,7 @@
 				B1F3805115F035C0007C6A4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B1F531E215AED4B100E89F98 /* Build configuration list for PBXNativeTarget "testPacking" */ = {
 			isa = XCConfigurationList;
