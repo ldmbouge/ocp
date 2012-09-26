@@ -22,6 +22,7 @@
 -(bool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
+-(id<CPSolver>) solver;
 @end
 
 @class CPCoreConstraint;

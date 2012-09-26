@@ -15,7 +15,7 @@
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 //#import "objcp/CPAVLTree.h"
-
+#import "objcp/CPBitMacros.h"
 #import "objcp/CPBitArray.h"
 #import "objcp/CPBitArrayDom.h"
 #import "objcp/CPBitConstraint.h"
@@ -41,7 +41,8 @@
     id<CPSolver> m = [CPFactory createSolver];
     unsigned int min[2];
     unsigned int max[2];
-    
+   max[0] = max[1] = CP_UMASK;
+   
     id<CPBitVar> x = [CPFactory bitVar:m withLow:min andUp:max andLength:64];
     min[0] = 0;
     min[1] = 4;
@@ -59,13 +60,18 @@
    [m add:[CPFactory bitEqual:x to:y]];
    [m add:[CPFactory bitEqual:y to:z]];
     [m solve: ^() {
-       //for(int i=0;i<log2([x domsize]);i++)
        @try {
-         [CPLabel bit: 2 ofVar:z];
+/*          while(![y bound])
+          {
+             unsigned int i = [(CPBitVarI*)y lsFreeBit];
+             [CPLabel bit: i ofVar:y];
+          }
+ */
+          [CPLabel upFromLSB:y];
        }
        @catch (NSException *exception) {
           
-          NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+          NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
           
        }
          NSLog(@"x = %@\n", x);
@@ -108,13 +114,19 @@
     
     [m add:[CPFactory bitAND:a and:b equals:c]];
    [m solve: ^() {
-      //for(int i=0;i<log2([x domsize]);i++)
       @try {
-         [CPLabel bit: 2 ofVar:c];
+         [CPLabel upFromLSB:c];
+/*         while(![c bound])
+         {
+            unsigned int i = [(CPBitVarI*)c lsFreeBit];
+            NSLog(@"Labeling bit %d of %@.\n", i, c);
+            [CPLabel bit: i ofVar:c];
+         }
+*/
       }
       @catch (NSException *exception) {
          
-         NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
+         NSLog(@"testANDConstraint: Caught %@: %@", [exception name], [exception reason]);
          
       }
       NSLog(@"a = %@\n", a);
@@ -188,21 +200,18 @@
     
     [m add:[CPFactory bitNOT:g equals:h]];
    [m solve: ^() {
-      //for(int i=0;i<log2([x domsize]);i++)
       @try {
-         [CPLabel bit: 2 ofVar:h];
+         [CPLabel upFromLSB:h];
+         NSLog(@"g = %@\n", g);
+         NSLog(@"h = %@\n", h);
       }
       @catch (NSException *exception) {
-         
          NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
-         
       }
-      NSLog(@"x = %@\n", g);
-      NSLog(@"z = %@\n", h);
    }];
     
-    NSLog(@"g = %@\n", g);
-    NSLog(@"h = %@\n", h);
+//    NSLog(@"g = %@\n", g);
+//    NSLog(@"h = %@\n", h);
     
     
     NSLog(@"End testing bitwise NOT constraint.\n");
@@ -353,9 +362,7 @@
     NSLog(@"cin  = %@\n", ci);
     NSLog(@"z    = %@\n", z);
     NSLog(@"cout = %@\n", co);
-    
 
-         
     NSLog(@"End testing bitwise Sum constraint.\n");
     
 }

@@ -66,6 +66,8 @@
         boundBits = (_low[i]._val ^ _up[i]._val);
         freeBits += __builtin_popcount(boundBits);
     }
+   
+   //Shouldn't
     _freebits = makeTRInt(tr, freeBits);
     return self;
 }
@@ -131,6 +133,24 @@
     return min;     
 }
 
+
+-(unsigned int*) lowArray
+{
+   unsigned int* low = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      low[i] = _low[i]._val;
+   return low;
+}
+-(unsigned int*) upArray
+{
+   unsigned int* up = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      up[i] = _up[i]._val;
+   return up;
+}
+
+
+
 -(uint64)   max
 {
     uint64 maximum;
@@ -179,13 +199,29 @@
       if (theBit ^ val)
          failNow();
    }
+   [self updateFreeBitCount];
    return ORSuspend;
 }
 -(bool) isFree:(unsigned int)idx
 {
    return BITFREE(idx);
 }
-
+-(unsigned int) lsFreeBit
+{
+   int j;
+   //[self updateFreeBitCount];
+   //Assumes length is a multiple of 32 bits
+   //Should work otherwise if extraneous bits are
+   //all the same value in up and low (e.g. 0)
+   
+   for(int i=0; i<_wordLength; i++){
+//      NSLog(@"%d is first free bit in %lx\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
+      if ((j=__builtin_ffs(_low[i]._val^_up[i]._val))!=0) {
+         return (i*32)+j-1;
+      }
+   }
+   return -1;
+}
 -(void) updateFreeBitCount
 {
    unsigned int freeBits = 0;
@@ -634,6 +670,20 @@
       }
       body(bits,rank);
    }
+}
+
+
+-(void)restoreDomain:(CPBitArrayDom*)toRestore
+{
+//   [self setLow:[toRestore lowArray]];
+//   [self setUp:[toRestore upArray]];
+   //update min/max????
+}
+-(void)restoreValue:(ORInt)toRestore
+{
+//   _min._val = toRestore;
+//   _max._val = toRestore;
+//   _sz._val  = 1;
 }
 
 @end

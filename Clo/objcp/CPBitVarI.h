@@ -12,8 +12,10 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPTypes.h>
+#import <objcp/CPSolverI.h>
 #import <objcp/CPEngine.h>
 #import <objcp/CPTrigger.h>
+#import <objcp/CPDom.h>
 
 @class CPBitArrayDom;
 @class CPBitArrayIterator;
@@ -31,20 +33,26 @@ typedef struct  {
 @interface CPBitVarI : NSObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
 @protected
-    ORUInt                         _name;
-    CPEngineI*                          _fdm;
+    ORUInt                             _name;
+    CPSolverI*                           _cp;
+    id<CPEngine>                        _fdm;
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
     CPTriggerMap*                  _triggers;
     id<CPBitVarNotifier>               _recv;
 }
--(void) initCPBitVarCore:(id<CPEngine>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
+-(void) initCPBitVarCore:(id<CPSolver>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 //-(CPBitVarI*) initCPBitVarView: (id<CPEngine>) fdm low: (int) low up: (int) up for: (CPBitVarI*) x;
 -(void) dealloc;
 -(void) setId:(ORUInt)name;
+-(ORUInt) getId;
 -(NSString*) description;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
+-(id<CPSolver>) solver;
+
+-(void)restoreDomain:(id<CPDom>)toRestore;
+-(void)restoreValue:(ORInt)toRestore;
 
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
@@ -72,6 +80,7 @@ typedef struct  {
 -(unsigned int) getWordLength;
 -(ORBounds) bounds;
 -(unsigned int) domsize;
+-(unsigned int) lsFreeBit;
 -(bool) member:(unsigned int*)v;
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
@@ -89,6 +98,8 @@ typedef struct  {
 +(CPBitVarI*)   initCPBitVar: (id<CPSolver>)fdm low:(int)low up:(int)up len:(unsigned int)len;
 +(CPBitVarI*)   initCPBitVarWithPat:(id<CPSolver>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
 +(CPTrigger*)   createTrigger: (ConstraintCallback) todo;
+
+
 @end
 
 

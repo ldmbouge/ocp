@@ -25,9 +25,9 @@
 
 @interface CPLabel (BitVar)
 +(void) bit:(int) i ofVar:(id<CPBitVar>) x;
+//+(void) bitVar:(id<CPBitVar>)x;
 //TODO
-//+(void) bitvar:(id<CPBitVar>)x;
-//+(void) upFromLSB:(id<CPBitVar>) x;
++(void) upFromLSB:(id<CPBitVar>) x;
 //+(void) downFromLSB:(id<CPBitVar>) x;
 //+(void) upFromMSB:(id<CPBitVar>) x;
 //+(void) downFromMSB:(id<CPBitVar>) x;

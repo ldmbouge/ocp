@@ -376,13 +376,15 @@
 
 -(void) labelBitVar: (id<CPBitVar>) var at:(int) i with:(bool) bit
 {
+   NSLog(@"In [CP labelBitVar.\n");
    var = [var dereference];
    ORStatus status = [_engine labelBitVar:var at: i with: bit];
    if (status == ORFailure) {
-   //   [_failLabel notify];
+      NSLog(@"Search failed on bitvar.\n");
+      //[_failLabel notify];
       [_search fail];
    }
-   //[_returnLabel notify];
+//   [_returnLabel notify];
    [ORConcurrency pumpEvents];
 }
 
