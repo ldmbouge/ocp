@@ -24,22 +24,29 @@ enum Heuristic {
    WDEG = 3,
    DDEG = 4
 };
+const char* hName[] = {"FF","ABS","IBS","WDeg","DDeg"};
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
+      ORLong startCPU = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
       [ORStreamManager setRandomized];
       ORInt n = 4;
+      ORFloat rf = 1.0;
+      ORInt t = 60;
       enum Heuristic hs = FF;
       for(int k = 1;k< argc;k++) {
          if (strncmp(argv[k], "-q", 2) == 0)
             n = atoi(argv[k]+2);
          else if (strncmp(argv[k], "-h", 2)==0)
             hs = atoi(argv[k]+2);
+         else if (strncmp(argv[k],"-w",2)==0)
+            rf = atof(argv[k]+2);
+         else if (strncmp(argv[k],"-t",2)==0)
+            t = atoi(argv[k]+2);
       }
-      if (argc >= 2)
-         n = atoi(argv[1]);
       id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
       id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
       ORInt T = n * (n*n + 1)/2;
@@ -59,13 +66,12 @@ int main(int argc, const char * argv[])
       [model add:[[s at:1 :1] lt: [s at: n :1]]];
       NSLog(@"Model is: %@",model);
       id<ORInteger> nbRestarts = [ORFactory integer: model value:0];
-      id<ORInteger> nbFailures = [ORFactory integer: model value:3 * n];
-      ORLong maxTime =  100;
+      id<ORInteger> nbFailures = [ORFactory integer: model value:rf == 1.0 ? MAXINT : 3 * n];
+      ORLong maxTime =  t * 1000;
       id<CPSolver> cp = [CPFactory createSolver];
       [cp addModel:model];
-      //id<CPHeuristic> h = [CPFactory createIBS:cp];
-      //id<CPHeuristic> h = [CPFactory createFF:cp];
       id<CPHeuristic> h = nil;
+      __block BOOL found = NO;
       switch(hs) {
          case FF: h = [CPFactory createFF:cp];break;
          case IBS: h = [CPFactory createIBS:cp];break;
@@ -73,7 +79,6 @@ int main(int argc, const char * argv[])
          case WDEG: h = [CPFactory createWDeg:cp];break;
          case DDEG: h = [CPFactory createDDeg:cp];break;
       }
-     
       [cp solve:^{
          [cp limitTime:maxTime in: ^ {
             [cp repeat:^{
@@ -88,9 +93,10 @@ int main(int argc, const char * argv[])
                         NSLog(@"%@",buf);
                      }
                   }
+                  found = YES;
                }];
             } onRepeat:^{
-               [nbFailures setValue:(float)[nbFailures value] * 1.1];
+               [nbFailures setValue:(float)[nbFailures value] * rf];
                [nbRestarts incr];
                NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
             }];
@@ -99,10 +105,12 @@ int main(int argc, const char * argv[])
       }];
       
       ORLong endTime = [ORRuntimeMonitor wctime];
-      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
+      ORLong endCPU  = [ORRuntimeMonitor cputime];
+      NSLog(@"Execution Time(WC) : %lld \n",endTime - startTime);
+      NSLog(@"Execution Time(CPU): %lld \n",endCPU - startCPU);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      printf("result: %d %lld\n",[cp nbFailures],endTime - startTime);
+      printf("%s %f %d %s %d %lld %lld\n",hName[hs],rf,n,found ? "YES" : "NO",[cp nbFailures],endTime - startTime,endCPU - startCPU);
       [cp release];
       [CPFactory shutdown];      
    }
