@@ -17,6 +17,13 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 
+enum Heuristic {
+   FF = 0,
+   ABS = 1,
+   IBS = 2,
+   WDEG = 3,
+   DDEG = 4
+};
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -24,6 +31,13 @@ int main(int argc, const char * argv[])
       id<ORModel> model = [ORFactory createModel];
       [ORStreamManager setRandomized];
       ORInt n = 4;
+      enum Heuristic hs = FF;
+      for(int k = 1;k< argc;k++) {
+         if (strncmp(argv[k], "-q", 2) == 0)
+            n = atoi(argv[k]+2);
+         else if (strncmp(argv[k], "-h", 2)==0)
+            hs = atoi(argv[k]+2);
+      }
       if (argc >= 2)
          n = atoi(argv[1]);
       id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
@@ -51,10 +65,16 @@ int main(int argc, const char * argv[])
       [cp addModel:model];
       //id<CPHeuristic> h = [CPFactory createIBS:cp];
       //id<CPHeuristic> h = [CPFactory createFF:cp];
-      id<CPHeuristic> h = [CPFactory createABS:cp];
-      
+      id<CPHeuristic> h = nil;
+      switch(hs) {
+         case FF: h = [CPFactory createFF:cp];break;
+         case IBS: h = [CPFactory createIBS:cp];break;
+         case ABS: h = [CPFactory createABS:cp];break;
+         case WDEG: h = [CPFactory createWDeg:cp];break;
+         case DDEG: h = [CPFactory createDDeg:cp];break;
+      }
+     
       [cp solve:^{
-         NSLog(@"Searching...");
          [cp limitTime:maxTime in: ^ {
             [cp repeat:^{
                [cp limitFailures:[nbFailures value] in: ^ {
@@ -82,6 +102,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
+      printf("result: %d %lld\n",[cp nbFailures],endTime - startTime);
       [cp release];
       [CPFactory shutdown];      
    }
