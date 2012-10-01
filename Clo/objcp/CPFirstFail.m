@@ -46,5 +46,6 @@
 -(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;
+   NSLog(@"FirstFail ready...");
 }
 @end
