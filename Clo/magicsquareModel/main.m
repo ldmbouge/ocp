@@ -52,7 +52,7 @@ int main(int argc, const char * argv[])
       [cp addModel:model];
       id<CPHeuristic> h = [CPFactory createIBS:cp];
       //id<CPHeuristic> h = [CPFactory createFF:cp];
-      //id<CPHeuristic> h = [CPFactory createABS:cp];
+      //try:id<CPHeuristic> h = [CPFactory createABS:cp];
       
       [cp solve:^{
          NSLog(@"Searching...");
