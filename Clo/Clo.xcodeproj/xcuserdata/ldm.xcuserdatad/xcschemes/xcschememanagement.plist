@@ -179,6 +179,11 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
+		<key>magicsquareModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>34</integer>
+		</dict>
 		<key>magicsquareModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -284,6 +289,11 @@
 			<key>orderHint</key>
 			<integer>48</integer>
 		</dict>
+		<key>testDistrib.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>35</integer>
+		</dict>
 		<key>testLPWrapper.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -318,6 +328,11 @@
 			<true/>
 		</dict>
 		<key>5B33370313A2B866001DFC38</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B5096DF1619B6CB00171F9D</key>
 		<dict>
 			<key>primary</key>
 			<true/>
