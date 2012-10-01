@@ -14,7 +14,7 @@
 
 @implementation OROPTSelect
 {
-   id<ORZeroOneStream> _stream;
+   id<ORRandomStream> _stream;
    id<ORIntIterator>   _range;
    ORInt2Bool         _filter;
    ORInt2Float         _order;
@@ -27,7 +27,7 @@
    _range = range;
    _filter = [filter copy];
    _order = [order copy];
-   _stream = [ORCrFactory zeroOneStream];
+   _stream = [ORCrFactory randomStream];
    _direction = 1;
    _randomized = randomized;
    return self;
@@ -58,13 +58,6 @@
 }
 -(ORInt) choose
 {
-   // This rountine is not correctly randomized.
-   // bestRand as MAXFLOAT, and the test simply says: choose a new value if the
-   // random number is smaller than the last one selected. How does that guarantee equi-probable
-   // choices? If the first values draws a small random number, it is far more likely to stay than, say the 10th
-   // value. Similarly, if we draw a very large value, that first selection is very likely to be
-   // pushed aside.
-   /*
    float bestFound = MAXFLOAT;
    float bestRand = MAXFLOAT;
    ORInt indexFound = MAXINT;
@@ -87,39 +80,7 @@
          }
       }
    }
-   return indexFound;*/
-   float bestFound = MAXFLOAT;
-   ORInt indexFound = MAXINT;
-   ORInt nbSeen     = 0;
-   ORInt maxSee     = 2;
-   ORInt* seen = malloc(sizeof(ORInt)*maxSee);
-   id<IntEnumerator> ite = [_range enumerator];
-   while ([ite more]) {
-      ORInt i = [ite next];
-      if (_filter(i)) {
-         float val = _direction * (_order ? _order(i) : 0.0);
-         if (val < bestFound) {
-            bestFound = val;
-            seen[0]  = i;
-            nbSeen   = 1;
-         }
-         else if (_randomized && val == bestFound) {
-            if (nbSeen >= maxSee) {
-               seen = realloc(seen, sizeof(ORInt)*maxSee*2);
-               maxSee <<= 1;
-            }
-            seen[nbSeen++] = i;
-         }
-      }
-   }
-   ORFloat r = [_stream next];
-   if (nbSeen != 0) {
-      assert(nbSeen != 0);
-      double w = 1.0L/nbSeen;
-      indexFound = seen[(ORInt)floor(r/w)];
-      free(seen);
-      return indexFound;
-   } else return MAXINT;
+   return indexFound;
 }
 
 @end

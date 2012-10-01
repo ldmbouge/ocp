@@ -36,6 +36,7 @@ int main(int argc, const char * argv[])
       ORInt n = 4;
       ORFloat rf = 1.0;
       ORInt t = 60;
+      ORInt r = 0;
       enum Heuristic hs = FF;
       for(int k = 1;k< argc;k++) {
          if (strncmp(argv[k], "-q", 2) == 0)
@@ -46,6 +47,8 @@ int main(int argc, const char * argv[])
             rf = atof(argv[k]+2);
          else if (strncmp(argv[k],"-t",2)==0)
             t = atoi(argv[k]+2);
+         else if (strncmp(argv[k],"-r",2)==0)
+            r = atoi(argv[k]+2);
       }
       id<ORIntRange>  R = [ORFactory intRange:model low:1 up:n];
       id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
@@ -110,7 +113,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Execution Time(CPU): %lld \n",endCPU - startCPU);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-      printf("%s %f %d %s %d %lld %lld\n",hName[hs],rf,n,found ? "YES" : "NO",[cp nbFailures],endTime - startTime,endCPU - startCPU);
+      printf("%d %s %d %d %f %d %lld %lld\n",r,hName[hs],n,found ? 1 : 0,rf,[cp nbFailures],endTime - startTime,endCPU - startCPU);
       [cp release];
       [CPFactory shutdown];      
    }
