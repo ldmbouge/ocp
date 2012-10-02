@@ -62,14 +62,13 @@ int main(int argc, const char * argv[])
          }
       }
       [model minimize: m];
-      [model add: [m leqi:11]];
 
       //NSLog(@"Model: %@",model);
 
-      //id<CPSolver> cp = [CPFactory createSolver];
+      id<CPSolver> cp = [CPFactory createSolver];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
       

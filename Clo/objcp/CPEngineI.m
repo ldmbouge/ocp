@@ -479,8 +479,8 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    @try {
       if (_status) {
          ORStatus ok = [_objective check];
-         if (ok)
-            ok = [self propagate];
+         //if (ok)
+           // ok = [self propagate];
          return ok;
       }
       else return _status;
