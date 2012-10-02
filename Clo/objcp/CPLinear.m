@@ -583,9 +583,11 @@ struct CPVarPair {
          }
       }break;
       case 2: {  // x <= y
+         //return [fdm post:[CPFactory sum:[self scaledViews] leq:- _indep]];
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            assert(_indep == 0);
             return [fdm post:[CPFactory lEqual: _terms[0]._var to:_terms[1]._var plus:- _indep]];
-         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
             return [fdm post:[CPFactory lEqual:_terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
             id<ORIntVar> xp = [CPFactory intVar:_terms[0]._var scale:_terms[0]._coef];

@@ -62,7 +62,7 @@ int main(int argc, const char * argv[])
          }
       }
       [model minimize: m];
-
+      id<ORInteger> myOpt = [ORFactory integer:model value:100];
       //NSLog(@"Model: %@",model);
 
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
@@ -70,7 +70,6 @@ int main(int argc, const char * argv[])
       id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
-      
       [cp solve: ^{
          __block ORInt depth = 0;
          __block ORInt maxc  = 0;
@@ -78,9 +77,19 @@ int main(int argc, const char * argv[])
             if ([c[i] bound])
                maxc = maxc > [c[i] value] ? maxc : [c[i] value];
          }
-         NSLog(@"Initial MAXC  = %d",maxc);
+         NSLog(@"Initial MAXC  = %d  - %@",maxc,m);
+         
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
+            if ([[[cp dereference] engine] propagate] == ORFailure)
+                [[cp explorer] fail];
+            for(ORInt i=[V low];i <= [V up];i++) {
+               if (!([c[i] max] <= [m max])) {
+                  [[[cp dereference] engine] propagate];
+                  assert([c[i] max] <= [m max]);
+               }
+            }
             id<ORIntVar> ci = [c[i] dereference]; // [ldm] this line alone saves 3 seconds over 20s of runtime in //.
+            if (![c[i] bound])
             [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [ci member:v];} in:^(ORInt v) {
                //NSLog(@"%@?c[%d]==%d  (var:%@)",tab(depth),i,v,c[i]);
                [cp label:ci with:v];
@@ -90,9 +99,15 @@ int main(int argc, const char * argv[])
                [cp diff:ci with:v];
             }];
             depth++;
+
+
          }];
+
          [cp label:m with:[m min]];
          NSLog(@"coloring with: %d colors",[m value]);
+         @synchronized(myOpt) {
+            [myOpt setValue:[m value]];
+         }
       }];
 
       ORLong endTime = [ORRuntimeMonitor wctime];

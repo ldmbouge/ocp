@@ -526,7 +526,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
-   VarEventNode* mList[5];
+   VarEventNode* mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
