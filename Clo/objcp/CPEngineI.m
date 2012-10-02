@@ -477,13 +477,11 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (_objective == nil) return ORSuspend;
    @try {
-      if (_status) {
-         ORStatus ok = [_objective check];
-         //if (ok)
-           // ok = [self propagate];
-         return ok;
-      }
-      else return _status;
+      _status = ORSuspend;
+      ORStatus ok = [_objective check];
+      if (ok)
+         ok = [self propagate];
+      return ok;
    } @catch (ORFailException *exception) {
       [exception release];
       _status = ORFailure;
