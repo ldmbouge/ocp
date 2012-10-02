@@ -442,6 +442,8 @@
 		B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862215CD8AE20019729B /* ORExplorerI.m */; };
 		B11D862715CD8E310019729B /* ORLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = B11D862515CD8E310019729B /* ORLimit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B11D862815CD8E310019729B /* ORLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862615CD8E310019729B /* ORLimit.m */; };
+		B1255E85161A02A8009A7AC3 /* libgurobi46.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */; };
+		B1255E86161A0437009A7AC3 /* mpwrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571ECC13EE06AE007B5E88 /* mpwrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B12ED8C2159E0C2200713C8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B12ED8C5159E0C2200713C8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B12ED8C4159E0C2200713C8E /* main.m */; };
 		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
@@ -1808,7 +1810,7 @@
 		5BC794C91389D81900EC7B21 /* SillyVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SillyVar.h; sourceTree = "<group>"; };
 		5BC794CA1389D81900EC7B21 /* SillyVar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SillyVar.m; sourceTree = "<group>"; };
 		5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libgurobi_g++4.2.a"; path = "../../../../../Library/gurobi461/mac64/lib/libgurobi_g++4.2.a"; sourceTree = "<group>"; };
-		5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgurobi46.so; path = /Users/ldm/work/platform/Clo/../../../../../Library/gurobi461/mac64/lib/libgurobi46.so; sourceTree = "<absolute>"; };
+		5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; name = libgurobi46.so; path = ../../../../../../../../../Library/gurobi461/mac64/lib/libgurobi46.so; sourceTree = SDKROOT; };
 		5BCCC4031417F8CE0079E833 /* queensACSem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = queensACSem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
@@ -1885,6 +1887,7 @@
 		B11D862215CD8AE20019729B /* ORExplorerI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORExplorerI.m; sourceTree = "<group>"; };
 		B11D862515CD8E310019729B /* ORLimit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORLimit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B11D862615CD8E310019729B /* ORLimit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORLimit.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; name = libgurobi.so.4.6.1; path = ../../../../../../Library/gurobi461/mac64/lib/libgurobi.so.4.6.1; sourceTree = "<group>"; };
 		B12B178B151DC9CB008AB289 /* ORConcurrency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConcurrency.h; sourceTree = "<group>"; };
 		B12B178D151DCA16008AB289 /* ORConcurrencyI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConcurrencyI.h; sourceTree = "<group>"; };
 		B12B178E151DCA16008AB289 /* ORConcurrencyI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORConcurrencyI.m; sourceTree = "<group>"; };
@@ -2485,6 +2488,7 @@
 				B1571EDB13EE0A3D007B5E88 /* mpwrapper.framework in Frameworks */,
 				B1571EB613EDF26E007B5E88 /* mpinterface.framework in Frameworks */,
 				B111FBFA13CF3C81003C5119 /* Foundation.framework in Frameworks */,
+				B1255E85161A02A8009A7AC3 /* libgurobi46.so in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2704,6 +2708,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */,
 				5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */,
 				5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */,
 				B1EADBD215CDC0590032A6C7 /* OREngine.h */,
@@ -4173,6 +4178,7 @@
 			files = (
 				B1571EBC13EE0472007B5E88 /* lpsolver.h in Headers */,
 				B1571EBD13EE0496007B5E88 /* lpsolveri.h in Headers */,
+				B1255E86161A0437009A7AC3 /* mpwrapper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8343,9 +8349,12 @@
 				HEADER_SEARCH_PATHS = /Library/gurobi461/mac64/include;
 				INFOPLIST_FILE = "gurobiwrapper/gurobiwrapper-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "";
-				LIBRARY_SEARCH_PATHS = "$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib",
+					/Library/gurobi461/mac64/lib,
+				);
 				New_Setting = "";
-				OTHER_LDFLAGS = "-lgurobi45";
+				OTHER_LDFLAGS = "-lgurobi46";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
@@ -8368,9 +8377,12 @@
 				HEADER_SEARCH_PATHS = /Library/gurobi461/mac64/include;
 				INFOPLIST_FILE = "gurobiwrapper/gurobiwrapper-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "";
-				LIBRARY_SEARCH_PATHS = "$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib";
+				LIBRARY_SEARCH_PATHS = (
+					"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib",
+					/Library/gurobi461/mac64/lib,
+				);
 				New_Setting = "";
-				OTHER_LDFLAGS = "-lgurobi45";
+				OTHER_LDFLAGS = "-lgurobi46";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
@@ -8889,6 +8901,7 @@
 				5B5096EB1619B6CC00171F9D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B558C111563F01000D2BCD7 /* Build configuration list for PBXNativeTarget "queensNaive" */ = {
 			isa = XCConfigurationList;
