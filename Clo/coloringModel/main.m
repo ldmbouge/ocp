@@ -68,11 +68,7 @@ int main(int argc, const char * argv[])
       //id<CPSolver> cp = [CPFactory createSolver];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-<<<<<<< HEAD
       id<CPParSolver> cp = [CPFactory createParSolver:1 withController:[ORSemDFSController class]];
-=======
-      id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
->>>>>>> 8ab36eb2e58cf7d13783228a4ce57d903ce60ab3
       //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemBDSController class]];
       [cp addModel: model];
       
@@ -84,14 +80,8 @@ int main(int argc, const char * argv[])
                maxc = maxc > [c[i] value] ? maxc : [c[i] value];
          }
          NSLog(@"Initial MAXC  = %d",maxc);
-<<<<<<< HEAD
          NSLog(@"%d ",[m max]);
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
-=======
-         [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];}
-          orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];}
-                 do:^(ORInt i) {
->>>>>>> 8ab36eb2e58cf7d13783228a4ce57d903ce60ab3
             id<ORIntVar> ci = [c[i] dereference]; // [ldm] this line alone saves 3 seconds over 20s of runtime in //.
             [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [ci member:v];} in:^(ORInt v) {
                //NSLog(@"%@?c[%d]==%d  (var:%@)",tab(depth),i,v,c[i]);
