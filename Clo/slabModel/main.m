@@ -94,10 +94,10 @@ int main(int argc, const char * argv[])
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [model minimize: obj];
    
-   id<CPSolver> cp = [CPFactory createSolver];
+   //id<CPSolver> cp = [CPFactory createSolver];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
-   //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+   id<CPParSolver> cp = [CPFactory createParSolver:4 withController:[ORSemDFSController class]];
    [cp addModel: model];
    [cp solve: ^{
       NSMutableArray* av = [cp allVars];
@@ -121,8 +121,11 @@ int main(int argc, const char * argv[])
           if (![slab[o] bound])
              [cp fail];
 #else
+         //printf("%d ",o);
           ORInt ms = max(0,[CPLabel maxBound: slab]);
-          [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [slab[o] member:s]; } in: ^void(ORInt s)
+          //[cp add: [slab[o] leqi:ms+1]];
+         //[cp lthen:slab[o] with:ms+2];
+          [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [slab[o] member:s]; } in: ^void(ORInt s)
            {
               //NSLog(@"doing %d with %d",o,s);
               [cp label: slab[o] with: s];
@@ -136,11 +139,11 @@ int main(int argc, const char * argv[])
           depth++;
       });
       printf("\n");
-      printf("obj: %d \n",[obj min]);
-      printf("Slab: ");
-      for(ORInt i = 1; i <= nbSize; i++)
-         printf("%d ",[slab[i] value]);
-      printf("\n");
+      printf("obj: %d %p\n",[obj min],[NSThread currentThread]);
+      //printf("Slab: ");
+      //for(ORInt i = 1; i <= nbSize; i++)
+      //   printf("%d ",[slab[i] value]);
+      //printf("\n");
    }];
    
    ORLong endTime = [ORRuntimeMonitor wctime];

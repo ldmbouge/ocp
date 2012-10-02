@@ -70,9 +70,9 @@ int main(int argc, const char * argv[])
         [CPLabel array: aw orderedBy: ^ORInt(ORInt i) { return [[aw at:i] domsize];}];
         }
         */
-       [CPLabel array: allgames orderedBy: ^ORInt(ORInt i) { return [[allgames at:i] domsize];}];
+       [CPLabel array: allgames orderedBy: ^ORFloat(ORInt i) { return [[allgames at:i] domsize];}];
        NSLog(@"after");
-       [CPLabel array: allteams orderedBy: ^ORInt(ORInt i) { return [[allteams at:i] domsize];}];
+       [CPLabel array: allteams orderedBy: ^ORFloat(ORInt i) { return [[allteams at:i] domsize];}];
        ORLong endTime = [ORRuntimeMonitor cputime];
        printf("Solution \n");
        for(ORInt p = 1; p <= n/2; p++) {
