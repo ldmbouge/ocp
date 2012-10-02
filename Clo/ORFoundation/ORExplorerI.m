@@ -355,7 +355,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       [self setController:newCtrl];           // install the new controller
       id<ORObjective> obj = solver.objective;
       assert(obj);
-      OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: ^ORStatus(void) { return [obj check]; }];
+      OROptimizationController* controller = [[OROptimizationController alloc] initOROptimizationController: ^ORStatus(void) { return [_engine enforceObjective]; }];
       [self push: controller];
       [controller release];
       if (search) search();

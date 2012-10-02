@@ -475,13 +475,18 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus)enforceObjective
 {
-   if (_objective != nil) {
-      if (_status)
-         return [_objective check];
-      else return _status;
+   if (_objective == nil) return ORSuspend;
+   @try {
+      _status = ORSuspend;
+      ORStatus ok = [_objective check];
+      if (ok)
+         ok = [self propagate];
+      return ok;
+   } @catch (ORFailException *exception) {
+      [exception release];
+      _status = ORFailure;
    }
-   else
-      return _status;
+   return _status;
 }
 
 -(ORStatus) post: (id<ORConstraint>) c

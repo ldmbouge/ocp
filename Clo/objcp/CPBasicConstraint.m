@@ -1520,7 +1520,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
   if (![_x bound]) 
     [_x whenChangeMinDo: ^ {
-       [_x updateMax: _primalBound];
+       [_x updateMax: _primalBound - 1];
     } onBehalf:self];
   return ORSuspend;
 }
@@ -1535,15 +1535,18 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(void) updatePrimalBound
 {
-  ORInt bound = [_x min];
-  if (bound < _primalBound) 
-    _primalBound = bound; 
-
+   ORInt bound = [_x min];
+   @synchronized(self) {
+      if (bound < _primalBound)
+         _primalBound = bound;
+   }
 }
 -(void) tightenPrimalBound:(ORInt)newBound
 {
-   if (newBound < _primalBound)
-      _primalBound = newBound;
+   @synchronized(self) {
+      if (newBound < _primalBound)
+         _primalBound = newBound;
+   }
 }
 
 -(ORStatus) check 
