@@ -14,7 +14,7 @@
 @implementation LPGurobiSolver;
 
 
--(id<LPSolverWrapper>) initLPGurobiSolver
+-(id<LPMatrixSolver>) initLPGurobiSolver
 {
     [super init];
     int error = GRBloadenv(&_env, "");

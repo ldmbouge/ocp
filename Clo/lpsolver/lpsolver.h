@@ -10,16 +10,16 @@
  ***********************************************************************/
 
 
-#import <objc/objc-auto.h>
-#import <Foundation/NSGarbageCollector.h>
-#import <Foundation/NSObject.h>
-#import <mpinterface/mpinterface.h>
-
-
-@interface LPFactory : NSObject
-{
-    
-}
-+(id<LPSolver>) solver;
-@end;
+//#import <objc/objc-auto.h>
+//#import <Foundation/NSGarbageCollector.h>
+//#import <Foundation/NSObject.h>
+//#import <mpinterface/mpinterface.h>
+//
+//
+//@interface LPFactory : NSObject
+//{
+//   
+//}
+//+(id<LPSolver>) solver;
+//@end;
 

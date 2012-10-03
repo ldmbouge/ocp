@@ -11,11 +11,14 @@
 
 
 #import <Foundation/Foundation.h>
-#import <mpwrapper/mpwrapper.h>
+#import "LPMatrixSolver.h"
 
-@interface MPWrapperFactory : NSObject
+@protocol LPMatrixSolver;
+
+
+@interface MPMatrixSolverFactory : NSObject
 {
     
 }
-+(id<LPSolverWrapper>) lpwrapper;
++(id<LPMatrixSolver>) lpMatrixSolver;
 @end;

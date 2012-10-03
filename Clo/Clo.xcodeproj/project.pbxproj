@@ -443,7 +443,10 @@
 		B11D862715CD8E310019729B /* ORLimit.h in Headers */ = {isa = PBXBuildFile; fileRef = B11D862515CD8E310019729B /* ORLimit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B11D862815CD8E310019729B /* ORLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862615CD8E310019729B /* ORLimit.m */; };
 		B1255E85161A02A8009A7AC3 /* libgurobi46.so in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */; };
-		B1255E86161A0437009A7AC3 /* mpwrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571ECC13EE06AE007B5E88 /* mpwrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1255EB2161CF450009A7AC3 /* MPMatrixSolverFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */; };
+		B1255EB3161CF50A009A7AC3 /* LPMatrixSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1255EB4161CF546009A7AC3 /* MPMatrixSolverFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1255EB5161CF5B1009A7AC3 /* gurobiwrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B17ABF7913CE4E7700DC7288 /* gurobiwrapper.framework */; };
 		B12ED8C2159E0C2200713C8E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B12ED8C5159E0C2200713C8E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B12ED8C4159E0C2200713C8E /* main.m */; };
 		B12ED8C9159E0C2200713C8E /* sport.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B12ED8C8159E0C2200713C8E /* sport.1 */; };
@@ -457,23 +460,18 @@
 		B1571EAD13EDF10E007B5E88 /* mpinterface.m in Sources */ = {isa = PBXBuildFile; fileRef = B1571EAC13EDF10E007B5E88 /* mpinterface.m */; };
 		B1571EB113EDF202007B5E88 /* mpinterface.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571EAB13EDF10E007B5E88 /* mpinterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1571EB613EDF26E007B5E88 /* mpinterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EA213EDF10E007B5E88 /* mpinterface.framework */; };
-		B1571EB713EDF279007B5E88 /* mpinterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EA213EDF10E007B5E88 /* mpinterface.framework */; };
-		B1571EBC13EE0472007B5E88 /* lpsolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B178F62F13E89CFA00D59B31 /* lpsolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1571EBD13EE0496007B5E88 /* lpsolveri.h in Headers */ = {isa = PBXBuildFile; fileRef = B1DA97E713EC714F00BA7244 /* lpsolveri.h */; };
 		B1571EC413EE06AE007B5E88 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B1571ECA13EE06AE007B5E88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1571EC813EE06AE007B5E88 /* InfoPlist.strings */; };
 		B1571ECE13EE06AE007B5E88 /* mpwrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = B1571ECD13EE06AE007B5E88 /* mpwrapper.m */; };
-		B1571ED313EE091F007B5E88 /* mpwrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571ECC13EE06AE007B5E88 /* mpwrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1571ED813EE0A24007B5E88 /* mpwrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EC313EE06AE007B5E88 /* mpwrapper.framework */; };
+		B1571ED313EE091F007B5E88 /* LPMatrixSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1571EDB13EE0A3D007B5E88 /* mpwrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EC313EE06AE007B5E88 /* mpwrapper.framework */; };
 		B1571EDE13EE0B60007B5E88 /* mpinterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EA213EDF10E007B5E88 /* mpinterface.framework */; };
 		B1571EEE13EEBC00007B5E88 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B1571EF413EEBC00007B5E88 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1571EF213EEBC00007B5E88 /* InfoPlist.strings */; };
-		B1571EF813EEBC00007B5E88 /* mpwrapperfactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B1571EF713EEBC00007B5E88 /* mpwrapperfactory.m */; };
+		B1571EF813EEBC00007B5E88 /* MPMatrixSolverFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */; };
 		B1571F0013EEBC26007B5E88 /* gurobiwrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B17ABF7913CE4E7700DC7288 /* gurobiwrapper.framework */; };
 		B1571F0113EEBC2B007B5E88 /* mpwrapper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EC313EE06AE007B5E88 /* mpwrapper.framework */; };
-		B1571F0213EEBE43007B5E88 /* mpwrapperfactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571EF613EEBC00007B5E88 /* mpwrapperfactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1571F0513EEBE64007B5E88 /* mpwrapperfactory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1571EED13EEBC00007B5E88 /* mpwrapperfactory.framework */; };
+		B1571F0213EEBE43007B5E88 /* MPMatrixSolverFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1571F0613EEBF9C007B5E88 /* lpgurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B17ABF9113CF333C00DC7288 /* lpgurobi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1583D3313A4CF7D0002FBD8 /* CPExprI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1583D3113A4CF7D0002FBD8 /* CPExprI.m */; };
 		B1595B4013C11F2A001FCB61 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -515,10 +513,6 @@
 		B17715A315579B4900BA14BF /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B17715B51557D9D200BA14BF /* CPTableI.h in Headers */ = {isa = PBXBuildFile; fileRef = B17715B31557D9D200BA14BF /* CPTableI.h */; };
 		B17715B61557D9D200BA14BF /* CPTableI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17715B41557D9D200BA14BF /* CPTableI.m */; };
-		B178F62713E89CFA00D59B31 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
-		B178F62D13E89CFA00D59B31 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B178F62B13E89CFA00D59B31 /* InfoPlist.strings */; };
-		B178F63113E89CFA00D59B31 /* lpsolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B178F63013E89CFA00D59B31 /* lpsolver.m */; };
-		B178F63A13E8AF0C00D59B31 /* lpsolver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B178F62613E89CFA00D59B31 /* lpsolver.framework */; };
 		B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = B17ABE9013CC852C00DC7288 /* CPIntVarI.h */; };
 		B17ABE9313CC852C00DC7288 /* CPIntVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17ABE9113CC852C00DC7288 /* CPIntVarI.m */; };
 		B17ABF8013CE4E7700DC7288 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B17ABF7E13CE4E7700DC7288 /* InfoPlist.strings */; };
@@ -545,6 +539,7 @@
 		B189515015E0FA7C00B77813 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B189515115E0FA8100B77813 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B189515215E0FA8500B77813 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		B18C3277161CF72C00A65B6D /* objlp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F3804415F035C0007C6A4A /* objlp.framework */; };
 		B1935C6015B90ECE00107399 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1935C6315B90ECE00107399 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1935C6215B90ECE00107399 /* main.m */; };
 		B1935C7115B90EEA00107399 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -607,7 +602,6 @@
 		B1EB8CD015F8194600A3662D /* LPGurobiWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E2362415F8140000AB8DB6 /* LPGurobiWrapper.h */; };
 		B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B1F3804B15F035C0007C6A4A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B1F3804915F035C0007C6A4A /* InfoPlist.strings */; };
-		B1F3804F15F035C0007C6A4A /* objlp.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F3804E15F035C0007C6A4A /* objlp.m */; };
 		B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = B1F531D015AED1DB00E89F98 /* CPBinPacking.h */; };
 		B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
 		B1F531DA15AED4B100E89F98 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -616,7 +610,7 @@
 		B1F531E715AED50000E89F98 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1F531EC15AED52200E89F98 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1F531ED15AED52700E89F98 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		B1FCB33C15F6BD2500F8446A /* LPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33A15F6BD2500F8446A /* LPSolver.h */; };
+		B1FCB33C15F6BD2500F8446A /* LPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33A15F6BD2500F8446A /* LPSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1FCB34015F6BD6100F8446A /* LPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33E15F6BD6100F8446A /* LPSolverI.h */; };
 		B1FCB34115F6BD6100F8446A /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1FCB33F15F6BD6100F8446A /* LPSolverI.m */; };
 /* End PBXBuildFile section */
@@ -951,33 +945,12 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		B1571EB213EDF249007B5E88 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B1571EA113EDF10E007B5E88;
-			remoteInfo = mpinterface;
-		};
 		B1571EB413EDF253007B5E88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = B1571EA113EDF10E007B5E88;
 			remoteInfo = mpinterface;
-		};
-		B1571EB813EDF29B007B5E88 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B1571EA113EDF10E007B5E88;
-			remoteInfo = mpinterface;
-		};
-		B1571ED613EE0A1B007B5E88 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B1571EC213EE06AE007B5E88;
-			remoteInfo = mpwrapper;
 		};
 		B1571ED913EE0A37007B5E88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1006,13 +979,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B1571EC213EE06AE007B5E88;
 			remoteInfo = mpwrapper;
-		};
-		B1571F0313EEBE5A007B5E88 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B1571EEC13EEBC00007B5E88;
-			remoteInfo = mpwrapperfactory;
 		};
 		B1595B4A13C11F3A001FCB61 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1063,13 +1029,6 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		B178F63813E8AF0100D59B31 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B178F62513E89CFA00D59B31;
-			remoteInfo = lpsolver;
-		};
 		B181E12315D746A200AB44DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1111,6 +1070,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		B18C3275161CF71C00A65B6D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B1F3804315F035C0007C6A4A;
+			remoteInfo = objlp;
 		};
 		B1935C6B15B90ED900107399 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1911,14 +1877,14 @@
 		B1571EC713EE06AE007B5E88 /* mpwrapper-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "mpwrapper-Info.plist"; sourceTree = "<group>"; };
 		B1571EC913EE06AE007B5E88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B1571ECB13EE06AE007B5E88 /* mpwrapper-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mpwrapper-Prefix.pch"; sourceTree = "<group>"; };
-		B1571ECC13EE06AE007B5E88 /* mpwrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mpwrapper.h; sourceTree = "<group>"; };
+		B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LPMatrixSolver.h; path = ../mpwrapper/LPMatrixSolver.h; sourceTree = "<group>"; };
 		B1571ECD13EE06AE007B5E88 /* mpwrapper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mpwrapper.m; sourceTree = "<group>"; };
 		B1571EED13EEBC00007B5E88 /* mpwrapperfactory.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = mpwrapperfactory.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1571EF113EEBC00007B5E88 /* mpwrapperfactory-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "mpwrapperfactory-Info.plist"; sourceTree = "<group>"; };
 		B1571EF313EEBC00007B5E88 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B1571EF513EEBC00007B5E88 /* mpwrapperfactory-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "mpwrapperfactory-Prefix.pch"; sourceTree = "<group>"; };
-		B1571EF613EEBC00007B5E88 /* mpwrapperfactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mpwrapperfactory.h; sourceTree = "<group>"; };
-		B1571EF713EEBC00007B5E88 /* mpwrapperfactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = mpwrapperfactory.m; sourceTree = "<group>"; };
+		B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MPMatrixSolverFactory.h; path = ../mpwrapperfactory/MPMatrixSolverFactory.h; sourceTree = "<group>"; };
+		B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MPMatrixSolverFactory.m; path = ../mpwrapperfactory/MPMatrixSolverFactory.m; sourceTree = "<group>"; };
 		B1571F0713EEC144007B5E88 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi461/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B1583D3113A4CF7D0002FBD8 /* CPExprI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPExprI.m; sourceTree = "<group>"; };
 		B1595B3E13C11F2A001FCB61 /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1953,7 +1919,6 @@
 		B177159C155798AA00BA14BF /* Euler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Euler.1; sourceTree = "<group>"; };
 		B17715B31557D9D200BA14BF /* CPTableI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTableI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B17715B41557D9D200BA14BF /* CPTableI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTableI.m; sourceTree = "<group>"; };
-		B178F62613E89CFA00D59B31 /* lpsolver.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = lpsolver.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B178F62A13E89CFA00D59B31 /* lpsolver-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "lpsolver-Info.plist"; sourceTree = "<group>"; };
 		B178F62C13E89CFA00D59B31 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B178F62E13E89CFA00D59B31 /* lpsolver-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "lpsolver-Prefix.pch"; sourceTree = "<group>"; };
@@ -2056,8 +2021,6 @@
 		B1F3804815F035C0007C6A4A /* objlp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objlp-Info.plist"; sourceTree = "<group>"; };
 		B1F3804A15F035C0007C6A4A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B1F3804C15F035C0007C6A4A /* objlp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objlp-Prefix.pch"; sourceTree = "<group>"; };
-		B1F3804D15F035C0007C6A4A /* objlp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objlp.h; sourceTree = "<group>"; };
-		B1F3804E15F035C0007C6A4A /* objlp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = objlp.m; sourceTree = "<group>"; };
 		B1F531D015AED1DB00E89F98 /* CPBinPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPBinPacking.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1F531D115AED1DB00E89F98 /* CPBinPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBinPacking.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531D815AED4B100E89F98 /* testPacking */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testPacking; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2377,7 +2340,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B178F63A13E8AF0C00D59B31 /* lpsolver.framework in Frameworks */,
+				B18C3277161CF72C00A65B6D /* objlp.framework in Frameworks */,
 				B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2467,17 +2430,6 @@
 				5B920ECD15A432E000AD0820 /* ORFoundation.framework in Frameworks */,
 				B17715A315579B4900BA14BF /* objcp.framework in Frameworks */,
 				B1771596155798AA00BA14BF /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B178F62213E89CFA00D59B31 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B1571F0513EEBE64007B5E88 /* mpwrapperfactory.framework in Frameworks */,
-				B1571ED813EE0A24007B5E88 /* mpwrapper.framework in Frameworks */,
-				B1571EB713EDF279007B5E88 /* mpinterface.framework in Frameworks */,
-				B178F62713E89CFA00D59B31 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2590,6 +2542,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1255EB5161CF5B1009A7AC3 /* gurobiwrapper.framework in Frameworks */,
 				B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2750,7 +2703,6 @@
 				B103533F13BBD7AC00627058 /* queensAC */,
 				B1595B3E13C11F2A001FCB61 /* Sudoku */,
 				B111FBFF13CF3D10003C5119 /* testLPWrapper */,
-				B178F62613E89CFA00D59B31 /* lpsolver.framework */,
 				B1571EA213EDF10E007B5E88 /* mpinterface.framework */,
 				B1571EC313EE06AE007B5E88 /* mpwrapper.framework */,
 				B1571EED13EEBC00007B5E88 /* mpwrapperfactory.framework */,
@@ -3565,7 +3517,6 @@
 		B1571EC513EE06AE007B5E88 /* mpwrapper */ = {
 			isa = PBXGroup;
 			children = (
-				B1571ECC13EE06AE007B5E88 /* mpwrapper.h */,
 				B1571ECD13EE06AE007B5E88 /* mpwrapper.m */,
 				B1571EC613EE06AE007B5E88 /* Supporting Files */,
 			);
@@ -3585,8 +3536,6 @@
 		B1571EEF13EEBC00007B5E88 /* mpwrapperfactory */ = {
 			isa = PBXGroup;
 			children = (
-				B1571EF613EEBC00007B5E88 /* mpwrapperfactory.h */,
-				B1571EF713EEBC00007B5E88 /* mpwrapperfactory.m */,
 				B1571EF013EEBC00007B5E88 /* Supporting Files */,
 			);
 			path = mpwrapperfactory;
@@ -3926,11 +3875,12 @@
 		B1F3804615F035C0007C6A4A /* objlp */ = {
 			isa = PBXGroup;
 			children = (
-				B1F3804D15F035C0007C6A4A /* objlp.h */,
-				B1F3804E15F035C0007C6A4A /* objlp.m */,
+				B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */,
 				B1FCB33A15F6BD2500F8446A /* LPSolver.h */,
 				B1FCB33E15F6BD6100F8446A /* LPSolverI.h */,
 				B1FCB33F15F6BD6100F8446A /* LPSolverI.m */,
+				B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */,
+				B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */,
 				B1F3804715F035C0007C6A4A /* Supporting Files */,
 			);
 			path = objlp;
@@ -4160,7 +4110,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1571ED313EE091F007B5E88 /* mpwrapper.h in Headers */,
+				B1571ED313EE091F007B5E88 /* LPMatrixSolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4168,17 +4118,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1571F0213EEBE43007B5E88 /* mpwrapperfactory.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B178F62313E89CFA00D59B31 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B1571EBC13EE0472007B5E88 /* lpsolver.h in Headers */,
-				B1571EBD13EE0496007B5E88 /* lpsolveri.h in Headers */,
-				B1255E86161A0437009A7AC3 /* mpwrapper.h in Headers */,
+				B1571F0213EEBE43007B5E88 /* MPMatrixSolverFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4204,6 +4144,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1FCB33C15F6BD2500F8446A /* LPSolver.h in Headers */,
+				B1255EB3161CF50A009A7AC3 /* LPMatrixSolver.h in Headers */,
+				B1255EB4161CF546009A7AC3 /* MPMatrixSolverFactory.h in Headers */,
 				B1FCB34015F6BD6100F8446A /* LPSolverI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4778,8 +4720,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				B1571EB913EDF29B007B5E88 /* PBXTargetDependency */,
-				B178F63913E8AF0100D59B31 /* PBXTargetDependency */,
+				B18C3276161CF71C00A65B6D /* PBXTargetDependency */,
 			);
 			name = testLPWrapper;
 			productName = testLPWrapper;
@@ -4952,27 +4893,6 @@
 			productName = Euler;
 			productReference = B1771594155798AA00BA14BF /* Euler */;
 			productType = "com.apple.product-type.tool";
-		};
-		B178F62513E89CFA00D59B31 /* lpsolver */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B178F63413E89CFA00D59B31 /* Build configuration list for PBXNativeTarget "lpsolver" */;
-			buildPhases = (
-				B178F62113E89CFA00D59B31 /* Sources */,
-				B178F62213E89CFA00D59B31 /* Frameworks */,
-				B178F62313E89CFA00D59B31 /* Headers */,
-				B178F62413E89CFA00D59B31 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B1571F0413EEBE5A007B5E88 /* PBXTargetDependency */,
-				B1571ED713EE0A1B007B5E88 /* PBXTargetDependency */,
-				B1571EB313EDF249007B5E88 /* PBXTargetDependency */,
-			);
-			name = lpsolver;
-			productName = lpsolver;
-			productReference = B178F62613E89CFA00D59B31 /* lpsolver.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 		B17ABF7813CE4E7700DC7288 /* gurobiwrapper */ = {
 			isa = PBXNativeTarget;
@@ -5228,7 +5148,6 @@
 				5B60E5D515AE907E002FF2B3 /* ORUtilities */,
 				5B9ABCEE1391329D000997E5 /* objcp */,
 				B17ABF7813CE4E7700DC7288 /* gurobiwrapper */,
-				B178F62513E89CFA00D59B31 /* lpsolver */,
 				B1571EA113EDF10E007B5E88 /* mpinterface */,
 				B1571EC213EE06AE007B5E88 /* mpwrapper */,
 				B1571EEC13EEBC00007B5E88 /* mpwrapperfactory */,
@@ -5375,14 +5294,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1571EF413EEBC00007B5E88 /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B178F62413E89CFA00D59B31 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B178F62D13E89CFA00D59B31 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5853,7 +5764,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1571EF813EEBC00007B5E88 /* mpwrapperfactory.m in Sources */,
+				B1571EF813EEBC00007B5E88 /* MPMatrixSolverFactory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5894,14 +5805,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1771599155798AA00BA14BF /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B178F62113E89CFA00D59B31 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B178F63113E89CFA00D59B31 /* lpsolver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5991,7 +5894,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1F3804F15F035C0007C6A4A /* objlp.m in Sources */,
+				B1255EB2161CF450009A7AC3 /* MPMatrixSolverFactory.m in Sources */,
 				B1FCB34115F6BD6100F8446A /* LPSolverI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6242,25 +6145,10 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B12ED8CD159E0CA500713C8E /* PBXContainerItemProxy */;
 		};
-		B1571EB313EDF249007B5E88 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B1571EA113EDF10E007B5E88 /* mpinterface */;
-			targetProxy = B1571EB213EDF249007B5E88 /* PBXContainerItemProxy */;
-		};
 		B1571EB513EDF253007B5E88 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = B1571EA113EDF10E007B5E88 /* mpinterface */;
 			targetProxy = B1571EB413EDF253007B5E88 /* PBXContainerItemProxy */;
-		};
-		B1571EB913EDF29B007B5E88 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B1571EA113EDF10E007B5E88 /* mpinterface */;
-			targetProxy = B1571EB813EDF29B007B5E88 /* PBXContainerItemProxy */;
-		};
-		B1571ED713EE0A1B007B5E88 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B1571EC213EE06AE007B5E88 /* mpwrapper */;
-			targetProxy = B1571ED613EE0A1B007B5E88 /* PBXContainerItemProxy */;
 		};
 		B1571EDA13EE0A37007B5E88 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6281,11 +6169,6 @@
 			isa = PBXTargetDependency;
 			target = B1571EC213EE06AE007B5E88 /* mpwrapper */;
 			targetProxy = B1571EFE13EEBC14007B5E88 /* PBXContainerItemProxy */;
-		};
-		B1571F0413EEBE5A007B5E88 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B1571EEC13EEBC00007B5E88 /* mpwrapperfactory */;
-			targetProxy = B1571F0313EEBE5A007B5E88 /* PBXContainerItemProxy */;
 		};
 		B1595B4B13C11F3A001FCB61 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6322,11 +6205,6 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B17715A115579B3900BA14BF /* PBXContainerItemProxy */;
 		};
-		B178F63913E8AF0100D59B31 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B178F62513E89CFA00D59B31 /* lpsolver */;
-			targetProxy = B178F63813E8AF0100D59B31 /* PBXContainerItemProxy */;
-		};
 		B181E12415D746A200AB44DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -6356,6 +6234,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B189514E15E0FA7300B77813 /* PBXContainerItemProxy */;
+		};
+		B18C3276161CF71C00A65B6D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B1F3804315F035C0007C6A4A /* objlp */;
+			targetProxy = B18C3275161CF71C00A65B6D /* PBXContainerItemProxy */;
 		};
 		B1935C6C15B90ED900107399 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -8281,58 +8164,6 @@
 			};
 			name = Release;
 		};
-		B178F63213E89CFA00D59B31 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "lpsolver/lpsolver-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
-				INFOPLIST_FILE = "lpsolver/lpsolver-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Debug;
-		};
-		B178F63313E89CFA00D59B31 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "lpsolver/lpsolver-Prefix.pch";
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
-				HEADER_SEARCH_PATHS = /Library/gurobi450/mac64/include;
-				INFOPLIST_FILE = "lpsolver/lpsolver-Info.plist";
-				LD_DYLIB_INSTALL_NAME = "";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Release;
-		};
 		B17ABF8313CE4E7700DC7288 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -9250,15 +9081,6 @@
 			buildConfigurations = (
 				B177159E155798AA00BA14BF /* Debug */,
 				B177159F155798AA00BA14BF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B178F63413E89CFA00D59B31 /* Build configuration list for PBXNativeTarget "lpsolver" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B178F63213E89CFA00D59B31 /* Debug */,
-				B178F63313E89CFA00D59B31 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

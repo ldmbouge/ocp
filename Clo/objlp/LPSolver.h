@@ -11,7 +11,66 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <lpwrapper/LPWrapper.h>
+
+typedef enum { LPinfeasible, LPoptimal, LPsuboptimal, LPunbounded, LPerror} LPOutcome;
+typedef enum { LPgeq, LPleq, LPeq } LPConstraintType;
+typedef enum { LPminimize, LPmaximize } LPObjectiveType;
+
+@protocol LPConstraint;
+@protocol LPVariable;
+
+typedef ORFloat (^LPInt2Float)(ORInt);
+typedef id<LPVariable> (^LPInt2Var)(ORInt);
+
+typedef struct IRange {
+   int low;
+   int up;
+} IRange;
+
+@protocol LPVariable <NSObject>
+-(ORInt)    idx;
+-(ORFloat)   low;
+-(ORFloat)   up;
+-(bool)     hasBounds;
+-(ORFloat)   value;
+-(ORFloat)   reducedCost;
+@end
+
+@protocol LPConstraint <NSObject>
+-(LPConstraintType)    type;
+-(ORInt)               size;
+-(id<LPVariable>*)     var;
+-(ORInt*)              col;
+-(ORFloat*)             coef;
+-(ORFloat)              rhs;
+-(ORInt)               idx;
+-(ORFloat)              dual;
+@end
+
+@protocol LPObjective  <NSObject>
+-(LPObjectiveType)     type;
+-(ORInt)                 size;
+-(ORInt*)                col;
+-(ORFloat*)             coef;
+-(ORFloat)              value;
+@end
+
+@protocol LPColumn <NSObject>
+-(ORInt)    idx;
+-(ORFloat) low;
+-(ORFloat) up;
+-(ORFloat) objCoef;
+-(ORInt) size;
+-(ORInt*) cstrIdx;
+-(ORFloat*) coef;
+@end
+
+@protocol LPLinearTerm <NSObject>
+-(ORInt) size;
+-(ORFloat) cst;
+-(void) add: (ORFloat) cst;
+-(void) add: (ORFloat) coef times: (id<LPVariable>) var;
+@end
 
 @protocol LPSolver <NSObject>
 -(id<LPVariable>)   createVariable;
@@ -57,3 +116,9 @@
 
 @end
 
+@interface LPFactory : NSObject
+{
+   
+}
++(id<LPSolver>) solver;
+@end;
