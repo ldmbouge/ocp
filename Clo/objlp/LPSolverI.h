@@ -15,7 +15,6 @@
 @class LPSolverI;
 @class LPVariableI;
 @class LPLinearTermI;
-@protocol LPMatrixWrapper;
 
 #define MAXINT ((ORInt)0x7FFFFFFF)
 #define MININT ((ORInt)0x80000000)
