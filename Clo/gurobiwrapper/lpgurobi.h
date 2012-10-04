@@ -12,10 +12,10 @@
 #import <objc/objc-auto.h>
 #import <Foundation/NSGarbageCollector.h>
 #import <Foundation/NSObject.h>
-#import <mpwrapper/mpwrapper.h>
+#import "LPMatrixSolver.h"
 #import "gurobi_c.h"
 
-@interface LPGurobiSolver: NSObject<LPSolverWrapper>
+@interface LPGurobiSolver: NSObject<LPMatrixSolver>
 {
 @private
     struct _GRBenv*                _env;
@@ -24,7 +24,7 @@
     LPObjectiveType                _objectiveType;
 }
 
--(id<LPSolverWrapper>) initLPGurobiSolver;
+-(id<LPMatrixSolver>) initLPGurobiSolver;
 -(void) dealloc;
 
 -(void) addVariable: (id<LPVariable>) var;

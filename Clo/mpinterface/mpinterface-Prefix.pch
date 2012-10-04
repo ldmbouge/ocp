@@ -1,7 +1,0 @@
-//
-// Prefix header for all source files of the 'mpinterface' target in the 'mpinterface' project
-//
-
-#ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
-#endif

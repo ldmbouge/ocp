@@ -12,10 +12,10 @@
 
 #import <objc/objc-auto.h>
 #import <Foundation/NSObject.h>
-#import <mpinterface/mpinterface.h>
+#import <objlp/LPSolver.h>
 
 
-@protocol LPSolverWrapper <NSObject>
+@protocol LPMatrixSolver <NSObject>
 
 -(void) addVariable: (id<LPVariable>) var;
 -(void) addConstraint: (id<LPConstraint>) cstr;
@@ -56,7 +56,7 @@
 
 @end
 
-@protocol LPSolverWrapperExecutionError <NSObject>
+@protocol LPMatrixSolverExecutionError <NSObject>
 -(char*) getMsg;
 @end
 

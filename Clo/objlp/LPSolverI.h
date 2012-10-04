@@ -212,9 +212,9 @@
 @end
 
 @interface LPSolverI : NSObject<LPSolver> {
-   id<LPSolverWrapper> _lp;
-   int                 _nbVars;
-   int                 _maxVars;
+   id<LPMatrixSolver>   _lp;
+   int                  _nbVars;
+   int                  _maxVars;
    LPVariableI**        _var;
    
    int                 _nbCstrs;
@@ -241,7 +241,7 @@
 -(id<LPColumn>)     createColumn: (ORFloat) low up: (ORFloat) up;
 
 -(id<LPLinearTerm>) createLinearTerm;
--(id<LPLinearTerm>)  createLinearTerm:(IRange) R coef: (LPInt2ORFloat) c var: (LPInt2Var) v;
+-(id<LPLinearTerm>)  createLinearTerm:(IRange) R coef: (LPInt2Float) c var: (LPInt2Var) v;
 
 -(id<LPConstraint>) createLEQ: (ORInt) size var: (id<LPVariable>*) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
 -(id<LPConstraint>) createGEQ: (ORInt) size var: (id<LPVariable>*) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;

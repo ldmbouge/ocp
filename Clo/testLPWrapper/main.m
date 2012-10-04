@@ -11,7 +11,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import "lpsolver/lpsolver.h"
+#import <objlp/LPSolver.h>
 
 static int nbRows = 7;
 static int nbColumns = 12;
@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
         
         [lp release];
         
-        
+       printf("This works my friend\n");
     }
     @catch (NSException* ee) {
         printf("ExecutionError: %s \n",[[ee reason] cStringUsingEncoding: NSASCIIStringEncoding]);

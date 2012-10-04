@@ -10,16 +10,15 @@
  ***********************************************************************/
 
 
-#import <objc/objc-auto.h>
-#import <Foundation/NSGarbageCollector.h>
-#import <Foundation/NSObject.h>
-#import <mpinterface/mpinterface.h>
+#import <Foundation/Foundation.h>
+#import "LPMatrixSolver.h"
+
+@protocol LPMatrixSolver;
 
 
-@interface LPFactory : NSObject
+@interface MPMatrixSolverFactory : NSObject
 {
     
 }
-+(id<LPSolver>) solver;
++(id<LPMatrixSolver>) lpMatrixSolver;
 @end;
-
