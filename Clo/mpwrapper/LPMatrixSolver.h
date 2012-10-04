@@ -12,7 +12,7 @@
 
 #import <objc/objc-auto.h>
 #import <Foundation/NSObject.h>
-#import "LPSolver.h"
+#import <objlp/LPSolver.h>
 
 
 @protocol LPMatrixSolver <NSObject>

@@ -12,7 +12,7 @@
 #import <objc/objc-auto.h>
 #import <Foundation/NSGarbageCollector.h>
 #import <Foundation/NSObject.h>
-#import <objlp/LPMatrixSolver.h>
+#import "LPMatrixSolver.h"
 #import "gurobi_c.h"
 
 @interface LPGurobiSolver: NSObject<LPMatrixSolver>

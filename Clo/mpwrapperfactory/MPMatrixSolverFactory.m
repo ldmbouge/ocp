@@ -9,7 +9,6 @@
 
  ***********************************************************************/
 
-
 #import <gurobiwrapper/lpgurobi.h>
 #import "MPMatrixSolverFactory.h"
 
@@ -17,7 +16,7 @@
 
 +(id<LPMatrixSolver>) lpMatrixSolver
 {
-    return [[LPGurobiSolver alloc] initLPGurobiSolver];
+   return [[LPGurobiSolver alloc] initLPGurobiSolver];
 }
 @end;
 
