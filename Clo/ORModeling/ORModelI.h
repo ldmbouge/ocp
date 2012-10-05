@@ -21,4 +21,5 @@
                        onConstraints:(void(^)(id<ORObject>))doCons
                          onObjective:(void(^)(id<ORObject>))doObjective;
 -(id<ORObjectiveFunction>)objective;
+-(void) visit: (id<ORVisitor>) visitor;
 @end

@@ -134,4 +134,14 @@
       doCons(c);
    doObjective(_objective);
 }
+-(void) visit: (id<ORVisitor>) visitor
+{
+   for(id<ORObject> c in _vars)
+      [c visit: visitor];
+//   for(id<ORObject> c in _oStore)
+//      [c visit: visitor];
+//   for(id<ORObject> c in _mStore)
+//      [c visit: visitor];
+//   [_objective visit: visitor];
+}
 @end

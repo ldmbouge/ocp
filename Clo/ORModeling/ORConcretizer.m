@@ -9,14 +9,27 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import <objcp/CPFactory.h>
 #import "ORConcretizer.h"
+#import "ORCPSolver.h"
+#import "CPConcretizer.h"
+#import "ORModelI.h"
 
 
 @implementation ORFactory (Concretization)
--(id<CPSolver>) createCPSolver
+
++(id<CPSolver>) createCPSolverWrapper: (id<CPSolver>) concreteCPSolver
 {
-   // This must be replaced by a wrapper
-   return [CPFactory createSolver];
+   return [[ORCPSolver alloc] initORCPSolver: concreteCPSolver];
+}
+
++(id<CPSolver>) createCPProgram: (ORModelI*) model
+{
+   id<CPSolver> concreteCPSolver = [CPFactory createSolver];
+   id<CPSolver> wrapperCPSolver = [ORFactory createCPSolverWrapper: concreteCPSolver];
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: concreteCPSolver];
+   [model visit: concretizer];
+   return wrapperCPSolver;
 }
 @end

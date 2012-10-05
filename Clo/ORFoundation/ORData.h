@@ -14,9 +14,11 @@
 
 @protocol ORExpr;
 @protocol ORIntRange;
+@protocol ORVisitor;
 
 @protocol ORObject <NSObject>
 -(id) dereference;
+-(void) visit: (id<ORVisitor>) visitor;
 @end;
 
 @interface NSObject (Concretization)

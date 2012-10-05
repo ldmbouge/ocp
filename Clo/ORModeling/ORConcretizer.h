@@ -10,8 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPSolver.h>
+#import "ORModeling.h"
+#import "ORCPSolver.h"
 
 @interface ORFactory (Concretization)
--(id<CPSolver>) createCPSolver;
++(id<CPSolver>) createCPProgram: (id<ORModel>) model;
 @end;

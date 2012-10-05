@@ -458,10 +458,6 @@
 {
    return nil;
 }
--(void) addModel: (id) model
-{
-   [model instantiate: self];
-}
 @end
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {

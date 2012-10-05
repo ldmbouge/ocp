@@ -58,10 +58,12 @@
 }
 -(void) add: (id<ORConstraint>) c
 {
+   // PVH: Need to flatten/concretize
    return [_solver add: c];
 }
 -(void) add: (id<ORConstraint>) c consistency:(CPConsistency) cons
 {
+   // PVH: Need to flatten/concretize
    return [_solver add: c consistency: cons];
 }
 // PVH: These guys will need to go
@@ -84,23 +86,23 @@
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver label: var with: val];
+   return [_solver label: [var dereference] with: val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver diff: var with: val];
+   return [_solver diff: [var dereference] with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver lthen: var with: val];
+   return [_solver lthen: [var dereference] with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver gthen: var with: val];
+   return [_solver gthen: [var dereference] with: val];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   return [_solver restrict: var to: S];
+   return [_solver restrict: [var dereference] to: S];
 }
 -(void) solve: (ORClosure) body
 {
