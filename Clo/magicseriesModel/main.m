@@ -10,10 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPFactory.h"
-#import "CPValueConstraint.h"
-#import "CPEquationBC.h"
-#import "CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORConcretizer.h>
 
 
 int main (int argc, const char * argv[])
@@ -26,19 +24,20 @@ int main (int argc, const char * argv[])
       [model add: [Sum(model,j,R,[x[j] eqi: i]) eq: x[i] ]];
    [model add: [Sum(model,i,R,[x[i] muli: i]) eqi: n ]];
    
-   id<CPSolver> cp = [CPFactory createSolver];
-   [cp addModel: model];
-   [cp solveAll: ^{
-      [CPLabel array: x];
-      printf("Succeeds \n");
-      for(ORInt i = 0; i < n; i++)
-         printf("%d ",[x[i] value]);
-      printf("\n");
-   }
-    ];
-   NSLog(@"Solver status: %@\n",cp);
-   [cp release];
-   [CPFactory shutdown];
+   id<CPSolver> cp = [ORFactory createCPProgram: model];
+   
+//   [cp addModel: model];
+//   [cp solveAll: ^{
+//      [CPLabel array: x];
+//      printf("Succeeds \n");
+//      for(ORInt i = 0; i < n; i++)
+//         printf("%d ",[x[i] value]);
+//      printf("\n");
+//   }
+//    ];
+//   NSLog(@"Solver status: %@\n",cp);
+//   [cp release];
+//   [CPFactory shutdown];
    return 0;
 }
 

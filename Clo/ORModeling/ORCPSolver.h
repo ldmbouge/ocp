@@ -9,16 +9,11 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPSolver.h>
 
-#import <Foundation/Foundation.h>
+// PVH: should probably return a id<CPProgram>
 
-/*
-@interface CPParSolverI : CPSemSolverI<CPParSolver> {
-   ORInt              _nbWorkers;
-}
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
--(ORInt)nbWorkers;
--(id<CPSolver>)dereference;
+@interface ORCPSolver : NSObject<CPSolver>
+-(id<CPSolver>) initORCPSolver: (id<CPSolver>) solver;
 @end
-*/

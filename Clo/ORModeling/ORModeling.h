@@ -21,10 +21,12 @@
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
 -(void) instantiate: (id<ORSolver>) solver;
--(void) applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs
+-(void) applyOnVar:(void(^)(id<ORObject>))doVar
+         onObjects:(void(^)(id<ORObject>))doObjs
      onConstraints:(void(^)(id<ORObject>))doCons
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>)objective;
+
 @end
 
 

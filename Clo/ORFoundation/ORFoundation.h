@@ -27,3 +27,4 @@
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORModel.h>
+#import <ORFoundation/ORVisit.h>

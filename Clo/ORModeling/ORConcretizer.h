@@ -9,16 +9,10 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
+#import "ORModeling.h"
+#import "ORCPSolver.h"
 
-#import <Foundation/Foundation.h>
-
-/*
-@interface CPParSolverI : CPSemSolverI<CPParSolver> {
-   ORInt              _nbWorkers;
-}
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
--(ORInt)nbWorkers;
--(id<CPSolver>)dereference;
-@end
-*/
+@interface ORFactory (Concretization)
++(id<CPSolver>) createCPProgram: (id<ORModel>) model;
+@end;
