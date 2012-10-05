@@ -24,7 +24,7 @@
 @end
 
 
-@interface CPSubst   : NSObject<ORExprVisitor> {
+@interface CPSubst   : NSObject<ORVisitor> {
    id<ORIntVar>    _rv;
    id<CPSolver>    _solver;
    id<CPEngine>   _engine;
@@ -33,7 +33,7 @@
 -(id)initCPSubst:(id<CPSolver>) solver consistency:(CPConsistency)c;
 -(id)initCPSubst:(id<CPSolver>) solver consistency:(CPConsistency)c by:(id<ORIntVar>)x;
 -(id<ORIntVar>)result;
--(void) visitIntVarI: (id<ORIntVar>) e;
+-(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
@@ -75,7 +75,7 @@
 }
 @end
 
-@interface CPRNormalizer : NSObject<ORExprVisitor> {
+@interface CPRNormalizer : NSObject<ORVisitor> {
    id<CPLinear> _terms;
    id<CPSolver>   _solver;
    CPEngineI*     _engine;
@@ -86,7 +86,7 @@
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
--(void) visitIntVarI: (id<ORIntVar>) e;
+-(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
@@ -101,7 +101,7 @@
 -(void) visitExprImplyI:(ORImplyI*)e;
 @end
 
-@interface CPLinearizer : NSObject<ORExprVisitor> {
+@interface CPLinearizer : NSObject<ORVisitor> {
    id<CPLinear>   _terms;
    id<CPSolver>   _solver;
    id<CPEngine>   _engine;
@@ -110,7 +110,7 @@
 -(id)initCPLinearizer:(id<CPLinear>)t solver:(id<CPSolver>) solver consistency:(CPConsistency)cons;
 +(CPLinear*)linearFrom:(id<ORExpr>)e  solver:(id<CPSolver>) solver consistency:(CPConsistency)cons;
 +(CPLinear*)addToLinear:(id<CPLinear>)terms from:(id<ORExpr>)e  solver:(id<CPSolver>) solver consistency:(CPConsistency)cons;
--(void) visitIntVarI: (id<ORIntVar>) e;
+-(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
@@ -200,7 +200,7 @@ struct CPVarPair {
    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
    [_engine post:[CPFactory boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
 }
--(void) visitIntVarI: (id<ORIntVar>) e     {}
+-(void) visitIntVar: (id<ORIntVar>) e     {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -222,7 +222,7 @@ struct CPVarPair {
    _cons  = cons;
    return self;
 }
--(void) visitIntVarI: (id<ORIntVar>) e
+-(void) visitIntVar: (id<ORIntVar>) e
 {
    [_terms addTerm:e by:1];
 }
@@ -651,7 +651,7 @@ struct CPVarPair {
 {
    return _rv;
 }
--(void) visitIntVarI: (id<ORIntVar>) e
+-(void) visitIntVar: (id<ORIntVar>) e
 {
    if (_rv)
       [_engine post:[CPFactory equal:_rv to:e plus:0]];

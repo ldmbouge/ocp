@@ -20,6 +20,27 @@
 @protocol ORConstraint <ORObject>
 @end
 
+@protocol  OREqualc <ORConstraint>
+@end
+
+@protocol  ORNEqualc <ORConstraint>
+@end
+
+@protocol  ORLEqualc <ORConstraint>
+@end
+
+@protocol  OREqual <ORConstraint>
+@end
+
+@protocol  ORNEqual <ORConstraint>
+@end
+
+@protocol  ORLEqual <ORConstraint>
+@end
+
+@protocol ORMult <ORConstraint>
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end

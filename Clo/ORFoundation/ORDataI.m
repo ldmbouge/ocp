@@ -83,7 +83,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitIntegerI: self];
 }

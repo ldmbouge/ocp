@@ -306,6 +306,11 @@
    else
       return self;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIdArray:self];
+}
+
 @end
 
 // Matrix ------------------------------------------------------------------
@@ -489,6 +494,11 @@
       _flat[i] = [aDecoder decodeObject];
    return self;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIdMatrix:self];
+}
+
 @end
 
 

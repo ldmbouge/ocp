@@ -38,7 +38,7 @@
 @end
 
 
-@interface ORExprConcretizer : NSObject<ORExprVisitor>
+@interface ORExprConcretizer : NSObject<ORVisitor>
 -(ORExprConcretizer*) initORExprConcretizer: (CPConcretizerI*) concretizer;
 -(id<ORExpr>) result;
 -(void) visitIntegerI: (id<ORInteger>) e;
@@ -55,6 +55,6 @@
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
--(void) visitIntVarI: (id<ORExpr>) var;
+-(void) visitIntVar: (id<ORIntVar>) var;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 @end

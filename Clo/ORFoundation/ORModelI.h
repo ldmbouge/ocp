@@ -28,6 +28,34 @@
 -(NSString*) description;
 @end
 
+@interface OREqualc : ORConstraintI<OREqualc>
+-(OREqualc*)initOREqualc:(id<ORIntVar>)x eqi:(ORInt)c;
+@end
+
+@interface ORNEqualc : ORConstraintI<ORNEqualc>
+-(ORNEqualc*)initORNEqualc:(id<ORIntVar>)x neqi:(ORInt)c;
+@end
+
+@interface ORLEqualc : ORConstraintI<ORLEqualc>
+-(ORLEqualc*)initORLEqualc:(id<ORIntVar>)x leqi:(ORInt)c;
+@end
+
+@interface OREqual : ORConstraintI<OREqual>
+-(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c;
+@end
+
+@interface ORNEqual : ORConstraintI<ORNEqual>
+-(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y;
+@end
+
+@interface ORLEqual : ORConstraintI<ORLEqual>
+-(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c;
+@end
+
+@interface OREqual3 : ORConstraintI<OREqual>
+-(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z;
+@end
+
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
 -(id<ORIntVarArray>) array;
