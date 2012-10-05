@@ -26,6 +26,20 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
+-(void) visitEqualc: (id<OREqualc>)c;
+-(void) visitNEqualc: (id<ORNEqualc>)c;
+-(void) visitLEqualc: (id<ORLEqualc>)c;
+-(void) visitEqual: (id<OREqual>)c;
+-(void) visitNEqual: (id<ORNEqual>)c;
+-(void) visitLEqual: (id<ORLEqual>)c;
+-(void) visitEqual3: (id<OREqual3>)c;
+-(void) visitMult: (id<ORMult>)c;
+-(void) visitAbs: (id<ORAbs>)c;
+-(void) visitOr: (id<OROr>)c;
+-(void) visitAnd:( id<ORAnd>)c;
+-(void) visitImply: (id<ORImply>)c;
+-(void) visitElementCst: (id<ORElementCst>)c;
+-(void) visitElementVar: (id<ORElementVar>)c;
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;

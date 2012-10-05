@@ -38,7 +38,28 @@
 @protocol  ORLEqual <ORConstraint>
 @end
 
+@protocol  OREqual3 <ORConstraint>
+@end
+
 @protocol ORMult <ORConstraint>
+@end
+
+@protocol ORAbs <ORConstraint>
+@end
+
+@protocol OROr <ORConstraint>
+@end
+
+@protocol ORAnd <ORConstraint>
+@end
+
+@protocol ORImply <ORConstraint>
+@end
+
+@protocol ORElementCst <ORConstraint>
+@end
+
+@protocol ORElementVar <ORConstraint>
 @end
 
 @protocol ORAlldifferent <ORConstraint>

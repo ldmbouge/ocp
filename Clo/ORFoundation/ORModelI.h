@@ -52,8 +52,36 @@
 -(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c;
 @end
 
-@interface OREqual3 : ORConstraintI<OREqual>
+@interface OREqual3 : ORConstraintI<OREqual3>
 -(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z;
+@end
+
+@interface ORMult : ORConstraintI<ORMult>
+-(ORMult*)initORMult:(id<ORIntVar>)x eq:(id<ORIntVar>)y times:(id<ORIntVar>)z;
+@end
+
+@interface ORAbs : ORConstraintI<ORAbs>
+-(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
+@end
+
+@interface OROr : ORConstraintI<OROr>
+-(OROr*)initOROr:(id<ORIntVar>)x eq:(id<ORIntVar>)y or:(id<ORIntVar>)z;
+@end
+
+@interface ORAnd : ORConstraintI<ORAnd>
+-(ORAnd*)initORAnd:(id<ORIntVar>)x eq:(id<ORIntVar>)y and:(id<ORIntVar>)z;
+@end
+
+@interface ORImply : ORConstraintI<ORImply>
+-(ORAnd*)initORImply:(id<ORIntVar>)x eq:(id<ORIntVar>)y imply:(id<ORIntVar>)z;
+@end
+
+@interface ORElementCst : ORConstraintI<ORElementCst>
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
+@end
+
+@interface ORElementVar : ORConstraintI<ORElementVar>
+-(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
