@@ -104,7 +104,7 @@
    id<ORIntVar>             _var;
    id<ORObjectiveFunction>  _impl;
 }
--(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORModel>) model obj: (id<ORIntVar>) x;
+-(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORAModel>) model obj: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(BOOL) concretized;
 -(void) setImpl:(id<ORObjectiveFunction>)impl;
@@ -113,21 +113,11 @@
 @end
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
--(ORMinimizeI*) initORMinimizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
+-(ORMinimizeI*) initORMinimizeI: (id<ORAModel>) model obj: (id<ORIntVar>) x;
 @end
 
 @interface ORMaximizeI : ORObjectiveFunctionI<ORObjectiveFunction>
--(ORMaximizeI*) initORMaximizeI: (id<ORModel>) model obj: (id<ORIntVar>) x;
+-(ORMaximizeI*) initORMaximizeI: (id<ORAModel>) model obj: (id<ORIntVar>) x;
 @end
 
-@interface ORModelI : NSObject<ORModel>
--(ORModelI*)              initORModelI;
--(void)                   dealloc;
--(NSString*)              description;
--(void)                   setId: (ORUInt) name;
--(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
-                           onObjects:(void(^)(id<ORObject>))doObjs
-                       onConstraints:(void(^)(id<ORObject>))doCons
-                         onObjective:(void(^)(id<ORObject>))doObjective;
--(id<ORObjectiveFunction>)objective;
-@end
+

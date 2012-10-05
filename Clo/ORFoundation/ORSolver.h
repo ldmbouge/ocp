@@ -40,10 +40,8 @@
 -(id<ORTracer>)    tracer;
 -(id<OREngine>)    engine;
 -(id<ORObjective>) objective;
-
-
 -(id<ORSolverConcretizer>) concretizer;
--(void)            addModel: (id<ORModel>) model;
+-(void)            addModel: (id<ORAModel>) model;
 
 -(ORStatus)        close;
 -(bool)            closed;

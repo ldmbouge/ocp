@@ -17,7 +17,6 @@
 @protocol ORSolver;
 @protocol ORSolverConcretizer;
 
-
 @protocol ORVar <ORObject,ORExpr>
 -(ORUInt) getId;
 -(BOOL) bound;
@@ -86,7 +85,6 @@
 -(id<ORIntVarArray>) binSize;
 @end
 
-
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
 @end
@@ -106,14 +104,6 @@
 -(id<ORIntVar>) var;
 @end
 
-@protocol ORModel <NSObject,ORTracker>
--(NSString*)description;
--(void) add: (id<ORConstraint>) cstr;
--(void) minimize: (id<ORIntVar>) x;
--(void) maximize: (id<ORIntVar>) x;
--(void) instantiate: (id<ORSolver>) solver;
--(void) applyOnVar:(void(^)(id<ORObject>))doVar onObjects:(void(^)(id<ORObject>))doObjs
-     onConstraints:(void(^)(id<ORObject>))doCons
-       onObjective:(void(^)(id<ORObject>))ofun;
--(id<ORObjectiveFunction>)objective;
+@protocol ORAModel <NSObject,ORTracker>
 @end
+

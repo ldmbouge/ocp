@@ -9,10 +9,8 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <Foundation/NSObject.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORUtilities/ORUtilities.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPData.h>
 #import <objcp/CPHeuristic.h>
 

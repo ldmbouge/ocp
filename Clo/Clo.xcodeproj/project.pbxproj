@@ -331,6 +331,23 @@
 		5B9EE58315175D4F00619B47 /* ORSemBDSController.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B85DE111438B2D500E4E133 /* ORSemBDSController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B85DE121438B2D500E4E133 /* ORSemBDSController.m */; };
 		5B9EE5871517BE3700619B47 /* libCPLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE52815175CF900619B47 /* libCPLib.a */; };
+		5BAD1150161E5E430014EBCB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
+		5BAD1156161E5E430014EBCB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5BAD1154161E5E430014EBCB /* InfoPlist.strings */; };
+		5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
+		5BAD1162161E5E540014EBCB /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5BAD1163161E5E540014EBCB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAD1164161E5F2B0014EBCB /* ORModelI.h */; };
+		5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1165161E5F2B0014EBCB /* ORModelI.m */; };
+		5BAD1168161E61500014EBCB /* ORModeling.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAD1158161E5E430014EBCB /* ORModeling.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BAD116D161E63170014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BAD116E161E63360014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BAD1173161E63560014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BAD1178161E63860014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BAD1179161E63860014EBCB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BAD1180161E63950014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BAD1181161E63950014EBCB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BAD1188161E63AD0014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BAD1189161E63AD0014EBCB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAEE08415AE9883006CEE1E /* ORParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BAEE08715AE9883006CEE1E /* ORParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAEE08515AE9883006CEE1E /* ORParallel.m */; };
 		5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B60E5DF15AE907F002FF2B3 /* ORUtilities.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -782,6 +799,97 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9EE52715175CF900619B47;
 			remoteInfo = CPLib;
+		};
+		5BAD115E161E5E4B0014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BAD1160161E5E4B0014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BAD116B161E62390014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BAD116F161E633E0014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BAD1171161E63450014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BAD1174161E63800014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BAD1176161E63800014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BAD117A161E638F0014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BAD117C161E638F0014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BAD117E161E638F0014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BAD1182161E63A80014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BAD1184161E63A80014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BAD1186161E63A80014EBCB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
 		};
 		5BAEE09315AE9EEE006CEE1E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1686,6 +1794,14 @@
 		5B9EE50715175CCC00619B47 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		5B9EE50A15175CCC00619B47 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
 		5B9EE52815175CF900619B47 /* libCPLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCPLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BAD114F161E5E420014EBCB /* ORModeling.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORModeling.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BAD1153161E5E430014EBCB /* ORModeling-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORModeling-Info.plist"; sourceTree = "<group>"; };
+		5BAD1155161E5E430014EBCB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		5BAD1157161E5E430014EBCB /* ORModeling-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ORModeling-Prefix.pch"; sourceTree = "<group>"; };
+		5BAD1158161E5E430014EBCB /* ORModeling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORModeling.h; sourceTree = "<group>"; };
+		5BAD1159161E5E430014EBCB /* ORModeling.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORModeling.m; sourceTree = "<group>"; };
+		5BAD1164161E5F2B0014EBCB /* ORModelI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelI.h; sourceTree = "<group>"; };
+		5BAD1165161E5F2B0014EBCB /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORModelI.m; sourceTree = "<group>"; };
 		5BAEE08415AE9883006CEE1E /* ORParallel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParallel.h; sourceTree = "<group>"; };
 		5BAEE08515AE9883006CEE1E /* ORParallel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORParallel.m; sourceTree = "<group>"; };
 		5BAEE09D15AEA08E006CEE1E /* costas */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = costas; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2025,6 +2141,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAD116E161E63360014EBCB /* ORModeling.framework in Frameworks */,
 				5B7B477715F0E4BE005FF875 /* objcp.framework in Frameworks */,
 				5B7B477815F0E4BE005FF875 /* ORFoundation.framework in Frameworks */,
 				5B7B477915F0E4BE005FF875 /* ORUtilities.framework in Frameworks */,
@@ -2047,6 +2164,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAD1173161E63560014EBCB /* ORModeling.framework in Frameworks */,
 				5B80562316076E1C00659ECC /* objcp.framework in Frameworks */,
 				5B80562416076E1C00659ECC /* ORFoundation.framework in Frameworks */,
 				5B80562516076E1C00659ECC /* ORUtilities.framework in Frameworks */,
@@ -2101,6 +2219,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BAD114B161E5E420014EBCB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BAD1162161E5E540014EBCB /* ORFoundation.framework in Frameworks */,
+				5BAD1163161E5E540014EBCB /* ORUtilities.framework in Frameworks */,
+				5BAD1150161E5E430014EBCB /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2169,6 +2297,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAD1188161E63AD0014EBCB /* ORModeling.framework in Frameworks */,
+				5BAD1189161E63AD0014EBCB /* ORUtilities.framework in Frameworks */,
 				5B920ED015A432FA00AD0820 /* ORFoundation.framework in Frameworks */,
 				5BCCC4101417FA740079E833 /* objcp.framework in Frameworks */,
 				5BCCC4051417F8CE0079E833 /* Foundation.framework in Frameworks */,
@@ -2327,6 +2457,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAD1180161E63950014EBCB /* ORModeling.framework in Frameworks */,
+				5BAD1181161E63950014EBCB /* ORUtilities.framework in Frameworks */,
 				B181E12615D746F300AB44DA /* ORFoundation.framework in Frameworks */,
 				B181E12515D746A700AB44DA /* objcp.framework in Frameworks */,
 				B181E11815D7465300AB44DA /* Foundation.framework in Frameworks */,
@@ -2337,6 +2469,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAD1178161E63860014EBCB /* ORModeling.framework in Frameworks */,
+				5BAD1179161E63860014EBCB /* ORUtilities.framework in Frameworks */,
 				B189513815DE530400B77813 /* ORFoundation.framework in Frameworks */,
 				B189513715DE52FF00B77813 /* objcp.framework in Frameworks */,
 				B189512815DE52D100B77813 /* Foundation.framework in Frameworks */,
@@ -2347,6 +2481,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAD116D161E63170014EBCB /* ORModeling.framework in Frameworks */,
 				B189515215E0FA8500B77813 /* objcp.framework in Frameworks */,
 				B189515115E0FA8100B77813 /* ORUtilities.framework in Frameworks */,
 				B189515015E0FA7C00B77813 /* ORFoundation.framework in Frameworks */,
@@ -2537,6 +2672,7 @@
 				B17ABF7913CE4E7700DC7288 /* gurobiwrapper.framework */,
 				B111FBF913CF3C81003C5119 /* Foundation.framework */,
 				5B9ABCEF1391329D000997E5 /* objcp.framework */,
+				5BAD1151161E5E430014EBCB /* ORModeling */,
 				B1943A1015B0E33C00E1771B /* data */,
 				5B7408AC1562828000C05277 /* Objective-CP Examples */,
 				5BFD594515A3ACA500825BC3 /* ORFoundation */,
@@ -2605,6 +2741,7 @@
 				5B7B476A15F0E4AD005FF875 /* coloringModel */,
 				5B80561016076DFE00659ECC /* magicsquareModel */,
 				5B5096E01619B6CB00171F9D /* testDistrib */,
+				5BAD114F161E5E420014EBCB /* ORModeling.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3038,6 +3175,28 @@
 				5B9ABD091391329D000997E5 /* objcpTests-Info.plist */,
 				5B9ABD0A1391329D000997E5 /* InfoPlist.strings */,
 				5B9ABD0D1391329D000997E5 /* objcpTests-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5BAD1151161E5E430014EBCB /* ORModeling */ = {
+			isa = PBXGroup;
+			children = (
+				5BAD1158161E5E430014EBCB /* ORModeling.h */,
+				5BAD1159161E5E430014EBCB /* ORModeling.m */,
+				5BAD1164161E5F2B0014EBCB /* ORModelI.h */,
+				5BAD1165161E5F2B0014EBCB /* ORModelI.m */,
+				5BAD1152161E5E430014EBCB /* Supporting Files */,
+			);
+			path = ORModeling;
+			sourceTree = "<group>";
+		};
+		5BAD1152161E5E430014EBCB /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5BAD1153161E5E430014EBCB /* ORModeling-Info.plist */,
+				5BAD1154161E5E430014EBCB /* InfoPlist.strings */,
+				5BAD1157161E5E430014EBCB /* ORModeling-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -3817,6 +3976,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5BAD114C161E5E420014EBCB /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
+				5BAD1168161E61500014EBCB /* ORModeling.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5BFD594015A3ACA500825BC3 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4039,6 +4207,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BAD1170161E633E0014EBCB /* PBXTargetDependency */,
 				5B7B477B15F0E4C6005FF875 /* PBXTargetDependency */,
 				5B7B477D15F0E4C6005FF875 /* PBXTargetDependency */,
 				5B7B477F15F0E4C6005FF875 /* PBXTargetDependency */,
@@ -4079,6 +4248,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BAD1172161E63450014EBCB /* PBXTargetDependency */,
 				5B80561E16076E0A00659ECC /* PBXTargetDependency */,
 				5B80562016076E0A00659ECC /* PBXTargetDependency */,
 				5B80562216076E0A00659ECC /* PBXTargetDependency */,
@@ -4182,6 +4352,26 @@
 			productName = CPLib;
 			productReference = 5B9EE52815175CF900619B47 /* libCPLib.a */;
 			productType = "com.apple.product-type.library.static";
+		};
+		5BAD114E161E5E420014EBCB /* ORModeling */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BAD115D161E5E430014EBCB /* Build configuration list for PBXNativeTarget "ORModeling" */;
+			buildPhases = (
+				5BAD114A161E5E420014EBCB /* Sources */,
+				5BAD114B161E5E420014EBCB /* Frameworks */,
+				5BAD114C161E5E420014EBCB /* Headers */,
+				5BAD114D161E5E420014EBCB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BAD115F161E5E4B0014EBCB /* PBXTargetDependency */,
+				5BAD1161161E5E4B0014EBCB /* PBXTargetDependency */,
+			);
+			name = ORModeling;
+			productName = ORModeling;
+			productReference = 5BAD114F161E5E420014EBCB /* ORModeling.framework */;
+			productType = "com.apple.product-type.framework";
 		};
 		5BAEE09C15AEA08D006CEE1E /* costas */ = {
 			isa = PBXNativeTarget;
@@ -4303,6 +4493,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BAD1183161E63A80014EBCB /* PBXTargetDependency */,
+				5BAD1185161E63A80014EBCB /* PBXTargetDependency */,
+				5BAD1187161E63A80014EBCB /* PBXTargetDependency */,
 				5B7AC1B614CFADD900B67A67 /* PBXTargetDependency */,
 			);
 			name = queensACSem;
@@ -4596,6 +4789,9 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BAD117B161E638F0014EBCB /* PBXTargetDependency */,
+				5BAD117D161E638F0014EBCB /* PBXTargetDependency */,
+				5BAD117F161E638F0014EBCB /* PBXTargetDependency */,
 				B181E12415D746A200AB44DA /* PBXTargetDependency */,
 			);
 			name = sportModel;
@@ -4614,6 +4810,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BAD1175161E63800014EBCB /* PBXTargetDependency */,
+				5BAD1177161E63800014EBCB /* PBXTargetDependency */,
 				B189513615DE52FA00B77813 /* PBXTargetDependency */,
 				B189513415DE52F500B77813 /* PBXTargetDependency */,
 			);
@@ -4633,6 +4831,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BAD116C161E62390014EBCB /* PBXTargetDependency */,
 				B189514F15E0FA7300B77813 /* PBXTargetDependency */,
 				B189514D15E0FA6F00B77813 /* PBXTargetDependency */,
 				B189514B15E0FA6A00B77813 /* PBXTargetDependency */,
@@ -4798,6 +4997,7 @@
 			targets = (
 				5BFD594215A3ACA500825BC3 /* ORFoundation */,
 				5B60E5D515AE907E002FF2B3 /* ORUtilities */,
+				5BAD114E161E5E420014EBCB /* ORModeling */,
 				5B9ABCEE1391329D000997E5 /* objcp */,
 				B17ABF7813CE4E7700DC7288 /* gurobiwrapper */,
 				B1F3804315F035C0007C6A4A /* objlp */,
@@ -4884,6 +5084,14 @@
 				5B8C7E0815867D7E007042CA /* InfoPlist.strings in Resources */,
 				5B8C7E0915867D7E007042CA /* MainStoryboard_iPad.storyboard in Resources */,
 				5B8C7E0A15867D7E007042CA /* MainStoryboard_iPhone.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BAD114D161E5E420014EBCB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BAD1156161E5E430014EBCB /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5198,6 +5406,15 @@
 				5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */,
 				5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */,
 				5B8C7E551586801F007042CA /* UIBoardController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BAD114A161E5E420014EBCB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */,
+				5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5629,6 +5846,71 @@
 			target = 5B9EE52715175CF900619B47 /* CPLib */;
 			targetProxy = 5B9EE5881517BE4B00619B47 /* PBXContainerItemProxy */;
 		};
+		5BAD115F161E5E4B0014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BAD115E161E5E4B0014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1161161E5E4B0014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BAD1160161E5E4B0014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD116C161E62390014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BAD116B161E62390014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1170161E633E0014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BAD116F161E633E0014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1172161E63450014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BAD1171161E63450014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1175161E63800014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BAD1174161E63800014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1177161E63800014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BAD1176161E63800014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD117B161E638F0014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BAD117A161E638F0014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD117D161E638F0014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BAD117C161E638F0014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD117F161E638F0014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BAD117E161E638F0014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1183161E63A80014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BAD1182161E63A80014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1185161E63A80014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BAD1184161E63A80014EBCB /* PBXContainerItemProxy */;
+		};
+		5BAD1187161E63A80014EBCB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BAD1186161E63A80014EBCB /* PBXContainerItemProxy */;
+		};
 		5BAEE09415AE9EEE006CEE1E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
@@ -5959,6 +6241,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				5B9ABD0B1391329D000997E5 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		5BAD1154161E5E430014EBCB /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5BAD1155161E5E430014EBCB /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -6736,6 +7026,62 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		5BAD115B161E5E430014EBCB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Debug;
+		};
+		5BAD115C161E5E430014EBCB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				INFOPLIST_FILE = "ORModeling/ORModeling-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -8172,6 +8518,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5BAD115D161E5E430014EBCB /* Build configuration list for PBXNativeTarget "ORModeling" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BAD115B161E5E430014EBCB /* Debug */,
+				5BAD115C161E5E430014EBCB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5BAEE0A715AEA08E006CEE1E /* Build configuration list for PBXNativeTarget "costas" */ = {
 			isa = XCConfigurationList;

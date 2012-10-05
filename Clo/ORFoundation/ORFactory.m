@@ -131,10 +131,6 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORModel>) createModel
-{
-   return [[[ORModelI alloc]  initORModelI] autorelease];
-}
 
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
 {
@@ -233,7 +229,7 @@
    [[item tracker] trackObject: o];
    return o;
 }
-+(id<ORConstraint>) algebraicConstraint:(id<ORModel>) model expr: (id<ORRelation>) exp
++(id<ORConstraint>) algebraicConstraint:(id<ORAModel>) model expr: (id<ORRelation>) exp
 {
    id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
    [model trackObject: o];
