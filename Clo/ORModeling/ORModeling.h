@@ -15,7 +15,7 @@
 
 @protocol ORModelTransformation;
 
-@protocol ORModel <ORTracker>
+@protocol ORModel <ORTracker,ORObject>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;

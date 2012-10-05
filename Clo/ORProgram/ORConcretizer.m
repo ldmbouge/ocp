@@ -24,7 +24,7 @@
    return [[ORCPSolver alloc] initORCPSolver: concreteCPSolver];
 }
 
-+(id<CPSolver>) createCPProgram: (ORModelI*) model
++(id<CPSolver>) createCPProgram: (id<ORModel>) model
 {
    id<CPSolver> concreteCPSolver = [CPFactory createSolver];
    id<CPSolver> wrapperCPSolver = [ORFactory createCPSolverWrapper: concreteCPSolver];

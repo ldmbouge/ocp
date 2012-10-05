@@ -41,13 +41,13 @@
 }
 -(id<ORModel>)apply:(id<ORModel>)m
 {
-   ORModelI* out = [ORFactory createModel];
+   ORModelI* out = [ORFactory createModel];  
    [m applyOnVar:^(id<ORVar> x) {
       [out captureVariable:x];
    } onObjects:^(id<ORObject> x) {
       NSLog(@"Got an object: %@",x);
    } onConstraints:^(id<ORConstraint> c) {
-      ORFlattenConstraint* fc = [ORFlattenConstraint alloc] init:out];
+      ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:out];
       [c visit:fc];
       [fc release];
    } onObjective:^(id<ORObjective> o) {
