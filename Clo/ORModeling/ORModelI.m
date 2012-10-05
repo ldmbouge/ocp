@@ -121,9 +121,10 @@
    [concretizer release];
  */
 }
--(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs
-    onConstraints:(void(^)(id<ORObject>)) doCons
-      onObjective:(void(^)(id<ORObject>)) doObjective
+-(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
+          onObjects: (void(^)(id<ORObject>)) doObjs
+      onConstraints:(void(^)(id<ORObject>)) doCons
+        onObjective:(void(^)(id<ORObject>)) doObjective
 {
    for(id<ORObject> c in _vars)
       doVar(c);

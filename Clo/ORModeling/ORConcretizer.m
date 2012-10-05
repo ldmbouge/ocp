@@ -9,16 +9,14 @@
  
  ***********************************************************************/
 
+#import <objcp/CPFactory.h>
+#import "ORConcretizer.h"
 
-#import <Foundation/Foundation.h>
 
-/*
-@interface CPParSolverI : CPSemSolverI<CPParSolver> {
-   ORInt              _nbWorkers;
+@implementation ORFactory (Concretization)
+-(id<CPSolver>) createCPSolver
+{
+   // This must be replaced by a wrapper
+   return [CPFactory createSolver];
 }
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
--(ORInt)nbWorkers;
--(id<CPSolver>)dereference;
 @end
-*/

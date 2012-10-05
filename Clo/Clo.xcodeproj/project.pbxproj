@@ -520,6 +520,10 @@
 		B17715A315579B4900BA14BF /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B17715B51557D9D200BA14BF /* CPTableI.h in Headers */ = {isa = PBXBuildFile; fileRef = B17715B31557D9D200BA14BF /* CPTableI.h */; };
 		B17715B61557D9D200BA14BF /* CPTableI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17715B41557D9D200BA14BF /* CPTableI.m */; };
+		B17832FC161F5FCC00C7298D /* ORConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FA161F5FCC00C7298D /* ORConcretizer.h */; };
+		B17832FD161F5FCC00C7298D /* ORConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORConcretizer.m */; };
+		B1783300161F636A00C7298D /* ORCPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* ORCPSolver.h */; };
+		B1783301161F636A00C7298D /* ORCPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* ORCPSolver.m */; };
 		B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = B17ABE9013CC852C00DC7288 /* CPIntVarI.h */; };
 		B17ABE9313CC852C00DC7288 /* CPIntVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17ABE9113CC852C00DC7288 /* CPIntVarI.m */; };
 		B17ABF8013CE4E7700DC7288 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B17ABF7E13CE4E7700DC7288 /* InfoPlist.strings */; };
@@ -1980,6 +1984,10 @@
 		B177159C155798AA00BA14BF /* Euler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Euler.1; sourceTree = "<group>"; };
 		B17715B31557D9D200BA14BF /* CPTableI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPTableI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B17715B41557D9D200BA14BF /* CPTableI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTableI.m; sourceTree = "<group>"; };
+		B17832FA161F5FCC00C7298D /* ORConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConcretizer.h; sourceTree = "<group>"; };
+		B17832FB161F5FCC00C7298D /* ORConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORConcretizer.m; sourceTree = "<group>"; };
+		B17832FE161F636A00C7298D /* ORCPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPSolver.h; sourceTree = "<group>"; };
+		B17832FF161F636A00C7298D /* ORCPSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPSolver.m; sourceTree = "<group>"; };
 		B17ABE9013CC852C00DC7288 /* CPIntVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPIntVarI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B17ABE9113CC852C00DC7288 /* CPIntVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPIntVarI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B17ABF7913CE4E7700DC7288 /* gurobiwrapper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = gurobiwrapper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3217,6 +3225,10 @@
 				5B57E5E9161F2DB100DB249A /* CPConcretizer.m */,
 				5B57E5EC161F3D8500DB249A /* CPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* CPParSolver.m */,
+				B17832FA161F5FCC00C7298D /* ORConcretizer.h */,
+				B17832FB161F5FCC00C7298D /* ORConcretizer.m */,
+				B17832FE161F636A00C7298D /* ORCPSolver.h */,
+				B17832FF161F636A00C7298D /* ORCPSolver.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -4018,6 +4030,8 @@
 				5B57E5DB161F167900DB249A /* ORSolver.h in Headers */,
 				5B57E5EA161F2DB100DB249A /* CPConcretizer.h in Headers */,
 				5B57E5EE161F3D8500DB249A /* CPParSolver.h in Headers */,
+				B17832FC161F5FCC00C7298D /* ORConcretizer.h in Headers */,
+				B1783300161F636A00C7298D /* ORCPSolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5456,6 +5470,8 @@
 				5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */,
 				5B57E5EB161F2DB100DB249A /* CPConcretizer.m in Sources */,
 				5B57E5EF161F3D8500DB249A /* CPParSolver.m in Sources */,
+				B17832FD161F5FCC00C7298D /* ORConcretizer.m in Sources */,
+				B1783301161F636A00C7298D /* ORCPSolver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

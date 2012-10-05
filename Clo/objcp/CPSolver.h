@@ -74,7 +74,6 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
 
--(void)           addModel: (id) model;
 @end
 
 @protocol CPSemSolver <CPSolver>
