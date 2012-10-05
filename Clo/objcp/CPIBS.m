@@ -161,7 +161,7 @@
 @end
 
 @implementation CPIBS {
-   CPEngineI*               _solver;
+   CPEngineI*               _engine;
    CPStatisticsMonitor*    _monitor;
    ORULong                     _nbv;
    NSMutableDictionary*    _impacts;
@@ -171,7 +171,7 @@
 {
    self = [super init];
    _cp = cp;
-   _solver = (CPEngineI*)[cp engine];
+   _engine = (CPEngineI*)[cp engine];
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
@@ -183,6 +183,11 @@
    [_impacts release];
    [super dealloc];
 }
+-(id<CPSolver>)solver
+{
+   return _cp;
+}
+
 -(float)varOrdering:(id<ORIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
@@ -211,7 +216,7 @@
       [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
-   [_solver post:_monitor];
+   [_engine post:_monitor];
    [self initImpacts];       // [ldm] init called _after_ adding the monitor so that the reduction is tracked (but before watching label)
    [[[_cp portal] retLabel] wheneverNotifiedDo:^void(id var,ORInt val) {
       NSNumber* key = [[NSNumber alloc] initWithInteger:[var getId]];
@@ -275,7 +280,7 @@
       ORInt mid = low + (up - low)/2;
       id<ORTracer> tracer = [_cp tracer];
       [tracer pushNode];
-      ORStatus s1 = [_solver lthen:x with:mid+1];
+      ORStatus s1 = [_engine lthen:x with:mid+1];
       [ORConcurrency pumpEvents];
       if (s1!=ORFailure) {
          [self dichotomize:x from:low to:mid block:b sac:set];
@@ -285,7 +290,7 @@
       }
       [tracer popNode];
       [tracer pushNode];
-      ORStatus s2 = [_solver gthen:x with:mid];
+      ORStatus s2 = [_engine gthen:x with:mid];
       [ORConcurrency pumpEvents];
       if (s2!=ORFailure) {
          [self dichotomize:x from:mid+1 to:up block:b sac:set];
@@ -310,12 +315,12 @@
       ORInt lastRank = (ORInt)[sacs count]-1;
       for(CPKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
-            [_solver gthen:v with:[kr up]];
+            [_engine gthen:v with:[kr up]];
          } else if (rank == lastRank && [kr up] == [v max]) {
-            [_solver lthen:v with:[kr low]];
+            [_engine lthen:v with:[kr low]];
          } else {
             for(ORInt i=[kr low];i <= [kr up];i++)
-               [_solver diff:v with:i];
+               [_engine diff:v with:i];
          }
          rank++;
       }

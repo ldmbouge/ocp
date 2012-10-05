@@ -351,6 +351,10 @@
    [_aggregator release];
    [super dealloc];
 }
+-(id<CPSolver>)solver
+{
+   return _cp;
+}
 -(float)varOrdering:(id<ORIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];

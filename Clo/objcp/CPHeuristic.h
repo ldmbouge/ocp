@@ -19,4 +19,5 @@
 -(void) initInternal: (id<ORVarArray>)t;
 -(void) initHeuristic: (NSMutableArray*)array;
 -(id<ORIntVarArray>) allIntVars;
+-(id<CPSolver>)solver;
 @end

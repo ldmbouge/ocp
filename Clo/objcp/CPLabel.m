@@ -63,7 +63,7 @@
 {
    id<ORIntVarArray> av = [h allIntVars];
 //   NSLog(@"Heuristic on: <%lu> %@",[av count],av);
-   CPSolverI* cp = (CPSolverI*) [av solver];
+   CPSolverI* cp = (CPSolverI*) [h solver];
    id<ORSelect> select = [ORFactory selectRandom: cp
                                            range: RANGE(cp,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }

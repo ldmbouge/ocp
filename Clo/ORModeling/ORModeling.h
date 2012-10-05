@@ -13,6 +13,8 @@
 #import <ORFoundation/ORModel.h>
 #import <ORModeling/ORSolver.h>
 
+@protocol ORModelTransformation;
+
 @protocol ORModel <ORTracker>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
@@ -28,4 +30,5 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORModelTransformation>)createFlattener;
 @end

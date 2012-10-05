@@ -29,6 +29,10 @@
 {
    [super dealloc];
 }
+-(id<CPSolver>)solver
+{
+   return _cp;
+}
 -(id<ORIntVarArray>)allIntVars
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);

@@ -11,10 +11,16 @@
 
 #import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
+#import "ORFlatten.h"
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
    return [[[ORModelI alloc]  initORModelI] autorelease];
 }
++(id<ORModelTransformation>)createFlattener
+{
+   return [[[ORFlatten alloc] initORFlatten] autorelease];
+}
+
 @end

@@ -45,6 +45,10 @@
    free(_map);
    [super dealloc];
 }
+-(id<CPSolver>)solver
+{
+   return _cp;
+}
 
 // pvh: not sure why this is needed
 // pvh: why do we need vars and t and so on.

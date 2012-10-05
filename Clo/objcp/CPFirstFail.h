@@ -24,4 +24,5 @@
 -(float)valOrdering:(int)v forVar:(id<ORIntVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<ORIntVarArray>)allIntVars;
+-(id<CPSolver>)solver;
 @end

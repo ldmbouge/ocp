@@ -16,6 +16,7 @@
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
+-(void)                  captureVariable:(id<ORVar>)x;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
                            onObjects:(void(^)(id<ORObject>))doObjs
                        onConstraints:(void(^)(id<ORObject>))doCons

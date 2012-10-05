@@ -42,6 +42,10 @@
    [_oStore release];
    [super dealloc];
 }
+-(void) captureVariable:(id<ORVar>)x
+{
+   [_vars addObject:x];
+}
 
 -(void) setId: (ORUInt) name
 {
