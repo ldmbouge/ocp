@@ -46,10 +46,13 @@ void failNow()
 {
    return [CPSemSolverI createWithController:ctrlClass];
 }
+/*
 +(id<CPParSolver>) createParSolver:(int)nbt withController:(Class)ctrlClass
 {
    return [CPParSolverI create:nbt withController:ctrlClass];
 }
+ */
+
 +(CPSolverI*) createRandomizedSolver
 {
     return [CPSolverI createRandomized];
@@ -104,11 +107,11 @@ void failNow()
 }
 +(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp
 {
-   return [[ORSemDFSController alloc] initTheController:cp];
+   return [[ORSemDFSController alloc] initTheController: [cp tracer] engine:[cp engine]];
 }
 +(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp
 {
-   return [[ORSemBDSController alloc] initTheController:cp];
+   return [[ORSemBDSController alloc] initTheController: [cp tracer] engine:[cp engine]];
 }
 +(void) shutdown
 {
@@ -259,7 +262,7 @@ void failNow()
 
 +(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c
 {
-   id<ORIntVarArray> rv = [self intVarArray:[x solver] range: [x range] with:^id<ORIntVar>(ORInt i) {
+   id<ORIntVarArray> rv = [self intVarArray:[x tracker] range: [x range] with:^id<ORIntVar>(ORInt i) {
       id<ORIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
       return theView;
    }];
@@ -268,7 +271,7 @@ void failNow()
 +(id<ORIntSet>) intSet: (id<ORTracker>) cp 
 {
     ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI]; 
-    [[cp solver] trackObject: o];
+    [cp trackObject: o];
     return o;
 }
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity
@@ -278,25 +281,25 @@ void failNow()
 +(id<ORInformer>) informer: (id<ORTracker>) cp
 {
     id<ORInformer> o = [ORConcurrency intInformer];
-    [[cp solver] trackObject: o];
+    [cp trackObject: o];
     return o;    
 }
 +(id<ORVoidInformer>) voidInformer: (id<ORTracker>) cp
 {
    id<ORVoidInformer> o = [ORConcurrency voidInformer];
-   [[cp solver] trackObject: o];
+   [cp trackObject: o];
    return o;       
 }
 +(id<ORIntInformer>) intInformer: (id<ORTracker>) cp
 {
    id<ORIntInformer> o = [ORConcurrency intInformer];
-   [[cp solver] trackObject: o];
+   [cp trackObject: o];
    return o;          
 }
 +(id<ORBarrier>)  barrier: (id<ORTracker>) cp value: (ORInt) nb
 {
     id<ORBarrier> o = [ORConcurrency barrier: nb];
-    [[cp solver] trackObject: o];
+    [cp trackObject: o];
     return o;    
 }
 
@@ -313,19 +316,19 @@ void failNow()
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) cp
 {
    id<ORRandomStream> o = [ORCrFactory randomStream];
-   [[cp solver] trackObject: o];
+   [cp trackObject: o];
    return o;
 }
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
 {
    id<ORZeroOneStream> o = (id<ORZeroOneStream>) [ORCrFactory zeroOneStream];
-   [[cp solver] trackObject: o];
+   [cp trackObject: o];
    return o;
 }
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
 {
    id<ORUniformDistribution> o = (id<ORUniformDistribution>) [ORCrFactory uniformDistribution:r];
-   [[cp solver] trackObject: o];
+   [cp trackObject: o];
    return o;
 }
 @end

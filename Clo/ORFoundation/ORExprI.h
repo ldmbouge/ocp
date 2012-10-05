@@ -39,9 +39,9 @@
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
-- (void) encodeWithCoder:(NSCoder*) aCoder;
-- (id) initWithCoder:(NSCoder*) aDecoder;
-- (void) visit: (id<ORExprVisitor>)v;
+-(void) encodeWithCoder:(NSCoder*) aCoder;
+-(id) initWithCoder:(NSCoder*) aDecoder;
+-(void) visit: (id<ORExprVisitor>)v;
 -(enum ORRelationType) type;
 @end
 

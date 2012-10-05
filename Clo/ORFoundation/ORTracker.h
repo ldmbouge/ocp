@@ -9,14 +9,10 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORUtilities/ORTypes.h>
-#import "ORData.h"
-
-@protocol ORSolver;
+#import <ORFoundation/ORData.h>
 
 @protocol ORTracker <NSObject>
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
--(id<ORSolver>) solver;
 @end

@@ -47,7 +47,7 @@
    ORHeist* stolen = [_controller steal];
    ORStatus ok = [_solver installCheckpoint:[stolen theCP]];
    assert(ok != ORFailure);
-   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:_solver];
+   id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine]];
    
    [[_solver explorer] applyController: base
                                     in: ^ {

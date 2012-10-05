@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORModeling/ORModeling.h>
+#import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>
 #import <objcp/CPHeuristic.h>
 
@@ -28,7 +28,7 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol CPSolver <ORSolver>
+@protocol CPSolver <ORASolver>
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
@@ -74,8 +74,7 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
 
--(id<ORSolverConcretizer>) concretizer;
--(void)           addModel: (id<ORModel>) model;
+-(void)           addModel: (id) model;
 @end
 
 @protocol CPSemSolver <CPSolver>
@@ -89,5 +88,11 @@
 @protocol CPParSolver <CPSemSolver>
 -(ORInt)nbWorkers;
 @end
+
+@interface NSThread (ORData)
++(void)setThreadID:(ORInt)tid;
++(ORInt)threadID;
+@end
+
 
 

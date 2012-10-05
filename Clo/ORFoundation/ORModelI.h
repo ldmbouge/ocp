@@ -13,7 +13,9 @@
 #import "ORArray.h"
 #import "ORSet.h"
 #import "ORModel.h"
+#import "ORVar.h"
 #import "ORExprI.h"
+#import "ORVisit.h"
 
 @protocol ORObjective;
 
@@ -31,14 +33,13 @@
 -(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
--(id<ORSolver>) solver;
+-(id<ORASolver>) solver;
 -(NSSet*)constraints;
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORExprVisitor>)v;
 @end
-
 
 @interface ORIntVarAffineI : ORIntVarI
 -(ORIntVarAffineI*)initORIntVarAffineI:(id<ORTracker>)tracker var:(id<ORIntVar>)x scale:(ORInt)a shift:(ORInt)b;
@@ -55,7 +56,7 @@
 -(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
--(id<ORSolver>) solver;
+-(id<ORASolver>) solver;
 -(NSSet*) constraints;
 -(void) visit: (id<ORExprVisitor>)v;
 @end

@@ -10,20 +10,17 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORCrFactory.h"
+#import <ORUtilities/ORCrFactory.h>
 
 @protocol ORExpr;
 @protocol ORIntRange;
-@protocol ORSolverConcretizer;
 
 @protocol ORObject <NSObject>
 -(id) dereference;
--(void) concretize: (id<ORSolverConcretizer>) concretizer;
 @end;
 
 @interface NSObject (Concretization)
 -(id) dereference;
--(void) concretize: (id<ORSolverConcretizer>) concretizer;
 @end;
 
 @protocol ORInteger <ORObject,ORExpr>
@@ -81,11 +78,8 @@
 -(void) close;
 @end
 
-@protocol ORSolver;
-
 @interface ORTableI : NSObject<ORTable,NSCoding> {
    @public
-   id<ORSolver>  _solver;
    ORInt   _arity;
    ORInt   _nb;
    ORInt   _size;
@@ -96,7 +90,7 @@
    ORInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
    ORInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
 }
--(ORTableI*) initORTableI: (id<ORSolver>) solver arity: (ORInt) arity;
+-(ORTableI*) initORTableI: (ORInt) arity;
 -(void) dealloc;
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;

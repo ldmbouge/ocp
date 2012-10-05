@@ -11,9 +11,11 @@
 
 #import "ORTrail.h"
 #import "ORTrailI.h"
+#import <ORFoundation/OREngine.h>
 #import "ORError.h"
 #import "ORData.h"
 #import <assert.h>
+
 
 @implementation ORTrailI
 -(ORTrailI*) init
@@ -512,11 +514,10 @@ void freeTRIntArray(TRIntArray a)
 
 
 @implementation ORTRIntArrayI
--(ORTRIntArrayI*) initORTRIntArray: (id<ORSolver>) solver range: (id<ORIntRange>) R
+-(ORTRIntArrayI*) initORTRIntArray: (id<OREngine>) engine range: (id<ORIntRange>) R
 {
    self = [super init];
-   _solver = solver;
-   _trail = [[solver engine] trail];
+   _trail = (ORTrailI*)[engine trail];
    _low = [R low];
    _up = [R up];
    _nb = (_up - _low + 1);
@@ -571,17 +572,8 @@ void freeTRIntArray(TRIntArray a)
    [rv appendString:@"]"];
    return rv;
 }
--(id<ORSolver>) solver
-{
-   return _solver;
-}
--(id<OREngine>) engine
-{
-   return [_solver engine];
-}
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
-   [aCoder encodeObject:_solver];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -593,7 +585,6 @@ void freeTRIntArray(TRIntArray a)
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
    self = [super init];
-   _solver = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -613,11 +604,10 @@ void freeTRIntArray(TRIntArray a)
 
 @implementation ORTRIntMatrixI
 
--(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+-(ORTRIntMatrixI*) initORTRIntMatrix:(id<OREngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    self = [super init];
-   _solver = cp;
-   _trail = [[cp engine] trail];
+   _trail = (ORTrailI*)[engine trail];
    _arity = 3;
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
@@ -642,11 +632,10 @@ void freeTRIntArray(TRIntArray a)
    return self;
 }
 
--(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSolver>) solver range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+-(ORTRIntMatrixI*) initORTRIntMatrix:(id<OREngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    self = [super init];
-   _solver = solver;
-   _trail = [[solver engine] trail];
+   _trail = (ORTrailI*)[engine trail];
    _arity = 2;
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
@@ -767,17 +756,8 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    [self descriptionAux: i depth:0 string: rv];
    return rv;
 }
--(id<ORSolver>) solver
-{
-   return _solver;
-}
--(id<OREngine>) engine
-{
-   return [_solver engine];
-}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_solver];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
    for(ORInt i = 0; i < _arity; i++) {
       [aCoder encodeObject:_range[i]];
@@ -792,7 +772,6 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _solver = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);

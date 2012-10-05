@@ -9,13 +9,10 @@
 
  ***********************************************************************/
 
-#import "ORUtilities/ORUtilities.h"
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import "CPSolver.h"
 #import "CPTypes.h"
 #import "CPConstraintI.h"
-#import "CPConcretizer.h"
 
 @interface CPHeuristicStack : NSObject {
    id<CPHeuristic>* _tab;
@@ -117,10 +114,10 @@
 - (void)    encodeWithCoder: (NSCoder *)aCoder;
 - (id)        initWithCoder: (NSCoder *)aDecoder;
 
--(void)           addModel: (id<ORModel>) model;
+-(void)           addModel: (id) model;
 @end
 
-@interface CPSolverI : CPCoreSolverI<CPSolver> {
+@interface CPSolverI : CPCoreSolverI<CPSolver,ORTracker> {
    DFSTracer*            _tracer;
 }
 -(CPSolverI*)             init;
@@ -136,28 +133,6 @@
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm withController:(Class)ctrlClass;
 -(id<ORTracer>)           tracer;
 -(void)                   dealloc;
-@end
-
-@interface CPParSolverI : CPSemSolverI<CPParSolver> {
-   ORInt              _nbWorkers;
-}
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
--(id<ORSolverConcretizer>) concretizer;
--(ORInt)nbWorkers;
--(id<CPSolver>)dereference;
-@end
-
-
-@interface CPParConcretizerI : NSObject<ORSolverConcretizer>
--(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;
--(id<ORIntVar>) intVar: (id<ORIntVar>) v;
--(id<ORFloatVar>) floatVar: (ORFloatVarI*) v;
--(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
--(id<ORIdArray>) idArray: (id<ORIdArray>) a;
--(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
--(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
--(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
 @end
 
 

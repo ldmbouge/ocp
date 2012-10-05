@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
-#import "Foundation/Foundation.h"
 #import "ORUtilities/ORUtilities.h"
 #import "ORFoundation/ORTracker.h"
 
 @protocol OREngine;
+@protocol ORTrail;
 
 @protocol ORSnapshot
 -(void) restoreInto: (NSArray*) av;
@@ -47,7 +47,7 @@
 -(bool)            closed;
 -(void)            trackObject:(id)obj;
 -(NSMutableArray*) allVars;
--(id) trail;
+-(id<ORTrail>) trail;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;
 -(void)clearStatus;

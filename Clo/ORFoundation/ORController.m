@@ -207,11 +207,10 @@
 @end
 
 @implementation ORDFSController
-
-- (id) initTheController:(id<ORSolver>)solver
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
 {
    self = [super initORDefaultController];
-   _tracer = [[solver tracer] retain];
+   _tracer = [tracer retain];
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;

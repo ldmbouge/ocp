@@ -109,15 +109,17 @@
 -(void) instantiate: (id<ORSolver>) solver
 {
    NSLog(@"I start instantiating this model...");
-   id<ORSolverConcretizer> concretizer = [solver concretizer];
+/*
+ id<ORVisit> concretizer = [solver concretizer];
    for(id c in _vars)
-      [c concretize: concretizer];
+      [c visit: concretizer];
    for(id c in _oStore)
-      [c concretize: concretizer];
+      [c visit: concretizer];
    for(id c in _mStore)
-      [c concretize: concretizer];
-   [_objective concretize: concretizer];
+      [c visit: concretizer];
+   [_objective visit: concretizer];
    [concretizer release];
+ */
 }
 -(void)applyOnVar: (void(^)(id<ORObject>)) doVar onObjects:(void(^)(id<ORObject>))doObjs
     onConstraints:(void(^)(id<ORObject>)) doCons

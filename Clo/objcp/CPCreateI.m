@@ -59,9 +59,11 @@
 }
 @end
 
+/*
 @implementation CPParSolverI (Create)
 +(CPParSolverI*)            create:(int)nbt withController:(Class)ctrlClass
 {
    return [[CPParSolverI alloc] initForWorkers:nbt withController:ctrlClass];
 }
 @end
+*/

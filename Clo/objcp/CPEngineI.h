@@ -75,7 +75,7 @@ enum CPEngineState {
 -(void)      scheduleAC3:(VarEventNode**)mlist;
 -(void)      scheduleAC5:(VarEventNode*)list with: (ORInt)val;
 -(ORStatus)  propagate;
--(id<ORConstraint>) wrapExpr: (id<ORSolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency)cons;
+-(id<ORConstraint>) wrapExpr: (id<ORASolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency)cons;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
 -(ORStatus)  add:(id<ORConstraint>)c;

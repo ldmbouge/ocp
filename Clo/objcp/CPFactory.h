@@ -19,7 +19,7 @@
 @interface CPFactory : NSObject
 +(id<CPSolver>) createSolver;
 +(id<CPSemSolver>) createSemSolver:(Class)ctrl;
-+(id<CPParSolver>) createParSolver:(int)nbt withController:(Class)ctrlClass;
+//+(id<CPParSolver>) createParSolver:(int)nbt withController:(Class)ctrlClass;
 +(id<CPSolver>) createRandomizedSolver;
 +(id<CPSolver>) createDeterministicSolver;
 //+(id<CPSolver>) createSemSolverFor:(id<CPEngine>)fdm;
@@ -49,15 +49,15 @@ void failNow();
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
 +(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
-+(id<ORIntVar>) boolVar: (id<ORSolver>)cp;
++(id<ORIntVar>) boolVar: (id<CPSolver>)cp;
 +(id<ORIntVar>) negate:(id<ORIntVar>)x;
 
-+(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
-+(id<ORIntArray>) intArray: (id<ORSolver>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range value: (ORInt) value;
++(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
++(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 
 
-+(id<ORVarArray>) varArray: (id<ORSolver>) cp range: (id<ORIntRange>) range;
++(id<ORVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;

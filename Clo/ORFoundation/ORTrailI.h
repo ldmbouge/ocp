@@ -15,6 +15,8 @@
 #import "ORFoundation/ORTrail.h"
 #import "ORFoundation/ORSet.h"
 
+@protocol OREngine;
+
 #define NBSLOT 8192
 
 #define TAGShort        0x1
@@ -101,7 +103,7 @@
 
 
 @interface ORTrailableIntI : NSObject<ORTrailableInt>
--(ORTrailableIntI*) initORTrailableIntI: (ORTrailI*) trail value:(ORInt) value;
+-(ORTrailableIntI*) initORTrailableIntI: (id<ORTrail>) trail value:(ORInt) value;
 -(ORInt) value;
 -(void)  setValue: (ORInt) value;
 -(void)  incr;
@@ -289,14 +291,13 @@ static inline V* get##T(T* v) { return v->_val;}
 
 @interface ORTRIntArrayI : NSObject<ORTRIntArray,NSCoding> {
    @package
-   id<ORSolver> _solver;
    ORTrailI*    _trail;
    TRInt*       _array;
    ORInt        _low;
    ORInt        _up;
    ORInt        _nb;
 }
--(ORTRIntArrayI*) initORTRIntArray: (id<ORSolver>) cp range: (id<ORIntRange>) R;
+-(ORTRIntArrayI*) initORTRIntArray: (id<OREngine>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
@@ -304,7 +305,6 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
--(id<ORSolver>) solver;
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
@@ -313,7 +313,6 @@ static inline V* get##T(T* v) { return v->_val;}
 
 @interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> {
 @private
-   id<ORSolver>    _solver;
    ORTrailI*       _trail;
    TRInt*          _flat;
    ORInt           _arity;
@@ -324,8 +323,8 @@ static inline V* get##T(T* v) { return v->_val;}
    ORInt*          _i;
    ORInt           _nb;
 }
--(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<OREngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<OREngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;
 -(ORInt) at: (ORInt) i0 : (ORInt) i1;
 -(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
@@ -335,8 +334,6 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
--(id<ORSolver>) solver;
--(id<OREngine>) engine;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end

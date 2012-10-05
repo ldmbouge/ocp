@@ -12,19 +12,15 @@
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
 #import "ORFoundation/ORTracker.h"
+#import "ORFoundation/ORModel.h"
 
 @protocol ORRelation;
 @protocol ORExpr;
-@protocol ORSolverConcretizer;
 @protocol ORIntArray;
 @protocol ORIntVarArray;
 
 id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r);
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
-
-
-@protocol ORConstraint <ORObject>
-@end
 
 @protocol ORExpr <ORConstraint,NSObject,NSCoding>
 -(id<ORTracker>) tracker;

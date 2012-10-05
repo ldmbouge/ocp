@@ -13,19 +13,7 @@
 
 @implementation ORSemDFSController
 
-- (id) initTheController:(id<ORSolver>)solver
-{
-   self = [super initORDefaultController];
-   _tracer = [[solver tracer] retain];
-   _engine = [solver engine];
-   _mx  = 64;
-   _tab = malloc(sizeof(NSCont*)* _mx);
-   _cpTab = malloc(sizeof(id<ORCheckpoint>)*_mx);
-   _sz  = 0;
-   return self;
-}
-
-- (id) initSemController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -105,7 +93,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer engine:_engine];
+   ORSemDFSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_engine];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

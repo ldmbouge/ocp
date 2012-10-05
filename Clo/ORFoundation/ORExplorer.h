@@ -12,7 +12,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol ORSolver;
+@protocol ORASolver;
 
 @protocol ORExplorer <NSObject>
 -(void) push: (id<ORSearchController>) c;
@@ -30,7 +30,7 @@
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)     nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
+-(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)                try: (ORClosure) left or: (ORClosure) right;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
@@ -45,9 +45,9 @@
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
--(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search; 
--(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
--(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
+-(void)      optimizeModel: (id<ORASolver>) solver using: (ORClosure) search;
+-(void)         solveModel: (id<ORASolver>) solver using: (ORClosure) search;
+-(void)      solveAllModel: (id<ORASolver>) solver using: (ORClosure) search;
 -(void)             search: (ORClosure) block;
 @end
 

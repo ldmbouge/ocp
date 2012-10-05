@@ -9,9 +9,8 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import "ORUtilities/ORUtilities.h"
-#import "ORSolver.h"
+#import "ORFoundation/ORTracker.h"
 
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;
@@ -104,7 +103,6 @@ ORInt trailMagic(id<ORTrail> trail);
 -(ORInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
--(id<ORSolver>) solver;
 @end
 
 // Struct-Based matrix of trailable Integers
@@ -118,5 +116,4 @@ ORInt trailMagic(id<ORTrail> trail);
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
--(id<ORSolver>) solver;
 @end

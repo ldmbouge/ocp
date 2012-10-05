@@ -30,7 +30,6 @@
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
--(id<ORSolver>) solver;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
@@ -49,7 +48,6 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
--(id<ORSolver>) solver;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
@@ -69,7 +67,6 @@
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
 -(id<ORTracker>) tracker;
--(id<ORSolver>) solver;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end
@@ -90,8 +87,6 @@
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
-
--(id<ORSolver>) solver;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 @end

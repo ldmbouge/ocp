@@ -679,7 +679,7 @@
    NSLog(@"%@",x);
    NSLog(@"%@",[x class]);
    if ([x isKindOfClass:[NSArray class]]) {
-      id<ORSolver> solver = [[x objectAtIndex:0] solver];
+      id<ORASolver> solver = [[x objectAtIndex:0] solver];
       self = [super initCPActiveConstraint: [solver engine]];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);

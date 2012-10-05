@@ -21,7 +21,6 @@
 #import "ORModel.h"
 #import "ORModelI.h"
 #import "ORTrailI.h" 
-#import "ORSolver.h"
 #import "ORSelectorI.h" 
 
 @implementation ORFactory
@@ -36,10 +35,10 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORTrailableInt>) trailableInt: (id<ORSolver>) solver value: (ORInt) value
++(id<ORTrailableInt>) trailableInt: (id<OREngine>) engine value: (ORInt) value
 {
-   ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [[solver engine] trail] value:value];
-   [solver trackObject: o];
+   ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [engine trail] value:value];
+   [engine trackObject: o];
    return o;
 }
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker
@@ -210,11 +209,11 @@
    return [self intVarArray:cp range:r1 :r2 with:clo];
 }
 
-+(id<ORTrailableIntArray>) trailableIntArray: (id<ORSolver>) tracker range: (id<ORIntRange>) range value: (ORInt) value
++(id<ORTrailableIntArray>) trailableIntArray: (id<OREngine>) engine range: (id<ORIntRange>) range value: (ORInt) value
 {
-   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   id<ORIdArray> o = [ORFactory idArray:engine range:range];
    for(ORInt k=range.low;k <= range.up;k++)
-      [o set: [ORFactory trailableInt: tracker value: value] at:k];
+      [o set: [ORFactory trailableInt: engine value: value] at:k];
    return (id<ORTrailableIntArray>) o;
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
@@ -257,24 +256,24 @@
    a[2] = z;
    return [self tableConstraint: (id<ORIntVarArray>) a table: table];
 }
-+(id<ORTRIntArray>) TRIntArray: (id<ORTracker>) solver range: (id<ORIntRange>) R
++(id<ORTRIntArray>) TRIntArray: (id<OREngine>) engine range: (id<ORIntRange>) R
 {
-   ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: (id<ORSolver>) solver range: R];
-   [solver trackObject: o];
+   ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: engine range: R];
+   [engine trackObject: o];
    return o;
 }
 
-+(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) solver range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
++(id<ORTRIntMatrix>) TRIntMatrix: (id<OREngine>) engine range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
-   ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: (id<ORSolver>) solver range: R1 : R2];
-   [solver trackObject: o];
+   ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: engine range: R1 : R2];
+   [engine trackObject: o];
    return o;
 }
 
-+(id<ORTable>) table: (id<ORSolver>) solver arity: (int) arity
++(id<ORTable>) table: (id<ORTracker>) tracker arity: (int) arity
 {
-   ORTableI* o = [[ORTableI alloc] initORTableI: solver arity: arity];
-   [solver trackObject: o];
+   ORTableI* o = [[ORTableI alloc] initORTableI: arity];
+   [tracker trackObject: o];
    return o;
 }
 

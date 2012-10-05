@@ -13,7 +13,6 @@
 #import "ORExprI.h"
 #import "ORFactory.h"
 #import "ORError.h"
-#import "ORSolver.h"
 #import "ORModel.h"
 
 @implementation ORExprI

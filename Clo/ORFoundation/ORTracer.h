@@ -80,6 +80,6 @@
 @end
 
 @interface SemTracer (Packing)
-+(id<ORProblem>)      unpackProblem:(NSData*)msg fOREngine:(id<ORSolver>) solver;
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<ORSolver>) solver;
++(id<ORProblem>)      unpackProblem:(NSData*)msg fOREngine:(id<OREngine>) engine;
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<OREngine>) engine;
 @end

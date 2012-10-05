@@ -149,7 +149,7 @@
    id<OREngine> _fdm;
 }
 -(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<OREngine>)fdm;
--(id<OREngine>)solver;
+-(id<OREngine>)engine;
 @end
 
 @implementation CPUnarchiver
@@ -164,7 +164,7 @@
    [_fdm release];
    [super dealloc];
 }
--(id<OREngine>)solver
+-(id<OREngine>)engine
 {
    return _fdm;
 }
@@ -200,7 +200,9 @@
 {
    self = [super init];
    [self dealloc];
-   return [[[aDecoder solver] trail] retain];
+   id<ORTrail> theTrail = [[aDecoder engine] trail];
+   [theTrail retain];
+   return (CPProxyTrail*)theTrail;
 }
 @end
 
@@ -223,7 +225,7 @@
 {
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_id];
-   id<OREngine> fdm = [aDecoder solver];
+   id<OREngine> fdm = [aDecoder engine];
    id theVar = [[[fdm allVars] objectAtIndex:_id] retain];
    [self release];
    return theVar;
@@ -313,9 +315,8 @@
 @end
 
 @implementation SemTracer (Packing)
-+(id<ORProblem>)unpackProblem:(NSData*)msg fOREngine:(id<ORSolver>)cp
++(id<ORProblem>)unpackProblem:(NSData*)msg fOREngine:(id<OREngine>)fdm
 {
-   id<OREngine> fdm = [cp engine];
    ORUInt nbProxies = 0;
    id arp  = [[NSAutoreleasePool alloc] init];
    CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
@@ -330,10 +331,9 @@
    free(proxies);
    return theProblem;
 }
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<ORSolver>) solver
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<OREngine>) fdm
 {
    id arp = [[NSAutoreleasePool alloc] init];
-   id<OREngine> fdm = [solver engine];
    ORUInt nbProxies = 0;
    CPUnarchiver* decoder = [[CPUnarchiver alloc] initForReadingWithData:msg andSolver:fdm];
    [decoder decodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];

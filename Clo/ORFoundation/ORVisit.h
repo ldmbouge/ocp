@@ -10,19 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "OREngine.h"
-#import "ORModel.h"
 
-@protocol ORTracer;
-
-@protocol ORObjective <NSObject,ORObjectiveFunction>
--(ORStatus) check;
--(void)     updatePrimalBound;
--(void) tightenPrimalBound:(ORInt)newBound;
--(ORInt)    primalBound;
-@end
-
-@protocol ORSolverConcretizer <NSObject>
+@protocol ORVisit <NSObject>
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
 -(id<ORFloatVar>) floatVar: (id<ORFloatVar>) v;
 -(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
@@ -35,16 +24,3 @@
 -(id<ORObjective>) minimize: (id<ORObjectiveFunction>) v;
 -(id<ORObjective>) maximize: (id<ORObjectiveFunction>) v;
 @end
-
-@protocol ORSolver <NSObject,ORTracker,ORSolutionProtocol>
--(id<ORTracer>)    tracer;
--(id<OREngine>)    engine;
--(id<ORObjective>) objective;
--(id<ORSolverConcretizer>) concretizer;
--(void)            addModel: (id) model;
-
--(ORStatus)        close;
--(bool)            closed;
--(NSMutableArray*) allVars;
-@end
-

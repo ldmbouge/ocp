@@ -21,7 +21,7 @@
    self = [super init];
    [cp addHeuristic:self];
    _cp = cp;
-   _solver  = (CPEngineI*)[cp solver];
+   _solver  = (CPEngineI*)[cp engine];
    _vars = nil;
    _rvars = rvars;
    _w = 0;

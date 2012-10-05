@@ -1387,7 +1387,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    }
    else if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
       id<ORIdArray> xa = x;
-      id<CPEngine> fdm = (id<CPEngine>) [[[xa tracker] solver] engine];
+      id<CPEngine> fdm = (id<CPEngine>)[[[xa at:[xa low]] solver] engine];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

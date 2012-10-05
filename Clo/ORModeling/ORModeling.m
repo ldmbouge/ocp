@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORModeling.h"
+#import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
 
 @implementation ORFactory (ORModeling)

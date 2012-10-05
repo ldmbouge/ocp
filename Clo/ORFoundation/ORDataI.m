@@ -14,10 +14,6 @@
 #import <sys/time.h>
 
 @implementation NSObject (Concretization)
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   
-}
 -(id) dereference
 {
    return self;
@@ -230,10 +226,9 @@ static ORInt _deterministic;
 
 @implementation ORTableI
 
--(ORTableI*) initORTableI: (id<ORSolver>) solver arity: (ORInt) arity
+-(ORTableI*) initORTableI:(ORInt) arity
 {
    self = [super init];
-   _solver = solver;
    _arity = arity;
    _nb = 0;
    _size = 2;
@@ -367,7 +362,6 @@ static ORInt _deterministic;
 
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
-   [aCoder encodeObject:_solver];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
    for(ORInt i = 0; i < _nb; i++)
@@ -377,10 +371,9 @@ static ORInt _deterministic;
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
-   id<ORSolver> solver = [[aDecoder decodeObject] retain];
    ORInt arity;
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&arity];
-   [self initORTableI: solver arity: arity];
+   [self initORTableI: arity];
    ORInt size;
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&size];
    for(ORInt i = 0; i < size; i++) {

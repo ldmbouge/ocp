@@ -25,7 +25,7 @@
    id<ORCheckpoint> _atRoot;
    id<OREngine>     _engine;
 }
--(id)  initTheController: (id<ORSolver>) solver;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
+#import <ORModeling/ORSolver.h>
 
 @protocol ORModel <ORTracker>
 -(NSString*)description;

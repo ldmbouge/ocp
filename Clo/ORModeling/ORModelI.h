@@ -9,7 +9,6 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 
 @interface ORModelI : NSObject<ORModel>

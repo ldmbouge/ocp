@@ -82,18 +82,7 @@
 
 @implementation ORSemBDSController
 
-- (id) initTheController:(id<ORSolver>)solver
-{
-   self = [super initORDefaultController];
-   _tracer = [[solver tracer] retain];
-   _solver = [solver engine];
-   _tab  = [[BDSStack alloc] initBDSStack:32];
-   _next = [[BDSStack alloc] initBDSStack:32];
-   _nbDisc = _maxDisc = 0;   
-   return self;
-}
-
-- (id) initSemController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -180,7 +169,7 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer engine:_solver];
+   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }

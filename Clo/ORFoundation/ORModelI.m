@@ -13,7 +13,6 @@
 #import "ORFoundation/ORFoundation.h"
 #import "ORModelI.h"
 #import "ORError.h"
-#import "ORSolver.H"
 
 @implementation ORIntVarI
 {
@@ -46,7 +45,7 @@
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_dense ? 'D':'S',_impl];
 }
 
--(id<ORSolver>) solver
+-(id<ORASolver>) solver
 {
    if (_impl)
       return [_impl solver];
@@ -152,11 +151,6 @@
 {
    return _dense;
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer intVar: self];
-}
 -(ORInt)scale
 {
    return 1;
@@ -201,11 +195,6 @@
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d)",_name,[_domain description],d,_a,_x,_b];
    else
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d,%@)",_name,[_domain description],d,_a,_x,_b,_impl];
-}
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer affineVar: self];
 }
 -(ORInt)scale
 {
@@ -253,7 +242,7 @@
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
 }
 
--(id<ORSolver>) solver
+-(id<ORASolver>) solver
 {
    if (_impl)
       return [_impl solver];
@@ -323,11 +312,6 @@
 {
    _impl = impl;
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer floatVar: self];
-}
 -(void) visit: (id<ORExprVisitor>) v
 {
    [v visitFloatVarI: self];
@@ -366,10 +350,6 @@
 {
    _impl = impl;
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   @throw [[ORExecutionError alloc] initORExecutionError:"Can't concretize an abstract constraint"];
-}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -391,11 +371,6 @@
 -(id<ORIntVarArray>) array
 {
    return _x;
-}
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer alldifferent: self];
 }
 -(NSString*)description
 {
@@ -435,12 +410,6 @@
 {
    return _up;
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer cardinality: self];
-}
-
 @end;
 
 @implementation ORBinPackingI
@@ -469,11 +438,6 @@
 {
    return _binSize;
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer binPacking: self];
-}
 @end
 
 @implementation ORAlgebraicConstraintI
@@ -489,11 +453,6 @@
 -(id<ORRelation>) expr
 {
    return _expr;
-}
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer algebraicConstraint: self];
 }
 -(NSString*)description
 {
@@ -522,11 +481,6 @@
 -(id<ORTable>) table
 {
    return _table;
-}
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer tableConstraint: self];
 }
 @end
 
@@ -572,13 +526,6 @@
    NSLog(@"ORMinimizeI dealloc'd (%p)...",self);
    [super dealloc];
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl==nil) {
-      [_var concretize:concretizer];
-      _impl = [concretizer minimize: self];
-   }
-}
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -597,13 +544,6 @@
 {
    NSLog(@"ORMaximizeI dealloc'd (%p)...",self);
    [super dealloc];
-}
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl==nil) {
-      [_var concretize:concretizer];
-      _impl = [concretizer maximize: self];
-   }
 }
 -(NSString*)description
 {

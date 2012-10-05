@@ -47,7 +47,7 @@
     id<ORConstraint> o;
     switch (c) {
         case DomainConsistency: 
-            o = [[CPAllDifferentDC alloc] initCPAllDifferentDC:x];
+            o = [[CPAllDifferentDC alloc] initCPAllDifferentDC:[x tracker] over:x];
             break;
         case ValueConsistency:
             o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC:x]; 
@@ -445,13 +445,13 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    return o;
 }
 
-+(id<ORConstraint>) relation2Constraint: (id<ORSolver>) solver expr: (id<ORRelation>) e consistency: (CPConsistency) c
++(id<ORConstraint>) relation2Constraint: (id<ORASolver>) solver expr: (id<ORRelation>) e consistency: (CPConsistency) c
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr: e consistency: c];
    [solver trackObject:wrapper];
    return wrapper;
 }
-+(id<ORConstraint>) relation2Constraint: (id<ORSolver>) solver expr: (id<ORRelation>) e
++(id<ORConstraint>) relation2Constraint: (id<ORASolver>) solver expr: (id<ORRelation>) e
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr:e consistency: RangeConsistency];
    [solver trackObject:wrapper];

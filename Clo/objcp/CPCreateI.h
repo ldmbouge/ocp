@@ -26,6 +26,6 @@
 +(CPSemSolverI*)            createFor:(CPEngineI*)fdm;
 @end
 
-@interface CPParSolverI (Create)
-+(CPParSolverI*)            create:(int)nbt withController:(Class)ctrlClass;
-@end
+//@interface CPParSolverI (Create)
+//+(CPParSolverI*)            create:(int)nbt withController:(Class)ctrlClass;
+//@end

@@ -9,70 +9,15 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORExpr.h"
-#import "ORTracker.h"
-#import "ORArray.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORArray.h>
 
-@protocol ORSolver;
-@protocol ORSolverConcretizer;
+@protocol ORIntVarArray;
+@protocol ORExpr;
+@protocol ORIntVar;
+@protocol OREngine;
 
-@protocol ORVar <ORObject,ORExpr>
--(ORUInt) getId;
--(BOOL) bound;
--(id<ORSolver>) solver;
--(NSSet*) constraints;
-@end
-
-@protocol ORIntVar <ORVar>
--(id<ORIntRange>) domain;
--(ORInt) value;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds) bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
--(id<ORIntVar>) dereference;
--(ORInt)scale;
--(ORInt)shift;
--(id<ORIntVar>)base;
-@end
-
-@protocol ORFloatVar <ORVar>
--(ORFloat) value;
--(ORFloat) min;
--(ORFloat) max;
--(id<ORFloatVar>) dereference;
-@end
-
-@protocol ORVarArray <ORIdArray>
--(id<ORVar>) at: (ORInt) value;
--(void) set: (id<ORVar>) x at: (ORInt) value;
--(id<ORExpr>) elt: (id<ORExpr>) idx;
--(id<ORVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORVar>) newValue atIndexedSubscript: (NSUInteger) idx;
-@end
-
-@protocol ORIntVarArray <ORVarArray>
--(id<ORIntVar>) at: (ORInt) value;
--(void) set: (id<ORIntVar>) x at: (ORInt) value;
--(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
--(id<ORSolver>) solver;
-@end
-
-@protocol ORIntVarMatrix <ORIdMatrix>
--(ORInt) arity;
--(id<ORIntVar>) flat:(ORInt)i;
--(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2;
--(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
--(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
--(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
--(id<ORIntRange>) range: (ORInt) i;
--(NSUInteger)count;
--(NSString*) description;
--(id<ORSolver>) solver;
+@protocol ORConstraint <ORObject>
 @end
 
 @protocol ORAlldifferent <ORConstraint>
@@ -103,3 +48,17 @@
 @protocol ORObjectiveFunction <ORObject>
 -(id<ORIntVar>) var;
 @end
+
+@protocol ORObjective <NSObject,ORObjectiveFunction>
+-(ORStatus) check;
+-(void)     updatePrimalBound;
+-(void) tightenPrimalBound:(ORInt)newBound;
+-(ORInt)    primalBound;
+@end
+
+@protocol ORASolver <NSObject,ORTracker>
+-(id<ORObjective>) objective;
+-(ORStatus)        close;
+-(id<OREngine>)    engine;
+@end
+

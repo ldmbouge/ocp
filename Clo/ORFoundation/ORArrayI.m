@@ -154,11 +154,6 @@
 {
    return _tracker;
 }
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
-}
-
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -268,10 +263,6 @@
 {
    return _tracker;
 }
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
-}
 -(id) objectAtIndexedSubscript: (NSUInteger)key
 {
    return _array[key];
@@ -307,11 +298,7 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
-{
-   if (_impl == nil)
-      _impl = [concretizer idArray: self];
-}
+
 -(id<ORIdArray>) dereference
 {
    if (_impl != nil)
@@ -466,10 +453,6 @@
 -(id<ORTracker>) tracker
 {
    return _tracker;
-}
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
 }
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {
@@ -671,10 +654,6 @@
 -(id<ORTracker>) tracker
 {
    return _tracker;
-}
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
