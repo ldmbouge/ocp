@@ -10,6 +10,7 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPSolver.h"
+//#import "ORVarI.h"
 
 @implementation ORExprConcretizer
 {
@@ -149,11 +150,11 @@
    _solver = solver;
    return self;
 }
--(id<ORIntVar>) intVar: (ORIntVarI*) v
+-(id<ORIntVar>) intVar: (id<ORIntVar>) v
 {
    return [CPFactory intVar: _solver domain: [v domain]];
 }
--(id<ORFloatVar>) floatVar: (ORFloatVarI*) v
+-(id<ORFloatVar>) floatVar: (id<ORFloatVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for floatVar"];
    return nil;
@@ -315,7 +316,7 @@
    [_solver trackObject:pVar];
    return pVar;
 }
--(id<ORFloatVar>) floatVar: (ORFloatVarI*) v
+-(id<ORFloatVar>) floatVar: (id<ORFloatVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for floatVar"];
    return nil;

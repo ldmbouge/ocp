@@ -25,6 +25,7 @@
 #import "pthread.h"
 #import "CPObjectQueue.h"
 #import "CPParallel.h"
+#import "ORVarI.h"
 
 @implementation CPHeuristicStack
 -(CPHeuristicStack*)initCPHeuristicStack

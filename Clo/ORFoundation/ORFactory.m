@@ -22,6 +22,7 @@
 #import "ORModelI.h"
 #import "ORTrailI.h" 
 #import "ORSelectorI.h" 
+#import "ORVarI.h"
 
 @implementation ORFactory
 +(id<ORTrail>) trail
