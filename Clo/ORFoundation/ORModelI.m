@@ -71,6 +71,10 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %d)",[self class],self,_impl,_x,_c];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitEqualc:self];
+}
 @end
 
 @implementation ORNEqualc {
@@ -90,6 +94,10 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %d)",[self class],self,_impl,_x,_c];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitNEqualc:self];
+}
 @end
 
 @implementation ORLEqualc {
@@ -108,6 +116,10 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %d)",[self class],self,_impl,_x,_c];
    return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitLEqualc:self];
 }
 @end
 
@@ -130,6 +142,10 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ + %d)",[self class],self,_impl,_x,_y,_c];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitEqual:self];
+}
 @end
 
 @implementation ORNEqual {
@@ -148,6 +164,10 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %@)",[self class],self,_impl,_x,_y];
    return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitNEqual:self];
 }
 @end
 
@@ -170,6 +190,10 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %d)",[self class],self,_impl,_x,_y,_c];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitLEqual:self];
+}
 @end
 
 @implementation OREqual3 {
@@ -191,7 +215,186 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitEqual3:self];
+}
 @end
+
+@implementation ORMult { // x = y * z
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(ORMult*)initORMult:(id<ORIntVar>)x eq:(id<ORIntVar>)y times:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %@)",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMult:self];
+}
+@end
+
+@implementation ORAbs { // x = |y|
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+}
+-(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == abs(%@))",[self class],self,_impl,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitAbs:self];
+}
+@end
+
+
+@implementation OROr { // x = y || z
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(OROr*)initOROr:(id<ORIntVar>)x eq:(id<ORIntVar>)y or:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ || %@)",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitOr:self];
+}
+@end
+
+@implementation ORAnd { // x = y && z
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(ORAnd*)initORAnd:(id<ORIntVar>)x eq:(id<ORIntVar>)y and:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ && %@)",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitAnd:self];
+}
+@end
+
+@implementation ORImply { // x = y => z
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(ORImply*)initORImply:(id<ORIntVar>)x eq:(id<ORIntVar>)y imply:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == (%@ => %@))",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitImply:self];
+}
+@end
+
+@implementation ORElementCst {  // y[idx] == z
+   id<ORIntVar>   _idx;
+   id<ORIntArray> _y;
+   id<ORIntVar>   _z;
+}
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _idx = idx;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@[%@] == %@)",[self class],self,_impl,_y,_idx,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitElementCst:self];
+}
+@end
+
+@implementation ORElementVar {  // y[idx] == z
+   id<ORIntVar>     _idx;
+   id<ORIntVarArray>  _y;
+   id<ORIntVar>       _z;
+}
+-(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _idx = idx;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@[%@] == %@)",[self class],self,_impl,_y,_idx,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitElementVar:self];
+}
+@end
+
 
 @implementation ORAlldifferentI
 {
