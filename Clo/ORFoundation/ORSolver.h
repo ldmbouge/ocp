@@ -41,7 +41,7 @@
 -(id<OREngine>)    engine;
 -(id<ORObjective>) objective;
 -(id<ORSolverConcretizer>) concretizer;
--(void)            addModel: (id<ORAModel>) model;
+-(void)            addModel: (id) model;
 
 -(ORStatus)        close;
 -(bool)            closed;

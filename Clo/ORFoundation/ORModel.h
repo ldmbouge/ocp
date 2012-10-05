@@ -103,7 +103,3 @@
 @protocol ORObjectiveFunction <ORObject>
 -(id<ORIntVar>) var;
 @end
-
-@protocol ORAModel <NSObject,ORTracker>
-@end
-

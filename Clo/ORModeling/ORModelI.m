@@ -83,13 +83,13 @@
 
 -(void) minimize: (id<ORIntVar>) x
 {
-   _objective = [[ORMinimizeI alloc] initORMinimizeI: self obj: x];
+   _objective = [[ORMinimizeI alloc] initORMinimizeI: x];
    [self trackObject: _objective];
 }
 
 -(void) maximize: (id<ORIntVar>) x
 {
-   _objective = [[ORMaximizeI alloc] initORMaximizeI: self obj: x];
+   _objective = [[ORMaximizeI alloc] initORMaximizeI: x];
    [self trackObject: _objective];
 }
 

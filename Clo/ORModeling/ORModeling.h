@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 
-@protocol ORModel <ORAModel>
+@protocol ORModel <ORTracker>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;

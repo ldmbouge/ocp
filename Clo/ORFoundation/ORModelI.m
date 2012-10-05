@@ -531,7 +531,7 @@
 @end
 
 @implementation ORObjectiveFunctionI
--(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORAModel>) model obj: (id<ORIntVar>) x
+-(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORIntVar>) x
 {
    self = [super init];
    _var = x;
@@ -562,9 +562,9 @@
 
 
 @implementation ORMinimizeI
--(ORMinimizeI*) initORMinimizeI: (id<ORAModel>) model obj: (id<ORIntVar>) x
+-(ORMinimizeI*) initORMinimizeI: (id<ORIntVar>) x
 {
-   self = [super initORObjectiveFunctionI: model obj:x];
+   self = [super initORObjectiveFunctionI: x];
    return self;
 }
 -(void)dealloc
@@ -588,9 +588,9 @@
 @end
 
 @implementation ORMaximizeI
--(ORMaximizeI*) initORMaximizeI: (id<ORAModel>) model obj: (id<ORIntVar>) x
+-(ORMaximizeI*) initORMaximizeI:(id<ORIntVar>) x
 {
-   self = [super initORObjectiveFunctionI: model obj:x];
+   self = [super initORObjectiveFunctionI:x];
    return self;
 }
 -(void)dealloc

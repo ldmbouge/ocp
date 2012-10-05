@@ -229,7 +229,7 @@
    [[item tracker] trackObject: o];
    return o;
 }
-+(id<ORConstraint>) algebraicConstraint:(id<ORAModel>) model expr: (id<ORRelation>) exp
++(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp
 {
    id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
    [model trackObject: o];
