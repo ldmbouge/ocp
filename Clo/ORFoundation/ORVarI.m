@@ -159,9 +159,9 @@
 {
    return self;
 }
--(void) visit: (id<ORExprVisitor>) v
+-(void) visit: (id<ORVisitor>) v
 {
-   [v visitIntVarI: self];
+   [v visitIntVar: self];
 }
 @end
 
@@ -203,6 +203,10 @@
 -(id<ORIntVar>)base
 {
    return _x;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitAffineVar: self];
 }
 @end
 
@@ -308,8 +312,8 @@
 {
    _impl = impl;
 }
--(void) visit: (id<ORExprVisitor>) v
+-(void) visit: (id<ORVisitor>) v
 {
-   [v visitFloatVarI: self];
+   [v visitFloatVar: self];
 }
 @end

@@ -36,7 +36,7 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
--(void) visit: (id<ORExprVisitor>)v;
+-(void) visit: (id<ORVisitor>)v;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI
@@ -44,6 +44,7 @@
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
+-(void) visit: (id<ORVisitor>)v;
 @end
 
 @interface ORFloatVarI : ORExprI<ORFloatVar>
@@ -56,5 +57,5 @@
 -(void) setImpl: (id<ORIntVar>) _impl;
 -(id<ORASolver>) solver;
 -(NSSet*) constraints;
--(void) visit: (id<ORExprVisitor>)v;
+-(void) visit: (id<ORVisitor>)v;
 @end

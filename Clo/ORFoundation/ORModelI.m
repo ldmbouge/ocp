@@ -49,7 +49,146 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> = %@",[self class],self,_impl];
+   [buf appendFormat:@"<%@ : %p> -> %@",[self class],self,_impl];
+   return buf;
+}
+@end
+
+@implementation OREqualc {
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(OREqualc*)initOREqualc:(id<ORIntVar>)x eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %d)",[self class],self,_impl,_x,_c];
+   return buf;
+}
+@end
+
+@implementation ORNEqualc {
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORNEqualc*)initORNEqualc:(id<ORIntVar>)x neqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %d)",[self class],self,_impl,_x,_c];
+   return buf;
+}
+@end
+
+@implementation ORLEqualc {
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORLEqualc*)initORLEqualc:(id<ORIntVar>)x leqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %d)",[self class],self,_impl,_x,_c];
+   return buf;
+}
+@end
+
+@implementation OREqual {
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORInt        _c;
+}
+-(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ + %d)",[self class],self,_impl,_x,_y,_c];
+   return buf;
+}
+@end
+
+@implementation ORNEqual {
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+}
+-(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %@)",[self class],self,_impl,_x,_y];
+   return buf;
+}
+@end
+
+@implementation ORLEqual {
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORInt        _c;
+}
+-(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %d)",[self class],self,_impl,_x,_y,_c];
+   return buf;
+}
+@end
+
+@implementation OREqual3 {
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
 @end
@@ -77,6 +216,10 @@
    }
    [buf appendString:@"]>"];
    return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitAlldifferent:self];
 }
 @end
 
@@ -106,7 +249,11 @@
 {
    return _up;
 }
-@end;
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitCardinality:self];
+}
+@end
 
 @implementation ORBinPackingI
 {
@@ -134,6 +281,10 @@
 {
    return _binSize;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBinPacking:self];
+}
 @end
 
 @implementation ORAlgebraicConstraintI
@@ -156,6 +307,10 @@
    [buf appendFormat:@"<ORAlgebraicConstraintI : %p IS %@>",self,_expr];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitAlgebraicConstraint:self];
+}
 @end
 
 @implementation ORTableConstraintI
@@ -177,6 +332,10 @@
 -(id<ORTable>) table
 {
    return _table;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitTableConstraint:self];
 }
 @end
 
@@ -228,6 +387,10 @@
    [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_var];
    return buf;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMinimize:self];
+}
 @end
 
 @implementation ORMaximizeI
@@ -246,6 +409,10 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_var];
    return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMaximize:self];
 }
 @end
 

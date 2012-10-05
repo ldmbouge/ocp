@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORExpr.h"
+#import "ORFoundation/ORExpr.h"
 #import "ORExprI.h"
 #import "ORFactory.h"
 #import "ORError.h"
@@ -123,7 +123,7 @@
    self = [super init];
    return self;
 }
-- (void)visit:(id<ORExprVisitor>)v
+- (void)visit:(id<ORVisitor>)visitor
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
 }
@@ -219,7 +219,7 @@
    [rv appendFormat:@"abs(%@)",[_op description]];
    return rv;   
 }
--(void) visit:(id<ORExprVisitor>)visitor
+-(void) visit:(id<ORVisitor>)visitor
 {
    [visitor visitExprAbsI:self];
 }
@@ -280,7 +280,7 @@
 {
    return [_index isConstant];
 }
--(void) visit:(id<ORExprVisitor>)visitor
+-(void) visit:(id<ORVisitor>)visitor
 {
    [visitor visitExprCstSubI:self];
 }
@@ -317,7 +317,7 @@
    return [_left max] + [_right max]; 
 }
 
--(void) visit:(id<ORExprVisitor>) visitor
+-(void) visit:(id<ORVisitor>) visitor
 {
    [visitor visitExprPlusI: self]; 
 }
@@ -357,7 +357,7 @@
    return [_left max] - [_right min]; 
 }
 
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprMinusI: self]; 
 }
@@ -401,7 +401,7 @@
    ORInt m2 = max([_left max] * [_right min],[_left max] * [_right max]);
    return max(m1,m2);
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprMulI: self]; 
 }
@@ -442,7 +442,7 @@
    assert([self isConstant]);
    return [_left max] == [_right max];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprEqualI: self]; 
 }
@@ -488,7 +488,7 @@
    assert([self isConstant]);
    return [_left max] != [_right max];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprNEqualI: self];
 }
@@ -533,7 +533,7 @@
    assert([self isConstant]);
    return [_left max] <= [_right max];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprLEqualI: self];
 }
@@ -576,7 +576,7 @@
 {
    return [_left max] || [_right max];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprDisjunctI: self];
 }
@@ -619,7 +619,7 @@
 {
    return [_left max] && [_right max];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprConjunctI: self];
 }
@@ -662,7 +662,7 @@
 {
    return ![_left max] || [_right max];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprImplyI: self];
 }
@@ -741,7 +741,7 @@
 {
    return [_e tracker];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprSumI: self]; 
 }
@@ -813,7 +813,7 @@
 {
    return [_e tracker];
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprAggOrI: self];
 }
@@ -877,7 +877,7 @@
 {
    return [_index isConstant];
 }
--(void) visit:(id<ORExprVisitor>)visitor
+-(void) visit:(id<ORVisitor>)visitor
 {
    [visitor visitExprVarSubI:self];
 }

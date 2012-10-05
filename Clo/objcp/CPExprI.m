@@ -11,11 +11,3 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import "CPIntVarI.h"
-
-@implementation CPIntVarI (visitor)
--(void) visit: (id<ORExprVisitor>) visitor
-{
-    [visitor visitIntVarI: self];
-}
-@end
-

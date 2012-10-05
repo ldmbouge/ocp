@@ -124,7 +124,7 @@
 {
    [[e expr] visit: self]; // we can remove the OR node, it serves no purpose.
 }
--(void) visitIntVarI: (id<ORIntVar>) var
+-(void) visitIntVar: (id<ORIntVar>) var
 {
    [var visit:_concretizer];
    _result = [var dereference];

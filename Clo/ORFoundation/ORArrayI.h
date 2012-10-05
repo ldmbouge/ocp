@@ -15,6 +15,8 @@
 #import "ORTracker.h"
 #import "ORArray.h"
 
+@protocol ORVisitor;
+
 @interface ORIntArrayI : NSObject<NSCoding,ORIntArray>
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) v;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORInt(^)(ORInt)) clo;
@@ -54,6 +56,7 @@
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
+-(void)visit:(id<ORVisitor>)v;
 @end
 
 @interface ORIntMatrixI : NSObject<ORIntMatrix,NSCoding>
@@ -89,5 +92,6 @@
 -(NSUInteger) count;
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
+-(void)visit:(id<ORVisitor>)v;
 @end
 

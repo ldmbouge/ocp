@@ -67,22 +67,3 @@ enum ORRelationType {
 -(id<ORRelation>) imply: (id<ORRelation>) e;
 @end
 
-@protocol ORExprVisitor
--(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitExprPlusI: (id<ORExpr>) e;
--(void) visitExprMinusI: (id<ORExpr>) e;
--(void) visitExprMulI: (id<ORExpr>) e;
--(void) visitExprEqualI: (id<ORExpr>) e;
--(void) visitExprNEqualI: (id<ORExpr>) e;
--(void) visitExprLEqualI: (id<ORExpr>) e;
--(void) visitExprSumI: (id<ORExpr>) e;
--(void) visitExprAbsI:(id<ORExpr>) e;
--(void) visitExprCstSubI: (id<ORExpr>) e;
--(void) visitExprDisjunctI:(id<ORExpr>) e;
--(void) visitExprConjunctI: (id<ORExpr>) e;
--(void) visitExprImplyI: (id<ORExpr>) e;
--(void) visitExprAggOrI: (id<ORExpr>) e;
--(void) visitIntVarI: (id<ORExpr>) var;
--(void) visitFloatVarI: (id<ORExpr>) var;
--(void) visitExprVarSubI: (id<ORExpr>) e;
-@end
