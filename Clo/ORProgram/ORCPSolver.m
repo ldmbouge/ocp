@@ -9,7 +9,10 @@
  
  ***********************************************************************/
 
+#import "ORProgram.h"
 #import "ORCPSolver.h"
+#import <objcp/CPSolver.h>
+#import <objcp/CPLabel.h>
 
 // PVH: all methods on modeling objects must dereference
 // PVH: this is also true for label qui doit etre ici maintenant
@@ -21,7 +24,7 @@
 @implementation ORCPSolver {
    id<CPSolver> _solver;
 }
--(id<CPSolver>) initORCPSolver: (id<CPSolver>) solver
+-(id<CPProgram>) initORCPSolver: (id<CPSolver>) solver
 {
    self = [super init];
    _solver = [solver retain];
@@ -196,5 +199,11 @@
 {
    [_solver trackVariable: object];
 }
-
+-(void) labelArray: (id<ORIntVarArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   for(ORInt i = low; i <= up; i++)
+      [CPLabel var: x[i]];
+}
 @end

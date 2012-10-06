@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORConcretizer.h>
+#import "ORConcretizer.h"
 #import "objcp/CPLabel.h"
 
 int main (int argc, const char * argv[])
@@ -30,10 +30,14 @@ int main (int argc, const char * argv[])
    [model add: [ORFactory alldifferent: xp]];
    [model add: [ORFactory alldifferent: xn]];
    
-   id<CPSolver> cp = [ORFactory createCPProgram: model];
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
    [cp solve:
     ^() {
-       [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+       [cp labelArray: x];
+       for(int i = 1; i <= n; i++)
+          printf("%d ",[x[i] value]);
+       printf("\n");
+//       [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
        [nbSolutions incr];
     }
     ];
