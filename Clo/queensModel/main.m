@@ -10,9 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "../ORProgram/ORConcretizer.h"
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import "objcp/CPSolver.h"
+#import "objcp/CPConstraint.h"
+#import "objcp/CPFactory.h"
+#import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
 
 int main (int argc, const char * argv[])
@@ -35,6 +40,13 @@ int main (int argc, const char * argv[])
     id<ORModel> linearModel = [linearizer apply: model];
     NSLog(@"-----------------------------------------------------------------------");
     NSLog([linearModel description]);
+    
+    id<CPSemSolver> cp = [CPFactory createSemSolver: [ORSemDFSController class]];
+    id<CPHeuristic> heur = [CPFactory createFF: cp];
+    [cp addModel: linearModel];
+    [cp solveAll: ^() {
+        [CPLabel heuristic: heur];
+    }];
     
    //id<CPSolver> cp = [ORFactory createCPProgram: model];
    //[cp solve:
