@@ -26,11 +26,14 @@
      onConstraints:(void(^)(id<ORObject>))doCons
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>)objective;
-
+-(NSArray*) variables;
+-(NSArray*) constraints;
 @end
 
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
 +(id<ORModelTransformation>)createFlattener;
++(id<ORModelTransformation>)createLinearizer;
++(id<ORIntVarArray>) binarizeIntVar: (id<ORIntVar>)x tracker: (id<ORTracker>) tracker;
 @end

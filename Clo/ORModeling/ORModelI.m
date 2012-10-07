@@ -59,6 +59,12 @@
 {
    return _objective;
 }
+-(NSArray*) variables {
+    return [NSArray arrayWithArray: _vars];
+}
+-(NSArray*) constraints {
+    return [NSArray arrayWithArray: _mStore];
+}
 
 -(NSString*) description
 {

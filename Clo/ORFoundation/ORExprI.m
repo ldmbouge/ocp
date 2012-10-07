@@ -702,7 +702,7 @@
    if (f!=nil) {
       while ([ite more]) {
          ORInt i = [ite next];
-         if (!f(i))
+         if (f(i))
             _e = [_e plus: e(i)];
       }
    }

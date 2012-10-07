@@ -11,7 +11,8 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORConcretizer.h>
+#import <ORModeling/ORModelTransformation.h>
+#import "../ORProgram/ORConcretizer.h"
 #import "objcp/CPLabel.h"
 
 int main (int argc, const char * argv[])
@@ -30,21 +31,27 @@ int main (int argc, const char * argv[])
    [model add: [ORFactory alldifferent: xp]];
    [model add: [ORFactory alldifferent: xn]];
    
-   id<CPSolver> cp = [ORFactory createCPProgram: model];
-   [cp solve:
-    ^() {
-       [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
-       [nbSolutions incr];
-    }
-    ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
-   NSLog(@"Solver status: %@\n",cp);
-   NSLog(@"Quitting");
-   NSLog(@"SOLUTION IS: %@",x);
+    id<ORModelTransformation> linearizer = [ORFactory createLinearizer];
+    id<ORModel> linearModel = [linearizer apply: model];
+    NSLog(@"-----------------------------------------------------------------------");
+    NSLog([linearModel description]);
+    
+   //id<CPSolver> cp = [ORFactory createCPProgram: model];
+   //[cp solve:
+   //^() {
+   //    [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+   //    [nbSolutions incr];
+   // }
+   // ];
+   //printf("GOT %d solutions\n",[nbSolutions value]);
+   //NSLog(@"Solver status: %@\n",cp);
+  // NSLog(@"Quitting");
+   //NSLog(@"SOLUTION IS: %@",x);
    // PVH 
 //   [cp release];
    // put on the ORFactory
 //   [CPFactory shutdown];
-   return 0;
+    NSLog(@"Done");
+    return 0;
 }
 

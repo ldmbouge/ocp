@@ -24,6 +24,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
+		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		5B0ECEBE1562C4FB000D1A08 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC11562C5E3000D1A08 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC21562C5E3000D1A08 /* CPWDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */; };
@@ -1722,6 +1724,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
+		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B074A27142E5B2D0055B72D /* ORSemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
@@ -3400,6 +3404,8 @@
 				5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */,
 				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
+				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
+				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -4231,6 +4237,7 @@
 				5B57E5DB161F167900DB249A /* ORSolver.h in Headers */,
 				5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */,
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
+				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5736,6 +5743,7 @@
 				5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */,
 				5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */,
 				5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */,
+				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8902,6 +8910,7 @@
 				5B68118D161F98FB00F4480F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B6A960C15879F1600019903 /* Build configuration list for PBXNativeTarget "knapsack" */ = {
 			isa = XCConfigurationList;

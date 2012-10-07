@@ -42,6 +42,18 @@
 {
     [_avl removeObjectForKey: v];
 }
+-(ORInt) min
+{
+    __block ORInt value = NSIntegerMax;
+    [self iterate:^void (ORInt e) { if(e < value) value = e; }];
+    return value;
+}
+-(ORInt) max
+{
+    __block ORInt value = NSIntegerMin;
+    [self iterate:^void (ORInt e) { if(e > value) value = e; }];
+    return value;
+}
 -(ORInt) size
 {
     return [_avl size];
@@ -148,6 +160,9 @@
 -(ORInt) up
 {
    return _up;
+}
+-(bool) inRange: (ORInt)e {
+    return e >= _low && e <= _up;
 }
 -(ORInt) size
 {

@@ -113,6 +113,30 @@
    return o;
 }
 
++(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
+{
+    ORInt m = NSIntegerMax;
+    for(ORInt i = [r low]; i <= [r up]; i++) {
+        if (filter == nil || filter(i)) {
+            ORInt x = e(i);
+            if(x < m) m = x;
+        }
+    }
+    return m;
+}
+
++(ORInt) maxOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
+{
+    ORInt m = NSIntegerMin;
+    for(ORInt i = [r low]; i <= [r up]; i++) {
+        if (filter == nil || filter(i)) {
+            ORInt x = e(i);
+            if(x > m) m = x;
+        }
+    }
+    return m;
+}
+
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker over: (id<ORIntIterator>) r
 {
    id<IntEnumerator> ite = [r enumerator];

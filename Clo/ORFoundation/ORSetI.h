@@ -21,6 +21,8 @@
 -(bool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) min;
+-(ORInt) max;
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
@@ -33,6 +35,7 @@
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
+-(bool) inRange: (ORInt)e;
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
