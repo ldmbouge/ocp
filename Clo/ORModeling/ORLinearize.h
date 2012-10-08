@@ -15,4 +15,3 @@
 -(id)initORLinearize;
 -(id<ORModel>) apply:(id<ORModel>)m;
 @end
-

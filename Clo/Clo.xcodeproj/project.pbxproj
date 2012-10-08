@@ -26,6 +26,7 @@
 /* Begin PBXBuildFile section */
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
+		3783F1A6162230720085E8C2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B0ECEBE1562C4FB000D1A08 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC11562C5E3000D1A08 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC21562C5E3000D1A08 /* CPWDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */; };
@@ -647,6 +648,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3783F1A3162230240085E8C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
 		5B1CDB7F13C36A5D0061631E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -2691,6 +2699,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3783F1A6162230720085E8C2 /* ORProgram.framework in Frameworks */,
 				B1C4F413161F87550010A5C8 /* ORFoundation.framework in Frameworks */,
 				B1C4F412161F87500010A5C8 /* ORUtilities.framework in Frameworks */,
 				B1C4F411161F874C0010A5C8 /* ORModeling.framework in Frameworks */,
@@ -5191,6 +5200,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				3783F1A4162230240085E8C2 /* PBXTargetDependency */,
 				B1C4F40F161F873C0010A5C8 /* PBXTargetDependency */,
 				B1C4F40D161F872A0010A5C8 /* PBXTargetDependency */,
 				B1C4F40B161F87240010A5C8 /* PBXTargetDependency */,
@@ -6049,6 +6059,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3783F1A4162230240085E8C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 3783F1A3162230240085E8C2 /* PBXContainerItemProxy */;
+		};
 		5B1CDB8013C36A5D0061631E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BB3836213B3C0E1005B7D52 /* magicserie */;

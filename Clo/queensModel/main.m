@@ -14,6 +14,7 @@
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
+#import "../ORProgram/ORConcretizer.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
@@ -41,12 +42,11 @@ int main (int argc, const char * argv[])
     NSLog(@"-----------------------------------------------------------------------");
     NSLog([linearModel description]);
     
-    id<CPSemSolver> cp = [CPFactory createSemSolver: [ORSemDFSController class]];
-    id<CPHeuristic> heur = [CPFactory createFF: cp];
-    [cp addModel: linearModel];
-    [cp solveAll: ^() {
-        [CPLabel heuristic: heur];
-    }];
+    //id<CPSolver> cp = [ORFactory createCPProgram: linearModel];
+    //id<CPHeuristic> heur = [CPFactory createFF: cp];
+    //[cp solveAll: ^() {
+    //    [CPLabel heuristic: heur];
+    //}];
     
    //id<CPSolver> cp = [ORFactory createCPProgram: model];
    //[cp solve:
