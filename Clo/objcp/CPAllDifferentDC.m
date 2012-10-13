@@ -18,7 +18,7 @@
 
 @implementation CPAllDifferentDC
 {
-   id<ORIntVarArray> _x;
+   id<CPIntVarArray> _x;
    CPIntVarI**     _var;
    UBType*         _member;
    ORInt           _varSize;
@@ -66,7 +66,7 @@ static void prune(CPAllDifferentDC* ad);
     _posted = false;
 }
 
--(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPSolver>) cp over: (id<ORIntVarArray>) x
+-(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPSolver>) cp over: (id<CPIntVarArray>) x
 {
    self = [super initCPActiveConstraint: [cp engine]];
    _x = x;
@@ -159,7 +159,7 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
     _varSize = (up - low + 1);
     _var = malloc(_varSize * sizeof(CPIntVarI*));
     for(ORInt i = 0; i < _varSize; i++) 
-        _var[i] = (CPIntVarI*) [[_x at: low + i] dereference];
+        _var[i] = (CPIntVarI*) [_x at: low + i];
 
     for(ORInt i = 0; i < _varSize; i++) 
         if ([_var[i] domsize] == 1) {

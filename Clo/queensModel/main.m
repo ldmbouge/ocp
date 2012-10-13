@@ -14,6 +14,9 @@
 #import "ORConcretizer.h"
 #import "objcp/CPLabel.h"
 
+
+// PVH Need to release the CPProgram
+
 int main (int argc, const char * argv[])
 {
    ORInt n = 8;
@@ -31,7 +34,7 @@ int main (int argc, const char * argv[])
    [model add: [ORFactory alldifferent: xn]];
    
    id<CPProgram> cp = [ORFactory createCPProgram: model];
-   [cp solve:
+   [cp solveAll:
     ^() {
        [cp labelArray: x];
        for(int i = 1; i <= n; i++)

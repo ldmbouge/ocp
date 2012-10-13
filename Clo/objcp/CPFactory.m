@@ -186,35 +186,11 @@ void failNow()
 {
    return (id<ORVarArray>)[ORFactory idArray:cp range: range];
 }
-+(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
-{
-   return [self intVarArray:cp range:range with:clo];
-}
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
++(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
-   for(ORInt k=range.low;k <= range.up;k++)
-      [o set:[CPFactory intVar:cp domain:domain] at:k];
-   return (id<ORIntVarArray>)o;
+   return (id<CPIntVarArray>) o;
 }
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
-{
-   id<ORIdArray> o = [ORFactory idArray:cp range:range];
-   return (id<ORIntVarArray>)o;
-}
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo
-{
-   return [ORFactory intVarArray: cp range: range with: clo];
-}
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(ORInt,ORInt)) clo
-{
-   return [ORFactory intVarArray: cp range: r1 :r2 with:clo];
-}
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with: (id<ORIntVar>(^)(ORInt,ORInt,ORInt)) clo
-{
-   return [ORFactory intVarArray: cp range: r1 :r2 : r3 with:clo];
-}
-
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
@@ -250,20 +226,20 @@ void failNow()
    return (id<ORIntVarMatrix>)o;
 }
 
-+(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m
++(id<CPIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m
 {
    id<ORTracker> tracker = [m tracker];
    ORInt sz = (ORInt)[m count];
    id<ORIdArray> flat = [ORFactory idArray: tracker range: RANGE(tracker,0,sz-1)];
    for(ORInt i=0;i<sz;i++)
       flat[i] = [m flat:i];
-   return (id<ORIntVarArray>)flat;
+   return (id<CPIntVarArray>)flat;
 }
 
-+(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c
++(id<CPIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c
 {
-   id<ORIntVarArray> rv = [self intVarArray:[x tracker] range: [x range] with:^id<ORIntVar>(ORInt i) {
-      id<ORIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
+   id<CPIntVarArray> rv = [self intVarArray:[x tracker] range: [x range] with:^id<CPIntVar>(ORInt i) {
+      id<CPIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
       return theView;
    }];
    return rv;

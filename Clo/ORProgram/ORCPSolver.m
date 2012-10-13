@@ -204,6 +204,20 @@
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++)
-      [CPLabel var: x[i]];
+      [self label: x[i]];
 }
+-(void) label: (id<ORIntVar>) mx
+{
+   id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
+   while (![x bound]) {
+      ORInt m = [x min];
+      [_solver try: ^() {
+         [_solver label: x with:m];
+      }
+      or: ^() {
+         [_solver diff: x with:m];
+      }];
+   }
+}
+
 @end

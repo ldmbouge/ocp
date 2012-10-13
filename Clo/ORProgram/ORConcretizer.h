@@ -14,7 +14,6 @@
 #import "ORCPSolver.h"
 
 
-// PVH: I need to have an interface on the CPIntVarI* variables
 // PVH: I need to move CPSolver in the ORProgram framework
 @interface ORFactory (Concretization)
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;

@@ -81,7 +81,6 @@
 		5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B65615D15AD58F6002F344B /* CPKnapsack.m */; };
 		5B681181161F98FB00F4480F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B681187161F98FB00F4480F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B681185161F98FB00F4480F /* InfoPlist.strings */; };
-		5B68118B161F98FB00F4480F /* ORProgram.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B68118A161F98FB00F4480F /* ORProgram.m */; };
 		5B681195161F991D00F4480F /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B681196161F991D00F4480F /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B681197161F991D00F4480F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
@@ -589,6 +588,8 @@
 		B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0A5F615CDAB42005992E7 /* CPData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A453E615E594C800A6171E /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A453E415E594C800A6171E /* CPConcretizer.h */; };
 		B1A453E715E594C800A6171E /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A453E515E594C800A6171E /* CPConcretizer.m */; };
+		B1A8E4E1162A15F300F26748 /* ORCPPoster.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A8E4DF162A15F300F26748 /* ORCPPoster.h */; };
+		B1A8E4E2162A15F300F26748 /* ORCPPoster.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A8E4E0162A15F300F26748 /* ORCPPoster.m */; };
 		B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; };
 		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1785,7 +1786,6 @@
 		5B681186161F98FB00F4480F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		5B681188161F98FB00F4480F /* ORProgram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ORProgram-Prefix.pch"; sourceTree = "<group>"; };
 		5B681189161F98FB00F4480F /* ORProgram.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORProgram.h; sourceTree = "<group>"; };
-		5B68118A161F98FB00F4480F /* ORProgram.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORProgram.m; sourceTree = "<group>"; };
 		5B6A960015879F1600019903 /* knapsack */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = knapsack; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6A960415879F1600019903 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6A960715879F1600019903 /* knapsack-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "knapsack-Prefix.pch"; sourceTree = "<group>"; };
@@ -2157,6 +2157,8 @@
 		B1A0A5F615CDAB42005992E7 /* CPData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1A453E415E594C800A6171E /* CPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConcretizer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1A453E515E594C800A6171E /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConcretizer.m; sourceTree = "<group>"; };
+		B1A8E4DF162A15F300F26748 /* ORCPPoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPPoster.h; sourceTree = "<group>"; };
+		B1A8E4E0162A15F300F26748 /* ORCPPoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPPoster.m; sourceTree = "<group>"; };
 		B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPAssignmentI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAssignmentI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1B68C74159FC16E008BC463 /* TestAssignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAssignment; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2840,8 +2842,9 @@
 				5B57E5E9161F2DB100DB249A /* ORCPConcretizer.m */,
 				B17832FE161F636A00C7298D /* ORCPSolver.h */,
 				B17832FF161F636A00C7298D /* ORCPSolver.m */,
+				B1A8E4DF162A15F300F26748 /* ORCPPoster.h */,
+				B1A8E4E0162A15F300F26748 /* ORCPPoster.m */,
 				5B681189161F98FB00F4480F /* ORProgram.h */,
-				5B68118A161F98FB00F4480F /* ORProgram.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
 				B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */,
@@ -4107,6 +4110,7 @@
 				5B68119F161F99C700F4480F /* ORCPSolver.h in Headers */,
 				5B6811A1161F99C700F4480F /* ORParCPConcretizer.h in Headers */,
 				B1C4F446161F9CBB0010A5C8 /* ORCPProgramI.h in Headers */,
+				B1A8E4E1162A15F300F26748 /* ORCPPoster.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5536,13 +5540,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5B68118B161F98FB00F4480F /* ORProgram.m in Sources */,
 				5B68119A161F99C700F4480F /* ORCPConcretizer.m in Sources */,
 				5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */,
 				5B68119E161F99C700F4480F /* ORConcretizer.m in Sources */,
 				5B6811A0161F99C700F4480F /* ORCPSolver.m in Sources */,
 				5B6811A2161F99C700F4480F /* ORParCPConcretizer.m in Sources */,
 				B1C4F447161F9CBB0010A5C8 /* ORCPProgramI.m in Sources */,
+				B1A8E4E2162A15F300F26748 /* ORCPPoster.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

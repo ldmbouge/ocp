@@ -44,13 +44,13 @@ void failNow();
 +(void) print: (id) x;
 +(id<ORInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
 
-+(id<ORIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range;
-+(id<ORIntVar>) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range;
-+(id<ORIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
-+(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
-+(id<ORIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
-+(id<ORIntVar>) boolVar: (id<CPSolver>)cp;
-+(id<ORIntVar>) negate:(id<ORIntVar>)x;
++(id<CPIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range;
++(id<CPIntVar>) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range;
++(id<CPIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
++(id<CPIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
++(id<CPIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
++(id<CPIntVar>) boolVar: (id<CPSolver>)cp;
++(id<CPIntVar>) negate:(id<ORIntVar>)x;
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range value: (ORInt) value;
 +(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
@@ -58,13 +58,7 @@ void failNow();
 
 
 +(id<ORVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORIntVarArray>) arrayORIntVar: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(id<ORIntVar>(^)(ORInt)) clo;
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 with:(id<ORIntVar>(^)(ORInt,ORInt)) clo;
-+(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2 : (id<ORIntRange>) r3 with:(id<ORIntVar>(^)(ORInt,ORInt,ORInt)) clo;
-
++(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;

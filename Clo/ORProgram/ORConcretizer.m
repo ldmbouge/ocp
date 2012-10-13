@@ -14,6 +14,7 @@
 #import "ORConcretizer.h"
 #import "ORCPSolver.h"
 #import "ORCPConcretizer.h"
+#import "ORCPPoster.h"
 #import <ORModeling/ORModeling.h>
 
 
@@ -28,8 +29,13 @@
 {
    id<CPSolver> concreteCPSolver = [CPFactory createSolver];
    id<CPProgram> wrapperCPSolver = [ORFactory createCPSolverWrapper: concreteCPSolver];
+
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: concreteCPSolver];
    [model visit: concretizer];
+   
+   id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: concreteCPSolver];
+   [model visit: poster];
+   
    return wrapperCPSolver;
 }
 @end

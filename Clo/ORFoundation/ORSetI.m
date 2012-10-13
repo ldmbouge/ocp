@@ -81,6 +81,10 @@
     }
     return self;   
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   
+}
 @end
 
 
@@ -179,6 +183,10 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    return self;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   
 }
 @end
 

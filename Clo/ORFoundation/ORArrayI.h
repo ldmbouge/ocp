@@ -39,7 +39,7 @@
 
 @interface ORIdArrayI : NSObject<NSCoding,ORIdArray>
 {
-   id<ORTracker>  _tracker;
+
 }
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;

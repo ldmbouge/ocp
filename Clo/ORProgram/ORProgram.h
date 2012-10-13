@@ -44,6 +44,7 @@
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)          labelArray: (id<ORIntVarArray>) x;
+-(void)               label: (id<ORIntVar>) mx;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;
@@ -70,5 +71,4 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
-
 @end

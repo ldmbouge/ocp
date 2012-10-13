@@ -329,9 +329,8 @@
 {
    [_engine trackVariable:object];
 }
--(void) label: (ORIntVarI*) var with: (ORInt) val
+-(void) label: (CPIntVarI*) var with: (ORInt) val
 {
-   var = [var dereference];
    ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
@@ -340,34 +339,33 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents]; 
 }
--(void) diff: (ORIntVarI*) var with: (ORInt) val
+-(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
-   var = [var dereference];
    ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+-(void) lthen: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine lthen:[var dereference] with: val];
+   ORStatus status = [_engine lthen: var with: val];
    if (status == ORFailure) {
       [_search fail];
    }
    [ORConcurrency pumpEvents];
 }
--(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+-(void) gthen: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine gthen:[var dereference] with:val];
+   ORStatus status = [_engine gthen: var with:val];
    if (status == ORFailure) {
       [_search fail];
    }
    [ORConcurrency pumpEvents];
 }
 
--(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
+-(void) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
-    ORStatus status = [_engine restrict: [var dereference] to: S];
+    ORStatus status = [_engine restrict: var to: S];
     if (status == ORFailure)
         [_search fail]; 
     [ORConcurrency pumpEvents];   

@@ -11,9 +11,10 @@
 
 #import "ORFoundation/ORFoundation.h"
 #import "objcp/CPBasicConstraint.h"
+#import "objcp/CPSolver.h"
 
 @interface CPAllDifferentDC : CPActiveConstraint<CPConstraint,NSCoding>
--(CPAllDifferentDC*) initCPAllDifferentDC: (id<ORTracker>) tracker over: (id<ORIntVarArray>) x;
+-(CPAllDifferentDC*) initCPAllDifferentDC: (id<ORTracker>) tracker over: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

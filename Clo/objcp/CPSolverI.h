@@ -80,11 +80,11 @@
 -(void)                state;
 -(id<ORObjective>) objective;
 
--(void)               label: (id<ORIntVar>) var with: (ORInt) val;
--(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
+-(void)               label: (id<CPIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;

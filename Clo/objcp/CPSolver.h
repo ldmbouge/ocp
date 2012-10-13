@@ -20,6 +20,29 @@
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 
+@protocol CPIntVar <NSObject>
+-(ORUInt) getId;
+-(ORInt) value;
+-(ORInt) min;
+-(ORInt) max;
+-(ORInt) domsize;
+-(ORBounds) bounds;
+-(BOOL) member: (ORInt) v;
+-(BOOL) isBool;
+-(id<ORIntVar>) dereference;
+-(ORInt) scale;
+-(ORInt) shift;
+-(id<ORIntVar>) base;
+-(BOOL) bound;
+@end
+
+@protocol CPIntVarArray <ORVarArray>
+-(id<CPIntVar>) at: (ORInt) value;
+-(void) set: (id<CPIntVar>) x at: (ORInt) value;
+-(id<CPIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -42,11 +65,11 @@
 -(id<ORObjective>) maximize: (id<ORIntVar>) x;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 
--(void)               label: (id<ORIntVar>) var with: (ORInt) val;
--(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
+-(void)               label: (id<CPIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<CPIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<CPIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)               solve: (ORClosure) body;
 -(void)            solveAll: (ORClosure) body;
