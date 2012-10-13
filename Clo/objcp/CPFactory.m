@@ -61,6 +61,10 @@ void failNow()
 {
     return [CPSolverI createDeterministic];
 }
++(id<CPEngine>) engine: (id<ORTrail>) trail
+{
+  return [[CPEngineI alloc] initEngine: trail];
+}
 //+(SemCP*) createSemSolverFor:(id<CPEngine>)fdm
 //{
 //   return [[SemCP alloc] initFor:fdm];

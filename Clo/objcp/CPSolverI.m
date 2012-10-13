@@ -82,9 +82,8 @@
 -(id) init
 {
    self = [super init];
-   _trail = [[ORTrailI alloc] init];
-   _engine = [[CPEngineI alloc] initSolver: _trail];
-   _pool = [[NSAutoreleasePool alloc] init];
+   _trail = [ORFactory trail];
+   _engine = [CPFactory engine: _trail];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
@@ -98,7 +97,6 @@
    self = [super init];
    _engine = [fdm retain];
    _trail = [[fdm trail] retain];
-   _pool = [[NSAutoreleasePool alloc] init];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
@@ -287,7 +285,6 @@
    self = [super init];
    _engine = [[aDecoder decodeObject] retain];
    _trail  = [[aDecoder decodeObject] retain];
-   _pool = [[NSAutoreleasePool alloc] init];
    return self;
 }
 -(void) close

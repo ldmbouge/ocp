@@ -34,7 +34,6 @@
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
    id<ORTrail>           _trail;
-   NSAutoreleasePool*    _pool;
    CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
 @package

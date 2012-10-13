@@ -65,7 +65,7 @@ enum CPEngineState {
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
 }
--(CPEngineI*) initSolver: (id<ORTrail>) trail;
+-(CPEngineI*) initEngine: (id<ORTrail>) trail;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
 -(void)      trackVariable:(id)var;

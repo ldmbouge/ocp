@@ -14,12 +14,36 @@
 #import <objcp/CPSolver.h>
 #import <objcp/CPLabel.h>
 
+
+// TODO by PVH 13/10/2012
+
+// 1. replace the id<CPSolver> by the engine and the search and start replacing the methods one at a time
+//    this does the delegation and the dispatching to the right place
+// 2. Make sure that the portal and heuristic stack are moved here. This is the proper place
+//    note that this includes both the protocols and the interfaces/implementations
+// 3. Remove the protocol and interface for CPSolver
+// 4. Rename ORCPSolver into CPSolver
+// 5. Clean les ORIntVar et les dereferences de objcp
+
+// once these steps are done, I have deconnected the search from objcp
+
+// TODO after that
+
+// 6. Try a model with an objective function to understand that aspect
+// 7. Allows the concretization to create a semantic DFS solver
+// 8. Clean tous les warnings
+
+
+
+
 // PVH: all methods on modeling objects must dereference
 // PVH: this is also true for label qui doit etre ici maintenant
 // PVH: everything must go through the labeling
 
 // PVH: Need to reorganize the CPSolver class: DFS, notDFTSem, PAR
 // PVH: Also need to remove methods that are now in the model
+
+
 
 @implementation ORCPSolver {
    id<CPSolver> _solver;
