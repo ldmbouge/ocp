@@ -224,18 +224,14 @@
 
 -(void) add: (id<ORConstraint>) c
 {
-    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-       c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:ValueConsistency];
-   }
+   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
 }
 -(void) add: (id<ORConstraint>) c consistency:(ORAnnotation)cons
 {
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:cons];
-   }
+   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
