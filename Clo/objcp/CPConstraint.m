@@ -22,12 +22,10 @@
 #import "CPElement.h"
 #import "CPCircuitI.h"
 #import "CPTableI.h"
-#import "CPLinear.h"
 #import "CPAssignmentI.h"
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
-#import "CPLinear.h"
 
 @implementation CPFactory (Constraint)
 
@@ -220,21 +218,6 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    [[x solver] trackObject:o];
    return o;
 }
-
-+(id<ORConstraint>) relation2Constraint: (id<ORASolver>) solver expr: (id<ORRelation>) e consistency: (ORAnnotation) c
-{
-   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr: e consistency: c];
-   [solver trackObject:wrapper];
-   return wrapper;
-}
-+(id<ORConstraint>) relation2Constraint: (id<ORASolver>) solver expr: (id<ORRelation>) e
-{
-   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr:e consistency: RangeConsistency];
-   [solver trackObject:wrapper];
-   return wrapper;
-   
-}
-
 
 +(id<ORIntVar>) reifyView: (CPIntVarI*) x eqi:(ORInt)c
 {
