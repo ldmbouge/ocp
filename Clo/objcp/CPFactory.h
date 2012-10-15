@@ -101,9 +101,5 @@ void failNow();
 +(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
-
-#define SUM(P,R,E)           [CPFactory sum: cp over:(R) suchThat:nil of:^id<ORExpr>(ORInt P) { return (id<ORExpr>)(E);}]
-#define ALL(RT,P,RANGE,E)    [CPFactory array##RT:cp range:(RANGE) with:^id<RT>(ORInt P) { return (E);}]
-#define OR(P,R,E)            [CPFactory or: cp over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 #define FORALL(p,S,c,b,body) [cp forall:(S) suchThat:^bool(ORInt p) { return (c);} orderedBy:^ORInt(ORInt p) { return (b);} do:(body)];
 

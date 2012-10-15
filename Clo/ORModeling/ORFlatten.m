@@ -8,6 +8,7 @@
 
 #import "ORFlatten.h"
 #import "ORModelI.h"
+#import "ORDecompose.h"
 
 @interface ORFlattenConstraint : NSObject<ORVisitor>
 -(id)init:(ORModelI*)m;
@@ -47,13 +48,18 @@
    } onObjects:^(id<ORObject> x) {
       NSLog(@"Got an object: %@",x);
    } onConstraints:^(id<ORConstraint> c) {
-      ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:out];
-      [c visit:fc];
-      [fc release];
+      [self flatten:c into:out];
    } onObjective:^(id<ORObjective> o) {
       NSLog(@"Got an objective: %@",o);
    }];
    return out;
+}
+
+-(void)flatten:(id<ORConstraint>)c into:(id<ORModel>)m
+{
+   ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:m];
+   [c visit:fc];
+   [fc release];
 }
 @end
 
@@ -80,7 +86,26 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   
+   id<ORExpr> theExpr = [cstr expr];
+   ORLinear* terms = [ORNormalizer normalize:theExpr into: _theModel note:DomainConsistency];
+   switch ([theExpr type]) {
+      case ORRBad: assert(NO);
+      case ORREq: {
+         if ([terms size] != 0) {
+            [terms postEQZ:_theModel note:DomainConsistency];
+         }
+      }break;
+      case ORRNEq: {
+         [terms postNEQZ:_theModel note:DomainConsistency];
+      }break;
+      case ORRLEq: {
+         [terms postLEQZ: _theModel note:DomainConsistency];
+      }break;
+      default:
+         assert(terms == nil);
+         break;
+   }
+   [terms release];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

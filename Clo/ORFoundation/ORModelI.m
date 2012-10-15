@@ -52,6 +52,29 @@
    [buf appendFormat:@"<%@ : %p> -> %@",[self class],self,_impl];
    return buf;
 }
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitConstraint:self];
+}
+
+@end
+
+@implementation ORFail
+-(ORFail*)init
+{
+   self = [super init];
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> fail",[self class],self];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitFail:self];
+}
 @end
 
 @implementation OREqualc {
@@ -127,6 +150,7 @@
    id<ORIntVar> _x;
    id<ORIntVar> _y;
    ORInt        _c;
+   ORAnnotation _n;
 }
 -(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c
 {
@@ -134,6 +158,16 @@
    _x = x;
    _y = y;
    _c = c;
+   _n = DomainConsistency;
+   return self;
+}
+-(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c note:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _c = c;
+   _n = n;
    return self;
 }
 -(NSString*) description
@@ -151,18 +185,29 @@
 @implementation ORNEqual {
    id<ORIntVar> _x;
    id<ORIntVar> _y;
+   ORInt        _c;
 }
 -(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
+   _c = 0;
    return self;
 }
+-(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y plus:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;   
+}
+
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %@)",[self class],self,_impl,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %@ + %d)",[self class],self,_impl,_x,_y,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -200,6 +245,7 @@
    id<ORIntVar> _x;
    id<ORIntVar> _y;
    id<ORIntVar> _z;
+   ORAnnotation _n;
 }
 -(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z
 {
@@ -207,6 +253,16 @@
    _x = x;
    _y = y;
    _z = z;
+   _n = DomainConsistency;
+   return self;
+}
+-(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   _n = n;
    return self;
 }
 -(NSString*) description
@@ -569,6 +625,10 @@
 -(id<ORObjectiveFunction>) dereference
 {
    return [_impl dereference];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitObjectiveFunction:self];
 }
 @end
 

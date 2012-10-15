@@ -74,7 +74,7 @@
     }
     return self;
 }
--(ORRange) unionOfVarArrayDomains: (id<ORIntVarArray>)arr
+-(ORRange) unionOfVarArrayRanges: (id<ORIntVarArray>)arr
 {
     ORRange r;
     r.up = [ORFactory maxOver: [arr range] suchThat: nil of:^ORInt (ORInt e) {
@@ -96,7 +96,7 @@
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-    ORRange dom = [self unionOfVarArrayDomains: [cstr array]];
+    ORRange dom = [self unionOfVarArrayRanges: [cstr array]];
     for (int d = dom.low; d <= dom.up; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
                                    suchThat:^bool(ORInt i) {

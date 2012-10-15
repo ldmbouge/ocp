@@ -61,7 +61,7 @@
    // PVH: Need to flatten/concretize
    return [_solver add: c];
 }
--(void) add: (id<ORConstraint>) c consistency:(CPConsistency) cons
+-(void) add: (id<ORConstraint>) c consistency:(ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
    return [_solver add: c consistency: cons];

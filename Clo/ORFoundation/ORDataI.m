@@ -146,6 +146,11 @@ static ORInt _deterministic;
 {
    return nrand48(_seed);
 }
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitRandomStream:self];
+}
+
 @end;
 
 @implementation ORZeroOneStreamI
@@ -166,7 +171,11 @@ static ORInt _deterministic;
 {
    return erand48(_seed);
 }
-@end;
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitZeroOneStream:self];
+}
+@end
 
 @implementation ORUniformDistributionI
 {
@@ -191,7 +200,11 @@ static ORInt _deterministic;
 {
    return _range.low + [_stream next] % _size;
 }
-@end;
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitUniformDistribution:self];
+}
+@end
 
 @implementation ORRuntimeMonitor
 +(ORLong) cputime

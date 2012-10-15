@@ -37,7 +37,7 @@
 -(id<ORSolution>)  solution;
 
 -(void)                 add: (id<ORConstraint>) c;
--(void)                 add: (id<ORConstraint>) c consistency:(CPConsistency) cons;
+-(void)                 add: (id<ORConstraint>) c consistency:(ORAnnotation) cons;
 -(id<ORObjective>) minimize: (id<ORIntVar>) x;
 -(id<ORObjective>) maximize: (id<ORIntVar>) x;
 -(void)        addHeuristic: (id<CPHeuristic>) h;

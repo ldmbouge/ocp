@@ -15,6 +15,7 @@
 #import "ORError.h"
 #import "ORData.h"
 #import <assert.h>
+#import "ORVisit.h"
 
 
 @implementation ORTrailI
@@ -505,6 +506,10 @@ void freeTRIntArray(TRIntArray a)
 -(void)  decr
 {
    assignTRInt(&_trint,_trint._val-1,_trail);
+}
+-(void)visit:(id<ORVisitor>)visitor
+{
+   [visitor visitTrailableInt:self];
 }
 @end
 

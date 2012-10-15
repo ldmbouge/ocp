@@ -20,6 +20,9 @@
 @protocol ORConstraint <ORObject>
 @end
 
+@protocol ORFail <ORConstraint>
+@end
+
 @protocol  OREqualc <ORConstraint>
 @end
 

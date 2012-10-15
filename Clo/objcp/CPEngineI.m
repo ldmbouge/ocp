@@ -510,7 +510,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
--(id<ORConstraint>) wrapExpr: (id<CPSolver>) solver for: (id<ORRelation>) e  consistency:(CPConsistency)cons
+-(id<ORConstraint>) wrapExpr: (id<CPSolver>) solver for: (id<ORRelation>) e  consistency:(ORAnnotation)cons
 {
    CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr:e consistency:cons];
    [self trackObject:wrapper];

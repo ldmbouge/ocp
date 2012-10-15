@@ -28,6 +28,10 @@
 -(NSString*) description;
 @end
 
+@interface ORFail : ORConstraintI<ORFail>
+-(ORFail*)init;
+@end
+
 @interface OREqualc : ORConstraintI<OREqualc>
 -(OREqualc*)initOREqualc:(id<ORIntVar>)x eqi:(ORInt)c;
 @end
@@ -42,10 +46,12 @@
 
 @interface OREqual : ORConstraintI<OREqual>
 -(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c;
+-(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c note:(ORAnnotation)n;
 @end
 
 @interface ORNEqual : ORConstraintI<ORNEqual>
 -(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y;
+-(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y plus:(ORInt)c;
 @end
 
 @interface ORLEqual : ORConstraintI<ORLEqual>
@@ -54,6 +60,7 @@
 
 @interface OREqual3 : ORConstraintI<OREqual3>
 -(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z;
+-(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n;
 @end
 
 @interface ORMult : ORConstraintI<ORMult>
@@ -124,6 +131,7 @@
 -(void) setImpl:(id<ORObjectiveFunction>)impl;
 -(id<ORObjectiveFunction>)impl;
 -(id<ORObjectiveFunction>) dereference;
+-(void) visit: (id<ORVisitor>) visitor;
 @end
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>

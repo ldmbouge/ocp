@@ -176,6 +176,10 @@
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:_array+i];
    return self;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIntArray:self];
+}
 @end
 
 // ------------------------------------------------------------------------------------------
@@ -664,6 +668,10 @@
 -(id<ORTracker>) tracker
 {
    return _tracker;
+}
+-(void) visit:(id<ORVisitor>)visitor
+{
+   [visitor visitIntMatrix:self];
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {

@@ -18,7 +18,7 @@
 -(id<ORObjective>)objective;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(id<ORConstraint>) wrapExpr: (id<ORASolver>) solver for: (id<ORRelation>) e  consistency: (CPConsistency) cons;
+-(id<ORConstraint>) wrapExpr: (id<ORASolver>) solver for: (id<ORRelation>) e  consistency: (ORAnnotation) cons;
 -(ORStatus) label: (id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus) diff:  (id<ORIntVar>) var with: (ORInt) val;
 -(ORStatus) lthen: (id<ORIntVar>) var with: (ORInt) val;

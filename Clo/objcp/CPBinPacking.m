@@ -80,13 +80,13 @@
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++)
-      [cp add: [SUM(i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
+      [cp add: [Sum(cp,i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
    ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [_itemSize at: i];
-   [cp add: [SUM(b,BR,_binSize[b]) eqi: s]];
+   [cp add: [Sum(cp,b,BR,_binSize[b]) eqi: s]];
    for(ORInt b = brlow; b <= brup; b++)
       [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
    return ORSkip;
