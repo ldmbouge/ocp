@@ -70,6 +70,10 @@
 {
    return [ORInternalFactory AVLTreeKeyIntEnumerator: _avl];
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIntSet:self];
+}
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {   
     ORInt size = [_avl size];
@@ -172,6 +176,10 @@
 {
    for(ORInt i = _low; i <= _up; i++)
       f(i);
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIntRange:self];
 }
 -(NSString*) description
 {

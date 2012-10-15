@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORSet.h"
 #import "ORFoundation/ORAVLTree.h"
-
+@protocol ORVisitor;
 
 @interface ORIntSetI : NSObject<ORIntSet>
 
@@ -27,6 +27,7 @@
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
+-(void)visit:(id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -39,6 +40,7 @@
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
+-(void)visit:(id<ORVisitor>)v;
 -(id<IntEnumerator>) enumerator;
 //-(id<IntEnumerator>) tailableEnumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;

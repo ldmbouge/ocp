@@ -58,7 +58,10 @@
    [av release];
    return nbu;
 }
-
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitConstraint:self];
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];

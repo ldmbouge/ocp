@@ -151,23 +151,23 @@ struct CPVarPair {
    id<ORIntVar> lV = [ORSubst normSide:linLeft  for:_model note:_n];
    id<ORIntVar> rV = [ORSubst normSide:linRight for:_model note:_n];
    id<ORIntVar> final = [ORFactory intVar: _model domain:RANGE(_model,0,1)];
-   [_model add:[ORFactory equalc:final to:1]];
+   [_model add:[ORFactory equalc:_model var:final to:1]];
    return (struct CPVarPair){lV,rV,final};
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
-   [_model add:[ORFactory boolean:vars.lV or:vars.rV equal:vars.boolVar]];
+   [_model add:[ORFactory model:_model boolean:vars.lV or:vars.rV equal:vars.boolVar]];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
-   [_model add:[ORFactory boolean:vars.lV and:vars.rV equal:vars.boolVar]];
+   [_model add:[ORFactory model:_model boolean:vars.lV and:vars.rV equal:vars.boolVar]];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
    struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
-   [_model add:[ORFactory boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
+   [_model add:[ORFactory model:_model boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
@@ -426,26 +426,26 @@ struct CPVarPair {
       case 0: assert(NO);return;
       case 1: {
          if (_terms[0]._coef == 1) {
-            [model add:[ORFactory notEqualc:_terms[0]._var to:- _indep]];
+            [model add:[ORFactory notEqualc:model var:_terms[0]._var to:- _indep]];
          } else if (_terms[0]._coef == -1) {
-            [model add:[ORFactory notEqualc:_terms[0]._var to:_indep]];
+            [model add:[ORFactory notEqualc:model var:_terms[0]._var to:_indep]];
          } else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
             ORInt cr = - _indep % _terms[0]._coef;
             if (cr == 0)
-               [model add:[ORFactory notEqualc:_terms[0]._var to:nc]];
+               [model add:[ORFactory notEqualc:model var:_terms[0]._var to:nc]];
          }
       }break;
       case 2: {
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            return [model add:[ORFactory notEqual:_terms[0]._var to:_terms[1]._var plus:-_indep]];
+            return [model add:[ORFactory notEqual:model var:_terms[0]._var to:_terms[1]._var plus:-_indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
-            return [model add:[ORFactory notEqual:_terms[1]._var to:_terms[0]._var plus:-_indep]];
+            return [model add:[ORFactory notEqual:model var:_terms[1]._var to:_terms[0]._var plus:-_indep]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
-            [model add:[ORFactory notEqual:xp to:yp plus:- _indep]];
+            [model add:[ORFactory notEqual:model var:xp to:yp plus:- _indep]];
          }
       }break;
       default: {
@@ -454,8 +454,8 @@ struct CPVarPair {
          id<ORIntVar> alpha = [ORFactory intVar:[_terms[0]._var tracker]
                                          domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
          [self addTerm:alpha by:-1];
-         [model add:[ORFactory sum:[self scaledViews:model] eq:-_indep]];
-         [model add:[ORFactory notEqualc:alpha to:0]];
+         [model add:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
+         [model add:[ORFactory notEqualc:model var:alpha to:0]];
       }break;
    }
 }
@@ -468,9 +468,9 @@ struct CPVarPair {
          return;
       case 1: {
          if (_terms[0]._coef == 1) {
-            return [model add:[ORFactory equalc:_terms[0]._var to:-_indep]];
+            return [model add:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
          } else if (_terms[0]._coef == -1) {
-            return [model add:[ORFactory equalc:_terms[0]._var to:_indep]];
+            return [model add:[ORFactory equalc:model var:_terms[0]._var to:_indep]];
          } else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
@@ -478,25 +478,25 @@ struct CPVarPair {
             if (cr != 0)
                [model add:[ORFactory fail:model]];
             else
-               [model add:[ORFactory equalc:_terms[0]._var to:nc]];
+               [model add:[ORFactory equalc:model var:_terms[0]._var to:nc]];
          }
       }break;
       case 2: {
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            [model add:[ORFactory equal:_terms[0]._var to:_terms[1]._var plus:-_indep note:cons]];
+            [model add:[ORFactory equal:model var:_terms[0]._var to:_terms[1]._var plus:-_indep note:cons]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
-            [model add:[ORFactory equal:_terms[1]._var to:_terms[0]._var plus:-_indep note:cons]];
+            [model add:[ORFactory equal:model var:_terms[1]._var to:_terms[0]._var plus:-_indep note:cons]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
-            [model add:[ORFactory equal:xp to:yp plus:- _indep note:cons]];
+            [model add:[ORFactory equal:model var:xp to:yp plus:- _indep note:cons]];
          }
       }break;
       case 3: {
          if (_terms[0]._coef * _terms[1]._coef * _terms[2]._coef == -1) { // odd number of negative coefs (4 cases)
             if (_terms[0]._coef + _terms[1]._coef + _terms[2]._coef == -3) { // all 3 negative
                id<ORIntVar> zp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef shift: _indep];
-               return [model add:[ORFactory equal3:zp to:_terms[1]._var plus:_terms[2]._var note:cons]];
+               return [model add:[ORFactory equal3:model var:zp to:_terms[1]._var plus:_terms[2]._var note:cons]];
             } else { // exactly 1 negative coef
                ORInt nc = _terms[0]._coef == -1 ? 0 : (_terms[1]._coef == -1 ? 1 : 2);
                ORInt pc[3] = {0,1,2};
@@ -504,13 +504,13 @@ struct CPVarPair {
                   if (pc[i] == nc)
                      pc[i] = pc[2];
                id<ORIntVar> zp = [ORFactory intVar:model var:_terms[nc]._var scale:1 shift:-_indep];
-               [model add:[ORFactory equal3:zp to:_terms[pc[0]]._var plus:_terms[pc[1]]._var note:cons]];
+               [model add:[ORFactory equal3:model var:zp to:_terms[pc[0]]._var plus:_terms[pc[1]]._var note:cons]];
             }
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:_terms[1]._coef];
             id<ORIntVar> zp = [ORFactory intVar:model var:_terms[2]._var scale:- _terms[2]._coef shift:-_indep];
-            [model add:[ORFactory equal3:zp to:xp plus:yp note:cons]];
+            [model add:[ORFactory equal3:model var:zp to:xp plus:yp note:cons]];
          }
       }break;
       default: {
@@ -520,10 +520,10 @@ struct CPVarPair {
                sumCoefs += (_terms[k]._coef == 1);
          if (sumCoefs == _nb) {
             id<ORIntVarArray> boolVars = All(model,ORIntVar, i, RANGE(model,0,_nb-1), _terms[i]._var);
-            [model add:[ORFactory sumbool:boolVars eq: - _indep]];
+            [model add:[ORFactory sumbool:model array:boolVars eqi: - _indep]];
          }
          else
-            [model add:[ORFactory sum:[self scaledViews:model] eq: - _indep note:cons]];
+            [model add:[ORFactory sum:model array:[self scaledViews:model] eqi: - _indep]];
       }
    }
 }
@@ -533,32 +533,32 @@ struct CPVarPair {
       case 0: assert(FALSE);return;
       case 1: {  // x <= c
          if (_terms[0]._coef == 1)
-            return [model add: [ORFactory lEqualc:_terms[0]._var to:- _indep]];
+            return [model add: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
          else if (_terms[0]._coef == -1)
-            return [model add: [ORFactory lEqualc:_terms[0]._var to: _indep]];
+            return [model add: [ORFactory lEqualc:model var:_terms[0]._var to: _indep]];
          else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
             ORInt cr = - _indep % _terms[0]._coef;
             if (nc < 0 && cr != 0)
-               [model add:[ORFactory lEqualc:_terms[0]._var to:nc - 1]];
+               [model add:[ORFactory lEqualc:model var:_terms[0]._var to:nc - 1]];
             else
-               [model add:[ORFactory lEqualc:_terms[0]._var to:nc]];
+               [model add:[ORFactory lEqualc:model var:_terms[0]._var to:nc]];
          }
       }break;
       case 2: {  // x <= y
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            return [model add:[ORFactory lEqual: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+            return [model add:[ORFactory lEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
-            return [model add:[ORFactory lEqual:_terms[1]._var to:_terms[0]._var plus:- _indep]];
+            return [model add:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
-            [model add:[ORFactory lEqual:xp to:yp]];
+            [model add:[ORFactory lEqual:model var:xp to:yp]];
          }
       }break;
       default:
-         [model add:[ORFactory sum:[self scaledViews:model] leq:- _indep]];
+         [model add:[ORFactory sum:model array:[self scaledViews:model] leqi:- _indep]];
    }
 }
 @end
@@ -616,7 +616,7 @@ struct CPVarPair {
 -(void) visitIntVar: (id<ORIntVar>) e
 {
    if (_rv)
-      [_model add:[ORFactory equal:_rv to:e plus:0]];
+      [_model add:[ORFactory equal:_model var:_rv to:e plus:0]];
    else
       _rv = e;
 }
@@ -625,7 +625,7 @@ struct CPVarPair {
    id<ORTracker> cp = [e tracker];
    if (!_rv)
       _rv = [ORFactory intVar:cp domain: RANGE(cp,[e value],[e value])];
-   [_model add:[ORFactory equalc:_rv to:[e value]]];
+   [_model add:[ORFactory equalc:_model var:_rv to:[e value]]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
@@ -662,7 +662,7 @@ struct CPVarPair {
    ORLong ub = maxOf(c,d);
    if (_rv==nil)
       _rv = [ORFactory intVar:cp domain: RANGE(cp,bindDown(lb),bindUp(ub))];
-   [_model add: [ORFactory mult:lV by:rV equal:_rv]];
+   [_model add: [ORFactory mult:_model var:lV by:rV equal:_rv]];
    [lT release];
    [rT release];
 }
@@ -678,7 +678,7 @@ struct CPVarPair {
    [_model add: [ORFactory reify:_rv with:theVar eqi:c]];
 #else
    if (_rv != nil) {
-      [_model add: [ORFactory reify:_rv with:theVar eqi:c]];
+      [_model add: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
    } else {
       _rv = [ORFactory reifyView:theVar eqi:c];
    }
@@ -691,7 +691,7 @@ struct CPVarPair {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
       _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
-   [_model add: [ORFactory reify:_rv with:theVar neq:c]];
+   [_model add: [ORFactory reify:_model boolean:_rv with:theVar neqi:c]];
 }
 -(void) reifyLEQc:(ORExprI*)theOther constant:(ORInt)c
 {
@@ -700,7 +700,7 @@ struct CPVarPair {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
       _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
-   [_model add: [ORFactory reify:_rv with:theVar leq:c]];
+   [_model add: [ORFactory reify:_model boolean:_rv with:theVar leqi:c]];
 }
 -(void) reifyGEQc:(ORExprI*)theOther constant:(ORInt)c
 {
@@ -709,7 +709,7 @@ struct CPVarPair {
    id<ORTracker> cp = [theVar tracker];
    if (_rv==nil)
       _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
-   [_model add: [ORFactory reify:_rv with:theVar geq:c]];
+   [_model add: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
 }
 
 -(void) visitExprEqualI:(ORExprEqualI*)e
@@ -725,7 +725,7 @@ struct CPVarPair {
       id<ORIntVar> rV = [ORSubst normSide:linRight for:_model note:_c];
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-      [_model add:[ORFactory reify:_rv with:lV eq:rV note:_c]];
+      [_model add:[ORFactory reify:_model boolean:_rv with:lV eq:rV note:_c]];
    }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
@@ -752,7 +752,7 @@ struct CPVarPair {
    id<ORIntVar> rV = [ORSubst normSide:linRight for:_model note:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   [_model add:[ORFactory boolean:lV or:rV equal:_rv]];
+   [_model add:[ORFactory model:_model boolean:lV or:rV equal:_rv]];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
@@ -762,7 +762,7 @@ struct CPVarPair {
    id<ORIntVar> rV = [ORSubst normSide:linRight for:_model note:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   [_model add:[ORFactory boolean:lV and:rV equal:_rv]];
+   [_model add:[ORFactory model:_model boolean:lV and:rV equal:_rv]];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
@@ -772,7 +772,7 @@ struct CPVarPair {
    id<ORIntVar> rV = [ORSubst normSide:linRight for:_model note:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   [_model add:[ORFactory boolean:lV imply:rV equal:_rv]];
+   [_model add:[ORFactory model:_model boolean:lV imply:rV equal:_rv]];
 }
 
 -(void) visitExprAbsI:(ORExprAbsI *)e
@@ -784,7 +784,7 @@ struct CPVarPair {
    ORInt ub = [lT max];
    if (_rv == nil)
       _rv = [ORFactory intVar:cp domain:RANGE(cp,lb,ub)];
-   [_model add:[ORFactory abs:oV equal:_rv note:_c]];
+   [_model add:[ORFactory abs:_model var:oV equal:_rv note:_c]];
    [lT release];
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
@@ -796,7 +796,7 @@ struct CPVarPair {
    ORInt ub = [e max];
    if (_rv == nil)
       _rv = [ORFactory intVar:cp domain: RANGE(cp,lb,ub)];
-   [_model add:[ORFactory element:oV idxCstArray:[e array] equal:_rv]];
+   [_model add:[ORFactory element:_model var:oV idxCstArray:[e array] equal:_rv]];
    [lT release];
 }
 
@@ -809,7 +809,7 @@ struct CPVarPair {
    ORInt ub = [e max];
    if (_rv == nil)
       _rv = [ORFactory intVar:cp domain: RANGE(cp,lb,ub)];
-   [_model add:[ORFactory element:oV idxVarArray: [e array] equal:_rv]];
+   [_model add:[ORFactory element:_model var:oV idxVarArray: [e array] equal:_rv]];
    [lT release];
 }
 

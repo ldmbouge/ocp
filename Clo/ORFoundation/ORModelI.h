@@ -91,6 +91,62 @@
 -(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
 @end
 
+@interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>
+-(ORReifyEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
+@end
+
+@interface ORReifyNEqualc : ORConstraintI<ORReifyNEqualc>
+-(ORReifyNEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neqi:(ORInt)c;
+@end
+
+@interface ORReifyEqual : ORConstraintI<ORReifyEqual>
+-(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y note:(ORAnnotation)n;
+@end
+
+@interface ORReifyNEqual : ORConstraintI<ORReifyNEqual>
+-(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y note:(ORAnnotation)n;
+@end
+
+@interface ORReifyLEqualc : ORConstraintI<ORReifyLEqualc>
+-(ORReifyLEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leqi:(ORInt)y;
+@end
+
+@interface ORReifyLEqual : ORConstraintI<ORReifyLEqual>
+-(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y note:(ORAnnotation)n;
+@end
+
+@interface ORReifyGEqualc : ORConstraintI<ORReifyGEqualc>
+-(ORReifyGEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geqi:(ORInt)y;
+@end
+
+@interface ORReifyGEqual : ORConstraintI<ORReifyGEqual>
+-(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y note:(ORAnnotation)n;
+@end
+
+@interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
+-(ORSumBoolEqc*)initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+@end
+
+@interface ORSumBoolLEqc : ORConstraintI<ORSumBoolLEqc>
+-(ORSumBoolLEqc*)initSumBool:(id<ORIntVarArray>)ba leqi:(ORInt)c;
+@end
+
+@interface ORSumBoolGEqc : ORConstraintI<ORSumBoolGEqc>
+-(ORSumBoolLEqc*)initSumBool:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+@end
+
+@interface ORSumEqc : ORConstraintI<ORSumEqc>
+-(ORSumEqc*)initSum:(id<ORIntVarArray>)ia eqi:(ORInt)c;
+@end
+
+@interface ORSumLEqc : ORConstraintI<ORSumLEqc>
+-(ORSumLEqc*)initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c;
+@end
+
+@interface ORSumGEqc : ORConstraintI<ORSumGEqc>
+-(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c;
+@end
+
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
 -(id<ORIntVarArray>) array;

@@ -65,6 +65,51 @@
 @protocol ORElementVar <ORConstraint>
 @end
 
+@protocol ORReify <ORConstraint>
+@end
+
+@protocol ORReifyEqualc <ORReify>
+@end
+
+@protocol ORReifyNEqualc <ORReify>
+@end
+
+@protocol ORReifyEqual <ORReify>
+@end
+
+@protocol ORReifyNEqual <ORReify>
+@end
+
+@protocol ORReifyLEqualc <ORReify>
+@end
+
+@protocol ORReifyLEqual <ORReify>
+@end
+
+@protocol ORReifyGEqualc <ORReify>
+@end
+
+@protocol ORReifyGEqual <ORReify>
+@end
+
+@protocol ORSumBoolEqc <ORConstraint>
+@end
+
+@protocol ORSumBoolLEqc <ORConstraint>
+@end
+
+@protocol ORSumBoolGEqc <ORConstraint>
+@end
+
+@protocol ORSumEqc <ORConstraint>
+@end
+
+@protocol ORSumGEqc <ORConstraint>
+@end
+
+@protocol ORSumLEqc <ORConstraint>
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end

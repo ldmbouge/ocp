@@ -10,6 +10,35 @@
 #import "ORModelI.h"
 #import "ORDecompose.h"
 
+@interface ORFlattenObjects : NSObject<ORVisitor>
+-(id)init:(ORModelI*)m;
+-(void) visitIntArray:(id<ORIntArray>)v;
+-(void) visitIntMatrix:(id<ORIntMatrix>)v;
+-(void) visitTrailableInt:(id<ORTrailableInt>)v;
+-(void) visitIntSet:(id<ORIntSet>)v;
+-(void) visitIntRange:(id<ORIntRange>)v;
+-(void) visitIdArray: (id<ORIdArray>) v;
+-(void) visitIdMatrix: (id<ORIdMatrix>) v;
+// Expressions
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitExprPlusI: (id<ORExpr>) e;
+-(void) visitExprMinusI: (id<ORExpr>) e;
+-(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprEqualI: (id<ORExpr>) e;
+-(void) visitExprNEqualI: (id<ORExpr>) e;
+-(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprSumI: (id<ORExpr>) e;
+-(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprCstSubI: (id<ORExpr>) e;
+-(void) visitExprDisjunctI:(id<ORExpr>) e;
+-(void) visitExprConjunctI: (id<ORExpr>) e;
+-(void) visitExprImplyI: (id<ORExpr>) e;
+-(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprVarSubI: (id<ORExpr>) e;
+// Constraints
+-(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+@end
+
 @interface ORFlattenConstraint : NSObject<ORVisitor>
 -(id)init:(ORModelI*)m;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -46,7 +75,9 @@
    [m applyOnVar:^(id<ORVar> x) {
       [out captureVariable:x];
    } onObjects:^(id<ORObject> x) {
-      NSLog(@"Got an object: %@",x);
+      ORFlattenObjects* fo = [[ORFlattenObjects alloc] init:out];
+      [x visit:fo];
+      [fo release];
    } onConstraints:^(id<ORConstraint> c) {
       [self flatten:c into:out];
    } onObjective:^(id<ORObjective> o) {
@@ -61,6 +92,62 @@
    [c visit:fc];
    [fc release];
 }
+@end
+
+@implementation ORFlattenObjects {
+   ORModelI* _theModel;
+}
+-(id)init:(ORModelI*)m
+{
+   self = [super init];
+   _theModel = m;
+   return self;
+}
+-(void) visitIntArray:(id<ORIntArray>)v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitIntMatrix:(id<ORIntMatrix>)v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitTrailableInt:(id<ORTrailableInt>)v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitIntSet:(id<ORIntSet>)v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitIntRange:(id<ORIntRange>)v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitIdArray: (id<ORIdArray>) v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitIdMatrix: (id<ORIdMatrix>) v
+{
+   [_theModel trackObject:v];
+}
+
+-(void) visitIntegerI: (id<ORInteger>) e {}
+-(void) visitExprPlusI: (id<ORExpr>) e {}
+-(void) visitExprMinusI: (id<ORExpr>) e {}
+-(void) visitExprMulI: (id<ORExpr>) e   {}
+-(void) visitExprEqualI: (id<ORExpr>) e {}
+-(void) visitExprNEqualI: (id<ORExpr>) e {}
+-(void) visitExprLEqualI: (id<ORExpr>) e {}
+-(void) visitExprSumI: (id<ORExpr>) e    {}
+-(void) visitExprAbsI:(id<ORExpr>) e     {}
+-(void) visitExprCstSubI: (id<ORExpr>) e {}
+-(void) visitExprDisjunctI:(id<ORExpr>) e   {}
+-(void) visitExprConjunctI: (id<ORExpr>) e  {}
+-(void) visitExprImplyI: (id<ORExpr>) e     {}
+-(void) visitExprAggOrI: (id<ORExpr>) e     {}
+-(void) visitExprVarSubI: (id<ORExpr>) e    {}
+-(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr {}
 @end
 
 @implementation ORFlattenConstraint {

@@ -274,6 +274,7 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
          [[x solver] trackObject: o];
          return o;
       }
+      default:assert(FALSE);
    }
 }
 

@@ -452,6 +452,359 @@
 @end
 
 
+@implementation ORReifyEqualc {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORReifyEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ == %d)",[self class],self,_impl,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyEqualc:self];
+}
+@end
+
+@implementation ORReifyNEqualc {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORReifyNEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ != %d)",[self class],self,_impl,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyNEqualc:self];
+}
+@end
+
+@implementation ORReifyEqual {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORAnnotation _n;
+}
+-(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y note:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   _n = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ == %@)",[self class],self,_impl,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyEqual:self];
+}
+@end
+
+@implementation ORReifyNEqual {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORAnnotation _n;
+}
+-(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y note:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   _n = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ != %@)",[self class],self,_impl,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyNEqual:self];
+}
+@end
+
+@implementation ORReifyLEqualc {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORReifyLEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ <= %d)",[self class],self,_impl,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyLEqualc:self];
+}
+@end
+
+@implementation ORReifyLEqual {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORAnnotation _n;
+}
+-(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y note:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   _n = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ <= %@)",[self class],self,_impl,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyLEqual:self];
+}
+@end
+
+@implementation ORReifyGEqualc {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORReifyGEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ >= %d)",[self class],self,_impl,_b,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyGEqualc:self];
+}
+@end
+
+@implementation ORReifyGEqual {
+   id<ORIntVar> _b;
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORAnnotation _n;
+}
+-(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y note:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _b = b;
+   _x = x;
+   _y = y;
+   _n = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ >= %@)",[self class],self,_impl,_b,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitReifyGEqual:self];
+}
+@end
+
+// ========================================================================================================
+// Sums
+
+@implementation ORSumBoolEqc {
+   id<ORIntVarArray> _ba;
+   ORInt             _c;
+}
+-(ORSumBoolEqc*)initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ba = ba;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sumbool(%@) == %d)",[self class],self,_impl,_ba,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSumBoolEqualc:self];
+}
+@end
+
+@implementation ORSumBoolLEqc {
+   id<ORIntVarArray> _ba;
+   ORInt             _c;   
+}
+-(ORSumBoolLEqc*)initSumBool:(id<ORIntVarArray>)ba leqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ba = ba;
+   _c  = c;
+   return self;   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sumbool(%@) <= %d)",[self class],self,_impl,_ba,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSumBoolLEqualc:self];
+}
+@end
+
+@implementation ORSumBoolGEqc {
+   id<ORIntVarArray> _ba;
+   ORInt             _c;
+}
+-(ORSumBoolGEqc*)initSumBool:(id<ORIntVarArray>)ba geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ba = ba;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sumbool(%@) >= %d)",[self class],self,_impl,_ba,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSumBoolGEqualc:self];
+}
+@end
+
+@implementation ORSumEqc {
+   id<ORIntVarArray> _ia;
+   ORInt              _c;
+}
+-(ORSumEqc*)initSum:(id<ORIntVarArray>)ia eqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@) == %d)",[self class],self,_impl,_ia,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSumEqualc:self];
+}
+@end
+
+@implementation ORSumLEqc {
+   id<ORIntVarArray> _ia;
+   ORInt              _c;   
+}
+-(ORSumLEqc*)initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _c  = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@) <= %d)",[self class],self,_impl,_ia,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSumLEqualc:self];
+}
+@end
+
+@implementation ORSumGEqc {
+   id<ORIntVarArray> _ia;
+   ORInt              _c;   
+}
+-(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@) >= %d)",[self class],self,_impl,_ia,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSumGEqualc:self];
+}
+@end
+
+// ========================================================================================================
+
+
 @implementation ORAlldifferentI
 {
    id<ORIntVarArray> _x;

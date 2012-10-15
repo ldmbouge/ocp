@@ -113,8 +113,6 @@
 -(void)         trackVariable: (id) object;
 - (void)    encodeWithCoder: (NSCoder *)aCoder;
 - (id)        initWithCoder: (NSCoder *)aDecoder;
-
--(void)           addModel: (id) model;
 @end
 
 @interface CPSolverI : CPCoreSolverI<CPSolver,ORTracker> {
