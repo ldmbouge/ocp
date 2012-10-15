@@ -20,10 +20,10 @@
 
 @implementation CPLabel
 
-+(void) var: (id<ORIntVar>) mx
++(void) var: (id<CPIntVar>) mx
 {
    id<CPSolver> cp = (id<CPSolver>) [mx solver];
-   CPIntVarI* x = (CPIntVarI*) [mx dereference];
+   CPIntVarI* x = (CPIntVarI*)mx;
    while (!bound(x)) {
       ORInt m = minDom(x);
       [cp try: ^() {
@@ -96,16 +96,16 @@
    } while (true);
 }
 
-+(ORInt) maxBound: (id<ORIntVarArray>) x
++(ORInt) maxBound: (id<ORIdArray>) x
 {
    ORInt low = [x low];
    ORInt up = [x up];
    ORInt M = -MAXINT;
    for(ORInt i = low; i <= up; i++) {
-      id<ORIntVar> xi = [x[i] dereference];
+      id<CPIntVar> xi = x[i];
       if ([xi bound] && [xi value] > M)
          M = [xi value];
    }
    return M;
 }
-@end;
+@end
