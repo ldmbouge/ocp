@@ -553,8 +553,8 @@
 
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
-   [NSException raise:@"NOT Implemented" format:@"circuit(%@)",x];
-   return nil;
+   id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];
+   return o;
 }
 +(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
 {

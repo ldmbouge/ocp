@@ -40,6 +40,7 @@
 -(void) visitBinPacking: (id<ORBinPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
+-(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
 -(void) visitEqualc: (id<OREqualc>)c;

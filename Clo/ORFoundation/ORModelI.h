@@ -177,6 +177,11 @@
 -(id<ORTable>) table;
 @end
 
+@interface ORCircuitI : ORConstraintI<ORCircuit>
+-(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) array;
+@end
+
 @interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {
    id<ORIntVar>             _var;
    id<ORObjectiveFunction>  _impl;

@@ -135,6 +135,10 @@
 -(id<ORIntArray>) up;
 @end
 
+@protocol ORCircuit <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
 @protocol ORObjectiveFunction <ORObject>
 -(id<ORIntVar>) var;
 @end

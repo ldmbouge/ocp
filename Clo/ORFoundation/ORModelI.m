@@ -951,6 +951,31 @@
 }
 @end
 
+@implementation ORCircuitI {
+   id<ORIntVarArray> _x;
+}
+-(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitCircuit:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = circuit(%@)>",[self class],self,_impl,_x];
+   return buf;
+}
+@end
+
 @implementation ORObjectiveFunctionI
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORIntVar>) x
 {

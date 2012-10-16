@@ -31,7 +31,6 @@ int main (int argc, const char * argv[])
 {
    int n = 8;
    id<ORModel> mdl = [ORFactory createModel];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
    id<ORIntRange> R = RANGE(mdl,0,n-1);
    id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
    id<ORIntVarArray> x = [ORFactory intVarArray:mdl range:R domain: R];
@@ -42,6 +41,7 @@ int main (int argc, const char * argv[])
          [mdl add: [x[i] neq:[x[j] plusi:(j-i)]]];
       }
    }
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
    id<ORModel> fm = [flat apply:mdl];
    NSLog(@"initial model: %@",mdl);
    NSLog(@"flat    model: %@",fm);
