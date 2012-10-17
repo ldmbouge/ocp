@@ -121,6 +121,11 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
+-(void) enumerateWith: (void(^)(ORInt obj,int idx)) block
+{
+   for(ORInt i=_low;i<=_up;i++)
+      block(_array[i],i);
+}
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
 //   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];

@@ -867,38 +867,6 @@
 }
 @end
 
-@implementation ORBinPackingI
-{
-   id<ORIntVarArray> _item;
-   id<ORIntArray>    _itemSize;
-   id<ORIntArray>    _binSize;
-}
--(ORBinPackingI*) initORBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
-{
-   self = [super initORConstraintI];
-   _item = item;
-   _itemSize = itemSize;
-   _binSize = binSize;
-   return self;
-}
--(id<ORIntVarArray>) item
-{
-   return _item;
-}
--(id<ORIntArray>) itemSize
-{
-   return _itemSize;
-}
--(id<ORIntArray>) binSize
-{
-   return _binSize;
-}
--(void)visit:(id<ORVisitor>)v
-{
-   [v visitBinPacking:self];
-}
-@end
-
 @implementation ORAlgebraicConstraintI
 {
    id<ORRelation> _expr;
@@ -972,6 +940,143 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> %@ = circuit(%@)>",[self class],self,_impl,_x];
+   return buf;
+}
+@end
+
+@implementation ORNoCycleI {
+   id<ORIntVarArray> _x;
+}
+-(ORNoCycleI*)initORNoCycleI:(id<ORIntVarArray>)x
+{
+   self = [super initORConstraintI];
+   _x = x;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitNoCycle:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = nocycle(%@)>",[self class],self,_impl,_x];
+   return buf;
+}
+@end
+
+@implementation ORPackOneI {
+   id<ORIntVarArray> _item;
+   id<ORIntArray>    _itemSize;
+   ORInt             _bin;
+   id<ORIntVar>      _binSize;
+}
+-(ORPackOneI*)initORPackOneI:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
+{
+   self = [super initORConstraintI];
+   _item = item;
+   _itemSize = itemSize;
+   _bin = b;
+   _binSize  = binSize;
+   return self;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitPackOne:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = packOne(%@,%@,%d,%@)>",[self class],self,_impl,_item,_itemSize,_bin,_binSize];
+   return buf;
+}
+@end
+
+@implementation ORPackingI {
+   id<ORIntVarArray>        _x;
+   id<ORIntArray>    _itemSize;
+   id<ORIntVarArray>     _load;
+}
+typedef struct _CPPairIntId {
+   ORInt        _int;
+   id           _id;
+} CPPairIntId;
+
+int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
+{
+   return r2->_int - r1->_int;
+}
+void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx,id<ORIntArray>* sortedSize)
+{
+   id<ORIntRange> R = [x range];
+   int nb = [R up] - [R low] + 1;
+   ORInt low = [R low];
+   ORInt up = [R up];
+   CPPairIntId* toSort = (CPPairIntId*) alloca(sizeof(CPPairIntId) * nb);
+   int k = 0;
+   for(ORInt i = low; i <= up; i++)
+      toSort[k++] = (CPPairIntId){[size at: i],x[i]};
+   qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);   
+   *sx = [ORFactory intVarArray: [x solver] range: R with: ^id<ORIntVar>(int i) { return toSort[i - low]._id; }];
+   *sortedSize = [ORFactory intArray:[x solver] range: R with: ^ORInt(ORInt i) { return toSort[i - low]._int; }];
+}
+
+-(ORPackingI*)initORPackingI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
+{
+   self = [super initORConstraintI];   
+   sortIntVarInt(x,itemSize,&_x,&_itemSize);
+   _load     = load;
+   return self;
+}
+-(id<ORIntVarArray>) item
+{
+   return _x;
+}
+-(id<ORIntArray>) itemSize
+{
+   return _itemSize;
+}
+-(id<ORIntVarArray>) binSize
+{
+   return _load;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitPacking:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = packing(%@,%@,%@)>",[self class],self,_impl,_x,_itemSize,_load];
+   return buf;
+}
+@end
+
+@implementation ORKnapsackI {
+   id<ORIntVarArray> _x;
+   id<ORIntArray>    _w;
+   id<ORIntVar>      _c;
+}
+-(ORKnapsackI*)initORKnapsackI:(id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _w = w;
+   _c = c;
+   return self;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitKnapsack:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = knapsack(%@,%@,%@)>",[self class],self,_impl,_x,_w,_c];
    return buf;
 }
 @end

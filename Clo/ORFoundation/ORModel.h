@@ -114,12 +114,6 @@
 -(id<ORIntVarArray>) array;
 @end
 
-@protocol ORBinPacking <ORConstraint>
--(id<ORIntVarArray>) item;
--(id<ORIntArray>) itemSize;
--(id<ORIntVarArray>) binSize;
-@end
-
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
 @end
@@ -137,6 +131,22 @@
 
 @protocol ORCircuit <ORConstraint>
 -(id<ORIntVarArray>) array;
+@end
+
+@protocol ORNoCycle <ORConstraint>
+-(id<ORIntVarArray>) array;
+@end
+
+@protocol ORPackOne <ORConstraint>
+@end
+
+@protocol ORPacking <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>)   itemSize;
+-(id<ORIntVarArray>) binSize;
+@end
+
+@protocol ORKnapsack <ORConstraint>
 @end
 
 @protocol ORObjectiveFunction <ORObject>

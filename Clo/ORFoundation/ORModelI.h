@@ -159,13 +159,6 @@
 -(id<ORIntArray>) up;
 @end;
 
-@interface ORBinPackingI : ORConstraintI<ORBinPacking>
--(ORBinPackingI*) initORBinPackingI: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
--(id<ORIntVarArray>) item;
--(id<ORIntArray>) itemSize;
--(id<ORIntArray>) binSize;
-@end
-
 @interface ORAlgebraicConstraintI : ORConstraintI<ORAlgebraicConstraint>
 -(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr;
 -(id<ORRelation>) expr;
@@ -180,6 +173,26 @@
 @interface ORCircuitI : ORConstraintI<ORCircuit>
 -(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;
+@end
+
+@interface ORNoCycleI : ORConstraintI<ORNoCycle>
+-(ORCircuitI*)initORNoCycleI:(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>) array;
+@end
+
+@interface ORPackOneI : ORConstraintI<ORPackOne>
+-(ORPackOneI*)initORPackOneI:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
+@end
+
+@interface ORPackingI : ORConstraintI<ORPacking>
+-(ORPackingI*)initORPackingI:(id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) itemSize;
+-(id<ORIntVarArray>) binSize;
+@end
+
+@interface ORKnapsackI : ORConstraintI<ORKnapsack>
+-(ORKnapsackI*)initORKnapsackI:(id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
 @end
 
 @interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {
