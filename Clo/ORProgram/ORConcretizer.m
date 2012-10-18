@@ -20,23 +20,21 @@
 
 @implementation ORFactory (Concretization)
 
-+(id<CPProgram>) createCPSolverWrapper: (id<CPSolver>) concreteCPSolver
++(id<CPProgram>) createCPSolverWrapper
 {
-   
-   return [[ORCPSolver alloc] initORCPSolver: concreteCPSolver];
+   return [[ORCPSolver alloc] initORCPSolver];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   id<CPSolver> concreteCPSolver = [CPFactory createSolver];
-   id<CPProgram> wrapperCPSolver = [ORFactory createCPSolverWrapper: concreteCPSolver];
+   id<CPProgram> cpprogram = [ORFactory createCPSolverWrapper];
 
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: concreteCPSolver];
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [model visit: concretizer];
    
-   id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: concreteCPSolver];
+   id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
    [model visit: poster];
    
-   return wrapperCPSolver;
+   return cpprogram;
 }
 @end

@@ -12,8 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import "ORProgram.h"
 
-// PVH: should probably return a id<CPProgram>
 
 @interface ORCPSolver : NSObject<CPProgram>
--(id<CPProgram>) initORCPSolver: (id<CPSolver>) solver;
+-(id<CPProgram>) initORCPSolver;
 @end

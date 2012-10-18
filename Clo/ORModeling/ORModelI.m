@@ -15,6 +15,8 @@
 #import "ORError.h"
 #import "ORSolver.H"
 
+// PVH: We need to delegate the track to the engine during search
+
 @implementation ORModelI
 {
    NSMutableArray*          _vars;

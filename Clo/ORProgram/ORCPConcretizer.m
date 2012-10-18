@@ -20,9 +20,9 @@
 
 @implementation ORCPConcretizer
 {
-   id<CPSolver> _solver;
+   id<CPProgram> _solver;
 }
--(ORCPConcretizer*) initORCPConcretizer: (id<CPSolver>) solver
+-(ORCPConcretizer*) initORCPConcretizer: (id<CPProgram>) solver
 {
    self = [super init];
    _solver = [solver retain];

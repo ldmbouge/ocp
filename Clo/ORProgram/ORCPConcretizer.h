@@ -17,7 +17,7 @@
 
 
 @interface ORCPConcretizer  : NSObject<ORVisitor>
--(ORCPConcretizer*) initORCPConcretizer: (id<CPSolver>) solver;
+-(ORCPConcretizer*) initORCPConcretizer: (id<CPProgram>) solver;
 -(void) dealloc;
 
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;

@@ -11,6 +11,8 @@
 
 #import "ORProgram.h"
 #import "ORCPSolver.h"
+// PVH: This needs to be cleaned up: No reason to have implementation files being included
+#import <ORFoundation/ORExplorerI.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPLabel.h>
@@ -107,12 +109,41 @@
 -(id<ORInformer>) propagateDone;
 @end
 
+@interface ORControllerFactoryI : NSObject<ORControllerFactory> {
+   id<CPProgram> _solver;
+   Class         _ctrlClass;
+   Class         _nestedClass;
+}
+-(id)initORControllerFactoryI: (id<CPProgram>) solver rootControllerClass:(Class)class nestedControllerClass:(Class)nc;
+-(id<ORSearchController>)makeRootController;
+-(id<ORSearchController>)makeNestedController;
+@end
+
+@implementation ORControllerFactoryI
+-(id)initORControllerFactoryI: (id<CPProgram>) solver rootControllerClass: (Class) class nestedControllerClass: (Class) nc
+{
+   self = [super init];
+   _solver = solver;
+   _ctrlClass = class;
+   _nestedClass = nc;
+   return self;
+}
+-(id<ORSearchController>) makeRootController
+{
+   return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+}
+-(id<ORSearchController>) makeNestedController
+{
+   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+}
+@end
+
 @implementation ORCPSolver {
-   id<CPSolver> _solver;
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
    id<ORTrail>           _trail;
+   DFSTracer*            _tracer;
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
    @package
@@ -120,25 +151,34 @@
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
 }
--(id<CPProgram>) initORCPSolver: (id<CPSolver>) solver
+-(id<CPProgram>) initORCPSolver
 {
    self = [super init];
-   _solver = [solver retain];
-   _engine = [_solver engine];
-   _search = [_solver explorer];
+   _trail = [ORFactory trail];
+   _engine = [CPFactory engine: _trail];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORDFSController class]
+                                                                  nestedControllerClass: [ORDFSController class]];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortalI alloc] initCPInformerPortalI: self];
    _objective = nil;
    return self;
 }
+
 -(void) dealloc
 {
-   [_solver release];
+   [_trail release];
+   [_engine release];
+   [_search release];
    [_hSet release];
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
+   [_tracer release];
    [super dealloc];
 }
 -(id<ORIdxIntInformer>) retLabel
@@ -171,9 +211,7 @@
 }
 -(id<ORTracer>) tracer
 {
-   // pvh: not sure what this does
-   assert(false);
-   return nil;
+   return _tracer;
 }
 -(id<ORSolution>)  solution
 {
@@ -183,6 +221,7 @@
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
+   // PVH: Need to distingusih between the add during search and the add which is done by the poster
    assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
@@ -191,6 +230,7 @@
 -(void) add: (id<ORConstraint>) c consistency:(ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
+   // PVH: Need to distingusih between the add during search and the add which is done by the poster
    assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
