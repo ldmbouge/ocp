@@ -12,6 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORConcretizer.h>
 
 #import "objcp/CPConstraint.h"
 #import "objcp/CPEngine.h"
@@ -44,8 +45,7 @@ int main (int argc, const char * argv[])
    id<ORModel> fm = [flat apply:mdl];
    NSLog(@"initial model: %@",mdl);
    NSLog(@"flat    model: %@",fm);
-   
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPSolver> cp = [ORFactory createCPProgram:fm];
    id<CPHeuristic> h = [CPFactory createIBS:cp];
    [cp solveAll:
     ^() {

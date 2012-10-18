@@ -210,6 +210,30 @@
 }
 @end
 
+@implementation ORIntVarLitEQView {
+   id<ORIntVar>   _x;
+   ORInt        _lit;
+}
+-(ORIntVarLitEQView*)initORIntVarLitEQView:(id<ORTracker>)tracker var:(id<ORIntVar>)x eqi:(ORInt)lit
+{
+   self = [super initORIntVarI:tracker domain:RANGE(tracker,0,1)];
+   _x = x;
+   _lit = lit;
+   return self;
+}
+-(ORInt)literal
+{
+   return _lit;
+}
+-(id<ORIntVar>)base
+{
+   return _x;
+}
+-(void) visit: (id<ORVisitor>)v
+{
+   [v visitIntVarLitEQView:self];
+}
+@end
 
 @implementation ORFloatVarI
 {

@@ -42,6 +42,18 @@
 {
     [_avl removeObjectForKey: v];
 }
+-(ORInt) min
+{
+    __block ORInt value = NSIntegerMax;
+    [self iterate:^void (ORInt e) { if(e < value) value = e; }];
+    return value;
+}
+-(ORInt) max
+{
+    __block ORInt value = NSIntegerMin;
+    [self iterate:^void (ORInt e) { if(e > value) value = e; }];
+    return value;
+}
 -(ORInt) size
 {
     return [_avl size];
@@ -57,6 +69,10 @@
 -(id<IntEnumerator>) enumerator
 {
    return [ORInternalFactory AVLTreeKeyIntEnumerator: _avl];
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIntSet:self];
 }
 - (void) encodeWithCoder:(NSCoder*) aCoder
 {   
@@ -80,10 +96,6 @@
         [self insert: e];
     }
     return self;   
-}
--(void)visit:(id<ORVisitor>)v
-{
-   
 }
 @end
 
@@ -153,6 +165,9 @@
 {
    return _up;
 }
+-(bool) inRange: (ORInt)e {
+    return e >= _low && e <= _up;
+}
 -(ORInt) size
 {
    return (_up - _low + 1);
@@ -161,6 +176,10 @@
 {
    for(ORInt i = _low; i <= _up; i++)
       f(i);
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIntRange:self];
 }
 -(NSString*) description
 {
@@ -184,10 +203,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    return self;
 }
--(void)visit:(id<ORVisitor>)v
-{
-   
-}
+
 @end
 
 

@@ -222,18 +222,14 @@
 
 -(void) add: (id<ORConstraint>) c
 {
-    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-       c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:ValueConsistency];
-   }
+   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
 }
--(void) add: (id<ORConstraint>) c consistency:(CPConsistency)cons
+-(void) add: (id<ORConstraint>) c consistency:(ORAnnotation)cons
 {
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-      c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:cons];
-   }
+   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
@@ -558,7 +554,6 @@
 }
 -(void) label: (ORIntVarI*) var with: (ORInt) val
 {
-   var = [var dereference];
    ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
@@ -570,7 +565,6 @@
 }
 -(void) diff: (ORIntVarI*) var with: (ORInt) val
 {
-   var = [var dereference];
    ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];

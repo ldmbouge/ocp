@@ -113,6 +113,30 @@
    return o;
 }
 
++(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
+{
+    ORInt m = NSIntegerMax;
+    for(ORInt i = [r low]; i <= [r up]; i++) {
+        if (filter == nil || filter(i)) {
+            ORInt x = e(i);
+            if(x < m) m = x;
+        }
+    }
+    return m;
+}
+
++(ORInt) maxOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
+{
+    ORInt m = NSIntegerMin;
+    for(ORInt i = [r low]; i <= [r up]; i++) {
+        if (filter == nil || filter(i)) {
+            ORInt x = e(i);
+            if(x > m) m = x;
+        }
+    }
+    return m;
+}
+
 +(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker over: (id<ORIntIterator>) r
 {
    id<IntEnumerator> ite = [r enumerator];
@@ -131,7 +155,12 @@
    [tracker trackObject: o];
    return o;
 }
-
++(id<ORIntVar>) reifyView: (id<ORIntVar>) x eqi:(ORInt)c
+{
+   id<ORIntVar> o = [[ORIntVarLitEQView alloc] initORIntVarLitEQView:[x tracker] var:x eqi:c];
+   [[x tracker] trackObject:o];
+   return o;
+}
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
@@ -217,46 +246,6 @@
       [o set: [ORFactory trailableInt: engine value: value] at:k];
    return (id<ORTrailableIntArray>) o;
 }
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
-{
-   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
-   [[x tracker] trackObject: o];
-   return o;
-}
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize
-{
-   id<ORConstraint> o = [[ORBinPackingI alloc] initORBinPackingI: item itemSize: itemSize binSize: binSize];
-   [[item tracker] trackObject: o];
-   return o;
-}
-+(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp
-{
-   id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
-   [model trackObject: o];
-   return o;
-}
-+(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (ORTableI*) table
-{
-   id<ORConstraint> o = [[ORTableConstraintI alloc] initORTableConstraintI: x table: table];
-   [[x tracker] trackObject: o];
-   return o;
-}
-+(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
-{
-   id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up];
-   [[x tracker] trackObject: o];
-   return o;
-}
-+(id<ORConstraint>) tableConstraint: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z
-{
-   id<ORTracker> tracker = [x tracker];
-   id<ORIntRange> R = RANGE(tracker,0,2);
-   id<ORIdArray> a = [ORFactory idArray:tracker range:R];
-   a[0] = x;
-   a[1] = y;
-   a[2] = z;
-   return [self tableConstraint: (id<ORIntVarArray>) a table: table];
-}
 +(id<ORTRIntArray>) TRIntArray: (id<OREngine>) engine range: (id<ORIntRange>) R
 {
    ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: engine range: R];
@@ -327,56 +316,56 @@
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right
 {
    id<ORExpr> o = [[ORExprPlusI alloc] initORExprPlusI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in Add Expression"];
+   return [self validate:o onError:"No CP tracker in Add Expression"];
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right
 {
    id<ORExpr> o = [[ORExprMinusI alloc] initORExprMinusI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in Sub Expression"];
+   return [self validate:o onError:"No CP tracker in Sub Expression"];
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right
 {
    id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right]; 
-   return [self validate:o onError:"No CP Solver in Mul Expression"];
+   return [self validate:o onError:"No CP tracker in Mul Expression"];
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right
 {
    id<ORRelation> o = [[ORExprEqualI alloc] initORExprEqualI: left and: right]; 
-   [self validate:o onError:"No CP Solver in == Expression"];
+   [self validate:o onError:"No CP tracker in == Expression"];
    return o;
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right
 {
    id<ORRelation> o = [[ORExprNotEqualI alloc] initORExprNotEqualI: left and: right];
-   [self validate:o onError:"No CP Solver in != Expression"];
+   [self validate:o onError:"No CP tracker in != Expression"];
    return o;
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right
 {
    id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: left and: right];
-   [self validate:o onError:"No CP Solver in <= Expression"];
+   [self validate:o onError:"No CP tracker in <= Expression"];
    return o;
 }
 +(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right
 {
    id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: right and: left];
-   [self validate:o onError:"No CP Solver in >= Expression"];
+   [self validate:o onError:"No CP tracker in >= Expression"];
    return o;
 }
 +(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right
 {
    id<ORExpr> o = [[ORConjunctI alloc] initORConjunctI:left and:right];
-   return [self validate:o onError:"No CP Solver in && Expression"];
+   return [self validate:o onError:"No CP tracker in && Expression"];
 }
 +(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right
 {
    id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
-   return [self validate:o onError:"No CP Solver in || Expression"];
+   return [self validate:o onError:"No CP tracker in || Expression"];
 }
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right
 {
    id<ORExpr> o = [[ORImplyI alloc] initORImplyI:left imply:right];
-   return [self validate:o onError:"No CP Solver in => Expression"];
+   return [self validate:o onError:"No CP tracker in => Expression"];
 }
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarArray: (id<ORIntVarArray>) a index: (id<ORExpr>) index
 {
@@ -394,7 +383,7 @@
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
-   return [self validate:o onError:"No CP Solver in Abs Expression"];
+   return [self validate:o onError:"No CP tracker in Abs Expression"];
 }
 +(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
@@ -407,5 +396,219 @@
    ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker over: S suchThat: f of: e];
    [tracker trackObject: o];
    return o;
+}
+@end
+
+// =====================================================================================================================
+// ORFactory (Modeling constraints)
+// =====================================================================================================================
+
+@implementation ORFactory (Constraints)
++(id<ORConstraint>) fail:(id<ORTracker>)model
+{
+   id<ORConstraint> o = [[ORFail alloc] init];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
+{
+   id<ORConstraint> o = [[ORReifyEqualc alloc] initReify: b equiv:x eqi: i];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y note:(ORAnnotation)c
+{
+   id<ORConstraint> o = [[ORReifyEqual alloc] initReify: b equiv: x eq: y note:c];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x neqi: (ORInt) i
+{
+   id<ORConstraint> o = [[ORReifyNEqualc alloc] initReify: b equiv: x neqi: i];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leqi: (ORInt) i
+{
+   id<ORConstraint> o = [[ORReifyLEqualc alloc] initReify: b equiv: x leqi: i];
+   return o;
+}
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x geqi: (ORInt) i
+{
+   id<ORConstraint> o = [[ORReifyGEqualc alloc] initReify: b equiv: x geqi: i];
+   return o;
+}
++(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumBoolGEqc alloc] initSumBool: x geqi: c];
+   return o;
+}
++(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x leqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumBoolLEqc alloc] initSumBool: x leqi: c];
+   return o;
+}
++(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x eqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumBoolEqc alloc] initSumBool: x eqi: c];
+   return o;
+}
++(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x eqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumEqc alloc] initSum:x eqi:c];
+   return o;
+}
++(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x leqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumLEqc alloc] initSum:x leqi:c];
+   return o;
+}
++(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
+{
+   id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
+   return o;
+}
++(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)b
+{
+   id<ORConstraint> o = [[ORAnd alloc] initORAnd:b eq:x and:y];
+   return o;
+}
++(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y equal:(id<ORIntVar>)b
+{
+   id<ORConstraint> o = [[ORImply alloc] initORImply:b eq:x imply:y];
+   return o;
+}
+
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c
+{
+   id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c];
+   return o;
+}
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c note: (ORAnnotation)n
+{
+   id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c note:n];
+   return o;
+}
++(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z note: (ORAnnotation)n
+{
+   id<ORConstraint> o = [[OREqual3 alloc] initOREqual:x eq:y plus:z note:n];
+   return o;
+}
++(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(int) c
+{
+   id<ORConstraint> o = [[OREqualc alloc] initOREqualc:x eqi:c];
+   return o;
+}
++(id<ORConstraint>) notEqual:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(id<ORIntVar>)y plus:(int)c
+{
+   id<ORConstraint> o = [[ORNEqual alloc] initORNEqual:x neq:y plus:c];
+   return o;
+}
++(id<ORConstraint>) notEqual:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(id<ORIntVar>)y
+{
+   id<ORConstraint> o = [[ORNEqual alloc] initORNEqual:x neq:y];
+   return o;
+}
++(id<ORConstraint>) notEqualc:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(ORInt)c
+{
+   id<ORConstraint> o = [[ORNEqualc alloc] initORNEqualc:x neqi:c];
+   return o;
+}
++(id<ORConstraint>) lEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
+{
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:x leq:y plus:0];
+   return o;
+}
++(id<ORConstraint>) lEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c
+{
+   id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:x leq:y plus:c];
+   return o;
+}
++(id<ORConstraint>) lEqualc:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (ORInt) c
+{
+   id<ORConstraint> o = [[ORLEqualc alloc] initORLEqualc:x leqi:c];
+   return o;
+}
++(id<ORConstraint>) less:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
+{
+   id<ORIntVar> yp = [self intVar:[x tracker] var:y shift:-1];
+   return [self lEqual:model var:x to:yp plus:0];
+}
++(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z
+{
+   id<ORConstraint> o = [[ORMult alloc] initORMult:z eq:x times:y];
+   return o;
+}
++(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y note:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORAbs alloc] initORAbs:y eqAbs:x];
+   return o;
+}
++(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y
+{
+   id<ORConstraint> o = [[ORElementCst alloc]  initORElement:x array:c equal:y];
+   return o;
+}
++(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y
+{
+   id<ORConstraint> o = [[ORElementVar alloc] initORElement:x array:c equal:y];
+   return o;
+}
+
++(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
+{
+   [NSException raise:@"NOT Implemented" format:@"circuit(%@)",x];
+   return nil;
+}
++(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
+{
+   [NSException raise:@"NOT Implemented" format:@"nocycle(%@)",x];
+   return nil;
+}
++(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
+{
+   [NSException raise:@"NOT Implemented" format:@"packing(%@)",item];
+   return nil;
+}
++(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
+{
+   [NSException raise:@"NOT Implemented" format:@"packone(%@)",item];
+   return nil;
+}
++(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c
+{
+   [NSException raise:@"NOT Implemented" format:@"knapsack(%@,%@,%@)",x,w,c];
+   return nil;
+}
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
+{
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
+   return o;
+}
++(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize
+{
+   id<ORConstraint> o = [[ORBinPackingI alloc] initORBinPackingI: item itemSize: itemSize binSize: binSize];
+   return o;
+}
++(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp
+{
+   id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
+   return o;
+}
++(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (ORTableI*) table
+{
+   id<ORConstraint> o = [[ORTableConstraintI alloc] initORTableConstraintI: x table: table];
+   return o;
+}
++(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
+{
+   id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up];
+   return o;
+}
++(id<ORConstraint>) tableConstraint: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z
+{
+   id<ORTracker> tracker = [x tracker];
+   id<ORIntRange> R = RANGE(tracker,0,2);
+   id<ORIdArray> a = [ORFactory idArray:tracker range:R];
+   a[0] = x;
+   a[1] = y;
+   a[2] = z;
+   return [self tableConstraint: (id<ORIntVarArray>) a table: table];
 }
 @end

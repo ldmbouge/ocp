@@ -15,7 +15,6 @@
 #import "CPTypes.h"
 #import "ORFoundation/ORSetI.h"
 #import "CPSolutionI.h"
-#import "CPLinear.h"
 
 #define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
@@ -509,12 +508,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _status = ORFailure;
    }
    return _status;
-}
--(id<ORConstraint>) wrapExpr: (id<CPSolver>) solver for: (id<ORRelation>) e  consistency:(CPConsistency)cons
-{
-   CPExprConstraintI* wrapper = [[CPExprConstraintI alloc] initCPExprConstraintI: solver expr:e consistency:cons];
-   [self trackObject:wrapper];
-   return wrapper;
 }
 
 -(ORStatus) add: (id<ORConstraint>) c

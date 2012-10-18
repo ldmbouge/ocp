@@ -231,7 +231,7 @@
 //   if (status == ORFailure)
 //      [_search fail];
 //}
-//-(void) add: (id<ORConstraint>) c consistency:(CPConsistency)cons
+//-(void) add: (id<ORConstraint>) c consistency:(ORAnnotation)cons
 //{
 //   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
 //      c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:cons];

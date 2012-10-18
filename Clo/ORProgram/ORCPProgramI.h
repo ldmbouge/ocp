@@ -64,7 +64,7 @@
 //-(id<CPPortal>)           portal;
 //-(id<ORSolution>)         solution;
 //
-//-(void)                  add: (id<ORConstraint>) c consistency:(CPConsistency)cons;
+//-(void)                  add: (id<ORConstraint>) c consistency:(ORAnnotation)cons;
 //-(void)                  add: (id<ORConstraint>) c;
 //-(id<ORObjective>)  minimize: (id<ORIntVar>) x;
 //-(id<ORObjective>)  maximize: (id<ORIntVar>) x;

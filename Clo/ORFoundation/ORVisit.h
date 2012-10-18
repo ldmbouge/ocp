@@ -10,15 +10,31 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORFoundation/ORData.h>
 #import <ORFoundation/ORVar.h>
+
+@protocol ORTrailableInt;
 
 @protocol ORVisitor <NSObject>
 @optional
+-(void) visitRandomStream:(id) v;
+-(void) visitZeroOneStream:(id) v;
+-(void) visitUniformDistribution:(id) v;
+-(void) visitIntSet:(id<ORIntSet>)v;
+-(void) visitIntRange:(id<ORIntRange>)v;
+-(void) visitIntArray:(id<ORIntArray>)v;
+-(void) visitIntMatrix:(id<ORIntMatrix>)v;
+-(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
+// micro-Constraints
+-(void) visitConstraint:(id<ORConstraint>)c;
+-(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f;
+-(void) visitFail:(id<ORFail>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitBinPacking: (id<ORBinPacking>) cstr;
@@ -40,7 +56,21 @@
 -(void) visitImply: (id<ORImply>)c;
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
-//
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
+-(void) visitReifyEqual: (id<ORReifyEqual>)c;
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c;
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c;
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c;
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c;
+-(void) visitSumEqualc:(id<ORSumEqc>)c;
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c;
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;

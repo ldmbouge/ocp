@@ -7,9 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-@protocol ORModel;
+#import "ORModeling.h"
+#import "ORModelI.h"
 
 @protocol ORModelTransformation <NSObject>
 -(id<ORModel>)apply:(id<ORModel>)m;
 @end
+

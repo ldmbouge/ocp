@@ -24,9 +24,14 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
+		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
+		3783F1A6162230720085E8C2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B0ECEBE1562C4FB000D1A08 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC11562C5E3000D1A08 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B0ECEC21562C5E3000D1A08 /* CPWDeg.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */; };
+		5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B1391841629A99D0029FD29 /* ORDecompose.h */; };
+		5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
 		5B150018156EB0E800897252 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B15001A156EB1A600897252 /* CPBaseHeuristic.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B150019156EB1A500897252 /* CPBaseHeuristic.m */; };
 		5B178C2A139697CA001D1C86 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF51391329D000997E5 /* Foundation.framework */; };
@@ -174,15 +179,12 @@
 		5B80562416076E1C00659ECC /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B80562516076E1C00659ECC /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B815B1C15A2E4FD0063ECD7 /* CPBaseHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B150017156EB0E800897252 /* CPBaseHeuristic.h */; };
-		5B815B1D15A2E4FD0063ECD7 /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
 		5B815B1E15A2E4FD0063ECD7 /* CPDDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F2915826A28008DF214 /* CPDDeg.h */; };
 		5B815B1F15A2E4FD0063ECD7 /* CPHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */; };
 		5B815B2015A2E4FD0063ECD7 /* CPBitMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B7408B015628C1400C05277 /* CPBitMacros.h */; };
 		5B815B2115A2E4FD0063ECD7 /* CPFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE19F251582654F008DF214 /* CPFirstFail.h */; };
 		5B8259861608BB04006CE539 /* CPABS.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8259841608BB04006CE539 /* CPABS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8259871608BB04006CE539 /* CPABS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8259851608BB04006CE539 /* CPABS.m */; };
-		5B896B5A158933B4002E145B /* CPLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B896B58158933B3002E145B /* CPLinear.h */; };
-		5B896B5B158933B4002E145B /* CPLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B896B59158933B4002E145B /* CPLinear.m */; };
 		5B8B12DC15A3BF8000300385 /* ORError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8B12DB15A3BF8000300385 /* ORError.m */; };
 		5B8C7DF3158674D1007042CA /* CPAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE7158674D1007042CA /* CPAppDelegate.m */; };
 		5B8C7DF4158674D1007042CA /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 5B8C7DE8158674D1007042CA /* Credits.rtf */; };
@@ -244,7 +246,6 @@
 		5B8E16C31505BB5700D3C698 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
 		5B8E979315AA5693008146AA /* CPStatisticsMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */; };
 		5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
-		5B8F1A2315A2D464009CCE42 /* CPLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B896B59158933B4002E145B /* CPLinear.m */; };
 		5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B91C335159FAB2D00158EEA /* CPElement.m */; };
 		5B8F1A2515A2D495009CCE42 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B8F1A2F15A2D495009CCE42 /* CPWDeg.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -387,6 +388,7 @@
 		5BB3836513B3C0E1005B7D52 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BB3836813B3C0E1005B7D52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3836713B3C0E1005B7D52 /* main.m */; };
 		5BB3837113B3C0F5005B7D52 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BB4239F162CA2B300B0EF42 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BBA3F8A151CCB0C00D6F6AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5BBA3FA0151CCB1F00D6F6AD /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BBA56D6153F33E70089118E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
@@ -649,6 +651,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		3783F1A3162230240085E8C2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
 		5B1CDB7F13C36A5D0061631E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1005,6 +1014,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		5BB423A0162CA2B600B0EF42 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
 		};
 		5BBA5700153F48680089118E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1733,11 +1749,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
+		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B074A27142E5B2D0055B72D /* ORSemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
 		5B0ECEBF1562C5E3000D1A08 /* CPWDeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPWDeg.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B0ECEC01562C5E3000D1A08 /* CPWDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPWDeg.m; sourceTree = "<group>"; };
+		5B1391841629A99D0029FD29 /* ORDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORDecompose.h; sourceTree = "<group>"; };
+		5B1391851629A99D0029FD29 /* ORDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORDecompose.m; sourceTree = "<group>"; };
 		5B150017156EB0E800897252 /* CPBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBaseHeuristic.h; sourceTree = "<group>"; };
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B2000ED156D585E00D80105 /* queensNaive copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "queensNaive copy"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1845,8 +1865,6 @@
 		5B8259851608BB04006CE539 /* CPABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPABS.m; sourceTree = "<group>"; };
 		5B85DE111438B2D500E4E133 /* ORSemBDSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemBDSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B85DE121438B2D500E4E133 /* ORSemBDSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemBDSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5B896B58158933B3002E145B /* CPLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPLinear.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5B896B59158933B4002E145B /* CPLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPLinear.m; sourceTree = "<group>"; };
 		5B8B12DB15A3BF8000300385 /* ORError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORError.m; sourceTree = "<group>"; };
 		5B8C7DE6158674D1007042CA /* CPAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAppDelegate.h; sourceTree = "<group>"; };
 		5B8C7DE7158674D1007042CA /* CPAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAppDelegate.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -2244,6 +2262,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BB4239F162CA2B300B0EF42 /* ORProgram.framework in Frameworks */,
 				5BDF5FB4161F84A400E5E1FA /* ORModeling.framework in Frameworks */,
 				5BDF5FB5161F84A400E5E1FA /* ORUtilities.framework in Frameworks */,
 				5B920ECB15A432D400AD0820 /* ORFoundation.framework in Frameworks */,
@@ -3339,8 +3358,6 @@
 				B1D3BCD715048D2B0036AB23 /* CPLabel.m */,
 				5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */,
 				5BEAD77E15ABBAFC00A012FE /* CPLexConstraint.m */,
-				5B896B58158933B3002E145B /* CPLinear.h */,
-				5B896B59158933B4002E145B /* CPLinear.m */,
 				5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */,
 				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
 				5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */,
@@ -3418,6 +3435,10 @@
 				5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */,
 				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
+				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
+				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
+				5B1391841629A99D0029FD29 /* ORDecompose.h */,
+				5B1391851629A99D0029FD29 /* ORDecompose.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -4159,7 +4180,6 @@
 				5B9B63EC1578C76B00441452 /* CPSolutionI.h in Headers */,
 				5BE19F2B15826A28008DF214 /* CPDDeg.h in Headers */,
 				B1672FE215849EA300EFE5C3 /* CPCardinalityDC.h in Headers */,
-				5B896B5A158933B4002E145B /* CPLinear.h in Headers */,
 				5B91C336159FAB2D00158EEA /* CPElement.h in Headers */,
 				B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */,
 				5BFD5A6815A3B92400825BC3 /* CPTypes.h in Headers */,
@@ -4215,7 +4235,6 @@
 				5B815B1E15A2E4FD0063ECD7 /* CPDDeg.h in Headers */,
 				5B815B2115A2E4FD0063ECD7 /* CPFirstFail.h in Headers */,
 				5B815B1F15A2E4FD0063ECD7 /* CPHeuristic.h in Headers */,
-				5B815B1D15A2E4FD0063ECD7 /* CPLinear.h in Headers */,
 				5B8F1A2F15A2D495009CCE42 /* CPWDeg.h in Headers */,
 				5B8F1A3515A2D495009CCE42 /* CPElement.h in Headers */,
 				5B9EE53815175D4F00619B47 /* CPSolverI.h in Headers */,
@@ -4251,6 +4270,8 @@
 				5B57E5DB161F167900DB249A /* ORSolver.h in Headers */,
 				5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */,
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
+				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
+				5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4374,6 +4395,7 @@
 				5BDF5FAF161F849E00E5E1FA /* PBXTargetDependency */,
 				5BDF5FB1161F849E00E5E1FA /* PBXTargetDependency */,
 				5BDF5FB3161F849E00E5E1FA /* PBXTargetDependency */,
+				5BB423A1162CA2B600B0EF42 /* PBXTargetDependency */,
 				5B558C141563F28B00D2BCD7 /* PBXTargetDependency */,
 			);
 			name = queensNaive;
@@ -5654,7 +5676,6 @@
 				5B9B63ED1578C76B00441452 /* CPSolutionI.m in Sources */,
 				5BE19F2815826550008DF214 /* CPFirstFail.m in Sources */,
 				B1672FE315849EA300EFE5C3 /* CPCardinalityDC.m in Sources */,
-				5B896B5B158933B4002E145B /* CPLinear.m in Sources */,
 				5B91C337159FAB2D00158EEA /* CPElement.m in Sources */,
 				B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */,
 				5BEAD78015ABBAFC00A012FE /* CPLexConstraint.m in Sources */,
@@ -5705,7 +5726,6 @@
 				5B799CAE15A6BFF3006DD012 /* ORDataI.m in Sources */,
 				5B799CAF15A6BFF3006DD012 /* ORArrayI.m in Sources */,
 				5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */,
-				5B8F1A2315A2D464009CCE42 /* CPLinear.m in Sources */,
 				5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */,
 				5B8C7E4A15867F13007042CA /* CPCircuitI.m in Sources */,
 				5B8C7E4B15867F13007042CA /* CPTableI.m in Sources */,
@@ -5758,6 +5778,8 @@
 				5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */,
 				5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */,
 				5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */,
+				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
+				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6063,6 +6085,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		3783F1A4162230240085E8C2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 3783F1A3162230240085E8C2 /* PBXContainerItemProxy */;
+		};
 		5B1CDB8013C36A5D0061631E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BB3836213B3C0E1005B7D52 /* magicserie */;
@@ -6317,6 +6344,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BB3836F13B3C0E9005B7D52 /* PBXContainerItemProxy */;
+		};
+		5BB423A1162CA2B600B0EF42 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BB423A0162CA2B600B0EF42 /* PBXContainerItemProxy */;
 		};
 		5BBA5701153F48680089118E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

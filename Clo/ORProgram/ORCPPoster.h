@@ -19,6 +19,9 @@
 @interface ORCPPoster  : NSObject<ORVisitor>
 -(ORCPPoster*) initORCPPoster: (id<CPSolver>) solver;
 -(void) dealloc;
+-(void) visitTrailableInt:(id<ORTrailableInt>)v;
+-(void) visitIntSet:(id<ORIntSet>)v;
+-(void) visitIntRange:(id<ORIntRange>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;

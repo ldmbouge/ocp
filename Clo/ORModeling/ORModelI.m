@@ -59,12 +59,24 @@
 {
    return _objective;
 }
-
+-(NSArray*) variables
+{
+    return [NSArray arrayWithArray: _vars];
+}
+-(NSArray*) constraints
+{
+    return [NSArray arrayWithArray: _mStore];
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
    [buf appendFormat:@"vars[%ld] = {\n",[_vars count]];
    for(id<ORVar> v in _vars)
+      [buf appendFormat:@"\t%@\n",v];
+   [buf appendFormat:@"}\n"];
+
+   [buf appendFormat:@"objects[%ld] = {\n",[_oStore count]];
+   for(id<ORObject> v in _oStore)
       [buf appendFormat:@"\t%@\n",v];
    [buf appendFormat:@"}\n"];
    

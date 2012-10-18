@@ -12,4 +12,5 @@
 @interface ORFlatten : NSObject<ORModelTransformation>
 -(id)initORFlatten;
 -(id<ORModel>)apply:(id<ORModel>)m;
+-(void)flatten:(id<ORConstraint>)c into:(id<ORModel>)m;
 @end

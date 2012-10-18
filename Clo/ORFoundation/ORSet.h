@@ -22,11 +22,14 @@
 -(bool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) min;
+-(ORInt) max;
 -(NSString*) description;
 @end
 
 @protocol ORIntRange <ORIntIterator>
 -(ORInt) low;
 -(ORInt) up;
+-(bool) inRange: (ORInt)e;
 -(NSString*) description;
 @end

@@ -47,6 +47,13 @@
 -(void) visit: (id<ORVisitor>)v;
 @end
 
+@interface ORIntVarLitEQView : ORIntVarI
+-(ORIntVarLitEQView*)initORIntVarLitEQView:(id<ORTracker>)tracker var:(id<ORIntVar>)x eqi:(ORInt)lit;
+-(ORInt)literal;
+-(id<ORIntVar>)base;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
 @interface ORFloatVarI : ORExprI<ORFloatVar>
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
 -(ORFloat) value;

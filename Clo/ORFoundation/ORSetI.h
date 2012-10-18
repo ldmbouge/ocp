@@ -14,7 +14,7 @@
 #import "ORFoundation/ORData.h"
 #import "ORFoundation/ORSet.h"
 #import "ORFoundation/ORAVLTree.h"
-
+@protocol ORVisitor;
 
 @interface ORIntSetI : NSObject<ORIntSet>
 
@@ -23,10 +23,13 @@
 -(bool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) min;
+-(ORInt) max;
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
+-(void)visit:(id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 -(void)visit:(id<ORVisitor>)v;
@@ -36,9 +39,11 @@
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
+-(bool) inRange: (ORInt)e;
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
+-(void)visit:(id<ORVisitor>)v;
 -(id<IntEnumerator>) enumerator;
 //-(id<IntEnumerator>) tailableEnumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;

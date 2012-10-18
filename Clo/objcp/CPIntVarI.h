@@ -114,7 +114,7 @@ enum CPVarClass {
 
 
 
-@interface CPIntVarI : ORExprI<ORIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : ORExprI<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
    enum CPVarClass                   _vc:16;
    ORUInt                        _isBool:16;

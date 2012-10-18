@@ -63,7 +63,7 @@
 -(id<CPPortal>)           portal;
 -(id<ORSolution>)         solution;
 
--(void)                  add: (id<ORConstraint>) c consistency:(CPConsistency)cons;
+-(void)                  add: (id<ORConstraint>) c consistency:(ORAnnotation)cons;
 -(void)                  add: (id<ORConstraint>) c;
 -(id<ORObjective>)  minimize: (id<ORIntVar>) x;
 -(id<ORObjective>)  maximize: (id<ORIntVar>) x;
@@ -112,8 +112,6 @@
 -(void)         trackVariable: (id) object;
 - (void)    encodeWithCoder: (NSCoder *)aCoder;
 - (id)        initWithCoder: (NSCoder *)aDecoder;
-
--(void)           addModel: (id) model;
 @end
 
 @interface CPSolverI : CPCoreSolverI<CPSolver,ORTracker> {

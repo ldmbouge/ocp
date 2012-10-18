@@ -14,12 +14,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-typedef enum {
-   DomainConsistency,
-   RangeConsistency,
-   ValueConsistency
-} CPConsistency;
-
 @protocol CPSolver;
 
 typedef void (^CPVirtualClosure)(id<CPSolver>);
