@@ -77,8 +77,6 @@ void failNow();
 
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;
 
-+(id<ORIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c;
-
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) cp ;
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp ;
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r;

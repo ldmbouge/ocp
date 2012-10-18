@@ -14,6 +14,7 @@
 #import <objcp/CPBaseHeuristic.h>
 
 @class CPStatisticsMonitor;
+@protocol CPIntVarArray;
 
 #define ALPHA 8.0L
 
@@ -23,9 +24,9 @@
    id<CPSolver>       _cp;
 }
 -(id)initCPABS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
--(float)varOrdering:(id<ORIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<ORIntVar>)x;
+-(float)varOrdering:(id<CPIntVar>)x;
+-(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;
--(id<ORIntVarArray>)allIntVars;
+-(id<CPIntVarArray>)allIntVars;
 -(id<CPSolver>)solver;
 @end

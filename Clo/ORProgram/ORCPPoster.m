@@ -69,7 +69,7 @@
 {
    [_solver add: [cstr impl]];   
 }
--(void) visitBinPacking: (id<ORBinPacking>) cstr
+-(void) visitPacking: (id<ORPacking>) cstr
 {
    [_solver add: [cstr impl]];   
 }

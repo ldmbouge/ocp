@@ -15,10 +15,10 @@
 
 @interface CPFactory (Constraint)
 
-+(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x consistency: (ORAnnotation) c;
-+(id<CPConstraint>) alldifferent: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) alldifferent: (id<ORIntVarArray>) x consistency: (ORAnnotation) c;
++(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<CPIntVarArray>) x;
++(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c;
++(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x;
++(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (ORAnnotation) c;
 
 +(id<CPConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
 +(id<CPConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up consistency: (ORAnnotation) c;
@@ -58,19 +58,16 @@
 +(id<CPConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
 +(id<CPConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y;
 +(id<CPConstraint>) notEqualc:(id<ORIntVar>)x to:(ORInt)c;
-+(id<CPConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y;
-+(id<CPConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c;
-+(id<CPConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c;
-+(id<CPConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y;
++(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y;
++(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y plus:(ORInt)c;
++(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;
++(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<ORIntVar>) y;
 +(id<CPConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
 +(id<CPConstraint>) abs: (id<ORIntVar>)x equal:(id<ORIntVar>)y consistency:(ORAnnotation)c;
 +(id<CPConstraint>) element:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y;
 +(id<CPConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y;
 +(id<CPConstraint>) table: (id<ORTable>) table on: (id<ORIntVarArray>) x;
 +(id<CPConstraint>) table: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
-+(id<CPConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e consistency: (ORAnnotation) c;
-+(id<CPConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e;
-
 +(id<CPConstraint>) assignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
 +(id<CPConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
 

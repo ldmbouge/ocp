@@ -61,7 +61,7 @@
 
 +(void) heuristic:(id<CPHeuristic>)h
 {
-   id<ORIntVarArray> av = [h allIntVars];
+   id<CPIntVarArray> av = [h allIntVars];
 //   NSLog(@"Heuristic on: <%lu> %@",[av count],av);
    CPSolverI* cp = (CPSolverI*) [h solver];
    id<ORSelect> select = [ORFactory selectRandom: cp
@@ -76,7 +76,7 @@
       if (i == MAXINT)
          return;
       //NSLog(@"Chose variable: %d",i);
-      id<ORIntVar> x = [av at: i];
+      id<CPIntVar> x = [av at: i];
       id<ORSelect> valSelect = [ORFactory selectRandom: cp
                                                  range:RANGE(cp,[x min],[x max])
                                               suchThat:^bool(ORInt v)    { return [x member:v];}

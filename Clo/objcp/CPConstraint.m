@@ -30,17 +30,17 @@
 @implementation CPFactory (Constraint)
 
 // alldifferent
-+(id<ORConstraint>) alldifferent: (id<CPSolver>) cp over: (id<ORIntVarArray>) x
++(id<ORConstraint>) alldifferent: (id<CPSolver>) cp over: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: cp over: x];
    [cp trackObject: o];
    return o;
 }
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
++(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x
 {
     return [CPFactory alldifferent: x consistency: DomainConsistency];
 }
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x consistency: (ORAnnotation) c
++(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (ORAnnotation) c
 {
     id<ORConstraint> o;
     switch (c) {
@@ -59,7 +59,7 @@
     [[x tracker] trackObject: o];
     return o;
 }
-+(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x consistency: (ORAnnotation) c
++(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c
 {
    id<ORConstraint> o;
    switch (c) {
@@ -390,27 +390,27 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    [[x solver] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y
++(id<ORConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y
 {
    id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y plus:0];
-   [[x solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c
++(id<ORConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y plus:(ORInt)c
 {
    id<ORConstraint> o = [[CPLEqualBC alloc] initCPLEqualBC:x and:y plus:c];
-   [[x solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;   
 }
-+(id<ORConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c
++(id<ORConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c
 {
    id<ORConstraint> o = [[CPLEqualc alloc] initCPLEqualc:x and:c];
-   [[x solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;   
 }
-+(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y
++(id<ORConstraint>) less: (id<CPIntVar>)x to: (id<ORIntVar>) y
 {
-   id<ORIntVar> yp = [self intVar:y shift:-1];
+   id<CPIntVar> yp = [self intVar:y shift:-1];
    return [self lEqual:x to:yp plus:0];
 }
 +(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z

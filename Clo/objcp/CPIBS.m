@@ -188,14 +188,14 @@
    return _cp;
 }
 
--(float)varOrdering:(id<ORIntVar>)x
+-(float)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
--(float)valOrdering:(int)v forVar:(id<ORIntVar>)x
+-(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
