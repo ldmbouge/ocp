@@ -169,7 +169,8 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   [_theModel add:cstr];   
+   
+   [_theModel add:cstr];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

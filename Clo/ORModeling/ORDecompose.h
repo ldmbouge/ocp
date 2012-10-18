@@ -16,8 +16,6 @@
 
 @protocol ORModel;
 
-typedef id<ORIntVar>(^ORRewriter)(id<ORExpr>);
-
 @protocol ORLinear<NSObject>
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
