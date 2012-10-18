@@ -68,7 +68,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPSolver>) cp over: (id<CPIntVarArray>) x
 {
-   self = [super initCPActiveConstraint: [cp engine]];
+   self = [super initCPActiveConstraint: cp];
    _x = x;
    [self initInstanceVariables];
    return self;

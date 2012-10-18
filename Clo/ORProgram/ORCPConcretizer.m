@@ -21,11 +21,13 @@
 @implementation ORCPConcretizer
 {
    id<CPProgram> _solver;
+   id<CPEngine> _engine;
 }
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPProgram>) solver
 {
    self = [super init];
    _solver = [solver retain];
+   _engine = [_solver engine];
    return self;
 }
 -(void) dealloc
@@ -48,9 +50,8 @@
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   // PVH: We need to use concrete variable in the library
    if ([v impl] == NULL) {
-      id<CPIntVar> cv = [CPFactory intVar: _solver domain: [v domain]];
+      id<CPIntVar> cv = [CPFactory intVar: _engine domain: [v domain]];
       [v setImpl: cv];
    }
 }
@@ -64,7 +65,7 @@
       id<ORIntVar> mBase = [v base];
       ORInt a = [v scale];
       ORInt b = [v shift];
-      id<CPIntVar> cv = [CPFactory intVar:[mBase dereference] scale:a shift:b];
+      id<CPIntVar> cv = [CPFactory intVar: [mBase dereference] scale: a shift: b];
       [v setImpl: cv];
    }
 }
@@ -72,7 +73,7 @@
 {
    if ([v impl] == NULL) {
       id<ORIntRange> R = [v range];
-      id<ORIdArray> dx = [ORFactory idArray: _solver range: R];
+      id<ORIdArray> dx = [ORFactory idArray: _engine range: R];
       ORInt low = R.low;
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++)
@@ -89,7 +90,7 @@
    if ([cstr impl] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _solver over: [ax impl]];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: [ax impl]];
       [cstr setImpl: concreteCstr];
    }
 }

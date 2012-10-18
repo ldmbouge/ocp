@@ -159,7 +159,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    _vc = CPVCBare;
    _isBool = NO;
    _cp = cp;
-   _fdm  = (CPEngineI*) [cp engine];
+   _fdm  = (CPEngineI*) cp;
    [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;

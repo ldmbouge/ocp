@@ -20,11 +20,13 @@
 @implementation ORCPPoster
 {
    id<CPProgram> _solver;
+   id<CPEngine> _engine;
 }
 -(ORCPPoster*) initORCPPoster: (id<CPProgram>) solver
 {
    self = [super init];
    _solver = [solver retain];
+   _engine = [_solver engine];
    return self;
 }
 -(void) dealloc
@@ -63,23 +65,23 @@
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   [_solver add: [cstr impl]];
+   [_engine add: [cstr impl]];
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   [_solver add: [cstr impl]];   
+   [_engine add: [cstr impl]];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   [_solver add: [cstr impl]];   
+   [_engine add: [cstr impl]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [_solver add: [cstr impl]];   
+   [_engine add: [cstr impl]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   [_solver add: [cstr impl]];   
+   [_engine add: [cstr impl]];
 }
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
@@ -91,59 +93,59 @@
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitEqual3: (id<OREqual3>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitMult: (id<ORMult>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitOr: (id<OROr>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitImply: (id<ORImply>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-   [_solver add: [c impl]];     
+   [_engine add: [c impl]];
 }
 //
 -(void) visitIntegerI: (id<ORInteger>) e
