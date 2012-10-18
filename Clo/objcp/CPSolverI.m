@@ -552,7 +552,7 @@
    [_tracer release];
    [super dealloc];
 }
--(void) label: (ORIntVarI*) var with: (ORInt) val
+-(void) label: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
@@ -563,7 +563,7 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
--(void) diff: (ORIntVarI*) var with: (ORInt) val
+-(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)

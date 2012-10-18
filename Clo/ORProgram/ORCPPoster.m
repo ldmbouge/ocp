@@ -69,10 +69,10 @@
 {
    [_solver add: [cstr impl]];   
 }
-//-(void) visitBinPacking: (id<ORBinPacking>) cstr
-//{
-//   [_solver add: [cstr impl]];
-//}
+-(void) visitPacking: (id<ORPacking>) cstr
+{
+   [_solver add: [cstr impl]];   
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    [_solver add: [cstr impl]];   

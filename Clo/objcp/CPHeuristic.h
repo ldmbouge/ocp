@@ -13,11 +13,13 @@
 #import <objcp/CPEngine.h>
 #import <objcp/CPData.h>
 
+@protocol CPIntVarArray;
+
 @protocol CPHeuristic <NSObject>
--(float) varOrdering: (id<ORIntVar>)x;
--(float) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
+-(float) varOrdering: (id<CPIntVar>)x;
+-(float) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x;
 -(void) initInternal: (id<ORVarArray>)t;
 -(void) initHeuristic: (NSMutableArray*)array;
--(id<ORIntVarArray>) allIntVars;
+-(id<CPIntVarArray>) allIntVars;
 -(id<CPSolver>)solver;
 @end

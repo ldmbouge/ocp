@@ -29,7 +29,3 @@ typedef void (^ConstraintIntCallBack)(ORInt);
 
 @protocol CPUniformDistribution <ORUniformDistribution>
 @end;
-
-@protocol CPIntVar <ORIntVar>
-@end
-

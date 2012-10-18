@@ -23,10 +23,10 @@
    id<CPSolver>       _cp;
 }
 -(id)initCPIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
--(float)varOrdering:(id<ORIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<ORIntVar>)x;
+-(float)varOrdering:(id<CPIntVar>)x;
+-(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;
--(id<ORIntVarArray>)allIntVars;
+-(id<CPIntVarArray>)allIntVars;
 -(void)initImpacts;
 -(id<CPSolver>)solver;
 @end

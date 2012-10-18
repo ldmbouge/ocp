@@ -226,7 +226,7 @@
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine label: var with: val];
+   ORStatus status = [_engine label: (id<CPIntVar>) [var dereference] with: val];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -236,14 +236,14 @@
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine diff: var with: val];
+   ORStatus status = [_engine diff: (id<CPIntVar>) [var dereference] with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine lthen: var with: val];
+   ORStatus status = [_engine lthen: (id<CPIntVar>) [var dereference] with: val];
    if (status == ORFailure) {
       [_search fail];
    }
@@ -251,7 +251,7 @@
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine gthen: var with:val];
+   ORStatus status = [_engine gthen: (id<CPIntVar>) [var dereference] with: val];
    if (status == ORFailure) {
       [_search fail];
    }
@@ -259,7 +259,7 @@
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   ORStatus status = [_engine restrict: var to: S];
+   ORStatus status = [_engine restrict: (id<CPIntVar>) [var dereference] to: S];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];

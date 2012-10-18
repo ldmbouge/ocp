@@ -239,15 +239,6 @@ void failNow()
       flat[i] = [m flat:i];
    return (id<CPIntVarArray>)flat;
 }
-
-+(id<CPIntVarArray>) pointwiseProduct:(id<ORIntVarArray>)x by:(int*)c
-{
-   id<CPIntVarArray> rv = [self intVarArray:[x tracker] range: [x range] with:^id<CPIntVar>(ORInt i) {
-      id<CPIntVar> theView = [self intVar:[x at:i]  scale:c[i]];
-      return theView;
-   }];
-   return rv;
-}
 +(id<ORIntSet>) intSet: (id<ORTracker>) cp 
 {
     ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI]; 

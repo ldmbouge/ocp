@@ -17,11 +17,11 @@
 
 
 @interface ABSNogood : NSObject {
-   id<ORIntVar> _var;
+   id<CPIntVar> _var;
    ORInt        _val;
 }
--(id)initABSNogood:(id<ORIntVar>)var value:(ORInt)val;
--(id<ORIntVar>)variable;
+-(id)initABSNogood:(id<CPIntVar>)var value:(ORInt)val;
+-(id<CPIntVar>)variable;
 -(ORInt)value;
 @end
 
@@ -50,7 +50,7 @@
 -(ABSProbeAggregator*)initABSProbeAggregator:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addProbe:(ABSProbe*)p;
--(void)addAssignment:(id<ORIntVar>)x toValue:(ORInt)v withActivity:(ORFloat)act;
+-(void)addAssignment:(id<CPIntVar>)x toValue:(ORInt)v withActivity:(ORFloat)act;
 -(ORInt)nbProbes;
 -(ORFloat)avgActivity:(ORInt)x;
 -(ORFloat)avgSQActivity:(ORInt)x;
@@ -71,10 +71,10 @@
 @end
 
 @interface ABSValueActivity : NSObject {
-   id<ORVar>             _theVar;
+   id                    _theVar;
    NSMutableDictionary*  _values;
 }
--(id)initABSActivity:(id<ORVar>)var;
+-(id)initABSActivity:(id)var;
 -(void)dealloc;
 -(void)setActivity:(ORFloat)a forValue:(ORInt)v;
 -(void)addActivity:(ORFloat)a forValue:(ORInt)v;
@@ -123,7 +123,7 @@
    }];
    _nbProbes++;
 }
--(void)addAssignment:(id<ORIntVar>)x toValue:(ORInt)v withActivity:(ORFloat)act
+-(void)addAssignment:(id<CPIntVar>)x toValue:(ORInt)v withActivity:(ORFloat)act
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSValueActivity* valueActivity = [_values objectForKey:key];
@@ -161,14 +161,14 @@
 @end
 
 @implementation ABSNogood
--(id)initABSNogood:(id<ORIntVar>)var value:(ORInt)val
+-(id)initABSNogood:(id<CPIntVar>)var value:(ORInt)val
 {
    self = [super init];
    _var = var;
    _val = val;
    return self;
 }
--(id<ORIntVar>)variable
+-(id<CPIntVar>)variable
 {
    return _var;
 }
@@ -355,7 +355,7 @@
 {
    return _cp;
 }
--(float)varOrdering:(id<ORIntVar>)x
+-(float)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSVariableActivity* varAct  = [_varActivity objectForKey:key];
@@ -363,7 +363,7 @@
    [key release];
    return rv / [x domsize];
 }
--(float)valOrdering:(int)v forVar:(id<ORIntVar>)x
+-(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSValueActivity* vAct = [_valActivity objectForKey:key];
@@ -423,12 +423,12 @@
    [[_cp engine] clearStatus];
    NSLog(@"ABS ready...");
 }
--(id<ORIntVarArray>)allIntVars
+-(id<CPIntVarArray>)allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
--(ORInt)chooseValue:(id<ORIntVar>)x
+-(ORInt)chooseValue:(id<CPIntVar>)x
 {
    ORBounds b = [x bounds];
    while (true) {
@@ -464,10 +464,10 @@
 -(void)installActivities
 {
    NSSet* varIDs = [_aggregator variableIDs];
-   id<ORIntVarArray> vars = [self allIntVars];
+   id<CPIntVarArray> vars = [self allIntVars];
    ORInt nbProbes = [_aggregator nbProbes];
    for(NSNumber* key in varIDs) {
-      id<ORIntVar> x = vars[[key intValue]];
+      id<CPIntVar> x = vars[[key intValue]];
       ORFloat act = [_aggregator avgActivity:[key intValue]];
       ABSVariableActivity* xAct = [[ABSVariableActivity alloc] initABSVariableActivity:x activity:act];
       [_varActivity setObject:xAct forKey:key];
@@ -495,7 +495,7 @@
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
-   id<ORIntVarArray> vars = [self allIntVars];
+   id<CPIntVarArray> vars = [self allIntVars];
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
    id<ORSelect> varSel = [ORFactory selectRandom:nil range:[vars range] suchThat:^bool(ORInt i) { return ![vars[i] bound];} orderedBy:nil];
    _valPr = [ORCrFactory zeroOneStream];
@@ -510,7 +510,7 @@
             [tracer pushNode];
             ORInt i = [varSel any];
             if (i != MAXINT) { // we found someone
-               id<ORIntVar> xi = vars[i];
+               id<CPIntVar> xi = vars[i];
                ORInt v = [self chooseValue:xi];
                ORStatus s = [_solver label:xi with:v];
                [ORConcurrency pumpEvents];

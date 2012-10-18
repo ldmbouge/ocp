@@ -15,6 +15,7 @@
 
 @class CPIntVarI;
 @class CPEngine;
+@protocol CPIntVarArray;
 
 // PVH: where is _active being used
 @interface CPEqualc : CPActiveConstraint<NSCoding> {
@@ -201,7 +202,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI**   _x;
    ORLong       _nb;
 }
--(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<ORIntVarArray>) x;
+-(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<CPIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (ORInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
 -(void) dealloc;

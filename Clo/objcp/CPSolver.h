@@ -34,6 +34,8 @@
 -(ORInt) shift;
 -(id<ORIntVar>) base;
 -(BOOL) bound;
+-(id<ORTracker>) tracker;
+-(id<CPEngine>)engine;
 @end
 
 @protocol CPIntVarArray <ORVarArray>
