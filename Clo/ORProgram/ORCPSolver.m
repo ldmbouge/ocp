@@ -224,46 +224,6 @@
 {
    [_hSet push: h];
 }
--(void) label: (id<ORIntVar>) var with: (ORInt) val
-{
-   ORStatus status = [_engine label: (id<CPIntVar>) [var dereference] with: val];
-   if (status == ORFailure) {
-      [_failLabel notifyWith:var andInt:val];
-      [_search fail];
-   }
-   [_returnLabel notifyWith:var andInt:val];
-   [ORConcurrency pumpEvents];
-}
--(void) diff: (id<ORIntVar>) var with: (ORInt) val
-{
-   ORStatus status = [_engine diff: (id<CPIntVar>) [var dereference] with: val];
-   if (status == ORFailure)
-      [_search fail];
-   [ORConcurrency pumpEvents];
-}
--(void) lthen: (id<ORIntVar>) var with: (ORInt) val
-{
-   ORStatus status = [_engine lthen: (id<CPIntVar>) [var dereference] with: val];
-   if (status == ORFailure) {
-      [_search fail];
-   }
-   [ORConcurrency pumpEvents];
-}
--(void) gthen: (id<ORIntVar>) var with: (ORInt) val
-{
-   ORStatus status = [_engine gthen: (id<CPIntVar>) [var dereference] with: val];
-   if (status == ORFailure) {
-      [_search fail];
-   }
-   [ORConcurrency pumpEvents];
-}
--(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
-{
-   ORStatus status = [_engine restrict: (id<CPIntVar>) [var dereference] to: S];
-   if (status == ORFailure)
-      [_search fail];
-   [ORConcurrency pumpEvents];
-}
 -(void) solve: (ORClosure) search
 {
    if (_objective != nil) {
@@ -381,16 +341,78 @@
    for(ORInt i = low; i <= up; i++)
       [self label: x[i]];
 }
+
+-(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
+{
+   ORStatus status = [_engine label: var with: val];
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   [_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
+}
+-(void) label: (id<CPIntVar>) var with: (ORInt) val
+{
+   return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
+{
+   ORStatus status = [_engine diff: var with: val];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) diff: (id<CPIntVar>) var with: (ORInt) val
+{
+   [self diffImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
+{
+   ORStatus status = [_engine lthen: var with: val];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+   [ORConcurrency pumpEvents];
+}
+-(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
+{
+   ORStatus status = [_engine gthen: var with: val];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+   [ORConcurrency pumpEvents];
+}
+-(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
+{
+   ORStatus status = [_engine restrict: var to: S];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self lthenImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self gthenImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
+{
+   [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
+}
+
 -(void) label: (id<ORIntVar>) mx
 {
    id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
    while (![x bound]) {
       ORInt m = [x min];
       [_search try: ^() {
-         [self label: x with: m];
+         [self labelImpl: x with: m];
       }
       or: ^() {
-         [self diff: x with: m];
+         [self diffImpl: x with: m];
       }];
    }
 }

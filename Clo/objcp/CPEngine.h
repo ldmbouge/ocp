@@ -29,4 +29,6 @@
 -(ORUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
 @end
