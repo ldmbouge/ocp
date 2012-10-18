@@ -113,23 +113,23 @@
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver label: [var dereference] with: val];
+   return [_solver label: (id<CPIntVar>)[var dereference] with: val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver diff: [var dereference] with: val];
+   return [_solver diff: (id<CPIntVar>)[var dereference] with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver lthen: [var dereference] with: val];
+   return [_solver lthen: (id<CPIntVar>)[var dereference] with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver gthen: [var dereference] with: val];
+   return [_solver gthen: (id<CPIntVar>)[var dereference] with: val];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   return [_solver restrict: [var dereference] to: S];
+   return [_solver restrict: (id<CPIntVar>)[var dereference] to: S];
 }
 -(void) solve: (ORClosure) body
 {

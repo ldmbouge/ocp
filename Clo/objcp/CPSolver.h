@@ -35,7 +35,7 @@
 -(id<ORIntVar>) base;
 -(BOOL) bound;
 -(id<ORTracker>) tracker;
--(id<CPSolver>)solver;
+-(id<CPEngine>)engine;
 @end
 
 @protocol CPIntVarArray <ORVarArray>

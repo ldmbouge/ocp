@@ -17,7 +17,7 @@
 @implementation CPEqualc
 -(id) initCPEqualc: (id<CPIntVar>) x and:(ORInt)c
 {
-   self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [x engine]];
    _x = (CPIntVarI*)x;
    _c = c;
    return self;
@@ -66,7 +66,7 @@
 @implementation CPDiffc
 -(id) initCPDiffc:(id<CPIntVar>) x and:(ORInt)c
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = (CPIntVarI*) x;
    _c = c;
    return self;
@@ -581,7 +581,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPBasicNotEqual
 -(id) initCPBasicNotEqual:(id<CPIntVar>) x and: (id<ORIntVar>) y
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
    return self;
@@ -699,7 +699,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPAbsDC
 -(id)initCPAbsDC:(id<CPIntVar>)x equal:(id<CPIntVar>)y
 {
-   self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [x engine]];
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
    return self;
@@ -793,7 +793,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPAbsBC
 -(id)initCPAbsBC:(id<CPIntVar>)x equal:(id<CPIntVar>)y
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x =  (CPIntVarI*) x;
    _y =  (CPIntVarI*) y;
    _idempotent = YES;
@@ -859,7 +859,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPOrDC
 -(id)initCPOrDC:(id<CPIntVar>) b equal:(id<CPIntVar>) x or:(id<CPIntVar>) y
 {
-   self = [super initCPActiveConstraint:[[b solver] engine]];
+   self = [super initCPActiveConstraint:[b engine]];
    _b = (CPIntVarI*) b;
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
@@ -990,7 +990,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPImplyDC
 -(id)initCPImplyDC:(id<CPIntVar>)b equal:(id<CPIntVar>)x imply:(id<CPIntVar>)y
 {
-   self = [super initCPActiveConstraint:[[b solver] engine]];
+   self = [super initCPActiveConstraint:[b  engine]];
    _b = (CPIntVarI*) b;
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
@@ -1056,7 +1056,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPLEqualc
 -(id) initCPLEqualc:(id<CPIntVar>)x and:(ORInt) c
 {
-   self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [x engine]];
    _x = (CPIntVarI*) x;
    _c = c;
    return self;
@@ -1097,7 +1097,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPMultBC
 -(id) initCPMultBC:(id<CPIntVar>)x times:(id<CPIntVar>)y equal:(id<CPIntVar>)z
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
    _z = (CPIntVarI*) z;
