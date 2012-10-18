@@ -163,7 +163,7 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    *sortedSize = [CPFactory intArray:[x solver] range: R with: ^ORInt(ORInt i) { return toSort[i - low]._int; }];
 }
 
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<ORIntArray>) load;
++(id<ORConstraint>) packing: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<ORIntArray>) load
 {
    id<ORIntVarArray> sortedItem;
    id<ORIntArray> sortedSize;

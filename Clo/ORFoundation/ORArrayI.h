@@ -33,6 +33,7 @@
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end

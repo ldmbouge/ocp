@@ -97,7 +97,7 @@
 {
    
 }
--(void) visitBinPacking: (id<ORBinPacking>) cstr
+-(void) visitPacking: (id<ORPacking>) cstr
 {
    
 }

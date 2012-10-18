@@ -17,7 +17,7 @@
 
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
--(void) visitBinPacking: (id<ORBinPacking>) cstr;
+-(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitEqualc: (id<OREqualc>)c;
@@ -141,7 +141,7 @@
         [_model add: [ORFactory expr: sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
     }
 }
--(void) visitBinPacking: (id<ORBinPacking>) cstr
+-(void) visitPacking: (id<ORPacking>) cstr
 {
     id<ORIntVarArray> item = [cstr item];
     id<ORIntVarArray> binSize = [cstr binSize];

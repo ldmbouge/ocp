@@ -553,38 +553,43 @@
 
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
-   [NSException raise:@"NOT Implemented" format:@"circuit(%@)",x];
-   return nil;
+   id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];
+   return o;
 }
 +(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
 {
-   [NSException raise:@"NOT Implemented" format:@"nocycle(%@)",x];
-   return nil;
+   id<ORConstraint> o = [[ORNoCycleI alloc] initORNoCycleI:x];
+   return o;
 }
 +(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
 {
-   [NSException raise:@"NOT Implemented" format:@"packing(%@)",item];
-   return nil;
+   id<ORConstraint> o = [[ORPackingI alloc] initORPackingI:item itemSize:itemSize load:load];
+   return o;
 }
 +(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
 {
-   [NSException raise:@"NOT Implemented" format:@"packone(%@)",item];
-   return nil;
+   id<ORConstraint> o = [[ORPackOneI alloc] initORPackOneI:item itemSize:itemSize bin:b binSize:binSize];
+   return o;
 }
 +(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c
 {
-   [NSException raise:@"NOT Implemented" format:@"knapsack(%@,%@,%@)",x,w,c];
-   return nil;
+   id<ORConstraint> o = [[ORKnapsackI alloc] initORKnapsackI:x weight:w capacity:c];
+   return o;
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
    return o;
 }
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize
++(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
 {
-   id<ORConstraint> o = [[ORBinPackingI alloc] initORBinPackingI: item itemSize: itemSize binSize: binSize];
-   return o;
+   // Rewritten in terms of the variable-driven load form.
+   id<ORIntRange> R = [binSize range];
+   id<ORIntVarArray> load = (id<ORIntVarArray>)[ORFactory idArray:[item tracker] range:R];
+   [binSize enumerateWith:^(ORInt bk, int k) {
+      load[k] = [ORFactory intVar:[item tracker] domain:RANGE([item tracker],0,bk)];
+   }];
+   return [self packing:item itemSize:itemSize load:load];
 }
 +(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp
 {

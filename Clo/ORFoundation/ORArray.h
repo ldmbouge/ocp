@@ -27,6 +27,7 @@
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 @end
 
 @protocol ORIntSetArray <ORObject>
