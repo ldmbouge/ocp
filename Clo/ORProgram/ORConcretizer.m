@@ -22,6 +22,7 @@
 
 +(id<CPProgram>) createCPSolverWrapper: (id<CPSolver>) concreteCPSolver
 {
+   
    return [[ORCPSolver alloc] initORCPSolver: concreteCPSolver];
 }
 

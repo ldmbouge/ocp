@@ -11,6 +11,7 @@
 
 #import "ORProgram.h"
 #import "ORCPSolver.h"
+#import <objcp/CPFactory.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPLabel.h>
 
@@ -44,56 +45,158 @@
 // PVH: Also need to remove methods that are now in the model
 
 
+@interface CPHeuristicSet : NSObject {
+   id<CPHeuristic>*  _tab;
+   ORUInt            _sz;
+   ORUInt            _mx;
+}
+-(CPHeuristicSet*) initCPHeuristicSet;
+-(void)push: (id<CPHeuristic>) h;
+-(id<CPHeuristic>) pop;
+-(void) reset;
+-(void)applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
+@end
+
+@implementation CPHeuristicSet
+-(CPHeuristicSet*) initCPHeuristicSet
+{
+   self = [super init];
+   _mx  = 2;
+   _tab = malloc(sizeof(id<CPHeuristic>)*_mx);
+   _sz  = 0;
+   return self;
+}
+-(void) push: (id<CPHeuristic>) h
+{
+   if (_sz >= _mx) {
+      _tab = realloc(_tab, _mx << 1);
+      _mx <<= 1;
+   }
+   _tab[_sz++] = h;
+}
+-(id<CPHeuristic>) pop
+{
+   return _tab[--_sz];
+}
+-(void) reset
+{
+   for(ORUInt k=0;k<_sz;k++)
+      [_tab[k] release];
+   _sz = 0;
+}
+-(void) dealloc
+{
+   [self reset];
+   free(_tab);
+   [super dealloc];
+}
+-(void)applyToAll: (void(^)(id<CPHeuristic>,NSMutableArray*))closure with: (NSMutableArray*)av;
+{
+   for(ORUInt k=0;k<_sz;k++)
+      closure(_tab[k],av);
+}
+@end
+
+@interface CPInformerPortalI : NSObject<CPPortal> {
+   ORCPSolver*  _cp;
+}
+-(CPInformerPortalI*) initCPInformerPortalI: (ORCPSolver*) cp;
+-(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) failLabel;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
+@end
 
 @implementation ORCPSolver {
    id<CPSolver> _solver;
+   id<CPEngine>          _engine;
+   id<ORExplorer>        _search;
+   id<ORObjective>       _objective;
+   id<ORTrail>           _trail;
+   CPHeuristicSet*       _hSet;
+   id<CPPortal>          _portal;
+   @package
+   id<ORIdxIntInformer>  _returnLabel;
+   id<ORIdxIntInformer>  _failLabel;
+   BOOL                  _closed;
 }
 -(id<CPProgram>) initORCPSolver: (id<CPSolver>) solver
 {
    self = [super init];
    _solver = [solver retain];
+   _engine = [_solver engine];
+   _search = [_solver explorer];
+   _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
+   _returnLabel = _failLabel = nil;
+   _portal = [[CPInformerPortalI alloc] initCPInformerPortalI: self];
+   _objective = nil;
    return self;
 }
 -(void) dealloc
 {
    [_solver release];
+   [_hSet release];
+   [_portal release];
+   [_returnLabel release];
+   [_failLabel release];
    [super dealloc];
 }
--(ORInt) nbFailures
+-(id<ORIdxIntInformer>) retLabel
 {
-   return [_solver nbFailures];
+   if (_returnLabel==nil)
+      _returnLabel = [ORConcurrency idxIntInformer];
+   return _returnLabel;
 }
--(id<CPEngine>) engine
+-(id<ORIdxIntInformer>) failLabel
 {
-   return [_solver engine];
-}
--(id<ORExplorer>) explorer
-{
-   return [_solver explorer];
+   if (_failLabel==nil)
+      _failLabel = [ORConcurrency idxIntInformer];
+   return _failLabel;
 }
 -(id<CPPortal>) portal
 {
-   return [_solver portal];
+   return _portal;
+}
+-(ORInt) nbFailures
+{
+   return [_search nbFailures];
+}
+-(id<CPEngine>) engine
+{
+   return _engine;
+}
+-(id<ORExplorer>) explorer
+{
+   return _search;
 }
 -(id<ORTracer>) tracer
 {
-   return [_solver tracer];
+   // pvh: not sure what this does
+   assert(false);
+   return nil;
 }
 -(id<ORSolution>)  solution
 {
-   return [_solver solution];
+   // pvh: will have to change
+   return [_engine solution];
 }
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
-   return [_solver add: c];
+   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
+   ORStatus status = [_engine add: c];
+   if (status == ORFailure)
+      [_search fail];
 }
 -(void) add: (id<ORConstraint>) c consistency:(ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
-   return [_solver add: c consistency: cons];
+   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
+   ORStatus status = [_engine add: c];
+   if (status == ORFailure)
+      [_search fail];
 }
-// PVH: These guys will need to go
+ // PVH: These guys will need to go
 -(id<ORObjective>) minimize: (id<ORIntVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method not useful in wrapper"];
@@ -106,122 +209,170 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method not useful in wrapper"];  
 }
+-(void) close
+{
+   if (!_closed) {
+      _closed = true;
+      if ([_engine close] == ORFailure)
+         [_search fail];
+      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine allVars]];
+      [ORConcurrency pumpEvents];
+   }
+}
 
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
-   return [_solver addHeuristic:h];
+   [_hSet push: h];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver label: [var dereference] with: val];
+   ORStatus status = [_engine label: var with: val];
+   if (status == ORFailure) {
+      [_failLabel notifyWith:var andInt:val];
+      [_search fail];
+   }
+   [_returnLabel notifyWith:var andInt:val];
+   [ORConcurrency pumpEvents];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver diff: [var dereference] with: val];
+   ORStatus status = [_engine diff: var with: val];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver lthen: [var dereference] with: val];
+   ORStatus status = [_engine lthen: var with: val];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+   [ORConcurrency pumpEvents];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [_solver gthen: [var dereference] with: val];
+   ORStatus status = [_engine gthen: var with:val];
+   if (status == ORFailure) {
+      [_search fail];
+   }
+   [ORConcurrency pumpEvents];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   return [_solver restrict: [var dereference] to: S];
+   ORStatus status = [_engine restrict: var to: S];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
 }
--(void) solve: (ORClosure) body
+-(void) solve: (ORClosure) search
 {
-   return [_solver solve: body];
+   if (_objective != nil) {
+      [_search optimizeModel: self using: search];
+      printf("Optimal Solution: %d \n",[_objective primalBound]);
+   }
+   else {
+      [_search solveModel: self using: search];
+   }
 }
--(void) solveAll: (ORClosure) body
+-(void) solveAll: (ORClosure) search
 {
-   return [_solver solveAll: body];
+   [_search solveAllModel: self using: search];
 }
--(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   return [_solver forall: S orderedBy:o do: b];
+   [ORControl forall: S suchThat: nil orderedBy: order do: body];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   return [_solver forall: S suchThat: f orderedBy: o do: b ];
+   [ORControl forall: S suchThat: filter orderedBy: order do: body];  
 }
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
-   return [_solver try: left or: right];
+   [_search try: left or: right];   
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
-   return [_solver tryall: range suchThat: f in: body];
+   [_search tryall: range suchThat: filter in: body];   
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+-(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
-   return [_solver tryall: range suchThat: f in: body  onFailure: onFailure];
+   [_search tryall: range suchThat: filter in: body onFailure: onFailure];  
 }
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRestart
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
-   return [_solver repeat: body onRepeat: onRestart];
+   [_search repeat: body onRepeat: onRepeat until: nil];   
 }
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
-   return [_solver repeat: body onRepeat: onRestart until: isDone];
+   [_search repeat: body onRepeat: onRepeat until: isDone];   
 }
 -(void) once: (ORClosure) cl
 {
-   return [_solver once: cl];
+   [_search once: cl];   
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
-   return [_solver limitSolutions: maxSolutions in: cl];
+   [_engine clearStatus];
+   [_search limitSolutions: maxSolutions in: cl];
 }
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
-   return [_solver limitCondition: condition in: cl];
+   [_engine clearStatus];
+   [_search limitCondition: condition in:cl];
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   return [_solver limitDiscrepancies:maxDiscrepancies in: cl];
+   [_engine clearStatus];
+   [_search limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
-   return [_solver limitFailures: maxFailures in:cl];
+   [_engine clearStatus];
+   [_search limitFailures: maxFailures in: cl];
+   
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
-   return [_solver limitTime: maxTime in: cl];
+   [_engine clearStatus];
+   [_search limitTime: maxTime in: cl];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   return [_solver nestedSolve: body onSolution: onSolution onExit: onExit];
+   [_search nestedSolve: body onSolution: onSolution onExit: onExit
+                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]]; 
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution
 {
-   return [_solver nestedSolve: body onSolution: onSolution];
+   [_search nestedSolve: body onSolution: onSolution onExit:nil
+                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 -(void) nestedSolve: (ORClosure) body
 {
-   return [_solver nestedSolve: body];
+   [_search nestedSolve: body onSolution:nil onExit:nil
+                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   return [_solver nestedSolveAll: body onSolution: onSolution onExit: onExit];
+   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit
+                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution
 {
-   return [_solver nestedSolveAll: body onSolution: onSolution];
+   [_search nestedSolveAll: body onSolution: onSolution onExit:nil
+                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 -(void) nestedSolveAll: (ORClosure) body
 {
-   return [_solver nestedSolveAll: body];
+   [_search nestedSolveAll: body onSolution:nil onExit:nil
+                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
 -(void) trackObject: (id) object
 {
-   [_solver trackObject:object];
+   [_engine trackObject:object];   
 }
 -(void) trackVariable: (id) object
 {
-   [_solver trackVariable: object];
+   [_engine trackObject:object];  
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -235,13 +386,42 @@
    id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
    while (![x bound]) {
       ORInt m = [x min];
-      [_solver try: ^() {
-         [_solver label: x with:m];
+      [_search try: ^() {
+         [self label: x with: m];
       }
       or: ^() {
-         [_solver diff: x with:m];
+         [self diff: x with: m];
       }];
    }
 }
 
+@end
+
+@implementation CPInformerPortalI
+-(CPInformerPortalI*) initCPInformerPortalI: (ORCPSolver*) cp
+{
+   self = [super init];
+   _cp = cp;
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(id<ORIdxIntInformer>) retLabel
+{
+   return [_cp retLabel];
+}
+-(id<ORIdxIntInformer>) failLabel
+{
+   return [_cp failLabel];
+}
+-(id<ORInformer>) propagateFail
+{
+   return [[_cp engine] propagateFail];
+}
+-(id<ORInformer>) propagateDone
+{
+   return [[_cp engine] propagateDone];
+}
 @end
