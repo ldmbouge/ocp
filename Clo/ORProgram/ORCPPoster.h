@@ -16,9 +16,12 @@
 #import <objcp/CPSolver.h>
 
 
-@interface ORCPConcretizer  : NSObject<ORVisitor>
--(ORCPConcretizer*) initORCPConcretizer: (id<CPSolver>) solver;
+@interface ORCPPoster  : NSObject<ORVisitor>
+-(ORCPPoster*) initORCPPoster: (id<CPSolver>) solver;
 -(void) dealloc;
+-(void) visitTrailableInt:(id<ORTrailableInt>)v;
+-(void) visitIntSet:(id<ORIntSet>)v;
+-(void) visitIntRange:(id<ORIntRange>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
@@ -26,7 +29,7 @@
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
--(void) visitPacking: (id<ORPacking>) cstr;
+-(void) visitBinPacking: (id<ORBinPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;

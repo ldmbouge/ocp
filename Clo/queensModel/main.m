@@ -10,6 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
 #import <ORModeling/ORModelTransformation.h>
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
@@ -20,6 +22,9 @@
 #import "objcp/CPFactory.h"
 #import "objcp/CPObjectQueue.h"
 #import "objcp/CPLabel.h"
+
+
+// PVH Need to release the CPProgram
 
 int main (int argc, const char * argv[])
 {
@@ -37,10 +42,26 @@ int main (int argc, const char * argv[])
    [model add: [ORFactory alldifferent: xp]];
    [model add: [ORFactory alldifferent: xn]];
    
-    id<ORModelTransformation> linearizer = [ORFactory createLinearizer];
-    id<ORModel> linearModel = [linearizer apply: model];
-    NSLog(@"-----------------------------------------------------------------------");
-    NSLog([linearModel description]);
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
+   [cp solveAll:
+    ^() {
+       [cp labelArray: x];
+       for(int i = 1; i <= n; i++)
+          printf("%d ",[x[i] value]);
+       printf("\n");
+//       [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+       [nbSolutions incr];
+    }
+    ];
+   printf("GOT %d solutions\n",[nbSolutions value]);
+   NSLog(@"Solver status: %@\n",cp);
+   NSLog(@"Quitting");
+   NSLog(@"SOLUTION IS: %@",x);
+
+//    id<ORModelTransformation> linearizer = [ORFactory createLinearizer];
+//    id<ORModel> linearModel = [linearizer apply: model];
+//    NSLog(@"-----------------------------------------------------------------------");
+//    NSLog([linearModel description]);
     
     //id<CPSolver> cp = [ORFactory createCPProgram: linearModel];
     //id<CPHeuristic> heur = [CPFactory createFF: cp];

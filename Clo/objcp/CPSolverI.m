@@ -82,9 +82,8 @@
 -(id) init
 {
    self = [super init];
-   _trail = [[ORTrailI alloc] init];
-   _engine = [[CPEngineI alloc] initSolver: _trail];
-   _pool = [[NSAutoreleasePool alloc] init];
+   _trail = [ORFactory trail];
+   _engine = [CPFactory engine: _trail];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
@@ -98,7 +97,6 @@
    self = [super init];
    _engine = [fdm retain];
    _trail = [[fdm trail] retain];
-   _pool = [[NSAutoreleasePool alloc] init];
    _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
@@ -283,7 +281,6 @@
    self = [super init];
    _engine = [[aDecoder decodeObject] retain];
    _trail  = [[aDecoder decodeObject] retain];
-   _pool = [[NSAutoreleasePool alloc] init];
    return self;
 }
 -(void) close
@@ -325,7 +322,7 @@
 {
    [_engine trackVariable:object];
 }
--(void) label: (ORIntVarI*) var with: (ORInt) val
+-(void) label: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_engine label: var with: val];
    if (status == ORFailure) {
@@ -335,31 +332,31 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents]; 
 }
--(void) diff: (ORIntVarI*) var with: (ORInt) val
+-(void) diff: (CPIntVarI*) var with: (ORInt) val
 {
    ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
 }
--(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+-(void) lthen: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine lthen:var with: val];
+   ORStatus status = [_engine lthen: var with: val];
    if (status == ORFailure) {
       [_search fail];
    }
    [ORConcurrency pumpEvents];
 }
--(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+-(void) gthen: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine gthen:var with:val];
+   ORStatus status = [_engine gthen: var with:val];
    if (status == ORFailure) {
       [_search fail];
    }
    [ORConcurrency pumpEvents];
 }
 
--(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
+-(void) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
     ORStatus status = [_engine restrict: var to: S];
     if (status == ORFailure)

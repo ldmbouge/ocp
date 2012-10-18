@@ -191,6 +191,7 @@
 
 @implementation ORIdArrayI
 {
+   id<ORTracker>  _tracker;
    id*              _array;
    ORInt              _low;
    ORInt               _up;
@@ -218,6 +219,14 @@
    _array += _low;
    free(_array);
    [super dealloc];
+}
+-(void) setImpl:(id)impl
+{
+   _impl = impl;
+}
+-(id) impl
+{
+   return _impl;
 }
 -(id) at: (ORInt) value
 {

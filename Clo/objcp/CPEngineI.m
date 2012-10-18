@@ -247,7 +247,7 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 @end
 
 @implementation CPEngineI
--(CPEngineI*) initSolver: (id<ORTrail>) trail
+-(CPEngineI*) initEngine: (id<ORTrail>) trail
 {
    self = [super init];
    _trail = trail;

@@ -9,13 +9,14 @@
  
  ***********************************************************************/
 
+#import "ORProgram.h"
 #import "CPConcretizer.h"
+#import "ORCPConcretizer.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPSolver.h"
 //#import "ORVarI.h"
-
 
 @implementation ORCPConcretizer
 {
@@ -32,9 +33,26 @@
    [_solver release];
    [super dealloc];
 }
+
+-(void) visitTrailableInt:(id<ORTrailableInt>)v
+{
+
+}
+-(void) visitIntSet:(id<ORIntSet>)v
+{
+   
+}
+-(void) visitIntRange:(id<ORIntRange>)v
+{
+   
+}
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   printf("visitIntVar \n");
+   // PVH: We need to use concrete variable in the library
+   if ([v impl] == NULL) {
+      id<CPIntVar> cv = [CPFactory intVar: _solver domain: [v domain]];
+      [v setImpl: cv];
+   }
 }
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
@@ -42,11 +60,25 @@
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
-   
+   if ([v impl] == NULL) {   
+      id<ORIntVar> mBase = [v base];
+      ORInt a = [v scale];
+      ORInt b = [v shift];
+      id<CPIntVar> cv = [CPFactory intVar:[mBase dereference] scale:a shift:b];
+      [v setImpl: cv];
+   }
 }
 -(void) visitIdArray: (id<ORIdArray>) v
 {
-   
+   if ([v impl] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORIdArray> dx = [ORFactory idArray: _solver range: R];
+      ORInt low = R.low;
+      ORInt up = R.up;
+      for(ORInt i = low; i <= up; i++)
+         dx[i] = [v[i] dereference];
+      [v setImpl: dx];
+   }
 }
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
@@ -54,7 +86,12 @@
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   
+   if ([cstr impl] == NULL) {
+      id<ORIntVarArray> ax = [cstr array];
+      [ax visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _solver over: [ax impl]];
+      [cstr setImpl: concreteCstr];
+   }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {

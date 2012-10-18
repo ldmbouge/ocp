@@ -28,11 +28,16 @@ typedef enum {
 
 @protocol ORObject <NSObject>
 -(id) dereference;
+-(void) setImpl: (id) impl;
+-(id) impl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
 @interface NSObject (Concretization)
 -(id) dereference;
+-(void) setImpl: (id) impl;
+-(id) impl;
+-(void) visit: (id<ORVisitor>) visitor;
 @end;
 
 @protocol ORInteger <ORObject,ORExpr>

@@ -9,7 +9,32 @@
  
  ***********************************************************************/
 
+#import "ORProgram.h"
 #import "ORCPSolver.h"
+#import <objcp/CPSolver.h>
+#import <objcp/CPLabel.h>
+
+
+// TODO by PVH 13/10/2012
+
+// 1. replace the id<CPSolver> by the engine and the search and start replacing the methods one at a time
+//    this does the delegation and the dispatching to the right place
+// 2. Make sure that the portal and heuristic stack are moved here. This is the proper place
+//    note that this includes both the protocols and the interfaces/implementations
+// 3. Remove the protocol and interface for CPSolver
+// 4. Rename ORCPSolver into CPSolver
+// 5. Clean les ORIntVar et les dereferences de objcp
+
+// once these steps are done, I have deconnected the search from objcp
+
+// TODO after that
+
+// 6. Try a model with an objective function to understand that aspect
+// 7. Allows the concretization to create a semantic DFS solver
+// 8. Clean tous les warnings
+
+
+
 
 // PVH: all methods on modeling objects must dereference
 // PVH: this is also true for label qui doit etre ici maintenant
@@ -18,10 +43,12 @@
 // PVH: Need to reorganize the CPSolver class: DFS, notDFTSem, PAR
 // PVH: Also need to remove methods that are now in the model
 
+
+
 @implementation ORCPSolver {
    id<CPSolver> _solver;
 }
--(id<CPSolver>) initORCPSolver: (id<CPSolver>) solver
+-(id<CPProgram>) initORCPSolver: (id<CPSolver>) solver
 {
    self = [super init];
    _solver = [solver retain];
@@ -195,6 +222,26 @@
 -(void) trackVariable: (id) object
 {
    [_solver trackVariable: object];
+}
+-(void) labelArray: (id<ORIntVarArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   for(ORInt i = low; i <= up; i++)
+      [self label: x[i]];
+}
+-(void) label: (id<ORIntVar>) mx
+{
+   id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
+   while (![x bound]) {
+      ORInt m = [x min];
+      [_solver try: ^() {
+         [_solver label: x with:m];
+      }
+      or: ^() {
+         [_solver diff: x with:m];
+      }];
+   }
 }
 
 @end

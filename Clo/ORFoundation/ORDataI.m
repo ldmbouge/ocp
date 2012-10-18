@@ -18,6 +18,20 @@
 {
    return self;
 }
+-(void) setImpl: (id) impl
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
+}
+-(id) impl
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "impl: No implementation in this object"];
+   return nil;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   NSLog(@"%@",self);
+   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
+}
 @end;
 
 @implementation ORIntegerI

@@ -10,6 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORUtilities/ORTypes.h"
+#import "ORFoundation/ORData.h"
 #import "ORFoundation/ORSet.h"
 #import "ORFoundation/ORAVLTree.h"
 @protocol ORVisitor;
@@ -30,6 +32,7 @@
 -(void)visit:(id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(void)visit:(id<ORVisitor>)v;
 @end
 
 @interface ORIntRangeI : NSObject<ORIntRange> 
@@ -45,4 +48,5 @@
 //-(id<IntEnumerator>) tailableEnumerator;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(void)visit:(id<ORVisitor>)v;
 @end
