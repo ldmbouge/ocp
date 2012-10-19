@@ -554,7 +554,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    if (bound(_x))
       removeDom(_y,minDom(_x)-_c);
    else
-      removeDom(_x,minDom(_y)-_c);
+      removeDom(_x,minDom(_y)+_c);
 }
 -(NSString*)description
 {

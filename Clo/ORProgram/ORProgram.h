@@ -9,7 +9,6 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>

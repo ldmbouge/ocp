@@ -9,19 +9,18 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+
 #import <ORModeling/ORModeling.h>
-#import "ORConcretizer.h"
 #import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import "../ORProgram/ORConcretizer.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
+
+#import <ORProgram/ORConcretizer.h>
+
+#import <objcp/CPSolver.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPLabel.h>
 
 
 // PVH Need to release the CPProgram
@@ -31,7 +30,7 @@ int main (int argc, const char * argv[])
    ORInt n = 8;
    id<ORModel> model = [ORFactory createModel];
    
-   id<ORIntRange> R = RANGE(model,1,n);
+   id<ORIntRange> R = RANGE(model,0,n-1);
    id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
    
    id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
@@ -46,7 +45,7 @@ int main (int argc, const char * argv[])
    [cp solveAll:
     ^() {
        [cp labelArray: x];
-       for(int i = 1; i <= n; i++)
+       for(int i = 0; i < n; i++)
           printf("%d ",[x[i] value]);
        printf("\n");
 //       [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];

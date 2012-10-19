@@ -203,7 +203,18 @@
    _c = c;
    return self;   
 }
-
+-(id<ORIntVar>)x
+{
+   return _x;
+}
+-(id<ORIntVar>)y
+{
+   return _y;
+}
+-(ORInt)c
+{
+   return _c;
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

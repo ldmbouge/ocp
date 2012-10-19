@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "ORProgram.h"
+#import <ORProgram/ORProgram.h>
 
 
 @interface ORCPSolver : NSObject<CPProgram>

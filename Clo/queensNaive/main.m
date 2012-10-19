@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORConcretizer.h>
 #import <ORProgram/ORConcretizer.h>
 
 #import "objcp/CPConstraint.h"
@@ -36,7 +36,7 @@ int main (int argc, const char * argv[])
    id<ORIntVarArray> x = [ORFactory intVarArray:mdl range:R domain: R];
    for(ORUInt i =0;i < n; i++) {
       for(ORUInt j=i+1;j< n;j++) {
-         [mdl add: [x[i] neq:[x[j] plusi:0]]];
+         [mdl add: [x[i] neq:x[j]]];
          [mdl add: [x[i] neq:[x[j] plusi:(i-j)]]];
          [mdl add: [x[i] neq:[x[j] plusi:(j-i)]]];
       }
@@ -45,13 +45,12 @@ int main (int argc, const char * argv[])
    id<ORModel> fm = [flat apply:mdl];
    NSLog(@"initial model: %@",mdl);
    NSLog(@"flat    model: %@",fm);
-   id<CPSolver> cp = [ORFactory createCPProgram:fm];
-   id<CPHeuristic> h = [CPFactory createIBS:cp];
+   id<CPProgram> cp = [ORFactory createCPProgram:fm];
+   
    [cp solveAll:
     ^() {
-      [CPLabel array: x ];
-      [CPLabel heuristic:h];
-       NSLog(@"LEVEL START: %d",[[cp tracer] level]);
+      [cp labelArray: x ];
+/*       NSLog(@"LEVEL START: %d",[[cp tracer] level]);
        for(ORInt i=0;i<n;i++) {
           while (![x[i] bound]) {
              ORInt min = [x[i] min];
@@ -64,8 +63,13 @@ int main (int argc, const char * argv[])
                 //[cp add:[x[i] neqi: min]];
              }];
           }
+       }*/
+       @autoreleasepool {
+          NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+          for(int i = 0; i < n; i++)
+             [buf appendFormat:@"%d ",[x[i] value]];
+          NSLog(@"sol [%d]: %@\n",[nbSolutions value],buf);
        }
-       NSLog(@"%@sol [%d]: %@ THREAD: %p || %d ||\n",indent(n),[nbSolutions value],x,[NSThread currentThread],[[cp tracer] level]);
       [nbSolutions incr];
     }
     ];

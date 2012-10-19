@@ -46,7 +46,6 @@
 
 +(id<CPConstraint>) circuit: (id<ORIntVarArray>) x;
 +(id<CPConstraint>) nocycle: (id<ORIntVarArray>) x;
-+(id<CPConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
 +(id<CPConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
 +(id<CPConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
 +(id<CPConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;

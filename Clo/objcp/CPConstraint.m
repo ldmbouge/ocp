@@ -125,52 +125,9 @@
    return o;
 }
 
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
-{
-   id<ORIntRange> R = [binSize range];
-   id<ORIntVarArray> load = [CPFactory intVarArray: [x solver] range: R];
-   ORInt low = [R low];
-   ORInt up = [R up];
-   for(ORInt i = low; i <= up; i++)
-      load[i] = [CPFactory intVar: [x solver] domain: RANGE([x tracker],0,[binSize at:i])];
-   id<ORConstraint> o = [CPFactory packing: x itemSize: itemSize load: load];  // [ldm] this already tracks o.
-   return o;
-}
-
-typedef struct _CPPairIntId {
-   ORInt        _int;
-   id           _id;
-} CPPairIntId;
-
-int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
-{
-   return r2->_int - r1->_int;
-}
-
-+(void) sortIntVarInt: (id<ORIntVarArray>) x size: (id<ORIntArray>) size sorted: (id<ORIntVarArray>*) sx sortedSize: (id<ORIntArray>*) sortedSize
-{
-   id<ORIntRange> R = [x range];
-   int nb = [R up] - [R low] + 1;
-   ORInt low = [R low];
-   ORInt up = [R up];
-   CPPairIntId* toSort = (CPPairIntId*) alloca(sizeof(CPPairIntId) * nb);
-   int k = 0;
-   for(ORInt i = low; i <= up; i++)
-      toSort[k++] = (CPPairIntId){[size at: i],x[i]};
-   qsort(toSort,nb,sizeof(CPPairIntId),(int(*)(const void*,const void*)) &compareCPPairIntId);
-   
-   *sx = [CPFactory intVarArray: [x solver] range: R with: ^id<ORIntVar>(int i) { return toSort[i - low]._id; }];
-   *sortedSize = [CPFactory intArray:[x solver] range: R with: ^ORInt(ORInt i) { return toSort[i - low]._int; }];
-}
-
 +(id<ORConstraint>) packing: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<ORIntArray>) load
 {
-   id<ORIntVarArray> sortedItem;
-   id<ORIntArray> sortedSize;
-   [CPFactory sortIntVarInt: x size: itemSize sorted: &sortedItem sortedSize: &sortedSize];
-   //   NSLog(@"%@",sortedItem);
-   //   NSLog(@"%@",sortedSize);
-   id<ORConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: sortedItem itemSize: sortedSize binSize: load];
+   id<ORConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: x itemSize: itemSize binSize: load];
    [[x tracker] trackObject: o];
    return o;
 }

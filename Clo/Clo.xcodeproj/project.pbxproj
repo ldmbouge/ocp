@@ -93,7 +93,7 @@
 		5B68119A161F99C700F4480F /* ORCPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5E9161F2DB100DB249A /* ORCPConcretizer.m */; };
 		5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */; };
 		5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
-		5B68119D161F99C700F4480F /* ORConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FA161F5FCC00C7298D /* ORConcretizer.h */; };
+		5B68119D161F99C700F4480F /* ORConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FA161F5FCC00C7298D /* ORConcretizer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B68119E161F99C700F4480F /* ORConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORConcretizer.m */; };
 		5B68119F161F99C700F4480F /* ORCPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* ORCPSolver.h */; };
 		5B6811A0161F99C700F4480F /* ORCPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* ORCPSolver.m */; };
@@ -282,6 +282,7 @@
 		5B920ED415A4331A00AD0820 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B92975713A01F45002AA188 /* CPValueConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B92975513A01F45002AA188 /* CPValueConstraint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B92975813A01F45002AA188 /* CPValueConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B92975613A01F45002AA188 /* CPValueConstraint.m */; };
+		5B94406C16319096006528DE /* ORProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B681189161F98FB00F4480F /* ORProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B95F0A415A26C2B00C0B2D8 /* mpl.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5B95F0A315A26C2B00C0B2D8 /* mpl.txt */; };
 		5B9ABCF11391329D000997E5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B9ABCFB1391329D000997E5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B9ABCF91391329D000997E5 /* InfoPlist.strings */; };
@@ -4124,6 +4125,7 @@
 				5B6811A1161F99C700F4480F /* ORParCPConcretizer.h in Headers */,
 				B1C4F446161F9CBB0010A5C8 /* ORCPProgramI.h in Headers */,
 				B1A8E4E1162A15F300F26748 /* ORCPPoster.h in Headers */,
+				5B94406C16319096006528DE /* ORProgram.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

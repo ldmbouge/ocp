@@ -133,9 +133,20 @@
 {
    
 }
--(void) visitNEqual: (id<ORNEqual>)c
+-(id<ORVar>)concreteVar:(id<ORIntVar>)x
 {
-   
+   [x visit:self];
+   return [x impl];
+}
+
+-(void) visitNEqual: (id<ORNEqual>)cstr
+{
+   if ([cstr impl] == NULL) {
+      id<ORVar> x = [self concreteVar:[cstr x]];
+      id<ORVar> y = [self concreteVar:[cstr y]];
+      id<CPConstraint> concrete = [CPFactory notEqual:x to:y plus:[cstr c]];
+      [cstr setImpl: concrete];
+   }
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
