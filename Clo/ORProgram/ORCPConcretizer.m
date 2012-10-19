@@ -34,6 +34,18 @@
    [super dealloc];
 }
 
+-(id)concreteVar:(id<ORIntVar>)x
+{
+   [x visit:self];
+   return [x impl];
+}
+
+-(id)concreteArray:(id<ORIntVarArray>)x
+{
+   [x visit:self];
+   return [x impl];
+}
+
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
 
@@ -50,7 +62,7 @@
 {
    // PVH: We need to use concrete variable in the library
    if ([v impl] == NULL) {
-      id<CPIntVar> cv = [CPFactory intVar: _solver domain: [v domain]];
+      id<CPIntVar> cv = [CPFactory intVar: [_solver engine] domain: [v domain]];
       [v setImpl: cv];
    }
 }
@@ -64,7 +76,7 @@
       id<ORIntVar> mBase = [v base];
       ORInt a = [v scale];
       ORInt b = [v shift];
-      id<CPIntVar> cv = [CPFactory intVar:[mBase dereference] scale:a shift:b];
+      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>)[mBase dereference] scale:a shift:b];
       [v setImpl: cv];
    }
 }
@@ -87,9 +99,8 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    if ([cstr impl] == NULL) {
-      id<ORIntVarArray> ax = [cstr array];
-      [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _solver over: [ax impl]];
+      id<CPIntVarArray> ax = [self concreteArray:[cstr array]];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _solver over: ax];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -133,17 +144,12 @@
 {
    
 }
--(id<ORVar>)concreteVar:(id<ORIntVar>)x
-{
-   [x visit:self];
-   return [x impl];
-}
 
 -(void) visitNEqual: (id<ORNEqual>)cstr
 {
    if ([cstr impl] == NULL) {
-      id<ORVar> x = [self concreteVar:[cstr x]];
-      id<ORVar> y = [self concreteVar:[cstr y]];
+      id<CPIntVar> x = [self concreteVar:[cstr x]];
+      id<CPIntVar> y = [self concreteVar:[cstr y]];
       id<CPConstraint> concrete = [CPFactory notEqual:x to:y plus:[cstr c]];
       [cstr setImpl: concrete];
    }

@@ -283,6 +283,7 @@
 		5B92975713A01F45002AA188 /* CPValueConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B92975513A01F45002AA188 /* CPValueConstraint.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B92975813A01F45002AA188 /* CPValueConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B92975613A01F45002AA188 /* CPValueConstraint.m */; };
 		5B94406C16319096006528DE /* ORProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B681189161F98FB00F4480F /* ORProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B94406E1631AEBA006528DE /* CPVar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B94406D1631AEB9006528DE /* CPVar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B95F0A415A26C2B00C0B2D8 /* mpl.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5B95F0A315A26C2B00C0B2D8 /* mpl.txt */; };
 		5B9ABCF11391329D000997E5 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B9ABCFB1391329D000997E5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B9ABCF91391329D000997E5 /* InfoPlist.strings */; };
@@ -1924,6 +1925,7 @@
 		5B920EBE15A402A500AD0820 /* ORArrayI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORArrayI.m; sourceTree = "<group>"; };
 		5B92975513A01F45002AA188 /* CPValueConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPValueConstraint.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B92975613A01F45002AA188 /* CPValueConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPValueConstraint.m; sourceTree = "<group>"; };
+		5B94406D1631AEB9006528DE /* CPVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPVar.h; sourceTree = "<group>"; };
 		5B95F0A315A26C2B00C0B2D8 /* mpl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpl.txt; sourceTree = SOURCE_ROOT; };
 		5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		5B9ABCE4139131EE000997E5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -3350,6 +3352,7 @@
 				B1D3BCD615048D2A0036AB23 /* CPLabel.h */,
 				B1D3BCD715048D2B0036AB23 /* CPLabel.m */,
 				5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */,
+				5B94406D1631AEB9006528DE /* CPVar.h */,
 				5BEAD77E15ABBAFC00A012FE /* CPLexConstraint.m */,
 				5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */,
 				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
@@ -4182,6 +4185,7 @@
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */,
 				B1A453E615E594C800A6171E /* CPConcretizer.h in Headers */,
+				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

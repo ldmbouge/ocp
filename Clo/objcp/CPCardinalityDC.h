@@ -12,9 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPConstraintI.h>
+#import <objcp/CPSolver.h>
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 
--(CPCardinalityDC*) initCPCardinalityDC: (id<ORIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
+-(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
 -(void) dealloc;
 
 -(ORStatus) post;

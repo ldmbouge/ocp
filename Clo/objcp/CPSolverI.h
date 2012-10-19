@@ -65,8 +65,8 @@
 
 -(void)                  add: (id<ORConstraint>) c consistency:(ORAnnotation)cons;
 -(void)                  add: (id<ORConstraint>) c;
--(id<ORObjective>)  minimize: (id<ORIntVar>) x;
--(id<ORObjective>)  maximize: (id<ORIntVar>) x;
+-(id<ORObjective>)  minimize: (id<CPIntVar>) x;
+-(id<ORObjective>)  maximize: (id<CPIntVar>) x;
 -(void)         addHeuristic: (id<CPHeuristic>) h;
 
 -(void)                close;

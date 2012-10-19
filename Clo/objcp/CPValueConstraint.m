@@ -535,7 +535,7 @@
          _x[k] = [x objectAtIndex:k];
    }
    else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
-      id<ORIntVarArray> xa = x;
+      id<CPIntVarArray> xa = x;
       self = [super initCPCoreConstraint];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
@@ -687,7 +687,7 @@
          _x[k] = [x objectAtIndex:k];
    }
    else {
-      id<ORIntVarArray> xa = x;
+      id<CPIntVarArray> xa = x;
       self = [super initCPActiveConstraint:[[x solver] engine]];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

@@ -9,17 +9,17 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
 #import "CPBitDom.h"
+#import <objcp/CPSolver.h>
 
 @class CPIntVarI;
 @interface CPKnapsack : CPActiveConstraint<NSCoding> {
-   id<ORIntVarArray> _x;
+   id<CPIntVarArray> _x;
    id<ORIntArray>    _w;
    CPIntVarI*        _c;
 }
--(id) initCPKnapsackDC:(id<ORIntVarArray>)x weights:(id<ORIntArray>)w capacity:(id<ORIntVar>)cap;
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(id<CPIntVar>)cap;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

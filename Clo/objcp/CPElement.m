@@ -164,7 +164,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 @end
 
 @implementation CPElementVarBC
--(id) initCPElementBC: (id) x indexVarArray:(id<ORIntVarArray>)z equal:(id)y
+-(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y
 {
    self = [super initCPActiveConstraint: [((id<CPSolver>)[x solver]) engine]];
    _x = x;
@@ -217,7 +217,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 -(NSSet*)allVars
 {
    ORULong sz = [_z count] + 2;
-   id<ORIntVar>* t = alloca(sizeof(id<ORIntVar>)*sz);
+   id<CPIntVar>* t = alloca(sizeof(id<ORIntVar>)*sz);
    ORInt i = 0;
    for(ORInt k=[_z low];k<=[_z up];k++)
       t[i++] = [_z at: k];

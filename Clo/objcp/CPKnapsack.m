@@ -90,7 +90,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 #define SUPP(r,c) ((r)*2 + (c))
 
--(id) initCPKnapsackDC:(id<ORIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
 {
    self = [super initCPActiveConstraint:[[x solver] engine]];
    _priority = HIGHEST_PRIO - 2;

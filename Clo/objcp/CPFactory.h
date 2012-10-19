@@ -43,29 +43,22 @@ void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
-+(id<ORInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
++(id<CPIntVar>) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range;
++(id<CPIntVar>) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range;
++(id<CPIntVar>) intVar: (id<CPIntVar>) x shift: (ORInt) b;
++(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (ORInt) a;
++(id<CPIntVar>) intVar: (id<CPIntVar>) x scale: (ORInt) a shift:(ORInt) b;
++(id<CPIntVar>) boolVar: (id<CPEngine>)cp;
++(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
-+(id<CPIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range;
-+(id<CPIntVar>) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range;
-+(id<CPIntVar>) intVar: (id<ORIntVar>) x shift: (ORInt) b;
-+(id<CPIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a;
-+(id<CPIntVar>) intVar: (id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
-+(id<CPIntVar>) boolVar: (id<CPSolver>)cp;
-+(id<CPIntVar>) negate:(id<ORIntVar>)x;
-
-+(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
-+(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
-
-
-+(id<ORVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
++(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 
-+(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
-+(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
-+(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>) m;
++(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain;
++(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain;
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
++(id<CPIntVarArray>) flattenMatrix:(id<CPIntVarMatrix>) m;
 
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 

@@ -31,9 +31,11 @@
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [model visit: concretizer];
+   [concretizer release];
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
    [model visit: poster];
+   [poster release];
    
    return cpprogram;
 }

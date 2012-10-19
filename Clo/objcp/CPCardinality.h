@@ -30,7 +30,7 @@
     TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
 }
 -(id) initCardinalityCst:(CPEngineI*) m values:(ORRange)r low:(ORInt*)low array:(id)ax up:(ORInt*)up;
--(id) initCardinalityCst:(id<ORIntVarArray>) ax low: (id<ORIntArray>)low up: (id<ORIntArray>) up;
+-(id) initCardinalityCst:(id<CPIntVarArray>) ax low: (id<ORIntArray>)low up: (id<ORIntArray>) up;
 -(void)dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
