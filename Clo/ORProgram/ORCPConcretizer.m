@@ -134,28 +134,47 @@
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   
+   id<ORIntVar> left = [c left];
+   ORInt cst = [c cst];
+   [left visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory equalc: (id<CPIntVar>) [left dereference]  to: cst];
+   [c setImpl: concreteCstr];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   
+   id<ORIntVar> left = [c left];
+   ORInt cst = [c cst];
+   [left visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory notEqualc: (id<CPIntVar>) [left dereference]  to: cst];
+   [c setImpl: concreteCstr];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   
+   id<ORIntVar> left = [c left];
+   ORInt cst = [c cst];
+   [left visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory lEqualc: (id<CPIntVar>) [left dereference]  to: cst];
+   [c setImpl: concreteCstr];
 }
 -(void) visitEqual: (id<OREqual>)c
-{
-   
-}
--(void) visitNEqual: (id<ORNEqual>)c
 {
    id<ORIntVar> left = [c left];
    id<ORIntVar> right = [c right];
    ORInt cst = [c cst];
    [left visit: self];
    [right visit: self];
-   id<CPConstraint> concreteCstr = [CPFactory notEqual: [left dereference] to: [right dereference] plus: cst];
+   id<CPConstraint> concreteCstr = [CPFactory equal: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
+   [c setImpl: concreteCstr];
+   
+}
+-(void) visitNEqual: (id<ORNEqual>) c
+{
+   id<ORIntVar> left = [c left];
+   id<ORIntVar> right = [c right];
+   ORInt cst = [c cst];
+   [left visit: self];
+   [right visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory notEqual: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
    [c setImpl: concreteCstr];
    
 }
@@ -166,7 +185,7 @@
    ORInt cst = [c cst];
    [left visit: self];
    [right visit: self];
-   id<CPConstraint> concreteCstr = [CPFactory lEqual: [left dereference] to: [right dereference] plus: cst];
+   id<CPConstraint> concreteCstr = [CPFactory lEqual: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
    [c setImpl: concreteCstr];
 }
 -(void) visitEqual3: (id<OREqual3>)c

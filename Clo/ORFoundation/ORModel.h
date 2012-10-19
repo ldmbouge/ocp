@@ -24,21 +24,30 @@
 @end
 
 @protocol  OREqualc <ORConstraint>
+-(id<ORIntVar>) left;
+-(ORInt) cst;
 @end
 
 @protocol  ORNEqualc <ORConstraint>
+-(id<ORIntVar>) left;
+-(ORInt) cst;
+@end
+
+@protocol  ORLEqualc <ORConstraint>
+-(id<ORIntVar>) left;
+-(ORInt) cst;
+@end
+
+@protocol  OREqual <ORConstraint>
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
 @end
 
-@protocol  ORLEqualc <ORConstraint>
-@end
-
-@protocol  OREqual <ORConstraint>
-@end
-
 @protocol  ORNEqual <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt) cst;
 @end
 
 @protocol  ORLEqual <ORConstraint>

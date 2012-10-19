@@ -20,18 +20,19 @@
 
 // TODO by PVH 13/10/2012
 
-// 3. Remove the protocol and interface for CPSolver
-// 4. Rename ORCPSolver into CPSolver
-// 5. Clean les ORIntVar et les dereferences de objcp
+// 3. Remove the protocol and interface for CPSolver  --> Wait for LDM changes
+// 4. Rename ORCPSolver into CPSolver --> Wait for LDM changes
+// 5. Clean les ORIntVar et les dereferences de objcp --> LDM is doing
 
-// TODO after that
+// TODO after that 18/10/2012
 
-// 6. Try a model with an objective function to understand that aspect
-// 7. Allows the concretization to create a semantic DFS solver
-// 8. Clean tous les warnings
-
-
-
+//  7. Allows the concretization to create a semantic DFS solver
+//  8. Clean tous les warnings
+//  9. Clean Label and fill in
+// 10. Fill in all the constraints
+// 11. Clean the examples files
+// 12. Clean the explorerI.h file in an import somewhere
+// 13. Deal with the annotations; probably need a default annotation in each constraint
 
 // PVH: all methods on modeling objects must dereference
 // PVH: this is also true for label qui doit etre ici maintenant
@@ -231,19 +232,6 @@
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
-}
-// PVH: These guys must go
--(id<ORObjective>) minimize: (id<ORIntVar>) x
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method not useful in wrapper"];
-}
--(id<ORObjective>) maximize: (id<ORIntVar>) x
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method not useful in wrapper"];
-}
--(void) state
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method not useful in wrapper"];  
 }
 -(void) close
 {

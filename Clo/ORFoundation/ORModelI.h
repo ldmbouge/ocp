@@ -34,31 +34,40 @@
 
 @interface OREqualc : ORConstraintI<OREqualc>
 -(OREqualc*)initOREqualc:(id<ORIntVar>)x eqi:(ORInt)c;
+-(id<ORIntVar>) left;
+-(ORInt) cst;
 @end
 
 @interface ORNEqualc : ORConstraintI<ORNEqualc>
 -(ORNEqualc*)initORNEqualc:(id<ORIntVar>)x neqi:(ORInt)c;
+-(id<ORIntVar>) left;
+-(ORInt) cst;
 @end
 
 @interface ORLEqualc : ORConstraintI<ORLEqualc>
 -(ORLEqualc*)initORLEqualc:(id<ORIntVar>)x leqi:(ORInt)c;
+-(id<ORIntVar>) left;
+-(ORInt) cst;
 @end
 
 @interface OREqual : ORConstraintI<OREqual>
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c;
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c note:(ORAnnotation)n;
+-(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c;
+-(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c note: (ORAnnotation) n;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt) cst;
 @end
 
 @interface ORNEqual : ORConstraintI<ORNEqual>
--(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y;
--(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y plus:(ORInt)c;
+-(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y;
+-(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
 @end
 
 @interface ORLEqual : ORConstraintI<ORLEqual>
--(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c;
+-(ORLEqual*)initORLEqual: (id<ORIntVar>) x leq: (id<ORIntVar>) y plus: (ORInt) c;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
@@ -67,6 +76,9 @@
 @interface OREqual3 : ORConstraintI<OREqual3>
 -(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z;
 -(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n;
+-(id<ORIntVar>) a1;
+-(id<ORIntVar>) a2;
+-(id<ORIntVar>) a3;
 @end
 
 @interface ORMult : ORConstraintI<ORMult>

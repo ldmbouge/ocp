@@ -98,6 +98,14 @@
 {
    [v visitEqualc:self];
 }
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
+}
 @end
 
 @implementation ORNEqualc {
@@ -121,6 +129,14 @@
 {
    [v visitNEqualc:self];
 }
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
+}
 @end
 
 @implementation ORLEqualc {
@@ -143,6 +159,14 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitLEqualc:self];
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
 }
 @end
 
@@ -180,6 +204,19 @@
 {
    [v visitEqual:self];
 }
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+
 @end
 
 @implementation ORNEqual {
@@ -297,6 +334,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitEqual3:self];
+}
+-(id<ORIntVar>) a1
+{
+   return _x;
+}
+-(id<ORIntVar>) a2
+{
+   return _y;
+}
+-(id<ORIntVar>) a3
+{
+   return _z;
 }
 @end
 
