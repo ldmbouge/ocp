@@ -635,6 +635,18 @@
 {
    [v visitReifyEqualc:self];
 }
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
+}
 @end
 
 @implementation ORReifyNEqualc {
@@ -659,6 +671,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitReifyNEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
 }
 @end
 
@@ -687,6 +711,22 @@
 {
    [v visitReifyEqual:self];
 }
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(id<ORIntVar>) y
+{
+   return _y;
+}
+-(ORAnnotation) annotation
+{
+   return _n;
+}
 @end
 
 @implementation ORReifyNEqual {
@@ -714,6 +754,22 @@
 {
    [v visitReifyNEqual:self];
 }
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(id<ORIntVar>) y
+{
+   return _y;
+}
+-(ORAnnotation) annotation
+{
+   return _n;
+}
 @end
 
 @implementation ORReifyLEqualc {
@@ -738,6 +794,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitReifyLEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
 }
 @end
 
@@ -766,6 +834,22 @@
 {
    [v visitReifyLEqual:self];
 }
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(id<ORIntVar>) y
+{
+   return _y;
+}
+-(ORAnnotation) annotation
+{
+   return _n;
+}
 @end
 
 @implementation ORReifyGEqualc {
@@ -790,6 +874,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitReifyGEqualc:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
 }
 @end
 
@@ -817,6 +913,22 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitReifyGEqual:self];
+}
+-(id<ORIntVar>) b
+{
+   return _b;
+}
+-(id<ORIntVar>) x
+{
+   return _x;
+}
+-(id<ORIntVar>) y
+{
+   return _y;
+}
+-(ORAnnotation) annotation
+{
+   return _n;
 }
 @end
 
@@ -1267,6 +1379,19 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> %@ = knapsack(%@,%@,%@)>",[self class],self,_impl,_x,_w,_c];
    return buf;
 }
+-(id<ORIntVarArray>) item
+{
+   return _x;
+}
+-(id<ORIntArray>) weight
+{
+   return _w;
+}
+-(id<ORIntVar>) capacity
+{
+   return _c;
+}
+
 @end
 
 @implementation ORObjectiveFunctionI

@@ -34,10 +34,12 @@
 // 12. Clean the explorerI.h file in an import somewhere
 // 13. Deal with the annotations; probably need a default annotation in each constraint
 
-// Questions
+// To Discuss with LDM
 
 //  1. Are we keeping expressions and concretizing them?
 //  2. The syntax of constraints is really different in the lib and in the model (not nice)
+//  3. Constraints missing in reification (and others)
+//  4. Annotations are inconsistent
 
 // PVH: all methods on modeling objects must dereference
 // PVH: this is also true for label qui doit etre ici maintenant

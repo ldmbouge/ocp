@@ -30,9 +30,9 @@
 
 +(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(ORAnnotation)c;
 +(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neq: (ORInt) i;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leq: (ORInt) i;
-+(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geq: (ORInt) i;
++(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neqi: (ORInt) i;
++(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leqi: (ORInt) i;
++(id<CPConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geqi: (ORInt) i;
 
 +(id<CPConstraint>) sumbool: (id<ORIntVarArray>) x geq: (ORInt) c;
 +(id<CPConstraint>) sumbool: (id<ORIntVarArray>) x eq: (ORInt) c;

@@ -135,35 +135,60 @@
 @end
 
 @interface ORReifyNEqualc : ORConstraintI<ORReifyNEqualc>
--(ORReifyNEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neqi:(ORInt)c;
+-(ORReifyNEqualc*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neqi:(ORInt)c;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @interface ORReifyEqual : ORConstraintI<ORReifyEqual>
--(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @interface ORReifyNEqual : ORConstraintI<ORReifyNEqual>
--(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyNEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @interface ORReifyLEqualc : ORConstraintI<ORReifyLEqualc>
--(ORReifyLEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leqi:(ORInt)y;
+-(ORReifyLEqualc*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leqi:(ORInt)y;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @interface ORReifyLEqual : ORConstraintI<ORReifyLEqual>
--(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyLEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @interface ORReifyGEqualc : ORConstraintI<ORReifyGEqualc>
--(ORReifyGEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geqi:(ORInt)y;
+-(ORReifyGEqualc*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geqi:(ORInt)y;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @interface ORReifyGEqual : ORConstraintI<ORReifyGEqual>
--(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyGEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
--(ORSumBoolEqc*)initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(ORSumBoolEqc*) initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
 @end
 
 @interface ORSumBoolLEqc : ORConstraintI<ORSumBoolLEqc>
@@ -238,6 +263,9 @@
 
 @interface ORKnapsackI : ORConstraintI<ORKnapsack>
 -(ORKnapsackI*)initORKnapsackI:(id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) weight;
+-(id<ORIntVar>) capacity;
 @end
 
 @interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {

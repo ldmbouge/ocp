@@ -109,30 +109,58 @@
 @end
 
 @protocol ORReifyEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @protocol ORReifyNEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @protocol ORReifyEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORReifyNEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORReifyLEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @protocol ORReifyLEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORReifyGEqualc <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(ORInt)        cst;
 @end
 
 @protocol ORReifyGEqual <ORReify>
+-(id<ORIntVar>) b;
+-(id<ORIntVar>) x;
+-(id<ORIntVar>) y;
+-(ORAnnotation) annotation;
 @end
-
 @protocol ORSumBoolEqc <ORConstraint>
+
 @end
 
 @protocol ORSumBoolLEqc <ORConstraint>
@@ -193,6 +221,9 @@
 @end
 
 @protocol ORKnapsack <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) weight;
+-(id<ORIntVar>) capacity;
 @end
 
 @protocol ORObjectiveFunction <ORObject>

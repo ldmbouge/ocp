@@ -261,21 +261,21 @@ int compareCPPairIntId(const CPPairIntId* r1,const CPPairIntId* r2)
    }
 }
 
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neq: (ORInt) i
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neqi: (ORInt) i
 {
     id<ORConstraint> o = [[CPReifyNotEqualcDC alloc] initCPReifyNotEqualcDC: b when: x neq: i];
     [[[x solver] engine] trackObject: o];
     return o;
 }
 
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leq: (ORInt) i
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leqi: (ORInt) i
 {
    id<ORConstraint> o = [[CPReifyLEqualDC alloc] initCPReifyLEqualDC: b when: x leq: i];
    [[[x solver] engine] trackObject: o];
    return o;
 }
 
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geq: (ORInt) i
++(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geqi: (ORInt) i
 {
    id<ORConstraint> o = [[CPReifyGEqualDC alloc] initCPReifyGEqualDC: b when: x geq: i];
    [[[x solver] engine] trackObject: o];
