@@ -203,7 +203,18 @@
    _c = c;
    return self;   
 }
-
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(ORInt) cst
+{
+   return _c;
+}
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -238,6 +249,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitLEqual:self];
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(ORInt) cst
+{
+   return _c;
 }
 @end
 

@@ -27,9 +27,11 @@
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
+-(id<ORObjectiveFunction>) objective;
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 -(id<ORSolution>)  solution;
+
 
 -(void)                 add: (id<ORConstraint>) c;
 -(void)                 add: (id<ORConstraint>) c consistency:(ORAnnotation) cons;

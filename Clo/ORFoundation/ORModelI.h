@@ -52,10 +52,16 @@
 @interface ORNEqual : ORConstraintI<ORNEqual>
 -(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y;
 -(ORNEqual*)initORNEqual:(id<ORIntVar>)x neq:(id<ORIntVar>)y plus:(ORInt)c;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt) cst;
 @end
 
 @interface ORLEqual : ORConstraintI<ORLEqual>
 -(ORLEqual*)initORLEqual:(id<ORIntVar>)x leq:(id<ORIntVar>)y plus:(ORInt)c;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt) cst;
 @end
 
 @interface OREqual3 : ORConstraintI<OREqual3>

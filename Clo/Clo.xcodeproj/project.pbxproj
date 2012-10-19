@@ -575,6 +575,7 @@
 		B1935C7315B90EF100107399 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1935C7515B910C700107399 /* slab.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1935C7415B90FFB00107399 /* slab.dat */; };
 		B1943A1115B0E34400E1771B /* rbg040a.tw in Copy Files */ = {isa = PBXBuildFile; fileRef = B1943A0F15B0E33C00E1771B /* rbg040a.tw */; };
+		B19624201630D4350079D2C8 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		B198E75A15D90768000BE64A /* ORTrailI.h in Headers */ = {isa = PBXBuildFile; fileRef = B198E75815D90768000BE64A /* ORTrailI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B198E75B15D90768000BE64A /* ORTrailI.m in Sources */ = {isa = PBXBuildFile; fileRef = B198E75915D90768000BE64A /* ORTrailI.m */; };
 		B19ABA0B146D68FE004EB77E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1244,6 +1245,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
 			remoteInfo = ORUtilities;
+		};
+		B196241E1630D41E0079D2C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
 		};
 		B19ABA16146D691A004EB77E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2328,6 +2336,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B19624201630D4350079D2C8 /* ORProgram.framework in Frameworks */,
 				5BAD116E161E63360014EBCB /* ORModeling.framework in Frameworks */,
 				5B7B477715F0E4BE005FF875 /* objcp.framework in Frameworks */,
 				5B7B477815F0E4BE005FF875 /* ORFoundation.framework in Frameworks */,
@@ -2853,9 +2862,9 @@
 				5B57E5E9161F2DB100DB249A /* ORCPConcretizer.m */,
 				B1A8E4DF162A15F300F26748 /* ORCPPoster.h */,
 				B1A8E4E0162A15F300F26748 /* ORCPPoster.m */,
+				5B681189161F98FB00F4480F /* ORProgram.h */,
 				B17832FE161F636A00C7298D /* ORCPSolver.h */,
 				B17832FF161F636A00C7298D /* ORCPSolver.m */,
-				5B681189161F98FB00F4480F /* ORProgram.h */,
 				B1C4F444161F9CBA0010A5C8 /* ORCPProgramI.h */,
 				B1C4F445161F9CBA0010A5C8 /* ORCPProgramI.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
@@ -4516,6 +4525,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				B196241F1630D41E0079D2C8 /* PBXTargetDependency */,
 				5BAD1170161E633E0014EBCB /* PBXTargetDependency */,
 				5B7B477B15F0E4C6005FF875 /* PBXTargetDependency */,
 				5B7B477D15F0E4C6005FF875 /* PBXTargetDependency */,
@@ -6501,6 +6511,11 @@
 			isa = PBXTargetDependency;
 			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
 			targetProxy = B1935C6F15B90EDE00107399 /* PBXContainerItemProxy */;
+		};
+		B196241F1630D41E0079D2C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = B196241E1630D41E0079D2C8 /* PBXContainerItemProxy */;
 		};
 		B19ABA17146D691A004EB77E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

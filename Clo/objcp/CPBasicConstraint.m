@@ -513,7 +513,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 -(id)initCPNotEqual:(id) x and:(id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -641,7 +641,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPLEqualBC
 -(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;

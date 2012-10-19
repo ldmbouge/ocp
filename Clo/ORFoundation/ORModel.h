@@ -27,6 +27,9 @@
 @end
 
 @protocol  ORNEqualc <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt) cst;
 @end
 
 @protocol  ORLEqualc <ORConstraint>
@@ -39,6 +42,9 @@
 @end
 
 @protocol  ORLEqual <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt) cst;
 @end
 
 @protocol  OREqual3 <ORConstraint>

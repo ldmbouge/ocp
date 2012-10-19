@@ -20,14 +20,14 @@
 
 @implementation ORFactory (Concretization)
 
-+(id<CPProgram>) createCPSolverWrapper
++(id<CPProgram>) createCPProgram
 {
    return [[ORCPSolver alloc] initORCPSolver];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   id<CPProgram> cpprogram = [ORFactory createCPSolverWrapper];
+   id<CPProgram> cpprogram = [ORFactory createCPProgram];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [model visit: concretizer];

@@ -27,6 +27,8 @@
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
+-(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;

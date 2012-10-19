@@ -63,6 +63,14 @@
 {
    
 }
+-(void) visitIntArray:(id<ORIntArray>) v
+{
+   
+}
+-(void) visitIntMatrix: (id<ORIntMatrix>) v
+{
+   
+}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    [_engine add: [cstr impl]];
@@ -85,11 +93,13 @@
 }
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
- 
+   [_engine add: [v impl]];
+   [_engine setObjective: [v impl]];
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v
 {
-   
+   [_engine add: [v impl]];
+   [_engine setObjective: [v impl]];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {

@@ -20,15 +20,9 @@
 
 // TODO by PVH 13/10/2012
 
-// 1. replace the id<CPSolver> by the engine and the search and start replacing the methods one at a time
-//    this does the delegation and the dispatching to the right place
-// 2. Make sure that the portal and heuristic stack are moved here. This is the proper place
-//    note that this includes both the protocols and the interfaces/implementations
 // 3. Remove the protocol and interface for CPSolver
 // 4. Rename ORCPSolver into CPSolver
 // 5. Clean les ORIntVar et les dereferences de objcp
-
-// once these steps are done, I have deconnected the search from objcp
 
 // TODO after that
 
@@ -209,6 +203,10 @@
 {
    return _search;
 }
+-(id<ORObjectiveFunction>) objective
+{
+   return [_engine objective];
+}
 -(id<ORTracer>) tracer
 {
    return _tracer;
@@ -221,8 +219,7 @@
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
-   // PVH: Need to distingusih between the add during search and the add which is done by the poster
-   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
+   // PVH: Only used during search
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
@@ -230,13 +227,12 @@
 -(void) add: (id<ORConstraint>) c consistency:(ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
-   // PVH: Need to distingusih between the add during search and the add which is done by the poster
-   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
+   // PVH: Only used during search
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
 }
- // PVH: These guys will need to go
+// PVH: These guys must go
 -(id<ORObjective>) minimize: (id<ORIntVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method not useful in wrapper"];
@@ -266,6 +262,7 @@
 }
 -(void) solve: (ORClosure) search
 {
+   _objective = [_engine objective];
    if (_objective != nil) {
       [_search optimizeModel: self using: search];
       printf("Optimal Solution: %d \n",[_objective primalBound]);

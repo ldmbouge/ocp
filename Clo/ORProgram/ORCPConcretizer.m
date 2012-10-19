@@ -85,6 +85,14 @@
 {
    
 }
+-(void) visitIntArray:(id<ORIntArray>) v
+{
+   
+}
+-(void) visitIntMatrix: (id<ORIntMatrix>) v
+{
+   
+}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    if ([cstr impl] == NULL) {
@@ -112,11 +120,17 @@
 }
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
-   
+   id<ORIntVar> o = [v var];
+   [o visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory minimize: [o dereference]];
+   [v setImpl: concreteCstr];
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v
 {
-   
+   id<ORIntVar> o = [v var];
+   [o visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory maximize: [o dereference]];
+   [v setImpl: concreteCstr];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
@@ -136,11 +150,24 @@
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
+   id<ORIntVar> left = [c left];
+   id<ORIntVar> right = [c right];
+   ORInt cst = [c cst];
+   [left visit: self];
+   [right visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory notEqual: [left dereference] to: [right dereference] plus: cst];
+   [c setImpl: concreteCstr];
    
 }
--(void) visitLEqual: (id<ORLEqual>)c
+-(void) visitLEqual: (id<ORLEqual>) c
 {
-   
+   id<ORIntVar> left = [c left];
+   id<ORIntVar> right = [c right];
+   ORInt cst = [c cst];
+   [left visit: self];
+   [right visit: self];
+   id<CPConstraint> concreteCstr = [CPFactory lEqual: [left dereference] to: [right dereference] plus: cst];
+   [c setImpl: concreteCstr];
 }
 -(void) visitEqual3: (id<OREqual3>)c
 {
