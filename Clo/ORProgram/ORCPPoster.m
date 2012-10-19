@@ -91,6 +91,22 @@
 {
    [_engine add: [cstr impl]];
 }
+-(void) visitCircuit:(id<ORCircuit>) cstr
+{
+  [_engine add: [cstr impl]];   
+}
+-(void) visitNoCycle:(id<ORNoCycle>) cstr
+{
+  [_engine add: [cstr impl]];   
+}
+-(void) visitPackOne:(id<ORPackOne>) cstr
+{
+  [_engine add: [cstr impl]];   
+}
+-(void) visitKnapsack:(id<ORKnapsack>) cstr
+{
+  [_engine add: [cstr impl]];   
+}
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
    [_engine add: [v impl]];
@@ -125,7 +141,7 @@
 {
    [_engine add: [c impl]];
 }
--(void) visitEqual3: (id<OREqual3>)c
+-(void) visitPlus: (id<ORPlus>)c
 {
    [_engine add: [c impl]];
 }
@@ -157,6 +173,63 @@
 {
    [_engine add: [c impl]];
 }
+-(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
+{
+   [_engine add: [cstr impl]];
+}
+-(void) visitReifyEqual: (id<ORReifyEqual>) cstr
+{
+   [_engine add: [cstr impl]];
+}
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitReifyNEqual: (id<ORReifyNEqual>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitReifyLEqual: (id<ORReifyLEqual>) cstr
+{
+    [_engine add: [cstr impl]];  
+}
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitReifyGEqual: (id<ORReifyGEqual>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitSumEqualc:(id<ORSumEqc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitSumLEqualc:(id<ORSumLEqc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+-(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
+{
+   [_engine add: [cstr impl]];   
+}
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {

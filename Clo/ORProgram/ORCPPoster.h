@@ -34,6 +34,10 @@
 -(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
+-(void) visitCircuit:(id<ORCircuit>) cstr;
+-(void) visitNoCycle:(id<ORNoCycle>) cstr;
+-(void) visitPackOne:(id<ORPackOne>) cstr;
+-(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
 -(void) visitEqualc: (id<OREqualc>)c;
@@ -42,7 +46,7 @@
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
--(void) visitEqual3: (id<OREqual3>)c;
+-(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
@@ -50,6 +54,21 @@
 -(void) visitImply: (id<ORImply>)c;
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
+-(void) visitReifyEqual: (id<ORReifyEqual>)c;
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c;
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c;
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c;
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c;
+-(void) visitSumEqualc:(id<ORSumEqc>)c;
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c;
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;

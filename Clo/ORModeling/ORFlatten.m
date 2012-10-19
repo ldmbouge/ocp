@@ -52,7 +52,7 @@
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
--(void) visitEqual3: (id<OREqual3>)c;
+-(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
@@ -223,7 +223,7 @@
 {
    [_theModel add:c];
 }
--(void) visitEqual3: (id<OREqual3>)c
+-(void) visitPlus: (id<ORPlus>)c
 {
    [_theModel add:c];
 }

@@ -42,6 +42,7 @@
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORAnnotation) annotation;
 @end
 
 @protocol  ORNEqual <ORConstraint>
@@ -56,28 +57,52 @@
 -(ORInt) cst;
 @end
 
-@protocol  OREqual3 <ORConstraint>
+@protocol  ORPlus <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORMult <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
 @end
 
 @protocol ORAbs <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
 @end
 
 @protocol OROr <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
 @end
 
 @protocol ORAnd <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
 @end
 
 @protocol ORImply <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
 @end
 
 @protocol ORElementCst <ORConstraint>
+-(id<ORIntArray>) array;
+-(id<ORIntVar>)   idx;
+-(id<ORIntVar>)   res;
 @end
 
 @protocol ORElementVar <ORConstraint>
+-(id<ORIntVarArray>) array;
+-(id<ORIntVar>)   idx;
+-(id<ORIntVar>)   res;
 @end
 
 @protocol ORReify <ORConstraint>
@@ -127,6 +152,7 @@
 
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORAlgebraicConstraint <ORConstraint>
@@ -142,6 +168,7 @@
 -(id<ORIntVarArray>) array;
 -(id<ORIntArray>) low;
 -(id<ORIntArray>) up;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORCircuit <ORConstraint>
@@ -153,6 +180,10 @@
 @end
 
 @protocol ORPackOne <ORConstraint>
+-(id<ORIntVarArray>) item;
+-(id<ORIntArray>) itemSize;
+-(ORInt) bin;
+-(id<ORIntVar>) binSize;
 @end
 
 @protocol ORPacking <ORConstraint>

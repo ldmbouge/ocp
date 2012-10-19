@@ -487,7 +487,7 @@
 }
 +(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z note: (ORAnnotation)n
 {
-   id<ORConstraint> o = [[OREqual3 alloc] initOREqual:x eq:y plus:z note:n];
+   id<ORConstraint> o = [[ORPlus alloc] initOREqual:x eq:y plus:z note:n];
    return o;
 }
 +(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(int) c

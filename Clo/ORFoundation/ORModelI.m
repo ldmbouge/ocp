@@ -216,7 +216,10 @@
 {
    return _c;
 }
-
+-(ORAnnotation) annotation
+{
+   return _n;
+}
 @end
 
 @implementation ORNEqual {
@@ -301,13 +304,13 @@
 }
 @end
 
-@implementation OREqual3 {
+@implementation ORPlus {
    id<ORIntVar> _x;
    id<ORIntVar> _y;
    id<ORIntVar> _z;
    ORAnnotation _n;
 }
--(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z
+-(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z
 {
    self = [super initORConstraintI];
    _x = x;
@@ -316,7 +319,7 @@
    _n = DomainConsistency;
    return self;
 }
--(OREqual3*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n
+-(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -333,19 +336,23 @@
 }
 -(void)visit:(id<ORVisitor>)v
 {
-   [v visitEqual3:self];
+   [v visitPlus:self];
 }
--(id<ORIntVar>) a1
+-(id<ORIntVar>) res
 {
    return _x;
 }
--(id<ORIntVar>) a2
+-(id<ORIntVar>) left
 {
    return _y;
 }
--(id<ORIntVar>) a3
+-(id<ORIntVar>) right
 {
    return _z;
+}
+-(ORAnnotation) annotation
+{
+   return _n;
 }
 @end
 
@@ -372,6 +379,18 @@
 {
    [v visitMult:self];
 }
+-(id<ORIntVar>) res
+{
+   return _x;
+}
+-(id<ORIntVar>) left
+{
+   return _y;
+}
+-(id<ORIntVar>) right
+{
+   return _z;
+}
 @end
 
 @implementation ORAbs { // x = |y|
@@ -394,6 +413,14 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitAbs:self];
+}
+-(id<ORIntVar>) res
+{
+   return _x;
+}
+-(id<ORIntVar>) left
+{
+   return _y;
 }
 @end
 
@@ -421,6 +448,18 @@
 {
    [v visitOr:self];
 }
+-(id<ORIntVar>) res
+{
+   return _x;
+}
+-(id<ORIntVar>) left
+{
+   return _y;
+}
+-(id<ORIntVar>) right
+{
+   return _z;
+}
 @end
 
 @implementation ORAnd { // x = y && z
@@ -445,6 +484,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitAnd:self];
+}
+-(id<ORIntVar>) res
+{
+   return _x;
+}
+-(id<ORIntVar>) left
+{
+   return _y;
+}
+-(id<ORIntVar>) right
+{
+   return _z;
 }
 @end
 
@@ -471,6 +522,18 @@
 {
    [v visitImply:self];
 }
+-(id<ORIntVar>) res
+{
+   return _x;
+}
+-(id<ORIntVar>) left
+{
+   return _y;
+}
+-(id<ORIntVar>) right
+{
+   return _z;
+}
 @end
 
 @implementation ORElementCst {  // y[idx] == z
@@ -495,6 +558,18 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitElementCst:self];
+}
+-(id<ORIntArray>) array
+{
+   return _y;
+}
+-(id<ORIntVar>) idx
+{
+   return _idx;
+}
+-(id<ORIntVar>) res
+{
+   return _z;
 }
 @end
 
@@ -521,6 +596,19 @@
 {
    [v visitElementVar:self];
 }
+-(id<ORIntVarArray>) array
+{
+   return _y;
+}
+-(id<ORIntVar>) idx
+{
+   return _idx;
+}
+-(id<ORIntVar>) res
+{
+   return _z;
+}
+
 @end
 
 
@@ -880,11 +968,13 @@
 @implementation ORAlldifferentI
 {
    id<ORIntVarArray> _x;
+   ORAnnotation _n;
 }
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
 {
    self = [super initORConstraintI];
    _x = x;
+   _n = DomainConsistency;
    return self;
 }
 -(id<ORIntVarArray>) array
@@ -905,6 +995,10 @@
 {
    [v visitAlldifferent:self];
 }
+-(ORAnnotation) annotation
+{
+   return _n;
+}
 @end
 
 @implementation ORCardinalityI
@@ -912,6 +1006,7 @@
    id<ORIntVarArray> _x;
    id<ORIntArray>    _low;
    id<ORIntArray>    _up;
+   ORAnnotation _n;
 }
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
@@ -919,6 +1014,7 @@
    _x = x;
    _low = low;
    _up = up;
+   _n = DomainConsistency;
    return self;
 }
 -(id<ORIntVarArray>) array
@@ -936,6 +1032,10 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitCardinality:self];
+}
+-(ORAnnotation) annotation
+{
+   return _n;
 }
 @end
 
@@ -1065,6 +1165,22 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> %@ = packOne(%@,%@,%d,%@)>",[self class],self,_impl,_item,_itemSize,_bin,_binSize];
    return buf;
+}
+-(id<ORIntVarArray>) item
+{
+   return _item;
+}
+-(id<ORIntArray>) itemSize
+{
+   return _itemSize;
+}
+-(ORInt) bin
+{
+   return _bin;
+}
+-(id<ORIntVar>) binSize
+{
+   return _binSize;
 }
 @end
 
