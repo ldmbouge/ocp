@@ -17,4 +17,6 @@
 // PVH: I need to move CPSolver in the ORProgram framework
 @interface ORFactory (Concretization)
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPCheckpointingProgram: (id<ORModel>) model;
++(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass;
 @end;

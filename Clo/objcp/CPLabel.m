@@ -109,3 +109,19 @@
    return M;
 }
 @end
+
+@implementation CPUtilities
+
++(ORInt) maxBound: (id<ORIdArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   ORInt M = -MAXINT;
+   for(ORInt i = low; i <= up; i++) {
+      id<CPIntVar> xi = x[i];
+      if ([xi bound] && [xi value] > M)
+         M = [xi value];
+   }
+   return M;
+}
+@end

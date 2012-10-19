@@ -124,7 +124,7 @@
 @end
 
 @interface CPSemSolverI : CPCoreSolverI<CPSemSolver> {
-   SemTracer*          _tracer;
+   SemTracer*             _tracer;
 }
 -(CPSemSolverI*)          initWithController:(Class)ctrlClass;
 -(CPCoreSolverI*)         initFor: (CPEngineI*) fdm withController:(Class)ctrlClass;

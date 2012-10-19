@@ -15,4 +15,6 @@
 
 @interface ORCPSolver : NSObject<CPProgram>
 -(id<CPProgram>) initORCPSolver;
+-(id<CPProgram>) initORCPSolverCheckpointing;
+-(id<CPProgram>) initORCPSemanticSolver: (Class) ctrlClass;
 @end

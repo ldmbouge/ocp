@@ -20,14 +20,19 @@
 
 @implementation ORFactory (Concretization)
 
-+(id<CPProgram>) createCPProgram
++(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
 {
-   return [[ORCPSolver alloc] initORCPSolver];
+   return [[ORCPSolver alloc] initORCPSemanticSolver: ctrlClass];
 }
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model
+
++(id<CPProgram>) createCPProgram: (id<ORModel>) model checkpointing: (BOOL) checkpointing
 {
-   id<CPProgram> cpprogram = [ORFactory createCPProgram];
+   id<CPProgram> cpprogram;
+   if (!checkpointing)
+      cpprogram = [[ORCPSolver alloc] initORCPSolver];
+   else
+      cpprogram = [[ORCPSolver alloc] initORCPSolverCheckpointing];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [model visit: concretizer];
@@ -37,4 +42,28 @@
    
    return cpprogram;
 }
+
++(id<CPProgram>) createCPProgram: (id<ORModel>) model
+{
+   return [ORFactory createCPProgram: model checkpointing: false];
+}
+
++(id<CPProgram>) createCPCheckpointingProgram: (id<ORModel>) model
+{
+   return [ORFactory createCPProgram: model checkpointing: true];
+}
+
++(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass
+{
+   id<CPProgram> cpprogram = [ORFactory createCPCommonProgram: ctrlClass];
+   
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   [model visit: concretizer];
+   
+   id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
+   [model visit: poster];
+   
+   return cpprogram;
+}
 @end
+

@@ -22,3 +22,6 @@
 +(ORInt) maxBound: (id<ORIntVarArray>) x;
 @end;
 
+@interface CPUtilities : NSObject
++(ORInt) maxBound: (id<ORIntVarArray>) x;
+@end;

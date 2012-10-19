@@ -46,7 +46,7 @@ int main (int argc, const char * argv[])
    id<CPProgram> cp = [ORFactory createCPProgram: model];
    [cp solveAll:
     ^() {
-       [cp labelArray: x];
+       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize]; }];
        for(int i = 1; i <= n; i++)
           printf("%d ",[x[i] value]);
        printf("\n");

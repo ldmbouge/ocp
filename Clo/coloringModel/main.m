@@ -71,19 +71,15 @@ int main(int argc, const char * argv[])
       [model minimize: m];
       
       id<CPProgram> cp = [ORFactory createCPProgram: model];
+//      id<CPProgram> cp = [ORFactory createCPCheckpointingProgram: model];
+//      id<CPCommonProgram> cp = [ORFactory createCPProgram: model with: [ORSemDFSController class]];
+//      BDS is buggy
+//      id<CPCommonProgram> cp = [ORFactory createCPProgram: model with: [ORSemBDSController class]];
       [cp solve: ^{
-         __block ORInt maxc  = 0;
-         for(ORInt i=[V low];i <= [V up];i++) {
-            if ([c[i] bound])
-               maxc = maxc > [c[i] value] ? maxc : [c[i] value];
-         }
-         NSLog(@"Initial MAXC  = %d",maxc);
-         NSLog(@"%d ",[m max]);
-
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
+            ORInt maxc = max(0,[CPUtilities maxBound: c]);
             [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member: v];} in:^(ORInt v) {
                [cp label: c[i] with: v];
-               maxc = maxc > v ? maxc : v;
             }
             onFailure:^(ORInt v) {
                [cp diff: c[i] with:v];
@@ -97,8 +93,8 @@ int main(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
-//      [cp release];
-//      [CPFactory shutdown];
+      [cp release];
+      [CPFactory shutdown];
    }
    return 0;
 }

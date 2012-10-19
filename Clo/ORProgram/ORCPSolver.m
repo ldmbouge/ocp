@@ -13,6 +13,7 @@
 #import "ORCPSolver.h"
 // PVH: This needs to be cleaned up: No reason to have implementation files being included
 #import <ORFoundation/ORExplorerI.h>
+#import <ORFoundation/ORSemDFSController.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPLabel.h>
@@ -26,7 +27,6 @@
 
 // TODO after that 18/10/2012
 
-//  7. Allows the concretization to create a semantic DFS solver
 //  8. Clean tous les warnings
 //  9. Clean Label and fill in
 // 10. Fill in all the constraints
@@ -138,7 +138,7 @@
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
    id<ORTrail>           _trail;
-   DFSTracer*            _tracer;
+   id<ORTracer>          _tracer;
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
    @package
@@ -164,6 +164,40 @@
    return self;
 }
 
+-(id<CPProgram>) initORCPSolverCheckpointing
+{
+   self = [super init];
+   _trail = [ORFactory trail];
+   _engine = [CPFactory engine: _trail];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORSemDFSControllerCSP class]
+                                                                  nestedControllerClass: [ORSemDFSControllerCSP class]];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
+   _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
+   _returnLabel = _failLabel = nil;
+   _portal = [[CPInformerPortalI alloc] initCPInformerPortalI: self];
+   _objective = nil;
+   return self;
+}
+-(id<CPCommonProgram>) initORCPSemanticSolver: (Class) ctrlClass
+{
+   self = [super init];
+   _trail = [ORFactory trail];
+   _engine = [CPFactory engine: _trail];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORSemDFSControllerCSP class]
+                                                                  nestedControllerClass: ctrlClass];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
+   _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
+   _returnLabel = _failLabel = nil;
+   _portal = [[CPInformerPortalI alloc] initCPInformerPortalI: self];
+   _objective = nil;
+   return self;
+}
 -(void) dealloc
 {
    [_trail release];
@@ -366,7 +400,50 @@
    for(ORInt i = low; i <= up; i++)
       [self label: x[i]];
 }
-
+-(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
+{
+   id<ORSelect> select = [ORFactory select: _engine
+                                     range: RANGE(self,[x low],[x up])
+                                  suchThat: ^bool(ORInt i) { return ![[x at: i] bound]; }
+                                 orderedBy: orderedBy];
+   do {
+      ORInt i = [select min];
+      if (i == MAXINT) {
+         return;
+      }
+      [self label: x[i]];
+   } while (true);
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h
+{
+   id<CPIntVarArray> av = [h allIntVars];
+   id<ORSelect> select = [ORFactory selectRandom: _engine
+                                           range: RANGE(_engine,[av low],[av up])
+                                        suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
+                                       orderedBy: ^ORFloat(ORInt i) { return [h varOrdering:av[i]]; }];
+   do {
+      ORInt i = [select max];
+      if (i == MAXINT)
+         return;
+      //NSLog(@"Chose variable: %d",i);
+      id<CPIntVar> x = av[i];
+      id<ORSelect> valSelect = [ORFactory selectRandom: _engine
+                                                 range:RANGE(_engine,[x min],[x max])
+                                              suchThat:^bool(ORInt v)    { return [x member:v];}
+                                             orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
+      do {
+         ORInt curVal = [valSelect max];
+         if (curVal == MAXINT)
+            break;
+         [self try:^{
+            [self labelImpl: x with: curVal];
+         } or:^{
+            [self diffImpl: x with: curVal];
+         }];
+      } while(![x bound]);
+   } while (true);
+   
+}
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine label: var with: val];
@@ -427,7 +504,6 @@
 {
    [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
 }
-
 -(void) label: (id<ORIntVar>) mx
 {
    id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
