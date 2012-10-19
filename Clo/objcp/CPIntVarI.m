@@ -202,13 +202,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return _fdm;
 }
--(id<CPSolver>) solver
-{
-    return _cp;
-}
 -(id<ORTracker>) tracker
 {
-   return _cp;
+   return _fdm;
 }
 -(void) addVar:(CPIntVarI*)var
 {
@@ -756,7 +752,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_vc];
    [aCoder encodeObject:_dom];
    [aCoder encodeObject:_fdm];
-   [aCoder encodeObject:_cp];
    [aCoder encodeObject:_recv];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
@@ -766,7 +761,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_vc];
    _dom = [[aDecoder decodeObject] retain];
    _fdm = [aDecoder decodeObject];
-   _cp  = [aDecoder decodeObject];
    ORInt low = [_dom imin];
    ORInt up  = [_dom imax];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);

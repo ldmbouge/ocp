@@ -117,7 +117,7 @@
 
 -(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -187,7 +187,7 @@
 @implementation CPEqualDC
 -(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -282,7 +282,7 @@
 @implementation CPEqual3DC
 -(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -513,7 +513,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 -(id)initCPNotEqual:(id) x and:(id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -641,7 +641,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPLEqualBC
 -(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPActiveConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -924,7 +924,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPAndDC
 -(id)initCPAndDC:(id)b equal:(id<CPIntVar>) x and: (id<CPIntVar>) y
 {
-   self = [super initCPActiveConstraint:[[b solver] engine]];
+   self = [super initCPActiveConstraint:[b engine]];
    _b = (CPIntVarI*) b;
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
@@ -1378,7 +1378,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 -(id) initCPAllDifferenceVC:(id) x
 {
    if ([x isKindOfClass:[NSArray class]]) {
-      id<CPEngine> fdm = (id<CPEngine>) [[[x objectAtIndex:0] solver] engine];
+      id<CPEngine> fdm = (id<CPEngine>) [[x objectAtIndex:0] engine];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
@@ -1387,7 +1387,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    }
    else if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
       id<ORIdArray> xa = x;
-      id<CPEngine> fdm = (id<CPEngine>)[[[xa at:[xa low]] solver] engine];
+      id<CPEngine> fdm = (id<CPEngine>)[[xa at:[xa low]] engine];
       self = [super initCPActiveConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);

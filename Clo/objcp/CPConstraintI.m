@@ -83,6 +83,7 @@
 @implementation CPActiveConstraint
 -(id) initCPActiveConstraint: (CPEngineI*) m
 {
+   assert(m);
     self = [super initCPCoreConstraint];
     _trail = [[m trail] retain];
     _active  = makeTRInt(_trail,true);

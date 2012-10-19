@@ -119,7 +119,6 @@ enum CPVarClass {
    enum CPVarClass                   _vc:16;
    ORUInt                        _isBool:16;
    ORUInt                             _name;
-   id<CPSolver>                         _cp;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
