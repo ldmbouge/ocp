@@ -48,15 +48,16 @@
 
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
-
+}
+-(void) visitIntArray:(id<ORIntArray>)v
+{   
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
    
 }
 -(void) visitIntRange:(id<ORIntRange>)v
-{
-   
+{   
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
@@ -110,7 +111,13 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> item = [self concreteArray:[cstr item]];
+      id<ORIntArray> itemSize = [cstr itemSize];
+      id<CPIntVarArray> binSize = [self concreteArray:[cstr binSize]];
+      id<CPConstraint> concrete = [CPFactory packing:item itemSize:itemSize load:binSize];
+      [cstr setImpl:concrete];
+   }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

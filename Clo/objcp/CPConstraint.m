@@ -125,13 +125,6 @@
    return o;
 }
 
-+(id<ORConstraint>) packing: (id<CPIntVarArray>) x itemSize: (id<ORIntArray>) itemSize load: (id<CPIntVarArray>) load
-{
-   id<ORConstraint> o = [[CPBinPackingI alloc] initCPBinPackingI: x itemSize: itemSize binSize: load];
-   [[x tracker] trackObject: o];
-   return o;
-}
-
 +(id<ORConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize
 {
    id<ORConstraint> o = [[CPOneBinPackingI alloc] initCPOneBinPackingI: item itemSize: itemSize bin: b binSize: binSize];

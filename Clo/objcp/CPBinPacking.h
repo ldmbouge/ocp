@@ -14,15 +14,6 @@
 #import <objcp/CPConstraintI.h>
 #import <objcp/CPSolver.h>
 
-@interface CPBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
-}
--(CPBinPackingI*) initCPBinPackingI: (id<CPIntVarArray>) x itemSize: (id<ORIntArray>) itemSize binSize: (id<CPIntVarArray>) binSize;
--(void) dealloc;
--(ORStatus) post;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
-@end
-
 @interface CPOneBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
 }
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<ORIntArray>) itemSize

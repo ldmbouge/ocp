@@ -9,21 +9,26 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+
+#import <ORProgram/ORConcretizer.h>
 #import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPlabel.h"
 
 int main (int argc, const char * argv[])
 {
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> R = RANGE(cp,0,9);
-   id<ORIntRange> D = RANGE(cp,0,1);
-   id<ORIntVarArray> item = [CPFactory intVarArray:cp range: R domain: D];
-   id<ORIntArray> itemSize = [CPFactory intArray: cp range: R value: 0];
-   id<ORIntVarArray> binSize = [CPFactory intVarArray:cp range: RANGE(cp,0,0) domain: RANGE(cp,34,35)];
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> R  = RANGE(model,0,9);
+   id<ORIntRange> D  = RANGE(model,0,1);
+   id<ORIntVarArray> item = [ORFactory intVarArray:model range: R domain: D];
+   id<ORIntArray> itemSize = [ORFactory intArray: model range: R value: 0];
+   id<ORIntVarArray> binSize = [ORFactory intVarArray:model range: RANGE(model,0,0) domain: RANGE(model,34,35)];
    [itemSize set: 10 at: 9];
    [itemSize set: 10 at: 8];
    [itemSize set: 10 at: 7];
@@ -34,10 +39,15 @@ int main (int argc, const char * argv[])
    [itemSize set: 5 at: 2];
    [itemSize set: 2 at: 1];
    [itemSize set: 1 at: 0];
-   [cp add: [CPFactory packing: item itemSize: itemSize load: binSize]];   
+   [model add: [ORFactory packing: item itemSize: itemSize load: binSize]];
+
+   id<ORModelTransformation> flattener = [ORFactory createFlattener];
+   id<ORModel> flat = [flattener apply:model];
+   id<CPProgram> cp = [ORFactory createCPProgram: flat];
+
    [cp solve:
     ^ {
-       [CPLabel array: item];
+       [cp labelArray: item];
        NSLog(@"%@",item);
        NSLog(@"%@",binSize);
        printf("\n");

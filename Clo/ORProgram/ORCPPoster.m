@@ -33,16 +33,16 @@
    [super dealloc];
 }
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
-{
-   
+{   
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
-   
+}
+-(void) visitIntArray:(id<ORIntArray>)v
+{
 }
 -(void) visitIntRange:(id<ORIntRange>)v
 {
-   
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
