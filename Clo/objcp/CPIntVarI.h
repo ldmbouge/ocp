@@ -204,9 +204,9 @@ enum CPVarClass {
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
 +(CPIntVarI*)    initCPBoolVar:(id<CPEngine>) fdm;
-+(CPIntVarI*)    initCPIntView: (id<CPEngine>)x withShift:(ORInt)b;
-+(CPIntVarI*)    initCPIntView: (id<CPEngine>)x withScale:(ORInt)a;
-+(CPIntVarI*)    initCPIntView: (id<CPEngine>)x withScale:(ORInt)a andShift:(ORInt)b;
++(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withShift:(ORInt)b;
++(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
++(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
 +(CPTrigger*)    createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 

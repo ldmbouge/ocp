@@ -73,6 +73,7 @@
 {
    if ([v impl] == NULL) {   
       id<ORIntVar> mBase = [v base];
+      [mBase visit: self];
       ORInt a = [v scale];
       ORInt b = [v shift];
       id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>)[mBase dereference] scale:a shift:b];

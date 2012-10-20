@@ -140,21 +140,21 @@ void failNow()
 +(CPIntVarI*) intVar: (CPIntVarI*) x shift: (ORInt) b
 {
    if (b!=0)
-      return [CPIntVarI initCPIntView: [x engine] withShift: b];
+      return [CPIntVarI initCPIntView: x withShift: b];
    else return x;
 }
 +(CPIntVarI*) intVar: (CPIntVarI*) x scale: (ORInt) a
 {
    if (a!=1)
-    return [CPIntVarI initCPIntView: [x engine] withScale: a];
+    return [CPIntVarI initCPIntView: x withScale: a];
    else return x;
 }
-+(CPIntVarI*) intVar: (CPIntVarI *)x scale: (ORInt) a shift:(ORInt) b
++(CPIntVarI*) intVar: (CPIntVarI *) x scale: (ORInt) a shift:(ORInt) b
 {
    if (a==1 && b==0)
       return x;
    else 
-      return [CPIntVarI initCPIntView: [x engine] withScale: a andShift: b];
+      return [CPIntVarI initCPIntView: x withScale: a andShift: b];
 }
 +(id<ORIntVar>)boolVar: (id<CPEngine>)cp
 {

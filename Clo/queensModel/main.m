@@ -49,7 +49,7 @@ int main (int argc, const char * argv[])
    [cp solveAll:
     ^() {
        [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize]; }];
-       for(int i = 1; i <= n; i++)
+       for(int i = 0; i < n; i++)
           printf("%d ",[x[i] value]);
        printf("\n");
        [nbSolutions incr];
