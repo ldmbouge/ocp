@@ -30,22 +30,20 @@ NSString* indent(int t)
 int main (int argc, const char * argv[])
 {
    int n = 8;
-   id<ORModel> mdl = [ORFactory createModel];
-   id<ORIntRange> R = RANGE(mdl,0,n-1);
-   id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
-   id<ORIntVarArray> x = [ORFactory intVarArray:mdl range:R domain: R];
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> R = RANGE(model,0,n-1);
+   id<ORInteger> nbSolutions = [ORFactory integer: model value:0];
+   id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
    for(ORUInt i =0;i < n; i++) {
       for(ORUInt j=i+1;j< n;j++) {
-         [mdl add: [x[i] neq:x[j]]];
-         [mdl add: [x[i] neq:[x[j] plusi:(i-j)]]];
-         [mdl add: [x[i] neq:[x[j] plusi:(j-i)]]];
+         [model add: [x[i] neq: x[j]]];
+         [model add: [x[i] neq: [x[j] plusi: (i-j)]]];
+         [model add: [x[i] neq: [x[j] plusi: (j-i)]]];
       }
    }
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   id<ORModel> fm = [flat apply:mdl];
-   NSLog(@"initial model: %@",mdl);
-   NSLog(@"flat    model: %@",fm);
-   id<CPProgram> cp = [ORFactory createCPProgram:fm];
+//   NSLog(@"initial model: %@",model);
+//   NSLog(@"flat    model: %@",fm);
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
    
    [cp solveAll:
     ^() {

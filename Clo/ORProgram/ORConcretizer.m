@@ -16,6 +16,7 @@
 #import "ORCPConcretizer.h"
 #import "ORCPPoster.h"
 #import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
 
 
 @implementation ORFactory (Concretization)
@@ -28,6 +29,9 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model checkpointing: (BOOL) checkpointing
 {
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   id<ORModel> flatModel = [flat apply: model];
+
    id<CPProgram> cpprogram;
    if (!checkpointing)
       cpprogram = [[ORCPSolver alloc] initORCPSolver];
@@ -35,12 +39,12 @@
       cpprogram = [[ORCPSolver alloc] initORCPSolverCheckpointing];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   [model visit: concretizer];
+   [flatModel visit: concretizer];
    [concretizer release];
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
-   NSArray* Constraints = [model constraints];
-   id<ORObjectiveFunction> obj = [model objective];
+   NSArray* Constraints = [flatModel constraints];
+   id<ORObjectiveFunction> obj = [flatModel objective];
    for(id<ORObject> c in Constraints)
       [c visit: poster];
    [obj visit: poster];
