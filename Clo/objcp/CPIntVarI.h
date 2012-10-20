@@ -119,15 +119,14 @@ enum CPVarClass {
    enum CPVarClass                   _vc:16;
    ORUInt                        _isBool:16;
    ORUInt                             _name;
-   id<CPSolver>                         _cp;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    CPTriggerMap*                  _triggers;
    id<CPIntVarNotifier,NSCoding>      _recv;
 }
--(CPIntVarI*) initCPIntVarCore:(CPSolverI*) cp low:(ORInt)low up:(ORInt)up;
--(CPIntVarI*) initCPIntVarView: (CPSolverI*) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
+-(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
+-(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(void) setId:(ORUInt)name;
@@ -202,13 +201,13 @@ enum CPVarClass {
 -(ORStatus)     inside:(ORIntSetI*) S;
 -(id)           snapshot;
 // Class methods
-+(CPIntVarI*)    initCPIntVar: (CPSolverI*) fdm bounds:(id<ORIntRange>)b;
-+(CPIntVarI*)    initCPIntVar: (CPSolverI*) fdm low:(ORInt)low up:(ORInt)up;
-+(CPIntVarI*)    initCPBoolVar:(CPSolverI*) fdm;
-+(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withShift:(ORInt)b;
-+(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(ORInt)a;
-+(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(ORInt)a andShift:(ORInt)b;
-+(CPIntVarI*)    initCPNegateBoolView:(CPIntVarI*)x;
++(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
++(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
++(CPIntVarI*)    initCPBoolVar:(id<CPEngine>) fdm;
++(CPIntVarI*)    initCPIntView: (id<CPEngine>)x withShift:(ORInt)b;
++(CPIntVarI*)    initCPIntView: (id<CPEngine>)x withScale:(ORInt)a;
++(CPIntVarI*)    initCPIntView: (id<CPEngine>)x withScale:(ORInt)a andShift:(ORInt)b;
++(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
 +(CPTrigger*)    createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 
 -(id<ORIntVar>) dereference;
@@ -486,8 +485,8 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(void)dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
--(void)addPositive:(id<ORIntVar>)x forValue:(ORInt)value;
--(id<ORIntVar>)positiveForValue:(ORInt)value;
+-(void)addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
+-(id<CPIntVar>)positiveForValue:(ORInt)value;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

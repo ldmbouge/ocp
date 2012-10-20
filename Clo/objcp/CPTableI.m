@@ -27,7 +27,7 @@
     _posted = false;
 }
 
--(CPTableCstrI*) initCPTableCstrI: (id<ORIntVarArray>) x table: (ORTableI*) table
+-(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (ORTableI*) table
 {
     [table close];
     

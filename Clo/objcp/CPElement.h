@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPConstraintI.h>
+#import <objcp/CPSolver.h>
 
 @class CPIntVarI;
 @class CPEngine;
@@ -32,9 +33,9 @@
 @private
    CPIntVarI*        _x;
    CPIntVarI*        _y;
-   id<ORIntVarArray> _z;
+   id<CPIntVarArray> _z;
 }
--(id) initCPElementBC: (id) x indexVarArray:(id<ORIntVarArray>) c equal:(id)y;
+-(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>) c equal:(id)y;
 -(void) dealloc;
 -(ORStatus) post;
 -(NSSet*)allVars;

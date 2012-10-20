@@ -36,9 +36,15 @@
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [model visit: concretizer];
+   [concretizer release];
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
-   [model visit: poster];
+   NSArray* Constraints = [model constraints];
+   id<ORObjectiveFunction> obj = [model objective];
+   for(id<ORObject> c in Constraints)
+      [c visit: poster];
+   [obj visit: poster];
+   [poster release];
    
    return cpprogram;
 }
@@ -59,6 +65,7 @@
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [model visit: concretizer];
+   [concretizer release];
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
    NSArray* Constraints = [model constraints];
@@ -66,6 +73,7 @@
    for(id<ORObject> c in Constraints)
       [c visit: poster];
    [obj visit: poster];
+   [poster release];
    
    return cpprogram;
 }

@@ -35,16 +35,20 @@
    [super dealloc];
 }
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
-{
-   
+{   
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
-   
 }
+-(void) visitIntArray:(id<ORIntArray>)v
+{
+}
+-(void) visitIntMatrix: (id<ORIntMatrix>) v
+{
+}
+
 -(void) visitIntRange:(id<ORIntRange>)v
 {
-   
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
@@ -61,15 +65,6 @@
 }
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
-   
-}
--(void) visitIntArray:(id<ORIntArray>) v
-{
-   
-}
--(void) visitIntMatrix: (id<ORIntMatrix>) v
-{
-   
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {

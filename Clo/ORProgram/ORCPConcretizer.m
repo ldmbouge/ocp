@@ -36,17 +36,27 @@
    [super dealloc];
 }
 
+-(id) concreteVar: (id<ORIntVar>) x
+{
+   [x visit:self];
+   return [x impl];
+}
+
+-(id) concreteArray: (id<ORIntVarArray>) x
+{
+   [x visit:self];
+   return [x impl];
+}
+
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
-
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
    
 }
 -(void) visitIntRange:(id<ORIntRange>)v
-{
-   
+{   
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
@@ -65,7 +75,7 @@
       id<ORIntVar> mBase = [v base];
       ORInt a = [v scale];
       ORInt b = [v shift];
-      id<CPIntVar> cv = [CPFactory intVar: [mBase dereference] scale: a shift: b];
+      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>)[mBase dereference] scale:a shift:b];
       [v setImpl: cv];
    }
 }
@@ -117,7 +127,13 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for packing constraints"];
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> item = [self concreteArray:[cstr item]];
+      id<ORIntArray> itemSize = [cstr itemSize];
+      id<CPIntVarArray> binSize = [self concreteArray:[cstr binSize]];
+      id<CPConstraint> concrete = [CPFactory packing:item itemSize:itemSize load:binSize];
+      [cstr setImpl:concrete];
+   }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
@@ -236,6 +252,7 @@
       [cstr setImpl: concreteCstr];
    }
 }
+
 -(void) visitNEqual: (id<ORNEqual>) cstr
 {
    if ([cstr impl] == NULL) {

@@ -13,38 +13,13 @@
 #import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>
 #import <objcp/CPHeuristic.h>
+#import <objcp/CPVar.h>
 
 @protocol ORSearchController;
 @protocol CPEngine;
 @protocol ORExplorer;
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
-
-@protocol CPIntVar <NSObject>
--(ORUInt) getId;
--(ORInt) value;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds) bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
--(id<ORIntVar>) dereference;
--(ORInt) scale;
--(ORInt) shift;
--(id<ORIntVar>) base;
--(BOOL) bound;
--(id<ORTracker>) tracker;
--(id<CPEngine>)engine;
-@end
-
-@protocol CPIntVarArray <ORVarArray>
--(id<CPIntVar>) at: (ORInt) value;
--(void) set: (id<CPIntVar>) x at: (ORInt) value;
--(id<CPIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
--(void) setObject: (id<CPIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
--(id<ORASolver>) solver;
-@end
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;

@@ -27,6 +27,7 @@
 #import "CPEngineI.h"
 #import "ORFoundation/ORSemDFSController.h"
 #import "ORFoundation/ORSemBDSController.h"
+#import "CPEngineI.h"
 
 void failNow()
 {
@@ -128,41 +129,24 @@ void failNow()
 {
     printf("%s\n",[[x description] cStringUsingEncoding:NSASCIIStringEncoding]);
 }
-+(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
++(CPIntVarI*) intVar: (id<CPEngine>) cp bounds: (id<ORIntRange>) range
 {
-   return [ORFactory integer: tracker value: value];
+   return [CPIntVarI initCPIntVar: cp bounds: range];
 }
-+(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range value: (ORInt) value
++(CPIntVarI*) intVar: (id<CPEngine>) cp domain: (id<ORIntRange>) range
 {
-   return (id<ORIntArray>)[ORFactory intArray:cp range: range value:value];
-}
-+(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
-{
-   return (id<ORIntArray>)[ORFactory intArray:cp range: range with:clo];
-}
-+(id<ORIntArray>) intArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
-{
-   return (id<ORIntArray>)[ORFactory intArray:cp range:r1 range: r2 with:clo];
-}
-
-+(id<ORIntVar>) intVar: (id<ORTracker>) cp bounds: (id<ORIntRange>) range
-{
-   return [CPIntVarI initCPIntVar: (CPSolverI*) cp bounds: range];
-}
-+(CPIntVarI*) intVar: (id<ORTracker>) cp domain: (id<ORIntRange>) range
-{
-    return [CPIntVarI initCPIntVar: (CPSolverI*) cp low: [range low] up: [range up]];
+    return [CPIntVarI initCPIntVar: cp low: [range low] up: [range up]];
 }
 +(CPIntVarI*) intVar: (CPIntVarI*) x shift: (ORInt) b
 {
    if (b!=0)
-      return [CPIntVarI initCPIntView: x withShift: b];
+      return [CPIntVarI initCPIntView: [x engine] withShift: b];
    else return x;
 }
 +(CPIntVarI*) intVar: (CPIntVarI*) x scale: (ORInt) a
 {
    if (a!=1)
-    return [CPIntVarI initCPIntView: x withScale: a]; 
+    return [CPIntVarI initCPIntView: [x engine] withScale: a];
    else return x;
 }
 +(CPIntVarI*) intVar: (CPIntVarI *)x scale: (ORInt) a shift:(ORInt) b
@@ -170,14 +154,14 @@ void failNow()
    if (a==1 && b==0)
       return x;
    else 
-      return [CPIntVarI initCPIntView: x withScale: a andShift: b]; 
+      return [CPIntVarI initCPIntView: [x engine] withScale: a andShift: b];
 }
-+(id<ORIntVar>)boolVar: (id<ORTracker>)cp
++(id<ORIntVar>)boolVar: (id<CPEngine>)cp
 {
-   return [CPIntVarI initCPBoolVar: (CPSolverI*) cp];
+   return [CPIntVarI initCPBoolVar: cp];
 }
 
-+(id<ORIntVar>) negate:(id<ORIntVar>)x
++(id<ORIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
@@ -186,51 +170,51 @@ void failNow()
 {
    return [ORFactory intMatrix: tracker range: r1 : r2];
 }
-+(id<ORVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
++(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
-   return (id<ORVarArray>)[ORFactory idArray:cp range: range];
+   return (id<CPVarArray>)[ORFactory idArray:cp range: range];
 }
 +(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range
 {
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    return (id<CPIntVarArray>) o;
 }
-+(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
++(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
    for(ORInt i=[r0 low];i <= [r0 up];i++)
       for(ORInt j= [r1 low];j <= [r1 up];j++)
          [o set:[CPFactory intVar:cp domain:domain] at:i :j];
-    return (id<ORIntVarMatrix>)o;
+    return (id<CPIntVarMatrix>)o;
 }
-+(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
++(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(ORInt i= [r0 low];i <= [r0 up]; i++)
       for(ORInt j= [r1 low]; j <= [r1 up]; j++)
          for(ORInt k= [r2 low]; k <= [r2 up];k++)
             [o set:[CPFactory intVar:cp domain:domain] at:i :j :k];
-   return (id<ORIntVarMatrix>)o;
+   return (id<CPIntVarMatrix>)o;
 }
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1];
    for(ORInt i= [r0 low];i <= [r0 up]; i++)
       for(ORInt j= [r1 low]; j <= [r1 up];j++)
-         [o set:[CPFactory boolVar: (CPSolverI*) cp] at:i :j];
-   return (id<ORIntVarMatrix>)o;   
+         [o set:[CPFactory boolVar: cp] at:i :j];
+   return (id<CPIntVarMatrix>)o;
 }
-+(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
++(id<CPIntVarMatrix>) boolVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range:r0 :r1 :r2];
    for(ORInt i= [r0 low]; i <= [r0 up]; i++)
       for(ORInt j= [r1 low]; j <= [r1 up]; j++)
          for(ORInt k= [r2 low]; k <= [r2 up]; k++)
-            [o set:[CPFactory boolVar: (CPSolverI*) cp] at:i :j :k];
-   return (id<ORIntVarMatrix>)o;
+            [o set:[CPFactory boolVar: cp] at:i :j :k];
+   return (id<CPIntVarMatrix>)o;
 }
 
-+(id<CPIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m
++(id<CPIntVarArray>) flattenMatrix:(id<CPIntVarMatrix>)m
 {
    id<ORTracker> tracker = [m tracker];
    ORInt sz = (ORInt)[m count];

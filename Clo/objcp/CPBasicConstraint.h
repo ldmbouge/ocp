@@ -212,7 +212,7 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMinimize : CPCoreConstraint<ORObjective>
--(id)        initCPIntVarMinimize: (id<ORIntVar>) x;
+-(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
 -(void)      dealloc;
 -(ORStatus)  post;
 -(ORStatus)  check;
@@ -224,7 +224,7 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORObjective>
--(id)        initCPIntVarMaximize: (id<ORIntVar>) x;
+-(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
 -(void)      dealloc;
 -(ORStatus)  post;
 -(ORStatus)  check;

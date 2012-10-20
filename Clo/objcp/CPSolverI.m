@@ -235,7 +235,7 @@
       [_search fail];
 }
 
--(id<ORObjective>) minimize: (id<ORIntVar>) x
+-(id<ORObjective>) minimize: (id<CPIntVar>) x
 {
    CPIntVarMinimize* cstr = (CPIntVarMinimize*) [CPFactory minimize: x];
    [self add: cstr];
@@ -243,7 +243,7 @@
    _objective = cstr;
    return _objective;
 }
--(id<ORObjective>) maximize: (id<ORIntVar>) x
+-(id<ORObjective>) maximize: (id<CPIntVar>) x
 {
    CPIntVarMaximize* cstr = (CPIntVarMaximize*) [CPFactory maximize: x];
    [self add: cstr];

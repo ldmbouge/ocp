@@ -12,19 +12,13 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPConstraintI.h>
-
-@interface CPBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
-}
--(CPBinPackingI*) initCPBinPackingI: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
--(void) dealloc;
--(ORStatus) post;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
-@end
+#import <objcp/CPSolver.h>
 
 @interface CPOneBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
 }
--(CPOneBinPackingI*) initCPOneBinPackingI: (id<ORIntVarArray>) x itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
+-(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<ORIntArray>) itemSize
+                                      bin: (ORInt) b
+                                  binSize: (id<CPIntVar>) binSize;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

@@ -169,8 +169,25 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   
-   [_theModel add:cstr];
+   id<ORIntVarArray> item = [cstr item];
+   id<ORIntVarArray> binSize = [cstr binSize];
+   id<ORIntArray>    itemSize = [cstr itemSize];
+   id<ORIntRange> BR = [binSize range];
+   id<ORIntRange> IR = [item range];
+   id<ORTracker> tracker = [item tracker];
+   ORInt brlow = [BR low];
+   ORInt brup = [BR up];
+   for(ORInt b = brlow; b <= brup; b++)
+      [_theModel add: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]] /*note:RangeConsistency*/];
+   ORInt s = 0;
+   ORInt irlow = [IR low];
+   ORInt irup = [IR up];
+   for(ORInt i = irlow; i <= irup; i++)
+      s += [itemSize at:i];
+   [_theModel add: [Sum(tracker,b,BR,binSize[b]) eqi: s]];
+                                             
+   for(ORInt b = brlow; b <= brup; b++)
+      [_theModel add: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

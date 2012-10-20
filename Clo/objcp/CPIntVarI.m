@@ -17,7 +17,7 @@
 #import "CPEngineI.h"
 #import "CPTrigger.h"
 #import "CPBitDom.h"
-
+#import "CPEngineI.h"
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
@@ -153,13 +153,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 #define TRACKLOSSES (_net._ac5._val != nil || _triggers != nil)
 
--(CPIntVarI*) initCPIntVarCore: (CPSolverI*) cp low: (ORInt) low up: (ORInt)up
+-(CPIntVarI*) initCPIntVarCore: (CPEngineI*)engine low: (ORInt) low up: (ORInt)up
 {
    self = [super init];
    _vc = CPVCBare;
    _isBool = NO;
-   _cp = cp;
-   _fdm  = (CPEngineI*) cp;
+   _fdm  = engine;
    [_fdm trackVariable: self];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
    _triggers = nil;
@@ -203,13 +202,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return _fdm;
 }
--(id<CPSolver>) solver
-{
-    return _cp;
-}
 -(id<ORTracker>) tracker
 {
-   return _cp;
+   return _fdm;
 }
 -(void) addVar:(CPIntVarI*)var
 {
@@ -646,23 +641,23 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return self;
 }
--(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp bounds:(id<ORIntRange>)b
+-(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {
-   self = [self initCPIntVarCore: cp low: [b low] up: [b up]];
+   self = [self initCPIntVarCore: engine low: [b low] up: [b up]];
    _dom = [[CPBoundsDom alloc] initBoundsDomFor:[_fdm trail] low: [b low] up: [b up]];
    return self;
 }
 
--(CPIntVarI*) initCPExplicitIntVar: (id<CPSolver>) cp low: (ORInt) low up: (ORInt) up
+-(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine low: (ORInt) low up: (ORInt) up
 {
-    self = [self initCPIntVarCore: cp low:low up:up];
+    self = [self initCPIntVarCore: engine low:low up:up];
     _dom = [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:low up:up];
     return self;
 }
 
--(CPIntVarI*) initCPIntVarView: (id<CPSolver>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x
+-(CPIntVarI*) initCPIntVarView: (id<CPEngine>) engine low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x
 {
-   self = [self initCPIntVarCore: cp low: low up: up];
+   self = [self initCPIntVarCore:engine low: low up: up];
    id<CPIntVarNotifier> xDeg = [x delegate];
    if (xDeg == x) {
       CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2];
@@ -681,14 +676,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 
-+(CPIntVarI*)    initCPIntVar: (id<CPSolver>)fdm bounds:(id<ORIntRange>)b
++(CPIntVarI*)    initCPIntVar: (id<CPEngine>)fdm bounds:(id<ORIntRange>)b
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds:b];
    x->_isBool = ([b low] == 0 && [b up] == 1);
    return x;
 }
 
-+(CPIntVarI*) initCPIntVar: (id<CPSolver>) fdm low: (ORInt) low up: (ORInt) up
++(CPIntVarI*) initCPIntVar: (id<CPEngine>) fdm low: (ORInt) low up: (ORInt) up
 {
    CPIntVarI* x = nil;
    if (low==0 && up==1)
@@ -698,7 +693,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    x->_isBool = (low == 0 && up==1);
    return x;
 }
-+(CPIntVarI*) initCPBoolVar: (id<CPSolver>) fdm
++(CPIntVarI*) initCPBoolVar: (id<CPEngine>) fdm
 {
    CPIntVarI* x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
    x->_isBool = YES;
@@ -757,7 +752,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_vc];
    [aCoder encodeObject:_dom];
    [aCoder encodeObject:_fdm];
-   [aCoder encodeObject:_cp];
    [aCoder encodeObject:_recv];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
@@ -767,7 +761,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_vc];
    _dom = [[aDecoder decodeObject] retain];
    _fdm = [aDecoder decodeObject];
-   _cp  = [aDecoder decodeObject];
    ORInt low = [_dom imin];
    ORInt up  = [_dom imax];
    setUpNetwork(&_net, [_fdm trail],low,up-low+1);
@@ -785,7 +778,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 @implementation CPIntShiftView
 -(CPIntShiftView*)initIVarShiftView: (CPIntVarI*) x b: (ORInt) b
 {
-   self = [super initCPIntVarView:[x solver] low:[x min]+b up:[x max]+b for:x];
+   self = [super initCPIntVarView:[x engine] low:[x min]+b up:[x max]+b for:x];
    _vc = CPVCShift;
    _dom  = (CPBoundsDom*)[[x domain] retain];
    _b = b;
@@ -940,7 +933,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    ORInt vLow = a < 0 ? a * [x max] + b : a * [x min] + b;
    ORInt vUp  = a < 0 ? a * [x min] + b : a * [x max] + b;
-   self = [super initCPIntVarView: [x solver] low:vLow up:vUp for:x];
+   self = [super initCPIntVarView: [x engine] low:vLow up:vUp for:x];
    _vc = CPVCAffine;
    _dom = (CPBoundsDom*)[[x domain] retain];
    _a = a;
@@ -1140,7 +1133,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v
 {
    assert(x->_vc == CPVCBare);
-   self = [self initCPIntVarCore:[x solver] low: 0 up: 1];   
+   self = [self initCPIntVarCore:[x engine] low: 0 up: 1];
    _isBool = YES;
    _secondary = x;
    _v = v;
@@ -1627,7 +1620,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    assert(_pos[value - _ofs] == 0);
    _pos[value - _ofs] = x;
 }
--(id<ORIntVar>)positiveForValue:(ORInt)value
+-(id<CPIntVar>)positiveForValue:(ORInt)value
 {
    return _pos[value - _ofs];
 }

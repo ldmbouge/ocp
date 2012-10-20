@@ -16,90 +16,12 @@
 #import "CPIntVarI.h"
 #import "CPError.h"
 
-@implementation CPBinPackingI
-{
-   id<ORIntVarArray>  _item;
-   id<ORIntArray>     _itemSize;
-   id<ORIntVarArray>  _binSize;
-   BOOL               _posted;
-}
-
--(void) initInstanceVariables
-{
-   _idempotent = YES;
-   _priority = HIGHEST_PRIO;
-   _posted = false;
-}
-
--(CPBinPackingI*) initCPBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntVarArray>) binSize;
-{
-   self = [super initCPActiveConstraint: [[item solver] engine]];
-   _item = item;
-   _itemSize = itemSize;
-   _binSize = binSize;
-   [self initInstanceVariables];
-   return self;
-}
--(void) dealloc
-{
-   NSLog(@"BinPacking dealloc called ...");
-   if (_posted) {
-   }
-   [super dealloc];
-}
-
--(void) encodeWithCoder:(NSCoder*) aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeObject:_item];
-   [aCoder encodeObject:_itemSize];
-   [aCoder encodeObject:_binSize];
-}
-
--(id) initWithCoder:(NSCoder*) aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   [self initInstanceVariables];
-   _item = [aDecoder decodeObject];
-   _itemSize = [aDecoder decodeObject];
-   _binSize = [aDecoder decodeObject];
-   return self;
-}
-
--(ORStatus) post
-{
-//   NSLog(@"BinPacking post called ...");
-   if (_posted)
-      return ORSkip;
-   
-   _posted = true;
-   id<ORIntRange> BR = [_binSize range];
-   id<ORIntRange> IR = [_item range];
-   id<CPSolver> cp = (id<CPSolver>)[_item solver];
-   
-   ORInt brlow = [BR low];
-   ORInt brup = [BR up];
-   for(ORInt b = brlow; b <= brup; b++)
-      [cp add: [Sum(cp,i,IR,mult([_itemSize at: i],[_item[i] eqi: b])) eq: _binSize[b]] consistency:RangeConsistency];
-   ORInt s = 0;
-   ORInt irlow = [IR low];
-   ORInt irup = [IR up];
-   for(ORInt i = irlow; i <= irup; i++)
-      s += [_itemSize at: i];
-   [cp add: [Sum(cp,b,BR,_binSize[b]) eqi: s]];
-   for(ORInt b = brlow; b <= brup; b++)
-      [cp add: [CPFactory packOne: _item itemSize: _itemSize bin: b binSize: _binSize[b]]];
-   return ORSkip;
-}
-
-@end
-
 @implementation CPOneBinPackingI
 {
-   id<ORIntVarArray>  _item;
+   id<CPIntVarArray>  _item;
    id<ORIntArray>     _itemSize;
    ORInt              _bin;
-   id<ORIntVar>       _binSize;
+   id<CPIntVar>       _binSize;
    BOOL               _posted;
    
    ORInt              _low;
@@ -130,7 +52,7 @@
    _posted = false;
 }
 
--(CPOneBinPackingI*) initCPOneBinPackingI: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
+-(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
 {
    self = [super initCPActiveConstraint: [[item solver] engine]];
    _item = item;

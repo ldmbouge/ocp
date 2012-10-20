@@ -252,7 +252,7 @@
 		<key>queensModel.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>35</integer>
+			<integer>34</integer>
 		</dict>
 		<key>queensNaive-VIEW.xcscheme_^#shared#^_</key>
 		<dict>
@@ -302,7 +302,7 @@
 		<key>testPacking.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>42</integer>
+			<integer>35</integer>
 		</dict>
 		<key>tests.xcscheme</key>
 		<dict>

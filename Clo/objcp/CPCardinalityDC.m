@@ -17,7 +17,7 @@
 
 @implementation CPCardinalityDC
 {
-   id<ORIntVarArray> _x;
+   id<CPIntVarArray> _x;
    id<ORIntArray>  _lb;
    id<ORIntArray>  _ub;
    
@@ -77,7 +77,7 @@ static void findSCCsink(CPCardinalityDC* card);
     _posted = false;
 }
 
--(CPCardinalityDC*) initCPCardinalityDC: (id<ORIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub
+-(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub
 {
     self = [super initCPActiveConstraint: [[x solver] engine]];
     _x = x;
@@ -129,12 +129,12 @@ static void findSCCsink(CPCardinalityDC* card);
         _var[i] = (CPIntVarI*) [_x at: low + i];    
 }
 
-static void findValueRange(id<ORIntVarArray> x,ORInt* low,ORInt* up)
+static void findValueRange(id<CPIntVarArray> x,ORInt* low,ORInt* up)
 {
     ORInt l = [x low];
     ORInt u = [x up];
     for(ORInt i = l; i <= u; i++) {
-        id<ORIntVar> v = [x at: i];
+        id<CPIntVar> v = [x at: i];
         ORInt lb = [v min]; 
         if (lb < *low)
             *low = lb;
