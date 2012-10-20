@@ -17,7 +17,6 @@
 @protocol ORVar <ORObject,ORExpr>
 -(ORUInt) getId;
 -(BOOL) bound;
--(id<ORASolver>) solver;
 -(NSSet*) constraints;
 @end
 

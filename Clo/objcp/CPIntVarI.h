@@ -134,7 +134,6 @@ enum CPVarClass {
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
--(id<CPSolver>) solver;
 -(id<ORTracker>) tracker;
 -(NSSet*)constraints;
 -(CPBitDom*)flatDomain;

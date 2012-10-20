@@ -164,21 +164,21 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [[_b solver] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         [[_b engine] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
          return ORSkip;
       } else {
-         [[_b solver] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         [[_b engine] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
          return ORSkip;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
-      [[_b solver] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      [[_b engine] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
       return ORSkip;
    }
    else if (bound(_y)) {
-      [[_b solver] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      [[_b engine] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
       return ORSkip;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
@@ -263,10 +263,10 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [[_b solver] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         [[_b engine] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
          return ORSkip;
       } else {
-         [[_b solver] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         [[_b engine] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
          return ORSkip;
       }
    }

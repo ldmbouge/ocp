@@ -36,7 +36,7 @@
         onValueRecover:(ORInt2Void)rec 
          onValueUnbind:(ORInt2Void)unb
 {
-   self = [super initCPActiveConstraint:(id<CPEngine>)[(CPIntVarI*)x solver]];
+   self = [super initCPActiveConstraint:[(CPIntVarI*)x engine]];
    _theVar = (CPIntVarI*)x;
    _lost = [lost copy];
    _bind = [bind copy];
@@ -99,7 +99,7 @@
                      onValueRecover:rec
                       onValueUnbind:unb];
    CPIntVarI* theVar = (CPIntVarI*)x;
-   [[theVar solver] trackObject:c];
+   [[theVar engine] trackObject:c];
    return c;
 }
 @end

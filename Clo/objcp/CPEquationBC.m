@@ -98,7 +98,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(ORStatus) post
 {
-   _trail = [[[_x[0] solver] engine] trail];
+   _trail = [[_x[0] engine] trail];
    _updateBounds = malloc(sizeof(UBType)*_nb);
    for(ORInt k=0;k<_nb;k++)
       _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];

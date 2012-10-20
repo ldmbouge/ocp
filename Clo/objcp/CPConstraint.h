@@ -15,8 +15,8 @@
 
 @interface CPFactory (Constraint)
 
-+(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<CPIntVarArray>) x;
-+(id<CPConstraint>) alldifferent: (id<CPSolver>) solver over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c;
++(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;
++(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c;
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x;
 +(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (ORAnnotation) c;
 

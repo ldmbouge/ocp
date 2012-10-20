@@ -41,13 +41,6 @@
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_dense ? 'D':'S',_impl];
 }
 
--(id<ORASolver>) solver
-{
-   if (_impl)
-      return [_impl solver];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-}
 -(void) setId: (ORUInt) name
 {
    _name = name;
@@ -264,14 +257,6 @@
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f)",_name,_low,_up];
    else
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
-}
-
--(id<ORASolver>) solver
-{
-   if (_impl)
-      return [_impl solver];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
 -(void) setId: (ORUInt) name
 {

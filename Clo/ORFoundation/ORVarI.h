@@ -31,7 +31,6 @@
 -(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
--(id<ORASolver>) solver;
 -(NSSet*)constraints;
 -(ORInt)scale;
 -(ORInt)shift;
@@ -62,7 +61,6 @@
 -(id<ORIntVar>) dereference;
 -(id<ORIntVar>) impl;
 -(void) setImpl: (id<ORIntVar>) _impl;
--(id<ORASolver>) solver;
 -(NSSet*) constraints;
 -(void) visit: (id<ORVisitor>)v;
 @end

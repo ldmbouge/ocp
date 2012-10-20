@@ -128,13 +128,14 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   if ([cstr impl] == NULL) {
-      id<CPIntVarArray> item = [self concreteArray:[cstr item]];
-      id<ORIntArray> itemSize = [cstr itemSize];
-      id<CPIntVarArray> binSize = [self concreteArray:[cstr binSize]];
-      id<CPConstraint> concrete = [CPFactory packing:item itemSize:itemSize load:binSize];
-      [cstr setImpl:concrete];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+//   if ([cstr impl] == NULL) {
+//      id<CPIntVarArray> item = [self concreteArray:[cstr item]];
+//      id<ORIntArray> itemSize = [cstr itemSize];
+//      id<CPIntVarArray> binSize = [self concreteArray:[cstr binSize]];
+//      id<CPConstraint> concrete = [CPFactory packing:item itemSize:itemSize load:binSize];
+//      [cstr setImpl:concrete];
+//   }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
@@ -198,7 +199,7 @@
    if ([v impl] == NULL) {
       id<ORIntVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory minimize: [o dereference]];
+      id<CPConstraint> concreteCstr = [CPFactory minimize: [o impl]];
       [v setImpl: concreteCstr];
    }
 }
@@ -207,7 +208,7 @@
    if ([v impl] == NULL) {
       id<ORIntVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory maximize: [o dereference]];
+      id<CPConstraint> concreteCstr = [CPFactory maximize: [o impl]];
       [v setImpl: concreteCstr];
    }
 }
@@ -483,7 +484,7 @@
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] neq: [y impl] consistency: annotation];
+      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] leq: [y impl] consistency: annotation];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -509,7 +510,7 @@
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] neq: [y impl] consistency: annotation];
+      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] geq: [y impl] consistency: annotation];
       [cstr setImpl: concreteCstr];
    }
 }
