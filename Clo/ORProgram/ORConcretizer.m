@@ -19,6 +19,8 @@
 #import <ORModeling/ORModelTransformation.h>
 
 
+// PVH to factorize this
+
 @implementation ORFactory (Concretization)
 
 +(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
@@ -65,15 +67,18 @@
 
 +(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   id<ORModel> flatModel = [flat apply: model];
+   
    id<CPProgram> cpprogram = [ORFactory createCPCommonProgram: ctrlClass];
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   [model visit: concretizer];
+   [flatModel visit: concretizer];
    [concretizer release];
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
-   NSArray* Constraints = [model constraints];
-   id<ORObjectiveFunction> obj = [model objective];
+   NSArray* Constraints = [flatModel constraints];
+   id<ORObjectiveFunction> obj = [flatModel objective];
    for(id<ORObject> c in Constraints)
       [c visit: poster];
    [obj visit: poster];
