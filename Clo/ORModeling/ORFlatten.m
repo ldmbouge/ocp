@@ -81,7 +81,8 @@
    } onConstraints:^(id<ORConstraint> c) {
       [self flatten:c into:out];
    } onObjective:^(id<ORObjective> o) {
-      NSLog(@"Got an objective: %@",o);
+      printf("We have an objective \n");
+      [out optimize: o];
    }];
    return out;
 }
@@ -147,6 +148,8 @@
 -(void) visitExprImplyI: (id<ORExpr>) e     {}
 -(void) visitExprAggOrI: (id<ORExpr>) e     {}
 -(void) visitExprVarSubI: (id<ORExpr>) e    {}
+-(void) visitMinimize: (id<ORObjectiveFunction>) v {}
+-(void) visitMaximize: (id<ORObjectiveFunction>) v {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr {}
 @end
 
@@ -271,5 +274,13 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
    [_theModel add:c];
+}
+-(void) visitMinimize: (id<ORObjectiveFunction>) o
+{
+   [_theModel minimize: [o var]];
+}
+-(void) visitMaximize: (id<ORObjectiveFunction>) o
+{
+   [_theModel maximize: [o var]];
 }
 @end

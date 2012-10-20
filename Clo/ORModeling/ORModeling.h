@@ -18,6 +18,7 @@
 @protocol ORModel <ORTracker,ORObject>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
+-(void) optimize: (id<ORObjectiveFunction>) o;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
 -(void) instantiate: (id<ORSolver>) solver;

@@ -61,11 +61,11 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> c  = [ORFactory intVarArray:model range:V domain: V];
       id<ORIntVar>      m  = [ORFactory intVar:model domain:V];
       for(ORInt i=1;i<=nbv;i++)
-         [model add: [ORFactory lEqual: model var: c[i] to: m]];
+         [model add: [c[i] leq: m]];
       for (ORInt i=1; i<=nbv; i++) {
          for(ORInt j =i+1;j <= nbv;j++) {
             if ([adj at: i :j])
-               [model add: [ORFactory notEqual: model var: c[i] to: c[j]]];
+               [model add: [c[i] neq: c[j]]];
          }
       }
       [model minimize: m];
