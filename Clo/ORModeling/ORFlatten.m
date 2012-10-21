@@ -37,6 +37,8 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Constraints
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(void) visitMinimize: (id<ORObjectiveFunction>) v;
+-(void) visitMaximize: (id<ORObjectiveFunction>) v;
 @end
 
 @interface ORFlattenConstraint : NSObject<ORVisitor>
@@ -148,6 +150,8 @@
 -(void) visitExprAggOrI: (id<ORExpr>) e     {}
 -(void) visitExprVarSubI: (id<ORExpr>) e    {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr {}
+-(void) visitMinimize: (id<ORObjectiveFunction>) v {}
+-(void) visitMaximize: (id<ORObjectiveFunction>) v {}
 @end
 
 @implementation ORFlattenConstraint {
