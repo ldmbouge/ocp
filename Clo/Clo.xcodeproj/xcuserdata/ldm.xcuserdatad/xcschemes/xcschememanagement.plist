@@ -37,12 +37,17 @@
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>35</integer>
+			<integer>31</integer>
 		</dict>
 		<key>ORModeling.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>38</integer>
+			<integer>33</integer>
+		</dict>
+		<key>ORProgram.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>34</integer>
 		</dict>
 		<key>ORUtilities.xcscheme</key>
 		<dict>
@@ -172,7 +177,7 @@
 		<key>magicsquareModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>33</integer>
+			<integer>30</integer>
 		</dict>
 		<key>market2s.xcscheme</key>
 		<dict>
@@ -244,10 +249,20 @@
 			<key>orderHint</key>
 			<integer>5</integer>
 		</dict>
+		<key>queensModel.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>35</integer>
+		</dict>
 		<key>queensNaive-VIEW.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>7</integer>
+		</dict>
+		<key>queensNaive.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>36</integer>
 		</dict>
 		<key>queensNaive.xcscheme_^#shared#^_</key>
 		<dict>
@@ -277,7 +292,7 @@
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>36</integer>
+			<integer>32</integer>
 		</dict>
 		<key>testLPWrapper.xcscheme</key>
 		<dict>
@@ -287,7 +302,7 @@
 		<key>testPacking.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>42</integer>
+			<integer>37</integer>
 		</dict>
 		<key>tests.xcscheme</key>
 		<dict>
