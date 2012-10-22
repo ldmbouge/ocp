@@ -155,11 +155,9 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORIntVar>) reifyView: (id<ORIntVar>) x eqi:(ORInt)c
++(id<ORIntVar>) reifyView:(id<ORTracker>)model var:(id<ORIntVar>) x eqi:(ORInt)c
 {
-   id<ORIntVar> o = [[ORIntVarLitEQView alloc] initORIntVarLitEQView:[x tracker] var:x eqi:c];
-   [[x tracker] trackObject:o];
-   return o;
+   return [[ORIntVarLitEQView alloc] initORIntVarLitEQView:model var:x eqi:c];
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
 {
@@ -175,7 +173,10 @@
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
 {
-   return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:b];
+   if (a == 1 && b == 0)
+      return x;
+   else
+      return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:b];
 }
 +(id<ORIntVar>) boolVar: (id<ORTracker>) model
 {
@@ -487,7 +488,7 @@
 }
 +(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z note: (ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORPlus alloc] initOREqual:x eq:y plus:z note:n];
+   id<ORConstraint> o = [[ORPlus alloc] initORPlus:x eq:y plus:z note:n];
    return o;
 }
 +(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(int) c

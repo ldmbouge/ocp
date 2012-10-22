@@ -403,7 +403,7 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
       case CPVCEQLiteral: return [x member:value];
       default:assert(NO);
    }
-   return getCPDom((CPBitDom*)x->_dom, target);   
+   return domMember((CPBitDom*)x->_dom, target);
 }
 
 static inline ORStatus removeDom(CPIntVarI* x,ORInt v)

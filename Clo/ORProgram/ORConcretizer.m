@@ -43,6 +43,7 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
+   NSLog(@"FLAT: %@",flatModel);
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
    NSArray* Constraints = [flatModel constraints];

@@ -304,6 +304,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return 1;
 }
+-(ORInt)literal
+{
+   return 0;
+}
 -(id<ORIntVar>)base
 {
    return self;
@@ -1373,9 +1377,9 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    if ([self bound])
-      [buf appendFormat:@"var<%d>+=%d",_name,[self min]];
+      [buf appendFormat:@"var<%d>+=%d (LIT=%d)",_name,[self min],_v];
    else
-      [buf appendFormat:@"var<%d>+={0,1}",_name];
+      [buf appendFormat:@"var<%d>+={0,1} (LIT=%d)",_name,_v];
    return buf;
 }
 -(id) snapshot

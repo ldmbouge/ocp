@@ -256,7 +256,7 @@
 		5B920EB415A3F6DD00AD0820 /* ORFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EB215A3F6DD00AD0820 /* ORFactory.m */; };
 		5B920EB615A3F91A00AD0820 /* ORData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB515A3F91A00AD0820 /* ORData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B920EB815A3FB9E00AD0820 /* ORArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB715A3FB9E00AD0820 /* ORArray.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB915A3FDB800AD0820 /* ORDataI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EB915A3FDB800AD0820 /* ORDataI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B920EBC15A3FDB800AD0820 /* ORDataI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EBA15A3FDB800AD0820 /* ORDataI.m */; };
 		5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EBD15A402A500AD0820 /* ORArrayI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B920EC015A402A600AD0820 /* ORArrayI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EBE15A402A500AD0820 /* ORArrayI.m */; };

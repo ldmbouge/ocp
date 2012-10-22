@@ -956,6 +956,14 @@
 {
    [v visitSumBoolEqualc:self];
 }
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(ORInt)cst
+{
+   return _c;
+}
 @end
 
 @implementation ORSumBoolLEqc {
@@ -978,6 +986,14 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitSumBoolLEqualc:self];
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(ORInt)cst
+{
+   return _c;
 }
 @end
 
@@ -1002,6 +1018,14 @@
 {
    [v visitSumBoolGEqualc:self];
 }
+-(id<ORIntVarArray>)vars
+{
+   return _ba;
+}
+-(ORInt)cst
+{
+   return _c;
+}
 @end
 
 @implementation ORSumEqc {
@@ -1024,6 +1048,14 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitSumEqualc:self];
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ia;
+}
+-(ORInt)cst
+{
+   return _c;
 }
 @end
 
@@ -1048,6 +1080,14 @@
 {
    [v visitSumLEqualc:self];
 }
+-(id<ORIntVarArray>)vars
+{
+   return _ia;
+}
+-(ORInt)cst
+{
+   return _c;
+}
 @end
 
 @implementation ORSumGEqc {
@@ -1071,6 +1111,14 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitSumGEqualc:self];
+}
+-(id<ORIntVarArray>)vars
+{
+   return _ia;
+}
+-(ORInt)cst
+{
+   return _c;
 }
 @end
 

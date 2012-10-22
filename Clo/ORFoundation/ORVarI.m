@@ -17,6 +17,7 @@
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
    BOOL           _dense;
+   BOOL           _isBool;
    ORUInt         _name;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
@@ -26,12 +27,17 @@
    _tracker = track;
    _domain = domain;
    _dense = true;
+   _isBool = ([domain low] == 0 && [domain up] == 1);
    [track trackVariable: self];
    return self;
 }
 -(void) dealloc
 {
    [super dealloc];
+}
+-(BOOL) isVariable
+{
+   return YES;
 }
 -(NSString*) description
 {
@@ -106,8 +112,7 @@
    if (_impl)
       return [_impl isBool];
    else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
+      return _isBool;
 }
 -(NSSet*)constraints
 {
@@ -148,6 +153,10 @@
 {
    return 0;
 }
+-(ORInt)literal
+{
+   return 0;
+}
 -(id<ORIntVar>)base
 {
    return self;
@@ -181,9 +190,9 @@
 {
    char d = _dense ? 'D':'S';
    if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d)",_name,[_domain description],d,_a,_x,_b];
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : nil)",_name,[_domain description],d,_a,_x,_b];
    else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d,%@)",_name,[_domain description],d,_a,_x,_b,_impl];
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : %@)",_name,[_domain description],d,_a,_x,_b,_impl];
 }
 -(ORInt)scale
 {

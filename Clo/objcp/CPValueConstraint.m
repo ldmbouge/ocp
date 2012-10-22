@@ -674,29 +674,17 @@
    TRInt _nbOne;
    TRInt _nbZero;   
 }
--(id) initCPSumBool:(id) x eq:(ORInt)c
+-(id) initCPSumBool:(id<CPIntVarArray>)xa eq:(ORInt)c
 {
-   NSLog(@"%@",x);
-   NSLog(@"%@",[x class]);
-   if ([x isKindOfClass:[NSArray class]]) {
-      id<ORASolver> solver = [[x objectAtIndex:0] solver];
-      self = [super initCPActiveConstraint: [solver engine]];
-      _nb = [x count];
-      _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(ORInt k=0;k<_nb;k++)
-         _x[k] = [x objectAtIndex:k];
-   }
-   else {
-      id<CPIntVarArray> xa = x;
-      self = [super initCPActiveConstraint:[[x solver] engine]];
-      _nb = [x count];
-      _x  = malloc(sizeof(CPIntVarI*)*_nb);
-      ORInt low = [xa low];
-      ORInt up = [xa up];
-      ORInt i = 0;
-      for(ORInt k=low;k <= up;k++)
-         _x[i++] = (CPIntVarI*) [xa at:k];
-   }
+   id<CPEngine> engine = [[xa at: [xa low]] engine];
+   self = [super initCPActiveConstraint:engine];
+   _nb = [xa count];
+   _x  = malloc(sizeof(CPIntVarI*)*_nb);
+   ORInt low = [xa low];
+   ORInt up = [xa up];
+   ORInt i = 0;
+   for(ORInt k=low;k <= up;k++)
+      _x[i++] = (CPIntVarI*) [xa at:k];
    _c = c;
    return self;
 }

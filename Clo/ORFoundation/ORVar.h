@@ -32,6 +32,7 @@
 -(id<ORIntVar>) dereference;
 -(ORInt)scale;
 -(ORInt)shift;
+-(ORInt)literal;
 -(id<ORIntVar>)base;
 @end
 

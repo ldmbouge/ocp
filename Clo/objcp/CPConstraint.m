@@ -147,25 +147,25 @@
 +(id<ORConstraint>) table: (ORTableI*) table on: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
-   [[x engine] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) table: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 {
    id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: table on: x : y : z];
-   [[x engine] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost
 {
    id<ORConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix cost: cost];
-   [[x solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y
 {
    id<ORConstraint> o = [[CPLexConstraint alloc] initCPLexConstraint:x and:y];
-   [[x solver] trackObject:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 

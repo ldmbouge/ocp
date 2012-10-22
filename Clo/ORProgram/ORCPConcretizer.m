@@ -80,6 +80,17 @@
       [v setImpl: cv];
    }
 }
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v
+{
+   if ([v impl] == NULL) {
+      id<ORIntVar> mBase = [v base];
+      [mBase visit:self];
+      ORInt lit = [v literal];
+      id<CPIntVar> cv = [CPFactory reifyView:(id<CPIntVar>)[mBase dereference] eqi:lit];
+      [v setImpl:cv];
+   }
+}
+
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    if ([v impl] == NULL) {
@@ -516,21 +527,25 @@
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
 {
-   
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPConstraint> concrete = [CPFactory sumbool:x eq:[cstr cst]];
+      [cstr setImpl:concrete];
+   }
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>) cstr
 {
- 
-   
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>) cstr
 {
- 
-   
 }
 -(void) visitSumEqualc:(id<ORSumEqc>) cstr
 {
-   
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPConstraint> concrete = [CPFactory sumbool:x eq:[cstr cst]];
+      [cstr setImpl:concrete];
+   }   
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>) cstr
 {
