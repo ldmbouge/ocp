@@ -543,7 +543,7 @@
 {
    if ([cstr impl] == NULL) {
       id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
-      id<CPConstraint> concrete = [CPFactory sumbool:x eq:[cstr cst]];
+      id<CPConstraint> concrete = [CPFactory sum:x eq:[cstr cst]];
       [cstr setImpl:concrete];
    }   
 }
