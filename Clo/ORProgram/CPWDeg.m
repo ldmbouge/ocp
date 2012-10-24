@@ -16,7 +16,7 @@
 
 @implementation CPWDeg
 
--(CPWDeg*)initCPWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
+-(CPWDeg*)initCPWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
@@ -45,7 +45,7 @@
    free(_map);
    [super dealloc];
 }
--(id<CPSolver>)solver
+-(id<CPProgram>)solver
 {
    return _cp;
 }

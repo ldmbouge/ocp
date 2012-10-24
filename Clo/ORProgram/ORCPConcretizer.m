@@ -538,6 +538,11 @@
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>) cstr
 {
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPConstraint> concrete = [CPFactory sumbool:x geq:[cstr cst]];
+      [cstr setImpl:concrete];
+   }
 }
 -(void) visitSumEqualc:(id<ORSumEqc>) cstr
 {
@@ -549,7 +554,11 @@
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>) cstr
 {
-   
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
+      id<CPConstraint> concrete = [CPFactory sum:x leq:[cstr cst]];
+      [cstr setImpl:concrete];
+   }   
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {

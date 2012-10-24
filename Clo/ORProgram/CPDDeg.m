@@ -16,7 +16,7 @@
 @implementation CPDDeg {
    CPEngineI*    _solver;
 }
--(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPDDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
@@ -29,7 +29,7 @@
 {
    [super dealloc];
 }
--(id<CPSolver>)solver
+-(id<CPProgram>)solver
 {
    return _cp;
 }

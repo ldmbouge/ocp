@@ -10,22 +10,21 @@
  ***********************************************************************/
 
 #import "CPBaseHeuristic.h"
-#import "CPEngineI.h"
-#import "CPIntVarI.h"
+#import <objcp/CPVar.h>
 
 @implementation CPBaseHeuristic
 -(void)initHeuristic:(NSMutableArray*)array
 {
    __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
-      nbViews += ([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]);
+      nbViews += ([obj varClass] == CPVCShift || [obj varClass] == CPVCAffine);
    }];
    ORULong l = [array count] - nbViews;
    id<ORASolver> cp = [[array objectAtIndex:0] solver];
-   id<ORVarArray> direct = [CPFactory varArray:cp range: RANGE(cp,0,(ORInt)l-1)];
+   id<ORVarArray> direct = (id<ORVarArray>)[ORFactory idArray:cp range:RANGE(cp,0,(ORInt)l-1) ];
    __block ORUInt k = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
-      if (!([obj isKindOfClass:[CPIntShiftView class]] || [obj isKindOfClass:[CPIntView class]]))
+      if (!([obj varClass] == CPVCShift || [obj varClass] == CPVCAffine))
          [direct set:obj at:k++];
    }];
    [self initInternal:direct];   

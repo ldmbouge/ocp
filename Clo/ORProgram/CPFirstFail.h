@@ -9,22 +9,19 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <objcp/CPHeuristic.h>
-#import <objcp/CPBaseHeuristic.h>
+#import <ORProgram/CPHeuristic.h>
+#import <ORProgram/CPBaseHeuristic.h>
+#import <ORProgram/ORProgram.h>
 
-@interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
+@interface CPFirstFail : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>  _vars;
    id<ORVarArray> _rvars;
-   ORUInt*          _map; 
-   id<CPSolver>      _cp;
-   ORULong          _nbv;
-   NSSet**           _cv;
+   id<CPProgram>     _cp;
 }
--(id)initCPDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
+-(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
+-(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
--(id<CPSolver>)solver;
+-(id<CPProgram>)solver;
 @end

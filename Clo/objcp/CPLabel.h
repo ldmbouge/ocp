@@ -12,7 +12,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPSolver.h>
-#import <objcp/CPHeuristic.h>
 
 //@interface CPLabel : NSObject
 //+(void) var: (id<ORIntVar>) x;

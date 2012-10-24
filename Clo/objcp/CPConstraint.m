@@ -193,17 +193,17 @@
    return o;
 }
 
-+(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(ORAnnotation)c
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (id<CPIntVar>) y consistency:(ORAnnotation)c
 {
    switch(c) {
       case ValueConsistency:
       case RangeConsistency: {
-         id<ORConstraint> o = [[CPReifyEqualBC alloc] initCPReifyEqualBC: b when: x eq: y];
+         id<CPConstraint> o = [[CPReifyNEqualBC alloc] initCPReify: b when: x neq: y];
          [[x tracker] trackObject: o];
          return o;
       }
       case DomainConsistency: {
-         id<ORConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
+         id<CPConstraint> o = [[CPReifyNEqualDC alloc] initCPReify: b when: x neq: y];
          [[x tracker] trackObject: o];
          return o;
       }
@@ -211,9 +211,27 @@
    }
 }
 
-+(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neqi: (ORInt) i
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(ORAnnotation)c
 {
-    id<ORConstraint> o = [[CPReifyNotEqualcDC alloc] initCPReifyNotEqualcDC: b when: x neq: i];
+   switch(c) {
+      case ValueConsistency:
+      case RangeConsistency: {
+         id<CPConstraint> o = [[CPReifyEqualBC alloc] initCPReifyEqualBC: b when: x eq: y];
+         [[x tracker] trackObject: o];
+         return o;
+      }
+      case DomainConsistency: {
+         id<CPConstraint> o = [[CPReifyEqualDC alloc] initCPReifyEqualDC: b when: x eq: y];
+         [[x tracker] trackObject: o];
+         return o;
+      }
+      default:assert(FALSE);
+   }
+}
+
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neqi: (ORInt) i
+{
+    id<CPConstraint> o = [[CPReifyNotEqualcDC alloc] initCPReifyNotEqualcDC: b when: x neq: i];
     [[x tracker] trackObject: o];
     return o;
 }

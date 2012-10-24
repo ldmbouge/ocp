@@ -150,6 +150,8 @@
 }
 @end
 
+// ==============================================================================================
+
 @implementation CPReifyEqualBC
 -(id) initCPReifyEqualBC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPIntVarI*) y
 {
@@ -164,27 +166,26 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [[_b engine] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y  (addInternal can throw)
          return ORSkip;
       } else {
-         [[_b engine] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y  (addInternal can throw)
          return ORSkip;
       }
    }
    else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
       [_b bind:minDom(_x) == minDom(_y)];
    else if (bound(_x)) {
-      [[_b engine] add: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
+      [[_b engine] addInternal: [CPFactory reify:_b with:_y eqi:minDom(_x)]];
       return ORSkip;
    }
    else if (bound(_y)) {
-      [[_b engine] add: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
+      [[_b engine] addInternal: [CPFactory reify:_b with:_x eqi:minDom(_y)]];
       return ORSkip;
    } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = NO
       if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
          [_b bind:NO];
       else {   // nobody bound and domains of (x,y) overlap
-         
          [_b whenBindPropagate:self];
          [_x whenChangeBoundsPropagate:self];
          [_y whenChangeBoundsPropagate:self];
@@ -249,6 +250,8 @@
 }
 @end
 
+// ==============================================================================================
+
 @implementation CPReifyEqualDC
 -(id) initCPReifyEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPIntVarI*) y
 {
@@ -263,10 +266,10 @@
 {
    if (bound(_b)) {
       if (minDom(_b)) {
-         [[_b engine] add: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
          return ORSkip;
       } else {
-         [[_b engine] add: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
+         [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]];     // Rewrite as x!=y
          return ORSkip;
       }
    }
@@ -384,6 +387,245 @@
    return self;
 }
 @end
+
+// ==============================================================================================
+
+@implementation CPReifyNEqualBC
+-(id) initCPReify: (CPIntVarI*) b when: (CPIntVarI*) x neq: (CPIntVarI*) y
+{
+   self = [super initCPCoreConstraint];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+
+-(ORStatus) post
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]];         // Rewrite as x==y  (addInternal can throw)
+         return ORSkip;
+      } else {
+         [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]];     // Rewrite as x==y  (addInternal can throw)
+         return ORSkip;
+      }
+   }
+   else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
+      [_b bind:minDom(_x) != minDom(_y)];
+   else if (bound(_x)) {
+      [[_b engine] addInternal: [CPFactory reify:_b with:_y neqi:minDom(_x)]];
+      return ORSkip;
+   }
+   else if (bound(_y)) {
+      [[_b engine] addInternal: [CPFactory reify:_b with:_x neqi:minDom(_y)]];
+      return ORSkip;
+   } else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = YES
+      if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
+         [_b bind:YES];
+      else {   // nobody bound and domains of (x,y) overlap
+         [_b whenBindPropagate:self];
+         [_x whenChangeBoundsPropagate:self];
+         [_y whenChangeBoundsPropagate:self];
+      }
+   }
+   return ORSuspend;
+}
+
+-(void)propagate
+{
+   if (minDom(_b)) {            // b is TRUE
+      if (bound(_x))            // TRUE <=> (y != c)
+         [_y remove:minDom(_x)];
+      else  if (bound(_y))      // TRUE <=> (x != c)
+         [_x remove:minDom(_y)];
+   }
+   else if (maxDom(_b)==0) {     // b is FALSE
+      if (bound(_x))
+         bindDom(_y, minDom(_x));
+      else if (bound(_y))
+         bindDom(_x, minDom(_y));
+      else {                    // FALSE <=> (x == y)
+         [_x updateMin:minDom(_y) andMax:maxDom(_y)];
+         [_y updateMin:minDom(_x) andMax:maxDom(_x)];
+      }
+   }
+   else {                        // b is unknown
+      if (bound(_x) && bound(_y))
+         [_b bind: minDom(_x) != minDom(_y)];
+      else if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
+         [_b bind:YES];
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPReifyNEqualBC:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_b bound];
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+// ==============================================================================================
+
+@implementation CPReifyNEqualDC
+-(id) initCPReify: (CPIntVarI*) b when: (CPIntVarI*) x neq: (CPIntVarI*) y
+{
+   self = [super initCPCoreConstraint];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+
+-(ORStatus) post
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [[_b engine] addInternal: [CPFactory notEqual:_x to:_y]]; // Rewrite as x!=y
+         return ORSkip;
+      } else {
+         [[_b engine] addInternal: [CPFactory equal:_x to:_y plus:0]]; // Rewrite as x==y
+         return ORSkip;
+      }
+   }
+   else if (bound(_x) && bound(_y))        //  b <=> c == d =>  b <- c==d
+      [_b bind:minDom(_x) != minDom(_y)];
+   else if (bound(_x))
+      [self reifiedOp:_y notEqual:minDom(_x) equiv:_b];
+   else if (bound(_y))
+      [self reifiedOp:_x notEqual:minDom(_y) equiv:_b];
+   else {      // nobody is bound. D(x) INTER D(y) = EMPTY => b = YES
+      if (maxDom(_x) < minDom(_y) || maxDom(_y) < minDom(_x))
+         [_b bind:YES];
+      else {   // nobody bound and domains of (x,y) overlap
+         [_b whenBindPropagate:self];
+         [self listenOn:_x inferOn:_y];
+         [self listenOn:_y inferOn:_x];
+      }
+   }
+   return ORSuspend;
+}
+-(void)listenOn:(CPIntVarI*)a inferOn:(CPIntVarI*)other
+{
+   [a whenLoseValue:self do:^(ORInt c) {    // c NOTIN(a)
+      if (bound(other) && minDom(other)==c) // FALSE <=> other==c & c NOTIN(a)
+         [_b bind:YES];
+   }];
+   [a whenBindDo:^{
+      if (minDom(_b)==1)           // TRUE <=> other != c
+         [other remove: minDom(a)];
+      else if (maxDom(_b)==0)     // FALSE <=> other != c -> other == c
+         [other bind:minDom(a)];
+      else {                      // b <=> y != c
+         if (!memberDom(other, minDom(a)))
+            [_b bind:YES];
+         if (bound(other))
+            [_b bind:minDom(a) != minDom(other)];
+      }
+   } onBehalf:self];
+}
+-(void)reifiedOp:(CPIntVarI*)a notEqual:(ORInt)c equiv:(CPIntVarI*)b
+{
+   if (!memberDom(a, c)) {                   // b <=> c != a & c NOTIN D(a)
+      [b bind:YES];                          // -> b=YES
+   } else {                                  // b <=> c != a & c IN D(a)
+      [a whenLoseValue:self do:^(ORInt v) {
+         if (v == c)
+            [b bind:YES];
+      }];
+      [a whenBindDo:^{
+         [b bind:c != minDom(a)];
+      } onBehalf:self];
+      [b whenBindDo:^{
+         if (minDom(b))
+            [a remove:c];
+         else
+            [a bind:c];
+      } onBehalf:self];
+   }
+}
+-(void)propagate
+{
+   if (minDom(_b)) {
+      if (bound(_x))            // TRUE <=> (y == c)
+         [_y bind:minDom(_x)];
+      else  if (bound(_y))      // TRUE <=> (x == c)
+         [_x bind:minDom(_y)];
+      else {                    // TRUE <=> (x == y)
+         [_x updateMin:minDom(_y) andMax:maxDom(_y)];
+         [_y updateMin:minDom(_x) andMax:maxDom(_x)];
+         ORBounds b = bounds(_x);
+         for(ORInt i = b.min;i <= b.max; i++) {
+            if (!memberBitDom(_x, i))
+               [_y remove:i];
+            if (!memberBitDom(_x, i))
+               [_x remove:i];
+         }
+      }
+   }
+   else {
+      if (bound(_x))             // FALSE <=> y == c => y != c
+         [_y remove:minDom(_x)];
+      else if (bound(_y))        // FALSE <=> x == c => x != c
+         [_x remove:minDom(_y)];
+      // x != y
+   }
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPReifyEqualDC:%02d %@ <=> (%@ == %@)>",_name,_b,_x,_y];
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_b bound];
+}
+
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_b];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+
+- (id) initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _b = [aDecoder decodeObject];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+// ==============================================================================================
 
 @implementation CPReifyLEqualDC
 -(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leq: (ORInt) c

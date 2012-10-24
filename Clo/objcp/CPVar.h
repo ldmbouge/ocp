@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>
-#import <objcp/CPHeuristic.h>
 
 @protocol CPEngine;
 @protocol ORTracer;
@@ -24,7 +23,16 @@
 -(id<CPEngine>)engine;
 @end
 
+enum CPVarClass {
+   CPVCBare = 0,
+   CPVCShift = 1,
+   CPVCAffine = 2,
+   CPVCEQLiteral = 3,
+   CPVCLiterals = 4
+};
+
 @protocol CPIntVar <CPVar>
+-(enum CPVarClass)varClass;
 -(ORInt) value;
 -(ORInt) min;
 -(ORInt) max;
@@ -37,6 +45,7 @@
 -(ORInt) shift;
 -(id<ORIntVar>) base;
 -(BOOL) bound;
+-(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 @end
 
 @protocol CPVarArray <ORVarArray>

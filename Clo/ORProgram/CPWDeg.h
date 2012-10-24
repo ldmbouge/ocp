@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <objcp/CPHeuristic.h>
-#import <objcp/CPBaseHeuristic.h>
+#import <ORProgram/CPHeuristic.h>
+#import <ORProgram/CPBaseHeuristic.h>
+#import <ORProgram/ORProgram.h>
 
 @class CPEngineI;
 // pvh: heuristics should use the solver and it should make the informer available
@@ -21,7 +21,7 @@
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
    ORUInt*           _map; 
-   id<CPSolver>             _cp;
+   id<CPProgram>      _cp;
    CPEngineI*     _solver;
    ORUInt            _nbc;
    ORUInt            _nbv;
@@ -29,10 +29,10 @@
    NSSet**            _cv;
    id*              _vOfC;
 }
--(CPWDeg*)initCPWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
+-(CPWDeg*)initCPWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
--(id<CPSolver>)solver;
+-(id<CPProgram>)solver;
 @end

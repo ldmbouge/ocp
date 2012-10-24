@@ -9,9 +9,11 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <objcp/CPHeuristic.h>
-#import <objcp/CPBaseHeuristic.h>
+#import <ORProgram/CPHeuristic.h>
+#import <ORProgram/CPBaseHeuristic.h>
+#import <ORProgram/ORConcretizer.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 
 @class CPStatisticsMonitor;
 
@@ -20,13 +22,13 @@
 @interface CPIBS : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
-   id<CPSolver>       _cp;
+   id<CPProgram>      _cp;
 }
--(id)initCPIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
+-(id)initCPIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
 -(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
 -(void)initImpacts;
--(id<CPSolver>)solver;
+-(id<CPProgram>)solver;
 @end

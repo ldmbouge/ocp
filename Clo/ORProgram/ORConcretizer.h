@@ -19,4 +19,16 @@
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPCheckpointingProgram: (id<ORModel>) model;
 +(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass;
-@end;
+
++(id<CPHeuristic>) createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createDDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createABS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
++(id<CPHeuristic>) createFF:(id<CPProgram>)cp;
++(id<CPHeuristic>) createWDeg:(id<CPProgram>)cp;
++(id<CPHeuristic>) createDDeg:(id<CPProgram>)cp;
++(id<CPHeuristic>) createIBS:(id<CPProgram>)cp;
++(id<CPHeuristic>) createABS:(id<CPProgram>)cp;
+
+@end

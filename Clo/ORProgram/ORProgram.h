@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>
-#import <objcp/CPHeuristic.h>
+#import <ORProgram/CPHeuristic.h>
 #import <objcp/CPSolver.h>
 
 @protocol ORSearchController;
@@ -29,7 +29,6 @@
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 -(id<ORSolution>)  solution;
-
 
 -(void)                 add: (id<ORConstraint>) c;
 -(void)                 add: (id<ORConstraint>) c consistency: (ORAnnotation) cons;
