@@ -46,7 +46,7 @@
 -(unsigned int*)        lowArray;
 -(unsigned int*)        upArray;
 -(bool)                 getBit:(unsigned int) idx;
--(ORStatus)             setBit:(unsigned int) idx to:(bool) val;
+-(ORStatus)             setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x;
 -(bool)                 isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
 -(bool)                 member:(unsigned int*) val;

@@ -292,7 +292,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
 {
-   [_dom updateFreeBitCount];
+   //[_dom updateFreeBitCount];
     id evt = [[VarEventNode alloc] initVarEventNode:_net._bitFixedEvt._val
                                             trigger:todo
                                                cstr:c
@@ -412,14 +412,15 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return self;
 }
 
--(CPBitVarI*) initCPExplicitBitVarPat: (CPSolverI*)fdm withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
+-(CPBitVarI*) initCPExplicitBitVarPat: (CPSolverI*)cp withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
 {
     self = [super init];
-    _fdm  = (CPEngineI*)[fdm engine];
+   _cp = (CPSolverI*)cp;
+    _fdm  = [cp engine];
     [_fdm trackVariable: self];
-    setUpNetwork(&_net, [fdm trail]);
+    setUpNetwork(&_net, [cp trail]);
     _triggers = nil;
-    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[fdm trail]];
+    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[cp trail]];
     _recv = self;
     return self;
 }

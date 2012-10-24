@@ -11,6 +11,7 @@
 
 #import "CPEngineI.h"
 #import "CPIntVarI.h"
+#import "CPBitVarI.h"
 #import "CPBasicConstraint.h"
 #import "CPTypes.h"
 #import "ORFoundation/ORSetI.h"
@@ -536,8 +537,8 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) labelBitVar: (id<CPBitVar>) var at:(ORUInt) i with: (bool) val
 {
    @try {
-      assert(_status != ORFailure);
-      ORStatus status = [[var domain] setBit:i to:val];
+      //assert(_status != ORFailure);
+      ORStatus status = [[var domain] setBit:i to:val for:(CPBitVarI*)var];
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
    } @catch (ORFailException *exception) {

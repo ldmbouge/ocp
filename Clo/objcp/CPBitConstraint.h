@@ -24,6 +24,7 @@
 +(id<CPConstraint>) bitXOR:(id<CPBitVar>)x xor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
 +(id<CPConstraint>) bitNOT:(id<CPBitVar>)x equals:(id<CPBitVar>) y;
 +(id<CPConstraint>) bitShiftL:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
++(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout;
 @end
 
 @interface CPBitEqual : CPActiveConstraint<NSCoding> {
@@ -137,7 +138,7 @@
     CPBitVarI*      _cout;
     
 }
--(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:cout;
+-(id) initCPBitAdd: (CPBitVarI*) x plus: (CPBitVarI*) y equals:(CPBitVarI*) z withCarryIn:(CPBitVarI*) cin andCarryOut:(CPBitVarI*)cout;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;

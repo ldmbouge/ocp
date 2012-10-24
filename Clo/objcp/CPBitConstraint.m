@@ -11,8 +11,10 @@
 
 #import "CPBitConstraint.h"
 #import "CPEngineI.h"
+#import "CPBitMacros.h"
 
-#define ISTRUE(up, low) (*up & *low)
+#define ISTRUE(up, low) (up & low)
+#define ISFALSE(up, low) ((~up) & (~low))
 
 @implementation CPFactory (BitConstraint)
 //Bit Vector Constraints
@@ -59,6 +61,12 @@
     
 }
 
++(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout
+{
+   id<CPConstraint> o = [[CPBitADD alloc] initCPBitAdd:(CPBitVarI*)x plus:(CPBitVarI*)y equals:(CPBitVarI*)z withCarryIn:(CPBitVarI*)cin andCarryOut:(CPBitVarI*)cout];
+   [[x engine] trackObject:o];
+   return o;
+}
 
 @end
 
@@ -682,34 +690,40 @@
     TRUInt* yLow = [_y getLow];
     TRUInt* yUp = [_y getUp];
     
-    unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
-    unsigned int* newXLow  = alloca(sizeof(unsigned int)*wordLength);
-    unsigned int* newYUp = alloca(sizeof(unsigned int)*wordLength);
-    unsigned int* newYLow  = alloca(sizeof(unsigned int)*wordLength);
+    unsigned int* newXUp = alloca((sizeof(unsigned int))*wordLength);
+    unsigned int* newXLow  = alloca((sizeof(unsigned int))*wordLength);
+    unsigned int* newYUp = alloca((sizeof(unsigned int))*wordLength);
+    unsigned int* newYLow  = alloca((sizeof(unsigned int))*wordLength);
     unsigned int upXORlow;
     
     bool    inconsistencyFound = false;
-    
+/*
         for(int i=wordLength-1;i>=0;i--){
         
         //y_k =1 => x_k-places = 1
-//        if (i+(_places/32)< wordLength)
-            newYUp[i] = ~((~xUp[i+(_places/32)]._val << (_places%32)) | ~yUp[i]._val);
-//        else
-//            newYUp[i] = 0;
-        
-        //z_k=0 & x_k=1 => y_k=1
-        //z_k=1 & x_k=0 => y_k=1
-//        if (i+(_places/32)< wordLength)
-            newYLow[i] =  (xLow[i+(_places/32)]._val << (_places%32)) | yLow[i]._val;
-//        else
-//            newYLow[i] = 0;
+         if (i+(_places/32)< wordLength){
+            newYUp[i] = (xUp[i+(_places/32)]._val << (_places%32)) | yUp[i]._val;
+            newXUp[i] = (yUp[i+(_places/32)]._val >> (_places%32)) | xUp[i]._val;
+            newYUp[i] |= xUp[i+_places/32-1]._val >> (32-_places%32);
+            newXUp[i] |= yUp[i+_places/32-1]._val << (_places%32);
 
-        upXORlow = newYUp[i] ^ newYLow[i];
+            newYLow[i] =  (xLow[i+(_places/32)]._val << (_places%32)) | yLow[i]._val;
+            newXLow[i] =  (yLow[i+(_places/32)]._val >> (32-(_places%32))) | xLow[i]._val;
+            newYLow[i] |= xLow[i+_places/32-1]._val >> (32-(_places%32));
+            newXLow[i] |= yLow[i+_places/32-1]._val << (_places%32);
+           }
+           newYUp[wordLength-1] &= CP_UMASK << _places;
+
+           upXORlow = newYUp[i] ^ newYLow[i];
+           upXORlow |= newXUp[i] ^ newXLow[i];
         inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
         
-        if (inconsistencyFound)
+           if (inconsistencyFound){
+              NSLog(@"Inconsistency found in Shift L Bit constraint.");
+              NSLog(@"x = %@",[_x description]);
+              NSLog(@"y = %@",[_y description]);
             failNow();
+           }
     }
 
     for(int i=0;i<wordLength;i++){
@@ -739,10 +753,97 @@
 //        upXORlow = newYUp[i] ^ newYLow[i];
 //        inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
         
-        if (inconsistencyFound)
+       if (inconsistencyFound){
+          NSLog(@"Inconsistency found in Shift L Bit constraint.");
+
             failNow();
+       }
         }
-    
+*/
+   
+   
+   for(int i=0;i<wordLength;i++){
+      /* commented out by GAJ on 10/17/12
+      if(i+(_places/32)< wordLength){
+         newYUp[i] = yUp[i]._val & xUp[i+(_places/32)]._val << (_places%32);
+         newYLow[i] = yLow[i]._val | xLow[i+(_places/32)]._val << (_places%32);
+         if (i+(_places/32)+1<wordLength){
+            newYUp[i] &= CP_UMASK << (_places%32) | (xUp[i+(_places/32)+1]._val >> (32 - (_places%32)));
+            newYLow[i] |= xLow[i+(_places/32)+1]._val >> (32 - (_places%32));
+         }
+      }
+         newXUp[i] = xUp[i]._val & yUp[i-_places/32]._val >> (_places%32);
+      if((i-(((int)_places)/32))>=0){
+         newXUp[i] = (xUp[i]._val & (yUp[i-_places/32]._val >> (_places%32))) | (CP_UMASK<< (32-(_places%32)));
+         newXLow[i] = xLow[i]._val | (yLow[i-_places/32]._val >> (_places%32));
+         if((i-((int)_places/32)-1)>=0){
+            newXUp[i] &= yUp[i-_places/32-1]._val << (32 - (_places%32));
+            newXLow[i] |= yLow[i-_places/32-1]._val << (32 - (_places%32));
+         }
+            
+      }
+      newYUp[wordLength-(_places/32)-1] &= CP_UMASK << _places%32;
+      newYLow[wordLength-(_places/32)-1] &= CP_UMASK << _places%32;
+      for(int i=wordLength-(_places/32)-1;i<wordLength;i++){
+         newYUp[i] = 0;
+         newYLow[i] = 0;
+      }
+*/ //end commented out 10/17/12
+      if ((i+_places/32) < wordLength) {
+         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|(ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
+         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|(ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32));
+         if((i+_places/32+1) < wordLength) {
+            newYUp[i] &= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
+            newYLow[i] |= ISTRUE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32));
+         }
+         else{
+            newYUp[i] &= ~(UP_MASK >> (32-(_places%32)));
+            newYLow[i] &= ~(UP_MASK >> (32-(_places%32)));
+         }
+      }
+      else{
+         newYUp[i] = 0;
+         newYLow[i] = 0;
+      }
+      
+      if ((i-(int)_places/32) >= 0) {
+         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|(ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
+         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|(ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32));
+         if((i-(int)_places/32-1) >= 0) {
+            newXUp[i] &= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
+            newXLow[i] |= ISTRUE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32));
+         }
+ /*        else{
+            newXUp[i] &= ~(UP_MASK << (32-(_places%32)));
+            newXLow[i] &= ~(UP_MASK << (32-(_places%32)));
+         }
+*/      }
+/*      else{
+         newXUp[i] = 0;
+         newXLow[i] = 0;
+      }
+*/
+      //last word with partial shifted value should have lower bits cleared
+
+
+      upXORlow = newYUp[i] ^ newYLow[i];
+      inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
+      if (inconsistencyFound)
+         NSLog(@"Inconsistency found in Shift L Bit constraint in the y variable at index %d.",i);
+
+      upXORlow = newXUp[i] ^ newXLow[i];
+      inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
+      if (inconsistencyFound)
+         NSLog(@"Inconsistency found in Shift L Bit constraint in the x variable at index %d.",i);
+
+   }
+   
+   if (inconsistencyFound){
+      NSLog(@"Inconsistency found in Shift L Bit constraint.");
+      failNow();
+   }
+
+
     [_x setLow:newXLow];
     [_x setUp:newXUp];
     [_y setLow:newYLow];
@@ -765,13 +866,17 @@
 @end
 
 @implementation CPBitADD
--(id) initCPBitAdd:(id)x plus:(id)y equals:(id)z withCarryIn:(id)cin andCarryOut:(id)cout{
+-(id) initCPBitAdd:(id<CPBitVar>)x plus:(id<CPBitVar>)y equals:(id<CPBitVar>)z withCarryIn:(id<CPBitVar>)cin andCarryOut:(id<CPBitVar>)cout{
+   NSLog(@"Posting Bitwise ADD Constraint...");
     self = [super initCPActiveConstraint:[x engine]];
-    _x = x;
-    _y = y;
-    _z = z;
-    _cin = cin;
-    _cout = cout;
+    _x = (CPBitVarI*)x;
+    _y = (CPBitVarI*)y;
+    _z = (CPBitVarI*)z;
+    _cin = (CPBitVarI*)cin;
+    _cout = (CPBitVarI*)cout;
+   [[x solver] add:[CPFactory bitShiftL:cout by:1 equals:cin]];
+   NSLog(@"done.\n");
+
     
     return self;
 }
@@ -784,10 +889,12 @@
 -(ORStatus) post
 {
    [self propagate];
-   if (![_x bound] || ![_y bound]) {
+   if (![_x bound] || ![_y bound] || ![_z bound] || ![_cin bound] || ![_cout bound]) {
       [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
       [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_cin whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_cout whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
    return ORSuspend;
@@ -795,7 +902,7 @@
 -(void) propagate
 {
     unsigned int wordLength = [_x getWordLength];
-    bool change = false;
+    bool change = true;
     
     TRUInt* xLow = [_x getLow];
     TRUInt* xUp = [_x getUp];
@@ -803,10 +910,10 @@
     TRUInt* yUp = [_y getUp];
     TRUInt* zLow = [_z getLow];
     TRUInt* zUp = [_z getUp];
-    TRUInt* cinLow = [_z getLow];
-    TRUInt* cinUp = [_z getUp];
-    TRUInt* coutLow = [_z getLow];
-    TRUInt* coutUp = [_z getUp];
+    TRUInt* cinLow = [_cin getLow];
+    TRUInt* cinUp = [_cin getUp];
+    TRUInt* coutLow = [_cout getLow];
+    TRUInt* coutUp = [_cout getUp];
 
     unsigned int* prevXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* prevXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -834,6 +941,7 @@
     unsigned int upXORlow;
     
     bool    inconsistencyFound = false;
+//   NSLog(@"Enter Sum Constraint");
 
     for(int i = 0; i<wordLength;i++){
         prevXUp[i] = xUp[i]._val;
@@ -843,97 +951,191 @@
         prevZUp[i] = zUp[i]._val;
         prevZLow[i] = zLow[i]._val;
         
-        //Using the previous propagation's Carry in and Carry out as a seed. Not sure if we should start 
+       newXUp[i] = xUp[i]._val;
+       newXLow[i] = xLow[i]._val;
+       newYUp[i] = yUp[i]._val;
+       newYLow[i] = yLow[i]._val;
+       newZUp[i] = zUp[i]._val;
+       newZLow[i] = zLow[i]._val;
+
+        //Using the previous propagation's Carry in and Carry out as a seed. Not sure if we should start
         //without assigning values to these variables. But, this allows us to check for overflow in Cout.
         prevCinUp[i] = cinUp[i]._val;
         prevCinLow[i] = cinLow[i]._val;
         prevCoutUp[i] = coutUp[i]._val;
         prevCoutLow[i] = coutLow[i]._val;
+       
+       newCinUp[i] = cinUp[i]._val;
+       newCinLow[i] = cinLow[i]._val;
+       newCoutUp[i] = coutUp[i]._val;
+       newCoutLow[i] = coutLow[i]._val;
+
     }
     
     while (change) {
         change = false;
-        for(int i=wordLength-1;i>=0;i--){
-/*        
-            newXUp[i] = ~((~zUp[i]._val & ~coutUp[i]._val) | (~coutUp[i]._val & yLow[i]._val & ~cinUp[i]._val) | (~coutUp[i]._val & cinLow[i]._val & ~yUp[i]._val) | (~zUp[i]._val & coutLow[i]._val & yLow[i]._val & cinLow[i]._val) | ~xUp[i]._val);
-            newXLow[i] = (zLow[i]._val & coutLow[i]._val) | (zLow[i]._val & ~coutUp[i]._val & ~yUp[i]._val & ~cinUp[i]._val) | (coutLow[i]._val & yLow[i]._val & ~coutUp[i]._val) | (coutLow[i]._val & ~yUp[i]._val & cinLow[i]._val);
-        
-            newYUp[i] = ~((~zUp[i]._val & ~coutUp[i]._val) | (~coutUp[i]._val & ~xUp[i]._val & cinLow[i]._val) | (~coutUp[i]._val & xLow[i]._val & ~cinUp[i]._val) | (~zUp[i]._val & coutLow[i]._val & xLow[i]._val & cinLow[i]._val));
-            newYLow[i] = (zLow[i]._val & coutLow[i]._val) | (zLow[i]._val & ~coutUp[i]._val & ~xUp[i]._val & ~cinUp[i]._val) | (coutLow[i]._val & ~xUp[i]._val & cinLow[i]._val) | (~coutUp[i]._val & xLow[i]._val & ~cinUp[i]._val);
-        
-            newZLow[i] = zLow[i]._val| (~(xLow[i]._val ^ yLow[i]._val) & ~(cinLow[i]._val & coutLow[i]._val)) | (~(xLow[i]._val | yLow[i]._val) & cinLow[i]._val);
-        
-            newCinLow[i] = newCinLow[i] | 0 ;
-        
-            newCoutLow[i] = newCoutLow[i] | 0;
-*/
-        
-            newXUp[i] = prevXUp[i] & ~ ((~prevZUp[i] & ~prevCoutUp[i])|(prevCinLow[i] & ~prevCoutUp[i])|(prevYLow[i] & ~prevCoutUp[i])|(prevYLow[i] & prevCinLow[i] & ~prevCoutUp[i]));
-            newXLow[i] = prevXLow[i] | ((prevZLow[i] & prevCoutLow[i]) | (~prevYUp[i] & prevCoutLow[i]) | (~prevCinUp[i] & prevCoutLow[i]) | (~prevYUp[i] & ~prevCinUp[i] & prevZLow[i]));
-
-            //testing for inconsistency between variables
-            inconsistencyFound |= (~prevYUp[i] & ((~prevCinUp[i] & prevCoutLow[i]) | (prevZLow[i] & prevCoutLow[i]))) | (~prevCinUp[i] & prevZLow[i] & prevCoutLow[i]);
-            
-            //testing for internal consistency
-            upXORlow = newXUp[i] ^ newXLow[i];
-            inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-
-            
-            newYUp[i] = prevYUp[i] & ~ ((~prevZUp[i] & ~prevCoutUp[i])|(prevCinLow[i] & ~prevCoutUp[i])|(prevXLow[i] & ~prevCoutUp[i])|(prevXLow[i] & prevCinLow[i] & ~prevCoutUp[i]));
-            newYLow[i] = prevYLow[i] | ((prevZLow[i] & prevCoutLow[i]) | (~prevXUp[i] & prevCoutLow[i]) | (~prevCinUp[i] & prevCoutLow[i]) | (~prevXUp[i] & ~prevCinUp[i] & prevZLow[i]));
-
-            //testing for inconsistency between variables
-            inconsistencyFound |= (~prevXUp[i] & ((~prevCinUp[i] & prevCoutLow[i]) | (prevZLow[i] & prevCoutLow[i]))) | (~prevCinUp[i] & prevZLow[i] & prevCoutLow[i]);
-            
-            //testing for internal consistency
-            upXORlow = newYUp[i] ^ newYLow[i];
-            inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-
-            
-            newZUp[i] = prevZUp[i] & ~ ((~prevCinUp[i] & prevCoutLow[i])|(~prevXUp[i] & prevCoutLow[i])|(~prevYUp[i] & prevCoutLow[i])|(~prevXUp[i] & ~prevYUp[i] & ~prevCinUp[i]));
-            newZLow[i] = prevZUp[i] | ((prevCinLow[i] & ~prevCoutUp[i])|(prevYLow[i] & ~prevCoutUp[i])|(prevXLow[i]&~prevCoutUp[i])|(prevXLow[i]&prevYLow[i]&prevCinLow[i]));
-            
-            //testing for consistency between variables
-            inconsistencyFound |= (~prevXUp[i] & ~prevYUp[i] &prevCoutLow[i]) | (prevXLow[i] & prevYLow[i] & ~prevCoutUp[i]) | (~prevXUp[i] & ~prevCinUp[i] & prevCoutLow[i]) | (prevYLow[i] & prevCinLow[i] & ~prevCoutUp[i]) | (prevXLow[i] & prevCinLow[i] & ~prevCoutUp[i]) | (~prevYUp[i] & ~prevCinUp[i] & prevCoutLow[i]);
-            
-            //testing for internal consistency
-            upXORlow = newZUp[i] ^ newZLow[i];
-            inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
-
-        
-            newCinUp[i] = prevCinUp[i] & ~((~prevCoutUp[i] & (~prevZUp[i] | prevXLow[i] | prevYLow[i]))|(prevXLow[i] & prevYLow[i] & ~prevZUp[i]));
-            newCinLow[i] = prevCinLow[i] | ((prevCoutLow[i] & (prevZLow[i]|~prevXUp[i] | ~prevYUp[i])) | (~prevXUp[i] & ~prevYUp[i] & prevCoutLow[i]));
-            
-            //testing for inconsistency between variables
-            inconsistencyFound |= (~prevXUp[i] & ((~prevYUp[i] & prevCoutLow[i]) | (prevZLow[i] & prevCoutLow[i]))) |
-                                  (prevXLow[i] & ((prevYLow[i] & ~prevCoutUp[i]) | (~prevZUp[i] & ~prevCoutUp[i]))) |
-                                  (prevYLow[i] & ~prevZUp[i] & ~prevCoutUp[i]) |
-                                  (~prevYUp[i] & prevZLow[i] & prevCoutLow[i]);
+        //for(int i=wordLength-1;i>=0;i--){
+       for(int i=wordLength-1;i>=0;i--){
+          if(![_x bound]){
+           newXUp[i] = prevXUp[i] &
+                        ~((ISFALSE(prevCoutUp[i], prevCoutLow[i]) & ISFALSE(prevZUp[i], prevZLow[i])) |
+                          (ISTRUE(prevYUp[i], prevYLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+                          (ISTRUE(prevCinUp[i], prevCinLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+                          (ISTRUE(prevYUp[i], prevYLow[i]) & ISTRUE(prevCinUp[i], prevCinLow[i]) & ISFALSE(prevZUp[i], prevZLow[i])));
              
-            //testing for internal consistency
-            upXORlow = newCinUp[i] ^ newCinLow[i];
-            inconsistencyFound |= (upXORlow&(~newCinUp[i]))&(upXORlow & newCinLow[i]);
+           newXLow[i] = prevXLow[i] |
+                       ((ISTRUE(prevCoutUp[i], prevCoutLow[i]) & ISTRUE(prevZUp[i], prevZLow[i])) |
+                       (ISFALSE(prevYUp[i], prevYLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+                       (ISFALSE(prevCinUp[i], prevCinLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+                       (ISFALSE(prevYUp[i], prevYLow[i]) & ISFALSE(prevCinUp[i], prevCinLow[i]) & ISTRUE(prevZUp[i], prevZLow[i])));
+          }
+          
+          if(![_y bound]){
+           newYUp[i] = prevYUp[i] &
+         ~((ISFALSE(prevCoutUp[i], prevCoutLow[i]) & ISFALSE(prevZUp[i], prevZLow[i])) |
+           (ISTRUE(prevXUp[i], prevXLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+           (ISTRUE(prevCinUp[i], prevCinLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+           (ISTRUE(prevXUp[i], prevXLow[i]) & ISTRUE(prevCinUp[i], prevCinLow[i]) & ISFALSE(prevZUp[i], prevZLow[i])));
 
-            newCoutUp[i] = prevCoutUp[i] & ~((prevXUp[i] & ~prevYUp[i])|(~prevCinUp[i] & prevZLow[i]));
-            newCoutLow[i] = prevCoutLow[i] | ((prevXLow[i] & prevYLow[i])|(prevCinLow[i] & ~prevZUp[i]));
+           newYLow[i] = prevYLow[i] |
+           ((ISTRUE(prevCoutUp[i], prevCoutLow[i]) & ISTRUE(prevZUp[i], prevZLow[i])) |
+            (ISFALSE(prevXUp[i], prevXLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+            (ISFALSE(prevCinUp[i], prevCinLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+            (ISFALSE(prevXUp[i], prevXLow[i]) & ISFALSE(prevCinUp[i], prevCinLow[i]) & ISTRUE(prevZUp[i], prevZLow[i])));
+          }
+
             
-            //testing for consistency between variables
-            inconsistencyFound |=   ((~prevCinUp[i] & ~prevZUp[i]) & ((~prevXUp[i] & prevYLow[i]) | (prevXLow[i] & ~prevYUp[i]))) |
-                                    ((prevCinLow[i] & prevZLow[i]) & ((~prevXUp[i] & prevYLow[i]) | (prevXLow[i] & ~prevYUp[i]))) |
-                                    ((~prevXUp[i] & ~prevYUp[i]) & ((~prevCinUp[i] & prevZLow[i]) | (prevCinLow[i] & ~prevZUp[i]))) |
-                                    ((prevXLow[i] & prevYLow[i]) & ((~prevCinUp[i] & prevZLow[i]) | (prevCinLow[i] & ~prevZUp[i])));
+          if(![_z bound]){
+           newZUp[i] = prevZUp[i] &
+             ~((ISFALSE(prevCinUp[i], prevCinLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+              (ISFALSE(prevYUp[i], prevYLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+              (ISFALSE(prevXUp[i], prevXLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+              (ISFALSE(prevXUp[i], prevXLow[i]) & ISFALSE(prevYUp[i], prevYLow[i]) & ISFALSE(prevCinUp[i], prevCinLow[i])));
+
+           
+           newZLow[i] = prevZLow[i] |
+                        ((ISTRUE(prevCinUp[i], prevCinLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+                         (ISTRUE(prevYUp[i], prevYLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+                         (ISTRUE(prevXUp[i], prevXLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+                         (ISTRUE(prevXUp[i], prevXLow[i]) & ISTRUE(prevYUp[i], prevYLow[i]) & ISTRUE(prevCinUp[i], prevCinLow[i])));
+          }
         
-            //testing for internal consistency
-            upXORlow = newCoutUp[i] ^ newCoutLow[i];
-            inconsistencyFound |= (upXORlow&(~newCoutUp[i]))&(upXORlow & newCoutLow[i]);
-        
-            if (inconsistencyFound)
-                failNow();
+          if(![_cin bound]){
+           newCinUp[i] = prevCinUp[i] &
+          ~((ISFALSE(prevZUp[i], prevZLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+           (ISTRUE(prevXUp[i], prevXLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+           (ISTRUE(prevYUp[i], prevYLow[i]) & ISFALSE(prevCoutUp[i], prevCoutLow[i])) |
+           (ISTRUE(prevXUp[i], prevXLow[i]) & ISTRUE(prevYUp[i], prevYLow[i]) & ISFALSE(prevZUp[i], prevZLow[i])));
+  
+                                                                                                                                                                               
+           newCinLow[i] = prevCinLow[i] |
+                          ((ISTRUE(prevZUp[i], prevZLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+                           (ISFALSE(prevXUp[i], prevXLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+                           (ISFALSE(prevYUp[i], prevYLow[i]) & ISTRUE(prevCoutUp[i], prevCoutLow[i])) |
+                           (ISFALSE(prevXUp[i], prevXLow[i]) & ISFALSE(prevYUp[i], prevYLow[i]) & ISTRUE(prevZUp[i], prevZLow[i])));
+          }
+          
+          if(![_cout bound]){
+           newCoutUp[i] = prevCoutUp[i] &
+          ~((ISFALSE(prevXUp[i], prevXLow[i]) & ISFALSE(prevYUp[i], prevYLow[i])) |
+           (ISFALSE(prevCinUp[i], prevCinLow[i]) & ISTRUE(prevZUp[i], prevZLow[i])));
+           newCoutLow[i] = prevCoutLow[i] |
+                          ((ISTRUE(prevXUp[i], prevXLow[i]) & ISTRUE(prevYUp[i], prevYLow[i])) |
+                          (ISTRUE(prevCinUp[i], prevCinLow[i]) & ISFALSE(prevZUp[i], prevZLow[i])));
+           
             
-            newCinLow[i] |= newCoutLow[i] << 1;
-            if (i<wordLength-1)
-                newCinLow[i] |= newCoutLow[i] >> 31;
-            
+         }
+          
+          //Check consistency of new domain for X variable
+          inconsistencyFound |= (ISFALSE(newYUp[i], newYLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i]) & ISTRUE(newZUp[i], newZLow[i])) |
+          (ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+          (ISTRUE(newYUp[i], newYLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+          (ISFALSE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newYUp[i], newYLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i]) & ISTRUE(newZUp[i], newZLow[i]));
+          
+          //testing for internal consistency
+          upXORlow = newXUp[i] ^ newXLow[i];
+          inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
+          if (inconsistencyFound){
+             NSLog(@"Inconsistency in Bitwise sum constraint variable x.\n");
+             failNow();
+          }
+
+          //Check consistency of new domain for Y variable
+          inconsistencyFound |= (ISFALSE(newXUp[i], newXLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i]) & ISTRUE(newZUp[i], newZLow[i])) |
+          (ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+          (ISTRUE(newXUp[i], newXLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+          (ISFALSE(newXUp[i], newXLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newXUp[i], newXLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i]) & ISTRUE(newZUp[i], newZLow[i]));
+          
+          
+          //testing for internal consistency
+          upXORlow = newYUp[i] ^ newYLow[i];
+          inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
+          if (inconsistencyFound){
+             NSLog(@"Inconsistency in Bitwise sum constraint variable y.\n");
+             failNow();
+          }
+
+          //Check consistency of new domain for Z variable
+          inconsistencyFound |= (ISFALSE(newXUp[i], newXLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newYUp[i], newYLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newXUp[i], newXLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISFALSE(newXUp[i], newXLow[i]) & ISFALSE(newYUp[i], newYLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newXUp[i], newXLow[i]) & ISTRUE(newYUp[i], newYLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISFALSE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i]));
+          
+          if (inconsistencyFound){
+             NSLog(@"Inconsistency in Bitwise sum constraint variable z [impossible bit pattern for variable].\n");
+             failNow();
+          }
+          
+          //testing for internal consistency
+          upXORlow = newZUp[i] ^ newZLow[i];
+          inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
+          if (inconsistencyFound){
+             NSLog(@"Inconsistency in Bitwise sum constraint variable z.\n");
+             failNow();
+          }
+
+          //Chgeck consistency of new domain for Cin variable.
+          inconsistencyFound |= (ISFALSE(newXUp[i], newXLow[i]) & ISTRUE(newZUp[i], newZLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newYUp[i], newYLow[i]) & ISFALSE(newZUp[i], newZLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newXUp[i], newXLow[i]) & ISFALSE(newZUp[i], newZLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i])) |
+          (ISFALSE(newXUp[i], newXLow[i]) & ISFALSE(newYUp[i], newYLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISFALSE(newYUp[i], newYLow[i]) & ISTRUE(newZUp[i], newZLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i])) |
+          (ISTRUE(newXUp[i], newXLow[i]) & ISTRUE(newYUp[i], newYLow[i]) & ISFALSE(newCoutUp[i], newCoutLow[i]));
+          
+          //testing for internal consistency
+          upXORlow = newCinUp[i] ^ newCinLow[i];
+          inconsistencyFound |= (upXORlow&(~newCinUp[i]))&(upXORlow & newCinLow[i]);
+          if (inconsistencyFound){
+             NSLog(@"Inconsistency in Bitwise sum constraint in Carry In.\n");
+             failNow();
+          }
+          
+          
+          //Check consistency of new domain for Cout variable
+          inconsistencyFound |= ((ISFALSE(newXUp[i], newXLow[i]) & ISFALSE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newZUp[i], newZLow[i])) |
+                                 (ISFALSE(newXUp[i], newXLow[i]) & ISFALSE(newYUp[i], newYLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+                                 (ISFALSE(newXUp[i], newXLow[i]) & ISTRUE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+                                 (ISFALSE(newXUp[i], newXLow[i]) & ISTRUE(newYUp[i], newYLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISTRUE(newZUp[i], newZLow[i])) |
+                                 (ISTRUE(newXUp[i], newXLow[i]) & ISTRUE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newZUp[i], newZLow[i])) |
+                                 (ISTRUE(newXUp[i], newXLow[i]) & ISTRUE(newYUp[i], newYLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+                                 (ISTRUE(newXUp[i], newXLow[i]) & ISFALSE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISFALSE(newZUp[i], newZLow[i])) |
+                                 (ISTRUE(newXUp[i], newXLow[i]) & ISFALSE(newYUp[i], newYLow[i]) & ISTRUE(newCinUp[i], newCinLow[i]) & ISTRUE(newZUp[i], newZLow[i])));
+          
+          //testing for internal consistency
+          upXORlow = newCoutUp[i] ^ newCoutLow[i];
+          inconsistencyFound |= (upXORlow&(~newCoutUp[i]))&(upXORlow & newCoutLow[i]);
+          
+          if (inconsistencyFound){
+             NSLog(@"Inconsistency in Bitwise sum constraint in carry out.\n");
+             failNow();
+          }
+          
             change |= newXUp[i] ^ prevXUp[i];
             change |= newXLow[i] ^ prevXLow[i];
             change |= newYUp[i] ^ prevYUp[i];
@@ -944,6 +1146,8 @@
             change |= newCinLow[i] ^ prevCinLow[i];
             change |= newCoutUp[i] ^ prevCoutUp[i];
             change |= newCoutLow[i] ^ prevCoutLow[i];
+          
+//          NSLog(@"Change:%x", change);
             
             prevXUp[i] = newXUp[i];
             prevXLow[i] = newXLow[i];
@@ -954,22 +1158,63 @@
             prevCinUp[i] = newCinUp[i];
             prevCinLow[i] = newCinLow[i];
             prevCoutUp[i] = newCoutUp[i];
-            prevCoutLow[i] = newCoutLow[i];
-            
-            
-        }   
+            prevCoutLow[i] = newCoutLow[i];            
+        }
     }
-    
-    [_x setLow:newXLow];
-    [_x setUp:newXUp];
-    [_y setLow:newYLow];
-    [_y setUp:newYUp];
-    [_z setLow:newZLow];
-    [_z setUp:newZUp];
-    [_cin setLow:newCinLow];
-    [_cin setUp:newCinUp];
-    [_cout setLow:newCoutLow];
-    [_cout setUp:newCoutUp];
+
+   for(int i=0;i<wordLength;i++)
+      if(newXLow[i] ^ xLow[i]._val){
+         [_x setLow:newXLow];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newXUp[i] ^ xUp[i]._val){
+         [_x setUp:newXUp];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newYLow[i] ^ yLow[i]._val){
+         [_y setLow:newYLow];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newYUp[i] ^ yUp[i]._val){
+         [_y setUp:newYUp];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newZLow[i] ^ zLow[i]._val){
+         [_z setLow:newZLow];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newZUp[i] ^ zUp[i]._val){
+         [_z setUp:newZUp];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newCinLow[i] ^ cinLow[i]._val){
+         [_cin setLow:newCinLow];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newCinUp[i] ^ cinUp[i]._val){
+         [_cin setUp:newCinUp];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newCoutLow[i] ^ coutLow[i]._val){
+         [_cout setLow:newCoutLow];
+         break;
+      }
+   for(int i=0;i<wordLength;i++)
+      if(newCoutUp[i] ^ coutUp[i]._val){
+         [_cout setUp:newCoutUp];
+         break;
+      }
+
+//   NSLog(@"Exit Sum Constraint");
+
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

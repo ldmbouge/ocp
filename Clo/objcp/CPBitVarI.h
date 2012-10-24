@@ -41,7 +41,7 @@ typedef struct  {
     CPTriggerMap*                  _triggers;
     id<CPBitVarNotifier>               _recv;
 }
--(void) initCPBitVarCore:(id<CPSolver>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
+-(void) initCPBitVarCore:(id<CPSolver>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 //-(CPBitVarI*) initCPBitVarView: (id<CPEngine>) fdm low: (int) low up: (int) up for: (CPBitVarI*) x;
 -(void) dealloc;
 -(void) setId:(ORUInt)name;
@@ -95,8 +95,8 @@ typedef struct  {
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 -(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPSolver>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods
-+(CPBitVarI*)   initCPBitVar: (id<CPSolver>)fdm low:(int)low up:(int)up len:(unsigned int)len;
-+(CPBitVarI*)   initCPBitVarWithPat:(id<CPSolver>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
++(CPBitVarI*)   initCPBitVar: (id<CPSolver>)cp low:(int)low up:(int)up len:(unsigned int)len;
++(CPBitVarI*)   initCPBitVarWithPat:(id<CPSolver>)cp withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
 +(CPTrigger*)   createTrigger: (ConstraintCallback) todo;
 
 
