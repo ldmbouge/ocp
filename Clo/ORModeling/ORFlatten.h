@@ -13,4 +13,5 @@
 -(id)initORFlatten;
 -(id<ORModel>)apply:(id<ORModel>)m;
 -(void)flatten:(id<ORConstraint>)c into:(id<ORModel>)m;
++(void)flattenExpression:(id<ORExpr>)e into:(id<ORModel>)m;
 @end

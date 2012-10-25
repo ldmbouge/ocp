@@ -27,46 +27,6 @@
 #import "CPParallel.h"
 #import "ORVarI.h"
 
-@implementation CPHeuristicStack
--(CPHeuristicStack*)initCPHeuristicStack
-{
-   self = [super init];
-   _mx  = 2;
-   _tab = malloc(sizeof(id<CPHeuristic>)*_mx);
-   _sz  = 0;
-   return self;
-}
--(void)push:(id<CPHeuristic>)h
-{
-   if (_sz >= _mx) {
-      _tab = realloc(_tab, _mx << 1);
-      _mx <<= 1;
-   }
-   _tab[_sz++] = h;
-}
--(id<CPHeuristic>)pop
-{
-   return _tab[--_sz];
-}
--(void)reset
-{
-   for(ORUInt k=0;k<_sz;k++)
-      [_tab[k] release];
-   _sz = 0;
-}
--(void)dealloc
-{
-   [self reset];
-   free(_tab);
-   [super dealloc];
-}
--(void)applyToAll:(void(^)(id<CPHeuristic>,NSMutableArray*))closure with:(NSMutableArray*)av;
-{
-   for(ORUInt k=0;k<_sz;k++)
-      closure(_tab[k],av);
-}
-@end
-
 @interface CPInformerPortal : NSObject<CPPortal> {
    CPCoreSolverI*  _cp;
    CPEngineI*  _solver;
@@ -84,7 +44,6 @@
    self = [super init];
    _trail = [ORFactory trail];
    _engine = [CPFactory engine: _trail];
-   _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    _objective = nil;
@@ -97,7 +56,6 @@
    self = [super init];
    _engine = [fdm retain];
    _trail = [[fdm trail] retain];
-   _hStack = [[CPHeuristicStack alloc] initCPHeuristicStack];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal:self];
    _objective = nil;
@@ -111,15 +69,10 @@
    [_trail release];
    [_engine release];
    [_search release];
-   [_hStack release];
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
    [super dealloc]; 
-}
--(void) addHeuristic: (id<CPHeuristic>)h
-{
-   [_hStack push:h];
 }
 
 -(id<ORASolver>) solver
@@ -289,8 +242,6 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      [_hStack applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];}
-                     with: [_engine allVars]];
       [ORConcurrency pumpEvents];
    }
 }

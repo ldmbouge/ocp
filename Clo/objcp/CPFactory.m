@@ -19,11 +19,6 @@
 #import "CPCreateI.h"
 #import "cont.h"
 #import "CPTableI.h"
-#import "CPDDeg.h"
-#import "CPWDeg.h"
-#import "CPIBS.h"
-#import "CPABS.h"
-#import "CPFirstFail.h"
 #import "CPEngineI.h"
 #import "ORFoundation/ORSemDFSController.h"
 #import "ORFoundation/ORSemBDSController.h"
@@ -70,46 +65,6 @@ void failNow()
 //{
 //   return [[SemCP alloc] initFor:fdm];
 //}
-+(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPWDeg alloc] initCPWDeg:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPDDeg alloc] initCPDDeg:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPIBS alloc] initCPIBS:cp restricted:rvars];
-}
-+(id<CPHeuristic>)createFF:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createABS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPABS alloc] initCPABS:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createWDeg:(id<CPSolver>)cp;
-{
-   return [[CPWDeg alloc] initCPWDeg:cp restricted:nil];
-}
-+(id<CPHeuristic>) createDDeg:(id<CPSolver>)cp 
-{
-   return [[CPDDeg alloc] initCPDDeg:cp restricted:nil];
-}
-+(id<CPHeuristic>) createIBS:(id<CPSolver>)cp
-{
-   return [[CPIBS alloc] initCPIBS:cp restricted:nil];
-}
-+(id<CPHeuristic>) createABS:(id<CPSolver>)cp
-{
-   return [[CPABS alloc] initCPABS:cp restricted:nil];
-}
-+(id<CPHeuristic>)createFF:(id<CPSolver>)cp
-{
-   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:nil];
-}
 +(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp
 {
    return [[ORSemDFSController alloc] initTheController: [cp tracer] engine:[cp engine]];

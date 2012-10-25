@@ -317,17 +317,9 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelImpl not implemented"];
 }
--(void) label: (id<CPIntVar>) var with: (ORInt) val
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method label not implemented"];
-}
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method diffImpl not implemented"]; 
-}
--(void) diff: (id<CPIntVar>) var with: (ORInt) val
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method diff not implemented"];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -341,19 +333,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
 }
--(void) lthen: (id<ORIntVar>) var with: (ORInt) val
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method lthen not implemented"];
-}
--(void) gthen: (id<ORIntVar>) var with: (ORInt) val
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method gthen not implemented"];
-}
--(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Method restrict not implemented"];
-}
-
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
@@ -417,6 +396,26 @@
                    [self diffImpl: x with: m];
                 }];
    }
+}
+-(void) label: (id<CPIntVar>) var with: (ORInt) val
+{
+   return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) diff: (id<CPIntVar>) var with: (ORInt) val
+{
+   [self diffImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) lthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self lthenImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) gthen: (id<ORIntVar>) var with: (ORInt) val
+{
+   [self gthenImpl: (id<CPIntVar>) [var dereference] with: val];
+}
+-(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
+{
+   [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
 }
 
 @end
@@ -459,47 +458,6 @@
    [_tracer release];
    [super dealloc];
 }
--(id<ORIdxIntInformer>) retLabel
-{
-   if (_returnLabel==nil)
-      _returnLabel = [ORConcurrency idxIntInformer];
-   return _returnLabel;
-}
--(id<ORIdxIntInformer>) failLabel
-{
-   if (_failLabel==nil)
-      _failLabel = [ORConcurrency idxIntInformer];
-   return _failLabel;
-}
--(id<CPPortal>) portal
-{
-   return _portal;
-}
--(ORInt) nbFailures
-{
-   return [_search nbFailures];
-}
--(id<CPEngine>) engine
-{
-   return _engine;
-}
--(id<ORExplorer>) explorer
-{
-   return _search;
-}
--(id<ORObjectiveFunction>) objective
-{
-   return [_engine objective];
-}
--(id<ORTracer>) tracer
-{
-   return _tracer;
-}
--(id<ORSolution>)  solution
-{
-   // pvh: will have to change
-   return [_engine solution];
-}
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
@@ -515,56 +473,6 @@
    ORStatus status = [_engine add: c];
    if (status == ORFailure)
       [_search fail];
-}
--(void) close
-{
-   if (!_closed) {
-      _closed = true;
-      if ([_engine close] == ORFailure)
-         [_search fail];
-      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine allVars]];
-      [ORConcurrency pumpEvents];
-   }
-}
-
--(void) addHeuristic: (id<CPHeuristic>) h
-{
-   [_hSet push: h];
-}
--(void) solve: (ORClosure) search
-{
-   _objective = [_engine objective];
-   if (_objective != nil) {
-      [_search optimizeModel: self using: search];
-      printf("Optimal Solution: %d \n",[_objective primalBound]);
-   }
-   else {
-      [_search solveModel: self using: search];
-   }
-}
--(void) solveAll: (ORClosure) search
-{
-   [_search solveAllModel: self using: search];
-}
--(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
-{
-   [ORControl forall: S suchThat: nil orderedBy: order do: body];
-}
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
-{
-   [ORControl forall: S suchThat: filter orderedBy: order do: body];
-}
--(void) try: (ORClosure) left or: (ORClosure) right
-{
-   [_search try: left or: right];
-}
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
-{
-   [_search tryall: range suchThat: filter in: body];
-}
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
-{
-   [_search tryall: range suchThat: filter in: body onFailure: onFailure];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
@@ -599,100 +507,6 @@
    [_search limitFailures: maxFailures in: cl];
    
 }
--(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
-{
-   [_engine clearStatus];
-   [_search limitTime: maxTime in: cl];
-}
--(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
-{
-   [_search nestedSolve: body onSolution: onSolution onExit: onExit
-                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
-}
--(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution
-{
-   [_search nestedSolve: body onSolution: onSolution onExit:nil
-                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
-}
--(void) nestedSolve: (ORClosure) body
-{
-   [_search nestedSolve: body onSolution:nil onExit:nil
-                control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
-}
--(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
-{
-   [_search nestedSolveAll: body onSolution: onSolution onExit: onExit
-                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
-}
--(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution
-{
-   [_search nestedSolveAll: body onSolution: onSolution onExit:nil
-                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
-}
--(void) nestedSolveAll: (ORClosure) body
-{
-   [_search nestedSolveAll: body onSolution:nil onExit:nil
-                   control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
-}
--(void) trackObject: (id) object
-{
-   [_engine trackObject:object];
-}
--(void) trackVariable: (id) object
-{
-   [_engine trackObject:object];
-}
--(void) labelArray: (id<ORIntVarArray>) x
-{
-   ORInt low = [x low];
-   ORInt up = [x up];
-   for(ORInt i = low; i <= up; i++)
-      [self label: x[i]];
-}
--(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
-{
-   id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
-                                  suchThat: ^bool(ORInt i) { return ![[x at: i] bound]; }
-                                 orderedBy: orderedBy];
-   do {
-      ORInt i = [select min];
-      if (i == MAXINT) {
-         return;
-      }
-      [self label: x[i]];
-   } while (true);
-}
--(void) labelHeuristic: (id<CPHeuristic>) h
-{
-   id<CPIntVarArray> av = [h allIntVars];
-   id<ORSelect> select = [ORFactory selectRandom: _engine
-                                           range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
-                                       orderedBy: ^ORFloat(ORInt i) { return [h varOrdering:av[i]]; }];
-   do {
-      ORInt i = [select max];
-      if (i == MAXINT)
-         return;
-      //NSLog(@"Chose variable: %d",i);
-      id<CPIntVar> x = av[i];
-      id<ORSelect> valSelect = [ORFactory selectRandom: _engine
-                                                 range:RANGE(_engine,[x min],[x max])
-                                              suchThat:^bool(ORInt v)    { return [x member:v];}
-                                             orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
-      do {
-         ORInt curVal = [valSelect max];
-         if (curVal == MAXINT)
-            break;
-         [self try:^{
-            [self labelImpl: x with: curVal];
-         } or:^{
-            [self diffImpl: x with: curVal];
-         }];
-      } while(![x bound]);
-   } while (true);
-   
-}
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine label: var with: val];
@@ -703,20 +517,12 @@
    [_returnLabel notifyWith:var andInt:val];
    [ORConcurrency pumpEvents];
 }
--(void) label: (id<CPIntVar>) var with: (ORInt) val
-{
-   return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
-}
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
    ORStatus status = [_engine diff: var with: val];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
-}
--(void) diff: (id<CPIntVar>) var with: (ORInt) val
-{
-   [self diffImpl: (id<CPIntVar>) [var dereference] with: val];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -741,32 +547,6 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) lthen: (id<ORIntVar>) var with: (ORInt) val
-{
-   [self lthenImpl: (id<CPIntVar>) [var dereference] with: val];
-}
--(void) gthen: (id<ORIntVar>) var with: (ORInt) val
-{
-   [self gthenImpl: (id<CPIntVar>) [var dereference] with: val];
-}
--(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
-{
-   [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
-}
--(void) label: (id<ORIntVar>) mx
-{
-   id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
-   while (![x bound]) {
-      ORInt m = [x min];
-      [_search try: ^() {
-         [self labelImpl: x with: m];
-      }
-                or: ^() {
-                   [self diffImpl: x with: m];
-                }];
-   }
-}
-
 @end
 
 /******************************************************************************************/
@@ -809,7 +589,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: [ORSemDFSControllerCSP class]];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
@@ -826,7 +606,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: ctrlClass];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;

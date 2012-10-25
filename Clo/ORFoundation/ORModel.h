@@ -159,23 +159,35 @@
 -(id<ORIntVar>) y;
 -(ORAnnotation) annotation;
 @end
-@protocol ORSumBoolEqc <ORConstraint>
 
+@protocol ORSumBoolEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @protocol ORSumBoolLEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @protocol ORSumBoolGEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @protocol ORSumEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @protocol ORSumGEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @protocol ORSumLEqc <ORConstraint>
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @protocol ORAlldifferent <ORConstraint>

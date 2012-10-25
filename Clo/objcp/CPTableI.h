@@ -15,8 +15,7 @@
 #import "CPTypes.h"
 #import "CPIntVarI.h"
 #import "CPConstraintI.h"
-
-
+#import "ORDataI.h"
 
 @interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
     CPIntVarI**     _var;

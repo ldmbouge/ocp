@@ -22,14 +22,14 @@
    CPIntVarI**   _xa; // 0-based version of _x
    CPIntVarI**   _ya; // 0-based version of _y
    ORULong       _sz; // size of xa/ya
-   id<CPEngine> _fdm;
+   id<CPEngine> _engine;
 }
 -(id) initCPLexConstraint:(id<CPIntVarArray>) x and:(id<CPIntVarArray>)y
 {
    self = [super initCPActiveConstraint:[ [x solver] engine]];
    _x = x;
    _y = y;
-   _fdm = (id<CPEngine>) [[x solver] engine];
+   _engine = [[x at:[x low]] engine];
    if ([_x count] != [_y count])
       @throw [[ORExecutionError alloc] initORExecutionError:"incompatible sizes in lex constraint"];
    return self;
@@ -87,15 +87,15 @@ STATE2:
       if (bound(_ya[LEX_Q]))
          [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])];
       else {
-         [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
+         [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
       }
    } else if (LEX_XGY(i)) {    // transition STATE 2 -> T2
       assignTRInt(&_active,NO,_trail);
       if (bound(_ya[LEX_Q]))
          [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])-1];
       else {
-         [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
-                                   to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
+         [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
+                                             to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
       }
    } else if (LEX_XLEQY(i)) {  // transition STATE 2 -> STATE 3
       assignTRInt(&_s,i = max(i + 1,LEX_S),_trail);
@@ -116,7 +116,7 @@ STATE3:
       if (bound(_ya[LEX_Q]))
          [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])];
       else {
-         [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
+         [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
       }
    }
    // transition 3 -> D3
@@ -132,8 +132,8 @@ STATE4:
       if (bound(_ya[LEX_Q]))
          [_xa[LEX_Q] updateMax: minDom(_ya[LEX_Q])-1];
       else {
-         [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
-                                   to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
+         [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
+                                             to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
       }
    }
    // transition 4 -> D2
@@ -190,10 +190,10 @@ STATE4:
    assignTRInt(&_r,i,_trail);
 
    if (i > up || LEX_XLY(i)) { // transition STATE 2 -> T3
-      return [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
+      return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
    } else if (LEX_XGY(i)) {    // transition STATE 2 -> T2
-      return [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
-                                       to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
+      return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
+                                                 to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
    } else if (LEX_XLEQY(i)) {  // transition STATE 2 -> STATE 3
       assignTRInt(&_s,i = i + 1,_trail);
       // ****************** ENTERING STATE 3
@@ -201,7 +201,7 @@ STATE4:
          i = i+1;
       assignTRInt(&_s,i,_trail);
       if (i>up || LEX_XLY(i))   // transition STATE 3 -> T3
-         return [_fdm post:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
+         return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
       // transition 3 -> D3
       // ****************** ENTERING STATE D3
       [self listenFrom:LEX_Q];
@@ -214,8 +214,8 @@ STATE4:
          i = i + 1;
       assignTRInt(&_s,i,_trail);
       if (i <= up && LEX_XGY(i)) // transition STATE 4 -> T2
-         return [_fdm post:[CPFactory lEqual:_xa[LEX_Q]
-                                          to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
+         return [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
+                                                    to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
       // transition 4 -> D2
       // ****************** ENTERING STATE D2
       [self listenFrom:LEX_Q];

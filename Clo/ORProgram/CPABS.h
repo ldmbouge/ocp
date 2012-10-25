@@ -9,20 +9,24 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import "CPHeuristic.h"
-#import "CPBaseHeuristic.h"
+#import <ORProgram/ORProgram.h>
+#import <ORProgram/CPHeuristic.h>
+#import <ORProgram/CPBaseHeuristic.h>
 
-@interface CPFirstFail : CPBaseHeuristic<CPHeuristic> {
-   id<ORVarArray>  _vars;
-   id<ORVarArray> _rvars;
-   id<CPSolver>            _cp;
+@class CPStatisticsMonitor;
+@protocol CPIntVarArray;
+
+#define ALPHA 8.0L
+
+@interface CPABS : CPBaseHeuristic<CPHeuristic> {
+   id<ORVarArray>   _vars;
+   id<ORVarArray>  _rvars;
+   id<CPProgram>      _cp;
 }
--(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars;
+-(id)initCPABS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(float)varOrdering:(id<CPIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
+-(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
--(id<CPSolver>)solver;
+-(id<CPProgram>)solver;
 @end

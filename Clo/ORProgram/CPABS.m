@@ -331,7 +331,7 @@
    id<ORZeroOneStream>          _valPr;
    ABSProbeAggregator*          _aggregator;
 }
--(id)initCPABS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPABS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
@@ -351,7 +351,7 @@
    [_aggregator release];
    [super dealloc];
 }
--(id<CPSolver>)solver
+-(id<CPProgram>)solver
 {
    return _cp;
 }

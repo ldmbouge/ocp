@@ -95,25 +95,3 @@ typedef enum {
 -(void) close;
 @end
 
-@interface ORTableI : NSObject<ORTable,NSCoding> {
-   @public
-   ORInt   _arity;
-   ORInt   _nb;
-   ORInt   _size;
-   ORInt** _column;
-   bool    _closed;
-   ORInt*  _min;          // _min[j] is the minimum value in column[j]
-   ORInt*  _max;          // _max[j] is the maximun value in column[j]
-   ORInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
-   ORInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
-}
--(ORTableI*) initORTableI: (ORInt) arity;
--(void) dealloc;
--(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
--(void) addEmptyTuple;
--(void) fill: (ORInt) j with: (ORInt) val;
--(void) close;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
--(void) print;
-@end

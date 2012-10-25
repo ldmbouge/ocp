@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>
-#import <objcp/CPHeuristic.h>
 #import <objcp/CPVar.h>
 
 @protocol ORSearchController;
@@ -40,7 +39,6 @@
 -(void)                 add: (id<ORConstraint>) c consistency:(ORAnnotation) cons;
 -(id<ORObjective>) minimize: (id<ORIntVar>) x;
 -(id<ORObjective>) maximize: (id<ORIntVar>) x;
--(void)        addHeuristic: (id<CPHeuristic>) h;
 
 -(void)               label: (id<CPIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<CPIntVar>) var with: (ORInt) val;

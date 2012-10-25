@@ -37,6 +37,8 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Constraints
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(void) visitMinimize: (id<ORObjectiveFunction>) v;
+-(void) visitMaximize: (id<ORObjectiveFunction>) v;
 @end
 
 @interface ORFlattenConstraint : NSObject<ORVisitor>
@@ -63,6 +65,13 @@
 @end
 
 
+@interface ORFlattenObjective : NSObject<ORVisitor>
+-(id)init:(ORModelI*)m;
+-(void) visitMinimize: (id<ORObjectiveFunction>) v;
+-(void) visitMaximize: (id<ORObjectiveFunction>) v;
+@end
+
+
 @implementation ORFlatten
 -(id)initORFlatten
 {
@@ -81,8 +90,9 @@
    } onConstraints:^(id<ORConstraint> c) {
       [self flatten:c into:out];
    } onObjective:^(id<ORObjective> o) {
-      printf("We have an objective \n");
-      [out optimize: o];
+      ORFlattenObjective* fo = [[ORFlattenObjective alloc] init:out];
+      [o visit:fo];
+      [fo release];
    }];
    return out;
 }
@@ -92,6 +102,28 @@
    ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:m];
    [c visit:fc];
    [fc release];
+}
++(void)flattenExpression:(id<ORExpr>)expr into:(id<ORModel>)model
+{
+   ORLinear* terms = [ORNormalizer normalize:expr into: model note:DomainConsistency];
+   switch ([expr type]) {
+      case ORRBad: assert(NO);
+      case ORREq: {
+         if ([terms size] != 0) {
+            [terms postEQZ:model note:DomainConsistency];
+         }
+      }break;
+      case ORRNEq: {
+         [terms postNEQZ:model note:DomainConsistency];
+      }break;
+      case ORRLEq: {
+         [terms postLEQZ:model note:DomainConsistency];
+      }break;
+      default:
+         assert(terms == nil);
+         break;
+   }
+   [terms release];
 }
 @end
 
@@ -180,40 +212,21 @@
    id<ORTracker> tracker = [item tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
-   for(ORInt b = brlow; b <= brup; b++)
-      [_theModel add: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]] /*note:RangeConsistency*/];
+   for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
+      [ORFlatten flattenExpression:[Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]] into:_theModel];
    ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [_theModel add: [Sum(tracker,b,BR,binSize[b]) eqi: s]];
+   [ORFlatten flattenExpression:[Sum(tracker,b,BR,binSize[b]) eqi: s] into:_theModel];
                                              
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel add: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   id<ORExpr> theExpr = [cstr expr];
-   ORLinear* terms = [ORNormalizer normalize:theExpr into: _theModel note:DomainConsistency];
-   switch ([theExpr type]) {
-      case ORRBad: assert(NO);
-      case ORREq: {
-         if ([terms size] != 0) {
-            [terms postEQZ:_theModel note:DomainConsistency];
-         }
-      }break;
-      case ORRNEq: {
-         [terms postNEQZ:_theModel note:DomainConsistency];
-      }break;
-      case ORRLEq: {
-         [terms postLEQZ: _theModel note:DomainConsistency];
-      }break;
-      default:
-         assert(terms == nil);
-         break;
-   }
-   [terms release];
+   [ORFlatten flattenExpression:[cstr expr] into:_theModel];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -275,12 +288,23 @@
 {
    [_theModel add:c];
 }
--(void) visitMinimize: (id<ORObjectiveFunction>) o
-{
-   [_theModel minimize: [o var]];
+@end
+
+@implementation ORFlattenObjective {
+   ORModelI* _theModel;
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) o
+-(id)init:(ORModelI*)m
 {
-   [_theModel maximize: [o var]];
+   self = [super init];
+   _theModel = m;
+   return self;
+}
+-(void) visitMinimize: (id<ORObjectiveFunction>) v
+{
+   [_theModel minimize:[v var]];
+}
+-(void) visitMaximize: (id<ORObjectiveFunction>) v
+{
+   [_theModel maximize:[v var]];
 }
 @end

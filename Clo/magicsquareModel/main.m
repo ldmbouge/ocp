@@ -9,13 +9,14 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import "ORFoundation/ORFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORConcretizer.h>
 
 enum Heuristic {
    FF = 0,
@@ -71,22 +72,22 @@ int main(int argc, const char * argv[])
       id<ORInteger> nbRestarts = [ORFactory integer: model value:0];
       id<ORInteger> nbFailures = [ORFactory integer: model value:rf == 1.0 ? MAXINT : 3 * n];
       ORLong maxTime =  t * 1000;
-      id<CPSolver> cp = [CPFactory createSolver];
-      [cp addModel:model];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
       id<CPHeuristic> h = nil;
       __block BOOL found = NO;
       switch(hs) {
-         case FF: h = [CPFactory createFF:cp];break;
-         case IBS: h = [CPFactory createIBS:cp];break;
-         case ABS: h = [CPFactory createABS:cp];break;
-         case WDEG: h = [CPFactory createWDeg:cp];break;
-         case DDEG: h = [CPFactory createDDeg:cp];break;
+         case FF:   h = [ORFactory createFF:cp];break;
+         case IBS:  h = [ORFactory createIBS:cp];break;
+         case ABS:  h = [ORFactory createABS:cp];break;
+         case WDEG: h = [ORFactory createWDeg:cp];break;
+         case DDEG: h = [ORFactory createDDeg:cp];break;
       }
       [cp solve:^{
          [cp limitTime:maxTime in: ^ {
             [cp repeat:^{
                [cp limitFailures:[nbFailures value] in: ^ {
-                  [CPLabel heuristic:h];
+                  [cp labelHeuristic:h];
                   @autoreleasepool {
                      for(ORInt i =1;i <= n;i++) {
                         NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

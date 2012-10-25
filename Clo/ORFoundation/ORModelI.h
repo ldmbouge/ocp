@@ -189,26 +189,38 @@
 
 @interface ORSumBoolEqc : ORConstraintI<ORSumBoolEqc>
 -(ORSumBoolEqc*) initSumBool:(id<ORIntVarArray>)ba eqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @interface ORSumBoolLEqc : ORConstraintI<ORSumBoolLEqc>
 -(ORSumBoolLEqc*)initSumBool:(id<ORIntVarArray>)ba leqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @interface ORSumBoolGEqc : ORConstraintI<ORSumBoolGEqc>
 -(ORSumBoolLEqc*)initSumBool:(id<ORIntVarArray>)ba geqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @interface ORSumEqc : ORConstraintI<ORSumEqc>
 -(ORSumEqc*)initSum:(id<ORIntVarArray>)ia eqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @interface ORSumLEqc : ORConstraintI<ORSumLEqc>
 -(ORSumLEqc*)initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @interface ORSumGEqc : ORConstraintI<ORSumGEqc>
 -(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c;
+-(id<ORIntVarArray>)vars;
+-(ORInt)cst;
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
@@ -231,7 +243,7 @@
 @end
 
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>
--(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (ORTableI*) table;
+-(ORTableConstraintI*) initORTableConstraintI: (id<ORIntVarArray>) x table: (id<ORTable>) table;
 -(id<ORIntVarArray>) array;
 -(id<ORTable>) table;
 @end

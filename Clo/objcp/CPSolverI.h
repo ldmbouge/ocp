@@ -14,19 +14,6 @@
 #import "CPTypes.h"
 #import "CPConstraintI.h"
 
-@interface CPHeuristicStack : NSObject {
-   id<CPHeuristic>* _tab;
-   ORUInt       _sz;
-   ORUInt       _mx;
-}
--(CPHeuristicStack*)initCPHeuristicStack;
--(void)push:(id<CPHeuristic>)h;
--(id<CPHeuristic>)pop;
--(void)reset;
--(void)applyToAll:(void(^)(id<CPHeuristic> h,NSMutableArray*))closure with:(NSMutableArray*)tab;
-@end
-
-
 @interface CPCoreSolverI : NSObject<CPSolver>
 {
 @protected
@@ -34,7 +21,6 @@
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
    id<ORTrail>           _trail;
-   CPHeuristicStack*     _hStack;
    id<CPPortal>          _portal;
 @package
    id<ORIdxIntInformer>  _returnLabel;
@@ -67,7 +53,6 @@
 -(void)                  add: (id<ORConstraint>) c;
 -(id<ORObjective>)  minimize: (id<CPIntVar>) x;
 -(id<ORObjective>)  maximize: (id<CPIntVar>) x;
--(void)         addHeuristic: (id<CPHeuristic>) h;
 
 -(void)                close;
 -(BOOL)               closed;

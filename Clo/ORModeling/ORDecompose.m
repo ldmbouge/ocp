@@ -680,7 +680,7 @@ struct CPVarPair {
    if (_rv != nil) {
       [_model add: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
    } else {
-      _rv = [ORFactory reifyView:theVar eqi:c];
+      _rv = [ORFactory reifyView:_model var:theVar eqi:c];
    }
 #endif
 }

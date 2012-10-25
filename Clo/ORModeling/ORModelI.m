@@ -119,14 +119,12 @@
 -(void) trackObject: (id) obj;
 {
    [_oStore addObject:obj];
-   [obj autorelease];
 }
 
 -(void) trackVariable: (id) var;
 {
    [var setId: (ORUInt) [_vars count]];
    [_vars addObject:var];
-   [var autorelease];
 }
 
 -(void) instantiate: (id<ORSolver>) solver

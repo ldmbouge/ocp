@@ -510,6 +510,21 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
+-(ORStatus) addInternal:(id<ORConstraint>) c
+{
+   if (_state != CPOpen) {
+      ORStatus s = [self post:c];
+      if (s==ORFailure)
+         failNow();
+      return s;
+   }
+   else {
+      CPCoreConstraint* cstr = (CPCoreConstraint*) c;
+      [cstr setId:(ORUInt)[_mStore count]];
+      [_mStore addObject:c];
+      return ORSuspend;      
+   }
+}
 -(ORStatus) add: (id<ORConstraint>) c
 {
    if (_state != CPOpen) {

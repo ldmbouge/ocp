@@ -77,6 +77,7 @@ enum CPEngineState {
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
+-(ORStatus)  addInternal:(id<ORConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  label:(id<CPIntVar>) var with: (ORInt) val;

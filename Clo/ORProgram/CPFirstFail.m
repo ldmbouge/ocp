@@ -10,18 +10,18 @@
  ***********************************************************************/
 
 #import "CPFirstFail.h"
-#import "CPEngineI.h"
+#import "CPEngine.h"
 #import "CPIntVarI.h"
 
 @implementation CPFirstFail {
-   CPEngineI*    _solver;
+   id<CPEngine>    _engine;
 }
--(CPFirstFail*)initCPFirstFail:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
+-(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    [cp addHeuristic:self];
    _cp = cp;
-   _solver  = (CPEngineI*)[cp engine];
+   _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    return self;
@@ -30,7 +30,7 @@
 {
    [super dealloc];
 }
--(id<CPSolver>)solver
+-(id<CPProgram>)solver
 {
    return _cp;
 }

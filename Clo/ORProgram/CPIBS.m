@@ -9,11 +9,11 @@
 
  ***********************************************************************/
 
-#import <CPIBS.h>
-#import "CPEngineI.h"
-#import "CPIntVarI.h"
-#import "CPStatisticsMonitor.h"
-#import "ORTracer.h"
+#import "CPIBS.h"
+#import <ORFoundation/ORTracer.h>
+#import <objcp/CPEngine.h>
+#import <objcp/CPStatisticsMonitor.h>
+#import <objcp/CPVar.h>
 
 @interface CPKillRange : NSObject {
 @package
@@ -161,17 +161,17 @@
 @end
 
 @implementation CPIBS {
-   CPEngineI*               _engine;
+   id<CPEngine>             _engine;
    CPStatisticsMonitor*    _monitor;
    ORULong                     _nbv;
    NSMutableDictionary*    _impacts;
 }
 
--(id)initCPIBS:(id<CPSolver>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _engine = (CPEngineI*)[cp engine];
+   _engine = [cp engine];
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
@@ -183,7 +183,7 @@
    [_impacts release];
    [super dealloc];
 }
--(id<CPSolver>)solver
+-(id<CPProgram>)solver
 {
    return _cp;
 }
@@ -261,7 +261,7 @@
    return;
 }
 
--(void)dichotomize:(CPIntVarI*)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
+-(void)dichotomize:(id<CPIntVar>)x from:(ORInt)low to:(ORInt)up block:(ORInt)b sac:(NSMutableSet*)set
 {
    if (up - low + 1 <= b) {
       float ks = 0.0;
@@ -307,7 +307,7 @@
    ORInt low = [_vars low],up = [_vars up];
    for(ORInt k=low; k <= up;k++) {
       NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
-      CPIntVarI* v = (CPIntVarI*)_vars[k];
+      id<CPIntVar> v = (id<CPIntVar>)_vars[k];
       ORBounds vb = [v bounds];
       [_monitor rootRefresh];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];

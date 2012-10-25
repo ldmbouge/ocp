@@ -84,15 +84,6 @@ typedef struct  {
 @class CPTriggerMap;
 @class CPLiterals;
 // This is really an implementation protocol
-
-enum CPVarClass {
-   CPVCBare = 0,
-   CPVCShift = 1,
-   CPVCAffine = 2,
-   CPVCEQLiteral = 3,
-   CPVCLiterals = 4
-};
-
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
 // PVH: my recommendation is to have an interface and this becomes the implementation class
 @protocol CPIntVarNotifier <NSObject>
@@ -403,7 +394,7 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
       case CPVCEQLiteral: return [x member:value];
       default:assert(NO);
    }
-   return getCPDom((CPBitDom*)x->_dom, target);   
+   return domMember((CPBitDom*)x->_dom, target);
 }
 
 static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
