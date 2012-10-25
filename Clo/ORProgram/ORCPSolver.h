@@ -12,9 +12,28 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORProgram/ORProgram.h>
 
+/***************************************************************************/
+/*                  This file should be private                            */
+/***************************************************************************/
 
-@interface ORCPSolver : NSObject<CPProgram>
+// This factorizes all the common stuff
+
+@interface ORCPCoreSolver : NSObject<ORASolver>
+-(ORCPCoreSolver*) initORCPCoreSolver;
+@end
+
+// Pure DFS CPSolver
+@interface ORCPSolver : ORCPCoreSolver<CPProgram>
 -(id<CPProgram>) initORCPSolver;
--(id<CPProgram>) initORCPSolverCheckpointing;
--(id<CPProgram>) initORCPSemanticSolver: (Class) ctrlClass;
+@end
+
+// SemanticPath CPSolver
+@interface ORCPSemanticSolver : ORCPCoreSolver<CPSemanticProgram>
+-(id<CPProgram>) initORCPCoreSolver;
+@end
+
+@interface ORCPSolverFactory : NSObject<CPProgram>
++(id<CPProgram>) initORCPSolver;
++(id<CPProgramCheckpoint>) initORCPSolverCheckpointing;
++(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass;
 @end

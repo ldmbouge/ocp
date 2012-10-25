@@ -21,6 +21,7 @@
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 
+
 @protocol CPCommonProgram <ORASolver>
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
@@ -34,12 +35,6 @@
 -(void)                 add: (id<ORConstraint>) c;
 -(void)                 add: (id<ORConstraint>) c consistency: (ORAnnotation) cons;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
-
--(void)               label: (id<ORIntVar>) var with: (ORInt) val;
--(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
@@ -56,11 +51,6 @@
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 
--(void)                once: (ORClosure) cl;
--(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
--(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
--(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
--(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
 -(void)         nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
@@ -71,9 +61,36 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 @end
 
+// CPSolver with Semantic Path
 @protocol CPProgram <CPCommonProgram>
+-(void)               label: (id<ORIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
+
+-(void)                once: (ORClosure) cl;
+-(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
+-(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
+-(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
+@end
+
+
+// Initially empty but will add things here
+@protocol CPProgramCheckpoint <CPProgram>
+@end
+
+// CPSolver with Semantic Path
+@protocol CPSemanticProgram <CPCommonProgram>
+-(void)               label: (id<ORIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 @end
 
 
