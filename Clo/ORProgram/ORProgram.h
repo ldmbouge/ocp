@@ -33,8 +33,13 @@
 
 -(void)                 add: (id<ORConstraint>) c;
 -(void)                 add: (id<ORConstraint>) c consistency: (ORAnnotation) cons;
--(void)        addHeuristic: (id<CPHeuristic>) h;
+-(void)               label: (id<ORIntVar>) var with: (ORInt) val;
+-(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
+-(void)        addHeuristic: (id<CPHeuristic>) h;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
@@ -62,11 +67,6 @@
 
 // CPSolver with Semantic Path
 @protocol CPProgram <CPCommonProgram>
--(void)               label: (id<ORIntVar>) var with: (ORInt) val;
--(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;

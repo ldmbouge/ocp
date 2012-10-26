@@ -18,7 +18,7 @@
 
 // This factorizes all the common stuff
 
-@interface ORCPCoreSolver : NSObject<ORASolver>
+@interface ORCPCoreSolver : NSObject<CPCommonProgram>
 -(ORCPCoreSolver*) initORCPCoreSolver;
 @end
 
@@ -32,7 +32,7 @@
 -(id<CPProgram>) initORCPCoreSolver;
 @end
 
-@interface ORCPSolverFactory : NSObject<CPProgram>
+@interface ORCPSolverFactory : NSObject
 +(id<CPProgram>) initORCPSolver;
 +(id<CPProgramCheckpoint>) initORCPSolverCheckpointing;
 +(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass;

@@ -81,7 +81,7 @@
 
    id<CPProgram> cpprogram;
    if (!checkpointing)
-      cpprogram = [[ORCPSolver alloc] initORCPSolver];
+      cpprogram = [ORCPSolverFactory initORCPSolver];
    else
       cpprogram = [[ORCPSolver alloc] initORCPSolverCheckpointing];
 

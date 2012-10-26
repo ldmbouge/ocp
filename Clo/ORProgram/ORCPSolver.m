@@ -146,6 +146,7 @@
 /******************************************************************************************/
 
 @implementation ORCPCoreSolver {
+@protected
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORObjective>       _objective;
@@ -153,7 +154,7 @@
    id<ORTracer>          _tracer;
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
-   @package
+
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
@@ -169,14 +170,10 @@
 }
 -(void) dealloc
 {
-   [_trail release];
-   [_engine release];
-   [_search release];
    [_hSet release];
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
-   [_tracer release];
    [super dealloc];
 }
 -(id<ORIdxIntInformer>) retLabel
@@ -312,6 +309,14 @@
 {
    [_engine trackObject:object];  
 }
+-(void) add: (id<ORConstraint>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];   
+}
+-(void) add: (id<ORConstraint>) c consistency: (ORAnnotation) cons
+{
+@throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];   
+}
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -424,19 +429,7 @@
 /*                                   CPSolver                                             */
 /******************************************************************************************/
 
-@implementation ORCPSolver {
-   id<CPEngine>          _engine;
-   id<ORExplorer>        _search;
-   id<ORObjective>       _objective;
-   id<ORTrail>           _trail;
-   id<ORTracer>          _tracer;
-   CPHeuristicSet*       _hSet;
-   id<CPPortal>          _portal;
-   @package
-   id<ORIdxIntInformer>  _returnLabel;
-   id<ORIdxIntInformer>  _failLabel;
-   BOOL                  _closed;
-}
+@implementation ORCPSolver
 -(id<CPProgram>) initORCPSolver
 {
    self = [super initORCPCoreSolver];
@@ -966,3 +959,17 @@
 }
 @end
 
+@implementation ORCPSolverFactory 
++(id<CPProgram>) initORCPSolver
+{
+   return [[ORCPSolver alloc] initORCPSolver];
+}
++(id<CPProgramCheckpoint>) initORCPSolverCheckpointing
+{
+//   return [[ORCPSolver alloc] initORCPSolver];
+}
++(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass
+{
+   
+}
+@end
