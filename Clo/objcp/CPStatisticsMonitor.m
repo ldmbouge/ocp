@@ -67,10 +67,10 @@ BOOL refresh(CPVarInfo* vi)
 @end
 
 @implementation CPStatisticsMonitor
--(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars
+-(id)initCPMonitor:(id<CPEngine>)engine vars:(id<ORVarArray>)allVars
 {
    self = [super initCPCoreConstraint];
-   _cp = cp;
+   _engine = engine;
    _monVar = allVars;
    _nbVI = [_monVar count];
    _nbActive = 0;
@@ -88,7 +88,7 @@ BOOL refresh(CPVarInfo* vi)
 }
 -(ORStatus) post
 {
-   id<ORTrail> trail = [[_cp engine] trail];
+   id<ORTrail> trail = [_engine trail];
    ORUInt nbW = 0;
    for(ORInt k = [_monVar low];k <= [_monVar up];k++) {
       id obj = [_monVar at:k];
@@ -98,7 +98,7 @@ BOOL refresh(CPVarInfo* vi)
                priority: LOWEST_PRIO+1
                onBehalf: self]; 
    }
-   [[[_cp portal] propagateDone] wheneverNotifiedDo:^{
+   [[_engine propagateDone] wheneverNotifiedDo:^{
       _nbActive = 0;
       for(ORUInt i=0;i<_nbVI;i++) {
          CPVarInfo* vInfo = _varInfo[i];
