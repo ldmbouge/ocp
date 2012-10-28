@@ -169,7 +169,10 @@
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a
 {
-   return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
+   if (a==1)
+      return x;
+   else
+      return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
 {
