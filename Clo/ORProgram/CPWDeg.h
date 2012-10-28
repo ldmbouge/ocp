@@ -20,6 +20,7 @@
 @interface CPWDeg : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
+   ORUInt         _nbVars;
    ORUInt*           _map; 
    id<CPProgram>      _cp;
    CPEngineI*     _solver;

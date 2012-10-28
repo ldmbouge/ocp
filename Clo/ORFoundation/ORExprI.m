@@ -712,6 +712,7 @@
          _e = [_e plus: e(i)];
       }
    }
+   [ite release]; // [ldm] fixed memory leak.
    return self;
 }
 -(id<ORExpr>) initORExprSumI: (id<ORExpr>) e
@@ -784,6 +785,7 @@
          _e = [_e or: e(i)];
       }
    }
+   [ite release]; // [ldm] fixed memory leak.
    return self;
 }
 -(id<ORRelation>) initORExprAggOrI: (id<ORExpr>) e

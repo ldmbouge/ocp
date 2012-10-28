@@ -80,6 +80,7 @@
          }
       }
    }
+   [ite release];  // [ldm] missing. Memory leak.
    return indexFound;
 }
 

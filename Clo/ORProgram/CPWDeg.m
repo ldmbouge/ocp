@@ -38,7 +38,7 @@
       free(_vOfC);  
    }
    if (_cv) {
-     for(int k=0;k<[_vars count];k++)
+     for(int k=0;k<_nbVars;k++)
        [_cv[k] release];
      free(_cv);
    }
@@ -83,6 +83,7 @@
 {
    ORUInt len = (ORUInt) [t count];
    _vars = t;
+   _nbVars = (ORUInt)[_vars count];
    _cv = malloc(sizeof(NSSet*)*len);
    memset(_cv,sizeof(NSSet*)*len,0);
    ORUInt maxID = 0;
