@@ -14,7 +14,7 @@
 #import "CPBitMacros.h"
 
 #define ISTRUE(up, low) (up & low)
-#define ISFALSE(up, low) ((~up) & (~low))
+#define ISFALSE(up, low) (~up)
 
 @implementation CPFactory (BitConstraint)
 //Bit Vector Constraints
@@ -59,6 +59,14 @@
     [[x engine] trackObject:o];
     return o;
     
+}
+
++(id<CPConstraint>) bitRotateL:(CPBitVarI*)x by:(int) p equals:(CPBitVarI*) y
+{
+   id<CPConstraint> o = [[CPBitRotateL alloc] initCPBitRotateL:x rotateLBy:p equals:y];
+   [[x engine] trackObject:o];
+   return o;
+   
 }
 
 +(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout
@@ -642,6 +650,7 @@
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
     [super encodeWithCoder:aCoder];
+    [aCoder encodeObject:_w];
     [aCoder encodeObject:_x];
     [aCoder encodeObject:_y];
     [aCoder encodeObject:_z];
@@ -649,6 +658,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
     self = [super initWithCoder:aDecoder];
+    _w = [aDecoder decodeObject];
     _x = [aDecoder decodeObject];
     _y = [aDecoder decodeObject];
     _z = [aDecoder decodeObject];
@@ -690,108 +700,18 @@
     TRUInt* yLow = [_y getLow];
     TRUInt* yUp = [_y getUp];
     
-    unsigned int* newXUp = alloca((sizeof(unsigned int))*wordLength);
-    unsigned int* newXLow  = alloca((sizeof(unsigned int))*wordLength);
-    unsigned int* newYUp = alloca((sizeof(unsigned int))*wordLength);
-    unsigned int* newYLow  = alloca((sizeof(unsigned int))*wordLength);
+    unsigned int* newXUp = alloca((sizeof(unsigned int))*(wordLength+1));
+    unsigned int* newXLow  = alloca((sizeof(unsigned int))*(wordLength+1));
+    unsigned int* newYUp = alloca((sizeof(unsigned int))*(wordLength+1));
+    unsigned int* newYLow  = alloca((sizeof(unsigned int))*(wordLength+1));
     unsigned int upXORlow;
     
     bool    inconsistencyFound = false;
-/*
-        for(int i=wordLength-1;i>=0;i--){
-        
-        //y_k =1 => x_k-places = 1
-         if (i+(_places/32)< wordLength){
-            newYUp[i] = (xUp[i+(_places/32)]._val << (_places%32)) | yUp[i]._val;
-            newXUp[i] = (yUp[i+(_places/32)]._val >> (_places%32)) | xUp[i]._val;
-            newYUp[i] |= xUp[i+_places/32-1]._val >> (32-_places%32);
-            newXUp[i] |= yUp[i+_places/32-1]._val << (_places%32);
 
-            newYLow[i] =  (xLow[i+(_places/32)]._val << (_places%32)) | yLow[i]._val;
-            newXLow[i] =  (yLow[i+(_places/32)]._val >> (32-(_places%32))) | xLow[i]._val;
-            newYLow[i] |= xLow[i+_places/32-1]._val >> (32-(_places%32));
-            newXLow[i] |= yLow[i+_places/32-1]._val << (_places%32);
-           }
-           newYUp[wordLength-1] &= CP_UMASK << _places;
-
-           upXORlow = newYUp[i] ^ newYLow[i];
-           upXORlow |= newXUp[i] ^ newXLow[i];
-        inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-        
-           if (inconsistencyFound){
-              NSLog(@"Inconsistency found in Shift L Bit constraint.");
-              NSLog(@"x = %@",[_x description]);
-              NSLog(@"y = %@",[_y description]);
-            failNow();
-           }
-    }
-
-    for(int i=0;i<wordLength;i++){
-
-        //z_k=0 & y_k=0 => x_k=0
-        //z_k=1 & y_k=1 => x_k=0
-//        if ((i-(_places/32))>=0){
-            newXUp[i] = ~((~yUp[i-(_places/32)]._val >> (_places%32)) | ~xUp[i]._val);
-//            newXUp[i] += newXUp[i-(_places/32)] << (32 - (_places%32));
-//        }
-//        else
-//            newXUp[i] = 0;
-        
-        //z_k=0 & y_k=1 => x_k=1
-        //z_k=1 & y_k=0 => x_k=1
-//        if ((i-(_places/32))>=0){
-            newXLow[i] = (yLow[i-(_places/32)]._val>>(_places%32)) | xLow[i]._val;
-//            newXLow[i] += newXLow[i-(_places/32)] << (32 - (_places%32));
-//        }
-//        else
-//            newXLow[i] = 0;
-        
-        
-        
-        upXORlow = newXUp[i] ^ newXLow[i];
-        inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-//        upXORlow = newYUp[i] ^ newYLow[i];
-//        inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-        
-       if (inconsistencyFound){
-          NSLog(@"Inconsistency found in Shift L Bit constraint.");
-
-            failNow();
-       }
-        }
-*/
-   
-   
    for(int i=0;i<wordLength;i++){
-      /* commented out by GAJ on 10/17/12
-      if(i+(_places/32)< wordLength){
-         newYUp[i] = yUp[i]._val & xUp[i+(_places/32)]._val << (_places%32);
-         newYLow[i] = yLow[i]._val | xLow[i+(_places/32)]._val << (_places%32);
-         if (i+(_places/32)+1<wordLength){
-            newYUp[i] &= CP_UMASK << (_places%32) | (xUp[i+(_places/32)+1]._val >> (32 - (_places%32)));
-            newYLow[i] |= xLow[i+(_places/32)+1]._val >> (32 - (_places%32));
-         }
-      }
-         newXUp[i] = xUp[i]._val & yUp[i-_places/32]._val >> (_places%32);
-      if((i-(((int)_places)/32))>=0){
-         newXUp[i] = (xUp[i]._val & (yUp[i-_places/32]._val >> (_places%32))) | (CP_UMASK<< (32-(_places%32)));
-         newXLow[i] = xLow[i]._val | (yLow[i-_places/32]._val >> (_places%32));
-         if((i-((int)_places/32)-1)>=0){
-            newXUp[i] &= yUp[i-_places/32-1]._val << (32 - (_places%32));
-            newXLow[i] |= yLow[i-_places/32-1]._val << (32 - (_places%32));
-         }
-            
-      }
-      newYUp[wordLength-(_places/32)-1] &= CP_UMASK << _places%32;
-      newYLow[wordLength-(_places/32)-1] &= CP_UMASK << _places%32;
-      for(int i=wordLength-(_places/32)-1;i<wordLength;i++){
-         newYUp[i] = 0;
-         newYLow[i] = 0;
-      }
-*/ //end commented out 10/17/12
       if ((i+_places/32) < wordLength) {
-         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|(ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
-         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|(ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32));
+         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32))));
+         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
          if((i+_places/32+1) < wordLength) {
             newYUp[i] &= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
             newYLow[i] |= ISTRUE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32));
@@ -807,34 +727,34 @@
       }
       
       if ((i-(int)_places/32) >= 0) {
-         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|(ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
-         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|(ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32));
+         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32))));
+         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
          if((i-(int)_places/32-1) >= 0) {
             newXUp[i] &= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
             newXLow[i] |= ISTRUE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32));
          }
- /*        else{
-            newXUp[i] &= ~(UP_MASK << (32-(_places%32)));
-            newXLow[i] &= ~(UP_MASK << (32-(_places%32)));
-         }
-*/      }
-/*      else{
-         newXUp[i] = 0;
-         newXLow[i] = 0;
       }
-*/
-      //last word with partial shifted value should have lower bits cleared
-
+      else{
+         newXUp[i] = xUp[i]._val;
+         newXLow[i] = xLow[i]._val;
+      }
 
       upXORlow = newYUp[i] ^ newYLow[i];
       inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-      if (inconsistencyFound)
+      if (inconsistencyFound){
          NSLog(@"Inconsistency found in Shift L Bit constraint in the y variable at index %d.",i);
+         NSLog(@"yUp=%x",newYUp[i]);
+         NSLog(@"yLow=%x",newYLow[i]);
+      }
 
       upXORlow = newXUp[i] ^ newXLow[i];
       inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-      if (inconsistencyFound)
+      if (inconsistencyFound){
          NSLog(@"Inconsistency found in Shift L Bit constraint in the x variable at index %d.",i);
+         NSLog(@"xUp=%x",newXUp[i]);
+         NSLog(@"xLow=%x",newXLow[i]);
+      }
+
 
    }
    
@@ -865,9 +785,121 @@
 }
 @end
 
+@implementation CPBitRotateL
+-(id) initCPBitRotateL:(id)x rotateLBy:(int)places equals:(id)y{
+   self = [super initCPActiveConstraint:[x engine]];
+   _x = x;
+   _y = y;
+   _places = places;
+   return self;
+   
+}
+
+- (void) dealloc
+{
+   [super dealloc];
+}
+
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+   }
+   [self propagate];
+   return ORSuspend;
+}
+-(void) propagate
+{
+   unsigned int wordLength = [_x getWordLength];
+   
+   TRUInt* xLow = [_x getLow];
+   TRUInt* xUp = [_x getUp];
+   TRUInt* yLow = [_y getLow];
+   TRUInt* yUp = [_y getUp];
+   
+   unsigned int* newXUp = alloca((sizeof(unsigned int))*wordLength);
+   unsigned int* newXLow  = alloca((sizeof(unsigned int))*wordLength);
+   unsigned int* newYUp = alloca((sizeof(unsigned int))*wordLength);
+   unsigned int* newYLow  = alloca((sizeof(unsigned int))*wordLength);
+   unsigned int upXORlow;
+   
+   bool    inconsistencyFound = false;
+   
+   for(int i=0;i<wordLength;i++){
+      if ((i+_places/32) < wordLength) {
+         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32))));
+         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
+         if((i+_places/32+1) < wordLength) {
+            newYUp[i] &= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
+            newYLow[i] |= ISTRUE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32));
+         }
+         else{
+            newYUp[i] &= ~(ISFALSE(xUp[i]._val,xLow[i]._val) >> (32-(_places%32)));
+            //check this one
+            newYLow[i] |= (ISTRUE(xUp[i]._val,xLow[i]._val) >> (32-(_places%32)));
+         }
+      }
+//      else{
+//         newYUp[i] = 0;
+//         newYLow[i] = 0;
+//      }
+      
+      if ((i-(int)_places/32) >= 0) {
+         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32))));
+         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
+         if((i-(int)_places/32-1) >= 0) {
+            newXUp[i] &= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
+            newXLow[i] |= ISTRUE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32));
+         }
+      }
+      else{
+         newXUp[i] = xUp[i]._val;
+         newXLow[i] = xLow[i]._val;
+      }
+      
+      upXORlow = newYUp[i] ^ newYLow[i];
+      inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
+      if (inconsistencyFound)
+         NSLog(@"Inconsistency found in Rotate L Bit constraint in the y variable at index %d.",i);
+      
+      upXORlow = newXUp[i] ^ newXLow[i];
+      inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
+      if (inconsistencyFound)
+         NSLog(@"Inconsistency found in Rotate L Bit constraint in the x variable at index %d.",i);
+      
+   }
+   
+   if (inconsistencyFound){
+      NSLog(@"Inconsistency found in Rotate L Bit constraint.");
+      failNow();
+   }
+   
+   
+   [_x setLow:newXLow];
+   [_x setUp:newXUp];
+   [_y setLow:newYLow];
+   [_y setUp:newYUp];
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 @implementation CPBitADD
 -(id) initCPBitAdd:(id<CPBitVar>)x plus:(id<CPBitVar>)y equals:(id<CPBitVar>)z withCarryIn:(id<CPBitVar>)cin andCarryOut:(id<CPBitVar>)cout{
-   NSLog(@"Posting Bitwise ADD Constraint...");
     self = [super initCPActiveConstraint:[x engine]];
     _x = (CPBitVarI*)x;
     _y = (CPBitVarI*)y;
@@ -875,9 +907,6 @@
     _cin = (CPBitVarI*)cin;
     _cout = (CPBitVarI*)cout;
    [[x solver] add:[CPFactory bitShiftL:cout by:1 equals:cin]];
-   NSLog(@"done.\n");
-
-    
     return self;
 }
 
@@ -941,7 +970,6 @@
     unsigned int upXORlow;
     
     bool    inconsistencyFound = false;
-//   NSLog(@"Enter Sum Constraint");
 
     for(int i = 0; i<wordLength;i++){
         prevXUp[i] = xUp[i]._val;
@@ -958,8 +986,6 @@
        newZUp[i] = zUp[i]._val;
        newZLow[i] = zLow[i]._val;
 
-        //Using the previous propagation's Carry in and Carry out as a seed. Not sure if we should start
-        //without assigning values to these variables. But, this allows us to check for overflow in Cout.
         prevCinUp[i] = cinUp[i]._val;
         prevCinLow[i] = cinLow[i]._val;
         prevCoutUp[i] = coutUp[i]._val;
@@ -973,8 +999,7 @@
     }
     
     while (change) {
-        change = false;
-        //for(int i=wordLength-1;i>=0;i--){
+       change = false;
        for(int i=wordLength-1;i>=0;i--){
           if(![_x bound]){
            newXUp[i] = prevXUp[i] &
@@ -1147,8 +1172,6 @@
             change |= newCoutUp[i] ^ prevCoutUp[i];
             change |= newCoutLow[i] ^ prevCoutLow[i];
           
-//          NSLog(@"Change:%x", change);
-            
             prevXUp[i] = newXUp[i];
             prevXLow[i] = newXLow[i];
             prevYUp[i] = newYUp[i];
@@ -1213,8 +1236,6 @@
          break;
       }
 
-//   NSLog(@"Exit Sum Constraint");
-
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -1222,12 +1243,18 @@
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_x];
     [aCoder encodeObject:_y];
+    [aCoder encodeObject:_z];
+    [aCoder encodeObject:_cin];
+    [aCoder encodeObject:_cout];
 }
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
     self = [super initWithCoder:aDecoder];
     _x = [aDecoder decodeObject];
     _y = [aDecoder decodeObject];
+    _z = [aDecoder decodeObject];
+    _cin = [aDecoder decodeObject];
+    _cout = [aDecoder decodeObject];
     return self;
 }
 @end

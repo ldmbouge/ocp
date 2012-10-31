@@ -24,6 +24,7 @@
 +(id<CPConstraint>) bitXOR:(id<CPBitVar>)x xor:(id<CPBitVar>)y equals:(id<CPBitVar>) z;
 +(id<CPConstraint>) bitNOT:(id<CPBitVar>)x equals:(id<CPBitVar>) y;
 +(id<CPConstraint>) bitShiftL:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
++(id<CPConstraint>) bitRotateL:(id<CPBitVar>)x by:(int) p equals:(id<CPBitVar>) y;
 +(id<CPConstraint>) bitADD:(id<CPBitVar>)x plus:(id<CPBitVar>) y withCarryIn:(id<CPBitVar>) cin equals:(id<CPBitVar>) z withCarryOut:(id<CPBitVar>) cout;
 @end
 
@@ -116,6 +117,19 @@
 -(ORStatus) post;
 -(void) propagate;
 @end
+
+@interface CPBitRotateL : CPActiveConstraint<NSCoding>{
+@private
+   CPBitVarI*      _x;
+   CPBitVarI*      _y;
+   unsigned int    _places;
+}
+-(id) initCPBitRotateL: (CPBitVarI*) x rotateLBy:(int) places equals: (CPBitVarI*) y;
+-(void) dealloc;
+-(ORStatus) post;
+-(void) propagate;
+@end
+
 
 @interface CPBitShiftR : CPActiveConstraint<NSCoding>{
 @private 
