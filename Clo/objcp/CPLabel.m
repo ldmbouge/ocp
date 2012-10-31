@@ -113,19 +113,14 @@
 
 +(void) bit:(int)i ofVar:(id<CPBitVar>)x
 {
-//   id<CPSolver> cp = (id<CPSolver>) [[x engine] solver];
    CPSolverI* cp = (CPSolverI*) [x solver];
 
       [cp try: ^() {
-//         NSLog(@"Labeling bit %d of %@ with 0...", i, x);
          [cp labelBitVar:x at:i with:false];
-//         NSLog(@" done.\n");
       }
            or: ^() {
-//              NSLog(@"Labeling bit %d of %@ with 1...", i, x);
               [cp labelBitVar:x at:i with:true];
-//              NSLog(@" done.\n");
-           }];   
+           }];
 }
 
 +(void) upFromLSB:(id<CPBitVar>) x
@@ -136,18 +131,12 @@
    CPBitVarI* bv = (CPBitVarI*) [x dereference];
 
    while ((i=[bv lsFreeBit])>=0) {
-      //int i = [(CPBitVarI*)x lsFreeBit];
       NSAssert(i>=0,@"ERROR in [CPLabel bitVar] bitVar is not bound, but no free bits found when using lsFreeBit.");
-      //NSLog(@"Labeling bit %d of %@\n", i, x);
       [cp try: ^() {
-//         NSLog(@"Labeling bit %d of %@ with 0...", i, x);
          [cp labelBitVar:x at:i with:false];
-//         NSLog(@" done.\n");
       }
            or: ^() {
-//              NSLog(@"Labeling bit %d of %@ with 1...", i, x);
               [cp labelBitVar:x at:i with:true];
-//              NSLog(@" done.\n");
            }];
    }
 }
