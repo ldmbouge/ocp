@@ -1130,11 +1130,11 @@
    id<ORIntVarArray> _x;
    ORAnnotation _n;
 }
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x note:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
-   _n = DomainConsistency;
+   _n = n;
    return self;
 }
 -(id<ORIntVarArray>) array

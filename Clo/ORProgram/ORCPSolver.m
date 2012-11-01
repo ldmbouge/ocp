@@ -559,7 +559,7 @@
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
 }
--(id<CPProgram>) initORCPSolver
+-(id<CPSemanticProgram>) initORCPSolver
 {
    self = [super initORCPCoreSolver];
    _trail = [ORFactory trail];
@@ -573,7 +573,7 @@
    return self;
 }
 
--(id<CPProgram>) initORCPSolverCheckpointing
+-(id<CPSemanticProgram>) initORCPSolverCheckpointing
 {
    self = [super init];
    _trail = [ORFactory trail];
@@ -590,7 +590,7 @@
    _objective = nil;
    return self;
 }
--(id<CPCommonProgram>) initORCPSemanticSolver: (Class) ctrlClass
+-(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass
 {
    self = [super init];
    _trail = [ORFactory trail];

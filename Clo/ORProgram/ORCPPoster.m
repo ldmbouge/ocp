@@ -19,10 +19,10 @@
 
 @implementation ORCPPoster
 {
-   id<CPProgram> _solver;
+   id<CPCommonProgram> _solver;
    id<CPEngine> _engine;
 }
--(ORCPPoster*) initORCPPoster: (id<CPProgram>) solver
+-(ORCPPoster*) initORCPPoster: (id<CPCommonProgram>) solver
 {
    self = [super init];
    _solver = [solver retain];

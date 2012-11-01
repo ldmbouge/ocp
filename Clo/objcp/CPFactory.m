@@ -77,7 +77,7 @@ void failNow()
 {
    [NSCont shutdown];
 }
-@end;
+@end
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 

@@ -25,6 +25,10 @@
 #import "ORVarI.h"
 
 @implementation ORFactory
++(void) shutdown
+{
+   [NSCont shutdown];
+}
 +(id<ORTrail>) trail
 {
    return [[ORTrailI alloc] init];
@@ -582,9 +586,15 @@
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x note:DomainConsistency];
    return o;
 }
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x note:(ORAnnotation)c
+{
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x note:c];
+   return o;
+}
+
 +(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
 {
    // Rewritten in terms of the variable-driven load form.

@@ -28,11 +28,12 @@
 
 @implementation ORFactory (Concretization)
 
+// [ldm] I don't understand. CPCommonProgram should be abstract. Why do we even
+// have a factory method named that way? 
 +(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
 {
-   return [[ORCPSolver alloc] initORCPSemanticSolver: ctrlClass];
+   return [[ORCPSolver alloc]  initORCPSemanticSolver: ctrlClass];
 }
-
 +(id<CPHeuristic>)createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
@@ -74,16 +75,16 @@
    return [[CPABS alloc] initCPABS:cp restricted:nil];
 }
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model checkpointing: (BOOL) checkpointing
++(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model checkpointing: (BOOL) checkpointing
 {
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    id<ORModel> flatModel = [flat apply: model];
 
-   id<CPProgram> cpprogram;
+   id<CPCommonProgram> cpprogram;
    if (!checkpointing)
       cpprogram = [ORCPSolverFactory initORCPSolver];
    else
-      cpprogram = [[ORCPSolver alloc] initORCPSolverCheckpointing];
+      cpprogram = [[ORCPSemanticSolver alloc] initORCPSolverCheckpointing];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
@@ -103,10 +104,10 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   return [ORFactory createCPProgram: model checkpointing: false];
+   return (id<CPProgram>)[ORFactory createCPProgram: model checkpointing: false];
 }
 
-+(id<CPProgram>) createCPCheckpointingProgram: (id<ORModel>) model
++(id<CPCommonProgram>) createCPCheckpointingProgram: (id<ORModel>) model
 {
    return [ORFactory createCPProgram: model checkpointing: true];
 }

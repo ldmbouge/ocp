@@ -10,46 +10,35 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <objcp/CPConstraint.h>
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
-#import "objcp/CPWDeg.h"
-
-ORInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,ORInt from,ORInt to)
-{
-   id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
-   [m solveAll: ^() {
-      [CPLabel array: x orderedBy: (ORInt2Float)^ORInt(ORInt i) { return [[x at:i] domsize];}];
-      [nbSolutions incr];
-   }
-    ];
-   printf("NbSolutions: %d \n",[nbSolutions value]);   
-   return [nbSolutions value];
-}
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
 
 int main (int argc, const char * argv[])
 {
    int n = 8;
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> R = RANGE(cp,1,n);
+   id<ORModel> model = [ORFactory createModel];
+   
+   id<ORIntRange> R = RANGE(model,1,n);
  
-   id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: x[i] shift:i]; }];
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: x[i] shift:-i]; }];
-   id<CPHeuristic> h = [CPFactory createFF:cp];
-   [cp add: [CPFactory alldifferent: cp over: x consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: cp over: xp consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: cp over: xn consistency:ValueConsistency]];
-   [cp solveAll:
+   id<ORInteger> nbSolutions = [ORFactory integer: model value:0];
+   id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
+   id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
+   id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
+   [model add: [ORFactory alldifferent: x note:ValueConsistency]];
+   [model add: [ORFactory alldifferent: xp note:ValueConsistency]];
+   [model add: [ORFactory alldifferent: xn note:ValueConsistency]];
+
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
+   id<CPHeuristic> h = [ORFactory createFF:cp];
+  [cp solveAll:
    ^() {
        //[CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
-       [CPLabel heuristic:h];
+       [cp labelHeuristic:h];
        printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];
     }
@@ -59,9 +48,8 @@ int main (int argc, const char * argv[])
    
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
-   //[h release];
-   [cp release];   
-   [CPFactory shutdown];
+   [cp release];
+   [ORFactory shutdown];
    return 0;
 }
 

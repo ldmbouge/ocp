@@ -84,6 +84,7 @@
 @end
 
 // CPSolver with Semantic Path
+// [ldm] Why repeat the methods in the protocol? That's already in CPCommonProgram. 
 @protocol CPSemanticProgram <CPCommonProgram>
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;

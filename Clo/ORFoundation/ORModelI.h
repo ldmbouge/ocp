@@ -224,7 +224,7 @@
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x note:(ORAnnotation)n;
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
 @end

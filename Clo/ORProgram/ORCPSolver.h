@@ -29,11 +29,12 @@
 
 // SemanticPath CPSolver
 @interface ORCPSemanticSolver : ORCPCoreSolver<CPSemanticProgram>
--(id<CPProgram>) initORCPCoreSolver;
+-(id<CPProgramCheckpoint>) initORCPSolverCheckpointing;
+-(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass;
 @end
 
 @interface ORCPSolverFactory : NSObject
-+(id<CPProgram>) initORCPSolver;
++(id<CPSemanticProgram>) initORCPSolver;
 +(id<CPProgramCheckpoint>) initORCPSolverCheckpointing;
 +(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass;
 @end
