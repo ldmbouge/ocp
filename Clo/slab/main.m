@@ -9,27 +9,25 @@
  
  ***********************************************************************/
 
-
 #import <Foundation/Foundation.h>
-#import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORArray.h>
-#import <ORFoundation/ORFactory.h>
-#import "objcp/CPFactory.h"
-#import "objcp/CPConstraint.h"
-#import <objcp/CPSolver.h>
-#import "objcp/CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
+#import <objcp/CPLabel.h>
 
 int main(int argc, const char * argv[])
 {
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<ORModel> mdl = [ORFactory createModel];
    FILE* dta = fopen("slab.dat","r");
    ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
-   id<ORIntRange> Caps = RANGE(cp,1,nbCap);
-   id<ORIntArray> cap = [CPFactory intArray: cp range:Caps value: 0];
+   id<ORIntRange> Caps = RANGE(mdl,1,nbCap);
+   id<ORIntArray> cap = [ORFactory intArray: mdl range:Caps value: 0];
    for(ORInt i = 2; i <= nbCap; i++) {
       ORInt c;
       fscanf(dta,"%d",&c);
@@ -40,10 +38,10 @@ int main(int argc, const char * argv[])
    fscanf(dta,"%d",&nbColors);
    NSLog(@"Nb Colors: %d",nbColors);
    fscanf(dta,"%d",&nbOrders);
-   id<ORIntRange> Colors = RANGE(cp,1,nbColors);
-   id<ORIntRange> Orders = RANGE(cp,1,nbOrders);
-   id<ORIntArray> color = [CPFactory intArray: cp range:Orders value: 0];
-   id<ORIntArray> weight = [CPFactory intArray: cp range:Orders value: 0];
+   id<ORIntRange> Colors = RANGE(mdl,1,nbColors);
+   id<ORIntRange> Orders = RANGE(mdl,1,nbOrders);
+   id<ORIntArray> color = [ORFactory intArray: mdl range:Orders value: 0];
+   id<ORIntArray> weight = [ORFactory intArray: mdl range:Orders value: 0];
    for(ORInt o = 1; o <= nbOrders; o++) {
       ORInt w;
       ORInt c;
@@ -54,11 +52,11 @@ int main(int argc, const char * argv[])
    }
    
    ORInt nbSize = 111;
-   id<ORIntRange> SetOrders = RANGE(cp,1,nbSize);
-   id<ORIntRange> Slabs = RANGE(cp,1,nbSize);
-   id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: cp range: Colors];
+   id<ORIntRange> SetOrders = RANGE(mdl,1,nbSize);
+   id<ORIntRange> Slabs = RANGE(mdl,1,nbSize);
+   id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: mdl range: Colors];
    for(int o = 1; o <= nbSize; o++)
-      coloredOrder[[color at: o]] = [CPFactory intSet: cp];
+      coloredOrder[[color at: o]] = [ORFactory intSet: mdl];
    for(int o = 1; o <= nbSize; o++)
       [coloredOrder[[color at: o]] insert: o];
    ORInt maxCapacities = 0;
@@ -66,8 +64,8 @@ int main(int argc, const char * argv[])
       if ([cap at: c] > maxCapacities)
          maxCapacities = [cap at: c];
    
-   id<ORIntRange> Capacities = RANGE(cp,0,maxCapacities);
-   id<ORIntArray> loss = [ORFactory intArray: cp range: Capacities value: 0];
+   id<ORIntRange> Capacities = RANGE(mdl,0,maxCapacities);
+   id<ORIntArray> loss = [ORFactory intArray: mdl range: Capacities value: 0];
    for(ORInt c = 0; c <= maxCapacities; c++) {
       ORInt m = MAXINT;
       for(ORInt i = Caps.low; i <= Caps.up; i++)
@@ -76,26 +74,22 @@ int main(int argc, const char * argv[])
       [loss set: m at: c];
    }
    ORLong startTime = [ORRuntimeMonitor cputime];
-   id<ORIntVarArray> slab = [CPFactory intVarArray: cp range: SetOrders domain: Slabs];
-   id<ORIntVarArray> load = [CPFactory intVarArray: cp range: Slabs domain: Capacities];
-   id<ORIntVar> obj = [CPFactory intVar: cp bounds: RANGE(cp,0,nbSize*maxCapacities)];
+   id<ORIntVarArray> slab = [ORFactory intVarArray: mdl range: SetOrders domain: Slabs];
+   id<ORIntVarArray> load = [ORFactory intVarArray: mdl range: Slabs domain: Capacities];
+   id<ORIntVar> obj = [ORFactory intVar: mdl domain: RANGE(mdl,0,nbSize*maxCapacities)];
    
-   [cp add: [obj eq: SUM(s,Slabs,[loss elt: [load at: s]])]];
-   [cp add: [CPFactory packing: slab itemSize: weight load: load]];
+   [mdl add: [obj eq: Sum(mdl,s,Slabs,[loss elt: [load at: s]])]];
+   [mdl add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
-      [cp add: [SUM(c,Colors,OR(o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
-   [cp minimize: obj];
-   
-   NSMutableArray* av = [cp allVars];
-   NSLog(@"VARS: %@",av);
+      [mdl add: [Sum(mdl,c,Colors,Or(mdl,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
+   [mdl minimize: obj];
 
-   
+   id<CPProgram> cp = [ORFactory createCPProgram:mdl];
    [cp solve: ^{
-      NSMutableArray* av = [cp allVars];
-      NSLog(@"In the search ... #VARS: %ld",[av count]);
+      NSLog(@"In the search ... ");
       [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
        {
-          ORInt ms = max(0,[CPLabel maxBound: slab]);
+          ORInt ms = max(0,[CPUtilities maxBound: slab]);
           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [slab[o] member:s]; } in: ^void(ORInt s)
            {
               [cp label: slab[o] with: s];
@@ -120,7 +114,7 @@ int main(int argc, const char * argv[])
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
    return 0;
 }
 

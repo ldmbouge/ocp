@@ -25,4 +25,6 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(void) visit: (id<ORVisitor>) visitor;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
 @end

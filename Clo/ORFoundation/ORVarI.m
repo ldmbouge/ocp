@@ -35,6 +35,27 @@
 {
    [super dealloc];
 }
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_impl];
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeObject:_domain];
+   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_dense];
+   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_isBool];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _impl = [aDecoder decodeObject];
+   _tracker = [aDecoder decodeObject];
+   _domain  = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_dense];
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_isBool];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
+}
+
 -(BOOL) isVariable
 {
    return YES;
@@ -68,29 +89,30 @@
    if (_impl)
       return [_impl min];
    else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+      return [_domain low];
 }
 -(ORInt) max
 {
    if (_impl)
       return [_impl max];
    else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
+      return [_domain up];
 }
 -(ORInt) domsize
 {
    if (_impl)
       return [_impl domsize];
    else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+      return [_domain size];
 }
 -(ORBounds)bounds
 {
    if (_impl)
       return [_impl bounds];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   else {
+      ORBounds b = {[_domain low],[_domain up]};
+      return b;
+   }
 }
 -(BOOL) member: (ORInt) v
 {
@@ -186,6 +208,21 @@
    _b = b;
    return self;
 }
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_a];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_b];
+   [aCoder encodeObject:_x];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_a];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_b];
+   _x = [aDecoder decodeObject];
+   return self;
+}
 -(NSString*) description
 {
    char d = _dense ? 'D':'S';
@@ -221,6 +258,19 @@
    self = [super initORIntVarI:tracker domain:RANGE(tracker,0,1)];
    _x = x;
    _lit = lit;
+   return self;
+}
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_lit];
+   [aCoder encodeObject:_x];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_lit];
+   _x = [aDecoder decodeObject];
    return self;
 }
 -(ORInt)literal
@@ -259,6 +309,24 @@
 -(void) dealloc
 {
    [super dealloc];
+}
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_impl];
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _impl = [aDecoder decodeObject];
+   _tracker = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
 }
 -(NSString*) description
 {

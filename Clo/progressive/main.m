@@ -10,41 +10,42 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORFoundation.h>
-#import <objcp/CPFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPSolver.h>
-#import <objcp/CPLabel.h>
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> cp = [CPFactory createSolver];
+      id<ORModel> mdl = [ORFactory createModel];
       ORInt nbConfigs = 6;
-      id<ORIntRange> Configs = RANGE(cp,1,nbConfigs);
+      id<ORIntRange> Configs = RANGE(mdl,1,nbConfigs);
       ORInt choiceConfig = 1;
-      id<ORIntRange> Hosts = RANGE(cp,1,13);
-      id<ORIntRange> Guests = RANGE(cp,1,29);
+      id<ORIntRange> Hosts = RANGE(mdl,1,13);
+      id<ORIntRange> Guests = RANGE(mdl,1,29);
       ORInt nbPeriods = 9;
-      id<ORIntRange> Periods = RANGE(cp,1,nbPeriods);
-      id<ORIntArray> cap = [CPFactory intArray: cp range: Hosts value: 0];
-      id<ORIntArray> crew = [CPFactory intArray: cp range: Guests value: 0];
+      id<ORIntRange> Periods = RANGE(mdl,1,nbPeriods);
+      id<ORIntArray> cap = [ORFactory intArray: mdl range: Hosts value: 0];
+      id<ORIntArray> crew = [ORFactory intArray: mdl range: Guests value: 0];
       
-      id<ORIntSetArray> config = [ORFactory intSetArray: cp range: Configs];
-      config[1] = COLLECT(cp,i,RANGE(cp,1,12),i);
+      id<ORIntSetArray> config = [ORFactory intSetArray: mdl range: Configs];
+      config[1] = COLLECT(mdl,i,RANGE(mdl,1,12),i);
       [config[1] insert: 16];
-      config[2] = COLLECT(cp,i,RANGE(cp,1,13),i);
-      config[3] = COLLECT(cp,i,RANGE(cp,3,13),i);
+      config[2] = COLLECT(mdl,i,RANGE(mdl,1,13),i);
+      config[3] = COLLECT(mdl,i,RANGE(mdl,3,13),i);
       [config[3] insert: 1];
       [config[3] insert: 19];
-      config[4] = COLLECT(cp,i,RANGE(cp,3,13),i);
+      config[4] = COLLECT(mdl,i,RANGE(mdl,3,13),i);
       [config[4] insert: 25];
       [config[4] insert: 26];
-      config[5] = COLLECT(cp,i,RANGE(cp,1,11),i);
+      config[5] = COLLECT(mdl,i,RANGE(mdl,1,11),i);
       [config[5] insert: 19];
       [config[5] insert: 21];
-      config[6] = COLLECT(cp,i,RANGE(cp,1,9),i);
+      config[6] = COLLECT(mdl,i,RANGE(mdl,1,9),i);
       for(ORInt i = 16; i <= 19; i++)
          [config[6] insert: i];
       
@@ -69,15 +70,16 @@ int main(int argc, const char * argv[])
       }
       ORLong startTime = [ORRuntimeMonitor cputime];
       
-      id<ORIntVarMatrix> boat = [CPFactory intVarMatrix:cp range:Guests :Periods domain: Hosts];
+      id<ORIntVarMatrix> boat = [ORFactory intVarMatrix:mdl range:Guests :Periods domain: Hosts];
       for(ORInt g = Guests.low; g <= Guests.up; g++)
-         [cp add: [CPFactory alldifferent: ALL(ORIntVar, p, Periods, [boat at:g :p]) ]];
+         [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]];
       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
-            [cp add: [SUM(p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
+            [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
       for(ORInt p = Periods.low; p <= Periods.up; p++)
-         [cp add: [CPFactory packing: ALL(ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
+         [mdl add: [ORFactory packing: All(mdl,ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
       
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          for(ORInt p = Periods.low; p <= Periods.up; p++) {
             // This is the same search as COMET.
@@ -167,7 +169,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

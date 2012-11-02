@@ -10,17 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORSet.h>
-#import <ORFoundation/ORArray.h>
-#import <ORFoundation/ORFactory.h>
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import "objcp/CPFactory.h"
-#import "objcp/CPConstraint.h"
-#import <objcp/CPSolver.h>
-#import "objcp/CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
+#import <objcp/CPLabel.h>
 
 NSString* tab(int d)
 {
@@ -89,24 +86,22 @@ int main(int argc, const char * argv[])
    id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,nbSize*maxCapacities)];
    
    [model add: [obj eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
-   [model add: [ORFactory packing: slab itemSize: weight binSize: load]];
+   [model add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
    [model minimize: obj];
    
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPProgram> cp = [ORFactory createCPProgram:model];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
    //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
-   [cp addModel: model];
    [cp solve: ^{
-      NSMutableArray* av = [cp allVars];
-      NSLog(@"In the search ... #VARS: %ld",[av count]);
       __block ORInt depth = 0;
-      FORALL(o, SetOrders, ![slab[o] bound], [slab[o] domsize], ^(ORInt o) {
+
+      [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![slab[o] bound];} orderedBy:^ORInt(ORInt o) { return ([slab[o] domsize]);} do: ^(ORInt o){
 #define TESTTA 1
 #if TESTTA==0
-          ORInt ms = max(0,[CPLabel maxBound: slab]);
+          ORInt ms = max(0,[CPUtilities maxBound: slab]);
           int low = [slab[o] min];
           int up  = ms + 1;
           int cur = low;
@@ -122,7 +117,7 @@ int main(int argc, const char * argv[])
              [cp fail];
 #else
          //printf("%d ",o);
-          ORInt ms = max(0,[CPLabel maxBound: slab]);
+          ORInt ms = max(0,[CPUtilities maxBound: slab]);
           //[cp add: [slab[o] leqi:ms+1]];
          //[cp lthen:slab[o] with:ms+2];
           [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [slab[o] member:s]; } in: ^void(ORInt s)
@@ -137,7 +132,7 @@ int main(int argc, const char * argv[])
            ];
 #endif
           depth++;
-      });
+      }];
       printf("\n");
       printf("obj: %d %p\n",[obj min],[NSThread currentThread]);
       //printf("Slab: ");
@@ -151,7 +146,7 @@ int main(int argc, const char * argv[])
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
    return 0;
 }
 

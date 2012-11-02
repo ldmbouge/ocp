@@ -58,7 +58,7 @@
 -(ORInt) cst;
 @end
 
-@interface ORNEqual : ORConstraintI<ORNEqual>
+@interface ORNEqual : ORConstraintI<ORNEqual,NSCoding>
 -(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y;
 -(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c;
 -(id<ORIntVar>) left;

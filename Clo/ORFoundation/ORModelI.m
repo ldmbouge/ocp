@@ -243,6 +243,20 @@
    _c = c;
    return self;   
 }
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
 -(id<ORIntVar>) left
 {
    return _x;

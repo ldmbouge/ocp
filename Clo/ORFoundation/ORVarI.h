@@ -17,7 +17,7 @@
 #import "ORExprI.h"
 #import "ORVisit.h"
 
-@interface ORIntVarI : ORExprI<ORIntVar>
+@interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 // [ldm] All the methods below were missing??????
 -(id<ORIntRange>) domain;
@@ -36,6 +36,8 @@
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORVisitor>)v;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI
@@ -44,6 +46,8 @@
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORVisitor>)v;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORIntVarLitEQView : ORIntVarI
@@ -51,6 +55,8 @@
 -(ORInt)literal;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORVisitor>)v;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORFloatVarI : ORExprI<ORFloatVar>
@@ -63,4 +69,6 @@
 -(void) setImpl: (id<ORIntVar>) _impl;
 -(NSSet*) constraints;
 -(void) visit: (id<ORVisitor>)v;
+-(void)encodeWithCoder:(NSCoder *)aCoder;
+-(id)initWithCoder:(NSCoder *)aDecoder;
 @end

@@ -165,4 +165,23 @@
       [c visit: visitor];
    [_objective visit: visitor];
 }
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_vars];
+   [aCoder encodeObject:_oStore];
+   [aCoder encodeObject:_mStore];
+   [aCoder encodeObject:_objective];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _vars = [[aDecoder decodeObject] retain];
+   _oStore = [[aDecoder decodeObject] retain];
+   _mStore = [[aDecoder decodeObject] retain];
+   _objective = [[aDecoder decodeObject] retain];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   return self;
+}
+
 @end

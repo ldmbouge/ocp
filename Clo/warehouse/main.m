@@ -9,20 +9,24 @@
  
  ***********************************************************************/
 
+
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> cp = [CPFactory createSolver];
+      id<ORModel> mdl = [ORFactory createModel];
       ORInt fixed = 30;
       ORInt maxCost = 100;
-      id<ORIntRange> Stores     = RANGE(cp,0,9);
-      id<ORIntRange> Warehouses = RANGE(cp,0,4);
+      id<ORIntRange> Stores     = RANGE(mdl,0,9);
+      id<ORIntRange> Warehouses = RANGE(mdl,0,4);
       ORInt* cap = (ORInt[]){1,4,2,1,3};
       ORInt connection[10][5] = {{ 20, 24, 11, 25, 30 },
                                  { 28, 27, 82, 83, 74 },
@@ -37,35 +41,37 @@ int main(int argc, const char * argv[])
       ORInt* conn = (ORInt*)connection;
 
     
-      id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
+      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
       
-      id<ORIntVarArray> cost = [CPFactory intVarArray: cp range:Stores domain: RANGE(cp,0,maxCost)];
-      id<ORIntVarArray> supp = [CPFactory intVarArray: cp range:Stores domain: Warehouses];
-      id<ORIntVarArray> open = [CPFactory intVarArray: cp range:Warehouses domain: RANGE(cp,0,1)];
-      id<ORIntVar>      obj  = [CPFactory intVar:cp bounds:RANGE(cp,0,maxCost*sizeof(cap))];
+      id<ORIntVarArray> cost = [ORFactory intVarArray: mdl range:Stores domain: RANGE(mdl,0,maxCost)];
+      id<ORIntVarArray> supp = [ORFactory intVarArray: mdl range:Stores domain: Warehouses];
+      id<ORIntVarArray> open = [ORFactory intVarArray: mdl range:Warehouses domain: RANGE(mdl,0,1)];
+      id<ORIntVar>      obj  = [ORFactory intVar:mdl domain:RANGE(mdl,0,maxCost*sizeof(cap))];
       
-      [cp add: [obj eq: [SUM(s, Stores, cost[s]) plus: SUM(w, Warehouses, [open[w] muli:fixed]) ]]];
+      [mdl add: [obj eq: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] muli:fixed]) ]]];
       for(ORUInt i=Warehouses.low;i <= Warehouses.up;i++) {
-         [cp add: [SUM(s, Stores, [supp[s] eqi:i]) leqi:cap[i]]];
+         [mdl add: [Sum(mdl,s, Stores, [supp[s] eqi:i]) leqi:cap[i]]];
       }
       for(ORUInt i=Stores.low;i <= Stores.up; i++) {
-         id<ORIntArray> row = [CPFactory intArray:cp range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
-         [cp add: [[open elt:supp[i]] eqi:YES]];
-         [cp add: [cost[i] eq:[row elt:supp[i]]]];
+         id<ORIntArray> row = [ORFactory intArray:mdl range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
+         [mdl add: [[open elt:supp[i]] eqi:YES]];
+         [mdl add: [cost[i] eq:[row elt:supp[i]]]];
       }
-      [cp minimize: obj];
+      [mdl minimize: obj];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          NSLog(@"Start...");
-         [CPLabel array:cost orderedBy:^ORInt(ORInt i) { return [cost[i] domsize];}];
-         [CPLabel array:supp orderedBy:^ORInt(ORInt i) { return [supp[i] domsize];}];
-         [CPLabel array:open orderedBy:^ORInt(ORInt i) { return [open[i] domsize];}];
+         [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cost[i] domsize];}];
+         [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [supp[i] domsize];}];
+         [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [open[i] domsize];}];
          [nbSolutions incr];
          NSLog(@"Solution: %@  -- cost: %@",open,obj);
       }];
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);
       [cp release];
-      [CPFactory shutdown];      
+      [ORFactory shutdown];
    }
    return 0;
 }
