@@ -86,6 +86,10 @@
 {
    [_engine add: [cstr impl]];
 }
+-(void) visitRestrict:(id<ORRestrict>)cstr
+{
+   [_engine add:[cstr impl]];
+}
 -(void) visitCircuit:(id<ORCircuit>) cstr
 {
   [_engine add: [cstr impl]];   

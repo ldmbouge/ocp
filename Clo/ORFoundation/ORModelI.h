@@ -32,6 +32,12 @@
 -(ORFail*)init;
 @end
 
+@interface ORRestrict : ORConstraintI<ORRestrict>
+-(ORRestrict*)initRestrict:(id<ORIntVar>)x to:(id<ORIntSet>)d;
+-(id<ORIntVar>)var;
+-(id<ORIntSet>)restriction;
+@end
+
 @interface OREqualc : ORConstraintI<OREqualc>
 -(OREqualc*)initOREqualc:(id<ORIntVar>)x eqi:(ORInt)c;
 -(id<ORIntVar>) left;

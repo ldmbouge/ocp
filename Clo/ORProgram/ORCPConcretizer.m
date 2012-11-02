@@ -115,6 +115,14 @@
 {
    
 }
+-(void) visitRestrict:(id<ORRestrict>)cstr
+{
+   if ([cstr impl] == NULL) {
+      id<CPIntVar> x = [self concreteVar:[cstr var]];
+      id<CPConstraint> concrete = [CPFactory restrict:x to:[cstr restriction]];
+      [cstr setImpl:concrete];
+   }
+}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    if ([cstr impl] == NULL) {

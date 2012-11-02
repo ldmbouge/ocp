@@ -35,6 +35,7 @@
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f;
 -(void) visitFail:(id<ORFail>)cstr;
+-(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;

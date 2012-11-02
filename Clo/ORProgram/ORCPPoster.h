@@ -36,6 +36,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
+-(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;

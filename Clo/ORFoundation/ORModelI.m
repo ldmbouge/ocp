@@ -77,6 +77,37 @@
 }
 @end
 
+@implementation ORRestrict {
+   id<ORIntVar> _x;
+   id<ORIntSet> _r;
+}
+-(ORRestrict*)initRestrict:(id<ORIntVar>)x to:(id<ORIntSet>)d
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _r = d;
+   return self;
+}
+-(id<ORIntVar>)var
+{
+   return _x;
+}
+-(id<ORIntSet>)restriction
+{
+   return _r;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> restrict(%@) to %@",[self class],self,_x,_r];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitRestrict:self];
+}
+@end
+
 @implementation OREqualc {
    id<ORIntVar> _x;
    ORInt        _c;

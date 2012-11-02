@@ -14,8 +14,21 @@
 #import <objcp/CPBitDom.h>
 
 @class CPIntVarI;
+@class ORIntSetI;
 @class CPEngine;
 @protocol CPIntVarArray;
+
+
+@interface CPRestrictI : CPActiveConstraint<NSCoding> {
+@private
+   CPIntVarI* _x;
+   ORIntSetI* _r;
+}
+-(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
+-(ORStatus)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 // PVH: where is _active being used
 @interface CPEqualc : CPActiveConstraint<NSCoding> {

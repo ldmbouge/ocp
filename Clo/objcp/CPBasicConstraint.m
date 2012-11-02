@@ -14,6 +14,50 @@
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 
+@implementation CPRestrictI
+-(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
+{
+   self = [super initCPActiveConstraint:[x engine]];
+   _x = (CPIntVarI*)x;
+   _r = r;
+   return self;
+}
+-(ORStatus)post
+{
+   ORStatus s = [_x inside:_r];
+   if (s==ORFailure)
+      return s;
+   return ORSkip;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,nil];   
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<x[%d] IN %@>",[_x getId],_r];
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_r];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   _r = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 @implementation CPEqualc
 -(id) initCPEqualc: (id<CPIntVar>) x and:(ORInt)c
 {

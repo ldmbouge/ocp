@@ -417,6 +417,11 @@
    id<ORConstraint> o = [[ORFail alloc] init];
    return o;
 }
++(id<ORConstraint>) restrict:(id<ORTracker>)model var:(id<ORIntVar>)x to:(id<ORIntSet>)d
+{
+   id<ORConstraint> o = [[ORRestrict alloc] initRestrict:x to:d];
+   return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyEqualc alloc] initReify: b equiv:x eqi: i];

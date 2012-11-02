@@ -38,7 +38,7 @@
 
 -(CPCircuitI*) initCPSubtourEliminationI: (id<CPIntVarArray>) x
 {
-    self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [[x at:[x low]] engine]];
     _x = x;
     [self initInstanceVariables];
     return self;
@@ -108,10 +108,10 @@ ORStatus assign(CPCircuitI* cstr,int i)
         _var[i] = (CPIntVarI*) [_x at: _low + i];
     _var -= _low;
     
-    id<ORIntRange> R = RANGE([_x solver],_low,_up);
-    _pred = [CPFactory TRIntArray: [_x solver] range: R];
-    _succ = [CPFactory TRIntArray: [_x solver] range: R];
-    _length = [CPFactory TRIntArray: [_x solver] range: R];
+    id<ORIntRange> R = RANGE([_x tracker],_low,_up);
+    _pred = [CPFactory TRIntArray: [_x tracker] range: R];
+    _succ = [CPFactory TRIntArray: [_x tracker] range: R];
+    _length = [CPFactory TRIntArray: [_x tracker] range: R];
     for(int i = _low; i <= _up; i++) {
         [_pred set: i at: i];
         [_succ set: i at: i];

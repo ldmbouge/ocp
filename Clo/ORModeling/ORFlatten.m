@@ -43,6 +43,7 @@
 
 @interface ORFlattenConstraint : NSObject<ORVisitor>
 -(id)init:(ORModelI*)m;
+-(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
@@ -62,6 +63,8 @@
 -(void) visitImply: (id<ORImply>)c;
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
+-(void) visitCircuit:(id<ORCircuit>) cstr;
+-(void) visitNoCycle:(id<ORNoCycle>) cstr;
 @end
 
 
@@ -194,6 +197,10 @@
    _theModel = m;
    return self;
 }
+-(void) visitRestrict:(id<ORRestrict>)cstr
+{
+   [_theModel add:cstr];
+}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    [_theModel add:cstr];
@@ -285,6 +292,14 @@
    [_theModel add:c];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
+{
+   [_theModel add:c];
+}
+-(void) visitCircuit:(id<ORCircuit>) c
+{
+   [_theModel add:c];
+}
+-(void) visitNoCycle:(id<ORNoCycle>) c
 {
    [_theModel add:c];
 }

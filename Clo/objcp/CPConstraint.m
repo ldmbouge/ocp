@@ -413,6 +413,13 @@
    [[x tracker] trackObject:o];
    return o;
 }
++(id<ORConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
+{
+   id<ORConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
+   [[x tracker] trackObject:o];
+   return o;
+}
+
 
 @end
 
