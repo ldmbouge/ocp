@@ -337,7 +337,7 @@
 +(id<ORConstraint>) equalc: (id<CPIntVar>) x to:(int) c
 {
    id<ORConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
-   [[x tracker] trackObject:o];
+  [[x tracker] trackObject:o];
    return o;      
 }
 +(id<ORConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y plus:(int)c
@@ -355,7 +355,7 @@
 +(id<ORConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c 
 {
    id<ORConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
-   [[x tracker] trackObject:o];
+  [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y
@@ -413,6 +413,24 @@
    [[x tracker] trackObject:o];
    return o;
 }
+@end
 
+
+@implementation CPSearchFactory 
++(id<ORConstraint>) equalc: (id<CPIntVar>) x to:(int) c
+{
+   id<ORConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
+   return o;
+}
++(id<ORConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c
+{
+   id<ORConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
+   return o;
+}
++(id<ORConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c
+{
+   id<ORConstraint> o = [[CPLEqualc alloc] initCPLEqualc:x and:c];
+   return o;
+}
 @end
 

@@ -30,7 +30,7 @@
 
 +(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
 {
-   return [[ORCPSolver alloc] initORCPSemanticSolver: ctrlClass];
+   return [[ORCPSemanticSolver alloc] initORCPSemanticSolver: ctrlClass];
 }
 
 +(id<CPHeuristic>)createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
@@ -103,20 +103,20 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   return [ORFactory createCPProgram: model checkpointing: false];
+   return [ORCPSolverFactory solver];
 }
 
 +(id<CPProgram>) createCPCheckpointingProgram: (id<ORModel>) model
 {
-   return [ORFactory createCPProgram: model checkpointing: true];
+   return [ORCPSolverFactory checkpointingSolver];
 }
 
-+(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass
++(id<CPSemanticProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    id<ORModel> flatModel = [flat apply: model];
    
-   id<CPProgram> cpprogram = [ORFactory createCPCommonProgram: ctrlClass];
+   id<CPSemanticProgram> cpprogram = [ORCPSolverFactory semanticSolver: ctrlClass];
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];

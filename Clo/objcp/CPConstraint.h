@@ -73,4 +73,9 @@
 
 @end
 
+@interface CPSearchFactory 
++(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
++(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;
++(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;
+@end
 
