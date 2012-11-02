@@ -14,6 +14,7 @@
 #import <objcp/CPEngine.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
+#import "ORCPConcretizer.h"
 
 @interface CPKillRange : NSObject {
 @package
@@ -175,6 +176,10 @@
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
+   ORCPConcretizer* cc = [[ORCPConcretizer alloc] initORCPConcretizer:cp];
+   [rvars visit:cc];
+   _rvars = [rvars impl];
+   [cc release];
    [cp addHeuristic:self];
    return self;
 }
