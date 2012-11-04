@@ -315,7 +315,8 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    if (_state != CPClosed) {
       [_vars addObject:var];
       [var release];
-   } else
+   }
+   else
       [_trail trailRelease:var];
 }
 
@@ -324,7 +325,8 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
-   } else
+   }
+   else
       [_trail trailRelease:obj];
 }
 

@@ -220,13 +220,13 @@
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORFlatten flattenExpression:[Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]] into:_theModel];
+      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]] into: _theModel];
    ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [ORFlatten flattenExpression:[Sum(tracker,b,BR,binSize[b]) eqi: s] into:_theModel];
+   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s] into: _theModel];
                                              
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel add: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];

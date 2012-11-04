@@ -115,7 +115,7 @@
 {
    
 }
--(void) visitRestrict:(id<ORRestrict>)cstr
+-(void) visitRestrict: (id<ORRestrict>) cstr
 {
    if ([cstr impl] == NULL) {
       id<CPIntVar> x = [self concreteVar:[cstr var]];
@@ -148,13 +148,6 @@
 -(void) visitPacking: (id<ORPacking>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
-//   if ([cstr impl] == NULL) {
-//      id<CPIntVarArray> item = [self concreteArray:[cstr item]];
-//      id<ORIntArray> itemSize = [cstr itemSize];
-//      id<CPIntVarArray> binSize = [self concreteArray:[cstr binSize]];
-//      id<CPConstraint> concrete = [CPFactory packing:item itemSize:itemSize load:binSize];
-//      [cstr setImpl:concrete];
-//   }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
