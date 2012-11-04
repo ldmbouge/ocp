@@ -65,7 +65,7 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 @end
 
-// CPSolver with Semantic Path
+// CPSolver with syntactic DFS Search
 @protocol CPProgram <CPCommonProgram>
 
 -(void)                once: (ORClosure) cl;
@@ -79,17 +79,21 @@
 @end
 
 
+// CPSolver with semantic DFS Search
 // Initially empty but will add things here
-@protocol CPProgramCheckpoint <CPProgram>
+@protocol CPDFSSemanticProgram <CPCommonProgram>
+-(void)                once: (ORClosure) cl;
+-(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
+-(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
+-(void)  limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
+-(void)       limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+
+-(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
+-(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
 @end
 
 // CPSolver with Semantic Path
 @protocol CPSemanticProgram <CPCommonProgram>
--(void)               label: (id<ORIntVar>) var with: (ORInt) val;
--(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
--(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
--(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 @end
 
 

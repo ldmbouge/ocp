@@ -32,6 +32,12 @@
 -(ORFail*)init;
 @end
 
+@interface ORRestrict : ORConstraintI<ORRestrict>
+-(ORRestrict*)initRestrict:(id<ORIntVar>)x to:(id<ORIntSet>)d;
+-(id<ORIntVar>)var;
+-(id<ORIntSet>)restriction;
+@end
+
 @interface OREqualc : ORConstraintI<OREqualc>
 -(OREqualc*)initOREqualc:(id<ORIntVar>)x eqi:(ORInt)c;
 -(id<ORIntVar>) left;
@@ -58,7 +64,7 @@
 -(ORInt) cst;
 @end
 
-@interface ORNEqual : ORConstraintI<ORNEqual>
+@interface ORNEqual : ORConstraintI<ORNEqual,NSCoding>
 -(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y;
 -(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c;
 -(id<ORIntVar>) left;
@@ -224,7 +230,7 @@
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x;
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x note:(ORAnnotation)n;
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
 @end

@@ -9,23 +9,21 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPlabel.h"
-#import "ORFoundation/ORFactory.h"
-
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORConcretizer.h>
 
 //1->11->26->9->3->13->23->8->14->4->10->20->5->15->30->40->46->36->53->63->48->31->16->6->21->27->37->52->58->41->51->57->42->25->19->29->35->50->33->43->49->59->44->61->55->45->60->54->64->47->62->56->39->24->7->22->32->38->28->34->17->2->12->18->1
 //39 choices
 //3 fails
 //199 propagations
 
-id<ORIntSet> knightMoves(id<CPSolver> cp,int i) 
+id<ORIntSet> knightMoves(id<ORModel> mdl,int i)
 {
-    id<ORIntSet> S = [CPFactory intSet: cp];
+    id<ORIntSet> S = [ORFactory intSet: mdl];
     if (i % 8 == 1) {
       [S insert: i-15]; [S insert: i-6]; [S insert: i+10]; [S insert: i+17];
     }
@@ -55,33 +53,36 @@ void printCircuit(id<ORIntVarArray> jump)
 }
 int main (int argc, const char * argv[])
 {
-    id<CPSolver> cp = [CPFactory createSolver];
-    id<ORIntRange> R = RANGE(cp,1,64);
-   id<ORIntRange> D = RANGE(cp,1,64);
-    id<ORIntVarArray> jump = [CPFactory intVarArray:cp range: R domain: D];
-   
-    NSLog(@"%@",jump[1]);
-   printf("min %d \n",[jump[1] min]);
-   printf("max %d \n",[jump[1] max]);
-   printf("size %d \n",[jump[1] domsize]);
-   
-   for(int i = 1; i <= 64; i++)
-      [cp restrict: [jump at: i] to: knightMoves(cp,i)];
-   [cp add: [CPFactory alldifferent: jump consistency: DomainConsistency]];
-   [cp add: [CPFactory circuit: jump]];
-
-    [cp solve:
-     ^() {
-         [CPLabel array: jump orderedBy: ^ORFloat(ORInt i) { return [[jump at:i] domsize];}];
-         printCircuit(jump);
-     }
-     ];
-
-    NSLog(@"Solver status: %@\n",cp);
-    NSLog(@"Quitting");
-    [cp release];
-    [CPFactory shutdown];
-    return 0;
+   @autoreleasepool {
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(mdl,1,64);
+      id<ORIntRange> D = RANGE(mdl,1,64);
+      id<ORIntVarArray> jump = [ORFactory intVarArray:mdl range: R domain: D];
+      
+      NSLog(@"%@",jump[1]);
+      printf("min %d \n",[jump[1] min]);
+      printf("max %d \n",[jump[1] max]);
+      printf("size %d \n",[jump[1] domsize]);
+      
+      for(int i = 1; i <= 64; i++)
+         [mdl add:[ORFactory restrict:mdl var:jump[i] to: knightMoves(mdl,i)]];
+      [mdl add: [ORFactory alldifferent: jump note: DomainConsistency]];
+      [mdl add: [ORFactory circuit: jump]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      [cp solve:
+       ^() {
+          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [[jump at:i] domsize];}];
+          printCircuit(jump);
+       }
+       ];
+      
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+      [ORFactory shutdown];
+   }
+   return 0;
 }
 
 

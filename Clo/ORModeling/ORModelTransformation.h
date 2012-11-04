@@ -10,6 +10,8 @@
 #import "ORModeling.h"
 #import "ORModelI.h"
 
+@protocol ORModel;
+
 @protocol ORModelTransformation <NSObject>
 -(id<ORModel>)apply:(id<ORModel>)m;
 @end

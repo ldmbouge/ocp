@@ -70,7 +70,7 @@
 +(id<CPConstraint>) table: (id<ORTable>) table on: (id<CPIntVar>) x : (id<CPIntVar>) y : (id<CPIntVar>) z;
 +(id<CPConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost;
 +(id<CPConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y;
-
++(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
 @end
 
 @interface CPSearchFactory 

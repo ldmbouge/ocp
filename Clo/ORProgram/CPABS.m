@@ -404,7 +404,7 @@
 -(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:_cp vars:_vars];
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_vars];
    _nbv = [_vars count];
    [_solver post:_monitor];
    _varActivity = [[NSMutableDictionary alloc] initWithCapacity:32];

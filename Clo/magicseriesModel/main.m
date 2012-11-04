@@ -9,35 +9,41 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORSemBDSController.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORConcretizer.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPLabel.h>
 
+#import <ORProgram/ORConcretizer.h>
 
 int main (int argc, const char * argv[])
 {
-   const ORInt n = 64;  // 128 -> 494 fails
-   id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
-   id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
-   for(ORInt i=0;i<n;i++)
-      [model add: [Sum(model,j,R,[x[j] eqi: i]) eq: x[i] ]];
-   [model add: [Sum(model,i,R,[x[i] muli: i]) eqi: n ]];
-   
-   id<CPSolver> cp = [ORFactory createCPProgram: model];
-   
-//   [cp addModel: model];
-//   [cp solveAll: ^{
-//      [CPLabel array: x];
-//      printf("Succeeds \n");
-//      for(ORInt i = 0; i < n; i++)
-//         printf("%d ",[x[i] value]);
-//      printf("\n");
-//   }
-//    ];
-//   NSLog(@"Solver status: %@\n",cp);
-//   [cp release];
-//   [CPFactory shutdown];
+   @autoreleasepool {
+      const ORInt n = 64;  // 128 -> 494 fails
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
+      id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
+      for(ORInt i=0;i<n;i++)
+         [model add: [Sum(model,j,R,[x[j] eqi: i]) eq: x[i] ]];
+      [model add: [Sum(model,i,R,[x[i] muli: i]) eqi: n ]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      
+      [cp solve: ^{
+         [cp  labelArray: x];
+         printf("Succeeds \n");
+         for(ORInt i = 0; i < n; i++)
+            printf("%d ",[x[i] value]);
+         printf("\n");
+      }
+       ];
+      NSLog(@"Solver status: %@\n",cp);
+      [cp release];
+      [CPFactory shutdown];
+   }
    return 0;
 }
 

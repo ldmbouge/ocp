@@ -14,11 +14,6 @@
 #import <ORProgram/ORConcretizer.h>
 #import <ORProgram/ORConcretizer.h>
 
-#import "objcp/CPConstraint.h"
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
 
 NSString* indent(int t)
 {
@@ -78,7 +73,7 @@ int main (int argc, const char * argv[])
    NSLog(@"Quitting");
    //[h release];
    [cp release];   
-   [CPFactory shutdown];
+   [ORFactory shutdown];
    return 0;
 }
 

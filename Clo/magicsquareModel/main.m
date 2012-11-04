@@ -68,7 +68,7 @@ int main(int argc, const char * argv[])
       }
       [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
       [model add:[[s at:1 :1] lt: [s at: n :1]]];
-      NSLog(@"Model is: %@",model);
+
       id<ORInteger> nbRestarts = [ORFactory integer: model value:0];
       id<ORInteger> nbFailures = [ORFactory integer: model value:rf == 1.0 ? MAXINT : 3 * n];
       ORLong maxTime =  t * 1000;

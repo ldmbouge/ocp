@@ -20,10 +20,10 @@
 
 @implementation ORCPConcretizer
 {
-   id<CPProgram> _solver;
-   id<CPEngine>  _engine;
+   id<CPCommonProgram> _solver;
+   id<CPEngine>        _engine;
 }
--(ORCPConcretizer*) initORCPConcretizer: (id<CPProgram>) solver
+-(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver
 {
    self = [super init];
    _solver = [solver retain];
@@ -114,6 +114,14 @@
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
    
+}
+-(void) visitRestrict:(id<ORRestrict>)cstr
+{
+   if ([cstr impl] == NULL) {
+      id<CPIntVar> x = [self concreteVar:[cstr var]];
+      id<CPConstraint> concrete = [CPFactory restrict:x to:[cstr restriction]];
+      [cstr setImpl:concrete];
+   }
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {

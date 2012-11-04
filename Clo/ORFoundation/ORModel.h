@@ -23,6 +23,11 @@
 @protocol ORFail <ORConstraint>
 @end
 
+@protocol ORRestrict <ORConstraint>
+-(id<ORIntVar>)var;
+-(id<ORIntSet>)restriction;
+@end
+
 @protocol  OREqualc <ORConstraint>
 -(id<ORIntVar>) left;
 -(ORInt) cst;

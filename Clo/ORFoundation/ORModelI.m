@@ -77,6 +77,37 @@
 }
 @end
 
+@implementation ORRestrict {
+   id<ORIntVar> _x;
+   id<ORIntSet> _r;
+}
+-(ORRestrict*)initRestrict:(id<ORIntVar>)x to:(id<ORIntSet>)d
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _r = d;
+   return self;
+}
+-(id<ORIntVar>)var
+{
+   return _x;
+}
+-(id<ORIntSet>)restriction
+{
+   return _r;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> restrict(%@) to %@",[self class],self,_x,_r];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitRestrict:self];
+}
+@end
+
 @implementation OREqualc {
    id<ORIntVar> _x;
    ORInt        _c;
@@ -242,6 +273,20 @@
    _y = y;
    _c = c;
    return self;   
+}
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_x];
+   [aCoder encodeObject:_y];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _x = [aDecoder decodeObject];
+   _y = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
 }
 -(id<ORIntVar>) left
 {
@@ -1130,11 +1175,11 @@
    id<ORIntVarArray> _x;
    ORAnnotation _n;
 }
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x note:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
-   _n = DomainConsistency;
+   _n = n;
    return self;
 }
 -(id<ORIntVarArray>) array

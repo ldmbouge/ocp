@@ -9,11 +9,12 @@
 
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORConcretizer.h>
 
 int main(int argc, const char * argv[])
 {
@@ -55,23 +56,26 @@ int main(int argc, const char * argv[])
          printf(" <= %d\n",b[i]);  
       }
 
-      id<CPSolver> cp = [CPFactory createSolver];
-      id<ORIntRange> N = RANGE(cp,0,n-1);
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> N = RANGE(mdl,0,n-1);
       
-      id<ORIntVarArray> x = ALL(ORIntVar, i, N, [CPFactory intVar:cp bounds:RANGE(cp,0,1)]);
-      id<CPHeuristic> h = [CPFactory createIBS:cp restricted:x];
-      
-      [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:p] eq:opt]];
+      id<ORIntVarArray> x = All(mdl,ORIntVar, i, N, [ORFactory intVar:mdl domain:RANGE(mdl,0,1)]);
+      [mdl add:[Sum(mdl, i, N, [x[i] muli:p[i]]) eqi:opt]];
       for(int i=0;i<m;i++) {
-         [cp add:[CPFactory sum:[CPFactory pointwiseProduct:x by:r[i]] leq:b[i]]];
+         [mdl add:[Sum(mdl,j,N,[x[j] muli:r[i][j]]) leqi:b[i]]];
          /*
          id<ORIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
          id<ORIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
          [cp add:[CPFactory knapsack:x weight:w capacity:c]];
           */
       }
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
+      
+
       [cp solve: ^{
-         [CPLabel heuristic:h];
+         [cp labelHeuristic:h];
          NSLog(@"Solution: %@",x);
          NSLog(@"Solver: %@",cp);
          ORInt tot = 0;
@@ -88,7 +92,7 @@ int main(int argc, const char * argv[])
          }            
       }];
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

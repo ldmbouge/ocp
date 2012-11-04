@@ -28,11 +28,12 @@
 
 @implementation ORFactory (Concretization)
 
+// [ldm] I don't understand. CPCommonProgram should be abstract. Why do we even
+// have a factory method named that way? 
 +(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
 {
    return [[ORCPSemanticSolver alloc] initORCPSemanticSolver: ctrlClass];
 }
-
 +(id<CPHeuristic>)createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
@@ -74,21 +75,21 @@
    return [[CPABS alloc] initCPABS:cp restricted:nil];
 }
 
-+(id<CPProgram>) createCPProgram: (id<ORModel>) model checkpointing: (BOOL) checkpointing
++(id<CPCommonProgram>) createCPProgram: (id<ORModel>) model checkpointing: (BOOL) checkpointing
 {
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    id<ORModel> flatModel = [flat apply: model];
 
-   id<CPProgram> cpprogram;
+   id<CPCommonProgram> cpprogram;
    if (!checkpointing)
-      cpprogram = [ORCPSolverFactory initORCPSolver];
+      cpprogram = [ORCPSolverFactory solver];
    else
-      cpprogram = [[ORCPSolver alloc] initORCPSolverCheckpointing];
+      cpprogram = [ORCPSolverFactory checkpointingSolver];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
-   NSLog(@"FLAT: %@",flatModel);
+   //NSLog(@"FLAT: %@",flatModel);
    
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
    NSArray* Constraints = [flatModel constraints];
@@ -103,12 +104,14 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   return [ORCPSolverFactory solver];
+//   return [ORCPSolverFactory solver];
+   return (id<CPProgram>) [ORFactory createCPProgram: model checkpointing:false];
 }
 
-+(id<CPProgram>) createCPCheckpointingProgram: (id<ORModel>) model
++(id<CPCommonProgram>) createCPCheckpointingProgram: (id<ORModel>) model
 {
-   return [ORCPSolverFactory checkpointingSolver];
+//   return [ORCPSolverFactory checkpointingSolver];
+   return (id<CPProgram>) [ORFactory createCPProgram: model checkpointing:true];
 }
 
 +(id<CPSemanticProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass

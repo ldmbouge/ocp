@@ -11,11 +11,13 @@
 
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
+#import <ORModeling/ORModeling.h>
+#import "ORConcretizer.h"
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
 
 //345 choices
 //254 fail
@@ -25,30 +27,31 @@
 
 int main (int argc, const char * argv[])
 {
-   ORInt n = 8;
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> R = RANGE(cp,1,n);
-   id<ORInteger> nbSolutions = [ORFactory integer: cp value: 0];
-   [CPFactory intArray:cp range:R with: ^ORInt(ORInt i) { return i; }];
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
-   id<ORIntVarArray> xp = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:i]);
-   id<ORIntVarArray> xn = ALL(ORIntVar,i,R,[CPFactory intVar:x[i] shift:-i]);
-   [cp add: [CPFactory alldifferent: x consistency: DomainConsistency]];
-   [cp add: [CPFactory alldifferent: xp consistency:DomainConsistency]];
-   [cp add: [CPFactory alldifferent: xn consistency:DomainConsistency]];
-
-   [cp solveAll:
-     ^() {
-       [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [x[i] domsize];}];
-       [nbSolutions incr];
-    }
-    ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
-   NSLog(@"Solver status: %@\n",cp);
-   NSLog(@"Quitting");
-   NSLog(@"SOLUTION IS: %@",x);
-   [cp release];
-   [CPFactory shutdown];
+   @autoreleasepool {
+      ORInt n = 8;
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(mdl,1,n);
+      id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
+      id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
+      id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
+      [mdl add: [ORFactory alldifferent: x note: DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xp note:DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xn note:DomainConsistency]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      [cp solveAll:
+       ^() {
+          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+          [nbSolutions incr];
+       }
+       ];
+      printf("GOT %d solutions\n",[nbSolutions value]);
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+      [ORFactory shutdown];
+   }
    return 0;
 }
 

@@ -553,6 +553,20 @@
    self = [super initORCPCoreSolver];
    _trail = [ORFactory trail];
    _engine = [CPFactory engine: _trail];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
+                                                                    rootControllerClass: [ORDFSController class]
+                                                                  nestedControllerClass: [ORDFSController class]];
+   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   [cFact release];
+   return self;
+}
+
+-(id<CPSemanticProgram>) initORCPSolverCheckpointing
+{
+   self = [super init];
+   _trail = [ORFactory trail];
+   _engine = [CPFactory engine: _trail];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
@@ -677,12 +691,12 @@
 {
    return [[ORCPSolver alloc] initORCPSolver];
 }
-+(id<CPProgramCheckpoint>) checkpointingSolver
++(id<CPDFSSemanticProgram>) checkpointingSolver
 {
    return [[ORCPSemanticSolver alloc] initORCPSemanticSolver];
 }
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {
-   return [[ORCPSemanticSolver alloc] initORCPSemanticSolver];   
+   return [[ORCPSemanticSolver alloc] initORCPSemanticSolver: ctrlClass];
 }
 @end

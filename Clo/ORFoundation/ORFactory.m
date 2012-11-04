@@ -25,6 +25,10 @@
 #import "ORVarI.h"
 
 @implementation ORFactory
++(void) shutdown
+{
+   [NSCont shutdown];
+}
 +(id<ORTrail>) trail
 {
    return [[ORTrailI alloc] init];
@@ -169,7 +173,10 @@
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a
 {
-   return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
+   if (a==1)
+      return x;
+   else
+      return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
 {
@@ -410,6 +417,11 @@
    id<ORConstraint> o = [[ORFail alloc] init];
    return o;
 }
++(id<ORConstraint>) restrict:(id<ORTracker>)model var:(id<ORIntVar>)x to:(id<ORIntSet>)d
+{
+   id<ORConstraint> o = [[ORRestrict alloc] initRestrict:x to:d];
+   return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyEqualc alloc] initReify: b equiv:x eqi: i];
@@ -579,9 +591,15 @@
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x];
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x note:DomainConsistency];
    return o;
 }
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x note:(ORAnnotation)c
+{
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x note:c];
+   return o;
+}
+
 +(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
 {
    // Rewritten in terms of the variable-driven load form.
