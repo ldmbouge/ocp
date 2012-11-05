@@ -66,5 +66,6 @@
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 -(void) print;
+-(void) visit:(id<ORVisitor>)visitor;
 @end
 

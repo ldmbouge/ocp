@@ -115,6 +115,11 @@
 {
    
 }
+-(void) visitTable:(id<ORTable>) v
+{
+   
+}
+
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {
    if ([cstr impl] == NULL) {

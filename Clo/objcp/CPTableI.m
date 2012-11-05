@@ -31,7 +31,7 @@
 {
     [table close];
     
-    self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [[x at:[x low]]  engine]];
     [self initInstanceVariables];
     _table = table;
     

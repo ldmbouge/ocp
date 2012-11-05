@@ -19,6 +19,7 @@
 -(void) visitIntRange:(id<ORIntRange>)v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
+-(void) visitTable:(id<ORTable>) v;
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
@@ -164,6 +165,10 @@
    [_theModel trackObject:v];
 }
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
+{
+   [_theModel trackObject:v];
+}
+-(void) visitTable:(id<ORTable>) v
 {
    [_theModel trackObject:v];
 }
