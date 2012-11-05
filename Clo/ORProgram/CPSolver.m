@@ -20,6 +20,7 @@
 // TODO after that 18/10/2012
 
 //  8. Clean tous les warnings
+   // 8.a. Move the limit/repeat in core solver
 //  9. Clean the header files
 // 10. Clean Label and fill in
 // 11. Fill in all the constraints
