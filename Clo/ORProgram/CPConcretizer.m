@@ -44,7 +44,7 @@
 
 -(id) concreteArray: (id<ORIntVarArray>) x
 {
-   [x visit:self];
+   [x visit: self];
    return [x impl];
 }
 

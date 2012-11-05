@@ -33,12 +33,13 @@
 {
    return _cp;
 }
--(id<ORIntVarArray>)allIntVars
+-(id<ORIntVarArray>) allIntVars
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
--(float)varOrdering:(id<CPIntVar>)x
+-(float)varOrdering: (id<ORIntVar>) ox
 {
+   id<CPIntVar> x = (id<CPIntVar>) [ox dereference];
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
@@ -46,11 +47,11 @@
    }
    return h / [x domsize];
 }
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(float)valOrdering:(int)v forVar:(id<ORIntVar>)x
 {
    return -v;   
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<CPVarArray>) t
 {
    _vars = t;
    ORLong len = [_vars count];

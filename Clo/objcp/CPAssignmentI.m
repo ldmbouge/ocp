@@ -17,6 +17,7 @@
 
 @implementation CPAssignment
 {
+   id<CPEngine>       _engine;
    id<CPIntVarArray>  _x;
    id<ORIntMatrix>    _matrix;
    CPIntVarI**        _var;
@@ -55,17 +56,18 @@
    _posted = false;
 }
 
--(CPAssignment*) initCPAssignment: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVarI*) costVariable
+-(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVarI*) costVariable
 {
-   self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: engine];
    _x = x;
+   _engine = engine;
    _matrix = matrix;
    _costVariable = costVariable;
    [self initInstanceVariables];
    return self;
 }
 
--(void) dealloc 
+-(void) dealloc
 {
    //   NSLog(@"AllDifferent dealloc called ...");
    if (_posted) {
@@ -122,7 +124,6 @@
       return ORSuspend;
    _posted = true;
    
-   id<CPSolver> cp = (id<CPSolver>) [_x solver];
    _low = [_x low];
    _up = [_x up];
 
@@ -143,7 +144,7 @@
       _var[i] = (CPIntVarI*) [_x at: i];
 
    
-   _cost = [CPFactory TRIntMatrix: cp range: Rows : Columns ];
+   _cost = [CPFactory TRIntMatrix: _engine range: Rows : Columns ];
    _bigM = 0;
    for(ORInt i = _lowr; i <= _upr; i++) 
       for(ORInt j = _lowc; j <= _upc; j++) {
@@ -156,15 +157,15 @@
    
    [self preprocess];
    
-   _lc = [CPFactory TRIntArray: cp range: Columns];
-   _lr = [CPFactory TRIntArray: cp range: Rows];
+   _lc = [CPFactory TRIntArray: _engine range: Columns];
+   _lr = [CPFactory TRIntArray: _engine range: Rows];
    for(ORInt i = _lowc; i <= _upc; i++)
       [_lc set: 0 at: i];
    for(ORInt i = _lowr; i <= _upr; i++)
       [_lr set: 0 at: i];
    
-   _rowOfColumn = [CPFactory TRIntArray: cp range: Columns];
-   _columnOfRow = [CPFactory TRIntArray: cp range: Rows];
+   _rowOfColumn = [CPFactory TRIntArray: _engine range: Columns];
+   _columnOfRow = [CPFactory TRIntArray: _engine range: Rows];
    for(ORInt i = _lowc; i <= _upc; i++)
       [_rowOfColumn set: MAXINT at: i];
    for(ORInt i = _lowr; i <= _upr; i++)

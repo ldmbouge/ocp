@@ -13,7 +13,7 @@
 #import <objcp/CPVar.h>
 
 @implementation CPBaseHeuristic
--(void)initHeuristic:(NSMutableArray*)array
+-(void) initHeuristic: (NSMutableArray*) array
 {
    __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
@@ -27,10 +27,10 @@
       if (!([obj varClass] == CPVCShift || [obj varClass] == CPVCAffine))
          [direct set:obj at:k++];
    }];
-   [self initInternal:direct];   
+   [self initInternal: direct];   
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void) initInternal: (id<ORVarArray>) t
 {
-   
+   @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
 }
 @end

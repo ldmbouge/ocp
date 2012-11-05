@@ -30,7 +30,7 @@
 @implementation CPFactory (Constraint)
 
 // alldifferent
-+(id<ORConstraint>) alldifferent: (id<CPSolver>) cp over: (id<CPIntVarArray>) x
++(id<ORConstraint>) alldifferent: (id<CPEngine>) cp over: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: cp over: x];
    [cp trackObject: o];
@@ -59,15 +59,15 @@
     [[x tracker] trackObject: o];
     return o;
 }
-+(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c
++(id<ORConstraint>) alldifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c
 {
    id<ORConstraint> o;
    switch (c) {
       case DomainConsistency:
-         o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: solver over: x];
+         o = [[CPAllDifferentDC alloc] initCPAllDifferentDC: engine over: x];
          break;
       case ValueConsistency:
-         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: solver over: x];
+         o = [[CPAllDifferenceVC alloc] initCPAllDifferenceVC: engine over: x];
          break;
       case RangeConsistency:
          @throw [[ORExecutionError alloc] initORExecutionError: "Range Consistency Not Implemented on alldifferent"];
@@ -147,19 +147,19 @@
 +(id<ORConstraint>) table: (ORTableI*) table on: (id<CPIntVarArray>) x
 {
    id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: x table: table];
-   [[x tracker] trackObject:o];
+   [[x tracker] trackObject: o];
    return o;
 }
 +(id<ORConstraint>) table: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 {
    id<ORConstraint> o = [[CPTableCstrI alloc] initCPTableCstrI: table on: x : y : z];
-   [[x tracker] trackObject:o];
+   [[x tracker] trackObject: o];
    return o;
 }
-+(id<ORConstraint>) assignment: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost
++(id<ORConstraint>) assignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost
 {
-   id<ORConstraint> o = [[CPAssignment alloc] initCPAssignment: x matrix: matrix cost: cost];
-   [[x tracker] trackObject:o];
+   id<ORConstraint> o = [[CPAssignment alloc] initCPAssignment: engine array: x matrix: matrix cost: cost];
+   [[x tracker] trackObject: o];
    return o;
 }
 +(id<ORConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y

@@ -80,6 +80,7 @@
    else
       cpprogram = [CPSolverFactory semanticSolverDFS];
 
+   
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
    [concretizer release];

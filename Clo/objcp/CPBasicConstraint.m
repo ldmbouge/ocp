@@ -1442,9 +1442,8 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    return self;
 }
 
--(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<CPIntVarArray>) x
+-(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
-   id<CPEngine> engine = [[x at:[x low]] engine];
    self = [super initCPActiveConstraint: engine];
    _nb = [x count];
    _x  = malloc(sizeof(CPIntVarI*)*_nb);
