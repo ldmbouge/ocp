@@ -92,11 +92,21 @@
 -(void) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c];
+      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
    
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
    [_mStore addObject:c];
+}
+
+-(void) add: (id<ORConstraint>) c annotation:(ORAnnotation)n
+{
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
+   
+   ORConstraintI* cstr = (ORConstraintI*) c;
+   [cstr setId: (ORUInt) [_mStore count]];
+   [_mStore addObject:c];   
 }
 
 -(void) optimize: (id<ORObjectiveFunction>) o

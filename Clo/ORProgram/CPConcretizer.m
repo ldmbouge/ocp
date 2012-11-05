@@ -333,8 +333,8 @@
       id<ORIntVar> left = [cstr left];
       [res visit: self];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) [res dereference]
-                                               equal: (id<CPIntVar>) [left dereference]
+      id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) [left dereference]
+                                               equal: (id<CPIntVar>) [res dereference]
                                          consistency: DomainConsistency
                                        ];
      [cstr setImpl: concreteCstr];

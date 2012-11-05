@@ -9,48 +9,44 @@
 
  ***********************************************************************/
 
-
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-
-void labelFF(id<CPSolver> cp,id<ORIntVarArray> x)
-{
-   id<ORIntRange> R = RANGE(cp,[x low],[x up]);
-   [ORControl forall: R
-            suchThat: ^bool(int i) { return ![[x at:i] bound];}
-           orderedBy: ^int(int i)  { return [[x at:i] domsize];}
-                  do: ^(int i)     { [CPLabel var: [x at:i]]; }
-    ];
-}
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPLabel.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORConcretizer.h>
+#import <objcp/CPError.h>
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> cp = [CPFactory createSolver];  
+      id<ORModel> mdl = [ORFactory createModel];
       int n = 8;
-      id<ORIntRange> R = RANGE(cp,1,n);
-      id<ORIntRange> D = RANGE(cp,0,n-1);
-      id<ORIntRange> SD = RANGE(cp,1,n-1);
+      id<ORIntRange> R = RANGE(mdl,1,n);
+      id<ORIntRange> D = RANGE(mdl,0,n-1);
+      id<ORIntRange> SD = RANGE(mdl,1,n-1);
       
-      id<ORInteger> nbSolutions = [CPFactory integer: cp value:0];
-      id<ORIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
-      id<ORIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
+      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
+      id<ORIntVarArray> sx = [ORFactory intVarArray: mdl range:R domain: D];
+      id<ORIntVarArray> dx = [ORFactory intVarArray: mdl range:SD domain: SD];
+      
+      [mdl add:[ORFactory alldifferent:sx note:DomainConsistency]];
+      for(ORUInt i=SD.low;i<=SD.up;i++) {
+         [mdl add:[dx[i] eq:[[sx[i+1] sub:sx[i]] abs]] annotation: DomainConsistency];
+      }
+      [mdl add:[ORFactory alldifferent:dx note:DomainConsistency]];
+      [mdl add:[sx[1]   leq:sx[2]]];
+      [mdl add:[dx[n-1] leq:dx[1]]];
+      
+      //NSLog(@"MODEL: %@",mdl);
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
       //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
-      id<CPHeuristic> h = [CPFactory createFF:cp restricted:sx];
-      [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
-      for(ORUInt i=SD.low;i<=SD.up;i++) {
-         [cp add:[[dx at:i] eq:[CPFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]]] consistency: DomainConsistency];
-      }
-      [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
-      [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
-      [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
+      id<CPHeuristic> h = [ORFactory createFF:cp restricted:sx];
+
       [cp solveAll: ^{
-         [CPLabel heuristic:h];
-         [CPLabel array:sx orderedBy:^ORInt(ORInt i) {
+         [cp labelHeuristic:h];
+         [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
             return [[sx at:i] domsize];
          }];
          [nbSolutions incr];

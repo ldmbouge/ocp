@@ -18,7 +18,8 @@ typedef enum {
    RangeConsistency,
    ValueConsistency,
    Hard,
-   Soft
+   Soft,
+   Default
 } ORAnnotation;
 
 

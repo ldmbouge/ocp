@@ -376,7 +376,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ + %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1244,14 +1244,15 @@
 }
 @end
 
-@implementation ORAlgebraicConstraintI
-{
+@implementation ORAlgebraicConstraintI {
    id<ORRelation> _expr;
+   ORAnnotation   _note;
 }
--(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr
+-(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _expr = expr;
+   _note = n;
    return self;
 }
 -(id<ORRelation>) expr
@@ -1267,6 +1268,10 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitAlgebraicConstraint:self];
+}
+-(ORAnnotation)annotation
+{
+   return _note;
 }
 @end
 

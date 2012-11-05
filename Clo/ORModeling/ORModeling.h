@@ -18,6 +18,7 @@
 @protocol ORModel <ORTracker,ORObject,NSCoding>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
+-(void) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;

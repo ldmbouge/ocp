@@ -19,6 +19,7 @@
 
 @interface ORExprI: NSObject<ORExpr,NSCoding>
 
+-(id<ORExpr>) abs;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
