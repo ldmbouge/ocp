@@ -102,6 +102,10 @@
 {
   [_engine add: [cstr impl]];   
 }
+-(void) visitLexLeq:(id<ORLexLeq>)cstr
+{
+   [_engine add: [cstr impl]];
+}
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
   [_engine add: [cstr impl]];   

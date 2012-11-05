@@ -26,7 +26,7 @@
 }
 -(id) initCPLexConstraint:(id<CPIntVarArray>) x and:(id<CPIntVarArray>)y
 {
-   self = [super initCPActiveConstraint:[ [x solver] engine]];
+   self = [super initCPActiveConstraint:[ [x at:[x low]] engine]];
    _x = x;
    _y = y;
    _engine = [[x at:[x low]] engine];

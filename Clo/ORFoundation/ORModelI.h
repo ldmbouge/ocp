@@ -255,6 +255,12 @@
 -(id<ORTable>) table;
 @end
 
+@interface ORLexLeq : ORConstraintI<ORLexLeq>
+-(ORLexLeq*)initORLex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
+-(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>)y;
+@end
+
 @interface ORCircuitI : ORConstraintI<ORCircuit>
 -(ORCircuitI*)initORCircuitI:(id<ORIntVarArray>)x;
 -(id<ORIntVarArray>) array;

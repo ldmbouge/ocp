@@ -48,6 +48,7 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
+-(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitEqualc: (id<OREqualc>)c;
@@ -66,6 +67,7 @@
 -(void) visitElementVar: (id<ORElementVar>)c;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
+-(void) visitLexLeq:(id<ORLexLeq>) cstr;
 @end
 
 
@@ -236,6 +238,10 @@
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel add: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
+-(void) visitKnapsack:(id<ORKnapsack>) cstr
+{
+   [_theModel add:cstr];
+}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    [ORFlatten flattenExpression:[cstr expr] into:_theModel];
@@ -305,6 +311,10 @@
    [_theModel add:c];
 }
 -(void) visitNoCycle:(id<ORNoCycle>) c
+{
+   [_theModel add:c];
+}
+-(void) visitLexLeq:(id<ORLexLeq>) c
 {
    [_theModel add:c];
 }
