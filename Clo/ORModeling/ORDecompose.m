@@ -622,16 +622,15 @@ struct CPVarPair {
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   id<ORTracker> cp = [e tracker];
    if (!_rv)
-      _rv = [ORFactory intVar:cp domain: RANGE(cp,[e value],[e value])];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
    [_model add:[ORFactory equalc:_model var:_rv to:[e value]]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    ORLinear* terms = [ORLinearizer linearFrom:e model:_model note:_c];
    if (_rv==nil)
-      _rv = [ORFactory intVar:[e tracker] domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model note:_c];
 }
@@ -639,13 +638,12 @@ struct CPVarPair {
 {
    ORLinear* terms = [ORLinearizer linearFrom:e model:_model note:_c];
    if (_rv==nil)
-      _rv = [ORFactory intVar:[e tracker] domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model note:_c];
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
-   id<ORTracker> cp = [e tracker];
    ORLinear* lT = [ORLinearizer linearFrom:[e left] model:_model note:_c];
    ORLinear* rT = [ORLinearizer linearFrom:[e right] model:_model note:_c];
    id<ORIntVar> lV = [ORSubst normSide:lT for:_model note:_c];
@@ -661,7 +659,7 @@ struct CPVarPair {
    ORLong d = maxOf(lub * rlb,lub * rub);
    ORLong ub = maxOf(c,d);
    if (_rv==nil)
-      _rv = [ORFactory intVar:cp domain: RANGE(cp,bindDown(lb),bindUp(ub))];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(lb),bindUp(ub))];
    [_model add: [ORFactory mult:_model var:lV by:rV equal:_rv]];
    [lT release];
    [rT release];
@@ -777,38 +775,35 @@ struct CPVarPair {
 
 -(void) visitExprAbsI:(ORExprAbsI *)e
 {
-   id<ORTracker> cp = [e tracker];
    ORLinear* lT = [ORLinearizer linearFrom:[e operand] model:_model note:_c];
    id<ORIntVar> oV = [ORSubst normSide:lT for:_model note:_c];
    ORInt lb = [lT min];
    ORInt ub = [lT max];
    if (_rv == nil)
-      _rv = [ORFactory intVar:cp domain:RANGE(cp,lb,ub)];
+      _rv = [ORFactory intVar:_model domain:RANGE(_model,lb,ub)];
    [_model add:[ORFactory abs:_model var:oV equal:_rv note:_c]];
    [lT release];
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   id<ORTracker> cp = [e tracker];
    ORLinear* lT = [ORLinearizer linearFrom:[e index] model:_model note:_c];
    id<ORIntVar> oV = [ORSubst normSide:lT for:_model note:_c];
    ORInt lb = [e min];
    ORInt ub = [e max];
    if (_rv == nil)
-      _rv = [ORFactory intVar:cp domain: RANGE(cp,lb,ub)];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
    [_model add:[ORFactory element:_model var:oV idxCstArray:[e array] equal:_rv]];
    [lT release];
 }
 
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   id<ORTracker> cp = [e tracker];
    ORLinear* lT = [ORLinearizer linearFrom:[e index] model:_model note:_c];
    id<ORIntVar> oV = [ORSubst normSide:lT for:_model note:_c];
    ORInt lb = [e min];
    ORInt ub = [e max];
    if (_rv == nil)
-      _rv = [ORFactory intVar:cp domain: RANGE(cp,lb,ub)];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
    [_model add:[ORFactory element:_model var:oV idxVarArray: [e array] equal:_rv]];
    [lT release];
 }

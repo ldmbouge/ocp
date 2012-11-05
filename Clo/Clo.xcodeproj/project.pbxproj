@@ -489,6 +489,12 @@
 		5BEEF61213970B6F002ADBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BEEF61513970B6F002ADBD4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BEEF61413970B6F002ADBD4 /* main.m */; };
 		5BEEF61C13970B7A002ADBD4 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BEFE4911647F7C0005089EC /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BEFE4921647F7C0005089EC /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BEFE4931647F7C0005089EC /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BEFE4941647F7C6005089EC /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BEFE4951647F7C6005089EC /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BEFE4961647F7C6005089EC /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BF62F211647F4A3008E672E /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BF62F221647F4A3008E672E /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BF62F231647F4A3008E672E /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -1430,6 +1436,62 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
 			remoteInfo = ORFoundation;
+		};
+		5BEFE4891647F7BB005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BEFE48B1647F7BB005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BEFE48D1647F7BB005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BEFE48F1647F7BB005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5BEFE4971647F7CC005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BEFE4991647F7CC005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BEFE49B1647F7CC005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BEFE49D1647F7CC005089EC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
 		};
 		5BF62F1D1647F49E008E672E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2859,6 +2921,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BEFE4941647F7C6005089EC /* ORModeling.framework in Frameworks */,
+				5BEFE4951647F7C6005089EC /* ORProgram.framework in Frameworks */,
+				5BEFE4961647F7C6005089EC /* ORUtilities.framework in Frameworks */,
 				5B920EC215A4329A00AD0820 /* ORFoundation.framework in Frameworks */,
 				5BE5A7F9158A83A2006703CB /* objcp.framework in Frameworks */,
 				5BE5A7EC158A8390006703CB /* Foundation.framework in Frameworks */,
@@ -2869,6 +2934,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BEFE4911647F7C0005089EC /* ORModeling.framework in Frameworks */,
+				5BEFE4921647F7C0005089EC /* ORProgram.framework in Frameworks */,
+				5BEFE4931647F7C0005089EC /* ORUtilities.framework in Frameworks */,
 				5B920EC115A4319100AD0820 /* ORFoundation.framework in Frameworks */,
 				5BE7774D1594CD1200ADE34E /* objcp.framework in Frameworks */,
 				5BE777421594C9E500ADE34E /* Foundation.framework in Frameworks */,
@@ -5229,6 +5297,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BEFE4981647F7CC005089EC /* PBXTargetDependency */,
+				5BEFE49A1647F7CC005089EC /* PBXTargetDependency */,
+				5BEFE49C1647F7CC005089EC /* PBXTargetDependency */,
+				5BEFE49E1647F7CC005089EC /* PBXTargetDependency */,
 				5BE5A7F8158A839A006703CB /* PBXTargetDependency */,
 			);
 			name = fdmul2;
@@ -5247,6 +5319,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BEFE48A1647F7BB005089EC /* PBXTargetDependency */,
+				5BEFE48C1647F7BB005089EC /* PBXTargetDependency */,
+				5BEFE48E1647F7BB005089EC /* PBXTargetDependency */,
+				5BEFE4901647F7BB005089EC /* PBXTargetDependency */,
 				5BE7774F1594CD1C00ADE34E /* PBXTargetDependency */,
 			);
 			name = fdmul;
@@ -7038,6 +7114,46 @@
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
 			targetProxy = 5BEAD79415ABE39000A012FE /* PBXContainerItemProxy */;
+		};
+		5BEFE48A1647F7BB005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BEFE4891647F7BB005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE48C1647F7BB005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BEFE48B1647F7BB005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE48E1647F7BB005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BEFE48D1647F7BB005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE4901647F7BB005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BEFE48F1647F7BB005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE4981647F7CC005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BEFE4971647F7CC005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE49A1647F7CC005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BEFE4991647F7CC005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE49C1647F7CC005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BEFE49B1647F7CC005089EC /* PBXContainerItemProxy */;
+		};
+		5BEFE49E1647F7CC005089EC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BEFE49D1647F7CC005089EC /* PBXContainerItemProxy */;
 		};
 		5BF62F1E1647F49E008E672E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
