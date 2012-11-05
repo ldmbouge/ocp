@@ -9,11 +9,13 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPError.h"
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPLabel.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORConcretizer.h>
+#import <objcp/CPError.h>
 
 ORInt ipow(ORInt b,ORInt e)
 {
@@ -25,31 +27,34 @@ ORInt ipow(ORInt b,ORInt e)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> cp = [CPFactory createSolver];
-      id<ORIntRange> R = RANGE(cp,0,19);
-      id<ORIntRange> D = RANGE(cp,0,9);
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(mdl,0,19);
+      id<ORIntRange> D = RANGE(mdl,0,9);
      
-//      id<ORIntVarArray> x = ALL(CPIntVar, i, R, [CPFactory intVar:cp bounds:D]);
-      id<ORIntVarArray> x = [CPFactory intVarArray: cp range: R domain: D];
-      id<CPHeuristic> h = [CPFactory createFF:cp];
+      id<ORIntVarArray> x = [ORFactory intVarArray: mdl range: R domain: D];
       
-      id<ORIntArray> lb = [CPFactory intArray:cp range:D value:2];
-      [cp add:[CPFactory cardinality:x low:lb up:lb consistency:ValueConsistency]];
+      id<ORIntArray> lb = [ORFactory intArray:mdl range:D value:2];
+      [mdl add:[ORFactory cardinality:x low:lb up:lb]];
       
-      id<ORExpr> lhs1 = SUM(i,RANGE(cp,0,2),[x[i] muli:ipow(10,i)]);
-      [cp add: [[lhs1 mul:x[3]] eq: SUM(i,RANGE(cp,6,8),[x[i] muli:ipow(10,i-6)])]];
-      [cp add: [[lhs1 mul:x[4]] eq: SUM(i,RANGE(cp,9,11),[x[i] muli:ipow(10,i-9)])]];
-      [cp add: [[lhs1 mul:x[5]] eq: SUM(i,RANGE(cp,12,14),[x[i] muli:ipow(10,i-12)])]];
+      id<ORExpr> lhs1 = Sum(mdl,i,RANGE(mdl,0,2),[x[i] muli:ipow(10,i)]);
+      [mdl add: [[lhs1 mul:x[3]] eq: Sum(mdl,i,RANGE(mdl,6,8),[x[i] muli:ipow(10,i-6)])]];
+      [mdl add: [[lhs1 mul:x[4]] eq: Sum(mdl,i,RANGE(mdl,9,11),[x[i] muli:ipow(10,i-9)])]];
+      [mdl add: [[lhs1 mul:x[5]] eq: Sum(mdl,i,RANGE(mdl,12,14),[x[i] muli:ipow(10,i-12)])]];
       int* coefs = (int[]){1,10,100,10,100,1000,100,1000,10000};
-      [cp add: [SUM(i,RANGE(cp,1,5),[x[14+i] muli: ipow(10,i-1)]) eq: SUM(i,RANGE(cp,6,14), [x[i] muli:coefs[i-6]])]];
+      [mdl add: [Sum(mdl,i,RANGE(mdl,1,5),[x[14+i] muli: ipow(10,i-1)]) eq: Sum(mdl,i,RANGE(mdl,6,14), [x[i] muli:coefs[i-6]])]];
       
-      NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+      /*
+      NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:mdl];
       BOOL ok = [archive writeToFile:@"fdmul2.CParchive" atomically:NO];
       NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+       */
+      
+      id<CPProgram>   cp = [ORFactory createCPProgram:mdl];
+      id<CPHeuristic> h = [ORFactory createFF:cp];
 
       [cp solve: ^{
          @try {
-            [CPLabel heuristic:h];
+            [cp labelHeuristic:h];
          } @catch(CPRemoveOnDenseDomainError* nsex) {
             NSLog(@"GOT AN REMOVE: %@",nsex);
             [nsex release];
@@ -65,7 +70,7 @@ int main(int argc, const char * argv[])
          NSLog(@"Solver: %@",cp);
        }];
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }
