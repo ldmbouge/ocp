@@ -40,6 +40,10 @@
 {
    return ORRBad;
 }
+-(id<ORExpr>) abs
+{
+   return [ORFactory exprAbs:self];
+}
 -(id<ORExpr>) plus: (id<ORExpr>) e
 {
    return [ORFactory expr: self plus: e];

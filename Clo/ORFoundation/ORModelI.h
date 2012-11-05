@@ -244,8 +244,9 @@
 @end;
 
 @interface ORAlgebraicConstraintI : ORConstraintI<ORAlgebraicConstraint>
--(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr;
+-(ORAlgebraicConstraintI*) initORAlgebraicConstraintI: (id<ORRelation>) expr annotation:(ORAnnotation)n;
 -(id<ORRelation>) expr;
+-(ORAnnotation)annotation;
 @end
 
 @interface ORTableConstraintI : ORConstraintI<ORTableConstraint>

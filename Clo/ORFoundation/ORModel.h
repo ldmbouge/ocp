@@ -202,6 +202,7 @@
 
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
+-(ORAnnotation)annotation;
 @end
 
 @protocol ORTableConstraint <ORConstraint>

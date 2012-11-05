@@ -610,9 +610,9 @@
    }];
    return [self packing:item itemSize:itemSize load:load];
 }
-+(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp
++(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp];
+   id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp annotation:n];
    return o;
 }
 +(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (ORTableI*) table
