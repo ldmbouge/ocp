@@ -82,7 +82,6 @@ int main(int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          for(ORInt p = Periods.low; p <= Periods.up; p++) {
-            // This is the same search as COMET.
             [cp forall:Guests suchThat:^bool(ORInt g) { return ![[boat at:g :p] bound];}
              orderedBy:nil do:^(ORInt g) {
                 [cp tryall:Hosts suchThat:^bool(ORInt h) { return [[boat at: g: p] member:h];}
