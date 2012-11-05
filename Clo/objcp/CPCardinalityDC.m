@@ -79,7 +79,7 @@ static void findSCCsink(CPCardinalityDC* card);
 
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub
 {
-    self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPActiveConstraint: [[x at:[x low]] engine]];
     _x = x;
     _lb = lb;
     _ub = ub;
