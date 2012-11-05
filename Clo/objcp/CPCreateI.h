@@ -12,19 +12,19 @@
 #import <Foundation/Foundation.h>
 #import "CPSolverI.h"
 
-@interface CPSolverI (Create)  
-+(CPSolverI*) create;
-+(CPSolverI*) createRandomized;
-+(CPSolverI*) createDeterministic;
-+(CPSolverI*) createFor:(CPEngineI*)fdm;
-@end
-
-@interface CPSemSolverI (Create)
-+(CPSemSolverI*)            createWithController:(Class)ctrlClass;
-+(CPSemSolverI*)            createRandomized;
-+(CPSemSolverI*)            createDeterministic;
-+(CPSemSolverI*)            createFor:(CPEngineI*)fdm;
-@end
+//@interface CPSolverI (Create)  
+//+(CPSolverI*) create;
+//+(CPSolverI*) createRandomized;
+//+(CPSolverI*) createDeterministic;
+//+(CPSolverI*) createFor:(CPEngineI*)fdm;
+//@end
+//
+//@interface CPSemSolverI (Create)
+//+(CPSemSolverI*)            createWithController:(Class)ctrlClass;
+//+(CPSemSolverI*)            createRandomized;
+//+(CPSemSolverI*)            createDeterministic;
+//+(CPSemSolverI*)            createFor:(CPEngineI*)fdm;
+//@end
 
 //@interface CPParSolverI (Create)
 //+(CPParSolverI*)            create:(int)nbt withController:(Class)ctrlClass;

@@ -22,7 +22,6 @@
 
 // TODO by PVH 13/10/2012
 
-// 3. Remove the protocol and interface for CPSolver  --> Wait for LDM changes
 // 4. Rename ORCPSolver into CPSolver --> Wait for LDM changes
 // 5. Clean les ORIntVar et les dereferences de objcp --> LDM is doing
 

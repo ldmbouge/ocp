@@ -131,10 +131,10 @@
    [_drawOn performSelectorOnMainThread:@selector(refresh) withObject:nil waitUntilDone:NO];
 //   [_drawOn setNeedsDisplay:TRUE];
 }
--(void)watchSearch: (CPSolverI*)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
-{
-   [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
-}
+//-(void)watchSearch: (CPSolverI*)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
+//{
+//   [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
+//}
 
 -(void)pause
 {

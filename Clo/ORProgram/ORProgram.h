@@ -21,6 +21,12 @@
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 
+@protocol CPPortal <NSObject>
+-(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) failLabel;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
+@end
 
 @protocol CPCommonProgram <ORASolver>
 -(ORInt)         nbFailures;

@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPVar.h>
 
 @interface CPOneBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
 }
