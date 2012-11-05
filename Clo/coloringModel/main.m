@@ -22,7 +22,6 @@
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
 
 
 NSString* tab(int d);

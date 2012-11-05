@@ -45,3 +45,7 @@
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end
+
+@interface CPUtilities : NSObject
++(ORInt) maxBound: (id<ORIntVarArray>) x;
+@end;

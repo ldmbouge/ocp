@@ -19,7 +19,6 @@
 
 // TODO after that 18/10/2012
 
-//  9. Clean the header files
 // 10. Clean Label and fill in
 // 11. Fill in all the constraints
 // 12. Clean the examples files
@@ -676,5 +675,21 @@
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
+}
+@end
+
+@implementation CPUtilities
+
++(ORInt) maxBound: (id<ORIdArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   ORInt M = -MAXINT;
+   for(ORInt i = low; i <= up; i++) {
+      id<CPIntVar> xi = [x[i] dereference];
+      if ([xi bound] && [xi value] > M)
+         M = [xi value];
+   }
+   return M;
 }
 @end

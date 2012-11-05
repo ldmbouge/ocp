@@ -13,14 +13,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPSolver.h>
 
-//@interface CPLabel : NSObject
-//+(void) var: (id<ORIntVar>) x;
-//+(void) array: (id<ORIntVarArray>) x;
-//+(void) array: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
-//+(void) heuristic:(id<CPHeuristic>)h;
-//+(ORInt) maxBound: (id<ORIntVarArray>) x;
-//@end;
-
 @interface CPUtilities : NSObject
 +(ORInt) maxBound: (id<ORIntVarArray>) x;
 @end;
