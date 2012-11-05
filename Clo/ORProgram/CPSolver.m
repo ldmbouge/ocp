@@ -673,7 +673,7 @@
 }
 +(id<CPSemanticProgramDFS>) semanticSolverDFS
 {
-   return [[CPSemanticSolver alloc] initCPSemanticSolver];
+   return [[CPSemanticSolver alloc] initCPSemanticSolverDFS];
 }
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {

@@ -28,9 +28,9 @@
 @end
 
 // SemanticPath CPSolver
-@interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram>
+@interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram,CPSemanticProgramDFS>
 -(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
--(id<CPSemanticProgram>)   initCPSemanticSolver: (Class) ctrlClass;
+-(id<CPSemanticProgram>)    initCPSemanticSolver: (Class) ctrlClass;
 @end
 
 @interface CPSolverFactory : NSObject

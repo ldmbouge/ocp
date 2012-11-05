@@ -78,7 +78,7 @@
    if (!checkpointing)
       cpprogram = [CPSolverFactory solver];
    else
-      cpprogram = [CPSolverFactory checkpointingSolver];
+      cpprogram = [CPSolverFactory semanticSolverDFS];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
