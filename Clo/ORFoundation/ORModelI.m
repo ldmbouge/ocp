@@ -1301,6 +1301,37 @@
 }
 @end
 
+@implementation ORLexLeq {
+   id<ORIntVarArray> _x;
+   id<ORIntVarArray> _y;
+}
+-(ORLexLeq*)initORLex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y
+{
+   self = [super init];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(id<ORIntVarArray>)x
+{
+   return _x;
+}
+-(id<ORIntVarArray>)y
+{
+   return _y;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitLexLeq:self];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = lexleq(%@,%@)>",[self class],self,_impl,_x,_y];
+   return buf;
+}
+@end
+
 @implementation ORCircuitI {
    id<ORIntVarArray> _x;
 }

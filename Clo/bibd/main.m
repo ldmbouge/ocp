@@ -9,11 +9,12 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPLabel.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORConcretizer.h>
 
 void show(id<ORIntVarMatrix> M)
 {
@@ -43,30 +44,31 @@ int main(int argc, const char * argv[])
       ORInt b = (v*(v-1)*l)/(k*(k-1));
       ORInt r = l*(v-1)/(k-1);
       
-      id<CPSolver> cp = [CPFactory createSolver];
-      id<ORIntRange> Rows = RANGE(cp,1,v);
-      id<ORIntRange> Cols = RANGE(cp,1,b);
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> Rows = RANGE(mdl,1,v);
+      id<ORIntRange> Cols = RANGE(mdl,1,b);
      
-      id<ORIntVarMatrix> M = [CPFactory boolVarMatrix:cp range:Rows :Cols];
+      id<ORIntVarMatrix> M = [ORFactory boolVarMatrix:mdl range:Rows :Cols];
      for(ORInt i=Rows.low;i<=Rows.up;i++)
-         [cp add: [SUM(x, Cols, [M at:i :x]) eqi:r]];
+         [mdl add: [Sum(mdl,x, Cols, [M at:i :x]) eqi:r]];
       for(ORInt i=Cols.low;i<=Cols.up;i++)
-         [cp add: [SUM(x, Rows, [M at:x :i]) eqi:k]];
+         [mdl add: [Sum(mdl,x, Rows, [M at:x :i]) eqi:k]];
       for(ORInt i=Rows.low;i<=Rows.up;i++)
          for(ORInt j=i+1;j <= v;j++)
-            [cp add: [SUM(x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
+            [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
       for(ORInt i=1;i <= v-1;i++) {
-         [cp add: [CPFactory lex:ALL(ORIntVar, j, Cols, [M at:i+1 :j])
-                             leq:ALL(ORIntVar, j, Cols, [M at:i   :j])]];
+         [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
+                              leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
       }
       for(ORInt j=1;j <= b-1;j++) {
-//         [cp add: [CPFactory lex:ALL(ORIntVar, i, Rows, [M at:i :j+1])
-//                             leq:ALL(ORIntVar, i, Rows, [M at:i :j])]];
+        [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
+                             leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
       }
-         
+      
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:^{
          NSLog(@"Start...");
-         [CPLabel array:[CPFactory flattenMatrix:M]];
+         [cp labelArray:[ORFactory flattenMatrix:M]];
          NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
          show(M);
       }];

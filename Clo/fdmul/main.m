@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "ORFoundation/ORFactory.h"
+#import <ORFoundation/ORFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPLabel.h>

@@ -15,16 +15,10 @@
 
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import "../ORProgram/ORConcretizer.h"
+#import <ORProgram/ORConcretizer.h>
 
-#import "objcp/CPSolver.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
+#import <objcp/CPSolver.h>
+#import <objcp/CPLabel.h>
 
 
 // PVH Need to release the CPProgram

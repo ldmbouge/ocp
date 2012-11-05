@@ -217,6 +217,11 @@
 -(ORAnnotation) annotation;
 @end
 
+@protocol ORLexLeq <ORConstraint>
+-(id<ORIntVarArray>)x;
+-(id<ORIntVarArray>)y;
+@end
+
 @protocol ORCircuit <ORConstraint>
 -(id<ORIntVarArray>) array;
 @end

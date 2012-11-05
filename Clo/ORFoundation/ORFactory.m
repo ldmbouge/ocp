@@ -309,7 +309,15 @@
             [o set: [ORFactory boolVar: cp] at:i :j :k];
    return (id<ORIntVarMatrix>) o;
 }
-
++(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m
+{
+   id<ORTracker> tracker = [m tracker];
+   ORInt sz = (ORInt)[m count];
+   id<ORIdArray> flat = [ORFactory idArray: tracker range: RANGE(tracker,0,sz-1)];
+   for(ORInt i=0;i<sz;i++)
+      flat[i] = [m flat:i];
+   return (id<ORIntVarArray>)flat;
+}
 @end
 
 @implementation ORFactory (Expressions)
@@ -563,7 +571,11 @@
    id<ORConstraint> o = [[ORElementVar alloc] initORElement:x array:c equal:y];
    return o;
 }
-
++(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y
+{
+   id<ORConstraint> o = [[ORLexLeq alloc] initORLex:x leq:y];
+   return o;
+}
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];

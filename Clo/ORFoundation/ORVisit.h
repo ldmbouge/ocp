@@ -41,6 +41,7 @@
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
+-(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;

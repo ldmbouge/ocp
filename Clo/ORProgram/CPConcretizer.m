@@ -185,6 +185,15 @@
       [cstr setImpl: concreteCstr];
    }
 }
+-(void) visitLexLeq:(id<ORLexLeq>) cstr
+{
+   if ([cstr impl] == NULL) {
+      id<CPIntVarArray> x = [self concreteArray:[cstr x]];
+      id<CPIntVarArray> y = [self concreteArray:[cstr y]];
+      id<CPConstraint> concrete = [CPFactory lex:x leq:y];
+      [cstr setImpl:concrete];
+   }
+}
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
    if ([cstr impl] == NULL) {
