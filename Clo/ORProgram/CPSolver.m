@@ -19,19 +19,15 @@
 #import <objcp/CPSolver.h>
 #import <objcp/CPLabel.h>
 
-
-// TODO by PVH 13/10/2012
-
-// 5. Clean les ORIntVar et les dereferences de objcp --> LDM is doing
-
 // TODO after that 18/10/2012
 
 //  8. Clean tous les warnings
-//  9. Clean Label and fill in
-// 10. Fill in all the constraints
-// 11. Clean the examples files
-// 12. Clean the explorerI.h file in an import somewhere
-// 13. Deal with the annotations; probably need a default annotation in each constraint
+//  9. Clean the header files
+// 10. Clean Label and fill in
+// 11. Fill in all the constraints
+// 12. Clean the examples files
+// 13. Clean the explorerI.h file in an import somewhere
+// 14. Deal with the annotations; probably need a default annotation in each constraint
 
 // To Discuss with LDM
 

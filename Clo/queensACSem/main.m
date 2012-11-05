@@ -49,13 +49,9 @@ int main (int argc, const char * argv[])
 #if TESTTA==1
             [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
                     in:^(ORInt v) {
-                       //NSLog(@"%@?x[%d] == %d   --> %@",tab(depth),i,v,[x[i] dereference]);
-                       [cp label: x[i] with:v];
-                       //NSLog(@"%@*x[%d] == %d   --> %@",tab(depth),i,v,[x[i] dereference]);
+                        [cp label: x[i] with:v];
                     } onFailure:^(ORInt v) {
-                       //NSLog(@"%@?x[%d] != %d   --> %@",tab(depth),i,v,[x[i] dereference]);
                        [cp diff: x[i] with:v];
-                       //NSLog(@"%@*x[%d] != %d   --> %@",tab(depth),i,v,[x[i] dereference]);
                     }];
             depth++;
 #else
