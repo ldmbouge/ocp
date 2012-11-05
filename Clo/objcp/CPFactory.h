@@ -17,16 +17,8 @@
 #import <objcp/CPVar.h>
 
 @interface CPFactory : NSObject
-//+(id<CPSolver>) createSolver;
-//+(id<CPSemSolver>) createSemSolver:(Class)ctrl;
 +(id<CPEngine>) engine: (id<ORTrail>) trail;
-//+(id<CPParSolver>) createParSolver:(int)nbt withController:(Class)ctrlClass;
-+(id<CPSolver>) createRandomizedSolver;
-+(id<CPSolver>) createDeterministicSolver;
-//+(id<CPSolver>) createSemSolverFor:(id<CPEngine>)fdm;
 +(void) shutdown;
-//+(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp;
-//+(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp;
 @end;
 
 void failNow();

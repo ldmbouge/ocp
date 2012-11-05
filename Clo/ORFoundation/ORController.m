@@ -39,6 +39,7 @@
 
 
 @implementation ORDefaultController
+
 - (id) initORDefaultController
 {
    self = [super init];
@@ -207,6 +208,13 @@
 @end
 
 @implementation ORDFSController
+{
+   NSCont**          _tab;
+   ORInt              _sz;
+   ORInt              _mx;
+   id<ORTracer>   _tracer;
+   ORInt          _atRoot;
+}
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
 {
    self = [super initORDefaultController];

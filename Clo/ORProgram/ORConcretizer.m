@@ -10,19 +10,19 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/CPFirstFail.h>
 #import <objcp/CPFactory.h>
+
 #import "ORConcretizer.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPPoster.h"
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/CPFirstFail.h>
-#import <ORProgram/CPDDeg.h>
-#import <ORProgram/CPWDeg.h>
-#import <ORProgram/CPIBS.h>
-#import <ORProgram/CPABS.h>
-
+#import "CPDDeg.h"
+#import "CPWDeg.h"
+#import "CPIBS.h"
+#import "CPABS.h"
 
 // PVH to factorize this
 
@@ -80,6 +80,7 @@
    else
       cpprogram = [CPSolverFactory semanticSolverDFS];
 
+   
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
    [concretizer release];

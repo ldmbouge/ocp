@@ -28,6 +28,6 @@
 -(void)neverStop;
 -(void)toggleGrid:(id)grid row:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv;
 -(void)drawRect:(NSRect)dirtyRect inView:(id)view;
--(void)watchSearch:(id<CPSolver>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
+//-(void)watchSearch:(id<CPSolver>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end
 

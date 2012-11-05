@@ -215,7 +215,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI**   _x;
    ORLong       _nb;
 }
--(id) initCPAllDifferenceVC: (id<CPSolver>) cp over: (id<CPIntVarArray>) x;
+-(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x;
 -(id) initCPAllDifferenceVC: (CPIntVarI**) x nb: (ORInt) n;
 -(id) initCPAllDifferenceVC: (id) x;
 -(void) dealloc;

@@ -20,6 +20,13 @@
 
 @interface CPCoreSolver : NSObject<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
+-(void) once: (ORClosure) cl;
+-(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
+-(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
+-(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
+-(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 @end
 
 // Pure DFS CPSolver

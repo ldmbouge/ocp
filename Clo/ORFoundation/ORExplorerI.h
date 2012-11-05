@@ -13,11 +13,6 @@
 #import <ORFoundation/cont.h>
 #import <ORFoundation/ORController.h>
 
-@protocol ORControllerFactory<NSObject>
--(id<ORSearchController>)makeRootController;
--(id<ORSearchController>)makeNestedController;
-@end
-
 @interface ORCoreExplorerI : NSObject
 
 -(ORCoreExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;

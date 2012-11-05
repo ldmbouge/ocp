@@ -71,7 +71,8 @@ int main(int argc, const char * argv[])
       }
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
+//      id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
+      id<CPHeuristic> h = [ORFactory createIBS:cp];
       
 
       [cp solve: ^{

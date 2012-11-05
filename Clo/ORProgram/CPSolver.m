@@ -9,18 +9,16 @@
  
  ***********************************************************************/
 
-#import "CPProgram.h"
-#import "CPSolver.h"
-// PVH: This needs to be cleaned up: No reason to have implementation files being included
-#import <ORFoundation/ORExplorerI.h>
+
+#import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <objcp/CPFactory.h>
-#import "objcp/CPConstraint.h"
+#import <objcp/CPConstraint.h>
+#import "CPProgram.h"
+#import "CPSolver.h"
 
 // TODO after that 18/10/2012
 
-//  8. Clean tous les warnings
-   // 8.a. Move the limit/repeat in core solver
 //  9. Clean the header files
 // 10. Clean Label and fill in
 // 11. Fill in all the constraints
@@ -114,11 +112,11 @@
 }
 -(id<ORSearchController>) makeRootController
 {
-   return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine]];
 }
 -(id<ORSearchController>) makeNestedController
 {
-   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine]];
 }
 @end
 
@@ -404,7 +402,39 @@
 {
    [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
 }
-
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
+{
+   [_search repeat: body onRepeat: onRepeat until: nil];
+}
+-(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
+{
+   [_search repeat: body onRepeat: onRepeat until: isDone];
+}
+-(void) once: (ORClosure) cl
+{
+   [_search once: cl];
+}
+-(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
+{
+   [_engine clearStatus];
+   [_search limitSolutions: maxSolutions in: cl];
+}
+-(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
+{
+   [_engine clearStatus];
+   [_search limitCondition: condition in:cl];
+}
+-(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
+{
+   [_engine clearStatus];
+   [_search limitDiscrepancies: maxDiscrepancies in: cl];
+}
+-(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
+{
+   [_engine clearStatus];
+   [_search limitFailures: maxFailures in: cl];
+   
+}
 @end
 
 /******************************************************************************************/
@@ -421,7 +451,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory explorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
@@ -489,39 +519,6 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
-{
-   [_search repeat: body onRepeat: onRepeat until: nil];
-}
--(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
-{
-   [_search repeat: body onRepeat: onRepeat until: isDone];
-}
--(void) once: (ORClosure) cl
-{
-   [_search once: cl];
-}
--(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
-{
-   [_engine clearStatus];
-   [_search limitSolutions: maxSolutions in: cl];
-}
--(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
-{
-   [_engine clearStatus];
-   [_search limitCondition: condition in:cl];
-}
--(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
-{
-   [_engine clearStatus];
-   [_search limitDiscrepancies: maxDiscrepancies in: cl];
-}
--(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
-{
-   [_engine clearStatus];
-   [_search limitFailures: maxFailures in: cl];
-   
-}
 @end
 
 /******************************************************************************************/
@@ -538,7 +535,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
@@ -552,7 +549,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: [ORSemDFSControllerCSP class]];
-   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
@@ -565,7 +562,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: ctrlClass];
-   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
