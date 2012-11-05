@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
-#import "ORProgram.h"
-#import "ORCPSolver.h"
+#import "CPProgram.h"
+#import "CPSolver.h"
 // PVH: This needs to be cleaned up: No reason to have implementation files being included
 #import <ORFoundation/ORExplorerI.h>
 #import <ORFoundation/ORSemDFSController.h>
@@ -22,7 +22,6 @@
 
 // TODO by PVH 13/10/2012
 
-// 4. Rename ORCPSolver into CPSolver --> Wait for LDM changes
 // 5. Clean les ORIntVar et les dereferences de objcp --> LDM is doing
 
 // TODO after that 18/10/2012
