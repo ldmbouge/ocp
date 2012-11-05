@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
 #import "CPBitDom.h"
-#import <objcp/CPSolver.h>
+#import <objcp/CPVar.h>
 
 @class CPIntVarI;
 @class CPEngine;

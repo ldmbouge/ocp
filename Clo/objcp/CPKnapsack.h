@@ -11,7 +11,7 @@
 
 #import "CPConstraintI.h"
 #import "CPBitDom.h"
-#import <objcp/CPSolver.h>
+#import <objcp/CPVar.h>
 
 @class CPIntVarI;
 @interface CPKnapsack : CPActiveConstraint<NSCoding> {

@@ -21,6 +21,12 @@
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 
+@protocol CPPortal <NSObject>
+-(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) failLabel;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
+@end
 
 @protocol CPCommonProgram <ORASolver>
 -(ORInt)         nbFailures;
@@ -81,7 +87,7 @@
 
 // CPSolver with semantic DFS Search
 // Initially empty but will add things here
-@protocol CPDFSSemanticProgram <CPCommonProgram>
+@protocol CPSemanticProgramDFS <CPCommonProgram>
 -(void)                once: (ORClosure) cl;
 -(void)      limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl;
 -(void)      limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;

@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPVar.h>
 
 @interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding>
 -(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;

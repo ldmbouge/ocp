@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <objcp/CPTypes.h>
 #import <objcp/CPConstraintI.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPVar.h>
 
 @interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;

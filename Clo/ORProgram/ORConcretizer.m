@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPFactory.h>
 #import "ORConcretizer.h"
-#import "ORCPSolver.h"
+#import "CPSolver.h"
 #import "ORCPConcretizer.h"
 #import "ORCPPoster.h"
 #import <ORModeling/ORModeling.h>
@@ -32,7 +32,7 @@
 // have a factory method named that way? 
 +(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
 {
-   return [[ORCPSemanticSolver alloc] initORCPSemanticSolver: ctrlClass];
+   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
 }
 +(id<CPHeuristic>)createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
@@ -82,9 +82,9 @@
 
    id<CPCommonProgram> cpprogram;
    if (!checkpointing)
-      cpprogram = [ORCPSolverFactory solver];
+      cpprogram = [CPSolverFactory solver];
    else
-      cpprogram = [ORCPSolverFactory checkpointingSolver];
+      cpprogram = [CPSolverFactory checkpointingSolver];
 
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
@@ -104,13 +104,13 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-//   return [ORCPSolverFactory solver];
+//   return [CPSolverFactory solver];
    return (id<CPProgram>) [ORFactory createCPProgram: model checkpointing:false];
 }
 
 +(id<CPCommonProgram>) createCPCheckpointingProgram: (id<ORModel>) model
 {
-//   return [ORCPSolverFactory checkpointingSolver];
+//   return [CPSolverFactory checkpointingSolver];
    return (id<CPProgram>) [ORFactory createCPProgram: model checkpointing:true];
 }
 
@@ -119,7 +119,7 @@
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    id<ORModel> flatModel = [flat apply: model];
    
-   id<CPSemanticProgram> cpprogram = [ORCPSolverFactory semanticSolver: ctrlClass];
+   id<CPSemanticProgram> cpprogram = [CPSolverFactory semanticSolver: ctrlClass];
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
