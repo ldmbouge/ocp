@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
       }
       [model minimize: m];
       
-     id<CPProgram> cp = [ORFactory createCPProgram: model];
+    id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPProgram> cp = [ORFactory createCPCheckpointingProgram: model];
 //      id<CPCommonProgram> cp = [ORFactory createCPProgram: model with: [ORSemDFSController class]];
 //      id<CPCommonProgram> cp = [ORFactory createCPProgram: model with: [ORSemBDSController class]];

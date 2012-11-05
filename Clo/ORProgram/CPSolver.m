@@ -9,17 +9,16 @@
  
  ***********************************************************************/
 
-#import "CPProgram.h"
-#import "CPSolver.h"
-// PVH: This needs to be cleaned up: No reason to have implementation files being included
-#import <ORFoundation/ORExplorerI.h>
+
+#import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <objcp/CPFactory.h>
-#import "objcp/CPConstraint.h"
+#import <objcp/CPConstraint.h>
+#import "CPProgram.h"
+#import "CPSolver.h"
 
 // TODO after that 18/10/2012
 
-//  8. Clean tous les warnings
 //  9. Clean the header files
 // 10. Clean Label and fill in
 // 11. Fill in all the constraints
@@ -113,11 +112,11 @@
 }
 -(id<ORSearchController>) makeRootController
 {
-   return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   return [[_ctrlClass alloc] initTheController: [_solver tracer] engine: [_solver engine]];
 }
 -(id<ORSearchController>) makeNestedController
 {
-   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
+   return [[_nestedClass alloc] initTheController: [_solver tracer] engine: [_solver engine]];
 }
 @end
 
@@ -452,7 +451,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory explorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
@@ -536,7 +535,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
-   _search = [[ORExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
@@ -550,7 +549,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: [ORSemDFSControllerCSP class]];
-   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }
@@ -563,7 +562,7 @@
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: ctrlClass];
-   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
+   _search = [ORExplorerFactory semanticExplorer: _engine withTracer: _tracer ctrlFactory: cFact];
    [cFact release];
    return self;
 }

@@ -9,13 +9,12 @@
  
  ***********************************************************************/
 
+
+#import <objcp/CPFactory.h>
+#import <objcp/CPConstraint.h>
 #import "CPProgram.h"
 #import "CPConcretizer.h"
 #import "CPPoster.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPSolver.h"
 
 @implementation ORCPPoster
 {

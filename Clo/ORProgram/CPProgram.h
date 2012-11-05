@@ -11,9 +11,8 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
-#import <objcp/CPData.h>
 #import <ORProgram/CPHeuristic.h>
-#import <objcp/CPSolver.h>
+#import <objcp/CPData.h>
 
 @protocol ORSearchController;
 @protocol CPEngine;

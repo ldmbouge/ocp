@@ -12,9 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORSolver.h>
-// PVH: This must go: the interface should be in modeling and/or foundations
-#import <objcp/CPSolver.h>
-
 
 @interface ORCPPoster  : NSObject<ORVisitor>
 -(ORCPPoster*) initORCPPoster: (id<CPCommonProgram>) solver;

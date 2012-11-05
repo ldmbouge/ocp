@@ -98,14 +98,7 @@
 -(BOOL) isFinitelyFailed;
 @end
 
-@interface ORDFSController : ORDefaultController <NSCopying,ORSearchController> {
-@private
-   NSCont**          _tab;
-   ORInt              _sz;
-   ORInt              _mx;
-   id<ORTracer>   _tracer;
-   ORInt          _atRoot;
-}
+@interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
 -(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine;
 -(void) dealloc;
 -(void) setup;
@@ -115,3 +108,7 @@
 -(void) fail;
 @end
 
+@protocol ORControllerFactory<NSObject>
+-(id<ORSearchController>) makeRootController;
+-(id<ORSearchController>) makeNestedController;
+@end
