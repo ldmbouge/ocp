@@ -489,15 +489,16 @@
 -(void) visitReifyLEqual: (id<ORReifyLEqual>) cstr
 {
    if ([cstr impl] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORIntVar> x = [cstr x];
-      id<ORIntVar> y = [cstr y];
-      ORAnnotation annotation = [cstr annotation];
-      [b visit: self];
-      [x visit: self];
-      [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] leq: [y impl] consistency: annotation];
-      [cstr setImpl: concreteCstr];
+      @throw [[ORExecutionError alloc] initORExecutionError: "reify leq not yet implemented"];
+//      id<ORIntVar> b = [cstr b];
+//      id<ORIntVar> x = [cstr x];
+//      id<ORIntVar> y = [cstr y];
+//      ORAnnotation annotation = [cstr annotation];
+//      [b visit: self];
+//      [x visit: self];
+//      [y visit: self];
+//      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] leq: [y impl] consistency: annotation];
+//      [cstr setImpl: concreteCstr];
    }
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>) cstr
@@ -515,15 +516,16 @@
 -(void) visitReifyGEqual: (id<ORReifyGEqual>) cstr
 {
    if ([cstr impl] == NULL) {
-      id<ORIntVar> b = [cstr b];
-      id<ORIntVar> x = [cstr x];
-      id<ORIntVar> y = [cstr y];
-      ORAnnotation annotation = [cstr annotation];
-      [b visit: self];
-      [x visit: self];
-      [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] geq: [y impl] consistency: annotation];
-      [cstr setImpl: concreteCstr];
+      @throw [[ORExecutionError alloc] initORExecutionError: "reify geq not yet implemented"];
+//      id<ORIntVar> b = [cstr b];
+//      id<ORIntVar> x = [cstr x];
+//      id<ORIntVar> y = [cstr y];
+//      ORAnnotation annotation = [cstr annotation];
+//      [b visit: self];
+//      [x visit: self];
+//      [y visit: self];
+//      id<CPConstraint> concreteCstr = [CPFactory reify: [b impl] with: [x impl] geq: [y impl] consistency: annotation];
+//      [cstr setImpl: concreteCstr];
    }
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr

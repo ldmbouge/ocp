@@ -16,8 +16,6 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <objcp/CPFactory.h>
 #import "objcp/CPConstraint.h"
-#import <objcp/CPSolver.h>
-#import <objcp/CPLabel.h>
 
 // TODO after that 18/10/2012
 
@@ -673,7 +671,7 @@
 {
    return [[CPSolver alloc] initCPSolver];
 }
-+(id<CPSemanticProgramDFS>) checkpointingSolver
++(id<CPSemanticProgramDFS>) semanticSolverDFS
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver];
 }

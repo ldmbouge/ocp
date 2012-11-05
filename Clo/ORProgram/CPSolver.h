@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/CPProgram.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */
@@ -34,7 +34,7 @@
 @end
 
 @interface CPSolverFactory : NSObject
-+(id<CPSemanticProgram>) initCPSolver;
-+(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
-+(id<CPSemanticProgram>) initCPSemanticSolver: (Class) ctrlClass;
++(id<CPSemanticProgram>) solver;
++(id<CPSemanticProgramDFS>) semanticSolverDFS;
++(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end

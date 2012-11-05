@@ -13,7 +13,7 @@
 #import <ORProgram/CPBaseHeuristic.h>
 #import <ORProgram/ORConcretizer.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/CPProgram.h>
 
 @class CPStatisticsMonitor;
 

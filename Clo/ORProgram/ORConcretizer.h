@@ -13,8 +13,6 @@
 #import "ORModeling.h"
 #import "CPSolver.h"
 
-
-// PVH: I need to move CPSolver in the ORProgram framework
 @interface ORFactory (Concretization)
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
 +(id<CPCommonProgram>) createCPCheckpointingProgram: (id<ORModel>) model;

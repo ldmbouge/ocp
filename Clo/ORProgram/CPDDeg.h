@@ -11,7 +11,7 @@
 
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/CPProgram.h>
 
 @interface CPDDeg : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>  _vars;

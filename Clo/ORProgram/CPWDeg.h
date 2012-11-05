@@ -11,7 +11,7 @@
 
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/CPProgram.h>
 
 @class CPEngineI;
 // pvh: heuristics should use the solver and it should make the informer available

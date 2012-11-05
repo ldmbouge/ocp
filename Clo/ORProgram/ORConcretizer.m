@@ -28,12 +28,6 @@
 
 @implementation ORFactory (Concretization)
 
-// [ldm] I don't understand. CPCommonProgram should be abstract. Why do we even
-// have a factory method named that way? 
-+(id<CPProgram>) createCPCommonProgram: (Class) ctrlClass
-{
-   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
-}
 +(id<CPHeuristic>)createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];

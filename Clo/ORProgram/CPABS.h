@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import <ORProgram/ORProgram.h>
+#import <ORProgram/CPProgram.h>
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
 
