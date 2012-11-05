@@ -18,23 +18,23 @@
 
 // This factorizes all the common stuff
 
-@interface ORCPCoreSolver : NSObject<CPCommonProgram>
--(ORCPCoreSolver*) initORCPCoreSolver;
+@interface CPCoreSolver : NSObject<CPCommonProgram>
+-(CPCoreSolver*) initCPCoreSolver;
 @end
 
 // Pure DFS CPSolver
-@interface ORCPSolver : ORCPCoreSolver<CPProgram>
--(id<CPProgram>) initORCPSolver;
+@interface CPSolver : CPCoreSolver<CPProgram>
+-(id<CPProgram>) initCPSolver;
 @end
 
 // SemanticPath CPSolver
-@interface ORCPSemanticSolver : ORCPCoreSolver<CPSemanticProgram>
--(id<CPDFSSemanticProgram>) initORCPSolverCheckpointing;
--(id<CPSemanticProgram>)   initORCPSemanticSolver: (Class) ctrlClass;
+@interface CPSemanticSolver : CPCoreSolver<CPSemanticProgram>
+-(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
+-(id<CPSemanticProgram>)   initCPSemanticSolver: (Class) ctrlClass;
 @end
 
-@interface ORCPSolverFactory : NSObject
-+(id<CPSemanticProgram>) initORCPSolver;
-+(id<CPDFSSemanticProgram>) initORCPSolverCheckpointing;
-+(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass;
+@interface CPSolverFactory : NSObject
++(id<CPSemanticProgram>) initCPSolver;
++(id<CPSemanticProgramDFS>) initCPSemanticSolverDFS;
++(id<CPSemanticProgram>) initCPSemanticSolver: (Class) ctrlClass;
 @end

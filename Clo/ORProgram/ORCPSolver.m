@@ -102,9 +102,9 @@
 @end
 
 @interface CPInformerPortalI : NSObject<CPPortal> {
-   ORCPCoreSolver*  _cp;
+   CPCoreSolver*  _cp;
 }
--(CPInformerPortalI*) initCPInformerPortalI: (ORCPCoreSolver*) cp;
+-(CPInformerPortalI*) initCPInformerPortalI: (CPCoreSolver*) cp;
 -(id<ORIdxIntInformer>) retLabel;
 -(id<ORIdxIntInformer>) failLabel;
 -(id<ORInformer>) propagateFail;
@@ -145,7 +145,7 @@
 /*                                 CoreSolver                                             */
 /******************************************************************************************/
 
-@implementation ORCPCoreSolver {
+@implementation CPCoreSolver {
 @protected
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
@@ -159,7 +159,7 @@
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
 }
--(ORCPCoreSolver*) initORCPCoreSolver
+-(CPCoreSolver*) initCPCoreSolver
 {
    self = [super init];
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
@@ -429,10 +429,10 @@
 /*                                   CPSolver                                             */
 /******************************************************************************************/
 
-@implementation ORCPSolver
--(id<CPProgram>) initORCPSolver
+@implementation CPSolver
+-(id<CPProgram>) initCPSolver
 {
-   self = [super initORCPCoreSolver];
+   self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _engine = [CPFactory engine: _trail];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
@@ -546,10 +546,10 @@
 /*                                   CPSemanticSolver                                     */
 /******************************************************************************************/
 
-@implementation ORCPSemanticSolver
--(id<CPSemanticProgram>) initORCPSemanticSolver
+@implementation CPSemanticSolver
+-(id<CPSemanticProgram>) initCPSemanticSolver
 {
-   self = [super initORCPCoreSolver];
+   self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _engine = [CPFactory engine: _trail];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
@@ -561,7 +561,7 @@
    return self;
 }
 
--(id<CPSemanticProgram>) initORCPSolverCheckpointing
+-(id<CPSemanticProgram>) initCPSemanticSolverDFS
 {
    self = [super init];
    _trail = [ORFactory trail];
@@ -574,9 +574,9 @@
    [cFact release];
    return self;
 }
--(id<CPSemanticProgram>) initORCPSemanticSolver: (Class) ctrlClass
+-(id<CPSemanticProgram>) initCPSemanticSolver: (Class) ctrlClass
 {
-   self = [super initORCPCoreSolver]; 
+   self = [super initCPCoreSolver]; 
    _trail = [ORFactory trail];
    _engine = [CPFactory engine: _trail];
    _tracer = [[SemTracer alloc] initSemTracer: _trail];
@@ -657,7 +657,7 @@
 
 
 @implementation CPInformerPortalI
--(CPInformerPortalI*) initCPInformerPortalI: (ORCPSolver*) cp
+-(CPInformerPortalI*) initCPInformerPortalI: (CPSolver*) cp
 {
    self = [super init];
    _cp = cp;
@@ -685,17 +685,17 @@
 }
 @end
 
-@implementation ORCPSolverFactory 
+@implementation CPSolverFactory 
 +(id<CPProgram>) solver
 {
-   return [[ORCPSolver alloc] initORCPSolver];
+   return [[CPSolver alloc] initCPSolver];
 }
-+(id<CPDFSSemanticProgram>) checkpointingSolver
++(id<CPSemanticProgramDFS>) checkpointingSolver
 {
-   return [[ORCPSemanticSolver alloc] initORCPSemanticSolver];
+   return [[CPSemanticSolver alloc] initCPSemanticSolver];
 }
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {
-   return [[ORCPSemanticSolver alloc] initORCPSemanticSolver: ctrlClass];
+   return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
 }
 @end
