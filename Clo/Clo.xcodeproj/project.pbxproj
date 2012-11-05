@@ -104,6 +104,7 @@
 		5B60E5F215AE9661002FF2B3 /* ORData.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5F115AE9661002FF2B3 /* ORData.m */; };
 		5B63C2D4156DB05E00C65B2A /* CPStatisticsMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B63C2D5156DB05E00C65B2A /* CPStatisticsMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */; };
+		5B6526D1164813BE0095A4D9 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B65615E15AD58F6002F344B /* CPKnapsack.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B65615C15AD58F6002F344B /* CPKnapsack.h */; };
 		5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B65615D15AD58F6002F344B /* CPKnapsack.m */; };
 		5B681181161F98FB00F4480F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
@@ -1026,6 +1027,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		5B6526CF164813B90095A4D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
 		};
 		5B68118F161F990700F4480F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3126,6 +3134,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B6526D1164813BE0095A4D9 /* ORProgram.framework in Frameworks */,
 				5BAD1180161E63950014EBCB /* ORModeling.framework in Frameworks */,
 				5BAD1181161E63950014EBCB /* ORUtilities.framework in Frameworks */,
 				B181E12615D746F300AB44DA /* ORFoundation.framework in Frameworks */,
@@ -5639,6 +5648,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5B6526D0164813B90095A4D9 /* PBXTargetDependency */,
 				5BAD117B161E638F0014EBCB /* PBXTargetDependency */,
 				5BAD117D161E638F0014EBCB /* PBXTargetDependency */,
 				5BAD117F161E638F0014EBCB /* PBXTargetDependency */,
@@ -6857,6 +6867,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B57E5F0161F415100DB249A /* PBXContainerItemProxy */;
+		};
+		5B6526D0164813B90095A4D9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B6526CF164813B90095A4D9 /* PBXContainerItemProxy */;
 		};
 		5B681190161F990700F4480F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
