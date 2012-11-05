@@ -362,7 +362,7 @@
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   id<CPIntVarArray> av = [h allIntVars];
+   id<ORIntVarArray> av = [h allIntVars];
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
@@ -372,7 +372,7 @@
       if (i == MAXINT)
          return;
       //NSLog(@"Chose variable: %d",i);
-      id<CPIntVar> x = av[i];
+      id<ORIntVar> x = av[i];
       id<ORSelect> valSelect = [ORFactory selectRandom: _engine
                                                  range:RANGE(_engine,[x min],[x max])
                                               suchThat:^bool(ORInt v)    { return [x member:v];}
@@ -382,9 +382,9 @@
          if (curVal == MAXINT)
             break;
          [self try:^{
-            [self labelImpl: x with: curVal];
+            [self label: x with: curVal];
          } or:^{
-            [self diffImpl: x with: curVal];
+            [self diff: x with: curVal];
          }];
       } while(![x bound]);
    } while (true);

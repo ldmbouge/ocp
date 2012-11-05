@@ -19,6 +19,16 @@
 @protocol ORIntArray;
 @protocol ORIntVarArray;
 
+enum ORRelationType {
+   ORRBad = 0,
+   ORREq  = 1,
+   ORRNEq = 2,
+   ORRLEq = 3,
+   ORRDisj = 4,
+   ORRConj = 5,
+   ORRImply = 6
+};
+
 id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r);
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
@@ -51,16 +61,6 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) imply:(id<ORExpr>)e;
 -(enum ORRelationType) type;
 @end
-
-enum ORRelationType {
-   ORRBad = 0,
-   ORREq  = 1,
-   ORRNEq = 2,
-   ORRLEq = 3,
-   ORRDisj = 4,
-   ORRConj = 5,
-   ORRImply = 6
-};
 
 @protocol ORRelation <ORExpr>
 -(enum ORRelationType) type;

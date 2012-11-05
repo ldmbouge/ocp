@@ -423,19 +423,19 @@
 
 
 @implementation CPSearchFactory 
-+(id<ORConstraint>) equalc: (id<CPIntVar>) x to:(int) c
++(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c
 {
-   id<ORConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
+   id<CPConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
    return o;
 }
-+(id<ORConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c
++(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c
 {
-   id<ORConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
+   id<CPConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
    return o;
 }
-+(id<ORConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c
++(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c
 {
-   id<ORConstraint> o = [[CPLEqualc alloc] initCPLEqualc:x and:c];
+   id<CPConstraint> o = [[CPLEqualc alloc] initCPLEqualc:x and:c];
    return o;
 }
 @end

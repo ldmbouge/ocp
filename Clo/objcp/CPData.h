@@ -18,7 +18,7 @@ typedef ORStatus(*UBType)(id,SEL,...);
 typedef void (^ConstraintCallback)(void);
 typedef void (^ConstraintIntCallBack)(ORInt);
 
-@protocol CPConstraint <ORConstraint>
+@protocol CPConstraint <ORConstraint,ORCommand>
 @end
 
 //@protocol CPRandomStream <ORRandomStream>

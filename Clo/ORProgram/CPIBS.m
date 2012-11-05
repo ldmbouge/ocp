@@ -176,10 +176,10 @@
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
-   ORCPConcretizer* cc = [[ORCPConcretizer alloc] initORCPConcretizer:cp];
-   [rvars visit:cc];
-   _rvars = [rvars impl];
-   [cc release];
+   //ORCPConcretizer* cc = [[ORCPConcretizer alloc] initORCPConcretizer:cp];
+   //[rvars visit:cc];
+   //_rvars = [rvars impl];
+   //[cc release];
    [cp addHeuristic:self];
    return self;
 }

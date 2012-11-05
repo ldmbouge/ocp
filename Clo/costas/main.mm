@@ -10,10 +10,12 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
+#import "ORFoundation/ORFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORConcretizer.h>
 
 class H {
    id<ORExpr> _h;
@@ -55,35 +57,33 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       int n = 10;
-      id<CPSolver> cp = [CPFactory createSolver];
-      id<ORIntRange> R = RANGE(cp,1,n);
-      id<ORIntRange> D = RANGE(cp,-n+1,n-1);
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(mdl,1,n);
+      id<ORIntRange> D = RANGE(mdl,-n+1,n-1);
           
-      id<ORIntVarArray> costas = [CPFactory intVarArray: cp range:R domain: R];         
-      id<ORIntVarMatrix>  diff = [CPFactory intVarMatrix:cp range:R : R domain:D];
-      id<CPHeuristic> h = [CPFactory createFF:cp];
-      
-      [cp add:[CPFactory alldifferent:costas]];
+      id<ORIntVarArray> costas = [ORFactory intVarArray: mdl range:R domain: R];
+      id<ORIntVarMatrix>  diff = [ORFactory intVarMatrix:mdl range:R : R domain:D];
+      [mdl add:[ORFactory alldifferent:costas]];
       for(ORUInt i=R.low;i<=R.up;i++) {
          for(ORUInt j=R.low;j<=R.up;j++) {
             if (i < j)
-               [cp add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
-            else [cp add:[CPFactory equalc:[diff at:i :j] to:0]];
+               [mdl add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
+            else [mdl add:[[diff at:i :j] eqi: 0]];
          }
       }
       for(ORInt i=1;i<=n-1;i++) {
-         id<ORIntVarArray> slice = ALL(ORIntVar, j, RANGE(cp,i+1,n), [diff at:i :j]);
-         [cp add:[CPFactory alldifferent:slice]];
+         id<ORIntVarArray> slice = All(mdl,ORIntVar, j, RANGE(mdl,i+1,n), [diff at:i :j]);
+         [mdl add:[ORFactory alldifferent:slice]];
       }
-      [cp add:[CPFactory less:[costas at:1] to:[costas at:n]]];
+      [mdl add:[[costas at:1] leq:[costas at:n]]];
       for(ORUInt i=R.low;i<=R.up;i++) {
          for(ORUInt j=i+1;j<=R.up;j++) {
-            [cp add:[CPFactory notEqualc:[diff at:i :j] to:0]];
+            [mdl add:[[diff at:i :j] neqi:0]];
          }
       }
       for (ORInt k=3; k<=n; k++) {
          for (ORInt l=k+1; l<=n; l++) {
-            [cp add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
+            [mdl add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
              H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
          }
       }
@@ -92,14 +92,17 @@ int main(int argc, const char * argv[])
       //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
       //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
 
+      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      id<CPHeuristic> h = [ORFactory createFF:cp];
+      
       [cp solve: ^{
           NSLog(@"Search");
-         [CPLabel heuristic:h];
+         [cp labelHeuristic:h];
          NSLog(@"Solution: %@",costas);
          NSLog(@"Solver: %@",cp);
       }];
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }
