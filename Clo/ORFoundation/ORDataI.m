@@ -386,6 +386,10 @@ static ORInt _deterministic;
       for(ORInt i = 0; i < _nb; i++)
          printf("_nextSupport[%d,%d]=%d\n",j,i,_nextSupport[j][i]);
 }
+-(void) visit:(id<ORVisitor>)visitor
+{
+   [visitor visitTable:self];
+}
 
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {

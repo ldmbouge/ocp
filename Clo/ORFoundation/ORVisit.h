@@ -31,6 +31,7 @@
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
+-(void) visitTable:(id<ORTable>) v;
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f;

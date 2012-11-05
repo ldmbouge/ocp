@@ -9,18 +9,16 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORConcretizer.h>
+#import <objcp/CPLabel.h>
 
 int main(int argc, const char * argv[])
 {
 
    @autoreleasepool {
-
       id<ORModel> model = [ORFactory createModel];
       ORLong startTime = [ORRuntimeMonitor cputime];
       ORInt n = 14;
@@ -56,12 +54,11 @@ int main(int argc, const char * argv[])
                                         low: c
                                          up: c]];
       
-      id<CPSolver> cp = [CPFactory createSolver];
-      [cp addModel: model];
-         
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      
       [cp solve: ^{
-          [CPLabel array: allgames orderedBy: ^ORInt(ORInt i) { return [[allgames at:i] domsize];}];
-          [CPLabel array: allteams orderedBy: ^ORInt(ORInt i) { return [[allteams at:i] domsize];}];
+          [cp labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [[allgames at:i] domsize];}];
+          [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [[allteams at:i] domsize];}];
           ORLong endTime = [ORRuntimeMonitor cputime];
           printf("Solution \n");
           for(ORInt p = 1; p <= n/2; p++) {
@@ -75,9 +72,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];
-      [CPFactory shutdown];
-      return 0;
-
+      [ORFactory shutdown];
     }
     return 0;
 }

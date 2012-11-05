@@ -47,7 +47,7 @@
 		<key>ORProgram.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>36</integer>
+			<integer>37</integer>
 		</dict>
 		<key>ORUtilities.xcscheme</key>
 		<dict>
@@ -262,7 +262,7 @@
 		<key>queensNaive.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>34</integer>
+			<integer>35</integer>
 		</dict>
 		<key>queensNaive.xcscheme_^#shared#^_</key>
 		<dict>
@@ -287,7 +287,7 @@
 		<key>sportModel.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>48</integer>
+			<integer>38</integer>
 		</dict>
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
@@ -302,7 +302,7 @@
 		<key>testPacking.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>35</integer>
+			<integer>36</integer>
 		</dict>
 		<key>tests.xcscheme</key>
 		<dict>

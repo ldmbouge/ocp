@@ -66,6 +66,10 @@
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
 }
+-(void) visitTable:(id<ORTable>) v
+{
+}
+
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    [_engine add: [cstr impl]];
