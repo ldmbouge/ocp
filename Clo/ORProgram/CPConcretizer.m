@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORProgram.h"
+#import "CPProgram.h"
 #import "CPConcretizer.h"
-#import "ORCPConcretizer.h"
+#import "CPConcretizer.h"
 #import "objcp/CPFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPSolver.h"

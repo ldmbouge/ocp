@@ -14,7 +14,7 @@
 #import <objcp/CPEngine.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
-#import "ORCPConcretizer.h"
+#import "CPConcretizer.h"
 
 @interface CPKillRange : NSObject {
 @package

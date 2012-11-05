@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import "ORModeling.h"
-#import "ORCPSolver.h"
+#import "CPSolver.h"
 
 
 // PVH: I need to move CPSolver in the ORProgram framework

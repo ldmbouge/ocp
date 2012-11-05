@@ -13,8 +13,8 @@
 #import <objcp/CPFactory.h>
 #import "ORConcretizer.h"
 #import "CPSolver.h"
-#import "ORCPConcretizer.h"
-#import "ORCPPoster.h"
+#import "CPConcretizer.h"
+#import "CPPoster.h"
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/CPFirstFail.h>
