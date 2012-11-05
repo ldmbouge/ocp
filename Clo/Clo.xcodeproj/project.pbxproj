@@ -374,8 +374,6 @@
 		5B9EE56615175D4F00619B47 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5B9EE56715175D4F00619B47 /* CPIntVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = B17ABE9013CC852C00DC7288 /* CPIntVarI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B9EE56815175D4F00619B47 /* CPIntVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17ABE9113CC852C00DC7288 /* CPIntVarI.m */; };
-		5B9EE56915175D4F00619B47 /* CPLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D3BCD615048D2A0036AB23 /* CPLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE56A15175D4F00619B47 /* CPLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D3BCD715048D2B0036AB23 /* CPLabel.m */; };
 		5B9EE56D15175D4F00619B47 /* CPObjectQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE56E15175D4F00619B47 /* CPObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B40C21014F80A7D0041D162 /* CPObjectQueue.m */; };
 		5B9EE56F15175D4F00619B47 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -690,8 +688,6 @@
 		B1CC833315D3BEEF008DE335 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1CC833415D3BEF8008DE335 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1CC833515D3BEFC008DE335 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B1D3BCD815048D2B0036AB23 /* CPLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D3BCD615048D2A0036AB23 /* CPLabel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1D3BCD915048D2B0036AB23 /* CPLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D3BCD715048D2B0036AB23 /* CPLabel.m */; };
 		B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */; };
 		B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
 		B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
@@ -2752,8 +2748,6 @@
 		B1CC832415D3BEC4008DE335 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
 		B1CC832815D3BEC4008DE335 /* model.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = model.1; sourceTree = "<group>"; };
-		B1D3BCD615048D2A0036AB23 /* CPLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPLabel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B1D3BCD715048D2B0036AB23 /* CPLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPLabel.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OREngine.h; path = ORFoundation/OREngine.h; sourceTree = "<group>"; };
@@ -3953,8 +3947,6 @@
 				B17ABE9113CC852C00DC7288 /* CPIntVarI.m */,
 				5B65615C15AD58F6002F344B /* CPKnapsack.h */,
 				5B65615D15AD58F6002F344B /* CPKnapsack.m */,
-				B1D3BCD615048D2A0036AB23 /* CPLabel.h */,
-				B1D3BCD715048D2B0036AB23 /* CPLabel.m */,
 				5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */,
 				5B94406D1631AEB9006528DE /* CPVar.h */,
 				5BEAD77E15ABBAFC00A012FE /* CPLexConstraint.m */,
@@ -4755,7 +4747,6 @@
 				5BB3835C13B3B624005B7D52 /* CPEquationBC.h in Headers */,
 				B103536413BCFF2400627058 /* CPCreateI.h in Headers */,
 				B169F9C814EF87D500B2F3A6 /* CPConstraint.h in Headers */,
-				B1D3BCD815048D2B0036AB23 /* CPLabel.h in Headers */,
 				5B40C21114F80A7D0041D162 /* CPObjectQueue.h in Headers */,
 				5B73E55D151F45F60043192D /* NSBoardController.h in Headers */,
 				5B729C41153F79A4001BE95A /* CPWatch.h in Headers */,
@@ -4793,7 +4784,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B9EE56315175D4F00619B47 /* CPFactory.h in Headers */,
-				5B9EE56915175D4F00619B47 /* CPLabel.h in Headers */,
 				5B9EE57315175D4F00619B47 /* CPEngine.h in Headers */,
 				5B9EE57C15175D4F00619B47 /* ORTypes.h in Headers */,
 				5B9EE57915175D4F00619B47 /* ORTrail.h in Headers */,
@@ -6331,7 +6321,6 @@
 				B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */,
 				B169F9C914EF87D500B2F3A6 /* CPConstraint.m in Sources */,
 				5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */,
-				B1D3BCD915048D2B0036AB23 /* CPLabel.m in Sources */,
 				5B8E16C31505BB5700D3C698 /* CPParallel.m in Sources */,
 				5B73E55E151F45F60043192D /* NSBoardController.m in Sources */,
 				5B729C42153F79A4001BE95A /* CPWatch.m in Sources */,
@@ -6426,7 +6415,6 @@
 				5B9EE56415175D4F00619B47 /* CPFactory.m in Sources */,
 				5B9EE56615175D4F00619B47 /* ORFactoryI.m in Sources */,
 				5B9EE56815175D4F00619B47 /* CPIntVarI.m in Sources */,
-				5B9EE56A15175D4F00619B47 /* CPLabel.m in Sources */,
 				5B9EE56E15175D4F00619B47 /* CPObjectQueue.m in Sources */,
 				5B9EE57015175D4F00619B47 /* CPParallel.m in Sources */,
 				5B9EE57B15175D4F00619B47 /* CPTrigger.m in Sources */,
