@@ -60,6 +60,17 @@
 -(void)visit:(id<ORVisitor>)v;
 @end
 
+@interface ORBindingArrayI : NSObject
+-(ORBindingArrayI*) initORBindingArray: (ORInt) nb;
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(ORInt) nb;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id) dereference;
+@end
+
+
 @interface ORIntMatrixI : NSObject<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;

@@ -16,19 +16,12 @@
 #import "CPProgram.h"
 #import "CPSolver.h"
 
-@interface CPHeuristicSet : NSObject {
+@implementation CPHeuristicSet
+{
    id<CPHeuristic>*  _tab;
    ORUInt            _sz;
    ORUInt            _mx;
 }
--(CPHeuristicSet*) initCPHeuristicSet;
--(void)push: (id<CPHeuristic>) h;
--(id<CPHeuristic>) pop;
--(void) reset;
--(void)applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
-@end
-
-@implementation CPHeuristicSet
 -(CPHeuristicSet*) initCPHeuristicSet
 {
    self = [super init];
@@ -68,15 +61,6 @@
 }
 @end
 
-@interface CPInformerPortalI : NSObject<CPPortal> {
-   CPCoreSolver*  _cp;
-}
--(CPInformerPortalI*) initCPInformerPortalI: (CPCoreSolver*) cp;
--(id<ORIdxIntInformer>) retLabel;
--(id<ORIdxIntInformer>) failLabel;
--(id<ORInformer>) propagateFail;
--(id<ORInformer>) propagateDone;
-@end
 
 @interface ORControllerFactoryI : NSObject<ORControllerFactory> {
    id<CPCommonProgram> _solver;
@@ -131,7 +115,7 @@
    self = [super init];
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
-   _portal = [[CPInformerPortalI alloc] initCPInformerPortalI: self];
+   _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    return self;
 }
@@ -426,6 +410,23 @@
    [_search limitFailures: maxFailures in: cl];
    
 }
+
+//- (void) encodeWithCoder:(NSCoder *)aCoder
+//{
+//   // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
+//   // The decoding recreates the pool.
+//   [aCoder encodeObject:_engine];
+//   [aCoder encodeObject:_trail];
+//}
+//- (id) initWithCoder:(NSCoder *)aDecoder;
+//{
+//   self = [super init];
+//   _engine = [[aDecoder decodeObject] retain];
+//   _trail  = [[aDecoder decodeObject] retain];
+//   _pool = [[NSAutoreleasePool alloc] init];
+//   return self;
+//}
+
 @end
 
 /******************************************************************************************/
@@ -462,7 +463,7 @@
    if (status == ORFailure)
       [_search fail];
 }
--(void) add: (id<ORConstraint>) c consistency:(ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c consistency: (ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
@@ -623,11 +624,45 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
+//- (void) encodeWithCoder:(NSCoder *)aCoder
+//{
+//   [super encodeWithCoder:aCoder];
+//}
+//- (id) initWithCoder:(NSCoder *)aDecoder;
+//{
+//   self = [super initWithCoder:aDecoder];
+//   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+//   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
+//                                                        rootControllerClass:[ORSemDFSControllerCSP class]
+//                                                      nestedControllerClass:[ORSemDFSController class]];
+//   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
+//   [cFact release];
+//   return self;
+//}
+//-(ORStatus)installCheckpoint:(id<ORCheckpoint>)cp
+//{
+//   return [_tracer restoreCheckpoint:cp inSolver:_engine];
+//}
+//-(ORStatus)installProblem:(id<ORProblem>)problem
+//{
+//   return [_tracer restoreProblem:problem inSolver:_engine];
+//}
+//-(id<ORCheckpoint>)captureCheckpoint
+//{
+//   return [_tracer captureCheckpoint];
+//}
+//-(NSData*)packCheckpoint:(id<ORCheckpoint>)cp
+//{
+//   id<ORCheckpoint> theCP = [_tracer captureCheckpoint];
+//   NSData* thePack = [theCP packFromSolver:_engine];
+//   [theCP release];
+//   return thePack;
+//}
 @end
 
 
-@implementation CPInformerPortalI
--(CPInformerPortalI*) initCPInformerPortalI: (CPSolver*) cp
+@implementation CPInformerPortal
+-(CPInformerPortal*) initCPInformerPortal: (CPSolver*) cp
 {
    self = [super init];
    _cp = cp;
@@ -668,6 +703,10 @@
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
 }
++(id<CPProgram>) multiStartSolver: (ORInt) k
+{
+   return [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
+}
 @end
 
 @implementation CPUtilities
@@ -685,3 +724,24 @@
    return M;
 }
 @end
+
+//@implementation NSThread (ORData)
+//
+//static pthread_key_t threadIDKey;
+//static pthread_once_t block = PTHREAD_ONCE_INIT;
+//
+//static void init_pthreads_key()
+//{
+//   pthread_key_create(&threadIDKey,NULL);
+//}
+//+(void)setThreadID:(ORInt)tid
+//{
+//   pthread_once(&block,init_pthreads_key);
+//   pthread_setspecific(threadIDKey,(void*)tid);
+//}
+//+(ORInt)threadID
+//{
+//   ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
+//   return tid;
+//}
+//@end
