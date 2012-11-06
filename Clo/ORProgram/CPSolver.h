@@ -16,6 +16,15 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
+@interface CPHeuristicSet : NSObject
+-(CPHeuristicSet*) initCPHeuristicSet;
+-(void) push: (id<CPHeuristic>) h;
+-(id<CPHeuristic>) pop;
+-(void) reset;
+-(void) applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
+@end
+
+
 // This factorizes all the common stuff
 
 @interface CPCoreSolver : NSObject<CPCommonProgram>
@@ -46,6 +55,21 @@
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end
 
+// MultiStart DFS CPSolver
+@interface CPMultiStartSolver : NSObject<CPProgram>
+-(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
+@end
+
 @interface CPUtilities : NSObject
 +(ORInt) maxBound: (id<ORIntVarArray>) x;
 @end;
+
+@interface CPInformerPortal : NSObject<CPPortal> {
+   CPCoreSolver*  _cp;
+}
+-(CPInformerPortal*) initCPInformerPortal: (CPCoreSolver*) cp;
+-(id<ORIdxIntInformer>) retLabel;
+-(id<ORIdxIntInformer>) failLabel;
+-(id<ORInformer>) propagateFail;
+-(id<ORInformer>) propagateDone;
+@end

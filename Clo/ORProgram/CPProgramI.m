@@ -275,21 +275,6 @@
 //{
 //   [_search solveModel: self using: ^{}];
 //}
-//- (void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//   // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
-//   // The decoding recreates the pool.
-//   [aCoder encodeObject:_engine];
-//   [aCoder encodeObject:_trail];
-//}
-//- (id) initWithCoder:(NSCoder *)aDecoder;
-//{
-//   self = [super init];
-//   _engine = [[aDecoder decodeObject] retain];
-//   _trail  = [[aDecoder decodeObject] retain];
-//   _pool = [[NSAutoreleasePool alloc] init];
-//   return self;
-//}
 //-(void) close
 //{
 //   if (!_closed) {
@@ -583,40 +568,6 @@
 //   [_tracer addCommand:[[CPDiffc alloc] initCPDiffc:var and:val]];
 //   [ORConcurrency pumpEvents];
 //}
-//- (void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//   [super encodeWithCoder:aCoder];
-//}
-//- (id) initWithCoder:(NSCoder *)aDecoder;
-//{
-//   self = [super initWithCoder:aDecoder];
-//   _tracer = [[SemTracer alloc] initSemTracer: _trail];
-//   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-//                                                        rootControllerClass:[ORSemDFSControllerCSP class]
-//                                                      nestedControllerClass:[ORSemDFSController class]];
-//   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
-//   [cFact release];
-//   return self;
-//}
-//-(ORStatus)installCheckpoint:(id<ORCheckpoint>)cp
-//{
-//   return [_tracer restoreCheckpoint:cp inSolver:_engine];
-//}
-//-(ORStatus)installProblem:(id<ORProblem>)problem
-//{
-//   return [_tracer restoreProblem:problem inSolver:_engine];
-//}
-//-(id<ORCheckpoint>)captureCheckpoint
-//{
-//   return [_tracer captureCheckpoint];
-//}
-//-(NSData*)packCheckpoint:(id<ORCheckpoint>)cp
-//{
-//   id<ORCheckpoint> theCP = [_tracer captureCheckpoint];
-//   NSData* thePack = [theCP packFromSolver:_engine];
-//   [theCP release];
-//   return thePack;
-//}
 //@end
 //
 //// *********************************************************************************************************
@@ -642,26 +593,6 @@
 //}
 //@end
 //
-//@implementation NSThread (ORData)
-//
-//static pthread_key_t threadIDKey;
-//static pthread_once_t block = PTHREAD_ONCE_INIT;
-//
-//static void init_pthreads_key()
-//{
-//   pthread_key_create(&threadIDKey,NULL);
-//}
-//+(void)setThreadID:(ORInt)tid
-//{
-//   pthread_once(&block,init_pthreads_key);
-//   pthread_setspecific(threadIDKey,(void*)tid);
-//}
-//+(ORInt)threadID
-//{
-//   ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
-//   return tid;
-//}
-//@end
 //
 //@implementation CPInformerPortal
 //-(CPInformerPortal*) initCPInformerPortal: (id<CPSolver>) cp

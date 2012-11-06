@@ -649,6 +649,7 @@
 		B1A453E715E594C800A6171E /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A453E515E594C800A6171E /* CPConcretizer.m */; };
 		B1A8E4E1162A15F300F26748 /* CPPoster.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A8E4DF162A15F300F26748 /* CPPoster.h */; };
 		B1A8E4E2162A15F300F26748 /* CPPoster.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A8E4E0162A15F300F26748 /* CPPoster.m */; };
+		B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
 		B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; };
 		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		B1B68C76159FC16E008BC463 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -668,7 +669,6 @@
 		B1C4F411161F874C0010A5C8 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		B1C4F412161F87500010A5C8 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1C4F413161F87550010A5C8 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B1C4F446161F9CBB0010A5C8 /* CPProgramI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C4F444161F9CBA0010A5C8 /* CPProgramI.h */; };
 		B1C4F447161F9CBB0010A5C8 /* CPProgramI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */; };
 		B1C4F44A161FA0770010A5C8 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		B1C9DF1515A8045C00EE924C /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
@@ -2709,6 +2709,7 @@
 		B1A453E515E594C800A6171E /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConcretizer.m; sourceTree = "<group>"; };
 		B1A8E4DF162A15F300F26748 /* CPPoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPoster.h; sourceTree = "<group>"; };
 		B1A8E4E0162A15F300F26748 /* CPPoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPoster.m; sourceTree = "<group>"; };
+		B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPMultiStartSolver.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPAssignmentI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPAssignmentI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1B68C74159FC16E008BC463 /* TestAssignment */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAssignment; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2726,7 +2727,6 @@
 		B1C4F403161F87070010A5C8 /* queensModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensModel.1; sourceTree = "<group>"; };
 		B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParCPConcretizer.h; sourceTree = "<group>"; };
 		B1C4F415161F8BF20010A5C8 /* ORParCPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORParCPConcretizer.m; sourceTree = "<group>"; };
-		B1C4F444161F9CBA0010A5C8 /* CPProgramI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPProgramI.h; sourceTree = "<group>"; };
 		B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPProgramI.m; sourceTree = "<group>"; };
 		B1C8C5F414BEBE1C000C5486 /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1C8C5F514BEBE1C000C5486 /* CPFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -3452,7 +3452,7 @@
 				5B681189161F98FB00F4480F /* CPProgram.h */,
 				B17832FE161F636A00C7298D /* CPSolver.h */,
 				B17832FF161F636A00C7298D /* CPSolver.m */,
-				B1C4F444161F9CBA0010A5C8 /* CPProgramI.h */,
+				B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */,
 				B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
@@ -4717,7 +4717,6 @@
 				5B68119D161F99C700F4480F /* ORConcretizer.h in Headers */,
 				5B68119F161F99C700F4480F /* CPSolver.h in Headers */,
 				5B6811A1161F99C700F4480F /* ORParCPConcretizer.h in Headers */,
-				B1C4F446161F9CBB0010A5C8 /* CPProgramI.h in Headers */,
 				B1A8E4E1162A15F300F26748 /* CPPoster.h in Headers */,
 				5B94406C16319096006528DE /* CPProgram.h in Headers */,
 				5B846926163856B300F4D749 /* CPDDeg.h in Headers */,
@@ -6231,6 +6230,7 @@
 				5B84692E163856BF00F4D749 /* CPWDeg.m in Sources */,
 				5B84692F163856BF00F4D749 /* CPABS.m in Sources */,
 				5B8469321638583800F4D749 /* CPBaseHeuristic.m in Sources */,
+				B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
