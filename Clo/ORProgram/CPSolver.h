@@ -41,7 +41,7 @@
 @end
 
 @interface CPSolverFactory : NSObject
-+(id<CPSemanticProgram>) solver;
++(id<CPProgram>) solver;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
 @end

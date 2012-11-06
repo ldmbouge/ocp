@@ -9,24 +9,12 @@
  
  ***********************************************************************/
 
-
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import "CPProgram.h"
 #import "CPSolver.h"
-
-// TODO after that 18/10/2012
-
-// 10. Clean Label and fill in
-// 11. Fill in all the constraints
-// 12. Clean the examples files
-// 13. Clean the explorerI.h file in an import somewhere
-// 14. Deal with the annotations; probably need a default annotation in each constraint
-
-// PVH: Also need to remove methods that are now in the model
-
 
 @interface CPHeuristicSet : NSObject {
    id<CPHeuristic>*  _tab;

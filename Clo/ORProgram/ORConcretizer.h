@@ -15,8 +15,8 @@
 
 @interface ORFactory (Concretization)
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
-+(id<CPCommonProgram>) createCPCheckpointingProgram: (id<ORModel>) model;
-+(id<CPSemanticProgram>) createCPProgram: (id<ORModel>) model with: (Class) ctrlClass;
++(id<CPSemanticProgramDFS>) createCPSemanticProgramDFS: (id<ORModel>) model;
++(id<CPSemanticProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 
 +(id<CPHeuristic>) createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
 +(id<CPHeuristic>) createWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
