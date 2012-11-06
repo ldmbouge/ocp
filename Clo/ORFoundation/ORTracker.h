@@ -15,4 +15,5 @@
 @protocol ORTracker <NSObject>
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
+-(void) trackConstraint: (id) obj;
 @end

@@ -276,6 +276,10 @@
 {
    [_engine trackObject:object];  
 }
+-(void) trackConstraint: (id) obj
+{
+   [_engine trackConstraint:obj];
+}
 -(void) add: (id<ORConstraint>) c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];   

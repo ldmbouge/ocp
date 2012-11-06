@@ -130,13 +130,16 @@
 {
    [_oStore addObject:obj];
 }
-
 -(void) trackVariable: (id) var;
 {
    [var setId: (ORUInt) [_vars count]];
    [_vars addObject:var];
+   [_oStore addObject:var];
 }
-
+-(void) trackConstraint:(id)obj
+{
+   [_oStore addObject:obj];
+}
 -(void) instantiate: (id<ORSolver>) solver
 {
    NSLog(@"I start instantiating this model...");
