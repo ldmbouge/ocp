@@ -724,3 +724,59 @@
 
 @end
 
+
+// ------------------------------------------------------------------------------------------
+
+@implementation ORBindingArrayI
+{
+   id*              _array;
+   ORInt            _nb;
+}
+-(ORBindingArrayI*) initORBindingArray: (ORInt) nb
+{
+   self = [super init];
+   _nb = nb;
+   _array = malloc(_nb * sizeof(id));
+   memset(_array,0,sizeof(id)*_nb);
+   return self;
+}
+-(void) dealloc
+{
+   free(_array);
+   [super dealloc];
+}
+-(id) at: (ORInt) value
+{
+   if (value < 0|| value >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORBindingArray"];
+   return _array[value];
+}
+-(void) set: (id) x at: (ORInt) value
+{
+   if (value < 0 || value >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
+   _array[value] = x;
+}
+-(ORInt) nb
+{
+   return _nb;
+}
+-(id) objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORBindingArray"];
+   return _array[key];
+}
+-(void) setObject: (id) newValue atIndexedSubscript: (NSUInteger) key
+{
+   if (key >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
+   _array[key] = newValue;
+}
+-(id) dereference
+{
+   ORInt k = 0;
+   return [_array[k] dereference];
+}
+@end
+

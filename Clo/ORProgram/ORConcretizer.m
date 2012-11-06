@@ -105,8 +105,15 @@
 {
    id<CPSemanticProgram> cpprogram = [CPSolverFactory semanticSolver: ctrlClass];
    [ORFactory createCPProgram: model program: cpprogram];
-    return cpprogram;
+   return cpprogram;
 }
 
++(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
+{
+   CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
+   id<CPProgram> cp = [cpprogram at: 0];
+   [ORFactory createCPProgram: model program: cp];
+   return cpprogram;
+}
 @end
 

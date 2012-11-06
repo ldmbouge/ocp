@@ -699,6 +699,10 @@
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
 }
++(id<CPProgram>) multiStartSolver: (ORInt) k
+{
+   return [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
+}
 @end
 
 @implementation CPUtilities

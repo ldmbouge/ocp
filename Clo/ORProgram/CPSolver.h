@@ -53,11 +53,14 @@
 +(id<CPProgram>) solver;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
+
++(id<CPProgram>) multiStartSolver: (ORInt) k;
 @end
 
 // MultiStart DFS CPSolver
 @interface CPMultiStartSolver : NSObject<CPProgram>
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
+-(id<CPProgram>) at: (ORInt) i;
 @end
 
 @interface CPUtilities : NSObject

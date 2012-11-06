@@ -40,11 +40,19 @@
       [_solver[i] release];
    [super dealloc];
 }
+-(id<CPProgram>) at: (ORInt) i
+{
+   if (i >= 0 && i < _nb)
+      return _solver[i];
+   else
+      return 0;
+}
 -(id<CPPortal>) portal
 {
    ORInt k = 0;
    return [_solver[k] portal];
 }
+
 -(ORInt) nbFailures
 {
    ORInt k = 0;

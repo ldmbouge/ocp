@@ -57,6 +57,15 @@
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
 @end
 
+@protocol ORBindingArray <NSObject>
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(id) objectAtIndexedSubscript:(NSUInteger)key;
+-(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) nb;
+-(id) dereference;
+@end
+
 @protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;
 -(id) at: (ORInt) i1 : (ORInt) i2;
