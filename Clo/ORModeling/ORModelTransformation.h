@@ -11,8 +11,9 @@
 #import "ORModelI.h"
 
 @protocol ORModel;
+@protocol ORINCModel;
 
 @protocol ORModelTransformation <NSObject>
--(id<ORModel>)apply:(id<ORModel>)m;
+-(void)apply:(id<ORModel>)m into:(id<ORINCModel>)target;
 @end
 

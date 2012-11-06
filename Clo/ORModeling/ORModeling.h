@@ -32,6 +32,13 @@
 -(NSArray*) constraints;
 @end
 
+@protocol ORINCModel<ORTracker>
+-(void)addVariable:(id<ORVar>)var;
+-(void)addObject:(id)object;
+-(void)addConstraint:(id<ORConstraint>)cstr;
+-(void)minimize:(id<ORIntVar>)x;
+-(void)maximize:(id<ORIntVar>)x;
+@end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;

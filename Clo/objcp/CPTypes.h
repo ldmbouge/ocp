@@ -16,7 +16,4 @@
 
 @protocol CPSolver;
 
-typedef void (^CPVirtualClosure)(id<CPSolver>);
-
-
 #endif

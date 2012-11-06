@@ -15,6 +15,7 @@
 #import <ORProgram/CPFirstFail.h>
 #import <objcp/CPFactory.h>
 
+#import "ORFlatten.h"
 #import "ORConcretizer.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
@@ -71,8 +72,11 @@
 
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORINCModel> batch  = [[ORBatchModel alloc] init:flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
-   id<ORModel> flatModel = [flat apply: model];
+   [flat apply: model into:batch];
+   [batch release];
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];

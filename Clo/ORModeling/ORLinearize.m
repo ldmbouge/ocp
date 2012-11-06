@@ -10,7 +10,7 @@
 #import "ORModelI.h"
 
 @interface ORLinearizeConstraint : NSObject<ORVisitor>
--(id)init:(ORModelI*)m;
+-(id)init:(id<ORINCModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
 -(ORRange) unionOfVarArrayRanges: (id<ORIntVarArray>)arr;
@@ -43,30 +43,28 @@
     return self;
 }
 
--(id<ORModel>)apply:(id<ORModel>)m
+-(void)apply:(id<ORModel>)m into:(id<ORINCModel>)batch
 {
-    ORModelI* out = [ORFactory createModel];
     [m applyOnVar:^(id<ORVar> x) {
-        [out captureVariable: x];
+        [batch addVariable: x];
     } onObjects:^(id<ORObject> x) {
         NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
-        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: out];
+        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: batch];
         [c visit: lc];
         [lc release];
     } onObjective:^(id<ORObjective> o) {
         NSLog(@"Got an objective: %@",o);
     }];
-    return out;
 }
 
 @end
 
 @implementation ORLinearizeConstraint {
-    ORModelI* _model;
-    NSMapTable* _binMap;
+    id<ORINCModel>  _model;
+    NSMapTable*   _binMap;
 }
--(id)init:(ORModelI*)m;
+-(id)init:(id<ORINCModel>)m;
 {
     if((self = [super init]) != nil) {
         _model = m;
@@ -106,7 +104,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: d];
                                    }];
-        [_model add: [ORFactory expr: sumExpr equal: [ORFactory integer: _model value: 1]]];
+        [_model addConstraint: [ORFactory expr: sumExpr equal: [ORFactory integer: _model value: 1]]];
     }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
@@ -123,7 +121,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: u];
                                    }];
-        [_model add: [ORFactory expr: sumExpr leq: [ORFactory integer: _model value: [upArr at: u]]]];
+        [_model addConstraint: [ORFactory expr: sumExpr leq: [ORFactory integer: _model value: [upArr at: u]]]];
     }
     
     // Constrain lower bounds
@@ -138,7 +136,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: l];
                                    }];
-        [_model add: [ORFactory expr: sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
+        [_model addConstraint: [ORFactory expr: sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
     }
 }
 -(void) visitPacking: (id<ORPacking>) cstr
@@ -157,7 +155,7 @@
                                        id<ORInteger> size = [ORFactory integer: _model value: [itemSize at: i]];
                                        return [ORFactory expr: [binArr at: b] mul: size];
                                    }];
-        [_model add: [ORFactory expr: sumExpr leq: [binSize at: b]]];
+        [_model addConstraint: [ORFactory expr: sumExpr leq: [binSize at: b]]];
     }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
