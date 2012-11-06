@@ -24,7 +24,15 @@
 -(id<ORObjectiveFunction>)objective;
 -(NSArray*) variables;
 -(NSArray*) constraints;
+-(id<ORSolution>)solution;
 -(void) visit: (id<ORVisitor>) visitor;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+@end
+
+@interface ORSolutionI : NSObject<ORSolution>
+-(ORSolutionI*) initSolution: (id<ORModel>) model;
+-(ORInt) intValue: (id) var;
+-(BOOL) boolValue: (id) var;
+-(NSUInteger) count;
 @end

@@ -452,6 +452,7 @@
 		5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF14150C38CB00B82836 /* ORSetI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF0E150C34DE00B82836 /* ORFactoryI.h */; };
+		5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */; };
 		5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */; };
 		5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -2526,6 +2527,7 @@
 		5BCCC4071417F8CE0079E833 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
 		5BCCC40B1417F8CE0079E833 /* queensACSem.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensACSem.1; sourceTree = "<group>"; };
+		5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; };
 		5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVarI.h; sourceTree = "<group>"; };
 		5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVarI.m; sourceTree = "<group>"; };
 		5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
@@ -4016,6 +4018,7 @@
 			children = (
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
+				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
 				5BAD1159161E5E430014EBCB /* ORModeling.m */,
 				5BAD1164161E5F2B0014EBCB /* ORModelI.h */,
 				5BAD1165161E5F2B0014EBCB /* ORModelI.m */,
@@ -4858,6 +4861,7 @@
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
 				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
 				5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */,
+				5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

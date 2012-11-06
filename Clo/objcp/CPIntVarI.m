@@ -73,6 +73,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return rv;
 }
 
+/*
 @interface CPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
    ORUInt    _name;
    union {
@@ -145,6 +146,8 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return self;
 }
 @end
+ */
+
 /*****************************************************************************************/
 /*                        CPIntVar                                                       */
 /*****************************************************************************************/
@@ -627,11 +630,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     }
     return ORSuspend;
 }
-
+/*
 -(id)snapshot
 {
-   return [[CPIntVarSnapshot alloc] initCPIntVarSnapshot:self];
+  return [[CPIntVarSnapshot alloc] initCPIntVarSnapshot:self];
 }
+ */
 -(void)restoreDomain:(id<CPDom>)toRestore
 {
    [_dom restoreDomain:toRestore];

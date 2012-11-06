@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 @protocol ORTracer;
+@protocol ORSolutionProtocol;
 
 @protocol ORSolverConcretizer <NSObject>
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;

@@ -27,9 +27,9 @@
 -(void)                   setController: (id<ORSearchController>) controller;
 -(void)                   push: (id<ORSearchController>) controller;
 
--(void)      optimizeModel: (id<ORASolver>) solver using: (ORClosure) search;
--(void)         solveModel: (id<ORASolver>) solver using: (ORClosure) search;
--(void)      solveAllModel: (id<ORASolver>) solver using: (ORClosure) search;
+-(void)      optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)         solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)      solveAllModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
 
 -(void)                try: (ORClosure) left or: (ORClosure) right;
 -(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;

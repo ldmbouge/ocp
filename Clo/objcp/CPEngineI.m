@@ -616,20 +616,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
--(void) saveSolution
-{
-   [_aSol release];
-   _aSol = [[CPSolutionI alloc] initCPSolution:self];
-}
-
--(void) restoreSolution
-{
-   [_aSol restoreInto:self];
-}
--(id<ORSolution>) solution
-{
-   return _aSol;
-}
 -(ORStatus) close
 {
    if (_state == CPOpen) {

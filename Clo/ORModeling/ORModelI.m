@@ -48,7 +48,6 @@
 {
    [_vars addObject:x];
 }
-
 -(void) setId: (ORUInt) name
 {
    _name = name;
@@ -68,6 +67,10 @@
 -(NSArray*) constraints
 {
     return [NSArray arrayWithArray: _mStore];
+}
+-(id<ORSolution>)solution
+{
+   return [[ORSolutionI alloc] initSolution:self];
 }
 -(NSString*) description
 {
@@ -196,5 +199,51 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
+@end
 
+@implementation ORSolutionI {
+   NSArray* _shots;
+}
+-(ORSolutionI*) initSolution: (id<ORModel>) model
+{
+   self = [super init];
+   NSArray* av = [model variables];
+   ORULong sz = [av count];
+   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+   [av enumerateObjectsUsingBlock:^(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+      id<ORSavable> shot = [obj snapshot];
+      if (shot)
+         [snapshots addObject: shot];
+      [shot release];
+   }];
+   _shots = snapshots;
+   return self;
+}
+-(void) dealloc
+{
+   [_shots release];
+   [super dealloc];
+}
+-(ORInt) intValue: (id) var
+{
+   return [[_shots objectAtIndex:[var getId]] intValue];   
+}
+-(BOOL) boolValue: (id) var
+{
+   return [[_shots objectAtIndex:[var getId]] boolValue];   
+}
+-(NSUInteger) count
+{
+   return [_shots count];   
+}
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+   [aCoder encodeObject:_shots];   
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   _shots = [[aDecoder decodeObject] retain];
+   return self;
+}
 @end

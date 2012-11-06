@@ -189,7 +189,7 @@ typedef struct  {
 -(ORStatus)     bind:(ORInt) val;
 -(ORStatus)     remove:(ORInt) val;
 -(ORStatus)     inside:(ORIntSetI*) S;
--(id)           snapshot;
+//-(id)           snapshot;
 // Class methods
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;

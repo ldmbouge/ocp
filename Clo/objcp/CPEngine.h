@@ -13,7 +13,7 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 @protocol CPIntVar;
-@protocol CPEngine <OREngine,ORSolutionProtocol>
+@protocol CPEngine <OREngine>
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
 -(ORStatus)  addInternal:(id<ORConstraint>) c;
@@ -26,7 +26,7 @@
 -(ORStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
--(id<ORSolution>) solution;
+//-(id<ORSolution>) solution;
 -(ORUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;

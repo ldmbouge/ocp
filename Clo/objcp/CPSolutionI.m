@@ -14,7 +14,7 @@
 #import "CPEngine.h"
 
 
-// Not sure why this works if shot is null
+/*
 @implementation CPSolutionI
 
 -(CPSolutionI*) initCPSolution: (id<CPEngine>) solver
@@ -69,3 +69,4 @@
    return self;
 }
 @end
+*/

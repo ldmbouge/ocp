@@ -78,11 +78,6 @@
    ORInt k = 0;
    return [_solver[k] tracer];
 }
--(id<ORSolution>)  solution
-{
-   printf("solution called in multistart solver");
-   return 0;
-}
 -(void) close
 {
    ORInt k = 0;
@@ -172,6 +167,11 @@
 {
    ORInt k = 0;
    return [_solver[k] trackVariable: object];
+}
+-(void) trackConstraint:(id)object
+{
+   ORInt k = 0;
+   return [_solver[k] trackConstraint:object];
 }
 -(void) add: (id<ORConstraint>) c
 {
