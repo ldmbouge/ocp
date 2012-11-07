@@ -60,7 +60,7 @@
 -(void)visit:(id<ORVisitor>)v;
 @end
 
-@interface ORBindingArrayI : NSObject
+@interface ORBindingArrayI : NSObject<ORBindingArray>
 -(ORBindingArrayI*) initORBindingArray: (ORInt) nb;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;

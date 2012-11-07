@@ -115,6 +115,19 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
+   
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORINCModel> batch  = [[ORBatchModel alloc] init:flatModel];
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   [flat apply: model into:batch];
+   [batch release];
+   
+   NSArray* Objects = [flatModel objects];
+   for(id<ORObject> c in Objects) {
+      id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
+      [c setImpl: ba];
+   }
+   
    id<CPProgram> cp = [cpprogram at: 0];
    [ORFactory createCPProgram: model program: cp];
    return cpprogram;

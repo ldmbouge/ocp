@@ -24,6 +24,7 @@
 -(id<ORObjectiveFunction>)objective;
 -(NSArray*) variables;
 -(NSArray*) constraints;
+-(NSArray*) objects;
 -(id<ORSolution>)solution;
 -(void) visit: (id<ORVisitor>) visitor;
 -(void)encodeWithCoder:(NSCoder *)aCoder;

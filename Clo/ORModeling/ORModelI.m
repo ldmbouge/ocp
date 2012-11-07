@@ -68,6 +68,10 @@
 {
     return [NSArray arrayWithArray: _mStore];
 }
+-(NSArray*) objects
+{
+   return [NSArray arrayWithArray: _oStore];
+}
 -(id<ORSolution>)solution
 {
    return [[ORSolutionI alloc] initSolution:self];

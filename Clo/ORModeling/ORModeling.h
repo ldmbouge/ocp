@@ -31,6 +31,7 @@
 -(id<ORObjectiveFunction>) objective;
 -(NSArray*) variables;
 -(NSArray*) constraints;
+-(NSArray*) objects;
 -(id<ORSolution>)solution;
 @end
 
