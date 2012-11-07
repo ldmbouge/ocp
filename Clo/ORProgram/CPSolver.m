@@ -185,9 +185,9 @@
 -(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
 {
    [_doOnSol release];
-   _doOnSol = [onSol retain];
+   _doOnSol = [onSol copy];
    [_doOnExit release];
-   _doOnExit = [onExit retain];
+   _doOnExit = [onExit copy];
 }
 
 -(void) solve: (ORClosure) search

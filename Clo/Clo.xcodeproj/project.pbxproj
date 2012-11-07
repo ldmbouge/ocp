@@ -646,8 +646,6 @@
 		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
 		B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0A5F615CDAB42005992E7 /* CPData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1A453E615E594C800A6171E /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A453E415E594C800A6171E /* CPConcretizer.h */; };
-		B1A453E715E594C800A6171E /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A453E515E594C800A6171E /* CPConcretizer.m */; };
 		B1A8E4E1162A15F300F26748 /* CPPoster.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A8E4DF162A15F300F26748 /* CPPoster.h */; };
 		B1A8E4E2162A15F300F26748 /* CPPoster.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A8E4E0162A15F300F26748 /* CPPoster.m */; };
 		B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
@@ -2707,8 +2705,6 @@
 		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1A0124B15CCAE72001ED0D4 /* ORTracer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORTracer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1A0A5F615CDAB42005992E7 /* CPData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B1A453E415E594C800A6171E /* CPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConcretizer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B1A453E515E594C800A6171E /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConcretizer.m; sourceTree = "<group>"; };
 		B1A8E4DF162A15F300F26748 /* CPPoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPoster.h; sourceTree = "<group>"; };
 		B1A8E4E0162A15F300F26748 /* CPPoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPoster.m; sourceTree = "<group>"; };
 		B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPMultiStartSolver.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -3923,8 +3919,6 @@
 				B1672FE115849EA300EFE5C3 /* CPCardinalityDC.m */,
 				B1C25A9F1557540E009CB8A8 /* CPCircuitI.h */,
 				B1C25AA01557540E009CB8A8 /* CPCircuitI.m */,
-				B1A453E415E594C800A6171E /* CPConcretizer.h */,
-				B1A453E515E594C800A6171E /* CPConcretizer.m */,
 				B169F9C614EF87D500B2F3A6 /* CPConstraint.h */,
 				B169F9C714EF87D500B2F3A6 /* CPConstraint.m */,
 				5BE642F4139D49320056F448 /* CPConstraintI.h */,
@@ -4776,7 +4770,6 @@
 				5B65615E15AD58F6002F344B /* CPKnapsack.h in Headers */,
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */,
-				B1A453E615E594C800A6171E /* CPConcretizer.h in Headers */,
 				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6343,7 +6336,6 @@
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
 				B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */,
-				B1A453E715E594C800A6171E /* CPConcretizer.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

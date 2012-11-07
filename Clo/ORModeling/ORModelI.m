@@ -246,4 +246,14 @@
    _shots = [[aDecoder decodeObject] retain];
    return self;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendString:@"SOL("];
+   NSUInteger last = [_shots count] - 1;
+   [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+      [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
+   }];
+   return buf;
+}
 @end
