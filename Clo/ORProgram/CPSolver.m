@@ -109,6 +109,8 @@
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
+   ORClosure             _doOnSol;
+   ORClosure             _doOnExit;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
@@ -117,6 +119,7 @@
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
+   _doOnSol = _doOnExit = nil;
    return self;
 }
 -(void) dealloc
@@ -125,6 +128,8 @@
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
+   [_doOnSol release];
+   [_doOnExit release];
    [super dealloc];
 }
 -(id<ORIdxIntInformer>) retLabel
@@ -177,36 +182,34 @@
 {
    [_hSet push: h];
 }
+-(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
+{
+   [_doOnSol release];
+   _doOnSol = [onSol retain];
+   [_doOnExit release];
+   _doOnExit = [onExit retain];
+}
+
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
    if (_objective != nil) {
       [_search optimizeModel: self using: search
-                  onSolution:^{
-                     NSLog(@"Got a solution...");
-                  } onExit:^{
-                     NSLog(@"Got an exit (restore?)...");
-                  }];
+                  onSolution: _doOnSol
+                      onExit: _doOnExit];
       printf("Optimal Solution: %d \n",[_objective primalBound]);
    }
    else {
       [_search solveModel: self using: search
-               onSolution:^{
-                  NSLog(@"Got a solution...");
-               } onExit:^{
-                  NSLog(@"Got an exit (restore?)...");
-               }];
+               onSolution: _doOnSol
+                   onExit: _doOnExit];
    }
 }
 -(void) solveAll: (ORClosure) search
 {
    [_search solveAllModel: self using: search
-               onSolution:^{
-                  NSLog(@"Got a solution...");
-               } onExit:^{
-                  NSLog(@"Got an exit (restore?)...");
-               }
-    ];
+               onSolution: _doOnSol
+                   onExit: _doOnExit];
 }
 -(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {

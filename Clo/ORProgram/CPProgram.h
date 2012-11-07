@@ -67,6 +67,7 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
+-(void)          onSolution: (ORClosure)onSol onExit:(ORClosure)onExit;
 @end
 
 // CPSolver with syntactic DFS Search

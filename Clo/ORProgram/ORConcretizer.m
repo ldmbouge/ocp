@@ -89,6 +89,13 @@
       [c visit: poster];
    [obj visit: poster];
    [poster release];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [model solution];
+      NSLog(@"Got a solution: %@",s);
+      [s release];
+   } onExit:^{
+      NSLog(@"onExit called...");
+   }];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
