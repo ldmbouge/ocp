@@ -306,12 +306,24 @@
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
+@interface ORIntObjectiveValue : NSObject<ORObjectiveValue> {
+   ORInt     _value;
+   ORInt _direction;
+}
+-(id)initObjectiveValue:(id<ORIntVar>)var minimize:(BOOL)b;
+-(ORInt)value;
+-(ORFloat)key;
+-(NSString*)description;
+@end
+
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMinimizeI*) initORMinimizeI: (id<ORIntVar>) x;
+-(id<ORObjectiveValue>)value;
 @end
 
 @interface ORMaximizeI : ORObjectiveFunctionI<ORObjectiveFunction>
 -(ORMaximizeI*) initORMaximizeI: (id<ORIntVar>) x;
+-(id<ORObjectiveValue>)value;
 @end
 
 

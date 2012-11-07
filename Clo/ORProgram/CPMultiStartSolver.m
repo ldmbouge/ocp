@@ -286,4 +286,8 @@
 {
    
 }
+-(id<ORSolutionPool>)solutionPool
+{
+   return NULL;
+}
 @end

@@ -32,6 +32,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(id<ORSolution>)solution;
+-(void)restore:(id<ORSolution>)s;
 @end
 
 @protocol ORINCModel<ORTracker>
@@ -47,4 +48,5 @@
 +(id<ORModelTransformation>)createFlattener;
 +(id<ORModelTransformation>)createLinearizer;
 +(id<ORIntVarArray>) binarizeIntVar: (id<ORIntVar>)x tracker: (id<ORTracker>) tracker;
++(id<ORSolutionPool>)createSolutionPool;
 @end
