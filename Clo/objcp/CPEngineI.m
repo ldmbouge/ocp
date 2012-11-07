@@ -14,7 +14,6 @@
 #import "CPBasicConstraint.h"
 #import "CPTypes.h"
 #import "ORFoundation/ORSetI.h"
-#import "CPSolutionI.h"
 
 #define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
