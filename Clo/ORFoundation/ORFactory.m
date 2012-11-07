@@ -193,6 +193,10 @@
 {
    return [[ORFloatVarI alloc]  initORFloatVarI: tracker low: low up: up];
 }
++(id<ORBindingArray>) bindingArray: (id<ORTracker>) tracker nb: (ORInt) nb
+{
+   return [[ORBindingArrayI alloc] initORBindingArray: nb];
+}
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
