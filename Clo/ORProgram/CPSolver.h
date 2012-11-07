@@ -62,6 +62,7 @@
 @interface CPMultiStartSolver : NSObject<CPProgram>
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
 -(id<CPProgram>) at: (ORInt) i;
+-(ORInt) nb;
 @end
 
 @interface CPUtilities : NSObject

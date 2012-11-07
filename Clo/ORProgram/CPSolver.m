@@ -16,6 +16,20 @@
 #import "CPProgram.h"
 #import "CPSolver.h"
 
+// to do 6/11/2012
+//
+// 1. For the multistart, start by putting the binding array
+// 2. Subsclass the CPConcretizer (need to clone everything
+// 3. Change the setImpl globally to make sure that you can add the binding array
+// 4. Look how to distinguish expression and constraints
+
+// to do 7/11/2012
+//
+// 1. Look at IncModel to implement the incremental addition of constraints
+// 2. Add a feature to determine if the model is closed; needed for incrementality
+// 3. Add the incremental add
+// 4. Look how to distinguish expression and constraints
+
 @implementation CPHeuristicSet
 {
    id<CPHeuristic>*  _tab;
@@ -738,6 +752,11 @@
    return M;
 }
 @end
+
+
+//id<ORBindingArray> ba = [ORFactory bindingArray: _tracker nb: _nb];
+//[v setImpl: ba];
+
 
 //@implementation NSThread (ORData)
 //

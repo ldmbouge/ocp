@@ -40,6 +40,10 @@
       [_solver[i] release];
    [super dealloc];
 }
+-(ORInt) nb
+{
+   return _nb;
+}
 -(id<CPProgram>) at: (ORInt) i
 {
    if (i >= 0 && i < _nb)
