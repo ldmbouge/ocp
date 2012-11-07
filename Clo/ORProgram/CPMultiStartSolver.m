@@ -282,5 +282,8 @@
 //   _pool = [[NSAutoreleasePool alloc] init];
 //   return self;
 //}
-
+-(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
+{
+   
+}
 @end

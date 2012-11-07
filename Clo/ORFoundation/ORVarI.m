@@ -18,6 +18,7 @@
 -(void)restoreInto:(NSArray*)av;
 -(int)intValue;
 -(BOOL)boolValue;
+-(NSString*)description;
 @end
 
 @implementation ORIntVarSnapshot
@@ -41,6 +42,13 @@
 {
    return _value;
 }
+-(NSString*)description
+{   
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"int(%d) : %d",_name,_value];
+   return buf;
+}
+
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];

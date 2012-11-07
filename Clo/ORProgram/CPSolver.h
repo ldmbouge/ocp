@@ -36,6 +36,7 @@
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
+-(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit;
 @end
 
 // Pure DFS CPSolver
