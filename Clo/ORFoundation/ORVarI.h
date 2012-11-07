@@ -38,6 +38,7 @@
 -(void) visit: (id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(id) snapshot;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI

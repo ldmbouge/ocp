@@ -10,6 +10,52 @@
 #import "ORError.h"
 #import "ORFactory.h"
 
+@interface ORIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORInt     _value;
+}
+-(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v;
+-(void)restoreInto:(NSArray*)av;
+-(int)intValue;
+-(BOOL)boolValue;
+@end
+
+@implementation ORIntVarSnapshot
+-(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v
+{
+   self = [super init];
+   _name = [v getId];
+   _value = [v min];
+   return self;
+}
+-(void)restoreInto:(NSArray*)av
+{
+   id<ORIntVar> theVar = [av objectAtIndex:_name];
+   [theVar restore:self];
+}
+-(int)intValue
+{
+   return _value;
+}
+-(BOOL)boolValue
+{
+   return _value;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   return self;
+}
+@end
+
+
 @implementation ORIntVarI
 {
 @protected
@@ -83,6 +129,15 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
+}
+-(id) snapshot
+{
+   return [[ORIntVarSnapshot alloc] initIntVarSnapshot:self];
+}
+-(void)restore:(id<ORSnapshot>)s
+{
+   ORInt theValue = [s intValue];
+   [_impl restoreValue:theValue];
 }
 -(ORInt) min
 {
@@ -343,6 +398,16 @@
 {
    return _name;
 }
+-(id) snapshot  // [ldm] to fix
+{
+   assert(FALSE);
+   return nil;
+}
+-(void)restore:(id<ORSnapshot>)s  // [ldm] to fix
+{
+   assert(FALSE);
+}
+
 -(ORFloat) value
 {
    if (_impl)

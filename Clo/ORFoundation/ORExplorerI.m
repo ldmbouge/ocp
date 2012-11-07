@@ -379,34 +379,36 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 -(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {}
 
--(void) optimizeModel: (id<ORASolver>) solver using: (ORClosure) search
+-(void) optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^{
       [self nestedOptimize: solver
                      using: ^ { [solver close]; search(); }
-                onSolution: ^ { [_engine saveSolution]; }
-                    onExit: ^ { [_engine restoreSolution]; }
+                onSolution: onSol
+                    onExit: onExit
        ];
    }];
 }
 
--(void) solveModel: (id<ORASolver>) solver using: (ORClosure) search
+-(void) solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
        [self nestedSolve: ^() { [solver close]; search(); }
-              onSolution: ^() { [_engine saveSolution]; }
-                  onExit: ^() { [_engine restoreSolution]; }];
+              onSolution: onSol
+                  onExit: onExit
+        ];
     }
     ];
 }
--(void) solveAllModel: (id<ORASolver>) solver using: (ORClosure) search
+-(void) solveAllModel: (id<ORASolver>) solver using: (ORClosure) search  onSolution:(ORClosure)onSol onExit:(ORClosure)onExit
 {
    [self search: ^()
     {
        [self nestedSolveAll: ^() { [solver close]; search(); }
-                 onSolution: ^() { [_engine saveSolution]; }
-                     onExit: ^() { [_engine restoreSolution]; }];
+                 onSolution: onSol
+                     onExit: onExit
+        ];
     }
     ];
 }

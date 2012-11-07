@@ -88,7 +88,7 @@ typedef enum {
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
 @end
 
-@protocol ORTable <NSObject>
+@protocol ORTable <ORObject>
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;

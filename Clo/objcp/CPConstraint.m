@@ -425,18 +425,15 @@
 @implementation CPSearchFactory 
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c
 {
-   id<CPConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
-   return o;
+   return [[CPEqualc alloc] initCPEqualc:x and:c];
 }
 +(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c
 {
-   id<CPConstraint> o = [[CPDiffc alloc] initCPDiffc:x and:c];
-   return o;
+   return [[CPDiffc alloc] initCPDiffc:x and:c];
 }
 +(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c
 {
-   id<CPConstraint> o = [[CPLEqualc alloc] initCPLEqualc:x and:c];
-   return o;
+   return [[CPLEqualc alloc] initCPLEqualc:x and:c];
 }
 @end
 

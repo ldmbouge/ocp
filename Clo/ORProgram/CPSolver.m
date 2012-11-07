@@ -177,11 +177,6 @@
 {
    return _tracer;
 }
--(id<ORSolution>)  solution
-{
-   // pvh: will have to change
-   return [_engine solution];
-}
 -(void) close
 {
    if (!_closed) {
@@ -200,16 +195,32 @@
 {
    _objective = [_engine objective];
    if (_objective != nil) {
-      [_search optimizeModel: self using: search];
+      [_search optimizeModel: self using: search
+                  onSolution:^{
+                     NSLog(@"Got a solution...");
+                  } onExit:^{
+                     NSLog(@"Got an exit (restore?)...");
+                  }];
       printf("Optimal Solution: %d \n",[_objective primalBound]);
    }
    else {
-      [_search solveModel: self using: search];
+      [_search solveModel: self using: search
+               onSolution:^{
+                  NSLog(@"Got a solution...");
+               } onExit:^{
+                  NSLog(@"Got an exit (restore?)...");
+               }];
    }
 }
 -(void) solveAll: (ORClosure) search
 {
-   [_search solveAllModel: self using: search];
+   [_search solveAllModel: self using: search
+               onSolution:^{
+                  NSLog(@"Got a solution...");
+               } onExit:^{
+                  NSLog(@"Got an exit (restore?)...");
+               }
+    ];
 }
 -(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
@@ -273,6 +284,10 @@
 -(void) trackVariable: (id) object
 {
    [_engine trackObject:object];  
+}
+-(void) trackConstraint: (id) obj
+{
+   [_engine trackConstraint:obj];
 }
 -(void) add: (id<ORConstraint>) c
 {

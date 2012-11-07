@@ -14,7 +14,18 @@
 #import "ORArray.h"
 #import "ORModel.h"
 
-@protocol ORVar <ORObject,ORExpr>
+@protocol ORSnapshot
+-(void) restoreInto: (NSArray*) av;
+-(int)  intValue;
+-(BOOL) boolValue;
+@end
+
+@protocol ORSavable<NSObject>
+-(id) snapshot;
+-(void)restore:(id<ORSnapshot>)s;
+@end
+
+@protocol ORVar <ORObject,ORSavable,ORExpr>
 -(ORUInt) getId;
 -(BOOL) bound;
 -(NSSet*) constraints;

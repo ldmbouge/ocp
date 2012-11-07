@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 #import <ORModeling/ORSolver.h>
+#import <ORModeling/ORSolution.h>
 
 @protocol ORModelTransformation;
 
@@ -30,8 +31,16 @@
 -(id<ORObjectiveFunction>) objective;
 -(NSArray*) variables;
 -(NSArray*) constraints;
+-(id<ORSolution>)solution;
 @end
 
+@protocol ORINCModel<ORTracker>
+-(void)addVariable:(id<ORVar>)var;
+-(void)addObject:(id)object;
+-(void)addConstraint:(id<ORConstraint>)cstr;
+-(void)minimize:(id<ORIntVar>)x;
+-(void)maximize:(id<ORIntVar>)x;
+@end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;

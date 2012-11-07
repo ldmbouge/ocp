@@ -46,9 +46,9 @@
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
--(void)      optimizeModel: (id<ORASolver>) solver using: (ORClosure) search;
--(void)         solveModel: (id<ORASolver>) solver using: (ORClosure) search;
--(void)      solveAllModel: (id<ORASolver>) solver using: (ORClosure) search;
+-(void)      optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)         solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)      solveAllModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
 -(void)             search: (ORClosure) block;
 @end
 

@@ -64,9 +64,9 @@ int main(int argc, const char * argv[])
       for(int i=0;i<m;i++) {
          [mdl add:[Sum(mdl,j,N,[x[j] muli:r[i][j]]) leqi:b[i]]];
          /*
-         id<ORIntArray> w = [CPFactory intArray:cp range:N with:^ORInt(ORInt j) {return r[i][j];}];
-         id<ORIntVar>   c = [CPFactory intVar:cp domain:RANGE(cp,0,b[i])];
-         [cp add:[CPFactory knapsack:x weight:w capacity:c]];
+         id<ORIntArray> w = [CPFactory intArray:mdl range:N with:^ORInt(ORInt j) {return r[i][j];}];
+         id<ORIntVar>   c = [CPFactory intVar:mdl domain:RANGE(mdl,0,b[i])];
+         [mdl add:[CPFactory knapsack:x weight:w capacity:c]];
           */
       }
       

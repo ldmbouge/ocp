@@ -15,34 +15,11 @@
 @protocol OREngine;
 @protocol ORTrail;
 
-@protocol ORSnapshot
--(void) restoreInto: (NSArray*) av;
--(int)  intValue;
--(BOOL) boolValue;
-@end
-
-@protocol ORSavable<NSObject>
--(id) snapshot;
-@end
-
-@protocol ORSolution <NSObject>
--(ORInt) intValue: (id) var;
--(BOOL) boolValue: (id) var;
--(NSUInteger) count;
--(void) restoreInto: (id<OREngine>) engine;
-@end
-
-@protocol ORSolutionProtocol <NSObject>
--(void)        saveSolution;
--(void)     restoreSolution;
--(id<ORSolution>) solution;
-@end
-
 @interface ORFailException : NSObject
 -(ORFailException*)init;
 @end
 
-@protocol OREngine <NSObject,ORTracker,ORSolutionProtocol>
+@protocol OREngine <NSObject,ORTracker>
 -(ORStatus)        close;
 -(bool)            closed;
 -(void)            trackObject:(id)obj;

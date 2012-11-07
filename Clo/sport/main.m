@@ -14,7 +14,6 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORConcretizer.h>
-#import <objcp/CPLabel.h>
 
 //20639 choices
 //20579 fail

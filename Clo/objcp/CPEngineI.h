@@ -59,7 +59,7 @@ enum CPEngineState {
    ORUInt               _nbpropag;
    CPCoreConstraint*        _last;
    UBType                   _propagIMP;
-   id<ORSolution>           _aSol;
+//   id<ORSolution>           _aSol;
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
@@ -88,9 +88,6 @@ enum CPEngineState {
 -(NSMutableArray*) allVars;
 -(NSMutableArray*) allConstraints;
 -(NSMutableArray*) allModelConstraints;
--(void)      saveSolution;
--(void)      restoreSolution;
--(id<ORSolution>) solution;
 -(ORStatus)  close;
 -(ORStatus)  status;
 -(bool)      closed;
