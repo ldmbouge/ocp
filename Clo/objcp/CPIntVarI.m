@@ -644,6 +644,15 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    [_dom restoreValue:toRestore];
 }
+-(void)restore:(id<ORSnapshot>)s
+{
+   [_dom restoreValue:[s intValue]];
+}
+-(id) snapshot
+{
+   assert(FALSE);
+   return nil;
+}
 
 -(id<ORIntVar>) dereference
 {

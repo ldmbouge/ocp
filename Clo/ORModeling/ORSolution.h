@@ -11,16 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 
-@protocol ORSnapshot
--(void) restoreInto: (NSArray*) av;
--(int)  intValue;
--(BOOL) boolValue;
-@end
-
-@protocol ORSavable<NSObject>
--(id) snapshot;
-@end
-
 @protocol ORSolution <ORObject>
 -(ORInt) intValue: (id) var;
 -(BOOL) boolValue: (id) var;
