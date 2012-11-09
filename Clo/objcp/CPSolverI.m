@@ -379,7 +379,6 @@
    var = [var dereference];
    ORStatus status = [_engine labelBitVar:var at: i with: bit];
    if (status == ORFailure) {
-      NSLog(@"Search failed on bitvar.\n");
       //[_failLabel notify];
       [_search fail];
    }

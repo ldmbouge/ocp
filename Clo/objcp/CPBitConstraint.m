@@ -713,7 +713,7 @@
          newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32))));
          newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
          if((i+_places/32+1) < wordLength) {
-            newYUp[i] &= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
+            newYUp[i] |= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
             newYLow[i] |= ISTRUE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32));
          }
          else{
@@ -730,7 +730,7 @@
          newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32))));
          newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
          if((i-(int)_places/32-1) >= 0) {
-            newXUp[i] &= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
+            newXUp[i] |= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
             newXLow[i] |= ISTRUE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32));
          }
       }
@@ -741,21 +741,9 @@
 
       upXORlow = newYUp[i] ^ newYLow[i];
       inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
-      if (inconsistencyFound){
-         NSLog(@"Inconsistency found in Shift L Bit constraint in the y variable at index %d.",i);
-         NSLog(@"yUp=%x",newYUp[i]);
-         NSLog(@"yLow=%x",newYLow[i]);
-      }
 
       upXORlow = newXUp[i] ^ newXLow[i];
       inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
-      if (inconsistencyFound){
-         NSLog(@"Inconsistency found in Shift L Bit constraint in the x variable at index %d.",i);
-         NSLog(@"xUp=%x",newXUp[i]);
-         NSLog(@"xLow=%x",newXLow[i]);
-      }
-
-
    }
    
    if (inconsistencyFound){
@@ -828,42 +816,17 @@
    bool    inconsistencyFound = false;
    
    for(int i=0;i<wordLength;i++){
-/*      if ((i+_places/32) < wordLength) {
-         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32))));
-         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
-         if((i+_places/32+1) < wordLength) {
-            newYUp[i] &= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
-            newYLow[i] |= ISTRUE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32));
-         }
-         else{
-            newYUp[i] &= ~(ISFALSE(xUp[wordLength - i - 1]._val, xLow[wordLength - i - 1]._val) >> (32-(_places%32)));
-            newYLow[i] |= (ISTRUE(xUp[wordLength- i - 1]._val,xLow[wordLength - i -1]._val)) >> (32-(_places%32));
-         }
-      }
-      else{
-         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|(ISFALSE(xUp[wordLength - i - 1]._val, xLow[[wordLength - i - 1]._val)));
-         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|(ISTRUE(xUp[wordLength - i - 1]._val, xLow[wordLength - i - 1]._val));
-      }
-      if ((i-(int)_places/32) >= 0) {
-         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32))));
-         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
-         if((i-(int)_places/32-1) >= 0) {
-            newXUp[i] &= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
-            newXLow[i] |= ISTRUE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32));
-         }
-//         else{
-//      }
-      }
-      else{
-         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|(ISFALSE(yUp[wordLength - i - 1]._val, yLow[wordLength - i - 1]._val)));;
-         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|(ISTRUE(yUp[wordLength - i - 1]._val, yLow[wordLength - i - 1]._val));
-      }
- */
-      newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)| (ISFALSE(xUp[(i+(_places/32))%wordLength]._val, xLow[(i+(_places/32))%wordLength]._val) << _places%32) | (ISFALSE(xUp[(i+(_places/32)+1)%wordLength]._val, xLow[(i+(_places/32)+1)%wordLength]._val) >> (32-(_places%32))));
-      newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val) | (ISTRUE(xUp[(i+(_places/32))%wordLength]._val, xLow[(i+(_places/32))%wordLength]._val) << _places%32) | (ISTRUE(xUp[(i+(_places/32)+1)%wordLength]._val, xLow[(i+(_places/32)+1)%wordLength]._val) >> (32-(_places%32)));
+      newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val) | (ISFALSE(xUp[(i+(_places/32))%wordLength]._val, xLow[(i+(_places/32))%wordLength]._val) << _places%32)
+                                                      | (ISFALSE(xUp[(i+(_places/32)+1)%wordLength]._val, xLow[(i+(_places/32)+1)%wordLength]._val) >> (32-(_places%32))));
       
-      newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)| (ISFALSE(yUp[(i-(_places/32))%wordLength]._val, yLow[(i-(_places/32))%wordLength]._val) >> _places%32) | (ISFALSE(yUp[(i-(_places/32)-1)%wordLength]._val, yLow[(i-(_places/32)-1)%wordLength]._val) << (32-(_places%32))));
-      newXLow[i] = ISTRUE(xUp[i]._val,yLow[i]._val) | (ISTRUE(yUp[(i-(_places/32))%wordLength]._val, yLow[(i-(_places/32))%wordLength]._val) >> _places%32) | (ISTRUE(yUp[(i-(_places/32)-1)%wordLength]._val, yLow[(i-(_places/32)-1)%wordLength]._val) << (32-(_places%32)));
+      newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)   | (ISTRUE(xUp[(i+(_places/32))%wordLength]._val, xLow[(i+(_places/32))%wordLength]._val) << _places%32)
+                                                      | (ISTRUE(xUp[(i+(_places/32)+1)%wordLength]._val, xLow[(i+(_places/32)+1)%wordLength]._val) >> (32-(_places%32)));
+      
+      newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val) | (ISFALSE(yUp[(i-(_places/32))%wordLength]._val, yLow[(i-(_places/32))%wordLength]._val) >> _places%32)
+                                                      | (ISFALSE(yUp[(i-(_places/32)-1)%wordLength]._val, yLow[(i-(_places/32)-1)%wordLength]._val) << (32-(_places%32))));
+      
+      newXLow[i] = ISTRUE(xUp[i]._val,yLow[i]._val)   | (ISTRUE(yUp[(i-(_places/32))%wordLength]._val, yLow[(i-(_places/32))%wordLength]._val) >> _places%32)
+                                                      | (ISTRUE(yUp[(i-(_places/32)-1)%wordLength]._val, yLow[(i-(_places/32)-1)%wordLength]._val) << (32-(_places%32)));
      
       upXORlow = newYUp[i] ^ newYLow[i];
       inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
@@ -1089,7 +1052,7 @@
           upXORlow = newXUp[i] ^ newXLow[i];
           inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
           if (inconsistencyFound){
-             NSLog(@"Inconsistency in Bitwise sum constraint variable x.\n");
+//             NSLog(@"Inconsistency in Bitwise sum constraint variable x.\n");
              failNow();
           }
 
@@ -1106,7 +1069,7 @@
           upXORlow = newYUp[i] ^ newYLow[i];
           inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
           if (inconsistencyFound){
-             NSLog(@"Inconsistency in Bitwise sum constraint variable y.\n");
+//             NSLog(@"Inconsistency in Bitwise sum constraint variable y.\n");
              failNow();
           }
 
@@ -1119,7 +1082,7 @@
           (ISFALSE(newYUp[i], newYLow[i]) & ISFALSE(newCinUp[i], newCinLow[i]) & ISTRUE(newCoutUp[i], newCoutLow[i]));
           
           if (inconsistencyFound){
-             NSLog(@"Inconsistency in Bitwise sum constraint variable z [impossible bit pattern for variable].\n");
+//             NSLog(@"Inconsistency in Bitwise sum constraint variable z [impossible bit pattern for variable].\n");
              failNow();
           }
           
@@ -1127,7 +1090,7 @@
           upXORlow = newZUp[i] ^ newZLow[i];
           inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
           if (inconsistencyFound){
-             NSLog(@"Inconsistency in Bitwise sum constraint variable z.\n");
+//             NSLog(@"Inconsistency in Bitwise sum constraint variable z.\n");
              failNow();
           }
 
@@ -1143,7 +1106,7 @@
           upXORlow = newCinUp[i] ^ newCinLow[i];
           inconsistencyFound |= (upXORlow&(~newCinUp[i]))&(upXORlow & newCinLow[i]);
           if (inconsistencyFound){
-             NSLog(@"Inconsistency in Bitwise sum constraint in Carry In.\n");
+//             NSLog(@"Inconsistency in Bitwise sum constraint in Carry In.\n");
              failNow();
           }
           
@@ -1163,7 +1126,7 @@
           inconsistencyFound |= (upXORlow&(~newCoutUp[i]))&(upXORlow & newCoutLow[i]);
           
           if (inconsistencyFound){
-             NSLog(@"Inconsistency in Bitwise sum constraint in carry out.\n");
+//             NSLog(@"Inconsistency in Bitwise sum constraint in carry out.\n");
              failNow();
           }
           
@@ -1191,56 +1154,58 @@
         }
     }
 
-   for(int i=0;i<wordLength;i++)
-      if(newXLow[i] ^ xLow[i]._val){
+//Checking each word of low & up may be unnecessary
+   
+//   for(int i=0;i<wordLength;i++)
+//      if(newXLow[i] ^ xLow[i]._val){
          [_x setLow:newXLow];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newXUp[i] ^ xUp[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newXUp[i] ^ xUp[i]._val){
          [_x setUp:newXUp];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newYLow[i] ^ yLow[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newYLow[i] ^ yLow[i]._val){
          [_y setLow:newYLow];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newYUp[i] ^ yUp[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newYUp[i] ^ yUp[i]._val){
          [_y setUp:newYUp];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newZLow[i] ^ zLow[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newZLow[i] ^ zLow[i]._val){
          [_z setLow:newZLow];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newZUp[i] ^ zUp[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newZUp[i] ^ zUp[i]._val){
          [_z setUp:newZUp];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newCinLow[i] ^ cinLow[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newCinLow[i] ^ cinLow[i]._val){
          [_cin setLow:newCinLow];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newCinUp[i] ^ cinUp[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newCinUp[i] ^ cinUp[i]._val){
          [_cin setUp:newCinUp];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newCoutLow[i] ^ coutLow[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newCoutLow[i] ^ coutLow[i]._val){
          [_cout setLow:newCoutLow];
-         break;
-      }
-   for(int i=0;i<wordLength;i++)
-      if(newCoutUp[i] ^ coutUp[i]._val){
+//         break;
+//      }
+//   for(int i=0;i<wordLength;i++)
+//      if(newCoutUp[i] ^ coutUp[i]._val){
          [_cout setUp:newCoutUp];
-         break;
-      }
+//         break;
+//      }
 
 }
 
