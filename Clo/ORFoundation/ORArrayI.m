@@ -786,7 +786,7 @@
    ORInt k = 0;
    if (_array[k] == NULL)
       return NULL;
-   return [_array[k] impl];
+   return [_array[k] dereference];
 }
 @end
 

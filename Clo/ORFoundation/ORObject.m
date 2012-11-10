@@ -37,9 +37,7 @@
 }
 -(id) impl
 {
-   if (_impl)
-      return [_impl impl];
-   return NULL;
+   return _impl;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

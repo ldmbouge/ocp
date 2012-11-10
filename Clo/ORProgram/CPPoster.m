@@ -71,169 +71,169 @@
 
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
-   [_engine add:[cstr impl]];
+   [_engine add:[cstr dereference]];
 }
 -(void) visitCircuit:(id<ORCircuit>) cstr
 {
-  [_engine add: [cstr impl]];   
+  [_engine add: [cstr dereference]];   
 }
 -(void) visitNoCycle:(id<ORNoCycle>) cstr
 {
-  [_engine add: [cstr impl]];   
+  [_engine add: [cstr dereference]];   
 }
 -(void) visitLexLeq:(id<ORLexLeq>)cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
-  [_engine add: [cstr impl]];   
+  [_engine add: [cstr dereference]];   
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
-  [_engine add: [cstr impl]];   
+  [_engine add: [cstr dereference]];   
 }
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
-   [_engine add: [v impl]];
-   [_engine setObjective: [v impl]];
+   [_engine add: [v dereference]];
+   [_engine setObjective: [v dereference]];
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v
 {
-   [_engine add: [v impl]];
-   [_engine setObjective: [v impl]];
+   [_engine add: [v dereference]];
+   [_engine setObjective: [v dereference]];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitPlus: (id<ORPlus>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitMult: (id<ORMult>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitOr: (id<OROr>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitImply: (id<ORImply>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-   [_engine add: [c impl]];
+   [_engine add: [c dereference]];
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>) cstr
 {
-   [_engine add: [cstr impl]];
+   [_engine add: [cstr dereference]];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>) cstr
 {
-    [_engine add: [cstr impl]];  
+    [_engine add: [cstr dereference]];  
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitSumEqualc:(id<ORSumEqc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
-   [_engine add: [cstr impl]];   
+   [_engine add: [cstr dereference]];   
 }
 
 //

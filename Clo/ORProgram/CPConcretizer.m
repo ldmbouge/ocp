@@ -63,7 +63,7 @@
 }
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if ([v impl] == NULL) {
+   if ([v dereference] == NULL) {
       id<CPIntVar> cv = [CPFactory intVar: _engine domain: [v domain]];
       [v setImpl: cv];
    }
@@ -74,7 +74,7 @@
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    
-   if ([v impl] == NULL) {
+   if ([v dereference] == NULL) {
       id<ORIntVar> mBase = [v base];
       [mBase visit: self];
       ORInt a = [v scale];
@@ -85,7 +85,7 @@
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
-   if ([v impl] == NULL) {
+   if ([v dereference] == NULL) {
       id<ORIntVar> mBase = [v base];
       [mBase visit:self];
       ORInt lit = [v literal];
@@ -96,7 +96,7 @@
 
 -(void) visitIdArray: (id<ORIdArray>) v
 {
-   if ([v impl] == NULL) {
+   if ([v dereference] == NULL) {
       id<ORIntRange> R = [v range];
       id<ORIdArray> dx = [ORFactory idArray: _engine range: R];
       ORInt low = R.low;
@@ -225,7 +225,7 @@
 }
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
-   if ([v impl] == NULL) {
+   if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
       [o visit: self];
       id<CPConstraint> concreteCstr = [CPFactory minimize: [o dereference]];
@@ -234,7 +234,7 @@
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v
 {
-   if ([v impl] == NULL) {
+   if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
       [o visit: self];
       id<CPConstraint> concreteCstr = [CPFactory maximize: [o dereference]];
@@ -253,7 +253,7 @@
 }
 -(void) visitNEqualc: (id<ORNEqualc>) cstr
 {
-   if ([cstr impl] == NULL) {
+   if ([cstr dereference] == NULL) {
       id<ORIntVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
@@ -263,7 +263,7 @@
 }
 -(void) visitLEqualc: (id<ORLEqualc>) cstr
 {
-   if ([cstr impl] == NULL) {
+   if ([cstr dereference] == NULL) {
       id<ORIntVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
@@ -286,7 +286,7 @@
 
 -(void) visitNEqual: (id<ORNEqual>) cstr
 {
-   if ([cstr impl] == NULL) {
+   if ([cstr dereference] == NULL) {
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       ORInt cst = [cstr cst];
@@ -298,7 +298,7 @@
 }
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
-   if ([cstr impl] == NULL) {
+   if ([cstr dereference] == NULL) {
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       ORInt cst = [cstr cst];
