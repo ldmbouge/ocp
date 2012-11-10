@@ -11,13 +11,14 @@
 
 #import <Foundation/Foundation.h>
 #import "ORTypes.h"
+#import "ORObject.h"
 #import "ORData.h"
 #import "ORTracker.h"
 #import "ORArray.h"
 
 @protocol ORVisitor;
 
-@interface ORIntArrayI : NSObject<NSCoding,ORIntArray>
+@interface ORIntArrayI : ORModelingObjectI<NSCoding,ORIntArray>
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) v;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORInt(^)(ORInt)) clo;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) v;
@@ -38,7 +39,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIdArrayI : NSObject<NSCoding,ORIdArray>
+@interface ORIdArrayI : ORModelingObjectI<NSCoding,ORIdArray>
 {
 
 }
@@ -60,7 +61,7 @@
 -(void)visit:(id<ORVisitor>)v;
 @end
 
-@interface ORBindingArrayI : NSObject<ORBindingArray>
+@interface ORBindingArrayI : ORModelingObjectI<ORBindingArray>
 -(ORBindingArrayI*) initORBindingArray: (ORInt) nb;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
@@ -68,10 +69,12 @@
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id) dereference;
+-(void) setImpl: (id) impl;
+-(id) impl;
 @end
 
 
-@interface ORIntMatrixI : NSObject<ORIntMatrix,NSCoding>
+@interface ORIntMatrixI : ORModelingObjectI<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;
@@ -87,7 +90,7 @@
 @end
 
 
-@interface ORIdMatrixI : NSObject<NSCoding,ORIdMatrix>
+@interface ORIdMatrixI : ORModelingObjectI<NSCoding,ORIdMatrix>
 {
    id<ORTracker>  _tracker;
 }

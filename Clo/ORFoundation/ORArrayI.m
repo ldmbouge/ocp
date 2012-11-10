@@ -772,7 +772,21 @@
 -(id) dereference
 {
    ORInt k = 0;
+   if (_array[k] == NULL)
+      return NULL;
    return [_array[k] dereference];
+}
+-(void) setImpl: (id) impl
+{
+   ORInt k = 0;
+   _array[k] = impl;
+}
+-(id) impl
+{
+   ORInt k = 0;
+   if (_array[k] == NULL)
+      return NULL;
+   return [_array[k] impl];
 }
 @end
 

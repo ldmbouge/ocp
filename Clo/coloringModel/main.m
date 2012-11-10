@@ -61,12 +61,14 @@ int main(int argc, const char * argv[])
       id<ORIntVar>      m  = [ORFactory intVar:model domain:V];
       for(ORInt i=1;i<=nbv;i++)
          [model add: [c[i] leq: m]];
-      for (ORInt i=1; i<=nbv; i++) {
+     for (ORInt i=1; i<=nbv; i++) {
          for(ORInt j =i+1;j <= nbv;j++) {
             if ([adj at: i :j])
                [model add: [c[i] neq: c[j]]];
          }
       }
+
+      
       [model minimize: m];
       
 //      id<CPProgram> cp = [ORFactory createCPProgram: model];
@@ -78,7 +80,9 @@ int main(int argc, const char * argv[])
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
             ORInt maxc = max(0,[CPUtilities maxBound: c]);
             [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member: v];} in:^(ORInt v) {
+//               NSLog(@"%d %d",i,[c[i] domsize]);
                [cp label: c[i] with: v];
+//                NSLog(@"after %d %d",i,[c[i] value]);
             }
             onFailure:^(ORInt v) {
                [cp diff: c[i] with:v];

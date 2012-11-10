@@ -14,9 +14,6 @@
 #import "ORExprI.h"
 #import "ORError.h"
 
-@interface ORObjectI : NSObject<ORObject>
-@end;
-
 @interface ORIntegerI : ORExprI<NSCoding,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
 -(ORInt)  value;

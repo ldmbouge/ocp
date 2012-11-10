@@ -67,7 +67,6 @@
 @implementation ORIntVarI
 {
 @protected
-   id<ORIntVar>   _impl;
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
    BOOL           _dense;
@@ -150,14 +149,14 @@
 -(ORInt) min
 {
    if (_impl)
-      return [[_impl dereference] min];
+      return [(id<ORIntVar>)[_impl dereference] min];
    else
       return [_domain low];
 }
 -(ORInt) max
 {
    if (_impl)
-      return [[_impl dereference] max];
+      return [(id<ORIntVar>)[_impl dereference] max];
    else
       return [_domain up];
 }
@@ -171,7 +170,7 @@
 -(ORBounds)bounds
 {
    if (_impl)
-      return [[_impl dereference] bounds];
+      return [(id<ORIntVar>)[_impl dereference] bounds];
    else {
       ORBounds b = {[_domain low],[_domain up]};
       return b;
@@ -180,14 +179,14 @@
 -(BOOL) member: (ORInt) v
 {
    if (_impl)
-      return [[_impl dereference] member: v];
+      return [(id<ORIntVar>)[_impl dereference] member: v];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
 -(BOOL) bound
 {
    if (_impl)
-      return [[_impl dereference] bound];
+      return [(id<ORIntVar>)[_impl dereference] bound];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -195,32 +194,20 @@
 -(BOOL) isBool
 {
    if (_impl)
-      return [[_impl dereference] isBool];
+      return [(id<ORIntVar>)[_impl dereference] isBool];
    else
       return _isBool;
 }
 -(NSSet*)constraints
 {
    if (_impl)
-      return [[_impl dereference] constraints];
+      return [(id<ORIntVar>)[_impl dereference] constraints];
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
 -(id<ORTracker>) tracker
 {
    return _tracker;
-}
--(id<ORIntVar>) impl
-{
-   return _impl;
-}
--(id<ORIntVar>) dereference
-{
-   return [_impl dereference];
-}
--(void) setImpl: (id<ORIntVar>) impl
-{
-   _impl = impl;
 }
 -(id<ORIntRange>) domain
 {
@@ -419,7 +406,7 @@
 -(ORFloat) value
 {
    if (_impl)
-      return [[_impl dereference] value];
+      return [(id<ORIntVar>) [_impl dereference] value];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -436,14 +423,14 @@
 -(ORFloat) min
 {
    if (_impl)
-      return [[_impl dereference] min];
+      return [(id<ORFloatVar>)[_impl dereference] min];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
 -(ORFloat) max
 {
    if (_impl)
-      return [[_impl dereference] max];
+      return [(id<ORFloatVar>)[_impl dereference] max];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -451,25 +438,13 @@
 -(NSSet*) constraints
 {
    if (_impl)
-      return [[_impl dereference] constraints];
+      return [(id<ORFloatVar>)[_impl dereference] constraints];
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
 -(id<ORTracker>) tracker
 {
    return _tracker;
-}
--(id<ORFloatVar>) impl
-{
-   return _impl;
-}
--(id<ORFloatVar>) dereference
-{
-   return [_impl dereference];
-}
--(void) setImpl: (id<ORFloatVar>) impl
-{
-   _impl = impl;
 }
 -(void) visit: (id<ORVisitor>) v
 {

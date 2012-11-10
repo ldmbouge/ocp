@@ -16,12 +16,14 @@
 #import "CPProgram.h"
 #import "CPSolver.h"
 
-// to do 6/11/2012
+// to do 11/11/2012
 //
 // 1. For the multistart, start by putting the binding array
-// 2. Subsclass the CPConcretizer (need to clone everything
+// 2. The CPConcretizer need to clone everything
 // 3. Change the setImpl globally to make sure that you can add the binding array
-// 4. Look how to distinguish expression and constraints
+// 4. Remove dereference 
+// 5. Look how to distinguish expression and constraints
+// 6. Move BindingArray in ORProgram: It is not a modelling object. Change the fact that it inherits from ModelingObject too
 
 // to do 7/11/2012
 //

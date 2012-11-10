@@ -28,9 +28,6 @@
 -(ORBounds)bounds;
 -(BOOL) member: (ORInt) v;
 -(BOOL) isBool;
--(id<ORIntVar>) dereference;
--(id<ORIntVar>) impl;
--(void) setImpl: (id<ORIntVar>) _impl;
 -(NSSet*)constraints;
 -(ORInt)scale;
 -(ORInt)shift;
@@ -65,9 +62,6 @@
 -(ORFloat) value;
 -(ORFloat) min;
 -(ORFloat) max;
--(id<ORIntVar>) dereference;
--(id<ORIntVar>) impl;
--(void) setImpl: (id<ORIntVar>) _impl;
 -(NSSet*) constraints;
 -(void) visit: (id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;

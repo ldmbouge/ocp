@@ -14,7 +14,7 @@
 #import "ORError.h"
 
 @protocol ORVisitor;
-@implementation ORObjectI
+@implementation ORModelingObjectI
 -(id) init
 {
    [super init];
@@ -33,11 +33,13 @@
    if (_impl)
       return [_impl dereference];
    else
-      return self;
+      return NULL;
 }
 -(id) impl
 {
-   return _impl;
+   if (_impl)
+      return [_impl impl];
+   return NULL;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

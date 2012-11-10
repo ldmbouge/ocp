@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORObject.h"
 #import "ORArray.h"
 #import "ORSet.h"
 #import "ORModel.h"
@@ -19,12 +20,11 @@
 
 @protocol ORObjective;
 
-@interface ORConstraintI : NSObject<ORConstraint>
+@interface ORConstraintI : ORModelingObjectI<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;
 -(id<ORConstraint>) impl;
 -(id<ORConstraint>) dereference;
--(void) setImpl: (id<ORConstraint>) _impl;
 -(NSString*) description;
 @end
 
@@ -293,16 +293,12 @@
 -(id<ORIntVar>) capacity;
 @end
 
-@interface ORObjectiveFunctionI : NSObject<ORObjectiveFunction> {
+@interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction> {
    id<ORIntVar>             _var;
-   id<ORObjectiveFunction>  _impl;
 }
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(BOOL) concretized;
--(void) setImpl:(id<ORObjectiveFunction>)impl;
--(id<ORObjectiveFunction>)impl;
--(id<ORObjectiveFunction>) dereference;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 

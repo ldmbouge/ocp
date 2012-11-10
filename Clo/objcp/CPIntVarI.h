@@ -63,7 +63,7 @@
 
 // Interface for CP extensions
 
-@protocol CPIntVarExtendedItf <ORIntVar,CPIntVarSubscriber>
+@protocol CPIntVarExtendedItf <CPIntVarSubscriber>
 -(ORStatus) updateMin: (ORInt) newMin;
 -(ORStatus) updateMax: (ORInt) newMax;
 -(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
@@ -105,7 +105,7 @@ typedef struct  {
 
 
 
-@interface CPIntVarI : ORExprI<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
    enum CPVarClass                   _vc:16;
    ORUInt                        _isBool:16;

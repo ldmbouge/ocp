@@ -129,12 +129,21 @@
    [flat apply: model into:batch];
    [batch release];
    
+   NSArray* Variables = [flatModel variables];
+   for(id<ORObject> c in Variables) {
+      id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
+      [c setImpl: ba];
+   }
+   NSArray* Constraints = [flatModel constraints];
+   for(id<ORObject> c in Constraints) {
+      id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
+      [c setImpl: ba];
+   }
    NSArray* Objects = [flatModel objects];
    for(id<ORObject> c in Objects) {
       id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
       [c setImpl: ba];
    }
-   
    id<CPProgram> cp = [cpprogram at: 0];
    [ORFactory createCPProgram: model program: cp];
    return cpprogram;

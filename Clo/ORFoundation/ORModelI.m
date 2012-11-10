@@ -17,7 +17,6 @@
 @implementation ORConstraintI
 {
    @protected
-   id<ORConstraint> _impl;
    ORUInt _name;
 }
 -(ORConstraintI*) initORConstraintI
@@ -33,18 +32,6 @@
 -(ORUInt) getId
 {
    return _name;
-}
--(id<ORConstraint>) impl
-{
-   return _impl;
-}
--(id<ORConstraint>) dereference
-{
-   return [_impl dereference];  
-}
--(void) setImpl: (id<ORConstraint>) impl
-{
-   _impl = impl;
 }
 -(NSString*) description
 {

@@ -20,12 +20,12 @@
 }
 -(void) setImpl: (id) impl
 {
+   NSLog(@"%@",self); 
    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
 -(id) impl
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "impl: No implementation in this object"];
-   return nil;
+   return self;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

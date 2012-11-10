@@ -11,8 +11,9 @@
 
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORAVLTree.h"
+#import "ORObject.h"
 
-@protocol ORIntIterator <NSObject>
+@protocol ORIntIterator <ORObject>
 -(void) iterate: (ORInt2Void) f;
 -(ORInt) size;
 -(id<IntEnumerator>) enumerator;

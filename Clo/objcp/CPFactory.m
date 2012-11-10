@@ -111,12 +111,12 @@ void failNow()
    else 
       return [CPIntVarI initCPIntView: x withScale: a andShift: b];
 }
-+(id<ORIntVar>)boolVar: (id<CPEngine>)cp
++(id<CPIntVar>) boolVar: (id<CPEngine>)cp
 {
    return [CPIntVarI initCPBoolVar: cp];
 }
 
-+(id<ORIntVar>) negate:(id<CPIntVar>)x
++(id<CPIntVar>) negate:(id<CPIntVar>)x
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }

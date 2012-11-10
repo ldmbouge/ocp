@@ -10,11 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import "ORData.h"
 
-@interface ORObjectI : NSObject<ORObject>
+@interface ORModelingObjectI : NSObject<ORObject>
 {
    id _impl;
 }
 -(id) init;
 -(void) setImpl: (id) impl;
+-(id) impl;
 @end;

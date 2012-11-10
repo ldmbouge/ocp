@@ -10,14 +10,15 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORExpr.h"
-#import "ORFoundation/ORArray.h"
-#import "ORFoundation/ORData.h"
-#import "ORFoundation/ORSet.h"
-#import "ORFoundation/ORModel.h"
-#import "ORFoundation/ORVisit.h"
+#import "ORObject.h"
+#import "ORExpr.h"
+#import "ORArray.h"
+#import "ORData.h"
+#import "ORSet.h"
+#import "ORModel.h"
+#import "ORVisit.h"
 
-@interface ORExprI: NSObject<ORExpr,NSCoding>
+@interface ORExprI: ORModelingObjectI<ORExpr,NSCoding>
 
 -(id<ORExpr>) abs;
 -(id<ORExpr>) plus: (id<ORExpr>) e;

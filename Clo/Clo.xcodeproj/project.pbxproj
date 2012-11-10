@@ -2314,8 +2314,8 @@
 		5B558C0D1563F01000D2BCD7 /* queensNaive.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensNaive.1; sourceTree = "<group>"; };
 		5B57E5E2161F280D00DB249A /* ORVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVar.h; sourceTree = "<group>"; };
 		5B57E5E4161F294F00DB249A /* ORVisit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVisit.h; sourceTree = "<group>"; };
-		5B57E5E8161F2DB100DB249A /* CPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConcretizer.h; sourceTree = "<group>"; };
-		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConcretizer.m; sourceTree = "<group>"; };
+		5B57E5E8161F2DB100DB249A /* CPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConcretizer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPParSolver.h; sourceTree = "<group>"; };
 		5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPParSolver.m; sourceTree = "<group>"; };
 		5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };

@@ -40,7 +40,6 @@
 -(ORBounds) bounds;
 -(BOOL) member: (ORInt) v;
 -(BOOL) isBool;
--(id<ORIntVar>) dereference;
 -(ORInt)scale;
 -(ORInt)shift;
 -(ORInt)literal;
@@ -51,7 +50,6 @@
 -(ORFloat) value;
 -(ORFloat) min;
 -(ORFloat) max;
--(id<ORFloatVar>) dereference;
 @end
 
 @protocol ORVarArray <ORIdArray>

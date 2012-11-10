@@ -10,13 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORTypes.h"
-#import "ORFoundation/ORData.h"
-#import "ORFoundation/ORSet.h"
-#import "ORFoundation/ORAVLTree.h"
+#import <ORUtilities/ORTypes.h>
+#import "ORObject.h"
+#import "ORData.h"
+#import "ORSet.h"
+#import "ORAVLTree.h"
 @protocol ORVisitor;
 
-@interface ORIntSetI : NSObject<ORIntSet>
+@interface ORIntSetI : ORModelingObjectI<ORIntSet>
 
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
@@ -34,7 +35,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : NSObject<ORIntRange> 
+@interface ORIntRangeI : ORModelingObjectI<ORIntRange>
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
