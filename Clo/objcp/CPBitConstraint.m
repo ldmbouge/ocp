@@ -710,13 +710,13 @@
 
    for(int i=0;i<wordLength;i++){
       if ((i+_places/32) < wordLength) {
-         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+(int)(_places/32)]._val, xLow[i+(int)(_places/32)]._val)<<(_places%32))));
-         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+(int)(_places/32)]._val, xLow[i+(int)(_places/32)]._val)<<(_places%32)));
-         NSLog(@"i=%i",i+_places/32);
+         newYUp[i] = ~(ISFALSE(yUp[i]._val,yLow[i]._val)|((ISFALSE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32))));
+         newYLow[i] = ISTRUE(yUp[i]._val,yLow[i]._val)|((ISTRUE(xUp[i+_places/32]._val, xLow[i+_places/32]._val)<<(_places%32)));
+//         NSLog(@"i=%i",i+_places/32);
          if((i+_places/32+1) < wordLength) {
-            newYUp[i] &= ~(ISFALSE(xUp[i+(int)(_places/32)+1]._val, xLow[i+(int)(_places/32+1)]._val)>>(32-(_places%32)));
-            newYLow[i] |= ISTRUE(xUp[i+(int)(_places/32)+1]._val, xLow[i+(int)(_places/32+1)]._val)>>(32-(_places%32));
-            NSLog(@"i=%i",i+_places/32+1);
+            newYUp[i] &= ~(ISFALSE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32)));
+            newYLow[i] |= ISTRUE(xUp[i+_places/32+1]._val, xLow[i+_places/32+1]._val)>>(32-(_places%32));
+//            NSLog(@"i=%i",i+_places/32+1);
          }
          else{
             newYUp[i] &= ~(UP_MASK >> (32-(_places%32)));
@@ -729,13 +729,13 @@
       }
       
       if ((i-(int)_places/32) >= 0) {
-         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUp[i-(int)(_places/32)]._val, yLow[i-(int)(_places/32)]._val)>>(_places%32))));
-         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUp[i-(int)(_places/32)]._val, yLow[i-(int)(_places/32)]._val)>>(_places%32)));
-         NSLog(@"i=%i",i-_places/32);
+         newXUp[i] = ~(ISFALSE(xUp[i]._val,xLow[i]._val)|((ISFALSE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32))));
+         newXLow[i] = ISTRUE(xUp[i]._val,xLow[i]._val)|((ISTRUE(yUp[i-_places/32]._val, yLow[i-_places/32]._val)>>(_places%32)));
+//         NSLog(@"i=%i",i-_places/32);
          if((i-(int)_places/32-1) >= 0) {
             newXUp[i] &= ~(ISFALSE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32)));
             newXLow[i] |= ISTRUE(yUp[(i-(int)_places/32-1)]._val,yLow[(i-(int)_places/32-1)]._val)<<(32-(_places%32));
-            NSLog(@"i=%i",i-(int)_places/32-1);
+//            NSLog(@"i=%i",i-(int)_places/32-1);
          }
       }
       else{
