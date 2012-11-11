@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import "CPProgram.h"
@@ -126,6 +127,7 @@
    BOOL                  _closed;
    ORClosure             _doOnSol;
    ORClosure             _doOnExit;
+   id<ORSolutionPool>    _sPool;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
@@ -135,6 +137,7 @@
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
    _doOnSol = _doOnExit = nil;
+   _sPool   = [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -145,6 +148,7 @@
    [_failLabel release];
    [_doOnSol release];
    [_doOnExit release];
+   [_sPool release];
    [super dealloc];
 }
 -(id<ORIdxIntInformer>) retLabel
@@ -204,7 +208,10 @@
    [_doOnExit release];
    _doOnExit = [onExit copy];
 }
-
+-(id<ORSolutionPool>) solutionPool
+{
+   return _sPool;
+}
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];

@@ -91,10 +91,14 @@
    [poster release];
    [cpprogram onSolution:^{
       id<ORSolution> s = [model solution];
-      NSLog(@"Got a solution: %@",s);
+      [[cpprogram solutionPool] addSolution:s];
+      //NSLog(@"Got a solution: %@",s);
       [s release];
    } onExit:^{
-      NSLog(@"onExit called...");
+      id<ORSolution> best = [[cpprogram solutionPool] best];
+      [model restore:best];
+      NSLog(@"onExit called: best(pool) = %@",best);
+      [best release];
    }];
 }
 

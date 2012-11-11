@@ -19,6 +19,8 @@
 -(int)intValue;
 -(BOOL)boolValue;
 -(NSString*)description;
+-(BOOL)isEqual:(id)object;
+-(NSUInteger)hash;
 @end
 
 @implementation ORIntVarSnapshot
@@ -41,6 +43,20 @@
 -(BOOL)boolValue
 {
    return _value;
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORIntVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value;
+      } else return NO;
+   } else
+      return NO;
+}
+-(NSUInteger)hash
+{
+   return _name << 16 + _value;
 }
 -(NSString*)description
 {   

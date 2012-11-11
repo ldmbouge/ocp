@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 @protocol ORTracer;
-@protocol ORSolutionProtocol;
 
 @protocol ORSolverConcretizer <NSObject>
 -(id<ORIntVar>) intVar: (id<ORIntVar>) v;
@@ -26,7 +25,7 @@
 -(id<ORObjective>) maximize: (id<ORObjectiveFunction>) v;
 @end
 
-@protocol ORSolver <NSObject,ORASolver,ORTracker,ORSolutionProtocol>
+@protocol ORSolver <NSObject,ORASolver,ORTracker>
 -(id<ORTracer>)    tracer;
 -(id<OREngine>)    engine;
 -(id<ORObjective>) objective;

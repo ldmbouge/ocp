@@ -39,7 +39,7 @@ int main (int argc, const char * argv[])
    ^() {
        //[CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
        [cp labelHeuristic:h];
-       printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
+       //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];
     }
     ];

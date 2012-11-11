@@ -39,5 +39,8 @@
     }
     return (id<ORIntVarArray>)o;
 }
-
++(id<ORSolutionPool>)createSolutionPool
+{
+   return [[ORSolutionPoolI alloc] init];
+}
 @end

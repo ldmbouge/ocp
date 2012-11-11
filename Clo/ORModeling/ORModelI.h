@@ -26,6 +26,7 @@
 -(NSArray*) constraints;
 -(NSArray*) objects;
 -(id<ORSolution>)solution;
+-(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
@@ -35,5 +36,18 @@
 -(ORSolutionI*) initSolution: (id<ORModel>) model;
 -(ORInt) intValue: (id) var;
 -(BOOL) boolValue: (id) var;
+-(id<ORSnapshot>) value:(id)var;
 -(NSUInteger) count;
+-(BOOL)isEqual:(id)object;
+-(NSUInteger)hash;
+-(id<ORObjectiveValue>)objectiveValue;
+@end
+
+@interface ORSolutionPoolI : NSObject<ORSolutionPool> {
+   NSMutableSet* _all;
+}
+-(id)init;
+-(void)addSolution:(id<ORSolution>)s;
+-(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORSolution>)best;
 @end

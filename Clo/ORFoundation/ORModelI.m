@@ -1544,6 +1544,39 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORIntObjectiveValue
+-(id)initObjectiveValue:(id<ORIntVar>)var  minimize:(BOOL)b
+{
+   self = [super init];
+   _value = [var value];
+   _direction = b ? 1 : -1;
+   return self;
+}
+-(ORInt)value
+{
+   return _value;
+}
+-(ORFloat)key
+{
+   return _value * _direction;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
+   return buf;
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]]) {
+      return _value == [((ORIntObjectiveValue*)object) value];
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   return _value;
+}
+@end
 
 @implementation ORMinimizeI
 -(ORMinimizeI*) initORMinimizeI: (id<ORIntVar>) x
@@ -1565,6 +1598,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitMinimize:self];
+}
+-(id<ORObjectiveValue>)value
+{
+   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:YES];
 }
 @end
 
@@ -1588,6 +1625,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitMaximize:self];
+}
+-(id<ORObjectiveValue>)value
+{
+   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:NO];
 }
 @end
 

@@ -249,8 +249,13 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORObjectiveValue <ORObject>
+-(ORFloat)key;
+@end
+
 @protocol ORObjectiveFunction <ORObject>
 -(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 @end
 
 @protocol ORObjective <NSObject,ORObjectiveFunction>

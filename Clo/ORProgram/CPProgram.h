@@ -19,6 +19,7 @@
 @protocol ORExplorer;
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
+@protocol ORSolutionPool;
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -68,6 +69,7 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
 -(void)          onSolution: (ORClosure)onSol onExit:(ORClosure)onExit;
+-(id<ORSolutionPool>) solutionPool;
 @end
 
 // CPSolver with syntactic DFS Search
