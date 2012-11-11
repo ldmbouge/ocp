@@ -20,8 +20,7 @@
 //
 // 1. For the multistart, start by putting the binding array
 // 2. The CPConcretizer need to clone everything
-// 3. Change the setImpl globally to make sure that you can add the binding array
-// 4. Remove dereference 
+
 // 5. Look how to distinguish expression and constraints
 // 6. Move BindingArray in ORProgram: It is not a modelling object. Change the fact that it inherits from ModelingObject too
 
