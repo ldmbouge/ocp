@@ -24,10 +24,20 @@
 #define HIGHEST_PRIO ((ORInt)7)
 
 
+@protocol CPEvent<NSObject>
+-(ORInt)execute;
+@end
+
+@protocol VarEventNode <NSObject>
+@end
+
+/*****************************************************************************************/
+/*                        VarEventNode                                                   */
+/*****************************************************************************************/
 // PVH: This guy covers two cases: the case where this is really a constraint and the case where this is a callback
 // Ideally, the callback case should be in the AC-5 category
 
-@interface VarEventNode : NSObject {
+@interface VarEventNode : NSObject<VarEventNode> {
    @package
    VarEventNode*         _node;
    id                 _trigger;  // type is {ConstraintCallback}
@@ -57,9 +67,8 @@ enum CPEngineState {
    ORStatus                _status;
    ORInt                _propagating;
    ORUInt               _nbpropag;
-   CPCoreConstraint*        _last;
+   id<CPConstraint>        _last;
    UBType                   _propagIMP;
-//   id<ORSolution>           _aSol;
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
@@ -71,9 +80,9 @@ enum CPEngineState {
 -(void)      trackVariable:(id)var;
 -(void)      trackObject:(id)obj;
 -(id)        trail;
--(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (CPCoreConstraint*)c;
--(void)      scheduleAC3:(VarEventNode**)mlist;
--(void)      scheduleAC5:(VarEventNode*)list with: (ORInt)val;
+-(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
+-(void)      scheduleAC3:(id<VarEventNode>*)mlist;
+-(void)      scheduleAC5:(id<CPEvent>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
@@ -87,7 +96,6 @@ enum CPEngineState {
 -(ORStatus)  restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 -(NSMutableArray*) allVars;
 -(NSMutableArray*) allConstraints;
--(NSMutableArray*) allModelConstraints;
 -(ORStatus)  close;
 -(ORStatus)  status;
 -(bool)      closed;

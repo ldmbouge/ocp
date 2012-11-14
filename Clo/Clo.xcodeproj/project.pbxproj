@@ -68,6 +68,8 @@
 		5B27ABE715B151A300E4A3DF /* mknap1-4.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABDF15B1518300E4A3DF /* mknap1-4.txt */; };
 		5B27ABE815B151A300E4A3DF /* mknap1-5.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABE015B1518300E4A3DF /* mknap1-5.txt */; };
 		5B27ABE915B151A300E4A3DF /* mknap1-6.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B27ABE115B1518300E4A3DF /* mknap1-6.txt */; };
+		5B30E16E16528F4800BD0718 /* CPEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B30E16C16528F4800BD0718 /* CPEvent.h */; };
+		5B30E16F16528F4800BD0718 /* CPEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B30E16D16528F4800BD0718 /* CPEvent.m */; };
 		5B3606911392A8DA008B0EE8 /* CPDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606901392A8DA008B0EE8 /* CPDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606951392A9C5008B0EE8 /* CPBitDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606931392A9C5008B0EE8 /* CPBitDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606961392A9C5008B0EE8 /* CPBitDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3606941392A9C5008B0EE8 /* CPBitDom.m */; };
@@ -2296,6 +2298,8 @@
 		5B27ABE115B1518300E4A3DF /* mknap1-6.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mknap1-6.txt"; sourceTree = "<group>"; };
 		5B27ABE215B1518300E4A3DF /* mknap1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = mknap1.txt; sourceTree = "<group>"; };
 		5B27ABE315B1518300E4A3DF /* mknap2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = mknap2.txt; sourceTree = "<group>"; };
+		5B30E16C16528F4800BD0718 /* CPEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEvent.h; sourceTree = "<group>"; };
+		5B30E16D16528F4800BD0718 /* CPEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEvent.m; sourceTree = "<group>"; };
 		5B3606901392A8DA008B0EE8 /* CPDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B3606931392A9C5008B0EE8 /* CPBitDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPBitDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B3606941392A9C5008B0EE8 /* CPBitDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBitDom.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -3908,6 +3912,8 @@
 				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
 				5B7408B015628C1400C05277 /* CPBitMacros.h */,
 				B19ABA24146DC7FA004EB77E /* CPCardinality.h */,
+				5B30E16C16528F4800BD0718 /* CPEvent.h */,
+				5B30E16D16528F4800BD0718 /* CPEvent.m */,
 				B19ABA25146DC7FA004EB77E /* CPCardinality.m */,
 				B1672FE015849EA300EFE5C3 /* CPCardinalityDC.h */,
 				B1672FE115849EA300EFE5C3 /* CPCardinalityDC.m */,
@@ -4762,6 +4768,7 @@
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				B1EADBCF15CDBE140032A6C7 /* CPEngineI.h in Headers */,
 				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
+				5B30E16E16528F4800BD0718 /* CPEvent.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6325,6 +6332,7 @@
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
 				B1EADBD115CDBE2B0032A6C7 /* CPEngineI.m in Sources */,
+				5B30E16F16528F4800BD0718 /* CPEvent.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

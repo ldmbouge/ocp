@@ -18,10 +18,6 @@
 #define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
 
-/*****************************************************************************************/
-/*                        VarEventNode                                                   */
-/*****************************************************************************************/
-
 @implementation VarEventNode
 -(VarEventNode*)initVarEventNode:(VarEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
 {
@@ -62,7 +58,6 @@ typedef struct AC3Entry {
 -(void)reset;
 -(bool)loaded;
 @end
-
 
 
 @implementation CPAC3Queue
@@ -113,7 +108,7 @@ inline static void AC3reset(CPAC3Queue* q)
    q->_enter = q->_exit = 0;
    q->_csz = 0;
 }
-inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,CPCoreConstraint* cstr)
+inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstraint> cstr)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
@@ -145,30 +140,22 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 }
 @end
 
-// PVH: This may need to be generalized to cope with different types of events
-typedef struct {
-   VarEventNode* _list;
-   ORInt        _value;
-} AC5Event;
-
-
 @interface CPAC5Queue : NSObject {
    @package
-   ORInt      _mxs;
-   ORInt      _csz;
-   AC5Event*  _tab;
-   ORInt    _enter;
-   ORInt     _exit;
-   ORInt     _mask;
+   ORInt          _mxs;
+   ORInt          _csz;
+   id<CPEvent>*   _tab;
+   ORInt        _enter;
+   ORInt         _exit;
+   ORInt         _mask;
 }
 -(id) initAC5Queue: (ORInt) sz;
 -(void) dealloc;
--(AC5Event) deQueue;
--(void) enQueue: (VarEventNode*) cb with: (ORInt) val;
+-(id<CPEvent>) deQueue;
+-(void) enQueue: (id<CPEvent>)cb;
 -(void) reset;
 -(bool) loaded;
 @end
-
 
 @implementation CPAC5Queue
 -(id) initAC5Queue:(ORInt)sz
@@ -177,7 +164,7 @@ typedef struct {
    _mxs = sz;
    _csz = 0;
    _mask = _mxs - 1;
-   _tab = malloc(sizeof(AC5Event)*_mxs);
+   _tab = malloc(sizeof(id<CPEvent>)*_mxs);
    _enter = _exit = 0;
    return self;
 }
@@ -197,8 +184,8 @@ typedef struct {
 }
 -(void)resize
 {
-   AC5Event* nt = malloc(sizeof(AC5Event)*_mxs*2);
-   AC5Event* ptr = nt;
+   id<CPEvent>* nt = malloc(sizeof(id<CPEvent>)*_mxs*2);
+   id<CPEvent>* ptr = nt;
    ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
@@ -213,33 +200,38 @@ typedef struct {
 }
 inline static void AC5reset(CPAC5Queue* q)
 {
+   while (q->_csz) {
+      [q->_tab[q->_exit] release];
+      q->_exit = (q->_exit + 1) & q->_mask;
+      --q->_csz;
+   }
    q->_enter = q->_exit = 0;
-   q->_csz = 0;
+   assert(q->_csz == 0);
 }
-inline static void enQueueAC5(CPAC5Queue* q,VarEventNode* cb,ORInt val)
+inline static void enQueueAC5(CPAC5Queue* q,id<CPEvent> cb)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
    ORInt enter = q->_enter;
-   q->_tab[enter]  = (AC5Event){cb,val};
+   q->_tab[enter]  = cb;
    q->_enter = (enter+1) & q->_mask;
    ++q->_csz;
 }
-inline static AC5Event deQueueAC5(CPAC5Queue* q)
+inline static id<CPEvent> deQueueAC5(CPAC5Queue* q)
 {
    if (q->_enter != q->_exit) {
       ORInt oe = q->_exit;
       q->_exit = (oe+1) & q->_mask;
       --q->_csz;
       return q->_tab[oe];
-   } else return (AC5Event){0,0};
+   } else return nil;
 }
 
--(void)enQueue:(VarEventNode*)cb with:(ORInt)val
+-(void)enQueue:(id<CPEvent>)cb
 {
-   enQueueAC5(self, cb, val);
+   enQueueAC5(self, cb);
 }
--(AC5Event)deQueue
+-(id<CPEvent>)deQueue
 {
    return deQueueAC5(self);
 }
@@ -295,10 +287,6 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
 {
    return _cStore;
 }
--(NSMutableArray*)allModelConstraints
-{
-   return _mStore;
-}
 -(ORUInt) nbPropagation
 {
    return _nbpropag;
@@ -344,12 +332,12 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
    return _trail;
 }
 
--(void) scheduleTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c
+-(void) scheduleTrigger:(ConstraintCallback)cb onBehalf:(id<CPConstraint>)c
 {
    AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
 }
 
--(void) scheduleAC3: (VarEventNode**) mlist
+-(void) scheduleAC3: (id<VarEventNode>*) mlist
 {
    while (*mlist) {
       VarEventNode* list = *mlist;
@@ -358,16 +346,16 @@ inline static AC5Event deQueueAC5(CPAC5Queue* q)
          list->_cstr->_todo = CPTocheck;
          AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);
          list = list->_node;
-      }
+      } 
       ++mlist;
    }
 }
 
 // PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses varEventNode; AC3 works with the trigger directly
 
--(void) scheduleAC5: (VarEventNode*) list  with: (ORInt) val
+-(void) scheduleAC5: (id<CPEvent>)evt
 {
-   enQueueAC5(_ac5, list, val);
+   enQueueAC5(_ac5, evt);
 }
 
 // PVH: This does the case analysis on the key of events {trigger,cstr} and handle the idempotence
@@ -406,14 +394,8 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(_ac5)) {
-            AC5Event evt = deQueueAC5(_ac5);
-            VarEventNode* list = evt._list;
-            while (list) {
-               // PVH: this may need to be generalized for more general events
-               ((ConstraintIntCallBack)(list->_trigger))(evt._value);
-               ++_nbpropag;
-               list = list->_node;
-            }
+            id<CPEvent> evt = deQueueAC5(_ac5);
+            _nbpropag += [evt execute];
          }
          // Processing AC3
          int p = HIGHEST_PRIO;
@@ -503,7 +485,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       ORStatus pstatus = internalPropagate(self,status);
       _status = pstatus;
       if (pstatus && status != ORSkip) {
-         [cstr setId:(ORUInt)[_cStore count]];
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
          [_trail trailClosure:^{
@@ -560,7 +541,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    @try {
       assert(_status != ORFailure);
-         //ORStatus status = [var bind: val];
       ORStatus status = bindDom(var,val);
       _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {

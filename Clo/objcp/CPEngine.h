@@ -13,7 +13,15 @@
 #import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 @protocol CPIntVar;
+@protocol CPEvent;
+@protocol CPConstraint;
+@protocol VarEventNode;
+@class CPCoreConstraint;
+
 @protocol CPEngine <OREngine>
+-(void) scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
+-(void) scheduleAC3:(id<VarEventNode>*)mlist;
+-(void) scheduleAC5:(id<CPEvent>)evt;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
 -(ORStatus)  addInternal:(id<ORConstraint>) c;
@@ -26,7 +34,6 @@
 -(ORStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
-//-(id<ORSolution>) solution;
 -(ORUInt) nbVars;
 -(NSMutableArray*)allVars;
 -(id) trail;

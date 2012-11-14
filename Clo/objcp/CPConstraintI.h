@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <objcp/CPData.h>
-#import "CPEngine.h"
+#import <objcp/CPEngine.h>
 
 @class CPEngineI;
 
@@ -41,7 +41,7 @@ typedef enum {
 
 @interface CPActiveConstraint : CPCoreConstraint {
    id<ORTrail> _trail;
-   TRInt    _active;
+   TRInt      _active;
 }
 -(id) initCPActiveConstraint: (id<OREngine>) m;
 @end

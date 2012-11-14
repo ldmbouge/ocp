@@ -18,6 +18,7 @@
 #import "CPTrigger.h"
 #import "CPBitDom.h"
 #import "CPEngineI.h"
+#import "CPEvent.h"
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
@@ -590,10 +591,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_fdm scheduleAC3:mList];
-    if (_net._ac5._val)
-        [_fdm scheduleAC5:_net._ac5._val with:val];
-    if (_triggers != nil)
-        [_triggers loseValEvt:val solver:_fdm];
+   if (_net._ac5._val) {
+        [_fdm scheduleAC5:[[CPValueLossEvent alloc] initValueLoss:val notify:_net._ac5._val]];
+   }
+   if (_triggers != nil)
+      [_triggers loseValEvt:val solver:_fdm];
    return ORSuspend;
 }
 -(ORStatus) updateMin: (ORInt) newMin
