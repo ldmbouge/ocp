@@ -134,6 +134,7 @@
       NSAssert(i>=0,@"ERROR in [CPLabel bitVar] bitVar is not bound, but no free bits found when using lsFreeBit.");
       [cp try: ^() {
          [cp labelBitVar:x at:i with:false];
+//         NSLog(@"%@",[x description]);
       }
            or: ^() {
               [cp labelBitVar:x at:i with:true];
