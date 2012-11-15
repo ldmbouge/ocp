@@ -19,9 +19,6 @@
 @class CPAC3Queue;
 @class CPAC5Queue;
 
-#define NBPRIORITIES ((ORInt)8)
-#define LOWEST_PRIO  ((ORInt)0)
-#define HIGHEST_PRIO ((ORInt)7)
 
 enum CPEngineState {
    CPOpen    = 0,

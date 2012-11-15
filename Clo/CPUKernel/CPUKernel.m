@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "CPUKernel.h"
+#import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
 
 @implementation CPFactory

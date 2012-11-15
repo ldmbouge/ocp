@@ -11,13 +11,8 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
-@class CPEngineI;
 
-typedef enum {
-   CPChecked,
-   CPTocheck,
-   CPOff
-} CPTodo;
+@class CPEngineI;
 
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @public

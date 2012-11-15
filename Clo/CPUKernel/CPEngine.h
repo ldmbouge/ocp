@@ -18,13 +18,17 @@
 @protocol VarEventNode;
 @class CPCoreConstraint;
 
+#define NBPRIORITIES ((ORInt)8)
+#define LOWEST_PRIO  ((ORInt)0)
+#define HIGHEST_PRIO ((ORInt)7)
+
 @protocol CPEngine <OREngine>
 -(void) scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
 -(void) scheduleAC3:(id<VarEventNode>*)mlist;
 -(void) scheduleAC5:(id<CPEvent>)evt;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
--(ORStatus)  addInternal:(id<ORConstraint>) c;
+-(ORStatus) addInternal:(id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
 -(ORStatus) impose:(Void2ORStatus)cl;

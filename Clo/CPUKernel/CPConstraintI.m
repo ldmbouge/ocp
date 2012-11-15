@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPConstraintI.h"
-#import "CPEngineI.h"
+#import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPEngineI.h>
 
 @implementation CPCoreConstraint
 -(CPCoreConstraint*) initCPCoreConstraint 

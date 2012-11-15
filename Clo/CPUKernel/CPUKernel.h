@@ -12,6 +12,12 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPEngine.h>
 
+typedef enum {
+   CPChecked,
+   CPTocheck,
+   CPOff
+} CPTodo;
+
 @protocol CPConstraint <ORConstraint,ORCommand>
 -(ORUInt)getId;
 @end
