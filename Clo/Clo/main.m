@@ -13,7 +13,6 @@
 #import <objc/objc-auto.h>
 #import <Foundation/NSGarbageCollector.h>
 #import <Foundation/NSObject.h>
-#import "objcp/CPFactory.h"
 #import "cont.h"
 #import "Silly.h"
 #import "DFSController.h"

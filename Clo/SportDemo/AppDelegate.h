@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "SportView.h"
-#import "objcp/NSBoardController.h"
+#import <objcp/NSBoardController.h>
 
 @interface AppDelegate : NSObject <NSApplicationDelegate> {
       NSBoardController* _topBoard;

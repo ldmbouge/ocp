@@ -333,6 +333,7 @@
 		5B93488C16554E6700757F89 /* CPEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B30E16D16528F4800BD0718 /* CPEvent.m */; };
 		5B93488D16554E6C00757F89 /* CPEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B30E16C16528F4800BD0718 /* CPEvent.h */; };
 		5B9348901655520100757F89 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B93489216558D1000757F89 /* ORProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B93489116558D0F00757F89 /* ORProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B94406C16319096006528DE /* CPProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B681189161F98FB00F4480F /* CPProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B94406E1631AEBA006528DE /* CPVar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B94406D1631AEB9006528DE /* CPVar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9440731631D7F3006528DE /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
@@ -2505,6 +2506,7 @@
 		5B9348721655451D00757F89 /* CPUKernel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CPUKernel-Prefix.pch"; sourceTree = "<group>"; };
 		5B9348731655451D00757F89 /* CPUKernel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPUKernel.h; sourceTree = "<group>"; };
 		5B9348741655451D00757F89 /* CPUKernel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CPUKernel.m; sourceTree = "<group>"; };
+		5B93489116558D0F00757F89 /* ORProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORProgram.h; sourceTree = "<group>"; };
 		5B94406D1631AEB9006528DE /* CPVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPVar.h; sourceTree = "<group>"; };
 		5B95F0A315A26C2B00C0B2D8 /* mpl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = mpl.txt; sourceTree = SOURCE_ROOT; };
 		5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -3494,6 +3496,7 @@
 		5B681182161F98FB00F4480F /* ORProgram */ = {
 			isa = PBXGroup;
 			children = (
+				5B93489116558D0F00757F89 /* ORProgram.h */,
 				B17832FA161F5FCC00C7298D /* ORConcretizer.h */,
 				B17832FB161F5FCC00C7298D /* ORConcretizer.m */,
 				B1595B4413C11F2A001FCB61 /* Supporting Files */,
@@ -4800,6 +4803,7 @@
 				5B84692A163856B300F4D749 /* CPABS.h in Headers */,
 				5B8469301638583000F4D749 /* CPHeuristic.h in Headers */,
 				5B8469311638583000F4D749 /* CPBaseHeuristic.h in Headers */,
+				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
