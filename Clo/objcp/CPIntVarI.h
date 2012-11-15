@@ -17,8 +17,8 @@
 #import <objcp/CPTrigger.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
-#import <objcp/CPConstraintI.h>
-#import "objcp/CPSolverI.h"
+#import <objcp/CPSolverI.h>
+#import <CPUKernel/CPConstraintI.h>
 
 @protocol CPIntVarSubscriber <NSObject>
 

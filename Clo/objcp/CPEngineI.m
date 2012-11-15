@@ -18,25 +18,6 @@
 #define AC5LOADED(q) ((q)->_csz)
 #define ISLOADED(q)  ((q)->_csz)
 
-@implementation VarEventNode
--(VarEventNode*)initVarEventNode:(VarEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
-{
-   self = [super init];
-   _node = [next retain];
-   _trigger = [t copy];
-   _cstr = c;
-   _priority = prio;
-   return self;
-}
--(void)dealloc
-{
-   //NSLog(@"VarEventNode::dealloc] %p\n",self);
-   [_trigger release];
-   [_node release];
-   [super dealloc];
-}
-@end
-
 typedef struct AC3Entry {
    ConstraintCallback   cb;
    CPCoreConstraint*    cstr;

@@ -14,14 +14,6 @@
 @protocol CP;
 @protocol CPExprVisitor;
 
-typedef ORStatus(*UBType)(id,SEL,...);
-typedef void (^ConstraintCallback)(void);
-typedef void (^ConstraintIntCallBack)(ORInt);
-
-@protocol CPConstraint <ORConstraint,ORCommand>
--(ORUInt)getId;
-@end
-
 @protocol CPZeroOneStream <ORZeroOneStream>
 @end
 

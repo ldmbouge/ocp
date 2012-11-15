@@ -54,7 +54,7 @@ int main(int argc, const char * argv[])
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

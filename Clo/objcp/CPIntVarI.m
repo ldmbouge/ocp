@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPTypes.h"
+#import <CPUKernel/CPUKernel.h>
 #import "CPData.h"
 #import "CPDom.h"
 #import "CPIntVarI.h"
@@ -34,16 +34,7 @@ static void setUpNetwork(CPEventNetwork* net,id<ORTrail> t,ORInt low,ORInt sz)
     net->_ac5       = makeTRId(t, nil);
 }
 
-static void freeList(VarEventNode* list)
-{
-    while (list) {
-        VarEventNode* next = list->_node;
-        [list release];
-        list = next;
-    }
-}
-
-static void deallocNetwork(CPEventNetwork* net) 
+static void deallocNetwork(CPEventNetwork* net)
 {
     freeList(net->_boundsEvt._val);
     freeList(net->_bindEvt._val);
@@ -51,15 +42,6 @@ static void deallocNetwork(CPEventNetwork* net)
     freeList(net->_minEvt._val);
     freeList(net->_maxEvt._val);
     freeList(net->_ac5._val);
-}
-
-static void collectList(VarEventNode* list,NSMutableSet* rv)
-{
-   while(list) {
-      VarEventNode* next = list->_node;
-      [rv addObject:list->_cstr];
-      list = next;      
-   }
 }
 
 static NSSet* collectConstraints(CPEventNetwork* net)

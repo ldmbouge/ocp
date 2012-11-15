@@ -10,9 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPData.h>
-#import <objcp/CPEngine.h>
-
+#import <CPUKernel/CPUKernel.h>
 @class CPEngineI;
 
 typedef enum {
@@ -22,7 +20,7 @@ typedef enum {
 } CPTodo;
 
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
-@package
+@public
    CPTodo _todo;
    bool   _idempotent;
    int    _priority;

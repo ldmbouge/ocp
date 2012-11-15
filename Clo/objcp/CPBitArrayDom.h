@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <CPUKernel/CPTypes.h>
 #import <objcp/CPBitArrayDom.h>
-#import <objcp/CPTypes.h>
 #import <objcp/CPData.h>
 
 

@@ -10,8 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPDom.h>
-#import "CPEngineI.h"
+#import <CPUKernel/CPUKernel.h>
 
 @interface CPValueLossEvent : NSObject<CPEvent> {
    VarEventNode* _theList;

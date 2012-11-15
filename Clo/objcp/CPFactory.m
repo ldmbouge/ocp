@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 
-
 #import "ORFoundation/ORFoundation.h"
 #import "ORUtilities/ORUtilities.h"
 #import "CPFactory.h"
@@ -24,60 +23,6 @@
 #import "ORFoundation/ORSemBDSController.h"
 #import "CPEngineI.h"
 
-void failNow()
-{
-   static ORFailException* fex = nil;
-   if (fex==nil) fex = [ORFailException new];
-   @throw  CFRetain(fex);
-}
-
-
-@implementation CPFactory
-
-//+(CPSolverI*) createSolver
-//{
-//    return [CPSolverI create];
-//}
-//+(id<CPSemSolver>) createSemSolver:(Class)ctrlClass
-//{
-//   return [CPSemSolverI createWithController:ctrlClass];
-//}
-/*
-+(id<CPParSolver>) createParSolver:(int)nbt withController:(Class)ctrlClass
-{
-   return [CPParSolverI create:nbt withController:ctrlClass];
-}
- */
-
-//+(CPSolverI*) createRandomizedSolver
-//{
-//    return [CPSolverI createRandomized];
-//}
-//+(CPSolverI*) createDeterministicSolver
-//{
-//    return [CPSolverI createDeterministic];
-//}
-+(id<CPEngine>) engine: (id<ORTrail>) trail
-{
-  return [[CPEngineI alloc] initEngine: trail];
-}
-//+(SemCP*) createSemSolverFor:(id<CPEngine>)fdm
-//{
-//   return [[SemCP alloc] initFor:fdm];
-//}
-//+(id<ORSearchController>)dfsController:(id<CPSemSolver>)cp
-//{
-//   return [[ORSemDFSController alloc] initTheController: [cp tracer] engine:[cp engine]];
-//}
-//+(id<ORSearchController>)bdsController:(id<CPSemSolver>)cp
-//{
-//   return [[ORSemBDSController alloc] initTheController: [cp tracer] engine:[cp engine]];
-//}
-+(void) shutdown
-{
-   [NSCont shutdown];
-}
-@end
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 

@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPData.h>
+#import <CPUKernel/CPTypes.h>
+
 @protocol CPIntVar;
 @protocol CPEvent;
 @protocol CPConstraint;

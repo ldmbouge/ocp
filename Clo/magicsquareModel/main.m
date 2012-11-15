@@ -115,7 +115,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Quitting");
       printf("%d %s %d %d %f %d %lld %lld\n",r,hName[hs],n,found ? 1 : 0,rf,[cp nbFailures],endTime - startTime,endCPU - startCPU);
       [cp release];
-      [CPFactory shutdown];      
+      [ORFactory shutdown];
    }
    return 0;
 }

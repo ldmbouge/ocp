@@ -9,11 +9,12 @@
  
  ***********************************************************************/
 
-#ifndef __CPTYPES_H
-#define __CPTYPES_H
-
 #import <ORFoundation/ORFoundation.h>
 
 @protocol CPSolver;
 
-#endif
+typedef ORStatus(*UBType)(id,SEL,...);
+typedef void (^ConstraintCallback)(void);
+typedef void (^ConstraintIntCallBack)(ORInt);
+
+void failNow();

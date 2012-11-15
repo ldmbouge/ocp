@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPEngine.h>
+#import <CPUKernel/CPEngine.h>
 
 @protocol CPBitVar <NSObject>
 -(bool) bound;

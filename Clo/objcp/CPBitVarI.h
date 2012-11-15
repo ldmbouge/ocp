@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPEngine.h>
 #import <objcp/CPBitVar.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPEngine.h>
 #import <objcp/CPTrigger.h>
 
 @class CPBitArrayDom;

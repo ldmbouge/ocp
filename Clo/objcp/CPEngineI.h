@@ -10,9 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPEngine.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPEngine.h>
+#import <CPUKernel/CPConstraintI.h>
 
 @class ORTrailI;
 @class ORTrailIStack;
@@ -22,31 +22,6 @@
 #define NBPRIORITIES ((ORInt)8)
 #define LOWEST_PRIO  ((ORInt)0)
 #define HIGHEST_PRIO ((ORInt)7)
-
-
-@protocol CPEvent<NSObject>
--(ORInt)execute;
-@end
-
-@protocol VarEventNode <NSObject>
-@end
-
-/*****************************************************************************************/
-/*                        VarEventNode                                                   */
-/*****************************************************************************************/
-// PVH: This guy covers two cases: the case where this is really a constraint and the case where this is a callback
-// Ideally, the callback case should be in the AC-5 category
-
-@interface VarEventNode : NSObject<VarEventNode> {
-   @package
-   VarEventNode*         _node;
-   id                 _trigger;  // type is {ConstraintCallback}
-   CPCoreConstraint*     _cstr;
-   ORInt             _priority;
-}
--(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
--(void)dealloc;
-@end
 
 enum CPEngineState {
    CPOpen    = 0,
