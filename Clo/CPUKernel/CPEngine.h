@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 
-@protocol CPIntVar;
 @protocol CPEvent;
 @protocol CPConstraint;
 @protocol VarEventNode;

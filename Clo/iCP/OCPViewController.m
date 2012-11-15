@@ -12,9 +12,7 @@
 
 #import "OCPViewController.h"
 #import <ORFoundation/ORFoundation.h>
-#import <ORProgram
-#import "objcp/CPConstraint.h"
-#import "objcp/DFSController.h"
+#import <ORProgram/ORProgram.h>
 
 @interface OCPViewController ()
 

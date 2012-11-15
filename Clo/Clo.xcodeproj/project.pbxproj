@@ -3499,7 +3499,6 @@
 				5B93489116558D0F00757F89 /* ORProgram.h */,
 				B17832FA161F5FCC00C7298D /* ORConcretizer.h */,
 				B17832FB161F5FCC00C7298D /* ORConcretizer.m */,
-				B1595B4413C11F2A001FCB61 /* Supporting Files */,
 				5B57E5E8161F2DB100DB249A /* CPConcretizer.h */,
 				5B57E5E9161F2DB100DB249A /* CPConcretizer.m */,
 				B1A8E4DF162A15F300F26748 /* CPPoster.h */,
@@ -4437,6 +4436,7 @@
 			children = (
 				B1595B4213C11F2A001FCB61 /* main.m */,
 				B1595B4613C11F2A001FCB61 /* Sudoku.1 */,
+				B1595B4413C11F2A001FCB61 /* Supporting Files */,
 			);
 			path = Sudoku;
 			sourceTree = "<group>";
@@ -4448,7 +4448,6 @@
 				B1595B4513C11F2A001FCB61 /* Sudoku-Prefix.pch */,
 			);
 			name = "Supporting Files";
-			path = ../Sudoku;
 			sourceTree = "<group>";
 		};
 		B15F6DE115B1361700158FA0 /* progressive */ = {

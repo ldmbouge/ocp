@@ -66,9 +66,6 @@
 -(ORInt) nb;
 @end
 
-@interface CPUtilities : NSObject
-+(ORInt) maxBound: (id<ORIntVarArray>) x;
-@end;
 
 @interface CPInformerPortal : NSObject<CPPortal> {
    CPCoreSolver*  _cp;

@@ -105,9 +105,6 @@
 */
 
 /*
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-
 typedef int (^Void2Int)(void);
 Void2Int makeC1(int i);
 Void2Int makeAdd(int i);

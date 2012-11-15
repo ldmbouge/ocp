@@ -9,20 +9,11 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import "ORConcretizer.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORProgram/ORProgram.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import <ORProgram/ORConcretizer.h>
-
-#import "objcp/CPSolver.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPObjectQueue.h"
-
 
 NSString* tab(int d);
 
@@ -69,10 +60,10 @@ int main(int argc, const char * argv[])
       }
       [model minimize: m];
       
-//      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPSemanticProgramDFS> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
-      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
+//      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
       [cp solve: ^{
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
@@ -93,7 +84,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }
