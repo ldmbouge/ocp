@@ -9,15 +9,13 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <objcp/CPSolver.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPObjectQueue.h>
 
 NSString* tab(int d);
 

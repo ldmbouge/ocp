@@ -537,57 +537,10 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _objective;
 }
 
--(ORStatus) label: (id) var with: (ORInt) val
+-(ORStatus) impose:(Void2ORStatus)cl
 {
    @try {
-      assert(_status != ORFailure);
-      ORStatus status = bindDom(var,val);
-      _status = internalPropagate(self,status);
-   } @catch (ORFailException *exception) {
-      [exception release];
-      _status = ORFailure;
-   }
-   return _status;
-}
-
--(ORStatus) diff: (CPIntVarI*) var with: (ORInt) val
-{
-   @try {
-      //assert(_status != ORFailure);
-      ORStatus status =  removeDom(var, val);
-      _status = internalPropagate(self,status);
-   } @catch (ORFailException *exception) {
-      [exception release];
-      _status = ORFailure;
-   }
-   return _status;
-}
--(ORStatus)  lthen:(id)var with:(ORInt)val
-{
-   @try {
-      ORStatus status = [var updateMax:val-1];
-      _status = internalPropagate(self,status);
-   } @catch (ORFailException *exception) {
-      [exception release];
-      _status = ORFailure;
-   }
-   return _status;
-}
--(ORStatus)  gthen:(id)var with:(ORInt)val
-{
-   @try {
-      ORStatus status = [var updateMin:val+1];
-      _status = internalPropagate(self,status);
-   } @catch (ORFailException *exception) {
-      [exception release];
-      _status = ORFailure;
-   }
-   return _status;
-}
--(ORStatus) restrict: (CPIntVarI*) var to: (ORIntSetI*) S
-{
-   @try {
-      ORStatus status = [var inside: S];
+      ORStatus status = cl();
       _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];

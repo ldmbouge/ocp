@@ -12,11 +12,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
+#import <objcp/CPConstraint.h"
+#import <objcp/CPSolver.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPHeuristic.h>
 
 //20632 choices
 //20579 fail

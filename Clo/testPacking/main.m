@@ -19,7 +19,6 @@
 #import <ORProgram/ORConcretizer.h>
 #import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPlabel.h"
 
 int main (int argc, const char * argv[])
 {

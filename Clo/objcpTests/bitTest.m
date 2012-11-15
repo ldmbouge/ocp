@@ -16,7 +16,6 @@
 #import "objcp/CPController.h"
 #import "objcp/ORTracer.h"
 #import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
 #import "ORFoundation/ORAVLTree.h"
 
 #import "objcp/CPBitArray.h"

@@ -602,7 +602,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
     return [_dom updateMin:newMin for:_recv];
 }
-
 -(ORStatus) updateMax: (ORInt) newMax
 {
     return [_dom updateMax:newMax for:_recv];

@@ -46,6 +46,12 @@ enum CPVarClass {
 -(id<ORIntVar>) base;
 -(BOOL) bound;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
+-(ORStatus) bind:(ORInt) val;
+-(ORStatus) remove:(ORInt) val;
+-(ORStatus) inside:(id<ORIntSet>) S;
+-(ORStatus) updateMin: (ORInt) newMin;
+-(ORStatus) updateMax: (ORInt) newMax;
+-(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
 @end
 
 @protocol CPVarArray <ORVarArray>

@@ -10,7 +10,6 @@
 #import "objcp/CPConstraint.h"
 #import "objcp/CPSolver.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
 
 @implementation AppDelegate {
    ORInt _canPause;

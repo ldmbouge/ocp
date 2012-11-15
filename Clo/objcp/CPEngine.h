@@ -27,11 +27,7 @@
 -(ORStatus)  addInternal:(id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(ORStatus) label: (id<CPIntVar>) var with: (ORInt) val;
--(ORStatus) diff:  (id<CPIntVar>) var with: (ORInt) val;
--(ORStatus) lthen: (id<CPIntVar>) var with: (ORInt) val;
--(ORStatus) gthen: (id<CPIntVar>) var with: (ORInt) val;
--(ORStatus) restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(ORStatus) impose:(Void2ORStatus)cl;
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
