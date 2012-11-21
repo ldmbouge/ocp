@@ -160,7 +160,7 @@
 -(void)restore:(id<ORSnapshot>)s
 {
    ORInt theValue = [s intValue];
-   [_impl restoreValue:theValue];
+   [[_impl dereference] restoreValue:theValue];
 }
 -(ORInt) min
 {

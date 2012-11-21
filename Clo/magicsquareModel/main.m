@@ -12,7 +12,6 @@
 #import "ORFoundation/ORFactory.h"
 #import "objcp/CPConstraint.h"
 #import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORModeling/ORModeling.h>

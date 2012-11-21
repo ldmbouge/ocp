@@ -329,11 +329,11 @@ static void findSCC(CPAllDifferentDC* ad)
 
 static void findSCCvar(CPAllDifferentDC* ad,ORInt k)
 {
-   ORInt*_varDfs = ad->_varDfs;
-   ORInt*_varHigh = ad->_varHigh;
-   ORInt*_stack = ad->_stack;
-   ORInt*_type = ad->_type;
-   ORInt*_valHigh = ad->_valHigh;
+   ORInt* _varDfs = ad->_varDfs;
+   ORInt* _varHigh = ad->_varHigh;
+   ORInt* _stack = ad->_stack;
+   ORInt* _type = ad->_type;
+   ORInt* _valHigh = ad->_valHigh;
    
    _varDfs[k] = ad->_dfs--;
    _varHigh[k] = _varDfs[k];
@@ -380,16 +380,16 @@ static void findSCCval(CPAllDifferentDC* ad,ORInt k)
 {
     int i;
     
-    ORInt*_varDfs = ad->_varDfs;
-    ORInt*_varHigh = ad->_varHigh;
-    ORInt*_stack = ad->_stack;
-    ORInt*_type = ad->_type;
-    ORInt*_match = ad->_match;
-    ORInt*_valDfs = ad->_valDfs;
-    ORInt*_valHigh = ad->_valHigh;
-    ORInt*_valComponent = ad->_valComponent;
-    ORInt*_varComponent = ad->_varComponent;
-    ORInt*_valMatch = ad->_valMatch;
+    ORInt* _varDfs = ad->_varDfs;
+    ORInt* _varHigh = ad->_varHigh;
+    ORInt* _stack = ad->_stack;
+    ORInt* _type = ad->_type;
+    ORInt* _match = ad->_match;
+    ORInt* _valDfs = ad->_valDfs;
+    ORInt* _valHigh = ad->_valHigh;
+    ORInt* _valComponent = ad->_valComponent;
+    ORInt* _varComponent = ad->_varComponent;
+    ORInt* _valMatch = ad->_valMatch;
     
     _valDfs[k] = ad->_dfs--;
     _valHigh[k] = _valDfs[k];

@@ -31,6 +31,7 @@ typedef enum {
 -(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;
+-(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
@@ -38,6 +39,7 @@ typedef enum {
 -(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;
+-(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
@@ -96,3 +98,11 @@ typedef enum {
 -(void) close;
 @end
 
+@protocol ORBindingArray <NSObject>
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(id) objectAtIndexedSubscript:(NSUInteger)key;
+-(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) nb;
+-(id) dereference;
+@end

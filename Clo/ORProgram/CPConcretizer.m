@@ -99,6 +99,7 @@
    if ([v dereference] == NULL) {
       id<ORIntRange> R = [v range];
       id<ORIdArray> dx = [ORFactory idArray: _engine range: R];
+      [dx makeImpl];
       ORInt low = R.low;
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++)

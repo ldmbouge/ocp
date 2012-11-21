@@ -19,4 +19,15 @@
 -(id) init;
 -(void) setImpl: (id) impl;
 -(id) impl;
+-(void) makeImpl;
+@end;
+
+@interface ORDualUseObjectI : NSObject<ORObject>
+{
+   id _impl;
+}
+-(id) init;
+-(void) setImpl: (id) impl;
+-(id) impl;
+-(void) makeImpl;
 @end;

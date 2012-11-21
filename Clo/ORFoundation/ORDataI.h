@@ -66,3 +66,15 @@
 -(void) visit:(id<ORVisitor>)visitor;
 @end
 
+@interface ORBindingArrayI : NSObject<ORBindingArray>
+-(ORBindingArrayI*) initORBindingArray: (ORInt) nb;
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(ORInt) nb;
+-(id)objectAtIndexedSubscript: (NSUInteger) key;
+-(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id) dereference;
+-(void) setImpl: (id) impl;
+-(id) impl;
+@end
+

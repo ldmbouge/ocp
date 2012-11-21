@@ -197,7 +197,6 @@
    ORInt               _up;
    ORInt               _nb;
    id<ORIntRange>   _range;
-   id<ORIdArray>     _impl;
 }
 
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
@@ -219,10 +218,6 @@
    _array += _low;
    free(_array);
    [super dealloc];
-}
--(id) impl
-{
-   return _impl;
 }
 -(id) at: (ORInt) value
 {
@@ -312,7 +307,7 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
-
+/*
 -(id<ORIdArray>) dereference
 {
    if (_impl != nil)
@@ -320,6 +315,7 @@
    else
       return self;
 }
+*/
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitIdArray:self];
@@ -720,73 +716,4 @@
 
 @end
 
-
-// ------------------------------------------------------------------------------------------
-
-@implementation ORBindingArrayI
-{
-   id*              _array;
-   ORInt            _nb;
-}
--(ORBindingArrayI*) initORBindingArray: (ORInt) nb
-{
-   self = [super init];
-   _nb = nb;
-   _array = malloc(_nb * sizeof(id));
-   memset(_array,0,sizeof(id)*_nb);
-   return self;
-}
--(void) dealloc
-{
-   free(_array);
-   [super dealloc];
-}
--(id) at: (ORInt) value
-{
-   if (value < 0|| value >= _nb)
-      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORBindingArray"];
-   return _array[value];
-}
--(void) set: (id) x at: (ORInt) value
-{
-   if (value < 0 || value >= _nb)
-      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
-   _array[value] = x;
-}
--(ORInt) nb
-{
-   return _nb;
-}
--(id) objectAtIndexedSubscript: (NSUInteger) key
-{
-   if (key >= _nb)
-      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORBindingArray"];
-   return _array[key];
-}
--(void) setObject: (id) newValue atIndexedSubscript: (NSUInteger) key
-{
-   if (key >= _nb)
-      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
-   _array[key] = newValue;
-}
--(id) dereference
-{
-   ORInt k = 0;
-   if (_array[k] == NULL)
-      return NULL;
-   return [_array[k] dereference];
-}
--(void) setImpl: (id) impl
-{
-   ORInt k = 0;
-   _array[k] = impl;
-}
--(id) impl
-{
-   ORInt k = 0;
-   if (_array[k] == NULL)
-      return NULL;
-   return [_array[k] dereference];
-}
-@end
 

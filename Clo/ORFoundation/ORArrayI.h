@@ -39,7 +39,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIdArrayI : ORModelingObjectI<NSCoding,ORIdArray>
+@interface ORIdArrayI : ORDualUseObjectI<NSCoding,ORIdArray>
 {
 
 }
@@ -59,18 +59,6 @@
 -(void)encodeWithCoder: (NSCoder*) aCoder;
 -(id)initWithCoder: (NSCoder*) aDecoder;
 -(void)visit:(id<ORVisitor>)v;
-@end
-
-@interface ORBindingArrayI : ORModelingObjectI<ORBindingArray>
--(ORBindingArrayI*) initORBindingArray: (ORInt) nb;
--(id) at: (ORInt) value;
--(void) set: (id) x at: (ORInt) value;
--(ORInt) nb;
--(id)objectAtIndexedSubscript: (NSUInteger) key;
--(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
--(id) dereference;
--(void) setImpl: (id) impl;
--(id) impl;
 @end
 
 
