@@ -113,6 +113,10 @@
 {
   [_engine add: [cstr impl]];   
 }
+-(void) visitAssignment:(id<ORAssignment>)cstr
+{
+   [_engine add:[cstr impl]];
+}
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
    [_engine add: [v impl]];

@@ -219,6 +219,17 @@
       [cstr setImpl: concreteCstr];
    }
 }
+-(void) visitAssignment:(id<ORAssignment>)cstr
+{
+   if ([cstr impl] == NULL) {
+      id<ORIntVarArray> x = [self concreteArray:[cstr x]];
+      id<ORIntMatrix> matrix = [cstr matrix];
+      id<ORIntVar> cost = [self concreteVar:[cstr cost]];
+      id<CPConstraint> concrete = [CPFactory assignment:_engine array:x matrix:matrix cost:cost];
+      [cstr setImpl:concrete];
+   }
+}
+
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
    if ([v impl] == NULL) {
