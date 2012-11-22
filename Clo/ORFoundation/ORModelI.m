@@ -1507,7 +1507,37 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _c;
 }
+@end
 
+@implementation ORAssignmentI {
+   id<ORIntVarArray> _x;
+   id<ORIntMatrix> _matrix;
+   id<ORIntVar>    _cost;
+}
+-(ORAssignmentI*)initORAssignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _matrix = matrix;
+   _cost = cost;
+   return self;
+}
+-(id<ORIntVarArray>) x
+{
+   return _x;
+}
+-(id<ORIntMatrix>) matrix
+{
+   return _matrix;
+}
+-(id<ORIntVar>) cost
+{
+   return _cost;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitAssignment:self];
+}
 @end
 
 @implementation ORObjectiveFunctionI

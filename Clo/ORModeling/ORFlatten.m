@@ -44,6 +44,7 @@
 -(void) visitPackOne:(id<ORPackOne>) cstr  {}
 -(void) visitPacking:(id<ORPacking>) cstr  {}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr  {}
+-(void) visitAssignment:(id<ORAssignment>)cstr {}
 -(void) visitMinimize: (id<ORObjectiveFunction>) v  {}
 -(void) visitMaximize: (id<ORObjectiveFunction>) v  {}
 -(void) visitEqualc: (id<OREqualc>)c  {}
@@ -111,6 +112,7 @@
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
+-(void) visitAssignment:(id<ORAssignment>)cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitEqualc: (id<OREqualc>)c;
@@ -324,6 +326,10 @@
       [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
+{
+   [_theModel addConstraint:cstr];
+}
+-(void) visitAssignment:(id<ORAssignment>)cstr
 {
    [_theModel addConstraint:cstr];
 }

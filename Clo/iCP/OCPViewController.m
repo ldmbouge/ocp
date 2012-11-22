@@ -11,12 +11,8 @@
 
 
 #import "OCPViewController.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/DFSController.h"
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORProgram/ORProgram.h>
 
 @interface OCPViewController ()
 
@@ -78,7 +74,7 @@
    
    [log insertText: [NSString stringWithFormat:@"Solver status: %@\n",cp]];
    [cp release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
 }
 
 - (IBAction)clear:(id)sender {

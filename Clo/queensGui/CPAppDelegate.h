@@ -11,7 +11,7 @@
 
 
 #import <Cocoa/Cocoa.h>
-#import "objcp/NSBoardController.h"
+#import <objcp/NSBoardController.h>
 #import "QueensView.h"
 
 @interface CPAppDelegate : NSObject <NSApplicationDelegate> {

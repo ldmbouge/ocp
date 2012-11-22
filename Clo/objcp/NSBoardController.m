@@ -9,7 +9,6 @@
 
  ***********************************************************************/
 
-
 #import "NSBoardController.h"
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"

@@ -10,33 +10,15 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPEngine.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPEngine.h>
+#import <CPUKernel/CPConstraintI.h>
 
 @class ORTrailI;
 @class ORTrailIStack;
 @class CPAC3Queue;
 @class CPAC5Queue;
 
-#define NBPRIORITIES ((ORInt)8)
-#define LOWEST_PRIO  ((ORInt)0)
-#define HIGHEST_PRIO ((ORInt)7)
-
-
-// PVH: This guy covers two cases: the case where this is really a constraint and the case where this is a callback
-// Ideally, the callback case should be in the AC-5 category
-
-@interface VarEventNode : NSObject {
-   @package
-   VarEventNode*         _node;
-   id                 _trigger;  // type is {ConstraintCallback}
-   CPCoreConstraint*     _cstr;
-   ORInt             _priority;
-}
--(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
--(void)dealloc;
-@end
 
 enum CPEngineState {
    CPOpen    = 0,
@@ -57,9 +39,8 @@ enum CPEngineState {
    ORStatus                _status;
    ORInt                _propagating;
    ORUInt               _nbpropag;
-   CPCoreConstraint*        _last;
+   id<CPConstraint>        _last;
    UBType                   _propagIMP;
-//   id<ORSolution>           _aSol;
    @package
    id<ORIntInformer>        _propagFail;
    id<ORVoidInformer>       _propagDone;
@@ -71,23 +52,18 @@ enum CPEngineState {
 -(void)      trackVariable:(id)var;
 -(void)      trackObject:(id)obj;
 -(id)        trail;
--(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (CPCoreConstraint*)c;
--(void)      scheduleAC3:(VarEventNode**)mlist;
--(void)      scheduleAC5:(VarEventNode*)list with: (ORInt)val;
+-(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
+-(void)      scheduleAC3:(id<VarEventNode>*)mlist;
+-(void)      scheduleAC5:(id<CPEvent>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
 -(ORStatus)  addInternal:(id<ORConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
--(ORStatus)  label:(id<CPIntVar>) var with: (ORInt) val;
--(ORStatus)  diff:(id<CPIntVar>) var with: (ORInt) val;
--(ORStatus)  lthen:(id<CPIntVar>) var with: (ORInt) val;
--(ORStatus)  gthen:(id<CPIntVar>) var with: (ORInt) val;
--(ORStatus)  restrict: (id<CPIntVar>) var to: (id<ORIntSet>) S;
+-(ORStatus)  impose:(Void2ORStatus)cl;
 -(NSMutableArray*) allVars;
 -(NSMutableArray*) allConstraints;
--(NSMutableArray*) allModelConstraints;
 -(ORStatus)  close;
 -(ORStatus)  status;
 -(bool)      closed;

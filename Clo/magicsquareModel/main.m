@@ -9,9 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
+#import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORModeling/ORModeling.h>
@@ -115,7 +113,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Quitting");
       printf("%d %s %d %d %f %d %lld %lld\n",r,hName[hs],n,found ? 1 : 0,rf,[cp nbFailures],endTime - startTime,endCPU - startCPU);
       [cp release];
-      [CPFactory shutdown];      
+      [ORFactory shutdown];
    }
    return 0;
 }

@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPConstraintI.h>
 
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)
 @interface CPCardinalityCst : CPActiveConstraint<NSCoding> {  

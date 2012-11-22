@@ -509,7 +509,7 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine label: var with: val];
+   ORStatus status = [_engine impose: ^ORStatus { return [var bind: val];}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -519,30 +519,28 @@
 }
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine diff: var with: val];
+   ORStatus status = [_engine impose:^ORStatus { return [var remove:val];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine lthen: var with: val];
-   if (status == ORFailure) {
+   ORStatus status = [_engine impose:^ORStatus { return  [var updateMax:val-1];}];
+   if (status == ORFailure)
       [_search fail];
-   }
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine gthen: var with: val];
-   if (status == ORFailure) {
+   ORStatus status = [_engine impose:^ORStatus { return [var updateMin:val+1];}];
+   if (status == ORFailure)
       [_search fail];
-   }
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
-   ORStatus status = [_engine restrict: var to: S];
+   ORStatus status = [_engine impose:^ORStatus { return [var inside:S];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
@@ -620,7 +618,7 @@
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine label: var with: val];
+   ORStatus status = [_engine impose: ^ORStatus { return [var bind: val];}];
    if (status == ORFailure) {
       [_failLabel notifyWith:var andInt:val];
       [_search fail];
@@ -631,7 +629,7 @@
 }
 -(void) diffImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine diff: var with: val];
+   ORStatus status = [_engine impose:^ORStatus { return [var remove:val];}];
    if (status == ORFailure)
       [_search fail];
    [_tracer addCommand: [CPSearchFactory notEqualc: var to: val]];
@@ -639,23 +637,21 @@
 }
 -(void) lthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine lthen: var with: val];
-   if (status == ORFailure) {
+   ORStatus status = [_engine impose:^ORStatus { return  [var updateMax:val-1];}];
+   if (status == ORFailure)
       [_search fail];
-   }
    [ORConcurrency pumpEvents];
 }
 -(void) gthenImpl: (id<CPIntVar>) var with: (ORInt) val
 {
-   ORStatus status = [_engine gthen: var with: val];
-   if (status == ORFailure) {
-      [_search fail];
-   }
+   ORStatus status = [_engine impose:^ORStatus { return [var updateMin:val+1];}];
+   if (status == ORFailure)
+      [_search fail];   
    [ORConcurrency pumpEvents];
 }
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
-   ORStatus status = [_engine restrict: var to: S];
+   ORStatus status = [_engine impose:^ORStatus { return [var inside:S];}];
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];

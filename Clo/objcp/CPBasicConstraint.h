@@ -10,8 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPBitDom.h>
+#import <objcp/CPVar.h>
 
 @class CPIntVarI;
 @class ORIntSetI;

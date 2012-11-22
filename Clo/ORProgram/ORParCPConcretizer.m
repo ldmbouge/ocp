@@ -10,9 +10,8 @@
  ***********************************************************************/
 
 #import "CPConcretizer.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
+#import <CPUKernel/CPUKernel.h>
+#import <objcp/CPFactory.h>
 
 /*
 

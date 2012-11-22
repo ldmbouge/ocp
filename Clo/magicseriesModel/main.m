@@ -41,7 +41,7 @@ int main (int argc, const char * argv[])
        ];
       NSLog(@"Solver status: %@\n",cp);
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

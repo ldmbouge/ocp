@@ -47,6 +47,7 @@
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitPacking:(id<ORPacking>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
+-(void) visitAssignment:(id<ORAssignment>)cstr;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
 -(void) visitEqualc: (id<OREqualc>)c;

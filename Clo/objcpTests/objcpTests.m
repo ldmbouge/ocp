@@ -12,14 +12,9 @@
 
 #import "objcpTests.h"
 
-#import "objcp/CPSolver.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPController.h"
-#import "objcp/ORTracer.h"
-#import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
-#import "ORFoundation/ORAVLTree.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORAVLTree.h>
+#import <objcp/CPObjectQueue.h>
 
 @implementation objcpTests
 

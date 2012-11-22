@@ -291,6 +291,14 @@
 -(id<ORIntVar>) capacity;
 @end
 
+
+@interface ORAssignmentI: ORConstraintI<ORAssignment>
+-(ORAssignmentI*)initORAssignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
+-(id<ORIntVarArray>) x;
+-(id<ORIntMatrix>) matrix;
+-(id<ORIntVar>) cost;
+@end
+
 @interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction> {
    id<ORIntVar>             _var;
 }

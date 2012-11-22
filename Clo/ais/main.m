@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
-#import <objcp/CPLabel.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORConcretizer.h>
 #import <objcp/CPError.h>
@@ -55,7 +54,7 @@ int main(int argc, const char * argv[])
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

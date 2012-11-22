@@ -10,17 +10,13 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORUtilities/ORUtilities.h>
-#import <ORFoundation/ORFoundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPlabel.h"
-
-
-#import "objcp/CPArray.h"
-
-
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
+#import <objcp/CPFactory.h>
 
 /*
 int main (int argc, const char * argv[])
@@ -148,10 +144,10 @@ int main (int argc, const char * argv[])
       fscanf(dta, "%d",&tmp);
       fscanf(dta, "%d",&tmp);
    }
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> Cities = RANGE(cp,0,nbCities-1);
+   id<ORModel> mdl = [ORFactory createModel];
+   id<ORIntRange> Cities = RANGE(mdl,0,nbCities-1);
 
-   id<ORIntMatrix> cost = [CPFactory intMatrix:cp range: Cities : Cities];
+   id<ORIntMatrix> cost = [ORFactory intMatrix:mdl range: Cities : Cities];
    for(ORInt i = 0; i < nbCities; i++) {
       for(ORInt j = 0; j < nbCities; j++) {
          fscanf(dta, "%d",&tmp);
@@ -163,21 +159,24 @@ int main (int argc, const char * argv[])
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
-   id<CPUniformDistribution> distr = [CPFactory uniformDistribution: cp range: Cities];
+   id<ORUniformDistribution> distr = [CPFactory uniformDistribution: mdl range: Cities];
       
-   id<ORInteger> nbRestarts = [ORFactory integer: cp value:0];
-   id<ORInteger> nbSolutions = [ORFactory integer: cp value:1];
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: Cities domain: Cities];
-   id<ORIntVar> assignmentCost = [CPFactory intVar:cp bounds: RANGE(cp,0,10000)];
-   id<ORTRIntArray> mark = [CPFactory TRIntArray:cp range: Cities];
+   id<ORInteger> nbRestarts = [ORFactory integer: mdl value:0];
+   id<ORInteger> nbSolutions = [ORFactory integer: mdl value:1];
+   id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: Cities domain: Cities];
+   id<ORIntVar> assignmentCost = [ORFactory intVar:mdl domain: RANGE(mdl,0,10000)];
    
    for(ORInt i = 0; i < nbCities; i++)
-      [cp add: [CPFactory notEqualc: x[i] to: i]];
-   [cp add: [CPFactory alldifferent: x]];
-   [cp add: [CPFactory circuit: x]];
-   [cp add: [CPFactory assignment: x matrix: cost cost:assignmentCost]];
+      [mdl add: [x[i] neqi: i]];
+   [mdl add: [ORFactory alldifferent: x]];
+   [mdl add: [ORFactory circuit: x]];
+   [mdl add: [ORFactory assignment: x matrix: cost cost:assignmentCost]];
 
-   [cp minimize: assignmentCost ];
+   [mdl minimize: assignmentCost ];
+   
+   id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+   id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
+
    [cp solve: ^{
        [cp limitCondition: ^bool() { return [nbRestarts value] >= 30; } in:
         ^{
@@ -185,7 +184,8 @@ int main (int argc, const char * argv[])
             ^{
                [cp limitFailures: 100 in:
                 ^{
-                  [CPLabel array: x];
+                  [cp labelArray: x];
+                   [cp label:assignmentCost with:[assignmentCost min]];
                    printf("Cost: %d \n",[assignmentCost min]);
                 }
                 ];
@@ -194,7 +194,7 @@ int main (int argc, const char * argv[])
                ^{
                   printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
                   [nbSolutions incr];
-                  id<ORSolution> solution = [cp solution];
+                  id<ORSolution> solution = [[cp solutionPool] best];
                   for(ORInt i = 0; i < nbCities; i++)
                      [mark set: 0 at: i];
                   
@@ -213,7 +213,7 @@ int main (int argc, const char * argv[])
         ];
     }
     ];
-   id<ORSolution> solution = [cp solution];
+   id<ORSolution> solution = [mdl solution];
    ORInt start = (int) [distr next];
    for(ORInt i = 0; i < 10; i++) {
       printf("%d->",start);
@@ -222,8 +222,7 @@ int main (int argc, const char * argv[])
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
-   [CPFactory shutdown];
-
+   [ORFactory shutdown];
    return 0;
 }
 

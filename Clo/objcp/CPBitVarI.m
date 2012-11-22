@@ -29,15 +29,6 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t)
     net->_maxEvt    = makeTRId(t,nil);
 }
 
-static void freeList(VarEventNode* list)
-{
-    while (list) {
-        VarEventNode* next = list->_node;
-        [list release];
-        list = next;
-    }
-}
-
 static void deallocNetwork(CPBitEventNetwork* net) 
 {
     freeList(net->_boundsEvt._val);

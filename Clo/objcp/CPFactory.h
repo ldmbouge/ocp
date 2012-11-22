@@ -11,17 +11,11 @@
 
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPEngine.h>
+#import <CPUKernel/CPUKernel.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPData.h>
 #import <objcp/CPVar.h>
 
-@interface CPFactory : NSObject
-+(id<CPEngine>) engine: (id<ORTrail>) trail;
-+(void) shutdown;
-@end;
-
-void failNow();
 
 @interface CPFactory (DataStructure)
 +(void) print: (id) x;
