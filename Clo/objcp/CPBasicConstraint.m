@@ -1550,7 +1550,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    _primalBound = MAXINT;
    return self;
 }
--(id<ORIntVar>)var
+-(id<CPIntVar>)var
 {
    return _x;
 }
@@ -1628,7 +1628,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
     [super dealloc];
 }
--(id<ORIntVar>)var
+-(id<CPIntVar>)var
 {
    return _x;
 }

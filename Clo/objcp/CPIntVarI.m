@@ -311,7 +311,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return 0;
 }
--(id<ORIntVar>)base
+-(id<CPIntVar>)base
 {
    return self;
 }
