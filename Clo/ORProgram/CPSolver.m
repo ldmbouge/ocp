@@ -16,6 +16,7 @@
 #import <objcp/CPConstraint.h>
 #import "CPProgram.h"
 #import "CPSolver.h"
+#import <objcp/CPBitVar.h>
 
 // to do 11/11/2012
 //
@@ -329,6 +330,28 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
 }
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
+}
+
+-(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
+{
+   [_search try: ^() { [self labelBV:x at:i with:false];}
+             or: ^() {[self labelBV:x at:i with:true];}];
+}
+-(void) labelUpFromLSB:(id<CPBitVar>) x
+{
+   int i;
+   CPBitVarI* bv = (CPBitVarI*) [x dereference];
+   while ((i=[bv lsFreeBit])>=0) {
+      NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
+      [_search try: ^() { [self labelBV:x at:i with:false];}
+                or: ^() { [self labelBV:x at:i with:true];}];
+   }
+}
+
+
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
@@ -393,6 +416,7 @@
                 }];
    }
 }
+
 -(void) label: (id<CPIntVar>) var with: (ORInt) val
 {
    return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
@@ -413,6 +437,11 @@
 {
    [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
 }
+-(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(bool)val
+{
+   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:i with: val];
+}
+
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
@@ -545,6 +574,13 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   ORStatus status = [_engine impose:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];   
+}
 @end
 
 /******************************************************************************************/
@@ -656,6 +692,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   ORStatus status = [_engine impose:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+
 //- (void) encodeWithCoder:(NSCoder *)aCoder
 //{
 //   [super encodeWithCoder:aCoder];

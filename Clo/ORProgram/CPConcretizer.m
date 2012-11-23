@@ -71,6 +71,14 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
 }
+-(void) visitBitVar: (id<ORBitVar>) v
+{
+   if ([v dereference] == NULL) {
+      id<CPBitVar> cv = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
+      [v setImpl:cv];
+   }
+}
+
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    
@@ -227,9 +235,9 @@
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
    if ([cstr impl] == NULL) {
-      id<ORIntVarArray> x = [self concreteArray:[cstr x]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr x]];
       id<ORIntMatrix> matrix = [cstr matrix];
-      id<ORIntVar> cost = [self concreteVar:[cstr cost]];
+      id<CPIntVar> cost = [self concreteVar:[cstr cost]];
       id<CPConstraint> concrete = [CPFactory assignment:_engine array:x matrix:matrix cost:cost];
       [cstr setImpl:concrete];
    }

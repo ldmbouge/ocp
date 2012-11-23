@@ -54,7 +54,9 @@
 }
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-   
+}
+-(void) visitBitVar: (id<ORBitVar>) v
+{
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {

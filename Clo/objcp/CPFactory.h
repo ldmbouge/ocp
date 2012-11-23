@@ -15,6 +15,7 @@
 #import <objcp/CPSolver.h>
 #import <objcp/CPData.h>
 #import <objcp/CPVar.h>
+#import <objcp/CPBitVar.h>
 
 
 @interface CPFactory (DataStructure)
@@ -55,13 +56,17 @@
 
 @end
 
-// pvh: should be merged with below
 @interface CPFactory (expression)
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
 +(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
+
+@interface CPFactory (BV)
++(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(int) len;
+@end
+
 
 #define FORALL(p,S,c,b,body) [cp forall:(S) suchThat:^bool(ORInt p) { return (c);} orderedBy:^ORInt(ORInt p) { return (b);} do:(body)];
 

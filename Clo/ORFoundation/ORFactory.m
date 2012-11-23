@@ -193,6 +193,10 @@
 {
    return [[ORFloatVarI alloc]  initORFloatVarI: tracker low: low up: up];
 }
++(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen
+{
+   return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
+}
 +(id<ORBindingArray>) bindingArray: (id<ORTracker>) tracker nb: (ORInt) nb
 {
    return [[ORBindingArrayI alloc] initORBindingArray: nb];

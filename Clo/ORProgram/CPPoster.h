@@ -21,6 +21,7 @@
 -(void) visitIntRange:(id<ORIntRange>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;

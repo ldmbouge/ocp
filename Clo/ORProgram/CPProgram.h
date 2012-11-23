@@ -20,6 +20,7 @@
 @protocol ORIdxIntInformer;
 @protocol ORTracer;
 @protocol ORSolutionPool;
+@protocol CPBitVar;
 
 @protocol CPPortal <NSObject>
 -(id<ORIdxIntInformer>) retLabel;
@@ -104,3 +105,7 @@
 @end
 
 
+@protocol CPBV
+-(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
+-(void) labelUpFromLSB:(id<ORBitVar>) x;
+@end

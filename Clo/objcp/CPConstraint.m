@@ -207,7 +207,7 @@
          [[x tracker] trackObject: o];
          return o;
       }
-      default:assert(FALSE);
+      default:assert(FALSE);return nil;
    }
 }
 
@@ -225,7 +225,7 @@
          [[x tracker] trackObject: o];
          return o;
       }
-      default:assert(FALSE);
+      default:assert(FALSE);return nil;
    }
 }
 

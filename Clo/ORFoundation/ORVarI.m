@@ -467,3 +467,150 @@
    [v visitFloatVar: self];
 }
 @end
+
+@implementation ORBitVarI {
+   id<ORBitVar>     _impl;
+   id<ORTracker>    _tracker;
+   ORUInt*          _low;
+   ORUInt*          _up;
+   ORUInt           _bLen;
+   ORUInt           _nb;
+   ORUInt           _name;
+}
+-(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
+{
+   self = [super init];
+   _bLen = len;
+   _nb = _bLen / 32 + (_bLen % 32) ? 1 : 0;
+   _low = malloc(sizeof(ORUInt)*_nb);
+   _up = malloc(sizeof(ORUInt)*_nb);
+   memcpy(_low,low,sizeof(ORUInt)*_nb);
+   memcpy(_up,up,sizeof(ORUInt)*_nb);
+   _name = -1;
+   _tracker = tracker;
+   _impl  = nil;
+   [tracker trackVariable: self];
+   return self;
+}
+-(void)dealloc
+{
+   free(_low);
+   free(_up);
+   [super dealloc];
+}
+-(void) setId:(ORUInt)vid
+{
+   _name = vid;
+}
+-(ORUInt) getId
+{
+   return _name;
+}
+-(ORUInt*)low
+{
+   return _low;
+}
+-(ORUInt*)up
+{
+   return _up;
+}
+-(ORUInt)bitLength
+{
+   return _bLen;
+}
+-(bool) bound
+{
+   if (_impl)
+      return [[_impl dereference] bound];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+-(uint64)min
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] min];
+   else {
+      return (long long)_low[1]<<32 | _low[0];
+   }
+}
+-(uint64)max
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] min];
+   else {
+      return (long long)_low[1]<<32 | _low[0];
+   }
+}
+-(unsigned int)  domsize
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] domsize];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   }
+}
+-(bool) member: (unsigned int*) v
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] member:v];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   }
+}
+-(void) visit: (id<ORVisitor>)v
+{
+   [v visitBitVar:self];
+}
+-(NSSet*) constraints
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] constraints];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   }   
+}
+-(id) snapshot
+{
+   return nil;
+}
+-(void)restore:(id<ORSnapshot>)s
+{
+   
+}
+-(void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_impl];
+   [aCoder encodeObject:_tracker];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_bLen];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_nb];
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeArrayOfObjCType:@encode(ORUInt) count:_nb at:_low];
+   [aCoder encodeArrayOfObjCType:@encode(ORUInt) count:_nb at:_up];
+}
+-(id)initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _impl = [aDecoder decodeObject];
+   _tracker = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_bLen];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_nb];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   _low = malloc(sizeof(ORUInt)*_nb);
+   _up = malloc(sizeof(ORUInt)*_nb);
+   [aDecoder decodeArrayOfObjCType:@encode(ORUInt) count:_nb at:_low];
+   [aDecoder decodeArrayOfObjCType:@encode(ORUInt) count:_nb at:_up];
+   return self;
+}
+
+-(BOOL) isVariable
+{
+   return YES;
+}
+-(NSString*) description
+{
+   if (_impl == nil)
+      return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(nil)",_name];
+   else
+      return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(%@)",_name,_impl];
+}
+@end

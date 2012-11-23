@@ -26,6 +26,7 @@
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntVar: (id<ORIntVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v;
 -(void) visitAffineVar:(id<ORIntVar>) v;

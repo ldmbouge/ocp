@@ -47,6 +47,17 @@
 -(id<ORIntVar>)base;
 @end
 
+@protocol ORBitVar <ORVar>
+-(bool) bound;
+-(uint64)min;
+-(uint64)max;
+-(ORUInt*)low;
+-(ORUInt*)up;
+-(ORUInt)bitLength;
+-(unsigned int)  domsize;
+-(bool) member: (unsigned int*) v;
+@end
+
 @protocol ORFloatVar <ORVar>
 -(ORFloat) value;
 -(ORFloat) min;

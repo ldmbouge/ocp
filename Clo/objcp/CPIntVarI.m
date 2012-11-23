@@ -639,7 +639,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(id<ORIntVar>) dereference
 {
-   return self;
+   return (id<ORIntVar>)self;
 }
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {

@@ -25,6 +25,7 @@
 
 -(id) visitIntVar: (id<ORIntVar>) v engine: (id<CPEngine>) engine;
 -(id) visitFloatVar: (id<ORFloatVar>) v engine: (id<CPEngine>) engine;
+-(id) visitBitVar: (id<ORBitVar>) v engine:(id<CPEngine>)engine;
 -(id) visitAffineVar:(id<ORIntVar>) v engine: (id<CPEngine>) engine;
 -(id) visitIdArray: (id<ORIdArray>) v engine: (id<CPEngine>) engine;
 -(id) visitIdMatrix: (id<ORIdMatrix>) v engine: (id<CPEngine>) engine;
@@ -102,6 +103,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
@@ -177,6 +179,7 @@
 
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;

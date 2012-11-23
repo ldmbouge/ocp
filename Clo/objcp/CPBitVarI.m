@@ -10,12 +10,9 @@
  ***********************************************************************/
 
 #import "CPBitVarI.h"
-#import "CPBitVar.h"
-#import "CPEngine.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"
 #import "CPBitArrayDom.h"
-#import "CPIntVarI.h"
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
@@ -37,15 +34,89 @@ static void deallocNetwork(CPBitEventNetwork* net)
     freeList(net->_maxEvt._val);
 }
 
+@interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   union {
+      ORInt _value;
+      id<CPDom>   _dom;
+   }              _rep;
+   BOOL         _asDom;
+}
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v;
+-(void)restoreInto:(NSArray*)av;
+-(int)intValue;
+-(BOOL)boolValue;
+@end
+
+@implementation CPBitVarSnapshot
+-(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v
+{
+   self = [super init];
+   _name = [v getId];
+   _asDom = ![v bound];
+//   if (_asDom) {
+//      _rep._dom = [[v domain] copy];
+//   } else
+//      _rep._value = [v min];
+   return self;
+}
+-(void)dealloc
+{
+   if (_asDom)
+      [_rep._dom release];
+   [super dealloc];
+}
+-(void)restoreInto:(NSArray*)av
+{
+   CPBitVarI* theVar = [av objectAtIndex:_name];
+   if (_asDom) {
+      [theVar restoreDomain:_rep._dom];
+   } else {
+      [theVar restoreValue:_rep._value];
+   }
+}
+-(int)intValue
+{
+   return _asDom ? [_rep._dom min] : _rep._value;
+}
+-(BOOL)boolValue
+{
+   return _asDom ? [_rep._dom min] : _rep._value;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_asDom];
+   if (_asDom) {
+      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
+   } else {
+      [aCoder encodeObject:_rep._dom];
+   }
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_asDom];
+   if (_asDom)
+      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
+   else {
+      _rep._dom = [[aDecoder decodeObject] retain];
+   }
+   return self;
+}
+@end
+
+//****************************************************
 @implementation CPBitVarI
--(void) initCPBitVarCore:(CPEngineI*)fdm low: (unsigned int*) low up: (unsigned int*)up length:(int)len
+-(void) initCPBitVarCore:(CPEngineI*)engine low: (unsigned int*) low up: (unsigned int*)up length:(int)len
 {
     self = [super init];
-    _fdm  = fdm;
-    [_fdm trackVariable: self];
-    setUpNetwork(&_net, [fdm trail]);
+    _engine = engine;
+    [_engine trackVariable: self];
+    setUpNetwork(&_net, [_engine trail]);
     _triggers = nil;
-    _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[fdm trail]];
+    _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
     _recv = self;
 }
 -(void)dealloc
@@ -63,9 +134,13 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     _name = name;
 }
+-(ORUInt) getId
+{
+   return _name;
+}
 -(id<CPEngine>) engine
 {
-    return _fdm;
+    return _engine;
 }
 -(id<CPBitVarNotifier>) delegate
 {
@@ -97,6 +172,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
 { 
     return [_dom max];
 }
+
+-(CPBitArrayDom*) domain
+{
+   return _dom;
+}
+
 -(unsigned int*) maxArray
 {
     return [_dom maxArray];
@@ -121,6 +202,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom domsize];
 }
 
+-(unsigned int) lsFreeBit
+{
+   return [_dom lsFreeBit];
+}
+
 -(bool)member:(unsigned int*)v
 {
     return [_dom member:v];
@@ -130,6 +216,25 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom description];
 }
+
+-(id)snapshot
+{
+   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot:self];
+}
+-(void)restoreDomain:(id<CPDom>)toRestore
+{
+   [_dom restoreDomain:toRestore];
+}
+-(void)restoreValue:(ORInt)toRestore
+{
+   [_dom restoreValue:toRestore];
+}
+
+-(id<CPBitVar>) dereference
+{
+   return self;
+}
+
 -(bool) tracksLoseEvt
 {
     return _triggers != nil;
@@ -144,7 +249,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
                                             trigger:todo
                                                cstr:c
                                                  at:p];
-    assignTRId(&_net._boundsEvt, evt, [_fdm trail]);
+    assignTRId(&_net._boundsEvt, evt, [_engine trail]);
     [evt release];
 }
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
@@ -153,7 +258,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
                                             trigger:todo
                                                cstr:c
                                                  at:p];
-    assignTRId(&_net._minEvt, evt, [_fdm trail]);
+    assignTRId(&_net._minEvt, evt, [_engine trail]);
     [evt release];
 }
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
@@ -162,17 +267,18 @@ static void deallocNetwork(CPBitEventNetwork* net)
                                             trigger:todo
                                                cstr:c
                                                  at:p];
-    assignTRId(&_net._maxEvt, evt, [_fdm trail]);
+    assignTRId(&_net._maxEvt, evt, [_engine trail]);
     [evt release];
 }
 
--(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo 
+-(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
 {
+   //[_dom updateFreeBitCount];
     id evt = [[VarEventNode alloc] initVarEventNode:_net._bitFixedEvt._val
                                             trigger:todo
                                                cstr:c
                                                  at:p];
-    assignTRId(&_net._bitFixedEvt, evt, [_fdm trail]);
+    assignTRId(&_net._bitFixedEvt, evt, [_engine trail]);
     [evt release];   
 }
 
@@ -198,9 +304,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
    mList[k] = _net._maxEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
+   [_engine scheduleAC3:mList];
     if (_triggers != nil)
-        [_triggers bindEvt:_fdm];
+        [_triggers bindEvt:_engine];
 }
 
 -(void) changeMinEvt: (int) dsz
@@ -212,9 +318,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
    mList[k] = _net._minEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
-   if (dsz==1 && _triggers != nil)
-      [_triggers bindEvt:_fdm];
+   [_engine scheduleAC3:mList];
+    if (dsz==1 && _triggers != nil)
+        [_triggers bindEvt:_engine];
 }
 -(void) changeMaxEvt: (int) dsz
 {
@@ -225,20 +331,21 @@ static void deallocNetwork(CPBitEventNetwork* net)
    mList[k] = _net._maxEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
+   [_engine scheduleAC3:mList];
     if (dsz==1 && _triggers != nil)
-        [_triggers bindEvt:_fdm];
+        [_triggers bindEvt:_engine];
 }
 
 -(void) bitFixedEvt:(int)idx
 {
+   [_dom updateFreeBitCount];
     //Empty implementation
    VarEventNode* mList[5];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
+   [_engine scheduleAC3:mList];
 }
 
 -(ORStatus) updateMin: (uint64) newMin
@@ -278,22 +385,22 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom bindToPat: val for:_recv];
 }
 
--(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)fdm withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
+-(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)engine withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {
-    [self initCPBitVarCore:fdm low:low up:up length:len];
+    [self initCPBitVarCore:engine low:low up:up length:len];
     [_dom setLow: low for:self];
     [_dom setUp: up for:self];
     return self;
 }
 
--(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)fdm withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
+-(CPBitVarI*) initCPExplicitBitVarPat: (CPEngineI*)engine withLow:(unsigned int*)low andUp:(unsigned int *)up andLen:(unsigned int)len
 {
     self = [super init];
-    _fdm  = fdm;
-    [_fdm trackVariable: self];
-    setUpNetwork(&_net, [fdm trail]);
+    _engine  = engine;
+    [_engine trackVariable: self];
+    setUpNetwork(&_net, [_engine trail]);
     _triggers = nil;
-    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[fdm trail]];
+    _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[_engine trail]];
     _recv = self;
     return self;
 }
@@ -302,7 +409,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 // Cluster Constructors
 // ------------------------------------------------------------------------
 //Integer interpretation of BitVar
-+(CPBitVarI*) initCPBitVar: (id<CPEngine>) fdm low: (int)low up: (int) up len: (unsigned int) len
++(CPBitVarI*) initCPBitVar: (id<CPEngine>)engine low: (int)low up: (int) up len: (unsigned int) len
 {
     unsigned int uLow[2];
     unsigned int uUp[2];
@@ -310,14 +417,14 @@ static void deallocNetwork(CPBitEventNetwork* net)
     uLow[1] = low;
     uUp[0] = 0;
     uUp[1] = up;
-    CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVar: fdm withLow: uLow andUp: uUp andLen: len];
+    CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVar: engine withLow: uLow andUp: uUp andLen: len];
     return x;
 }
 
 //Binary bit pattern interpretation of BitVar
-+(CPBitVarI*) initCPBitVarWithPat:(CPEngineI*)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
++(CPBitVarI*) initCPBitVarWithPat:(CPEngineI*)engine withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len{
     
-    CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVarPat: fdm withLow: low andUp: up andLen: len];
+    CPBitVarI* x = [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow: low andUp: up andLen: len];
     return x;
 }
 
@@ -332,7 +439,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
     [aCoder encodeObject:_dom];
-    [aCoder encodeObject:_fdm];
+    [aCoder encodeObject:_engine];
     [aCoder encodeObject:_recv];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
@@ -340,8 +447,8 @@ static void deallocNetwork(CPBitEventNetwork* net)
     self = [super init];
     [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
     _dom = [[aDecoder decodeObject] retain];
-    _fdm = [aDecoder decodeObject];
-    setUpNetwork(&_net, [_fdm trail]);
+    _engine = [aDecoder decodeObject];
+    setUpNetwork(&_net, [_engine trail]);
     _triggers = nil;
     _recv = [[aDecoder decodeObject] retain];
     return self;
@@ -400,7 +507,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   _tab = malloc(sizeof(CPIntVarI*)*_mx);
+   _tab = malloc(sizeof(CPBitVarI*)*_mx);
    for(ORInt k=0;k<_nb;k++)
       _tab[k] = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];   
