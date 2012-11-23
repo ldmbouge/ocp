@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPConstraintI.h>
 #import "ORFoundation/ORTrailI.h"
 
 @class CPIntVarI;

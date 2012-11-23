@@ -23,8 +23,6 @@
 @interface ORConstraintI : ORModelingObjectI<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;
--(id<ORConstraint>) impl;
--(id<ORConstraint>) dereference;
 -(NSString*) description;
 @end
 
@@ -291,6 +289,14 @@
 -(id<ORIntVarArray>) item;
 -(id<ORIntArray>) weight;
 -(id<ORIntVar>) capacity;
+@end
+
+
+@interface ORAssignmentI: ORConstraintI<ORAssignment>
+-(ORAssignmentI*)initORAssignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
+-(id<ORIntVarArray>) x;
+-(id<ORIntMatrix>) matrix;
+-(id<ORIntVar>) cost;
 @end
 
 @interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction> {

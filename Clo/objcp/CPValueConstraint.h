@@ -11,9 +11,9 @@
 
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPTypes.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPConstraintI.h>
 #import "CPIntVarI.h"
-#import "CPConstraintI.h"
 
 @class CPIntVarI;
 @class CPEngineI;

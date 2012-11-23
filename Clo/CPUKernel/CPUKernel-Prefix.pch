@@ -1,0 +1,8 @@
+//
+// Prefix header for all source files of the 'CPUKernel' target in the 'CPUKernel' project
+//
+
+#ifdef __OBJC__
+   #import <Cocoa/Cocoa.h>
+   #import <ORFoundation/ORFoundation.h>
+#endif

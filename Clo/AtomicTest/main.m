@@ -11,14 +11,13 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/Foundation.h>
-#import "objcp/CPSolver.h"
-#import "objcp/CPEquationBC.h"
-#import "objcp/CPBasicConstraint.h"
-#import "objcp/CPValueConstraint.h"
-#import "objcp/CPCardinality.h"
-#import "objcp/CPConcurrency.h"
-#import "objcp/CPError.h"
-#import "objcp/CPCrFactory.h"
+#import <objcp/CPEquationBC.h>
+#import <objcp/CPBasicConstraint.h>
+#import <objcp/CPValueConstraint.h>
+#import <objcp/CPCardinality.h>
+#import <objcp/CPConcurrency.>
+#import <objcp/CPError.h>
+#import <objcp/CPCrFactory.h>
 
 /*
 
@@ -106,9 +105,6 @@
 */
 
 /*
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-
 typedef int (^Void2Int)(void);
 Void2Int makeC1(int i);
 Void2Int makeAdd(int i);

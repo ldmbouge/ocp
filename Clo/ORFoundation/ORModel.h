@@ -249,6 +249,12 @@
 -(id<ORIntVar>) capacity;
 @end
 
+@protocol ORAssignment <ORConstraint>
+-(id<ORIntVarArray>) x;
+-(id<ORIntMatrix>) matrix;
+-(id<ORIntVar>) cost;
+@end
+
 @protocol ORObjectiveValue <ORObject>
 -(ORFloat)key;
 @end

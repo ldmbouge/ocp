@@ -11,13 +11,9 @@
 
 
 #import "CPAppDelegate.h"
-#import "objcp/CPConstraint.h"
-#import "ORFoundation/ORController.h"
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/NSBoardController.h"
+#import <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPUKernel.h>
+#import <objcp/NSBoardController.h>
 
 @implementation CPAppDelegate
 

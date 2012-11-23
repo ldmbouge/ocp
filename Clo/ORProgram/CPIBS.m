@@ -11,7 +11,7 @@
 
 #import "CPIBS.h"
 #import <ORFoundation/ORTracer.h>
-#import <objcp/CPEngine.h>
+#import <CPUKernel/CPUKernel.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
 #import "CPConcretizer.h"
@@ -281,7 +281,7 @@
       ORInt mid = low + (up - low)/2;
       id<ORTracer> tracer = [_cp tracer];
       [tracer pushNode];
-      ORStatus s1 = [_engine lthen:x with:mid+1];
+      ORStatus s1 = [_engine impose:^ORStatus { return [x updateMax:mid];}]; //  lthen:x with:mid+1];
       [ORConcurrency pumpEvents];
       if (s1!=ORFailure) {
          [self dichotomize:x from:low to:mid block:b sac:set];
@@ -291,7 +291,7 @@
       }
       [tracer popNode];
       [tracer pushNode];
-      ORStatus s2 = [_engine gthen:x with:mid];
+      ORStatus s2 = [_engine impose: ^ORStatus { return [x updateMin:mid+1];}];// gthen:x with:mid];
       [ORConcurrency pumpEvents];
       if (s2!=ORFailure) {
          [self dichotomize:x from:mid+1 to:up block:b sac:set];
@@ -316,12 +316,12 @@
       ORInt lastRank = (ORInt)[sacs count]-1;
       for(CPKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
-            [_engine gthen:v with:[kr up]];
+            [_engine impose: ^ORStatus { return [v updateMin:[kr up]+1];}];  // gthen:v with:[kr up]];
          } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine lthen:v with:[kr low]];
+            [_engine impose: ^ORStatus { return [v updateMax:[kr low]-1];}]; // lthen:v with:[kr low]];
          } else {
             for(ORInt i=[kr low];i <= [kr up];i++)
-               [_engine diff:v with:i];
+               [_engine impose: ^ORStatus { return [v remove:i];}];// diff:v with:i];
          }
          rank++;
       }

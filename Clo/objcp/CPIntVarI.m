@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "CPTypes.h"
+#import <CPUKernel/CPUKernel.h>
 #import "CPData.h"
 #import "CPDom.h"
 #import "CPIntVarI.h"
@@ -18,6 +18,7 @@
 #import "CPTrigger.h"
 #import "CPBitDom.h"
 #import "CPEngineI.h"
+#import "CPEvent.h"
 
 /*****************************************************************************************/
 /*                        Constraint Network Handling                                    */
@@ -33,16 +34,7 @@ static void setUpNetwork(CPEventNetwork* net,id<ORTrail> t,ORInt low,ORInt sz)
     net->_ac5       = makeTRId(t, nil);
 }
 
-static void freeList(VarEventNode* list)
-{
-    while (list) {
-        VarEventNode* next = list->_node;
-        [list release];
-        list = next;
-    }
-}
-
-static void deallocNetwork(CPEventNetwork* net) 
+static void deallocNetwork(CPEventNetwork* net)
 {
     freeList(net->_boundsEvt._val);
     freeList(net->_bindEvt._val);
@@ -50,15 +42,6 @@ static void deallocNetwork(CPEventNetwork* net)
     freeList(net->_minEvt._val);
     freeList(net->_maxEvt._val);
     freeList(net->_ac5._val);
-}
-
-static void collectList(VarEventNode* list,NSMutableSet* rv)
-{
-   while(list) {
-      VarEventNode* next = list->_node;
-      [rv addObject:list->_cstr];
-      list = next;      
-   }
 }
 
 static NSSet* collectConstraints(CPEventNetwork* net)
@@ -311,7 +294,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return 0;
 }
--(id<ORIntVar>)base
+-(id<CPIntVar>)base
 {
    return self;
 }
@@ -590,17 +573,17 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    k += mList[k] != NULL;
    mList[k] = NULL;
    [_fdm scheduleAC3:mList];
-    if (_net._ac5._val)
-        [_fdm scheduleAC5:_net._ac5._val with:val];
-    if (_triggers != nil)
-        [_triggers loseValEvt:val solver:_fdm];
+   if (_net._ac5._val) {
+        [_fdm scheduleAC5:[[CPValueLossEvent alloc] initValueLoss:val notify:_net._ac5._val]];
+   }
+   if (_triggers != nil)
+      [_triggers loseValEvt:val solver:_fdm];
    return ORSuspend;
 }
 -(ORStatus) updateMin: (ORInt) newMin
 {
     return [_dom updateMin:newMin for:_recv];
 }
-
 -(ORStatus) updateMax: (ORInt) newMax
 {
     return [_dom updateMax:newMax for:_recv];

@@ -11,13 +11,10 @@
 
 
 #import "testCard.h"
-#import "objcp/CPBasicConstraint.h"
-#import "objcp/DFSController.h"
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "CPLabel.h"
-#import "CPData.h"
-#import "CPValueConstraint.h"
+#import <ORFoundation/ORController.h>
+#import <objcp/CPData.h>
+#import <objcp/CPValueConstraint.h>
+#import <objcp/CPBasicConstraint.h>
 
 
 @implementation testCard

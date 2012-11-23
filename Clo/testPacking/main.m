@@ -17,9 +17,6 @@
 #import <ORModeling/ORModelTransformation.h>
 
 #import <ORProgram/ORConcretizer.h>
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPlabel.h"
 
 int main (int argc, const char * argv[])
 {
@@ -50,7 +47,7 @@ int main (int argc, const char * argv[])
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
    [cp release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
    return 0;
 }
 

@@ -11,7 +11,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
+#import <CPUKernel/CPTypes.h>
 
 @interface CPObjectQueue : NSObject {
    @package

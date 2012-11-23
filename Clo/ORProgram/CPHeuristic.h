@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPEngine.h>
+#import <CPUKernel/CPEngine.h>
 #import <objcp/CPData.h>
 
 @protocol CPIntVarArray;

@@ -11,7 +11,9 @@
 
 
 #import <Foundation/Foundation.h>
+#import <CPUKernel/CPUKernel.h>
 #import <objcp/CPData.h>
+
 @class ORAVLTree;
 
 // PVH: I am not sure that I like the fact that it is a struct

@@ -10,19 +10,12 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPData.h>
-#import "CPEngine.h"
+#import <CPUKernel/CPUKernel.h>
 
 @class CPEngineI;
 
-typedef enum {
-   CPChecked,
-   CPTocheck,
-   CPOff
-} CPTodo;
-
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
-@package
+@public
    CPTodo _todo;
    bool   _idempotent;
    int    _priority;
@@ -41,7 +34,7 @@ typedef enum {
 
 @interface CPActiveConstraint : CPCoreConstraint {
    id<ORTrail> _trail;
-   TRInt    _active;
+   TRInt      _active;
 }
 -(id) initCPActiveConstraint: (id<OREngine>) m;
 @end

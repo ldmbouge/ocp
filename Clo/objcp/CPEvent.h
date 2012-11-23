@@ -9,11 +9,14 @@
  
  ***********************************************************************/
 
-#ifndef __CPTYPES_H
-#define __CPTYPES_H
-
 #import <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPUKernel.h>
 
-@protocol CPSolver;
-
-#endif
+@interface CPValueLossEvent : NSObject<CPEvent> {
+   VarEventNode* _theList;
+   ORInt         _theVal;
+}
+-(id)initValueLoss:(ORInt)value notify:(VarEventNode*)list;
+-(void)dealloc;
+-(ORInt)execute;
+@end

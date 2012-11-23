@@ -694,4 +694,11 @@
    [tracker trackConstraint:o];
    return o;
 }
+
++(id<ORConstraint>) assignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost
+{
+   id<ORConstraint> o = [[ORAssignmentI alloc] initORAssignment:x matrix:matrix cost:cost];
+   [[x tracker] trackConstraint:o];
+   return o;
+}
 @end

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 
-#import "objcp/CPObjectQueue.h"
+#import <objcp/CPObjectQueue.h>
 
 @implementation CPObjectQueue 
 -(id) initEvtQueue: (ORInt) sz {   

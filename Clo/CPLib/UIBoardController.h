@@ -11,8 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "objcp/CPFactory.h"
-#import "objcp/CPWatch.h"
+#import <objcp/CPWatch.h>
 
 @interface UIBoardController : NSObject {
    UIView* _drawOn;

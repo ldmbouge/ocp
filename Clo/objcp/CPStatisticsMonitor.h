@@ -10,9 +10,10 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPConstraintI.h>
 
 @class CPVarInfo;
+@protocol CPEngine;
 
 // PVH: Need another name for this baby
 
