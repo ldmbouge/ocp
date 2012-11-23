@@ -504,7 +504,7 @@
       _flat[i] = [aDecoder decodeObject];
    return self;
 }
--(void)visit:(id<ORVisitor>)v
+-(void) visit:(id<ORVisitor>)v
 {
    [v visitIdMatrix:self];
 }
