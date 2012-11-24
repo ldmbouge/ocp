@@ -242,6 +242,12 @@
    [_engine add: [cstr dereference]];   
 }
 
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c
+{
+   [_engine add: [c dereference]];
+}
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {

@@ -328,4 +328,8 @@
 -(id<ORObjectiveValue>)value;
 @end
 
-
+@interface ORBitEqual : ORConstraintI<ORBitEqual>
+-(ORBitEqual*)initORBitEqual: (id<ORBitVar>) x eq: (id<ORBitVar>) y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end

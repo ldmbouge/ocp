@@ -16,7 +16,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPSolver.h>
-
+#import <objcp/CPBitConstraint.h>
 
 
 @implementation ORCPConcretizer
@@ -602,8 +602,19 @@
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
-   
 }
+
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete = [CPFactory bitEqual:x to:y];
+      [cstr setImpl:concrete];
+   }
+}
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -1397,6 +1408,11 @@
 //{
 //   
 //}
+// Bit
+//-(void) visitBitEqual:(id<ORBitEqual>)c
+// {
+//
+// }
 ////
 //-(void) visitIntegerI: (id<ORInteger>) e
 //{

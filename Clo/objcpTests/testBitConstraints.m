@@ -81,14 +81,14 @@ char *int2bin(int a, char *buffer, int buf_size) {
     NSLog(@"x = %@\n", x);
     NSLog(@"y = %@\n", y);
     NSLog(@"z = %@\n", z);
-   [m add:[CPFactory bitEqual:x to:y]];
-   [m add:[CPFactory bitEqual:y to:z]];
+   [m add:[ORFactory bit:x eq:y]];
+   [m add:[ORFactory bit:y eq:z]];
 
    NSLog(@"a = %@\n", a);
    NSLog(@"b = %@\n", b);
    NSLog(@"c = %@\n", c);
-   [m add:[CPFactory bitEqual:a to:b]];
-   [m add:[CPFactory bitEqual:b to:c]];
+   [m add:[ORFactory bit:a eq:b]];
+   [m add:[ORFactory bit:b eq:c]];
 
    id<CPProgram,CPBV> cp = [ORFactory createCPProgram:m];
     [cp solve: ^() {
@@ -119,17 +119,13 @@ char *int2bin(int a, char *buffer, int buf_size) {
           STAssertTrue([[a description] isEqualToString:[c description]], @"testBitEqualityConstraint: Bit Patterns for a and c should be equal.");
        }
        @catch (NSException *exception) {
-          
           NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);
-          
        }
-
     }];
     
     NSLog(@"End testing bitwise equality constraint.\n");
-    
 }
-
+/*
 - (void)testANDConstraint
 {
     NSLog(@"Begin testing bitwise AND constraint\n");
@@ -720,5 +716,5 @@ char *int2bin(int a, char *buffer, int buf_size) {
    
     NSLog(@"End testing bitwise Sum constraint.\n");
 }
-
+*/
 @end

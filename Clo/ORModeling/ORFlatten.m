@@ -76,6 +76,8 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c  {}
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c  {}
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c  {}
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c {}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
@@ -133,6 +135,22 @@
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
+-(void) visitReifyEqual: (id<ORReifyEqual>)c;
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c;
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c;
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c;
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c;
+-(void) visitSumEqualc:(id<ORSumEqc>)c;
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c;
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)cstr;
 @end
 
 
@@ -407,6 +425,68 @@
    [_theModel addConstraint:c];
 }
 -(void) visitLexLeq:(id<ORLexLeq>) c
+{
+   [_theModel addConstraint:c];
+}
+
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyEqual: (id<ORReifyEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumEqualc:(id<ORSumEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c
 {
    [_theModel addConstraint:c];
 }

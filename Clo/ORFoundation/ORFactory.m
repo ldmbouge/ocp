@@ -706,3 +706,12 @@
    return o;
 }
 @end
+
+@implementation ORFactory (BV)
++(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];
+   [[x tracker] trackConstraint:o];
+   return o;
+}
+@end

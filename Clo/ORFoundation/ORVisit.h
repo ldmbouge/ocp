@@ -95,4 +95,6 @@
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
 @end

@@ -72,6 +72,8 @@
 -(id) visitSumEqualc:(id<ORSumEqc>)c engine: (id<CPEngine>) engine;
 -(id) visitSumLEqualc:(id<ORSumLEqc>)c engine: (id<CPEngine>) engine;
 -(id) visitSumGEqualc:(id<ORSumGEqc>)c engine: (id<CPEngine>) engine;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c engine: (id<CPEngine>) engine;
 //
 -(id) visitIntegerI: (id<ORInteger>) e engine: (id<CPEngine>) engine;
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -150,6 +152,8 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c;
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
@@ -226,6 +230,8 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c;
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;

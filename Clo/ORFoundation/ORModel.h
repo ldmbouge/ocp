@@ -277,3 +277,10 @@
 -(id<OREngine>)    engine;
 @end
 
+// ====== Bit Constraints =====================================
+
+@protocol  ORBitEqual <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+

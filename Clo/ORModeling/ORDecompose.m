@@ -79,6 +79,7 @@
 +(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORINCModel>)model note:(ORAnnotation)n;
 +(ORLinear*)addToLinear:(id<ORLinear>)terms from:(id<ORExpr>)e  model:(id<ORINCModel>)model note:(ORAnnotation)n;
 -(void) visitIntVar: (id<ORIntVar>) e;
+-(void) visitAffineVar:(id<ORIntVar>)e;
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
@@ -190,6 +191,10 @@ struct CPVarPair {
    return self;
 }
 -(void) visitIntVar: (id<ORIntVar>) e
+{
+   [_terms addTerm:e by:1];
+}
+-(void) visitAffineVar:(id<ORIntVar>)e
 {
    [_terms addTerm:e by:1];
 }
