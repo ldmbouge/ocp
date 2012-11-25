@@ -23,7 +23,7 @@ ORInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,ORInt from,ORInt to)
 {
    id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
    [m solveAll: ^() {
-      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
+      [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [[x at:i] domsize];}];
       [nbSolutions incr];
    }
     ];
