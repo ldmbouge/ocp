@@ -45,9 +45,9 @@
 -(ORInt)size;
 -(ORInt)min;
 -(ORInt)max;
--(void)postEQZ:(id<ORINCModel>)model note:(ORAnnotation)cons;
--(void)postNEQZ:(id<ORINCModel>)model note:(ORAnnotation)cons;
--(void)postLEQZ:(id<ORINCModel>)model note:(ORAnnotation)cons;
+-(void)postEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons;
+-(void)postNEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons;
+-(void)postLEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons;
 @end
 
 @interface ORNormalizer : NSObject<ORVisitor> {
@@ -55,8 +55,8 @@
    id<ORINCModel>   _model;
    ORAnnotation         _n;
 }
-+(ORLinear*)normalize:(id<ORExpr>)expr into: (id<ORINCModel>)model note:(ORAnnotation)n;
--(id)initORNormalizer:(id<ORINCModel>) model note:(ORAnnotation)n;
++(ORLinear*)normalize:(id<ORExpr>)expr into: (id<ORINCModel>)model annotation:(ORAnnotation)n;
+-(id)initORNormalizer:(id<ORINCModel>) model annotation:(ORAnnotation)n;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;

@@ -43,6 +43,7 @@
 // Pure DFS CPSolver
 @interface CPSolver : CPCoreSolver<CPProgram>
 -(id<CPProgram>) initCPSolver;
+-(void) addInternal: (id<ORConstraint>) c;
 @end
 
 // SemanticPath CPSolver

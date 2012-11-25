@@ -35,9 +35,9 @@ int main (int argc, const char * argv[])
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-      [mdl add: [ORFactory alldifferent: x note: DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xp note:DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xn note:DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       
       id<CPProgram> cp = [ORFactory createCPProgram: mdl];
       [cp solveAll:

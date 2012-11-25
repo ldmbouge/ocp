@@ -122,7 +122,7 @@
 		5B681196161F991D00F4480F /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B681197161F991D00F4480F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B681198161F991D00F4480F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		5B681199161F99C700F4480F /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E8161F2DB100DB249A /* CPConcretizer.h */; };
+		5B681199161F99C700F4480F /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E8161F2DB100DB249A /* CPConcretizer.h */; settings = {ATTRIBUTES = (); }; };
 		5B68119A161F99C700F4480F /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5E9161F2DB100DB249A /* CPConcretizer.m */; };
 		5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */; };
 		5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
@@ -488,7 +488,7 @@
 		5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */; };
 		5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */; };
 		5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */; };
+		5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */; };
 		5BDF5FB4161F84A400E5E1FA /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BDF5FB5161F84A400E5E1FA /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };

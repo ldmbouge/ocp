@@ -445,9 +445,9 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y note:(ORAnnotation)c
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y annotation:(ORAnnotation)c
 {
-   id<ORConstraint> o = [[ORReifyEqual alloc] initReify: b equiv: x eq: y note:c];
+   id<ORConstraint> o = [[ORReifyEqual alloc] initReify: b equiv: x eq: y annotation:c];
    [model trackConstraint:o];
    return o;
 }
@@ -523,15 +523,15 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c note: (ORAnnotation)n
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c annotation: (ORAnnotation)n
 {
-   id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c note:n];
+   id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c annotation:n];
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z note: (ORAnnotation)n
++(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z annotation: (ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORPlus alloc] initORPlus:x eq:y plus:z note:n];
+   id<ORConstraint> o = [[ORPlus alloc] initORPlus:x eq:y plus:z annotation:n];
    [model trackConstraint:o];
    return o;
 }
@@ -590,7 +590,7 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y note:(ORAnnotation)n
++(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORAbs alloc] initORAbs:y eqAbs:x];
    [model trackConstraint:o];
@@ -646,13 +646,13 @@
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
-   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x note:DomainConsistency];
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x annotation:DomainConsistency];
    [[x tracker] trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x note:(ORAnnotation)c
++(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x annotation:(ORAnnotation)c
 {
-   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x note:c];
+   id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x annotation:c];
    [[x tracker] trackConstraint:o];
    return o;
 }

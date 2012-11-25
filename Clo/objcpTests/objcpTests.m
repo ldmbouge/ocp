@@ -247,7 +247,7 @@
    id<ORIntVar> x = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> y = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> b = [ORFactory intVar:m domain:RANGE(m,0,1)];
-   [m add:[ORFactory reify:m boolean:b with:x eq:y note:ValueConsistency]];
+   [m add:[ORFactory reify:m boolean:b with:x eq:y annotation:ValueConsistency]];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
 
    [cp solveAll:^() {
@@ -267,7 +267,7 @@
    id<ORIntVar> x = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> y = [ORFactory intVar:m domain:RANGE(m,0,10)];
    id<ORIntVar> b = [ORFactory intVar:m domain:RANGE(m,0,1)];
-   [m add:[ORFactory reify:m boolean:b with:x eq:y note:DomainConsistency]];
+   [m add:[ORFactory reify:m boolean:b with:x eq:y annotation:DomainConsistency]];
 
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:^() {
@@ -326,9 +326,9 @@
    id<ORIntVarArray> x = [ORFactory intVarArray:m range: R domain: R];
    id<ORIntVarArray> xp = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:[x at: i] shift:i]; }];
    id<ORIntVarArray> xn = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:[x at: i] shift:-i]; }];
-   [m add: [ORFactory alldifferent: x note: DomainConsistency]];
-   [m add: [ORFactory alldifferent: xp note:DomainConsistency]];
-   [m add: [ORFactory alldifferent: xn note:DomainConsistency]];
+   [m add: [ORFactory alldifferent: x annotation: DomainConsistency]];
+   [m add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
+   [m add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:

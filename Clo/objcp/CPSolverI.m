@@ -180,7 +180,7 @@
 //   if (status == ORFailure)
 //      [_search fail];
 //}
-//-(void) add: (id<ORConstraint>) c consistency:(ORAnnotation)cons
+//-(void) add: (id<ORConstraint>) c annotation:(ORAnnotation)cons
 //{
 //   assert([[c class] conformsToProtocol:@protocol(ORRelation)] == NO);
 //   ORStatus status = [_engine add: c];

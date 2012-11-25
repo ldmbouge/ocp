@@ -29,11 +29,11 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> sx = [ORFactory intVarArray: mdl range:R domain: D];
       id<ORIntVarArray> dx = [ORFactory intVarArray: mdl range:SD domain: SD];
       
-      [mdl add:[ORFactory alldifferent:sx note:DomainConsistency]];
+      [mdl add:[ORFactory alldifferent:sx annotation:DomainConsistency]];
       for(ORUInt i=SD.low;i<=SD.up;i++) {
          [mdl add:[dx[i] eq:[[sx[i+1] sub:sx[i]] abs]] annotation: DomainConsistency];
       }
-      [mdl add:[ORFactory alldifferent:dx note:DomainConsistency]];
+      [mdl add:[ORFactory alldifferent:dx annotation:DomainConsistency]];
       [mdl add:[sx[1]   leq:sx[2]]];
       [mdl add:[dx[n-1] leq:dx[1]]];
       

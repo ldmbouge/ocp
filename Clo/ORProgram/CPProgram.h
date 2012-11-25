@@ -37,8 +37,9 @@
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 
+-(void)         addInternal: (id<ORConstraint>) c annotation:(ORAnnotation)n;
 -(void)                 add: (id<ORConstraint>) c;
--(void)                 add: (id<ORConstraint>) c consistency: (ORAnnotation) cons;
+-(void)                 add: (id<ORConstraint>) c annotation: (ORAnnotation) cons;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;

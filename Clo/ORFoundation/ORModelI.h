@@ -56,7 +56,7 @@
 
 @interface OREqual : ORConstraintI<OREqual>
 -(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c;
--(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c note: (ORAnnotation) n;
+-(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
@@ -79,7 +79,7 @@
 
 @interface ORPlus : ORConstraintI<ORPlus>
 -(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z;
--(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n;
+-(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z annotation:(ORAnnotation)n;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
@@ -146,7 +146,7 @@
 @end
 
 @interface ORReifyEqual : ORConstraintI<ORReifyEqual>
--(ORReifyEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
@@ -154,7 +154,7 @@
 @end
 
 @interface ORReifyNEqual : ORConstraintI<ORReifyNEqual>
--(ORReifyNEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyNEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
@@ -169,7 +169,7 @@
 @end
 
 @interface ORReifyLEqual : ORConstraintI<ORReifyLEqual>
--(ORReifyLEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyLEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
@@ -184,7 +184,7 @@
 @end
 
 @interface ORReifyGEqual : ORConstraintI<ORReifyGEqual>
--(ORReifyGEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y note:(ORAnnotation)n;
+-(ORReifyGEqual*) initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y annotation:(ORAnnotation)n;
 -(id<ORIntVar>) b;
 -(id<ORIntVar>) x;
 -(id<ORIntVar>) y;
@@ -228,7 +228,7 @@
 @end
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x note:(ORAnnotation)n;
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n;
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
 @end

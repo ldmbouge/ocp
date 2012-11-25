@@ -1,10 +1,13 @@
-//
-//  ORFlatten.m
-//  Clo
-//
-//  Created by Laurent Michel on 10/5/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import "ORFlatten.h"
 #import "ORModelI.h"
@@ -220,7 +223,7 @@
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [self flatten:c into:batch];
+      [ORFlatten flatten:c into:batch];
    } onObjective:^(id<ORObjective> o) {
       ORFlattenObjective* fo = [[ORFlattenObjective alloc] init:batch];
       [o visit:fo];
@@ -228,7 +231,7 @@
    }];
 }
 
--(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m
++(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m
 {
    ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:m];
    [c visit:fc];
@@ -236,19 +239,19 @@
 }
 +(void)flattenExpression:(id<ORExpr>)expr into:(id<ORINCModel>)model
 {
-   ORLinear* terms = [ORNormalizer normalize:expr into: model note:DomainConsistency];
+   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:DomainConsistency];
    switch ([expr type]) {
       case ORRBad: assert(NO);
       case ORREq: {
          if ([terms size] != 0) {
-            [terms postEQZ:model note:DomainConsistency];
+            [terms postEQZ:model annotation:DomainConsistency];
          }
       }break;
       case ORRNEq: {
-         [terms postNEQZ:model note:DomainConsistency];
+         [terms postNEQZ:model annotation:DomainConsistency];
       }break;
       case ORRLEq: {
-         [terms postLEQZ:model note:DomainConsistency];
+         [terms postLEQZ:model annotation:DomainConsistency];
       }break;
       default:
          assert(terms == nil);

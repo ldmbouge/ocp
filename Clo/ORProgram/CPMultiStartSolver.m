@@ -182,10 +182,10 @@
    ORInt k = 0;
    return [_solver[k] add: c];
 }
--(void) add: (id<ORConstraint>) c consistency: (ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
 {
    ORInt k = 0;
-   return [_solver[k] add: c consistency: cons];
+   return [_solver[k] add: c annotation: cons];
 }
 -(void) labelArray: (id<ORIntVarArray>) x
 {

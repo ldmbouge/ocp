@@ -203,7 +203,7 @@
    _n = DomainConsistency;
    return self;
 }
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c note:(ORAnnotation)n
+-(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -351,7 +351,7 @@
    _n = DomainConsistency;
    return self;
 }
--(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z note:(ORAnnotation)n
+-(ORPlus*)initORPlus:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -724,7 +724,7 @@
    id<ORIntVar> _y;
    ORAnnotation _n;
 }
--(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y note:(ORAnnotation)n
+-(ORReifyEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eq:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _b = b;
@@ -767,7 +767,7 @@
    id<ORIntVar> _y;
    ORAnnotation _n;
 }
--(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y note:(ORAnnotation)n
+-(ORReifyNEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x neq:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _b = b;
@@ -847,7 +847,7 @@
    id<ORIntVar> _y;
    ORAnnotation _n;
 }
--(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y note:(ORAnnotation)n
+-(ORReifyLEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x leq:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _b = b;
@@ -927,7 +927,7 @@
    id<ORIntVar> _y;
    ORAnnotation _n;
 }
--(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y note:(ORAnnotation)n
+-(ORReifyGEqual*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x geq:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _b = b;
@@ -1162,7 +1162,7 @@
    id<ORIntVarArray> _x;
    ORAnnotation _n;
 }
--(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x note:(ORAnnotation)n
+-(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
