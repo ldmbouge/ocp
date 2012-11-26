@@ -113,10 +113,10 @@ char *int2bin(int a, char *buffer, int buf_size) {
           NSLog(@"x = %@\n", x);
           NSLog(@"y = %@\n", y);
           NSLog(@"z = %@\n", z);
-          STAssertTrue([[x description] isEqualToString:[y description]], @"testBitEqualityConstraint: Bit Patterns for x and y should be equal.");
-          STAssertTrue([[x description] isEqualToString:[z description]], @"testBitEqualityConstraint: Bit Patterns for x and z should be equal.");
-          STAssertTrue([[a description] isEqualToString:[b description]], @"testBitEqualityConstraint: Bit Patterns for a and b should be equal.");
-          STAssertTrue([[a description] isEqualToString:[c description]], @"testBitEqualityConstraint: Bit Patterns for a and c should be equal.");
+          STAssertTrue([[x stringValue] isEqualToString:[y stringValue]], @"testBitEqualityConstraint: Bit Patterns for x and y should be equal.");
+          STAssertTrue([[x stringValue] isEqualToString:[z stringValue]], @"testBitEqualityConstraint: Bit Patterns for x and z should be equal.");
+          STAssertTrue([[a stringValue] isEqualToString:[b stringValue]], @"testBitEqualityConstraint: Bit Patterns for a and b should be equal.");
+          STAssertTrue([[a stringValue] isEqualToString:[c stringValue]], @"testBitEqualityConstraint: Bit Patterns for a and c should be equal.");
        }
        @catch (NSException *exception) {
           NSLog(@"testEqualityConstraint: Caught %@: %@", [exception name], [exception reason]);

@@ -63,9 +63,9 @@ typedef struct  {
 // notification
 
 //-(void) bindEvt;
--(void) changeMinEvt:(int)dsz;
--(void) changeMaxEvt:(int)dsz;
--(void) bitFixedEvt:(int)dsz;
+-(void) changeMinEvt:(int)dsz sender:(CPBitArrayDom*)sender;
+-(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
+-(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(bool) bound;
 -(uint64) min;
@@ -113,6 +113,6 @@ typedef struct  {
 -(void) dealloc;
 -(void) addVar:(CPBitVarI*) v;
 -(void) bindEvt;
--(void) bitFixedEvt:(ORUInt) dsz;
+-(void) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end
 

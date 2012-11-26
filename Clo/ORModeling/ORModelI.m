@@ -263,7 +263,10 @@
 }
 -(id<ORSnapshot>) value:(id)var
 {
-   return [_shots objectAtIndex:[var getId]];
+   NSUInteger idx = [var getId];
+   if (idx < [_shots count])
+      return [_shots objectAtIndex:idx];
+   else return nil;
 }
 -(ORInt) intValue: (id) var
 {

@@ -56,6 +56,7 @@
 -(ORUInt)bitLength;
 -(unsigned int)  domsize;
 -(bool) member: (unsigned int*) v;
+-(NSString*)stringValue;
 @end
 
 @protocol ORFloatVar <ORVar>

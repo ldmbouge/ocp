@@ -81,4 +81,5 @@
 -(bool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
 -(NSSet*) constraints;
+-(NSString*)stringValue;
 @end

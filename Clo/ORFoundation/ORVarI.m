@@ -469,7 +469,6 @@
 @end
 
 @implementation ORBitVarI {
-   id<ORBitVar>     _impl;
    id<ORTracker>    _tracker;
    ORUInt*          _low;
    ORUInt*          _up;
@@ -480,15 +479,15 @@
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
    self = [super init];
+   _impl  = nil;
    _bLen = len;
-   _nb = _bLen / 32 + (_bLen % 32) ? 1 : 0;
+   _nb = (_bLen / 32) + ((_bLen % 32) ? 1 : 0);
    _low = malloc(sizeof(ORUInt)*_nb);
    _up = malloc(sizeof(ORUInt)*_nb);
    memcpy(_low,low,sizeof(ORUInt)*_nb);
    memcpy(_up,up,sizeof(ORUInt)*_nb);
    _name = -1;
    _tracker = tracker;
-   _impl  = nil;
    [tracker trackVariable: self];
    return self;
 }
@@ -569,13 +568,16 @@
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }   
 }
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
 -(id) snapshot
 {
    return nil;
 }
 -(void)restore:(id<ORSnapshot>)s
-{
-   
+{   
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -613,4 +615,12 @@
    else
       return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(%@)",_name,_impl];
 }
+-(NSString*)stringValue
+{
+   if (_impl)
+      return [[_impl dereference] description];
+   else
+      return [self description];
+}
+
 @end

@@ -309,7 +309,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
         [_triggers bindEvt:_engine];
 }
 
--(void) changeMinEvt: (int) dsz
+-(void) changeMinEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
    VarEventNode* mList[5];
    ORUInt k = 0;
@@ -322,7 +322,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     if (dsz==1 && _triggers != nil)
         [_triggers bindEvt:_engine];
 }
--(void) changeMaxEvt: (int) dsz
+-(void) changeMaxEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
    VarEventNode* mList[5];
    ORUInt k = 0;
@@ -336,7 +336,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
         [_triggers bindEvt:_engine];
 }
 
--(void) bitFixedEvt:(int)idx
+-(void) bitFixedEvt:(int)idx sender:(CPBitArrayDom*)sender
 {
    [_dom updateFreeBitCount];
     //Empty implementation
@@ -488,10 +488,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
     for(int i=0;i<_nb;i++)
         [_tab[i] bindEvt];
 }
--(void)bitFixedEvt: (ORUInt) dsz
+-(void)bitFixedEvt: (ORUInt) dsz sender:(CPBitArrayDom*)sender
 {
     for(int i=0;i<_nb;i++)
-        [_tab[i] bitFixedEvt:dsz];
+        [_tab[i] bitFixedEvt:dsz sender:sender];
 }
 
 - (void)encodeWithCoder: (NSCoder *) aCoder
