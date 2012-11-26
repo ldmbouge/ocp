@@ -494,6 +494,14 @@
 //   return self;
 //}
 
+-(void) addInternal: (id<ORConstraint>) c
+{
+   // LDM: This is the true addition of the constraint into the solver during the search.
+   ORStatus status = [_engine add: c];
+   if (status == ORFailure)
+      [_search fail];
+}
+
 @end
 
 /******************************************************************************************/
@@ -586,14 +594,6 @@
    [_search release];
    [_tracer release];
    [super dealloc];
-}
-
--(void) addInternal: (id<ORConstraint>) c
-{
-   // LDM: This is the true addition of the constraint into the solver during the search.
-   ORStatus status = [_engine add: c];
-   if (status == ORFailure)
-      [_search fail];
 }
 
 -(void) add: (id<ORConstraint>) c

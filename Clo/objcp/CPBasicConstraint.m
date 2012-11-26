@@ -1410,6 +1410,95 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+@implementation CPModcBC
+-(id)initCPModcBC:(CPIntVarI*)x mod:(ORInt)c equal:(CPIntVarI*)y
+{
+   self = [super initCPActiveConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y))
+      [_x whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void)propagate
+{
+   if ([_x min] >= 0)
+      [_y updateMin:0];
+   if ([_x max] <= 0)
+      [_y updateMax:0];
+   if (bound(_x)) {
+      [_y bind:[_x min] % _c];
+   }
+   else if (bound(_y)) {
+      ORBounds xb = bounds(_x);
+      bool outside = xb.min % _c < [_y min];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x, ++xb.min))
+            continue;
+         outside = xb.min % _c < [_y min];
+      }
+      if (xb.min  < xb.max)
+         [_x updateMin:xb.min];
+      outside = xb.max % _c > [_y max];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x, --xb.max))
+            continue;
+         outside = xb.max % _c > [_y max];
+      }
+      if (xb.min < xb.max)
+         [_x updateMax:xb.max];
+   }
+   else {
+      int rb = abs(_c)-1;
+      [_y updateMin:-rb andMax:rb];
+      ORBounds xb = bounds(_x);
+      ORInt qxMax = xb.max / _c;
+      ORInt qxMin = xb.min / _c;
+      if (qxMin == qxMax) {
+         int lr = xb.min % _c;
+         int up = xb.max % _c;
+         [_y updateMin:lr andMax:up];
+      }
+      bool outside = xb.min % _c < [_y min];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x, ++xb.min))
+            continue;
+         outside = xb.min % _c < [_y min];
+      }
+      if (xb.min < xb.max)
+         [_x updateMin:xb.min];
+      outside = xb.max % _c > [_y max];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x,--xb.max))
+            continue;
+         outside = xb.max % _c > [_y max];
+      }
+      if (xb.min < xb.max)
+         [_x updateMax:xb.max];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];   
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPModcBC:%02d %@ == %@ MOD %d>",_name,_y,_x,_c];
+}
+@end
+
 
 @implementation CPAllDifferenceVC
 -(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(ORInt) n

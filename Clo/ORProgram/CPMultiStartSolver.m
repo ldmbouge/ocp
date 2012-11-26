@@ -182,6 +182,11 @@
    ORInt k = 0;
    return [_solver[k] add: c];
 }
+-(void) addInternal: (id<ORConstraint>) c 
+{
+   ORInt k = 0;
+   return [_solver[k] addInternal: c];
+}
 -(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
 {
    ORInt k = 0;

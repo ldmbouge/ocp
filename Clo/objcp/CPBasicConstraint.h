@@ -160,6 +160,17 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
+@interface CPModcBC : CPActiveConstraint { // y == x MOD c
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   ORInt      _c;
+}
+-(id)initCPModcBC:(id)x mod:(ORInt)c equal:(id)y;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPAbsBC : CPActiveConstraint<NSCoding> { // abs(x)==y
    CPIntVarI* _x;
    CPIntVarI* _y;
