@@ -494,7 +494,7 @@
 //   return self;
 //}
 
--(void) addInternal: (id<ORConstraint>) c
+-(void) addInternal: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
    ORStatus status = [_engine add: c];
@@ -518,7 +518,6 @@
 -(void)addConstraint:(id<ORConstraint>)cstr;
 -(void)minimize:(id<ORIntVar>)x;
 -(void)maximize:(id<ORIntVar>)x;
--(id<ORModel>)model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
 -(void) trackConstraint:(id)obj;
@@ -549,7 +548,7 @@
 {
    [cstr visit:_concretizer];
    id<CPConstraint> c = [cstr dereference];
-   [_solver addInternal:c];
+   [_solver addInternal:c annotation:DomainConsistency];
 }
 -(void)minimize:(id<ORIntVar>)x
 {   
@@ -603,7 +602,7 @@
    // LDM: DONE. Have not checked the variable creation/deallocation logic though. 
    id<ORINCModel> trg = [[ORRTModel alloc] init:self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:c into:trg];
+      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg];
    else
       [ORFlatten flatten:c into:trg];
    [trg release];
@@ -615,7 +614,7 @@
    // LDM: See above. 
    id<ORINCModel> trg = [[ORRTModel alloc] init:self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:c into:trg];
+      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg];
    else
       [ORFlatten flatten:c into:trg];
    [trg release];
