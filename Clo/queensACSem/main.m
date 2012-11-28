@@ -12,6 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
@@ -36,9 +38,9 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       [cp addModel: model];
       [cp solveAll: ^{
          __block ORInt depth = 0;

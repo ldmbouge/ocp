@@ -64,6 +64,14 @@
 {
    return [ORFactory expr:self mul:[ORFactory integer:[self tracker] value:e]];
 }
+-(id<ORExpr>) mod: (id<ORExpr>) e
+{
+   return [ORFactory expr:self mod:e];
+}
+-(id<ORExpr>) modi: (ORInt) e
+{
+   return [ORFactory expr:self mod:[ORFactory integer:[self tracker] value:e]];
+}
 -(id<ORRelation>) eq: (id<ORExpr>) e
 {
    return [ORFactory expr:self equal:e];
@@ -418,6 +426,49 @@
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"(%@ * %@)",[_left description],[_right description]];
    return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprModI
+-(id<ORExpr>) initORExprModI: (id<ORExpr>) left mod: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(ORInt) min
+{
+   ORInt ub = max(abs([_right min]),abs([_right max])) - 1;
+   if ([_left min] > 0)
+      return 0;
+   else
+      return - ub;
+}
+-(ORInt) max
+{
+   ORInt ub = max(abs([_right min]),abs([_right max])) - 1;
+   if ([_left max] < 0)
+      return 0;
+   else
+      return ub;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ mod %@)",[_left description],[_right description]];
+   return rv;
+}
+-(void) visit: (id<ORVisitor>)visitor
+{
+   [visitor visitExprModI:self];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

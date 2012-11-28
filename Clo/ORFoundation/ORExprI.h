@@ -25,6 +25,8 @@
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
 -(id<ORExpr>) muli: (ORInt) e;
+-(id<ORExpr>) mod: (id<ORExpr>) e;
+-(id<ORExpr>) modi: (ORInt) e;
 -(id<ORRelation>) eq: (id<ORExpr>) e;
 -(id<ORRelation>) eqi: (ORInt) e;
 -(id<ORRelation>) neq: (id<ORExpr>) e;
@@ -97,6 +99,14 @@
 
 @interface ORExprMulI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprMulI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
+@interface ORExprModI: ORExprBinaryI<ORExpr,NSCoding>
+-(id<ORExpr>) initORExprModI: (id<ORExpr>) left mod: (id<ORExpr>) right;
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;

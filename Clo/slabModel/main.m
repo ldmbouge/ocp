@@ -16,6 +16,7 @@
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORProgram.h>
 #import <ORProgram/ORConcretizer.h>
 
 NSString* tab(int d)

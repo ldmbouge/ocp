@@ -52,6 +52,8 @@
 -(id) visitLEqual: (id<ORLEqual>)c engine: (id<CPEngine>) engine;
 -(id) visitPlus: (id<ORPlus>)c engine: (id<CPEngine>) engine;
 -(id) visitMult: (id<ORMult>)c engine: (id<CPEngine>) engine;
+-(id) visitMod: (id<ORMod>)c engine:(id<CPEngine>) engine;
+-(id) visitModc: (id<ORModc>)c engine:(id<CPEngine>) engine;
 -(id) visitAbs: (id<ORAbs>)c engine: (id<CPEngine>) engine;
 -(id) visitOr: (id<OROr>)c engine: (id<CPEngine>) engine;
 -(id) visitAnd:( id<ORAnd>)c engine: (id<CPEngine>) engine;
@@ -79,6 +81,7 @@
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMinusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMulI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
+-(id) visitExprModI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprNEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprLEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -132,6 +135,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -159,6 +164,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
@@ -210,6 +216,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -237,6 +245,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;

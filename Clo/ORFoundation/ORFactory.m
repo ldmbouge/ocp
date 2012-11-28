@@ -352,6 +352,11 @@
    id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right]; 
    return [self validate:o onError:"No CP tracker in Mul Expression"];
 }
++(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right
+{
+   id<ORExpr> o = [[ORExprModI alloc] initORExprModI: left and: right];
+   return [self validate:o onError:"No CP tracker in Mod Expression"];
+}
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right
 {
    id<ORRelation> o = [[ORExprEqualI alloc] initORExprEqualI: left and: right]; 
