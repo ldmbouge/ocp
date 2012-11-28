@@ -75,6 +75,18 @@
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORMod <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@protocol ORModc <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(ORInt) right;
+@end
+
 @protocol ORAbs <ORConstraint>
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;

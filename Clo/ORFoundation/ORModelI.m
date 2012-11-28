@@ -425,6 +425,80 @@
 }
 @end
 
+@implementation ORMod { // z = x MOD y
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(ORMod*)initORMod:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ MOD %@)",[self class],self,_impl,_z,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMod:self];
+}
+-(id<ORIntVar>) res
+{
+   return _z;
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+@end
+
+@implementation ORModc { // z = x MOD y  (y==c)
+   id<ORIntVar> _x;
+   ORInt        _y;
+   id<ORIntVar> _z;
+}
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ MOD %d)",[self class],self,_impl,_z,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitModc:self];
+}
+-(id<ORIntVar>) res
+{
+   return _z;
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(ORInt) right
+{
+   return _y;
+}
+@end
+
 @implementation ORAbs { // x = |y|
    id<ORIntVar> _x;
    id<ORIntVar> _y;

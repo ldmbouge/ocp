@@ -1521,165 +1521,161 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(void)propagate
 {
-   /*
-    if (_x->getMin() >= 0)
-   if (_r->updateMin(0) == Failure)
-      return Failure;
-   if (_x->getMax() <= 0)
-      if (_r->updateMax(0) == Failure)
-         return Failure;
-   if (_x->isBound()) {
-      int c = _x->getMin();
-      int dlow = _d->getMin(),dup = _d->getMax();
-      int rlow = _r->getMin(),rup = _r->getMax();
-      while (rlow <= rup) {
-         int cp = c - rlow;
-         int dcur = dlow;
-         while (dcur <= dup) {
-            if (dcur<0) {
-               int rem = cp % dcur;
-               if (rem==0) break;
-               else ++dcur;
-            } else if (dcur==0) ++dcur;
+   if ([_x min] >= 0)
+      [_z updateMin:0];
+   if ([_x max] <= 0)
+      [_z updateMax:0];
+   if (bound(_x)) {
+      ORInt c = [_x value];
+      ORBounds yb = bounds(_y);
+      ORBounds zb = bounds(_z);   // zb = c MOD yb
+      while (zb.min <= zb.max) {  // scan all remainders
+         ORInt cp   = c - zb.min; // q * y + z = x AND x=c =>  q * y = c - z.
+         ORInt ycur = yb.min;     // Scan all y values. If we find something that divides exactly, we should keep that z value
+         while (ycur <= yb.max) { // if we do not find anything that divides exactly, that remainder is impossible, increase low(z)
+            if (ycur < 0) {
+               ORInt rem = cp % ycur;
+               if (rem==0) break; // if y_k divides c-z exactly, that we can keep that z value (break)
+               else ++ycur;
+            } else if (ycur==0)   // skip the 0 divisor.
+               ++ycur;
             else {
-               int rem  = cp % dcur;
+               ORInt rem  = cp % ycur;
                if (rem == 0)
+                  break;          // if y_k divides c-z exactly, we can keep that z value (break)
+               ORInt q   = cp / ycur;  // compute the inexact division.
+               if (q==0) {             // if we don't even get a whole unit.....
+                  ycur = yb.max+1;     // there is no point trying larger y values. So set y_k past the last value and break.
                   break;
-               int q   = cp / dcur;
-               if (q==0) {dcur = dup+1;break;}
-               int inc = rem / q,rp  = rem % q;
-               if (rp == 0) {
-                  dcur += inc;
-                  COMETASSERT(cp % dcur == 0);
+               }
+               // q = (c - z_k) DIV y_k  : integer division. rem is the matching remainder. Therefore ->
+               // q * y_k + rem = c - z_k
+               ORInt inc = rem / q;  // The fraction of the remainder that could be "spread" among all q "copies" of y_k
+               ORInt rp  = rem % q;  // Whether the fraction above is exact! If not, there is no way.
+               if (rp == 0) {        // If rem can be evenly spread
+                  ycur += inc;       // increase y_k with the ideal fraction so that the division becomes exact (and we can break)
+                  assert(cp % ycur == 0);
                   break;
                } else
-                  dcur += inc + 1;
+                  ycur += inc + 1;   // If there is no way to evenly spread, we might as well skip the values in the range.
             }
          }
-         if (dcur > dup) ++rlow;
-         else break;
+         if (ycur > yb.max)     // We didn't find a match, increase low(z)
+            ++zb.min;
+         else break;            // we found a match, we are consistent for the LB.
       }
-      Outcome ok = _r->updateMin(rlow);
-      if (ok==Failure) return ok;
-      while (rlow <= rup) {
-         int cp = c - rup;
-         int dcur = dlow;
-         while (dcur <= dup) {
-            if (dcur<0) {
-               int rem = cp % dcur;
+      [_z updateMin:zb.min];
+      
+      while (zb.min <= zb.max) {
+         ORInt cp = c - zb.max;
+         ORInt ycur = yb.min;
+         while (ycur <= yb.max) {
+            if (ycur<0) {
+               ORInt rem = cp % ycur;
                if (rem==0) break;
-               else ++dcur;
-            } else if (dcur==0) ++dcur;
+               else ++ycur;
+            } else if (ycur==0)
+               ++ycur;
             else {
-               int rem  = cp % dcur;
+               ORInt rem  = cp % ycur;
                if (rem == 0)
                   break;
-               int q   = cp / dcur;
-               if (q==0) {dcur = dup+1;break;}
-               int inc = rem / q,rp  = rem % q;
+               ORInt q   = cp / ycur;
+               if (q==0) {
+                  ycur = yb.max+1;
+                  break;
+               }
+               ORInt inc = rem / q,rp  = rem % q;
                if (rp == 0) {
-                  dcur += inc;
-                  COMETASSERT(cp % dcur == 0);
+                  ycur += inc;
+                  assert(cp % ycur == 0);
                   break;
                } else
-                  dcur += inc + 1;
+                  ycur += inc + 1;
             }
          }
-         if (dcur > dup) --rup;
+         if (ycur > yb.max)
+            --zb.max;
          else break;
       }
-      ok = _r->updateMax(rup);
-      if (ok ==Failure) return ok;
-      dlow = _d->getMin();
-      dup = _d->getMax();
-      rlow = _r->getMin();
-      rup = _r->getMax();
-      int dcur = dlow;
-      while (dcur <= dup) {
+      [_z updateMax:zb.max];
+      yb = bounds(_y);
+      zb = bounds(_z);
+      ORInt dcur = yb.min;
+      while (dcur <= yb.max) {
          if (dcur!=0) {
-            int rem = c % dcur;
-            if (rem >= rlow && rem <= rup)
+            ORInt rem = c % dcur;
+            if (rem >= zb.min && rem <= zb.max)
                break;
          }
          ++dcur;
       }
-      ok = _d->updateMin(dcur);
-      if (ok ==Failure) return ok;
-      dcur = dup;
-      while(dcur >= dlow) {
+      [_y updateMin:dcur];
+      dcur = yb.max;
+      while(dcur >= yb.min) {
          if (dcur!=0) {
-            int rem = c % dcur;
-            if (rem >= rlow && rem <= rup)
+            ORInt rem = c % dcur;
+            if (rem >= zb.min && rem <= zb.max)
                break;
          }
          --dcur;
       }
-      ok = _d->updateMax(dup);
-      return ok;
+      [_y updateMax:dcur];
    }
-   else if (_d->isBound()) {
-      int c = _d->getMin();
-      if (c==0) return Failure;
-      int rb = abs(c) - 1;
-      Outcome ok = _r->updateMin(- rb);
-      if (ok) ok = _r->updateMax(rb);
-      if (ok == Failure) return ok;
-      int qxMax = _x->getMax() / c;
-      int qxMin = _x->getMin() / c;
+   else if (bound(_y)) {
+      ORInt c = [_y min];
+      if (c==0) failNow();
+      ORInt rb = abs(c) - 1;
+      [_z updateMin:- rb andMax:rb];
+      ORInt qxMax = [_x max] / c;
+      ORInt qxMin = [_x min] / c;
       if (qxMin == qxMax) {
-         int lr = _x->getMin() % c;
-         int up = _x->getMax() % c;
-         ok = _r->updateMin(lr);
-         if (ok) ok = _r->updateMax(up);
+         ORInt lr = [_x min] % c;
+         ORInt up = [_x max] % c;
+         [_z updateMin:lr andMax:up];
       }
-      if (ok==Failure) return ok;
-      int lowx = _x->getMin(),upx  = _x->getMax();
-      bool outside = lowx % c < _r->getMin();
-      while(outside && lowx < upx) {
-         if (!_x->member(++lowx))
+      ORBounds xb = bounds(_x);
+      bool outside = xb.min % c < [_z min];
+      while(outside && xb.min < xb.max) {
+         if (!memberBitDom(_x,++xb.min))
             continue;
-         outside = lowx % c < _r->getMin();
+         outside = xb.min % c < [_z min];
       }
-      if (lowx < upx) ok = _x->updateMin(lowx);
-      if (ok==Failure) return Failure;
-      outside = upx % c > _r->getMax();
-      while(outside && lowx < upx) {
-         if (!_x->member(--upx))
+      [_x updateMin:xb.min];
+      
+      outside = xb.max % c > [_z max];
+      while(outside && xb.min < xb.max) {
+         if (!memberBitDom(_x, --xb.max))
             continue;
-         outside = upx % c > _r->getMax();
+         outside = xb.max % c > [_z max];
       }
-      if (lowx < upx) ok = _x->updateMax(upx);
-      return ok;
+      [_x updateMax:xb.max];
    }
-   else if (_r->isBound()) {
-      int c = _r->getMin();
-      Outcome oc = Suspend;
-      int xv;
-      int xpl = _x->getMin();
-      int xpu = _x->getMax();
-      int dlow = _d->getMin(),dup = _d->getMax();
+   else if (bound(_z)) {
+      ORInt c = [_z value];
+      ORBounds xb = bounds(_x);
+      ORBounds yb = bounds(_y);
       bool ok = false;
-      for( xv=xpl;xv <= xpu && !ok;xv++) {
-         int cd = dlow;
+      ORInt xv;
+      for(xv=xb.min;xv <= xb.max && !ok;xv++) {
+         ORInt cd = yb.min;
          ok = false;
-         while (cd <= dup) {
+         while (cd <= yb.max) {
             if (cd!=0) {
                ok = (xv % cd) == c;
-               if (ok) break;
+               if (ok)
+                  break;
             }
             ++cd;
          }
          if (ok) break;
       }
-      if (ok)
-         oc = _x->updateMin(xv);
-      else oc = Failure;
-      if (oc ==Failure) return Failure;
+      [_x updateMin:xv];
       ok = false;
-      for(xv=xpu;xv >= xpl && !ok;xv--) {
-         int cd = dup;
+      for(xv=xb.max;xv >= xb.min && !ok;xv--) {
+         ORInt cd = yb.max;
          ok = false;
-         while (cd >= dlow) {
+         while (cd >= yb.min) {
             if (cd!=0) {
                ok = (xv % cd) == c;
                if (ok) break;
@@ -1688,61 +1684,44 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
          }
          if (ok) break;
       }
-      if (ok)
-         oc = _x->updateMax(xv);
-      else oc = Failure;
-      if (oc ==Failure) return Failure;
-      xpl = _x->getMin();
-      xpu = _x->getMax();
-      int cd = dlow;
-      while(cd <= dup) {
+      [_x updateMax:xv];
+      xb = bounds(_x);
+      ORInt cd = yb.min;
+      while(cd <= yb.max) {
          if (cd!=0) {
-            int xc = xpl;
-            while (xc % cd != c && xc <= xpu) ++xc;
-            if (xc <= xpu)
+            ORInt xc = xb.min;
+            while (xc % cd != c && xc <= xb.max) ++xc;
+            if (xc <= xb.max)
                break;
             else ++cd;
          } else ++cd;
       }
-      oc = _d->updateMin(cd);
-      if (oc==Failure) return Failure;
-      
-      cd = dup;
-      while(cd >= dlow) {
+      [_y updateMin:cd];
+      cd = yb.max;
+      while(cd >= yb.min) {
          if (cd!=0) {
-            int xc = xpu;
-            while (xc % cd != c && xc >= xpl) --xc;
-            if (xc >= xpl)
+            int xc = xb.max;
+            while (xc % cd != c && xc >= xb.min) --xc;
+            if (xc >= xb.min)
                break;
             else --cd;
          } else --cd;
       }
-      oc = _d->updateMax(cd);
-      return oc;
-      
+      [_y updateMax:cd];      
    }
    else {
-      Outcome oc = Suspend;
-      int dmin = _d->getMin(),dmax = _d->getMax();
-      if (dmin==0) {
-         oc = _d->updateMin(1);
-         dmin = 1;
-         if (oc == Failure) return oc;
+      ORBounds yb = bounds(_y);
+      if (yb.min==0) {
+         [_y updateMin:1];
+         yb.min = 1;
       }
-      if (dmax==0) {
-         oc = _d->updateMax(-1);
-         dmax = -1;
-         if (oc==Failure) return oc;
+      if (yb.max==0) {
+         [_y updateMax:-1];
+         yb.max = -1;
       }
-      int ld = abs(dmin) > abs(dmax) ? abs(dmin) : abs(dmax);
-      oc = _r->updateMin(-ld+1);
-      if (oc) oc = _r->updateMax(ld-1);
-      if (oc==Failure) return oc;
-      
-      return Suspend;
+      int ld = abs(yb.min) > abs(yb.max) ? abs(yb.min) : abs(yb.max);
+      [_z updateMin:-ld+1 andMax:ld-1];
    }
-*/
-
 }
 -(NSSet*)allVars
 {
