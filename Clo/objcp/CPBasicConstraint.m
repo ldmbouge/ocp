@@ -1499,6 +1499,264 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+@implementation CPModBC
+-(id)initCPModBC:(CPIntVarI*)x mod:(CPIntVarI*)y equal:(CPIntVarI*)z
+{
+   self = [super initCPActiveConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_z))
+      [_z whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void)propagate
+{
+   /*
+    if (_x->getMin() >= 0)
+   if (_r->updateMin(0) == Failure)
+      return Failure;
+   if (_x->getMax() <= 0)
+      if (_r->updateMax(0) == Failure)
+         return Failure;
+   if (_x->isBound()) {
+      int c = _x->getMin();
+      int dlow = _d->getMin(),dup = _d->getMax();
+      int rlow = _r->getMin(),rup = _r->getMax();
+      while (rlow <= rup) {
+         int cp = c - rlow;
+         int dcur = dlow;
+         while (dcur <= dup) {
+            if (dcur<0) {
+               int rem = cp % dcur;
+               if (rem==0) break;
+               else ++dcur;
+            } else if (dcur==0) ++dcur;
+            else {
+               int rem  = cp % dcur;
+               if (rem == 0)
+                  break;
+               int q   = cp / dcur;
+               if (q==0) {dcur = dup+1;break;}
+               int inc = rem / q,rp  = rem % q;
+               if (rp == 0) {
+                  dcur += inc;
+                  COMETASSERT(cp % dcur == 0);
+                  break;
+               } else
+                  dcur += inc + 1;
+            }
+         }
+         if (dcur > dup) ++rlow;
+         else break;
+      }
+      Outcome ok = _r->updateMin(rlow);
+      if (ok==Failure) return ok;
+      while (rlow <= rup) {
+         int cp = c - rup;
+         int dcur = dlow;
+         while (dcur <= dup) {
+            if (dcur<0) {
+               int rem = cp % dcur;
+               if (rem==0) break;
+               else ++dcur;
+            } else if (dcur==0) ++dcur;
+            else {
+               int rem  = cp % dcur;
+               if (rem == 0)
+                  break;
+               int q   = cp / dcur;
+               if (q==0) {dcur = dup+1;break;}
+               int inc = rem / q,rp  = rem % q;
+               if (rp == 0) {
+                  dcur += inc;
+                  COMETASSERT(cp % dcur == 0);
+                  break;
+               } else
+                  dcur += inc + 1;
+            }
+         }
+         if (dcur > dup) --rup;
+         else break;
+      }
+      ok = _r->updateMax(rup);
+      if (ok ==Failure) return ok;
+      dlow = _d->getMin();
+      dup = _d->getMax();
+      rlow = _r->getMin();
+      rup = _r->getMax();
+      int dcur = dlow;
+      while (dcur <= dup) {
+         if (dcur!=0) {
+            int rem = c % dcur;
+            if (rem >= rlow && rem <= rup)
+               break;
+         }
+         ++dcur;
+      }
+      ok = _d->updateMin(dcur);
+      if (ok ==Failure) return ok;
+      dcur = dup;
+      while(dcur >= dlow) {
+         if (dcur!=0) {
+            int rem = c % dcur;
+            if (rem >= rlow && rem <= rup)
+               break;
+         }
+         --dcur;
+      }
+      ok = _d->updateMax(dup);
+      return ok;
+   }
+   else if (_d->isBound()) {
+      int c = _d->getMin();
+      if (c==0) return Failure;
+      int rb = abs(c) - 1;
+      Outcome ok = _r->updateMin(- rb);
+      if (ok) ok = _r->updateMax(rb);
+      if (ok == Failure) return ok;
+      int qxMax = _x->getMax() / c;
+      int qxMin = _x->getMin() / c;
+      if (qxMin == qxMax) {
+         int lr = _x->getMin() % c;
+         int up = _x->getMax() % c;
+         ok = _r->updateMin(lr);
+         if (ok) ok = _r->updateMax(up);
+      }
+      if (ok==Failure) return ok;
+      int lowx = _x->getMin(),upx  = _x->getMax();
+      bool outside = lowx % c < _r->getMin();
+      while(outside && lowx < upx) {
+         if (!_x->member(++lowx))
+            continue;
+         outside = lowx % c < _r->getMin();
+      }
+      if (lowx < upx) ok = _x->updateMin(lowx);
+      if (ok==Failure) return Failure;
+      outside = upx % c > _r->getMax();
+      while(outside && lowx < upx) {
+         if (!_x->member(--upx))
+            continue;
+         outside = upx % c > _r->getMax();
+      }
+      if (lowx < upx) ok = _x->updateMax(upx);
+      return ok;
+   }
+   else if (_r->isBound()) {
+      int c = _r->getMin();
+      Outcome oc = Suspend;
+      int xv;
+      int xpl = _x->getMin();
+      int xpu = _x->getMax();
+      int dlow = _d->getMin(),dup = _d->getMax();
+      bool ok = false;
+      for( xv=xpl;xv <= xpu && !ok;xv++) {
+         int cd = dlow;
+         ok = false;
+         while (cd <= dup) {
+            if (cd!=0) {
+               ok = (xv % cd) == c;
+               if (ok) break;
+            }
+            ++cd;
+         }
+         if (ok) break;
+      }
+      if (ok)
+         oc = _x->updateMin(xv);
+      else oc = Failure;
+      if (oc ==Failure) return Failure;
+      ok = false;
+      for(xv=xpu;xv >= xpl && !ok;xv--) {
+         int cd = dup;
+         ok = false;
+         while (cd >= dlow) {
+            if (cd!=0) {
+               ok = (xv % cd) == c;
+               if (ok) break;
+            }
+            --cd;
+         }
+         if (ok) break;
+      }
+      if (ok)
+         oc = _x->updateMax(xv);
+      else oc = Failure;
+      if (oc ==Failure) return Failure;
+      xpl = _x->getMin();
+      xpu = _x->getMax();
+      int cd = dlow;
+      while(cd <= dup) {
+         if (cd!=0) {
+            int xc = xpl;
+            while (xc % cd != c && xc <= xpu) ++xc;
+            if (xc <= xpu)
+               break;
+            else ++cd;
+         } else ++cd;
+      }
+      oc = _d->updateMin(cd);
+      if (oc==Failure) return Failure;
+      
+      cd = dup;
+      while(cd >= dlow) {
+         if (cd!=0) {
+            int xc = xpu;
+            while (xc % cd != c && xc >= xpl) --xc;
+            if (xc >= xpl)
+               break;
+            else --cd;
+         } else --cd;
+      }
+      oc = _d->updateMax(cd);
+      return oc;
+      
+   }
+   else {
+      Outcome oc = Suspend;
+      int dmin = _d->getMin(),dmax = _d->getMax();
+      if (dmin==0) {
+         oc = _d->updateMin(1);
+         dmin = 1;
+         if (oc == Failure) return oc;
+      }
+      if (dmax==0) {
+         oc = _d->updateMax(-1);
+         dmax = -1;
+         if (oc==Failure) return oc;
+      }
+      int ld = abs(dmin) > abs(dmax) ? abs(dmin) : abs(dmax);
+      oc = _r->updateMin(-ld+1);
+      if (oc) oc = _r->updateMax(ld-1);
+      if (oc==Failure) return oc;
+      
+      return Suspend;
+   }
+*/
+
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound] + ![_z bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPModBC:%02d %@ == %@ MOD %@>",_name,_z,_x,_y];
+}
+@end
 
 @implementation CPAllDifferenceVC
 -(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(ORInt) n
