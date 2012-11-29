@@ -1693,3 +1693,312 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [v visitBitEqual:self];
 }
 @end
+
+@implementation ORBitOr {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitOr*)initORBitOr: (id<ORBitVar>) x or:(id<ORBitVar>) y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ | %@ = %@)",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitOr:self];
+}
+@end
+
+@implementation ORBitAnd {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitAnd*)initORBitAnd: (id<ORBitVar>) x and:(id<ORBitVar>) y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ & %@ = %@)",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitAnd:self];
+}
+@end
+
+@implementation ORBitNot {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+}
+-(ORBitNot*)initORBitNot: (id<ORBitVar>) x not: (id<ORBitVar>) y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ ~ %@)",[self class],self,_impl,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitNot:self];
+}
+@end
+
+@implementation ORBitXor {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitXor*)initORBitXor: (id<ORBitVar>) x xor:(id<ORBitVar>) y eq:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ ^ %@ = %@)",[self class],self,_impl,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitXor:self];
+}
+@end
+
+@implementation ORBitShiftL {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   ORInt _places;
+}
+-(ORBitShiftL*)initORBitShiftL: (id<ORBitVar>) x by:(ORInt) p eq:(id<ORBitVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _places = p;
+   return self;
+}
+-(ORInt) places
+{
+   return _places;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <<%d = %@)",[self class],self,_impl,_x,_places,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitShiftL:self];
+}
+@end
+
+@implementation ORBitRotateL {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   ORInt _places;
+}
+-(ORBitRotateL*)initORBitRotateL: (id<ORBitVar>) x by:(ORInt) p eq:(id<ORBitVar>)y
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _places = p;
+   return self;
+}
+-(ORInt) places
+{
+   return _places;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <<<%d = %@)",[self class],self,_impl,_x,_places,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitRotateL:self];
+}
+@end
+
+@implementation ORBitSum {
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _ci;
+   id<ORBitVar> _z;
+   id<ORBitVar> _co;
+}
+-(ORBitSum*)initORBitSum: (id<ORBitVar>) x plus:(id<ORBitVar>)y in:(id<ORBitVar>)ci eq:(id<ORBitVar>)z out:(id<ORBitVar>)co
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _ci = ci;
+   _z = z;
+   _co = co;
+   return self;
+}
+-(id<ORBitVar>) left
+{
+   return _x;
+}
+-(id<ORBitVar>) right
+{
+   return _y;
+}
+-(id<ORBitVar>) res
+{
+   return _z;
+}
+-(id<ORBitVar>) in
+{
+   return _ci;
+}
+-(id<ORBitVar>) out
+{
+   return _co;
+}
+
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ + %@ [cin %@] = %@ [cout %@])",[self class],self,_impl,_x,_y,_ci,_z,_co];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitSum:self];
+}
+@end
+
+@implementation ORBitIf {
+   id<ORBitVar> _w;
+   id<ORBitVar> _x;
+   id<ORBitVar> _y;
+   id<ORBitVar> _z;
+}
+-(ORBitIf*)initORBitIf: (id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z
+{
+   self = [super initORConstraintI];
+   _w = w;
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(id<ORBitVar>) res
+{
+   return _w;
+}
+-(id<ORBitVar>) trueIf
+{
+   return _x;
+}
+-(id<ORBitVar>) equals
+{
+   return _y;
+}
+-(id<ORBitVar>) zeroIfXEquals
+{
+   return _z;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ true if (x=%@)  equals %@ and false if x equals %@.])",[self class],self,_impl,_w,_x,_y,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitBitIf:self];
+}
+@end

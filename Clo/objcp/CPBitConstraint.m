@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPBitConstraint.h"
-#import "CPEngineI.h"
+#import "CPUKernel/CPEngineI.h"
 #import "CPBitMacros.h"
 
 #define ISTRUE(up, low) (up & low)
@@ -75,6 +75,16 @@
                                                 equals:(CPBitVarI*)z
                                            withCarryIn:(CPBitVarI*)cin
                                            andCarryOut:(CPBitVarI*)cout];
+   [[x engine] trackObject:o];
+   return o;
+}
+
++(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z
+{
+   id<CPConstraint> o = [[CPBitIF alloc] initCPBitIF:(CPBitVarI*)w
+                                         equalsOneIf:(CPBitVarI*)x
+                                              equals:(CPBitVarI*)y
+                                    andZeroIfXEquals:(CPBitVarI*)z];
    [[x engine] trackObject:o];
    return o;
 }
@@ -566,7 +576,10 @@
 -(ORStatus) post
 {
    [self propagate];
-   if (![_x bound] || ![_y bound]) {
+//   if (![_x bound] || ![_y bound]) {
+   if (![_x bound] || ![_y bound] || ![_z bound] || ![_w bound]) {
+      //_w added by GAJ on 11/29/12
+      [_w whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
       [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
       [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
       [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];

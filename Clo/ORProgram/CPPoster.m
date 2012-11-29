@@ -247,7 +247,38 @@
 {
    [_engine add: [c dereference]];
 }
-
+-(void) visitBitOr:(id<ORBitOr>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitAnd:(id<ORBitAnd>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitNot:(id<ORBitNot>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitXor:(id<ORBitXor>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitSum:(id<ORBitSum>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitIf:(id<ORBitIf>)c
+{
+   [_engine add: [c dereference]];
+}
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {

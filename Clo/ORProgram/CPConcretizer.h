@@ -74,6 +74,14 @@
 -(id) visitSumGEqualc:(id<ORSumGEqc>)c engine: (id<CPEngine>) engine;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c engine: (id<CPEngine>) engine;
+-(void) visitBitOr:(id<ORBitOr>)c engine: (id<CPEngine>) engine;
+-(void) visitBitAnd:(id<ORBitAnd>)c engine: (id<CPEngine>) engine;
+-(void) visitBitNot:(id<ORBitNot>)c engine: (id<CPEngine>) engine;
+-(void) visitBitXor:(id<ORBitXor>)c engine: (id<CPEngine>) engine;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c engine: (id<CPEngine>) engine;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c engine: (id<CPEngine>) engine;
+-(void) visitBitSum:(id<ORBitSum>)c engine: (id<CPEngine>) engine;
+-(void) visitBitIf:(id<ORBitIf>)c engine: (id<CPEngine>) engine;
 //
 -(id) visitIntegerI: (id<ORInteger>) e engine: (id<CPEngine>) engine;
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -154,6 +162,15 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)c;
+-(void) visitBitIf:(id<ORBitIf>)c;
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
@@ -232,6 +249,14 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)c;
+-(void) visitBitIf:(id<ORBitIf>)c;
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
