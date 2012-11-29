@@ -161,6 +161,14 @@
 {
    [_engine add: [c dereference]];
 }
+-(void) visitMod: (id<ORMod>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitModc: (id<ORModc>)c
+{
+   [_engine add: [c dereference]];
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
    [_engine add: [c dereference]];
@@ -293,6 +301,10 @@
    
 }
 -(void) visitExprMulI: (id<ORExpr>) e
+{
+   
+}
+-(void) visitExprModI: (id<ORExpr>) e
 {
    
 }

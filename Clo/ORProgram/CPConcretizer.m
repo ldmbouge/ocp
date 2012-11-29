@@ -363,6 +363,28 @@
    }
 }
 
+-(void) visitMod: (id<ORMod>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> left = [self concreteVar:[cstr left]];
+      id<CPIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete  = [CPFactory mod:left mod:right equal:res];
+      [cstr setImpl:concrete];
+   }   
+}
+-(void) visitModc: (id<ORModc>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> left = [self concreteVar:[cstr left]];
+      ORInt right = [cstr right];
+      id<CPConstraint> concrete  = [CPFactory mod:left modi:right equal:res];
+      [cstr setImpl:concrete];
+   }
+}
+
+
 -(void) visitAbs: (id<ORAbs>) cstr
 {
    if ([cstr dereference] == NULL) {
@@ -718,6 +740,10 @@
    
 }
 -(void) visitExprMulI: (id<ORExpr>) e
+{
+   
+}
+-(void) visitExprModI: (id<ORExpr>) e
 {
    
 }
@@ -1518,6 +1544,10 @@
 //-(void) visitExprMulI: (id<ORExpr>) e
 //{
 //   
+//}
+//-(void) visitExprModI: (id<ORExpr>) e
+//{
+//
 //}
 //-(void) visitExprEqualI: (id<ORExpr>) e
 //{

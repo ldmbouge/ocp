@@ -59,6 +59,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c  {}
 -(void) visitPlus: (id<ORPlus>)c  {}
 -(void) visitMult: (id<ORMult>)c  {}
+-(void) visitMod: (id<ORMod>)c {}
+-(void) visitModc: (id<ORModc>)c {}
 -(void) visitAbs: (id<ORAbs>)c  {}
 -(void) visitOr: (id<OROr>)c  {}
 -(void) visitAnd:( id<ORAnd>)c  {}
@@ -138,6 +140,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -408,6 +412,14 @@
    [_theModel addConstraint:c];
 }
 -(void) visitMult: (id<ORMult>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitMod: (id<ORMod>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitModc: (id<ORModc>)c
 {
    [_theModel addConstraint:c];
 }

@@ -50,6 +50,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -76,6 +78,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
@@ -120,6 +123,7 @@
 //-(void) visitExprPlusI: (id<ORExpr>) e;
 //-(void) visitExprMinusI: (id<ORExpr>) e;
 //-(void) visitExprMulI: (id<ORExpr>) e;
+//-(void) visitExprModI: (id<ORExpr>) e;
 //-(void) visitExprEqualI: (id<ORExpr>) e;
 //-(void) visitExprNEqualI: (id<ORExpr>) e;
 //-(void) visitExprLEqualI: (id<ORExpr>) e;

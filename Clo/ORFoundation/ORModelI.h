@@ -93,6 +93,20 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORMod : ORConstraintI<ORMod>
+-(ORMod*)initORMod:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@interface ORModc : ORConstraintI<ORModc>
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z;
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(ORInt) right;
+@end
+
 // PVH: should add annotation
 @interface ORAbs : ORConstraintI<ORAbs>
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;

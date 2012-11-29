@@ -1410,6 +1410,332 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+@implementation CPModcBC
+-(id)initCPModcBC:(CPIntVarI*)x mod:(ORInt)c equal:(CPIntVarI*)y
+{
+   self = [super initCPActiveConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y))
+      [_x whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void)propagate
+{
+   if ([_x min] >= 0)
+      [_y updateMin:0];
+   if ([_x max] <= 0)
+      [_y updateMax:0];
+   if (bound(_x)) {
+      [_y bind:[_x min] % _c];
+   }
+   else if (bound(_y)) {
+      ORBounds xb = bounds(_x);
+      bool outside = xb.min % _c < [_y min];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x, ++xb.min))
+            continue;
+         outside = xb.min % _c < [_y min];
+      }
+      if (xb.min  < xb.max)
+         [_x updateMin:xb.min];
+      outside = xb.max % _c > [_y max];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x, --xb.max))
+            continue;
+         outside = xb.max % _c > [_y max];
+      }
+      if (xb.min < xb.max)
+         [_x updateMax:xb.max];
+   }
+   else {
+      int rb = abs(_c)-1;
+      [_y updateMin:-rb andMax:rb];
+      ORBounds xb = bounds(_x);
+      ORInt qxMax = xb.max / _c;
+      ORInt qxMin = xb.min / _c;
+      if (qxMin == qxMax) {
+         int lr = xb.min % _c;
+         int up = xb.max % _c;
+         [_y updateMin:lr andMax:up];
+      }
+      bool outside = xb.min % _c < [_y min];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x, ++xb.min))
+            continue;
+         outside = xb.min % _c < [_y min];
+      }
+      if (xb.min < xb.max)
+         [_x updateMin:xb.min];
+      outside = xb.max % _c > [_y max];
+      while(outside && xb.min < xb.max) {
+         if (!memberDom(_x,--xb.max))
+            continue;
+         outside = xb.max % _c > [_y max];
+      }
+      if (xb.min < xb.max)
+         [_x updateMax:xb.max];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];   
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPModcBC:%02d %@ == %@ MOD %d>",_name,_y,_x,_c];
+}
+@end
+
+@implementation CPModBC
+-(id)initCPModBC:(CPIntVarI*)x mod:(CPIntVarI*)y equal:(CPIntVarI*)z
+{
+   self = [super initCPActiveConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_z))
+      [_z whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void)propagate
+{
+   if ([_x min] >= 0)
+      [_z updateMin:0];
+   if ([_x max] <= 0)
+      [_z updateMax:0];
+   if (bound(_x)) {
+      ORInt c = [_x value];
+      ORBounds yb = bounds(_y);
+      ORBounds zb = bounds(_z);   // zb = c MOD yb
+      while (zb.min <= zb.max) {  // scan all remainders
+         ORInt cp   = c - zb.min; // q * y + z = x AND x=c =>  q * y = c - z.
+         ORInt ycur = yb.min;     // Scan all y values. If we find something that divides exactly, we should keep that z value
+         while (ycur <= yb.max) { // if we do not find anything that divides exactly, that remainder is impossible, increase low(z)
+            if (ycur < 0) {
+               ORInt rem = cp % ycur;
+               if (rem==0) break; // if y_k divides c-z exactly, that we can keep that z value (break)
+               else ++ycur;
+            } else if (ycur==0)   // skip the 0 divisor.
+               ++ycur;
+            else {
+               ORInt rem  = cp % ycur;
+               if (rem == 0)
+                  break;          // if y_k divides c-z exactly, we can keep that z value (break)
+               ORInt q   = cp / ycur;  // compute the inexact division.
+               if (q==0) {             // if we don't even get a whole unit.....
+                  ycur = yb.max+1;     // there is no point trying larger y values. So set y_k past the last value and break.
+                  break;
+               }
+               // q = (c - z_k) DIV y_k  : integer division. rem is the matching remainder. Therefore ->
+               // q * y_k + rem = c - z_k
+               ORInt inc = rem / q;  // The fraction of the remainder that could be "spread" among all q "copies" of y_k
+               ORInt rp  = rem % q;  // Whether the fraction above is exact! If not, there is no way.
+               if (rp == 0) {        // If rem can be evenly spread
+                  ycur += inc;       // increase y_k with the ideal fraction so that the division becomes exact (and we can break)
+                  assert(cp % ycur == 0);
+                  break;
+               } else
+                  ycur += inc + 1;   // If there is no way to evenly spread, we might as well skip the values in the range.
+            }
+         }
+         if (ycur > yb.max)     // We didn't find a match, increase low(z)
+            ++zb.min;
+         else break;            // we found a match, we are consistent for the LB.
+      }
+      [_z updateMin:zb.min];
+      
+      while (zb.min <= zb.max) {
+         ORInt cp = c - zb.max;
+         ORInt ycur = yb.min;
+         while (ycur <= yb.max) {
+            if (ycur<0) {
+               ORInt rem = cp % ycur;
+               if (rem==0) break;
+               else ++ycur;
+            } else if (ycur==0)
+               ++ycur;
+            else {
+               ORInt rem  = cp % ycur;
+               if (rem == 0)
+                  break;
+               ORInt q   = cp / ycur;
+               if (q==0) {
+                  ycur = yb.max+1;
+                  break;
+               }
+               ORInt inc = rem / q,rp  = rem % q;
+               if (rp == 0) {
+                  ycur += inc;
+                  assert(cp % ycur == 0);
+                  break;
+               } else
+                  ycur += inc + 1;
+            }
+         }
+         if (ycur > yb.max)
+            --zb.max;
+         else break;
+      }
+      [_z updateMax:zb.max];
+      yb = bounds(_y);
+      zb = bounds(_z);
+      ORInt dcur = yb.min;
+      while (dcur <= yb.max) {
+         if (dcur!=0) {
+            ORInt rem = c % dcur;
+            if (rem >= zb.min && rem <= zb.max)
+               break;
+         }
+         ++dcur;
+      }
+      [_y updateMin:dcur];
+      dcur = yb.max;
+      while(dcur >= yb.min) {
+         if (dcur!=0) {
+            ORInt rem = c % dcur;
+            if (rem >= zb.min && rem <= zb.max)
+               break;
+         }
+         --dcur;
+      }
+      [_y updateMax:dcur];
+   }
+   else if (bound(_y)) {
+      ORInt c = [_y min];
+      if (c==0) failNow();
+      ORInt rb = abs(c) - 1;
+      [_z updateMin:- rb andMax:rb];
+      ORInt qxMax = [_x max] / c;
+      ORInt qxMin = [_x min] / c;
+      if (qxMin == qxMax) {
+         ORInt lr = [_x min] % c;
+         ORInt up = [_x max] % c;
+         [_z updateMin:lr andMax:up];
+      }
+      ORBounds xb = bounds(_x);
+      bool outside = xb.min % c < [_z min];
+      while(outside && xb.min < xb.max) {
+         if (!memberBitDom(_x,++xb.min))
+            continue;
+         outside = xb.min % c < [_z min];
+      }
+      [_x updateMin:xb.min];
+      
+      outside = xb.max % c > [_z max];
+      while(outside && xb.min < xb.max) {
+         if (!memberBitDom(_x, --xb.max))
+            continue;
+         outside = xb.max % c > [_z max];
+      }
+      [_x updateMax:xb.max];
+   }
+   else if (bound(_z)) {
+      ORInt c = [_z value];
+      ORBounds xb = bounds(_x);
+      ORBounds yb = bounds(_y);
+      bool ok = false;
+      ORInt xv;
+      for(xv=xb.min;xv <= xb.max && !ok;xv++) {
+         ORInt cd = yb.min;
+         ok = false;
+         while (cd <= yb.max) {
+            if (cd!=0) {
+               ok = (xv % cd) == c;
+               if (ok)
+                  break;
+            }
+            ++cd;
+         }
+         if (ok) break;
+      }
+      [_x updateMin:xv];
+      ok = false;
+      for(xv=xb.max;xv >= xb.min && !ok;xv--) {
+         ORInt cd = yb.max;
+         ok = false;
+         while (cd >= yb.min) {
+            if (cd!=0) {
+               ok = (xv % cd) == c;
+               if (ok) break;
+            }
+            --cd;
+         }
+         if (ok) break;
+      }
+      [_x updateMax:xv];
+      xb = bounds(_x);
+      ORInt cd = yb.min;
+      while(cd <= yb.max) {
+         if (cd!=0) {
+            ORInt xc = xb.min;
+            while (xc % cd != c && xc <= xb.max) ++xc;
+            if (xc <= xb.max)
+               break;
+            else ++cd;
+         } else ++cd;
+      }
+      [_y updateMin:cd];
+      cd = yb.max;
+      while(cd >= yb.min) {
+         if (cd!=0) {
+            int xc = xb.max;
+            while (xc % cd != c && xc >= xb.min) --xc;
+            if (xc >= xb.min)
+               break;
+            else --cd;
+         } else --cd;
+      }
+      [_y updateMax:cd];      
+   }
+   else {
+      ORBounds yb = bounds(_y);
+      if (yb.min==0) {
+         [_y updateMin:1];
+         yb.min = 1;
+      }
+      if (yb.max==0) {
+         [_y updateMax:-1];
+         yb.max = -1;
+      }
+      int ld = abs(yb.min) > abs(yb.max) ? abs(yb.min) : abs(yb.max);
+      [_z updateMin:-ld+1 andMax:ld-1];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound] + ![_z bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPModBC:%02d %@ == %@ MOD %@>",_name,_z,_x,_y];
+}
+@end
 
 @implementation CPAllDifferenceVC
 -(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(ORInt) n

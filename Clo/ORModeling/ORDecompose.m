@@ -33,6 +33,7 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprModI: (ORExprModI*) e;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
@@ -84,6 +85,7 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprModI: (ORExprModI*) e;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
@@ -174,6 +176,7 @@ struct CPVarPair {
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
+-(void) visitExprModI: (ORExprModI*) e     {}
 -(void) visitExprSumI: (ORExprSumI*) e     {}
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
@@ -234,6 +237,11 @@ struct CPVarPair {
       id<ORIntVar> alpha =  [ORSubst substituteIn:_model expr:e annotation:_n];
       [_terms addTerm:alpha by:1];
    }
+}
+-(void) visitExprModI: (ORExprModI*) e
+{
+   id<ORIntVar> alpha =  [ORSubst substituteIn:_model expr:e annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
@@ -665,6 +673,25 @@ struct CPVarPair {
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(lb),bindUp(ub))];
    [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv]];
+   [lT release];
+   [rT release];
+}
+-(void) visitExprModI:(ORExprModI *)e
+{
+   ORLinear* lT = [ORLinearizer linearFrom:[e left] model:_model annotation:_c];
+   ORLinear* rT = [ORLinearizer linearFrom:[e right] model:_model annotation:_c];
+   if ([rT size] == 0) {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];
+      id<ORIntVar> lV = [ORSubst normSide:lT for:_model annotation:_c];
+      [_model addConstraint:[ORFactory mod:_model var:lV modi:[rT independent] equal:_rv]];
+   } else {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];
+      id<ORIntVar> lV = [ORSubst normSide:lT for:_model annotation:_c];
+      id<ORIntVar> rV = [ORSubst normSide:rT for:_model annotation:_c];
+      [_model addConstraint:[ORFactory mod:_model var:lV mod:rV equal:_rv]];
+   }
    [lT release];
    [rT release];
 }

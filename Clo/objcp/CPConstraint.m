@@ -387,6 +387,18 @@
    [[x tracker] trackObject:o];
    return o;   
 }
++(id<ORConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y
+{
+   id<ORConstraint> o = [[CPModcBC alloc] initCPModcBC:x mod:c equal:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) mod: (id<CPIntVar>)x mod:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+   id<ORConstraint> o = [[CPModBC alloc] initCPModBC:x mod:y equal:z];
+   [[x tracker] trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = nil;
