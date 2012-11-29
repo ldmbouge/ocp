@@ -732,4 +732,52 @@
    [[x tracker] trackConstraint:o];
    return o;
 }
++(id<ORConstraint>) bit:(id<ORBitVar>)x or:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitOr alloc] initORBitOr:x or:y eq:z];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x and:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitAnd alloc] initORBitAnd:x and:y eq:z];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x not:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitNot alloc] initORBitNot:x not:y];
+   [[x tracker] trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x xor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitXor alloc] initORBitXor:x xor:y eq:z];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x shiftLBy:(ORInt)p eq:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitShiftL alloc] initORBitShiftL:x by:p eq:y];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x rotateLBy:(ORInt)p eq:(id<ORBitVar>)y
+{
+   id<ORConstraint> o = [[ORBitRotateL alloc] initORBitRotateL:x by:p eq:y];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)x plus:(id<ORBitVar>)y withCarryIn:(id<ORBitVar>)ci eq:(id<ORBitVar>)z withCarryOut:(id<ORBitVar>)co
+{
+   id<ORConstraint> o = [[ORBitSum alloc] initORBitSum:x plus:y in:ci eq:z out:co];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) bit:(id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z
+{
+   id<ORConstraint> o = [[ORBitIf alloc] initORBitIf:w trueIf:x equals:y zeroIfXEquals:z];
+   [[x tracker]trackConstraint:o];
+   return o;
+}
 @end

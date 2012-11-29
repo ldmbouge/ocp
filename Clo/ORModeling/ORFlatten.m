@@ -83,6 +83,15 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c  {}
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
+-(void) visitBitOr:(id<ORBitOr>)c {}
+-(void) visitBitAnd:(id<ORBitAnd>)c {}
+-(void) visitBitNot:(id<ORBitNot>)c {}
+-(void) visitBitXor:(id<ORBitXor>)c {}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c {}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c {}
+-(void) visitBitSum:(id<ORBitSum>)c {}
+-(void) visitBitIf:(id<ORBitIf>)c {}
+
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
@@ -158,6 +167,13 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr;
+-(void) visitBitOr:(id<ORBitOr>)cstr;
+-(void) visitBitAnd:(id<ORBitAnd>)cstr;
+-(void) visitBitNot:(id<ORBitNot>)cstr;
+-(void) visitBitXor:(id<ORBitXor>)cstr;
+-(void) visitBitShiftL:(id<ORBitNot>)cstr;
+-(void) visitBitSum:(id<ORBitSum>)cstr;
+-(void) visitBitIf:(id<ORBitIf>)cstr;
 @end
 
 
@@ -502,6 +518,38 @@
 }
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitOr:(id<ORBitOr>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitAnd:(id<ORBitAnd>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitNot:(id<ORBitNot>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitXor:(id<ORBitXor>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitSum:(id<ORBitSum>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitIf:(id<ORBitIf>)c
 {
    [_theModel addConstraint:c];
 }

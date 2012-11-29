@@ -17,6 +17,7 @@
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
+#import "ORTypes.h"
 
 @protocol ORObjective;
 
@@ -346,4 +347,62 @@
 -(ORBitEqual*)initORBitEqual: (id<ORBitVar>) x eq: (id<ORBitVar>) y;
 -(id<ORBitVar>) left;
 -(id<ORBitVar>) right;
+@end
+
+@interface ORBitOr : ORConstraintI<ORBitOr>
+-(ORBitOr*)initORBitOr: (id<ORBitVar>) x or: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitAnd : ORConstraintI<ORBitAnd>
+-(ORBitAnd*)initORBitAnd: (id<ORBitVar>) x and: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitNot : ORConstraintI<ORBitNot>
+-(ORBitNot*)initORBitNot: (id<ORBitVar>) x not: (id<ORBitVar>) y;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitXor : ORConstraintI<ORBitXor>
+-(ORBitXor*)initORBitXor: (id<ORBitVar>) x xor: (id<ORBitVar>) y eq:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitShiftL : ORConstraintI<ORBitShiftL>
+-(ORBitShiftL*)initORBitShiftL: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
+-(ORInt) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitRotateL : ORConstraintI<ORBitRotateL>
+-(ORBitRotateL*)initORBitRotateL: (id<ORBitVar>) x by:(ORInt)p eq: (id<ORBitVar>) y;
+-(ORInt) places;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@interface ORBitSum : ORConstraintI<ORBitSum>
+-(ORBitSum*)initORBitSum: (id<ORBitVar>) x plus:(id<ORBitVar>) y in:(id<ORBitVar>)ci eq:(id<ORBitVar>)z out:(id<ORBitVar>)co;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) in;
+-(id<ORBitVar>) out;
+@end
+
+@interface ORBitIf : ORConstraintI<ORBitIf>
+-(ORBitIf*)initORBitIf: (id<ORBitVar>) w trueIf:(id<ORBitVar>) x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z;
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) trueIf;
+-(id<ORBitVar>) equals;
+-(id<ORBitVar>) zeroIfXEquals;
 @end

@@ -36,8 +36,8 @@
    [_solver release];
    [super dealloc];
 }
-
--(id) concreteVar: (id<ORIntVar>) x
+//GAJ made this take ORVar as a parameter instead of ORIntVar on 11/28/12
+-(id) concreteVar: (id<ORVar>) x
 {
    [x visit:self];
    return [x dereference];
@@ -633,6 +633,95 @@
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPConstraint> concrete = [CPFactory bitEqual:x to:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitOr:(id<ORBitOr>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concrete = [CPFactory bitOR:x or:y equals:z];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitAnd:(id<ORBitAnd>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concrete = [CPFactory bitAND:x and:y equals:z];
+      [cstr setImpl:concrete];
+   }
+}
+-(void) visitBitNot:(id<ORBitNot>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete = [CPFactory bitNOT:x equals:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitXor:(id<ORBitXor>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concrete = [CPFactory bitXOR:x xor:y equals:z];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitShiftL:(id<ORBitShiftL>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concrete = [CPFactory bitShiftL:x by:p equals:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitRotateL:(id<ORBitRotateL>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concrete = [CPFactory bitRotateL:x by:p equals:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitSum:(id<ORBitSum>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPBitVar> ci = [self concreteVar:[cstr in]];
+      id<CPBitVar> co = [self concreteVar:[cstr out]];
+      id<CPConstraint> concrete = [CPFactory bitADD:x plus:y withCarryIn:ci equals:z withCarryOut:co];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitIf:(id<ORBitIf>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> w = [self concreteVar:[cstr res]];
+      id<CPBitVar> x = [self concreteVar:[cstr trueIf]];
+      id<CPBitVar> y = [self concreteVar:[cstr equals]];
+      id<CPBitVar> z = [self concreteVar:[cstr zeroIfXEquals]];
+      id<CPConstraint> concrete = [CPFactory bitIF:w equalsOneIf:x equals:y andZeroIfXEquals:z];
       [cstr setImpl:concrete];
    }
 }

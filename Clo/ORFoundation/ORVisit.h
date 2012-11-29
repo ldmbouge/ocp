@@ -14,6 +14,7 @@
 #import <ORFoundation/ORVar.h>
 
 @protocol ORTrailableInt;
+@protocol ORFloatVar;
 
 @protocol ORVisitor <NSObject>
 @optional
@@ -100,4 +101,12 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)cstr;
+-(void) visitBitIf:(id<ORBitIf>)cstr;
 @end
