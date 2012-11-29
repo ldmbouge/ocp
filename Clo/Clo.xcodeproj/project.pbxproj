@@ -8726,7 +8726,7 @@
 				GCC_PREFIX_HEADER = "Clo/Clo-Prefix.pch";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi451/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -8744,7 +8744,7 @@
 				GCC_PREFIX_HEADER = "Clo/Clo-Prefix.pch";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi451/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

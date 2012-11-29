@@ -148,7 +148,7 @@
 -(ORInt) value
 {
    if (_impl)
-      return [[_impl dereference] value];
+      return [(id<ORIntVar>)[_impl dereference] value];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -159,8 +159,7 @@
 }
 -(void)restore:(id<ORSnapshot>)s
 {
-   ORInt theValue = [s intValue];
-   [[_impl dereference] restoreValue:theValue];
+   [[_impl dereference] restore:s];
 }
 -(ORInt) min
 {
