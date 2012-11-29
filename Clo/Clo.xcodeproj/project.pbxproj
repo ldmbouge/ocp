@@ -2598,7 +2598,6 @@
 		5B6E89261379D3E9005DB4CA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		5B6E89291379D3EA005DB4CA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6E892C1379D3EA005DB4CA /* Clo-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Clo-Prefix.pch"; sourceTree = "<group>"; };
-		5B6E892E1379D3EA005DB4CA /* Clo.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Clo.xcdatamodel; sourceTree = "<group>"; };
 		5B6E89301379D3EA005DB4CA /* Clo.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Clo.1; sourceTree = "<group>"; };
 		5B729C3F153F79A4001BE95A /* CPWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPWatch.h; sourceTree = "<group>"; };
 		5B729C40153F79A4001BE95A /* CPWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPWatch.m; sourceTree = "<group>"; };
@@ -2776,8 +2775,6 @@
 		5BC116A81595067900E0F5C8 /* ais.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ais.1; sourceTree = "<group>"; };
 		5BC43CB413A13C56009119FF /* testCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = testCard.h; path = ../testCard.h; sourceTree = "<group>"; };
 		5BC43CB513A13C56009119FF /* testCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; name = testCard.m; path = ../testCard.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		5BC794C213898F7C00EC7B21 /* Silly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Silly.h; sourceTree = "<group>"; };
-		5BC794C313898F7C00EC7B21 /* Silly.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Silly.m; sourceTree = "<group>"; };
 		5BC794C91389D81900EC7B21 /* SillyVar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SillyVar.h; sourceTree = "<group>"; };
 		5BC794CA1389D81900EC7B21 /* SillyVar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SillyVar.m; sourceTree = "<group>"; };
 		5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = "libgurobi_g++4.2.a"; path = "../../../../../Library/gurobi461/mac64/lib/libgurobi_g++4.2.a"; sourceTree = "<group>"; };
@@ -3936,10 +3933,7 @@
 			isa = PBXGroup;
 			children = (
 				5B6E89291379D3EA005DB4CA /* main.m */,
-				5BC794C213898F7C00EC7B21 /* Silly.h */,
-				5BC794C313898F7C00EC7B21 /* Silly.m */,
 				5B6E89301379D3EA005DB4CA /* Clo.1 */,
-				5B6E892D1379D3EA005DB4CA /* Clo.xcdatamodeld */,
 				5B6E892B1379D3EA005DB4CA /* Supporting Files */,
 				5BC794C91389D81900EC7B21 /* SillyVar.h */,
 				5BC794CA1389D81900EC7B21 /* SillyVar.m */,
@@ -11099,19 +11093,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		5B6E892D1379D3EA005DB4CA /* Clo.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				5B6E892E1379D3EA005DB4CA /* Clo.xcdatamodel */,
-			);
-			currentVersion = 5B6E892E1379D3EA005DB4CA /* Clo.xcdatamodel */;
-			path = Clo.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = 5B6E89171379D3E9005DB4CA /* Project object */;
 }

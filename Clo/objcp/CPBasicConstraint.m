@@ -1425,7 +1425,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    if (!bound(_x))
       [_x whenChangeBoundsPropagate:self];
    if (!bound(_y))
-      [_x whenChangeBoundsPropagate:self];
+      [_y whenChangeBoundsPropagate:self];
    return ORSuspend;
 }
 -(void)propagate
@@ -1514,7 +1514,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    if (!bound(_x))
       [_x whenChangeBoundsPropagate:self];
    if (!bound(_y))
-      [_x whenChangeBoundsPropagate:self];
+      [_y whenChangeBoundsPropagate:self];
    if (!bound(_z))
       [_z whenChangeBoundsPropagate:self];
    return ORSuspend;
