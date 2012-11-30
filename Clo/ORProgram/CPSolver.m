@@ -154,6 +154,10 @@
    [_sPool release];
    [super dealloc];
 }
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_engine nbVars],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
+}
 -(id<ORIdxIntInformer>) retLabel
 {
    if (_returnLabel==nil)
@@ -210,6 +214,7 @@
    _doOnSol = [onSol copy];
    [_doOnExit release];
    _doOnExit = [onExit copy];
+   
 }
 -(id<ORSolutionPool>) solutionPool
 {

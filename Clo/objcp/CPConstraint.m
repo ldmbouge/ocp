@@ -419,9 +419,17 @@
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<CPIntVar>)y
++(id<ORConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)array equal:(id<CPIntVar>)y annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:c equal:y];
+   id<ORConstraint> o = nil;
+   switch(n) {
+      case DomainConsistency:
+         o = [[CPElementVarAC alloc] initCPElementAC:x indexVarArray:array equal:y];
+         break;
+      default:
+         o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:array equal:y];
+         break;
+   }
    [[x tracker] trackObject:o];
    return o;
 }

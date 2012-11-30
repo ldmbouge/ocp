@@ -89,15 +89,16 @@
       [c visit: poster];
    [obj visit: poster];
    [poster release];
+   __block id<CPCommonProgram> recv = cpprogram;
    [cpprogram onSolution:^{
       id<ORSolution> s = [model solution];
-      [[cpprogram solutionPool] addSolution:s];
+      [[recv solutionPool] addSolution:s];
       //NSLog(@"Got a solution: %@",s);
       [s release];
    } onExit:^{
-      id<ORSolution> best = [[cpprogram solutionPool] best];
+      id<ORSolution> best = [[recv solutionPool] best];
       [model restore:best];
-      NSLog(@"onExit called: best(pool) = %@",best);
+      NSLog(@"onExit called: best(pool) = %p",best);
       [best release];
    }];
 }

@@ -467,15 +467,13 @@
 -(void) visitElementVar: (id<ORElementVar>) cstr
 {
    if ([cstr dereference] == NULL) {
-      id<ORIntVarArray> array = [cstr array];
-      id<ORIntVar> idx = [cstr idx];
-      id<ORIntVar> res = [cstr res];
-      [array visit: self];
-      [idx visit: self];
-      [res visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) [idx dereference]
-                                             idxVarArray: (id<CPIntVarArray>) [array dereference]
-                                                   equal: (id<CPIntVar>) [res dereference]
+      id<CPIntVarArray> array = [self concreteArray:[cstr array]];
+      id<CPIntVar> idx = [self concreteVar:[cstr idx]];
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory element: idx
+                                             idxVarArray: array
+                                                   equal: res
+                                              annotation: DomainConsistency
                                        ];
      [cstr setImpl: concreteCstr];
    }
