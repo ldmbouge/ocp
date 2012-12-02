@@ -8,12 +8,13 @@
 
 #import <ORModeling/ORLinearize.h>
 #import "ORModelI.h"
+#import "ORSetI.h"
 
 @interface ORLinearizeConstraint : NSObject<ORVisitor>
 -(id)init:(id<ORINCModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
--(ORRange) unionOfVarArrayRanges: (id<ORIntVarArray>)arr;
+-(id<ORIntRange>) unionOfVarArrayRanges: (id<ORIntVarArray>)arr;
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
 @end
 
@@ -55,15 +56,16 @@
     }
     return self;
 }
--(ORRange) unionOfVarArrayRanges: (id<ORIntVarArray>)arr
+-(id<ORIntRange>) unionOfVarArrayRanges: (id<ORIntVarArray>)arr
 {
-    ORRange r;
-    r.up = [ORFactory maxOver: [arr range] suchThat: nil of:^ORInt (ORInt e) {
+    ORInt up = [ORFactory maxOver: [arr range] suchThat: nil of:^ORInt (ORInt e) {
         return [[(id<ORIntVar>)[arr at: e] domain] up];
     }];
-    r.low = [ORFactory minOver: [arr range] suchThat: nil of:^ORInt (ORInt e) {
+    ORInt low = [ORFactory minOver: [arr range] suchThat: nil of:^ORInt (ORInt e) {
         return [[(id<ORIntVar>)[arr at: e] domain] low];
     }];
+    id<ORIntRange> r = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
+    NSLog(@"LOW: %i", low);
     return r;
 }
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var
@@ -82,8 +84,8 @@
 -(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-    ORRange dom = [self unionOfVarArrayRanges: [cstr array]];
-    for (int d = dom.low; d <= dom.up; d++) {
+    id<ORIntRange> dom = [self unionOfVarArrayRanges: [cstr array]];
+    for (int d = [dom low]; d <= [dom up]; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
                                    suchThat:^bool(ORInt i) {
                                        id<ORIntVar> var = (id<ORIntVar>)[[cstr array] at: i];

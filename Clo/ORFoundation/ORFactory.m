@@ -58,7 +58,7 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORIntRange>)  undefinedRange {
++(id<ORIntRange>)  undefinedIntRange {
     ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: MAXINT up: MININT];
     return o;
 }
@@ -123,7 +123,7 @@
 
 +(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
 {
-    ORInt m = NSIntegerMax;
+    ORInt m = MAXINT;
     for(ORInt i = [r low]; i <= [r up]; i++) {
         if (filter == nil || filter(i)) {
             ORInt x = e(i);
@@ -135,7 +135,7 @@
 
 +(ORInt) maxOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
 {
-    ORInt m = NSIntegerMin;
+    ORInt m = MININT;
     for(ORInt i = [r low]; i <= [r up]; i++) {
         if (filter == nil || filter(i)) {
             ORInt x = e(i);

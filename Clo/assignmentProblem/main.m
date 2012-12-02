@@ -22,7 +22,7 @@
 int main (int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
-    ORInt n = 20;
+    ORInt n = 10;
     id<ORIntRange> R = RANGE(model,1,n);
     
     id<ORUniformDistribution> distr = [CPFactory uniformDistribution: model range: RANGE(model, 1, 20)];
@@ -31,7 +31,7 @@ int main (int argc, const char * argv[])
     //id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
     
     id<ORIntVarArray> tasks  = [ORFactory intVarArray: model range: R domain: R];
-    id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, 20, 20 * n)];
+    id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * n)];
     
     [model minimize: assignCost];
     [model add: [ORFactory alldifferent: tasks]];
@@ -40,7 +40,7 @@ int main (int argc, const char * argv[])
     id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
     ORBatchModel* lm = [[ORBatchModel alloc] init: [ORFactory createModel]];
     [linearizer apply: model into: lm];
-    
+        
     id<CPProgram> cp = [ORFactory createCPProgram: [lm model]];
     id<CPHeuristic> h = [ORFactory createFF: cp];
     [cp solve:
