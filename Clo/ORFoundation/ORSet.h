@@ -31,5 +31,6 @@
 -(ORInt) low;
 -(ORInt) up;
 -(bool) inRange: (ORInt)e;
+-(bool) isDefined;
 -(NSString*) description;
 @end

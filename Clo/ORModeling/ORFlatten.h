@@ -23,6 +23,9 @@
 -(void) trackVariable: (id) obj;
 @end
 
+@interface ORNOopVisit : NSObject<ORVisitor>
+@end
+
 @interface ORFlatten : NSObject<ORModelTransformation>
 -(id)initORFlatten;
 -(void)apply:(id<ORModel>)m into:(id<ORINCModel>)target;

@@ -16,6 +16,8 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORConcretizer.h>
 #import <objcp/CPFactory.h>
+#import "../ORModeling/ORLinearize.h"
+#import "../ORModeling/ORFlatten.h"
 
 int main (int argc, const char * argv[])
 {
@@ -34,12 +36,16 @@ int main (int argc, const char * argv[])
    [model minimize: assignCost];
    [model add: [ORFactory alldifferent: tasks]];
    [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
-   
-   id<CPProgram> cp = [ORFactory createCPProgram: model];
+    
+    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
+    ORBatchModel* lm = [[ORBatchModel alloc] init: model];
+    [linearizer apply: model into: lm];
+    
+    id<CPProgram> cp = [ORFactory createCPProgram: model];
+    id<CPHeuristic> h = [ORFactory createFF: cp];
    [cp solve:
     ^() {
-       [cp labelArray: tasks orderedBy: ^ORFloat(ORInt i) { return [tasks[i] domsize];}];
-       [cp label: assignCost];
+       [cp labelHeuristic: h];
     }];
    NSLog(@"solution: %@", [tasks description]);
    

@@ -26,6 +26,7 @@
 /* Begin PBXBuildFile section */
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
+		37C2A74D166AC26A009A016B /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 37C2A74C166AC269009A016B /* ORModelTransformation.m */; };
 		5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B1391841629A99D0029FD29 /* ORDecompose.h */; };
 		5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
 		5B178C2A139697CA001D1C86 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF51391329D000997E5 /* Foundation.framework */; };
@@ -2417,6 +2418,7 @@
 /* Begin PBXFileReference section */
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
+		37C2A74C166AC269009A016B /* ORModelTransformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORModelTransformation.m; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B074A27142E5B2D0055B72D /* ORSemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
@@ -4231,6 +4233,7 @@
 		5BAD1151161E5E430014EBCB /* ORModeling */ = {
 			isa = PBXGroup;
 			children = (
+				37C2A74C166AC269009A016B /* ORModelTransformation.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
 				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
@@ -6735,6 +6738,7 @@
 				5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */,
 				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
+				37C2A74D166AC26A009A016B /* ORModelTransformation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10430,6 +10434,7 @@
 				5B5F5486165D6EB300E674DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B60E5E215AE907F002FF2B3 /* Build configuration list for PBXNativeTarget "ORUtilities" */ = {
 			isa = XCConfigurationList;

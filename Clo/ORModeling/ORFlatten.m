@@ -10,9 +10,6 @@
 #import "ORModelI.h"
 #import "ORDecompose.h"
 
-@interface ORNOopVisit : NSObject<ORVisitor>
-@end
-
 @implementation ORNOopVisit
 -(void) visitRandomStream:(id) v {}
 -(void) visitZeroOneStream:(id) v {}

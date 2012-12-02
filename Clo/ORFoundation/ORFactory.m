@@ -58,6 +58,9 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORIntRange>)  undefinedIntRange {
+    return [[ORIntRangeI alloc] initORIntRangeI: MAXINT up: MININT];
+}
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: (ORInt) value];

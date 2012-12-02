@@ -168,6 +168,9 @@
 -(bool) inRange: (ORInt)e {
     return e >= _low && e <= _up;
 }
+-(bool) isDefined {
+    return _low <= _up;
+}
 -(ORInt) size
 {
    return (_up - _low + 1);

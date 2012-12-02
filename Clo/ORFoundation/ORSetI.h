@@ -39,6 +39,7 @@
 -(ORInt) low;
 -(ORInt) up;
 -(bool) inRange: (ORInt)e;
+-(bool) isDefined;
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;

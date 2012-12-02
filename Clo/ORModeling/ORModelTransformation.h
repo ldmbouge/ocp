@@ -11,9 +11,17 @@
 #import "ORModelI.h"
 
 @protocol ORModel;
+@protocol ORTracker;
 @protocol ORINCModel;
 
 @protocol ORModelTransformation <NSObject>
 -(void)apply:(id<ORModel>)m into:(id<ORINCModel>)target;
 @end
 
+@protocol ORExprDomainEvaluator <ORVisitor>
+-(id<ORIntRange>) domain: (id<ORTracker>) tracker ForExpr: (id<ORExpr>)expr;
+@end
+
+@interface ORExprDomainEvaluatorI : NSObject <ORExprDomainEvaluator>
+-(id<ORIntRange>) domain: (id<ORTracker>) tracker ForExpr: (id<ORExpr>)expr;
+@end
