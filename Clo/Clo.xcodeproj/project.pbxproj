@@ -24,6 +24,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		3737A3A9166B0867002D3A57 /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737A3A8166B0867002D3A57 /* ORModelTransformation.m */; };
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		5B137ADA1666B1D0008C7049 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -2648,6 +2649,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3737A3A8166B0867002D3A57 /* ORModelTransformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORModelTransformation.m; sourceTree = "<group>"; };
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -4553,6 +4555,7 @@
 		5BAD1151161E5E430014EBCB /* ORModeling */ = {
 			isa = PBXGroup;
 			children = (
+				3737A3A8166B0867002D3A57 /* ORModelTransformation.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
 				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
@@ -7136,6 +7139,7 @@
 				5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */,
 				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
+				3737A3A9166B0867002D3A57 /* ORModelTransformation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11023,6 +11027,7 @@
 				5B28CAED1668FC63008AB802 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B28CB0F16691F0D008AB802 /* Build configuration list for PBXNativeTarget "langford" */ = {
 			isa = XCConfigurationList;
@@ -11031,6 +11036,7 @@
 				5B28CB1116691F0D008AB802 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B33370613A2B866001DFC38 /* Build configuration list for PBXAggregateTarget "allProgs" */ = {
 			isa = XCConfigurationList;
