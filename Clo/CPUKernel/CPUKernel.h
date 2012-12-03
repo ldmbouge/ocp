@@ -44,6 +44,7 @@ typedef enum {
 
 void collectList(VarEventNode* list,NSMutableSet* rv);
 void freeList(VarEventNode* list);
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail;

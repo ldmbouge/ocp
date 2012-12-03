@@ -250,52 +250,24 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._bindEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._bindEvt, evt, [_fdm trail]); 
-    [evt release];
+   hookupEvent(_fdm, &_net._bindEvt, todo, c, p);
 }
 -(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._domEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._domEvt, evt, [_fdm trail]);      
-    [evt release];
+   hookupEvent(_fdm, &_net._domEvt, todo, c, p);
 }
-
 -(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._minEvt, evt, [_fdm trail]);
-    [evt release];
+   hookupEvent(_fdm, &_net._minEvt, todo, c, p);
 }
 -(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._maxEvt, evt, [_fdm trail]);
-    [evt release];
+   hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
 }
 -(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._boundsEvt, evt, [_fdm trail]);
-    [evt release];
+   hookupEvent(_fdm,&_net._boundsEvt, todo, c, p);
 }
-
-
 -(void)whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c]; 
@@ -320,50 +292,23 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 // Constraint-based Events
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._bindEvt._val
-                                            trigger:NULL
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._bindEvt, evt, [_fdm trail]); 
-    [evt release];
-    
+   hookupEvent(_fdm, &_net._bindEvt, nil, c, p);
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._domEvt._val
-                                            trigger:NULL
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._domEvt, evt, [_fdm trail]);      
-    [evt release];
-    
+   hookupEvent(_fdm, &_net._domEvt, nil, c, p);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
-                                           trigger:NULL
-                                              cstr:c
-                                                at:p];
-   assignTRId(&_net._minEvt, evt, [_fdm trail]);
-   [evt release];    
+   hookupEvent(_fdm, &_net._minEvt, nil, c, p);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
-                                           trigger:NULL
-                                              cstr:c
-                                                at:p];
-   assignTRId(&_net._maxEvt, evt, [_fdm trail]);
-   [evt release];
+   hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
-                                           trigger:NULL
-                                              cstr:c
-                                                at:p];
-   assignTRId(&_net._boundsEvt, evt, [_fdm trail]);
-   [evt release];
+   hookupEvent(_fdm, &_net._boundsEvt, nil, c, p);
 }
 
 -(void) whenBindPropagate: (CPCoreConstraint*) c
@@ -391,12 +336,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo 
 {
    [_recv setTracksLoseEvt];
-   id evt = [[VarEventNode alloc] initVarEventNode: _net._ac5._val
-                                           trigger:todo
-                                              cstr: c
-                                                at:HIGHEST_PRIO];
-   assignTRId(&_net._ac5, evt, [_fdm trail]);
-   [evt release];   
+   hookupEvent(_fdm, &_net._ac5, todo, c, HIGHEST_PRIO);
 }
 
 

@@ -55,4 +55,14 @@ void freeList(VarEventNode* list)
       list = next;
    }
 }
+
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority)
+{
+   id evt = [[VarEventNode alloc] initVarEventNode:evtList->_val
+                                           trigger:todo
+                                              cstr:c
+                                                at:priority];
+   assignTRId(evtList, evt, [engine trail]);
+   [evt release];
+}
 @end
