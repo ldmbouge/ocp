@@ -27,21 +27,6 @@
 {
     return [[[ORLinearize alloc] initORLinearize] autorelease];
 }
-+(id<ORIntVarArray>) binarizeIntVar: (id<ORIntVar>)x tracker: (id<ORTracker>) tracker
-{
-    id<ORIntRange> range = [x domain];
-    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
-    for(ORInt k=range.low;k <= range.up;k++)
-        [o set: [ORFactory intVar: tracker domain: RANGE(tracker, 0, 1)] at: k];
-    if([tracker conformsToProtocol: @protocol(ORModel)] ||
-       [tracker conformsToProtocol: @protocol(ORINCModel)]) {
-        id<ORExpr> sumBinVars = [ORFactory sum: tracker over: range suchThat: nil of:^id<ORExpr>(ORInt i) { return [o at: i]; }];
-        id<ORExpr> sumExpr = [ORFactory sum: tracker over: range suchThat: nil of:^id<ORExpr>(ORInt i) { return [[o at: i] muli: i]; }];
-        [tracker addConstraint: [sumBinVars eqi: 1]];
-        [tracker addConstraint: [sumExpr eq: x]];
-    }
-    return (id<ORIntVarArray>)o;
-}
 +(id<ORSolutionPool>)createSolutionPool
 {
    return [[ORSolutionPoolI alloc] init];

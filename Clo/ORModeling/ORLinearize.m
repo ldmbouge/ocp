@@ -68,11 +68,22 @@
     NSLog(@"LOW: %i", low);
     return r;
 }
+-(id<ORIntVarArray>) binarizeIntVar:(id<ORIntVar>)x
+{
+   id<ORIntVarArray> o = [ORFactory intVarArray:_model range:[x domain] with:^id<ORIntVar>(ORInt i) {
+      return [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+   }];
+   id<ORExpr> sumBinVars = Sum(_model, i,[x domain], o[i]);
+   id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] muli: i]);
+   [_model addConstraint: [sumBinVars eqi: 1]];
+   [_model addConstraint: [sumExpr eq: x]];
+   return o;
+}
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var
 {
     id<ORIntVarArray> binArr = [_binMap objectForKey: var];
     if(binArr == nil) {
-        binArr = [ORFactory binarizeIntVar: var tracker: _model];
+        binArr = [self binarizeIntVar: var];
         [_binMap setObject: binArr forKey: var];
     }
     return binArr;
