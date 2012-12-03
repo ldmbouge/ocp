@@ -38,7 +38,7 @@
 
 -(CPCircuitI*) initCPSubtourEliminationI: (id<CPIntVarArray>) x
 {
-   self = [super initCPActiveConstraint: [[x at:[x low]] engine]];
+   self = [super initCPCoreConstraint: [[x at:[x low]] engine]];
     _x = x;
     [self initInstanceVariables];
     return self;

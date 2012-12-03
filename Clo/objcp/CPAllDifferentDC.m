@@ -68,7 +68,7 @@ static void prune(CPAllDifferentDC* ad);
 
 -(CPAllDifferentDC*) initCPAllDifferentDC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
-   self = [super initCPActiveConstraint: engine];
+   self = [super initCPCoreConstraint: engine];
    _x = x;
    [self initInstanceVariables];
    return self;

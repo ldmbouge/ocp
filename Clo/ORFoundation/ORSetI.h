@@ -39,6 +39,7 @@
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
+-(bool) isDefined;
 -(bool) inRange: (ORInt)e;
 -(ORInt) size;
 -(void) iterate: (ORInt2Void) f;

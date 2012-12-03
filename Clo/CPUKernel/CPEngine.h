@@ -12,9 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 
-@protocol CPEvent;
+@protocol CPAC5Event;
 @protocol CPConstraint;
-@protocol VarEventNode;
+@protocol CPEventNode;
 @class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
@@ -23,14 +23,14 @@
 
 @protocol CPEngine <OREngine>
 -(void) scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
--(void) scheduleAC3:(id<VarEventNode>*)mlist;
--(void) scheduleAC5:(id<CPEvent>)evt;
+-(void) scheduleAC3:(id<CPEventNode>*)mlist;
+-(void) scheduleAC5:(id<CPAC5Event>)evt;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
 -(ORStatus) addInternal:(id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(ORStatus) impose: (Void2ORStatus) cl;
+-(ORStatus) enforce:(Void2ORStatus)cl;
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;

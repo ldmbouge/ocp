@@ -31,6 +31,7 @@
 @protocol ORIntRange <ORIntIterator>
 -(ORInt) low;
 -(ORInt) up;
+-(bool) isDefined;
 -(bool) inRange: (ORInt)e;
 -(NSString*) description;
 @end

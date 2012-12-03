@@ -48,6 +48,5 @@
 +(id<ORModel>) createModel;
 +(id<ORModelTransformation>)createFlattener;
 +(id<ORModelTransformation>)createLinearizer;
-+(id<ORIntVarArray>) binarizeIntVar: (id<ORIntVar>)x tracker: (id<ORTracker>) tracker;
 +(id<ORSolutionPool>)createSolutionPool;
 @end

@@ -58,7 +58,7 @@
 
 -(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (CPIntVarI*) costVariable
 {
-   self = [super initCPActiveConstraint: engine];
+   self = [super initCPCoreConstraint: engine];
    _x = x;
    _engine = engine;
    _matrix = matrix;

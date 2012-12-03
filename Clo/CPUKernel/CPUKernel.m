@@ -11,6 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
+#import "CPAC3Event.h"
 
 @implementation CPFactory
 +(id<CPEngine>) engine: (id<ORTrail>) trail
@@ -20,8 +21,8 @@
 @end
 
 
-@implementation VarEventNode
--(VarEventNode*)initVarEventNode:(VarEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
+@implementation CPEventNode
+-(id)initCPEventNode:(CPEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
 {
    self = [super init];
    _node = [next retain];
@@ -32,27 +33,45 @@
 }
 -(void)dealloc
 {
-   //NSLog(@"VarEventNode::dealloc] %p\n",self);
+   //NSLog(@"CPEventNode::dealloc] %p\n",self);
    [_trigger release];
    [_node release];
    [super dealloc];
 }
+-(id)trigger
+{
+   return _trigger;
+}
+-(id<CPEventNode>)next
+{
+   return _node;
+}
 
-void collectList(VarEventNode* list,NSMutableSet* rv)
+void collectList(CPEventNode* list,NSMutableSet* rv)
 {
    while(list) {
-      VarEventNode* next = list->_node;
+      CPEventNode* next = list->_node;
       [rv addObject:list->_cstr];
       list = next;
    }
 }
 
-void freeList(VarEventNode* list)
+void freeList(CPEventNode* list)
 {
    while (list) {
-      VarEventNode* next = list->_node;
+      CPEventNode* next = list->_node;
       [list release];
       list = next;
    }
+}
+
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority)
+{
+   id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
+                                          trigger:todo
+                                             cstr:c
+                                               at:priority];
+   assignTRId(evtList, evt, [engine trail]);
+   [evt release];
 }
 @end

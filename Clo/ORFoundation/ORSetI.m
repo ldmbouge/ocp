@@ -165,6 +165,9 @@
 {
    return _up;
 }
+-(bool) isDefined {
+    return _low <= _up;
+}
 -(bool) inRange: (ORInt)e {
     return e >= _low && e <= _up;
 }

@@ -12,7 +12,7 @@
 #import "CPEvent.h"
 
 @implementation CPValueLossEvent
--(id)initValueLoss:(ORInt)value notify:(VarEventNode*)list
+-(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list
 {
    self = [super init];
    _theVal = value;
@@ -26,11 +26,11 @@
 -(ORInt)execute
 {
    ORInt nbP = 0;
-   VarEventNode* evt = _theList;
+   id<CPEventNode> evt = _theList;
    @try {
       while (evt) {
-         ((ConstraintIntCallBack)evt->_trigger)(_theVal);
-         evt = evt->_node;
+         ((ConstraintIntCallBack)[evt trigger])(_theVal);
+         evt = [evt next];
          ++nbP;
       }
       [self release];

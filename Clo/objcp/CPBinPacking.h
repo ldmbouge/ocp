@@ -14,7 +14,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPOneBinPackingI : CPActiveConstraint<CPConstraint,NSCoding> {
+@interface CPOneBinPackingI : CPCoreConstraint<CPConstraint,NSCoding> {
 }
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) x itemSize: (id<ORIntArray>) itemSize
                                       bin: (ORInt) b

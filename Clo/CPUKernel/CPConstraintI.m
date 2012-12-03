@@ -14,7 +14,7 @@
 #import <CPUKernel/CPEngineI.h>
 
 @implementation CPCoreConstraint
--(CPCoreConstraint*) initCPCoreConstraint 
+-(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m
 {
    self = [super init];
    _todo = CPTocheck;
@@ -22,7 +22,14 @@
    _priority = HIGHEST_PRIO;
    _name = 0;
    _propagate = [self methodForSelector:@selector(propagate)];
+   _trail = [[m trail] retain];
+   _active  = makeTRInt(_trail,true);
    return self;
+}
+-(void)dealloc
+{
+   [_trail release];
+   [super dealloc];
 }
 // Tracer method
 -(ORStatus) doIt
@@ -77,37 +84,6 @@
     [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_priority]; 
     return self;
-}
-@end
-
-@implementation CPActiveConstraint
--(id) initCPActiveConstraint: (CPEngineI*) m
-{
-   assert(m);
-    self = [super initCPCoreConstraint];
-    _trail = [[m trail] retain];
-    _active  = makeTRInt(_trail,true);
-    return self;
-}
--(void)dealloc
-{
-   [super dealloc];
-   [_trail release];
-}
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeObject:_trail];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_active._val];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_active._mgc];
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   _trail = [[aDecoder decodeObject] retain];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._val];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_active._mgc];
-   return self;
 }
 @end
 

@@ -17,7 +17,7 @@
 #import "CPConstraintI.h"
 #import "ORDataI.h"
 
-@interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
+@interface CPTableCstrI : CPCoreConstraint<CPConstraint,NSCoding> {
     CPIntVarI**     _var;
     ORInt           _arity;  
     ORTableI*       _table;
