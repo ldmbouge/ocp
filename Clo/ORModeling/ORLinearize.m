@@ -84,15 +84,15 @@
 -(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-    id<ORIntRange> dom = [self unionOfVarArrayRanges: [cstr array]];
+   id<ORIntVarArray> varsOfC = [cstr array];
+    id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
-        id<ORExpr> sumExpr = [ORFactory sum: _model over: [[cstr array] range]
+        id<ORExpr> sumExpr = [ORFactory sum: _model over: [varsOfC range]
                                    suchThat:^bool(ORInt i) {
-                                       id<ORIntVar> var = (id<ORIntVar>)[[cstr array] at: i];
-                                       return [[var domain] inRange: d];
+                                       return [[varsOfC[i] domain] inRange: d];
                                    } of:^id<ORExpr>(ORInt i) {
-                                       id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
-                                       return [binArr at: d];
+                                       id<ORIntVarArray> binArr = [self binarizationForVar: varsOfC[i]];
+                                       return binArr[d];
                                    }];
         [_model addConstraint: [sumExpr eqi: 1]];
     }
