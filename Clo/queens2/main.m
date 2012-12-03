@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import "ORConcretizer.h"
 #import <ORModeling/ORModelTransformation.h>
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
@@ -29,9 +28,9 @@ int main (int argc, const char * argv[])
    id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
    id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
    id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
-   [model add: [ORFactory alldifferent: x note:ValueConsistency]];
-   [model add: [ORFactory alldifferent: xp note:ValueConsistency]];
-   [model add: [ORFactory alldifferent: xn note:ValueConsistency]];
+   [model add: [ORFactory alldifferent: x annotation:ValueConsistency]];
+   [model add: [ORFactory alldifferent: xp annotation:ValueConsistency]];
+   [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
 
    id<CPProgram> cp = [ORFactory createCPProgram: model];
    id<CPHeuristic> h = [ORFactory createFF:cp];

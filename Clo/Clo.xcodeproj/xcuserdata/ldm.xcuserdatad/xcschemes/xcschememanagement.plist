@@ -124,6 +124,11 @@
 			<key>orderHint</key>
 			<integer>28</integer>
 		</dict>
+		<key>debruijn.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>42</integer>
+		</dict>
 		<key>driver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -164,6 +169,11 @@
 			<key>orderHint</key>
 			<integer>29</integer>
 		</dict>
+		<key>langford.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>43</integer>
+		</dict>
 		<key>lpsolver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -192,7 +202,7 @@
 		<key>market2s.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>45</integer>
+			<integer>41</integer>
 		</dict>
 		<key>marriage.xcscheme_^#shared#^_</key>
 		<dict>
@@ -338,6 +348,16 @@
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
 		<key>5B2000E0156D585E00D80105</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B28CAE11668FC63008AB802</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B28CB0416691F0C008AB802</key>
 		<dict>
 			<key>primary</key>
 			<true/>

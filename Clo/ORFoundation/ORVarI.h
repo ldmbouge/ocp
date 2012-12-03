@@ -67,3 +67,19 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
+
+@interface ORBitVarI : ORExprI<ORBitVar>
+-(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
+-(ORUInt) getId;
+-(bool) bound;
+-(uint64)min;
+-(uint64)max;
+-(ORUInt*)low;
+-(ORUInt*)up;
+-(ORUInt)bitLength;
+-(unsigned int)  domsize;
+-(bool) member: (unsigned int*) v;
+-(void) visit: (id<ORVisitor>)v;
+-(NSSet*) constraints;
+-(NSString*)stringValue;
+@end

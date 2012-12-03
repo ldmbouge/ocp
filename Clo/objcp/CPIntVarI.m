@@ -56,81 +56,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    return rv;
 }
 
-/*
-@interface CPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   union {
-      ORInt _value;
-      id<CPDom>   _dom;
-   }              _rep;
-   BOOL         _asDom;
-}
--(CPIntVarSnapshot*)initCPIntVarSnapshot:(CPIntVarI*)v;
--(void)restoreInto:(NSArray*)av;
--(int)intValue; 
--(BOOL)boolValue;
-@end
-
-@implementation CPIntVarSnapshot
--(CPIntVarSnapshot*)initCPIntVarSnapshot:(CPIntVarI*)v
-{
-   self = [super init];
-   _name = [v getId];
-   _asDom = ![v bound];
-   if (_asDom) {
-      _rep._dom = [[v domain] copy];
-   } else 
-      _rep._value = [v min];
-   return self;
-}
--(void)dealloc
-{
-   if (_asDom)
-      [_rep._dom release];
-   [super dealloc];
-}
--(void)restoreInto:(NSArray*)av
-{
-   CPIntVarI* theVar = [av objectAtIndex:_name];
-   if (_asDom) {
-      [theVar restoreDomain:_rep._dom];
-   } else {
-      [theVar restoreValue:_rep._value];
-   }
-}
--(int)intValue 
-{
-   return _asDom ? [_rep._dom min] : _rep._value;
-}
--(BOOL)boolValue
-{
-   return _asDom ? [_rep._dom min] : _rep._value;
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_asDom];
-   if (_asDom) {
-      [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   } else {
-      [aCoder encodeObject:_rep._dom];
-   }
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_asDom];
-   if (_asDom)
-      [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
-   else {
-      _rep._dom = [[aDecoder decodeObject] retain];
-   }
-   return self;
-}
-@end
- */
-
 /*****************************************************************************************/
 /*                        CPIntVar                                                       */
 /*****************************************************************************************/
@@ -613,12 +538,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     }
     return ORSuspend;
 }
-/*
--(id)snapshot
-{
-  return [[CPIntVarSnapshot alloc] initCPIntVarSnapshot:self];
-}
- */
 -(void)restoreDomain:(id<CPDom>)toRestore
 {
    [_dom restoreDomain:toRestore];
@@ -639,7 +558,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(id<ORIntVar>) dereference
 {
-   return self;
+   return (id<ORIntVar>)self;
 }
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {

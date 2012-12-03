@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
                                                          with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
                                   low: c
                                    up: c
-                          consistency:DomainConsistency]];
+                          annotation:DomainConsistency]];
 
    [cp solve:
     ^() {

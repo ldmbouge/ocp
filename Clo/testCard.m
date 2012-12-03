@@ -11,11 +11,13 @@
 
 
 #import "testCard.h"
-#import <ORFoundation/ORController.h>
-#import <objcp/CPData.h>
-#import <objcp/CPValueConstraint.h>
-#import <objcp/CPBasicConstraint.h>
 
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORAVLTree.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
+#import <objcp/CPObjectQueue.h>
+#import <objcp/CPFactory.h>
 
 @implementation testCard
 
@@ -35,23 +37,21 @@
 
 -(NSInteger) setupCardWith:(ORInt)n size:(ORInt)s
 {
-   id<CPSolver> m = [CPFactory createSolver];
-   id<ORIntVarArray> x = [CPFactory intVarArray:m range:(ORRange){0,s-1} domain:(ORRange){0,n-1}];
-   id<ORIntArray> lb = [CPFactory intArray:m range:(ORRange){0,n-1} value:2];
-   id<ORIntArray> ub = [CPFactory intArray:m range:(ORRange){0,n-1} value:3];
+   id<ORModel> m = [ORFactory createModel];
+   id<ORIntVarArray> x = [ORFactory intVarArray:m range:RANGE(m,0,s-1) domain:RANGE(m,0,n-1)];
+   id<ORIntArray> lb = [ORFactory intArray:m range:RANGE(m,0,n-1) value:2];
+   id<ORIntArray> ub = [ORFactory intArray:m range:RANGE(m,0,n-1) value:3];
     
    int* cnt = alloca(sizeof(NSInteger)*n);
-   id<CPInteger> nbSolutions = [CPFactory integer: m value: 0];
-   [m solveAll: ^() {
-      [m add:[CPFactory cardinality:x low:lb up:ub]];      
-   } using: ^() {
-      [CPLabel array:x orderedBy:^ORInt(ORInt i) {
+   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   [m add:[ORFactory cardinality:x low:lb up:ub]];
+   
+   id<CPProgram> cp = [ORFactory createCPProgram:m];
+   
+   [cp solveAll: ^() {
+      [cp labelArray:x orderedBy:^ORFloat(ORInt i) {
          return i;
       }];
-      /*for(NSInteger k=0;k<s;k++)
-         printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
-      printf("]\n");
-       */
       for(NSInteger k=0;k<n;k++)cnt[k]=0;
       for(ORInt k=0;k<s;k++)
          cnt[[[x at:k] min]]++;
@@ -63,7 +63,7 @@
    printf("GOT %d solutions\n",[nbSolutions value]);   
    NSInteger rv =  [nbSolutions value];
    [m release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
    return rv;
 }
 

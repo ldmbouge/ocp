@@ -70,9 +70,9 @@
    id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
 
-   [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: x annotation:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: xp annotation:ValueConsistency]];
+   [cp add: [CPFactory alldifferent: xn annotation:ValueConsistency]];
    
    [cp solveAll:
     ^() {

@@ -22,6 +22,7 @@
 #import "ORFoundation/ORSemDFSController.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "CPEngineI.h"
+#import "CPBitVarI.h"
 
 
 @implementation CPFactory (DataStructure)
@@ -219,4 +220,13 @@
 }
 
 @end
+
+@implementation CPFactory (BV)
++(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(int) len
+{
+   return [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow:low andUp:up andLen:len];
+}
+@end
+
+
 

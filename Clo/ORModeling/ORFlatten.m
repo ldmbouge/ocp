@@ -1,10 +1,13 @@
-//
-//  ORFlatten.m
-//  Clo
-//
-//  Created by Laurent Michel on 10/5/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import "ORFlatten.h"
 #import "ORModelI.h"
@@ -24,6 +27,7 @@
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}
 -(void) visitFloatVar: (id<ORFloatVar>) v  {}
+-(void) visitBitVar: (id<ORBitVar>) v {}
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v  {}
 -(void) visitAffineVar:(id<ORIntVar>) v  {}
 -(void) visitIdArray: (id<ORIdArray>) v  {}
@@ -55,6 +59,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c  {}
 -(void) visitPlus: (id<ORPlus>)c  {}
 -(void) visitMult: (id<ORMult>)c  {}
+-(void) visitMod: (id<ORMod>)c {}
+-(void) visitModc: (id<ORModc>)c {}
 -(void) visitAbs: (id<ORAbs>)c  {}
 -(void) visitOr: (id<OROr>)c  {}
 -(void) visitAnd:( id<ORAnd>)c  {}
@@ -75,6 +81,17 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c  {}
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c  {}
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c  {}
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c {}
+-(void) visitBitOr:(id<ORBitOr>)c {}
+-(void) visitBitAnd:(id<ORBitAnd>)c {}
+-(void) visitBitNot:(id<ORBitNot>)c {}
+-(void) visitBitXor:(id<ORBitXor>)c {}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c {}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c {}
+-(void) visitBitSum:(id<ORBitSum>)c {}
+-(void) visitBitIf:(id<ORBitIf>)c {}
+
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
@@ -123,6 +140,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -132,6 +151,29 @@
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
+-(void) visitReifyEqual: (id<ORReifyEqual>)c;
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c;
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c;
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c;
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c;
+-(void) visitSumEqualc:(id<ORSumEqc>)c;
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c;
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)cstr;
+-(void) visitBitOr:(id<ORBitOr>)cstr;
+-(void) visitBitAnd:(id<ORBitAnd>)cstr;
+-(void) visitBitNot:(id<ORBitNot>)cstr;
+-(void) visitBitXor:(id<ORBitXor>)cstr;
+-(void) visitBitShiftL:(id<ORBitNot>)cstr;
+-(void) visitBitSum:(id<ORBitSum>)cstr;
+-(void) visitBitIf:(id<ORBitIf>)cstr;
 @end
 
 
@@ -201,7 +243,7 @@
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [self flatten:c into:batch];
+      [ORFlatten flatten:c into:batch];
    } onObjective:^(id<ORObjective> o) {
       ORFlattenObjective* fo = [[ORFlattenObjective alloc] init:batch];
       [o visit:fo];
@@ -209,7 +251,7 @@
    }];
 }
 
--(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m
++(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m
 {
    ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:m];
    [c visit:fc];
@@ -217,19 +259,19 @@
 }
 +(void)flattenExpression:(id<ORExpr>)expr into:(id<ORINCModel>)model
 {
-   ORLinear* terms = [ORNormalizer normalize:expr into: model note:DomainConsistency];
+   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:DomainConsistency];
    switch ([expr type]) {
       case ORRBad: assert(NO);
       case ORREq: {
          if ([terms size] != 0) {
-            [terms postEQZ:model note:DomainConsistency];
+            [terms postEQZ:model annotation:DomainConsistency];
          }
       }break;
       case ORRNEq: {
-         [terms postNEQZ:model note:DomainConsistency];
+         [terms postNEQZ:model annotation:DomainConsistency];
       }break;
       case ORRLEq: {
-         [terms postLEQZ:model note:DomainConsistency];
+         [terms postLEQZ:model annotation:DomainConsistency];
       }break;
       default:
          assert(terms == nil);
@@ -373,6 +415,14 @@
 {
    [_theModel addConstraint:c];
 }
+-(void) visitMod: (id<ORMod>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitModc: (id<ORModc>)c
+{
+   [_theModel addConstraint:c];
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
    [_theModel addConstraint:c];
@@ -406,6 +456,100 @@
    [_theModel addConstraint:c];
 }
 -(void) visitLexLeq:(id<ORLexLeq>) c
+{
+   [_theModel addConstraint:c];
+}
+
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyEqual: (id<ORReifyEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumEqualc:(id<ORSumEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c
+{
+   [_theModel addConstraint:c];
+}
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitOr:(id<ORBitOr>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitAnd:(id<ORBitAnd>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitNot:(id<ORBitNot>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitXor:(id<ORBitXor>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitSum:(id<ORBitSum>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitBitIf:(id<ORBitIf>)c
 {
    [_theModel addConstraint:c];
 }

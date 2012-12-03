@@ -9,20 +9,23 @@
  
  ***********************************************************************/
 
-
-#import <ORFoundation/ORFoundation.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
+#import <Foundation/Foundation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORConcretizer.h>
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> cp = [CPFactory createSolver];
+      id<ORModel> model = [ORFactory createModel];
       const char* fn = "market.dta";
       FILE* dta = fopen(fn,"r");
       int n,m,z;
       fscanf(dta, "%d %d %d",&m,&n,&z);
-      id<ORIntRange> V = RANGE(cp,0,n-1);
+      id<ORIntRange> V = RANGE(model,0,n-1);
       int** w = alloca(sizeof(int*)*m);
       for(int k=0;k<m;k++)
          w[k] = alloca(sizeof(int)*n);
@@ -59,12 +62,15 @@ int main(int argc, const char * argv[])
       
       
       
-      id<ORIntVarArray> x = ALL(ORIntVar, i, V, [CPFactory intVar:cp domain:RANGE(cp,0,1)]);
+      id<ORIntVarArray> x = All(model,ORIntVar, i, V, [ORFactory intVar:model domain:RANGE(model,0,1)]);
       for(int i=0;i<m;i++) {
-         id<ORIntArray> coef = [CPFactory intArray:cp range:V with:^ORInt(ORInt j) { return w[i][j];}];
-         id<ORIntVar>   r = [CPFactory intVar:cp domain:RANGE(cp,rhs[i],rhs[i])];
-         [cp add:[CPFactory knapsack:x weight:coef capacity:r]];
+         id<ORIntArray> coef = [ORFactory intArray:model range:V with:^ORInt(ORInt j) { return w[i][j];}];
+         id<ORIntVar>   r = [ORFactory intVar:model domain:RANGE(model,rhs[i],rhs[i])];
+         [model add:[ORFactory knapsack:x weight:coef capacity:r]];
       }
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      
       [cp solve: ^{
          [cp forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) { return -tw[i]; } do:^(ORInt i) {
             [cp try:^{
@@ -101,7 +107,7 @@ int main(int argc, const char * argv[])
       }
       NSLog(@"Solver: %@",cp);
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

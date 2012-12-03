@@ -15,6 +15,7 @@
 @protocol ORIntVarArray;
 @protocol ORExpr;
 @protocol ORIntVar;
+@protocol ORBitVar;
 @protocol OREngine;
 
 @protocol ORConstraint <ORObject>
@@ -73,6 +74,18 @@
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
+@end
+
+@protocol ORMod <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@protocol ORModc <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(ORInt) right;
 @end
 
 @protocol ORAbs <ORConstraint>
@@ -277,3 +290,59 @@
 -(id<OREngine>)    engine;
 @end
 
+// ====== Bit Constraints =====================================
+
+@protocol  ORBitEqual <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitOr <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitAnd <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitNot <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitXor <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+@end
+
+@protocol  ORBitShiftL <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(ORInt) places;
+@end
+
+@protocol  ORBitRotateL <ORConstraint>
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(ORInt) places;
+@end
+
+@protocol  ORBitSum <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) left;
+-(id<ORBitVar>) right;
+-(id<ORBitVar>) in;
+-(id<ORBitVar>) out;
+@end
+
+@protocol  ORBitIf <ORConstraint>
+-(id<ORBitVar>) res;
+-(id<ORBitVar>) trueIf;
+-(id<ORBitVar>) equals;
+-(id<ORBitVar>) zeroIfXEquals;
+@end

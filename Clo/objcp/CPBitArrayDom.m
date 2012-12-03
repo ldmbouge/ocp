@@ -66,6 +66,8 @@
         boundBits = (_low[i]._val ^ _up[i]._val);
         freeBits += __builtin_popcount(boundBits);
     }
+   
+   //Shouldn't
     _freebits = makeTRInt(tr, freeBits);
     return self;
 }
@@ -131,6 +133,24 @@
     return min;     
 }
 
+
+-(unsigned int*) lowArray
+{
+   unsigned int* low = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      low[i] = _low[i]._val;
+   return low;
+}
+-(unsigned int*) upArray
+{
+   unsigned int* up = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      up[i] = _up[i]._val;
+   return up;
+}
+
+
+
 -(uint64)   max
 {
     uint64 maximum;
@@ -168,7 +188,7 @@
    return _low[WORDIDX(idx)]._val  & ONEAT(idx);
 }
 
--(ORStatus) setBit:(unsigned int) idx to:(bool) val
+-(ORStatus) setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x
 {
    if (BITFREE(idx)) {
       if (val)
@@ -179,13 +199,30 @@
       if (theBit ^ val)
          failNow();
    }
+   [self updateFreeBitCount];
+   [x bitFixedEvt:_freebits._val sender:self];
    return ORSuspend;
 }
 -(bool) isFree:(unsigned int)idx
 {
    return BITFREE(idx);
 }
-
+-(unsigned int) lsFreeBit
+{
+   int j;
+   [self updateFreeBitCount];
+   //Assumes length is a multiple of 32 bits
+   //Should work otherwise if extraneous bits are
+   //all the same value in up and low (e.g. 0)
+   
+   for(int i=_wordLength-1; i>=0; i--){
+//      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
+      if ((j=__builtin_ffs(_low[i]._val^_up[i]._val))!=0) {
+         return (i*32)+j-1;
+      }
+   }
+   return -1;
+}
 -(void) updateFreeBitCount
 {
    unsigned int freeBits = 0;
@@ -193,6 +230,8 @@
       unsigned int boundBits = (_low[i]._val ^ _up[i]._val);
       freeBits += __builtin_popcount(boundBits);
    }
+//   NSLog(@"Bit pattern:%@",[self description]);
+//   NSLog(@"%d free bits\n", freeBits);
    assignTRInt(&(_freebits), freeBits, _trail);
 }
 -(bool) member:(unsigned int*) val
@@ -475,7 +514,7 @@
     int bith = 0;
     while(inc) {
         if (inc & 0x1) 
-            [self  setBit:bith to: false];          // Indicate that this specific bit was reset to 0.
+            [self  setBit:bith to: false for:x];          // Indicate that this specific bit was reset to 0.
         inc >>= 1;
         ++bith;
     }
@@ -494,10 +533,10 @@
         const bool isFreeBit = [self isFree:bit];
         if (isFreeBit) {
             if (atLeast + mask > newMax64) { 	
-                [self setBit:bit to:false];
+               [self setBit:bit to:false for:x];
             } else {
                 if (atLeast + mask <= min) {
-                    [self setBit:bit to:true];
+                   [self setBit:bit to:true for:x];
                     atLeast += mask;
                 } else break;
             }
@@ -546,7 +585,7 @@
     assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
     assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
     assignTRInt(&_freebits, 0, _trail);
-   [x bindEvt:self];
+    [x bindEvt];
     return ORSuspend;   
 }
 
@@ -567,7 +606,7 @@
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
    assignTRInt(&_freebits, 0, _trail);
-   [x bindEvt:self];
+   [x bindEvt];
    return ORSuspend;   
 }
 
@@ -591,27 +630,27 @@
 
 -(void) setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x
 {
-    bool lmod = _low[0]._val != newLow[0];
-    lmod |= _low[1]._val != newLow[1];
-    assignTRUInt(&_low[0], newLow[0], _trail);
-    if(_wordLength>1)
-        assignTRUInt(&_low[1], newLow[1], _trail);
+   bool lmod =  false;
+   for(int i=0;i<_wordLength;i++){
+    lmod |= _low[i]._val != newLow[i];
+    assignTRUInt(&_low[i], newLow[i], _trail);
+   }
     [self updateFreeBitCount];
     if (lmod)
-        [x bitFixedEvt:_freebits._val sender:self];
+       [x bitFixedEvt:_freebits._val sender:self];
 }
 
 -(void) setUp: (unsigned int*) newUp  for:(id<CPBitVarNotifier>)x
 {
-    bool umod = _up[0]._val != newUp[0];
-    umod |= _up[1]._val != newUp[1];
+    bool umod = false;
 
-    assignTRUInt(&_up[0], newUp[0], _trail);
-    if(_wordLength>1)
-        assignTRUInt(&_up[1], newUp[1], _trail);
+   for(int i=0;i<_wordLength;i++){
+    umod |= _up[i]._val != newUp[i];
+    assignTRUInt(&_up[i], newUp[i], _trail);
+   }
     [self updateFreeBitCount];
     if (umod)
-    [x bitFixedEvt:_freebits._val sender:self];
+       [x bitFixedEvt:_freebits._val sender:self];
 }
 
 -(void)enumerateWith:(void(^)(unsigned int*,ORInt))body
@@ -634,6 +673,20 @@
       }
       body(bits,rank);
    }
+}
+
+
+-(void)restoreDomain:(CPBitArrayDom*)toRestore
+{
+//   [self setLow:[toRestore lowArray]];
+//   [self setUp:[toRestore upArray]];
+   //update min/max????
+}
+-(void)restoreValue:(ORInt)toRestore
+{
+//   _min._val = toRestore;
+//   _max._val = toRestore;
+//   _sz._val  = 1;
 }
 
 @end

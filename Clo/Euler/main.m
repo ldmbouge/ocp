@@ -66,7 +66,7 @@ int main (int argc, const char * argv[])
       
       for(int i = 1; i <= 64; i++)
          [mdl add:[ORFactory restrict:mdl var:jump[i] to: knightMoves(mdl,i)]];
-      [mdl add: [ORFactory alldifferent: jump note: DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: jump annotation: DomainConsistency]];
       [mdl add: [ORFactory circuit: jump]];
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];

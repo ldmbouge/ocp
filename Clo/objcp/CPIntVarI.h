@@ -181,6 +181,7 @@ typedef struct  {
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
+-(void)restore:(id<ORSnapshot>)s;
 
 // update
 -(ORStatus)     updateMin: (ORInt) newMin;

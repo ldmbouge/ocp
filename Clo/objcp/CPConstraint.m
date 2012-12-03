@@ -38,9 +38,9 @@
 }
 +(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x
 {
-    return [CPFactory alldifferent: x consistency: DomainConsistency];
+    return [CPFactory alldifferent: x annotation: DomainConsistency];
 }
-+(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x consistency: (ORAnnotation) c
++(id<ORConstraint>) alldifferent: (id<CPIntVarArray>) x annotation: (ORAnnotation) c
 {
     id<ORConstraint> o;
     switch (c) {
@@ -59,7 +59,7 @@
     [[x tracker] trackObject: o];
     return o;
 }
-+(id<ORConstraint>) alldifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x consistency: (ORAnnotation) c
++(id<ORConstraint>) alldifferent: (id<CPEngine>) engine over: (id<CPIntVarArray>) x annotation: (ORAnnotation) c
 {
    id<ORConstraint> o;
    switch (c) {
@@ -82,9 +82,9 @@
 // cardinality
 +(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
-    return [CPFactory cardinality: x low: low up: up consistency: ValueConsistency];
+    return [CPFactory cardinality: x low: low up: up annotation: ValueConsistency];
 }
-+(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up consistency: (ORAnnotation) c
++(id<ORConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation: (ORAnnotation) c
 { 
     id<ORConstraint> o;
     switch (c) {
@@ -193,7 +193,7 @@
    return o;
 }
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (id<CPIntVar>) y consistency:(ORAnnotation)c
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (id<CPIntVar>) y annotation:(ORAnnotation)c
 {
    switch(c) {
       case ValueConsistency:
@@ -207,11 +207,11 @@
          [[x tracker] trackObject: o];
          return o;
       }
-      default:assert(FALSE);
+      default:assert(FALSE);return nil;
    }
 }
 
-+(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y consistency:(ORAnnotation)c
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y annotation:(ORAnnotation)c
 {
    switch(c) {
       case ValueConsistency:
@@ -225,7 +225,7 @@
          [[x tracker] trackObject: o];
          return o;
       }
-      default:assert(FALSE);
+      default:assert(FALSE);return nil;
    }
 }
 
@@ -266,10 +266,10 @@
 
 +(id<ORConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c
 {
-   return [self sum:x eq:c consistency:RangeConsistency];
+   return [self sum:x eq:c annotation:RangeConsistency];
 }
 
-+(id<ORConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c consistency: (ORAnnotation)cons
++(id<ORConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORAnnotation)cons
 {
    id<ORConstraint> o = [[CPEquationBC alloc] initCPEquationBC: x equal: c];
    [[x tracker] trackObject: o];
@@ -308,7 +308,7 @@
    [[x tracker] trackObject:o];
    return o;   
 }
-+(id<ORConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c consistency: (ORAnnotation)cons
++(id<ORConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(int) c annotation: (ORAnnotation)cons
 {
    id<ORConstraint> o = nil;
    switch(cons) {
@@ -320,7 +320,7 @@
    [[x tracker] trackObject:o];
    return o;   
 }
-+(id<ORConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z consistency: (ORAnnotation)cons
++(id<ORConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z annotation: (ORAnnotation)cons
 {
    id<ORConstraint> o = nil;
    switch(cons) {
@@ -387,7 +387,19 @@
    [[x tracker] trackObject:o];
    return o;   
 }
-+(id<ORConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y consistency:(ORAnnotation)c
++(id<ORConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y
+{
+   id<ORConstraint> o = [[CPModcBC alloc] initCPModcBC:x mod:c equal:y];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) mod: (id<CPIntVar>)x mod:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+   id<ORConstraint> o = [[CPModBC alloc] initCPModBC:x mod:y equal:z];
+   [[x tracker] trackObject:o];
+   return o;
+}
++(id<ORConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = nil;
    switch (c) {
@@ -407,9 +419,17 @@
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<CPIntVar>)y
++(id<ORConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)array equal:(id<CPIntVar>)y annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:c equal:y];
+   id<ORConstraint> o = nil;
+   switch(n) {
+      case DomainConsistency:
+         o = [[CPElementVarAC alloc] initCPElementAC:x indexVarArray:array equal:y];
+         break;
+      default:
+         o = [[CPElementVarBC alloc] initCPElementBC:x indexVarArray:array equal:y];
+         break;
+   }
    [[x tracker] trackObject:o];
    return o;
 }

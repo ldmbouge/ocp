@@ -25,6 +25,7 @@
 
 -(id) visitIntVar: (id<ORIntVar>) v engine: (id<CPEngine>) engine;
 -(id) visitFloatVar: (id<ORFloatVar>) v engine: (id<CPEngine>) engine;
+-(id) visitBitVar: (id<ORBitVar>) v engine:(id<CPEngine>)engine;
 -(id) visitAffineVar:(id<ORIntVar>) v engine: (id<CPEngine>) engine;
 -(id) visitIdArray: (id<ORIdArray>) v engine: (id<CPEngine>) engine;
 -(id) visitIdMatrix: (id<ORIdMatrix>) v engine: (id<CPEngine>) engine;
@@ -51,6 +52,8 @@
 -(id) visitLEqual: (id<ORLEqual>)c engine: (id<CPEngine>) engine;
 -(id) visitPlus: (id<ORPlus>)c engine: (id<CPEngine>) engine;
 -(id) visitMult: (id<ORMult>)c engine: (id<CPEngine>) engine;
+-(id) visitMod: (id<ORMod>)c engine:(id<CPEngine>) engine;
+-(id) visitModc: (id<ORModc>)c engine:(id<CPEngine>) engine;
 -(id) visitAbs: (id<ORAbs>)c engine: (id<CPEngine>) engine;
 -(id) visitOr: (id<OROr>)c engine: (id<CPEngine>) engine;
 -(id) visitAnd:( id<ORAnd>)c engine: (id<CPEngine>) engine;
@@ -71,11 +74,22 @@
 -(id) visitSumEqualc:(id<ORSumEqc>)c engine: (id<CPEngine>) engine;
 -(id) visitSumLEqualc:(id<ORSumLEqc>)c engine: (id<CPEngine>) engine;
 -(id) visitSumGEqualc:(id<ORSumGEqc>)c engine: (id<CPEngine>) engine;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c engine: (id<CPEngine>) engine;
+-(void) visitBitOr:(id<ORBitOr>)c engine: (id<CPEngine>) engine;
+-(void) visitBitAnd:(id<ORBitAnd>)c engine: (id<CPEngine>) engine;
+-(void) visitBitNot:(id<ORBitNot>)c engine: (id<CPEngine>) engine;
+-(void) visitBitXor:(id<ORBitXor>)c engine: (id<CPEngine>) engine;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c engine: (id<CPEngine>) engine;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c engine: (id<CPEngine>) engine;
+-(void) visitBitSum:(id<ORBitSum>)c engine: (id<CPEngine>) engine;
+-(void) visitBitIf:(id<ORBitIf>)c engine: (id<CPEngine>) engine;
 //
 -(id) visitIntegerI: (id<ORInteger>) e engine: (id<CPEngine>) engine;
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMinusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMulI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
+-(id) visitExprModI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprNEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprLEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -102,6 +116,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
@@ -128,6 +143,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -148,11 +165,23 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c;
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)c;
+-(void) visitBitIf:(id<ORBitIf>)c;
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
@@ -177,6 +206,7 @@
 
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
@@ -203,6 +233,8 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -223,11 +255,22 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c;
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)c;
+-(void) visitBitIf:(id<ORBitIf>)c;
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;

@@ -15,6 +15,7 @@
 
 @class CPIntVarI;
 @class CPEngine;
+@class CPBitDom;
 
 @interface CPElementCstBC : CPActiveConstraint<NSCoding> { // y == c[x]
 @private
@@ -42,3 +43,20 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPElementVarAC : CPActiveConstraint {
+   CPIntVarI*         _x;
+   id<CPIntVarArray>  _array;
+   CPIntVarI*         _z;
+   id<ORTrailableIntArray> _s;  // supports
+   id<ORTrailableIntArray> _c;  // cardinalities of intersections
+   CPBitDom**          _inter;  // intersections
+   CPBitDom*             _iva;
+   ORInt                _minA;  // lowest index in array
+   ORInt               _nbVal;  // number of slots in array
+   ORInt  _minCI,_maxCI,_nbCI;  // bounds & size of interesection array
+}
+-(id)initCPElementAC: (id) x indexVarArray:(id<CPIntVarArray>)y equal:(id)z;
+-(ORStatus)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

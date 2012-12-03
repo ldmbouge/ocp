@@ -12,10 +12,13 @@
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
+#import <ORModeling/ORFlatten.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import "CPProgram.h"
 #import "CPSolver.h"
+#import <objcp/CPBitVar.h>
+#import "CPConcretizer.h"
 
 // to do 11/11/2012
 //
@@ -148,6 +151,10 @@
    [_sPool release];
    [super dealloc];
 }
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_engine nbVars],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
+}
 -(id<ORIdxIntInformer>) retLabel
 {
    if (_returnLabel==nil)
@@ -204,6 +211,7 @@
    _doOnSol = [onSol copy];
    [_doOnExit release];
    _doOnExit = [onExit copy];
+   
 }
 -(id<ORSolutionPool>) solutionPool
 {
@@ -301,7 +309,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];   
 }
--(void) add: (id<ORConstraint>) c consistency: (ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
 {
 @throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];   
 }
@@ -326,6 +334,28 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
 }
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
+}
+
+-(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
+{
+   [_search try: ^() { [self labelBV:x at:i with:false];}
+             or: ^() {[self labelBV:x at:i with:true];}];
+}
+-(void) labelUpFromLSB:(id<CPBitVar>) x
+{
+   int i;
+   CPBitVarI* bv = (CPBitVarI*) [x dereference];
+   while ((i=[bv lsFreeBit])>=0) {
+      NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
+      [_search try: ^() { [self labelBV:x at:i with:false];}
+                or: ^() { [self labelBV:x at:i with:true];}];
+   }
+}
+
+
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt low = [x low];
@@ -390,6 +420,7 @@
                 }];
    }
 }
+
 -(void) label: (id<CPIntVar>) var with: (ORInt) val
 {
    return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
@@ -410,6 +441,11 @@
 {
    [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
 }
+-(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(bool)val
+{
+   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:i with: val];
+}
+
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
@@ -460,11 +496,83 @@
 //   return self;
 //}
 
+-(void) addInternal: (id<ORConstraint>) c annotation:(ORAnnotation)n
+{
+   // LDM: This is the true addition of the constraint into the solver during the search.
+   ORStatus status = [_engine add: c];
+   if (status == ORFailure)
+      [_search fail];
+}
+
 @end
 
 /******************************************************************************************/
 /*                                   CPSolver                                             */
 /******************************************************************************************/
+
+@interface ORRTModel : NSObject<ORINCModel> {
+   CPSolver* _solver;
+   id<ORVisitor> _concretizer;
+}
+-(ORRTModel*)init:(CPSolver*)solver;
+-(void)addVariable:(id<ORVar>)var;
+-(void)addObject:(id)object;
+-(void)addConstraint:(id<ORConstraint>)cstr;
+-(void)minimize:(id<ORIntVar>)x;
+-(void)maximize:(id<ORIntVar>)x;
+-(void) trackObject: (id) obj;
+-(void) trackVariable: (id) obj;
+-(void) trackConstraint:(id)obj;
+@end
+
+@implementation ORRTModel
+-(ORRTModel*)init:(CPSolver*)solver
+{
+   self = [super init];
+   _solver = solver;
+   _concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: solver];
+   return self;
+}
+-(void)dealloc
+{
+   [_concretizer release];
+   [super dealloc];
+}
+-(void)addVariable:(id<ORVar>)var
+{
+   [_solver trackVariable:var];
+}
+-(void)addObject:(id)object
+{
+   [_solver trackObject:object];
+}
+-(void)addConstraint:(id<ORConstraint>)cstr
+{
+   [cstr visit:_concretizer];
+   id<CPConstraint> c = [cstr dereference];
+   [_solver addInternal:c annotation:DomainConsistency];
+}
+-(void)minimize:(id<ORIntVar>)x
+{   
+   assert(FALSE);
+}
+-(void)maximize:(id<ORIntVar>)x
+{
+   assert(FALSE);
+}
+-(void) trackObject: (id) obj
+{
+   [_solver trackObject:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_solver trackVariable:obj];
+}
+-(void) trackConstraint:(id)obj
+{
+   [_solver trackConstraint:obj];
+}
+@end
 
 @implementation CPSolver
 -(id<CPProgram>) initCPSolver
@@ -488,21 +596,30 @@
    [_tracer release];
    [super dealloc];
 }
+
 -(void) add: (id<ORConstraint>) c
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
-   ORStatus status = [_engine add: c];
-   if (status == ORFailure)
-      [_search fail];
+   // LDM: DONE. Have not checked the variable creation/deallocation logic though. 
+   id<ORINCModel> trg = [[ORRTModel alloc] init:self];
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg];
+   else
+      [ORFlatten flatten:c into:trg];
+   [trg release];
 }
--(void) add: (id<ORConstraint>) c consistency: (ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
-   ORStatus status = [_engine add: c];
-   if (status == ORFailure)
-      [_search fail];
+   // LDM: See above. 
+   id<ORINCModel> trg = [[ORRTModel alloc] init:self];
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg];
+   else
+      [ORFlatten flatten:c into:trg];
+   [trg release];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -541,6 +658,13 @@
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];
+}
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   ORStatus status = [_engine impose:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];   
 }
 @end
 
@@ -605,7 +729,7 @@
    if (status == ORFailure)
       [_search fail];
 }
--(void) add: (id<ORConstraint>) c consistency:(ORAnnotation) cons
+-(void) add: (id<ORConstraint>) c annotation:(ORAnnotation) cons
 {
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
@@ -653,6 +777,14 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   ORStatus status = [_engine impose:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+
 //- (void) encodeWithCoder:(NSCoder *)aCoder
 //{
 //   [super encodeWithCoder:aCoder];

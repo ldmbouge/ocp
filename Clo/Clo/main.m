@@ -9,142 +9,85 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORProgram.h>
 
-#import <objc/objc-auto.h>
-#import <Foundation/NSGarbageCollector.h>
-#import <Foundation/NSObject.h>
-#import "cont.h"
-#import "Silly.h"
-#import "DFSController.h"
-#import "SillyVar.h"
-#import "CPEngine.h"
-#import "CPBasicConstraint.h"
-#import "CPSolver.h"
-
-
-void EvalFuncOnGrid( float(^block)(float) ) {
-   int i;
-   for ( i = 0; i < 5 ; ++i ) {
-      float x = i * 0.1;
-      printf("%f %f |", x, block(x));
-   }
-}
-
-void Caller(void) {
-   float forceConst = 3.445;
-   EvalFuncOnGrid(^(float x) { return 0.5f * forceConst * x * x; }
-                  );
-}
-
-@interface Foo : NSObject {
-   int _x;
-   int _y;
-}
-   -(Foo*)initWith:(ORInt)x y:(ORInt)y;
-   -(void)bye;   
-   -(void)finalize;
-@end
-
-@implementation Foo
--(Foo*)initWith:(ORInt) x y:(ORInt)y {
-   [super init];
-   _x = x;
-   _y = y;
-   return self;
-}
--(void)bye {
-   NSLog(@"foo bye called\n");
-}
--(void)finalize {
-   NSLog(@"Foo::finalize called %d \n",_x);
-}
-@end
-
-void silly(int i) 
-{
-   [[Foo alloc]initWith:i y:20];
-}
-
-static id resume=nil;
-
-int fact(int n) {
-   if (n==0) {
-      resume = [NSCont takeContinuation];
-      return 1;
-   } else {
-      return n * fact(n-1);
-   }   
-}
-
-static int nbCall = 0;
-
-void startSearch() {
-   int x;
-   initContinuationLibrary(&x);
-   int f5 = fact(5);
-   nbCall++;
-   if (nbCall % 500000 ==0) 
-      NSLog(@"%d:\tFact(5) = %d\n",nbCall,f5);
-   if (nbCall < 20000000)
-      [resume call];
-}
-
-void traverseTree() {
-   int x;
-   initContinuationLibrary(&x);
-   ORDFSController* cp = [[ORDFSController alloc] init];
-   id<CPSolver> m = [CPFactory createSolver];
-   int* cnt = NSAllocateCollectable(sizeof(ORInt), NSCollectorDisabledOption);
-   *cnt = 0;
-   const ORInt nbv = 8;
-   NSMutableArray* vars = [[NSMutableArray alloc] initWithCapacity:nbv];
-   for(ORInt i=0;i< nbv;i++)
-      [vars addObject: [[SillyVar alloc] initWithLow:0 up:10]];
-   NSLog(@"Array before starting: %@\n",vars);
-   [m solveAll: ^() {
-      for(ORInt i=0;i<nbv;i++) {
-         SillyVar* cv = [vars objectAtIndex:i];
-         int v = 0;
-         while (![cv bound] && v < [cv imax]) {
-            [m try: ^() {[cv set: v];}
-                or: ^()  {[cv reset];}
-             ];
-	    v = v+1;
-         }
-         if (![cv bound]) [cp fail];
-      }
-      //NSLog(@"At leaf!  %@\n",vars);   
-      (*cnt)++;   
-   }];
-}
+int test1();
+int test2();
 
 int main (int argc, const char * argv[])
 {
-   //objc_startCollectorThread();
-/*   for(ORInt i=0;i<1000;i++) {
-      silly(i);
-   }
-   
-   printf("Hello world");
-   Caller();
-   printf("\n");
-   objc_clear_stack(OBJC_CLEAR_RESIDENT_STACK);
-   [[NSGarbageCollector defaultCollector] collectExhaustively];
-  */ 
-
-   //startSearch();
-   
-/*   Silly* os = [[Silly alloc] init:10 y:2];
-   double t = 0;
-   for(ORInt i=0;i<500000000;i++) {
-      t += [os callMe:i];
-   } 
-   NSLog(@"Method call: %f\n",t);
- */
-   
-   traverseTree();
+   test1();
+   test2();
    return 0;
 }
 
+int test1()
+{
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
+      id<ORIntVar> y = [ORFactory intVar:model domain:RANGE(model,1,3)];
+      id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];
+      [model add:[ORFactory mod:model var:x mod:y equal:z]];
+      __block int nbSol = 0;
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solveAll:^{
+         [cp label:x];
+         [cp label:y];
+         [cp label:z];
+         @autoreleasepool {
+            NSLog(@"values: %@",[NSArray arrayWithObjects:x,y,z, nil]);
+         }
+         assert([x value] % [y value] == [z value]);
+         nbSol++;
+      }];
+      ORInt nbc = 0;
+      for(ORInt i=-10;i<=10;i++) {
+         for(ORInt j=1;j<=3;j++) {
+            ORInt k = i % j;
+            nbc += (k >= 0 && k <= 10);
+         }
+      }
+      NSLog(@"#sol: %d - %d",nbSol,nbc);
+      assert(nbSol == nbc);
+      [ORFactory shutdown];
+   }
+   return 0;
+}
 
-
+int test2()
+{
+   @autoreleasepool {
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
+      ORInt y = 3;
+      id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];
+      [model add:[ORFactory mod:model var:x modi:y equal:z]];
+      __block int nbSol = 0;
+      id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solveAll:^{
+         [cp label:x];
+         [cp label:z];
+         @autoreleasepool {
+            NSLog(@"values: %@",[NSArray arrayWithObjects:x,[NSNumber numberWithInt:y],z, nil]);
+         }
+         assert([x value] % y == [z value]);
+         nbSol++;
+      }];
+      ORInt nbc = 0;
+      for(ORInt i=-10;i<=10;i++) {
+         ORInt j = 3;
+         ORInt k = i % j;
+         nbc += (k >= 0 && k <= 10);
+      }
+      NSLog(@"#sol: %d - %d",nbSol,nbc);
+      assert(nbSol == nbc);
+      [ORFactory shutdown];
+   }
+   return 0;
+}

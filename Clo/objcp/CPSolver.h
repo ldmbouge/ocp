@@ -30,7 +30,7 @@
 //-(id<ORSolution>)  solution;
 //
 //-(void)                 add: (id<ORConstraint>) c;
-//-(void)                 add: (id<ORConstraint>) c consistency:(ORAnnotation) cons;
+//-(void)                 add: (id<ORConstraint>) c annotation:(ORAnnotation) cons;
 //-(id<ORObjective>) minimize: (id<ORIntVar>) x;
 //-(id<ORObjective>) maximize: (id<ORIntVar>) x;
 //

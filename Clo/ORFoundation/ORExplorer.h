@@ -12,6 +12,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORController.h>
 
 @protocol ORASolver;
 

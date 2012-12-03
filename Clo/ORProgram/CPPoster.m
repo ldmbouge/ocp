@@ -54,7 +54,9 @@
 }
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-   
+}
+-(void) visitBitVar: (id<ORBitVar>) v
+{
 }
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
@@ -159,6 +161,14 @@
 {
    [_engine add: [c dereference]];
 }
+-(void) visitMod: (id<ORMod>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitModc: (id<ORModc>)c
+{
+   [_engine add: [c dereference]];
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
    [_engine add: [c dereference]];
@@ -240,6 +250,43 @@
    [_engine add: [cstr dereference]];   
 }
 
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitOr:(id<ORBitOr>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitAnd:(id<ORBitAnd>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitNot:(id<ORBitNot>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitXor:(id<ORBitXor>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitSum:(id<ORBitSum>)c
+{
+   [_engine add: [c dereference]];
+}
+-(void) visitBitIf:(id<ORBitIf>)c
+{
+   [_engine add: [c dereference]];
+}
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -254,6 +301,10 @@
    
 }
 -(void) visitExprMulI: (id<ORExpr>) e
+{
+   
+}
+-(void) visitExprModI: (id<ORExpr>) e
 {
    
 }

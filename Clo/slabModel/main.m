@@ -11,11 +11,11 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import "ORConcretizer.h"
 #import <ORModeling/ORModelTransformation.h>
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORProgram.h>
 #import <ORProgram/ORConcretizer.h>
 
 NSString* tab(int d)

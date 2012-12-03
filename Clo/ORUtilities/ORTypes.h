@@ -9,8 +9,6 @@
 
  ***********************************************************************/
 
-#ifndef __ORTYPES_H
-#define __ORTYPES_H
 
 #if !defined(__APPLE__) || defined(__IPHONE_NA)
 typedef unsigned long long uint64;
@@ -80,5 +78,3 @@ typedef ORFloat (^ORInt2Float)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);
 typedef id<ORRelation> (^ORInt2Relation)(ORInt);
 typedef ORStatus (^Void2ORStatus)(void);
-
-#endif

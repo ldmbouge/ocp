@@ -164,7 +164,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 @end
 
 @implementation CPElementVarBC
--(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y
+-(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y   // y == z[x]
 {
    self = [super initCPActiveConstraint: [x engine]];
    _x = x;
@@ -190,6 +190,8 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 -(void) propagate
 {
    ORBounds bx = bounds(_x);
+   id<ORIntRange> zr = [_z range];
+   [_x updateMin:[zr low] andMax:[zr up]];
    ORInt minZ = MAXINT,maxZ = MININT; // [minZ,maxZ] = UNION(k in D(x)) D(z[k])
    for(int k=bx.min; k <= bx.max;k++) {
       if (memberDom(_x, k)) {
@@ -257,3 +259,136 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
    return self;
 }
 @end
+
+@implementation CPElementVarAC
+-(id)initCPElementAC: (id) x indexVarArray:(id<CPIntVarArray>)y equal:(id)z   // z AC== y[x]
+{
+   self = [super initCPActiveConstraint: [x engine]];
+   _x = x;
+   _array = y;
+   _z = z;
+   _s = _c = nil;
+   _inter = nil;
+   _iva = nil;
+   _minCI = _maxCI = _nbCI = 0;
+   _minA = _nbVal = 0;
+   return self;   
+}
+-(void)dealloc
+{
+   for(ORInt k=0;k<_nbCI;k++)
+      [_inter[k] release];
+   free(_inter);
+   [_iva release];
+   [_s release];
+   [_c release];
+   [super dealloc];   
+}
+-(ORStatus)post
+{
+   ORBounds xb = bounds(_x);
+   ORInt la = max([_array low],xb.min);
+   ORInt ua = min([_array up],xb.max);
+   ORInt minA = MAXINT,maxA = MININT;
+   [_x updateMin:la andMax:ua];
+   for(ORInt k=la;k <= ua;k++) {
+      if (memberDom(_x, k)) {
+         minA = min(minA,[_array[k] min]);
+         maxA = max(maxA,[_array[k] max]);
+      }
+   }
+   [_z updateMin:minA andMax:maxA];
+   _minA   = minA;
+   _nbVal  = maxA - minA + 1;          // range of reachable array *values*.
+   _nbCI   = [_x max] - [_x min] + 1;  // range of *index* variable
+   _minCI  = [_x min];
+   _maxCI  = [_x max];
+   _s      = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine],0,_nbVal-1) value:0];
+   _c      = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine],0,_nbCI) value:0];
+   _inter  = malloc(sizeof(CPBitDom*)*_nbCI);
+   /*
+   _s      = cnew<CotTrail<int> >(_nbVal,getAllocator());
+   _ci     = cnew<CotTrail<int> >(_nbCI,getAllocator());
+   _inter  = cnew<CotCPDomainI*>(_nbCI,getAllocator());
+   memset(_s,0,sizeof(CotTrail<int>)*_nbVal);
+   memset(_ci,0,sizeof(CotTrail<int>)*_nbCI);
+   _s     -= minY;
+   _ci    -= _minCI;
+   _inter -= _minCI;
+   for(int k = _minCI;k<=_maxCI;k++) {
+      if (_x->member(k)) {
+         int interMin = yr[k]->getMin() < _z->getMin() ? yr[k]->getMin() : _z->getMin();
+         int interMax = yr[k]->getMax() > _z->getMax() ? yr[k]->getMax() : _z->getMax();
+         _inter[k] = new (getAllocator()) CotCPDomainI(getAllocator(),_fdm->getTrail(),interMin,interMax);
+         _inter[k]->setAllZero(interMin,interMax);
+      } else _inter[k] = 0;
+   }
+   
+   _iva = new (getAllocator()) CotCPDomainI(getAllocator(),_fdm->getTrail(),lx,ux);
+   for(int k=lx;k<=ux;k++) {
+      if (_x->member(k)) {
+         for(int i=yr[k]->getMin();i<=yr[k]->getMax();i++) {
+            if (yr[k]->member(i)) {
+               _s[i].assign(_s[i]+1,*_fdm);
+            }
+         }
+      } else _iva->set(k,false);
+   }
+   for(int k=minY;ok && k<=maxY;k++) {
+      if (_s[k] == 0 && _z->member(k))
+         ok = _z->removeValue(k);
+   }
+   if (!ok) return ok;
+   for(int k=_x->getMin();ok && k<= _x->getMax();k++) {
+      if (_x->member(k)) {
+         COMETASSERT(_ci[k] == 0);
+         COMETASSERT(_inter[k]->countBetween(_inter[k]->getMin(),_inter[k]->getMax()) == _ci[k]);
+         CotCPIntVarI* yk = yr[k]->getVar();
+         for(int i=yk->getMin();i<= yk->getMax();i++) {
+            if (yk->member(i) && _z->member(i)) {
+               _ci[k].assign(_ci[k]+1,*_fdm);
+               _inter[k]->set(i,true);
+            }
+            COMETASSERT(_inter[k]->countBetween(_inter[k]->getMin(),_inter[k]->getMax()) == _ci[k]);
+         }
+         COMETASSERT(_inter[k]->countBetween(_inter[k]->getMin(),_inter[k]->getMax()) == _ci[k]);
+         if (_ci[k] == 0)
+            ok = _x->removeValue(k);
+      }
+   }
+   if (!ok) return ok;
+   if (!_x->isBound()) _x->addAC5(this);
+   if (!_z->isBound()) _z->addAC5(this);
+   for(int k=_x->getMin();ok && k<= _x->getMax();k++)
+      if (_x->member(k) && !yr[k]->isBound())
+         yr[k]->getVar()->addAC5Index(this,k);
+   return ok;
+    */
+}
+-(NSSet*)allVars
+{
+   ORULong sz = [_array count] + 2;
+   id<CPIntVar>* t = alloca(sizeof(id<ORIntVar>)*sz);
+   ORInt i = 0;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      t[i++] = [_array at: k];
+   t[i++] = _x;
+   t[i++] = _z;
+   return [[NSSet alloc] initWithObjects:t count:sz];   
+}
+-(ORUInt)nbUVars
+{
+   ORInt nbuv = 0;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      nbuv += !bound((CPIntVarI*)[_array at: k]);
+   nbuv += !bound(_x) + !bound(_z);
+   return nbuv;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPElementVarAC: <%02d %@ [ %@ ] == %@ >",_name,_array,_x,_z];
+   return buf;
+}
+@end
+

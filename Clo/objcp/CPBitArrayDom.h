@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <CPUKernel/CPTypes.h>
 #import <objcp/CPBitArrayDom.h>
+#import <CPUKernel/CPTypes.h>
 #import <objcp/CPData.h>
 
 
@@ -34,7 +34,7 @@
 
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
--(ORUInt)           getSize;
+-(ORUInt)               getSize;
 -(int)                  domsize;
 -(void)                 updateFreeBitCount;
 -(bool)                 bound;
@@ -42,9 +42,12 @@
 -(uint64)               max;
 -(unsigned int*)        minArray;
 -(unsigned int*)        maxArray;
+-(unsigned int*)        lowArray;
+-(unsigned int*)        upArray;
 -(bool)                 getBit:(unsigned int) idx;
--(ORStatus)             setBit:(unsigned int) idx to:(bool) val;
+-(ORStatus)             setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x;
 -(bool)                 isFree:(unsigned int) idx;
+-(unsigned int)         lsFreeBit;
 -(bool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;
@@ -60,4 +63,7 @@
 -(void)                 setUp: (unsigned int*) newUp for:(id<CPBitVarNotifier>)x;
 -(NSString*)            description;
 -(void)                 enumerateWith:(void(^)(unsigned int*,ORInt))body;
+-(void)                 restoreDomain:(CPBitArrayDom*)toRestore;
+-(void)                 restoreValue:(ORInt)toRestore;
+
 @end

@@ -225,16 +225,16 @@
 //-(void) add: (id<ORConstraint>) c
 //{
 //   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-//      c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:ValueConsistency];
+//      c = [_engine wrapExpr: self for: (id<ORRelation>)c annotation:ValueConsistency];
 //   }
 //   ORStatus status = [_engine add: c];
 //   if (status == ORFailure)
 //      [_search fail];
 //}
-//-(void) add: (id<ORConstraint>) c consistency:(ORAnnotation)cons
+//-(void) add: (id<ORConstraint>) c annotation:(ORAnnotation)cons
 //{
 //   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
-//      c = [_engine wrapExpr: self for: (id<ORRelation>)c consistency:cons];
+//      c = [_engine wrapExpr: self for: (id<ORRelation>)c annotation:cons];
 //   }
 //   ORStatus status = [_engine add: c];
 //   if (status == ORFailure)

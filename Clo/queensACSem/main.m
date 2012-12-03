@@ -12,13 +12,12 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
-#import <objcp/CPObjectQueue.h>
 
 NSString* tab(int d);
-
 
 #define TESTTA 1
 int main (int argc, const char * argv[])
@@ -36,10 +35,9 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
+      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
       //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
-      [cp addModel: model];
+      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
       [cp solveAll: ^{
          __block ORInt depth = 0;
          //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
@@ -93,7 +91,7 @@ int main (int argc, const char * argv[])
       }];
       NSLog(@"Quitting #SOL=%d",[nbSol value]);
       [cp release];
-      [CPFactory shutdown];
+      [ORFactory shutdown];
    }
    return 0;
 }

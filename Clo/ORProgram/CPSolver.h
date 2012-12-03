@@ -38,6 +38,7 @@
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit;
 -(id<ORSolutionPool>) solutionPool;
+-(void) addInternal: (id<ORConstraint>) c annotation:(ORAnnotation)n;
 @end
 
 // Pure DFS CPSolver

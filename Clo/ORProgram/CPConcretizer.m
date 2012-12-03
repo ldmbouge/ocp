@@ -16,7 +16,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPSolver.h>
 #import <objcp/CPSolver.h>
-
+#import <objcp/CPBitConstraint.h>
 
 
 @implementation ORCPConcretizer
@@ -36,8 +36,8 @@
    [_solver release];
    [super dealloc];
 }
-
--(id) concreteVar: (id<ORIntVar>) x
+//GAJ made this take ORVar as a parameter instead of ORIntVar on 11/28/12
+-(id) concreteVar: (id<ORVar>) x
 {
    [x visit:self];
    return [x dereference];
@@ -71,6 +71,14 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
 }
+-(void) visitBitVar: (id<ORBitVar>) v
+{
+   if ([v dereference] == NULL) {
+      id<CPBitVar> cv = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
+      [v setImpl:cv];
+   }
+}
+
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    
@@ -138,7 +146,7 @@
       id<ORIntVarArray> ax = [cstr array];
       ORAnnotation n = [cstr annotation];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: [ax dereference] consistency: n];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: [ax dereference] annotation: n];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -150,7 +158,7 @@
       id<ORIntArray> up = [cstr up];
       ORAnnotation n = [cstr annotation];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: low up: up consistency: n];
+      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: low up: up annotation: n];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -227,9 +235,9 @@
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
    if ([cstr impl] == NULL) {
-      id<ORIntVarArray> x = [self concreteArray:[cstr x]];
+      id<CPIntVarArray> x = [self concreteArray:[cstr x]];
       id<ORIntMatrix> matrix = [cstr matrix];
-      id<ORIntVar> cost = [self concreteVar:[cstr cost]];
+      id<CPIntVar> cost = [self concreteVar:[cstr cost]];
       id<CPConstraint> concrete = [CPFactory assignment:_engine array:x matrix:matrix cost:cost];
       [cstr setImpl:concrete];
    }
@@ -333,7 +341,7 @@
       id<CPConstraint> concreteCstr = [CPFactory equal3: (id<CPIntVar>) [res dereference]
                                                      to: (id<CPIntVar>) [left dereference]
                                                    plus: (id<CPIntVar>) [right dereference]
-                                            consistency:annotation
+                                            annotation:annotation
                                        ];
       [cstr setImpl: concreteCstr];
    }
@@ -355,6 +363,28 @@
    }
 }
 
+-(void) visitMod: (id<ORMod>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> left = [self concreteVar:[cstr left]];
+      id<CPIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete  = [CPFactory mod:left mod:right equal:res];
+      [cstr setImpl:concrete];
+   }   
+}
+-(void) visitModc: (id<ORModc>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> left = [self concreteVar:[cstr left]];
+      ORInt right = [cstr right];
+      id<CPConstraint> concrete  = [CPFactory mod:left modi:right equal:res];
+      [cstr setImpl:concrete];
+   }
+}
+
+
 -(void) visitAbs: (id<ORAbs>) cstr
 {
    if ([cstr dereference] == NULL) {
@@ -364,7 +394,7 @@
       [left visit: self];
       id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) [left dereference]
                                                equal: (id<CPIntVar>) [res dereference]
-                                         consistency: DomainConsistency
+                                         annotation: DomainConsistency
                                        ];
      [cstr setImpl: concreteCstr];
    }
@@ -437,15 +467,13 @@
 -(void) visitElementVar: (id<ORElementVar>) cstr
 {
    if ([cstr dereference] == NULL) {
-      id<ORIntVarArray> array = [cstr array];
-      id<ORIntVar> idx = [cstr idx];
-      id<ORIntVar> res = [cstr res];
-      [array visit: self];
-      [idx visit: self];
-      [res visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) [idx dereference]
-                                             idxVarArray: (id<CPIntVarArray>) [array dereference]
-                                                   equal: (id<CPIntVar>) [res dereference]
+      id<CPIntVarArray> array = [self concreteArray:[cstr array]];
+      id<CPIntVar> idx = [self concreteVar:[cstr idx]];
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPConstraint> concreteCstr = [CPFactory element: idx
+                                             idxVarArray: array
+                                                   equal: res
+                                              annotation: DomainConsistency
                                        ];
      [cstr setImpl: concreteCstr];
    }
@@ -472,7 +500,7 @@
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] eq: [y dereference] consistency: annotation];
+      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] eq: [y dereference] annotation: annotation];
       [cstr setImpl: concreteCstr];
    }
    
@@ -499,7 +527,7 @@
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] neq: [y dereference] consistency: annotation];
+      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] neq: [y dereference] annotation: annotation];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -526,7 +554,7 @@
 //      [b visit: self];
 //      [x visit: self];
 //      [y visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] leq: [y dereference] consistency: annotation];
+//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] leq: [y dereference] annotation: annotation];
 //      [cstr setImpl: concreteCstr];
    }
 }
@@ -553,7 +581,7 @@
 //      [b visit: self];
 //      [x visit: self];
 //      [y visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] geq: [y dereference] consistency: annotation];
+//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] geq: [y dereference] annotation: annotation];
 //      [cstr setImpl: concreteCstr];
    }
 }
@@ -594,8 +622,108 @@
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
-   
 }
+
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete = [CPFactory bitEqual:x to:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitOr:(id<ORBitOr>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concrete = [CPFactory bitOR:x or:y equals:z];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitAnd:(id<ORBitAnd>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concrete = [CPFactory bitAND:x and:y equals:z];
+      [cstr setImpl:concrete];
+   }
+}
+-(void) visitBitNot:(id<ORBitNot>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete = [CPFactory bitNOT:x equals:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitXor:(id<ORBitXor>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPConstraint> concrete = [CPFactory bitXOR:x xor:y equals:z];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitShiftL:(id<ORBitShiftL>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concrete = [CPFactory bitShiftL:x by:p equals:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitRotateL:(id<ORBitRotateL>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      ORInt p = [cstr places];
+      id<CPConstraint> concrete = [CPFactory bitRotateL:x by:p equals:y];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitSum:(id<ORBitSum>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> x = [self concreteVar:[cstr left]];
+      id<CPBitVar> y = [self concreteVar:[cstr right]];
+      id<CPBitVar> z = [self concreteVar:[cstr res]];
+      id<CPBitVar> ci = [self concreteVar:[cstr in]];
+      id<CPBitVar> co = [self concreteVar:[cstr out]];
+      id<CPConstraint> concrete = [CPFactory bitADD:x plus:y withCarryIn:ci equals:z withCarryOut:co];
+      [cstr setImpl:concrete];
+   }
+}
+
+-(void) visitBitIf:(id<ORBitIf>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPBitVar> w = [self concreteVar:[cstr res]];
+      id<CPBitVar> x = [self concreteVar:[cstr trueIf]];
+      id<CPBitVar> y = [self concreteVar:[cstr equals]];
+      id<CPBitVar> z = [self concreteVar:[cstr zeroIfXEquals]];
+      id<CPConstraint> concrete = [CPFactory bitIF:w equalsOneIf:x equals:y andZeroIfXEquals:z];
+      [cstr setImpl:concrete];
+   }
+}
+
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -610,6 +738,10 @@
    
 }
 -(void) visitExprMulI: (id<ORExpr>) e
+{
+   
+}
+-(void) visitExprModI: (id<ORExpr>) e
 {
    
 }
@@ -835,7 +967,7 @@
 //      id<ORIntVarArray> ax = [cstr array];
 //      ORAnnotation n = [cstr annotation];
 //      [ax visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: [ax dereference] consistency: n];
+//      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: [ax dereference] annotation: n];
 //      [cstr setImpl: concreteCstr];
 //   }
 //}
@@ -856,7 +988,7 @@
 //      id<ORIntArray> up = [cstr up];
 //      ORAnnotation n = [cstr annotation];
 //      [ax visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: low up: up consistency: n];
+//      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: low up: up annotation: n];
 //      [cstr setImpl: concreteCstr];
 //   }
 //}
@@ -1126,7 +1258,7 @@
 //      id<CPConstraint> concreteCstr = [CPFactory equal3: (id<CPIntVar>) [res dereference]
 //                                                     to: (id<CPIntVar>) [left dereference]
 //                                                   plus: (id<CPIntVar>) [right dereference]
-//                                            consistency:annotation
+//                                            annotation:annotation
 //                                       ];
 //      [cstr setImpl: concreteCstr];
 //   }
@@ -1157,7 +1289,7 @@
 //      [left visit: self];
 //      id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) [left dereference]
 //                                               equal: (id<CPIntVar>) [res dereference]
-//                                         consistency: DomainConsistency
+//                                         annotation: DomainConsistency
 //                                       ];
 //      [cstr setImpl: concreteCstr];
 //   }
@@ -1265,7 +1397,7 @@
 //      [b visit: self];
 //      [x visit: self];
 //      [y visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] eq: [y dereference] consistency: annotation];
+//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] eq: [y dereference] annotation: annotation];
 //      [cstr setImpl: concreteCstr];
 //   }
 //   
@@ -1292,7 +1424,7 @@
 //      [b visit: self];
 //      [x visit: self];
 //      [y visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] neq: [y dereference] consistency: annotation];
+//      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] neq: [y dereference] annotation: annotation];
 //      [cstr setImpl: concreteCstr];
 //   }
 //}
@@ -1319,7 +1451,7 @@
 //      //      [b visit: self];
 //      //      [x visit: self];
 //      //      [y visit: self];
-//      //      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] leq: [y dereference] consistency: annotation];
+//      //      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] leq: [y dereference] annotation: annotation];
 //      //      [cstr setImpl: concreteCstr];
 //   }
 //}
@@ -1346,7 +1478,7 @@
 //      //      [b visit: self];
 //      //      [x visit: self];
 //      //      [y visit: self];
-//      //      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] geq: [y dereference] consistency: annotation];
+//      //      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] geq: [y dereference] annotation: annotation];
 //      //      [cstr setImpl: concreteCstr];
 //   }
 //}
@@ -1389,6 +1521,11 @@
 //{
 //   
 //}
+// Bit
+//-(void) visitBitEqual:(id<ORBitEqual>)c
+// {
+//
+// }
 ////
 //-(void) visitIntegerI: (id<ORInteger>) e
 //{
@@ -1405,6 +1542,10 @@
 //-(void) visitExprMulI: (id<ORExpr>) e
 //{
 //   
+//}
+//-(void) visitExprModI: (id<ORExpr>) e
+//{
+//
 //}
 //-(void) visitExprEqualI: (id<ORExpr>) e
 //{
@@ -1621,7 +1762,7 @@
 //-(id<ORConstraint>) cardinality: (ORCardinalityI*) cstr
 //{
 //   id<ORIntVarArray> dx = [ORFactory intVarArrayDereference: _solver array: [cstr array]];
-//   id<ORConstraint> ncstr = [CPFactory cardinality: dx low: [cstr low] up: [cstr up] consistency: DomainConsistency];
+//   id<ORConstraint> ncstr = [CPFactory cardinality: dx low: [cstr low] up: [cstr up] annotation: DomainConsistency];
 //   [_solver add: ncstr];
 //   return ncstr;
 //}

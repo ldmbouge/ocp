@@ -110,11 +110,11 @@
            }
         } onBehalf:self];
         [_x setLoseTrigger: _c do: ^ {
-           assert([_b bound]);
+           assert(![_b bound]);
            [_b bind:false];
         } onBehalf:self];
         [_x setBindTrigger: ^ {
-           assert([_b bound]);
+           assert([_x bound]);
            [_b bind:[_x min] == _c];
         } onBehalf:self];
         return ORSuspend;
