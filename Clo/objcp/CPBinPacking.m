@@ -55,7 +55,7 @@
 -(CPOneBinPackingI*) initCPOneBinPackingI: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
 {
    id<CPEngine> engine = [[item at:[item low]] engine];
-   self = [super initCPActiveConstraint: engine];
+   self = [super initCPCoreConstraint: engine];
    _item = item;
    _itemSize = itemSize;
    _bin = b;

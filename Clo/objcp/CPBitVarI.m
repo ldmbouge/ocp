@@ -245,44 +245,21 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 -(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo 
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._boundsEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._boundsEvt, evt, [_engine trail]);
-    [evt release];
+   hookupEvent(_engine, &_net._boundsEvt, todo, c, p);
 }
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._minEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._minEvt, evt, [_engine trail]);
-    [evt release];
+   hookupEvent(_engine, &_net._minEvt, todo, c, p);
 }
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
 {
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._maxEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._maxEvt, evt, [_engine trail]);
-    [evt release];
+   hookupEvent(_engine, &_net._maxEvt, todo, c, p);
 }
 
 -(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
 {
-   //[_dom updateFreeBitCount];
-    id evt = [[VarEventNode alloc] initVarEventNode:_net._bitFixedEvt._val
-                                            trigger:todo
-                                               cstr:c
-                                                 at:p];
-    assignTRId(&_net._bitFixedEvt, evt, [_engine trail]);
-    [evt release];   
+   hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p);
 }
-
-
 
 -(void) createTriggers
 {
@@ -295,7 +272,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) bindEvt
 {
-   VarEventNode* mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -311,7 +288,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) changeMinEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
-   VarEventNode* mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -324,7 +301,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 -(void) changeMaxEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
-   VarEventNode* mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -340,7 +317,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    [_dom updateFreeBitCount];
     //Empty implementation
-   VarEventNode* mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt._val;
    k += mList[k] != NULL;

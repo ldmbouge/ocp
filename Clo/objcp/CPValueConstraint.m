@@ -18,7 +18,7 @@
 @implementation CPReifyNotEqualcDC
 -(id)initCPReifyNotEqualcDC:(CPIntVarI*)b when:(CPIntVarI*)x neq:(ORInt)c
 {
-    self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
     _b = b;
     _x = x;
     _c = c;
@@ -80,7 +80,7 @@
 @implementation CPReifyEqualcDC
 -(id) initCPReifyEqualcDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
     _b = b;
     _x = x;
     _c = c;
@@ -155,7 +155,7 @@
 @implementation CPReifyEqualBC
 -(id) initCPReifyEqualBC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPIntVarI*) y
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = b;
    _x = x;
    _y = y;
@@ -255,7 +255,7 @@
 @implementation CPReifyEqualDC
 -(id) initCPReifyEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x eq: (CPIntVarI*) y
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = b;
    _x = x;
    _y = y;
@@ -393,7 +393,7 @@
 @implementation CPReifyNEqualBC
 -(id) initCPReify: (CPIntVarI*) b when: (CPIntVarI*) x neq: (CPIntVarI*) y
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = b;
    _x = x;
    _y = y;
@@ -493,7 +493,7 @@
 @implementation CPReifyNEqualDC
 -(id) initCPReify: (CPIntVarI*) b when: (CPIntVarI*) x neq: (CPIntVarI*) y
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = b;
    _x = x;
    _y = y;
@@ -630,7 +630,7 @@
 @implementation CPReifyLEqualDC
 -(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leq: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = b;
    _x = x;
    _c = c;
@@ -701,7 +701,7 @@
 @implementation CPReifyGEqualDC
 -(id) initCPReifyGEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x geq: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = b;
    _x = x;
    _c = c;
@@ -769,16 +769,9 @@
 
 -(id) initCPSumBool: (id) x geq: (ORInt) c
 {
-   if ([x isKindOfClass:[NSArray class]]) {
-      self = [super initCPCoreConstraint];
-      _nb = [x count];
-      _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(ORInt k=0;k<_nb;k++)
-         _x[k] = [x objectAtIndex:k];
-   }
-   else if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
+   if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
       id<CPIntVarArray> xa = x;
-      self = [super initCPCoreConstraint];
+      self = [super initCPCoreConstraint:[[xa at:[xa low]] engine]];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       ORInt low = [xa low];
@@ -787,6 +780,8 @@
       for(ORInt k=low;k <= up;k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
+   else
+      assert(FALSE);
    _c = c;
    _at = 0;
    _notTriggered = 0;
@@ -919,7 +914,7 @@
 -(id) initCPSumBool:(id<CPIntVarArray>)xa eq:(ORInt)c
 {
    id<CPEngine> engine = [[xa at: [xa low]] engine];
-   self = [super initCPActiveConstraint:engine];
+   self = [super initCPCoreConstraint:engine];
    _nb = [xa count];
    _x  = malloc(sizeof(CPIntVarI*)*_nb);
    ORInt low = [xa low];

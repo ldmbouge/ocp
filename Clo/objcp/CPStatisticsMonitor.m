@@ -69,7 +69,7 @@ BOOL refresh(CPVarInfo* vi)
 @implementation CPStatisticsMonitor
 -(id)initCPMonitor:(id<CPEngine>)engine vars:(id<ORVarArray>)allVars
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:engine];
    _engine = engine;
    _monVar = allVars;
    _nbVI = [_monVar count];

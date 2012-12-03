@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import "CPBasicConstraint.h"
 
-@interface CPAssignment : CPActiveConstraint<CPConstraint,NSCoding>
+@interface CPAssignment : CPCoreConstraint<CPConstraint,NSCoding>
 -(CPAssignment*) initCPAssignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost;
 -(void) dealloc;
 -(ORStatus) post;

@@ -271,16 +271,16 @@ typedef struct { \
    V*      _val; \
    ORUInt _mgc; \
 } T; \
-static inline T inline_make##T(ORTrailI* trail,V* val) \
+static inline T inline_make##T(id<ORTrail> trail,V* val) \
 { \
    return (T) { val, [trail magic]-1}; \
 } \
-static inline void inline_assign##T(T* v,V* val,ORTrailI* trail) \
+static inline void inline_assign##T(T* v,V* val,id<ORTrail> trail) \
 { \
-   ORInt cmgc = trail->_magic; \
+   ORInt cmgc = ((ORTrailI*)trail)->_magic; \
    if (v->_mgc != cmgc) { \
       v->_mgc = cmgc; \
-      inline_trailPointerFun(trail, (void**)&v->_val); \
+      inline_trailPointerFun((ORTrailI*)trail, (void**)&v->_val); \
    } \
    v->_val = val; \
 } \

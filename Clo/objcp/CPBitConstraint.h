@@ -29,7 +29,7 @@
 +(id<CPConstraint>) bitIF:(id<CPBitVar>)w equalsOneIf:(id<CPBitVar>)x equals:(id<CPBitVar>)y andZeroIfXEquals:(id<CPBitVar>) z;
 @end
 
-@interface CPBitEqual : CPActiveConstraint<NSCoding> {
+@interface CPBitEqual : CPCoreConstraint<NSCoding> {
 @private
     CPBitVarI*  _x;
     CPBitVarI*  _y;
@@ -40,7 +40,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitNOT : CPActiveConstraint<NSCoding>{
+@interface CPBitNOT : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;    
@@ -51,7 +51,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitAND : CPActiveConstraint<NSCoding>{
+@interface CPBitAND : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -63,7 +63,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitOR : CPActiveConstraint<NSCoding>{
+@interface CPBitOR : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -75,7 +75,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitXOR : CPActiveConstraint<NSCoding>{
+@interface CPBitXOR : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI* _x;
     CPBitVarI* _y;
@@ -87,7 +87,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitIF : CPActiveConstraint<NSCoding>{
+@interface CPBitIF : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI* _w;
     CPBitVarI* _x;
@@ -101,7 +101,7 @@
 @end
 
 
-@interface CPBitShiftL : CPActiveConstraint<NSCoding>{
+@interface CPBitShiftL : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -113,7 +113,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitRotateL : CPActiveConstraint<NSCoding>{
+@interface CPBitRotateL : CPCoreConstraint<NSCoding>{
 @private
    CPBitVarI*      _x;
    CPBitVarI*      _y;
@@ -126,7 +126,7 @@
 @end
 
 
-@interface CPBitShiftR : CPActiveConstraint<NSCoding>{
+@interface CPBitShiftR : CPCoreConstraint<NSCoding>{
 @private 
     CPBitVarI*      _x;
     CPBitVarI*      _y;
@@ -138,7 +138,7 @@
 -(void) propagate;
 @end
 
-@interface CPBitADD: CPActiveConstraint<NSCoding>{
+@interface CPBitADD: CPCoreConstraint<NSCoding>{
 @private
     CPBitVarI*      _x;
     CPBitVarI*      _y;

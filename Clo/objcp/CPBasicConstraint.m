@@ -17,7 +17,7 @@
 @implementation CPRestrictI
 -(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = (CPIntVarI*)x;
    _r = r;
    return self;
@@ -61,7 +61,7 @@
 @implementation CPEqualc
 -(id) initCPEqualc: (id<CPIntVar>) x and:(ORInt)c
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = (CPIntVarI*)x;
    _c = c;
    return self;
@@ -110,7 +110,7 @@
 @implementation CPDiffc
 -(id) initCPDiffc:(id<CPIntVar>) x and:(ORInt)c
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = (CPIntVarI*) x;
    _c = c;
    return self;
@@ -161,7 +161,7 @@
 
 -(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -231,7 +231,7 @@
 @implementation CPEqualDC
 -(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -326,7 +326,7 @@
 @implementation CPEqual3DC
 -(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -557,7 +557,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 -(id)initCPNotEqual:(id) x and:(id) y  and: (ORInt) c
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -625,7 +625,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPBasicNotEqual
 -(id) initCPBasicNotEqual:(id<CPIntVar>) x and: (id<ORIntVar>) y
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
    return self;
@@ -685,7 +685,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPLEqualBC
 -(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -743,7 +743,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPAbsDC
 -(id)initCPAbsDC:(id<CPIntVar>)x equal:(id<CPIntVar>)y
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
    return self;
@@ -837,7 +837,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPAbsBC
 -(id)initCPAbsBC:(id<CPIntVar>)x equal:(id<CPIntVar>)y
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x =  (CPIntVarI*) x;
    _y =  (CPIntVarI*) y;
    _idempotent = YES;
@@ -903,7 +903,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPOrDC
 -(id)initCPOrDC:(id<CPIntVar>) b equal:(id<CPIntVar>) x or:(id<CPIntVar>) y
 {
-   self = [super initCPActiveConstraint:[b engine]];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = (CPIntVarI*) b;
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
@@ -968,7 +968,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPAndDC
 -(id)initCPAndDC:(id)b equal:(id<CPIntVar>) x and: (id<CPIntVar>) y
 {
-   self = [super initCPActiveConstraint:[b engine]];
+   self = [super initCPCoreConstraint:[b engine]];
    _b = (CPIntVarI*) b;
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
@@ -1034,7 +1034,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPImplyDC
 -(id)initCPImplyDC:(id<CPIntVar>)b equal:(id<CPIntVar>)x imply:(id<CPIntVar>)y
 {
-   self = [super initCPActiveConstraint:[b  engine]];
+   self = [super initCPCoreConstraint:[b  engine]];
    _b = (CPIntVarI*) b;
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
@@ -1100,7 +1100,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPLEqualc
 -(id) initCPLEqualc:(id<CPIntVar>)x and:(ORInt) c
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = (CPIntVarI*) x;
    _c = c;
    return self;
@@ -1141,7 +1141,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @implementation CPMultBC
 -(id) initCPMultBC:(id<CPIntVar>)x times:(id<CPIntVar>)y equal:(id<CPIntVar>)z
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = (CPIntVarI*) x;
    _y = (CPIntVarI*) y;
    _z = (CPIntVarI*) z;
@@ -1413,7 +1413,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 @implementation CPModcBC
 -(id)initCPModcBC:(CPIntVarI*)x mod:(ORInt)c equal:(CPIntVarI*)y
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -1502,7 +1502,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 @implementation CPModBC
 -(id)initCPModBC:(CPIntVarI*)x mod:(CPIntVarI*)y equal:(CPIntVarI*)z
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -1749,7 +1749,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    if ([x isKindOfClass:[NSArray class]]) {
       id<CPEngine> fdm = (id<CPEngine>) [[x objectAtIndex:0] engine];
-      self = [super initCPActiveConstraint:fdm];
+      self = [super initCPCoreConstraint:fdm];
       _nb = [x count];
       _x = malloc(sizeof(CPIntVarI*)*_nb);
       for(ORInt k=0;k<_nb;k++)
@@ -1758,7 +1758,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    else if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
       id<ORIdArray> xa = x;
       id<CPEngine> fdm = (id<CPEngine>)[[xa at:[xa low]] engine];
-      self = [super initCPActiveConstraint:fdm];
+      self = [super initCPCoreConstraint:fdm];
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
@@ -1770,7 +1770,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(id) initCPAllDifferenceVC: (id<CPEngine>) engine over: (id<CPIntVarArray>) x
 {
-   self = [super initCPActiveConstraint: engine];
+   self = [super initCPCoreConstraint: engine];
    _nb = [x count];
    _x  = malloc(sizeof(CPIntVarI*)*_nb);
    int i=0;
@@ -1871,7 +1871,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(CPIntVarMinimize*) initCPIntVarMinimize: (CPIntVarI*) x
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = MAXINT;
    return self;
@@ -1935,7 +1935,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
-
 @implementation CPIntVarMaximize
 {
    CPIntVarI*  _x;
@@ -1944,7 +1943,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(CPIntVarMaximize*) initCPIntVarMaximize: (CPIntVarI*) x
 {
-   self = [super initCPCoreConstraint];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
    return self;

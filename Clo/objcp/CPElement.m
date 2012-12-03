@@ -28,7 +28,7 @@ typedef struct CPEltRecordTag {
 
 -(id) initCPElementBC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _c = c;
@@ -166,7 +166,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 @implementation CPElementVarBC
 -(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y   // y == z[x]
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _y = y;
    _z = z;
@@ -263,7 +263,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 @implementation CPElementVarAC
 -(id)initCPElementAC: (id) x indexVarArray:(id<CPIntVarArray>)y equal:(id)z   // z AC== y[x]
 {
-   self = [super initCPActiveConstraint: [x engine]];
+   self = [super initCPCoreConstraint: [x engine]];
    _x = x;
    _array = y;
    _z = z;

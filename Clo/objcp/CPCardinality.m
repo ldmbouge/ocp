@@ -89,7 +89,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
 
 -(id)initCardinalityCst:(CPEngineI*)m values:(ORRange) r low:(ORInt*)low array:(id)ax up:(ORInt*)up
 {
-    self = [super initCPActiveConstraint: m];
+    self = [super initCPCoreConstraint: m];
     _fdm = m;
     _values = r;
     _low = low;
@@ -126,7 +126,7 @@ static void computeCardinalities(id<CPIntVarArray> ax,
 -(id) initCardinalityCst: (id<CPIntVarArray>) ax low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
    _fdm = (CPEngineI*) [[ax solver] engine];
-   self = [super initCPActiveConstraint: _fdm];
+   self = [super initCPCoreConstraint: _fdm];
    _required = _possible = 0;
    
    _sx = (ORInt)[ax count];

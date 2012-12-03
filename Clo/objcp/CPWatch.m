@@ -17,7 +17,7 @@
 #import "CPSolverI.h"
 
 
-@interface CPWatch : CPActiveConstraint {
+@interface CPWatch : CPCoreConstraint {
    CPIntVarI* _theVar;
    ORInt2Void _lost;
    ORInt2Void _bind;
@@ -36,7 +36,7 @@
         onValueRecover:(ORInt2Void)rec 
          onValueUnbind:(ORInt2Void)unb
 {
-   self = [super initCPActiveConstraint:[(CPIntVarI*)x engine]];
+   self = [super initCPCoreConstraint:[(CPIntVarI*)x engine]];
    _theVar = (CPIntVarI*)x;
    _lost = [lost copy];
    _bind = [bind copy];

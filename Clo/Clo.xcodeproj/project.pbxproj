@@ -389,6 +389,7 @@
 		5B9ABD0F1391329D000997E5 /* objcpTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 5B9ABD0E1391329D000997E5 /* objcpTests.h */; };
 		5B9ABD111391329D000997E5 /* objcpTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9ABD101391329D000997E5 /* objcpTests.m */; };
 		5B9ABD2C13913495000997E5 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B9C2CDF166CF08C00D91D40 /* CPAC3Event.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */; };
 		5B9EE50815175CCC00619B47 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
 		5B9EE50915175CCC00619B47 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B9EE50B15175CCC00619B47 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50A15175CCC00619B47 /* CoreGraphics.framework */; };
@@ -2874,6 +2875,7 @@
 		5B9ABD0D1391329D000997E5 /* objcpTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objcpTests-Prefix.pch"; sourceTree = "<group>"; };
 		5B9ABD0E1391329D000997E5 /* objcpTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objcpTests.h; sourceTree = "<group>"; };
 		5B9ABD101391329D000997E5 /* objcpTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = objcpTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAC3Event.h; sourceTree = "<group>"; };
 		5B9EE50515175CCB00619B47 /* iCP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9EE50715175CCC00619B47 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
 		5B9EE50A15175CCC00619B47 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
@@ -4394,6 +4396,7 @@
 		5B93486C1655451C00757F89 /* CPUKernel */ = {
 			isa = PBXGroup;
 			children = (
+				5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */,
 				5B9348731655451D00757F89 /* CPUKernel.h */,
 				5B9348741655451D00757F89 /* CPUKernel.m */,
 				5BE642FD139D49320056F448 /* CPEngine.h */,
@@ -5284,6 +5287,7 @@
 				5B9348831655465A00757F89 /* CPTypes.h in Headers */,
 				5B9348851655473D00757F89 /* CPConstraintI.h in Headers */,
 				5B9348861655478200757F89 /* CPUKernel.h in Headers */,
+				5B9C2CDF166CF08C00D91D40 /* CPAC3Event.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
