@@ -19,11 +19,11 @@ typedef enum {
 } CPTodo;
 
 @protocol CPConstraint <ORConstraint,ORCommand>
--(ORUInt)getId;
+-(ORUInt) getId;
 @end
 
 @protocol CPEvent<NSObject>
--(ORInt)execute;
+-(ORInt) execute;
 @end
 
 @protocol VarEventNode <NSObject>
@@ -32,14 +32,14 @@ typedef enum {
 @class CPCoreConstraint;
 
 @interface VarEventNode : NSObject<VarEventNode> {
-   @public
+@public
    VarEventNode*         _node;
    id                 _trigger;  // type is {ConstraintCallback}
    CPCoreConstraint*     _cstr;
    ORInt             _priority;
 }
 -(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
--(void)dealloc;
+-(void) dealloc;
 @end
 
 void collectList(VarEventNode* list,NSMutableSet* rv);

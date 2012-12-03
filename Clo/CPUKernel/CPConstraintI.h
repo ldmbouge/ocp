@@ -26,15 +26,15 @@
 -(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;
--(void) setId:(ORUInt)name;
--(ORUInt)getId;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
+-(void) setId: (ORUInt) name;
+-(ORUInt) getId;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
 @end
 
 @interface CPActiveConstraint : CPCoreConstraint {
    id<ORTrail> _trail;
-   TRInt      _active;
+   TRInt       _active;
 }
 -(id) initCPActiveConstraint: (id<OREngine>) m;
 @end

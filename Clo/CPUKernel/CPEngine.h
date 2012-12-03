@@ -30,11 +30,11 @@
 -(ORStatus) addInternal:(id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(ORStatus) impose:(Void2ORStatus)cl;
+-(ORStatus) impose: (Void2ORStatus) cl;
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
--(NSMutableArray*)allVars;
+-(NSMutableArray*) allVars;
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
