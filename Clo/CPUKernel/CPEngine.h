@@ -14,7 +14,7 @@
 
 @protocol CPAC5Event;
 @protocol CPConstraint;
-@protocol VarEventNode;
+@protocol CPEventNode;
 @class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
@@ -23,7 +23,7 @@
 
 @protocol CPEngine <OREngine>
 -(void) scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
--(void) scheduleAC3:(id<VarEventNode>*)mlist;
+-(void) scheduleAC3:(id<CPEventNode>*)mlist;
 -(void) scheduleAC5:(id<CPAC5Event>)evt;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;

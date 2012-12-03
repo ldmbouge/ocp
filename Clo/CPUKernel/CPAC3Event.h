@@ -14,13 +14,13 @@
 
 @class CPCoreConstraint;
 
-@interface VarEventNode : NSObject<VarEventNode> {
+@interface CPEventNode : NSObject<CPEventNode> {
 @public
-   VarEventNode*         _node;
+   CPEventNode*          _node;
    id                 _trigger;  // type is {ConstraintCallback}
    CPCoreConstraint*     _cstr;
    ORInt             _priority;
 }
--(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
+-(id) initCPEventNode: (CPEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
 -(void)dealloc;
 @end

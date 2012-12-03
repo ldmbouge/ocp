@@ -53,7 +53,7 @@ enum CPEngineState {
 -(void)      trackObject:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
--(void)      scheduleAC3:(id<VarEventNode>*)mlist;
+-(void)      scheduleAC3:(id<CPEventNode>*)mlist;
 -(void)      scheduleAC5:(id<CPAC5Event>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORObjective>) obj;

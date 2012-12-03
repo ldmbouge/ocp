@@ -376,7 +376,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
-   id<VarEventNode> mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -396,7 +396,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   id<VarEventNode> mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -414,7 +414,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   id<VarEventNode> mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -432,7 +432,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-   id<VarEventNode> mList[5];
+   id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._domEvt._val;
    k += mList[k] != NULL;

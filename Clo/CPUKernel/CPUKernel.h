@@ -26,13 +26,13 @@ typedef enum {
 -(ORInt)execute;
 @end
 
-@protocol VarEventNode <NSObject>
+@protocol CPEventNode <NSObject>
 -(id)trigger;                      // retrieves the closure responsible for responding to the event
--(id<VarEventNode>)next;           // fetches the next event in the list *list suffix*
+-(id<CPEventNode>)next;           // fetches the next event in the list *list suffix*
 @end
 
-void collectList(id<VarEventNode> list,NSMutableSet* rv);
-void freeList(id<VarEventNode> list);
+void collectList(id<CPEventNode> list,NSMutableSet* rv);
+void freeList(id<CPEventNode> list);
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
 
 @interface CPFactory : NSObject

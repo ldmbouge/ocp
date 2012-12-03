@@ -319,10 +319,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
 }
 
--(void) scheduleAC3: (id<VarEventNode>*) mlist
+-(void) scheduleAC3: (id<CPEventNode>*) mlist
 {
    while (*mlist) {
-      VarEventNode* list = *mlist;
+      CPEventNode* list = *mlist;
       while (list) {
          assert(list->_cstr);
          list->_cstr->_todo = CPTocheck;
@@ -333,7 +333,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    }
 }
 
-// PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses varEventNode; AC3 works with the trigger directly
+// PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses CPEventNode; AC3 works with the trigger directly
 
 -(void) scheduleAC5: (id<CPAC5Event>)evt
 {

@@ -13,10 +13,10 @@
 #import <CPUKernel/CPUKernel.h>
 
 @interface CPValueLossEvent : NSObject<CPAC5Event> {
-   id<VarEventNode> _theList;
+   id<CPEventNode> _theList;
    ORInt             _theVal;
 }
--(id)initValueLoss:(ORInt)value notify:(id<VarEventNode>)list;
+-(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list;
 -(void)dealloc;
 -(ORInt)execute;
 @end
