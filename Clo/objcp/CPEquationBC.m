@@ -16,27 +16,20 @@
 
 @implementation CPEquationBC
 
--(CPEquationBC*) initCPEquationBC: (id) x equal: (ORInt) c
+-(CPEquationBC*) initCPEquationBC: (ORIdArrayI*) x equal: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   id<OREngine> engine = [[x at:[x low]] engine];
+   self = [super initCPCoreConstraint:engine];
    _idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
-   if ([x isKindOfClass:[NSArray class]]) {
-      [super initCPCoreConstraint];
-      _nb = [x count];
-      _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(ORInt k=0;k<_nb;k++)
-         _x[k] = [x objectAtIndex:k];
-   } 
-   else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<CPIntVarArray> xa = x;
-      [super initCPCoreConstraint];
+   if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
-   }
+   } else assert(FALSE);
    _c = c;
    _allTerms = NULL;
    _inUse    = NULL;
@@ -98,7 +91,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(ORStatus) post
 {
-   _trail = [[_x[0] engine] trail];
    _updateBounds = malloc(sizeof(UBType)*_nb);
    for(ORInt k=0;k<_nb;k++)
       _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
@@ -268,27 +260,22 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 @end
 
 @implementation CPINEquationBC 
--(CPINEquationBC*) initCPINEquationBC: (id) x lequal: (ORInt) c
+-(CPINEquationBC*) initCPINEquationBC: (ORIdArrayI*) x lequal: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   id<OREngine> engine = [[x at:[x low]] engine];
+   self = [super initCPCoreConstraint:engine];
    _idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
-   if ([x isKindOfClass:[NSArray class]]) {
-      [super initCPCoreConstraint];
-      _nb = [x count];
-      _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(ORInt k=0;k<_nb;k++)
-         _x[k] = [x objectAtIndex:k];
-   } 
-   else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<CPIntVarArray> xa = x;
-      [super initCPCoreConstraint];
+   if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
+   else
+      assert(FALSE);
    _c = c;
    return self;
 }

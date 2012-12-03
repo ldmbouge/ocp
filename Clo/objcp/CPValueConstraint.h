@@ -129,7 +129,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPSumBoolEq : CPActiveConstraint<NSCoding> {
+@interface CPSumBoolEq : CPCoreConstraint<NSCoding> {
    CPIntVarI**       _x;
    ORLong           _nb;
    ORInt             _c;

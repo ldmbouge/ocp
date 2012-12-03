@@ -14,7 +14,7 @@
 #import <objcp/CPVar.h>
 
 @class CPIntVarI;
-@interface CPKnapsack : CPActiveConstraint<NSCoding> {
+@interface CPKnapsack : CPCoreConstraint<NSCoding> {
    id<CPIntVarArray> _x;
    id<ORIntArray>    _w;
    CPIntVarI*        _c;

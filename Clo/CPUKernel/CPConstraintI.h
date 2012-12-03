@@ -16,13 +16,15 @@
 
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @public
-   CPTodo _todo;
-   bool   _idempotent;
-   int    _priority;
-   ORUInt _name;
-   IMP    _propagate;
+   CPTodo          _todo:2;
+   bool      _idempotent:1;
+   int        _priority:29;
+   ORUInt            _name;
+   IMP          _propagate;
+   id<ORTrail>      _trail;
+   TRInt           _active;
 }
--(CPCoreConstraint*) initCPCoreConstraint;
+-(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m;
 -(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;
@@ -31,11 +33,3 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
-
-@interface CPActiveConstraint : CPCoreConstraint {
-   id<ORTrail> _trail;
-   TRInt      _active;
-}
--(id) initCPActiveConstraint: (id<OREngine>) m;
-@end
-

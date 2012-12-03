@@ -95,7 +95,7 @@
 
 -(id) initCPBitEqual:(CPBitVarI*) x and:(CPBitVarI*) y
 {
-    self = [super initCPActiveConstraint: [x engine]];
+    self = [super initCPCoreConstraint: [x engine]];
     _x = x;
     _y = y;
     return self;
@@ -164,7 +164,7 @@
 
 -(id) initCPBitNOT:(id) x equals:(id) y 
 {
-    self = [super initCPActiveConstraint:[x engine]];
+    self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
     return self;
@@ -250,7 +250,7 @@
 
 @implementation CPBitAND
 -(id) initCPBitAND:(id)x and:(id)y equals:(id)z{
-    self = [super initCPActiveConstraint:[x engine]];
+    self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;
@@ -352,7 +352,7 @@
 
 @implementation CPBitOR
 -(id) initCPBitOR:(id)x or:(id)y equals:(id)z{
-    self = [super initCPActiveConstraint:[x engine]];
+    self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;
@@ -452,7 +452,7 @@
 
 @implementation CPBitXOR
 -(id) initCPBitXOR:(id)x xor:(id)y equals:(id)z{
-    self = [super initCPActiveConstraint:[x engine]];
+    self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
     _z = z;
@@ -559,7 +559,7 @@
 
 @implementation CPBitIF
 -(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z{
-    self = [super initCPActiveConstraint:[x engine]];
+    self = [super initCPCoreConstraint:[x engine]];
     _w = w;
     _x = x;
     _y = y;
@@ -684,7 +684,7 @@
  
 @implementation CPBitShiftL
 -(id) initCPBitShiftL:(id)x shiftLBy:(int)places equals:(id)y{
-    self = [super initCPActiveConstraint:[x engine]];
+    self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
     _places = places;
@@ -795,7 +795,7 @@
 
 @implementation CPBitRotateL
 -(id) initCPBitRotateL:(id)x rotateLBy:(int)places equals:(id)y{
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _y = y;
    _places = places;
@@ -890,7 +890,7 @@
 @implementation CPBitADD
 -(id) initCPBitAdd:(id<CPBitVar>)x plus:(id<CPBitVar>)y equals:(id<CPBitVar>)z withCarryIn:(id<CPBitVar>)cin andCarryOut:(id<CPBitVar>)cout
 {
-   self = [super initCPActiveConstraint:[x engine]];
+   self = [super initCPCoreConstraint:[x engine]];
    _x = (CPBitVarI*)x;
    _y = (CPBitVarI*)y;
    _z = (CPBitVarI*)z;

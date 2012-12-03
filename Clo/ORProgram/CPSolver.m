@@ -314,7 +314,7 @@
 }
 -(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
 {
-@throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];
 }
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val

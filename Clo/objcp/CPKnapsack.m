@@ -92,7 +92,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 -(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
 {
-   self = [super initCPActiveConstraint:[cap engine]];
+   self = [super initCPCoreConstraint:[cap engine]];
    _priority = HIGHEST_PRIO - 2;
    _fdm = [cap engine];
    _x = x;

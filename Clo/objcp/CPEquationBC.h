@@ -34,7 +34,6 @@ MAKETRPointer(TRCPEQTerm,CPEQTerm);
    UBType*        _updateBounds;
    CPEQTerm*          _allTerms;
    TRCPEQTerm*           _inUse;
-   ORTrailI*             _trail;
    TRInt                  _used;
    TRLong                   _ec; // expanded constant c (including the bound terms)
 }

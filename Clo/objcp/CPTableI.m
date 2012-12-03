@@ -31,7 +31,7 @@
 {
     [table close];
     
-   self = [super initCPActiveConstraint: [[x at:[x low]]  engine]];
+   self = [super initCPCoreConstraint: [[x at:[x low]]  engine]];
     [self initInstanceVariables];
     _table = table;
     
@@ -47,7 +47,7 @@
 {
     [table close];
     
-    self = [super initCPActiveConstraint: [x engine]];
+    self = [super initCPCoreConstraint: [x engine]];
     [self initInstanceVariables];    
     _table = table;
 

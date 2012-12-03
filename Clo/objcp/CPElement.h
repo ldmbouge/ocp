@@ -17,7 +17,7 @@
 @class CPEngine;
 @class CPBitDom;
 
-@interface CPElementCstBC : CPActiveConstraint<NSCoding> { // y == c[x]
+@interface CPElementCstBC : CPCoreConstraint<NSCoding> { // y == c[x]
 @private
    CPIntVarI*     _x;   
    CPIntVarI*     _y;
@@ -30,7 +30,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPElementVarBC : CPActiveConstraint<NSCoding> { // y == z[x]
+@interface CPElementVarBC : CPCoreConstraint<NSCoding> { // y == z[x]
 @private
    CPIntVarI*        _x;
    CPIntVarI*        _y;
@@ -43,7 +43,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPElementVarAC : CPActiveConstraint {
+@interface CPElementVarAC : CPCoreConstraint {
    CPIntVarI*         _x;
    id<CPIntVarArray>  _array;
    CPIntVarI*         _z;

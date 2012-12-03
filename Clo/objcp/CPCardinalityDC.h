@@ -13,7 +13,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 
+@interface CPCardinalityDC : CPCoreConstraint<CPConstraint,NSCoding> 
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
 -(void) dealloc;
 

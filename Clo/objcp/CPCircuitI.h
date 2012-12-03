@@ -15,7 +15,7 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPVar.h>
 
-@interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding>
+@interface CPCircuitI : CPCoreConstraint<CPConstraint,NSCoding>
 -(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
 -(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;

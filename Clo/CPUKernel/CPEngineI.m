@@ -489,6 +489,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       return s;
    }
    else {
+      assert(false); // [ldm] this should never be called.
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       [cstr setId:(ORUInt)[_mStore count]];
       [_mStore addObject:c];
@@ -497,7 +498,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 }
 -(ORStatus) add: (id<ORConstraint>) c
 {
-   assert(false);
    if (_state != CPOpen) {
       return [self post: c];
    }

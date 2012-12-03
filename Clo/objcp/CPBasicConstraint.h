@@ -21,7 +21,7 @@
 @protocol CPIntVarArray;
 
 
-@interface CPRestrictI : CPActiveConstraint<NSCoding> {
+@interface CPRestrictI : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI* _x;
    ORIntSetI* _r;
@@ -33,7 +33,7 @@
 @end
 
 // PVH: where is _active being used
-@interface CPEqualc : CPActiveConstraint<NSCoding> {
+@interface CPEqualc : CPCoreConstraint<NSCoding> {
    @private
    CPIntVarI* _x;
    ORInt  _c;
@@ -45,7 +45,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPDiffc : CPActiveConstraint<NSCoding> {
+@interface CPDiffc : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI* _x;
    ORInt      _c;
@@ -57,7 +57,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPEqualBC : CPActiveConstraint<NSCoding> {
+@interface CPEqualBC : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI*  _x;
    CPIntVarI*  _y;
@@ -71,7 +71,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPEqualDC : CPActiveConstraint<NSCoding> {
+@interface CPEqualDC : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI*  _x;
    CPIntVarI*  _y;
@@ -84,7 +84,7 @@
 -(ORUInt)nbUVars;
 @end
 
-@interface CPEqual3DC : CPActiveConstraint<NSCoding> {
+@interface CPEqual3DC : CPCoreConstraint<NSCoding> {
    CPIntVarI* _x;
    CPIntVarI* _y;
    CPIntVarI* _z;   
@@ -103,7 +103,7 @@
 
 typedef int (^intgetter) (void) ;
 
-@interface CPNotEqual : CPActiveConstraint<NSCoding> {
+@interface CPNotEqual : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -116,7 +116,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPBasicNotEqual : CPActiveConstraint<NSCoding> {
+@interface CPBasicNotEqual : CPCoreConstraint<NSCoding> {
    CPIntVarI* _x;
    CPIntVarI* _y;
 }
@@ -126,7 +126,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPLEqualBC : CPActiveConstraint<NSCoding> {  // x <= y + c
+@interface CPLEqualBC : CPCoreConstraint<NSCoding> {  // x <= y + c
 @private
    CPIntVarI*  _x;
    CPIntVarI*  _y;
@@ -138,7 +138,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPLEqualc : CPActiveConstraint<NSCoding> { // x <= c
+@interface CPLEqualc : CPCoreConstraint<NSCoding> { // x <= c
 @private
    CPIntVarI* _x;
    ORInt      _c;
@@ -149,7 +149,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPMultBC : CPActiveConstraint<NSCoding> { // z == x * y
+@interface CPMultBC : CPCoreConstraint<NSCoding> { // z == x * y
    CPIntVarI* _x;
    CPIntVarI* _y;
    CPIntVarI* _z;
@@ -160,7 +160,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPModcBC : CPActiveConstraint { // y == x MOD c
+@interface CPModcBC : CPCoreConstraint { // y == x MOD c
    CPIntVarI* _x;
    CPIntVarI* _y;
    ORInt      _c;
@@ -171,7 +171,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPModBC : CPActiveConstraint { // z == x MOD y
+@interface CPModBC : CPCoreConstraint { // z == x MOD y
    CPIntVarI* _x;
    CPIntVarI* _y;
    CPIntVarI* _z;
@@ -182,7 +182,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAbsBC : CPActiveConstraint<NSCoding> { // abs(x)==y
+@interface CPAbsBC : CPCoreConstraint<NSCoding> { // abs(x)==y
    CPIntVarI* _x;
    CPIntVarI* _y;
 }
@@ -192,7 +192,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAbsDC : CPActiveConstraint<NSCoding> { // abs(x)==y
+@interface CPAbsDC : CPCoreConstraint<NSCoding> { // abs(x)==y
    CPIntVarI* _x;
    CPIntVarI* _y;
 }
@@ -202,7 +202,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPOrDC : CPActiveConstraint<NSCoding> { // b == (x || y)
+@interface CPOrDC : CPCoreConstraint<NSCoding> { // b == (x || y)
    CPIntVarI* _b;
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -213,7 +213,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAndDC : CPActiveConstraint<NSCoding> { // b == (x && y)
+@interface CPAndDC : CPCoreConstraint<NSCoding> { // b == (x && y)
    CPIntVarI* _b;
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -224,7 +224,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPImplyDC : CPActiveConstraint<NSCoding> { // b == (x => y)
+@interface CPImplyDC : CPCoreConstraint<NSCoding> { // b == (x => y)
    CPIntVarI* _b;
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -235,7 +235,7 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPAllDifferenceVC : CPActiveConstraint<NSCoding> {
+@interface CPAllDifferenceVC : CPCoreConstraint<NSCoding> {
    CPIntVarI**   _x;
    ORLong       _nb;
 }
