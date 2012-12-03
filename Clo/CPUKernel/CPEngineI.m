@@ -13,6 +13,7 @@
 #import "CPIntVarI.h"
 #import "CPBasicConstraint.h"
 #import "CPTypes.h"
+#import "CPAC3Event.h"
 #import "ORFoundation/ORSetI.h"
 
 #define AC5LOADED(q) ((q)->_csz)
@@ -123,17 +124,17 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 
 @interface CPAC5Queue : NSObject {
    @package
-   ORInt          _mxs;
-   ORInt          _csz;
-   id<CPEvent>*   _tab;
-   ORInt        _enter;
-   ORInt         _exit;
-   ORInt         _mask;
+   ORInt           _mxs;
+   ORInt           _csz;
+   id<CPAC5Event>* _tab;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;
 }
 -(id) initAC5Queue: (ORInt) sz;
 -(void) dealloc;
--(id<CPEvent>) deQueue;
--(void) enQueue: (id<CPEvent>)cb;
+-(id<CPAC5Event>) deQueue;
+-(void) enQueue: (id<CPAC5Event>)cb;
 -(void) reset;
 -(bool) loaded;
 @end
@@ -145,7 +146,7 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
    _mxs = sz;
    _csz = 0;
    _mask = _mxs - 1;
-   _tab = malloc(sizeof(id<CPEvent>)*_mxs);
+   _tab = malloc(sizeof(id<CPAC5Event>)*_mxs);
    _enter = _exit = 0;
    return self;
 }
@@ -165,8 +166,8 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 }
 -(void)resize
 {
-   id<CPEvent>* nt = malloc(sizeof(id<CPEvent>)*_mxs*2);
-   id<CPEvent>* ptr = nt;
+   id<CPAC5Event>* nt = malloc(sizeof(id<CPAC5Event>)*_mxs*2);
+   id<CPAC5Event>* ptr = nt;
    ORInt cur = _exit;
    do {
       *ptr++ = _tab[cur];
@@ -189,7 +190,7 @@ inline static void AC5reset(CPAC5Queue* q)
    q->_enter = q->_exit = 0;
    assert(q->_csz == 0);
 }
-inline static void enQueueAC5(CPAC5Queue* q,id<CPEvent> cb)
+inline static void enQueueAC5(CPAC5Queue* q,id<CPAC5Event> cb)
 {
    if (q->_csz == q->_mxs-1)
       [q resize];
@@ -198,7 +199,7 @@ inline static void enQueueAC5(CPAC5Queue* q,id<CPEvent> cb)
    q->_enter = (enter+1) & q->_mask;
    ++q->_csz;
 }
-inline static id<CPEvent> deQueueAC5(CPAC5Queue* q)
+inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    if (q->_enter != q->_exit) {
       ORInt oe = q->_exit;
@@ -208,11 +209,11 @@ inline static id<CPEvent> deQueueAC5(CPAC5Queue* q)
    } else return nil;
 }
 
--(void)enQueue:(id<CPEvent>)cb
+-(void)enQueue:(id<CPAC5Event>)cb
 {
    enQueueAC5(self, cb);
 }
--(id<CPEvent>)deQueue
+-(id<CPAC5Event>)deQueue
 {
    return deQueueAC5(self);
 }
@@ -334,7 +335,7 @@ inline static id<CPEvent> deQueueAC5(CPAC5Queue* q)
 
 // PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses varEventNode; AC3 works with the trigger directly
 
--(void) scheduleAC5: (id<CPEvent>)evt
+-(void) scheduleAC5: (id<CPAC5Event>)evt
 {
    enQueueAC5(_ac5, evt);
 }
@@ -375,7 +376,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(_ac5)) {
-            id<CPEvent> evt = deQueueAC5(_ac5);
+            id<CPAC5Event> evt = deQueueAC5(_ac5);
             _nbpropag += [evt execute];
          }
          // Processing AC3
@@ -496,6 +497,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 }
 -(ORStatus) add: (id<ORConstraint>) c
 {
+   assert(false);
    if (_state != CPOpen) {
       return [self post: c];
    }
@@ -518,7 +520,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _objective;
 }
 
--(ORStatus) impose:(Void2ORStatus)cl
+-(ORStatus) enforce:(Void2ORStatus)cl
 {
    @try {
       ORStatus status = cl();

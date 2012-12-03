@@ -11,6 +11,7 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
+#import "CPAC3Event.h"
 
 @implementation CPFactory
 +(id<CPEngine>) engine: (id<ORTrail>) trail
@@ -36,6 +37,14 @@
    [_trigger release];
    [_node release];
    [super dealloc];
+}
+-(id)trigger
+{
+   return _trigger;
+}
+-(id<VarEventNode>)next
+{
+   return _node;
 }
 
 void collectList(VarEventNode* list,NSMutableSet* rv)

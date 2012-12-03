@@ -12,11 +12,11 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
 
-@interface CPValueLossEvent : NSObject<CPEvent> {
-   VarEventNode* _theList;
-   ORInt         _theVal;
+@interface CPValueLossEvent : NSObject<CPAC5Event> {
+   id<VarEventNode> _theList;
+   ORInt             _theVal;
 }
--(id)initValueLoss:(ORInt)value notify:(VarEventNode*)list;
+-(id)initValueLoss:(ORInt)value notify:(id<VarEventNode>)list;
 -(void)dealloc;
 -(ORInt)execute;
 @end

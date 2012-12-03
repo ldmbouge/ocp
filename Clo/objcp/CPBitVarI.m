@@ -272,7 +272,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) bindEvt
 {
-   VarEventNode* mList[5];
+   id<VarEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -288,7 +288,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) changeMinEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
-   VarEventNode* mList[5];
+   id<VarEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -301,7 +301,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 -(void) changeMaxEvt: (int) dsz sender:(CPBitArrayDom*)sender
 {
-   VarEventNode* mList[5];
+   id<VarEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -317,7 +317,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    [_dom updateFreeBitCount];
     //Empty implementation
-   VarEventNode* mList[5];
+   id<VarEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._bitFixedEvt._val;
    k += mList[k] != NULL;

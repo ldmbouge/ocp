@@ -22,28 +22,17 @@ typedef enum {
 -(ORUInt)getId;
 @end
 
-@protocol CPEvent<NSObject>
+@protocol CPAC5Event<NSObject>
 -(ORInt)execute;
 @end
 
 @protocol VarEventNode <NSObject>
+-(id)trigger;                      // retrieves the closure responsible for responding to the event
+-(id<VarEventNode>)next;           // fetches the next event in the list *list suffix*
 @end
 
-@class CPCoreConstraint;
-
-@interface VarEventNode : NSObject<VarEventNode> {
-   @public
-   VarEventNode*         _node;
-   id                 _trigger;  // type is {ConstraintCallback}
-   CPCoreConstraint*     _cstr;
-   ORInt             _priority;
-}
--(VarEventNode*) initVarEventNode: (VarEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
--(void)dealloc;
-@end
-
-void collectList(VarEventNode* list,NSMutableSet* rv);
-void freeList(VarEventNode* list);
+void collectList(id<VarEventNode> list,NSMutableSet* rv);
+void freeList(id<VarEventNode> list);
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
 
 @interface CPFactory : NSObject

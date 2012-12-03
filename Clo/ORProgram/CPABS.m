@@ -512,7 +512,7 @@
             if (i != MAXINT) { // we found someone
                id<CPIntVar> xi = vars[i];
                ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver impose: ^ORStatus { return [xi bind:v];}];
+               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {
@@ -545,7 +545,7 @@
       carryOn = [self moreProbes];
    } while (carryOn && cntProbes < 10 * maxProbes);
    for(ABSNogood* b in killSet) {
-      [_solver impose: ^ORStatus { return [[b variable] remove:[b value]];}];//diff:[b variable] with:[b value]];
+      [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];//diff:[b variable] with:[b value]];
       NSLog(@"Imposing SAC %@",b);
    }
    [killSet release];

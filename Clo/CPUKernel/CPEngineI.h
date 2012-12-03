@@ -54,14 +54,14 @@ enum CPEngineState {
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
 -(void)      scheduleAC3:(id<VarEventNode>*)mlist;
--(void)      scheduleAC5:(id<CPEvent>)evt;
+-(void)      scheduleAC5:(id<CPAC5Event>)evt;
 -(ORStatus)  propagate;
 -(void) setObjective: (id<ORObjective>) obj;
 -(id<ORObjective>)objective;
 -(ORStatus)  addInternal:(id<ORConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
--(ORStatus)  impose:(Void2ORStatus)cl;
+-(ORStatus)  enforce:(Void2ORStatus)cl;
 -(NSMutableArray*) allVars;
 -(NSMutableArray*) allConstraints;
 -(ORStatus)  close;
