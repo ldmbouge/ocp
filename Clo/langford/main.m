@@ -21,8 +21,9 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
-      ORInt k = 3;
-      ORInt n = 9;
+      ORInt k    = argc >= 2 ? atoi(argv[1]) : 2;
+      ORInt n    = argc >= 3 ? atoi(argv[2]) : 4;
+      NSLog(@"Params: k=%d n=%d",k,n);
       
       id<ORIntRange> R = RANGE(model,1,k*n);
       id<ORIntRange> N = RANGE(model,1,n);
@@ -34,21 +35,39 @@ int main(int argc, const char * argv[])
       [model add:[ORFactory cardinality:x low:occ up:occ]];
       for(ORInt i=1;i<=k;i++)
          for(ORInt j=1;j<=n;j++)
-            [model add:[[x elt:[p at:i :j]] eqi:j]];  // onDomain
+            [model add:[[x elt:[p at:i :j]] eqi:j] annotation:DomainConsistency];  // onDomain
       
       for(ORInt i=1;i<=k-1;i++)
          for(ORInt j=1;j<=n;j++)
-            [model add:[[p at:i :j] lt:[p at:i+1 :j]]]; // onDomain
+            [model add:[[p at:i :j] lt:[p at:i+1 :j]] annotation:DomainConsistency]; // onDomain
 
       for(ORInt i=1;i<=k-1;i++)
          for(ORInt j=1;j<=n;j++)
-            [model add:[[x elt:[[p at:i :j] plusi:1+j]] eqi:j]]; // onDomain
+            [model add:[[x elt:[[p at:i :j] plusi:1+j]] eqi:j] annotation:DomainConsistency]; // onDomain
       [model add: [x[1] leq: x[k*n]]];
       
       __block ORInt nbSol = 0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
+      id<CPHeuristic> h = [ORFactory createFF:cp];
       [cp solveAll:^{
-         [cp labelArray:All2(model, ORIntVar, i, K, j, N, [p at:i :j])];
+         id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
+         //[cp labelHeuristic:h];
+         //[cp labelArray:tb];
+         [cp forall:[tb range] suchThat:^bool(ORInt i) { return ![tb[i] bound];} orderedBy:^ORInt(ORInt i) {
+            return [tb[i] domsize];
+         } do:^(ORInt i) {
+            [cp tryall:[tb[i] domain] suchThat:^bool(ORInt j) {
+               return [tb[i] member:j];
+            } in:^(ORInt j) {
+               //NSLog(@" ? tb[%d] == %d",i,j);
+               [cp label:tb[i] with:j];
+               //NSLog(@" ! tb[%d] == %d",i,j);
+            } onFailure:^(ORInt j) {
+               //NSLog(@" ? tb[%d] != %d",i,j);
+               [cp diff:tb[i] with:j];
+               //NSLog(@" ! tb[%d] != %d",i,j);
+            }];
+         }];
          @autoreleasepool {
             NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
             [buf appendString:@"["];

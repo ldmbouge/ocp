@@ -17,7 +17,7 @@
 @interface ORIntegerI : ORExprI<NSCoding,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
 -(ORInt)  value;
--(void) setValue: (ORInt) value;
+-(ORInt) setValue: (ORInt) value;
 -(void) incr;
 -(void) decr;
 -(ORInt)   min;

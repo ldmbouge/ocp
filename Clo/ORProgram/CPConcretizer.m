@@ -473,7 +473,7 @@
       id<CPConstraint> concreteCstr = [CPFactory element: idx
                                              idxVarArray: array
                                                    equal: res
-                                              annotation: DomainConsistency
+                                              annotation: [cstr annotation]
                                        ];
      [cstr setImpl: concreteCstr];
    }

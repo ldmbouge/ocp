@@ -604,7 +604,7 @@
    // LDM: DONE. Have not checked the variable creation/deallocation logic though. 
    id<ORINCModel> trg = [[ORRTModel alloc] init:self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg];
+      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg annotation:DomainConsistency];
    else
       [ORFlatten flatten:c into:trg];
    [trg release];
@@ -616,7 +616,7 @@
    // LDM: See above. 
    id<ORINCModel> trg = [[ORRTModel alloc] init:self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg];
+      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg annotation:cons];
    else
       [ORFlatten flatten:c into:trg];
    [trg release];

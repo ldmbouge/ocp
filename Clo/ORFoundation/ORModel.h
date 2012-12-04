@@ -121,6 +121,7 @@
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
 @end
 
 @protocol ORReify <ORConstraint>

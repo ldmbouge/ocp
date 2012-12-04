@@ -30,5 +30,5 @@
 -(id)initORFlatten;
 -(void)apply:(id<ORModel>)m into:(id<ORINCModel>)target;
 +(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m;
-+(void)flattenExpression:(id<ORExpr>)e into:(id<ORINCModel>)m;
++(void)flattenExpression:(id<ORExpr>)e into:(id<ORINCModel>)m annotation:(ORAnnotation)note;
 @end

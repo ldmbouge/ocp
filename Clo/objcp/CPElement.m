@@ -276,13 +276,12 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(void)dealloc
 {
+   _inter += _minCI;
    for(ORInt k=0;k<_nbCI;k++)
       [_inter[k] release];
    free(_inter);
    [_iva release];
-   [_s release];
-   [_c release];
-   [super dealloc];   
+   [super dealloc];
 }
 -(ORStatus)post
 {
@@ -356,9 +355,9 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
             ORBounds avb = bounds(av);
             for(ORInt k=avb.min;k <= avb.max;k++) {
                if (memberDom(av, k)) {
-                  [_s[k] setValue:[_s[k] value] - 1];
-                  if ([_s[k] value] == 0)
-                     [_z remove:k];
+                  ORInt support = [_s[k] decr];
+                  if (support == 0)
+                     removeDom(_z, k);
                }
             }
             if (bound(_x))
@@ -373,33 +372,33 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
             if (!memberDom(_x, k)) continue;
             if ([_inter[k] get:val]) {
                [_inter[k] set:val at:NO];
-               [_c[k] setValue:[_c[k] value] - 1];
-               if ([_c[k] value] == 0)
+               ORInt card = [_c[k] decr];
+               if (card == 0)
                   [_x remove:k];
             }
             assert([_inter[k] countFrom:[_inter[k] min] to:[_inter[k] max]] == [_c[k] value]);
          }
       }];
-   for(int k=[_x min];k <= [_x max];k++) {
+   for(int k=minDom(_x);k <= maxDom(_x);k++) {
       CPIntVarI* ak = (CPIntVarI*)_array[k];
       if (memberDom(_x, k) && !bound(ak)) {
          [ak whenLoseValue:self do:^(ORInt val) {
             if ([_iva get:k]) {
-               [_s[val] setValue:[_s[val] value] - 1];
+               ORInt support = [_s[val] decr];
                if ([_inter[k] get:val]) {
-                  [_c[k] setValue:[_c[k] value] - 1];
+                  ORInt card = [_c[k] decr];
                   [_inter[k] set:val at:NO];
-                  assert([_inter[k] countFrom:[_inter[k] min] to:[_inter[k] max]] == _c[k]);
+                  assert([_inter[k] countFrom: minCPDom(_inter[k]) to: maxCPDom(_inter[k])] == [_c[k] value]);
                   assert([_c[k] value] >= 0);
-                  if ([_c[k] value] == 0)
-                     [_x remove:k];
+                  if (card == 0)
+                     removeDom(_x,k);
                }
-               if ([_s[val] value]==0)
-                  [_z remove:val];
+               if (support == 0)
+                  removeDom(_z,val);
             }
             if (bound(_x)) {
-               if ([_x min] == k)
-                  [_z remove:val];
+               if (minDom(_x) == k)
+                  removeDom(_z,val);
             }
          }];
       }
@@ -417,11 +416,12 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       CPIntVarI* av = (CPIntVarI*)_array[xv];
       [av  updateMin:[_z min] andMax:[_z max]];
       [_z updateMin:[av min] andMax:[av max]];
-      for(ORInt k=[_z min];k <= [_z max];k++) {
+      ORBounds zb = bounds(_z);
+      for(ORInt k=zb.min;k <= zb.max;k++) {
          if (!memberDom(_z, k))
-            [av remove:k];
+            removeDom(av, k);
          if (!memberDom(av, k))
-            [_z remove:k];
+            removeDom(_z, k);
       }
    }
 }

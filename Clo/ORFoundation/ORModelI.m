@@ -683,8 +683,10 @@
    id<ORIntVar>     _idx;
    id<ORIntVarArray>  _y;
    id<ORIntVar>       _z;
+   ORAnnotation    _note;
 }
 -(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z
+                   annotation:(ORAnnotation)note
 {
    self = [super initORConstraintI];
    _idx = idx;
@@ -714,7 +716,10 @@
 {
    return _z;
 }
-
+-(ORAnnotation)annotation
+{
+   return _note;
+}
 @end
 
 

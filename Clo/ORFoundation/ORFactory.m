@@ -625,8 +625,9 @@
    return o;
 }
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y
+                 annotation:(ORAnnotation)note
 {
-   id<ORConstraint> o = [[ORElementVar alloc] initORElement:x array:c equal:y];
+   id<ORConstraint> o = [[ORElementVar alloc] initORElement:x array:c equal:y annotation:note];
    [model trackConstraint:o];
    return o;
 }

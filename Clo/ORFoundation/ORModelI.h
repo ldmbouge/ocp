@@ -143,10 +143,12 @@
 @end
 
 @interface ORElementVar : ORConstraintI<ORElementVar>
--(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
+-(ORElementVar*)initORElement:(id<ORIntVar>)idx array:(id<ORIntVarArray>)y equal:(id<ORIntVar>)z
+                   annotation:(ORAnnotation)note; // y[idx] == z
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
 @end
 
 @interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>

@@ -56,9 +56,9 @@
 {
    return _value;
 }
--(void) setValue: (ORInt) value
+-(ORInt) setValue: (ORInt) value
 {
-   _value = value;
+   return _value = value;
 }
 -(void) incr
 {

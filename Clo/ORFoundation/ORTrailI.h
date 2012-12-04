@@ -105,9 +105,9 @@
 @interface ORTrailableIntI : NSObject<ORTrailableInt>
 -(ORTrailableIntI*) initORTrailableIntI: (id<ORTrail>) trail value:(ORInt) value;
 -(ORInt) value;
--(void)  setValue: (ORInt) value;
--(void)  incr;
--(void)  decr;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  incr;
+-(ORInt)  decr;
 @end
 
 @implementation ORTrailI (InlineTrailFunction)

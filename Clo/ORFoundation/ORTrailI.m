@@ -495,17 +495,20 @@ void freeTRIntArray(TRIntArray a)
 {
    return _trint._val;
 }
--(void)  setValue: (ORInt) value
+-(ORInt) setValue: (ORInt) value
 {
    assignTRInt(&_trint,value,_trail);
+   return value;
 }
--(void)  incr
+-(ORInt)  incr
 {
    assignTRInt(&_trint,_trint._val+1,_trail);
+   return _trint._val;
 }
--(void)  decr
+-(ORInt)  decr
 {
    assignTRInt(&_trint,_trint._val-1,_trail);
+   return _trint._val;
 }
 -(void)visit:(id<ORVisitor>)visitor
 {

@@ -17,6 +17,5 @@
    ORInt             _theVal;
 }
 -(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list;
--(void)dealloc;
 -(ORInt)execute;
 @end

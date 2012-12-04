@@ -44,17 +44,17 @@ typedef enum {
 @end;
 
 @protocol ORInteger <ORObject,ORExpr>
--(ORInt)  value;
--(void) setValue: (ORInt) value;
+-(ORInt) value;
+-(ORInt) setValue: (ORInt) value;
 -(void) incr;
 -(void) decr;
 @end
 
 @protocol ORTrailableInt <ORObject>
 -(ORInt) value;
--(void)  setValue: (ORInt) value;
--(void)  incr;
--(void)  decr;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  incr;  // post-incr returned
+-(ORInt)  decr;  // post-decr returned
 @end
 
 @interface ORRuntimeMonitor : NSObject

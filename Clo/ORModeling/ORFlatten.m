@@ -257,9 +257,9 @@
    [c visit:fc];
    [fc release];
 }
-+(void)flattenExpression:(id<ORExpr>)expr into:(id<ORINCModel>)model
++(void)flattenExpression:(id<ORExpr>)expr into:(id<ORINCModel>)model annotation:(ORAnnotation)note
 {
-   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:DomainConsistency];
+   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad: assert(NO);
       case ORREq: {
@@ -356,13 +356,17 @@
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]] into: _theModel];
+      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]]
+                              into: _theModel
+                        annotation: DomainConsistency];
    ORInt s = 0;
    ORInt irlow = [IR low];
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s] into: _theModel];
+   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s]
+                           into: _theModel
+                     annotation: DomainConsistency];
                                              
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
@@ -377,7 +381,7 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_theModel];
+   [ORFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
