@@ -443,7 +443,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
  */
 }
 
--(ORStatus)enforceObjective
+-(ORStatus) enforceObjective
 {
    if (_objective == nil) return ORSuspend;
    @try {
@@ -482,20 +482,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) addInternal:(id<ORConstraint>) c
 {
-   if (_state != CPOpen) {
-      ORStatus s = [self post:c];
-      if (s==ORFailure)
-         failNow();
-      return s;
-   }
-   else {
-      assert(false); // [ldm] this should never be called.
-      CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId:(ORUInt)[_mStore count]];
-      [_mStore addObject:c];
-      return ORSuspend;      
-   }
+   assert(_state != CPOpen);
+   ORStatus s = [self post:c];
+   if (s==ORFailure)
+      failNow();
+   return s;
 }
+
 -(ORStatus) add: (id<ORConstraint>) c
 {
    if (_state != CPOpen) {
@@ -503,8 +496,8 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    else {
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
-      [cstr setId:(ORUInt)[_mStore count]];
-      [_mStore addObject:c];
+      [cstr setId: (ORUInt)[_mStore count]];
+      [_mStore addObject: c];
       return ORSuspend;
    }
 }
@@ -515,12 +508,12 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    _objective = [obj retain];
 }
 
--(id<ORObjective>)objective
+-(id<ORObjective>) objective
 {
    return _objective;
 }
 
--(ORStatus) enforce:(Void2ORStatus)cl
+-(ORStatus) enforce: (Void2ORStatus) cl
 {
    @try {
       ORStatus status = cl();
@@ -531,6 +524,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
+
 -(ORStatus) close
 {
    if (_state == CPOpen) {
@@ -545,24 +539,29 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    //printf("Closing CPEngine\n");
    return ORSuspend;
 }
+
 -(void) clearStatus
 {
    _status = ORSuspend;
 }
+
 -(ORStatus)  status
 {
    return _status;
 }
+
 -(bool) closed
 {
    return _state == CPClosed;
 }
+
 -(id<ORInformer>) propagateFail
 {
    if (_propagFail == nil)
       _propagFail = [ORConcurrency  intInformer];
    return _propagFail;
 }
+
 -(id<ORInformer>) propagateDone
 {
    if (_propagDone == nil)
@@ -578,6 +577,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    [aCoder encodeObject:_mStore];
    [aCoder encodeObject:_oStore];
 }
+
 - (id)initWithCoder:(NSCoder *)aDecoder;
 {
    self = [super init];

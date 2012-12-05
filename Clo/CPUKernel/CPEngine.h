@@ -22,15 +22,15 @@
 #define HIGHEST_PRIO ((ORInt)7)
 
 @protocol CPEngine <OREngine>
--(void) scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
--(void) scheduleAC3:(id<CPEventNode>*)mlist;
--(void) scheduleAC5:(id<CPAC5Event>)evt;
+-(void) scheduleTrigger: (ConstraintCallback) cb onBehalf: (id<CPConstraint>)c;
+-(void) scheduleAC3: (id<CPEventNode>*) mlist;
+-(void) scheduleAC5: (id<CPAC5Event>) evt;
 -(void) setObjective: (id<ORObjective>) obj;
--(id<ORObjective>)objective;
--(ORStatus) addInternal:(id<ORConstraint>) c;
+-(id<ORObjective>) objective;
+-(ORStatus) addInternal: (id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;
--(ORStatus) enforce:(Void2ORStatus)cl;
+-(ORStatus) enforce: (Void2ORStatus)cl;
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;

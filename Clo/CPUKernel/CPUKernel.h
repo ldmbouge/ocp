@@ -24,12 +24,12 @@ typedef enum {
 
 
 @protocol CPAC5Event<NSObject>
--(ORInt)execute;
+-(ORInt) execute;
 @end
 
 @protocol CPEventNode <NSObject>
--(id)trigger;                      // retrieves the closure responsible for responding to the event
--(id<CPEventNode>)next;           // fetches the next event in the list *list suffix*
+-(id) trigger;                      // retrieves the closure responsible for responding to the event
+-(id<CPEventNode>) next;           // fetches the next event in the list *list suffix*
 @end
 
 
