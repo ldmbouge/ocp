@@ -65,7 +65,6 @@
         return [[(id<ORIntVar>)[arr at: e] domain] low];
     }];
     id<ORIntRange> r = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
-    NSLog(@"LOW: %i", low);
     return r;
 }
 -(id<ORIntVarArray>) binarizeIntVar:(id<ORIntVar>)x
@@ -95,7 +94,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   id<ORIntVarArray> varsOfC = [cstr array];
+    id<ORIntVarArray> varsOfC = [cstr array];
     id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [varsOfC range]

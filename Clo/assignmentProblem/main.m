@@ -22,7 +22,7 @@
 int main (int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
-    ORInt n = 10;
+    ORInt n = 3;
     id<ORIntRange> R = RANGE(model,1,n);
     
     id<ORUniformDistribution> distr = [CPFactory uniformDistribution: model range: RANGE(model, 1, 20)];
@@ -31,7 +31,7 @@ int main (int argc, const char * argv[])
     //id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
     
     id<ORIntVarArray> tasks  = [ORFactory intVarArray: model range: R domain: R];
-    id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * n)];
+    id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * 20)];
     
     [model minimize: assignCost];
     [model add: [ORFactory alldifferent: tasks]];
@@ -47,7 +47,11 @@ int main (int argc, const char * argv[])
      ^() {
          [cp labelHeuristic: h];
      }];
-    NSLog(@"solution: %@", [assignCost description]);
+
+    for(id<ORIntVar> v in [[lm model] variables])
+        NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
+    NSLog(@"SOL: %@", assignCost);
+    
     
     //id<CPSolver> cp = [ORFactory createCPProgram: model];
     //[cp solve:
