@@ -489,10 +489,12 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
          if (bound(_y)) {
             assignTRInt(&_active, NO, _trail);
             [_z bind:minDom(_x) + minDom(_y)];
+            return;
          } else if (bound(_z)) {
             assignTRInt(&_active, NO, _trail);
             [_y bind:minDom(_z) - minDom(_x)];
-         } else { 
+            return;
+         } else {
             _todo = CPChecked;
             int c = minDom(_x);
             [_y updateMin:minDom(_z) - c andMax:[_z max] - c];
@@ -502,7 +504,8 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
          if (bound(_z)) {
             assignTRInt(&_active, NO, _trail);
             [_x bind:minDom(_z) - minDom(_y)];
-         } else { 
+            return;
+         } else {
             _todo = CPChecked;
             int c = minDom(_y);
             [_x updateMin:minDom(_z) - c andMax:[_z max] - c];

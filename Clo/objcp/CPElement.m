@@ -52,7 +52,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 -(ORStatus) post
 {
    if (bound(_x)) {
-       return [_y bind:[_x min]];
+      return [_y bind:[_c at:[_x min]]];
    } else if (bound(_y)) {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
