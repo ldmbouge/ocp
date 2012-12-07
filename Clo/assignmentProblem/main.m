@@ -37,22 +37,26 @@ int main (int argc, const char * argv[])
     [model add: [ORFactory alldifferent: tasks]];
     [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
     
+   NSLog(@"ORIG: %@",model);
     id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
-    ORBatchModel* lm = [[ORBatchModel alloc] init: [ORFactory createModel]];
+   id<ORModel> lin = [ORFactory createModel];
+    ORBatchModel* lm = [[ORBatchModel alloc] init: lin];
     [linearizer apply: model into: lm];
-        
+   NSLog(@"FLAT: %@",lin);
     id<CPProgram> cp = [ORFactory createCPProgram: [lm model]];
     id<CPHeuristic> h = [ORFactory createFF: cp];
     [cp solve:
      ^() {
-         [cp labelHeuristic: h];
+        NSLog(@"here...");
+        [cp labelHeuristic: h];
+
      }];
 
     for(id<ORIntVar> v in [[lm model] variables])
         NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
     NSLog(@"SOL: %@", assignCost);
     
-    
+   
     //id<CPSolver> cp = [ORFactory createCPProgram: model];
     //[cp solve:
     //^() {
