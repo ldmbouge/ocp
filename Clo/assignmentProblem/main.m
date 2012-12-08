@@ -34,9 +34,9 @@ int main (int argc, const char * argv[])
     id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * 20)];
     
     [model minimize: assignCost];
-    [model add: [tasks[1] eqi:2]];
-    [model add: [tasks[2] eqi:1]];
-    [model add: [tasks[3] eqi:3]];
+    //[model add: [tasks[1] eqi:2]];
+    //[model add: [tasks[2] eqi:1]];
+    //[model add: [tasks[3] eqi:3]];
    
     [model add: [ORFactory alldifferent: tasks]];
     [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
@@ -48,13 +48,14 @@ int main (int argc, const char * argv[])
     [linearizer apply: model into: lm];
     NSLog(@"FLAT: %@",lin);
    
-    id<CPProgram> cp = [ORFactory createCPProgram: model];
+    id<CPProgram> cp = [ORFactory createCPProgram: lin];
     id<CPHeuristic> h = [ORFactory createFF: cp];
     [cp solve:
      ^() {
         NSLog(@"here...");
-        //[cp labelHeuristic: h];
         [cp labelArray:tasks];
+        [cp labelHeuristic: h];
+        NSLog(@"better sol --------> %d",[assignCost value]);
      }];
 
     for(id<ORIntVar> v in [[lm model] variables])
