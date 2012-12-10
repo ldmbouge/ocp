@@ -15,11 +15,54 @@
 #import "CPEngineI.h"
 #import "CPConstraintI.h"
 
+@interface CPDenseTriggerMap : CPTriggerMap {
+@private
+   CPTrigger**   _tab;
+   ORInt         _low;
+   ORInt          _sz;
+}
+-(id) initDenseTriggerMap:(ORInt)low size:(ORInt)sz;
+-(CPTrigger*)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
+-(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
+@end
+
+@interface CPSparseTriggerMap : CPTriggerMap {
+@private
+   ORAVLTree* _map;
+}
+-(id) initSparseTriggerMap;
+-(CPTrigger*) linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
+-(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
+@end
+
+void detachTrigger(CPTrigger* toMove)
+{
+   toMove->_next->_prev = toMove->_prev;
+   toMove->_prev->_next = toMove->_next;
+}
+
+ORInt varOfTrigger(CPTrigger* toMove)
+{
+   return toMove->_vId;
+}
+void setTriggerOwner(CPTrigger* t,ORInt vID)
+{
+   t->_vId = vID;
+}
+ORInt getVarOfTrigger(CPTrigger* t)
+{
+   return t->_vId;
+}
+
 /*****************************************************************************************/
 /*                        CPTriggerMap                                                   */
 /*****************************************************************************************/
 
-@implementation CPTriggerMap
+@implementation CPTriggerMap {
+   @package
+   bool     _active;
+   CPTrigger* _bind;
+}
 
 static void freeTriggers(CPTrigger* list)
 {
@@ -45,6 +88,14 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
++(CPTrigger*) createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   CPTrigger* trig = malloc(sizeof(CPTrigger));
+   trig->_cb = [todo copy];
+   trig->_cstr = c;
+   return trig;
+}
+
 +(CPTriggerMap*)triggerMapFrom:(ORInt)low to:(ORInt)up dense:(bool)dense
 {
     if (dense) {
@@ -55,7 +106,7 @@ static void freeTriggers(CPTrigger* list)
         return tMap;
     }
 }
--(void) linkBindTrigger: (CPTrigger*) t
+-(CPTrigger*) linkBindTrigger: (CPTrigger*) t
 {
     if (_bind==NULL) {
         CPTrigger* front = malloc(sizeof(CPTrigger));
@@ -72,6 +123,7 @@ static void freeTriggers(CPTrigger* list)
     t->_prev = front;
     front->_next = t;
     t->_next->_prev = t;
+   return t;
 }
 -(void) bindEvt: (CPEngineI*) fdm
 {
@@ -106,7 +158,7 @@ static void freeTriggers(CPTrigger* list)
     [super dealloc];
 }
 
--(void)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
+-(CPTrigger*)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
 {
     if (_tab[value] == 0) {
         CPTrigger* front = malloc(sizeof(CPTrigger));
@@ -122,7 +174,8 @@ static void freeTriggers(CPTrigger* list)
     trig->_next = front->_next;
     trig->_prev = front;
     front->_next = trig;
-    trig->_next->_prev = trig;   
+    trig->_next->_prev = trig;
+   return trig;
 }
 -(void)loseValEvt:(ORInt)val solver:(CPEngineI*)fdm
 {
@@ -192,7 +245,7 @@ static void freeTriggers(CPTrigger* list)
     trig->_next->_prev = trig;
     return trig;
 }
--(void)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
+-(CPTrigger*)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
 {
     ORAVLTreeNode* at = [_map findNodeForKey:value];
     if (at==nil) {
@@ -211,7 +264,8 @@ static void freeTriggers(CPTrigger* list)
     trig->_next = front->_next;
     trig->_prev = front;
     front->_next = trig;
-    trig->_next->_prev = trig;   
+    trig->_next->_prev = trig;
+   return trig;
 }
 -(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm
 {

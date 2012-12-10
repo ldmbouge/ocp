@@ -81,7 +81,6 @@ typedef struct  {
 } CPEventNetwork;
 
 @class CPIntVarI;
-@class CPTriggerMap;
 @class CPLiterals;
 // This is really an implementation protocol
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
@@ -113,7 +112,7 @@ typedef struct  {
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
-   CPTriggerMap*                  _triggers;
+   id<CPTriggerMap>               _triggers;
    id<CPIntVarNotifier,NSCoding>      _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
@@ -199,8 +198,6 @@ typedef struct  {
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
-+(CPTrigger*)    createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
-
 -(id<ORIntVar>) dereference;
 @end
 

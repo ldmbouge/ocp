@@ -339,15 +339,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    hookupEvent(_fdm, &_net._ac5, todo, c, HIGHEST_PRIO);
 }
 
-
 -(CPTrigger*) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
         [self createTriggers];
-    CPTrigger* trig = [CPIntVarI createTrigger: todo onBehalf:c];
-    [_triggers linkTrigger:trig forValue:value];
-    return trig;
+    return [_triggers linkTrigger:[CPTriggerMap createTrigger: todo onBehalf:c] forValue:value];
 }
 -(void) watch: (ORInt) val with: (CPTrigger*) t;
 {
@@ -361,9 +358,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
         [self createTriggers];
-   CPTrigger* trig = [CPIntVarI createTrigger: todo onBehalf:c];
-    [_triggers linkBindTrigger:trig];
-    return trig;    
+    return [_triggers linkBindTrigger:[CPTriggerMap createTrigger: todo onBehalf:c]];
 }
 -(void) createTriggers
 {
@@ -598,13 +593,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    view->_isBool = YES;
    return view;
 }
-+(CPTrigger*) createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   CPTrigger* trig = malloc(sizeof(CPTrigger));
-   trig->_cb = [todo copy];
-   trig->_cstr = c;
-   return trig;
-}
+
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];

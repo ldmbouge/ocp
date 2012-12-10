@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 
-#import <Foundation/Foundation.h>
 #import <CPUKernel/CPUKernel.h>
 #import <objcp/CPData.h>
 
@@ -19,56 +18,35 @@
 // PVH: I am not sure that I like the fact that it is a struct
 // In any case, this should be hidden evenfrom those with access to extended interface.
 // PVH to clean up
-
-@class CPCoreConstraint;
-@class CPEngineI;
-
 typedef struct CPTrigger {
    struct CPTrigger*  _prev;
    struct CPTrigger*  _next;
    ConstraintCallback   _cb;       // var/val held inside the closure (captured).
    CPCoreConstraint*  _cstr;
-   ORInt _vId;               // local variable identifier (var being watched)
+   ORInt               _vId;       // local variable identifier (var being watched)
 } CPTrigger;
 
 
-@protocol CPTriggerMapInterface <NSObject>
+@class CPCoreConstraint;
+@class CPEngineI;
+
+@protocol CPTriggerMap <NSObject>
 @optional
--(void)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void)linkBindTrigger:(CPTrigger*)t;
+-(CPTrigger*)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
+-(CPTrigger*)linkBindTrigger:(CPTrigger*)t;
 // Events for those triggers.
 -(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
 -(void) bindEvt:(CPEngineI*)fdm;
 @end
 
-@interface CPTriggerMap : NSObject<CPTriggerMapInterface> {
-    @package
-    bool     _active;
-    CPTrigger* _bind;
-}
--(CPTriggerMap*) init;
-+(CPTriggerMap*) triggerMapFrom:(ORInt)low to:(ORInt)up dense:(bool)b;
--(void) linkBindTrigger:(CPTrigger*)t;
+@interface CPTriggerMap : NSObject<CPTriggerMap>
++(CPTrigger*)     createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
++(id<CPTriggerMap>) triggerMapFrom: (ORInt)low to:(ORInt)up dense:(bool)b;
+-(CPTrigger*) linkBindTrigger:(CPTrigger*)t;
 -(void) bindEvt:(CPEngineI*)fdm;
 @end
 
-@interface CPDenseTriggerMap : CPTriggerMap {
-@private
-    CPTrigger** _tab;
-    ORInt         _low;
-    ORInt          _sz;
-}
--(id) initDenseTriggerMap:(ORInt)low size:(ORInt)sz;
--(void)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
-@end
-
-@interface CPSparseTriggerMap : CPTriggerMap {
-@private
-    ORAVLTree* _map;
-}
--(id) initSparseTriggerMap;
--(void) linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
-@end
-
+void detachTrigger(CPTrigger* t);
+ORInt varOfTrigger(CPTrigger* t);
+void setTriggerOwner(CPTrigger* t,ORInt vID);
+ORInt getVarOfTrigger(CPTrigger* t);

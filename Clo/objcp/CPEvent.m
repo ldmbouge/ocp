@@ -23,15 +23,13 @@
 }
 -(ORInt)execute
 {
-   ORInt nbP = 0;
-   id<CPEventNode> evt = _theList;
    @try {
-      while (evt) {
-         ((ConstraintIntCallBack)[evt trigger])(_theVal);
-         evt = [evt next];
+      __block ORInt nbP = 0;
+      scanListWithBlock(_theList, ^(ConstraintIntCallBack trigger) {
+         trigger(_theVal);
          ++nbP;
-      }
-      [self release];
+      });
+      CFRelease(self);
       return nbP;
    } @catch(ORFailException* ex) {
       [self release];

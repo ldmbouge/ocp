@@ -837,23 +837,17 @@
                                } while (j != _last && !jOk);
                                if (jOk) {
                                    ORInt nextVar = _notTriggered[j];
-                                   // This is manipulating the list directly: very dangerous
-                                   // We should abstract the triggers
                                    CPTrigger* toMove = _at[listen];
-                                   // remove the trigger
-                                   toMove->_next->_prev = toMove->_prev;
-                                   toMove->_prev->_next = toMove->_next;
-                                   // put it in the next variable to track
-                                   [_x[nextVar] watch:true with:toMove];
-                                   // would be better to do before setting the trigger
-                                   _notTriggered[j] = toMove->_vId;
-                                   toMove->_vId = nextVar;
+                                   detachTrigger(toMove);                            // remove the trigger
+                                  _notTriggered[j] = varOfTrigger(toMove);           // remember that this variable no longer has a trigger
+                                   [_x[nextVar] watch:true with:toMove];             // start watching the new variable
+                                   setTriggerOwner(toMove,nextVar);                  // update the trigger with the (*local*) variable identifier
                                    _last = j;
                                } 
                                else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
                                    for(ORInt k=0;k<_c+1;k++) {
                                        if (k != listen) {
-                                           ORStatus ok = [_x[_at[k]->_vId] updateMin:true];
+                                           ORStatus ok = [_x[getVarOfTrigger(_at[k])] updateMin:true];
                                            if (!ok) 
                                               failNow();
                                        }
@@ -861,7 +855,7 @@
                                }
                            }
                            onBehalf:self];                           
-            _at[listen]->_vId = (ORInt)i; // local identifier of var being watched.
+            setTriggerOwner(_at[listen],(ORInt)i); // local identifier of var being watched.
         } 
         else 
             _notTriggered[nbNW++] = (ORInt)i;

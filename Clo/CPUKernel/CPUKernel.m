@@ -47,6 +47,23 @@
    return _node;
 }
 
+-(void)scanWithBlock:(void(^)(id))block
+{
+   CPEventNode* cur = self;
+   while(cur) {
+      block(cur->_trigger);
+      cur = cur->_node;
+   }
+}
+
+void scanListWithBlock(CPEventNode* cur,ORID2Void block)
+{
+   while(cur) {
+      block(cur->_trigger);
+      cur = cur->_node;
+   }
+}
+
 void collectList(CPEventNode* list,NSMutableSet* rv)
 {
    while(list) {
