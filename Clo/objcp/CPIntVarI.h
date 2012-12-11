@@ -12,13 +12,14 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORSetI.h>
+#import <CPUKernel/CPTrigger.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPData.h>
 #import <objcp/CPDom.h>
-#import <objcp/CPTrigger.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPSolverI.h>
-#import <CPUKernel/CPConstraintI.h>
 
 @protocol CPIntVarSubscriber <NSObject>
 

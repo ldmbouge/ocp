@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
 #import "CPBasicConstraint.h"
 #import "CPTypes.h"
 #import "CPAC3Event.h"

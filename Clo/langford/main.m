@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
       __block ORInt nbSol = 0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       //NSLog(@"Model %@",model);
-      id<CPHeuristic> h = [ORFactory createFF:cp];
+//      id<CPHeuristic> h = [ORFactory createFF:cp];
       [cp solveAll:^{
          id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
          //[cp labelHeuristic:h];
