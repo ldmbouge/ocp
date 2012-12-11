@@ -339,21 +339,21 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    hookupEvent(_fdm, &_net._ac5, todo, c, HIGHEST_PRIO);
 }
 
--(CPTrigger*) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
         [self createTriggers];
     return [_triggers linkTrigger:[CPTriggerMap createTrigger: todo onBehalf:c] forValue:value];
 }
--(void) watch: (ORInt) val with: (CPTrigger*) t;
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
         [self createTriggers];
     [_triggers linkTrigger:t forValue:val];
 }
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)

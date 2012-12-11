@@ -53,11 +53,11 @@
 
 // Triggers
 // create a trigger which executes todo when value val is removed.
--(CPTrigger*) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // create a trigger which executes todo when the variable is bound.
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // assign a trigger which is executed when value val is removed.
--(void) watch:(ORInt) val with: (CPTrigger*) t;
+-(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
 @end
 
@@ -146,9 +146,9 @@ typedef struct  {
 
 // triggers
 
--(CPTrigger*) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) watch: (ORInt) val with: (CPTrigger*) t;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 -(void) createTriggers;
 
 // notification

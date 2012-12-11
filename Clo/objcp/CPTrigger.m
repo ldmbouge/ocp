@@ -15,6 +15,21 @@
 #import "CPEngineI.h"
 #import "CPConstraintI.h"
 
+
+@interface CPTrigger : NSObject {
+   @package
+   CPTrigger*         _prev;
+   CPTrigger*         _next;
+   ConstraintCallback   _cb;       // var/val held inside the closure (captured).
+   CPCoreConstraint*  _cstr;
+   ORInt               _vId;       // local variable identifier (var being watched)
+}
+-(id)initTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c;
+-(void)detach;
+-(ORInt)localID;
+-(void)setLocalID:(ORInt)lid;
+@end
+
 @interface CPDenseTriggerMap : CPTriggerMap {
 @private
    CPTrigger**   _tab;
@@ -35,24 +50,60 @@
 -(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
 @end
 
-void detachTrigger(CPTrigger* toMove)
+@implementation CPTrigger
+-(id)init
 {
-   toMove->_next->_prev = toMove->_prev;
-   toMove->_prev->_next = toMove->_next;
+   self = [super init];
+   _cb = nil;
+   _vId = -1;
+   _cstr = nil;
+   _prev = _next = nil;
+   return self;
 }
-
-ORInt varOfTrigger(CPTrigger* toMove)
+-(id)initTrigger:(ConstraintCallback)cb onBehalf:(CPCoreConstraint*)c
 {
-   return toMove->_vId;
+   self = [super init];
+   _cb = [cb copy];
+   _cstr = c;
+   _vId = -1;
+   _prev = _next = nil;
+   return self;
 }
-void setTriggerOwner(CPTrigger* t,ORInt vID)
+-(void)dealloc
 {
-   t->_vId = vID;
+   [_cb release];
+   [super dealloc];
 }
-ORInt getVarOfTrigger(CPTrigger* t)
+-(void)detach
 {
-   return t->_vId;
+   _next->_prev = _prev;
+   _prev->_next = _next;
 }
+-(ORInt)localID
+{
+   return _vId;
+}
+-(void)setLocalID:(ORInt)lid
+{
+   _vId = lid;
+}
+-(void)setNext:(CPTrigger*)new
+{
+   if (_next)
+      _next->_prev = new;
+   new->_next = _next;
+   _next = new;
+   new->_prev = self;
+}
+static void freeTriggers(CPTrigger* list)
+{
+   while (list) {
+      CPTrigger* nxt = list->_next;
+      [list release];
+      list = nxt;
+   }
+}
+@end
 
 /*****************************************************************************************/
 /*                        CPTriggerMap                                                   */
@@ -62,16 +113,6 @@ ORInt getVarOfTrigger(CPTrigger* t)
    @package
    bool     _active;
    CPTrigger* _bind;
-}
-
-static void freeTriggers(CPTrigger* list)
-{
-    while (list) {
-        CPTrigger* nxt = list->_next;
-        [list->_cb release];
-        free(list);
-        list = nxt;
-    }
 }
 
 -(CPTriggerMap*) init
@@ -90,10 +131,7 @@ static void freeTriggers(CPTrigger* list)
 
 +(CPTrigger*) createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   CPTrigger* trig = malloc(sizeof(CPTrigger));
-   trig->_cb = [todo copy];
-   trig->_cstr = c;
-   return trig;
+   return [[CPTrigger alloc] initTrigger:todo onBehalf:c];
 }
 
 +(CPTriggerMap*)triggerMapFrom:(ORInt)low to:(ORInt)up dense:(bool)dense
@@ -108,21 +146,14 @@ static void freeTriggers(CPTrigger* list)
 }
 -(CPTrigger*) linkBindTrigger: (CPTrigger*) t
 {
-    if (_bind==NULL) {
-        CPTrigger* front = malloc(sizeof(CPTrigger));
-        CPTrigger* back  = malloc(sizeof(CPTrigger));
-        memset(front,0,sizeof(CPTrigger));
-        memset(back,0,sizeof(CPTrigger));
-        _bind        = front;
-        front->_next = back;
-        back->_prev  = front;      
-        _active = YES;
-    }
-    CPTrigger* front = _bind;
-    t->_next = front->_next;
-    t->_prev = front;
-    front->_next = t;
-    t->_next->_prev = t;
+   if (_bind==NULL) {
+      CPTrigger* front = [[CPTrigger alloc] init];
+      CPTrigger* back  = [[CPTrigger alloc] init];
+      [front setNext:back];
+      _bind        = front;
+      _active = YES;
+   }
+   [_bind setNext:t];
    return t;
 }
 -(void) bindEvt: (CPEngineI*) fdm
@@ -138,7 +169,6 @@ static void freeTriggers(CPTrigger* list)
 @end
 
 @implementation CPDenseTriggerMap
-
 -(id)initDenseTriggerMap:(ORInt)low size:(ORInt)sz
 {
     self = [super init];
@@ -160,21 +190,14 @@ static void freeTriggers(CPTrigger* list)
 
 -(CPTrigger*)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
 {
-    if (_tab[value] == 0) {
-        CPTrigger* front = malloc(sizeof(CPTrigger));
-        CPTrigger* back  = malloc(sizeof(CPTrigger));
-        memset(front,0,sizeof(CPTrigger));
-        memset(back,0,sizeof(CPTrigger));
-        _tab[value] = front;
-        front->_next = back;
-        back->_prev  = front;
-        _active = YES;
-    }  
-    CPTrigger* front = _tab[value];
-    trig->_next = front->_next;
-    trig->_prev = front;
-    front->_next = trig;
-    trig->_next->_prev = trig;
+   if (_tab[value] == 0) {
+      CPTrigger* front = [[CPTrigger alloc] init];
+      CPTrigger* back  = [[CPTrigger alloc] init];
+      _tab[value] = front;
+      [front setNext:back];
+      _active = YES;
+   }
+   [_tab[value] setNext:trig];
    return trig;
 }
 -(void)loseValEvt:(ORInt)val solver:(CPEngineI*)fdm
@@ -224,47 +247,33 @@ static void freeTriggers(CPTrigger* list)
 }
 -(CPTrigger*) addTriggerFor: (ORInt) value
 {
-    ORAVLTreeNode* at = [_map findNodeForKey:value];
-    if (at==nil) {
-        CPTrigger* front = malloc(sizeof(CPTrigger));
-        CPTrigger* back  = malloc(sizeof(CPTrigger));
-        memset(front,0,sizeof(CPTrigger));
-        memset(back,0,sizeof(CPTrigger));
-        front->_next = back;
-        back->_prev  = front;
-        _active = YES;      
-        at = [_map insertObject:[[CPTriggerList alloc] initTriggerList:front] 
-                         forKey:value];
-    }
-    CPTrigger* trig = malloc(sizeof(CPTrigger));
-    CPTriggerList* tList = [at element];
-    CPTrigger* front = tList->_list;
-    trig->_next = front->_next;
-    trig->_prev = front;
-    front->_next = trig;
-    trig->_next->_prev = trig;
-    return trig;
+   ORAVLTreeNode* at = [_map findNodeForKey:value];
+   if (at==nil) {
+      CPTrigger* front = [[CPTrigger alloc] init];
+      CPTrigger* back  = [[CPTrigger alloc] init];
+      [front setNext:back];
+      _active = YES;
+      at = [_map insertObject:[[CPTriggerList alloc] initTriggerList:front]
+                       forKey:value];
+   }
+   CPTrigger* trig = [[CPTrigger alloc] init];
+   CPTriggerList* tList = [at element];
+   [tList->_list setNext:trig];
+   return trig;
 }
 -(CPTrigger*)linkTrigger:(CPTrigger*)trig forValue:(ORInt)value
 {
-    ORAVLTreeNode* at = [_map findNodeForKey:value];
-    if (at==nil) {
-        CPTrigger* front = malloc(sizeof(CPTrigger));
-        CPTrigger* back  = malloc(sizeof(CPTrigger));
-        memset(front,0,sizeof(CPTrigger));
-        memset(back,0,sizeof(CPTrigger));
-        front->_next = back;
-        back->_prev  = front;
-        _active = YES;      
-        at = [_map insertObject:[[CPTriggerList alloc] initTriggerList:front] 
-                         forKey:value];
-    }
-    CPTriggerList* tList = [at element];
-    CPTrigger* front = tList->_list;
-    trig->_next = front->_next;
-    trig->_prev = front;
-    front->_next = trig;
-    trig->_next->_prev = trig;
+   ORAVLTreeNode* at = [_map findNodeForKey:value];
+   if (at==nil) {
+      CPTrigger* front = [[CPTrigger alloc] init];
+      CPTrigger* back  = [[CPTrigger alloc] init];
+      [front setNext:back];
+      _active = YES;
+      at = [_map insertObject:[[CPTriggerList alloc] initTriggerList:front]
+                       forKey:value];
+   }
+   CPTriggerList* tList = [at element];
+   [tList->_list setNext:trig];
    return trig;
 }
 -(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm

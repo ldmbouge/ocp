@@ -15,38 +15,28 @@
 
 @class ORAVLTree;
 
-// PVH: I am not sure that I like the fact that it is a struct
-// In any case, this should be hidden evenfrom those with access to extended interface.
-// PVH to clean up
-typedef struct CPTrigger {
-   struct CPTrigger*  _prev;
-   struct CPTrigger*  _next;
-   ConstraintCallback   _cb;       // var/val held inside the closure (captured).
-   CPCoreConstraint*  _cstr;
-   ORInt               _vId;       // local variable identifier (var being watched)
-} CPTrigger;
-
+@protocol CPTrigger <NSObject>
+-(void)detach;
+-(ORInt)localID;
+-(void)setLocalID:(ORInt)lid;
+@end
 
 @class CPCoreConstraint;
 @class CPEngineI;
 
 @protocol CPTriggerMap <NSObject>
 @optional
--(CPTrigger*)linkTrigger:(CPTrigger*)t forValue:(ORInt)value;
--(CPTrigger*)linkBindTrigger:(CPTrigger*)t;
+-(id<CPTrigger>)linkTrigger:(id<CPTrigger>)t forValue:(ORInt)value;
+-(id<CPTrigger>)linkBindTrigger:(id<CPTrigger>)t;
 // Events for those triggers.
 -(void) loseValEvt:(ORInt)val solver:(CPEngineI*)fdm;
 -(void) bindEvt:(CPEngineI*)fdm;
 @end
 
 @interface CPTriggerMap : NSObject<CPTriggerMap>
-+(CPTrigger*)     createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
++(id<CPTrigger>)     createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 +(id<CPTriggerMap>) triggerMapFrom: (ORInt)low to:(ORInt)up dense:(bool)b;
--(CPTrigger*) linkBindTrigger:(CPTrigger*)t;
+-(id<CPTrigger>) linkBindTrigger:(id<CPTrigger>)t;
 -(void) bindEvt:(CPEngineI*)fdm;
 @end
 
-void detachTrigger(CPTrigger* t);
-ORInt varOfTrigger(CPTrigger* t);
-void setTriggerOwner(CPTrigger* t,ORInt vID);
-ORInt getVarOfTrigger(CPTrigger* t);
