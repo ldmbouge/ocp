@@ -769,7 +769,7 @@
 
 -(id) initCPSumBool: (id) x geq: (ORInt) c
 {
-   if ([[x class] conformsToProtocol:@protocol(ORIntVarArray)]) {
+   if ([[x class] conformsToProtocol:@protocol(ORIdArray)]) {
       id<CPIntVarArray> xa = x;
       self = [super initCPCoreConstraint:[[xa at:[xa low]] engine]];
       _nb = [x count];
@@ -798,7 +798,7 @@
 
 -(ORStatus) post
 {
-    _at = malloc(sizeof(CPTrigger*)*(_c+1));
+    _at = malloc(sizeof(id<CPTrigger>)*(_c+1));
     _notTriggered = malloc(sizeof(ORInt)*(_nb - _c - 1));
     int nbTrue = 0;
     int nbPos  = 0;
@@ -823,7 +823,7 @@
     }
     ORInt listen = _c+1;
     ORInt nbNW   = 0;
-    for(ORLong i=_nb-1;i >= 0;--i) {
+    for(ORInt i=(ORInt)_nb-1;i >= 0;--i) {
         if (listen > 0 && [_x[i] max] == true) { // Still in the domain and in need of more watches
             --listen; // the closure must capture the correct value of listen!
             _at[listen] = [_x[i] setLoseTrigger: true do: ^ 
@@ -837,23 +837,17 @@
                                } while (j != _last && !jOk);
                                if (jOk) {
                                    ORInt nextVar = _notTriggered[j];
-                                   // This is manipulating the list directly: very dangerous
-                                   // We should abstract the triggers
-                                   CPTrigger* toMove = _at[listen];
-                                   // remove the trigger
-                                   toMove->_next->_prev = toMove->_prev;
-                                   toMove->_prev->_next = toMove->_next;
-                                   // put it in the next variable to track
-                                   [_x[nextVar] watch:true with:toMove];
-                                   // would be better to do before setting the trigger
-                                   _notTriggered[j] = toMove->_vId;
-                                   toMove->_vId = nextVar;
+                                   id<CPTrigger> toMove = _at[listen];
+                                   [toMove detach];                        // remove the trigger
+                                   _notTriggered[j] = [toMove localID];    // remember that this variable no longer has a trigger
+                                   [_x[nextVar] watch:true with:toMove];   // start watching the new variable
+                                   [toMove setLocalID:nextVar];            // update the trigger with the (*local*) variable id
                                    _last = j;
                                } 
                                else {  // Ok, we couldn't find any other support => so we must bind the remaining ones
                                    for(ORInt k=0;k<_c+1;k++) {
                                        if (k != listen) {
-                                           ORStatus ok = [_x[_at[k]->_vId] updateMin:true];
+                                           ORStatus ok = [_x[[_at[k] localID]] updateMin:true];
                                            if (!ok) 
                                               failNow();
                                        }
@@ -861,10 +855,10 @@
                                }
                            }
                            onBehalf:self];                           
-            _at[listen]->_vId = (ORInt)i; // local identifier of var being watched.
+           [_at[listen] setLocalID:i]; // local identifier of var being watched.
         } 
         else 
-            _notTriggered[nbNW++] = (ORInt)i;
+            _notTriggered[nbNW++] = i;
     }   
     assert(nbNW == _nb - _c - 1);
     _last = _nb - _c - 2;  // where we will start the circular scan among the unWatched variables.

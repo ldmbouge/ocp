@@ -12,13 +12,14 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORSetI.h>
+#import <CPUKernel/CPTrigger.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPData.h>
 #import <objcp/CPDom.h>
-#import <objcp/CPTrigger.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
 #import <objcp/CPSolverI.h>
-#import <CPUKernel/CPConstraintI.h>
 
 @protocol CPIntVarSubscriber <NSObject>
 
@@ -53,11 +54,11 @@
 
 // Triggers
 // create a trigger which executes todo when value val is removed.
--(CPTrigger*) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // create a trigger which executes todo when the variable is bound.
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // assign a trigger which is executed when value val is removed.
--(void) watch:(ORInt) val with: (CPTrigger*) t;
+-(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
 @end
 
@@ -81,7 +82,6 @@ typedef struct  {
 } CPEventNetwork;
 
 @class CPIntVarI;
-@class CPTriggerMap;
 @class CPLiterals;
 // This is really an implementation protocol
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
@@ -113,7 +113,7 @@ typedef struct  {
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
-   CPTriggerMap*                  _triggers;
+   id<CPTriggerMap>               _triggers;
    id<CPIntVarNotifier,NSCoding>      _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
@@ -147,9 +147,9 @@ typedef struct  {
 
 // triggers
 
--(CPTrigger*) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) watch: (ORInt) val with: (CPTrigger*) t;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 -(void) createTriggers;
 
 // notification
@@ -199,8 +199,6 @@ typedef struct  {
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
-+(CPTrigger*)    createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
-
 -(id<ORIntVar>) dereference;
 @end
 

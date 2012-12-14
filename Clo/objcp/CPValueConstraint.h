@@ -13,6 +13,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPTrigger.h>
 #import "CPIntVarI.h"
 
 @class CPIntVarI;
@@ -118,7 +119,7 @@
     CPIntVarI**       _x;
     ORLong           _nb;
     ORInt             _c;
-    CPTrigger**      _at; // the c+1 triggers.
+    id<CPTrigger>*   _at; // the c+1 triggers.
     ORInt* _notTriggered;
     ORLong         _last;
 }

@@ -65,7 +65,6 @@
         return [[(id<ORIntVar>)[arr at: e] domain] low];
     }];
     id<ORIntRange> r = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
-    NSLog(@"LOW: %i", low);
     return r;
 }
 -(id<ORIntVarArray>) binarizeIntVar:(id<ORIntVar>)x
@@ -95,7 +94,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v  { _exprResult = v; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   id<ORIntVarArray> varsOfC = [cstr array];
+    id<ORIntVarArray> varsOfC = [cstr array];
     id<ORIntRange> dom = [self unionOfVarArrayRanges: varsOfC];
     for (int d = [dom low]; d <= [dom up]; d++) {
         id<ORExpr> sumExpr = [ORFactory sum: _model over: [varsOfC range]
@@ -256,7 +255,8 @@
     else {
         id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
         indexVar = [ORFactory intVar: _model domain: [domainEval domain: _model ForExpr: linearIndexExpr]];
-        [_model addVariable: indexVar];
+        // [ldm] Removed next line. Redundant since the factory already adds the variable.
+        // [_model addVariable: indexVar];
         [_model addConstraint: [indexVar eq: linearIndexExpr]];
     }
     id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
@@ -264,7 +264,8 @@
         return [[binIndexVar at: i] muli: [[cstSubExpr array] at: i ]];
     }];
     id<ORIntVar> sumVar = [ORFactory intVar: _model domain: [domainEval domain: _model ForExpr: linearSumExpr]];
-    [_model addVariable: sumVar];
+    // [ldm] Removed next line. Redundant since the factory already adds the variable.
+    //[_model addVariable: sumVar];
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
 }

@@ -680,7 +680,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
       }
       return nDom;
    } else if (a == -1) {
-      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax up:-bd->_imin];
+      CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:-bd->_imax + b up:-bd->_imin + b];
       for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [nDom set:-v+b at:NO];

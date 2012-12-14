@@ -405,13 +405,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return x;
 }
 
-+(CPTrigger*) createTrigger: (ConstraintCallback) todo
-{
-    CPTrigger* trig = malloc(sizeof(CPTrigger));
-    trig->_cb = [todo copy];
-    return trig;
-}
- 
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
     [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];

@@ -12,9 +12,9 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPEngine.h>
+#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPBitVar.h>
 #import <objcp/CPSolverI.h>
-#import <objcp/CPTrigger.h>
 #import <objcp/CPDom.h>
 
 @class CPBitArrayDom;
@@ -93,9 +93,6 @@ typedef struct  {
 // Class methods
 +(CPBitVarI*)   initCPBitVar: (id<CPEngine>)cp low:(int)low up:(int)up len:(unsigned int)len;
 +(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
-+(CPTrigger*)   createTrigger: (ConstraintCallback) todo;
-
-
 @end
 
 

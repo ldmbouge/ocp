@@ -22,7 +22,7 @@
 int main (int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
-    ORInt n = 10;
+    ORInt n = 3;
     id<ORIntRange> R = RANGE(model,1,n);
     
     id<ORUniformDistribution> distr = [CPFactory uniformDistribution: model range: RANGE(model, 1, 20)];
@@ -31,24 +31,38 @@ int main (int argc, const char * argv[])
     //id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
     
     id<ORIntVarArray> tasks  = [ORFactory intVarArray: model range: R domain: R];
-    id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * n)];
+    id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * 20)];
     
     [model minimize: assignCost];
+    //[model add: [tasks[1] eqi:2]];
+    //[model add: [tasks[2] eqi:1]];
+    //[model add: [tasks[3] eqi:3]];
+   
     [model add: [ORFactory alldifferent: tasks]];
     [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
     
+    NSLog(@"ORIG: %@",model);
     id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
-    ORBatchModel* lm = [[ORBatchModel alloc] init: [ORFactory createModel]];
+    id<ORModel> lin = [ORFactory createModel];
+    ORBatchModel* lm = [[ORBatchModel alloc] init: lin];
     [linearizer apply: model into: lm];
-        
-    id<CPProgram> cp = [ORFactory createCPProgram: [lm model]];
+    NSLog(@"FLAT: %@",lin);
+   
+    id<CPProgram> cp = [ORFactory createCPProgram: lin];
     id<CPHeuristic> h = [ORFactory createFF: cp];
     [cp solve:
      ^() {
-         [cp labelHeuristic: h];
+        NSLog(@"here...");
+        [cp labelArray:tasks];
+        [cp labelHeuristic: h];
+        NSLog(@"better sol --------> %d",[assignCost value]);
      }];
-    NSLog(@"solution: %@", [assignCost description]);
+
+    for(id<ORIntVar> v in [[lm model] variables])
+        NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
+    NSLog(@"SOL: %@", assignCost);
     
+   
     //id<CPSolver> cp = [ORFactory createCPProgram: model];
     //[cp solve:
     //^() {

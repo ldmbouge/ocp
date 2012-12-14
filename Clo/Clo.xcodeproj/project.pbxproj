@@ -99,6 +99,8 @@
 		5B3606911392A8DA008B0EE8 /* CPDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606901392A8DA008B0EE8 /* CPDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606951392A9C5008B0EE8 /* CPBitDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606931392A9C5008B0EE8 /* CPBitDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606961392A9C5008B0EE8 /* CPBitDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3606941392A9C5008B0EE8 /* CPBitDom.m */; };
+		5B3DAE4A1677988700F01DBF /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B3DAE4B1677988700F01DBF /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
 		5B40C21114F80A7D0041D162 /* CPObjectQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B40C21014F80A7D0041D162 /* CPObjectQueue.m */; };
 		5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -661,8 +663,6 @@
 		B181E12515D746A700AB44DA /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B181E12615D746F300AB44DA /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B181E12815D7B62800AB44DA /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B181E12715D7B62600AB44DA /* CPSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B189033F142C266F007F6EAD /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1890340142C266F007F6EAD /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
 		B189511C15DE25D800B77813 /* ORSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = B189511A15DE25D800B77813 /* ORSelector.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B189512015DE434A00B77813 /* ORSelectorI.h in Headers */ = {isa = PBXBuildFile; fileRef = B189511E15DE434900B77813 /* ORSelectorI.h */; };
 		B189512115DE434A00B77813 /* ORSelectorI.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511F15DE434900B77813 /* ORSelectorI.m */; };
@@ -4396,6 +4396,8 @@
 		5B93486C1655451C00757F89 /* CPUKernel */ = {
 			isa = PBXGroup;
 			children = (
+				B189033D142C266D007F6EAD /* CPTrigger.h */,
+				B189033E142C266E007F6EAD /* CPTrigger.m */,
 				5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */,
 				5B9348731655451D00757F89 /* CPUKernel.h */,
 				5B9348741655451D00757F89 /* CPUKernel.m */,
@@ -4506,8 +4508,6 @@
 				5BE642F3139D49320056F448 /* CPSolverI.m */,
 				B17715B31557D9D200BA14BF /* CPTableI.h */,
 				B17715B41557D9D200BA14BF /* CPTableI.m */,
-				B189033D142C266D007F6EAD /* CPTrigger.h */,
-				B189033E142C266E007F6EAD /* CPTrigger.m */,
 				5B92975513A01F45002AA188 /* CPValueConstraint.h */,
 				5B92975613A01F45002AA188 /* CPValueConstraint.m */,
 				5B729C3F153F79A4001BE95A /* CPWatch.h */,
@@ -5288,6 +5288,7 @@
 				5B9348851655473D00757F89 /* CPConstraintI.h in Headers */,
 				5B9348861655478200757F89 /* CPUKernel.h in Headers */,
 				5B9C2CDF166CF08C00D91D40 /* CPAC3Event.h in Headers */,
+				5B3DAE4A1677988700F01DBF /* CPTrigger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5313,7 +5314,6 @@
 				5B778B9A154EF67C0078EB07 /* CPBitArrayDom.h in Headers */,
 				5B778B9C154EF67C0078EB07 /* CPBitConstraint.h in Headers */,
 				5B778BA1154EF7DA0078EB07 /* CPBitVar.h in Headers */,
-				B189033F142C266F007F6EAD /* CPTrigger.h in Headers */,
 				5B7408B115628C1400C05277 /* CPBitMacros.h in Headers */,
 				B181E12815D7B62800AB44DA /* CPSolver.h in Headers */,
 				B1C010EC15CDAF7300ED7027 /* CPFactory.h in Headers */,
@@ -7010,6 +7010,7 @@
 				5B934880165545D200757F89 /* CPEngineI.m in Sources */,
 				5B9348821655465600757F89 /* CPTypes.m in Sources */,
 				5B9348841655473900757F89 /* CPConstraintI.m in Sources */,
+				5B3DAE4B1677988700F01DBF /* CPTrigger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7028,7 +7029,6 @@
 				5BB3835D13B3B624005B7D52 /* CPEquationBC.m in Sources */,
 				B103536513BCFF2400627058 /* CPCreateI.m in Sources */,
 				B17ABE9313CC852C00DC7288 /* CPIntVarI.m in Sources */,
-				B1890340142C266F007F6EAD /* CPTrigger.m in Sources */,
 				B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */,
 				B169F9C914EF87D500B2F3A6 /* CPConstraint.m in Sources */,
 				5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */,
