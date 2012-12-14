@@ -12,6 +12,16 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPEngine.h>
 
+/*
+ 
+pvh: 
+ 
+1. simplify scheduleAC3 et les appels
+2. Rename CPEventNode
+ 
+ */
+
+ 
 typedef enum {
    CPChecked,
    CPTocheck,

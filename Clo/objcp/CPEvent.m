@@ -14,14 +14,16 @@
 //static id vLossCache = nil;
 
 @implementation CPValueLossEvent
--(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list
+
+-(id) initValueLoss: (ORInt) value notify: (id<CPEventNode>) list
 {
    self = [super init];
    _theVal = value;
    _theList = list;
    return self;
 }
--(ORInt)execute
+
+-(ORInt) execute
 {
    ORInt nbP = 0;
    id<CPEventNode> evt = _theList;
@@ -33,7 +35,8 @@
       }
       [self release];
       return nbP;
-   } @catch(ORFailException* ex) {
+   }
+   @catch(ORFailException* ex) {
       [self release];
       @throw;
    }
