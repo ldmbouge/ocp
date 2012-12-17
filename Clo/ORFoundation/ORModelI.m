@@ -188,6 +188,38 @@
 }
 @end
 
+@implementation ORGEqualc {
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORGEqualc*)initORGEqualc:(id<ORIntVar>)x geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ >= %d)",[self class],self,_impl,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitGEqualc:self];
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+@end
+
+
 @implementation OREqual {
    id<ORIntVar> _x;
    id<ORIntVar> _y;

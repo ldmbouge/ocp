@@ -141,6 +141,10 @@
 {
    [_engine add: [c dereference]];
 }
+-(void) visitGEqualc: (id<ORGEqualc>)c
+{
+   [_engine add: [c dereference]];
+}
 -(void) visitEqual: (id<OREqual>)c
 {
    [_engine add: [c dereference]];

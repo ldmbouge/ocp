@@ -554,7 +554,7 @@ struct CPVarPair {
          if (_terms[0]._coef == 1)
             return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
          else if (_terms[0]._coef == -1)
-            return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to: _indep]];
+            return [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
          else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;

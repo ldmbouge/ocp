@@ -1140,6 +1140,46 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 @end
 
+@implementation CPGEqualc
+-(id) initCPGEqualc:(id<CPIntVar>)x and:(ORInt) c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = (CPIntVarI*) x;
+   _c = c;
+   return self;
+}
+-(ORStatus) post
+{
+   return [_x updateMin:_c];
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPGEqualc: %02d %@ >= %d>",_name,_x,_c];
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_x];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_c];
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder;
+{
+   self = [super initWithCoder:aDecoder];
+   _x = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
+   return self;
+}
+@end
+
 
 @implementation CPMultBC
 -(id) initCPMultBC:(id<CPIntVar>)x times:(id<CPIntVar>)y equal:(id<CPIntVar>)z

@@ -314,6 +314,11 @@
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
+		<key>slow_convergence.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>46</integer>
+		</dict>
 		<key>sport.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -518,6 +523,11 @@
 			<true/>
 		</dict>
 		<key>5BC091AC167F9095009A7712</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BC091CF167F9D5B009A7712</key>
 		<dict>
 			<key>primary</key>
 			<true/>

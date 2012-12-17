@@ -61,6 +61,7 @@
 +(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y plus:(ORInt)c;
 +(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;
++(id<CPConstraint>) gEqualc: (id<CPIntVar>)x to: (ORInt) c;
 +(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) mult: (id<CPIntVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
 +(id<CPConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y;

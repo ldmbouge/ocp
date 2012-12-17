@@ -55,6 +55,12 @@
 -(ORInt) cst;
 @end
 
+@interface ORGEqualc : ORConstraintI<ORGEqualc>
+-(ORGEqualc*)initORGEqualc:(id<ORIntVar>)x geqi:(ORInt)c;
+-(id<ORIntVar>) left;
+-(ORInt) cst;
+@end
+
 @interface OREqual : ORConstraintI<OREqual>
 -(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c;
 -(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;

@@ -200,6 +200,9 @@
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
 }
+-(void) visitGEqualc: (id<ORGEqualc>)c
+{
+}
 -(void) visitEqual: (id<OREqual>)c
 {
 }

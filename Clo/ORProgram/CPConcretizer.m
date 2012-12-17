@@ -291,6 +291,16 @@
       [cstr setImpl: concreteCstr];
    }
 }
+-(void) visitGEqualc: (id<ORGEqualc>) cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<ORIntVar> left = [cstr left];
+      ORInt cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory gEqualc: (id<CPIntVar>) [left dereference]  to: cst];
+      [cstr setImpl: concreteCstr];
+   }
+}
 -(void) visitEqual: (id<OREqual>) cstr
 {
    if ([cstr dereference] == NULL) {

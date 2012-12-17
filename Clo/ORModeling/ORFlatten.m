@@ -54,6 +54,7 @@
 -(void) visitEqualc: (id<OREqualc>)c  {}
 -(void) visitNEqualc: (id<ORNEqualc>)c  {}
 -(void) visitLEqualc: (id<ORLEqualc>)c  {}
+-(void) visitGEqualc: (id<ORGEqualc>)c  {}
 -(void) visitEqual: (id<OREqual>)c  {}
 -(void) visitNEqual: (id<ORNEqual>)c  {}
 -(void) visitLEqual: (id<ORLEqual>)c  {}
@@ -136,6 +137,7 @@
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
+-(void) visitGEqualc: (id<ORGEqualc>)c;
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
@@ -397,6 +399,10 @@
    [_theModel addConstraint:c];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitGEqualc: (id<ORGEqualc>)c
 {
    [_theModel addConstraint:c];
 }

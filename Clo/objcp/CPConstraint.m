@@ -376,6 +376,12 @@
    [[x tracker] trackObject:o];
    return o;   
 }
++(id<ORConstraint>) gEqualc: (id<CPIntVar>)x to: (ORInt) c
+{
+   id<ORConstraint> o = [[CPGEqualc alloc] initCPGEqualc:x and:c];
+   [[x tracker] trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y
 {
    id<CPIntVar> yp = [self intVar:y shift:-1];

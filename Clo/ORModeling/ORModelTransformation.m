@@ -63,6 +63,7 @@
 -(void) visitEqualc: (id<OREqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitNEqualc: (id<ORNEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitLEqualc: (id<ORLEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitGEqualc: (id<ORGEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitEqual: (id<OREqual>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitNEqual: (id<ORNEqual>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitLEqual: (id<ORLEqual>)c  { _result = [ORFactory undefinedIntRange]; }
