@@ -540,10 +540,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 +(CPIntVarI*) initCPIntVar: (id<CPEngine>) fdm low: (ORInt) low up: (ORInt) up
 {
    CPIntVarI* x = nil;
+   ORLong sz = (ORLong)up - low + 1;
    if (low==0 && up==1)
-      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];     // binary domain. Use bounds only.
+   else if (sz >= 65536)
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,low,up)];  // large domain. Fall back to bounds only.
    else
-      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];            // Smallish domain. Use bit-vectors.
    x->_isBool = (low == 0 && up==1);
    return x;
 }

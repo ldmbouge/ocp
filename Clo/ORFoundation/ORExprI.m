@@ -747,8 +747,7 @@
 @end
 
 
-
-@implementation ORExprSumI 
+@implementation ORExprSumI
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
@@ -804,6 +803,79 @@
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitExprSumI: self]; 
+}
+-(NSString *) description
+{
+   return [_e description];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_e];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _e = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORExprProdI
+-(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   self = [super init];
+   id<IntEnumerator> ite = [S enumerator];
+   _e = [ORFactory integer: tracker value: 1];
+   if (f!=nil) {
+      while ([ite more]) {
+         ORInt i = [ite next];
+         if (f(i))
+            _e = [_e mul: e(i)];
+      }
+   }
+   else {
+      while ([ite more]) {
+         ORInt i = [ite next];
+         _e = [_e mul: e(i)];
+      }
+   }
+   [ite release]; // [ldm] fixed memory leak.
+   return self;
+}
+-(id<ORExpr>) initORExprProdI: (id<ORExpr>) e
+{
+   self = [super init];
+   _e = e;
+   return self;
+}
+
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORExpr>) expr
+{
+   return _e;
+}
+-(ORInt) min
+{
+   return [_e min];
+}
+-(ORInt) max
+{
+   return [_e max];
+}
+-(BOOL) isConstant
+{
+   return [_e isConstant];
+}
+-(id<ORTracker>) tracker
+{
+   return [_e tracker];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitExprProdI: self];
 }
 -(NSString *) description
 {

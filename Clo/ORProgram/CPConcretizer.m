@@ -761,6 +761,9 @@
 {
    
 }
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+}
 -(void) visitExprAbsI:(id<ORExpr>) e
 {
    
@@ -1561,7 +1564,11 @@
 //}
 //-(void) visitExprSumI: (id<ORExpr>) e
 //{
-//   
+//
+//}
+//-(void) visitExprProdI: (id<ORExpr>) e
+//{
+//
 //}
 //-(void) visitExprAbsI:(id<ORExpr>) e
 //{
@@ -1661,6 +1668,10 @@
 //   _result = [ORFactory expr: leftc leq: rightc];
 //}
 //-(void) visitExprSumI: (ORExprSumI*) e
+//{
+//   [[e expr] visit: self];  // we can remove the sum node. It serves no purpose.
+//}
+//-(void) visitExprProdI: (ORExprProdI*) e
 //{
 //   [[e expr] visit: self];  // we can remove the sum node. It serves no purpose.
 //}

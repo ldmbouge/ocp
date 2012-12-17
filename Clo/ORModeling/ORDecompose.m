@@ -38,6 +38,7 @@
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI *)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
@@ -90,6 +91,7 @@
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
@@ -178,6 +180,7 @@ struct CPVarPair {
 -(void) visitExprMulI: (ORExprMulI*) e     {}
 -(void) visitExprModI: (ORExprModI*) e     {}
 -(void) visitExprSumI: (ORExprSumI*) e     {}
+-(void) visitExprProdI: (ORExprProdI*) e   {}
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
@@ -279,6 +282,10 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
 {
    [[e expr] visit:self];
 }
@@ -840,6 +847,10 @@ struct CPVarPair {
 }
 
 -(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
 {
    [[e expr] visit:self];
 }

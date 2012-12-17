@@ -144,6 +144,11 @@
 			<key>orderHint</key>
 			<integer>23</integer>
 		</dict>
+		<key>grocery.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>44</integer>
+		</dict>
 		<key>gurobiwrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -498,6 +503,11 @@
 			<true/>
 		</dict>
 		<key>5BBA56D3153F33E70089118E</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BC09189167F7F9A009A7712</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -160,7 +160,22 @@
 -(ORExprI*) expr;
 -(BOOL) isConstant;
 -(NSString *) description;
--(void) visit: ORVisitorI;
+-(void) visit:(id<ORVisitor>)v;
+@end
+
+@interface ORExprProdI : ORExprI<ORExpr,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprProdI: (id<ORExpr>) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(BOOL) isConstant;
+-(NSString *) description;
+-(void) visit: (id<ORVisitor>)v;
 @end
 
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
@@ -175,7 +190,7 @@
 -(ORExprI*) expr;
 -(BOOL) isConstant;
 -(NSString *) description;
--(void) visit: ORVisitorI;
+-(void) visit: (id<ORVisitor>)v;
 @end
 
 @interface ORDisjunctI : ORExprBinaryI<ORRelation,NSCoding>

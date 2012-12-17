@@ -249,9 +249,15 @@
     id<ORExpr> right = [self linearizeExpr: [binExpr right]];
     _exprResult = [left sub: right];
 }
--(void) visitExprSumI: (id<ORExpr>) e  {
+-(void) visitExprSumI: (id<ORExpr>) e
+{
     ORExprSumI* sumExpr = (ORExprSumI*)e;
     [[sumExpr expr] visit: self];
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+   ORExprProdI* pExpr = (ORExprProdI*)e;
+   [[pExpr expr] visit: self];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e  {
     ORExprCstSubI* cstSubExpr = (ORExprCstSubI*)e;

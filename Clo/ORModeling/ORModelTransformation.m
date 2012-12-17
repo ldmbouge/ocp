@@ -126,9 +126,15 @@
 -(void) visitExprEqualI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprNEqualI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprLEqualI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
--(void) visitExprSumI: (id<ORExpr>) e  {
-    ORExprSumI* exprSum = (ORExprSumI*)e;
-    [self evaluateExpr: [exprSum expr]];
+-(void) visitExprSumI: (id<ORExpr>) e
+{
+    ORExprSumI* expr = (ORExprSumI*)e;
+    [self evaluateExpr: [expr expr]];
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+   ORExprProdI* expr = (ORExprProdI*)e;
+   [self evaluateExpr: [expr expr]];
 }
 -(void) visitExprAbsI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprCstSubI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
