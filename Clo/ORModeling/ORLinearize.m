@@ -18,6 +18,12 @@
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
 @end
 
+@interface ORLinearizeObjective : NSObject<ORVisitor>
+-(id)init:(id<ORINCModel>)m;
+-(void) visitMinimize: (id<ORObjectiveFunction>) v;
+-(void) visitMaximize: (id<ORObjectiveFunction>) v;
+@end
+
 @implementation ORLinearize
 -(id)initORLinearize
 {
@@ -36,7 +42,8 @@
         [c visit: lc];
         [lc release];
     } onObjective:^(id<ORObjective> o) {
-        //NSLog(@"Got an objective: %@",o);
+        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: batch];
+        [o visit: lo];
     }];
 }
 
@@ -268,5 +275,24 @@
     //[_model addVariable: sumVar];
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
+}
+@end
+
+@implementation ORLinearizeObjective {
+    id<ORINCModel> _model;
+}
+-(id)init:(id<ORINCModel>)m
+{
+    self = [super init];
+    _model = m;
+    return self;
+}
+-(void) visitMinimize: (id<ORObjectiveFunction>) v
+{
+    [_model minimize:[v var]];
+}
+-(void) visitMaximize: (id<ORObjectiveFunction>) v
+{
+    [_model maximize:[v var]];
 }
 @end
