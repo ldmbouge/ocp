@@ -1385,9 +1385,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (!_tracksLoseEvt) return ORSuspend;
+   ORStatus ok;
    for(ORInt i=0;i<_nb;i++) {
-      //[_tab[i] loseValEvt:val];
-      ORStatus ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
+      //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
+      if (_loseValIMP[i])
+         ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
       if (!ok) return ok;
    }
    return ORSuspend;

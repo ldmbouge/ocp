@@ -52,6 +52,10 @@
 {
    return [ORFactory expr: self plus:[ORFactory integer:[self tracker] value:e]];
 }
+-(id<ORExpr>) subi: (ORInt) e
+{
+   return [ORFactory expr: self sub:[ORFactory integer:[self tracker] value:e]];
+}
 -(id<ORExpr>) sub: (id<ORExpr>) e
 {
    return [ORFactory expr:self sub:e];

@@ -22,6 +22,7 @@
 
 -(id<ORExpr>) abs;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
+-(id<ORExpr>) subi: (ORInt) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
 -(id<ORExpr>) muli: (ORInt) e;

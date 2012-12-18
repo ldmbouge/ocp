@@ -179,6 +179,11 @@
 			<key>orderHint</key>
 			<integer>43</integer>
 		</dict>
+		<key>latinSquare.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>47</integer>
+		</dict>
 		<key>lpsolver.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -478,6 +483,11 @@
 			<true/>
 		</dict>
 		<key>5B9EE52715175CF900619B47</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BA3457B1680B7BD00485366</key>
 		<dict>
 			<key>primary</key>
 			<true/>
