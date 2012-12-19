@@ -2990,6 +2990,18 @@
 		5B3606901392A8DA008B0EE8 /* CPDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B3606931392A9C5008B0EE8 /* CPBitDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPBitDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B3606941392A9C5008B0EE8 /* CPBitDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBitDom.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B36F25E1682683000020E94 /* gap1.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap1.txt; sourceTree = "<group>"; };
+		5B36F25F1682683000020E94 /* gap10.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap10.txt; sourceTree = "<group>"; };
+		5B36F2601682683000020E94 /* gap11.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap11.txt; sourceTree = "<group>"; };
+		5B36F2611682683000020E94 /* gap12.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap12.txt; sourceTree = "<group>"; };
+		5B36F2621682683000020E94 /* gap2.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap2.txt; sourceTree = "<group>"; };
+		5B36F2631682683000020E94 /* gap3.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap3.txt; sourceTree = "<group>"; };
+		5B36F2641682683000020E94 /* gap4.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap4.txt; sourceTree = "<group>"; };
+		5B36F2651682683000020E94 /* gap5.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap5.txt; sourceTree = "<group>"; };
+		5B36F2661682683000020E94 /* gap6.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap6.txt; sourceTree = "<group>"; };
+		5B36F2671682683000020E94 /* gap7.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap7.txt; sourceTree = "<group>"; };
+		5B36F2681682683000020E94 /* gap8.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap8.txt; sourceTree = "<group>"; };
+		5B36F2691682683000020E94 /* gap9.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = gap9.txt; sourceTree = "<group>"; };
 		5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPObjectQueue.h; sourceTree = "<group>"; };
 		5B40C21014F80A7D0041D162 /* CPObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPObjectQueue.m; sourceTree = "<group>"; };
 		5B43634015AECE4D00E9458D /* CPDDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDDeg.m; sourceTree = "<group>"; };
@@ -4268,6 +4280,25 @@
 				5B28CB0C16691F0D008AB802 /* langford-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5B36F25D1682683000020E94 /* GAPDATA */ = {
+			isa = PBXGroup;
+			children = (
+				5B36F25E1682683000020E94 /* gap1.txt */,
+				5B36F25F1682683000020E94 /* gap10.txt */,
+				5B36F2601682683000020E94 /* gap11.txt */,
+				5B36F2611682683000020E94 /* gap12.txt */,
+				5B36F2621682683000020E94 /* gap2.txt */,
+				5B36F2631682683000020E94 /* gap3.txt */,
+				5B36F2641682683000020E94 /* gap4.txt */,
+				5B36F2651682683000020E94 /* gap5.txt */,
+				5B36F2661682683000020E94 /* gap6.txt */,
+				5B36F2671682683000020E94 /* gap7.txt */,
+				5B36F2681682683000020E94 /* gap8.txt */,
+				5B36F2691682683000020E94 /* gap9.txt */,
+			);
+			path = GAPDATA;
 			sourceTree = "<group>";
 		};
 		5B5096E31619B6CB00171F9D /* testDistrib */ = {
@@ -5584,6 +5615,7 @@
 		B1943A1015B0E33C00E1771B /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5B36F25D1682683000020E94 /* GAPDATA */,
 				5B7B478215F0F538005FF875 /* test-n30-e50.col */,
 				5B7B478515F0F733005FF875 /* smallColoring.col */,
 				5B7B478015F0EBF7005FF875 /* test-n80-p40-0.col */,
@@ -12407,6 +12439,7 @@
 				5BF1387B16822EFC005EAC6B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BFD595115A3ACA500825BC3 /* Build configuration list for PBXNativeTarget "ORFoundation" */ = {
 			isa = XCConfigurationList;
