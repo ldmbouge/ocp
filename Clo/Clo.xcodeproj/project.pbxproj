@@ -756,6 +756,10 @@
 		B1FCB33C15F6BD2500F8446A /* LPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33A15F6BD2500F8446A /* LPSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1FCB34015F6BD6100F8446A /* LPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1FCB33E15F6BD6100F8446A /* LPSolverI.h */; };
 		B1FCB34115F6BD6100F8446A /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1FCB33F15F6BD6100F8446A /* LPSolverI.m */; };
+		F548AA73167FB1C600726814 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		F548AA76167FB1C600726814 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AA75167FB1C600726814 /* main.m */; };
+		F548AA7A167FB1C700726814 /* MD5.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F548AA79167FB1C700726814 /* MD5.1 */; };
+		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2647,6 +2651,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		F548AA6F167FB1C600726814 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				F548AA7A167FB1C700726814 /* MD5.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -3156,6 +3170,12 @@
 		B1FCB33A15F6BD2500F8446A /* LPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolver.h; sourceTree = "<group>"; };
 		B1FCB33E15F6BD6100F8446A /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolverI.h; sourceTree = "<group>"; };
 		B1FCB33F15F6BD6100F8446A /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolverI.m; sourceTree = "<group>"; };
+		F548AA71167FB1C600726814 /* MD5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MD5; sourceTree = BUILT_PRODUCTS_DIR; };
+		F548AA75167FB1C600726814 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		F548AA78167FB1C700726814 /* MD5-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MD5-Prefix.pch"; sourceTree = "<group>"; };
+		F548AA79167FB1C700726814 /* MD5.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MD5.1; sourceTree = "<group>"; };
+		F548AAB01680B3A500726814 /* MD4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD4.h; sourceTree = "<group>"; };
+		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3821,6 +3841,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F548AA6E167FB1C600726814 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F548AA73167FB1C600726814 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -4049,6 +4077,7 @@
 				5B778BB4154F1D030078EB07 /* bitArrayTest */,
 				5BB170111582820500D4791A /* driver */,
 				5B5096E31619B6CB00171F9D /* testDistrib */,
+				F548AA74167FB1C600726814 /* MD5 */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -4111,6 +4140,7 @@
 				5B5F547B165D6EB200E674DA /* assignmentProblem */,
 				5B28CAE21668FC63008AB802 /* debruijn */,
 				5B28CB0516691F0C008AB802 /* langford */,
+				F548AA71167FB1C600726814 /* MD5 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5237,6 +5267,26 @@
 			isa = PBXGroup;
 			children = (
 				B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F548AA74167FB1C600726814 /* MD5 */ = {
+			isa = PBXGroup;
+			children = (
+				F548AA75167FB1C600726814 /* main.m */,
+				F548AA79167FB1C700726814 /* MD5.1 */,
+				F548AA77167FB1C600726814 /* Supporting Files */,
+				F548AAB01680B3A500726814 /* MD4.h */,
+				F548AAB11680B3A500726814 /* MD4.m */,
+			);
+			path = MD5;
+			sourceTree = "<group>";
+		};
+		F548AA77167FB1C600726814 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				F548AA78167FB1C700726814 /* MD5-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -6637,6 +6687,23 @@
 			productReference = B1F531D815AED4B100E89F98 /* testPacking */;
 			productType = "com.apple.product-type.tool";
 		};
+		F548AA70167FB1C600726814 /* MD5 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F548AA7D167FB1C700726814 /* Build configuration list for PBXNativeTarget "MD5" */;
+			buildPhases = (
+				F548AA6D167FB1C600726814 /* Sources */,
+				F548AA6E167FB1C600726814 /* Frameworks */,
+				F548AA6F167FB1C600726814 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MD5;
+			productName = MD5;
+			productReference = F548AA71167FB1C600726814 /* MD5 */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -6714,6 +6781,7 @@
 				5B5F547A165D6EB200E674DA /* assignmentProblem */,
 				5B28CAE11668FC63008AB802 /* debruijn */,
 				5B28CB0416691F0C008AB802 /* langford */,
+				F548AA70167FB1C600726814 /* MD5 */,
 			);
 		};
 /* End PBXProject section */
@@ -7444,6 +7512,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1F531DD15AED4B100E89F98 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F548AA6D167FB1C600726814 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F548AA76167FB1C600726814 /* main.m in Sources */,
+				F548AAB21680B3A500726814 /* MD4.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9096,9 +9173,9 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LINK_WITH_STANDARD_LIBRARIES = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 			};
 			name = Debug;
 		};
@@ -9120,9 +9197,9 @@
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = macosx;
+				SDKROOT = macosx10.7;
 			};
 			name = Release;
 		};
@@ -9470,6 +9547,7 @@
 				LD_DYLIB_INSTALL_NAME = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -9492,6 +9570,7 @@
 				LD_DYLIB_INSTALL_NAME = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -11012,6 +11091,46 @@
 			};
 			name = Release;
 		};
+		F548AA7B167FB1C700726814 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MD5/MD5-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F548AA7C167FB1C700726814 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "MD5/MD5-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -11524,6 +11643,15 @@
 			buildConfigurations = (
 				B1F531E315AED4B100E89F98 /* Debug */,
 				B1F531E415AED4B100E89F98 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F548AA7D167FB1C700726814 /* Build configuration list for PBXNativeTarget "MD5" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F548AA7B167FB1C700726814 /* Debug */,
+				F548AA7C167FB1C700726814 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
