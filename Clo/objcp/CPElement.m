@@ -163,6 +163,158 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 @end
 
+struct EltACPair {
+   ORInt _value;
+   ORInt _idx;
+   TRInt _support;
+};
+
+@implementation CPElementCstAC {
+   struct EltACPair* _values;
+   ORInt             _endOfList;
+   ORInt*            _list;
+   ORInt             _xLow;
+   ORInt             _xUp;
+   ORInt             _nbValues;
+}
+-(id) initCPElementAC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(void) dealloc
+{
+   _list += _xLow;
+   free(_list);
+   free(_values);
+   [super dealloc];
+}
+int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
+
+-(ORInt)valueIndex:(ORInt)v
+{
+   ORInt low = 0,up = _nbValues - 1;
+   while (low <= up) {
+      ORInt mid = (low + up)/2;
+      if (_values[mid]._value == v)
+         return mid;
+      else if (_values[mid]._value > v)
+         up = mid - 1;
+      else low = mid + 1;
+   }
+   return _endOfList;
+}
+
+-(ORStatus) post
+{
+   ORInt cLow = [_c low];
+   ORInt cUp  = [_c up];
+   [_x updateMin:cLow andMax:cUp];
+   ORBounds xb = bounds(_x);
+   _xLow = xb.min;
+   _xUp  = xb.max;
+   ORInt xsz = xb.max - xb.min + 1;
+   ORInt minC = MAXINT;
+   ORInt maxC = MININT;
+   for(ORInt k=xb.min; k <= xb.max;k++) {
+      if (memberDom(_x, k)) {
+         ORInt ck = [_c at:k];
+         minC = minC < ck ? minC : ck;
+         maxC = maxC > ck ? maxC : ck;
+      }
+   }
+   _endOfList = xb.min - 1;   // endOfList marker is min(D) - 1
+   _list = malloc(sizeof(ORInt)*xsz);
+   _list -= _xLow;
+   ORInt* sorted = malloc(sizeof(ORInt)*xsz);
+   ORInt nbs = 0;
+   for(ORInt k=xb.min; k <= xb.max;k++)
+      if (memberDom(_x, k))
+         sorted[nbs++] = [_c at:k];
+   qsort(sorted, nbs,sizeof(ORInt), (int(*)(const void*,const void*))&compareInt32);
+   // note that sorted may contain duplicates (which are now consecutive after the sort)
+   _values = malloc(sizeof(struct EltACPair)*xsz);
+   _nbValues = 0;
+   ORInt lastValue = sorted[0] - 1;
+   for(ORInt k =0 ; k < nbs ; k++) {
+      if (sorted[k] != lastValue) {
+         _values[_nbValues]._value = sorted[k];
+         _values[_nbValues]._idx   = _endOfList; // next index in list supporting this value (initially empty)
+         _values[_nbValues]._support = makeTRInt(_trail, 1);
+         _nbValues++;
+      } else  // duplicates cause an increase in the number of supports (# duplicates == # supports)
+         assignTRInt(&_values[_nbValues - 1]._support,_values[_nbValues - 1]._support._val + 1,_trail);
+      lastValue = sorted[k];
+   }
+   [_y updateMin:minC andMax:maxC];                   // update the bounds of the output variable first.
+   ORBounds yb = bounds(_y);
+   ORInt sortedIdx = 0;
+   assert(yb.min == sorted[0]);
+   assert(yb.max == sorted[nbs-1]);
+   for(ORInt i=yb.min;i <= yb.max;i++) {              // scan the output variable to eliminate unsupported values
+      while (sorted[sortedIdx] < i) sortedIdx++;
+      if (sorted[sortedIdx] > i)
+         removeDom(_y,i);
+      while (sorted[sortedIdx] == i && sortedIdx < nbs) sortedIdx++;
+   }
+   free(sorted);
+  
+   for(ORInt k=_xLow;k <= _xUp;k++) {                 // scan the index variable
+      if (memberDom(_x, k)) {                         // for each valid index value (k)
+         ORInt listIdx = [self valueIndex:[_c at:k]]; // find start of list of supports for value ck
+         _list[k] = _values[listIdx]._idx;            // Add k to the list of indices supporting ck
+         _values[listIdx]._idx  = k;                  // update the head-of-list
+      }
+   }
+   for(ORInt k=0;k < _nbValues;k++) {                 // scan all the values appearing in array c (in range)
+      if (!memberDom(_y,_values[k]._value)) {         // if the value is not in the domain of result var.
+         ORInt ptr = _values[k]._idx;                 // get the list of supporting indices.
+         while (ptr != _endOfList) {                  // loop over all
+            removeDom(_x, ptr);                       // remove each from the index variable.
+            ptr = _list[ptr];                         // go to the next one.
+         }
+      }
+   }
+   if (!bound(_y)) {
+      [_y whenLoseValue:self do:^(ORInt v) {
+         ORInt listIdx = [self valueIndex:v];         // get the index of the value in the value DS.
+         ORInt ptr = _values[listIdx]._idx;           // get the list of supporting indices.
+         while (ptr != _endOfList) {                  // loop over all
+            removeDom(_x, ptr);                       // remove each from the index variable.
+            ptr = _list[ptr];                         // go to the next one.
+         }
+      }];
+   }
+   if (!bound(_x)) {
+      [_x whenLoseValue:self do:^(ORInt v) {
+         ORInt listIdx = [self valueIndex:[_c at:v]]; // get the index of the value in the value DS.
+         assignTRInt(&_values[listIdx]._support, _values[listIdx]._support._val - 1, _trail);
+         if (_values[listIdx]._support._val == 0)
+            removeDom(_y, _values[listIdx]._value);
+      }];
+   }
+   return ORSuspend;
+}
+
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+}
+-(ORUInt)nbUVars
+{
+   return !bound(_x) && !bound(_y);
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPElementCstAC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
+   return buf;
+}
+@end
+
 @implementation CPElementVarBC
 -(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y   // y == z[x]
 {

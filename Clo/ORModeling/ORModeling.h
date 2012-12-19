@@ -29,6 +29,7 @@
      onConstraints:(void(^)(id<ORObject>))doCons
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
+-(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;

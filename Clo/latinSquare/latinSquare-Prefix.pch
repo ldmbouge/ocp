@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'latinSquare' target in the 'latinSquare' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

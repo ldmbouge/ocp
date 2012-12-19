@@ -41,6 +41,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORExpr>) abs;
 -(id<ORExpr>) plusi: (ORInt) e;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
+-(id<ORExpr>) subi: (ORInt) e;
 -(id<ORExpr>) sub: (id<ORExpr>) e;
 -(id<ORExpr>) mul: (id<ORExpr>) e;
 -(id<ORExpr>) muli: (ORInt) e;

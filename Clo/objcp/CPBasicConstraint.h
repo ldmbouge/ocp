@@ -149,6 +149,17 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
+@interface CPGEqualc : CPCoreConstraint<NSCoding> { // x >= c
+@private
+   CPIntVarI* _x;
+   ORInt      _c;
+}
+-(id) initCPGEqualc:(id)x and:(ORInt) c;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPMultBC : CPCoreConstraint<NSCoding> { // z == x * y
    CPIntVarI* _x;
    CPIntVarI* _y;

@@ -540,10 +540,13 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 +(CPIntVarI*) initCPIntVar: (id<CPEngine>) fdm low: (ORInt) low up: (ORInt) up
 {
    CPIntVarI* x = nil;
+   ORLong sz = (ORLong)up - low + 1;
    if (low==0 && up==1)
-      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,0,1)];     // binary domain. Use bounds only.
+   else if (sz >= 65536)
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm bounds: RANGE(fdm,low,up)];  // large domain. Fall back to bounds only.
    else
-      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];
+      x = [[CPIntVarI alloc] initCPExplicitIntVar: fdm low: low up: up];            // Smallish domain. Use bit-vectors.
    x->_isBool = (low == 0 && up==1);
    return x;
 }
@@ -1382,9 +1385,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (!_tracksLoseEvt) return ORSuspend;
+   ORStatus ok;
    for(ORInt i=0;i<_nb;i++) {
-      //[_tab[i] loseValEvt:val];
-      ORStatus ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
+      //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
+      if (_loseValIMP[i])
+         ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
       if (!ok) return ok;
    }
    return ORSuspend;

@@ -376,6 +376,12 @@
    [[x tracker] trackObject:o];
    return o;   
 }
++(id<ORConstraint>) gEqualc: (id<CPIntVar>)x to: (ORInt) c
+{
+   id<ORConstraint> o = [[CPGEqualc alloc] initCPGEqualc:x and:c];
+   [[x tracker] trackObject:o];
+   return o;
+}
 +(id<ORConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y
 {
    id<CPIntVar> yp = [self intVar:y shift:-1];
@@ -413,9 +419,18 @@
    [[x tracker] trackObject:o];
    return o;   
 }
-+(id<ORConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<CPIntVar>)y
++(id<ORConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<CPIntVar>)y annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[CPElementCstBC alloc] initCPElementBC:x indexCstArray:c equal:y];
+   id<ORConstraint> o = nil;
+   switch(n) {
+      case DomainConsistency:
+         //o = [[CPElementCstBC alloc] initCPElementBC:x indexCstArray:c equal:y];
+         o = [[CPElementCstAC alloc] initCPElementAC:x indexCstArray:c equal:y]; // tocheck
+         break;
+      default:
+         o = [[CPElementCstBC alloc] initCPElementBC:x indexCstArray:c equal:y];
+         break;
+   }
    [[x tracker] trackObject:o];
    return o;
 }

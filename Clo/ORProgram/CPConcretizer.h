@@ -47,6 +47,7 @@
 -(id) visitEqualc: (id<OREqualc>)c engine: (id<CPEngine>) engine;
 -(id) visitNEqualc: (id<ORNEqualc>)c engine: (id<CPEngine>) engine;
 -(id) visitLEqualc: (id<ORLEqualc>)c engine: (id<CPEngine>) engine;
+-(id) visitGEqualc: (id<ORGEqualc>)c engine: (id<CPEngine>) engine;
 -(id) visitEqual: (id<OREqual>)c engine: (id<CPEngine>) engine;
 -(id) visitNEqual: (id<ORNEqual>)c engine: (id<CPEngine>) engine;
 -(id) visitLEqual: (id<ORLEqual>)c engine: (id<CPEngine>) engine;
@@ -94,6 +95,7 @@
 -(id) visitExprNEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprLEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprSumI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
+-(id) visitExprProdI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprAbsI:(id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprCstSubI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprDisjunctI:(id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -138,6 +140,7 @@
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
+-(void) visitGEqualc: (id<ORGEqualc>)c;
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
@@ -186,6 +189,7 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
+-(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
@@ -228,6 +232,7 @@
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
+-(void) visitGEqualc: (id<ORGEqualc>)c;
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
@@ -275,6 +280,7 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
+-(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;

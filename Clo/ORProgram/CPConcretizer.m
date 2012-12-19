@@ -291,15 +291,25 @@
       [cstr setImpl: concreteCstr];
    }
 }
--(void) visitEqual: (id<OREqual>) cstr
+-(void) visitGEqualc: (id<ORGEqualc>) cstr
 {
    if ([cstr dereference] == NULL) {
       id<ORIntVar> left = [cstr left];
-      id<ORIntVar> right = [cstr right];
       ORInt cst = [cstr cst];
       [left visit: self];
-      [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory equal: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
+      id<CPConstraint> concreteCstr = [CPFactory gEqualc: (id<CPIntVar>) [left dereference]  to: cst];
+      [cstr setImpl: concreteCstr];
+   }
+}
+-(void) visitEqual: (id<OREqual>) cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPIntVar> left  = [self concreteVar:[cstr left]];
+      id<CPIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory equal: left
+                                                    to: right
+                                                  plus: [cstr cst]
+                                            annotation: [cstr annotation]];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -460,6 +470,7 @@
       id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) [idx dereference]
                                              idxCstArray: array
                                                    equal: (id<CPIntVar>) [res dereference]
+                                              annotation: [cstr annotation]
                                        ];
      [cstr setImpl: concreteCstr];
    }
@@ -760,6 +771,9 @@
 -(void) visitExprSumI: (id<ORExpr>) e
 {
    
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
 }
 -(void) visitExprAbsI:(id<ORExpr>) e
 {
@@ -1561,7 +1575,11 @@
 //}
 //-(void) visitExprSumI: (id<ORExpr>) e
 //{
-//   
+//
+//}
+//-(void) visitExprProdI: (id<ORExpr>) e
+//{
+//
 //}
 //-(void) visitExprAbsI:(id<ORExpr>) e
 //{
@@ -1661,6 +1679,10 @@
 //   _result = [ORFactory expr: leftc leq: rightc];
 //}
 //-(void) visitExprSumI: (ORExprSumI*) e
+//{
+//   [[e expr] visit: self];  // we can remove the sum node. It serves no purpose.
+//}
+//-(void) visitExprProdI: (ORExprProdI*) e
 //{
 //   [[e expr] visit: self];  // we can remove the sum node. It serves no purpose.
 //}

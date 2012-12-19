@@ -55,6 +55,12 @@
 -(ORInt) cst;
 @end
 
+@interface ORGEqualc : ORConstraintI<ORGEqualc>
+-(ORGEqualc*)initORGEqualc:(id<ORIntVar>)x geqi:(ORInt)c;
+-(id<ORIntVar>) left;
+-(ORInt) cst;
+@end
+
 @interface OREqual : ORConstraintI<OREqual>
 -(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c;
 -(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
@@ -136,10 +142,11 @@
 @end
 
 @interface ORElementCst : ORConstraintI<ORElementCst>
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n; // y[idx] == z
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
 @end
 
 @interface ORElementVar : ORConstraintI<ORElementVar>

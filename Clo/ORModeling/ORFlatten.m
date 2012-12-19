@@ -54,6 +54,7 @@
 -(void) visitEqualc: (id<OREqualc>)c  {}
 -(void) visitNEqualc: (id<ORNEqualc>)c  {}
 -(void) visitLEqualc: (id<ORLEqualc>)c  {}
+-(void) visitGEqualc: (id<ORGEqualc>)c  {}
 -(void) visitEqual: (id<OREqual>)c  {}
 -(void) visitNEqual: (id<ORNEqual>)c  {}
 -(void) visitLEqual: (id<ORLEqual>)c  {}
@@ -101,6 +102,7 @@
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
 -(void) visitExprSumI: (id<ORExpr>) e  {}
+-(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}
@@ -135,6 +137,7 @@
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
+-(void) visitGEqualc: (id<ORGEqualc>)c;
 -(void) visitEqual: (id<OREqual>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
@@ -264,14 +267,14 @@
       case ORRBad: assert(NO);
       case ORREq: {
          if ([terms size] != 0) {
-            [terms postEQZ:model annotation:DomainConsistency];
+            [terms postEQZ:model annotation:note];
          }
       }break;
       case ORRNEq: {
-         [terms postNEQZ:model annotation:DomainConsistency];
+         [terms postNEQZ:model annotation:note];
       }break;
       case ORRLEq: {
-         [terms postLEQZ:model annotation:DomainConsistency];
+         [terms postLEQZ:model annotation:note];
       }break;
       default:
          assert(terms == nil);
@@ -396,6 +399,10 @@
    [_theModel addConstraint:c];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitGEqualc: (id<ORGEqualc>)c
 {
    [_theModel addConstraint:c];
 }
