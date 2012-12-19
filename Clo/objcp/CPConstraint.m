@@ -327,9 +327,7 @@
       case DomainConsistency:
          o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
       default: 
-         // TOFIX
-         o = [[CPEqual3DC alloc] initCPEqual3DC:y plus:z equal:x];break;
-         //o = [[CPEqualBC alloc] initCPEqualBC:y and:z and:x];break;
+         o = [[CPEqual3BC alloc] initCPEqual3BC:y plus:z equal:x];break;
    }
    [[x tracker] trackObject:o];
    return o;   

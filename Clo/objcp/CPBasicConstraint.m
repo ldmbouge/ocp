@@ -320,6 +320,77 @@
 }
 @end
 
+@implementation CPEqual3BC
+-(id) initCPEqual3BC: (id) x plus: (id) y  equal: (id) z
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y))
+      [_y whenChangeBoundsPropagate:self];
+   if (!bound(_z))
+      [_z whenChangeBoundsPropagate:self];
+   [self propagate];
+   return ORSuspend;
+}
+-(void)propagate
+{
+   do {
+      _todo = CPChecked;
+      if (bound(_x)) {
+         if (bound(_y)) {
+            bindDom(_z, minDom(_x) + minDom(_y));
+         } else if (bound(_z)) {
+            bindDom(_y,minDom(_z) - minDom(_x));
+         } else {
+            ORInt c = minDom(_x);
+            [_y updateMin:minDom(_z) - c andMax:maxDom(_z) - c];
+            [_z updateMin:minDom(_y) + c andMax:maxDom(_y) + c];
+         }
+      } else if (bound(_y)) {  // we are here: bound(_x) is FALSE
+         if (bound(_z)) {
+            bindDom(_x,minDom(_z) - minDom(_y));
+         } else {
+            ORInt c = minDom(_y);
+            [_x updateMin:minDom(_z) - c andMax:maxDom(_z) - c];
+            [_z updateMin:minDom(_x) + c andMax:maxDom(_x) + c];
+         }
+      } else if (bound(_z)) {  // bound(_x) is FALSE AND bound(_y) is FALSE
+         ORInt c = minDom(_z);
+         [_x updateMin:c - maxDom(_y) andMax:c - minDom(_y)];
+         [_y updateMin:c - maxDom(_x) andMax:c - minDom(_x)];
+      } else {
+         ORBounds xb = bounds(_x);
+         ORBounds yb = bounds(_y);
+         ORBounds zb = bounds(_z);
+         [_z updateMin:xb.min + yb.min andMax:xb.max + yb.max];
+         [_x updateMin:zb.min - yb.max andMax:zb.max - yb.min];
+         [_y updateMin:zb.min - xb.max andMax:zb.max - xb.min];
+      }
+   } while (_todo == CPTocheck);
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];   
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_z bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPEqual3BC:%02d %@ + %@ == %@>",_name,_x,_y,_z];
+}
+@end
+
 @implementation CPEqual3DC
 -(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z
 {
