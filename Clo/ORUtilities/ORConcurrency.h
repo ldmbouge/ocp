@@ -47,3 +47,8 @@
 +(id<ORBarrier>)  barrier: (ORInt) nb;
 +(void) pumpEvents;
 @end
+
+@interface NSThread (ORData)
++(void) setThreadID:(ORInt)tid;
++(ORInt) threadID;
+@end

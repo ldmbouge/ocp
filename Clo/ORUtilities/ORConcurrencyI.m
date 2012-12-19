@@ -416,3 +416,24 @@ static void init_eventlist()
     return a;
 }
 @end
+
+@implementation NSThread (ORData)
+
+static pthread_key_t threadIDKey;
+static pthread_once_t block = PTHREAD_ONCE_INIT;
+
+static void init_pthreads_key()
+{
+   pthread_key_create(&threadIDKey,NULL);
+}
++(void)setThreadID:(ORInt)tid
+{
+   pthread_once(&block,init_pthreads_key);
+   pthread_setspecific(threadIDKey,(void*)tid);
+}
++(ORInt)threadID
+{
+   ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
+   return tid;
+}
+@end

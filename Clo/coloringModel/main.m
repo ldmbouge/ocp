@@ -62,10 +62,10 @@ int main(int argc, const char * argv[])
       
       [model minimize: m];
       
-      id<CPProgram> cp = [ORFactory createCPProgram: model];
+//      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPSemanticProgramDFS> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
-//      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
+     id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
       [cp solve: ^{
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
@@ -80,7 +80,7 @@ int main(int argc, const char * argv[])
             }];
          }];
          [cp label:m with:[m min]];
-         NSLog(@"coloring with: %d colors %p",[m value],[NSThread currentThread]);
+         NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
       }];
       
       ORLong endTime = [ORRuntimeMonitor wctime];

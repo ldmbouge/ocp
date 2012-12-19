@@ -81,8 +81,8 @@
 //@end
 //
 //@interface NSThread (ORData)
-//+(void)setThreadID:(ORInt)tid;
-//+(ORInt)threadID;
+//+(void) setThreadID:(ORInt)tid;
+//+(ORInt) threadID;
 //@end
 //
 //

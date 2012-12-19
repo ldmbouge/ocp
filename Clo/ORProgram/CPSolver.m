@@ -514,15 +514,15 @@
    CPSolver* _solver;
    id<ORVisitor> _concretizer;
 }
--(ORRTModel*)init:(CPSolver*)solver;
--(void)addVariable:(id<ORVar>)var;
--(void)addObject:(id)object;
--(void)addConstraint:(id<ORConstraint>)cstr;
--(void)minimize:(id<ORIntVar>)x;
--(void)maximize:(id<ORIntVar>)x;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
--(void) trackConstraint:(id)obj;
+-(ORRTModel*) init:(CPSolver*)solver;
+-(void)       addVariable:(id<ORVar>)var;
+-(void)       addObject:(id)object;
+-(void)       addConstraint:(id<ORConstraint>)cstr;
+-(void)       minimize:(id<ORIntVar>)x;
+-(void)       maximize:(id<ORIntVar>)x;
+-(void)       trackObject: (id) obj;
+-(void)       trackVariable: (id) obj;
+-(void)       trackConstraint:(id)obj;
 @end
 
 @implementation ORRTModel

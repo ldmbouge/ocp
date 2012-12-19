@@ -149,9 +149,26 @@
       id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
       [c setImpl: ba];
    }
+   
+   // I need to create k solvers
+   // I also need to create the threads to run them
+   // I also need to associate the number to the thread id
    id<CPProgram> cp = [cpprogram at: 0];
    [ORFactory createCPProgram: model program: cp];
    return cpprogram;
 }
 @end
 
+/*
+-(void) solveAll:(ORClosure)search
+{
+   for(ORInt i=0;i<_nbWorkers;i++) {
+      [NSThread detachNewThreadSelector:@selector(workerSolve:)
+                               toTarget:self
+                             withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
+                                         [search copy],nil]];
+   }
+   [self waitWorkers]; // wait until all the workers are done.
+   
+}
+*/
