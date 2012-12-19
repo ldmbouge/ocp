@@ -267,14 +267,14 @@
       case ORRBad: assert(NO);
       case ORREq: {
          if ([terms size] != 0) {
-            [terms postEQZ:model annotation:DomainConsistency];
+            [terms postEQZ:model annotation:note];
          }
       }break;
       case ORRNEq: {
-         [terms postNEQZ:model annotation:DomainConsistency];
+         [terms postNEQZ:model annotation:note];
       }break;
       case ORRLEq: {
-         [terms postLEQZ:model annotation:DomainConsistency];
+         [terms postLEQZ:model annotation:note];
       }break;
       default:
          assert(terms == nil);

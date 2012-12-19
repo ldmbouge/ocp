@@ -251,44 +251,41 @@
 }
 -(ORStatus) post
 {
-   ORStatus ok = ORSuspend;
    if (bound(_x)) {
-      ok = [_y bind:minDom(_x) - _c];
+      [_y bind:minDom(_x) - _c];
    } else if (bound(_y)) {
-      ok = [_x bind:minDom(_y) + _c];
+      [_x bind:minDom(_y) + _c];
    } else {
-      ok = [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
-      if (ok) [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
-      if (ok) {
-         ORBounds bx = bounds(_x);
-         ORBounds by = bounds(_y);
-         for(ORInt i = bx.min; (i <= bx.max) && ok; i++)
-            if (![_x member:i])
-               ok = [_y remove:i - _c];
-         for(ORInt i = by.min; (i <= by.max) && ok; i++)
-            if (![_y member:i])
-               ok = [_x remove:i + _c];
-      }
-      if (ok) {
-         [_x whenLoseValue:self do:^(ORInt val) {
-            [_y remove: val - _c];
-         }];
-         [_y whenLoseValue:self do:^(ORInt val) {
-            [_x remove: val + _c];
-         }];
-         [_x whenBindDo:^{
-            [_y bind:minDom(_x) - _c];
-         } onBehalf:self];
-         [_y whenBindDo:^{
-            [_x bind:minDom(_x) + _c];
-         } onBehalf:self];
-      }
+      [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
+      [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
+      ORBounds bx = bounds(_x);
+      ORBounds by = bounds(_y);
+      for(ORInt i = bx.min;i <= bx.max; i++)
+         if (![_x member:i])
+            [_y remove:i - _c];
+      for(ORInt i = by.min; i <= by.max; i++)
+         if (![_y member:i])
+            [_x remove:i + _c];
+
+      [_x whenLoseValue:self do:^(ORInt val) {
+         [_y remove: val - _c];
+      }];
+      [_y whenLoseValue:self do:^(ORInt val) {
+         [_x remove: val + _c];
+      }];
+      [_x whenBindDo:^{
+         [_y bind:minDom(_x) - _c];
+      } onBehalf:self];
+      [_y whenBindDo:^{
+         [_x bind:minDom(_y) + _c];
+      } onBehalf:self];
    }
-   [self propagate];
+   //[self propagate];
    return ORSuspend;
 }
 -(void) propagate
 {
+   assert(false);
    do {
       _todo = CPChecked;
       if (bound(_x)) {
@@ -296,7 +293,7 @@
       } else if (bound(_y)) {
          [_x bind:minDom(_y) + _c];
       } else {
-         [_x updateMin:[_y min]+_c andMax:[_y max] + _c];
+         [_x updateMin:[_y min]+_c   andMax:[_y max] + _c];
          [_y updateMin:[_x min] - _c andMax:[_x max] - _c];
       }
    } while (_todo == CPTocheck);

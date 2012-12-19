@@ -304,12 +304,12 @@
 -(void) visitEqual: (id<OREqual>) cstr
 {
    if ([cstr dereference] == NULL) {
-      id<ORIntVar> left = [cstr left];
-      id<ORIntVar> right = [cstr right];
-      ORInt cst = [cstr cst];
-      [left visit: self];
-      [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory equal: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
+      id<CPIntVar> left  = [self concreteVar:[cstr left]];
+      id<CPIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr = [CPFactory equal: left
+                                                    to: right
+                                                  plus: [cstr cst]
+                                            annotation: [cstr annotation]];
       [cstr setImpl: concreteCstr];
    }
 }
@@ -470,6 +470,7 @@
       id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) [idx dereference]
                                              idxCstArray: array
                                                    equal: (id<CPIntVar>) [res dereference]
+                                              annotation: [cstr annotation]
                                        ];
      [cstr setImpl: concreteCstr];
    }

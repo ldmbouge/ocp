@@ -30,6 +30,18 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPElementCstAC : CPCoreConstraint { // y == c[x]
+   CPIntVarI*     _x;
+   CPIntVarI*     _y;
+   id<ORIntArray> _c;
+}
+-(id) initCPElementAC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y;
+-(void) dealloc;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPElementVarBC : CPCoreConstraint<NSCoding> { // y == z[x]
 @private
    CPIntVarI*        _x;

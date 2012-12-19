@@ -142,10 +142,11 @@
 @end
 
 @interface ORElementCst : ORConstraintI<ORElementCst>
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z; // y[idx] == z
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n; // y[idx] == z
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
 @end
 
 @interface ORElementVar : ORConstraintI<ORElementVar>

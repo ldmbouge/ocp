@@ -31,13 +31,6 @@ int main(int argc, const char * argv[])
       id<ORIntVarMatrix> y = [ORFactory intVarMatrix:model range:R :R domain:D];
       id<ORIntVarMatrix> z = [ORFactory intVarMatrix:model range:R :R domain:R2];
 
-      for(ORInt i=0;i <= n-1 ; i++) {
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:i :j]) annotation:DomainConsistency]];
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:j :i]) annotation:DomainConsistency]];
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:i :j]) annotation:DomainConsistency]];
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:j :i]) annotation:DomainConsistency]];
-      }
-      [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [z at:i :j]) annotation:DomainConsistency]];
       
       id<ORIntArray> m1 = [ORFactory intArray:model range:R2 with:^ORInt(ORInt i) { return 1 + i % n;}];
       id<ORIntArray> m2 = [ORFactory intArray:model range:R2 with:^ORInt(ORInt i) { return 1 + i / n;}];
@@ -49,6 +42,16 @@ int main(int argc, const char * argv[])
             [model add:[[z at:i :j] eq: [[[[[x at:i :j] subi: 1] muli:n] plus: [y at:i :j]] subi: 1]] annotation:DomainConsistency];
          }
       }
+
+      for(ORInt i=0;i <= n-1 ; i++) {
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:i :j]) annotation:DomainConsistency]];
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:j :i]) annotation:DomainConsistency]];
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:i :j]) annotation:DomainConsistency]];
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:j :i]) annotation:DomainConsistency]];
+      }
+      [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [z at:i :j]) annotation:DomainConsistency]];
+
+      
       for(ORInt i=1;i<=n-1;i++)
          [model add:[ORFactory lex:All(model, ORIntVar, j, R, [x at:i :j]) leq:All(model, ORIntVar, j, R, [y at:i-1 :j])]];
       
@@ -56,6 +59,13 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> av = All2(model, ORIntVar, i, R, j, R, [z at:i :j]);
       id<CPHeuristic> h = [ORFactory createFF:cp restricted:av];
       [cp solve:^{
+         /*int zf[25] = { 1, 23, 17,  9, 10, 7, 15,  3 ,11, 24,13,  4,  5, 22, 16, 19, 12, 21 , 0 , 8 ,20 , 6 ,14 ,18 , 2};
+         for(ORInt i=0;i<25;i++) {
+            NSLog(@"try... %d",i);
+            [cp label:av[i] with:zf[i]];
+            NSLog(@"done... %d",i);
+         }*/
+         
          [cp forall:[av range] suchThat:^bool(ORInt i) { return ![av[i] bound];} orderedBy:^ORInt(ORInt i) { return [av[i] domsize];} do:^(ORInt i) {
             [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) { return [av[i] member:j];} in:^(ORInt j) {
                [cp label:av[i] with:j];
@@ -86,6 +96,18 @@ int main(int argc, const char * argv[])
                [buf appendString:@"|"];
                NSLog(@"%@",buf);
             }
+            
+            NSLog(@"z=");
+            for(ORInt i=0;i<=n-1;i++) {
+               NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+               [buf appendString:@"\t|"];
+               for(ORInt j=0;j<=n-1;j++) {
+                  [buf appendFormat:@"%2d ",[[z at:i :j] value]];
+               }
+               [buf appendString:@"|"];
+               NSLog(@"%@",buf);
+            }
+            
          }
       }];
        

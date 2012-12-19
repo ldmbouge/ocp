@@ -830,7 +830,7 @@ struct CPVarPair {
    ORInt ub = [e max];
    if (_rv == nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
-   [_model addConstraint:[ORFactory element:_model var:oV idxCstArray:[e array] equal:_rv]];
+   [_model addConstraint:[ORFactory element:_model var:oV idxCstArray:[e array] equal:_rv annotation:_c]];
    [lT release];
 }
 

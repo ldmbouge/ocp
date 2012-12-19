@@ -120,6 +120,7 @@
 -(id<ORIntArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
 @end
 
 @protocol ORElementVar <ORConstraint>
