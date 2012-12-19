@@ -41,6 +41,8 @@ static id vLossCache = nil;
 
 +(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list
 {
+   // [ldm] This is an effective optimization, but it is not thread-friendly.
+   // Should use TLS to store the vLossCache.
    id ptr = vLossCache;
    if (ptr)
       vLossCache = *(id*)vLossCache;
