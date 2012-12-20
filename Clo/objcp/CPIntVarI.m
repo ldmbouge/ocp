@@ -434,7 +434,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    mList[k] = NULL;
    [_fdm scheduleAC3:mList];
    if (_net._ac5._val) {
-        [_fdm scheduleAC5:[[CPValueLossEvent alloc] initValueLoss:val notify:_net._ac5._val]];
+      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
    }
    if (_triggers != nil)
       [_triggers loseValEvt:val solver:_fdm];
@@ -453,6 +453,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    ORStatus s = [_dom updateMin:newMin for:_recv];
    if (s)   s = [_dom updateMax:newMax for:_recv];
    return s;
+//   return [_dom updateMin:newMin andMax:newMax for:_recv];
 }
 
 -(ORStatus) bind: (ORInt) val

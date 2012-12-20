@@ -16,6 +16,8 @@
    id<CPEventNode> _theList;
    ORInt             _theVal;
 }
++(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list;
+-(void)letgo;
 -(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list;
 -(ORInt)execute;
 @end

@@ -18,6 +18,7 @@
 -(void)dealloc;
 -(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+//-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 -(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 

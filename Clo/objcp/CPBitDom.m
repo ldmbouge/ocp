@@ -158,6 +158,35 @@
    }
    return [x changeMaxEvt:nsz sender:self];
 }
+/*
+-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+{
+   if (newMin <= _min._val && newMax >= _max._val) return ORSuspend;
+   newMin = max(newMin,_min._val);
+   newMax = min(newMax,_max._val);
+   if (newMin > _max._val || newMin > newMax || newMax < _min._val)
+      failNow();
+   ORInt oldMin = _min._val;
+   ORInt oldMax = _max._val;
+   ORInt nbr = newMin - _min._val + _max._val - newMax;  // number of values removed.
+   ORInt nsz = _sz._val - nbr;
+   assignTRInt(&_sz,nsz,_trail);
+   assignTRInt(&_min, newMin, _trail);
+   assignTRInt(&_max, newMax, _trail);
+   if ([x tracksLoseEvt:self]) {
+      ORStatus ok = ORSuspend;
+      for(ORInt k=oldMin;k< newMin && ok;k++)
+         ok = [x loseValEvt:k sender:self];
+      for(ORInt k=newMax+1;k<= oldMax && ok;k++)
+         ok = [x loseValEvt:k sender:self];
+      if (!ok) return ok;
+   }
+   ORStatus ok = [x changeMinEvt:nsz sender:self];
+   if (!ok) return ok;
+   ok = [x changeMaxEvt:nsz sender:self];
+   return ok;
+}
+ */
 -(ORStatus)  bind:(ORInt)  val for:(id<CPIntVarNotifier>) x
 {
    if (val < _min._val || val > _max._val)
@@ -537,7 +566,41 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    }
    return [x changeMaxEvt:nsz sender:self];
 }
-
+/*
+-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+{
+   if (newMin <= _min._val && newMax >= _max._val) return ORSuspend;
+   newMin = max(newMin,_min._val);
+   newMax = min(newMax,_max._val);
+   if (newMin > _max._val || newMin > newMax || newMax < _min._val)
+      failNow();
+   ORInt oldMin = _min._val;
+   ORInt oldMax = _max._val;
+   ORInt nbMinLoss = countFrom(self,_min._val,newMin-1);
+   ORInt nbMaxLoss = countFrom(self,newMax+1,_max._val);
+   ORInt nbr = nbMinLoss + nbMaxLoss;                    // number of values removed.
+   ORInt nsz = _sz._val - nbr;
+   assignTRInt(&_sz,nsz,_trail);
+   newMin = findMin(self,newMin);
+   newMax = findMax(self,newMax);
+   assignTRInt(&_min, newMin, _trail);
+   assignTRInt(&_max, newMax, _trail);
+   if ([x tracksLoseEvt:self]) {
+      ORStatus ok = ORSuspend;
+      for(ORInt k=oldMin;k< newMin && ok;k++)
+         if (GETBIT(k))
+            ok = [x loseValEvt:k sender:self];
+      for(ORInt k=newMax+1;k<= oldMax && ok;k++)
+         if (GETBIT(k))
+            ok = [x loseValEvt:k sender:self];
+      if (!ok) return ok;
+   }
+   ORStatus ok = [x changeMinEvt:nsz sender:self];
+   if (!ok) return ok;
+   ok = [x changeMaxEvt:nsz sender:self];
+   return ok;
+}
+*/
 -(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val)
@@ -656,7 +719,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
       CPBitDom* nDom = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up: bd->_imax];
       for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
-            [nDom set:-v at:NO];
+            [nDom set:v at:NO];
          }
       }
       return nDom;
@@ -665,7 +728,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
       CPBitDom* clone = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
       for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
-            [clone set:-v at:NO];
+            [clone set:v at:NO];
          }
       }
       //CPBitDom* clone = [bd copyWithZone:NULL];
