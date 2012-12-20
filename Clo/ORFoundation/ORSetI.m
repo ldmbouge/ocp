@@ -206,7 +206,6 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    return self;
 }
-
 @end
 
 

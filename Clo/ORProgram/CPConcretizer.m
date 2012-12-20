@@ -59,8 +59,11 @@
 }
 -(void) visitIntRange:(id<ORIntRange>)v
 {
-   [v setImpl: v];
+   id<ORIntRange> R = [ORFactory intRange: _engine low: [v low] up:[v up]];
+   [v setImpl: R];
+   [R setImpl: R];
 }
+
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if ([v dereference] == NULL) {
@@ -68,9 +71,11 @@
       [v setImpl: cv];
    }
 }
+
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
 }
+
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    if ([v dereference] == NULL) {
@@ -81,7 +86,6 @@
 
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
-   
    if ([v dereference] == NULL) {
       id<ORIntVar> mBase = [v base];
       [mBase visit: self];

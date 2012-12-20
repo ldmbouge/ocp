@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
 //      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPSemanticProgramDFS> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
-     id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
+      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
       [cp solve: ^{
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {

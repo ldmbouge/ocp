@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
@@ -224,7 +225,7 @@
       [_search optimizeModel: self using: search
                   onSolution: _doOnSol
                       onExit: _doOnExit];
-      printf("Optimal Solution: %d \n",[_objective primalBound]);
+      printf("Optimal Solution: %d %d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search

@@ -12,6 +12,7 @@
 #import "ORDataI.h"
 #import "ORSet.h"
 #import <sys/time.h>
+#import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)
 -(id) dereference
@@ -472,14 +473,14 @@ static ORInt _deterministic;
 }
 -(id) dereference
 {
-   ORInt k = 0;
+   ORInt k = [NSThread threadID];
    if (_array[k] == NULL)
       return NULL;
    return [_array[k] dereference];
 }
 -(void) setImpl: (id) impl
 {
-   ORInt k = 0;
+   ORInt k = [NSThread threadID];
    if (_array[k] == NULL)
       _array[k] = impl;
    else
@@ -487,10 +488,7 @@ static ORInt _deterministic;
 }
 -(id) impl
 {
-   ORInt k = 0;
-   if (_array[k] == NULL)
-      return NULL;
-   return [_array[k] dereference];
+   return self;
 }
 @end
 
