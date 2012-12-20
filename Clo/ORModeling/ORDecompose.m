@@ -38,6 +38,7 @@
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI *)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
@@ -90,6 +91,7 @@
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
@@ -178,6 +180,7 @@ struct CPVarPair {
 -(void) visitExprMulI: (ORExprMulI*) e     {}
 -(void) visitExprModI: (ORExprModI*) e     {}
 -(void) visitExprSumI: (ORExprSumI*) e     {}
+-(void) visitExprProdI: (ORExprProdI*) e   {}
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
@@ -279,6 +282,10 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
 {
    [[e expr] visit:self];
 }
@@ -547,7 +554,7 @@ struct CPVarPair {
          if (_terms[0]._coef == 1)
             return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
          else if (_terms[0]._coef == -1)
-            return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to: _indep]];
+            return [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
          else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
@@ -823,7 +830,7 @@ struct CPVarPair {
    ORInt ub = [e max];
    if (_rv == nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
-   [_model addConstraint:[ORFactory element:_model var:oV idxCstArray:[e array] equal:_rv]];
+   [_model addConstraint:[ORFactory element:_model var:oV idxCstArray:[e array] equal:_rv annotation:_c]];
    [lT release];
 }
 
@@ -840,6 +847,10 @@ struct CPVarPair {
 }
 
 -(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
 {
    [[e expr] visit:self];
 }

@@ -13,6 +13,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPTrigger.h>
 #import "CPIntVarI.h"
 
 @class CPIntVarI;

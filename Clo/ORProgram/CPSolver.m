@@ -380,7 +380,7 @@
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
    id<ORIntVarArray> av = [h allIntVars];
-   id<ORSelect> select = [ORFactory selectRandom: _engine
+   id<ORSelect> select = [ORFactory select: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) { return [h varOrdering:av[i]]; }];
@@ -390,7 +390,7 @@
          return;
       //NSLog(@"Chose variable: %d",i);
       id<ORIntVar> x = av[i];
-      id<ORSelect> valSelect = [ORFactory selectRandom: _engine
+      id<ORSelect> valSelect = [ORFactory select: _engine
                                                  range:RANGE(_engine,[x min],[x max])
                                               suchThat:^bool(ORInt v)    { return [x member:v];}
                                              orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];

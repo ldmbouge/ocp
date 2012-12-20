@@ -423,6 +423,13 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   ORExprProdI* o = [[ORExprProdI alloc] initORExprProdI: tracker over: S suchThat: f of: e];
+   [tracker trackObject: o];
+   return o;
+}
+
 +(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker over: S suchThat: f of: e];
@@ -586,6 +593,12 @@
    [model trackConstraint:o];
    return o;
 }
++(id<ORConstraint>) gEqualc:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (ORInt) c
+{
+   id<ORConstraint> o = [[ORGEqualc alloc] initORGEqualc:x geqi:c];
+   [model trackConstraint:o];
+   return o;
+}
 +(id<ORConstraint>) less:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
    id<ORIntVar> yp = [self intVar:[x tracker] var:y shift:-1];
@@ -619,8 +632,9 @@
    return o;
 }
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y
+                 annotation:(ORAnnotation)note
 {
-   id<ORConstraint> o = [[ORElementCst alloc]  initORElement:x array:c equal:y];
+   id<ORConstraint> o = [[ORElementCst alloc]  initORElement:x array:c equal:y annotation:note];
    [model trackConstraint:o];
    return o;
 }

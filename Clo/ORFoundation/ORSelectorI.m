@@ -59,7 +59,7 @@
 -(ORInt) choose
 {
    float bestFound = MAXFLOAT;
-   float bestRand = MAXFLOAT;
+   ORLong bestRand = 0x7fffffffffffffff;
    ORInt indexFound = MAXINT;
    id<IntEnumerator> ite = [_range enumerator];
    while ([ite more]) {
@@ -72,7 +72,7 @@
             bestRand = [_stream next];
          }
          else if (_randomized && val == bestFound) {
-            float r = [_stream next];
+            ORLong r = [_stream next];
             if (r < bestRand) {
                indexFound = i;
                bestRand = r;

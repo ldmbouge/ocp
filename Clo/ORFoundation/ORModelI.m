@@ -188,6 +188,38 @@
 }
 @end
 
+@implementation ORGEqualc {
+   id<ORIntVar> _x;
+   ORInt        _c;
+}
+-(ORGEqualc*)initORGEqualc:(id<ORIntVar>)x geqi:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ >= %d)",[self class],self,_impl,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitGEqualc:self];
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+@end
+
+
 @implementation OREqual {
    id<ORIntVar> _x;
    id<ORIntVar> _y;
@@ -646,13 +678,15 @@
    id<ORIntVar>   _idx;
    id<ORIntArray> _y;
    id<ORIntVar>   _z;
+   ORAnnotation  _note;
 }
--(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORIntArray>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _idx = idx;
    _y = y;
    _z = z;
+   _note = n;
    return self;
 }
 -(NSString*) description
@@ -677,6 +711,10 @@
 {
    return _z;
 }
+-(ORAnnotation)annotation
+{
+   return _note;
+}
 @end
 
 @implementation ORElementVar {  // y[idx] == z
@@ -692,6 +730,7 @@
    _idx = idx;
    _y = y;
    _z = z;
+   _note = note;
    return self;
 }
 -(NSString*) description

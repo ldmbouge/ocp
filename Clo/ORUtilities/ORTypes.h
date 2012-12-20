@@ -36,11 +36,14 @@ static inline ORInt max(ORInt a,ORInt b) { return a > b ? a : b;}
 #define MAXINT ((ORInt)0x7FFFFFFF)
 #define MININT ((ORInt)0x80000000)
 
+#define FDMAXINT (((ORInt)0x7FFFFFFF)/2)
+#define FDMININT (((ORInt)0x80000000)/2)
+
 #define MAXUNSIGNED ((ORUInt)0xFFFFFFFF)
 #define MINUNSIGNED ((ORUInt)0x0)
 
-static inline ORInt bindUp(ORLong a)   { return (a < (ORLong)MAXINT) ? (ORInt)a : MAXINT;}
-static inline ORInt bindDown(ORLong a) { return (a > (ORLong)MININT) ? (ORInt)a : MININT;}
+static inline ORInt bindUp(ORLong a)   { return (a < (ORLong)FDMAXINT) ? (ORInt)a : FDMAXINT;}
+static inline ORInt bindDown(ORLong a) { return (a > (ORLong)FDMININT) ? (ORInt)a : FDMININT;}
 
 @protocol ORExpr;
 @protocol ORRelation;

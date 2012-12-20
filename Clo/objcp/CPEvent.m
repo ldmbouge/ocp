@@ -11,7 +11,7 @@
 
 #import "CPEvent.h"
 
-//static id vLossCache = nil;
+static id vLossCache = nil;
 
 @implementation CPValueLossEvent
 -(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list
@@ -29,13 +29,34 @@
          trigger(_theVal);
          ++nbP;
       });
-      CFRelease(self);
+      //CFRelease(self);
+      [self letgo];
       return nbP;
    } @catch(ORFailException* ex) {
-      [self release];
+      //[self release];
+      [self letgo];
       @throw;
    }
 }
+
++(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list
+{
+   id ptr = vLossCache;
+   if (ptr)
+      vLossCache = *(id*)vLossCache;
+   else ptr = [super allocWithZone:nil];
+   *(Class*)ptr = self;
+   id rv = [ptr initValueLoss:value notify:list];
+   return rv;
+}
+-(void)letgo
+{
+   *(id*)self = vLossCache;
+   vLossCache = self;
+   return;
+   [super dealloc];
+}
+
 /*
 +(id)allocWithZone:(NSZone *)zone
 {

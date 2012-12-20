@@ -63,6 +63,7 @@
 -(void) visitEqualc: (id<OREqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitNEqualc: (id<ORNEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitLEqualc: (id<ORLEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitGEqualc: (id<ORGEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitEqual: (id<OREqual>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitNEqual: (id<ORNEqual>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitLEqual: (id<ORLEqual>)c  { _result = [ORFactory undefinedIntRange]; }
@@ -126,9 +127,15 @@
 -(void) visitExprEqualI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprNEqualI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprLEqualI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
--(void) visitExprSumI: (id<ORExpr>) e  {
-    ORExprSumI* exprSum = (ORExprSumI*)e;
-    [self evaluateExpr: [exprSum expr]];
+-(void) visitExprSumI: (id<ORExpr>) e
+{
+    ORExprSumI* expr = (ORExprSumI*)e;
+    [self evaluateExpr: [expr expr]];
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+   ORExprProdI* expr = (ORExprProdI*)e;
+   [self evaluateExpr: [expr expr]];
 }
 -(void) visitExprAbsI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprCstSubI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }

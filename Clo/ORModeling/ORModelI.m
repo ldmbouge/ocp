@@ -60,6 +60,22 @@
 {
    return _objective;
 }
+-(id<ORIdArray>)intVars
+{
+   __block ORInt cnt = 0;
+   [_vars enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      cnt += [obj conformsToProtocol:@protocol(ORIntVar)];
+   }];
+   id<ORIdArray> rv = [ORFactory idArray:self range:RANGE(self,0,cnt-1)];
+   cnt = 0;
+   [_vars enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([obj conformsToProtocol:@protocol(ORIntVar)]) {
+         [rv set:obj at:cnt];
+         cnt++;
+      }
+   }];
+   return rv;
+}
 -(NSArray*) variables
 {
     return [NSArray arrayWithArray: _vars];

@@ -84,6 +84,17 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPEqual3BC : CPCoreConstraint {
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   CPIntVarI* _z;
+}
+-(id) initCPEqual3BC: (id) x plus: (id) y  equal: (id) z;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPEqual3DC : CPCoreConstraint<NSCoding> {
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -144,6 +155,17 @@ typedef int (^intgetter) (void) ;
    ORInt      _c;
 }
 -(id) initCPLEqualc:(id)x and:(ORInt) c;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPGEqualc : CPCoreConstraint<NSCoding> { // x >= c
+@private
+   CPIntVarI* _x;
+   ORInt      _c;
+}
+-(id) initCPGEqualc:(id)x and:(ORInt) c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
