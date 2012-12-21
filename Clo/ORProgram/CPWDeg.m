@@ -97,7 +97,7 @@
       _cv[k - low] = [[_vars at:k] constraints];
    }
    _nbv = len;
-   NSArray* allC = [_solver allConstraints];
+   NSArray* allC = [_solver constraints];
    _nbc = (ORUInt)[allC count];
    _w   = malloc(sizeof(ORUInt)*_nbc);
    _vOfC = malloc(sizeof(id)*_nbc);

@@ -53,10 +53,13 @@ int main(int argc, const char * argv[])
       for(ORInt i=1;i<=n-1;i++)
          [model add:[ORFactory lex:All(model, ORIntVar, j, R, [x at:i :j]) leq:All(model, ORIntVar, j, R, [y at:i-1 :j])]];
       
+      NSLog(@"initial: %@",model);
+      
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       id<ORIntVarArray> av = All2(model, ORIntVar, i, R, j, R, [z at:i :j]);
       id<CPHeuristic> h = [ORFactory createFF:cp restricted:av];
       [cp solve:^{
+         NSLog(@"BASIC: %@",[[cp engine] model]);
          /*int zf[25] = { 1, 23, 17,  9, 10, 7, 15,  3 ,11, 24,13,  4,  5, 22, 16, 19, 12, 21 , 0 , 8 ,20 , 6 ,14 ,18 , 2};
          for(ORInt i=0;i<25;i++) {
             NSLog(@"try... %d",i);

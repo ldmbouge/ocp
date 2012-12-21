@@ -34,7 +34,7 @@
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
--(NSMutableArray*) allVars;
+-(id<ORBasicModel>)model;
 -(id) trail;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;

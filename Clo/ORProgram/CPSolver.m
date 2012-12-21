@@ -198,7 +198,7 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine allVars]];
+      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine variables]];
       [ORConcurrency pumpEvents];
    }
 }

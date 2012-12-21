@@ -218,6 +218,72 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 @end
 
+@interface CPModelI : NSObject<ORBasicModel> {
+   CPEngineI* _engine;
+   ORInt      _printing;
+}
+-(id)initCPModel:(CPEngineI*)e;
+-(NSString*)description;
+@end
+
+@implementation CPModelI
+-(id)initCPModel:(CPEngineI*)e
+{
+   self = [super init];
+   _engine = e;
+   _printing = 0;
+   return self;
+}
+-(id<ORObjectiveFunction>) objective
+{
+   return [_engine objective];
+}
+-(id<ORIntVarArray>)intVars
+{
+   return (id<ORIntVarArray>)[_engine intVars];
+}
+-(NSArray*) variables
+{
+   return [_engine variables];
+}
+-(NSArray*) constraints
+{
+   return [_engine constraints];
+}
+-(NSArray*) objects
+{
+   return [_engine objects];
+}
+-(NSString*)description
+{
+   if (_printing) {
+      return [NSString stringWithFormat:@"model(%p)",self];
+   } else {
+      _printing++;
+      NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
+      [buf appendFormat:@"vars[%ld] = {\n",[[_engine variables] count]];
+      for(id<ORVar> v in [_engine variables])
+         [buf appendFormat:@"\t%@\n",v];
+      [buf appendFormat:@"}\n"];
+      
+      [buf appendFormat:@"objects[%ld] = {\n",[[_engine objects] count]];
+      for(id<ORObject> v in [_engine objects]) {
+         if (![v conformsToProtocol:@protocol(ORConstraint)])
+         [buf appendFormat:@"\t%@\n",v];
+      }
+      [buf appendFormat:@"}\n"];
+      
+      [buf appendFormat:@"cstr[%ld] = {\n",[[_engine constraints] count]];
+      for(id<ORConstraint> c in [_engine constraints])
+         [buf appendFormat:@"\t%@\n",c];
+      [buf appendFormat:@"}\n"];
+      _printing--;
+      return buf;
+   }
+}
+@end
+
+
 @implementation CPEngineI
 -(CPEngineI*) initEngine: (id<ORTrail>) trail
 {
@@ -260,14 +326,19 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return self;
 }
--(NSMutableArray*)allVars
+-(NSMutableArray*)variables
 {
    return _vars;
 }
--(NSMutableArray*)allConstraints
+-(NSMutableArray*)constraints
 {
    return _cStore;
 }
+-(NSMutableArray*) objects
+{
+   return _oStore;
+}
+
 -(ORUInt) nbPropagation
 {
    return _nbpropag;
@@ -538,6 +609,31 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    //printf("Closing CPEngine\n");
    return ORSuspend;
 }
+
+// TOCHECK
+-(id<ORIntVarArray>)intVars
+{
+   __block ORInt nbIntVars = 0;
+   [[self variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([obj conformsToProtocol:@protocol(CPIntVar)])
+         nbIntVars++;
+   }];
+   id<ORIntVarArray> rv = (id<ORIntVarArray>)[ORFactory idArray:self range:RANGE(self,0,nbIntVars-1)];
+   nbIntVars = 0;
+   [[self variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      if ([obj conformsToProtocol:@protocol(CPIntVar)])
+         [rv set:obj at:nbIntVars++];
+   }];
+   return rv;
+}
+
+-(id<ORBasicModel>)model
+{
+   id<ORBasicModel> bm = [[CPModelI alloc] initCPModel:self];
+   [self trackObject:bm];
+   return bm;
+}
+
 
 -(void) clearStatus
 {
