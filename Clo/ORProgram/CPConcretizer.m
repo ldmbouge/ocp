@@ -55,16 +55,20 @@
 
 -(void) visitTrailableInt: (id<ORTrailableInt>) v
 {
-   id<ORTrailableInt> n = [ORFactory trailableInt:_engine value: [v value]];
-   [n makeImpl];
-   [v setImpl: n];
+   if ([v dereference] == NULL) { 
+      id<ORTrailableInt> n = [ORFactory trailableInt:_engine value: [v value]];
+      [n makeImpl];
+      [v setImpl: n];
+   }
 }
 -(void) visitIntSet: (id<ORIntSet>) v
 {
-   id<ORIntSet> i = [ORFactory intSet: _engine];
-   [v copyInto: i];
-   [i makeImpl];
-   [v setImpl: v];
+   if ([v dereference] == NULL) {   
+      id<ORIntSet> i = [ORFactory intSet: _engine];
+      [i makeImpl];
+      [v copyInto: i];
+      [v setImpl: i];
+   }
 }
 -(void) visitIntRange:(id<ORIntRange>)v
 {

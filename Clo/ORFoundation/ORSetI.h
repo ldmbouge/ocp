@@ -17,7 +17,7 @@
 #import "ORAVLTree.h"
 @protocol ORVisitor;
 
-@interface ORIntSetI : ORModelingObjectI<ORIntSet>
+@interface ORIntSetI : ORDualUseObjectI<ORIntSet>
 
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;

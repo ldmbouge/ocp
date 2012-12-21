@@ -50,6 +50,9 @@ int main(int argc, const char * argv[])
       
       id<ORIntVarArray> c  = [ORFactory intVarArray:model range:V domain: V];
       id<ORIntVar>      m  = [ORFactory intVar:model domain:V];
+      id<ORIntSetArray> sa = [ORFactory intSetArray: model range: V];
+      sa[1] = [ORFactory intSet: model];
+      [sa[1] insert: 5];
       for(ORInt i=1;i<=nbv;i++)
          [model add: [c[i] leq: m]];
       for (ORInt i=1; i<=nbv; i++) {
