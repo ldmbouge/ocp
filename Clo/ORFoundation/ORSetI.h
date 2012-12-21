@@ -35,7 +35,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : ORModelingObjectI<ORIntRange>
+@interface ORIntRangeI : ORDualUseObjectI<ORIntRange>
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;

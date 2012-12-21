@@ -745,8 +745,6 @@
 		B1A0124C15CCAE73001ED0D4 /* ORTracer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124A15CCAE71001ED0D4 /* ORTracer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
 		B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0A5F615CDAB42005992E7 /* CPData.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1A8E4E1162A15F300F26748 /* CPPoster.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A8E4DF162A15F300F26748 /* CPPoster.h */; };
-		B1A8E4E2162A15F300F26748 /* CPPoster.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A8E4E0162A15F300F26748 /* CPPoster.m */; };
 		B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
 		B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AAA338164AADAD00CE9AED /* ORObject.h */; };
 		B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA339164AADAD00CE9AED /* ORObject.m */; };
@@ -3434,8 +3432,6 @@
 		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1A0124B15CCAE72001ED0D4 /* ORTracer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORTracer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1A0A5F615CDAB42005992E7 /* CPData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		B1A8E4DF162A15F300F26748 /* CPPoster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPPoster.h; sourceTree = "<group>"; };
-		B1A8E4E0162A15F300F26748 /* CPPoster.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPPoster.m; sourceTree = "<group>"; };
 		B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPMultiStartSolver.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1AAA338164AADAD00CE9AED /* ORObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORObject.h; sourceTree = "<group>"; };
 		B1AAA339164AADAD00CE9AED /* ORObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORObject.m; sourceTree = "<group>"; };
@@ -4390,13 +4386,11 @@
 				B17832FB161F5FCC00C7298D /* ORConcretizer.m */,
 				5B57E5E8161F2DB100DB249A /* CPConcretizer.h */,
 				5B57E5E9161F2DB100DB249A /* CPConcretizer.m */,
-				B1A8E4DF162A15F300F26748 /* CPPoster.h */,
-				B1A8E4E0162A15F300F26748 /* CPPoster.m */,
 				5B681189161F98FB00F4480F /* CPProgram.h */,
+				B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */,
 				B17832FE161F636A00C7298D /* CPSolver.h */,
 				B17832FF161F636A00C7298D /* CPSolver.m */,
 				B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */,
-				B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
 				B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */,
@@ -5792,7 +5786,6 @@
 				5B68119D161F99C700F4480F /* ORConcretizer.h in Headers */,
 				5B68119F161F99C700F4480F /* CPSolver.h in Headers */,
 				5B6811A1161F99C700F4480F /* ORParCPConcretizer.h in Headers */,
-				B1A8E4E1162A15F300F26748 /* CPPoster.h in Headers */,
 				5B94406C16319096006528DE /* CPProgram.h in Headers */,
 				5B846926163856B300F4D749 /* CPDDeg.h in Headers */,
 				5B846927163856B300F4D749 /* CPFirstFail.h in Headers */,
@@ -7574,7 +7567,6 @@
 				5B6811A0161F99C700F4480F /* CPSolver.m in Sources */,
 				5B6811A2161F99C700F4480F /* ORParCPConcretizer.m in Sources */,
 				B1C4F447161F9CBB0010A5C8 /* CPProgramI.m in Sources */,
-				B1A8E4E2162A15F300F26748 /* CPPoster.m in Sources */,
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,

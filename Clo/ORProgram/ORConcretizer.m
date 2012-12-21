@@ -82,6 +82,7 @@
    [flatModel visit: concretizer];
    [concretizer release];
    
+   /*
    id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
    NSArray* Constraints = [flatModel constraints];
    id<ORObjectiveFunction> obj = [flatModel objective];
@@ -89,6 +90,9 @@
       [c visit: poster];
    [obj visit: poster];
    [poster release];
+    */
+   
+   
    __block id<CPCommonProgram> recv = cpprogram;
    [cpprogram onSolution:^{
       id<ORSolution> s = [model solution];
@@ -131,7 +135,6 @@
    [ORFactory createCPProgram: model program: cp];
 }
 
-
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
@@ -158,16 +161,3 @@
 }
 @end
 
-/*
--(void) solveAll:(ORClosure)search
-{
-   for(ORInt i=0;i<_nbWorkers;i++) {
-      [NSThread detachNewThreadSelector:@selector(workerSolve:)
-                               toTarget:self
-                             withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                         [search copy],nil]];
-   }
-   [self waitWorkers]; // wait until all the workers are done.
-   
-}
-*/
