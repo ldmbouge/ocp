@@ -79,7 +79,7 @@
 @end
 
 
-@interface ORIdMatrixI : ORModelingObjectI<NSCoding,ORIdMatrix>
+@interface ORIdMatrixI : ORDualUseObjectI<NSCoding,ORIdMatrix>
 {
    id<ORTracker>  _tracker;
 }

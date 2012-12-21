@@ -155,7 +155,7 @@
 
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
-   if ([v dereference] == NULL) {
+ if ([v dereference] == NULL) {
       ORInt nb = (ORInt) [v count];
       for(ORInt k = 0; k < nb; k++)
          [[v flat: k] visit: self];
@@ -168,7 +168,7 @@
 -(void) visitTable:(id<ORTable>) v
 {
    if ([v dereference] == NULL) {
-      id<ORIntMatrix> n = [ORFactory table: _engine with: v];
+      id<ORTable> n = [ORFactory table: _engine with: v];
       [n makeImpl];
       [v setImpl: n];
    }
@@ -177,8 +177,8 @@
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {
    if ([cstr dereference] == NULL) {
-      id<CPIntVar> x = [self concreteVar:[cstr var]];
-      id<CPConstraint> concrete = [CPFactory restrict:x to:[cstr restriction]];
+      id<CPIntVar> x = [self concreteVar: [cstr var]];
+      id<CPConstraint> concrete = [CPFactory restrict: x to: [cstr restriction]];
       [cstr setImpl:concrete];
       [_engine add: concrete];
    }
@@ -202,7 +202,9 @@
       id<ORIntArray> up = [cstr up];
       ORAnnotation n = [cstr annotation];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: low up: up annotation: n];
+      [low visit: self];
+      [up visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: [low dereference] up: [up dereference] annotation: n];
       [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
    }
@@ -221,7 +223,8 @@
       id<ORIntVarArray> array = [cstr array];
       id<ORTable> table = [cstr table];
       [array visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory table: table on: [array dereference]];
+      [table visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory table: [table dereference] on: [array dereference]];
       [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
    }
@@ -249,9 +252,9 @@
 -(void) visitLexLeq:(id<ORLexLeq>) cstr
 {
    if ([cstr dereference] == NULL) {
-      id<CPIntVarArray> x = [self concreteArray:[cstr x]];
-      id<CPIntVarArray> y = [self concreteArray:[cstr y]];
-      id<CPConstraint> concrete = [CPFactory lex:x leq:y];
+      id<CPIntVarArray> x = [self concreteArray: [cstr x]];
+      id<CPIntVarArray> y = [self concreteArray: [cstr y]];
+      id<CPConstraint> concrete = [CPFactory lex: x leq: y];
       [cstr setImpl:concrete];
       [_engine add: concrete];
    }
@@ -264,8 +267,9 @@
       ORInt bin = [cstr bin];
       id<ORIntVar> binSize = [cstr binSize];
       [item visit: self];
+      [itemSize visit: self];
       [binSize visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory packOne: [item dereference] itemSize: itemSize bin: bin binSize: [binSize dereference]];
+      id<CPConstraint> concreteCstr = [CPFactory packOne: [item dereference] itemSize: [itemSize dereference] bin: bin binSize: [binSize dereference]];
       [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
    }
@@ -277,8 +281,9 @@
       id<ORIntArray> weight = [cstr weight];
       id<ORIntVar> capacity = [cstr capacity];
       [item visit: self];
+      [weight visit: self];
       [capacity visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory knapsack: [item dereference] weight:weight capacity: [capacity dereference]];
+      id<CPConstraint> concreteCstr = [CPFactory knapsack: [item dereference] weight: [weight dereference] capacity: [capacity dereference]];
       [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
    }
@@ -286,10 +291,11 @@
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
    if ([cstr impl] == NULL) {
-      id<CPIntVarArray> x = [self concreteArray:[cstr x]];
+      id<CPIntVarArray> x = [self concreteArray: [cstr x]];
       id<ORIntMatrix> matrix = [cstr matrix];
-      id<CPIntVar> cost = [self concreteVar:[cstr cost]];
-      id<CPConstraint> concreteCstr = [CPFactory assignment:_engine array:x matrix:matrix cost:cost];
+      [matrix visit: self];
+      id<CPIntVar> cost = [self concreteVar: [cstr cost]];
+      id<CPConstraint> concreteCstr = [CPFactory assignment: _engine array: x matrix: [matrix dereference] cost: cost];
       [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
    }
@@ -539,7 +545,7 @@
       [idx visit: self];
       [res visit: self];
       id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) [idx dereference]
-                                             idxCstArray: array
+                                             idxCstArray: [array dereference]
                                                    equal: (id<CPIntVar>) [res dereference]
                                               annotation: [cstr annotation]
                                        ];
