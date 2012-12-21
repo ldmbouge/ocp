@@ -70,7 +70,7 @@
       [v setImpl: i];
    }
 }
--(void) visitIntRange:(id<ORIntRange>)v
+-(void) visitIntRange:(id<ORIntRange>) v
 {
    [v makeImpl];
 }
@@ -167,7 +167,11 @@
 
 -(void) visitTable:(id<ORTable>) v
 {
-   
+   if ([v dereference] == NULL) {
+      id<ORIntMatrix> n = [ORFactory table: _engine with: v];
+      [n makeImpl];
+      [v setImpl: n];
+   }
 }
 
 -(void) visitRestrict: (id<ORRestrict>) cstr

@@ -298,6 +298,13 @@
    return o;
 }
 
++(id<ORTable>) table: (id<ORTracker>) tracker table: (ORTableI*) table
+{
+   ORTableI* o = [[ORTableI alloc] initORTableWithTableI: table];
+   [tracker trackObject: o];
+   return o;
+}
+
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];

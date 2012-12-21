@@ -272,6 +272,19 @@ static ORInt _deterministic;
    return self;
 }
 
+-(ORTableI*) initORTableWithTableI: (ORTableI*) table
+{
+   self = [super init];
+   _arity = table->_arity;
+   _nb = 0;
+   _size = 2;
+   _column = malloc(sizeof(ORInt*)*_arity);
+   for(ORInt i = 0; i < _arity; i++)
+      _column[i] = malloc(sizeof(ORInt)*_size);
+   _closed = false;
+   return self;
+}
+
 -(void) dealloc
 {
    NSLog(@"ORTableI dealloc called ...");
