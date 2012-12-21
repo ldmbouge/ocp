@@ -10,8 +10,15 @@
  ***********************************************************************/
 
 #import "CPEvent.h"
+#include <pthread.h>
 
 static id vLossCache = nil;
+static pthread_key_t pkey;
+static void initPool()
+{
+   pthread_key_create(&pkey,NULL);
+}
+
 
 @implementation CPValueLossEvent
 
@@ -46,18 +53,22 @@ static id vLossCache = nil;
 {
    // [ldm] This is an effective optimization, but it is not thread-friendly.
    // Should use TLS to store the vLossCache.
-   id ptr = vLossCache;
-   if (ptr)
-      vLossCache = *(id*)vLossCache;
-   else ptr = [super allocWithZone:nil];
+   static pthread_once_t block = PTHREAD_ONCE_INIT;
+   pthread_once(&block,initPool);
+   id ptr = pthread_getspecific(pkey);
+   if (ptr) {
+      pthread_setspecific(pkey,*(id*)ptr);
+   } else ptr = [super allocWithZone:nil];
+   // now generic code.
    *(Class*)ptr = self;
    id rv = [ptr initValueLoss:value notify:list];
    return rv;
 }
 -(void)letgo
 {
+   id vLossCache = pthread_getspecific(pkey);
    *(id*)self = vLossCache;
-   vLossCache = self;
+   pthread_setspecific(pkey, self);
    return;
    [super dealloc];
 }
