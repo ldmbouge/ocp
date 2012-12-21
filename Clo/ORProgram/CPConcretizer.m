@@ -52,13 +52,14 @@
 }
 
 // visit interface
--(void) visitTrailableInt:(id<ORTrailableInt>)v
+
+-(void) visitTrailableInt: (id<ORTrailableInt>) v
 {
-   id<ORTrailableInt> i = [ORFactory trailableInt: [_engine trail] value: [v value]];
-   [i makeImpl];
-   [v setImpl: i];
+   id<ORTrailableInt> n = [ORFactory trailableInt:_engine value: [v value]];
+   [n makeImpl];
+   [v setImpl: n];
 }
--(void) visitIntSet:(id<ORIntSet>)v
+-(void) visitIntSet: (id<ORIntSet>) v
 {
    id<ORIntSet> i = [ORFactory intSet: _engine];
    [v copyInto: i];
@@ -67,9 +68,7 @@
 }
 -(void) visitIntRange:(id<ORIntRange>)v
 {
-   id<ORIntRange> R = [ORFactory intRange: _engine low: [v low] up:[v up]];
-   [R makeImpl];
-   [v setImpl: R];
+   [v makeImpl];
 }
 
 -(void) visitIntVar: (id<ORIntVar>) v
@@ -123,15 +122,14 @@
       [dx makeImpl];
       ORInt low = R.low;
       ORInt up = R.up;
-      for(ORInt i = low; i <= up; i++)
+      for(ORInt i = low; i <= up; i++) {
+         [v[i] visit: self];
          dx[i] = [v[i] dereference];
+      }
       [v setImpl: dx];
    }
 }
--(void) visitIdMatrix: (id<ORIdMatrix>) v
-{
-   
-}
+
 -(void) visitIntArray:(id<ORIntArray>) v
 {
    if ([v dereference] == NULL) {
@@ -144,8 +142,25 @@
 }
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
-   
+   if ([v dereference] == NULL) {
+      id<ORIntMatrix> n = [ORFactory intMatrix: _engine with: v];
+      [n makeImpl];
+      [v setImpl: n];
+   }
 }
+
+-(void) visitIdMatrix: (id<ORIdMatrix>) v
+{
+   if ([v dereference] == NULL) {
+      ORInt nb = (ORInt) [v count];
+      for(ORInt k = 0; k < nb; k++)
+         [[v flat: k] visit: self];
+      id<ORIdMatrix> n = [ORFactory idMatrix: _engine withDereferenced: v];
+      [n makeImpl];
+      [v setImpl: n];
+   }
+}
+
 -(void) visitTable:(id<ORTable>) v
 {
    

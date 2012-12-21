@@ -62,7 +62,7 @@
 @end
 
 
-@interface ORIntMatrixI : ORModelingObjectI<ORIntMatrix,NSCoding>
+@interface ORIntMatrixI : ORDualUseObjectI<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix;
