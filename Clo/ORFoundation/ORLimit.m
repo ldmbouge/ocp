@@ -204,10 +204,6 @@
 }
 @end
 
-@interface NSThread (ORData)
-+(ORInt)threadID;
-@end
-
 @implementation OROptimizationController
 
 -(id) initOROptimizationController: (Void2ORStatus) canImprove

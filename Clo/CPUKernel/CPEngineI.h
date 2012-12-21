@@ -62,8 +62,9 @@ enum CPEngineState {
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(Void2ORStatus)cl;
--(NSMutableArray*) allVars;
--(NSMutableArray*) allConstraints;
+-(NSMutableArray*) variables;
+-(NSMutableArray*) constraints;
+-(NSMutableArray*) objects;
 -(ORStatus)  close;
 -(ORStatus)  status;
 -(bool)      closed;
@@ -72,4 +73,6 @@ enum CPEngineState {
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 -(ORStatus)enforceObjective;
+-(id<ORIntVarArray>)intVars;
+-(id<ORBasicModel>)model;
 @end

@@ -16,7 +16,7 @@
 
 @protocol ORModelTransformation;
 
-@protocol ORModel <ORTracker,ORObject,NSCoding>
+@protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
 -(void) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;

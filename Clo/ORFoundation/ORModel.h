@@ -17,6 +17,15 @@
 @protocol ORIntVar;
 @protocol ORBitVar;
 @protocol OREngine;
+@protocol ORObjectiveFunction;
+
+@protocol ORBasicModel
+-(id<ORObjectiveFunction>) objective;
+-(id<ORIntVarArray>)intVars;
+-(NSArray*) variables;
+-(NSArray*) constraints;
+-(NSArray*) objects;
+@end
 
 @protocol ORConstraint <ORObject>
 @end

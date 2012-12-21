@@ -39,7 +39,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<x[%d] IN %@>",[_x getId],_r];
+   return [NSString stringWithFormat:@"<CPRestrict: x[%d] IN %@>",[_x getId],_r];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -88,7 +88,7 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<x[%d] == %d>",[_x getId],_c];
+   return [NSString stringWithFormat:@"<CPEqualc: %02d %@ == %d>",_name,_x,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

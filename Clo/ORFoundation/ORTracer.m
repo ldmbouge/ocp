@@ -226,7 +226,7 @@
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_id];
    id<OREngine> fdm = [aDecoder engine];
-   id theVar = [[[fdm allVars] objectAtIndex:_id] retain];
+   id theVar = [[[fdm variables] objectAtIndex:_id] retain];
    [self release];
    return theVar;
 }
@@ -284,9 +284,9 @@
 #else
    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
-   NSArray* dico = [fdm allVars];
+   NSArray* dico = [fdm variables];
    //NSLog(@"DICO: %@",dico);
-   ORULong nbProxies = [[fdm allVars] count] + 1; // 1 extra for the trail proxy
+   ORULong nbProxies = [[fdm variables] count] + 1; // 1 extra for the trail proxy
    id* proxies = malloc(sizeof(CPProxyVar*)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -402,8 +402,8 @@
 #else
    NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
 #endif
-   NSArray* dico = [solver allVars];
-   ORULong nbProxies = [[solver allVars] count] + 1; // 1 extra for the trail proxy
+   NSArray* dico = [solver variables];
+   ORULong nbProxies = [[solver variables] count] + 1; // 1 extra for the trail proxy
    __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
