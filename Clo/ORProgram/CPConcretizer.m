@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <ORFoundation/ORSet.h>
 #import "CPProgram.h"
 #import "CPConcretizer.h"
 #import "CPConcretizer.h"
@@ -51,13 +52,17 @@
 }
 
 // visit interface
-
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
-   [v setImpl: v];
+   id<ORTrailableInt> i = [ORFactory trailableInt: [_engine trail] value: [v value]];
+   [i makeImpl];
+   [v setImpl: i];
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
+   id<ORIntSet> i = [ORFactory intSet: _engine];
+   [v copyInto: i];
+   [i makeImpl];
    [v setImpl: v];
 }
 -(void) visitIntRange:(id<ORIntRange>)v
@@ -77,6 +82,7 @@
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet for Float Variables"];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
@@ -128,6 +134,12 @@
 }
 -(void) visitIntArray:(id<ORIntArray>) v
 {
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORIntArray> dx = [ORFactory intArray: _engine range: R with: ^ORInt(ORInt i) { return [v at: i]; }];
+      [dx makeImpl];
+      [v setImpl: dx];
+   }
    
 }
 -(void) visitIntMatrix: (id<ORIntMatrix>) v

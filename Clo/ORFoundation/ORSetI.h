@@ -27,6 +27,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) size;
+-(void) copyInto: (id<ORIntSet>) S;
 -(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;

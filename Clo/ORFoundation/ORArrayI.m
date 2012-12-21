@@ -582,7 +582,10 @@
       _flat[i] = 0;
    return self;
 }
-
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix
+{
+   
+}
 -(void) dealloc
 {
    //   NSLog(@"CPIntVarMatrix dealloc called...\n");

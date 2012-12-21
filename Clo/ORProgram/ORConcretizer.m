@@ -82,27 +82,16 @@
    [flatModel visit: concretizer];
    [concretizer release];
    
-   /*
-   id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
-   NSArray* Constraints = [flatModel constraints];
-   id<ORObjectiveFunction> obj = [flatModel objective];
-   for(id<ORObject> c in Constraints)
-      [c visit: poster];
-   [obj visit: poster];
-   [poster release];
-    */
-   
-   
    __block id<CPCommonProgram> recv = cpprogram;
    [cpprogram onSolution:^{
       id<ORSolution> s = [model solution];
       [[recv solutionPool] addSolution:s];
-      //NSLog(@"Got a solution: %@",s);
+      // NSLog(@"Got a solution: %@",s);
       [s release];
    } onExit:^{
       id<ORSolution> best = [[recv solutionPool] best];
       [model restore:best];
-      NSLog(@"onExit called: best(pool) = %p",best);
+      // NSLog(@"onExit called: best(pool) = %p",best);
       [best release];
    }];
 }
