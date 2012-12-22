@@ -10,18 +10,27 @@
  ***********************************************************************/
 
 #import "CPEvent.h"
+#include <pthread.h>
 
 static id vLossCache = nil;
+static pthread_key_t pkey;
+static void initPool()
+{
+   pthread_key_create(&pkey,NULL);
+}
+
 
 @implementation CPValueLossEvent
--(id)initValueLoss:(ORInt)value notify:(id<CPEventNode>)list
+
+-(id) initValueLoss: (ORInt) value notify: (id<CPEventNode>) list
 {
    self = [super init];
    _theVal = value;
    _theList = list;
    return self;
 }
--(ORInt)execute
+
+-(ORInt) execute
 {
    @try {
       __block ORInt nbP = 0;
@@ -32,6 +41,7 @@ static id vLossCache = nil;
       //CFRelease(self);
       [self letgo];
       return nbP;
+
    } @catch(ORFailException* ex) {
       //[self release];
       [self letgo];
@@ -41,18 +51,24 @@ static id vLossCache = nil;
 
 +(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list
 {
-   id ptr = vLossCache;
-   if (ptr)
-      vLossCache = *(id*)vLossCache;
-   else ptr = [super allocWithZone:nil];
+   // [ldm] This is an effective optimization, but it is not thread-friendly.
+   // Should use TLS to store the vLossCache.
+   static pthread_once_t block = PTHREAD_ONCE_INIT;
+   pthread_once(&block,initPool);
+   id ptr = pthread_getspecific(pkey);
+   if (ptr) {
+      pthread_setspecific(pkey,*(id*)ptr);
+   } else ptr = [super allocWithZone:nil];
+   // now generic code.
    *(Class*)ptr = self;
    id rv = [ptr initValueLoss:value notify:list];
    return rv;
 }
 -(void)letgo
 {
+   id vLossCache = pthread_getspecific(pkey);
    *(id*)self = vLossCache;
-   vLossCache = self;
+   pthread_setspecific(pkey, self);
    return;
    [super dealloc];
 }

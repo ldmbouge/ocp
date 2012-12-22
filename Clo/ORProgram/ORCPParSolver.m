@@ -47,7 +47,7 @@
 {
    return _nbWorkers;
 }
--(void)waitWorkers
+-(void) waitWorkers
 {
    [_terminated lock];
    while (_nbDone < _nbWorkers)

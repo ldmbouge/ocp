@@ -82,23 +82,16 @@
    [flatModel visit: concretizer];
    [concretizer release];
    
-   id<ORVisitor> poster = [[ORCPPoster alloc] initORCPPoster: cpprogram];
-   NSArray* Constraints = [flatModel constraints];
-   id<ORObjectiveFunction> obj = [flatModel objective];
-   for(id<ORObject> c in Constraints)
-      [c visit: poster];
-   [obj visit: poster];
-   [poster release];
    __block id<CPCommonProgram> recv = cpprogram;
    [cpprogram onSolution:^{
       id<ORSolution> s = [model solution];
       [[recv solutionPool] addSolution:s];
-      //NSLog(@"Got a solution: %@",s);
+      // NSLog(@"Got a solution: %@",s);
       [s release];
    } onExit:^{
       id<ORSolution> best = [[recv solutionPool] best];
       [model restore:best];
-      NSLog(@"onExit called: best(pool) = %p",best);
+      // NSLog(@"onExit called: best(pool) = %p",best);
       [best release];
    }];
 }
@@ -124,33 +117,35 @@
    return cpprogram;
 }
 
++(void) createCPOneProgram: (id<ORModel>) model multistartprogram: (CPMultiStartSolver*) cpprogram nb: (ORInt) i
+{
+   [NSThread setThreadID: i];
+   id<CPProgram> cp = [cpprogram at: i];
+   [ORFactory createCPProgram: model program: cp];
+}
+
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
    
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORINCModel> batch  = [[ORBatchModel alloc] init:flatModel];
+   id<ORINCModel> batch  = [[ORBatchModel alloc] init: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into:batch];
    [batch release];
    
-   NSArray* Variables = [flatModel variables];
-   for(id<ORObject> c in Variables) {
-      id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
-      [c setImpl: ba];
-   }
-   NSArray* Constraints = [flatModel constraints];
-   for(id<ORObject> c in Constraints) {
-      id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
-      [c setImpl: ba];
-   }
    NSArray* Objects = [flatModel objects];
    for(id<ORObject> c in Objects) {
-      id<ORBindingArray> ba = [ORFactory bindingArray: model nb: k];
-      [c setImpl: ba];
+      if ([c impl] == NULL) {
+         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+         [c setImpl: ba];
+      }
    }
-   id<CPProgram> cp = [cpprogram at: 0];
-   [ORFactory createCPProgram: model program: cp];
+   for(ORInt i = 0; i < k; i++) {
+      [NSThread setThreadID: i];
+      id<CPProgram> cp = [cpprogram at: i];
+      [ORFactory createCPProgram: flatModel program: cp];
+   }
    return cpprogram;
 }
 @end

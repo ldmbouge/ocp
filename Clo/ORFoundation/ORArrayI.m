@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+
 #import "ORTypes.h"
 #import "ORArrayI.h"
 #import "ORError.h"
@@ -359,6 +360,29 @@
    _flat = malloc(sizeof(id)*_nb);
    return self;
 }
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) matrix
+{
+   self = [super init];
+   _tracker = tracker;
+   _arity = matrix->_arity;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _i = malloc(sizeof(ORRange) * _arity);
+   for(ORInt k = 0; k < _arity; k++) {
+      _range[k] = matrix->_range[k];
+      _low[k] = matrix->_low[k];
+      _up[k] = matrix->_up[k];
+      _size[k] = matrix->_size[k];
+   }
+   _nb = matrix->_nb;
+   _flat = malloc(sizeof(id) * _nb);
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = [matrix->_flat[i] dereference];
+   return self;
+}
+
 -(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    return self = [self initORIdMatrix: tracker arity:3 ranges:(id<ORIntRange>[]){r0,r1,r2}];
@@ -581,7 +605,28 @@
       _flat[i] = 0;
    return self;
 }
-
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix
+{
+   self = [super init];
+   _tracker = tracker;
+   _arity = matrix->_arity;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _i = malloc(sizeof(ORRange) * _arity);
+   for(ORInt k = 0; k < _arity; k++) {
+      _range[k] = matrix->_range[k];
+      _low[k] = matrix->_low[k];
+      _up[k] = matrix->_up[k];
+      _size[k] = matrix->_size[k];
+   }
+   _nb = matrix->_nb;
+   _flat = malloc(sizeof(ORInt) * _nb);
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = matrix->_flat[i];
+   return self;
+}
 -(void) dealloc
 {
    //   NSLog(@"CPIntVarMatrix dealloc called...\n");

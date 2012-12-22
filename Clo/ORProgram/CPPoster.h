@@ -13,6 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORSolver.h>
 
+/*
 @interface ORCPPoster  : NSObject<ORVisitor>
 -(ORCPPoster*) initORCPPoster: (id<CPCommonProgram>) solver;
 -(void) dealloc;
@@ -140,3 +141,4 @@
 //-(void) visitIntVar: (id<ORIntVar>) var;
 //-(void) visitExprVarSubI: (id<ORExpr>) e;
 //@end
+ */

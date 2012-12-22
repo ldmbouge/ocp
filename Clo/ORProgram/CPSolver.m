@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
@@ -224,7 +225,7 @@
       [_search optimizeModel: self using: search
                   onSolution: _doOnSol
                       onExit: _doOnExit];
-      printf("Optimal Solution: %d \n",[_objective primalBound]);
+      printf("Optimal Solution: %d %d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search
@@ -514,15 +515,15 @@
    CPSolver* _solver;
    id<ORVisitor> _concretizer;
 }
--(ORRTModel*)init:(CPSolver*)solver;
--(void)addVariable:(id<ORVar>)var;
--(void)addObject:(id)object;
--(void)addConstraint:(id<ORConstraint>)cstr;
--(void)minimize:(id<ORIntVar>)x;
--(void)maximize:(id<ORIntVar>)x;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
--(void) trackConstraint:(id)obj;
+-(ORRTModel*) init:(CPSolver*)solver;
+-(void)       addVariable:(id<ORVar>)var;
+-(void)       addObject:(id)object;
+-(void)       addConstraint:(id<ORConstraint>)cstr;
+-(void)       minimize:(id<ORIntVar>)x;
+-(void)       maximize:(id<ORIntVar>)x;
+-(void)       trackObject: (id) obj;
+-(void)       trackVariable: (id) obj;
+-(void)       trackConstraint:(id)obj;
 @end
 
 @implementation ORRTModel
@@ -886,28 +887,3 @@
 }
 @end
 
-
-//id<ORBindingArray> ba = [ORFactory bindingArray: _tracker nb: _nb];
-//[v setImpl: ba];
-
-
-//@implementation NSThread (ORData)
-//
-//static pthread_key_t threadIDKey;
-//static pthread_once_t block = PTHREAD_ONCE_INIT;
-//
-//static void init_pthreads_key()
-//{
-//   pthread_key_create(&threadIDKey,NULL);
-//}
-//+(void)setThreadID:(ORInt)tid
-//{
-//   pthread_once(&block,init_pthreads_key);
-//   pthread_setspecific(threadIDKey,(void*)tid);
-//}
-//+(ORInt)threadID
-//{
-//   ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
-//   return tid;
-//}
-//@end

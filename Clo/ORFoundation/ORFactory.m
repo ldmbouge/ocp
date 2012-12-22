@@ -106,7 +106,18 @@
    [tracker trackObject: o];
    return o;
 }
-
++(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) m
+{
+   ORIntMatrixI* o = [[ORIntMatrixI alloc] initORIntMatrix: tracker with: m];
+   [tracker trackObject: o];
+   return o;
+}
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker withDereferenced: (id<ORIntMatrix>) m
+{
+   ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix: tracker withDereferenced: m];
+   [tracker trackObject: o];
+   return o;
+}
 +(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    return (id<ORIntSetArray>)[ORFactory idArray: tracker range: range];
@@ -283,6 +294,13 @@
 +(id<ORTable>) table: (id<ORTracker>) tracker arity: (int) arity
 {
    ORTableI* o = [[ORTableI alloc] initORTableI: arity];
+   [tracker trackObject: o];
+   return o;
+}
+
++(id<ORTable>) table: (id<ORTracker>) tracker table: (ORTableI*) table
+{
+   ORTableI* o = [[ORTableI alloc] initORTableWithTableI: table];
    [tracker trackObject: o];
    return o;
 }

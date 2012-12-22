@@ -62,6 +62,10 @@
 {
    [_avl iterateOverKey: f];
 }
+-(void) copyInto: (id<ORIntSet>) S
+{
+   [self iterate: ^void(ORInt e) { [S insert: e]; } ];
+}
 -(NSString*) description
 {
     return [_avl description];
@@ -206,7 +210,6 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    return self;
 }
-
 @end
 
 

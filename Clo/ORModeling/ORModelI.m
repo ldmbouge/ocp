@@ -47,6 +47,7 @@
 -(void) captureVariable:(id<ORVar>)x
 {
    [_vars addObject:x];
+   [_oStore addObject:x];
 }
 -(void) setId: (ORUInt) name
 {

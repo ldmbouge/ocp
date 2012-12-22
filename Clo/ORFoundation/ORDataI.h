@@ -42,7 +42,7 @@
 -(ORInt) next;
 @end
 
-@interface ORTableI : NSObject<ORTable,NSCoding> {
+@interface ORTableI : ORDualUseObjectI<ORTable,NSCoding> {
 @public
    ORInt   _arity;
    ORInt   _nb;
@@ -55,6 +55,7 @@
    ORInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
 }
 -(ORTableI*) initORTableI: (ORInt) arity;
+-(ORTableI*) initORTableWithTableI: (ORTableI*) table;
 -(void) dealloc;
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;

@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+/*
 
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
@@ -292,6 +293,8 @@
    [_engine add: [c dereference]];
 }
 //
+ 
+
 -(void) visitIntegerI: (id<ORInteger>) e
 {
 
@@ -360,3 +363,5 @@
    
 }
 @end
+
+*/
