@@ -18,7 +18,7 @@
 #import "ORModel.h"
 #import "ORVisit.h"
 
-@interface ORExprI: ORModelingObjectI<ORExpr,NSCoding>
+@interface ORExprI: ORDualUseObjectI<ORExpr,NSCoding>
 
 -(id<ORExpr>) abs;
 -(id<ORExpr>) plus: (id<ORExpr>) e;
