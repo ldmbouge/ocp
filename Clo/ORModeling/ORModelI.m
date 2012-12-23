@@ -15,8 +15,6 @@
 #import "ORError.h"
 #import "ORSolver.H"
 
-// PVH: We need to delegate the track to the engine during search
-
 @implementation ORModelI
 {
    NSMutableArray*          _vars;
@@ -57,11 +55,11 @@
 {
    return nil;
 }
--(id<ORObjectiveFunction>)objective
+-(id<ORObjectiveFunction>) objective
 {
    return _objective;
 }
--(id<ORIdArray>)intVars
+-(id<ORIdArray>) intVars
 {
    __block ORInt cnt = 0;
    [_vars enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -89,11 +87,11 @@
 {
    return [NSArray arrayWithArray: _oStore];
 }
--(id<ORSolution>)solution
+-(id<ORSolution>) solution
 {
    return [[ORSolutionI alloc] initSolution:self];
 }
--(void)restore:(id<ORSolution>)s
+-(void) restore: (id<ORSolution>) s
 {
    NSArray* av = [self variables];
    [av enumerateObjectsUsingBlock:^(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
@@ -130,7 +128,7 @@
    [_mStore addObject:c];
 }
 
--(void) add: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
@@ -148,13 +146,11 @@
 -(void) minimize: (id<ORIntVar>) x
 {
    _objective = [[ORMinimizeI alloc] initORMinimizeI: x];
-//   [self trackObject: _objective];
 }
 
 -(void) maximize: (id<ORIntVar>) x
 {
    _objective = [[ORMaximizeI alloc] initORMaximizeI: x];
-//   [self trackObject: _objective];
 }
 
 -(void) trackObject: (id) obj;
@@ -170,21 +166,6 @@
 -(void) trackConstraint:(id)obj
 {
    [_oStore addObject:obj];
-}
--(void) instantiate: (id<ORSolver>) solver
-{
-   NSLog(@"I start instantiating this model...");
-/*
- id<ORVisit> concretizer = [solver concretizer];
-   for(id c in _vars)
-      [c visit: concretizer];
-   for(id c in _oStore)
-      [c visit: concretizer];
-   for(id c in _mStore)
-      [c visit: concretizer];
-   [_objective visit: concretizer];
-   [concretizer release];
- */
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
           onObjects: (void(^)(id<ORObject>)) doObjs
@@ -209,7 +190,7 @@
       [c visit: visitor];
    [_objective visit: visitor];
 }
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_vars];
    [aCoder encodeObject:_oStore];
@@ -226,6 +207,54 @@
    _objective = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
+}
+@end
+
+@implementation ORBatchModel
+{
+   ORModelI* _target;
+}
+-(ORBatchModel*)init: (ORModelI*) theModel
+{
+   self = [super init];
+   _target = theModel;
+   return self;
+}
+-(void) addVariable: (id<ORVar>) var
+{
+   [_target captureVariable: var];
+}
+-(void) addObject: (id) object
+{
+   [_target trackObject: object];
+}
+-(void) addConstraint: (id<ORConstraint>) cstr
+{
+   [_target add: cstr];
+}
+-(id<ORModel>) model
+{
+   return _target;
+}
+-(void) minimize: (id<ORIntVar>) x
+{
+   [_target minimize:x];
+}
+-(void) maximize:(id<ORIntVar>) x
+{
+   [_target maximize: x];
+}
+-(void) trackObject: (id) obj
+{
+   [_target trackObject:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_target trackVariable: obj];
+}
+-(void) trackConstraint: (id) obj
+{
+   [_target trackConstraint: obj];
 }
 @end
 

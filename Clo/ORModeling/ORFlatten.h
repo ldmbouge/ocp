@@ -12,23 +12,11 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
-@interface ORBatchModel : NSObject<ORINCModel> {
-   ORModelI* _target;
-}
--(ORBatchModel*)init:(ORModelI*)model;
--(void)addVariable:(id<ORVar>)var;
--(void)addObject:(id)object;
--(void)addConstraint:(id<ORConstraint>)cstr;
--(void)minimize:(id<ORIntVar>)x;
--(void)maximize:(id<ORIntVar>)x;
--(id<ORModel>)model;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
-@end
+
 
 @interface ORFlatten : NSObject<ORModelTransformation>
 -(id)initORFlatten;
--(void)apply:(id<ORModel>)m into:(id<ORINCModel>)target;
-+(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m;
-+(void)flattenExpression:(id<ORExpr>)e into:(id<ORINCModel>)m annotation:(ORAnnotation)note;
+-(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
++(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
++(void)flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
 @end

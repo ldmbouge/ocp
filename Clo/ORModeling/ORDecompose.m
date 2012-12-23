@@ -22,11 +22,11 @@
 
 @interface ORSubst   : NSObject<ORVisitor> {
    id<ORIntVar>      _rv;
-   id<ORINCModel> _model;
+   id<ORAddToModel> _model;
    ORAnnotation       _c;
 }
--(id)initORSubst:(id<ORINCModel>) model annotation:(ORAnnotation)c;
--(id)initORSubst:(id<ORINCModel>) model annotation:(ORAnnotation)c by:(id<ORIntVar>)x;
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORIntVar>)x;
 -(id<ORIntVar>)result;
 -(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitIntegerI: (id<ORInteger>) e;
@@ -46,9 +46,9 @@
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
-+(id<ORIntVar>) substituteIn:(id<ORINCModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c;
-+(id<ORIntVar>) substituteIn:(id<ORINCModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c;
-+(id<ORIntVar>)normSide:(ORLinear*)e for:(id<ORINCModel>) model annotation:(ORAnnotation)c;
++(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c;
++(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c;
++(id<ORIntVar>)normSide:(ORLinear*)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
 @end
 
 @implementation ORLinearFlip
@@ -74,12 +74,12 @@
 
 @interface ORLinearizer : NSObject<ORVisitor> {
    id<ORLinear>   _terms;
-   id<ORINCModel>    _model;
+   id<ORAddToModel>    _model;
    ORAnnotation       _n;
 }
--(id)initORLinearizer:(id<ORLinear>)t model:(id<ORINCModel>)model annotation:(ORAnnotation)n;
-+(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORINCModel>)model annotation:(ORAnnotation)n;
-+(ORLinear*)addToLinear:(id<ORLinear>)terms from:(id<ORExpr>)e  model:(id<ORINCModel>)model annotation:(ORAnnotation)n;
+-(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORLinear*)addToLinear:(id<ORLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 -(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitAffineVar:(id<ORIntVar>)e;
 -(void) visitIntegerI: (id<ORInteger>) e;
@@ -102,7 +102,7 @@
 @end
 
 @implementation ORNormalizer
-+(ORLinear*)normalize:(ORExprI*)rel into:(id<ORINCModel>) model annotation:(ORAnnotation)n
++(ORLinear*)normalize:(ORExprI*)rel into:(id<ORAddToModel>) model annotation:(ORAnnotation)n
 {
    ORNormalizer* v = [[ORNormalizer alloc] initORNormalizer: model annotation:n];
    [rel visit:v];
@@ -110,7 +110,7 @@
    [v release];
    return rv;
 }
--(id)initORNormalizer:(id<ORINCModel>) model annotation:(ORAnnotation)n
+-(id)initORNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n
 {
    self = [super init];
    _terms = nil;
@@ -188,7 +188,7 @@ struct CPVarPair {
 @end
 
 @implementation ORLinearizer
--(id)initORLinearizer:(id<ORLinear>)t model:(id<ORINCModel>)model annotation:(ORAnnotation)n
+-(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n
 {
    self = [super init];
    _terms = t;
@@ -304,7 +304,7 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 
-+(ORLinear*)linearFrom:(ORExprI*)e model:(id<ORINCModel>)model annotation:(ORAnnotation)cons
++(ORLinear*)linearFrom:(ORExprI*)e model:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    ORLinear* rv = [[ORLinear alloc] initORLinear:4];
    ORLinearizer* v = [[ORLinearizer alloc] initORLinearizer:rv model: model annotation:cons];
@@ -312,7 +312,7 @@ struct CPVarPair {
    [v release];
    return rv;
 }
-+(ORLinear*)addToLinear:(id<ORLinear>)terms from:(ORExprI*)e  model:(id<ORINCModel>)model annotation:(ORAnnotation)cons
++(ORLinear*)addToLinear:(id<ORLinear>)terms from:(ORExprI*)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    ORLinearizer* v = [[ORLinearizer alloc] initORLinearizer:terms model: model annotation:cons];
    [e visit:v];
@@ -391,7 +391,7 @@ struct CPVarPair {
    [buf appendFormat:@" (%d)",_indep];
    return buf;
 }
--(id<ORIntVarArray>)scaledViews:(id<ORINCModel>)model
+-(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model
 {
    id<ORIntVarArray> sx = [ORFactory intVarArray:model
                                            range:RANGE(model,0,_nb-1)
@@ -402,7 +402,7 @@ struct CPVarPair {
    }];
    return sx;
 }
--(id<ORIntVar>)oneView:(id<ORINCModel>)model
+-(id<ORIntVar>)oneView:(id<ORAddToModel>)model
 {
    id<ORIntVar> rv = [ORFactory intVar:model
                                    var:_terms[0]._var
@@ -439,7 +439,7 @@ struct CPVarPair {
    return min(MAXINT,bindUp(ub));
 }
 
--(void)postNEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons
+-(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    switch(_nb) {
       case 0: assert(NO);return;
@@ -478,7 +478,7 @@ struct CPVarPair {
       }break;
    }
 }
--(void)postEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons
+-(void)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    // [ldm] This should *never* raise an exception, but return a ORFailure.
    switch (_nb) {
@@ -546,7 +546,7 @@ struct CPVarPair {
       }
    }
 }
--(void)postLEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons
+-(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    switch(_nb) {
       case 0: assert(FALSE);return;
@@ -584,7 +584,7 @@ struct CPVarPair {
 
 @implementation ORSubst
 
-+(id<ORIntVar>) substituteIn:(id<ORINCModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c
++(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c
 {
    ORSubst* subst = [[ORSubst alloc] initORSubst: model annotation:c];
    [expr visit:subst];
@@ -592,7 +592,7 @@ struct CPVarPair {
    [subst release];
    return theVar;
 }
-+(id<ORIntVar>) substituteIn:(id<ORINCModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c
++(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c
 {
    ORSubst* subst = [[ORSubst alloc] initORSubst: model annotation:c by:x];
    [expr visit:subst];
@@ -600,7 +600,7 @@ struct CPVarPair {
    [subst release];
    return theVar;
 }
-+(id<ORIntVar>)normSide:(ORLinear*)e for:(id<ORINCModel>)model annotation:(ORAnnotation)c
++(id<ORIntVar>)normSide:(ORLinear*)e for:(id<ORAddToModel>)model annotation:(ORAnnotation)c
 {
    if ([e size] == 1) {
       return [e oneView:model];
@@ -612,7 +612,7 @@ struct CPVarPair {
    }
 }
 
--(id)initORSubst:(id<ORINCModel>) model annotation: (ORAnnotation) c
+-(id)initORSubst:(id<ORAddToModel>) model annotation: (ORAnnotation) c
 {
    self = [super init];
    _rv = nil;
@@ -620,7 +620,7 @@ struct CPVarPair {
    _c = c;
    return self;
 }
--(id)initORSubst:(id<ORINCModel>) model annotation:(ORAnnotation)c by:(id<ORIntVar>)x
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORIntVar>)x
 {
    self = [super init];
    _rv  = x;
