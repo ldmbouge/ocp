@@ -65,6 +65,14 @@
 -(ORAnnotation) annotation;
 @end
 
+@protocol  ORAffine <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt)coef;
+-(ORInt)cst;
+-(ORAnnotation) annotation;
+@end
+
 @protocol  ORNEqual <ORConstraint>
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;

@@ -69,6 +69,15 @@
 -(ORInt) cst;
 @end
 
+@interface ORAffine :ORConstraintI<ORAffine>
+-(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b annotation: (ORAnnotation) n;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt)coef;
+-(ORInt)cst;
+@end
+
+
 @interface ORNEqual : ORConstraintI<ORNEqual,NSCoding>
 -(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y;
 -(ORNEqual*) initORNEqual: (id<ORIntVar>) x neq: (id<ORIntVar>) y plus: (ORInt) c;

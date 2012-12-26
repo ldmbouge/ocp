@@ -725,7 +725,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
       return nDom;
       //return [bd copyWithZone:NULL];
    } else if (a==1) {
-      CPBitDom* clone = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:-bd->_imax];
+      CPBitDom* clone = [[CPBitDom alloc] initBitDomFor:bd->_trail low:bd->_imin up:bd->_imax];
       for(ORInt v =bd->_imin;v <= bd->_imax;v++) {
          if (!memberCPDom(bd, v)) {
             [clone set:v at:NO];

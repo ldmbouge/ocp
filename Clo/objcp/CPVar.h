@@ -28,7 +28,8 @@ enum CPVarClass {
    CPVCShift = 1,
    CPVCAffine = 2,
    CPVCEQLiteral = 3,
-   CPVCLiterals = 4
+   CPVCLiterals = 4,
+   CPVCFlip = 5
 };
 
 @protocol CPIntVar <CPVar>

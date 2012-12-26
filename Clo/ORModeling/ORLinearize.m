@@ -206,6 +206,9 @@
 -(void) visitEqual: (id<OREqual>)c
 {
 }
+-(void) visitAffine: (id<ORAffine>)c
+{
+}
 -(void) visitNEqual: (id<ORNEqual>)c
 {
 }

@@ -12,13 +12,11 @@
 #import "CPEvent.h"
 #include <pthread.h>
 
-static id vLossCache = nil;
 static pthread_key_t pkey;
 static void initPool()
 {
    pthread_key_create(&pkey,NULL);
 }
-
 
 @implementation CPValueLossEvent
 

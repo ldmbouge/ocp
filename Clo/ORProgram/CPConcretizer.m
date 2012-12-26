@@ -375,6 +375,17 @@
    }
 }
 
+-(void) visitAffine: (id<ORAffine>)cstr
+{
+   if ([cstr dereference] == NULL) {
+      id<CPIntVar> y = [self concreteVar:[cstr left]];
+      id<CPIntVar> x = [self concreteVar:[cstr right]];
+      id<CPConstraint> concrete = [CPFactory affine:y equal:[cstr coef] times:x plus:[cstr cst] annotation:[cstr annotation]];
+      [cstr setImpl: concrete];
+      [_engine add:concrete];
+   }
+}
+
 -(void) visitNEqual: (id<ORNEqual>) cstr
 {
    if ([cstr dereference] == NULL) {

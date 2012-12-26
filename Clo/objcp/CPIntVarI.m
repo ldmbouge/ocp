@@ -513,10 +513,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) engine low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x
 {
    self = [self initCPIntVarCore:engine low: low up: up];
+   _vc = CPVCAffine;
    id<CPIntVarNotifier> xDeg = [x delegate];
    if (xDeg == x) {
-      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2];
-      [mc addVar: x];
+      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:32 root:x];
       [mc addVar: self];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
@@ -570,6 +570,19 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       CPIntView* view = [[CPIntView alloc] initIVarAViewFor: scale x: x b: b+shift];
       return view;
    }
+}
++(CPIntVarI*) initCPFlipView: (CPIntVarI*)x
+{
+   ORInt scale = [x scale];
+   ORInt shift = [x shift];
+   CPIntVarI* rv = [x->_recv findAffine:-scale shift:-shift];
+   if (rv==nil) {
+      if (scale==1 && shift==0)
+         rv = [[CPIntFlipView alloc] initFlipViewFor:x];
+      else
+         rv = [self initCPIntView:x withScale:-scale andShift:-shift];
+   }
+   return rv;
 }
 +(CPIntVarI*) initCPIntView: (CPIntVarI*) x withScale: (ORInt) a
 {
@@ -845,24 +858,54 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(ORStatus) updateMin: (ORInt) newMin
 {
+   if (_a > 0) {
+      ORInt op = newMin - _b;
+      ORInt ms = op > 0 ? +1 : 0;  // multiplier sign
+      ORInt mv = op % _a ? 1 : 0;   // multiplier value
+      return [_dom updateMin:op / _a + ms * mv for:_recv];
+   } else {
+      ORInt op = newMin - _b;
+      ORInt ms = op > 0 ?  0 : -1;
+      ORInt mv = op % _a ?  1 : 0;
+      return [_dom updateMax:op / _a + ms * mv for:_recv];
+   }
+   /*
     ORInt r = (newMin - _b) % _a;
     ORInt om = (newMin - _b)/_a;
     if (_a > 0)
         return [_dom updateMin:om + (r!=0) for:_recv];   
     else 
-        return [_dom updateMax:om for:_recv]; 
+        return [_dom updateMax:om for:_recv];
+   */
 }
 -(ORStatus) updateMax: (ORInt) newMax
 {
+   if (_a > 0) {
+      ORInt op = newMax - _b;
+      ORInt ms = op > 0  ? 0 : -1;
+      ORInt mv = op % _a ? 1 : 0;
+      return [_dom updateMax:op / _a + ms * mv for:_recv];
+   } else {
+      ORInt op = newMax - _b;
+      ORInt ms = op > 0 ? +1 : 0;
+      ORInt mv = op % _a ? 1 : 0;
+      return [_dom updateMin:op / _a + ms * mv for:_recv];
+   }
+   /*
     ORInt r = (newMax - _b) % _a;
     ORInt om = (newMax - _b)/_a;
     if (_a > 0)
         return [_dom updateMax:om for:_recv];   
     else 
         return [_dom updateMin:om + (r!=0) for:_recv]; 
+    */
 }
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
+   ORStatus s = [self updateMin:newMin];
+   if (s == ORFailure) return s;
+   return [self updateMax:newMax];
+/*
    ORStatus s;
    ORInt tMin = (newMin - _b) / _a;
    ORInt tMax = (newMax - _b) / _a;
@@ -876,6 +919,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       if (s) s = [_dom updateMin:tMax + (rMax!=0) for:_recv];      
    }
    return s;
+ */
 }
 
 -(ORStatus)bind: (ORInt) val
@@ -977,6 +1021,133 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(id)snapshot
 {
    return nil;
+}
+@end
+
+@implementation CPIntFlipView
+-(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x
+{
+   self = [super initCPIntVarView: [x engine] low:-[x max] up:-[x min] for:x];
+   _vc = CPVCFlip;
+   _dom = (CPBoundsDom*)[[x domain] retain];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(CPBitDom*)flatDomain
+{
+   return newDomain((CPBitDom*)_dom, -1, 0);
+}
+-(ORInt) min
+{
+   return - [_dom max];
+}
+-(ORInt) max
+{
+   return - [_dom min];
+}
+-(ORBounds)bounds
+{
+   ORBounds b = [_dom bounds];
+   return (ORBounds){-b.max,-b.min};
+}
+-(bool)member:(ORInt)v
+{
+   return [_dom member:-v];
+}
+-(ORRange)around:(ORInt)v
+{
+   ORInt low = [_dom findMax:-v-1];
+   ORInt up  = [_dom findMin:-v+1];
+   return (ORRange){-up,-low};
+}
+-(ORInt) shift
+{
+   return 0;
+}
+-(ORInt) scale
+{
+   return -1;
+}
+-(ORStatus)updateMin:(ORInt)newMin
+{
+   return [_dom updateMax:-newMin for:_recv];
+}
+-(ORStatus)updateMax:(ORInt)newMax
+{
+   return [_dom updateMin:-newMax for:_recv];
+}
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
+{
+   ORStatus s = [_dom updateMax:-newMin for:_recv];
+   if (s == ORFailure) return s;
+   return [_dom updateMin:-newMax for:_recv];
+}
+-(ORStatus)bind:(ORInt)val
+{
+   return [_dom bind:-val for:_recv];
+}
+-(ORStatus)remove:(ORInt)val
+{
+   return [_dom remove:-val for:_recv];
+}
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
+{
+   return [super loseValEvt:-val sender:sender];
+}
+-(id)snapshot
+{
+   return nil;
+}
+-(NSString*)description
+{
+   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+#if !defined(_NDEBUG)
+   [s appendFormat:@"var<%d>=",_name];
+#endif
+   ORInt min = - [_dom max];
+   if ([_dom domsize]==1)
+      [s appendFormat:@"%d",min];
+   else {
+      [s appendFormat:@"(%d)[%d",[_dom domsize],min];
+      __block ORInt lastIn = min;
+      __block ORInt frstIn = min;
+      __block bool seq   = true;
+      void (^body)(ORInt) = ^(ORInt k) {
+         if ([_dom get:k]) {
+            ORInt tk = - k;
+            if (!seq) {
+               [s appendFormat:@",%d",tk];
+               frstIn = lastIn = tk;
+               seq = true;
+            }
+            lastIn = tk;
+         } else {
+            if (seq) {
+               if (frstIn != lastIn) {
+                  if (frstIn + 1 == lastIn)
+                     [s appendFormat:@",%d",lastIn];
+                  else
+                     [s appendFormat:@"..%d",lastIn];
+               }
+               seq = false;
+            }
+         }
+      };
+      for(ORInt k=[_dom max]-1;k>=[_dom min];k--) body(k);
+      if (seq) {
+         if (frstIn != lastIn) {
+            if (frstIn + 1 == lastIn)
+               [s appendFormat:@",%d",lastIn];
+            else
+               [s appendFormat:@"..%d",lastIn];
+         }
+      }
+      [s appendFormat:@"]"];
+   }
+   return s;
 }
 @end
 
@@ -1255,14 +1426,18 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 @implementation CPIntVarMultiCast
 
--(id)initVarMC:(ORInt)n 
+-(id)initVarMC:(ORInt)n root:(CPIntVarI*)root
 {
    self = [super init];
    _mx  = n;
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
    _tracksLoseEvt = false;
-   _nb  = 0;
+   _tab[0] = root;
+   [root setDelegate:self];
+   _tracksLoseEvt |= [_tab[0] tracksLoseEvt:nil];
+   _loseValIMP[0] = (UBType)[root methodForSelector:@selector(loseValEvt:sender:)];
+   _nb  = 1;
    return self;
 }
 -(ORInt)getId
@@ -1289,7 +1464,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
-
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
    [_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
@@ -1301,6 +1475,12 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       _loseValIMP[toFix] = nil;
    }];
    _nb++;
+   ORInt nbBare = 0;
+   for(ORInt i=0;i<_nb;i++) {
+      if (_tab[i] !=nil)
+         nbBare += ([_tab[i] varClass] == CPVCBare);
+   }
+   assert(nbBare==1);
 }
 -(CPLiterals*)findLiterals:(CPIntVarI*)ref
 {
@@ -1343,11 +1523,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(NSString*)description
 {
-   static const char* classes[] = {"Bare","Shift","Affine","EQLit","Literals","NEQLit"};
+   static const char* classes[] = {"Bare","Shift","Affine","EQLit","Literals","Flip","NEQLit"};
    NSMutableString* buf = [NSMutableString stringWithCapacity:64];
    [buf appendFormat:@"MC:<%d>[",_nb];
    for(ORUInt k=0;k<_nb;k++) {
-      [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
+      if (_tab[k] == nil)
+         [buf appendFormat:@"nil %c",k < _nb -1 ? ',' : ']'];
+      else
+         [buf appendFormat:@"%d-%s %c",[_tab[k] getId],classes[[_tab[k] varClass]],k < _nb -1 ? ',' : ']'];
    }
    return buf;
 }

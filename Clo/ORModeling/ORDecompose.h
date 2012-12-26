@@ -21,6 +21,12 @@
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
+-(void)addLinear:(id<ORLinear>)lts;
+-(void)scaleBy:(ORInt)s;
+-(ORInt)size;
+-(id<ORIntVar>)var:(ORInt)k;
+-(ORInt)coef:(ORInt)k;
+-(ORInt)independent;
 @end
 
 @interface ORLinear : NSObject<ORLinear> {
@@ -38,6 +44,8 @@
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
+-(void)addLinear:(ORLinear*)lts;
+-(void)scaleBy:(ORInt)s;
 -(ORInt)independent;
 -(NSString*)description;
 -(id<ORIntVarArray>)scaledViews:(id<ORINCModel>)model;

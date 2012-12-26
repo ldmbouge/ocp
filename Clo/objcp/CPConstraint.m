@@ -173,8 +173,7 @@
 {
    id<CPIntVarNotifier> mc = [x delegate];
    if (mc == x) {
-      mc = [[CPIntVarMultiCast alloc] initVarMC:2];
-      [mc addVar: x];
+      mc = [[CPIntVarMultiCast alloc] initVarMC:32 root:x];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
@@ -319,6 +318,18 @@
    }
    [[x tracker] trackObject:o];
    return o;   
+}
++(id<ORConstraint>) affine:(id<CPIntVar>)y equal:(ORInt)a times:(id<CPIntVar>)x plus:(ORInt)b annotation:(ORAnnotation)cons
+{
+   id<ORConstraint> o  = nil;
+   switch(cons) {
+      case DomainConsistency:
+         o = [[CPAffineAC alloc] initCPAffineAC:y equal:a times:x plus:b];break;
+      default:
+         o = [[CPAffineBC alloc] initCPAffineBC:y equal:a times:x plus:b];break;
+   }
+   [[x tracker] trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z annotation: (ORAnnotation)cons
 {
