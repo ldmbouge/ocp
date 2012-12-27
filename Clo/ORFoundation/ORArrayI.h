@@ -85,6 +85,7 @@
 }
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) matrix;
 -(void) dealloc;
 -(ORInt) arity;
 -(id) flat:(ORInt)i;

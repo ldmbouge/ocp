@@ -112,7 +112,7 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker withDereferenced: (id<ORIntMatrix>) m
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) m
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix: tracker withDereferenced: m];
    [tracker trackObject: o];

@@ -107,9 +107,11 @@
    id<ORLinear>   _terms;
    id<ORAddToModel>    _model;
    ORAnnotation       _n;
+   id<ORIntVar>       _eqto;
 }
 -(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 +(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
 +(ORLinear*)addToLinear:(id<ORLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 -(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitAffineVar:(id<ORIntVar>)e;
@@ -151,11 +153,22 @@
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   ORLinear* linLeft = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
-   ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
-   [ORLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
-   [linRight release];
-   _terms = linLeft;
+   bool lv = [[e left] isVariable];
+   bool rv = [[e right] isVariable];
+   if (lv || rv) {
+      ORExprI* other = lv ? [e right] : [e left];
+      ORExprI* var   = lv ? [e left] : [e right];
+      id<ORIntVar> theVar = [ORSubst substituteIn:_model expr:var annotation:_n];
+      ORLinear* lin  = [ORLinearizer linearFrom:other model:_model equalTo:theVar annotation:_n];
+      [lin release];
+      _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+   } else {
+      ORLinear* linLeft = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
+      ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+      [ORLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
+      [linRight release];
+      _terms = linLeft;
+   }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
@@ -219,100 +232,143 @@ struct CPVarPair {
 @end
 
 @implementation ORLinearizer
+-(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n
+{
+   self = [super init];
+   _terms = t;
+   _model = model;
+   _n     = n;
+   _eqto  = x;
+   return self;
+}
 -(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n
 {
    self = [super init];
    _terms = t;
    _model = model;
    _n     = n;
+   _eqto  = nil;
    return self;
 }
 -(void) visitIntVar: (id<ORIntVar>) e
 {
-   [_terms addTerm:e by:1];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   [_terms addTerm:e by:1];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   [_terms addIndependent:[e value]];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e value]]];
+      [_terms addIndependent:[e value]];
+      _eqto = nil;
+   } else
+      [_terms addIndependent:[e value]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
-   [[e left] visit:self];
-   [[e right] visit:self];
+   if (_eqto) {
+      id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      [[e left] visit:self];
+      [[e right] visit:self];
+   }
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-   [[e left] visit:self];
-   id<ORLinear> old = _terms;
-   _terms = [[ORLinearFlip alloc] initORLinearFlip: _terms];
-   [[e right] visit:self];
-   [_terms release];
-   _terms = old;
+   if (_eqto) {
+      id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      [[e left] visit:self];
+      id<ORLinear> old = _terms;
+      _terms = [[ORLinearFlip alloc] initORLinearFlip: _terms];
+      [[e right] visit:self];
+      [_terms release];
+      _terms = old;
+   }
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
-   BOOL cv = [[e left] isConstant] && [[e right] isVariable];
-   BOOL vc = [[e left] isVariable] && [[e right] isConstant];
-   if (cv || vc) {
-      ORInt coef = cv ? [[e left] min] : [[e right] min];
-      id       x = cv ? [e right] : [e left];
-      [_terms addTerm:x by:coef];
-   } else if ([[e left] isConstant]) {
-      id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:[e right] annotation:_n];
-      [_terms addTerm:alpha by:[[e left] min]];
-   } else if ([[e right] isConstant]) {
-      ORLinear* left = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
-      [left scaleBy:[[e right] min]];
-      [_terms addLinear:left];
-      //id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:[e left] annotation:_n];
-      //[_terms addTerm:alpha by:[[e right] min]];
-   } else {
-      id<ORIntVar> alpha =  [ORSubst substituteIn:_model expr:e annotation:_n];
+   if (_eqto) {
+      id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
       [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      BOOL cv = [[e left] isConstant] && [[e right] isVariable];
+      BOOL vc = [[e left] isVariable] && [[e right] isConstant];
+      if (cv || vc) {
+         ORInt coef = cv ? [[e left] min] : [[e right] min];
+         id       x = cv ? [e right] : [e left];
+         [_terms addTerm:x by:coef];
+      } else if ([[e left] isConstant]) {
+         id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:[e right] annotation:_n];
+         [_terms addTerm:alpha by:[[e left] min]];
+      } else if ([[e right] isConstant]) {
+         ORLinear* left = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
+         [left scaleBy:[[e right] min]];
+         [_terms addLinear:left];
+         //id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:[e left] annotation:_n];
+         //[_terms addTerm:alpha by:[[e right] min]];
+      } else {
+         id<ORIntVar> alpha =  [ORSubst substituteIn:_model expr:e annotation:_n];
+         [_terms addTerm:alpha by:1];
+      }
    }
 }
 -(void) visitExprModI: (ORExprModI*) e
 {
-   id<ORIntVar> alpha =  [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha =  [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
@@ -329,15 +385,22 @@ struct CPVarPair {
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e annotation:_n];
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
-
++(ORLinear*)linearFrom:(ORExprI*)e model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)cons
+{
+   ORLinear* rv = [[ORLinear alloc] initORLinear:4];
+   ORLinearizer* v = [[ORLinearizer alloc] initORLinearizer:rv model: model  equalTo:x annotation:cons];
+   [e visit:v];
+   [v release];
+   return rv;
+}
 +(ORLinear*)linearFrom:(ORExprI*)e model:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    ORLinear* rv = [[ORLinear alloc] initORLinear:4];
