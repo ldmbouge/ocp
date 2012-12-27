@@ -114,7 +114,7 @@
 @end
 
 @interface ORFlattenObjects : ORNOopVisit<ORVisitor>
--(id)init:(id<ORINCModel>)m;
+-(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
@@ -126,7 +126,7 @@
 @end
 
 @interface ORFlattenConstraint : ORNOopVisit<ORVisitor>
--(id)init:(id<ORINCModel>)m;
+-(id)init:(id<ORAddToModel>)m;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
@@ -183,55 +183,11 @@
 
 
 @interface ORFlattenObjective : NSObject<ORVisitor>
--(id)init:(id<ORINCModel>)m;
+-(id)init:(id<ORAddToModel>)m;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
 @end
 
-@implementation ORBatchModel
--(ORBatchModel*)init:(ORModelI*)theModel
-{
-   self = [super init];
-   _target = theModel;
-   return self;
-}
--(void)addVariable:(id<ORVar>)var
-{
-   [_target captureVariable: var];
-}
--(void)addObject:(id)object
-{
-   [_target trackObject:object];
-}
--(void)addConstraint:(id<ORConstraint>)cstr
-{
-   [_target add:cstr];
-}
--(id<ORModel>)model
-{
-   return _target;
-}
--(void)minimize:(id<ORIntVar>)x
-{
-   [_target minimize:x];
-}
--(void)maximize:(id<ORIntVar>)x
-{
-   [_target maximize:x];
-}
--(void) trackObject: (id) obj
-{
-   [_target trackObject:obj];
-}
--(void) trackVariable: (id) obj
-{
-   [_target trackVariable:obj];
-}
--(void) trackConstraint:(id)obj
-{
-   [_target trackConstraint:obj];
-}
-@end
 
 @implementation ORFlatten
 -(id)initORFlatten
@@ -239,7 +195,7 @@
    self = [super init];
    return self;
 }
--(void)apply:(id<ORModel>)m into:(id<ORINCModel>)batch
+-(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)batch
 {
    [m applyOnVar:^(id<ORVar> x) {
       [batch addVariable:x];
@@ -256,13 +212,13 @@
    }];
 }
 
-+(void)flatten:(id<ORConstraint>)c into:(id<ORINCModel>)m
++(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
 {
    ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:m];
    [c visit:fc];
    [fc release];
 }
-+(void)flattenExpression:(id<ORExpr>)expr into:(id<ORINCModel>)model annotation:(ORAnnotation)note
++(void)flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
@@ -287,9 +243,9 @@
 @end
 
 @implementation ORFlattenObjects {
-   id<ORINCModel> _theModel;
+   id<ORAddToModel> _theModel;
 }
--(id)init:(id<ORINCModel>)m
+-(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
    _theModel = m;
@@ -330,9 +286,9 @@
 @end
 
 @implementation ORFlattenConstraint {
-   id<ORINCModel> _theModel;
+   id<ORAddToModel> _theModel;
 }
--(id)init:(id<ORINCModel>)m
+-(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
    _theModel = m;
@@ -573,9 +529,9 @@
 @end
 
 @implementation ORFlattenObjective {
-   id<ORINCModel> _theModel;
+   id<ORAddToModel> _theModel;
 }
--(id)init:(id<ORINCModel>)m
+-(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
    _theModel = m;

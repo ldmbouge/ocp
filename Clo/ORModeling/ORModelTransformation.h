@@ -14,10 +14,10 @@
 #import "ORModelI.h"
 
 @protocol ORModel;
-@protocol ORINCModel;
+@protocol ORAddToModel;
 
 @protocol ORModelTransformation <NSObject>
--(void)apply:(id<ORModel>)m into:(id<ORINCModel>)target;
+-(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
 @end
 
 @protocol ORExprDomainEvaluator <ORVisitor>

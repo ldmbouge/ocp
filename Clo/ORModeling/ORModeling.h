@@ -23,7 +23,6 @@
 -(void) optimize: (id<ORObjectiveFunction>) o;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
--(void) instantiate: (id<ORSolver>) solver;
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
          onObjects:(void(^)(id<ORObject>))doObjs
      onConstraints:(void(^)(id<ORObject>))doCons
@@ -37,17 +36,18 @@
 -(void)restore:(id<ORSolution>)s;
 @end
 
-@protocol ORINCModel<ORTracker>
--(void)addVariable:(id<ORVar>)var;
--(void)addObject:(id)object;
--(void)addConstraint:(id<ORConstraint>)cstr;
--(void)minimize:(id<ORIntVar>)x;
--(void)maximize:(id<ORIntVar>)x;
+@protocol ORAddToModel <ORTracker>
+-(void) addVariable:(id<ORVar>) var;
+-(void )addObject:(id) object;
+-(void) addConstraint:(id<ORConstraint>) cstr;
+-(void) minimize:(id<ORIntVar>) x;
+-(void) maximize:(id<ORIntVar>) x;
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORModelTransformation>)createFlattener;
-+(id<ORModelTransformation>)createLinearizer;
-+(id<ORSolutionPool>)createSolutionPool;
++(id<ORModelTransformation>) createFlattener;
++(id<ORModelTransformation>) createLinearizer;
++(id<ORSolutionPool>) createSolutionPool;
 @end
+

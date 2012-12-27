@@ -15,7 +15,7 @@
 #import <objcp/CPData.h>
 
 @protocol ORModel;
-@protocol ORINCModel;
+@protocol ORAddToModel;
 
 @protocol ORLinear<NSObject>
 -(void)setIndependent:(ORInt)idp;
@@ -48,23 +48,23 @@
 -(void)scaleBy:(ORInt)s;
 -(ORInt)independent;
 -(NSString*)description;
--(id<ORIntVarArray>)scaledViews:(id<ORINCModel>)model;
--(id<ORIntVar>)oneView:(id<ORINCModel>)model;
+-(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model;
+-(id<ORIntVar>)oneView:(id<ORAddToModel>)model;
 -(ORInt)size;
 -(ORInt)min;
 -(ORInt)max;
--(void)postEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons;
--(void)postNEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons;
--(void)postLEQZ:(id<ORINCModel>)model annotation:(ORAnnotation)cons;
+-(void)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
 @end
 
 @interface ORNormalizer : NSObject<ORVisitor> {
    id<ORLinear>     _terms;
-   id<ORINCModel>   _model;
+   id<ORAddToModel>   _model;
    ORAnnotation         _n;
 }
-+(ORLinear*)normalize:(id<ORExpr>)expr into: (id<ORINCModel>)model annotation:(ORAnnotation)n;
--(id)initORNormalizer:(id<ORINCModel>) model annotation:(ORAnnotation)n;
++(ORLinear*)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
+-(id)initORNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;

@@ -33,6 +33,18 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
+@interface ORBatchModel : NSObject<ORAddToModel>
+-(ORBatchModel*)init: (ORModelI*) model;
+-(void) addVariable: (id<ORVar>) var;
+-(void) addObject:(id)object;
+-(void) addConstraint: (id<ORConstraint>) cstr;
+-(void) minimize: (id<ORIntVar>) x;
+-(void) maximize: (id<ORIntVar>) x;
+-(id<ORModel>) model;
+-(void) trackObject: (id) obj;
+-(void) trackVariable: (id) obj;
+@end
+
 @interface ORSolutionI : NSObject<ORSolution>
 -(ORSolutionI*) initSolution: (id<ORModel>) model;
 -(ORInt) intValue: (id) var;

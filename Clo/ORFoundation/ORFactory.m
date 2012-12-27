@@ -318,7 +318,7 @@
    return o;
 }
 
-+(id<ORTable>) table: (id<ORTracker>) tracker table: (ORTableI*) table
++(id<ORTable>) table: (id<ORTracker>) tracker with: (ORTableI*) table
 {
    ORTableI* o = [[ORTableI alloc] initORTableWithTableI: table];
    [tracker trackObject: o];

@@ -11,7 +11,7 @@
 #import "ORSetI.h"
 
 @interface ORLinearizeConstraint : NSObject<ORVisitor>
--(id)init:(id<ORINCModel>)m;
+-(id)init:(id<ORAddToModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
 -(id<ORIntRange>) unionOfVarArrayRanges: (id<ORIntVarArray>)arr;
@@ -19,7 +19,7 @@
 @end
 
 @interface ORLinearizeObjective : NSObject<ORVisitor>
--(id)init:(id<ORINCModel>)m;
+-(id)init:(id<ORAddToModel>)m;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
 @end
@@ -31,7 +31,7 @@
     return self;
 }
 
--(void)apply:(id<ORModel>)m into:(id<ORINCModel>)batch
+-(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)batch
 {
     [m applyOnVar:^(id<ORVar> x) {
         [batch addVariable: x];
@@ -50,11 +50,11 @@
 @end
 
 @implementation ORLinearizeConstraint {
-    id<ORINCModel>  _model;
+    id<ORAddToModel>  _model;
     NSMapTable*   _binMap;
     id<ORExpr> _exprResult;
 }
--(id)init:(id<ORINCModel>)m;
+-(id)init:(id<ORAddToModel>)m;
 {
     if((self = [super init]) != nil) {
         _model = m;
@@ -291,9 +291,9 @@
 @end
 
 @implementation ORLinearizeObjective {
-    id<ORINCModel> _model;
+    id<ORAddToModel> _model;
 }
--(id)init:(id<ORINCModel>)m
+-(id)init:(id<ORAddToModel>)m
 {
     self = [super init];
     _model = m;
