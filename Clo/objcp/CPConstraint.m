@@ -173,7 +173,7 @@
 {
    id<CPIntVarNotifier> mc = [x delegate];
    if (mc == x) {
-      mc = [[CPIntVarMultiCast alloc] initVarMC:32 root:x];
+      mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
@@ -214,6 +214,7 @@
 {
    switch(c) {
       case ValueConsistency:
+      case Default:
       case RangeConsistency: {
          id<CPConstraint> o = [[CPReifyEqualBC alloc] initCPReifyEqualBC: b when: x eq: y];
          [[x tracker] trackObject: o];

@@ -516,7 +516,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    _vc = CPVCAffine;
    id<CPIntVarNotifier> xDeg = [x delegate];
    if (xDeg == x) {
-      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:32 root:x];
+      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
       [mc addVar: self];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
@@ -1480,7 +1480,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
       if (_tab[i] !=nil)
          nbBare += ([_tab[i] varClass] == CPVCBare);
    }
-   assert(nbBare==1);
+   assert(nbBare<=1);
 }
 -(CPLiterals*)findLiterals:(CPIntVarI*)ref
 {
