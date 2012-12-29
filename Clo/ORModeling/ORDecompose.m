@@ -153,21 +153,35 @@
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   bool lv = [[e left] isVariable];
-   bool rv = [[e right] isVariable];
-   if (lv || rv) {
-      ORExprI* other = lv ? [e right] : [e left];
-      ORExprI* var   = lv ? [e left] : [e right];
-      id<ORIntVar> theVar = [ORSubst substituteIn:_model expr:var annotation:_n];
-      ORLinear* lin  = [ORLinearizer linearFrom:other model:_model equalTo:theVar annotation:_n];
-      [lin release];
-      _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+   bool lc = [[e left] isConstant];
+   bool rc = [[e right] isConstant];
+   if (lc && rc) {
+      bool isOk = [[e left] min] == [[e right] min];
+      if (!isOk)
+         [_model addConstraint:[ORFactory fail:_model]];
+   } else if (lc || rc) {
+      ORInt c = lc ? [[e left] min] : [[e right] min];
+      ORExprI* other = lc ? [e right] : [e left];
+      ORLinear* lin  = [ORLinearizer linearFrom:other model:_model annotation:_n];
+      [lin addIndependent: - c];
+      _terms = lin;
    } else {
-      ORLinear* linLeft = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
-      ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
-      [ORLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
-      [linRight release];
-      _terms = linLeft;
+      bool lv = [[e left] isVariable];
+      bool rv = [[e right] isVariable];
+      if (lv || rv) {
+         ORExprI* other = lv ? [e right] : [e left];
+         ORExprI* var   = lv ? [e left] : [e right];
+         id<ORIntVar> theVar = [ORSubst substituteIn:_model expr:var annotation:_n];
+         ORLinear* lin  = [ORLinearizer linearFrom:other model:_model equalTo:theVar annotation:_n];
+         [lin release];
+         _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
+      } else {
+         ORLinear* linLeft = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
+         ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+         [ORLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
+         [linRight release];
+         _terms = linLeft;
+      }
    }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
