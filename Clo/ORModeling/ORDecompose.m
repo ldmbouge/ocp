@@ -684,7 +684,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       case 3: {
          ORInt np = [self nbPositive];
          if (np == 1 || np == 0) [self scaleBy:-1];
-         assert([self nbPositive]==2);
+         assert([self nbPositive]>=2);
          [self positiveFirst];
          assert(_terms[0]._coef > 0 && _terms[1]._coef > 0);
          id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale: _terms[0]._coef  shift: _indep];

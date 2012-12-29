@@ -366,8 +366,14 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          changed |= updateNow;
          terms[i].updated |= updateNow;
          terms[i].up  = minOf(terms[i].up,nSupi);
-         feasible = terms[i].low <= terms[i].up;         
-      }      
+         if (updateNow) {
+            // [ldm] this is necessary to make sure that the view can apply its narrowing
+            // so that the constraint behaves in an idempotent way.
+            terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
+            terms[i].up = maxDom(terms[i].var);
+         }
+         feasible = terms[i].low <= terms[i].up;
+      }
    } while (changed && feasible);
    
    if (!feasible)

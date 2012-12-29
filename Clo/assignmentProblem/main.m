@@ -61,7 +61,7 @@ int main (int argc, const char * argv[])
     for(id<ORIntVar> v in [[lm model] variables])
         NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
     NSLog(@"SOL: %@", assignCost);
-    
+   [ORFactory shutdown];
    
     //id<CPSolver> cp = [ORFactory createCPProgram: model];
     //[cp solve:
