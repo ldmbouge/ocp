@@ -24,7 +24,6 @@
 #import "CPEngineI.h"
 #import "CPBitVarI.h"
 
-
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 
 {
@@ -54,7 +53,9 @@
 {
    if (a==1 && b==0)
       return x;
-   else 
+   else if (a==-1 && b==0)
+      return [CPIntVarI initCPFlipView: x];
+   else
       return [CPIntVarI initCPIntView: x withScale: a andShift: b];
 }
 +(id<CPIntVar>) boolVar: (id<CPEngine>)cp
@@ -227,6 +228,3 @@
    return [[CPBitVarI alloc] initCPExplicitBitVarPat:engine withLow:low andUp:up andLen:len];
 }
 @end
-
-
-

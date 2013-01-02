@@ -21,7 +21,7 @@
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
-      const ORInt n = 64;  // 128 -> 494 fails
+      const ORInt n = argc>= 2 ? atoi(argv[1]) : 8;  // 128 -> 494 fails
       id<ORModel> model = [ORFactory createModel];
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
       id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
@@ -32,6 +32,8 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram: model];
       
       [cp solve: ^{
+         NSLog(@"BASIC: %@",[[cp engine] model]);
+
          [cp  labelArray: x];
          printf("Succeeds \n");
          for(ORInt i = 0; i < n; i++)

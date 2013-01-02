@@ -272,6 +272,55 @@
 }
 @end
 
+@implementation ORAffine {   // y == a * x + b
+   ORInt _a;
+   ORInt _b;
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   ORAnnotation _note;
+}
+-(ORAffine*)initORAffine: (id<ORIntVar>) y eq:(ORInt)a times:(id<ORIntVar>) x plus: (ORInt) b annotation: (ORAnnotation) n
+{
+   self = [super initORConstraintI];
+   _a = a;
+   _b = b;
+   _x = x;
+   _y = y;
+   _note = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %d * %@ + %d)",[self class],self,_impl,_y,_a,_x,_b];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitAffine:self];
+}
+-(id<ORIntVar>) left
+{
+   return _y;
+}
+-(id<ORIntVar>) right
+{
+   return _x;
+}
+-(ORInt)coef
+{
+   return _a;
+}
+-(ORInt)cst
+{
+   return _b;
+}
+-(ORAnnotation)annotation
+{
+   return _note;
+}
+@end
+
 @implementation ORNEqual {
    id<ORIntVar> _x;
    id<ORIntVar> _y;

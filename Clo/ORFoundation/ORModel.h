@@ -17,6 +17,15 @@
 @protocol ORIntVar;
 @protocol ORBitVar;
 @protocol OREngine;
+@protocol ORObjectiveFunction;
+
+@protocol ORBasicModel
+-(id<ORObjectiveFunction>) objective;
+-(id<ORIntVarArray>)intVars;
+-(NSArray*) variables;
+-(NSArray*) constraints;
+-(NSArray*) objects;
+@end
 
 @protocol ORConstraint <ORObject>
 @end
@@ -53,6 +62,14 @@
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
 -(ORInt) cst;
+-(ORAnnotation) annotation;
+@end
+
+@protocol  ORAffine <ORConstraint>
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+-(ORInt)coef;
+-(ORInt)cst;
 -(ORAnnotation) annotation;
 @end
 

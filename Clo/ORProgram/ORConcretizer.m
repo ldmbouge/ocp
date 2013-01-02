@@ -73,7 +73,7 @@
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORINCModel> batch  = [[ORBatchModel alloc] init:flatModel];
+   id<ORAddToModel> batch  = [[ORBatchModel alloc] init:flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into:batch];
    [batch release];
@@ -129,9 +129,9 @@
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
    
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORINCModel> batch  = [[ORBatchModel alloc] init: flatModel];
+   id<ORAddToModel> batch  = [[ORBatchModel alloc] init: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into:batch];
+   [flat apply: model into: batch];
    [batch release];
    
    NSArray* Objects = [flatModel objects];

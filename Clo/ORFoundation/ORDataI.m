@@ -276,11 +276,16 @@ static ORInt _deterministic;
 {
    self = [super init];
    _arity = table->_arity;
-   _nb = 0;
-   _size = 2;
+   _nb = table->_nb;
+   _size = table->_size;
    _column = malloc(sizeof(ORInt*)*_arity);
    for(ORInt i = 0; i < _arity; i++)
       _column[i] = malloc(sizeof(ORInt)*_size);
+   for(ORInt j = 0; j < _arity; j++) {
+      for(ORInt i = 0; i < _nb; i++)
+         _column[j][i] = table->_column[j][i];
+   }
+   assert(table->_closed == false);
    _closed = false;
    return self;
 }

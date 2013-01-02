@@ -195,6 +195,7 @@ typedef struct  {
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
 +(CPIntVarI*)    initCPBoolVar:(id<CPEngine>) fdm;
++(CPIntVarI*)    initCPFlipView:(id<CPIntVar>)x;
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withShift:(ORInt)b;
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
@@ -234,6 +235,27 @@ typedef struct  {
     ORInt _b;
 }
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
+-(void)dealloc;
+-(CPBitDom*)flatDomain;
+-(ORInt) min;
+-(ORInt) max;
+-(ORBounds)bounds;
+-(bool)member:(ORInt)v;
+-(ORRange)around:(ORInt)v;
+-(ORInt) shift;
+-(ORInt) scale;
+-(ORStatus)updateMin:(ORInt)newMin;
+-(ORStatus)updateMax:(ORInt)newMax;
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORStatus)bind:(ORInt)val;
+-(ORStatus)remove:(ORInt)val;
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(id)           snapshot;
+@end
+
+@interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
+}
+-(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
 -(ORInt) min;
@@ -292,6 +314,7 @@ static inline ORInt minDom(CPIntVarI* x)
             return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
       case CPVCEQLiteral: return [x min];
+      case CPVCFlip: return - ((CPBoundsDom*)x->_dom)->_max._val;
       default:assert(NO);return 0;
    }
 }
@@ -308,6 +331,7 @@ static inline ORInt maxDom(CPIntVarI* x)
             return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
       }
       case CPVCEQLiteral: return [x max];
+      case CPVCFlip: return - ((CPBoundsDom*)x->_dom)->_min._val;
       default:assert(NO);return 0;
    }
 }
@@ -328,6 +352,7 @@ static inline ORBounds bounds(CPIntVarI* x)
             return (ORBounds){fmax,fmin};
       }
       case CPVCEQLiteral: return [x bounds];
+      case CPVCFlip: return [x bounds];
       default:assert(NO);return (ORBounds){0,0};
    }
 }
@@ -338,7 +363,6 @@ static inline ORBounds negBounds(CPIntVarI* x)
    ORBounds b = [x bounds];
    return (ORBounds){- b.max, -b.min};
 }
-
 
 static inline ORInt memberDom(CPIntVarI* x,ORInt value)
 {
@@ -363,6 +387,9 @@ static inline ORInt memberDom(CPIntVarI* x,ORInt value)
          }
       }break;
       case CPVCEQLiteral: return [x member:value];
+      case CPVCFlip:
+         target = -value;
+         break;
       default:assert(NO);
    }
    return domMember((CPBoundsDom*)x->_dom, target);
@@ -391,6 +418,9 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
          }
       }break;
       case CPVCEQLiteral: return [x member:value];
+      case CPVCFlip:
+         target = - value;
+         break;
       default:assert(NO);
    }
    return domMember((CPBitDom*)x->_dom, target);
@@ -414,8 +444,9 @@ static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
             if (r != 0) return ORSuspend;
             target = (v - b) / a; 
          }
-      }
+      }break;
       case CPVCEQLiteral: return [x remove:v];
+      case CPVCFlip: target = -v;break;
       default:assert(NO);
    }
    return [x->_dom remove:target for:x->_recv];
@@ -434,8 +465,9 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
          if (r != 0)
             failNow();
          target = (v - b) / a;
-      }
+      }break;
       case CPVCEQLiteral: return [x bind:v];
+      case CPVCFlip: target = - v;break;
       default:assert(NO);
    }
    return [x->_dom bind:target for:x->_recv];
@@ -452,7 +484,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
    ORInt                  _mx;
    UBType*        _loseValIMP;
 }
--(id)initVarMC:(ORInt)n;
+-(id)initVarMC:(ORInt)n root:(CPIntVarI*)root;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;

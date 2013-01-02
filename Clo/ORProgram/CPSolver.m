@@ -21,17 +21,11 @@
 #import <objcp/CPBitVar.h>
 #import "CPConcretizer.h"
 
-// to do 11/11/2012
-//
-// 2. The CPConcretizer need to clone everything
-// 5. Look how to distinguish expression and constraints
-
-// to do 7/11/2012
+// to do 23/12/2012
 //
 // 1. Look at IncModel to implement the incremental addition of constraints
-// 2. Add a feature to determine if the model is closed; needed for incrementality
-// 3. Add the incremental add
-// 4. Look how to distinguish expression and constraints
+// 2. Need to check how variables/constraints/objects are created during the search
+// 3. Need to concretize them directly
 
 @implementation CPHeuristicSet
 {
@@ -139,6 +133,7 @@
    _objective = nil;
    _doOnSol = _doOnExit = nil;
    _sPool   = [ORFactory createSolutionPool];
+   _closed = false;
    return self;
 }
 -(void) dealloc
@@ -198,7 +193,7 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine allVars]];
+      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine variables]];
       [ORConcurrency pumpEvents];
    }
 }
@@ -306,14 +301,14 @@
 {
    [_engine trackConstraint:obj];
 }
--(void) add: (id<ORConstraint>) c
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];   
-}
--(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];
-}
+//-(void) add: (id<ORConstraint>) c
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];
+//}
+//-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];
+//}
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -497,7 +492,7 @@
 //   return self;
 //}
 
--(void) addInternal: (id<ORConstraint>) c annotation:(ORAnnotation)n
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORAnnotation) n
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
    ORStatus status = [_engine add: c];
@@ -511,22 +506,23 @@
 /*                                   CPSolver                                             */
 /******************************************************************************************/
 
-@interface ORRTModel : NSObject<ORINCModel> {
-   CPSolver* _solver;
-   id<ORVisitor> _concretizer;
-}
+@interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*)solver;
--(void)       addVariable:(id<ORVar>)var;
--(void)       addObject:(id)object;
--(void)       addConstraint:(id<ORConstraint>)cstr;
--(void)       minimize:(id<ORIntVar>)x;
--(void)       maximize:(id<ORIntVar>)x;
+-(void)       addVariable: (id<ORVar>) var;
+-(void)       addObject: (id) object;
+-(void)       addConstraint: (id<ORConstraint>) cstr;
+-(void)       minimize: (id<ORIntVar>) x;
+-(void)       maximize: (id<ORIntVar>) x;
 -(void)       trackObject: (id) obj;
 -(void)       trackVariable: (id) obj;
--(void)       trackConstraint:(id)obj;
+-(void)       trackConstraint: (id) obj;
 @end
 
 @implementation ORRTModel
+{
+   CPSolver* _solver;
+   id<ORVisitor> _concretizer;
+}
 -(ORRTModel*)init:(CPSolver*)solver
 {
    self = [super init];
@@ -534,32 +530,32 @@
    _concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: solver];
    return self;
 }
--(void)dealloc
+-(void) dealloc
 {
    [_concretizer release];
    [super dealloc];
 }
--(void)addVariable:(id<ORVar>)var
+-(void) addVariable: (id<ORVar>) var
 {
    [_solver trackVariable:var];
 }
--(void)addObject:(id)object
+-(void) addObject: (id) object
 {
-   [_solver trackObject:object];
+   [_solver trackObject: object];
 }
--(void)addConstraint:(id<ORConstraint>)cstr
+-(void) addConstraint: (id<ORConstraint>) cstr
 {
-   [cstr visit:_concretizer];
+   [cstr visit: _concretizer];
    id<CPConstraint> c = [cstr dereference];
-   [_solver addInternal:c annotation:DomainConsistency];
+   [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
 }
--(void)minimize:(id<ORIntVar>)x
-{   
-   assert(FALSE);
-}
--(void)maximize:(id<ORIntVar>)x
+-(void) minimize:(id<ORIntVar>) x
 {
-   assert(FALSE);
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"]; 
+}
+-(void) maximize:(id<ORIntVar>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
 }
 -(void) trackObject: (id) obj
 {
@@ -569,7 +565,7 @@
 {
    [_solver trackVariable:obj];
 }
--(void) trackConstraint:(id)obj
+-(void) trackConstraint:(id) obj
 {
    [_solver trackConstraint:obj];
 }
@@ -603,11 +599,11 @@
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
    // LDM: DONE. Have not checked the variable creation/deallocation logic though. 
-   id<ORINCModel> trg = [[ORRTModel alloc] init:self];
+   id<ORAddToModel> trg = [[ORRTModel alloc] init:self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg annotation:DomainConsistency];
+      [ORFlatten flattenExpression:(id<ORExpr>) c into: trg annotation: DomainConsistency];
    else
-      [ORFlatten flatten:c into:trg];
+      [ORFlatten flatten: c into:trg];
    [trg release];
 }
 -(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
@@ -615,11 +611,11 @@
    // PVH: Need to flatten/concretize
    // PVH: Only used during search
    // LDM: See above. 
-   id<ORINCModel> trg = [[ORRTModel alloc] init:self];
+   id<ORAddToModel> trg = [[ORRTModel alloc] init: self];
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
-      [ORFlatten flattenExpression:(id<ORExpr>)c into:trg annotation:cons];
+      [ORFlatten flattenExpression: (id<ORExpr>) c into: trg annotation: cons];
    else
-      [ORFlatten flatten:c into:trg];
+      [ORFlatten flatten: c into: trg];
    [trg release];
 }
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val

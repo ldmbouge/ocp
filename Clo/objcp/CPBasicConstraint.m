@@ -39,7 +39,7 @@
 }
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<x[%d] IN %@>",[_x getId],_r];
+   return [NSString stringWithFormat:@"<CPRestrict: x[%d] IN %@>",[_x getId],_r];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -88,7 +88,7 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<x[%d] == %d>",[_x getId],_c];
+   return [NSString stringWithFormat:@"<CPEqualc: %02d %@ == %d>",_name,_x,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -167,11 +167,6 @@
    _c = c;
    return self;
 }
-
-- (void) dealloc
-{
-    [super dealloc];
-}
 -(NSSet*)allVars
 {
    return [[NSSet alloc] initWithObjects:_x,_y,nil];
@@ -236,10 +231,6 @@
    _y = y;
    _c = c;
    return self;
-}
--(void) dealloc
-{
-   [super dealloc];   
 }
 -(NSSet*)allVars
 {
@@ -317,6 +308,145 @@
    _y = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_c];
    return self;
+}
+@end
+
+@implementation CPAffineBC
+-(id)initCPAffineBC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b
+{
+   self = [super initCPCoreConstraint:[y engine]];
+   _x = x;
+   _y = y;
+   _a = a;
+   _b = b;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (![_x bound] || ![_y bound]) {
+      [_x whenChangeBoundsPropagate: self];
+      [_y whenChangeBoundsPropagate: self];
+   }
+   [self propagate];
+   return ORSuspend;   
+}
+-(void) propagate    // y == a * x + b
+{
+   if (bound(_x)) {
+      [_y bind:_a * minDom(_x) + _b];
+   }
+   else if (bound(_y)) {    //  (y - b) / a == x
+      ORInt ymb = minDom(_y) - _b;
+      ORInt r   = ymb % _a;
+      if (r != 0)
+         failNow();
+      else
+         [_x bind:ymb / _a];
+   }
+   else {
+      ORBounds xb = bounds(_x);
+      if (_a > 0) {
+         [_y updateMin:_a * xb.min + _b andMax:_a * xb.max + _b];
+         ORBounds yb = bounds(_y);
+         yb.min -= _b;
+         yb.max -= _b;
+         ORInt ymaxs = yb.max < 0  ? -1 : +1;
+         ORInt ymaxr = yb.max % _a ? 1  : 0;
+         ORInt ymins = yb.min > 0  ? +1 : -1;
+         ORInt yminr = yb.min % _a ? 1  : 0;
+         [_x updateMin:yb.min / _a + ymins * yminr andMax:yb.max / _a + ymaxs * ymaxr];
+      } else {
+         [_y updateMin:_a * xb.max + _b andMax:_a * xb.min + _b];
+         ORBounds yb = bounds(_y);
+         yb.min -= _b;
+         yb.max -= _b;
+         ORInt ymaxs = yb.max < 0  ? +1 : -1;
+         ORInt ymaxr = yb.max % _a ? 1  : 0;
+         ORInt ymins = yb.min > 0  ? -1 : +1;
+         ORInt yminr = yb.min % _a ? 1  : 0;
+         [_x updateMin:yb.max / _a + ymaxs * ymaxr andMax:yb.min / _a + ymins * yminr];
+      }
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPAffineBC:%02d %@ == %d * %@ + %d>",_name,_y,_a,_x,_b];
+}
+@end
+
+@implementation CPAffineAC
+-(id)initCPAffineAC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b
+{
+   self = [super initCPCoreConstraint:[y engine]];
+   _x = x;
+   _y = y;
+   _a = a;
+   _b = b;
+   return self;   
+}
+-(ORStatus) post
+{
+   if (bound(_x)) {
+      bindDom(_y, _a * minDom(_x) + _b);
+   } else if (bound(_y)) {
+      ORInt ymb = minDom(_y) - _b;
+      ORInt r   = ymb % _a;
+      if (r != 0)
+         failNow();
+      else
+         [_x bind:ymb / _a];      
+   } else {
+      for(ORInt i=minDom(_x);i <= maxDom(_x);i++) {
+         if (!memberDom(_x, i)) continue;
+         ORInt v = _a * i + _b;
+         if (!memberDom(_y, v))
+            [_x remove:i];
+      }
+      for(ORInt i=minDom(_y);i <= maxDom(_y);i++) {
+         if (!memberDom(_y,i)) continue;
+         ORInt v = i - _b;
+         if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
+            [_y remove:i];
+         else {
+            ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
+            if (!memberDom(_x, w))
+               [_y remove:i];
+         }
+      }
+      if (!bound(_x))
+         [_x whenLoseValue:self do:^(ORInt v) {
+            ORInt w = _a * v + _b;
+            [_y remove:w];
+         }];
+      if (!bound(_y))
+         [_y whenLoseValue:self do:^(ORInt v) {
+            ORInt w = v - _b;
+            assert(w % _a == 0);
+            [_x remove:w / _a];
+         }];
+   }
+   return ORSuspend;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPAffineAC:%02d %@ == %d * %@ + %d>",_name,_y,_a,_x,_b];
 }
 @end
 

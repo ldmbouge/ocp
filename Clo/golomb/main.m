@@ -22,7 +22,7 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
-      ORInt n = argc >= 2 ? atoi(argv[1]) : 11;
+      ORInt n = argc >= 2 ? atoi(argv[1]) : 6;
       id<ORIntRange> R = RANGE(model,1,n);
       id<ORIntRange> D = RANGE(model,0,n*n);
 
@@ -54,6 +54,7 @@ int main(int argc, const char * argv[])
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^{
+         NSLog(@"BASIC: %@",[[cp engine] model]);
          [cp labelArray:m];
          NSLog(@"Optimum: %d",[m[n] value]);
       }];

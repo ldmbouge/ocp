@@ -13,5 +13,5 @@
 
 @interface ORLinearize : NSObject<ORModelTransformation>
 -(id)initORLinearize;
--(void) apply:(id<ORModel>)m into:(id<ORINCModel>)target;
+-(void) apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
 @end

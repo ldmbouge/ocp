@@ -112,7 +112,7 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker withDereferenced: (id<ORIntMatrix>) m
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) m
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix: tracker withDereferenced: m];
    [tracker trackObject: o];
@@ -192,6 +192,19 @@
       return x;
    else
       return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
+
+   /*if (a==1)
+      return x;
+   else if (a==-1) {
+      return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
+   }
+   else {
+      ORInt l = a > 0 ? a * [x min] : a * [x max];
+      ORInt u = a > 0 ? a * [x max] : a * [x min];
+      id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:0 annotation:DomainConsistency]];
+      return nv;
+   }*/
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
 {
@@ -199,6 +212,13 @@
       return x;
    else
       return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:b];
+/*
+   ORInt l = (a > 0 ? a * [x min] : a * [x max]) + b;
+   ORInt u = (a > 0 ? a * [x max] : a * [x min]) + b;
+   id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
+   [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:DomainConsistency]];
+   return nv;
+ */
 }
 +(id<ORIntVar>) boolVar: (id<ORTracker>) model
 {
@@ -298,7 +318,7 @@
    return o;
 }
 
-+(id<ORTable>) table: (id<ORTracker>) tracker table: (ORTableI*) table
++(id<ORTable>) table: (id<ORTracker>) tracker with: (ORTableI*) table
 {
    ORTableI* o = [[ORTableI alloc] initORTableWithTableI: table];
    [tracker trackObject: o];
@@ -563,7 +583,15 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z annotation: (ORAnnotation)n
++(id<ORConstraint>) model:(id<ORTracker>)model var:(id<ORIntVar>)y equal:(ORInt)a times:(id<ORIntVar>)x plus:(ORInt)b
+               annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORAffine alloc] initORAffine:y eq:a times:x plus:b annotation:n];
+   [model trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z
+                annotation: (ORAnnotation)n
 {
    id<ORConstraint> o = [[ORPlus alloc] initORPlus:x eq:y plus:z annotation:n];
    [model trackConstraint:o];

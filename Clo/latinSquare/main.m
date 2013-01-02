@@ -16,6 +16,13 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
 
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
 
 int main(int argc, const char * argv[])
 {
@@ -30,14 +37,6 @@ int main(int argc, const char * argv[])
       id<ORIntVarMatrix> x = [ORFactory intVarMatrix:model range:R :R domain:D];
       id<ORIntVarMatrix> y = [ORFactory intVarMatrix:model range:R :R domain:D];
       id<ORIntVarMatrix> z = [ORFactory intVarMatrix:model range:R :R domain:R2];
-
-      for(ORInt i=0;i <= n-1 ; i++) {
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:i :j]) annotation:DomainConsistency]];
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:j :i]) annotation:DomainConsistency]];
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:i :j]) annotation:DomainConsistency]];
-         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:j :i]) annotation:DomainConsistency]];
-      }
-      [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [z at:i :j]) annotation:DomainConsistency]];
       
       id<ORIntArray> m1 = [ORFactory intArray:model range:R2 with:^ORInt(ORInt i) { return 1 + i % n;}];
       id<ORIntArray> m2 = [ORFactory intArray:model range:R2 with:^ORInt(ORInt i) { return 1 + i / n;}];
@@ -49,27 +48,47 @@ int main(int argc, const char * argv[])
             [model add:[[z at:i :j] eq: [[[[[x at:i :j] subi: 1] muli:n] plus: [y at:i :j]] subi: 1]] annotation:DomainConsistency];
          }
       }
-      
+
+      for(ORInt i=0;i <= n-1 ; i++) {
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:i :j]) annotation:DomainConsistency]];
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [x at:j :i]) annotation:DomainConsistency]];
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:i :j]) annotation:DomainConsistency]];
+         [model add:[ORFactory alldifferent:All(model, ORIntVar, j, R, [y at:j :i]) annotation:DomainConsistency]];
+      }
+      [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [z at:i :j]) annotation:DomainConsistency]];
+
       for(ORInt i=1;i<=n-1;i++)
-         [model add:[ORFactory lex:All(model, ORIntVar, j, R, [x at:i :j]) leq:All(model, ORIntVar, j, R, [y at:i-1 :j])]];
+            [model add:[ORFactory lex:All(model, ORIntVar, j, R, [x at:i :j]) leq:All(model, ORIntVar, j, R, [y at:i-1 :j])]];
+      
+      //NSLog(@"initial: %@",model);
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       id<ORIntVarArray> av = All2(model, ORIntVar, i, R, j, R, [z at:i :j]);
       id<CPHeuristic> h = [ORFactory createFF:cp restricted:av];
       [cp solve:^{
-         /*int zf[25] = { 1, 23, 17,  9, 10, 7, 15,  3 ,11, 24,13,  4,  5, 22, 16, 19, 12, 21 , 0 , 8 ,20 , 6 ,14 ,18 , 2};
-         for(ORInt i=0;i<25;i++) {
-            NSLog(@"try... %d",i);
-            [cp label:av[i] with:zf[i]];
-            NSLog(@"done... %d",i);
-         }*/
-         
+         id<ORBasicModel> bm = [[cp engine] model];
+         NSArray* bmv = [bm variables];
+         //NSLog(@"BASIC: %@",bm);
+         __block ORInt d = 0;
          [cp forall:[av range] suchThat:^bool(ORInt i) { return ![av[i] bound];} orderedBy:^ORInt(ORInt i) { return [av[i] domsize];} do:^(ORInt i) {
-            [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) { return [av[i] member:j];} in:^(ORInt j) {
-               [cp label:av[i] with:j];
-            } onFailure:^(ORInt j) {
-               [cp diff:av[i] with:j];
+/*            [bmv enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+               printf("%ld : %s\n",idx,[[obj description] cStringUsingEncoding:NSASCIIStringEncoding]);
             }];
+ */
+            [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) {
+               //NSLog(@"member?(%@,%d) == %d",av[i],j,[av[i] member:j]);
+               return [av[i] member:j];
+            } in:^(ORInt j) {
+               [cp label:av[i] with:j];
+               //printf("%sTried label ok %d - %d \n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],i,j);
+               //printf("%sx[21] = %s\n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],[[av[21] description] cStringUsingEncoding:NSASCIIStringEncoding]);
+            } onFailure:^(ORInt j) {
+               //printf("%sabout to try to remove %d",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],j);
+               [cp diff:av[i] with:j];
+               //printf("%sTried diff ok  %d - %d \n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],i,j);
+               //printf("%sx[21] = %s\n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],[[av[21] description] cStringUsingEncoding:NSASCIIStringEncoding]);
+            }];
+            d = d + 1;
          }];
          [cp labelHeuristic:h];
          //[cp labelArray:av];

@@ -233,21 +233,21 @@
    ORInt k = [NSThread threadID];
    return [_solver[k] trackConstraint:object];
 }
--(void) add: (id<ORConstraint>) c
+//-(void) add: (id<ORConstraint>) c
+//{
+//   ORInt k = [NSThread threadID];
+//   return [_solver[k] add: c];
+//}
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {
    ORInt k = [NSThread threadID];
-   return [_solver[k] add: c];
+   [_solver[k] addConstraintDuringSearch: c annotation:n];
 }
--(void) addInternal: (id<ORConstraint>) c annotation:(ORAnnotation)n
-{
-   ORInt k = [NSThread threadID];
-   [_solver[k] addInternal: c annotation:n];
-}
--(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
-{
-   ORInt k = [NSThread threadID];
-   return [_solver[k] add: c annotation: cons];
-}
+//-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
+//{
+//   ORInt k = [NSThread threadID];
+//   return [_solver[k] add: c annotation: cons];
+//}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
    ORInt k = [NSThread threadID];

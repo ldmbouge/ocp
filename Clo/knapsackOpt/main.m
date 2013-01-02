@@ -75,7 +75,13 @@ int main(int argc, const char * argv[])
       id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
       [cp solve: ^{
          [cp labelHeuristic:h];
-         NSLog(@"Solution: %@ -> obj = %@",x,obj);
+         @autoreleasepool {
+            NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+            [b appendString:@"["];
+            for(ORInt i=0;i<=n-1;i++)
+               [b appendFormat:@"%d%c",[x[i] value],i < n-1 ? ',' : ']'];
+            NSLog(@"sol: %@ obj = %@",b,obj);
+         }
       }];
 
       ORInt tot = 0;

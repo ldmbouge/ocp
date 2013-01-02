@@ -173,6 +173,16 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          cur->updated |= updateNow;
          cur->low = maxOf(cur->low,nLowi);
          cur->up  = minOf(cur->up,nSupi);
+         if (updateNow) {
+            // [ldm] We must update now. A view such as y = a * x with y appearing here
+            // might force a stronger tightening of the bounds of y. e.g.,
+            // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
+            // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
+            cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
+            ORBounds b = bounds(cur->var);
+            cur->low = b.min;
+            cur->up  = b.max;
+         }
          feasible = cur->low <= cur->up;
          if (cur->low == cur->up) {
             assignTRLong(&_ec, _ec._val + cur->low, _trail);
@@ -180,6 +190,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
             inline_assignTRCPEQTerm(&_inUse[_used._val - 1],cur,_trail);
             inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
             assignTRInt(&_used,_used._val - 1,_trail);
+            toSet = _used._val;
          } else ++i;
       }
    } while(changed && feasible);
@@ -355,8 +366,14 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          changed |= updateNow;
          terms[i].updated |= updateNow;
          terms[i].up  = minOf(terms[i].up,nSupi);
-         feasible = terms[i].low <= terms[i].up;         
-      }      
+         if (updateNow) {
+            // [ldm] this is necessary to make sure that the view can apply its narrowing
+            // so that the constraint behaves in an idempotent way.
+            terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
+            terms[i].up = maxDom(terms[i].var);
+         }
+         feasible = terms[i].low <= terms[i].up;
+      }
    } while (changed && feasible);
    
    if (!feasible)

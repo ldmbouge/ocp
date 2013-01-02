@@ -23,7 +23,7 @@
 -(ORStatus)        close;
 -(bool)            closed;
 -(void)            trackObject:(id)obj;
--(NSMutableArray*) allVars;
+-(NSMutableArray*) variables;
 -(id<ORTrail>) trail;
 -(ORStatus)propagate;
 -(ORStatus)enforceObjective;

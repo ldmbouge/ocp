@@ -39,7 +39,6 @@
    ORInt  _c;
 }
 -(id) initCPEqualc:(id)x and:(ORInt)c;
--(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -51,7 +50,6 @@
    ORInt      _c;
 }
 -(id) initCPDiffc:(id)x and:(ORInt)c;
--(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -64,7 +62,6 @@
    ORInt _c;
 }
 -(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c;
--(void) dealloc;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;
@@ -78,7 +75,30 @@
    ORInt _c;
 }
 -(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c;
--(void) dealloc;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPAffineBC : CPCoreConstraint { // y == a x + b
+   CPIntVarI* _y;
+   CPIntVarI* _x;
+   ORInt      _a;
+   ORInt      _b;
+}
+-(id)initCPAffineBC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPAffineAC : CPCoreConstraint {  // y == a x + b
+   CPIntVarI* _y;
+   CPIntVarI* _x;
+   ORInt      _a;
+   ORInt      _b;
+}
+-(id)initCPAffineAC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
