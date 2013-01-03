@@ -347,6 +347,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return (ORUInt)[_vars count];
 }
+-(ORUInt) nbConstraints
+{
+   return (ORUInt)[_mStore count];
+}
 -(void) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
@@ -377,7 +381,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%d propagations\n",[_vars count],_nbpropag];
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",[_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail
 {

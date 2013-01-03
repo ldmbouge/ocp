@@ -34,6 +34,7 @@
 -(ORStatus) propagate;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
+-(ORUInt) nbConstraints;
 -(id<ORBasicModel>)model;
 -(id) trail;
 -(id<ORInformer>) propagateFail;

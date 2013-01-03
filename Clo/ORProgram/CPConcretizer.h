@@ -98,6 +98,7 @@
 -(id) visitExprSumI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprProdI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprAbsI:(id<ORExpr>) e engine: (id<CPEngine>) engine;
+-(id) visitExprNegateI:(id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprCstSubI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprDisjunctI:(id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprConjunctI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -193,6 +194,7 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>) e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
@@ -285,6 +287,7 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>) e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;

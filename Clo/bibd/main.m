@@ -32,8 +32,9 @@ void show(id<ORIntVarMatrix> M)
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    @autoreleasepool {
-      ORInt a = 0;
+      ORInt a = argc >= 2 ? atoi(argv[1]) : 9;
       ORInt instances[14][3] = {
          {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
          {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},
@@ -46,9 +47,9 @@ int main(int argc, const char * argv[])
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> Rows = RANGE(mdl,1,v);
       id<ORIntRange> Cols = RANGE(mdl,1,b);
-     
+      
       id<ORIntVarMatrix> M = [ORFactory boolVarMatrix:mdl range:Rows :Cols];
-     for(ORInt i=Rows.low;i<=Rows.up;i++)
+      for(ORInt i=Rows.low;i<=Rows.up;i++)
          [mdl add: [Sum(mdl,x, Cols, [M at:i :x]) eqi:r]];
       for(ORInt i=Cols.low;i<=Cols.up;i++)
          [mdl add: [Sum(mdl,x, Rows, [M at:x :i]) eqi:k]];
@@ -60,8 +61,8 @@ int main(int argc, const char * argv[])
                               leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
       }
       for(ORInt j=1;j <= b-1;j++) {
-        [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
-                             leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
+         [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
+                              leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
       }
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
@@ -74,6 +75,7 @@ int main(int argc, const char * argv[])
       NSLog(@"Solver: %@",cp);
       [cp release];
       [ORFactory shutdown];
+      NSLog(@"malloc: %@",mallocReport());
    }
    return 0;
 }

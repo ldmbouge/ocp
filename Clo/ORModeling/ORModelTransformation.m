@@ -139,6 +139,7 @@
    [self evaluateExpr: [expr expr]];
 }
 -(void) visitExprAbsI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitExprNegateI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprCstSubI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprDisjunctI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprConjunctI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }

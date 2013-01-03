@@ -96,6 +96,7 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;

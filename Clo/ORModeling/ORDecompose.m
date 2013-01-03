@@ -41,6 +41,7 @@
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI *)e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
@@ -127,6 +128,7 @@
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
@@ -241,6 +243,7 @@ struct CPVarPair {
 -(void) visitExprProdI: (ORExprProdI*) e   {}
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
+-(void) visitExprNegateI:(ORExprNegateI*)e {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
 -(void) visitExprVarSubI:(ORExprVarSubI*)e {}
 @end
@@ -351,6 +354,11 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
 {
    id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
@@ -862,7 +870,14 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    [lT release];
    [rT release];
 }
+
+#if  USEVIEWS==1
 #define OLDREIFY 0
+#else
+#define OLDREIFY 1
+#endif
+
+
 -(void) reifyEQc:(ORExprI*)theOther constant:(ORInt)c
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
@@ -981,6 +996,10 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,lb,ub)];
    [_model addConstraint:[ORFactory abs:_model var:oV equal:_rv annotation:_c]];
    [lT release];
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
+{
+   // TODO
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {

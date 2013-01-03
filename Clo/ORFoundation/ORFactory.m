@@ -176,7 +176,12 @@
 }
 +(id<ORIntVar>) reifyView:(id<ORTracker>)model var:(id<ORIntVar>) x eqi:(ORInt)c
 {
+#if USEVIEWS==1
    return [[ORIntVarLitEQView alloc] initORIntVarLitEQView:model var:x eqi:c];
+#else
+   assert(0);
+   return nil;
+#endif
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) model domain: (id<ORIntRange>) r
 {
@@ -184,41 +189,55 @@
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
 {
+#if USEVIEWS==1
    return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:1 shift:b];
+#else
+   if (b==0)
+      return x;
+   else {
+      id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,[x min] + b,[x max] + b)];
+      [tracker addConstraint:[ORFactory equal:tracker var:nv to:x plus:b annotation:DomainConsistency]];
+      return nv;
+   }
+#endif
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a
 {
+#if USEVIEWS==1
    if (a==1)
       return x;
    else
       return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
-
-   /*if (a==1)
+#else
+   if (a==1)
       return x;
-   else if (a==-1) {
-      return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:0];
-   }
    else {
       ORInt l = a > 0 ? a * [x min] : a * [x max];
       ORInt u = a > 0 ? a * [x max] : a * [x min];
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
       [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:0 annotation:DomainConsistency]];
       return nv;
-   }*/
+   }
+#endif
 }
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
 {
+#if USEVIEWS==1
    if (a == 1 && b == 0)
       return x;
    else
       return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:a shift:b];
-/*
-   ORInt l = (a > 0 ? a * [x min] : a * [x max]) + b;
-   ORInt u = (a > 0 ? a * [x max] : a * [x min]) + b;
-   id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
-   [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:DomainConsistency]];
-   return nv;
- */
+#else
+   if (a== 1 && b == 0)
+      return x;
+   else {
+      ORInt l = (a > 0 ? a * [x min] : a * [x max]) + b;
+      ORInt u = (a > 0 ? a * [x max] : a * [x min]) + b;
+      id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:DomainConsistency]];
+      return nv;
+   }
+#endif
 }
 +(id<ORIntVar>) boolVar: (id<ORTracker>) model
 {
@@ -455,6 +474,12 @@
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP tracker in Abs Expression"];
 }
++(id<ORExpr>) exprNegate: (id<ORExpr>) op
+{
+   id<ORExpr> o = [[ORExprNegateI alloc] initORNegateI:op];
+   return [self validate:o onError:"No CP tracker in negate Expression"];
+}
+
 +(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker over: S suchThat: f of: e];

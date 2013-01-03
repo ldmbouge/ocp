@@ -895,6 +895,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
 }
+-(void) visitExprNegateI:(id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];
+}
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   

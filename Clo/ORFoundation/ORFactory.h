@@ -99,6 +99,7 @@
 +(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right;
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
++(id<ORExpr>) exprNegate: (id<ORExpr>) op;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterator>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;

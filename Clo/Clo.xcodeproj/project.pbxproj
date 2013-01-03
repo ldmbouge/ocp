@@ -96,6 +96,8 @@
 		5B28CB2116691F57008AB802 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B28CB2216691F57008AB802 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B28CB2316691F57008AB802 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B2AC1391695DF64008645FB /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B2AC1371695DF64008645FB /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B2AC13A1695DF64008645FB /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B2AC1381695DF64008645FB /* ORMallocWatch.m */; };
 		5B3606911392A8DA008B0EE8 /* CPDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606901392A8DA008B0EE8 /* CPDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606951392A9C5008B0EE8 /* CPBitDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606931392A9C5008B0EE8 /* CPBitDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606961392A9C5008B0EE8 /* CPBitDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3606941392A9C5008B0EE8 /* CPBitDom.m */; };
@@ -2983,6 +2985,8 @@
 		5B28CB0916691F0D008AB802 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B28CB0C16691F0D008AB802 /* langford-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "langford-Prefix.pch"; sourceTree = "<group>"; };
 		5B28CB0D16691F0D008AB802 /* langford.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = langford.1; sourceTree = "<group>"; };
+		5B2AC1371695DF64008645FB /* ORMallocWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMallocWatch.h; sourceTree = "<group>"; };
+		5B2AC1381695DF64008645FB /* ORMallocWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMallocWatch.m; sourceTree = "<group>"; };
 		5B30E16C16528F4800BD0718 /* CPEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEvent.h; sourceTree = "<group>"; };
 		5B30E16D16528F4800BD0718 /* CPEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPEvent.m; sourceTree = "<group>"; };
 		5B3606901392A8DA008B0EE8 /* CPDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPDom.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -4364,6 +4368,8 @@
 				5B60E5DF15AE907F002FF2B3 /* ORUtilities.h */,
 				5B60E5E015AE907F002FF2B3 /* ORUtilities.m */,
 				5B60E5D915AE907F002FF2B3 /* Supporting Files */,
+				5B2AC1371695DF64008645FB /* ORMallocWatch.h */,
+				5B2AC1381695DF64008645FB /* ORMallocWatch.m */,
 			);
 			path = ORUtilities;
 			sourceTree = "<group>";
@@ -5774,6 +5780,7 @@
 				5B60E5EC15AE9136002FF2B3 /* ORConcurrencyI.h in Headers */,
 				5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */,
 				5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */,
+				5B2AC1391695DF64008645FB /* ORMallocWatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7554,6 +7561,7 @@
 				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
 				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
+				5B2AC13A1695DF64008645FB /* ORMallocWatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9927,6 +9935,7 @@
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DUSEVIEWS=1";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -9951,6 +9960,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-DUSEVIEWS=1";
 				SDKROOT = macosx;
 			};
 			name = Release;
