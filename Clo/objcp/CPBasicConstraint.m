@@ -351,9 +351,9 @@
          ORBounds yb = bounds(_y);
          yb.min -= _b;
          yb.max -= _b;
-         ORInt ymaxs = yb.max < 0  ? -1 : +1;
+         ORInt ymaxs = yb.max > 0  ? 0  : -1;
          ORInt ymaxr = yb.max % _a ? 1  : 0;
-         ORInt ymins = yb.min > 0  ? +1 : -1;
+         ORInt ymins = yb.min > 0  ? +1 : 0;
          ORInt yminr = yb.min % _a ? 1  : 0;
          [_x updateMin:yb.min / _a + ymins * yminr andMax:yb.max / _a + ymaxs * ymaxr];
       } else {
@@ -361,9 +361,9 @@
          ORBounds yb = bounds(_y);
          yb.min -= _b;
          yb.max -= _b;
-         ORInt ymaxs = yb.max < 0  ? +1 : -1;
+         ORInt ymaxs = yb.max < 0  ? +1 : 0;
          ORInt ymaxr = yb.max % _a ? 1  : 0;
-         ORInt ymins = yb.min > 0  ? -1 : +1;
+         ORInt ymins = yb.min > 0  ? -1 : 0;
          ORInt yminr = yb.min % _a ? 1  : 0;
          [_x updateMin:yb.max / _a + ymaxs * ymaxr andMax:yb.min / _a + ymins * yminr];
       }

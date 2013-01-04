@@ -861,47 +861,27 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(ORStatus) updateMin: (ORInt) newMin
 {
+   ORInt op = newMin - _b;
+   ORInt mv = op % _a ? 1 : 0;   // multiplier value
    if (_a > 0) {
-      ORInt op = newMin - _b;
       ORInt ms = op > 0 ? +1 : 0;  // multiplier sign
-      ORInt mv = op % _a ? 1 : 0;   // multiplier value
       return [_dom updateMin:op / _a + ms * mv for:_recv];
    } else {
-      ORInt op = newMin - _b;
-      ORInt ms = op > 0 ?  0 : -1;
-      ORInt mv = op % _a ?  1 : 0;
+      ORInt ms = op > 0 ?  -1 : 0;
       return [_dom updateMax:op / _a + ms * mv for:_recv];
    }
-   /*
-    ORInt r = (newMin - _b) % _a;
-    ORInt om = (newMin - _b)/_a;
-    if (_a > 0)
-        return [_dom updateMin:om + (r!=0) for:_recv];   
-    else 
-        return [_dom updateMax:om for:_recv];
-   */
 }
 -(ORStatus) updateMax: (ORInt) newMax
 {
+   ORInt op = newMax - _b;
+   ORInt mv = op % _a ? 1 : 0;
    if (_a > 0) {
-      ORInt op = newMax - _b;
       ORInt ms = op > 0  ? 0 : -1;
-      ORInt mv = op % _a ? 1 : 0;
       return [_dom updateMax:op / _a + ms * mv for:_recv];
    } else {
-      ORInt op = newMax - _b;
-      ORInt ms = op > 0 ? +1 : 0;
-      ORInt mv = op % _a ? 1 : 0;
+      ORInt ms = op < 0 ? +1 : 0;
       return [_dom updateMin:op / _a + ms * mv for:_recv];
    }
-   /*
-    ORInt r = (newMax - _b) % _a;
-    ORInt om = (newMax - _b)/_a;
-    if (_a > 0)
-        return [_dom updateMax:om for:_recv];   
-    else 
-        return [_dom updateMin:om + (r!=0) for:_recv]; 
-    */
 }
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
