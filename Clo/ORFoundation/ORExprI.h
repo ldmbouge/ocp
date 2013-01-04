@@ -228,6 +228,7 @@
 -(id<ORExpr>)initORNegateI:(id<ORExpr>)op;
 -(ORInt)min;
 -(ORInt)max;
+-(ORExprI*) operand;
 -(NSString*)description;
 -(void)visit:(id<ORVisitor>)v;
 @end

@@ -997,9 +997,16 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    [_model addConstraint:[ORFactory abs:_model var:oV equal:_rv annotation:_c]];
    [lT release];
 }
--(void) visitExprNegateI:(ORExprNegateI*) e
+-(void) visitExprNegateI:(ORExprNegateI*)e
 {
-   // TODO
+   ORLinear* lT = [ORLinearizer linearFrom:[e operand] model:_model annotation:_c];
+   id<ORIntVar> oV = [ORSubst normSide:lT for:_model annotation:_c];
+   if (_rv == nil)
+      _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+   else {
+      id<ORIntVar> fV = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+      [_model addConstraint:[ORFactory equal:_model var:_rv to:fV plus:0 annotation:_c]];
+   }
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
