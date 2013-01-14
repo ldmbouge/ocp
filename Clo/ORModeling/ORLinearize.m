@@ -221,6 +221,9 @@
 -(void) visitMult: (id<ORMult>)c
 {
 }
+-(void) visitSquare:(id<ORSquare>)c
+{
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
 }

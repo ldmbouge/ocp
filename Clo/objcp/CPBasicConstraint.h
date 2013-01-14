@@ -202,6 +202,21 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
+@interface CPSquareBC : CPCoreConstraint { // z = x^2
+   CPIntVarI* _x;
+   CPIntVarI* _z;
+}
+-(id)initCPSquareBC:(id)z equalSquare:(id)x;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPSquareDC : CPSquareBC   // z == x^2 (DC variant)
+-(id)initCPSquareDC:(id)z equalSquare:(id)x;
+-(ORStatus) post;
+@end
+
 @interface CPModcBC : CPCoreConstraint { // y == x MOD c
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -209,8 +224,6 @@ typedef int (^intgetter) (void) ;
 }
 -(id)initCPModcBC:(id)x mod:(ORInt)c equal:(id)y;
 -(ORStatus) post;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
 @end
 
 @interface CPModBC : CPCoreConstraint { // z == x MOD y

@@ -35,4 +35,5 @@
 -(bool) isDefined;
 -(bool) inRange: (ORInt)e;
 -(NSString*) description;
+-(void)enumerateWithBlock:(void(^)(ORInt))block;
 @end

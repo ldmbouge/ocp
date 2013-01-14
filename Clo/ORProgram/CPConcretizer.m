@@ -454,6 +454,18 @@
       [_engine add: concreteCstr];
    }
 }
+-(void) visitSquare: (id<ORSquare>)cstr
+{
+   if ([cstr dereference] ==NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> op  = [self concreteVar:[cstr op]];
+      ORAnnotation annotation = [cstr annotation];
+      id<CPConstraint> concrete = [CPFactory square:op equal:res annotation:annotation];
+      [cstr setImpl:concrete];
+      [_engine add:concrete];
+   }
+}
+
 
 -(void) visitMod: (id<ORMod>)cstr
 {
@@ -652,16 +664,12 @@
 -(void) visitReifyLEqual: (id<ORReifyLEqual>) cstr
 {
    if ([cstr dereference] == NULL) {
-      @throw [[ORExecutionError alloc] initORExecutionError: "reify leq not yet implemented"];
-      //      id<ORIntVar> b = [cstr b];
-      //      id<ORIntVar> x = [cstr x];
-      //      id<ORIntVar> y = [cstr y];
-      //      ORAnnotation annotation = [cstr annotation];
-      //      [b visit: self];
-      //      [x visit: self];
-      //      [y visit: self];
-      //      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] leq: [y dereference] annotation: annotation];
-      //      [cstr setImpl: concreteCstr];
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVar> x = [self concreteVar:[cstr x]];
+      id<CPIntVar> y = [self concreteVar:[cstr y]];      
+      id<CPConstraint> concreteCstr = [CPFactory reify: b with: x leq: y annotation: Default];
+      [cstr setImpl:concreteCstr];
+      [_engine add:concreteCstr];
    }
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>) cstr
@@ -680,16 +688,12 @@
 -(void) visitReifyGEqual: (id<ORReifyGEqual>) cstr
 {
    if ([cstr dereference] == NULL) {
-      @throw [[ORExecutionError alloc] initORExecutionError: "reify geq not yet implemented"];
-      //      id<ORIntVar> b = [cstr b];
-      //      id<ORIntVar> x = [cstr x];
-      //      id<ORIntVar> y = [cstr y];
-      //      ORAnnotation annotation = [cstr annotation];
-      //      [b visit: self];
-      //      [x visit: self];
-      //      [y visit: self];
-      //      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] geq: [y dereference] annotation: annotation];
-      //      [cstr setImpl: concreteCstr];
+      id<CPIntVar> b = [self concreteVar:[cstr b]];
+      id<CPIntVar> x = [self concreteVar:[cstr x]];
+      id<CPIntVar> y = [self concreteVar:[cstr y]];
+      id<CPConstraint> concreteCstr = [CPFactory reify: b with: y leq: x annotation: Default];
+      [cstr setImpl:concreteCstr];
+      [_engine add:concreteCstr];
    }
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr

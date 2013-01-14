@@ -847,7 +847,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    ORLong ub = maxOf(c,d);
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(lb),bindUp(ub))];
-   [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv]];
+   [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv annotation:_c]];
    [lT release];
    [rT release];
 }
@@ -953,7 +953,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       [self reifyGEQc:[e right] constant:[[e left] min]];
    } else if ([[e right] isConstant]) {
       [self reifyLEQc:[e left] constant:[[e right] min]];
-   } else assert(NO);
+   } else assert(NO); // [TOFIX]
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {

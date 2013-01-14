@@ -237,9 +237,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     return _dom;
 }
 
+#define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil)
+
 -(bool) tracksLoseEvt:(id<CPDom>)sender
 {
-    return _net._ac5._val != nil || _triggers != nil;
+    return TRACKSINTVAR;
 }
 // nothing to do here
 -(void) setTracksLoseEvt
@@ -427,6 +429,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
+   if (!TRACKSINTVAR) return ORSuspend;
    id<CPEventNode> mList[5];
    ORUInt k = 0;
    mList[k] = _net._domEvt._val;

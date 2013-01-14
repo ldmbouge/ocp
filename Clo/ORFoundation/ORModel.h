@@ -98,6 +98,12 @@
 -(id<ORIntVar>) right;
 @end
 
+@protocol ORSquare<ORConstraint>
+-(id<ORIntVar>)res;
+-(id<ORIntVar>)op;
+-(ORAnnotation) annotation;
+@end
+
 @protocol ORMod <ORConstraint>
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;

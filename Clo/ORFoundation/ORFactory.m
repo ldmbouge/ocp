@@ -677,11 +677,17 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z
++(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORMult alloc] initORMult:z eq:x times:y];
-   [model trackConstraint:o];
-   return o;
+   if ([x getId] == [y getId]) {
+      id<ORConstraint> o = [[ORSquare alloc] initORSquare:z square:x annotation:n];
+      [model trackConstraint:o];
+      return o;
+   } else {
+      id<ORConstraint> o = [[ORMult alloc] initORMult:z eq:x times:y];
+      [model trackConstraint:o];
+      return o;
+   }
 }
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {

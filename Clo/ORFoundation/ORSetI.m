@@ -184,6 +184,11 @@
    for(ORInt i = _low; i <= _up; i++)
       f(i);
 }
+-(void)enumerateWithBlock:(void(^)(ORInt))block
+{
+   for(ORInt i = _low; i <= _up; i++)
+      block(i);
+}
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitIntRange:self];

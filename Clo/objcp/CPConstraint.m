@@ -238,8 +238,15 @@
 
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leqi: (ORInt) i
 {
-   id<ORConstraint> o = [[CPReifyLEqualDC alloc] initCPReifyLEqualDC: b when: x leq: i];
+   id<ORConstraint> o = [[CPReifyLEqualDC alloc] initCPReifyLEqualDC: b when: x leqi: i];
    [[x tracker] trackObject: o];
+   return o;
+}
+
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq:(id<CPIntVar>)y annotation:(ORAnnotation)c
+{
+   id<CPConstraint> o = [[CPReifyLEqualBC alloc] initCPReifyLEqualBC:b when:x leq:y];
+   [[x tracker] trackObject:o];
    return o;
 }
 
@@ -402,6 +409,20 @@
    id<ORConstraint> o = [[CPMultBC alloc] initCPMultBC:x times:y equal:z];
    [[x tracker] trackObject:o];
    return o;   
+}
++(id<ORConstraint>) square: (id<CPIntVar>)x equal:(id<CPIntVar>)z annotation:(ORAnnotation)c
+{
+   id<ORConstraint> o = nil;
+   switch (c) {
+      case DomainConsistency:
+         o = [[CPSquareDC alloc] initCPSquareDC:z equalSquare:x];
+         break;
+      default:
+         o = [[CPSquareBC alloc] initCPSquareBC:z equalSquare:x];
+         break;
+   }
+   [[x tracker] trackObject:o];
+   return o;
 }
 +(id<ORConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y
 {

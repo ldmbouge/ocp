@@ -627,11 +627,28 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 -(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x
 {
    if (val < _min._val || val > _max._val) return ORSuspend;
-   if (val == _min._val) return _updateMin(self,@selector(updateMin:for:),val+1,x);
-   if (val == _max._val) return _updateMax(self,@selector(updateMax:for:),val-1,x);
+   if (_min._val == _max._val && _min._val == val) failNow();
+   if (val == _min._val) {
+      ORInt oldMin = _min._val;
+      inline_assignTRInt(&_sz, _sz._val - 1, _trail);
+      ORInt newMin = findMin(self,_min._val + 1);
+      inline_assignTRInt(&_min, newMin, _trail);
+      ORStatus ok = [x loseValEvt:oldMin sender:self];
+      if (!ok) return ok;
+      return [x changeMinEvt:_sz._val sender:self];
+   } 
+   if (val == _max._val) {
+      ORInt oldMax = _max._val;
+      inline_assignTRInt(&_sz, _sz._val - 1, _trail);
+      ORInt newMax = findMax(self,_max._val - 1);
+      inline_assignTRInt(&_max, newMax, _trail);
+      ORStatus ok = [x loseValEvt:oldMax sender:self];
+      if (!ok) return ok;
+      return [x changeMaxEvt:_sz._val sender:self];
+   }
    if (GETBIT(val)) {
       resetBit(self,val);
-      assignTRInt(&_sz, _sz._val -  1, _trail);
+      inline_assignTRInt(&_sz, _sz._val -  1, _trail);
       ORStatus ok = ORSuspend;
       if (_sz._val==1)
          ok = [x bindEvt:self];

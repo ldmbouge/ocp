@@ -191,9 +191,9 @@ static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
 }
 
 
-static inline void inline_assignTRInt(TRInt* v,int val,ORTrailI* trail)
+static inline void inline_assignTRInt(TRInt* v,int val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
       trailIntFun(trail, &v->_val);

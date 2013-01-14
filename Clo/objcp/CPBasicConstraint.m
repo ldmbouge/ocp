@@ -1651,6 +1651,136 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+@implementation CPSquareBC
+-(id)initCPSquareBC:(id)z equalSquare:(id)x
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _z = z;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x))
+      [_x whenChangeBoundsPropagate:self];
+   if (!bound(_z))
+      [_z whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void)propagate
+{
+   do {
+      _todo = CPChecked;
+      if (bound(_x)) {
+         ORInt v = minDom(_x);
+         [_z bind:v*v];
+         return;
+      } else if (bound(_z)) {
+         ORInt v = (ORInt)sqrt((double)minDom(_z));
+         if (v*v == minDom(_z)) {
+            if (minDom(_x) >= 0)
+               bindDom(_x, v);
+            else if (maxDom(_x) <= 0)
+               bindDom(_x,-v);
+            else
+               [_x updateMin:-v andMax:v];
+            return;
+         } else failNow();
+      } else { // nobody is bound yet.
+         // first infer on y
+         ORBounds xb = bounds(_x);
+         ORBounds sb = {xb.min * xb.min,xb.max * xb.max};
+         if (xb.min >= 0)
+            [_z updateMin:sb.min andMax:sb.max];
+         else if (xb.max <= 0)
+            [_z updateMin:sb.max andMax:sb.min];
+         else if (memberDom(_x, 0))
+            [_z updateMin:0 andMax:max(sb.min, sb.max)];
+         else {
+            ORRange az = [_x around:0];    // ------+ ------------* --- 0 ----- * ----------------------- + --------
+            ORInt lastNegative = az.low;   // pick up the two "stars" in line
+            ORInt firstPositive = az.up;   // ditto
+            ORInt sln = lastNegative  * lastNegative;
+            ORInt sfp = firstPositive * firstPositive;
+            [_z updateMin:min(sln, sfp) andMax:max(sb.min,sb.max)]; // smallest value is min of ^2 of *. largest is max of ^2 of +
+         }
+         // infer on x now.
+         ORBounds zb = bounds(_z);
+         ORBounds rz = {(ORInt)sqrt((double)zb.min),(ORInt)sqrt((double)zb.max)};
+         if (xb.min >= 0)
+            [_x updateMin:rz.min andMax:rz.max];
+         else if (xb.max <= 0)
+            [_x updateMin:- rz.max andMax:- rz.min];
+         else {
+            [_x updateMin:min(rz.min,-rz.max) andMax:rz.max];
+         }
+      }
+   } while (_todo == CPTocheck);
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_z,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_z bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPSquareBC:%02d %@ == %@^2>",_name,_z,_x];
+}
+@end
+
+@implementation CPSquareDC
+-(id)initCPSquareDC:(id)z equalSquare:(id)x
+{
+   self = [super initCPSquareBC:z equalSquare:x];
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   ORBounds xb = bounds(_x);
+   for(ORInt k=xb.min; k <= xb.max;k++) {
+      ORInt ks = k * k;
+      if (!memberBitDom(_x, k) && !memberBitDom(_x, -k) && memberDom(_z, ks))
+         removeDom(_z, ks);
+   }
+   ORBounds zb = bounds(_z);
+   for(ORInt k=zb.min; k <= zb.max;k++) {
+      ORInt rk = (ORInt)sqrt((double)k);
+      if (rk*rk == k) {
+         if (!memberDom(_z, k)) {
+            if (memberDom(_x, rk))
+               removeDom(_x, rk);
+            if (memberDom(_x,-rk))
+               removeDom(_x, -rk);
+         }
+      } else
+         removeDom(_z, k);
+   }
+   [_x whenLoseValue:self do:^(ORInt v) {
+      ORInt vs = v * v;
+      if (!memberDom(_x, v) && !memberDom(_x, -v))
+         removeDom(_z, vs);
+   }];
+   [_z whenLoseValue:self do:^(ORInt v) {
+      ORInt rv = (ORInt)sqrt((double)v);
+      if (memberDom(_x, rv))
+         removeDom(_x, rv);
+      if (memberDom(_x, -rv))
+         removeDom(_x,-rv);
+   }];
+   return ORSuspend;
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPSquareDC:%02d %@ == %@^2>",_name,_z,_x];
+}
+@end
+
+
 @implementation CPModcBC
 -(id)initCPModcBC:(CPIntVarI*)x mod:(ORInt)c equal:(CPIntVarI*)y
 {
