@@ -221,7 +221,7 @@
       [_search optimizeModel: self using: search
                   onSolution: _doOnSol
                       onExit: _doOnExit];
-      printf("Optimal Solution: %d %d\n",[_objective primalBound],[NSThread threadID]);
+      printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search

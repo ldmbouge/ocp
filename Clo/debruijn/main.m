@@ -18,12 +18,12 @@
 
 int main(int argc, const char * argv[])
 {
-   //mallocWatch();
+   mallocWatch();
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
       NSLog(@"args: %d %s %s %s %s",argc,argv[0],argv[1],argv[2],argv[3]);
       ORInt base = argc >= 2 ? atoi(argv[1]) : 2;
-      ORInt n    = argc >= 3 ? atoi(argv[2]) : 4;
+      ORInt n    = argc >= 3 ? atoi(argv[2]) : 9;
       ORInt m    = argc >= 4 ? atoi(argv[3]) : pow(base,n);
       ORInt up   = (ORInt)pow(base,n)-1;
       NSLog(@"Params: n=%d m=%d base=%d",n,m,base);
@@ -52,10 +52,10 @@ int main(int argc, const char * argv[])
          [model add:[Sum(model, j, RANGE(model,1,m), [code[j] eqi:i]) eq:gcc[i]]];
       */
       
-      NSLog(@"MODEL: %@",model);
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       __block ORInt nbSol = 0;
       [cp solve:^{
+         //NSLog(@"MODEL: %@",[[cp engine] model]);
          NSLog(@"searching...");
          [cp labelArray:x];
          @autoreleasepool {
@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
       [cp release];
       [ORFactory shutdown];
    }
-   //NSLog(@"malloc: %@",mallocReport());
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 
