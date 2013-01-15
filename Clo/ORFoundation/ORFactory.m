@@ -234,7 +234,7 @@
       ORInt l = (a > 0 ? a * [x min] : a * [x max]) + b;
       ORInt u = (a > 0 ? a * [x max] : a * [x min]) + b;
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
-      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:DOmainConsistency]];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:DomainConsistency]];
       return nv;
    }
 #endif
