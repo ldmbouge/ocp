@@ -515,9 +515,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) engine low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x
 {
-#if USEVIEWS==0
-   assert(0);
-#endif
    self = [self initCPIntVarCore:engine low: low up: up];
    _vc = CPVCAffine;
    id<CPIntVarNotifier> xDeg = [x delegate];

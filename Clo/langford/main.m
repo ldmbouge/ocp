@@ -18,6 +18,7 @@
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();   
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
@@ -51,6 +52,7 @@ int main(int argc, const char * argv[])
       //NSLog(@"Model %@",model);
 //      id<CPHeuristic> h = [ORFactory createFF:cp];
       [cp solveAll:^{
+         NSLog(@"concrete: %@",[[cp engine] model]);
          id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
          //[cp labelHeuristic:h];
          //[cp labelArray:tb];
@@ -87,5 +89,6 @@ int main(int argc, const char * argv[])
       [cp release];
       [ORFactory shutdown];
    }
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
