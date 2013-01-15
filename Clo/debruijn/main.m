@@ -18,6 +18,7 @@
 
 int main(int argc, const char * argv[])
 {
+   //mallocWatch();
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
       NSLog(@"args: %d %s %s %s %s",argc,argv[0],argv[1],argv[2],argv[3]);
@@ -49,7 +50,7 @@ int main(int argc, const char * argv[])
       for(ORInt i=0;i<base;i++)
          [model add:[Sum(model, j, RANGE(model,1,m), [code[j] eqi:i]) eq:gcc[i]]];
       
-      
+      NSLog(@"MODEL: %@",model);
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       __block ORInt nbSol = 0;
       [cp solve:^{
@@ -69,6 +70,7 @@ int main(int argc, const char * argv[])
       [cp release];
       [ORFactory shutdown];
    }
+   //NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 
