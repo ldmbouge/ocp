@@ -886,7 +886,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    if (_rv==nil) {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
    }
-   [_model add: [ORFactory reify:_rv with:theVar eqi:c]];
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
 #else
    if (_rv != nil) {
       [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
