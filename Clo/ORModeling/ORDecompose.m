@@ -922,6 +922,17 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
    [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
 }
+-(void) reifyLEQ:(ORExprI*)left right:(ORExprI*)right
+{
+   ORLinear* linLeft   = [ORLinearizer linearFrom:left model:_model annotation:_c];
+   ORLinear* linRight  = [ORLinearizer linearFrom:right model:_model annotation:_c];
+   id<ORIntVar> varLeft  = [ORSubst normSide:linLeft for:_model annotation:_c];
+   id<ORIntVar> varRight = [ORSubst normSide:linRight for:_model annotation:_c];
+   id<ORTracker> cp = [varLeft tracker];
+   if (_rv==nil)
+      _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:varLeft leq:varRight]];
+}
 
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
@@ -953,7 +964,8 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       [self reifyGEQc:[e right] constant:[[e left] min]];
    } else if ([[e right] isConstant]) {
       [self reifyLEQc:[e left] constant:[[e right] min]];
-   } else assert(NO); // [TOFIX]
+   } else
+      [self reifyLEQ:[e left] right:[e right]];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {

@@ -39,8 +39,38 @@ int main(int argc, const char * argv[])
             }
          }];
       }];
-      NSLog(@"model: %@",model);
+      [sidel enumerateWithBlock:^(ORInt k) {
+         [model add:[Sum(model, i, square, [[[x[i] leqi:k] and:[x[i] geqi:k - side[i] + 1]] muli:side[i]]) eqi:s]];
+         [model add:[Sum(model, i, square, [[[y[i] leqi:k] and:[y[i] geqi:k - side[i] + 1]] muli:side[i]]) eqi:s]];
+      }];
+      //NSLog(@"model: %@",model);
       id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [cp solveAll:^{
+         //NSLog(@"start(x)...");
+         [sidel enumerateWithBlock:^(ORInt p) {
+            [square enumerateWithBlock:^(ORInt i) {
+               [cp try:^{
+                  [cp label:x[i] with:p];
+               } or:^{
+                  [cp diff:x[i] with:p];
+               }];
+            }];
+         }];
+         //NSLog(@"start(y)...");
+         [sidel enumerateWithBlock:^(ORInt p) {
+            [square enumerateWithBlock:^(ORInt i) {
+               [cp try:^{
+                  [cp label:y[i] with:p];
+               } or:^{
+                  [cp diff:y[i] with:p];
+               }];
+            }];
+         }];
+         id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [x[i] value];}];
+         id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [y[i] value];}];
+         NSLog(@"x = %@",xs);
+         NSLog(@"y = %@",ys);
+      }];
       ORLong endTime = [ORRuntimeMonitor wctime];      
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);

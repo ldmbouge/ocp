@@ -338,7 +338,7 @@ void assignTRInt(TRInt* v,int val,ORTrailI* trail)
    ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailIntFun(trail, &v->_val);
+      inline_trailIntFun(trail, &v->_val);
    }
    v->_val = val;
 }
@@ -348,7 +348,7 @@ void  assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
    ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailUIntFun(trail, &v->_val);
+      inline_trailUIntFun(trail, &v->_val);
    }
    v->_val = val;
 }
