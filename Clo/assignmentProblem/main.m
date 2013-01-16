@@ -18,11 +18,13 @@
 #import <objcp/CPFactory.h>
 #import "../ORModeling/ORLinearize.h"
 #import "../ORModeling/ORFlatten.h"
+#import "ORRunnable.h"
+#import "ORParallelRunnable.h"
 
 int main (int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
-    ORInt n = 3;
+    ORInt n = 40;
     id<ORIntRange> R = RANGE(model,1,n);
     
     id<ORUniformDistribution> distr = [CPFactory uniformDistribution: model range: RANGE(model, 1, 20)];
@@ -34,51 +36,25 @@ int main (int argc, const char * argv[])
     id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * 20)];
     
     [model minimize: assignCost];
-    //[model add: [tasks[1] eqi:2]];
-    //[model add: [tasks[2] eqi:1]];
-    //[model add: [tasks[3] eqi:3]];
-   
     [model add: [ORFactory alldifferent: tasks]];
     [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
     
-    NSLog(@"ORIG: %@",model);
     id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
     id<ORModel> lin = [ORFactory createModel];
     ORBatchModel* lm = [[ORBatchModel alloc] init: lin];
     [linearizer apply: model into: lm];
-    NSLog(@"FLAT: %@",lin);
-   
-    id<CPProgram> cp = [ORFactory createCPProgram: lin];
-    id<CPHeuristic> h = [ORFactory createFF: cp];
-    [cp solve:
-     ^() {
-        NSLog(@"here...");
-        [cp labelArray:tasks];
-        [cp labelHeuristic: h];
-        NSLog(@"better sol --------> %d",[assignCost value]);
-     }];
-
-    for(id<ORIntVar> v in [[lm model] variables])
-        NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
+       
+    id<ORRunnable> r0 = [[CPRunnableI alloc] initWithModel: model];
+    id<ORRunnable> r1 = [[CPRunnableI alloc] initWithModel: lin];
+    id<ORRunnableBinaryTransform> parTran = [[ORParallelRunnableTransform alloc] init];
+    id<ORRunnable> pr = [parTran apply: r0 and: r1];
+    [pr run];
+    
+    //for(id<ORIntVar> v in [[lm model] variables])
+    //    NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
     NSLog(@"SOL: %@", assignCost);
    [ORFactory shutdown];
    
-    //id<CPSolver> cp = [ORFactory createCPProgram: model];
-    //[cp solve:
-    //^() {
-    //    [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
-    //    [nbSolutions incr];
-    // }
-    // ];
-    //printf("GOT %d solutions\n",[nbSolutions value]);
-    //NSLog(@"Solver status: %@\n",cp);
-    // NSLog(@"Quitting");
-    //NSLog(@"SOLUTION IS: %@",x);
-    // PVH
-    //   [cp release];
-    // put on the ORFactory
-    //   [CPFactory shutdown];
-    NSLog(@"Done");
     return 0;
 }
 
