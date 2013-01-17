@@ -9,16 +9,17 @@
 
  ***********************************************************************/
 
+
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgram.h>
+
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    @autoreleasepool {
+      ORLong startTime = [ORRuntimeMonitor cputime];
       const char* src = "MKNAP";
       const char* afn[6] = {"mknap1-0.txt",
                             "mknap1-2.txt",
@@ -71,11 +72,15 @@ int main(int argc, const char * argv[])
       }
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-//      id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
-      id<CPHeuristic> h = [ORFactory createIBS:cp];
+      id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
+//      id<CPHeuristic> h = [ORFactory createFF:cp restricted:x];
+//      id<CPHeuristic> h = [ORFactory createWDeg:cp restricted:x];
+//      id<CPHeuristic> h = [ORFactory createIBS:cp];
       
 
       [cp solve: ^{
+         NSLog(@"model: %@",[[cp engine] model]);
+         
          [cp labelHeuristic:h];
          NSLog(@"Solution: %@",x);
          NSLog(@"Solver: %@",cp);
@@ -92,9 +97,12 @@ int main(int argc, const char * argv[])
             NSLog(@"C[%d] %d <= %d",i,lhs,b[i]);
          }            
       }];
+      ORLong endTime = [ORRuntimeMonitor cputime];
+      NSLog(@"Execution Time(CPU): %lld \n",endTime - startTime);
       [cp release];
       [ORFactory shutdown];
    }
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 

@@ -15,6 +15,7 @@
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
@@ -64,6 +65,7 @@ int main(int argc, const char * argv[])
       [cp release];
       [ORFactory shutdown];
    }
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 

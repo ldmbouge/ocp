@@ -286,6 +286,7 @@
    _b = b;
    _x = x;
    _y = y;
+   assert(a != 0);
    _note = n;
    return self;
 }

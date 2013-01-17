@@ -207,7 +207,7 @@
 -(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;   
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_vars];
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:[self allIntVars]];
    _nbv = [_vars count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
    ORInt low = [_vars low],up = [_vars up];
@@ -305,7 +305,8 @@
 -(void)initImpacts
 {
    ORInt blockWidth = 1;
-   ORInt low = [_vars low],up = [_vars up];
+   id<CPIntVarArray> av = [self allIntVars];
+   ORInt low = [av low],up = [av up];
    for(ORInt k=low; k <= up;k++) {
       NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
       id<CPIntVar> v = (id<CPIntVar>)_vars[k];
@@ -326,8 +327,8 @@
          rank++;
       }
       [sacs release];
-      //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
+      NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
    }
-   //NSLog(@"VARS AT END OF INIT:%@ ",_vars);
+   //NSLog(@"VARS AT END OF INIT:%@ ",av);
 }
 @end

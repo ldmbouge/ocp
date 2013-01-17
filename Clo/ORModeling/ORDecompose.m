@@ -477,6 +477,7 @@ struct CPVarPair {
 }
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c
 {
+   if (c==0) return;
    ORInt low = 0,up=_nb-1,mid=-1,kid;
    ORInt xid = [x  getId];
    BOOL found = NO;

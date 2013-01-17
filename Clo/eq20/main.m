@@ -10,12 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
-
 
 int main(int argc, const char * argv[])
 {

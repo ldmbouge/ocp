@@ -391,6 +391,7 @@
    _y = y;
    _a = a;
    _b = b;
+   assert(a != 0);   
    return self;   
 }
 -(ORStatus) post
