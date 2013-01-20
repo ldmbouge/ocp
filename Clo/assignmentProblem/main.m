@@ -24,7 +24,7 @@
 int main (int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
-    ORInt n = 40;
+    ORInt n = 10;
     id<ORIntRange> R = RANGE(model,1,n);
     
     id<ORUniformDistribution> distr = [CPFactory uniformDistribution: model range: RANGE(model, 1, 20)];
