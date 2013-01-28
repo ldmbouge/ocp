@@ -69,7 +69,7 @@
 @end
 
 @protocol ORUpperBoundStreamConsumer<ORRunnable>
--(void) onStreamedUpperBound: (ORInt)b;
+-(id<ORIntInformer>) upperBoundStreamInformer;
 @end
 
 @protocol ORUpperBoundStreamProvider<ORRunnable>

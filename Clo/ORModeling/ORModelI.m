@@ -14,6 +14,7 @@
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORSolver.H"
+#import "ORCopy.h"
 
 @implementation ORModelI
 {
@@ -33,7 +34,6 @@
    _name = 0;
    return self;
 }
-
 -(void) dealloc
 {
    NSLog(@"ORModelI [%p] dealloc called...\n",self);
@@ -189,6 +189,12 @@
    for(id<ORObject> c in _mStore)
       [c visit: visitor];
    [_objective visit: visitor];
+}
+-(id) copyWithZone:(NSZone*)zone {
+    ORCopy* copier = [[ORCopy alloc] initORCopy: zone];
+    id<ORModel> m = [copier copyModel: self];
+    [copier release];
+    return m;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

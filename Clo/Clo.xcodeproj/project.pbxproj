@@ -24,7 +24,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		3737A3A9166B0867002D3A57 /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737A3A8166B0867002D3A57 /* ORModelTransformation.m */; };
+		3764F2CB16AF123D0053D69E /* ORCopy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3764F2C916AF123D0053D69E /* ORCopy.h */; };
+		3764F2CC16AF123D0053D69E /* ORCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3764F2CA16AF123D0053D69E /* ORCopy.m */; };
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		3793D9EC16A61CF200337905 /* ORRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 3793D9EA16A61CF200337905 /* ORRunnable.h */; };
@@ -2959,7 +2960,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3737A3A8166B0867002D3A57 /* ORModelTransformation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORModelTransformation.m; sourceTree = "<group>"; };
+		3764F2C916AF123D0053D69E /* ORCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCopy.h; sourceTree = "<group>"; };
+		3764F2CA16AF123D0053D69E /* ORCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCopy.m; sourceTree = "<group>"; };
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		3793D9EA16A61CF200337905 /* ORRunnable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORRunnable.h; sourceTree = "<group>"; };
@@ -5021,7 +5023,6 @@
 			isa = PBXGroup;
 			children = (
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
-				3737A3A8166B0867002D3A57 /* ORModelTransformation.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
 				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
@@ -5031,6 +5032,8 @@
 				5BAD1152161E5E430014EBCB /* Supporting Files */,
 				5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */,
 				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
+				3764F2C916AF123D0053D69E /* ORCopy.h */,
+				3764F2CA16AF123D0053D69E /* ORCopy.m */,
 				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
 				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
 				5B1391841629A99D0029FD29 /* ORDecompose.h */,
@@ -5956,6 +5959,7 @@
 				5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */,
 				3793D9EC16A61CF200337905 /* ORRunnable.h in Headers */,
 				3793D9F116A6264E00337905 /* ORParallelRunnable.h in Headers */,
+				3764F2CB16AF123D0053D69E /* ORCopy.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7812,9 +7816,9 @@
 				5BDF5FAD161F81B800E5E1FA /* ORFlatten.m in Sources */,
 				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
-				3737A3A9166B0867002D3A57 /* ORModelTransformation.m in Sources */,
 				3793D9ED16A61CF200337905 /* ORRunnable.m in Sources */,
 				3793D9F216A6264E00337905 /* ORParallelRunnable.m in Sources */,
+				3764F2CC16AF123D0053D69E /* ORCopy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
