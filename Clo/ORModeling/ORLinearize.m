@@ -267,13 +267,13 @@
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e  {
     ORExprCstSubI* cstSubExpr = (ORExprCstSubI*)e;
-    id<ORExprDomainEvaluator> domainEval = [[ORExprDomainEvaluatorI alloc] init];
     id<ORIntVar> indexVar;
     // Create the index variable if needed.
     if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)]) indexVar = (id<ORIntVar>)[cstSubExpr index];
     else {
         id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
-        indexVar = [ORFactory intVar: _model domain: [domainEval domain: _model ForExpr: linearIndexExpr]];
+        indexVar = [ORFactory intVar: _model domain:
+                    [ORFactory intRange: _model low: [linearIndexExpr min] up: [linearIndexExpr max]]];
         // [ldm] Removed next line. Redundant since the factory already adds the variable.
         // [_model addVariable: indexVar];
         [_model addConstraint: [indexVar eq: linearIndexExpr]];
@@ -282,7 +282,8 @@
     id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
         return [[binIndexVar at: i] muli: [[cstSubExpr array] at: i ]];
     }];
-    id<ORIntVar> sumVar = [ORFactory intVar: _model domain: [domainEval domain: _model ForExpr: linearSumExpr]];
+    id<ORIntVar> sumVar = [ORFactory intVar: _model domain:
+                           [ORFactory intRange: _model low: [linearSumExpr min] up: [linearSumExpr max]]];
     // [ldm] Removed next line. Redundant since the factory already adds the variable.
     //[_model addVariable: sumVar];
     [_model addConstraint: [sumVar eq: linearSumExpr]];

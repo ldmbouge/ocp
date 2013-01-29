@@ -9,6 +9,7 @@
 #import "ORRunnable.h"
 #import "ORFactory.h"
 #import "ORConcretizer.h"
+#import "ORConcurrencyI.h"
 
 @implementation ORSignatureI
 
@@ -23,6 +24,12 @@
 @synthesize providesUpperBound;
 @synthesize providesUpperBoundPool;
 @synthesize providesUpperBoundStream;
+@synthesize acceptsLowerBound;
+@synthesize acceptsLowerBoundPool;
+@synthesize acceptsLowerBoundStream;
+@synthesize acceptsUpperBound;
+@synthesize acceptsUpperBoundPool;
+@synthesize acceptsUpperBoundStream;
 
 @end
 
@@ -90,18 +97,25 @@
 }
 @end
 
+@interface CPRunnableI(Private)
+-(void) setupRun;
+@end
+
 @implementation CPRunnableI {
     id<ORModel> _model;
     id<CPProgram> _program;
     id<ORSignature> _sig;
-    NSMutableArray* _upperBoundConsumers;
+    id<ORIntInformer> _upperBoundStreamInformer;
+    NSMutableArray* _upperBoundStreamConsumers;
 }
 
 -(id) initWithModel: (id<ORModel>)m {
     if((self = [super init]) != nil) {
         _model = [m retain];
         _program = [ORFactory createCPProgram: _model];
-        _upperBoundConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+        _sig = nil;
+        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
+        _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
     }
     return self;
 }
@@ -109,7 +123,8 @@
 -(void) dealloc {
     [_model release];
     [_program release];
-    [_upperBoundConsumers release];
+    [_upperBoundStreamInformer release];
+    [_upperBoundStreamConsumers release];
     [_sig release];
     [super dealloc];
 }
@@ -122,21 +137,30 @@
 }
 
 -(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c {
-    [_upperBoundConsumers addObject: c];
+    NSLog(@"Adding upper bound consumer...");
+    [_upperBoundStreamConsumers addObject: c];
 }
 
--(void) onStreamedUpperBound:(ORInt)b {
-    [_program addConstraintDuringSearch: [[[_model objective] var] leqi: b] annotation: Hard];
+-(id<ORIntInformer>) upperBoundStreamInformer {
+    return _upperBoundStreamInformer;
+}
+
+-(void) setupRun {
+    [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(ORInt b) {
+        NSLog(@"recieved upper bound: %i", b);
+        [_program addConstraintDuringSearch: [[[_model objective] var] leqi: b] annotation: Hard];
+    }];
 }
 
 -(void) run {
     NSLog(@"Running CP runnable(%p)...", _program);
+    [self setupRun];
     id<CPHeuristic> h = [ORFactory createFF: _program];
     
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution: ^void () {
-        for(id<ORUpperBoundStreamConsumer> c in _upperBoundConsumers)
-            [c onStreamedUpperBound: (ORInt)[[[_model objective] value] key]];
+        for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
+            [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
     } onExit: nil];
     
     [_program solve:

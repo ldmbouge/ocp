@@ -43,9 +43,10 @@ int main (int argc, const char * argv[])
     id<ORModel> lin = [ORFactory createModel];
     ORBatchModel* lm = [[ORBatchModel alloc] init: lin];
     [linearizer apply: model into: lm];
-       
+    id<ORModel> clm = [ORFactory cloneModel: lin];
+    
     id<ORRunnable> r0 = [[CPRunnableI alloc] initWithModel: model];
-    id<ORRunnable> r1 = [[CPRunnableI alloc] initWithModel: lin];
+    id<ORRunnable> r1 = [[CPRunnableI alloc] initWithModel: clm];
     id<ORRunnableBinaryTransform> parTran = [[ORParallelRunnableTransform alloc] init];
     id<ORRunnable> pr = [parTran apply: r0 and: r1];
     [pr run];

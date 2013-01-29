@@ -12,12 +12,19 @@
 #import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
 #import "ORFlatten.h"
+#import "ORCopy.h"
 #import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
    return [[[ORModelI alloc]  initORModelI] autorelease];
+}
++(id<ORModel>) cloneModel: (id<ORModel>)m {
+    ORCopy* copier = [[ORCopy alloc] initORCopy: nil];
+    id<ORModel> copyModel = [copier copyModel: m];
+    [copier release];
+    return copyModel;
 }
 +(id<ORModelTransformation>)createFlattener
 {

@@ -41,7 +41,12 @@
     return _sig;
 }
 
--(void) run {
+-(void) run {    
+    if([[_r0 signature] providesUpperBoundStream] && [[_r1 signature] acceptsUpperBoundStream])
+        [((id<ORUpperBoundStreamProvider>)_r0) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)_r1];
+    if([[_r1 signature] providesUpperBoundStream] && [[_r0 signature] acceptsUpperBoundStream])
+        [((id<ORUpperBoundStreamProvider>)_r1) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)_r0];
+        
     _t0 = [[NSThread alloc] initWithTarget: _r0 selector: @selector(run) object: nil];
     [_t0 start];
     

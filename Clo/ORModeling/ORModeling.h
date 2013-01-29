@@ -16,7 +16,7 @@
 
 @protocol ORModelTransformation;
 
-@protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding>
+@protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
 -(void) add: (id<ORConstraint>) cstr;
 -(void) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
@@ -46,6 +46,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORModelTransformation>) createFlattener;
 +(id<ORModelTransformation>) createLinearizer;
 +(id<ORSolutionPool>) createSolutionPool;

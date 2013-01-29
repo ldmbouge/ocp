@@ -29,6 +29,7 @@
 -(id<ORSolution>)solution;
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
+-(id) copyWithZone:(NSZone*)zone;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
