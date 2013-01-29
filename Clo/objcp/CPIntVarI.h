@@ -107,9 +107,9 @@ typedef struct  {
 
 @interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
-   enum CPVarClass                   _vc:16;
-   ORUInt                        _isBool:16;
-   ORUInt                             _name;
+   enum CPVarClass                      _vc;
+   ORUInt                         _isBool:1;
+   ORUInt                          _name:31;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
