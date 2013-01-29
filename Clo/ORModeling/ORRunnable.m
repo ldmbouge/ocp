@@ -136,6 +136,8 @@
     return _sig;
 }
 
+-(id<CPProgram>) solver { return _program; }
+
 -(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c {
     NSLog(@"Adding upper bound consumer...");
     [_upperBoundStreamConsumers addObject: c];
@@ -147,8 +149,8 @@
 
 -(void) setupRun {
     [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(ORInt b) {
-        NSLog(@"recieved upper bound: %i", b);
-        [_program addConstraintDuringSearch: [[[_model objective] var] leqi: b] annotation: Hard];
+        NSLog(@"(%p) recieved upper bound: %i", self, b);
+        [[[_program engine] objective] tightenPrimalBound: b];
     }];
 }
 
@@ -159,6 +161,7 @@
     
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution: ^void () {
+        NSLog(@"(%p) objective tightened: %i", self, [[[_program engine] objective] primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
             [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
     } onExit: nil];

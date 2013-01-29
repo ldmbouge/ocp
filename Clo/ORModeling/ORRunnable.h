@@ -85,10 +85,12 @@
 @end
 
 @protocol CPRunnable<ORUpperBoundStreamConsumer, ORUpperBoundStreamProvider>
+-(id<CPProgram>) solver;
 @end
 
 @interface CPRunnableI : NSObject<CPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(id<ORSignature>) signature;
+-(id<CPProgram>) solver;
 -(void) run;
 @end
