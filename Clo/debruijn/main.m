@@ -20,6 +20,7 @@ int main(int argc, const char * argv[])
 {
    mallocWatch();
    @autoreleasepool {
+      ORLong startTime = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
       NSLog(@"args: %d %s %s %s %s",argc,argv[0],argv[1],argv[2],argv[3]);
       ORInt base = argc >= 2 ? atoi(argv[1]) : 2;
@@ -69,6 +70,8 @@ int main(int argc, const char * argv[])
       }];
       NSLog(@"#sol: %d",nbSol);
       NSLog(@"Stats: %@",cp);
+      ORLong endTime = [ORRuntimeMonitor cputime];
+      NSLog(@"Execution Time: %lld \n",endTime - startTime);
       [cp release];
       [ORFactory shutdown];
    }

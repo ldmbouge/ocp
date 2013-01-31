@@ -17,7 +17,7 @@ int main(int argc, const char * argv[])
 {
    mallocWatch();
    @autoreleasepool {
-      ORLong startTime = [ORRuntimeMonitor wctime];
+      ORLong startTime = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
       ORInt n = argc >= 2 ? atoi(argv[1]) : 26;
       id<ORIntRange> V = RANGE(model,0,n-1);
@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
          NSLog(@"Sol: %@ -- %@",solX,solY);
       }];
       
-      ORLong endTime = [ORRuntimeMonitor wctime];      
+      ORLong endTime = [ORRuntimeMonitor cputime];
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
