@@ -297,7 +297,7 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
 {
    TRInt* ei = a._entries + i;
    if (ei->_mgc != [a._trail magic]) {
-      trailIntFun(a._trail, & ei->_val);
+      trailIntFun((ORTrailI*)a._trail, & ei->_val);
       ei->_mgc = [a._trail magic];
    }
    return ei->_val = val;

@@ -44,13 +44,13 @@
 }
 -(ORInt) min
 {
-    __block ORInt value = NSIntegerMax;
+    __block ORInt value = MAXINT;
     [self iterate:^void (ORInt e) { if(e < value) value = e; }];
     return value;
 }
 -(ORInt) max
 {
-    __block ORInt value = NSIntegerMin;
+    __block ORInt value = MININT;
     [self iterate:^void (ORInt e) { if(e > value) value = e; }];
     return value;
 }
