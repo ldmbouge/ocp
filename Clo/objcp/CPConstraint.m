@@ -172,7 +172,7 @@
 +(id<CPIntVar>) reifyView: (CPIntVarI*) x eqi:(ORInt)c
 {
    id<CPIntVarNotifier> mc = [x delegate];
-   if (mc == x) {
+   if (mc == nil) {
       mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }

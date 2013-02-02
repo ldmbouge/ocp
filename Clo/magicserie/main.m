@@ -16,7 +16,7 @@
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
-      const ORInt n = 5;  // 128 -> 494 fails
+      const ORInt n = 40;  // 128 -> 494 fails
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,0,n-1);
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
@@ -27,6 +27,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          NSLog(@"x = %@",x);
+         NSLog(@"model: %@",[[cp engine] model]);
          for(ORInt i=0;i<n;i++) {
             while (![x[i] bound]) {
                ORInt v = [x[i] min];
