@@ -361,10 +361,9 @@ static inline ORBounds negBounds(CPIntVarI* x)
 
 static inline ORInt memberDom(CPIntVarI* x,ORInt value)
 {
-   ORInt target;
    switch (x->_vc) {
-      case CPVCBare: target = value;
-         return domMember((CPBoundsDom*)x->_dom, target);
+      case CPVCBare:
+         return domMember((CPBoundsDom*)x->_dom, value);
          break;
       default:
          return [x member:value];
@@ -373,10 +372,9 @@ static inline ORInt memberDom(CPIntVarI* x,ORInt value)
 
 static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
 {
-   ORInt target;
    switch (x->_vc) {
-      case CPVCBare: target = value;
-         return domMember((CPBoundsDom*)x->_dom, target);
+      case CPVCBare:
+         return domMember((CPBoundsDom*)x->_dom, value);
          break;
       default:
          return [x member:value];
@@ -396,11 +394,9 @@ static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
 
 static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 {
-   ORInt target;
    switch(x->_vc) {
       case CPVCBare:
-         target = v;
-         return [x->_dom bind:target for:x];
+         return [x->_dom bind:v for:x];
       default:
          return [x bind:v];
    }

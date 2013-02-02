@@ -1178,7 +1178,7 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(ORStatus)bindEvt:(id<CPDom>)sender
 {
    assert(bound(_secondary));
-   ORInt boundTo = minDom(_secondary);
+//   ORInt boundTo = minDom(_secondary);
    return [super bindEvt:sender];
 }
 
