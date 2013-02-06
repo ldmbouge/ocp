@@ -78,7 +78,7 @@
 +(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
 @end
 
-@interface CPSearchFactory 
+@interface CPSearchFactory : NSObject
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
 +(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;
 +(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;

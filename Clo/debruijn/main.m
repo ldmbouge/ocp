@@ -72,6 +72,8 @@ int main(int argc, const char * argv[])
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"#sol: %d",nbSol);
       NSLog(@"Stats: %@",cp);
+      ORLong endTime = [ORRuntimeMonitor cputime];
+      NSLog(@"Execution Time: %lld \n",endTime - startTime);
       [cp release];
       [ORFactory shutdown];
    }
