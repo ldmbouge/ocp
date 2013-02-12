@@ -40,6 +40,7 @@
 -(id<ORRelation>) lti: (ORInt) e;
 -(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) gti: (ORInt) e;
+-(id<ORExpr>) neg;
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
@@ -220,6 +221,18 @@
 -(enum ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
+
+@interface ORExprNegateI : ORExprI<ORRelation,NSCoding> {
+   id<ORExpr> _op;
+}
+-(id<ORExpr>)initORNegateI:(id<ORExpr>)op;
+-(ORInt)min;
+-(ORInt)max;
+-(ORExprI*) operand;
+-(NSString*)description;
+-(void)visit:(id<ORVisitor>)v;
+@end
+
 
 @interface ORExprVarSubI : ORExprI<ORExpr,NSCoding> {
    id<ORIntVarArray> _array;

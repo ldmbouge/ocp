@@ -15,12 +15,16 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORConcretizer.h>
 #import <objcp/CPError.h>
+#include <malloc/malloc.h>
 
+  
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
+   
    @autoreleasepool {
       id<ORModel> mdl = [ORFactory createModel];
-      int n = 8;
+      int n = argc >= 2 ? atoi(argv[1]) : 8;
       id<ORIntRange> R = RANGE(mdl,1,n);
       id<ORIntRange> D = RANGE(mdl,0,n-1);
       id<ORIntRange> SD = RANGE(mdl,1,n-1);
@@ -43,18 +47,23 @@ int main(int argc, const char * argv[])
       //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
       id<CPHeuristic> h = [ORFactory createFF:cp restricted:sx];
 
-      [cp solveAll: ^{
+      [cp solve: ^{
          [cp labelHeuristic:h];
          [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
             return [[sx at:i] domsize];
          }];
          [nbSolutions incr];
-         NSLog(@"Solution: %@",sx);
+         id<ORIntArray> a = [ORFactory intArray:cp range: R  with:^ORInt(ORInt i) {
+            return [sx[i] value];
+         }];
+         NSLog(@"Solution: %@",a);
       }];
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);
+      //malloc_zone_print(malloc_default_zone(),NO);
       [cp release];
       [ORFactory shutdown];
+      NSLog(@"malloc: %@",mallocReport());
    }
    return 0;
 }

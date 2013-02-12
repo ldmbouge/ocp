@@ -44,13 +44,13 @@
 }
 -(ORInt) min
 {
-    __block ORInt value = NSIntegerMax;
+    __block ORInt value = MAXINT;
     [self iterate:^void (ORInt e) { if(e < value) value = e; }];
     return value;
 }
 -(ORInt) max
 {
-    __block ORInt value = NSIntegerMin;
+    __block ORInt value = MININT;
     [self iterate:^void (ORInt e) { if(e > value) value = e; }];
     return value;
 }
@@ -183,6 +183,11 @@
 {
    for(ORInt i = _low; i <= _up; i++)
       f(i);
+}
+-(void)enumerateWithBlock:(void(^)(ORInt))block
+{
+   for(ORInt i = _low; i <= _up; i++)
+      block(i);
 }
 -(void)visit:(id<ORVisitor>)v
 {

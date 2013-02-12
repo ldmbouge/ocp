@@ -286,6 +286,7 @@
    _b = b;
    _x = x;
    _y = y;
+   assert(a != 0);
    _note = n;
    return self;
 }
@@ -503,6 +504,43 @@
 -(id<ORIntVar>) right
 {
    return _z;
+}
+@end
+
+@implementation ORSquare { // z == x^2
+   id<ORIntVar> _z;
+   id<ORIntVar> _x;
+   ORAnnotation _n;
+}
+-(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = z;
+   _n = n;
+   return self;
+}
+-(id<ORIntVar>)res
+{
+   return _z;
+}
+-(id<ORIntVar>)op
+{
+   return _x;
+}
+-(ORAnnotation)annotation
+{
+   return _n;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ ^ 2)",[self class],self,_impl,_z,_x];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSquare:self];
 }
 @end
 

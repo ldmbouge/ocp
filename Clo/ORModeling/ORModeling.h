@@ -13,6 +13,8 @@
 #import <ORFoundation/ORModel.h>
 #import <ORModeling/ORSolver.h>
 #import <ORModeling/ORSolution.h>
+#import <ORModeling/ORModelTransformation.h>
+
 
 @protocol ORModelTransformation;
 

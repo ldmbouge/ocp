@@ -53,6 +53,8 @@ enum CPDomClass {
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
+-(void) enumerateWithBlock:(void(^)(ORInt))block;
+-(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
 
 static inline ORBounds domBounds(CPBoundsDom* dom)
@@ -87,6 +89,37 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
 -(void)translate:(ORInt)shift;
+-(void) enumerateWithBlock:(void(^)(ORInt))block;
+-(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
+@end
+
+@interface CPAffineDom : NSObject<CPDom> {
+   id<CPDom> _theDom;
+   ORInt     _a;
+   ORInt     _b;
+}
+-(id)initAffineDom:(id<CPDom>)d scale:(ORInt)a shift:(ORInt)b;
+-(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
+-(ORInt) min;
+-(ORInt) max;
+-(ORInt) imin;
+-(ORInt) imax;
+-(bool) bound;
+-(ORBounds) bounds;
+-(ORInt) domsize;
+-(ORInt) countFrom:(ORInt)from to:(ORInt)to;
+-(bool) get:(ORInt)b;
+-(bool) member:(ORInt)v;
+-(ORInt)findMin:(ORInt)from;
+-(ORInt) findMax:(ORInt)from;
+-(id) copyWithZone:(NSZone *)zone;
+-(void) restoreDomain:(id<CPDom>)toRestore;
+-(void) restoreValue:(ORInt)toRestore;
+-(void) enumerateWithBlock:(void(^)(ORInt))block;
+-(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
 
 static const ORUInt __bitmasks[32] = {

@@ -91,13 +91,25 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPReifyLEqualBC : CPCoreConstraint {
+@private
+   CPIntVarI* _b;
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+}
+-(id) initCPReifyLEqualBC:(id<CPIntVar>)b when:(id<CPIntVar>)x leq:(id<CPIntVar>)y;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
 @interface CPReifyLEqualDC : CPCoreConstraint<NSCoding> {
 @private
    CPIntVarI* _b;
    CPIntVarI* _x;
    ORInt      _c;
 }
--(id) initCPReifyLEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x leq:(ORInt)c;
+-(id) initCPReifyLEqualDC:(id<CPIntVar>)b when:(id<CPIntVar>)x leqi:(ORInt)c;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;

@@ -41,6 +41,7 @@
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI *)e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
@@ -127,6 +128,7 @@
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;
@@ -241,6 +243,7 @@ struct CPVarPair {
 -(void) visitExprProdI: (ORExprProdI*) e   {}
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
+-(void) visitExprNegateI:(ORExprNegateI*)e {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
 -(void) visitExprVarSubI:(ORExprVarSubI*)e {}
 @end
@@ -351,6 +354,11 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
 {
    id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
@@ -469,6 +477,7 @@ struct CPVarPair {
 }
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c
 {
+   if (c==0) return;
    ORInt low = 0,up=_nb-1,mid=-1,kid;
    ORInt xid = [x  getId];
    BOOL found = NO;
@@ -839,7 +848,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    ORLong ub = maxOf(c,d);
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,bindDown(lb),bindUp(ub))];
-   [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv]];
+   [_model addConstraint: [ORFactory mult:_model var:lV by:rV equal:_rv annotation:_c]];
    [lT release];
    [rT release];
 }
@@ -862,7 +871,14 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    [lT release];
    [rT release];
 }
+
+#if  USEVIEWS==1
 #define OLDREIFY 0
+#else
+#define OLDREIFY 1
+#endif
+
+
 -(void) reifyEQc:(ORExprI*)theOther constant:(ORInt)c
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
@@ -871,7 +887,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    if (_rv==nil) {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
    }
-   [_model add: [ORFactory reify:_rv with:theVar eqi:c]];
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
 #else
    if (_rv != nil) {
       [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
@@ -907,6 +923,17 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
    [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
 }
+-(void) reifyLEQ:(ORExprI*)left right:(ORExprI*)right
+{
+   ORLinear* linLeft   = [ORLinearizer linearFrom:left model:_model annotation:_c];
+   ORLinear* linRight  = [ORLinearizer linearFrom:right model:_model annotation:_c];
+   id<ORIntVar> varLeft  = [ORSubst normSide:linLeft for:_model annotation:_c];
+   id<ORIntVar> varRight = [ORSubst normSide:linRight for:_model annotation:_c];
+   id<ORTracker> cp = [varLeft tracker];
+   if (_rv==nil)
+      _rv = [ORFactory intVar:cp domain:RANGE(cp,0,1)];
+   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:varLeft leq:varRight]];
+}
 
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
@@ -938,7 +965,8 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       [self reifyGEQc:[e right] constant:[[e left] min]];
    } else if ([[e right] isConstant]) {
       [self reifyLEQc:[e left] constant:[[e right] min]];
-   } else assert(NO);
+   } else
+      [self reifyLEQ:[e left] right:[e right]];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
@@ -981,6 +1009,17 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,lb,ub)];
    [_model addConstraint:[ORFactory abs:_model var:oV equal:_rv annotation:_c]];
    [lT release];
+}
+-(void) visitExprNegateI:(ORExprNegateI*)e
+{
+   ORLinear* lT = [ORLinearizer linearFrom:[e operand] model:_model annotation:_c];
+   id<ORIntVar> oV = [ORSubst normSide:lT for:_model annotation:_c];
+   if (_rv == nil)
+      _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+   else {
+      id<ORIntVar> fV = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+      [_model addConstraint:[ORFactory equal:_model var:_rv to:fV plus:0 annotation:_c]];
+   }
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {

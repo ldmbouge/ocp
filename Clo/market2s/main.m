@@ -9,17 +9,15 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+#import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgram.h>
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    @autoreleasepool {
+      ORLong startTime = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
       const char* fn = "market.dta";
       FILE* dta = fopen(fn,"r");
@@ -74,25 +72,9 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
          [cp forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) { return -tw[i]; } do:^(ORInt i) {
             [cp try:^{
-               //printf("BR:%d==%d\n",i+1,0);
                [cp label:x[i] with:0];
-               /*
-               for(ORInt k=V.low;k<=V.up;k++)
-                  if ([x[k] bound])
-                     printf("%d ",[x[k] value]);
-                  else printf("? ");
-               printf("\n");
-               */
             } or:^{
-               //printf("BR:%d==%d\n",i+1,1);
                [cp label:x[i] with:1];
-               /*
-               for(ORInt k=V.low;k<=V.up;k++)
-                  if ([x[k] bound])
-                     printf("%d ",[x[k] value]);
-                  else printf("? ");
-               printf("\n");
-               */
             }];
          }];
          NSLog(@"Solution: %@",x);
@@ -106,8 +88,11 @@ int main(int argc, const char * argv[])
          assert(sum == rhs[k]);
       }
       NSLog(@"Solver: %@",cp);
+      ORLong endTime = [ORRuntimeMonitor cputime];
+      NSLog(@"Execution Time(CPU): %lld \n",endTime - startTime);
       [cp release];
       [ORFactory shutdown];
    }
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }

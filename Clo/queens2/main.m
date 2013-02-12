@@ -36,7 +36,7 @@ int main (int argc, const char * argv[])
    id<CPHeuristic> h = [ORFactory createFF:cp];
   [cp solveAll:
    ^() {
-       //[CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
+       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
        [cp labelHeuristic:h];
        //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];

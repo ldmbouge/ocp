@@ -28,3 +28,6 @@
 #import <ORFoundation/OREngine.h>
 #import <ORFoundation/ORModel.h>
 #import <ORFoundation/ORVisit.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+

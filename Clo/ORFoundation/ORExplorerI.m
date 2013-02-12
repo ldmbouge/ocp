@@ -124,7 +124,7 @@ struct TAOutput {
 
 struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 {
-   ORInt value;
+   ORInt value = 0;
    BOOL found = [ite more];
    if(found) {
       value = [ite next];
@@ -485,11 +485,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 @end
 
 @implementation ORExplorerFactory
--(id<ORExplorer>) explorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
++(id<ORExplorer>) explorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
 {
    return [[ORExplorerI alloc] initORExplorer: engine withTracer: tracer ctrlFactory: cFact];
 }
--(id<ORExplorer>) semanticExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
++(id<ORExplorer>) semanticExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
 {
    return [[ORSemExplorerI alloc] initORExplorer: engine withTracer: tracer ctrlFactory: cFact];
 }

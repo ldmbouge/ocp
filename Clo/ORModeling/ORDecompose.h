@@ -78,6 +78,7 @@
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
 -(void) visitExprVarSubI:(ORExprVarSubI*)e;
 -(void) visitExprDisjunctI:(ORDisjunctI*)e;

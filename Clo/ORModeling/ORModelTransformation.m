@@ -70,6 +70,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitPlus: (id<ORPlus>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitMult: (id<ORMult>)c  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitSquare: (id<ORSquare>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitAbs: (id<ORAbs>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitOr: (id<OROr>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitAnd:( id<ORAnd>)c  { _result = [ORFactory undefinedIntRange]; }
@@ -139,6 +140,7 @@
    [self evaluateExpr: [expr expr]];
 }
 -(void) visitExprAbsI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitExprNegateI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprCstSubI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprDisjunctI:(id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitExprConjunctI: (id<ORExpr>) e  { _result = [ORFactory undefinedIntRange]; }

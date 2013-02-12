@@ -62,6 +62,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
@@ -96,6 +97,7 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;

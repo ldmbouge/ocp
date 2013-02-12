@@ -10,8 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORModeling.h"
-#import "ORModelI.h"
+#import <ORModeling/ORModeling.h>
 
 @protocol ORModel;
 @protocol ORAddToModel;

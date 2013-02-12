@@ -196,11 +196,12 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    } while(changed && feasible);
    if (!feasible)
       failNow();
+   /*
    for(ORUInt i=0;i < toSet;i++) {
       CPEQTerm* cur = _inUse[i]._val;
       if (cur->updated)
          cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
-   }
+   }*/
 /*
     struct CPEQTerm* terms = alloca(sizeof(struct CPEQTerm)*_nb);
     for(ORInt k=0;k<_nb;k++) {

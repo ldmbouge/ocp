@@ -124,6 +124,10 @@
 {
    return [ORFactory expr:self geq:[ORFactory integer:[self tracker] value:e+1]];
 }
+-(id<ORExpr>)neg
+{
+   return [ORFactory exprNegate:self];
+}
 -(id<ORExpr>)and:(id<ORRelation>)e
 {
    return [ORFactory expr:(id<ORRelation>)self and:e];
@@ -255,6 +259,58 @@
    return self;
 }
 @end
+
+
+@implementation ORExprNegateI
+-(id<ORExpr>) initORNegateI: (id<ORExpr>) op
+{
+   self = [super init];
+   _op = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_op tracker];
+}
+-(ORInt) min
+{
+   return 0;
+}
+-(ORInt) max
+{
+   return 1;
+}
+-(ORExprI*) operand
+{
+   return _op;
+}
+-(BOOL) isConstant
+{
+   return [_op isConstant];
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"neg(%@)",[_op description]];
+   return rv;
+}
+-(void) visit:(id<ORVisitor>)visitor
+{
+   [visitor visitExprNegateI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+   [aCoder encodeObject:_op];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   _op = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 
 @implementation ORExprCstSubI
 -(id<ORExpr>) initORExprCstSubI: (id<ORIntArray>) array index:(id<ORExpr>) op

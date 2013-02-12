@@ -53,7 +53,7 @@
 -(void)             search: (ORClosure) block;
 @end
 
-@interface ORExplorerFactory
--(id<ORExplorer>) explorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
--(id<ORExplorer>) semanticExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
+@interface ORExplorerFactory : NSObject
++(id<ORExplorer>) explorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
++(id<ORExplorer>) semanticExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 @end

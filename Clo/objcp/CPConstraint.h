@@ -30,6 +30,7 @@
 
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y annotation:(ORAnnotation)c;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (id<CPIntVar>) y annotation:(ORAnnotation)c;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq:(id<CPIntVar>)y annotation:(ORAnnotation)c;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neqi: (ORInt) i;
 +(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leqi: (ORInt) i;
@@ -64,6 +65,7 @@
 +(id<CPConstraint>) gEqualc: (id<CPIntVar>)x to: (ORInt) c;
 +(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y;
 +(id<CPConstraint>) mult: (id<CPIntVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
++(id<CPConstraint>) square: (id<CPIntVar>)x equal:(id<CPIntVar>)z annotation:(ORAnnotation)c;
 +(id<CPConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y;
 +(id<CPConstraint>) mod: (id<CPIntVar>)x mod:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
 +(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y annotation:(ORAnnotation)c;
@@ -76,7 +78,7 @@
 +(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
 @end
 
-@interface CPSearchFactory 
+@interface CPSearchFactory : NSObject
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
 +(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;
 +(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;

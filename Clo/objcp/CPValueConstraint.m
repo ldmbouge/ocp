@@ -102,19 +102,15 @@
     else {
         [_b setBindTrigger: ^ {
            if ([_b min] == true) {
-               assert([_x bound]);
                 [_x bind:_c];
            } else {
-              assert([_x member:_c]==FALSE);
               [_x remove:_c];
            }
         } onBehalf:self];
         [_x setLoseTrigger: _c do: ^ {
-           assert(![_b bound]);
            [_b bind:false];
         } onBehalf:self];
         [_x setBindTrigger: ^ {
-           assert([_x bound]);
            [_b bind:[_x min] == _c];
         } onBehalf:self];
         return ORSuspend;
@@ -625,10 +621,76 @@
 }
 @end
 
+@implementation CPReifyLEqualBC
+-(id) initCPReifyLEqualBC:(CPIntVarI*)b when:(CPIntVarI*)x leq:(CPIntVarI*)y
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _b = b;
+   _x = x;
+   _y = y;
+   return self;
+}
+-(ORStatus) post
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {  // YES <=>  x <= y
+         [_x updateMax:maxDom(_y)];
+         [_y updateMin:minDom(_x)];
+      } else {            // NO <=> x <= y   ==>  YES <=> x > y
+         if (bound(_x)) { // c > y
+            [_y updateMax:minDom(_x) - 1];
+         } else {         // x > y
+            [_y updateMax:maxDom(_x) - 1];
+            [_x updateMin:minDom(_y) + 1];
+         }
+      }
+      if (!bound(_x))
+         [_x whenChangeBoundsPropagate:self];
+      if (!bound(_y))
+         [_y whenChangeBoundsPropagate:self];
+   } else {
+      if (maxDom(_x) <= minDom(_y))
+         [_b bind:YES];
+      else if (minDom(_x) > maxDom(_y))
+         [_b bind:NO];
+      else {
+         [_x whenChangeBoundsPropagate:self];
+         [_y whenChangeBoundsPropagate:self];
+         [_b whenBindPropagate:self];
+      }
+   }
+   return ORSuspend;
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      if (minDom(_b)) {
+         [_x updateMax:maxDom(_y)];
+         [_y updateMin:minDom(_x)];
+      } else {
+         [_x updateMin:minDom(_y) + 1];
+         [_y updateMax:maxDom(_x) - 1];
+      }
+   } else {
+      if (maxDom(_x) <= minDom(_y))
+         [_b bind:YES];
+      else if (minDom(_x) > maxDom(_y))
+         [_b bind:NO];
+   }
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound] + ![_y bound] + ![_b bound];
+}
+@end
 // ==============================================================================================
 
 @implementation CPReifyLEqualDC
--(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leq: (ORInt) c
+-(id) initCPReifyLEqualDC: (CPIntVarI*) b when: (CPIntVarI*) x leqi: (ORInt) c
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = b;

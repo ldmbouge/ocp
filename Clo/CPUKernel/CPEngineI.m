@@ -347,6 +347,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return (ORUInt)[_vars count];
 }
+-(ORUInt) nbConstraints
+{
+   return (ORUInt)[_mStore count];
+}
 -(void) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
@@ -377,7 +381,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%d propagations\n",[_vars count],_nbpropag];
+   return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",[_vars count],[_cStore count],_nbpropag];
 }
 -(id) trail
 {
@@ -434,6 +438,62 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    return ORSuspend;
 }
 
+ORStatus propagateFDM(CPEngineI* fdm)
+{
+   if (fdm->_propagating > 0)
+      return ORDelay;
+   ++fdm->_propagating;
+   ORStatus status = fdm->_status = ORSuspend;
+   bool done = false;
+   CPAC5Queue* ac5 = fdm->_ac5;
+   CPAC3Queue** ac3 = fdm->_ac3;
+   id<CPConstraint>* last = &fdm->_last;
+   *last = nil;
+   ORInt nbp = 0;
+   @try {
+      while (!done) {
+         // AC5 manipulates the list
+         while (AC5LOADED(ac5)) {
+            id<CPAC5Event> evt = deQueueAC5(ac5);
+            nbp += [evt execute];
+         }
+         // Processing AC3
+         int p = HIGHEST_PRIO;
+         while (p>=LOWEST_PRIO && !ISLOADED(ac3[p]))
+            --p;
+         done = p < LOWEST_PRIO;
+         while (!done) {
+            status = executeAC3(AC3deQueue(ac3[p]),last);
+            nbp += status !=ORSkip;
+            if (AC5LOADED(ac5))
+               break;
+            p = HIGHEST_PRIO;
+            while (p >= LOWEST_PRIO && !ISLOADED(ac3[p]))
+               --p;
+            done = p < LOWEST_PRIO;
+         }
+      }
+      if (fdm->_propagDone)
+         [fdm->_propagDone notify];
+      fdm->_status = status;
+      fdm->_nbpropag += nbp;
+      --fdm->_propagating;
+      return status;
+   }
+   @catch (ORFailException *exception) {
+      for(ORInt p=NBPRIORITIES-1;p>=0;--p)
+         AC3reset(ac3[p]);
+      AC5reset(ac5);
+      if (fdm->_propagFail)
+         [fdm->_propagFail notifyWith:[*last getId]];
+      [exception release];
+      fdm->_status = ORFailure;
+      fdm->_nbpropag += nbp;
+      --fdm->_propagating;
+      return ORFailure;
+   } 
+}
+
 -(ORStatus) propagate
 {
    if (_propagating > 0)
@@ -487,7 +547,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (status == ORSuspend || status == ORSuccess)
-      return fdm->_propagIMP(fdm,@selector(propagate));
+      return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
    else if (status== ORFailure) {
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
          AC3reset(fdm->_ac3[p]);
@@ -520,7 +580,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _status = ORSuspend;
       ORStatus ok = [_objective check];
       if (ok)
-         ok = [self propagate];
+         ok = propagateFDM(self);// [self propagate];
       return ok;
    } @catch (ORFailException *exception) {
       [exception release];

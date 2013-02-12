@@ -60,6 +60,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) gt: (id<ORExpr>) e;
 -(id<ORRelation>) gti: (ORInt) e;
 
+-(id<ORRelation>) neg;
 -(id<ORRelation>) and: (id<ORExpr>) e;
 -(id<ORRelation>) or: (id<ORExpr>) e;
 -(id<ORRelation>) imply:(id<ORExpr>)e;

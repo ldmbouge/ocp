@@ -70,6 +70,7 @@ enum CPEngineState {
 -(bool)      closed;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
+-(ORUInt) nbConstraints;
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 -(ORStatus)enforceObjective;

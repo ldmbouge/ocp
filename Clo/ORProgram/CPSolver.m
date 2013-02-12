@@ -149,7 +149,8 @@
 }
 -(NSString*) description
 {
-   return [NSString stringWithFormat:@"Solver: %d vars\n\t%d choices\n\t%d fail\n\t%d propagations",[_engine nbVars],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
+   return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
+               [_engine nbVars],[_engine nbConstraints],[_search nbChoices],[_search nbFailures],[_engine nbPropagation]];
 }
 -(id<ORIdxIntInformer>) retLabel
 {
@@ -220,7 +221,7 @@
       [_search optimizeModel: self using: search
                   onSolution: _doOnSol
                       onExit: _doOnExit];
-      printf("Optimal Solution: %d %d\n",[_objective primalBound],[NSThread threadID]);
+      printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search

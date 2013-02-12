@@ -108,6 +108,13 @@
 -(id<ORIntVar>) right;
 @end
 
+@interface ORSquare : ORConstraintI<ORSquare>
+-(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n;
+-(id<ORIntVar>)res;
+-(id<ORIntVar>)op;
+-(ORAnnotation) annotation;
+@end
+
 @interface ORMod : ORConstraintI<ORMod>
 -(ORMod*)initORMod:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
 -(id<ORIntVar>) res;

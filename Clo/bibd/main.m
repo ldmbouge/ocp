@@ -32,8 +32,10 @@ void show(id<ORIntVarMatrix> M)
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    @autoreleasepool {
-      ORInt a = 0;
+      ORLong t0 = [ORRuntimeMonitor cputime];
+      ORInt a = argc >= 2 ? atoi(argv[1]) : 10;
       ORInt instances[14][3] = {
          {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
          {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},
@@ -46,22 +48,23 @@ int main(int argc, const char * argv[])
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> Rows = RANGE(mdl,1,v);
       id<ORIntRange> Cols = RANGE(mdl,1,b);
-     
+      
       id<ORIntVarMatrix> M = [ORFactory boolVarMatrix:mdl range:Rows :Cols];
-     for(ORInt i=Rows.low;i<=Rows.up;i++)
+      for(ORInt i=Rows.low;i<=Rows.up;i++)
          [mdl add: [Sum(mdl,x, Cols, [M at:i :x]) eqi:r]];
       for(ORInt i=Cols.low;i<=Cols.up;i++)
          [mdl add: [Sum(mdl,x, Rows, [M at:x :i]) eqi:k]];
       for(ORInt i=Rows.low;i<=Rows.up;i++)
          for(ORInt j=i+1;j <= v;j++)
-            [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
+//            [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
+            [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eqi:l]];
       for(ORInt i=1;i <= v-1;i++) {
          [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
                               leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
       }
       for(ORInt j=1;j <= b-1;j++) {
-        [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
-                             leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
+         [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
+                              leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
       }
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
@@ -74,7 +77,10 @@ int main(int argc, const char * argv[])
       NSLog(@"Solver: %@",cp);
       [cp release];
       [ORFactory shutdown];
+      ORLong t1 = [ORRuntimeMonitor cputime];
+      NSLog(@"time: %lld",t1 - t0);
    }
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 /*

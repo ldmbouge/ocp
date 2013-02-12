@@ -297,7 +297,7 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
 {
    TRInt* ei = a._entries + i;
    if (ei->_mgc != [a._trail magic]) {
-      trailIntFun(a._trail, & ei->_val);
+      trailIntFun((ORTrailI*)a._trail, & ei->_val);
       ei->_mgc = [a._trail magic];
    }
    return ei->_val = val;
@@ -338,7 +338,7 @@ void assignTRInt(TRInt* v,int val,ORTrailI* trail)
    ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailIntFun(trail, &v->_val);
+      inline_trailIntFun(trail, &v->_val);
    }
    v->_val = val;
 }
@@ -348,7 +348,7 @@ void  assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
    ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailUIntFun(trail, &v->_val);
+      inline_trailUIntFun(trail, &v->_val);
    }
    v->_val = val;
 }
