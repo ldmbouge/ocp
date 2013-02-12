@@ -18,50 +18,24 @@
 #import <objcp/CPBitArray.h>
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPBitConstraint.h>
+#import "MD4.h"
 
 int main(int argc, const char * argv[])
 {
-//
-//   @autoreleasepool {
-//      id<ORModel> m = [ORFactory createModel];
-//      unsigned int min;
-//      unsigned int max;
-//      min = min = 0;
-//      max = max = CP_UMASK;
-//      
-//      id<ORBitVar> x = [ORFactory bitVar:m low:&min up:&max bitLength:32];
-//      id<ORBitVar> y = [ORFactory bitVar:m low:&min up:&max bitLength:32];
-//      min[1] = 8;
-//      max[1] = 12;
-//      id<ORBitVar> z = [ORFactory bitVar:m low:&min up:&max bitLength:32];
-//      
-//      [m add:[ORFactory bit:x eq:y]];
-//      [m add:[ORFactory bit:y eq:z]];
-//
-//      id<CPProgram,CPBV> cp = [ORFactory createCPProgram:m];
-//      [cp solve: ^() {
-//         @try {
-//            NSLog(@"After Posting:");
-//            NSLog(@"a = %@\n", a);
-//            NSLog(@"b = %@\n", b);
-//            NSLog(@"c = %@\n", c);
-//            [cp labelUpFromLSB:a];
-//            [cp labelUpFromLSB:b];
-//            [cp labelUpFromLSB:c];
-//            NSLog(@"Solution Found:");
-//            NSLog(@"a = %@\n", a);
-//            NSLog(@"b = %@\n", b);
-//            NSLog(@"c = %@\n", c);
-//            
-//         }
-//         @catch (NSException *exception) {
-//            
-//            NSLog(@"MD5: Caught %@: %@", [exception name], [exception reason]);
-//            
-//         }
-//      }];
-//      
-//   }
-//    return 0;
+   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+
+   MD4 *myMD4 = [MD4 initMD4];
+   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/lorem-mssg.txt";
+//   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
+   
+   uint32 *mask = malloc(16*sizeof(uint32));
+   mask[0] = 0x0000FFFF;
+   for(int i=1;i<16;i++)
+      mask[i] = 0xFFFFFFFF;
+   
+   [myMD4 preimage:filename withMask:mask];
+   
+   [pool drain];
+   return 0;
 }
 

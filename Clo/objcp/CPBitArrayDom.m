@@ -76,8 +76,9 @@
 {
    NSMutableString* string = [[NSMutableString alloc] init];
    for(int i=0; i< _wordLength;i++){
-      unsigned int boundLow = ~ _up[i]._val;
-      unsigned int boundUp = _low[i]._val;
+      unsigned int boundLow = (~ _up[i]._val) & (~_low[i]._val);
+      unsigned int boundUp = _up[i]._val & _low[i]._val;
+      unsigned int err = ~_up[i]._val & _low[i]._val;
       unsigned int mask = CP_DESC_MASK;
       if (i<_wordLength-1)
          for (int j=0; j<32; j++){
@@ -85,6 +86,8 @@
                [string appendString: @"0"];
             else if ((mask & boundUp) != 0)
                [string appendString: @"1"];
+            else if ((mask & err) != 0)
+               [string appendString: @"X"];
             else
                [string appendString: @"?"];
             mask >>= 1;
@@ -96,6 +99,8 @@
                [string appendString: @"0"];
             else if ((mask & boundUp) !=0)
                [string appendString: @"1"];
+            else if ((mask & err) != 0)
+               [string appendString: @"X"];
             else
                [string appendString: @"?"];
             mask >>= 1;
