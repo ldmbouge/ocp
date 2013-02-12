@@ -45,6 +45,18 @@
 -(void) trackVariable: (id) obj;
 @end
 
+@interface ORBatchGroup : NSObject<ORAddToModel>
+-(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
+-(void) addVariable: (id<ORVar>) var;
+-(void) addObject:(id)object;
+-(void) addConstraint: (id<ORConstraint>) cstr;
+-(void) minimize: (id<ORIntVar>) x;
+-(void) maximize: (id<ORIntVar>) x;
+-(id<ORAddToModel>) model;
+-(void) trackObject: (id) obj;
+-(void) trackVariable: (id) obj;
+@end
+
 @interface ORSolutionI : NSObject<ORSolution>
 -(ORSolutionI*) initSolution: (id<ORModel>) model;
 -(ORInt) intValue: (id) var;

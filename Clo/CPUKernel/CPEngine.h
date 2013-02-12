@@ -40,3 +40,46 @@
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 @end
+
+#define AC5LOADED(q) ((q)->_csz)
+#define ISLOADED(q)  ((q)->_csz)
+
+typedef struct AC3Entry {
+   ConstraintCallback   cb;
+   CPCoreConstraint*    cstr;
+} AC3Entry;
+
+@interface CPAC3Queue : NSObject {
+   @package
+   ORInt      _mxs;
+   ORInt      _csz;
+   AC3Entry*  _tab;
+   ORInt    _enter;
+   ORInt     _exit;
+   ORInt     _mask;
+}
+-(id)initAC3Queue:(ORInt)sz;
+-(void)dealloc;
+-(AC3Entry)deQueue;
+-(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr;
+-(void)reset;
+-(bool)loaded;
+@end
+
+@interface CPAC5Queue : NSObject {
+   @package
+   ORInt           _mxs;
+   ORInt           _csz;
+   id<CPAC5Event>* _tab;
+   ORInt         _enter;
+   ORInt          _exit;
+   ORInt          _mask;
+}
+-(id) initAC5Queue: (ORInt) sz;
+-(void) dealloc;
+-(id<CPAC5Event>) deQueue;
+-(void) enQueue: (id<CPAC5Event>)cb;
+-(void) reset;
+-(bool) loaded;
+@end
+

@@ -21,17 +21,26 @@ pvh:
  
  */
 
- 
 typedef enum {
    CPChecked,
    CPTocheck,
    CPOff
 } CPTodo;
 
+@protocol CPGroup;
+
 @protocol CPConstraint <ORConstraint,ORCommand>
 -(ORUInt) getId;
+-(void)setGroup:(id<CPGroup>)g;
+-(id<CPGroup>)group;
 @end
 
+@protocol CPGroup <CPConstraint>
+-(void)add:(id<CPConstraint>)p;
+-(id<OREngine>)engine;
+-(void)scheduleAC3:(id<CPEventNode>)evt;
+-(id<CPConstraint>)controller;
+@end
 
 @protocol CPAC5Event<NSObject>
 -(ORInt) execute;
@@ -52,4 +61,6 @@ void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,OR
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail;
++(id<CPGroup>)group:(id<CPEngine>)engine;
++(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
 @end;

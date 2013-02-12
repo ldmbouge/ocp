@@ -36,6 +36,7 @@
 -(void) visitTable:(id<ORTable>) v;
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
+-(void) visitGroup:(id<ORGroup>)g;
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f;
 -(void) visitFail:(id<ORFail>)cstr;
 -(void) visitRestrict:(id<ORRestrict>)cstr;

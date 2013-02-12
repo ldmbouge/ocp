@@ -44,6 +44,7 @@
 -(void) visitTable:(id<ORTable>) v  { _result = [ORFactory undefinedIntRange]; }
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitGroup:(id<ORGroup>)g            { _result = [ORFactory undefinedIntRange]; }
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitFail:(id<ORFail>)cstr  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitRestrict:(id<ORRestrict>)cstr  { _result = [ORFactory undefinedIntRange]; }

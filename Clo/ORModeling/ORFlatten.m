@@ -35,6 +35,7 @@
 -(void) visitTable:(id<ORTable>) v  {}
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
+-(void) visitGroup:(id<ORGroup>)g {}
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  {}
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
@@ -334,6 +335,16 @@
                                              
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
+}
+-(void) visitGroup:(id<ORGroup>)g
+{
+   id<ORGroup> ng = [ORFactory group:_theModel type:[g type]];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_theModel group:ng];
+   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+      [ORFlatten flatten:ck into:a2g];
+   }];
+   [_theModel addConstraint:ng];
+   [a2g release];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {

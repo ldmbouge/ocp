@@ -826,18 +826,22 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
 -(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
+   return ORSuspend;
 }
 -(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
+   return ORSuspend;
 }
 -(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
+   return ORSuspend;
 }
 -(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
+   return ORSuspend;
 }
 
 -(ORInt) min

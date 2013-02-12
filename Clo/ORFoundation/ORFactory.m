@@ -34,6 +34,21 @@
    return [[ORTrailI alloc] init];
 }
 
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];
+   [model trackObject:o];
+   return o;
+}
++(id<ORGroup>)group:(id<ORTracker>)model
+{
+   return [self group:model type:DefaultGroup];
+}
++(id<ORGroup>)bergeGroup:(id<ORTracker>)model
+{
+   return [self group:model type:BergeGroup];
+}
+
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];

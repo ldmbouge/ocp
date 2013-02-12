@@ -118,24 +118,25 @@
    return buf;
 }
 
--(void) add: (id<ORConstraint>) c
+-(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
-   
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
    [_mStore addObject:c];
+   return c;
 }
 
--(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
+-(id<ORConstraint>) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
    
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
-   [_mStore addObject:c];   
+   [_mStore addObject:c];
+   return c;
 }
 
 -(void) optimize: (id<ORObjectiveFunction>) o
@@ -255,6 +256,55 @@
 -(void) trackConstraint: (id) obj
 {
    [_target trackConstraint: obj];
+}
+@end
+
+@implementation ORBatchGroup {
+   id<ORAddToModel>     _target;
+   id<ORGroup>        _theGroup;
+}
+-(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group
+{
+   self = [super init];
+   _target = model;
+   _theGroup = group;
+   return self;
+}
+-(void) addVariable: (id<ORVar>) var
+{
+   [_target addVariable:var];
+}
+-(void) addObject:(id)object
+{
+   [_target addObject:object];
+}
+-(void) addConstraint: (id<ORConstraint>) cstr
+{
+   [_theGroup add:cstr];
+}
+-(void) minimize: (id<ORIntVar>) x
+{
+   [_target minimize:x];
+}
+-(void) maximize: (id<ORIntVar>) x
+{
+   [_target maximize:x];
+}
+-(id<ORAddToModel>) model
+{
+   return _target;
+}
+-(void) trackObject: (id) obj
+{
+   [_target trackObject:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_target trackVariable:obj];
+}
+-(void)trackConstraint:(id)obj
+{
+   [_target trackConstraint:obj];
 }
 @end
 

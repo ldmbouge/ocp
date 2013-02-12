@@ -24,6 +24,7 @@
    _propagate = [self methodForSelector:@selector(propagate)];
    _trail = [[m trail] retain];
    _active  = makeTRInt(_trail,true);
+   _group = nil;
    return self;
 }
 -(void)dealloc
@@ -65,6 +66,15 @@
    [av release];
    return nbu;
 }
+-(void)setGroup:(id<CPGroup>)g
+{
+   _group = g;
+}
+-(id<CPGroup>)group
+{
+   return _group;
+}
+
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitConstraint:self];

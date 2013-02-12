@@ -17,7 +17,7 @@
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
-#import "ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 
 @protocol ORObjective;
 
@@ -25,6 +25,16 @@
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;
 -(NSString*) description;
+@end
+
+
+@interface ORGroupI : ORModelingObjectI<ORGroup>
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
+-(id<ORConstraint>)add:(id<ORConstraint>)c;
+-(NSString*) description;
+-(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(void) setId: (ORUInt) name;
+-(enum ORGroupType)type;
 @end
 
 @interface ORFail : ORConstraintI<ORFail>

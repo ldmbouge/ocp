@@ -23,6 +23,7 @@
    IMP          _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
+   id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m;
 -(ORStatus) doIt;
@@ -32,4 +33,6 @@
 -(ORUInt) getId;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+-(void)setGroup:(id<CPGroup>)g;
+-(id<CPGroup>)group;
 @end
