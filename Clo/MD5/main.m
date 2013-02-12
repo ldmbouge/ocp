@@ -29,10 +29,10 @@ int main(int argc, const char * argv[])
 //   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    
    uint32 *mask = malloc(16*sizeof(uint32));
-   mask[0] = 0x0000FFFF;
-   for(int i=1;i<16;i++)
+
+   for(int i=0;i<16;i++)
       mask[i] = 0xFFFFFFFF;
-   
+   mask[7] = 0x0000FFFF;
    [myMD4 preimage:filename withMask:mask];
    
    [pool drain];

@@ -809,6 +809,7 @@
 		F548AA76167FB1C600726814 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AA75167FB1C600726814 /* main.m */; };
 		F548AA7A167FB1C700726814 /* MD5.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F548AA79167FB1C700726814 /* MD5.1 */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
+		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3557,6 +3558,8 @@
 		F548AA79167FB1C700726814 /* MD5.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MD5.1; sourceTree = "<group>"; };
 		F548AAB01680B3A500726814 /* MD4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD4.h; sourceTree = "<group>"; };
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
+		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
+		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -5849,6 +5852,8 @@
 		F548AA74167FB1C600726814 /* MD5 */ = {
 			isa = PBXGroup;
 			children = (
+				F55DEFB516C9F33E005818AF /* MD5.h */,
+				F55DEFB616C9F33E005818AF /* MD5.m */,
 				F548AA75167FB1C600726814 /* main.m */,
 				F548AA79167FB1C700726814 /* MD5.1 */,
 				F548AA77167FB1C600726814 /* Supporting Files */,
@@ -8260,6 +8265,7 @@
 			files = (
 				F548AA76167FB1C600726814 /* main.m in Sources */,
 				F548AAB21680B3A500726814 /* MD4.m in Sources */,
+				F55DEFB716C9F33E005818AF /* MD5.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

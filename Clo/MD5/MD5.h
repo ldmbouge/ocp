@@ -44,10 +44,10 @@
 -(MD5*) initExplicitMD5;
 
 -(bool) getMessage:(NSString*) fname;
--(NSMutableArray*) getMD4Digest:(NSString*)fname;
--(void) createMD4Blocks:(uint32*)mask;
+-(NSMutableArray*) getMD5Digest:(NSString*)fname;
+-(void) createMD5Blocks:(uint32*)mask;
 //-(void) createMD4Block:(uint32*)data withCount:(uint64)count;
--(void) createMD4Block:(uint32*)data withCount:(uint64)count andMask:(uint32*)messageMask;
+-(void) createMD5Block:(uint32*)data withCount:(uint64)count andMask:(uint32*)messageMask;
 
 -(id<ORBitVar>) f:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z;
 -(id<ORBitVar>) g:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z;
@@ -73,8 +73,8 @@
    uint32         _data[16];
    id<ORBitVar>   *_bitVars;
 }
-+(MD5Block*) initMD4Block:(id<ORModel>)m;
--(MD5Block*) initExplicitMD4Block:(id<ORModel>)m;
++(MD5Block*) initMD5Block:(id<ORModel>)m;
+-(MD5Block*) initExplicitMD5Block:(id<ORModel>)m;
 -(void) setData:(ORUInt*)data;
 -(void) setData:(ORUInt*)data withMask:(uint32*)mask;
 -(ORUInt*) getData;
