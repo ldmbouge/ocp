@@ -37,9 +37,7 @@ typedef enum {
 
 @protocol CPGroup <CPConstraint>
 -(void)add:(id<CPConstraint>)p;
--(id<OREngine>)engine;
 -(void)scheduleAC3:(id<CPEventNode>)evt;
--(id<CPConstraint>)controller;
 @end
 
 @protocol CPAC5Event<NSObject>

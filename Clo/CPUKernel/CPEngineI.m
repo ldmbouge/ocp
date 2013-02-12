@@ -370,8 +370,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
          list->_cstr->_todo = CPTocheck;
          id<CPGroup> group = [list->_cstr group];
          if (group) {
-            id<CPConstraint> gc = [group controller];
-            AC3enQueue(_ac3[LOWEST_PRIO], nil, gc);
+            AC3enQueue(_ac3[LOWEST_PRIO], nil, group);
             [group scheduleAC3:list];
          } else
             AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);

@@ -15,7 +15,6 @@
 #import "CPEngineI.h"
 
 @implementation CPGroup
-
 -(id)init:(CPEngineI*) engine
 {
    self = [super initCPCoreConstraint:engine];
@@ -23,12 +22,10 @@
    for(ORInt i=0;i<NBPRIORITIES;i++)
       _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
    _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
-   _controller = [[CPGroupController alloc] initGroupController:self];
    return self;
 }
 -(void)dealloc
 {
-   [_controller release];
    for(ORInt i=0;i<NBPRIORITIES;i++)
       [_ac3[i] release];
    [_ac5 release];
@@ -46,12 +43,10 @@
 {
    return nil;
 }
-
 -(ORStatus) post
 {
    return ORSuspend;
 }
-
 -(void)scheduleAC3:(CPEventNode*)evt
 {
    [_ac3[evt->_priority] enQueue:evt->_trigger cstr:evt->_cstr];
@@ -60,7 +55,6 @@
 {
    [_ac5 enQueue:evt];
 }
-
 static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 {
    *last = cb.cstr;
@@ -121,51 +115,8 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       [_ac5 reset];
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
-      //fdm->_nbpropag += nbp;
-      // MUST REPORT WHICH CONSTRAINT FAILED LAST.
       @throw exception;
    }
-}
-
--(id<CPConstraint>)controller
-{
-   _controller->_todo = CPTocheck;
-   return _controller;
-}
--(id<OREngine>)engine
-{
-   return _engine;
-}
-
-- (void)encodeWithCoder:(NSCoder *)aCoder
-{
-}
-- (id)initWithCoder:(NSCoder *)aDecoder
-{
-   self = [super init];
-   for(ORInt i=0;i<NBPRIORITIES;i++)
-      _ac3[i] = [[CPAC3Queue alloc] initAC3Queue:512];
-   _ac5 = [[CPAC5Queue alloc] initAC5Queue:512];
-   return self;
-}
-@end
-
-@implementation CPGroupController
--(id)initGroupController:(CPGroup*)g
-{
-   self = [super initCPCoreConstraint:[g engine]];
-   _toRun = g;
-   return self;
-}
--(ORStatus) post
-{
-   NSLog(@"Nothing to do to post a group...");
-   [_toRun post];
-   return ORSuspend;
-}
--(void) propagate
-{
-   [_toRun propagate];
 }
 @end
 
@@ -174,7 +125,6 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 {
    self = [super initCPCoreConstraint:engine];
    _engine = engine;
-   _controller = [[CPGroupController alloc] initGroupController:self];
    _max = 2;
    _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
    _scanMap = malloc(sizeof(id<CPConstraint>)*_max);   
@@ -187,7 +137,6 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    free(_map);
    free(_scanMap);
    free(_inGroup);
-   [_controller release];
    [super dealloc];
 }
 -(void)add:(id<CPConstraint>)p
@@ -220,7 +169,6 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn);
    return ORSuspend;
 }
-
 -(void)scheduleAC3:(CPEventNode*)evt
 {
    ORInt cid = [evt->_cstr getId];
@@ -257,14 +205,5 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       [_engine setLastFailure:last];
       @throw exception;
    }
-}
--(id<CPConstraint>)controller
-{
-   _controller->_todo = CPTocheck;
-   return _controller;
-}
--(id<OREngine>)engine
-{
-   return _engine;
 }
 @end

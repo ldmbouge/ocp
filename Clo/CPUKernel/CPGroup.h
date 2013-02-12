@@ -19,7 +19,6 @@
    CPEngineI*               _engine;
    CPAC3Queue*              _ac3[NBPRIORITIES];
    CPAC5Queue*              _ac5;
-   CPGroupController*       _controller;
 }
 -(id)init:(id<CPEngine>)engine;
 -(void)add:(id<CPConstraint>)p;
@@ -27,13 +26,10 @@
 -(void)scheduleAC5:(id<CPAC5Event>)evt;
 -(ORStatus) post;
 -(ORStatus)propagate;
--(id<CPConstraint>)controller;
--(id<OREngine>)engine;
 @end
 
 @interface CPBergeGroup : CPCoreConstraint<CPGroup> {
    CPEngineI*               _engine;
-   CPGroupController*       _controller;
    id<CPConstraint>*        _inGroup;
    id<CPEventNode>*         _scanMap;
    ORInt                    _nbIn;
@@ -48,14 +44,4 @@
 -(void)scheduleAC5:(id<CPAC5Event>)evt;
 -(ORStatus) post;
 -(ORStatus)propagate;
--(id<CPConstraint>)controller;
--(id<OREngine>)engine;
-@end
-
-@interface CPGroupController : CPCoreConstraint {
-   CPGroup*    _toRun;
-}
--(id)initGroupController:(id<CPGroup>)g;
--(ORStatus) post;
--(void) propagate;
 @end
