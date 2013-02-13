@@ -19,12 +19,14 @@
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPBitConstraint.h>
 #import "MD4.h"
+#import "MD5.h"
 
 int main(int argc, const char * argv[])
 {
    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
    MD4 *myMD4 = [MD4 initMD4];
+   MD5 *myMD5 = [MD5 initMD5];
    NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/lorem-mssg.txt";
 //   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    
@@ -33,7 +35,7 @@ int main(int argc, const char * argv[])
    for(int i=0;i<16;i++)
       mask[i] = 0xFFFFFFFF;
    mask[7] = 0x0000FFFF;
-   [myMD4 preimage:filename withMask:mask];
+   [myMD5 preimage:filename withMask:mask];
    
    [pool drain];
    return 0;

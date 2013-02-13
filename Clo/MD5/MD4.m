@@ -246,10 +246,10 @@
 }
 -(id<ORBitVar>*) stateModel
 {
-   uint32 *I0 = malloc(sizeof(uint32));
-   uint32 *I1 = malloc(sizeof(uint32));
-   uint32 *I2 = malloc(sizeof(uint32));
-   uint32 *I3 = malloc(sizeof(uint32));
+   uint32 *I0 = alloca(sizeof(uint32));
+   uint32 *I1 = alloca(sizeof(uint32));
+   uint32 *I2 = alloca(sizeof(uint32));
+   uint32 *I3 = alloca(sizeof(uint32));
    
    *I0 = 0x67452301;
    *I1 = 0xefcdab89;
@@ -278,8 +278,8 @@
       hVars[2] = h2;
       hVars[3] = h3;
       
-      uint32 *min = malloc(sizeof(uint32));
-      uint32 *max = malloc(sizeof(uint32));
+      uint32 *min = alloca(sizeof(uint32));
+      uint32 *max = alloca(sizeof(uint32));
 
       *min = 0;
       *max = 0xFFFFFFFF;
@@ -308,8 +308,8 @@
 
 -(id<ORBitVar>) f:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z
 {
-   uint32 *min = malloc(sizeof(uint32));
-   uint32 *max = malloc(sizeof(uint32));
+   uint32 *min = alloca(sizeof(uint32));
+   uint32 *max = alloca(sizeof(uint32));
    
    *min = 0;
    *max = 0xFFFFFFFF;
@@ -331,8 +331,8 @@
 }
 -(id<ORBitVar>) g:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z
 {
-   uint32 *min = malloc(sizeof(uint32));
-   uint32 *max = malloc(sizeof(uint32));
+   uint32 *min = alloca(sizeof(uint32));
+   uint32 *max = alloca(sizeof(uint32));
    
    *min = 0;
    *max = 0xFFFFFFFF;
@@ -357,8 +357,8 @@
 }
 -(id<ORBitVar>) h:(id<ORBitVar>)x y:(id<ORBitVar>)y z:(id<ORBitVar>)z
 {
-   uint32 *min = malloc(sizeof(uint32));
-   uint32 *max = malloc(sizeof(uint32));
+   uint32 *min = alloca(sizeof(uint32));
+   uint32 *max = alloca(sizeof(uint32));
    
    *min = 0;
    *max = 0xFFFFFFFF;
@@ -533,8 +533,8 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 
 -(id<ORBitVar>) shuffle1:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x
 {
-   uint32 *min = malloc(sizeof(uint32));
-   uint32 *max = malloc(sizeof(uint32));
+   uint32 *min = alloca(sizeof(uint32));
+   uint32 *max = alloca(sizeof(uint32));
    
    *min = 0;
    *max = 0xFFFFFFFF;
@@ -569,8 +569,8 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 
 -(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x
 {
-   uint32 *min = malloc(sizeof(uint32));
-   uint32 *max = malloc(sizeof(uint32));
+   uint32 *min = alloca(sizeof(uint32));
+   uint32 *max = alloca(sizeof(uint32));
       
 //   NSLog(@"Shuffle2\n");
    // A = (A + g(B,C,D) + X[i] + 5A827999) <<< s
@@ -606,8 +606,8 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 
 -(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>*) x
 {
-   uint32 *min = malloc(sizeof(uint32));
-   uint32 *max = malloc(sizeof(uint32));
+   uint32 *min = alloca(sizeof(uint32));
+   uint32 *max = alloca(sizeof(uint32));
    
 //   NSLog(@"Shuffle3\n");
    //A = (A + h(B,C,D) + X[i] + 6ED9EBA1) <<< s
