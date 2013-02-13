@@ -97,6 +97,7 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
           NSLog(@"Search");
          [cp labelHeuristic:h];
+         //[cp labelArray:costas];
          NSLog(@"Solution: %@",costas);
          NSLog(@"Solver: %@",cp);
       }];

@@ -380,7 +380,10 @@
    id<ORSelect> select = [ORFactory select: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
-                                       orderedBy: ^ORFloat(ORInt i) { return [h varOrdering:av[i]]; }];
+                                       orderedBy: ^ORFloat(ORInt i) {
+                                          ORFloat rv = [h varOrdering:av[i]];
+                                          return rv;
+                                       }];
    do {
       ORInt i = [select max];
       if (i == MAXINT)

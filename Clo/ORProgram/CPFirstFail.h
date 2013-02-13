@@ -20,8 +20,8 @@
    id<CPProgram>     _cp;
 }
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
--(float)varOrdering:(id<CPIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
+-(ORFloat)varOrdering:(id<CPIntVar>)x;
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
 -(id<CPProgram>)solver;

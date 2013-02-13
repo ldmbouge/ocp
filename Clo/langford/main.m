@@ -22,8 +22,8 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
-      ORInt k    = argc >= 2 ? atoi(argv[1]) : 3;
-      ORInt n    = argc >= 3 ? atoi(argv[2]) : 9;
+      ORInt k    = argc >= 2 ? atoi(argv[1]) : 2;
+      ORInt n    = argc >= 3 ? atoi(argv[2]) : 8;
       NSLog(@"Params: k=%d n=%d",k,n);
       
       id<ORIntRange> R = RANGE(model,1,k*n);
@@ -52,7 +52,7 @@ int main(int argc, const char * argv[])
       //NSLog(@"Model %@",model);
 //      id<CPHeuristic> h = [ORFactory createFF:cp];
       [cp solveAll:^{
-         NSLog(@"concrete: %@",[[cp engine] model]);
+         //NSLog(@"concrete: %@",[[cp engine] model]);
          id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
          //[cp labelHeuristic:h];
          //[cp labelArray:tb];

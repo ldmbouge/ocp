@@ -116,7 +116,9 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e  {}
 @end
 
-@interface ORFlattenObjects : ORNOopVisit<ORVisitor>
+@interface ORFlattenObjects : ORNOopVisit<ORVisitor> {
+   id<ORAddToModel> _theModel;
+}
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
@@ -128,7 +130,9 @@
 -(void) visitTable:(id<ORTable>) v;
 @end
 
-@interface ORFlattenConstraint : ORNOopVisit<ORVisitor>
+@interface ORFlattenConstraint : ORNOopVisit<ORVisitor> {
+   id<ORAddToModel> _theModel;
+}
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -246,9 +250,7 @@
 }
 @end
 
-@implementation ORFlattenObjects {
-   id<ORAddToModel> _theModel;
-}
+@implementation ORFlattenObjects 
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -289,9 +291,7 @@
 }
 @end
 
-@implementation ORFlattenConstraint {
-   id<ORAddToModel> _theModel;
-}
+@implementation ORFlattenConstraint 
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];

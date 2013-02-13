@@ -28,8 +28,9 @@ NSString* tab(int d)
 
 int main(int argc, const char * argv[])
 {
+   const char* fName = argc >=2 ? argv[1] : "slab.dat";
    id<ORModel> model = [ORFactory createModel];
-   FILE* dta = fopen("slab.dat","r");
+   FILE* dta = fopen(fName,"r");
    ORInt nbCap;
    fscanf(dta,"%d",&nbCap);
    nbCap++;
@@ -57,7 +58,7 @@ int main(int argc, const char * argv[])
       [color set: c at: o];
    }
    
-   ORInt nbSize = 111;
+   ORInt nbSize = nbOrders;
    id<ORIntRange> SetOrders = RANGE(model,1,nbSize);
    id<ORIntRange> Slabs = RANGE(model,1,nbSize);
    id<ORIntSetArray> coloredOrder = [ORFactory intSetArray: model range: Colors];
