@@ -44,6 +44,11 @@
 			<key>orderHint</key>
 			<integer>15</integer>
 		</dict>
+		<key>MD5.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>55</integer>
+		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -793,6 +798,11 @@
 			<true/>
 		</dict>
 		<key>B1F531D715AED4B100E89F98</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F548AA70167FB1C600726814</key>
 		<dict>
 			<key>primary</key>
 			<true/>
