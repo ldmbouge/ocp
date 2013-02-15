@@ -55,7 +55,7 @@ H operator==(id<ORIntVar> x,H y)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 10;
+      int n = 15;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,1,n);
       id<ORIntRange> D = RANGE(mdl,-n+1,n-1);
@@ -92,11 +92,12 @@ int main(int argc, const char * argv[])
       //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
 
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createFF:cp];
+      id<CPHeuristic> h = [ORFactory createABS:cp];
       
       [cp solve: ^{
           NSLog(@"Search");
          [cp labelHeuristic:h];
+         //[cp labelArray:costas];
          NSLog(@"Solution: %@",costas);
          NSLog(@"Solver: %@",cp);
       }];

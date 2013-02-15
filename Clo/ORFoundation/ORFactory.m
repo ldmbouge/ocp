@@ -34,6 +34,21 @@
    return [[ORTrailI alloc] init];
 }
 
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];
+   [model trackObject:o];
+   return o;
+}
++(id<ORGroup>)group:(id<ORTracker>)model
+{
+   return [self group:model type:DefaultGroup];
+}
++(id<ORGroup>)bergeGroup:(id<ORTracker>)model
+{
+   return [self group:model type:BergeGroup];
+}
+
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
@@ -266,13 +281,13 @@
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++) {
-      o[k] = clo(k);
+      [o  set:clo(k) at:k];
    }
    return (id<ORIntVarArray>)o;
 }
 +(id<ORIntVarArray>) intVarArrayDereference: (id<ORTracker>) tracker array: (id<ORIntVarArray>) x
 {
-   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([x[i] dereference]); }];
+   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([[x at:i] dereference]); }];
 }
 
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(ORInt,ORInt)) clo
@@ -384,7 +399,7 @@
    ORInt sz = (ORInt)[m count];
    id<ORIdArray> flat = [ORFactory idArray: tracker range: RANGE(tracker,0,sz-1)];
    for(ORInt i=0;i<sz;i++)
-      flat[i] = [m flat:i];
+      [flat set:[m flat:i] at:i];
    return (id<ORIntVarArray>)flat;
 }
 @end
@@ -811,9 +826,9 @@
    id<ORTracker> tracker = [x tracker];
    id<ORIntRange> R = RANGE(tracker,0,2);
    id<ORIdArray> a = [ORFactory idArray:tracker range:R];
-   a[0] = x;
-   a[1] = y;
-   a[2] = z;
+   [a set:x at:0];
+   [a set:y at:1];
+   [a set:z at:2];
    id<ORConstraint> o = [self tableConstraint: (id<ORIntVarArray>) a table: table];
    [tracker trackConstraint:o];
    return o;

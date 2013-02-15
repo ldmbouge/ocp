@@ -65,7 +65,7 @@
    while ([ite more]) {
       ORInt i = [ite next];
       if (_filter(i)) {
-         float val = _direction * (_order ? _order(i) : 0.0);
+         ORFloat val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound) {
             bestFound = val;
             indexFound = i;

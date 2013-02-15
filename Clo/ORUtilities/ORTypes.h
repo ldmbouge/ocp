@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-
+#import <Foundation/Foundation.h>
 #if !defined(__APPLE__) || defined(__IPHONE_NA)
 typedef unsigned long long uint64;
 typedef long long sint64;

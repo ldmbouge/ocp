@@ -39,11 +39,12 @@
    return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
--(float)varOrdering:(id<CPIntVar>)x
+-(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   return - [x domsize];
+   float rv = - [x domsize];
+   return rv;
 }
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }

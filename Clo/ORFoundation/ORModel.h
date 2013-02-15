@@ -30,6 +30,17 @@
 @protocol ORConstraint <ORObject>
 @end
 
+enum ORGroupType {
+   DefaultGroup = 0,
+   BergeGroup = 1
+};
+
+@protocol ORGroup <ORObject,ORConstraint>
+-(id<ORConstraint>)add:(id<ORConstraint>)c;
+-(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(enum ORGroupType)type;
+@end
+
 @protocol ORFail <ORConstraint>
 @end
 

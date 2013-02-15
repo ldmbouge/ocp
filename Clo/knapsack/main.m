@@ -19,6 +19,7 @@ int main(int argc, const char * argv[])
 {
    mallocWatch();
    @autoreleasepool {
+      [ORStreamManager setRandomized];
       ORLong startTime = [ORRuntimeMonitor cputime];
       const char* src = "MKNAP";
       const char* afn[6] = {"mknap1-0.txt",
@@ -72,7 +73,8 @@ int main(int argc, const char * argv[])
       }
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
+      //id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
+      id<CPHeuristic> h = [ORFactory createABS:cp restricted:x];
 //      id<CPHeuristic> h = [ORFactory createFF:cp restricted:x];
 //      id<CPHeuristic> h = [ORFactory createWDeg:cp restricted:x];
 //      id<CPHeuristic> h = [ORFactory createIBS:cp];
@@ -99,6 +101,7 @@ int main(int argc, const char * argv[])
       }];
       ORLong endTime = [ORRuntimeMonitor cputime];
       NSLog(@"Execution Time(CPU): %lld \n",endTime - startTime);
+      printf("OUT:%d:%d:%lld\n,",[[cp explorer] nbChoices],[[cp explorer] nbFailures],endTime-startTime);
       [cp release];
       [ORFactory shutdown];
    }

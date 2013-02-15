@@ -355,7 +355,7 @@
 {
    return _cp;
 }
--(float)varOrdering:(id<CPIntVar>)x
+-(ORFloat)varOrdering:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSVariableActivity* varAct  = [_varActivity objectForKey:key];
@@ -363,7 +363,7 @@
    [key release];
    return rv / [x domsize];
 }
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSValueActivity* vAct = [_valActivity objectForKey:key];
@@ -512,7 +512,7 @@
             if (i != MAXINT) { // we found someone
                id<CPIntVar> xi = vars[i];
                ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
+               ORStatus s = [_solver enforce: ^ORStatus { return [[xi dereference] bind:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {

@@ -165,18 +165,22 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 }
 -(bool)bound
 {
+   assert(_dom);
     return [_dom bound];
 }
 -(ORInt) min
 {
+   assert(_dom);
     return [_dom min];
 }
 -(ORInt) max 
-{ 
+{
+   assert(_dom);
     return [_dom max];
 }
 -(ORInt) value
 {
+   assert(_dom);
    if ([_dom bound])
       return [_dom min];
    else {
@@ -187,22 +191,27 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 
 -(ORBounds) bounds
 {
+   assert(_dom);
    return domBounds((CPBoundsDom*)_dom);
 }
 -(ORInt)domsize
 {
+   assert(_dom);
     return [_dom domsize];
 }
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to
 {
+   assert(_dom);
    return [_dom countFrom:from to:to];
 }
 -(bool)member:(ORInt)v
 {
+   assert(_dom);
     return [_dom member:v];
 }
 -(ORRange)around:(ORInt)v
 {
+   assert(_dom);
    ORInt low = [_dom findMax:v-1];
    ORInt up  = [_dom findMin:v+1];
    return (ORRange){low,up};
@@ -692,7 +701,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:1 shift:_b];
 }
-
+-(bool) bound
+{
+   return [_x bound];
+}
 -(ORInt)min
 {
     return [_x min]+_b;
@@ -712,6 +724,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(bool)member: (ORInt) v
 {
     return [_dom member:v-_b];
+}
+-(ORInt) domsize
+{
+   return [_x domsize];
 }
 -(ORRange)around:(ORInt)v
 {
@@ -816,7 +832,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:_a shift:_b];
 }
-
+-(bool) bound
+{
+   return [_x bound];
+}
 -(ORInt) min
 {
     if (_a > 0)
@@ -843,6 +862,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
     if (r != 0) return NO;
     ORInt dv = (v - _b) / _a;
     return [_x member:dv];
+}
+-(ORInt) domsize
+{
+   return [_x domsize];
 }
 -(ORRange)around:(ORInt)v
 {
@@ -981,7 +1004,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:-1 shift:0];
 }
-
+-(bool) bound
+{
+   return [_x bound];
+}
 -(ORInt) min
 {
    return - [_x max];
@@ -998,6 +1024,10 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 -(bool)member:(ORInt)v
 {
    return [_x member:-v];
+}
+-(ORInt) domsize
+{
+   return [_x domsize];
 }
 -(ORRange)around:(ORInt)v
 {
@@ -1073,6 +1103,11 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:[self min] up:[self max]];
 }
+-(bool) bound
+{
+   return [self domsize]<= 1;
+}
+
 -(ORInt) min
 {
    if (bound(_secondary))
@@ -1112,6 +1147,17 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return (ORBounds){[self min],[self max]};
 }
+-(ORInt) domsize
+{
+   if (bound(_secondary)) {
+      return 1;
+   } else {
+      if (memberDom(_secondary, _v))
+         return 2;
+      else return 1;
+   }
+}
+
 -(ORRange)around:(ORInt)v
 {
    return (ORRange){0,1};

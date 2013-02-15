@@ -24,7 +24,7 @@
    </BuildAction>
    <TestAction
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.GDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       buildConfiguration = "Debug">
       <Testables>
@@ -37,6 +37,17 @@
                BlueprintName = "objcpTests"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "bitTest">
+               </Test>
+               <Test
+                  Identifier = "objcpTests">
+               </Test>
+               <Test
+                  Identifier = "testCard">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
