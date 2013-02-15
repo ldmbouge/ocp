@@ -105,6 +105,9 @@
 		5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B40C21014F80A7D0041D162 /* CPObjectQueue.m */; };
 		5B48FEA715A3D79600141BB1 /* ORTrail.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE64310139D49610056F448 /* ORTrail.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B48FEA915A3DB2A00141BB1 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B49CA9F16CEE28000D9125E /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B49CAA416CEE2FF00D9125E /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B49CAA216CEE2FF00D9125E /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B49CAA516CEE2FF00D9125E /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B49CAA316CEE2FF00D9125E /* ORMallocWatch.m */; };
 		5B5096E21619B6CB00171F9D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B5096E51619B6CC00171F9D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5096E41619B6CC00171F9D /* main.m */; };
 		5B5096E91619B6CC00171F9D /* testDistrib.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B5096E81619B6CC00171F9D /* testDistrib.1 */; };
@@ -1271,6 +1274,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5BEEF60F13970B6F002ADBD4;
 			remoteInfo = queens2;
+		};
+		5B49CAA016CEE28600D9125E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
 		};
 		5B5096ED1619B6DD00171F9D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3129,6 +3139,8 @@
 		5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPObjectQueue.h; sourceTree = "<group>"; };
 		5B40C21014F80A7D0041D162 /* CPObjectQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPObjectQueue.m; sourceTree = "<group>"; };
 		5B43634015AECE4D00E9458D /* CPDDeg.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPDDeg.m; sourceTree = "<group>"; };
+		5B49CAA216CEE2FF00D9125E /* ORMallocWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMallocWatch.h; sourceTree = "<group>"; };
+		5B49CAA316CEE2FF00D9125E /* ORMallocWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMallocWatch.m; sourceTree = "<group>"; };
 		5B5096E01619B6CB00171F9D /* testDistrib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testDistrib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B5096E41619B6CC00171F9D /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B5096E71619B6CC00171F9D /* testDistrib-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testDistrib-Prefix.pch"; sourceTree = "<group>"; };
@@ -3736,6 +3748,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B49CA9F16CEE28000D9125E /* CPUKernel.framework in Frameworks */,
 				5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */,
 				5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */,
 				5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */,
@@ -4523,6 +4536,8 @@
 		5B60E5D815AE907E002FF2B3 /* ORUtilities */ = {
 			isa = PBXGroup;
 			children = (
+				5B49CAA216CEE2FF00D9125E /* ORMallocWatch.h */,
+				5B49CAA316CEE2FF00D9125E /* ORMallocWatch.m */,
 				B149BF5B151E759600FC5887 /* ORCrFactory.h */,
 				B149BF5C151E759600FC5887 /* ORCrFactory.m */,
 				5BE64312139D49610056F448 /* ORTypes.h */,
@@ -6003,6 +6018,7 @@
 				5B60E5EE15AE91E9002FF2B3 /* ORTypes.h in Headers */,
 				5B60E5EC15AE9136002FF2B3 /* ORConcurrencyI.h in Headers */,
 				5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */,
+				5B49CAA416CEE2FF00D9125E /* ORMallocWatch.h in Headers */,
 				5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6422,6 +6438,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5B49CAA116CEE28600D9125E /* PBXTargetDependency */,
 				5B196C7016446F4400C9CED2 /* PBXTargetDependency */,
 				5B196C7216446F4400C9CED2 /* PBXTargetDependency */,
 				5B196C7416446F4400C9CED2 /* PBXTargetDependency */,
@@ -7833,6 +7850,7 @@
 				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
 				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
+				5B49CAA516CEE2FF00D9125E /* ORMallocWatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8746,6 +8764,11 @@
 			isa = PBXTargetDependency;
 			target = 5BEEF60F13970B6F002ADBD4 /* queens2 */;
 			targetProxy = 5B33370A13A2B87B001DFC38 /* PBXContainerItemProxy */;
+		};
+		5B49CAA116CEE28600D9125E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B49CAA016CEE28600D9125E /* PBXContainerItemProxy */;
 		};
 		5B5096EE1619B6DD00171F9D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

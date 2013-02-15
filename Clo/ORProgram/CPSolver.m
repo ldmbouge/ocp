@@ -384,16 +384,29 @@
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
                                        }];
+   id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   [_trail trailClosure:^{
+      free(last);
+   }];
+   *last = nil;
+   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      ORInt i = [select max];
-      if (i == MAXINT)
-         return;
-      //NSLog(@"Chose variable: %d",i);
-      id<ORIntVar> x = av[i];
+      id<ORIntVar> x = *last;
+      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+         ORInt i = [select max];
+         if (i == MAXINT)
+            return;
+         //NSLog(@"Chose variable: %d",i);
+         x = av[i];
+         *last = x;
+      }/* else {
+         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+      }*/
+      [failStamp setValue:[_search nbFailures]];
       id<ORSelect> valSelect = [ORFactory select: _engine
-                                                 range:RANGE(_engine,[x min],[x max])
-                                              suchThat:^bool(ORInt v)    { return [x member:v];}
-                                             orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
+                                           range:RANGE(_engine,[x min],[x max])
+                                        suchThat:^bool(ORInt v)    { return [x member:v];}
+                                       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
       do {
          ORInt curVal = [valSelect max];
          if (curVal == MAXINT)
@@ -405,7 +418,6 @@
          }];
       } while(![x bound]);
    } while (true);
-   
 }
 -(void) label: (id<ORIntVar>) mx
 {

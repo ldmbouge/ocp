@@ -512,7 +512,7 @@
             if (i != MAXINT) { // we found someone
                id<CPIntVar> xi = vars[i];
                ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
+               ORStatus s = [_solver enforce: ^ORStatus { return [[xi dereference] bind:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {
