@@ -19,7 +19,7 @@
 
 
 /******************************************************************************************/
-/*                                 CoreSolver                                             */
+/*                                 MultiStartSolver                                             */
 /******************************************************************************************/
 
 @implementation CPMultiStartSolver {
@@ -27,6 +27,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
+   id<ORSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -37,6 +38,8 @@
       _solver[i] = [[CPSolver alloc] initCPSolver];
    
    _terminated = [[NSCondition alloc] init];
+   
+   _sPool   = [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -45,6 +48,7 @@
       [_solver[i] release];
    free(_solver);
    [_terminated release];
+   [_sPool release];
    [super dealloc];
 }
 -(ORInt) nb
@@ -320,7 +324,7 @@
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   ORInt k = 0;
+   ORInt k = [NSThread threadID];
    return [_solver[k] limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
@@ -347,8 +351,13 @@
 {
    
 }
--(id<ORSolutionPool>)solutionPool
+-(id<ORSolutionPool>) solutionPool
 {
-   return NULL;
+   ORInt k = [NSThread threadID];
+   return [_solver[k] solutionPool];
+}
+-(id<ORSolutionPool>) globalSolutionPool
+{
+   return _sPool;
 }
 @end

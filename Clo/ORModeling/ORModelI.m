@@ -42,7 +42,7 @@
    [_oStore release];
    [super dealloc];
 }
--(void) captureVariable:(id<ORVar>)x
+-(void) captureVariable: (id<ORVar>) x
 {
    [_vars addObject:x];
    [_oStore addObject:x];
@@ -87,7 +87,7 @@
 {
    return [NSArray arrayWithArray: _oStore];
 }
--(id<ORSolution>) solution
+-(id<ORSolution>) captureSolution
 {
    return [[ORSolutionI alloc] initSolution:self];
 }
@@ -277,7 +277,8 @@
    _shots = snapshots;
    if ([model objective])
       _objValue = [[model objective] value];
-   else _objValue = nil;
+   else
+      _objValue = nil;
    return self;
 }
 -(void) dealloc
@@ -355,28 +356,32 @@
 
 
 @implementation ORSolutionPoolI
--(id)init
+-(id) init
 {
    self = [super init];
    _all = [[NSMutableSet alloc] initWithCapacity:64];
    return self;
 }
--(void)dealloc
+
+-(void) dealloc
 {
    [_all release];
    [super dealloc];
 }
--(void)addSolution:(id<ORSolution>)s
+
+-(void) addSolution:(id<ORSolution>)s
 {
    [_all addObject:s];
 }
--(void)enumerateWith:(void(^)(id<ORSolution>))block
+
+-(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
       block(obj);
    }];
 }
--(NSString*)description
+
+-(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
@@ -386,7 +391,8 @@
    [buf appendFormat:@"]"];
    return buf;
 }
--(id<ORSolution>)best
+
+-(id<ORSolution>) best
 {
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;

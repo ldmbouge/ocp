@@ -81,25 +81,28 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
-   
-   __block id<CPCommonProgram> recv = cpprogram;
-   [cpprogram onSolution:^{
-      id<ORSolution> s = [model solution];
-      [[recv solutionPool] addSolution:s];
-      // NSLog(@"Got a solution: %@",s);
-      [s release];
-   } onExit:^{
-      id<ORSolution> best = [[recv solutionPool] best];
-      [model restore:best];
-      // NSLog(@"onExit called: best(pool) = %p",best);
-      [best release];
-   }];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram];
+   __block id<CPCommonProgram> recv = cpprogram;
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [model solution];
+      [[recv solutionPool] addSolution:s];
+      NSLog(@"Got a solution: %@",s);
+      [s release];
+   }
+    ];
+   [cpprogram onExit:^{
+      id<ORSolution> best = [[recv solutionPool] best];
+      NSLog(@"onExit called: bestObjective(pool) = %@",[best objectiveValue]);
+      [model restore:best];
+      NSLog(@"onExit called: best(pool) = %p",best);
+      [best release];
+   }
+    ];
    return cpprogram;
 }
 
@@ -145,6 +148,18 @@
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
+      __block id<CPCommonProgram> recv = cp;
+ //     __block CPMultiStartSolver* mcp = cpprogram;
+      id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
+      [cp onSolution: ^{
+         id<ORSolution> s = [model solution];
+         [[recv solutionPool] addSolution: s];
+//         [[mcp globalSolutionPool] addSolution: s];
+         [gp addSolution: s];
+         NSLog(@"Got a solution: %@ in solver %d",s,i);
+         [s release];
+      }
+      ];
    }
    return cpprogram;
 }

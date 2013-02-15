@@ -34,7 +34,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
--(id<ORSolution>)solution;
+-(id<ORSolution>) captureSolution;
 -(void)restore:(id<ORSolution>)s;
 @end
 

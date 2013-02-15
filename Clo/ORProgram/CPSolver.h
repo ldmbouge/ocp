@@ -36,8 +36,10 @@
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl;
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
--(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit;
+-(void) onSolution: (ORClosure) onSolution;
+-(void) onExit: (ORClosure) onExit;
 -(id<ORSolutionPool>) solutionPool;
+-(id<ORSolutionPool>) globalSolutionPool;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
 @end
 
@@ -65,6 +67,7 @@
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
 -(id<CPProgram>) at: (ORInt) i;
 -(ORInt) nb;
+-(id<ORSolutionPool>) globalSolutionPool;
 @end
 
 

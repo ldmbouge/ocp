@@ -202,15 +202,22 @@
 {
    [_hSet push: h];
 }
--(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
+-(void) onSolution: (ORClosure) onSolution
 {
    [_doOnSol release];
-   _doOnSol = [onSol copy];
+   _doOnSol = [onSolution copy];
+}
+-(void) onExit: (ORClosure) onExit
+{
    [_doOnExit release];
    _doOnExit = [onExit copy];
-   
 }
+
 -(id<ORSolutionPool>) solutionPool
+{
+   return _sPool;
+}
+-(id<ORSolutionPool>) globalSolutionPool
 {
    return _sPool;
 }
