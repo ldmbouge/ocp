@@ -56,8 +56,11 @@
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 
+-(id<ORForall>)      forall: (id<ORIntIterator>) S;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
 -(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;

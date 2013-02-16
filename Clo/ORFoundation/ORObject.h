@@ -12,6 +12,8 @@
 #import <Foundation/Foundation.h>
 #import "ORData.h"
 
+// pvh: Do I need the implementation to be visible
+
 @interface ORModelingObjectI : NSObject<ORObject>
 {
    id _impl;

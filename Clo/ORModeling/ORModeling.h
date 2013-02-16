@@ -35,7 +35,9 @@
 -(NSArray*) constraints;
 -(NSArray*) objects;
 -(id<ORSolution>) captureSolution;
--(void)restore:(id<ORSolution>)s;
+-(id<ORSolutionPool>) solutions;
+-(id<ORSolution>) bestSolution;
+-(void) restore: (id<ORSolution>) s;
 @end
 
 @protocol ORAddToModel <ORTracker>
@@ -48,6 +50,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel;
 +(id<ORModelTransformation>) createFlattener;
 +(id<ORModelTransformation>) createLinearizer;
 +(id<ORSolutionPool>) createSolutionPool;

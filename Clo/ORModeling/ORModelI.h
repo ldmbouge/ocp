@@ -11,7 +11,7 @@
 
 #import <ORModeling/ORModeling.h>
 
-@interface ORModelI : NSObject<ORModel>
+@interface ORModelI : ORModelingObjectI<ORModel>
 -(ORModelI*)              initORModelI;
 -(void)                   dealloc;
 -(NSString*)              description;
@@ -26,7 +26,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
--(id<ORSolution>)captureSolution;
+-(id<ORSolution>) captureSolution;
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
