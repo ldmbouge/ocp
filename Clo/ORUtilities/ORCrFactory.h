@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
+
 #import <ORUtilities/ORTypes.h>
 
 @protocol ORInformer;

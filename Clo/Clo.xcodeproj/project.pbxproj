@@ -465,7 +465,7 @@
 		5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
 		5BAD1162161E5E540014EBCB /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5BAD1163161E5E540014EBCB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAD1164161E5F2B0014EBCB /* ORModelI.h */; };
+		5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAD1164161E5F2B0014EBCB /* ORModelI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BAD1167161E5F2B0014EBCB /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1165161E5F2B0014EBCB /* ORModelI.m */; };
 		5BAD1168161E61500014EBCB /* ORModeling.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BAD1158161E5E430014EBCB /* ORModeling.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BAD116D161E63170014EBCB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
@@ -6174,9 +6174,9 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
 				5BAD1168161E61500014EBCB /* ORModeling.h in Headers */,
 				5B57E5DB161F167900DB249A /* ORSolver.h in Headers */,
+				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
 				5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */,
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
 				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
@@ -7573,7 +7573,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0460;
-				ORGANIZATIONNAME = CSE;
+				ORGANIZATIONNAME = "";
 			};
 			buildConfigurationList = 5B6E891A1379D3E9005DB4CA /* Build configuration list for PBXProject "Clo" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -10032,7 +10032,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -10057,7 +10057,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "ORUtilities/ORUtilities-Info.plist";
@@ -10156,8 +10156,9 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = "-DUSEVIEWS=1";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -10179,11 +10180,12 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				LLVM_LTO = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_CFLAGS = (
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
@@ -11586,6 +11588,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objlp/objlp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -11607,6 +11610,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objlp/objlp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;

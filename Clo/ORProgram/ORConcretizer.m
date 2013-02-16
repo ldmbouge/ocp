@@ -11,8 +11,8 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
 #import <ORModeling/ORModelI.h>
+#import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/CPFirstFail.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
@@ -89,7 +89,7 @@
    [ORFactory createCPProgram: model program: cpprogram];
    __block id<CPCommonProgram> recv = cpprogram;
    [cpprogram onSolution:^{
-      id<ORSolution> s = [model solution];
+      id<ORSolution> s = [model captureSolution];
       [[recv solutionPool] addSolution:s];
       NSLog(@"Got a solution: %@",s);
       [s release];
@@ -152,7 +152,7 @@
  //     __block CPMultiStartSolver* mcp = cpprogram;
       id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
       [cp onSolution: ^{
-         id<ORSolution> s = [model solution];
+         id<ORSolution> s = [model captureSolution];
          [[recv solutionPool] addSolution: s];
 //         [[mcp globalSolutionPool] addSolution: s];
          [gp addSolution: s];
