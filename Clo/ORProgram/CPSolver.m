@@ -278,6 +278,21 @@
 {
    [ORControl forall: S suchThat: filter orderedBy: order do: body];  
 }
+-(void) forall: (id<ORIntIterator>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+{
+   id<ORForall> forall = [ORControl forall: self set: S];
+   [forall orderedBy:o1];
+   [forall orderedBy:o2];
+   [forall do: b];
+}
+-(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+{
+   id<ORForall> forall = [ORControl forall: self set: S];
+   [forall suchThat: suchThat];
+   [forall orderedBy:o1];
+   [forall orderedBy:o2];
+   [forall do: b];
+}
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
    [_search try: left or: right];   

@@ -18,7 +18,7 @@
 
 NSString* tab(int d);
 
-/*
+
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -65,24 +65,26 @@ int main(int argc, const char * argv[])
       }
       [model minimize: m];
       
-      id<CPProgram> cp = [ORFactory createCPProgram: model];
+//      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPSemanticProgramDFS> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
-//       id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
+       id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
-      [cp onSolution: ^{ NSLog(@"Solution found in solver"); }];
       [cp solve: ^{
-         [cp onSolution: ^{ NSLog(@"Solution found in solver"); }];
-         [cp forall: V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy: ^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:
-          ^(ORInt i) {
-            ORInt maxc = max(0,[CPUtilities maxBound: c]);
-            [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member: v];} in:^(ORInt v) {
-               [cp label: c[i] with: v];
-            }
-            onFailure:^(ORInt v) {
-               [cp diff: c[i] with:v];
-            }];
-          }
+         [cp forall: V
+           suchThat:^bool(ORInt i) { return ![c[i] bound];}
+          orderedBy: ^ORInt(ORInt i) { return [c[i] domsize]; }
+                and: ^ORInt(ORInt i) { return - [deg at:i];}
+                 do: ^(ORInt i) {
+                    ORInt maxc = max(0,[CPUtilities maxBound: c]);
+                    [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member: v];} in:^(ORInt v) {
+                       [cp label: c[i] with: v];
+                    }
+                     onFailure:^(ORInt v) {
+                        [cp diff: c[i] with:v];
+                     }
+                     ];
+                 }
          ];
          [cp label:m with:[m min]];
          NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
@@ -105,8 +107,9 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
-*/
 
+
+/*
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -195,6 +198,7 @@ int main(int argc, const char * argv[])
    }
    return 0;
 }
+*/
 
 //int main(int argc, const char * argv[])
 //{
