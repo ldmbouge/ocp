@@ -349,9 +349,15 @@
 //   _pool = [[NSAutoreleasePool alloc] init];
 //   return self;
 //}
--(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
+-(void) onSolution: (ORClosure) onSol 
 {
-   
+   for(ORInt k = 0; k < _nb; k++) 
+      [_solver[k] onSolution: onSol];
+}
+-(void) onExit: (ORClosure) onExit
+{
+   for(ORInt k = 0; k < _nb; k++)   
+      [_solver[k] onExit: onExit];
 }
 -(id<ORSolutionPool>) solutionPool
 {

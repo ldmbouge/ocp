@@ -120,8 +120,8 @@
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
-   ORClosure             _doOnSol;
-   ORClosure             _doOnExit;
+   NSMutableArray*       _doOnSolArray;
+   NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
 }
 -(CPCoreSolver*) initCPCoreSolver
@@ -131,9 +131,10 @@
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
-   _doOnSol = _doOnExit = nil;
    _sPool   = [ORFactory createSolutionPool];
    _closed = false;
+   _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
 }
 -(void) dealloc
@@ -142,9 +143,9 @@
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
-   [_doOnSol release];
-   [_doOnExit release];
    [_sPool release];
+   [_doOnSolArray release];
+   [_doOnExitArray release];
    [super dealloc];
 }
 -(NSString*) description
@@ -204,15 +205,12 @@
 }
 -(void) onSolution: (ORClosure) onSolution
 {
-   [_doOnSol release];
-   _doOnSol = [onSolution copy];
+   [_doOnSolArray addObject: [onSolution copy]];
 }
 -(void) onExit: (ORClosure) onExit
 {
-   [_doOnExit release];
-   _doOnExit = [onExit copy];
+   [_doOnExitArray addObject: [onExit copy]];
 }
-
 -(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
@@ -224,23 +222,49 @@
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
+   ORInt nbs = (ORInt) [_doOnSolArray count];
+   ORInt nbe = (ORInt) [_doOnExitArray count];
    if (_objective != nil) {
       [_search optimizeModel: self using: search
-                  onSolution: _doOnSol
-                      onExit: _doOnExit];
+                  onSolution: ^{
+                        for(ORInt i = 0; i < nbs; i++)
+                              ((ORClosure) [_doOnSolArray objectAtIndex: i])();
+                  }
+                      onExit: ^{
+                         for(ORInt i = 0; i < nbe; i++)
+                            ((ORClosure) [_doOnExitArray objectAtIndex: i])();
+                      }
+
+       ];
       printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search
-               onSolution: _doOnSol
-                   onExit: _doOnExit];
+               onSolution: ^{
+                  for(ORInt i = 0; i < nbs; i++)
+                     ((ORClosure) [_doOnSolArray objectAtIndex: i])();
+               }
+                   onExit: ^{
+                      for(ORInt i = 0; i < nbe; i++)
+                         ((ORClosure) [_doOnExitArray objectAtIndex: i])();
+                   }
+       ];
    }
 }
 -(void) solveAll: (ORClosure) search
 {
+   ORInt nbs = (ORInt) [_doOnSolArray count];
+   ORInt nbe = (ORInt) [_doOnExitArray count];
    [_search solveAllModel: self using: search
-               onSolution: _doOnSol
-                   onExit: _doOnExit];
+               onSolution: ^{
+                  for(ORInt i = 0; i < nbs; i++)
+                     ((ORClosure) [_doOnSolArray objectAtIndex: i])();
+               }
+                   onExit: ^{
+                      for(ORInt i = 0; i < nbe; i++)
+                         ((ORClosure) [_doOnExitArray objectAtIndex: i])();
+                   }
+    ];
 }
 -(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {

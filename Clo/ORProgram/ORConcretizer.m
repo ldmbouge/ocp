@@ -92,16 +92,7 @@
    [cpprogram onSolution:^{
       id<ORSolution> s = [model captureSolution];
       [sp addSolution: s];
-      NSLog(@"Got a solution: %@",[s objectiveValue]);
       [s release];
-   }
-    ];
-   [cpprogram onExit:^{
-      id<ORSolution> best = [sp best];
-      NSLog(@"onExit called: bestObjective(pool) = %@",[best objectiveValue]);
-//      [model restore:best];
-//      NSLog(@"onExit called: best(pool) = %p",best);
-      [best release];
    }
     ];
    return cpprogram;
@@ -157,7 +148,6 @@
          @synchronized(gp) {
             [gp addSolution: s];
          }
-         NSLog(@"Got a solution: %@ in solver %d",[s objectiveValue],i);
          [s release];
       }
       ];
