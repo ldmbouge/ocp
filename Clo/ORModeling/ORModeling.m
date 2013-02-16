@@ -19,6 +19,10 @@
 {
    return [[[ORModelI alloc]  initORModelI] autorelease];
 }
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel
+{
+   return [[ORBatchModel alloc]  init: flatModel];
+}
 +(id<ORModelTransformation>) createFlattener
 {
    return [[[ORFlatten alloc] initORFlatten] autorelease];

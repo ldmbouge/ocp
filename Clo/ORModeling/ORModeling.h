@@ -50,6 +50,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel;
 +(id<ORModelTransformation>) createFlattener;
 +(id<ORModelTransformation>) createLinearizer;
 +(id<ORSolutionPool>) createSolutionPool;

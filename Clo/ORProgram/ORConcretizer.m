@@ -11,7 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelI.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/CPFirstFail.h>
 #import <objcp/CPFactory.h>
@@ -73,7 +72,7 @@
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [[ORBatchModel alloc] init:flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into:batch];
    [batch release];
@@ -124,7 +123,7 @@
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
    [model setImpl: cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [[ORBatchModel alloc] init: flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into: batch];
    [batch release];
