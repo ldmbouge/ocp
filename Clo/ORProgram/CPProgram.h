@@ -56,6 +56,7 @@
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 
+-(id<ORForall>)      forall: (id<ORIntIterator>) S;
 -(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;

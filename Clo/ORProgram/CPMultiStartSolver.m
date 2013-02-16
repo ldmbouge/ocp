@@ -163,7 +163,10 @@
    }
    [self waitWorkers];
 }
-
+-(id<ORForall>) forall: (id<ORIntIterator>) S
+{
+   return [ORControl forall: self set: S];
+}
 -(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    ORInt k = [NSThread threadID];
