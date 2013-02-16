@@ -21,6 +21,7 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       [ORStreamManager setRandomized];
       ORLong startTime = [ORRuntimeMonitor cputime];
+      ORInt hs = argc >= 2 ? atoi(argv[1]) : 0;
       const char* src = "MKNAP";
       const char* afn[6] = {"mknap1-0.txt",
                             "mknap1-2.txt",
@@ -71,17 +72,18 @@ int main(int argc, const char * argv[])
          [mdl add:[CPFactory knapsack:x weight:w capacity:c]];
           */
       }
-      
+      const char* hName[] = {"FF","IBS","ABS","WDeg"};
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      //id<CPHeuristic> h = [ORFactory createIBS:cp restricted:x];
-      id<CPHeuristic> h = [ORFactory createABS:cp restricted:x];
-//      id<CPHeuristic> h = [ORFactory createFF:cp restricted:x];
-//      id<CPHeuristic> h = [ORFactory createWDeg:cp restricted:x];
-//      id<CPHeuristic> h = [ORFactory createIBS:cp];
-      
+      id<CPHeuristic> h = nil;
+      switch(hs) {
+         case 0: h = [ORFactory createFF:cp restricted:x];break;
+         case 1: h = [ORFactory createIBS:cp restricted:x];break;
+         case 2: h = [ORFactory createABS:cp restricted:x];break;
+         case 3: h = [ORFactory createWDeg:cp restricted:x];break;
+      }
 
       [cp solve: ^{
-         NSLog(@"model: %@",[[cp engine] model]);
+         //NSLog(@"model: %@",[[cp engine] model]);
          
          [cp labelHeuristic:h];
          NSLog(@"Solution: %@",x);
@@ -101,7 +103,7 @@ int main(int argc, const char * argv[])
       }];
       ORLong endTime = [ORRuntimeMonitor cputime];
       NSLog(@"Execution Time(CPU): %lld \n",endTime - startTime);
-      printf("OUT:%d:%d:%lld\n,",[[cp explorer] nbChoices],[[cp explorer] nbFailures],endTime-startTime);
+      printf("OUT:%s:%d:%d:%lld\n,",hName[hs],[[cp explorer] nbChoices],[[cp explorer] nbFailures],endTime-startTime);
       [cp release];
       [ORFactory shutdown];
    }

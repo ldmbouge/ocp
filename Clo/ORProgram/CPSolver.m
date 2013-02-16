@@ -384,7 +384,7 @@
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
    id<ORIntVarArray> av = [h allIntVars];
-   id<ORSelect> select = [ORFactory select: _engine
+   id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) {
@@ -398,7 +398,7 @@
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      id<ORIntVar> x = *last;
+      id<ORIntVar> x = nil;//*last;
       if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)

@@ -44,9 +44,8 @@ static void deallocNetwork(CPEventNetwork* net)
     freeList(net->_ac5._val);
 }
 
-static NSSet* collectConstraints(CPEventNetwork* net)
+static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:2];
    collectList(net->_boundsEvt._val,rv);
    collectList(net->_bindEvt._val,rv);
    collectList(net->_domEvt._val,rv);
@@ -125,9 +124,14 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return nil;
 }
--(NSSet*)constraints
+-(NSMutableSet*)constraints
 {
-   NSSet* rv = collectConstraints(&_net);
+   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   if (_recv) {
+      NSMutableSet* rc = [_recv constraints];
+      [rv unionSet:rc];
+      [rc release];
+   }
    return rv;
 }
 -(CPBitDom*)flatDomain
@@ -1107,7 +1111,6 @@ static NSSet* collectConstraints(CPEventNetwork* net)
 {
    return [self domsize]<= 1;
 }
-
 -(ORInt) min
 {
    if (bound(_secondary))
@@ -1351,6 +1354,17 @@ static NSSet* collectConstraints(CPEventNetwork* net)
    }
    assert(nbBare<=1);
 }
+-(NSMutableSet*)constraints
+{
+   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:8];
+   for(ORInt i=0;i<_nb;i++) {
+      NSMutableSet* ti = [_tab[i] constraints];
+      [rv unionSet:ti];
+      [ti release];
+   }
+   return rv;
+}
+
 -(CPLiterals*)findLiterals:(CPIntVarI*)ref
 {
    for(ORUInt i=0;i < _nb;i++) {

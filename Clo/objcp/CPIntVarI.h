@@ -89,6 +89,7 @@ typedef struct  {
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
 -(ORInt)getId;
+-(NSMutableSet*)constraints;
 -(void)setDelegate:(id<CPIntVarNotifier>)delegate;
 -(void) addVar:(CPIntVarI*)var;
 -(enum CPVarClass)varClass;
@@ -126,7 +127,7 @@ typedef struct  {
 -(NSString*) description;
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
--(NSSet*)constraints;
+-(NSMutableSet*)constraints;
 -(CPBitDom*)flatDomain;
 -(CPLiterals*)literals;
 
@@ -426,6 +427,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
 -(void) addVar:(CPIntVarI*) v;
+-(NSMutableSet*)constraints;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
