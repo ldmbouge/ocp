@@ -87,19 +87,20 @@
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram];
-   __block id<CPCommonProgram> recv = cpprogram;
+   [model setImpl: cpprogram];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [model captureSolution];
-      [[recv solutionPool] addSolution:s];
-      NSLog(@"Got a solution: %@",s);
+      [sp addSolution: s];
+      NSLog(@"Got a solution: %@",[s objectiveValue]);
       [s release];
    }
     ];
    [cpprogram onExit:^{
-      id<ORSolution> best = [[recv solutionPool] best];
+      id<ORSolution> best = [sp best];
       NSLog(@"onExit called: bestObjective(pool) = %@",[best objectiveValue]);
-      [model restore:best];
-      NSLog(@"onExit called: best(pool) = %p",best);
+//      [model restore:best];
+//      NSLog(@"onExit called: best(pool) = %p",best);
       [best release];
    }
     ];
@@ -130,7 +131,7 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
-   
+   [model setImpl: cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [[ORBatchModel alloc] init: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
@@ -148,15 +149,15 @@
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
-      __block id<CPCommonProgram> recv = cp;
- //     __block CPMultiStartSolver* mcp = cpprogram;
+      id<ORSolutionPool> lp = [cp solutionPool];
       id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
       [cp onSolution: ^{
          id<ORSolution> s = [model captureSolution];
-         [[recv solutionPool] addSolution: s];
-//         [[mcp globalSolutionPool] addSolution: s];
-         [gp addSolution: s];
-         NSLog(@"Got a solution: %@ in solver %d",s,i);
+         [lp addSolution: s];
+         @synchronized(gp) {
+            [gp addSolution: s];
+         }
+         NSLog(@"Got a solution: %@ in solver %d",[s objectiveValue],i);
          [s release];
       }
       ];

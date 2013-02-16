@@ -63,10 +63,10 @@ int main(int argc, const char * argv[])
       }
       [model minimize: m];
       
-//     id<CPProgram> cp = [ORFactory createCPProgram: model];
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPSemanticProgramDFS> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
-        id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
+//       id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
       [cp solve: ^{
          [cp forall:V suchThat:^bool(ORInt i) { return ![c[i] bound];} orderedBy:^ORInt(ORInt i) { return ([c[i] domsize]<< 16) - [deg at:i];} do:^(ORInt i) {
@@ -81,10 +81,14 @@ int main(int argc, const char * argv[])
          [cp label:m with:[m min]];
          NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
       }];
-      id<ORSolution> sol = [[cp globalSolutionPool] best];
+      id<ORSolution> sol = [model bestSolution];
       for(ORInt i=1; i <= nbv; i++)
          NSLog(@"Variable %d has color %d",i,[sol intValue: c[i]]);
       NSLog(@"Solution retrieved: %@",sol);
+      
+      id<ORSolutionPool> pool = [model solutions];
+      [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
+      
       
       ORLong endTime = [ORRuntimeMonitor wctime];
       NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);

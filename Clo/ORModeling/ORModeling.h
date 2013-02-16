@@ -35,7 +35,9 @@
 -(NSArray*) constraints;
 -(NSArray*) objects;
 -(id<ORSolution>) captureSolution;
--(void)restore:(id<ORSolution>)s;
+-(id<ORSolutionPool>) solutions;
+-(id<ORSolution>) bestSolution;
+-(void) restore: (id<ORSolution>) s;
 @end
 
 @protocol ORAddToModel <ORTracker>

@@ -90,6 +90,14 @@
 {
    return [[ORSolutionI alloc] initSolution:self];
 }
+-(id<ORSolutionPool>) solutions
+{
+   return [((id<ORASolver>) _impl) globalSolutionPool];
+}
+-(id<ORSolution>) bestSolution
+{
+   return [[self solutions] best];
+}
 -(void) restore: (id<ORSolution>) s
 {
    NSArray* av = [self variables];

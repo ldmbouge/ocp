@@ -44,11 +44,11 @@
 }
 -(void) dealloc
 {
+   [_sPool release];
    for(ORInt i = 0; i < _nb; i++)
       [_solver[i] release];
    free(_solver);
    [_terminated release];
-   [_sPool release];
    [super dealloc];
 }
 -(ORInt) nb
@@ -119,6 +119,7 @@
    [NSThread setThreadID: i];
    [_solver[i] solve: search];
    [search release];
+   [NSCont shutdown];
    [_terminated lock];
    ++_nbDone;
    if (_nbDone == _nb)
@@ -149,6 +150,7 @@
                              withObject:[NSArray arrayWithObjects: [search copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
+   [_sPool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
 }
 
 -(void) solveAll: (ORClosure) search
