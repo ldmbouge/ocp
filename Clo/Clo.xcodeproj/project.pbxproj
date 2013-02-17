@@ -3507,6 +3507,7 @@
 		B154420416D18DEF001BD7B3 /* LPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGurobi.h; sourceTree = "<group>"; };
 		B154420516D18DEF001BD7B3 /* LPGurobi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGurobi.m; sourceTree = "<group>"; };
 		B154420716D19025001BD7B3 /* LPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPType.h; sourceTree = "<group>"; };
+		B154426416D19B68001BD7B3 /* objcp copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "objcp copy-Info.plist"; path = "/Users/pvh/NICTA/Project/platform/Clo/objcp copy-Info.plist"; sourceTree = "<absolute>"; };
 		B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LPMatrixSolver.h; path = ../mpwrapper/LPMatrixSolver.h; sourceTree = "<group>"; };
 		B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MPMatrixSolverFactory.h; path = ../mpwrapperfactory/MPMatrixSolverFactory.h; sourceTree = "<group>"; };
 		B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MPMatrixSolverFactory.m; path = ../mpwrapperfactory/MPMatrixSolverFactory.m; sourceTree = "<group>"; };
@@ -4669,6 +4670,7 @@
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
+				B154426416D19B68001BD7B3 /* objcp copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};

@@ -38,22 +38,22 @@
 -(LPOutcome) solve;
 
 -(LPOutcome) status;
--(double) value: (LPVariableI*) var;
--(double) lowerBound: (LPVariableI*) var;
--(double) upperBound: (LPVariableI*) var;
--(double) objectiveValue;
--(double) reducedCost: (LPVariableI*) var;
--(double) dual: (LPConstraintI*) cstr;
+-(ORFloat) value: (LPVariableI*) var;
+-(ORFloat) lowerBound: (LPVariableI*) var;
+-(ORFloat) upperBound: (LPVariableI*) var;
+-(ORFloat) objectiveValue;
+-(ORFloat) reducedCost: (LPVariableI*) var;
+-(ORFloat) dual: (LPConstraintI*) cstr;
 
--(void) setBounds: (LPVariableI*) var low: (double) low up: (double) up;
+-(void) setBounds: (LPVariableI*) var low: (ORFloat) low up: (ORFloat) up;
 -(void) setUnboundUpperBound: (LPVariableI*) var;
 -(void) setUnboundLowerBound: (LPVariableI*) var;
 
--(void) updateLowerBound: (LPVariableI*) var lb: (double) lb;
--(void) updateUpperBound: (LPVariableI*) var ub: (double) ub;
+-(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb;
+-(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
--(void) setFloatParameter: (const char*) name val: (double) val;
+-(void) setFloatParameter: (const char*) name val: (ORFloat) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
 -(void) postConstraint: (LPConstraintI*) cstr;

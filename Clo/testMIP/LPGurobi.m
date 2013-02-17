@@ -66,7 +66,7 @@
 {
    int s = [obj size];
    int* idx = [obj col];
-   double* coef = [obj coef];
+   ORFloat* coef = [obj coef];
    _objectiveType = [obj type];
    for(ORInt i = 0; i < s; i++)
       if (_objectiveType == LPminimize)
@@ -77,7 +77,7 @@
 
 -(void) addColumn: (LPColumnI*) col
 {
-   double o = [col objCoef];
+   ORFloat o = [col objCoef];
    if (_objectiveType == LPmaximize)
       o = -o;
    GRBaddvar(_model,[col size],[col cstrIdx],[col coef],o,[col low],[col up],GRB_CONTINUOUS,NULL);
@@ -117,30 +117,30 @@
    return _status;
 }
 
--(double) value: (LPVariableI*) var
+-(ORFloat) value: (LPVariableI*) var
 {
-   double value;
+   ORFloat value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
    return value;
 }
 
--(double) lowerBound: (LPVariableI*) var
+-(ORFloat) lowerBound: (LPVariableI*) var
 {
-   double value;
+   ORFloat value;
    GRBgetdblattrelement(_model,"LB",[var idx],&value);
    return value;
 }
 
--(double) upperBound: (LPVariableI*) var
+-(ORFloat) upperBound: (LPVariableI*) var
 {
-   double value;
+   ORFloat value;
    GRBgetdblattrelement(_model,"UB",[var idx],&value);
    return value;
 }
 
--(double) objectiveValue
+-(ORFloat) objectiveValue
 {
-   double objVal;
+   ORFloat objVal;
    GRBgetdblattr(_model,"ObjVal",&objVal);
    if (_objectiveType == LPmaximize)
       return -objVal;
@@ -148,21 +148,21 @@
       return objVal;
 }
 
--(double) reducedCost: (LPVariableI*) var
+-(ORFloat) reducedCost: (LPVariableI*) var
 {
-   double value;
+   ORFloat value;
    GRBgetdblattrelement(_model,"RC",[var idx],&value);
    return value;
 }
 
--(double) dual: (LPConstraintI*) cstr
+-(ORFloat) dual: (LPConstraintI*) cstr
 {
-   double value;
+   ORFloat value;
    GRBgetdblattrelement(_model,"Pi",[cstr idx],&value);
    return value;
 }
 
--(void) setBounds: (LPVariableI*) var low: (double) low up: (double) up
+-(void) setBounds: (LPVariableI*) var low: (ORFloat) low up: (ORFloat) up
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],low);
@@ -178,13 +178,13 @@
    GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
 }
 
--(void) updateLowerBound: (LPVariableI*) var lb: (double) lb
+-(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
 {
    if (lb > [self lowerBound: var])
       GRBsetdblattrelement(_model,"LB",[var idx],lb);
 }
 
--(void) updateUpperBound: (LPVariableI*) var ub: (double) ub
+-(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub
 {
    if (ub < [self upperBound: var])
       GRBsetdblattrelement(_model,"UB",[var idx],ub);
@@ -195,7 +195,7 @@
    GRBsetintparam(_env,name,val);
 }
 
--(void) setFloatParameter: (const char*) name val: (double) val
+-(void) setFloatParameter: (const char*) name val: (ORFloat) val
 {
    GRBsetdblparam(_env,name,val);
 }
