@@ -7,9 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "gurobi_c.h"
-#import "LPGurobi.h"
-#import "LPSolverI.h"
+#import <objmp/LPSolverI.h>
 
 static int nbRows = 7;
 static int nbColumns = 12;
