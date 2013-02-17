@@ -269,8 +269,6 @@
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb;
 -(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub;
--(void) removeLastConstraint;
--(void) removeLastVariable;
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val;
 -(void) setFloatParameter: (const char*) name val: (ORFloat) val;
@@ -284,3 +282,6 @@
 
 @end
 
+@interface LPFactory : NSObject
++(LPSolverI*) solver;
+@end;

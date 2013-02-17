@@ -9,10 +9,9 @@
  
  ***********************************************************************/
 
-/*
-
+#import "LPType.h"
+#import "LPGurobi.h"
 #import "LPSolverI.h"
-
 
 @implementation LPConstraintI;
 
@@ -42,6 +41,7 @@
    _tmpCoef = NULL;
    return self;
 }
+
 -(void) dealloc
 {
    for(ORInt i = 0; i < _size; i++)
@@ -89,7 +89,7 @@
       _tmpVar[i] = _var[i];
    return _tmpVar;
 }
--(id<LPVariable>) var: (ORInt) i
+-(LPVariableI*) var: (ORInt) i
 {
    return _var[i];
 }
@@ -757,25 +757,6 @@
    _coef = (double*) malloc(_maxSize * sizeof(double));
    return self;
 }
--(LPLinearTermI*) initLPLinearTermI: (LPSolverI*) solver range: (IRange) R coef: (LPInt2Float) c var: (LPInt2Var) v
-{
-   [super init];
-   _solver = solver;
-   int low = R.low;
-   int up = R.up;
-   if (up - low + 1 < 0)
-      @throw [[NSException alloc] initWithName:@"LPSolver Error"
-                                        reason:@"Linear Term has zero size"
-                                      userInfo:nil];
-   _maxSize = (up -low +1);
-   if (_maxSize == 0)
-      _maxSize++;
-   _var = (LPVariableI**) malloc(_maxSize * sizeof(LPVariableI*));
-   _coef = (double*) malloc(_maxSize * sizeof(double));
-   for (int i=low ; i <= up; i++)
-      [self add: c(i) times: v(i)];
-   return self;
-}
 -(void) dealloc
 {
    for(ORInt i = 0; i < _size; i++)
@@ -863,14 +844,14 @@
 
 @implementation LPSolverI
 
-+(id<LPSolver>) create
++(LPSolverI*) create
 {
    return [[LPSolverI alloc] initLPSolverI];
 }
 -(LPSolverI*) initLPSolverI
 {
    [super init];
-   _lp = [MPMatrixSolverFactory lpMatrixSolver];
+   _lp = [[LPGurobiSolver alloc] initLPGurobiSolver];
    _nbVars = 0;
    _maxVars = 32;
    _var = (LPVariableI**) malloc(_maxVars * sizeof(LPVariableI*));
@@ -909,21 +890,21 @@
    _var[_nbVars++] = [v retain];
 }
 
--(id<LPVariable>) createVariable
+-(LPVariableI*) createVariable
 {
-   LPVariableI* v = [[[LPVariableI alloc] initLPVariableI: self] autorelease];
+   LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self];
    [v setNb: _createdVars++];
    [self addVariable: v];
    return v;
 }
 -(LPVariableI*) createVariable: (double) low up: (double) up
 {
-   LPVariableI* v = [[[LPVariableI alloc] initLPVariableI: self low: low up: up] autorelease];
+   LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self low: low up: up];
    [v setNb: _createdVars++];
    [self addVariable: v];
    return v;
 }
--(LPColumnI*) createColumn: (double) low up: (double) up size: (ORInt) size obj: (double) obj cstr: (id<LPConstraint>*) cstr coef: (double*) coef
+-(LPColumnI*) createColumn: (double) low up: (double) up size: (ORInt) size obj: (double) obj cstr: (LPConstraintI**) cstr coef: (double*) coef
 {
    LPColumnI* c = [[[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef] autorelease];
    [c setNb: _createdCols++];
@@ -938,10 +919,6 @@
 -(LPLinearTermI*) createLinearTerm
 {
    return [[[LPLinearTermI alloc] initLPLinearTermI: self] autorelease];
-}
--(LPLinearTermI*) createLinearTerm: (IRange) R coef: (LPInt2Float) c var: (LPInt2Var) v
-{
-   return [[[LPLinearTermI alloc] initLPLinearTermI: self range: R coef: c var: v] autorelease];
 }
 -(void) addConstraint: (LPConstraintI*) cstr
 {
@@ -962,43 +939,43 @@
       [var[i] addConstraint: cstr coef: coef[i]];
    
 }
--(id<LPConstraint>) createLEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs
+-(LPConstraintI*) createLEQ: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs
 {
-   id<LPLinearTerm> t = [self createLinearTerm];
+   LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createLEQ: t rhs: rhs];
 }
--(id<LPConstraint>) createGEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs
+-(LPConstraintI*) createGEQ: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs
 {
-   id<LPLinearTerm> t = [self createLinearTerm];
+   LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createGEQ: t rhs: rhs];
    
 }
--(id<LPConstraint>) createEQ: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef rhs: (double) rhs
+-(LPConstraintI*) createEQ: (ORInt) size var: (LPVariableI**) var coef: (double*) coef rhs: (double) rhs
 {
-   id<LPLinearTerm> t = [self createLinearTerm];
+   LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createEQ: t rhs: rhs];
 }
--(id<LPObjective>) createMinimize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef
+-(LPObjectiveI*) createMinimize: (ORInt) size var: (LPVariableI**) var coef: (double*) coef
 {
-   id<LPLinearTerm> t = [self createLinearTerm];
+   LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createMinimize: t];
 }
--(id<LPObjective>) createMaximize: (ORInt) size var: (id<LPVariable>*) var coef: (double*) coef
+-(LPObjectiveI*) createMaximize: (ORInt) size var: (LPVariableI**) var coef: (double*) coef
 {
-   id<LPLinearTerm> t = [self createLinearTerm];
+   LPLinearTermI* t = [self createLinearTerm];
    for(ORInt i = 0; i < size; i++)
       [t add: coef[i] times: var[i]];
    return [self createMaximize: t];
 }
--(id<LPObjective>) createMaximize: (LPLinearTermI*) t
+-(LPObjectiveI*) createMaximize: (LPLinearTermI*) t
 {
    if (![t isKindOfClass: [LPLinearTermI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1010,7 +987,7 @@
    [o setNb: _createdObjs++];
    return o;
 }
--(id<LPObjective>) createMinimize: (id<LPLinearTerm>) ti
+-(LPObjectiveI*) createMinimize: (LPLinearTermI*) ti
 {
    if (![ti isKindOfClass: [LPLinearTermI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1023,7 +1000,7 @@
    [o setNb: _createdObjs++];
    return o;
 }
--(id<LPConstraint>) createLEQ: (id<LPLinearTerm>) ti rhs: (double) rhs;
+-(LPConstraintI*) createLEQ: (LPLinearTermI*) ti rhs: (double) rhs;
 {
    if (![ti isKindOfClass: [LPLinearTermI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1036,7 +1013,7 @@
    [c setNb: _createdCstrs++];
    return c;
 }
--(id<LPConstraint>) createGEQ: (id<LPLinearTerm>) ti rhs: (double) rhs;
+-(LPConstraintI*) createGEQ: (LPLinearTermI*) ti rhs: (double) rhs;
 {
    if (![ti isKindOfClass: [LPLinearTermI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1049,7 +1026,7 @@
    [c setNb: _createdCstrs++];
    return c;
 }
--(id<LPConstraint>) createEQ: (id<LPLinearTerm>) ti rhs: (double) rhs;
+-(LPConstraintI*) createEQ: (LPLinearTermI*) ti rhs: (double) rhs;
 {
    if (![ti isKindOfClass: [LPLinearTermI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1063,7 +1040,7 @@
    return c;
 }
 
--(id<LPConstraint>) postConstraint: (id<LPConstraint>) cstrItf
+-(LPConstraintI*) postConstraint: (LPConstraintI*) cstrItf
 {
    if (![cstrItf isKindOfClass: [LPConstraintI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1085,7 +1062,7 @@
                                       userInfo:nil];
    return cstr;
 }
--(void) removeConstraint: (id<LPConstraint>) cstrItf
+-(void) removeConstraint: (LPConstraintI*) cstrItf
 {
    if (![cstrItf isKindOfClass: [LPConstraintI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1117,7 +1094,7 @@
    if (_isClosed)
       [_lp solve];
 }
--(void) removeVariable: (id<LPVariable>) vari
+-(void) removeVariable: (LPVariableI*) vari
 {
    if (![vari isKindOfClass: [LPVariableI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1149,7 +1126,7 @@
    if (_isClosed)
       [_lp solve];
 }
--(id<LPObjective>) postObjective: (id<LPObjective>) objItf
+-(LPObjectiveI*) postObjective: (LPObjectiveI*) objItf
 {
    if (![objItf isKindOfClass: [LPObjectiveI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1172,7 +1149,7 @@
    return _obj;
 }
 
--(id<LPVariable>) postColumn: (id<LPColumn>) coli
+-(LPVariableI*) postColumn: (LPColumnI*) coli
 {
    if (![coli isKindOfClass: [LPColumnI class]]) {
       @throw [[NSException alloc] initWithName:@"LP Solver Error"
@@ -1259,14 +1236,6 @@
 {
    [_lp updateUpperBound: var ub: ub];
 }
--(void) removeLastConstraint
-{
-   [_lp removeLastConstraint];
-}
--(void) removeLastVariable
-{
-   [_lp removeLastVariable];
-}
 
 -(void) setIntParameter: (const char*) name val: (ORInt) val
 {
@@ -1313,12 +1282,12 @@
 
 @implementation LPFactory
 
-+(id<LPSolver>) solver
++(LPSolverI*) solver
 {
    return [LPSolverI create];
 }
 @end;
 
-*/
+
 
 
