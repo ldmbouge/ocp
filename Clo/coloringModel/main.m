@@ -65,10 +65,10 @@ int main(int argc, const char * argv[])
       }
       [model minimize: m];
       
-//      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPSemanticProgramDFS> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
-       id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
+//       id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
 //      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
       [cp solve: ^{
          [cp forall: V
