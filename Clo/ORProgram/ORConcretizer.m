@@ -12,10 +12,12 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
+#import "ORConcretizer.h"
+
+// CP Solver
 #import <ORProgram/CPFirstFail.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
-#import "ORConcretizer.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPPoster.h"
@@ -23,6 +25,10 @@
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPABS.h"
+
+// LP Solver
+#import "LPProgram.h"
+#import "LPSolver.h"
 
 // PVH to factorize this
 
@@ -152,6 +158,26 @@
       ];
    }
    return cpprogram;
+}
+
++(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
+{
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   [flat apply: model into:batch];
+   [batch release];
+   
+   id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: cpprogram];
+   [flatModel visit: concretizer];
+   [concretizer release];
+}
+
++(id<LPProgram>) createLPProgram: (id<ORModel>) model
+{
+   id<LPProgram> lpprogram = [LPSolverFactory solver];
+   [model setImpl: lpprogram];
+   return lpprogram;
 }
 @end
 

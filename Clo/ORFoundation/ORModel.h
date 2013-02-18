@@ -327,6 +327,7 @@ enum ORGroupType {
 -(ORInt)    primalBound;
 @end
 
+
 @protocol ORASolver <NSObject,ORTracker>
 -(id<ORObjective>)    objective;
 -(ORStatus)           close;

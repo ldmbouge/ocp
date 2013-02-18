@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
+#import <ORProgram/LPProgram.h>
 
 @interface ORFactory (Concretization)
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model;
@@ -29,5 +30,7 @@
 +(id<CPHeuristic>) createDDeg:(id<CPProgram>)cp;
 +(id<CPHeuristic>) createIBS:(id<CPProgram>)cp;
 +(id<CPHeuristic>) createABS:(id<CPProgram>)cp;
+
++(id<LPProgram>) createLPProgram: (id<ORModel>) model;
 
 @end

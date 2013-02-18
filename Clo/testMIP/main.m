@@ -7,6 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ORProgram/ORProgram.h>
+#import <ORModeling/ORModeling.h>
+
 #import <objmp/LPSolverI.h>
 
 static int nbRows = 7;
@@ -23,7 +26,14 @@ float coef[7][12] = {
    {  0,   0,  40, 70,   4,  63,   0,  0, 60,   0, 4, 0},
    {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
 
+
 int main(int argc, const char * argv[])
+{
+   ORLong startTime = [ORRuntimeMonitor wctime];
+   id<ORModel> model = [ORFactory createModel];
+   return 0;
+}
+int maini(int argc, const char * argv[])
 {
    
    @try {
