@@ -13,16 +13,25 @@
 #import <ORFoundation/ORFoundation.h>
 #import "LPProgram.h"
 #import "LPSolver.h"
+#import <objmp/LPSolverI.h>
 
-@implementation LPSolver 
+@implementation LPSolver
+{
+   LPSolverI* _lpsolver;
+}
 -(id<LPProgram>) initLPSolver
 {
    self = [super init];
+   _lpsolver = [LPFactory solver];
    return self;
 }
 -(void) dealloc
 {
    [super dealloc];
+}
+-(LPSolverI*) solver
+{
+   return _lpsolver;
 }
 -(void) solve
 {

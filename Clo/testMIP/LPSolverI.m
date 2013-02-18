@@ -864,6 +864,7 @@
    _createdCstrs = 0;
    _createdObjs = 0;
    _createdCols = 0;
+   _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    return self;
 }
 -(void) dealloc
@@ -1216,6 +1217,23 @@
 
 //-(CotLPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotLPAbstractBasis* basis) ;
+
+-(void) trackVariable: (id) var
+{
+   [_oStore addObject: var];
+   [var release];
+}
+-(void) trackObject:(id)obj
+{
+   [_oStore addObject:obj];
+   [obj release];
+}
+-(void) trackConstraint:(id)obj
+{
+   [_oStore addObject:obj];
+   [obj release];
+
+}
 
 @end
 

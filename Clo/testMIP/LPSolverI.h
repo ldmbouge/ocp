@@ -204,7 +204,7 @@
 -(void) close;
 @end
 
-@interface LPSolverI : NSObject {
+@interface LPSolverI : NSObject<ORTracker> {
    LPGurobiSolver*      _lp;
    int                  _nbVars;
    int                  _maxVars;
@@ -221,6 +221,8 @@
    int                 _createdObjs;
    int                 _createdCols;
    bool                _isClosed;
+   
+   NSMutableArray*     _oStore;
    
 }
 
@@ -279,6 +281,10 @@
 
 //-(CotLPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotLPAbstractBasis* basis) ;
+
+-(void) trackVariable: (id) var;
+-(void) trackObject: (id) obj;
+-(void) trackConstraint: (id) obj;
 
 @end
 

@@ -29,6 +29,7 @@
 // LP Solver
 #import "LPProgram.h"
 #import "LPSolver.h"
+#import "LPConcretizer.h"
 
 // PVH to factorize this
 
@@ -168,7 +169,7 @@
    [flat apply: model into:batch];
    [batch release];
    
-   id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: cpprogram];
+   id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
 }
