@@ -356,21 +356,6 @@
    ORInt k = [NSThread threadID];
    return [_solver[k] limitFailures: maxFailures in: cl];
 }
-//- (void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//   // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
-//   // The decoding recreates the pool.
-//   [aCoder encodeObject:_engine];
-//   [aCoder encodeObject:_trail];
-//}
-//- (id) initWithCoder:(NSCoder *)aDecoder;
-//{
-//   self = [super init];
-//   _engine = [[aDecoder decodeObject] retain];
-//   _trail  = [[aDecoder decodeObject] retain];
-//   _pool = [[NSAutoreleasePool alloc] init];
-//   return self;
-//}
 -(void) onSolution: (ORClosure) onSol 
 {
    for(ORInt k = 0; k < _nb; k++) 
