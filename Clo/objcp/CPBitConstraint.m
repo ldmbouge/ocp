@@ -135,8 +135,11 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
     [self propagate];
     if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+       [_x whenChangePropagate: self];
+       [_y whenChangePropagate: self];
+
+//        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
     [self propagate];
    return ORSuspend;
@@ -168,10 +171,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
         }
     }
 
-    [_x setLow: low];
-    [_y setLow: low];
-    [_x setUp: up];
-    [_y setUp: up];
+   [_x setUp:up andLow:low];
+   [_y setUp:up andLow:low];
+   
+//    [_x setLow: low];
+//    [_y setLow: low];
+//    [_x setUp: up];
+//    [_y setUp: up];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -208,8 +214,11 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
     [self propagate];
     if (![_x bound] || ![_y bound]) {
-        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+       [_x whenChangePropagate: self];
+       [_y whenChangePropagate: self];
+
+//        [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//        [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
     }
    [self propagate];
    return ORSuspend;
@@ -265,10 +274,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 
     }
     
-    [_x setLow: newXLow];
-    [_y setLow: newYLow];
-    [_x setUp: newXUp];
-    [_y setUp: newYUp];
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
+   
+//    [_x setLow: newXLow];
+//    [_y setLow: newYLow];
+//    [_x setUp: newXUp];
+//    [_y setUp: newYUp];
 #ifdef BIT_DEBUG
    NSLog(@"     ~(X =%@)",_x);
    NSLog(@"  =    Y =%@",_y);
@@ -310,9 +322,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
    [self propagate];
    if (![_x bound] || ![_y bound] || ![_z bound]) {
-      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
-      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
-      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+      [_z whenChangePropagate: self];
+
+//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
    return ORSuspend;
@@ -380,12 +396,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
             failNow();
     }
 
-    [_x setLow:newXLow];
-    [_x setUp:newXUp];
-    [_y setLow:newYLow];
-    [_y setUp:newYUp];
-    [_z setLow:newZLow];
-    [_z setUp:newZUp];
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
+   [_z setUp:newZUp andLow:newZLow];
+   
+//    [_x setLow:newXLow];
+//    [_x setUp:newXUp];
+//    [_y setLow:newYLow];
+//    [_y setUp:newYUp];
+//    [_z setLow:newZLow];
+//    [_z setUp:newZUp];
 #ifdef BIT_DEBUG
    NSLog(@"       X =%@",_x);
    NSLog(@"  AND  Y =%@",_y);
@@ -428,9 +448,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
    [self propagate];
    if (![_x bound] || ![_y bound] || ![_z bound]) {
-      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+      [_z whenChangePropagate: self];
+
+//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
    return ORSuspend;
@@ -492,13 +516,17 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
         if (inconsistencyFound)
            failNow();
     }
-    
-    [_x setLow:newXLow];
-    [_x setUp:newXUp];
-    [_y setLow:newYLow];
-    [_y setUp:newYUp];
-    [_z setLow:newZLow];
-    [_z setUp:newZUp];
+
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
+   [_z setUp:newZUp andLow:newZLow];
+
+//    [_x setLow:newXLow];
+//    [_x setUp:newXUp];
+//    [_y setLow:newYLow];
+//    [_y setUp:newYUp];
+//    [_z setLow:newZLow];
+//    [_z setUp:newZUp];
 #ifdef BIT_DEBUG
    NSLog(@"      X =%@",_x);
    NSLog(@"  OR  Y =%@",_y);
@@ -543,9 +571,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
    [self propagate];
    if (![_x bound] || ![_y bound] || ![_z bound]) {
-      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+      [_z whenChangePropagate: self];
+
+//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
    return ORSuspend;
@@ -617,13 +649,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
         if (inconsistencyFound)
             failNow();
     }
-    
-    [_x setLow:newXLow];
-    [_x setUp:newXUp];
-    [_y setLow:newYLow];
-    [_y setUp:newYUp];
-    [_z setLow:newZLow];
-    [_z setUp:newZUp];
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
+   [_z setUp:newZUp andLow:newZLow];
+   
+//    [_x setLow:newXLow];
+//    [_x setUp:newXUp];
+//    [_y setLow:newYLow];
+//    [_y setUp:newYUp];
+//    [_z setLow:newZLow];
+//    [_z setUp:newZUp];
    
 #ifdef BIT_DEBUG
    NSLog(@"      X =%@",_x);
@@ -794,8 +829,10 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
-      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
    return ORSuspend;
@@ -876,11 +913,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       failNow();
    }
 
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
 
-    [_x setLow:newXLow];
-    [_x setUp:newXUp];
-    [_y setLow:newYLow];
-    [_y setUp:newYUp];
+//    [_x setLow:newXLow];
+//    [_x setUp:newXUp];
+//    [_y setLow:newYLow];
+//    [_y setUp:newYUp];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -917,8 +956,10 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
    [self propagate];
    if (![_x bound] || ![_y bound]) {
-      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
-      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
+//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];} ];
    }
    [self propagate];
    return ORSuspend;
@@ -979,11 +1020,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
       failNow();
    }
    
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
    
-   [_x setLow:newXLow];
-   [_x setUp:newXUp];
-   [_y setLow:newYLow];
-   [_y setUp:newYUp];
+//   [_x setLow:newXLow];
+//   [_x setUp:newXUp];
+//   [_y setLow:newYLow];
+//   [_y setUp:newYUp];
 
 #ifdef BIT_DEBUG
    NSLog(@"         X =%@",_x);
@@ -1016,7 +1059,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    _z = (CPBitVarI*)z;
    _cin = (CPBitVarI*)cin;
    _cout = (CPBitVarI*)cout;
-   //[[x engine] add:[CPFactory bitShiftL:cout by:1 equals:cin]];
    return self;
 }
 
@@ -1029,12 +1071,19 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 {
 //   NSLog(@"Bit Sum Constraint Posted");
    [self propagate];
-   if (![_x bound] || ![_y bound] || ![_z bound] || ![_cin bound] || ![_cout bound]) {
-      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
-      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
-      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
-      [_cin whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
-      [_cout whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//   if (![_x bound] || ![_y bound] || ![_z bound] || ![_cin bound] || ![_cout bound]) {
+   if (![_x bound] || ![_y bound] || ![_z bound]) {
+      [_x whenChangePropagate: self];
+      [_y whenChangePropagate: self];
+      [_z whenChangePropagate: self];
+//      [_cin whenChangePropagate: self];
+//      [_cout whenChangePropagate: self];
+      
+//      [_x whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//      [_y whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//      [_z whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//      [_cin whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
+//      [_cout whenBitFixed: self at: HIGHEST_PRIO do: ^() { [self propagate];}];
    }
    [self propagate];
    return ORSuspend;
@@ -1089,29 +1138,29 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
     bool    inconsistencyFound = false;
 
     for(int i = 0; i<wordLength;i++){
-        prevXUp[i] = xUp[i]._val;
-        prevXLow[i] = xLow[i]._val;
-        prevYUp[i] = yUp[i]._val;
-        prevYLow[i] = yLow[i]._val;
-        prevZUp[i] = zUp[i]._val;
-        prevZLow[i] = zLow[i]._val;
+        prevXUp[i] = newXUp[i] = xUp[i]._val;
+        prevXLow[i] = newXLow[i] = xLow[i]._val;
+        prevYUp[i] = newYUp[i] = yUp[i]._val;
+        prevYLow[i] = newYLow[i] = yLow[i]._val;
+        prevZUp[i] = newZUp[i] = zUp[i]._val;
+        prevZLow[i] = newZLow[i] = zLow[i]._val;
         
-       newXUp[i] = xUp[i]._val;
-       newXLow[i] = xLow[i]._val;
-       newYUp[i] = yUp[i]._val;
-       newYLow[i] = yLow[i]._val;
-       newZUp[i] = zUp[i]._val;
-       newZLow[i] = zLow[i]._val;
+//       newXUp[i] = xUp[i]._val;
+//       newXLow[i] = xLow[i]._val;
+//       newYUp[i] = yUp[i]._val;
+//       newYLow[i] = yLow[i]._val;
+//       newZUp[i] = zUp[i]._val;
+//       newZLow[i] = zLow[i]._val;
 
-        prevCinUp[i] = cinUp[i]._val;
-        prevCinLow[i] = cinLow[i]._val;
-        prevCoutUp[i] = coutUp[i]._val;
-        prevCoutLow[i] = coutLow[i]._val;
+        prevCinUp[i] = newCinUp[i] = cinUp[i]._val;
+        prevCinLow[i] = newCinLow[i] = cinLow[i]._val;
+        prevCoutUp[i] = newCoutUp[i] = coutUp[i]._val;
+        prevCoutLow[i] = newCoutLow[i] = coutLow[i]._val;
        
-       newCinUp[i] = cinUp[i]._val;
-       newCinLow[i] = cinLow[i]._val;
-       newCoutUp[i] = coutUp[i]._val;
-       newCoutLow[i] = coutLow[i]._val;
+//       newCinUp[i] = cinUp[i]._val;
+//       newCinLow[i] = cinLow[i]._val;
+//       newCoutUp[i] = coutUp[i]._val;
+//       newCoutLow[i] = coutLow[i]._val;
 
     }
 #ifdef BIT_DEBUG
@@ -1203,8 +1252,8 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              //testing for internal consistency
              upXORlow = shiftedCinUp[i] ^ shiftedCinLow[i];
              inconsistencyFound |= (upXORlow&(~shiftedCinUp[i]))&(upXORlow & shiftedCinLow[i]);
-             if (inconsistencyFound){
 #ifdef BIT_DEBUG
+             if (inconsistencyFound){
                 NSLog(@"Inconsistency in Bitwise sum constraint in (shifted) Carry In.\n");
 //                NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(shiftedCinLow, shiftedCinUp, wordLength));
 //                NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(prevXLow, prevXUp, wordLength));
@@ -1226,9 +1275,9 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                           NSLog(@"_______________________________________________________");
                           NSLog(@" Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength));
                           NSLog(@" Cout =%@\n\n",bitvar2NSString(shiftedCoutLow, shiftedCoutUp, wordLength));
-#endif
                 failNow();
           }
+#endif
              prevCoutLow[i] = shiftedCoutLow[i];
              prevCoutUp[i] = shiftedCoutUp[i];
              prevCinLow[i] = shiftedCinLow[i];
@@ -1260,7 +1309,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
           
           // End of pasted code
           
-          if(![_x bound]){
+//          if(![_x bound]){
            newXUp[i] = prevXUp[i] &
              ~((~prevCinLow[i] & ~prevCinUp[i] & ~prevYLow[i] & ~prevYUp[i] & ~prevZLow[i] & ~prevZUp[i] & ~prevCoutLow[i]) |
                (~prevCinLow[i] & ~prevCinUp[i] & prevYLow[i] & prevYUp[i] & prevZLow[i] & prevZUp[i] & ~prevCoutLow[i]) |
@@ -1280,9 +1329,9 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
               (prevCinUp[i] & prevYUp[i] & prevZLow[i] & prevZUp[i] & prevCoutLow[i] & prevCoutUp[i]));
 
 
-          }
+//          }
           
-          if(![_y bound]){
+//          if(![_y bound]){
            newYUp[i] = prevYUp[i] &
              ~((~prevCinLow[i] & ~prevCinUp[i] & ~prevXLow[i] & ~prevXUp[i] & ~prevZLow[i] & ~prevZUp[i] & ~prevCoutLow[i]) |
                (~prevCinLow[i] & ~prevCinUp[i] & prevXLow[i] & prevXUp[i] & prevZLow[i] & prevZUp[i] & ~prevCoutLow[i]) |
@@ -1302,10 +1351,10 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
               (prevCinUp[i] & prevXUp[i] & prevZLow[i] & prevZUp[i] & prevCoutLow[i] & prevCoutUp[i]));
 
 
-          }
+//          }
 
-            
-          if(![_z bound]){
+          
+//          if(![_z bound]){
            newZUp[i] = prevZUp[i] &
              ~((~prevCoutLow[i] & ~prevCinLow[i] & ~prevCinUp[i] & ~prevXLow[i] & ~prevXUp[i] & ~prevYLow[i] & ~prevYUp[i]) |
                (prevCoutLow[i] & prevCoutUp[i] & ~prevCinLow[i] & ~prevCinUp[i] & prevXUp[i] & prevYUp[i]) |
@@ -1337,9 +1386,9 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                    (prevXLow[i] & ~prevXUp[i]) | 
                                    (prevYLow[i] & ~prevYUp[i]));
              
-          }
+//          }
         
-          if(![_cin bound]){
+//          if(![_cin bound]){
            newCinUp[i] = prevCinUp[i] &
              ~((~prevXLow[i] & ~prevXUp[i] & ~prevYLow[i] & ~prevYUp[i] & ~prevZLow[i] & ~prevZUp[i] & ~prevCoutLow[i]) |
                (~prevXLow[i] & ~prevXUp[i] & prevYLow[i] & prevYUp[i] & prevZLow[i] & prevZUp[i] & ~prevCoutLow[i]) |
@@ -1375,9 +1424,9 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 
              
 
-          }
+//          }
           
-          if(![_cout bound]){
+//          if(![_cout bound]){
            newCoutUp[i] = prevCoutUp[i] &
              ~((~prevZLow[i] & ~prevCinLow[i] & ~prevCinUp[i] & ~prevXLow[i] & ~prevXUp[i] & ~prevYLow[i]) |
                (~prevZLow[i] & ~prevCinLow[i] & ~prevCinUp[i] & ~prevXLow[i] & ~prevYLow[i] & ~prevYUp[i]) |
@@ -1406,53 +1455,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
               (prevZUp[i] & prevCinLow[i] & prevCinUp[i] & prevXUp[i] & prevYLow[i] & prevYUp[i]) |
               (prevZUp[i] & prevCinUp[i] & prevXLow[i] & prevXUp[i] & prevYLow[i] & prevYUp[i]));
              
-         }
-          
-          
-//          // Pasted shift constraint code to directly compute new CIN from the new COUT
-//          for(int j=wordLength-1;j>=0;j--){
-//             if ((i+1/32) < wordLength) {
-//                shiftedCinUp[j] = ~(ISFALSE(newCinUp[j],newCinLow[j])|((ISFALSE(newCoutUp[j+1/32], newCoutLow[j+1/32])<<(1%32))));
-//                shiftedCinLow[j] = ISTRUE(newCinUp[j],newCinLow[j])|((ISTRUE(newCoutUp[j+1/32], newCoutLow[j+1/32])<<(1%32)));
-//                //         NSLog(@"i=%i",i+1/32);
-//                if((i+1/32+1) < wordLength) {
-//                   shiftedCinUp[j] &= ~(ISFALSE(newCoutUp[j+1/32+1], newCoutLow[j+1/32+1])>>(32-(1%32)));
-//                   shiftedCinLow[j] |= ISTRUE(newCoutUp[j+1/32+1], newCoutLow[j+1/32+1])>>(32-(1%32));
-//                   //            NSLog(@"i=%i",i+1/32+1);
-//                }
-//                else{
-//                   shiftedCinUp[j] &= ~(UP_MASK >> (32-(1%32)));
-//                   shiftedCinLow[j] &= ~(UP_MASK >> (32-(1%32)));
-//                }
-//             }
-//             else{
-//                shiftedCinUp[j] = 0;
-//                shiftedCinLow[j] = 0;
-//             }
-//             
-//             if ((i-(int)1/32) >= 0) {
-//                shiftedCoutUp[j] = ~(ISFALSE(newCoutUp[j],newCoutLow[j])|((ISFALSE(newCinUp[j-1/32], newCinLow[j-1/32])>>(1%32))));
-//                shiftedCoutLow[j] = ISTRUE(newCoutUp[j],newCoutLow[j])|((ISTRUE(newCinUp[j-1/32], newCinLow[j-1/32])>>(1%32)));
-//                //         NSLog(@"i=%i",i-1/32);
-//                if((i-(int)1/32-1) >= 0) {
-//                   shiftedCoutUp[j] &= ~(ISFALSE(newCinUp[(i-(int)1/32-1)],newCinLow[(i-(int)1/32-1)])<<(32-(1%32)));
-//                   shiftedCoutLow[j] |= ISTRUE(newCinUp[(i-(int)1/32-1)],newCinLow[(i-(int)1/32-1)])<<(32-(1%32));
-//                   //            NSLog(@"i=%i",i-(int)_places/32-1);
-//                }
-//             }
-//             else{
-//                shiftedCoutUp[i] = newCoutUp[i];
-//                shiftedCoutLow[i] = newCoutLow[i];
-//             }
-//             
-//             newCoutLow[i] = shiftedCoutLow[i];
-//             newCoutUp[i] = shiftedCoutUp[i];
-//             newCinLow[i] = shiftedCinLow[i];
-//             newCinUp[i] = shiftedCinUp[i];
-//          }
-//
-//          // End of pasted code
-          
+//         }
           
           //Check consistency of new domain for X variable
           inconsistencyFound = ((prevCinLow[i] & ~prevCinUp[i]) |
@@ -1460,13 +1463,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                 (prevCinLow[i] & ~prevZUp[i] & ~prevCoutUp[i]) |
                                 (~prevCinUp[i] & ~prevYUp[i] & prevCoutLow[i]) |
                                 (~prevCinUp[i] & prevZLow[i] & prevCoutLow[i]) |
-                                //(prevYLow[i] & ~prevYUp[i]) |
+                                (prevYLow[i] & ~prevYUp[i]) |
                                 (prevYLow[i] & ~prevZUp[i] & ~prevCoutUp[i]) |
-                                (~prevYUp[i] & prevZLow[i] & prevCoutLow[i]));
-          //(prevZLow[i] & ~prevZUp[i]) |
-          //(prevCoutLow[i] & ~prevCoutUp[i]));
-          if (inconsistencyFound){
+                                (~prevYUp[i] & prevZLow[i] & prevCoutLow[i]) |
+                                (prevZLow[i] & ~prevZUp[i]) |
+                                (prevCoutLow[i] & ~prevCoutUp[i]));
 #ifdef BIT_DEBUG
+          if (inconsistencyFound){
              NSLog(@"Logical inconsistency in Bitwise sum constraint variable x.\n");
              NSLog(@"In the %d th word: %x\n\n",i,inconsistencyFound);
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
@@ -1475,15 +1478,15 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+//#endif
           
           //testing for internal consistency
           upXORlow = newXUp[i] ^ newXLow[i];
           inconsistencyFound |= (upXORlow&(~newXUp[i]))&(upXORlow & newXLow[i]);
+//#ifdef BIT_DEBUG
           if (inconsistencyFound){
-#ifdef BIT_DEBUG
              NSLog(@"Inconsistency in Bitwise sum constraint variable x.\n");
              NSLog(@"In the %d th word: %x\n\n",i,inconsistencyFound);
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
@@ -1492,9 +1495,9 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+#endif
           //Check consistency of new domain for Y variable
           inconsistencyFound |= ((prevCinLow[i] & ~prevCinUp[i]) |
                                  (prevCinLow[i] & prevXLow[i] & ~prevCoutUp[i]) |
@@ -1508,8 +1511,8 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                  (prevCoutLow[i] & ~prevCoutUp[i]));
           
           
-          if (inconsistencyFound){
 #ifdef BIT_DEBUG
+          if (inconsistencyFound){
              NSLog(@"Inconsistency in Bitwise sum constraint variable y. [unstable sum constraint]\n");
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
              NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(newXLow, newXUp, wordLength));
@@ -1517,16 +1520,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+//#endif
           
           
           //testing for internal consistency
           upXORlow = newYUp[i] ^ newYLow[i];
           inconsistencyFound |= (upXORlow&(~newYUp[i]))&(upXORlow & newYLow[i]);
+//#ifdef BIT_DEBUG
           if (inconsistencyFound){
-#ifdef BIT_DEBUG
              NSLog(@"Inconsistency in Bitwise sum constraint variable y. [unstable bitvar]\n");
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
              NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(newXLow, newXUp, wordLength));
@@ -1534,13 +1537,13 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+#endif
           
           
-          if (inconsistencyFound){
 #ifdef BIT_DEBUG
+          if (inconsistencyFound){
              NSLog(@"Inconsistency in Bitwise sum constraint variable z [impossible bit pattern for variable].\n");
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
              NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(newXLow, newXUp, wordLength));
@@ -1548,15 +1551,15 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+//#endif
           
           //testing for internal consistency
           upXORlow = newZUp[i] ^ newZLow[i];
           inconsistencyFound |= (upXORlow&(~newZUp[i]))&(upXORlow & newZLow[i]);
+//#ifdef BIT_DEBUG
           if (inconsistencyFound){
-#ifdef BIT_DEBUG
              NSLog(@"Inconsistency in Bitwise sum constraint variable z.\n");
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
              NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(newXLow, newXUp, wordLength));
@@ -1564,12 +1567,10 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
           
           if (inconsistencyFound){
-#ifdef BIT_DEBUG
              NSLog(@"Inconsistency in Bitwise sum constraint in Carry In logical inconsistency.\n");
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
              NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(newXLow, newXUp, wordLength));
@@ -1577,16 +1578,16 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+//#endif
           
           
           //testing for internal consistency
           upXORlow = newCinUp[i] ^ newCinLow[i];
           inconsistencyFound |= (upXORlow&(~newCinUp[i]))&(upXORlow & newCinLow[i]);
+//#ifdef BIT_DEBUG
           if (inconsistencyFound){
-#ifdef BIT_DEBUG
              NSLog(@"Inconsistency in Bitwise sum constraint in Carry In.\n");
              NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(newCinLow, newCinUp, wordLength));
              NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(newXLow, newXUp, wordLength));
@@ -1594,9 +1595,9 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
              NSLog(@"_____________________________________________________________________________________________________________________________________________________");
              NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(newZLow, newZUp, wordLength));
              NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(newCoutLow, newCoutUp, wordLength));
-#endif
              failNow();
           }
+#endif
 
           //Check consistency of new domain for Cout variable
           inconsistencyFound |= ((prevZLow[i] & ~prevZUp[i]) |
@@ -1688,17 +1689,23 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
             prevCoutLow[i] = newCoutLow[i];
         }
     }
+   
+   [_x setUp:newXUp andLow:newXLow];
+   [_y setUp:newYUp andLow:newYLow];
+   [_z setUp:newZUp andLow:newZLow];
+   [_cin setUp:newCinUp andLow:newCinLow];
+   [_cout setUp:newCoutUp andLow:newCoutLow];
 
-   [_x setLow:newXLow];
-   [_x setUp:newXUp];
-   [_y setLow:newYLow];
-   [_y setUp:newYUp];
-   [_z setLow:newZLow];
-   [_z setUp:newZUp];
-   [_cin setLow:newCinLow];
-   [_cin setUp:newCinUp];
-   [_cout setLow:newCoutLow];
-   [_cout setUp:newCoutUp];
+//   [_x setLow:newXLow];
+//   [_x setUp:newXUp];
+//   [_y setLow:newYLow];
+//   [_y setUp:newYUp];
+//   [_z setLow:newZLow];
+//   [_z setUp:newZUp];
+//   [_cin setLow:newCinLow];
+//   [_cin setUp:newCinUp];
+//   [_cout setLow:newCoutLow];
+//   [_cout setUp:newCoutUp];
    
 #ifdef BIT_DEBUG
    NSLog(@"Done propagating sum constraint");

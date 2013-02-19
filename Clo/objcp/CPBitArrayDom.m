@@ -657,6 +657,23 @@
     if (umod)
        [x bitFixedEvt:_freebits._val sender:self];
 }
+-(void) setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x
+{
+   bool umod = false;
+   bool lmod = false;
+   
+   for(int i=0;i<_wordLength;i++){
+      umod |= _up[i]._val != newUp[i];
+      assignTRUInt(&_up[i], newUp[i], _trail);
+      lmod |= _low[i]._val != newLow[i];
+      assignTRUInt(&_low[i], newLow[i], _trail);
+
+   }
+   [self updateFreeBitCount];
+   if (umod || lmod)
+      [x bitFixedEvt:_freebits._val sender:self];
+   
+}
 
 -(void)enumerateWith:(void(^)(unsigned int*,ORInt))body
 {

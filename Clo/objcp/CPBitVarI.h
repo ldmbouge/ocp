@@ -50,6 +50,9 @@ typedef struct  {
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
 
+// AC3 Constraint Event
+-(void) whenChangePropagate:  (CPCoreConstraint*) c;
+
 // need for speeding the code when not using AC5
 -(bool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
@@ -83,6 +86,7 @@ typedef struct  {
 -(ORStatus)     updateMax: (uint64) newMax;
 -(void)         setLow: (unsigned int*) newLow;
 -(void)         setUp: (unsigned int*) newUp;
+-(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow;
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
 -(ORStatus)     bind:(unsigned int*) val;

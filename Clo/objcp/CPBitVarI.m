@@ -243,6 +243,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(void) setTracksLoseEvt
 {
 }
+
+-(void) whenChangePropagate:  (CPCoreConstraint*) c 
+{
+   hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO);
+}
+
 -(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo 
 {
    hookupEvent(_engine, &_net._boundsEvt, todo, c, p);
@@ -342,6 +348,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) setUp:(unsigned int *)newUp{
     [_dom setUp: newUp for:_recv];
+}
+
+-(void) setUp:(unsigned int *)newUp andLow:(unsigned int *)newLow{
+   [_dom setUp: newUp andLow:newLow for:_recv];
 }
 
 -(TRUInt*) getLow
