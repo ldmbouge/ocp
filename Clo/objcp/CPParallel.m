@@ -16,7 +16,7 @@
 #import "CPSolverI.h"
 
 @implementation CPParallelAdapter
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue *)pcq
 {
    self = [super init:chain parent:[[solver explorer] controller]];
    _solver = solver;
@@ -100,7 +100,7 @@
 
 @implementation CPGenerator
 
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue*)pcq
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq
 {
    self = [super initORDefaultController];
    [self setController:chain];

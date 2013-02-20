@@ -16,6 +16,7 @@
 
 // CP Solver
 #import <ORProgram/CPFirstFail.h>
+#import <ORProgram/ORCPParSolver.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
 #import "CPSolver.h"
@@ -135,14 +136,15 @@
    [flat apply: model into: batch];
    [batch release];
    
-   NSArray* Objects = [flatModel objects];
-   for(id<ORObject> c in Objects) {
+   NSArray* objects = [flatModel objects];
+   for(id<ORObject> c in objects) {
       if ([c impl] == NULL) {
          id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
          [c setImpl: ba];
       }
    }
    for(ORInt i = 0; i < k; i++) {
+      // This "fakes" the thread number so that the main thread does add into the binding array at offset i
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
@@ -160,6 +162,30 @@
    }
    return cpprogram;
 }
+
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k
+{
+   CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:nil];
+   [model setImpl:cpprogram];
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   [flat apply: model into: batch];
+   [batch release];
+   for(id<ORObject> c in [flatModel objects]) {
+      if ([c impl] == NULL) {
+         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+         [c setImpl: ba];
+      }
+   }
+   for(ORInt i=0;i< k;i++) {
+      [NSThread setThreadID:i];
+      id<CPProgram> pi = [cpprogram dereference];
+      [ORFactory createCPProgram:flatModel program: pi]; // [ldm] it is already flat. This flattens _again_
+   }
+   return cpprogram;
+}
+
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {

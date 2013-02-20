@@ -11,14 +11,14 @@
 
 
 #import <Foundation/Foundation.h>
+#import <ORProgram/CPProgram.h> 
+#import <ORProgram/CPSolver.h>
 
-/*
-@interface CPParSolverI : CPSemSolverI<CPParSolver> {
+@interface CPParSolverI : NSObject<CPProgram> {
    ORInt              _nbWorkers;
 }
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
+-(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass;
 -(ORInt)nbWorkers;
--(id<CPSolver>)dereference;
+-(id<CPProgram>)dereference;
+-(id<ORSolutionPool>)globalSolutionPool;
 @end
-*/
