@@ -11,8 +11,8 @@
 
 
 #import "ORCPParSolver.h"
+#import <ORProgram/CPParallel.h>
 #import <objcp/CPObjectQueue.h>
-#import <objcp/CPParallel.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
   CPSemanticSolver* _solver;
@@ -25,7 +25,7 @@
 @end
 
 @implementation CPParSolverI {
-   CPSemanticSolver** _workers;
+   id<CPSemanticProgram>* _workers;
    PCObjectQueue*       _queue;
    NSCondition*    _terminated;
    ORInt               _nbDone;
@@ -35,11 +35,14 @@
 {
    self = [super init];
    _nbWorkers = nbt;
-   _workers   = malloc(sizeof(CPSemanticSolver*)*_nbWorkers);
+   _workers   = malloc(sizeof(id<CPSemanticProgram>)*_nbWorkers);
+   memset(_workers,0,sizeof(id<CPSemanticProgram>)*_nbWorkers);
    _queue = [[PCObjectQueue alloc] initPCQueue:128 nbWorkers:_nbWorkers];
    _terminated = [[NSCondition alloc] init];
    _defCon     = ctrlClass;
    _nbDone     = 0;
+   for(ORInt i=0;i<_nbWorkers;i++)
+      _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
    return self;
 }
 -(void)dealloc
@@ -267,7 +270,7 @@
    return nil;
 }
 
--(void)setupWork:(NSData*)root forCP:(CPSemanticSolver*)cp
+-(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
 {
    id<ORProblem> theSub = [SemTracer unpackProblem:root fOREngine:[cp engine]];
    //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
@@ -278,7 +281,7 @@
 }
 -(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
 {
-   CPSemanticSolver* me  = _workers[myID];
+   id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
    id<ORSearchController> parc = [[CPParallelAdapter alloc] initCPParallelAdapter:nested

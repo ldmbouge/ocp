@@ -508,5 +508,16 @@ static ORInt _deterministic;
 {
    return self;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   [buf appendFormat:@"binding["];
+   for(ORInt i=0;i<_nb;i++) {
+      [buf appendFormat:@"%@%c",[_array[i] description], i < _nb-1 ? ',' : ' '];
+   }
+   [buf appendFormat:@"]"];
+   return buf;
+}
+
 @end
 

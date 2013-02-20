@@ -24,8 +24,8 @@ int main (int argc, const char * argv[])
 {
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];
-      int n = 11;
-      id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n];
+      int n = 8;//11;
+      id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
       id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
       id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i]; }];
@@ -35,9 +35,9 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
-      id<CPSemanticProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
-      //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]];
-      //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
+      //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
+      //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
+      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
       [cp solveAll: ^{
          __block ORInt depth = 0;
          //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
@@ -46,8 +46,10 @@ int main (int argc, const char * argv[])
             [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
                     in:^(ORInt v) {
                         [cp label: x[i] with:v];
+                       //NSLog(@"AFTER LABEL: %@",x);
                     } onFailure:^(ORInt v) {
                        [cp diff: x[i] with:v];
+                       //NSLog(@"AFTER DIFF: %@",x);
                     }];
             depth++;
 #else
