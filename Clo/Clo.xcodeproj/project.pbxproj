@@ -99,6 +99,8 @@
 		5B3606911392A8DA008B0EE8 /* CPDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606901392A8DA008B0EE8 /* CPDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606951392A9C5008B0EE8 /* CPBitDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606931392A9C5008B0EE8 /* CPBitDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3606961392A9C5008B0EE8 /* CPBitDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B3606941392A9C5008B0EE8 /* CPBitDom.m */; };
+		5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B378BB716D5245D002E1AB4 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
 		5B3DAE4A1677988700F01DBF /* CPTrigger.h in Headers */ = {isa = PBXBuildFile; fileRef = B189033D142C266D007F6EAD /* CPTrigger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B3DAE4B1677988700F01DBF /* CPTrigger.m in Sources */ = {isa = PBXBuildFile; fileRef = B189033E142C266E007F6EAD /* CPTrigger.m */; };
 		5B40C21114F80A7D0041D162 /* CPObjectQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -321,8 +323,6 @@
 		5B8DA20915B98BD900684FD8 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5B8DA20A15B98BD900684FD8 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B8DCD91165FDDB6007CC562 /* testBitConstraints.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8DCD90165FDDB6007CC562 /* testBitConstraints.m */; };
-		5B8E16C21505BB5700D3C698 /* CPParallel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B8E16C01505BB5700D3C698 /* CPParallel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B8E16C31505BB5700D3C698 /* CPParallel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8E16C11505BB5700D3C698 /* CPParallel.m */; };
 		5B8E979315AA5693008146AA /* CPStatisticsMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */; };
 		5B8F1A2215A2D464009CCE42 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
 		5B8F1A2415A2D464009CCE42 /* CPElement.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B91C335159FAB2D00158EEA /* CPElement.m */; };
@@ -4798,6 +4798,8 @@
 				B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
+				5B8E16C01505BB5700D3C698 /* CPParallel.h */,
+				5B8E16C11505BB5700D3C698 /* CPParallel.m */,
 				B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */,
 				B1C4F415161F8BF20010A5C8 /* ORParCPConcretizer.m */,
 				5BE19F2915826A28008DF214 /* CPDDeg.h */,
@@ -5352,8 +5354,6 @@
 				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
 				5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */,
 				5B40C21014F80A7D0041D162 /* CPObjectQueue.m */,
-				5B8E16C01505BB5700D3C698 /* CPParallel.h */,
-				5B8E16C11505BB5700D3C698 /* CPParallel.m */,
 				B181E12715D7B62600AB44DA /* CPSolver.h */,
 				5BE642F2139D49320056F448 /* CPSolverI.h */,
 				5BE642F3139D49320056F448 /* CPSolverI.m */,
@@ -6333,6 +6333,7 @@
 				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
+				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6379,7 +6380,6 @@
 				B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */,
 				5B63C2D4156DB05E00C65B2A /* CPStatisticsMonitor.h in Headers */,
 				B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */,
-				5B8E16C21505BB5700D3C698 /* CPParallel.h in Headers */,
 				B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */,
 				B17715B51557D9D200BA14BF /* CPTableI.h in Headers */,
 				5B778B9E154EF67C0078EB07 /* CPBitVarI.h in Headers */,
@@ -8231,6 +8231,7 @@
 				B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */,
 				B15442B216D1A3F7001BD7B3 /* LPSolver.m in Sources */,
 				B15442E616D1B414001BD7B3 /* LPConcretizer.m in Sources */,
+				5B378BB716D5245D002E1AB4 /* CPParallel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8329,7 +8330,6 @@
 				B19ABA27146DC7FA004EB77E /* CPCardinality.m in Sources */,
 				B169F9C914EF87D500B2F3A6 /* CPConstraint.m in Sources */,
 				5B40C21214F80A7D0041D162 /* CPObjectQueue.m in Sources */,
-				5B8E16C31505BB5700D3C698 /* CPParallel.m in Sources */,
 				5B73E55E151F45F60043192D /* NSBoardController.m in Sources */,
 				5B729C42153F79A4001BE95A /* CPWatch.m in Sources */,
 				B1C25AA21557540E009CB8A8 /* CPCircuitI.m in Sources */,

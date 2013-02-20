@@ -186,7 +186,6 @@
    return cpprogram;
 }
 
-
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];

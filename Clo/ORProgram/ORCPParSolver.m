@@ -133,6 +133,22 @@
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void) trackObject: (id) object
+{
+   return [[self dereference] trackObject: object];
+}
+-(void) trackVariable: (id) object
+{
+   return [[self dereference] trackVariable: object];
+}
+-(void) trackConstraint:(id)object
+{
+   return [[self dereference] trackConstraint:object];
+}
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
+{
+   [[self dereference] addConstraintDuringSearch: c annotation:n];
+}
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
@@ -246,6 +262,10 @@
 {
    return [[self dereference] solutionPool];
 }
+-(id<ORSolutionPool>) globalSolutionPool
+{
+   return nil;
+}
 
 -(void)setupWork:(NSData*)root forCP:(CPSemanticSolver*)cp
 {
@@ -265,7 +285,7 @@
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   id<ORObjectiveFunction> objective = [me objective];
+   id<ORObjective> objective = [me objective];
    if (objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }

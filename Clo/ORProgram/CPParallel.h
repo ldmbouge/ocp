@@ -20,6 +20,7 @@
 
 @interface CPGenerator : ORDefaultController<ORSearchController> {
    id<CPSemanticProgram>   _solver;
+   id<ORTracer>        _tracer;
    PCObjectQueue*      _pool;
    NSCont**             _tab;
    id<ORCheckpoint>*  _cpTab;
