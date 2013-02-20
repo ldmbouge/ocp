@@ -89,6 +89,7 @@ typedef struct  {
 -(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow;
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
+-(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(ORStatus)     bind:(unsigned int*) val;
 -(ORStatus)     bindUInt64:(uint64) val;
 //-(ORStatus)     remove:(int) val;

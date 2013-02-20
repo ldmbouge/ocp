@@ -59,6 +59,7 @@
 -(ORStatus)             bindToPat: (unsigned int*) pat for:(id<CPBitVarNotifier>)x;
 -(TRUInt*)              getLow;
 -(TRUInt*)              getUp;
+-(void)                 getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(void)                 setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x;
 -(void)                 setUp: (unsigned int*) newUp for:(id<CPBitVarNotifier>)x;
 -(void)                 setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x;

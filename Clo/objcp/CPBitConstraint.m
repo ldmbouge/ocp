@@ -153,11 +153,14 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    
     unsigned int wordLength = [_x getWordLength];
     
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
-    
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   
     unsigned int* up = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* low = alloca(sizeof(unsigned int)*wordLength);
     unsigned int  upXORlow;
@@ -233,10 +236,14 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    
     unsigned int wordLength = [_x getWordLength];
     
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+
     
     unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newXLow = alloca(sizeof(unsigned int)*wordLength);
@@ -341,12 +348,17 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 #endif
    
     unsigned int wordLength = [_x getWordLength];
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
-    TRUInt* zLow = [_z getLow];
-    TRUInt* zUp = [_z getUp];
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   TRUInt* zLow;
+   TRUInt* zUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   [_z getUp:&zUp andLow:&zLow];
+
     
     unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -466,12 +478,17 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
    NSLog(@"Bit OR Constraint propagated.");
 #endif
     unsigned int wordLength = [_x getWordLength];
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
-    TRUInt* zLow = [_z getLow];
-    TRUInt* zUp = [_z getUp];
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   TRUInt* zLow;
+   TRUInt* zUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   [_z getUp:&zUp andLow:&zLow];
+
     
     unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -590,12 +607,17 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 #endif
 
     unsigned int wordLength = [_x getWordLength];
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
-    TRUInt* zLow = [_z getLow];
-    TRUInt* zUp = [_z getUp];   
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   TRUInt* zLow;
+   TRUInt* zUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   [_z getUp:&zUp andLow:&zLow];
+
     unsigned int* newXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newXLow  = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* newYUp = alloca(sizeof(unsigned int)*wordLength);
@@ -844,11 +866,15 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 #endif
    unsigned int wordLength = [_x getWordLength];
     
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
-    
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+
+   
     unsigned int* newXUp = alloca((sizeof(unsigned int))*(wordLength+1));
     unsigned int* newXLow  = alloca((sizeof(unsigned int))*(wordLength+1));
     unsigned int* newYUp = alloca((sizeof(unsigned int))*(wordLength+1));
@@ -1093,17 +1119,36 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //   NSLog(@"Bit Sum Constraint Propagated");
     unsigned int wordLength = [_x getWordLength];
     bool change = true;
-    
-    TRUInt* xLow = [_x getLow];
-    TRUInt* xUp = [_x getUp];
-    TRUInt* yLow = [_y getLow];
-    TRUInt* yUp = [_y getUp];
-    TRUInt* zLow = [_z getLow];
-    TRUInt* zUp = [_z getUp];
-    TRUInt* cinLow = [_cin getLow];
-    TRUInt* cinUp = [_cin getUp];
-    TRUInt* coutLow = [_cout getLow];
-    TRUInt* coutUp = [_cout getUp];
+
+//   TRUInt* xLow = [_x getLow];
+//   TRUInt* xUp = [_x getUp];
+//   TRUInt* yLow = [_y getLow];
+//   TRUInt* yUp = [_y getUp];
+//   TRUInt* zLow = [_z getLow];
+//   TRUInt* zUp = [_z getUp];
+//   TRUInt* cinLow = [_cin getLow];
+//   TRUInt* cinUp = [_cin getUp];
+//   TRUInt* coutLow = [_cout getLow];
+//   TRUInt* coutUp = [_cout getUp];
+
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   TRUInt* zLow;
+   TRUInt* zUp;
+   TRUInt* cinLow;
+   TRUInt* cinUp;
+   TRUInt* coutLow;
+   TRUInt* coutUp;
+
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+   [_z getUp:&zUp andLow:&zLow];
+   [_cin getUp:&cinUp andLow:&cinLow];
+   [_cout getUp:&coutUp andLow:&coutLow];
+   
 
     unsigned int* prevXUp = alloca(sizeof(unsigned int)*wordLength);
     unsigned int* prevXLow  = alloca(sizeof(unsigned int)*wordLength);
@@ -1255,12 +1300,6 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 #ifdef BIT_DEBUG
              if (inconsistencyFound){
                 NSLog(@"Inconsistency in Bitwise sum constraint in (shifted) Carry In.\n");
-//                NSLog(@" Cin  =%@\t\t Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength),bitvar2NSString(shiftedCinLow, shiftedCinUp, wordLength));
-//                NSLog(@" X    =%@\t\t X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength),bitvar2NSString(prevXLow, prevXUp, wordLength));
-//                NSLog(@"+Y    =%@\t\t+Y    =%@",bitvar2NSString(prevYLow, prevYUp, wordLength),bitvar2NSString(prevYLow, prevYUp, wordLength));
-//                NSLog(@"_____________________________________________________________________________________________________________________________________________________");
-//                NSLog(@" Z    =%@\t\t Z    =%@",bitvar2NSString(prevZLow, prevZUp, wordLength),bitvar2NSString(prevZLow, prevZUp, wordLength));
-//                NSLog(@" Cout =%@\t\t Cout =%@\n\n",bitvar2NSString(prevCoutLow, prevCoutUp, wordLength),bitvar2NSString(shiftedCoutLow, shiftedCoutUp, wordLength));
 
                           NSLog(@" Cin  =%@",bitvar2NSString(prevCinLow,prevCinUp, wordLength));
                           NSLog(@" X    =%@",bitvar2NSString(prevXLow, prevXUp, wordLength));

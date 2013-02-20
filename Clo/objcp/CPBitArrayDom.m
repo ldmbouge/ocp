@@ -633,6 +633,13 @@
     return _up;
 }
 
+-(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow
+{
+   *currUp = _up;
+   *currLow = _low;
+}
+
+
 -(void) setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x
 {
    bool lmod =  false;

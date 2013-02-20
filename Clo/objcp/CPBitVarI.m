@@ -362,6 +362,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom getUp];
 }
+-(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow
+{
+   return [_dom getUp:currUp andLow:currLow];
+}
 
 -(ORStatus) bindUInt64:(uint64)val
 {
