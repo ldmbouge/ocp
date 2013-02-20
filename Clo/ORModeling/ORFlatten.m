@@ -35,6 +35,7 @@
 -(void) visitTable:(id<ORTable>) v  {}
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
+-(void) visitGroup:(id<ORGroup>)g {}
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  {}
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
@@ -115,7 +116,9 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e  {}
 @end
 
-@interface ORFlattenObjects : ORNOopVisit<ORVisitor>
+@interface ORFlattenObjects : ORNOopVisit<ORVisitor> {
+   id<ORAddToModel> _theModel;
+}
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
@@ -127,7 +130,9 @@
 -(void) visitTable:(id<ORTable>) v;
 @end
 
-@interface ORFlattenConstraint : ORNOopVisit<ORVisitor>
+@interface ORFlattenConstraint : ORNOopVisit<ORVisitor> {
+   id<ORAddToModel> _theModel;
+}
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -245,9 +250,7 @@
 }
 @end
 
-@implementation ORFlattenObjects {
-   id<ORAddToModel> _theModel;
-}
+@implementation ORFlattenObjects 
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -288,9 +291,7 @@
 }
 @end
 
-@implementation ORFlattenConstraint {
-   id<ORAddToModel> _theModel;
-}
+@implementation ORFlattenConstraint 
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -334,6 +335,16 @@
                                              
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
+}
+-(void) visitGroup:(id<ORGroup>)g
+{
+   id<ORGroup> ng = [ORFactory group:_theModel type:[g type]];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_theModel group:ng];
+   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+      [ORFlatten flatten:ck into:a2g];
+   }];
+   [_theModel addConstraint:ng];
+   [a2g release];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {

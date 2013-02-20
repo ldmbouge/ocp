@@ -19,15 +19,19 @@
 {
    return [[[ORModelI alloc]  initORModelI] autorelease];
 }
-+(id<ORModelTransformation>)createFlattener
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel
+{
+   return [[ORBatchModel alloc]  init: flatModel];
+}
++(id<ORModelTransformation>) createFlattener
 {
    return [[[ORFlatten alloc] initORFlatten] autorelease];
 }
-+(id<ORModelTransformation>)createLinearizer
++(id<ORModelTransformation>) createLinearizer
 {
     return [[[ORLinearize alloc] initORLinearize] autorelease];
 }
-+(id<ORSolutionPool>)createSolutionPool
++(id<ORSolutionPool>) createSolutionPool
 {
    return [[ORSolutionPoolI alloc] init];
 }

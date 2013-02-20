@@ -35,7 +35,7 @@ int main(int argc, const char * argv[])
       ORFloat rf = 1.0;
       ORInt t = 60;
       ORInt r = 0;
-      enum Heuristic hs = FF;
+      enum Heuristic hs = ABS;
       for(int k = 1;k< argc;k++) {
          if (strncmp(argv[k], "-q", 2) == 0)
             n = atoi(argv[k]+2);

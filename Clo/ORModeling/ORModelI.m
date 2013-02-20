@@ -9,7 +9,6 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import "ORFoundation/ORFoundation.h"
 #import "ORModelI.h"
 #import "ORError.h"
@@ -42,7 +41,7 @@
    [_oStore release];
    [super dealloc];
 }
--(void) captureVariable:(id<ORVar>)x
+-(void) captureVariable: (id<ORVar>) x
 {
    [_vars addObject:x];
    [_oStore addObject:x];
@@ -87,9 +86,17 @@
 {
    return [NSArray arrayWithArray: _oStore];
 }
--(id<ORSolution>) solution
+-(id<ORSolution>) captureSolution
 {
    return [[ORSolutionI alloc] initSolution:self];
+}
+-(id<ORSolutionPool>) solutions
+{
+   return [((id<ORASolver>) _impl) globalSolutionPool];
+}
+-(id<ORSolution>) bestSolution
+{
+   return [[self solutions] best];
 }
 -(void) restore: (id<ORSolution>) s
 {
@@ -118,24 +125,25 @@
    return buf;
 }
 
--(void) add: (id<ORConstraint>) c
+-(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
-   
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
    [_mStore addObject:c];
+   return c;
 }
 
--(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
+-(id<ORConstraint>) add: (id<ORConstraint>) c annotation: (ORAnnotation) n
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
    
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
-   [_mStore addObject:c];   
+   [_mStore addObject:c];
+   return c;
 }
 
 -(void) optimize: (id<ORObjectiveFunction>) o
@@ -258,6 +266,55 @@
 }
 @end
 
+@implementation ORBatchGroup {
+   id<ORAddToModel>     _target;
+   id<ORGroup>        _theGroup;
+}
+-(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group
+{
+   self = [super init];
+   _target = model;
+   _theGroup = group;
+   return self;
+}
+-(void) addVariable: (id<ORVar>) var
+{
+   [_target addVariable:var];
+}
+-(void) addObject:(id)object
+{
+   [_target addObject:object];
+}
+-(void) addConstraint: (id<ORConstraint>) cstr
+{
+   [_theGroup add:cstr];
+}
+-(void) minimize: (id<ORIntVar>) x
+{
+   [_target minimize:x];
+}
+-(void) maximize: (id<ORIntVar>) x
+{
+   [_target maximize:x];
+}
+-(id<ORAddToModel>) model
+{
+   return _target;
+}
+-(void) trackObject: (id) obj
+{
+   [_target trackObject:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_target trackVariable:obj];
+}
+-(void)trackConstraint:(id)obj
+{
+   [_target trackConstraint:obj];
+}
+@end
+
 @implementation ORSolutionI {
    NSArray*                _shots;
    id<ORObjectiveValue> _objValue;
@@ -277,7 +334,8 @@
    _shots = snapshots;
    if ([model objective])
       _objValue = [[model objective] value];
-   else _objValue = nil;
+   else
+      _objValue = nil;
    return self;
 }
 -(void) dealloc
@@ -355,28 +413,32 @@
 
 
 @implementation ORSolutionPoolI
--(id)init
+-(id) init
 {
    self = [super init];
    _all = [[NSMutableSet alloc] initWithCapacity:64];
    return self;
 }
--(void)dealloc
+
+-(void) dealloc
 {
    [_all release];
    [super dealloc];
 }
--(void)addSolution:(id<ORSolution>)s
+
+-(void) addSolution:(id<ORSolution>)s
 {
    [_all addObject:s];
 }
--(void)enumerateWith:(void(^)(id<ORSolution>))block
+
+-(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
       block(obj);
    }];
 }
--(NSString*)description
+
+-(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
@@ -386,7 +448,8 @@
    [buf appendFormat:@"]"];
    return buf;
 }
--(id<ORSolution>)best
+
+-(id<ORSolution>) best
 {
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;

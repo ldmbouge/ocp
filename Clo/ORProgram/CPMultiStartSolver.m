@@ -19,7 +19,7 @@
 
 
 /******************************************************************************************/
-/*                                 CoreSolver                                             */
+/*                                 MultiStartSolver                                             */
 /******************************************************************************************/
 
 @implementation CPMultiStartSolver {
@@ -27,6 +27,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
+   id<ORSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -37,10 +38,13 @@
       _solver[i] = [[CPSolver alloc] initCPSolver];
    
    _terminated = [[NSCondition alloc] init];
+   
+   _sPool   = [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
 {
+   [_sPool release];
    for(ORInt i = 0; i < _nb; i++)
       [_solver[i] release];
    free(_solver);
@@ -115,6 +119,7 @@
    [NSThread setThreadID: i];
    [_solver[i] solve: search];
    [search release];
+   [NSCont shutdown];
    [_terminated lock];
    ++_nbDone;
    if (_nbDone == _nb)
@@ -145,6 +150,7 @@
                              withObject:[NSArray arrayWithObjects: [search copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
+   [_sPool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
 }
 
 -(void) solveAll: (ORClosure) search
@@ -157,7 +163,11 @@
    }
    [self waitWorkers];
 }
-
+-(id<ORForall>) forall: (id<ORIntIterator>) S
+{
+   ORInt k = [NSThread threadID];
+   return [ORControl forall: _solver[k] set: S];
+}
 -(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    ORInt k = [NSThread threadID];
@@ -168,6 +178,24 @@
    ORInt k = [NSThread threadID];
    return [_solver[k] forall: S suchThat: filter orderedBy: order do: body];
 }
+-(void) forall: (id<ORIntIterator>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+{
+   ORInt k = [NSThread threadID];
+   id<ORForall> forall = [ORControl forall: _solver[k] set: S];
+   [forall orderedBy:o1];
+   [forall orderedBy:o2];
+   [forall do: b];
+}
+-(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+{
+   ORInt k = [NSThread threadID];
+   id<ORForall> forall = [ORControl forall: _solver[k] set: S];
+   [forall suchThat: suchThat];
+   [forall orderedBy:o1];
+   [forall orderedBy:o2];
+   [forall do: b];
+}
+
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
    ORInt k = [NSThread threadID];
@@ -320,7 +348,7 @@
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   ORInt k = 0;
+   ORInt k = [NSThread threadID];
    return [_solver[k] limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
@@ -343,12 +371,23 @@
 //   _pool = [[NSAutoreleasePool alloc] init];
 //   return self;
 //}
--(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
+-(void) onSolution: (ORClosure) onSol 
 {
-   
+   for(ORInt k = 0; k < _nb; k++) 
+      [_solver[k] onSolution: onSol];
 }
--(id<ORSolutionPool>)solutionPool
+-(void) onExit: (ORClosure) onExit
 {
-   return NULL;
+   for(ORInt k = 0; k < _nb; k++)   
+      [_solver[k] onExit: onExit];
+}
+-(id<ORSolutionPool>) solutionPool
+{
+   ORInt k = [NSThread threadID];
+   return [_solver[k] solutionPool];
+}
+-(id<ORSolutionPool>) globalSolutionPool
+{
+   return _sPool;
 }
 @end

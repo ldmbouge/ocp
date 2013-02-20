@@ -89,6 +89,7 @@ typedef struct  {
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
 -(ORInt)getId;
+-(NSMutableSet*)constraints;
 -(void)setDelegate:(id<CPIntVarNotifier>)delegate;
 -(void) addVar:(CPIntVarI*)var;
 -(enum CPVarClass)varClass;
@@ -107,9 +108,9 @@ typedef struct  {
 
 @interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
 @package
-   enum CPVarClass                   _vc:16;
-   ORUInt                        _isBool:16;
-   ORUInt                             _name;
+   enum CPVarClass                      _vc;
+   ORUInt                         _isBool:1;
+   ORUInt                          _name:31;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
@@ -126,7 +127,7 @@ typedef struct  {
 -(NSString*) description;
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
--(NSSet*)constraints;
+-(NSMutableSet*)constraints;
 -(CPBitDom*)flatDomain;
 -(CPLiterals*)literals;
 
@@ -214,10 +215,12 @@ typedef struct  {
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(bool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(bool)member:(ORInt)v;
+-(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -239,10 +242,12 @@ typedef struct  {
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(bool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(bool)member:(ORInt)v;
+-(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -262,10 +267,12 @@ typedef struct  {
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(bool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(bool)member:(ORInt)v;
+-(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -286,9 +293,11 @@ typedef struct  {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(bool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
+-(ORInt) domsize;
 -(bool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -418,6 +427,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
 -(void) addVar:(CPIntVarI*) v;
+-(NSMutableSet*)constraints;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

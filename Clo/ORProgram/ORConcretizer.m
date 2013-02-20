@@ -12,7 +12,6 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORModeling/ORModelI.h>
 #import <ORProgram/CPFirstFail.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
@@ -73,7 +72,7 @@
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [[ORBatchModel alloc] init:flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into:batch];
    [batch release];
@@ -81,25 +80,20 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
-   
-   __block id<CPCommonProgram> recv = cpprogram;
-   [cpprogram onSolution:^{
-      id<ORSolution> s = [model solution];
-      [[recv solutionPool] addSolution:s];
-      // NSLog(@"Got a solution: %@",s);
-      [s release];
-   } onExit:^{
-      id<ORSolution> best = [[recv solutionPool] best];
-      [model restore:best];
-      // NSLog(@"onExit called: best(pool) = %p",best);
-      [best release];
-   }];
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram];
+   [model setImpl: cpprogram];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [model captureSolution];
+      [sp addSolution: s];
+      [s release];
+   }
+    ];
    return cpprogram;
 }
 
@@ -127,9 +121,9 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
-   
+   [model setImpl: cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [[ORBatchModel alloc] init: flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into: batch];
    [batch release];
@@ -145,6 +139,17 @@
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
+      id<ORSolutionPool> lp = [cp solutionPool];
+      id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
+      [cp onSolution: ^{
+         id<ORSolution> s = [model captureSolution];
+         [lp addSolution: s];
+         @synchronized(gp) {
+            [gp addSolution: s];
+         }
+         [s release];
+      }
+      ];
    }
    return cpprogram;
 }

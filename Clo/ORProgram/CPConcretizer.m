@@ -173,6 +173,27 @@
       [v setImpl: n];
    }
 }
+-(void) visitGroup:(id<ORGroup>)g
+{
+   if ([g dereference] == NULL) {
+      id<CPGroup> cg = nil;
+      switch([g type]) {
+         case BergeGroup:
+            cg = [CPFactory bergeGroup:_engine];
+            break;
+         default:
+            cg = [CPFactory group:_engine];
+            break;
+      }
+      [_engine add:cg]; // Do this first!!!! We want to have the group posted before posting the constraints of the group.
+      [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+         [ck visit:self];
+         [cg add:[ck dereference]];
+      }];      
+      [g setImpl:cg];
+   }
+}
+
 
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {

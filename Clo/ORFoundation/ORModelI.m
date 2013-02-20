@@ -43,8 +43,67 @@
 {
    [visitor visitConstraint:self];
 }
-
 @end
+
+@implementation ORGroupI {
+   NSMutableArray* _content;
+   id<ORTracker>     _model;
+   ORUInt             _name;
+   enum ORGroupType     _gt;
+}
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
+{
+   self = [super init];
+   _model = model;
+   _content = [[NSMutableArray alloc] initWithCapacity:8];
+   _name = -1;
+   _gt = gt;
+   return self;
+}
+-(void)dealloc
+{
+   [_content release];
+   [super dealloc];
+}
+-(void) setId: (ORUInt) name
+{
+   _name = name;
+}
+-(id<ORConstraint>)add:(id<ORConstraint>)c
+{
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      c = [ORFactory algebraicConstraint:_model expr: (id<ORRelation>)c annotation:Default];
+   [_content addObject:c];
+   return c;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@",[self class],self,_impl];
+   [buf appendString:@"{"];
+   [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [buf appendFormat:@"%@,",[obj description]];
+   }];
+   [buf appendString:@"}"];
+   return buf;
+}
+-(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block
+{
+   [_content enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+      block(obj);
+   }];
+}
+
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitGroup:self];
+}
+-(enum ORGroupType)type
+{
+   return _gt;
+}
+@end
+
 
 @implementation ORFail
 -(ORFail*)init

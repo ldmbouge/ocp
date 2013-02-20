@@ -18,6 +18,8 @@
 @protocol ORBitVar;
 @protocol OREngine;
 @protocol ORObjectiveFunction;
+@protocol ORSolution;
+@protocol ORSolutionPool;
 
 @protocol ORBasicModel
 -(id<ORObjectiveFunction>) objective;
@@ -28,6 +30,17 @@
 @end
 
 @protocol ORConstraint <ORObject>
+@end
+
+enum ORGroupType {
+   DefaultGroup = 0,
+   BergeGroup = 1
+};
+
+@protocol ORGroup <ORObject,ORConstraint>
+-(id<ORConstraint>)add:(id<ORConstraint>)c;
+-(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(enum ORGroupType)type;
 @end
 
 @protocol ORFail <ORConstraint>
@@ -315,9 +328,11 @@
 @end
 
 @protocol ORASolver <NSObject,ORTracker>
--(id<ORObjective>) objective;
--(ORStatus)        close;
--(id<OREngine>)    engine;
+-(id<ORObjective>)    objective;
+-(ORStatus)           close;
+-(id<OREngine>)       engine;
+-(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
+-(id<ORSolutionPool>) globalSolutionPool;    // Solution pool for parallel computing (to use internally)
 @end
 
 // ====== Bit Constraints =====================================

@@ -37,7 +37,7 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
--(float)varOrdering: (id<ORIntVar>) ox
+-(ORFloat)varOrdering: (id<ORIntVar>) ox
 {
    id<CPIntVar> x = (id<CPIntVar>) [ox dereference];
    __block float h = 0.0;
@@ -47,7 +47,7 @@
    }
    return h / [x domsize];
 }
--(float)valOrdering:(int)v forVar:(id<ORIntVar>)x
+-(ORFloat)valOrdering:(int)v forVar:(id<ORIntVar>)x
 {
    return -v;   
 }

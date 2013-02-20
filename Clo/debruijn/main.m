@@ -48,10 +48,10 @@ int main(int argc, const char * argv[])
          [model add:[[binary at:m :j] eq: [binary at:1 :j-1]]];
       for(ORInt i=1;i<=m;i++)
          [model add:[code[i] eq:[binary at:i :1]]];
-      /*
+      
       for(ORInt i=0;i<base;i++)
          [model add:[Sum(model, j, RANGE(model,1,m), [code[j] eqi:i]) eq:gcc[i]]];
-      */
+      
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       __block ORInt nbSol = 0;
@@ -68,9 +68,10 @@ int main(int argc, const char * argv[])
          }
          nbSol++;
       }];
+      ORLong endTime = [ORRuntimeMonitor cputime];
+      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"#sol: %d",nbSol);
       NSLog(@"Stats: %@",cp);
-      ORLong endTime = [ORRuntimeMonitor cputime];
       NSLog(@"Execution Time: %lld \n",endTime - startTime);
       [cp release];
       [ORFactory shutdown];

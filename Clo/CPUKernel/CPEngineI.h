@@ -74,6 +74,8 @@ enum CPEngineState {
 -(id<ORInformer>) propagateFail;
 -(id<ORInformer>) propagateDone;
 -(ORStatus)enforceObjective;
--(id<ORIntVarArray>)intVars;
+//-(id<ORIntVarArray>)intVars;
 -(id<ORBasicModel>)model;
+-(void)incNbPropagation:(ORUInt)add;
+-(void)setLastFailure:(id<CPConstraint>)lastToFail;
 @end
