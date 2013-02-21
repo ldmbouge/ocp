@@ -19,7 +19,6 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
-#import <objcp/CPSolverI.h>
 
 @protocol CPIntVarSubscriber <NSObject>
 

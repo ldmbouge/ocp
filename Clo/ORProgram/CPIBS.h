@@ -11,7 +11,7 @@
 
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPVar.h>

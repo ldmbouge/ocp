@@ -70,7 +70,7 @@ int main(int argc, const char * argvri[])
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
       // id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
-      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:4 with:[ORSemDFSController class]];
       [cp solve: ^{
          [cp forall: V
            suchThat:^bool(ORInt i) { return ![c[i] bound];}

@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORConcretizer.h"
+#import "ORProgramFactory.h"
 
 // CP Solver
 #import <ORProgram/CPFirstFail.h>

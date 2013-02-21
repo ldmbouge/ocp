@@ -14,7 +14,7 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 int main(int argc, const char * argv[])
 {

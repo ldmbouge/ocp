@@ -9,11 +9,8 @@
 
  ***********************************************************************/
 
-#import "CPParallel.h"
-#import "CPSolverI.h"
-#import "CPFactory.h"
-#import "ORSemDFSController.h"
-#import "CPSolverI.h"
+#import <ORProgram/CPParallel.h>
+#import <ORFoundation/ORSemDFSController.h>
 #import "CPProgram.h"
 
 @implementation CPParallelAdapter
