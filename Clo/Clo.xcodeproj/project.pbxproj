@@ -163,8 +163,6 @@
 		5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORProgramFactory.m */; };
 		5B68119F161F99C700F4480F /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* CPSolver.h */; };
 		5B6811A0161F99C700F4480F /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
-		5B6811A1161F99C700F4480F /* ORParCPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */; };
-		5B6811A2161F99C700F4480F /* ORParCPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C4F415161F8BF20010A5C8 /* ORParCPConcretizer.m */; };
 		5B6A960215879F1600019903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
 		5B6A960D15879F2900019903 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -3780,8 +3778,6 @@
 		B1C4F3FF161F87070010A5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1C4F402161F87070010A5C8 /* queensModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensModel-Prefix.pch"; sourceTree = "<group>"; };
 		B1C4F403161F87070010A5C8 /* queensModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensModel.1; sourceTree = "<group>"; };
-		B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORParCPConcretizer.h; sourceTree = "<group>"; };
-		B1C4F415161F8BF20010A5C8 /* ORParCPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORParCPConcretizer.m; sourceTree = "<group>"; };
 		B1C4F445161F9CBA0010A5C8 /* CPProgramI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CPProgramI.m; path = ../ORProgram/CPProgramI.m; sourceTree = "<group>"; };
 		B1C8C5F414BEBE1C000C5486 /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPFactory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1C8C5F514BEBE1C000C5486 /* CPFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPFactory.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -4822,8 +4818,6 @@
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
 				5B8E16C01505BB5700D3C698 /* CPParallel.h */,
 				5B8E16C11505BB5700D3C698 /* CPParallel.m */,
-				B1C4F414161F8BF20010A5C8 /* ORParCPConcretizer.h */,
-				B1C4F415161F8BF20010A5C8 /* ORParCPConcretizer.m */,
 				5BE19F2915826A28008DF214 /* CPDDeg.h */,
 				5B43634015AECE4D00E9458D /* CPDDeg.m */,
 				5BE19F251582654F008DF214 /* CPFirstFail.h */,
@@ -6363,7 +6357,6 @@
 				5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */,
 				5B68119D161F99C700F4480F /* ORProgramFactory.h in Headers */,
 				5B68119F161F99C700F4480F /* CPSolver.h in Headers */,
-				5B6811A1161F99C700F4480F /* ORParCPConcretizer.h in Headers */,
 				5B94406C16319096006528DE /* CPProgram.h in Headers */,
 				5B846926163856B300F4D749 /* CPDDeg.h in Headers */,
 				5B846927163856B300F4D749 /* CPFirstFail.h in Headers */,
@@ -8279,7 +8272,6 @@
 				5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */,
 				5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */,
 				5B6811A0161F99C700F4480F /* CPSolver.m in Sources */,
-				5B6811A2161F99C700F4480F /* ORParCPConcretizer.m in Sources */,
 				5B84692B163856BF00F4D749 /* CPDDeg.m in Sources */,
 				5B84692C163856BF00F4D749 /* CPFirstFail.m in Sources */,
 				5B84692D163856BF00F4D749 /* CPIBS.m in Sources */,
