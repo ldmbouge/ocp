@@ -75,6 +75,8 @@
 -(void)      nestedSolveAll: (ORClosure) body;
 -(void)          onSolution: (ORClosure) onSolution;
 -(void)              onExit: (ORClosure) onExit;
+-(void) doOnSolution;
+-(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
 @end

@@ -220,5 +220,4 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
-
 @end

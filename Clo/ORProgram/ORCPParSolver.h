@@ -16,9 +16,14 @@
 
 @interface CPParSolverI : NSObject<CPProgram> {
    ORInt              _nbWorkers;
+   id<ORSolutionPool> _globalPool;
+   ORClosure          _onSol;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass;
 -(ORInt)nbWorkers;
 -(id<CPProgram>)dereference;
 -(id<ORSolutionPool>)globalSolutionPool;
+-(void)onSolution:(ORClosure)onSolution;
+-(void) doOnSolution;
+-(void) doOnExit;
 @end

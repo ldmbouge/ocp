@@ -23,8 +23,9 @@ NSString* tab(int d);
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
+      ORLong t0 = [ORRuntimeMonitor wctime];
       id<ORModel> model = [ORFactory createModel];
-      int n = 8;//11;
+      int n = 12;
       id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
       id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
@@ -35,6 +36,7 @@ int main (int argc, const char * argv[])
       id<ORInteger> nbSol = [ORFactory integer:model value:0];
 
       NSLog(@"Model: %@",model);
+      //id<CPProgram> cp = [ORFactory createCPProgram:model];
       //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
       //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
       id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
@@ -92,6 +94,8 @@ int main (int argc, const char * argv[])
          }
       }];
       NSLog(@"Quitting #SOL=%d",[nbSol value]);
+      ORLong t1 = [ORRuntimeMonitor wctime];
+      NSLog(@"Solving time: %lld",t1 - t0);
       [cp release];
       [ORFactory shutdown];
    }

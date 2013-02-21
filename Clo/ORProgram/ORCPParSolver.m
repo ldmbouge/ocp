@@ -43,6 +43,8 @@
    _nbDone     = 0;
    for(ORInt i=0;i<_nbWorkers;i++)
       _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
+   _globalPool = [ORFactory createSolutionPool];
+   _onSol = nil;
    return self;
 }
 -(void)dealloc
@@ -51,6 +53,8 @@
    free(_workers);
    [_queue release];
    [_terminated release];
+   [_globalPool release];
+   [_onSol release];
    [super dealloc];
 }
 -(ORInt)nbWorkers
@@ -251,23 +255,30 @@
 {
    [[self dereference] limitFailures: maxFailures in: cl];
 }
--(void) onSolution: (ORClosure) onSol 
+-(void)onSolution:(ORClosure)onSolution
 {
-   for(ORInt k = 0; k < _nbWorkers; k++) 
-    [_workers[k] onSolution: onSol];
+   _onSol = [onSolution copy];
 }
 -(void) onExit: (ORClosure) onExit
 {
    for(ORInt k = 0; k < _nbWorkers; k++) 
     [_workers[k] onExit: onExit];
 }
+-(void) doOnSolution
+{
+   _onSol();
+}
+-(void) doOnExit
+{
+}
+
 -(id<ORSolutionPool>) solutionPool
 {
    return [[self dereference] solutionPool];
 }
 -(id<ORSolutionPool>) globalSolutionPool
 {
-   return nil;
+   return _globalPool;
 }
 
 -(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
@@ -288,20 +299,28 @@
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   id<ORObjective> objective = [me objective];
+   id<ORObjective> objective = [[me objective] dereference];
    if (objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
-                            //[[me engine] saveSolution];
+                            [self doOnSolution];
+                            [me doOnSolution];
                             ORInt myBound = [objective primalBound];
-                            //[_objective tightenPrimalBound:myBound];
+                            for(ORInt w=0;w < _nbWorkers;w++) {
+                               if (w == myID) continue;
+                               id<ORObjective> wwObj = [[_workers[w] objective] dereference];
+                               [wwObj tightenPrimalBound:myBound];
+                            }
                          }
-                             onExit: nil //^ { [[me engine] restoreSolution];}
+                             onExit: nil
                             control: parc];
    } else {
       [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
-                         onSolution:nil
+                         onSolution: ^ {
+                            [self doOnSolution];
+                            [me doOnSolution];
+                         }
                              onExit:nil
                             control:parc];
    }
@@ -312,8 +331,6 @@
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
    [NSThread setThreadID:myID];
-   //[[_workers[myID] explorer] solveModel:_workers[myID] using:mySearch];
-   //[[_workers[myID] explorer] performSelector:todo withObject:_workers[myID] withObject:mySearch];
    [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
       if (myID == 0) {
@@ -364,6 +381,7 @@
    }
    [self waitWorkers]; // wait until all the workers are done.
 }
+
 @end
 
 

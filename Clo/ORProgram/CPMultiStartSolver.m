@@ -366,6 +366,10 @@
    for(ORInt k = 0; k < _nb; k++)   
       [_solver[k] onExit: onExit];
 }
+-(void) doOnSolution
+{}
+-(void) doOnExit
+{}
 -(id<ORSolutionPool>) solutionPool
 {
    ORInt k = [NSThread threadID];
