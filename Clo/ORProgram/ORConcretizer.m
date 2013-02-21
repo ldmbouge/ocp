@@ -170,7 +170,7 @@
    [batch release];
    
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
-   [flatModel visit: concretizer];
+   [model visit: concretizer];
    [concretizer release];
 }
 
@@ -178,6 +178,7 @@
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver];
    [model setImpl: lpprogram];
+   [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
 @end

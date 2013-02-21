@@ -226,7 +226,7 @@
    [c visit:fc];
    [fc release];
 }
-+(void)flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
