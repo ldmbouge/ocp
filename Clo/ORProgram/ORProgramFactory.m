@@ -21,7 +21,6 @@
 #import "ORFlatten.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
-#import "CPPoster.h"
 #import "CPDDeg.h"
 #import "CPWDeg.h"
 #import "CPIBS.h"
