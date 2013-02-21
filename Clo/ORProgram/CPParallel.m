@@ -9,14 +9,12 @@
 
  ***********************************************************************/
 
-#import "CPParallel.h"
-#import "CPSolverI.h"
-#import "CPFactory.h"
-#import "ORSemDFSController.h"
-#import "CPSolverI.h"
+#import <ORProgram/CPParallel.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import "CPProgram.h"
 
 @implementation CPParallelAdapter
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue *)pcq
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue *)pcq
 {
    self = [super init:chain parent:[[solver explorer] controller]];
    _solver = solver;
@@ -43,9 +41,10 @@
 {
    _publishing = YES;
    //NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
-   id<ORCheckpoint> theCP = [_solver captureCheckpoint];
+   id<ORTracer> tracer = [_solver tracer];   
+   id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    ORHeist* stolen = [_controller steal];
-   ORStatus ok = [_solver installCheckpoint:[stolen theCP]];
+   ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine]];
    assert(ok != ORFailure);
    id<ORSearchController> base = [[ORSemDFSController alloc] initTheController:[_solver tracer] engine:[_solver engine]];
    
@@ -58,7 +57,7 @@
                                     }];
    
    [stolen release];
-   ok = [_solver installCheckpoint:theCP];
+   ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine]];
    assert(ok != ORFailure);
    [theCP release];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
@@ -100,11 +99,12 @@
 
 @implementation CPGenerator
 
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue*)pcq
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq
 {
    self = [super initORDefaultController];
    [self setController:chain];
    _solver = solver;
+   _tracer = [solver tracer];
    _pool = [pcq retain];   
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
@@ -152,7 +152,7 @@
       _mx <<= 1;      
    }
    _tab[_sz]   = k;
-   _cpTab[_sz] = [_solver captureCheckpoint];
+   _cpTab[_sz] = [_tracer captureCheckpoint];
    _sz++;
    return [_cpTab[_sz-1] nodeId];
 }
@@ -162,7 +162,7 @@
       long ofs = _sz-1;
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
-         ORStatus ok = [_solver installCheckpoint:cp];
+         ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine]];
          assert(ok != ORFailure);
          [cp release];
          NSCont* k = _tab[ofs];
@@ -217,5 +217,4 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
-
 @end

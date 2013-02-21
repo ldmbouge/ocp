@@ -13,7 +13,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPError.h>
 #include <malloc/malloc.h>
 

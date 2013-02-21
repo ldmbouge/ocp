@@ -19,7 +19,6 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
-#import <objcp/CPSolverI.h>
 
 @protocol CPIntVarSubscriber <NSObject>
 
@@ -445,6 +444,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(void)dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
+-(NSMutableSet*)constraints;
 -(void)addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
 -(id<CPIntVar>)positiveForValue:(ORInt)value;
 -(ORStatus) bindEvt:(id<CPDom>)sender;

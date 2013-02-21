@@ -7,6 +7,7 @@
 //
 
 #import "MD4.h"
+#import <time.h>
 
 @implementation MD4
 +(MD4*) initMD4{
@@ -29,6 +30,7 @@
 {
    self = [super init];
    _m = [ORFactory createModel];
+//   _explorer = [_m ];
    return self;
 }
 
@@ -157,12 +159,18 @@
    
 }
 
--(void) preimage:(NSString*)filename withMask:(uint32*) mask
+-(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask
 {
+   clock_t start;
+   NSMutableString *results = [NSMutableString stringWithString:@""];
+
    id<ORBitVar>* digest;
    id<ORBitVar>* digestVars = malloc(4*sizeof(id<ORBitVar>));
    
    [self getMessage:filename];
+   
+   start = clock();
+   
    [self getMD4Digest:filename];
    //get MD4 Blocks
    _temps = [[NSMutableArray alloc] initWithCapacity:128];
@@ -192,49 +200,63 @@
    
    
    id<CPProgram,CPBV> cp = [ORFactory createCPProgram: _m];
+   id<CPEngine> engine = [cp engine];
+   id<ORExplorer> explorer = [cp explorer];
+   
    [cp solve: ^() {
       @try {
-         fflush(stderr);
-         NSLog(@"Digest Variables:\n");
-         for(int i=0;i<4;i++)
-         {
-            NSLog(@"%@",digest[i]);
-            NSLog(@"%@\n\n",digestVars[i]);
-         }
-         NSLog(@"Message Blocks (Original)");
-         id<ORBitVar>* bitVars;
-         for(int i=0; i<_numBlocks;i++){
-            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-            for(int j=0;j<16;j++)
-               NSLog(@"%@\n",bitVars[j]);
-         }
-         NSLog(@"Message Blocks (With Data Recovered)");
+//         NSLog(@"Digest Variables:\n");
+//         for(int i=0;i<4;i++)
+//         {
+//            NSLog(@"%@",digest[i]);
+//            NSLog(@"%@\n\n",digestVars[i]);
+//         }
+//         NSLog(@"Message Blocks (Original)");
 //         id<ORBitVar>* bitVars;
+//         for(int i=0; i<_numBlocks;i++){
+//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+//            for(int j=0;j<16;j++)
+//               NSLog(@"%@\n",bitVars[j]);
+//         }
+//         NSLog(@"Message Blocks (With Data Recovered)");
+         id<ORBitVar>* bitVars;
+         clock_t searchStart = clock();
          for(int i=0; i<_numBlocks;i++){
             bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
             for(int j=0;j<16;j++){
-               [cp labelUpFromLSB:bitVars[j]];
                NSLog(@"%@\n",bitVars[j]);
             }
+            for(int j=0;j<16;j++){
+               [cp labelUpFromLSB:bitVars[j]];
+//               NSLog(@"%@\n",bitVars[j]);
+            }
          }
-//         NSLog(@"Temporary Variables:\n");
-//         for(int i=0;i<[_temps count];i++)
+         clock_t searchFinish = clock();
+         
+//         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
+//         NSDate *searchStart = [NSDate date];
+//         for(int i=0;i<4;i++)
 //         {
-////            [cp labelUpFromLSB:[_temps objectAtIndex:i]];
-//            NSLog(@"%@",[_temps objectAtIndex:i]);
-//            if((i%3)==2)
-//               NSLog(@"\n\n");
+//            [cp labelUpFromLSB:digest[i]];
 //         }
-         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
-         for(int i=0;i<4;i++)
-         {
-            [cp labelUpFromLSB:digest[i]];
-         }
-         for(int i=0;i<4;i++)
-         {
-            NSLog(@"%@",digest[i]);
-            NSLog(@"%@\n\n",digestVars[i]);
-         }
+//         for(int i=0;i<4;i++)
+//         {
+//            NSLog(@"%@",digest[i]);
+//            NSLog(@"%@\n\n",digestVars[i]);
+//         }
+         double totalTime, searchTime;
+         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+         
+         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
+         [results appendString:str];
+         
+         NSLog(@"Number propagations: %d",[engine nbPropagation]);
+         NSLog(@"     Number choices: %d",[explorer nbChoices]);
+         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
+         NSLog(@"    Search Time (s): %f",searchTime);
+         NSLog(@"     Total Time (s): %f\n\n",totalTime);
+         
       }
       @catch (NSException *exception) {
          
@@ -242,7 +264,7 @@
          
       }
    }];
-
+   return results;
 }
 -(id<ORBitVar>*) stateModel
 {
@@ -273,31 +295,21 @@
       id<ORBitVar> *h2 = [self round2:h1 x:msg];
       id<ORBitVar> *h3 = [self round3:h2 x:msg];
       
-      hVars[0] = h0;
-      hVars[1] = h1;
-      hVars[2] = h2;
-      hVars[3] = h3;
-      
-      uint32 *min = alloca(sizeof(uint32));
-      uint32 *max = alloca(sizeof(uint32));
-
-      *min = 0;
-      *max = 0xFFFFFFFF;
+      uint32 min = 0;
+      uint32 max = 0xFFFFFFFF;
 
       id<ORBitVar> cin;
       id<ORBitVar> cout;
-      h4[0] = [ORFactory bitVar:_m low:min up:max bitLength:32];
-      h4[1] = [ORFactory bitVar:_m low:min up:max bitLength:32];
-      h4[2] = [ORFactory bitVar:_m low:min up:max bitLength:32];
-      h4[3] = [ORFactory bitVar:_m low:min up:max bitLength:32];
+      h4[0] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      h4[1] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      h4[2] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+      h4[3] = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
       
       //forall(i in 0..3) _m.post(h4[i] == h0[i] + h3[i]);
       for (int i=0; i<4; i++)
       {
-//            *max = 0xFFFFFFFE;
-         cin = [ORFactory bitVar:_m low:min up:max bitLength:32];
-//            *max = 0xFFFFFFFF;
-         cout = [ORFactory bitVar:_m low:min up:max bitLength:32];
+         cin = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
+         cout = [ORFactory bitVar:_m low:&min up:&max bitLength:32];
          [_m add:[ORFactory bit:h0[i] plus:h3[i] withCarryIn:cin eq:h4[i] withCarryOut:cout]];
       }
       h0 = h4;
@@ -682,9 +694,9 @@ id<ORBitVar> t1 = [ORFactory bitVar:_m low:min up:max bitLength:32];
 //      maskedLow = data[i];
 //      _data[i] = maskedData;
       _bitVars[i] = [ORFactory bitVar:_m low:&maskedLow up:&maskedUp bitLength:32];
-      NSLog(@"Message:    %x",data[i]);
-      NSLog(@"Masked Up:  %x",maskedUp);
-      NSLog(@"Masked Low: %x\n\n",maskedLow);
+//      NSLog(@"Message:    %x",data[i]);
+//      NSLog(@"Masked Up:  %x",maskedUp);
+//      NSLog(@"Masked Low: %x\n\n",maskedLow);
    }
 }
 

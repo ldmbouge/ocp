@@ -238,6 +238,7 @@
 }
 -(void) addConstraint: (id<ORConstraint>) cstr
 {
+   [_target trackConstraint:cstr];
    [_target add: cstr];
 }
 -(id<ORModel>) model

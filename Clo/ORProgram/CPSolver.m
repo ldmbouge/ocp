@@ -219,35 +219,32 @@
 {
    return _sPool;
 }
+-(void) doOnSolution
+{
+   [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
+      block();
+   }];
+}
+-(void) doOnExit
+{
+   [_doOnExitArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
+      block();
+   }];
+}
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
-   ORInt nbs = (ORInt) [_doOnSolArray count];
-   ORInt nbe = (ORInt) [_doOnExitArray count];
    if (_objective != nil) {
       [_search optimizeModel: self using: search
-                  onSolution: ^{
-                        for(ORInt i = 0; i < nbs; i++)
-                              ((ORClosure) [_doOnSolArray objectAtIndex: i])();
-                  }
-                      onExit: ^{
-                         for(ORInt i = 0; i < nbe; i++)
-                            ((ORClosure) [_doOnExitArray objectAtIndex: i])();
-                      }
-
+                  onSolution: ^{ [self doOnSolution];}
+                      onExit: ^{ [self doOnExit];}
        ];
       printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search
-               onSolution: ^{
-                  for(ORInt i = 0; i < nbs; i++)
-                     ((ORClosure) [_doOnSolArray objectAtIndex: i])();
-               }
-                   onExit: ^{
-                      for(ORInt i = 0; i < nbe; i++)
-                         ((ORClosure) [_doOnExitArray objectAtIndex: i])();
-                   }
+               onSolution: ^{ [self doOnSolution];}
+                   onExit: ^{ [self doOnExit];}
        ];
    }
 }

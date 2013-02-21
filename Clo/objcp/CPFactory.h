@@ -12,7 +12,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPUKernel.h>
-#import <objcp/CPSolver.h>
 #import <objcp/CPData.h>
 #import <objcp/CPVar.h>
 #import <objcp/CPBitVar.h>
