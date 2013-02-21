@@ -74,6 +74,11 @@
 			<key>orderHint</key>
 			<integer>58</integer>
 		</dict>
+		<key>SHA1.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>59</integer>
+		</dict>
 		<key>Silly.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -838,6 +843,11 @@
 			<true/>
 		</dict>
 		<key>B1F531D715AED4B100E89F98</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>F538A1FA16D2BACF0097C9F9</key>
 		<dict>
 			<key>primary</key>
 			<true/>

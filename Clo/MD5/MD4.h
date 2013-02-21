@@ -31,6 +31,9 @@
 @interface MD4 : NSObject{
    @private
    id<ORModel>    _m;
+   id<ORExplorer> _explorer;
+   id<OREngine>   _engine;
+   
    NSFileManager  *_fm;
    NSMutableArray *_digest;
    NSMutableArray *_temps;
@@ -39,6 +42,7 @@
    uint32         *_buffer;
    uint64         _numBlocks;
    NSMutableArray *_messageBlocks;
+
    
 }
 
@@ -62,7 +66,7 @@
 -(id<ORBitVar>) shuffle1:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x;
 -(id<ORBitVar>) shuffle2:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x;
 -(id<ORBitVar>) shuffle3:(id<ORBitVar>)A b:(id<ORBitVar>)B c:(id<ORBitVar>)C d:(id<ORBitVar>) D index:(int)i shiftBy:(int) s x:(id<ORBitVar>[]) x;
--(void) preimage:(NSString*) filename withMask:(uint32*)mask;
+-(NSString*) preimage:(NSString*) filename withMask:(uint32*)mask;
 -(id<ORBitVar>*) stateModel;
 
 
