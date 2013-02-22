@@ -510,9 +510,9 @@
             [tracer pushNode];
             ORInt i = [varSel any];
             if (i != MAXINT) { // we found someone
-               id<CPIntVar> xi = vars[i];
+               id<CPIntVar> xi = (id<CPIntVar>)[vars[i] dereference];
                ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^ORStatus { return [[xi dereference] bind:v];}];
+               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {

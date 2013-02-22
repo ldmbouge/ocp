@@ -12,17 +12,24 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
+#import "ORProgramFactory.h"
+
+// CP Solver
 #import <ORProgram/CPFirstFail.h>
+#import <ORProgram/ORCPParSolver.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
-#import "ORConcretizer.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
-#import "CPPoster.h"
 #import "CPDDeg.h"
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPABS.h"
+
+// LP Solver
+#import "LPProgram.h"
+#import "LPSolver.h"
+#import "LPConcretizer.h"
 
 // PVH to factorize this
 
@@ -92,8 +99,7 @@
       id<ORSolution> s = [model captureSolution];
       [sp addSolution: s];
       [s release];
-   }
-    ];
+   }];
    return cpprogram;
 }
 
@@ -128,14 +134,15 @@
    [flat apply: model into: batch];
    [batch release];
    
-   NSArray* Objects = [flatModel objects];
-   for(id<ORObject> c in Objects) {
+   NSArray* objects = [flatModel objects];
+   for(id<ORObject> c in objects) {
       if ([c impl] == NULL) {
          id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
          [c setImpl: ba];
       }
    }
    for(ORInt i = 0; i < k; i++) {
+      // This "fakes" the thread number so that the main thread does add into the binding array at offset i
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
@@ -152,6 +159,59 @@
       ];
    }
    return cpprogram;
+}
+
++(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
+{
+   CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
+   [model setImpl:cpprogram];
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   [flat apply: model into: batch];
+   [batch release];
+   for(id<ORObject> c in [flatModel objects]) {
+      if ([c impl] == NULL) {
+         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+         [c setImpl: ba];
+      }
+   }
+   id<ORSolutionPool> global = [cpprogram globalSolutionPool];
+   for(ORInt i=0;i< k;i++) {
+      [NSThread setThreadID:i];
+      id<CPProgram> pi = [cpprogram dereference];
+      [pi onSolution:^{
+         [[pi solutionPool] addSolution:[model captureSolution]];
+      }];
+      [ORFactory createCPProgram:flatModel program: pi]; // [ldm] it is already flat. This flattens _again_
+   }
+   [cpprogram onSolution: ^ {
+      id<ORSolution> s = [model captureSolution];
+      @synchronized(global) {
+         [global addSolution:s];
+      }
+   }];
+   return cpprogram;
+}
+
++(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
+{
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   [flat apply: model into:batch];
+   [batch release];
+   
+   id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
+   [flatModel visit: concretizer];
+   [concretizer release];
+}
+
++(id<LPProgram>) createLPProgram: (id<ORModel>) model
+{
+   id<LPProgram> lpprogram = [LPSolverFactory solver];
+   [model setImpl: lpprogram];
+   return lpprogram;
 }
 @end
 

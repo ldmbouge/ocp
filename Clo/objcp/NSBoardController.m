@@ -13,7 +13,6 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPSolverI.h"
 #import "CPWatch.h"
 
 @interface CPGrid : NSObject {

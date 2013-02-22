@@ -30,5 +30,6 @@ plot(nobtf.ih,col=rgb(0,0,1,1/4),add=T)
 plot(nobtf.ah,col=rgb(0,1,0,1/4),add=T)
 
 
-plot(btf.ah,col=rgb(1,0,0,1/4),xlim=c(0,max(nobtf.ah$breaks,btf.ah$breaks)))
+plot(btf.ah,col=rgb(1,0,0,1/4),xlim=c(0,max(nobtf.ah$breaks,btf.ah$breaks)),
+	main="Comparative Histograms (BTF ON/OFF) + ABS")
 plot(nobtf.ah,col=rgb(0,0,1,1/4),add=T)

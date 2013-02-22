@@ -16,7 +16,7 @@
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
 #import <ORProgram/ORProgram.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 int main(int argc, const char * argv[])
 {

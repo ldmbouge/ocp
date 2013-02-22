@@ -38,6 +38,8 @@
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void) onSolution: (ORClosure) onSolution;
 -(void) onExit: (ORClosure) onExit;
+-(void) doOnSolution;
+-(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;

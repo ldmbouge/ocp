@@ -13,7 +13,7 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 enum Heuristic {
    FF = 0,

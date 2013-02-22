@@ -77,5 +77,6 @@
 -(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;
+-(NSString*)description;
 @end
 

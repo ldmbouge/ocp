@@ -315,7 +315,7 @@
 @end
 
 @implementation SemTracer (Packing)
-+(id<ORProblem>)unpackProblem:(NSData*)msg fOREngine:(id<OREngine>)fdm
++(id<ORProblem>)unpackProblem:(NSData*)msg forEngine:(id<OREngine>)fdm
 {
    ORUInt nbProxies = 0;
    id arp  = [[NSAutoreleasePool alloc] init];
@@ -331,7 +331,7 @@
    free(proxies);
    return theProblem;
 }
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<OREngine>) fdm
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg forEngine:(id<OREngine>) fdm
 {
    id arp = [[NSAutoreleasePool alloc] init];
    ORUInt nbProxies = 0;

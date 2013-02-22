@@ -16,17 +16,18 @@
 
 @class SemTracer;
 @class SemCP;
-@protocol CPSemSolver;
+@protocol CPSemanticProgram;
 
 @interface CPGenerator : ORDefaultController<ORSearchController> {
-   id<CPSemSolver>   _solver;
+   id<CPSemanticProgram>   _solver;
+   id<ORTracer>        _tracer;
    PCObjectQueue*      _pool;
    NSCont**             _tab;
    id<ORCheckpoint>*  _cpTab;
    int                   _sz;
    int                   _mx;
 }
--(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue*)pcq;
+-(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(BOOL) isFinitelyFailed;
@@ -35,12 +36,12 @@
 @end
 
 @interface CPParallelAdapter : ORNestedController<ORSearchController> {
-   id<CPSemSolver>      _solver;
-   PCObjectQueue*         _pool;
-   BOOL             _publishing;
-   CPGenerator*            _gen;
+   id<CPSemanticProgram>  _solver;
+   PCObjectQueue*           _pool;
+   BOOL               _publishing;
+   CPGenerator*              _gen;
 }
--(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemSolver>)solver onPool:(PCObjectQueue*)pcq;
+-(id)initCPParallelAdapter:(id<ORSearchController>)chain  explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
 -(void)       succeeds;

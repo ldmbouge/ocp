@@ -1507,6 +1507,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return 0;
 }
+-(NSMutableSet*)constraints
+{
+   assert(FALSE);
+   return nil;
+}
 -(void)setDelegate:(id<CPIntVarNotifier>)delegate
 {}
 -(void) addVar:(CPIntVarI*)var

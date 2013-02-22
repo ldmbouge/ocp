@@ -14,7 +14,6 @@
 #import <CPUKernel/CPEngine.h>
 #import <CPUKernel/CPTrigger.h>
 #import <objcp/CPBitVar.h>
-#import <objcp/CPSolverI.h>
 #import <objcp/CPDom.h>
 
 @class CPBitArrayDom;

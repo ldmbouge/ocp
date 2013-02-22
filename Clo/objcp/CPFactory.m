@@ -14,8 +14,6 @@
 #import "ORUtilities/ORUtilities.h"
 #import "CPFactory.h"
 #import "CPData.h"
-#import "CPSolverI.h"
-#import "CPCreateI.h"
 #import "cont.h"
 #import "CPTableI.h"
 #import "CPEngineI.h"

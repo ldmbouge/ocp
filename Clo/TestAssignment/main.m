@@ -15,7 +15,7 @@
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPFactory.h>
 
 void printCircuit(id<ORIntVarArray> x)

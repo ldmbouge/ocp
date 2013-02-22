@@ -18,6 +18,7 @@
 
 @protocol ORExplorer <NSObject>
 -(void) push: (id<ORSearchController>) c;
+-(id<ORControllerFactory>) controllerFactory;
 
 // Statistics
 -(ORInt)       nbChoices;

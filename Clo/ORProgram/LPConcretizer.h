@@ -12,23 +12,27 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORSolver.h>
+#import <ORProgram/CPSolver.h>
 
-/*
-@interface ORCPPoster  : NSObject<ORVisitor>
--(ORCPPoster*) initORCPPoster: (id<CPCommonProgram>) solver;
+
+@interface ORLPConcretizer  : NSObject<ORVisitor>
+-(ORLPConcretizer*) initORLPConcretizer: (id<LPProgram>) solver;
 -(void) dealloc;
+
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntSet:(id<ORIntSet>)v;
 -(void) visitIntRange:(id<ORIntRange>)v;
+-(void) visitTable:(id<ORTable>) v;
+
 -(void) visitIntVar: (id<ORIntVar>) v;
 -(void) visitFloatVar: (id<ORFloatVar>) v;
--(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitAffineVar:(id<ORIntVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
--(void) visitTable:(id<ORTable>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
+-(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
@@ -36,8 +40,7 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitCircuit:(id<ORCircuit>) cstr;
 -(void) visitNoCycle:(id<ORNoCycle>) cstr;
--(void) visitLexLeq:(id<ORLexLeq>)cstr;
--(void) visitRestrict:(id<ORRestrict>)cstr;
+-(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitAssignment:(id<ORAssignment>)cstr;
@@ -48,10 +51,12 @@
 -(void) visitLEqualc: (id<ORLEqualc>)c;
 -(void) visitGEqualc: (id<ORGEqualc>)c;
 -(void) visitEqual: (id<OREqual>)c;
+-(void) visitAffine: (id<ORAffine>)c;
 -(void) visitNEqual: (id<ORNEqual>)c;
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
@@ -75,7 +80,6 @@
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
 
-//
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -87,58 +91,25 @@
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>) e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
+
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)c;
+-(void) visitBitIf:(id<ORBitIf>)c;
+
 @end
 
-//@interface CPConcretizerI : NSObject<ORSolverConcretizer>
-//-(CPConcretizerI*) initCPConcretizerI: (id<CPSolver>) solver;
-//-(id<ORIntVar>) intVar: (id<ORIntVar>) v;
-//-(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
-//-(id<ORIdArray>) idArray: (id<ORIdArray>) a;
-//-(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
-//-(id<ORConstraint>) cardinality: (id<ORCardinality>) cstr;
-//-(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
-//-(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
-//-(id<ORIntVar>) minimize: (id<ORIntVar>) v;
-//@end
-//
-//@interface CPParConcretizerI : NSObject<ORSolverConcretizer>
-//-(CPConcretizerI*) initCPParConcretizerI: (id<CPSolver>) solver;
-//-(id<ORIntVar>) intVar: (id<ORIntVar>) v;
-//-(id<ORFloatVar>) floatVar: (id<ORFloatVar>) v;
-//-(id<ORIntVar>) affineVar:(id<ORIntVar>) v;
-//-(id<ORIdArray>) idArray: (id<ORIdArray>) a;
-//-(id<ORConstraint>) alldifferent: (id<ORAlldifferent>) cstr;
-//-(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
-//-(id<ORConstraint>) binPacking: (id<ORBinPacking>) cstr;
-//@end
-//
-//
-//@interface ORExprConcretizer : NSObject<ORVisitor>
-//-(ORExprConcretizer*) initORExprConcretizer: (CPConcretizerI*) concretizer;
-//-(id<ORExpr>) result;
-//-(void) visitIntegerI: (id<ORInteger>) e;
-//-(void) visitExprPlusI: (id<ORExpr>) e;
-//-(void) visitExprMinusI: (id<ORExpr>) e;
-//-(void) visitExprMulI: (id<ORExpr>) e;
-//-(void) visitExprModI: (id<ORExpr>) e;
-//-(void) visitExprEqualI: (id<ORExpr>) e;
-//-(void) visitExprNEqualI: (id<ORExpr>) e;
-//-(void) visitExprLEqualI: (id<ORExpr>) e;
-//-(void) visitExprSumI: (id<ORExpr>) e;
-//-(void) visitExprProdI: (id<ORExpr>) e;
-//-(void) visitExprAbsI:(id<ORExpr>) e;
-//-(void) visitExprCstSubI: (id<ORExpr>) e;
-//-(void) visitExprDisjunctI:(id<ORExpr>) e;
-//-(void) visitExprConjunctI: (id<ORExpr>) e;
-//-(void) visitExprImplyI: (id<ORExpr>) e;
-//-(void) visitExprAggOrI: (id<ORExpr>) e;
-//-(void) visitIntVar: (id<ORIntVar>) var;
-//-(void) visitExprVarSubI: (id<ORExpr>) e;
-//@end
- */
+
