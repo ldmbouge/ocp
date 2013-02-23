@@ -111,8 +111,8 @@
 }
 
 -(void) createMD4Block:(ORUInt*)data withCount:(uint64)count andMask:(uint32*)messageMask{
-   uint32 numBits, numBytes;
-   uint32 mask;
+   uint64 numBits, numBytes;
+   uint64 mask;
    ORUInt      paddedData[16];
    MD4Block* newBlock;
    
@@ -131,7 +131,7 @@
       unsigned char *XX = (unsigned char*)paddedData;
       /* Copy X into XX since we need to modify it */
       for (int i=0;i<=numBytes;i++)   XX[i] = X[i];
-      for (int i=numBytes+1;i<64;i++) XX[i] = 0;
+      for (uint64 i=numBytes+1;i<64;i++) XX[i] = 0;
       /* Add padding '1' bit and low-order zeros in last byte */
       mask = 1 << (7 - numBits);
       XX[numBytes] = (XX[numBytes] | mask) & ~( mask - 1);
