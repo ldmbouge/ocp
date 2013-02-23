@@ -808,7 +808,7 @@
 
 
 @implementation ORExprSumI
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
@@ -881,7 +881,7 @@
 @end
 
 @implementation ORExprProdI
--(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
@@ -954,7 +954,7 @@
 @end
 
 @implementation ORExprAggOrI
--(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+-(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
