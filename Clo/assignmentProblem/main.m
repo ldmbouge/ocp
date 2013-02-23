@@ -16,8 +16,8 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPFactory.h>
-#import "../ORModeling/ORLinearize.h"
-#import "../ORModeling/ORFlatten.h"
+#import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORFlatten.h>
 
 int main (int argc, const char * argv[])
 {
@@ -40,12 +40,9 @@ int main (int argc, const char * argv[])
    
     [model add: [ORFactory alldifferent: tasks]];
     [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
-    
+   
     NSLog(@"ORIG: %@",model);
-    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
-    id<ORModel> lin = [ORFactory createModel];
-    ORBatchModel* lm = [[ORBatchModel alloc] init: lin];
-    [linearizer apply: model into: lm];
+    id<ORModel> lin = [ORLinearize linearize:model];
     NSLog(@"FLAT: %@",lin);
    
     id<CPProgram> cp = [ORFactory createCPProgram: lin];
@@ -58,7 +55,7 @@ int main (int argc, const char * argv[])
         NSLog(@"better sol --------> %d",[assignCost value]);
      }];
 
-    for(id<ORIntVar> v in [[lm model] variables])
+    for(id<ORIntVar> v in [lin variables])
         NSLog(@"var(%@): %i-%i", [v description], [[v domain] low], [[v domain] up]);
     NSLog(@"SOL: %@", assignCost);
    [ORFactory shutdown];

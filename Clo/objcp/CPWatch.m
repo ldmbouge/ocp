@@ -91,12 +91,12 @@
                    onValueUnbind:(ORInt2Void)unb
 {
    id<ORConstraint> c = nil;
-   c = [[CPWatch alloc] initCPWatch:x 
+   c = [[CPWatch alloc] initCPWatch:[x dereference]
                         onValueLost:lost 
                         onValueBind:bind
                      onValueRecover:rec
                       onValueUnbind:unb];
-   CPIntVarI* theVar = (CPIntVarI*)x;
+   CPIntVarI* theVar = (CPIntVarI*)[x dereference];
    [[theVar engine] trackObject:c];
    return c;
 }

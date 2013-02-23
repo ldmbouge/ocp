@@ -998,10 +998,14 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 #endif
    unsigned int wordLength = [_x getWordLength];
    
-   TRUInt* xLow = [_x getLow];
-   TRUInt* xUp = [_x getUp];
-   TRUInt* yLow = [_y getLow];
-   TRUInt* yUp = [_y getUp];
+   TRUInt* xLow;
+   TRUInt* xUp;
+   TRUInt* yLow;
+   TRUInt* yUp;
+   
+   [_x getUp:&xUp andLow:&xLow];
+   [_y getUp:&yUp andLow:&yLow];
+
    
    unsigned int* newXUp = alloca((sizeof(unsigned int))*wordLength);
    unsigned int* newXLow  = alloca((sizeof(unsigned int))*wordLength);

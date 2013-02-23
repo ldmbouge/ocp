@@ -9,8 +9,25 @@
 #import <Foundation/Foundation.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORModeling.h>
-
 #import <objmp/LPSolverI.h>
+
+// ************************
+// Pascal, read this!
+// [ldm] I cleaned up the inclusions in objmp and
+// of course, the main1 below that refers to gurobi directly
+// can't compile. So the include below is meant to be temporary
+// to get by while "testing". Nonetheless, the link produces tons of
+// warning for doubly defined classes. This is bound to be bad.
+// So.....
+// 1. I removed LPGurobi.m and LPSolverI.m from the target list of testMIP
+// 2. I *temporarily* made LPGurobi.h into a *PUBLIC* header in objmp
+// 3. The other includes are all fixed to be correct w.r.t. objmp
+// 4. I temporarily include LPGurobi directly to give access to the _direct_ gurobi header.
+//    The line below should be removed once this is all tested.
+// 5. Finally, I relocated the source files for objmp which were located in the testMIP directory. 
+
+#import <objmp/LPGurobi.h>
+
 
 static int nbRows = 7;
 static int nbColumns = 12;
@@ -77,17 +94,6 @@ int maini(int argc, const char * argv[])
    }
    return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 int printSolution(GRBmodel* model, int nCategories, int nFoods);

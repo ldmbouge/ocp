@@ -108,23 +108,23 @@
 {
   [[self dereference] addHeuristic:h];
 }
--(id<ORForall>) forall: (id<ORIntIterator>) S
+-(id<ORForall>) forall: (id<ORIntIterable>) S
 {
   return [[self dereference] forall:S];
 }
--(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
   [[self dereference] forall:S orderedBy:order do:body];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
   [[self dereference] forall:S suchThat:filter orderedBy:order do:body];
 }
--(void) forall: (id<ORIntIterator>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
   [[self dereference] forall:S orderedBy:o1 and:o2 do:b];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
   [[self dereference] forall:S suchThat:suchThat orderedBy:o1 and:o2  do:b];
 }
@@ -132,11 +132,11 @@
 {
    [[[self dereference] explorer] try: left or: right];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }

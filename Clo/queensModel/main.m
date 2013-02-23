@@ -17,8 +17,6 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
 
-#import <objcp/CPSolver.h>
-
 
 // PVH Need to release the CPProgram
 

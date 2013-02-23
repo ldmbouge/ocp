@@ -10,8 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import "LPType.h"
-#import "LPGurobi.h"
+#import <objmp/LPType.h>
+
+@class LPGurobiSolver;
 
 @interface LPVariableI : NSObject 
 {

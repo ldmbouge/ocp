@@ -21,7 +21,7 @@
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 13;
+      int n = 12;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl, 0, n-1);
       long startTime = [ORRuntimeMonitor cputime];
