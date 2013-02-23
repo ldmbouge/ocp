@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import "LPType.h"
 #import "LPGurobi.h"
-#import "LPSolverI.h"
+#import <objmp/LPType.h>
+#import <objmp/LPSolverI.h>
 
 @implementation LPGurobiSolver;
 

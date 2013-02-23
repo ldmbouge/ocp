@@ -9,9 +9,8 @@
  
  ***********************************************************************/
 
-#import "LPType.h"
-#import "LPGurobi.h"
 #import "LPSolverI.h"
+#import "LPGurobi.h"
 
 @implementation LPConstraintI;
 

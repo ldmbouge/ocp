@@ -68,6 +68,7 @@
 		5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B1B494116D9025300F96CDA /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */; };
 		5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
@@ -663,15 +664,12 @@
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B15441F016D17713001BD7B3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B15441EF16D17713001BD7B3 /* main.m */; };
 		B15441F416D17713001BD7B3 /* testMIP.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B15441F316D17713001BD7B3 /* testMIP.1 */; };
-		B15441FF16D17AF0001BD7B3 /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */; };
-		B154420216D189F1001BD7B3 /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420116D189F1001BD7B3 /* LPSolverI.m */; };
 		B154420316D18B46001BD7B3 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B154420616D18DEF001BD7B3 /* LPGurobi.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420516D18DEF001BD7B3 /* LPGurobi.m */; };
 		B154428116D19D8F001BD7B3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B154428716D19D8F001BD7B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B154428516D19D8F001BD7B3 /* InfoPlist.strings */; };
 		B154429316D19E04001BD7B3 /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420116D189F1001BD7B3 /* LPSolverI.m */; };
 		B154429416D19E3A001BD7B3 /* LPGurobi.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420516D18DEF001BD7B3 /* LPGurobi.m */; };
-		B154429516D19E4D001BD7B3 /* LPGurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420416D18DEF001BD7B3 /* LPGurobi.h */; settings = {ATTRIBUTES = (); }; };
+		B154429516D19E4D001BD7B3 /* LPGurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420416D18DEF001BD7B3 /* LPGurobi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429616D19E6D001BD7B3 /* LPType.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420716D19025001BD7B3 /* LPType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429716D19E92001BD7B3 /* LPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420016D189F1001BD7B3 /* LPSolverI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -3656,11 +3654,11 @@
 		B15441F316D17713001BD7B3 /* testMIP.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testMIP.1; sourceTree = "<group>"; };
 		B15441FC16D17A75001BD7B3 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Users/ldm/work/platform/Clo/../../../../../../Library/gurobi500/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi502/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
-		B154420016D189F1001BD7B3 /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPSolverI.h; path = ../testMIP/LPSolverI.h; sourceTree = "<group>"; };
-		B154420116D189F1001BD7B3 /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPSolverI.m; path = ../testMIP/LPSolverI.m; sourceTree = "<group>"; };
-		B154420416D18DEF001BD7B3 /* LPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPGurobi.h; path = ../testMIP/LPGurobi.h; sourceTree = "<group>"; };
-		B154420516D18DEF001BD7B3 /* LPGurobi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPGurobi.m; path = ../testMIP/LPGurobi.m; sourceTree = "<group>"; };
-		B154420716D19025001BD7B3 /* LPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPType.h; path = ../testMIP/LPType.h; sourceTree = "<group>"; };
+		B154420016D189F1001BD7B3 /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolverI.h; sourceTree = "<group>"; };
+		B154420116D189F1001BD7B3 /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolverI.m; sourceTree = "<group>"; };
+		B154420416D18DEF001BD7B3 /* LPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGurobi.h; sourceTree = "<group>"; };
+		B154420516D18DEF001BD7B3 /* LPGurobi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGurobi.m; sourceTree = "<group>"; };
+		B154420716D19025001BD7B3 /* LPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPType.h; sourceTree = "<group>"; };
 		B154428016D19D8E001BD7B3 /* objmp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = objmp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B154428416D19D8F001BD7B3 /* objmp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objmp-Info.plist"; sourceTree = "<group>"; };
 		B154428616D19D8F001BD7B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -4391,8 +4389,8 @@
 				B15442BE16D1AA41001BD7B3 /* ORUtilities.framework in Frameworks */,
 				B15442BD16D1AA3B001BD7B3 /* objmp.framework in Frameworks */,
 				B154420316D18B46001BD7B3 /* ORFoundation.framework in Frameworks */,
-				B15441FF16D17AF0001BD7B3 /* libgurobi.so.5.0.0 in Frameworks */,
 				B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */,
+				5B1B494116D9025300F96CDA /* libgurobi.so.5.0.0 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8706,8 +8704,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15441F016D17713001BD7B3 /* main.m in Sources */,
-				B154420216D189F1001BD7B3 /* LPSolverI.m in Sources */,
-				B154420616D18DEF001BD7B3 /* LPGurobi.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11720,6 +11716,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi502/mac64/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11742,6 +11739,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi502/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -11775,6 +11773,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -11802,6 +11801,7 @@
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
