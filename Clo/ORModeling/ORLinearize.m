@@ -31,6 +31,15 @@
     return self;
 }
 
++(id<ORModel>)linearize:(id<ORModel>)model
+{
+   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
+   id<ORModel> lin = [ORFactory createModel];
+   ORBatchModel* lm = [[ORBatchModel alloc] init: lin];
+   [linearizer apply: model into: lm];
+   return lin;
+}
+
 -(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)batch
 {
     [m applyOnVar:^(id<ORVar> x) {

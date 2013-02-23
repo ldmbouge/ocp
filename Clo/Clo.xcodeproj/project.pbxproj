@@ -25,7 +25,7 @@
 
 /* Begin PBXBuildFile section */
 		3737A3A9166B0867002D3A57 /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737A3A8166B0867002D3A57 /* ORModelTransformation.m */; };
-		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; };
+		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		5B137ADA1666B1D0008C7049 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B137ADB1666B1D0008C7049 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };

@@ -14,7 +14,6 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
-#import <objcp/CPSolver.h>
 #import <objcp/CPConstraint.h>
 
 NSString* tab(int d);
