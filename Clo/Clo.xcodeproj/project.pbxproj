@@ -68,6 +68,7 @@
 		5B196C7916446F4800C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C7A16446F4800C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C7B16446F4800C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B1B494116D9025300F96CDA /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */; };
 		5B2000E6156D585E00D80105 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B2000E7156D585E00D80105 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B2000E9156D585E00D80105 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
@@ -559,6 +560,8 @@
 		5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF0E150C34DE00B82836 /* ORFactoryI.h */; };
 		5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDE360316D905BE0030559D /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
 		5BDF5FA6161F4F9900E5E1FA /* ORVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */; };
 		5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */; };
 		5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -663,15 +666,12 @@
 		B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B15441F016D17713001BD7B3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B15441EF16D17713001BD7B3 /* main.m */; };
 		B15441F416D17713001BD7B3 /* testMIP.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B15441F316D17713001BD7B3 /* testMIP.1 */; };
-		B15441FF16D17AF0001BD7B3 /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */; };
-		B154420216D189F1001BD7B3 /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420116D189F1001BD7B3 /* LPSolverI.m */; };
 		B154420316D18B46001BD7B3 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B154420616D18DEF001BD7B3 /* LPGurobi.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420516D18DEF001BD7B3 /* LPGurobi.m */; };
 		B154428116D19D8F001BD7B3 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B154428716D19D8F001BD7B3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B154428516D19D8F001BD7B3 /* InfoPlist.strings */; };
 		B154429316D19E04001BD7B3 /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420116D189F1001BD7B3 /* LPSolverI.m */; };
 		B154429416D19E3A001BD7B3 /* LPGurobi.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420516D18DEF001BD7B3 /* LPGurobi.m */; };
-		B154429516D19E4D001BD7B3 /* LPGurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420416D18DEF001BD7B3 /* LPGurobi.h */; settings = {ATTRIBUTES = (); }; };
+		B154429516D19E4D001BD7B3 /* LPGurobi.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420416D18DEF001BD7B3 /* LPGurobi.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429616D19E6D001BD7B3 /* LPType.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420716D19025001BD7B3 /* LPType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429716D19E92001BD7B3 /* LPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420016D189F1001BD7B3 /* LPSolverI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -844,8 +844,6 @@
 		F548AA7A167FB1C700726814 /* MD5.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F548AA79167FB1C700726814 /* MD5.1 */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
-		F5892AFD16D807DE00A824B0 /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F5892AFE16D807DE00A824B0 /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3541,6 +3539,8 @@
 		5BCCC40A1417F8CE0079E833 /* queensACSem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensACSem-Prefix.pch"; sourceTree = "<group>"; };
 		5BCCC40B1417F8CE0079E833 /* queensACSem.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensACSem.1; sourceTree = "<group>"; };
 		5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSolution.h; sourceTree = "<group>"; };
+		5BDE360316D905BE0030559D /* ORMallocWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMallocWatch.h; sourceTree = "<group>"; };
+		5BDE360416D905BE0030559D /* ORMallocWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMallocWatch.m; sourceTree = "<group>"; };
 		5BDF5FA4161F4F9900E5E1FA /* ORVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVarI.h; sourceTree = "<group>"; };
 		5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVarI.m; sourceTree = "<group>"; };
 		5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
@@ -3642,11 +3642,11 @@
 		B15441F316D17713001BD7B3 /* testMIP.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testMIP.1; sourceTree = "<group>"; };
 		B15441FC16D17A75001BD7B3 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Users/ldm/work/platform/Clo/../../../../../../Library/gurobi500/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi502/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
-		B154420016D189F1001BD7B3 /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPSolverI.h; path = ../testMIP/LPSolverI.h; sourceTree = "<group>"; };
-		B154420116D189F1001BD7B3 /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPSolverI.m; path = ../testMIP/LPSolverI.m; sourceTree = "<group>"; };
-		B154420416D18DEF001BD7B3 /* LPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPGurobi.h; path = ../testMIP/LPGurobi.h; sourceTree = "<group>"; };
-		B154420516D18DEF001BD7B3 /* LPGurobi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = LPGurobi.m; path = ../testMIP/LPGurobi.m; sourceTree = "<group>"; };
-		B154420716D19025001BD7B3 /* LPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LPType.h; path = ../testMIP/LPType.h; sourceTree = "<group>"; };
+		B154420016D189F1001BD7B3 /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolverI.h; sourceTree = "<group>"; };
+		B154420116D189F1001BD7B3 /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolverI.m; sourceTree = "<group>"; };
+		B154420416D18DEF001BD7B3 /* LPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPGurobi.h; sourceTree = "<group>"; };
+		B154420516D18DEF001BD7B3 /* LPGurobi.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPGurobi.m; sourceTree = "<group>"; };
+		B154420716D19025001BD7B3 /* LPType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPType.h; sourceTree = "<group>"; };
 		B154428016D19D8E001BD7B3 /* objmp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = objmp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B154428416D19D8F001BD7B3 /* objmp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objmp-Info.plist"; sourceTree = "<group>"; };
 		B154428616D19D8F001BD7B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -3667,7 +3667,7 @@
 		B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LPMatrixSolver.h; path = ../mpwrapper/LPMatrixSolver.h; sourceTree = "<group>"; };
 		B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MPMatrixSolverFactory.h; path = ../mpwrapperfactory/MPMatrixSolverFactory.h; sourceTree = "<group>"; };
 		B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MPMatrixSolverFactory.m; path = ../mpwrapperfactory/MPMatrixSolverFactory.m; sourceTree = "<group>"; };
-		B1571F0713EEC144007B5E88 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi502/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
+		B1571F0713EEC144007B5E88 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi461/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B1583D3113A4CF7D0002FBD8 /* CPExprI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPExprI.m; sourceTree = "<group>"; };
 		B1595B3E13C11F2A001FCB61 /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1595B4213C11F2A001FCB61 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -3809,8 +3809,6 @@
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
-		F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMallocWatch.h; sourceTree = "<group>"; };
-		F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMallocWatch.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4371,8 +4369,8 @@
 				B15442BE16D1AA41001BD7B3 /* ORUtilities.framework in Frameworks */,
 				B15442BD16D1AA3B001BD7B3 /* objmp.framework in Frameworks */,
 				B154420316D18B46001BD7B3 /* ORFoundation.framework in Frameworks */,
-				B15441FF16D17AF0001BD7B3 /* libgurobi.so.5.0.0 in Frameworks */,
 				B15441ED16D17713001BD7B3 /* Foundation.framework in Frameworks */,
+				5B1B494116D9025300F96CDA /* libgurobi.so.5.0.0 in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4744,8 +4742,8 @@
 		5B60E5D815AE907E002FF2B3 /* ORUtilities */ = {
 			isa = PBXGroup;
 			children = (
-				F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */,
-				F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */,
+				5BDE360316D905BE0030559D /* ORMallocWatch.h */,
+				5BDE360416D905BE0030559D /* ORMallocWatch.m */,
 				B149BF5B151E759600FC5887 /* ORCrFactory.h */,
 				B149BF5C151E759600FC5887 /* ORCrFactory.m */,
 				5BE64312139D49610056F448 /* ORTypes.h */,
@@ -6295,7 +6293,7 @@
 				5B60E5EC15AE9136002FF2B3 /* ORConcurrencyI.h in Headers */,
 				5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */,
 				5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */,
-				F5892AFD16D807DE00A824B0 /* ORMallocWatch.h in Headers */,
+				5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8192,7 +8190,7 @@
 				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
 				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
-				F5892AFE16D807DE00A824B0 /* ORMallocWatch.m in Sources */,
+				5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8638,8 +8636,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15441F016D17713001BD7B3 /* main.m in Sources */,
-				B154420216D189F1001BD7B3 /* LPSolverI.m in Sources */,
-				B154420616D18DEF001BD7B3 /* LPGurobi.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10596,7 +10592,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DUSEVIEWS=1";
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 			};
 			name = Debug;
 		};
@@ -10624,7 +10619,6 @@
 					"-fno-stack-protector",
 				);
 				SDKROOT = macosx;
-				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 			};
 			name = Release;
 		};
@@ -11645,6 +11639,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi502/mac64/lib\"",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -11667,6 +11662,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
+					"\"$(LOCAL_LIBRARY_DIR)/gurobi502/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -11700,6 +11696,7 @@
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -11727,6 +11724,7 @@
 					"\"$(LOCAL_LIBRARY_DIR)/gurobi500/mac64/lib\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -12228,7 +12226,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Library/gurobi500/mac64/lib;
 			};
 			name = Debug;
 		};
