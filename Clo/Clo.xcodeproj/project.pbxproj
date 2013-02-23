@@ -168,6 +168,11 @@
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
 		5B6A960D15879F2900019903 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */; };
+		5B6CFD7616D91CD600BCB95F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B6CFD7716D91CD600BCB95F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B6CFD7816D91CD600BCB95F /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B6CFD7916D91CD600BCB95F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B6CFD8716D9200800BCB95F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */; };
 		5B6E89251379D3E9005DB4CA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89241379D3E9005DB4CA /* CoreData.framework */; };
 		5B6E89271379D3E9005DB4CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6E892A1379D3EA005DB4CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6E89291379D3EA005DB4CA /* main.m */; };
@@ -1401,6 +1406,48 @@
 			remoteInfo = ORFoundation;
 		};
 		5B681193161F991100F4480F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5B6CFD7A16D91CE100BCB95F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B6CFD7C16D91CE100BCB95F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B6CFD7E16D91CE100BCB95F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B6CFD8016D91CE100BCB95F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B6CFD8216D91CE100BCB95F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B6CFD8416D91CE100BCB95F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -3327,6 +3374,7 @@
 		5B6A960815879F1600019903 /* knapsack.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = knapsack.1; sourceTree = "<group>"; };
 		5B6CFD7316D90F2200BCB95F /* rbg049a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg049a.tw; sourceTree = "<group>"; };
 		5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
+		5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5B6E89201379D3E9005DB4CA /* Clo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clo; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6E89241379D3E9005DB4CA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5B6E89261379D3E9005DB4CA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -3789,7 +3837,7 @@
 		B1CC832815D3BEC4008DE335 /* model.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = model.1; sourceTree = "<group>"; };
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = OREngine.h; path = ORFoundation/OREngine.h; sourceTree = "<group>"; };
+		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OREngine.h; sourceTree = "<group>"; };
 		B1F3804415F035C0007C6A4A /* objlp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = objlp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1F3804815F035C0007C6A4A /* objlp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "objlp-Info.plist"; sourceTree = "<group>"; };
 		B1F3804A15F035C0007C6A4A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -4139,6 +4187,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B6CFD7616D91CD600BCB95F /* CPUKernel.framework in Frameworks */,
+				5B6CFD7716D91CD600BCB95F /* ORModeling.framework in Frameworks */,
+				5B6CFD7816D91CD600BCB95F /* ORProgram.framework in Frameworks */,
+				5B6CFD7916D91CD600BCB95F /* ORUtilities.framework in Frameworks */,
 				5B920ECE15A432ED00AD0820 /* ORFoundation.framework in Frameworks */,
 				5BBA3FA0151CCB1F00D6F6AD /* objcp.framework in Frameworks */,
 				5BBA3F8A151CCB0C00D6F6AD /* Cocoa.framework in Frameworks */,
@@ -4839,12 +4891,12 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */,
 				B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */,
 				B15441FC16D17A75001BD7B3 /* gurobi_c.h */,
 				B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */,
 				5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */,
 				5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */,
-				B1EADBD215CDC0590032A6C7 /* OREngine.h */,
 				B1571F0713EEC144007B5E88 /* gurobi_c.h */,
 				B111FBF913CF3C81003C5119 /* Foundation.framework */,
 				5B9ABCEF1391329D000997E5 /* objcp.framework */,
@@ -5731,6 +5783,7 @@
 		5BFD594515A3ACA500825BC3 /* ORFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				B1EADBD215CDC0590032A6C7 /* OREngine.h */,
 				5B920EA915A3DDA600AD0820 /* ORExpr.h */,
 				5B920EAD15A3F5B000AD0820 /* ORExprI.h */,
 				5B920EAE15A3F5B000AD0820 /* ORExprI.m */,
@@ -7095,6 +7148,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				5B6CFD7B16D91CE100BCB95F /* PBXTargetDependency */,
+				5B6CFD7D16D91CE100BCB95F /* PBXTargetDependency */,
+				5B6CFD7F16D91CE100BCB95F /* PBXTargetDependency */,
+				5B6CFD8116D91CE100BCB95F /* PBXTargetDependency */,
+				5B6CFD8316D91CE100BCB95F /* PBXTargetDependency */,
+				5B6CFD8516D91CE100BCB95F /* PBXTargetDependency */,
 			);
 			name = queensGui;
 			productName = queensGui;
@@ -8081,6 +8140,7 @@
 				5B8C7E2F15867D90007042CA /* first@2x.png in Resources */,
 				5B8C7E3215867D90007042CA /* second.png in Resources */,
 				5B8C7E3315867D90007042CA /* second@2x.png in Resources */,
+				5B6CFD8716D9200800BCB95F /* Default-568h@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9211,6 +9271,36 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B681193161F991100F4480F /* PBXContainerItemProxy */;
+		};
+		5B6CFD7B16D91CE100BCB95F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B6CFD7A16D91CE100BCB95F /* PBXContainerItemProxy */;
+		};
+		5B6CFD7D16D91CE100BCB95F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B6CFD7C16D91CE100BCB95F /* PBXContainerItemProxy */;
+		};
+		5B6CFD7F16D91CE100BCB95F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B6CFD7E16D91CE100BCB95F /* PBXContainerItemProxy */;
+		};
+		5B6CFD8116D91CE100BCB95F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B6CFD8016D91CE100BCB95F /* PBXContainerItemProxy */;
+		};
+		5B6CFD8316D91CE100BCB95F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B6CFD8216D91CE100BCB95F /* PBXContainerItemProxy */;
+		};
+		5B6CFD8516D91CE100BCB95F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B6CFD8416D91CE100BCB95F /* PBXContainerItemProxy */;
 		};
 		5B76D99C15AAADC500F8B445 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

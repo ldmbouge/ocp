@@ -14,7 +14,7 @@
 #import "ORObject.h"
 
 @protocol ORIntIterator <ORObject>
--(void) iterate: (ORInt2Void) f;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(ORInt) size;
 -(id<IntEnumerator>) enumerator;
 @end
@@ -35,5 +35,5 @@
 -(bool) isDefined;
 -(bool) inRange: (ORInt)e;
 -(NSString*) description;
--(void)enumerateWithBlock:(void(^)(ORInt))block;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 @end

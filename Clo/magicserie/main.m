@@ -65,7 +65,7 @@ int main (int argc, const char * argv[])
    id<CPSolver> cp = [CPFactory createSolver];
    id<ORIntRange> R = RANGE(cp,0,n-1);
    id<ORIntSet> RS = [ORFactory intSet: cp];
-   [R iterate: ^(ORInt e) { [RS insert: e]; } ];
+   [R enumerateWithBlock: ^(ORInt e) { [RS insert: e]; } ];
    NSLog(@"%@",RS);
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
    [cp solve: ^{
