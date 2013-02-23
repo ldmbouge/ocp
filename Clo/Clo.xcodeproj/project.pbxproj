@@ -844,6 +844,8 @@
 		F548AA7A167FB1C700726814 /* MD5.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = F548AA79167FB1C700726814 /* MD5.1 */; };
 		F548AAB21680B3A500726814 /* MD4.m in Sources */ = {isa = PBXBuildFile; fileRef = F548AAB11680B3A500726814 /* MD4.m */; };
 		F55DEFB716C9F33E005818AF /* MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DEFB616C9F33E005818AF /* MD5.m */; };
+		F5892AFD16D807DE00A824B0 /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F5892AFE16D807DE00A824B0 /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -3665,7 +3667,7 @@
 		B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LPMatrixSolver.h; path = ../mpwrapper/LPMatrixSolver.h; sourceTree = "<group>"; };
 		B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MPMatrixSolverFactory.h; path = ../mpwrapperfactory/MPMatrixSolverFactory.h; sourceTree = "<group>"; };
 		B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MPMatrixSolverFactory.m; path = ../mpwrapperfactory/MPMatrixSolverFactory.m; sourceTree = "<group>"; };
-		B1571F0713EEC144007B5E88 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi461/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
+		B1571F0713EEC144007B5E88 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi502/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B1583D3113A4CF7D0002FBD8 /* CPExprI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPExprI.m; sourceTree = "<group>"; };
 		B1595B3E13C11F2A001FCB61 /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1595B4213C11F2A001FCB61 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -3807,6 +3809,8 @@
 		F548AAB11680B3A500726814 /* MD4.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD4.m; sourceTree = "<group>"; };
 		F55DEFB516C9F33E005818AF /* MD5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MD5.h; sourceTree = "<group>"; };
 		F55DEFB616C9F33E005818AF /* MD5.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MD5.m; sourceTree = "<group>"; };
+		F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMallocWatch.h; sourceTree = "<group>"; };
+		F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMallocWatch.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -4740,8 +4744,8 @@
 		5B60E5D815AE907E002FF2B3 /* ORUtilities */ = {
 			isa = PBXGroup;
 			children = (
-				5B49CAA216CEE2FF00D9125E /* ORMallocWatch.h */,
-				5B49CAA316CEE2FF00D9125E /* ORMallocWatch.m */,
+				F5892AFB16D807DE00A824B0 /* ORMallocWatch.h */,
+				F5892AFC16D807DE00A824B0 /* ORMallocWatch.m */,
 				B149BF5B151E759600FC5887 /* ORCrFactory.h */,
 				B149BF5C151E759600FC5887 /* ORCrFactory.m */,
 				5BE64312139D49610056F448 /* ORTypes.h */,
@@ -4863,7 +4867,6 @@
 				F548AA74167FB1C600726814 /* MD5 */,
 				B154428216D19D8F001BD7B3 /* objmp */,
 				B15442A116D1A247001BD7B3 /* GraveYard */,
-				F538A1FD16D2BACF0097C9F9 /* SHA1 */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -6292,6 +6295,7 @@
 				5B60E5EC15AE9136002FF2B3 /* ORConcurrencyI.h in Headers */,
 				5B60E5EF15AE958A002FF2B3 /* ORCrFactory.h in Headers */,
 				5BAEE08915AE99C8006CEE1E /* ORUtilities.h in Headers */,
+				F5892AFD16D807DE00A824B0 /* ORMallocWatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8188,7 +8192,7 @@
 				5B60E5E115AE907F002FF2B3 /* ORUtilities.m in Sources */,
 				5B60E5ED15AE913F002FF2B3 /* ORConcurrencyI.m in Sources */,
 				5B60E5F015AE958A002FF2B3 /* ORCrFactory.m in Sources */,
-				5B49CAA516CEE2FF00D9125E /* ORMallocWatch.m in Sources */,
+				F5892AFE16D807DE00A824B0 /* ORMallocWatch.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10592,6 +10596,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = "-DUSEVIEWS=1";
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 			};
 			name = Debug;
 		};
@@ -10619,6 +10624,7 @@
 					"-fno-stack-protector",
 				);
 				SDKROOT = macosx;
+				USER_HEADER_SEARCH_PATHS = /Library/gurobi500/mac64/include;
 			};
 			name = Release;
 		};
@@ -12222,6 +12228,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				"USER_HEADER_SEARCH_PATHS[arch=*]" = /Library/gurobi500/mac64/lib;
 			};
 			name = Debug;
 		};
@@ -12836,15 +12843,6 @@
 			buildConfigurations = (
 				B1F531E315AED4B100E89F98 /* Debug */,
 				B1F531E415AED4B100E89F98 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F538A20616D2BAD00097C9F9 /* Build configuration list for PBXNativeTarget "SHA1" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F538A20416D2BAD00097C9F9 /* Debug */,
-				F538A20516D2BAD00097C9F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
