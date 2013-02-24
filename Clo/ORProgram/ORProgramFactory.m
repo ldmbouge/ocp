@@ -17,6 +17,7 @@
 // CP Solver
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
 #import "CPSolver.h"

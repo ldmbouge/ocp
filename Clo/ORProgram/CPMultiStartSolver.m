@@ -12,10 +12,9 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
-#import "CPProgram.h"
-#import "CPSolver.h"
 
 
 /******************************************************************************************/
@@ -62,46 +61,42 @@
    else
       return 0;
 }
+-(CPSolver*)dereference
+{
+   return _solver[[NSThread threadID]];
+}
 -(id<CPPortal>) portal
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] portal];
+   return [[self dereference] portal];
 }
-
 -(ORInt) nbFailures
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nbFailures];
+   return [[self dereference] nbFailures];
 }
--(id<CPEngine>) engine
+-(id<OREngine>) engine
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] engine];
+   return [[self dereference] engine];
 }
 -(id<ORExplorer>) explorer
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] explorer];
+   return [[self dereference] explorer];
 }
 -(id<ORObjectiveFunction>) objective
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] objective];
+   return [[self dereference] objective];
 }
 -(id<ORTracer>) tracer
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] tracer];
+   return [[self dereference] tracer];
 }
 -(void) close
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] close];
+   CPSolver* solver = [self dereference];
+   [solver close];
 }
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
-   for(ORInt i=0;i < _nb;i++)
-      [_solver[i] addHeuristic:[h copyWithZone:nil]];
+   assert(NO);
 }
 -(void) waitWorkers
 {
@@ -139,7 +134,6 @@
       [_terminated signal];
    [_terminated unlock];
 }
-
 -(void) solve: (ORClosure) search
 {
    _nbDone = 0;
@@ -164,31 +158,26 @@
 }
 -(id<ORForall>) forall: (id<ORIntIterable>) S
 {
-   ORInt k = [NSThread threadID];
-   return [ORControl forall: _solver[k] set: S];
+   return [ORControl forall: [self dereference] set: S];
 }
 -(void) forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] forall: S orderedBy: order do: body];
+   return [[self dereference] forall: S orderedBy: order do: body];
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] forall: S suchThat: filter orderedBy: order do: body];
+   return [[self dereference] forall: S suchThat: filter orderedBy: order do: body];
 }
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-   ORInt k = [NSThread threadID];
-   id<ORForall> forall = [ORControl forall: _solver[k] set: S];
+   id<ORForall> forall = [ORControl forall: [self dereference] set: S];
    [forall orderedBy:o1];
    [forall orderedBy:o2];
    [forall do: b];
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-   ORInt k = [NSThread threadID];
-   id<ORForall> forall = [ORControl forall: _solver[k] set: S];
+   id<ORForall> forall = [ORControl forall: [self dereference] set: S];
    [forall suchThat: suchThat];
    [forall orderedBy:o1];
    [forall orderedBy:o2];
@@ -197,163 +186,123 @@
 
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] try: left or: right];
+   [[self dereference] try: left or: right];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] tryall: range suchThat: filter in: body];
+   [[self dereference] tryall: range suchThat: filter in: body];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] tryall: range suchThat: filter in: body onFailure: onFailure];
+   [[self dereference] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] limitTime: maxTime in: cl];
+   [[self dereference] limitTime: maxTime in: cl];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nestedSolve: body onSolution: onSolution onExit: onExit];
+   [[self dereference] nestedSolve: body onSolution: onSolution onExit: onExit];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nestedSolve: body onSolution: onSolution];
+   [[self dereference] nestedSolve: body onSolution: onSolution];
 }
 -(void) nestedSolve: (ORClosure) body
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nestedSolve: body];
+   [[self dereference] nestedSolve: body];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nestedSolveAll: body onSolution: onSolution onExit: onExit];
+   [[self dereference] nestedSolveAll: body onSolution: onSolution onExit: onExit];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nestedSolve: body onSolution: onSolution];
+   [[self dereference] nestedSolve: body onSolution: onSolution];
 }
 -(void) nestedSolveAll: (ORClosure) body
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] nestedSolveAll: body];
+   [[self dereference] nestedSolveAll: body];
 }
 -(void) trackObject: (id) object
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] trackObject: object];
+   [[self dereference] trackObject: object];
 }
 -(void) trackVariable: (id) object
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] trackVariable: object];
+   [[self dereference] trackVariable: object];
 }
 -(void) trackConstraint:(id)object
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] trackConstraint:object];
+   [[self dereference] trackConstraint:object];
 }
-//-(void) add: (id<ORConstraint>) c
-//{
-//   ORInt k = [NSThread threadID];
-//   return [_solver[k] add: c];
-//}
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {
-   ORInt k = [NSThread threadID];
-   [_solver[k] addConstraintDuringSearch: c annotation:n];
+   [[self dereference] addConstraintDuringSearch: c annotation:n];
 }
-//-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
-//{
-//   ORInt k = [NSThread threadID];
-//   return [_solver[k] add: c annotation: cons];
-//}
 -(void) labelArray: (id<ORIntVarArray>) x
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] labelArray: x];
+   [[self dereference] labelArray: x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] labelArray: x orderedBy: orderedBy];
+   [[self dereference] labelArray: x orderedBy: orderedBy];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] labelHeuristic: h];
+   [[self dereference] labelHeuristic: h];
 }
 -(void) label: (id<ORIntVar>) mx
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] label: mx];
+   [[self dereference] label: mx];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] label: var with: val];
+   [[self dereference] label: var with: val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] diff: var with: val];
+   [[self dereference] diff: var with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] lthen: var with: val];
+   [[self dereference] lthen: var with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] gthen: var with: val];
+   [[self dereference] gthen: var with: val];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] restrict: var to: S];
+   [[self dereference] restrict: var to: S];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] repeat: body onRepeat: onRepeat];
+   [[self dereference] repeat: body onRepeat: onRepeat];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] repeat: body onRepeat: onRepeat until: isDone];
+   [[self dereference] repeat: body onRepeat: onRepeat until: isDone];
 }
 -(void) once: (ORClosure) cl
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] once: cl];
+   [[self dereference] once: cl];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] limitSolutions: maxSolutions in: cl];
+   [[self dereference] limitSolutions: maxSolutions in: cl];
 }
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] limitCondition: condition in: cl];
+   [[self dereference] limitCondition: condition in: cl];
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] limitDiscrepancies: maxDiscrepancies in: cl];
+   [[self dereference] limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] limitFailures: maxFailures in: cl];
+   [[self dereference] limitFailures: maxFailures in: cl];
 }
 -(void) onSolution: (ORClosure) onSol 
 {
@@ -371,11 +320,81 @@
 {}
 -(id<ORSolutionPool>) solutionPool
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] solutionPool];
+   return [[self dereference] solutionPool];
 }
 -(id<ORSolutionPool>) globalSolutionPool
 {
    return _sPool;
+}
+
+-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createFF:rvars];
+  return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createWDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createDDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createIBS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createABS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createFF
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createFF];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createWDeg
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createWDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createDDeg
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createDDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createIBS
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createIBS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createABS
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+  for(ORInt i=0;i < _nb;i++)
+    binding[i] = [_solver[i] createABS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
 @end

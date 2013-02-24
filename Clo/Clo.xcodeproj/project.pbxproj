@@ -551,6 +551,7 @@
 		5BB3836813B3C0E1005B7D52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3836713B3C0E1005B7D52 /* main.m */; };
 		5BB3837113B3C0F5005B7D52 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BB4239F162CA2B300B0EF42 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB9541F16DA888500932681 /* CPMultiStartSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBA3F8A151CCB0C00D6F6AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5BBA3FA0151CCB1F00D6F6AD /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BBA56D6153F33E70089118E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
@@ -3613,6 +3614,7 @@
 		5BB3836713B3C0E1005B7D52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BB3836A13B3C0E1005B7D52 /* magicserie-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "magicserie-Prefix.pch"; sourceTree = "<group>"; };
 		5BB3836B13B3C0E1005B7D52 /* magicserie.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = magicserie.1; sourceTree = "<group>"; };
+		5BB9541F16DA888500932681 /* CPMultiStartSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMultiStartSolver.h; sourceTree = "<group>"; };
 		5BBA3F88151CCB0C00D6F6AD /* queensGui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = queensGui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBA56D4153F33E70089118E /* iQueens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iQueens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBB08C416C551960087ACF0 /* order */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = order; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -4903,6 +4905,7 @@
 				B17832FF161F636A00C7298D /* CPSolver.m */,
 				B15442AF16D1A3F7001BD7B3 /* LPSolver.h */,
 				B15442B016D1A3F7001BD7B3 /* LPSolver.m */,
+				5BB9541F16DA888500932681 /* CPMultiStartSolver.h */,
 				B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
@@ -6450,6 +6453,7 @@
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
+				5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
