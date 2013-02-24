@@ -599,6 +599,20 @@
    [model trackConstraint:o];
    return o;
 }
++(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  eq: (ORInt) c
+{
+   id<ORConstraint> o = [[ORLinearEq alloc] initLinearEq: x coef: coef cst: c];
+   [model trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  leq: (ORInt) c
+{
+   id<ORConstraint> o = [[ORLinearLeq alloc] initLinearLeq: x coef: coef cst: c];
+   [model trackConstraint:o];
+   return o;
+}
+
+
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];

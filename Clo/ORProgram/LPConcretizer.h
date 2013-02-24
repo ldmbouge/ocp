@@ -80,6 +80,9 @@
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
 
+-(void) visitLinearEq: (id<ORLinearEq>) c;
+-(void) visitLinearLeq: (id<ORLinearLeq>) c;
+
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;

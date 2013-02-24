@@ -251,6 +251,24 @@ enum ORGroupType {
 -(ORInt)cst;
 @end
 
+@protocol ORLinearGeq <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@protocol ORLinearLeq <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@protocol ORLinearEq <ORConstraint>
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;

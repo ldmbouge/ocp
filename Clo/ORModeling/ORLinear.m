@@ -1,0 +1,396 @@
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+#import "ORDecompose.h"
+#import "ORModeling/ORModeling.h"
+
+
+@implementation ORLinear
+-(ORLinear*)initORLinear:(ORInt)mxs
+{
+   self = [super init];
+   _max   = mxs;
+   _terms = malloc(sizeof(struct CPTerm)*_max);
+   _nb    = 0;
+   _indep = 0;
+   return self;
+}
+-(void)dealloc
+{
+   free(_terms);
+   [super dealloc];
+}
+-(void)setIndependent:(ORInt)idp
+{
+   _indep = idp;
+}
+-(void)addIndependent:(ORInt)idp
+{
+   _indep += idp;
+}
+-(ORInt)independent
+{
+   return _indep;
+}
+-(id<ORIntVar>)var:(ORInt)k
+{
+   return _terms[k]._var;
+}
+-(ORInt)coef:(ORInt)k
+{
+   return _terms[k]._coef;
+}
+-(void)addTerm:(id<ORIntVar>)x by:(ORInt)c
+{
+   if (c==0) return;
+   ORInt low = 0,up=_nb-1,mid=-1,kid;
+   ORInt xid = [x  getId];
+   BOOL found = NO;
+   while (low <= up) {
+      mid = (low+up)/2;
+      kid = [_terms[mid]._var getId];
+      found = kid == xid;
+      if (found)
+         break;
+      else if (xid < kid)
+         up = mid - 1;
+      else low = mid + 1;
+   }
+   if (found) {
+      _terms[mid]._coef += c;
+   } else {
+      if (_nb >= _max) {
+         _terms = realloc(_terms, sizeof(struct CPTerm)*_max*2);
+         _max <<= 1;
+      }
+      if (mid==-1)
+         _terms[_nb++] = (struct CPTerm){x,c};
+      else {
+         if (xid > kid)
+            mid++;
+         for(int k=_nb-1;k>=mid;--k)
+            _terms[k+1] = _terms[k];
+         _terms[mid] = (struct CPTerm){x,c};
+         _nb += 1;
+      }
+   }
+}
+
+-(void)addLinear:(ORLinear*)lts
+{
+   for(ORInt k=0;k < lts->_nb;k++) {
+      [self addTerm:lts->_terms[k]._var by:lts->_terms[k]._coef];
+   }
+   [self addIndependent:lts->_indep];
+}
+-(void)scaleBy:(ORInt)s
+{
+   for(ORInt k=0;k<_nb;k++)
+      _terms[k]._coef *= s;
+   _indep  *= s;
+}
+-(BOOL)allPositive
+{
+   BOOL ap = YES;
+   for(ORInt k=0;k<_nb;k++)
+      ap &= _terms[k]._coef > 0;
+   return ap;
+}
+-(BOOL)allNegative
+{
+   BOOL an = YES;
+   for(ORInt k=0;k<_nb;k++)
+      an &= _terms[k]._coef < 0;
+   return an;
+}
+-(ORInt)nbPositive
+{
+   ORInt nbP = 0;
+   for(ORInt k=0;k<_nb;k++)
+      nbP += (_terms[k]._coef > 0);
+   return nbP;
+}
+-(ORInt)nbNegative
+{
+   ORInt nbN = 0;
+   for(ORInt k=0;k<_nb;k++)
+      nbN += (_terms[k]._coef < 0);
+   return nbN;
+}
+int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
+{
+   return t2->_coef - t1->_coef;
+}
+-(void)positiveFirst  // sort by decreasing coefficient
+{
+   qsort(_terms, _nb, sizeof(struct CPTerm),(int(*)(const void*,const void*))&decCoef);
+}
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:128] autorelease];
+   for(ORInt k=0;k<_nb;k++) {
+      [buf appendFormat:@"(%d * %@) + ",_terms[k]._coef,[_terms[k]._var description]];
+   }
+   [buf appendFormat:@" (%d)",_indep];
+   return buf;
+}
+-(id<ORIntVarArray>) variables: (id<ORAddToModel>) model
+{
+   return [ORFactory intVarArray: model range: RANGE(model,0,_nb-1) with:^id<ORIntVar>(ORInt i) { return _terms[i]._var; }];
+}
+-(id<ORIntArray>) coefficients: (id<ORAddToModel>) model
+{
+   return [ORFactory intArray: model range: RANGE(model,0,_nb-1) with: ^ORInt(ORInt i) { return _terms[i]._coef; }];
+}
+
+-(id<ORIntVarArray>)scaledViews:(id<ORAddToModel>)model
+{
+   id<ORIntVarArray> sx = [ORFactory intVarArray:model
+                                           range:RANGE(model,0,_nb-1)
+                                            with:^id<ORIntVar>(ORInt i) {
+                                               id<ORIntVar> xi = _terms[i]._var;
+                                               id<ORIntVar> theView = [ORFactory intVar:model var:xi  scale:_terms[i]._coef];
+                                               return theView;
+                                            }];
+   return sx;
+}
+-(id<ORIntVar>)oneView:(id<ORAddToModel>)model
+{
+   id<ORIntVar> rv = [ORFactory intVar:model
+                                   var:_terms[0]._var
+                                 scale:_terms[0]._coef
+                                 shift:_indep];
+   return rv;
+}
+-(ORInt)size
+{
+   return _nb;
+}
+-(ORInt)min
+{
+   ORLong lb = _indep;
+   for(ORInt k=0;k < _nb;k++) {
+      ORInt c = _terms[k]._coef;
+      ORLong vlb = [_terms[k]._var min];
+      ORLong vub = [_terms[k]._var max];
+      ORLong svlb = c > 0 ? vlb * c : vub * c;
+      lb += svlb;
+   }
+   return max(MININT,bindDown(lb));
+}
+-(ORInt)max
+{
+   ORLong ub = _indep;
+   for(ORInt k=0;k < _nb;k++) {
+      ORInt c = _terms[k]._coef;
+      ORLong vlb = [_terms[k]._var min];
+      ORLong vub = [_terms[k]._var max];
+      ORLong svub = c > 0 ? vub * c : vlb * c;
+      ub += svub;
+   }
+   return min(MAXINT,bindUp(ub));
+}
+
+-(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   switch(_nb) {
+      case 0: assert(NO);return;
+      case 1: {
+         if (_terms[0]._coef == 1) {
+            [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:- _indep]];
+         } else if (_terms[0]._coef == -1) {
+            [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:_indep]];
+         } else {
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (cr == 0)
+               [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            return [model addConstraint:[ORFactory notEqual:model var:_terms[0]._var to:_terms[1]._var plus:-_indep]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
+            return [model addConstraint:[ORFactory notEqual:model var:_terms[1]._var to:_terms[0]._var plus:-_indep]];
+         } else {
+            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
+            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
+            [model addConstraint:[ORFactory notEqual:model var:xp to:yp plus:- _indep]];
+         }
+      }break;
+      default: {
+         ORInt lb = [self min];
+         ORInt ub = [self max];
+         id<ORIntVar> alpha = [ORFactory intVar:[_terms[0]._var tracker]
+                                         domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
+         [self addTerm:alpha by:-1];
+         [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
+         [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
+      }break;
+   }
+}
+-(void)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   // [ldm] This should *never* raise an exception, but return a ORFailure.
+   switch (_nb) {
+      case 0:
+         assert(NO);
+         return;
+      case 1: {
+         if (_terms[0]._coef == 1) {
+            return [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
+         } else if (_terms[0]._coef == -1) {
+            return [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:_indep]];
+         } else {
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (cr != 0)
+               [model addConstraint:[ORFactory fail:model]];
+            else
+               [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            [model addConstraint:[ORFactory equal:model var:_terms[0]._var to:_terms[1]._var plus:-_indep annotation:cons]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
+            [model addConstraint:[ORFactory equal:model var:_terms[1]._var to:_terms[0]._var plus:-_indep annotation:cons]];
+         } else {
+            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
+            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
+            [model addConstraint:[ORFactory equal:model var:xp to:yp plus:- _indep annotation:cons]];
+         }
+      }break;
+      case 3: {
+         ORInt np = [self nbPositive];
+         if (np == 1 || np == 0) [self scaleBy:-1];
+         assert([self nbPositive]>=2);
+         [self positiveFirst];
+         assert(_terms[0]._coef > 0 && _terms[1]._coef > 0);
+         id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale: _terms[0]._coef  shift: _indep];
+         id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale: _terms[1]._coef];
+         id<ORIntVar> zp = [ORFactory intVar:model var:_terms[2]._var scale: - _terms[2]._coef];
+         [model  addConstraint:[ORFactory equal3:model var:zp to:xp plus:yp annotation:cons]];
+      }break;
+      default: {
+         ORInt sumCoefs = 0;
+         for(ORInt k=0;k<_nb;k++)
+            if ([_terms[k]._var isBool])
+               sumCoefs += (_terms[k]._coef == 1);
+         if (sumCoefs == _nb) {
+            id<ORIntVarArray> boolVars = All(model,ORIntVar, i, RANGE(model,0,_nb-1), _terms[i]._var);
+            [model addConstraint:[ORFactory sumbool:model array:boolVars eqi: - _indep]];
+         }
+         else
+            [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi: - _indep]];
+      }
+   }
+}
+-(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   switch(_nb) {
+      case 0: assert(FALSE);return;
+      case 1: {  // x <= c
+         if (_terms[0]._coef == 1)
+            return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
+         else if (_terms[0]._coef == -1)
+            return [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
+         else {
+            assert(_terms[0]._coef != 0);
+            ORInt nc = - _indep / _terms[0]._coef;
+            ORInt cr = - _indep % _terms[0]._coef;
+            if (nc < 0 && cr != 0)
+               [model addConstraint:[ORFactory lEqualc:model var:_terms[0]._var to:nc - 1]];
+            else
+               [model addConstraint:[ORFactory lEqualc:model var:_terms[0]._var to:nc]];
+         }
+      }break;
+      case 2: {  // x <= y
+         if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
+            return [model addConstraint:[ORFactory lEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+         } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
+            return [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
+         } else {
+            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
+            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
+            [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+         }
+      }break;
+      default:
+         [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] leqi:- _indep]];
+   }
+}
+
+-(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+{
+   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
+}
+-(void)postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+{
+   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
+}
+@end
+
+
+@implementation ORLinearFlip
+-(ORLinearFlip*) initORLinearFlip: (id<ORLinear>)r
+{
+   self = [super init];
+   _real = r;
+   return self;
+}
+-(void) setIndependent:(ORInt)idp
+{
+   [_real setIndependent:-idp];
+}
+-(void) addIndependent:(ORInt)idp
+{
+   [_real addIndependent:-idp];
+}
+-(void) addTerm:(id<ORIntVar>) x by: (ORInt) c
+{
+   [_real addTerm: x by: -c];
+}
+-(void) addLinear: (id<ORLinear>) lts
+{
+   for(ORInt k=0;k < [lts size];k++) {
+      [_real addTerm:[lts var:k] by: - [lts coef:k]];
+   }
+   [_real addIndependent:- [lts independent]];
+}
+-(void) scaleBy: (ORInt) s
+{
+   [_real scaleBy: -s];
+}
+-(ORInt) size
+{
+   return [_real size];
+}
+-(id<ORIntVar>) var: (ORInt) k
+{
+   return [_real var: k];
+}
+-(ORInt)coef: (ORInt) k
+{
+   return [_real coef:k];
+}
+-(ORInt) independent
+{
+   return [_real independent];
+}
+-(NSString*) description
+{
+   return [_real description];
+}
+@end
+

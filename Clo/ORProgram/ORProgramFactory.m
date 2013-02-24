@@ -156,7 +156,7 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener];
    [flat apply: model into:batch];
    [batch release];
    
@@ -169,6 +169,7 @@
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver];
    [model setImpl: lpprogram];
+   [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
 @end

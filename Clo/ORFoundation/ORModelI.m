@@ -1359,7 +1359,7 @@
    id<ORIntVarArray> _ia;
    ORInt              _c;   
 }
--(ORSumLEqc*)initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c
+-(ORSumLEqc*) initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -1413,6 +1413,120 @@
    return _ia;
 }
 -(ORInt)cst
+{
+   return _c;
+}
+@end
+
+@implementation ORLinearGeq {
+   id<ORIntVarArray> _ia;
+   id<ORIntArray>    _coefs;
+   ORInt             _c;
+}
+-(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) coefs cst: (ORInt) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitLinearGeq: self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORIntArray>) coefs
+{
+   return _coefs;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORLinearLeq {
+   id<ORIntVarArray> _ia;
+   id<ORIntArray>    _coefs;
+   ORInt             _c;
+}
+-(ORLinearLeq*) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) coefs cst:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitLinearLeq: self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORIntArray>) coefs
+{
+   return _coefs;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORLinearEq {
+   id<ORIntVarArray> _ia;
+   id<ORIntArray>    _coefs;
+   ORInt             _c;
+}
+-(ORLinearEq*) initLinearEq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) coefs cst:(ORInt) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void)visit: (id<ORVisitor>) v
+{
+   [v visitLinearEq: self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORIntArray>) coefs
+{
+   return _coefs;
+}
+-(ORInt) cst
 {
    return _c;
 }

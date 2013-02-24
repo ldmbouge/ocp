@@ -14,23 +14,84 @@
 #import "LPProgram.h"
 #import "LPConcretizer.h"
 
+static int nbRows = 7;
+static int nbColumns = 12;
+
+int b[7] = { 18209, 7692, 1333, 924, 26638, 61188, 13360 };
+float c[12] = { 96, 76, 56, 11, 86, 10, 66, 86, 83, 12, 9, 81 };
+float coef[7][12] = {
+   { 19,   1,  10,  1,   1,  14, 152, 11,  1,   1, 1, 1},
+   {  0,   4,  53,  0,   0,  80,   0,  4,  5,   0, 0, 0},
+   {  4, 660,   3,  0,  30,   0,   3,  0,  4,  90, 0, 0},
+   {  7,   0,  18,  6, 770, 330,   7,  0,  0,   6, 0, 0},
+   {  0,  20,   0,  4,  52,   3,   0,  0,  0,   5, 4, 0},
+   {  0,   0,  40, 70,   4,  63,   0,  0, 60,   0, 4, 0},
+   {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
+
+
+int maini()
+{
+   
+   @try {
+      
+      LPSolverI* lp = [LPFactory solver];
+      [lp print];
+      
+      LPVariableI* x[nbColumns];
+      for(ORInt i = 0; i < nbColumns; i++)
+         x[i] = [lp createVariable];
+      
+      LPLinearTermI* obj = [lp createLinearTerm];
+      for(ORInt i = 0; i < nbColumns; i++)
+         [obj add: c[i] times: x[i]];
+      LPObjectiveI* o = [lp postObjective: [lp createMaximize: obj]];
+      
+      LPConstraintI* c[nbRows];
+      for(ORInt i = 0; i < nbRows; i++) {
+         LPLinearTermI* t = [lp createLinearTerm];
+         for(ORInt j = 0; j < nbColumns; j++)
+            [t add: coef[i][j] times: x[j]];
+         c[i] = [lp postConstraint: [lp createLEQ: t rhs: b[i]]];
+      }
+      
+      [lp solve];
+      [lp print];
+      
+      printf("Status: %d \n",[lp status]);
+      printf("objective: %f \n",[o value]);
+      for(ORInt i = 0; i < nbColumns; i++)
+         printf("Value of %d is %f \n",i,[x[i] value]);
+      for(ORInt i = 0; i < nbRows; i++)
+         printf("Dual of %d is %f \n",i,[c[i] dual]);
+      
+      [lp release];
+      
+      printf("This works my friend\n");
+   }
+   @catch (NSException* ee) {
+      printf("ExecutionError: %s \n",[[ee reason] cStringUsingEncoding: NSASCIIStringEncoding]);
+   }
+   return 0;
+}
 
 
 @implementation ORLPConcretizer
 {
    id<LPProgram> _program;
-   LPSolverI*    _solver;
+   LPSolverI*    _lpsolver;
 }
 -(ORLPConcretizer*) initORLPConcretizer: (id<LPProgram>) program
 {
+   maini();
    self = [super init];
    _program = [program retain];
-   _solver = [program solver];
+   _lpsolver = [program solver];
    return self;
 }
 -(void) dealloc
 {
-   [_solver release];
+   NSLog(@"LP Concretizer released");
+   [_program release];
    [super dealloc];
 }
 
@@ -55,24 +116,25 @@
 }
 -(void) visitIntSet: (id<ORIntSet>) v
 {
-//   if ([v dereference] == NULL) {
-//      id<ORIntSet> i = [ORFactory intSet: _engine];
-//      [i makeImpl];
-//     [v copyInto: i];
-//      [v setImpl: i];
-//   }
+   if ([v dereference] == NULL) {
+      id<ORIntSet> i = [ORFactory intSet: _lpsolver];
+      [i makeImpl];
+      [v copyInto: i];
+      [v setImpl: i];
+   }
 }
 -(void) visitIntRange:(id<ORIntRange>) v
 {
    [v makeImpl];
 }
 
+// pvh: this is bogus right now but this is easy for testing
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-//   if ([v dereference] == NULL) {
-//      id<CPIntVar> cv = [CPFactory intVar: _engine domain: [v domain]];
-//      [v setImpl: cv];
-//   }
+   if ([v dereference] == NULL) {
+      LPVariableI* cv = [_lpsolver createVariable];
+      [v setImpl: cv];
+   }
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
@@ -82,6 +144,7 @@
 
 -(void) visitBitVar: (id<ORBitVar>) v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([v dereference] == NULL) {
 //      id<CPBitVar> cv = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
 //     [v setImpl:cv];
@@ -90,6 +153,7 @@
 
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([v dereference] == NULL) {
 //      id<ORIntVar> mBase = [v base];
 //      [mBase visit: self];
@@ -101,6 +165,7 @@
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([v dereference] == NULL) {
 //      id<ORIntVar> mBase = [v base];
 //      [mBase visit:self];
@@ -112,31 +177,32 @@
 
 -(void) visitIdArray: (id<ORIdArray>) v
 {
-//   if ([v dereference] == NULL) {
-//      id<ORIntRange> R = [v range];
-//      id<ORIdArray> dx = [ORFactory idArray: _engine range: R];
-//      [dx makeImpl];
-//      ORInt low = R.low;
-//      ORInt up = R.up;
-//      for(ORInt i = low; i <= up; i++) {
-//         [v[i] visit: self];
-//         dx[i] = [v[i] dereference];
-//      }
-//      [v setImpl: dx];
-//   }
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORIdArray> dx = [ORFactory idArray: _lpsolver range: R];
+      [dx makeImpl];
+      ORInt low = R.low;
+      ORInt up = R.up;
+      for(ORInt i = low; i <= up; i++) {
+         [v[i] visit: self];
+         dx[i] = [v[i] dereference];
+      }
+      [v setImpl: dx];
+   }
 }
 
 -(void) visitIntArray:(id<ORIntArray>) v
 {
-//   if ([v dereference] == NULL) {
-//      id<ORIntRange> R = [v range];
-//      id<ORIntArray> dx = [ORFactory intArray: _engine range: R with: ^ORInt(ORInt i) { return [v at: i]; }];
-//      [dx makeImpl];
-//      [v setImpl: dx];
-//   }
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORIntArray> dx = [ORFactory intArray: _lpsolver range: R with: ^ORInt(ORInt i) { return [v at: i]; }];
+      [dx makeImpl];
+      [v setImpl: dx];
+   }
 }
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([v dereference] == NULL) {
 //      id<ORIntMatrix> n = [ORFactory intMatrix: _engine with: v];
 //      [n makeImpl];
@@ -146,6 +212,7 @@
 
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([v dereference] == NULL) {
 //      ORInt nb = (ORInt) [v count];
 //      for(ORInt k = 0; k < nb; k++)
@@ -158,6 +225,7 @@
 
 -(void) visitTable:(id<ORTable>) v
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([v dereference] == NULL) {
 //      id<ORTable> n = [ORFactory table: _engine with: v];
 //      [n makeImpl];
@@ -166,6 +234,7 @@
 }
 -(void) visitGroup:(id<ORGroup>)g
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([g dereference] == NULL) {
 //      id<CPGroup> cg = nil;
 //      switch([g type]) {
@@ -188,6 +257,7 @@
 
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> x = [self concreteVar: [cstr var]];
 //      id<CPConstraint> concrete = [CPFactory restrict: x to: [cstr restriction]];
@@ -197,6 +267,7 @@
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> ax = [cstr array];
 //      ORAnnotation n = [cstr annotation];
@@ -208,6 +279,7 @@
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> ax = [cstr array];
 //      id<ORIntArray> low = [cstr low];
@@ -231,6 +303,7 @@
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> array = [cstr array];
 //      id<ORTable> table = [cstr table];
@@ -243,6 +316,7 @@
 }
 -(void) visitCircuit:(id<ORCircuit>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> ax = [cstr array];
 //      [ax visit: self];
@@ -253,6 +327,7 @@
 }
 -(void) visitNoCycle:(id<ORNoCycle>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> ax = [cstr array];
 //      [ax visit: self];
@@ -263,6 +338,7 @@
 }
 -(void) visitLexLeq:(id<ORLexLeq>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVarArray> x = [self concreteArray: [cstr x]];
 //      id<CPIntVarArray> y = [self concreteArray: [cstr y]];
@@ -273,6 +349,7 @@
 }
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> item = [cstr item];
 //      id<ORIntArray> itemSize = [cstr itemSize];
@@ -288,6 +365,7 @@
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVarArray> item = [cstr item];
 //      id<ORIntArray> weight = [cstr weight];
@@ -302,6 +380,7 @@
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr impl] == NULL) {
 //      id<CPIntVarArray> x = [self concreteArray: [cstr x]];
 //      id<ORIntMatrix> matrix = [cstr matrix];
@@ -315,28 +394,27 @@
 
 -(void) visitMinimize: (id<ORObjectiveFunction>) v
 {
-//   if ([v dereference] == NULL) {
-//      id<ORIntVar> o = [v var];
-//      [o visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory minimize: [o dereference]];
-//      [v setImpl: concreteCstr];
-//      [_engine add: concreteCstr];
-//      [_engine setObjective: [v dereference]];
-//   }
+   if ([v dereference] == NULL) {
+      id<ORIntVar> o = [v var];
+      [o visit: self];
+      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: [o dereference]];
+      [v setImpl: concreteObj];
+      [_lpsolver solve];
+   }
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v
 {
-//   if ([v dereference] == NULL) {
-//      id<ORIntVar> o = [v var];
-//      [o visit: self];
-//      id<CPConstraint> concreteCstr = [CPFactory maximize: [o dereference]];
-//      [v setImpl: concreteCstr];
-//      [_engine add: concreteCstr];
-//      [_engine setObjective: [v dereference]];
-//   }
+   if ([v dereference] == NULL) {
+      id<ORIntVar> o = [v var];
+      [o visit: self];
+      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: [o dereference]];
+      [v setImpl: concreteObj];
+      [_lpsolver postObjective: concreteObj];
+   }
 }
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> left = [cstr left];
 //      ORInt cst = [cstr cst];
@@ -348,6 +426,7 @@
 }
 -(void) visitNEqualc: (id<ORNEqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> left = [cstr left];
 //      ORInt cst = [cstr cst];
@@ -359,6 +438,7 @@
 }
 -(void) visitLEqualc: (id<ORLEqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> left = [cstr left];
 //      ORInt cst = [cstr cst];
@@ -370,6 +450,7 @@
 }
 -(void) visitGEqualc: (id<ORGEqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> left = [cstr left];
 //      ORInt cst = [cstr cst];
@@ -381,6 +462,7 @@
 }
 -(void) visitEqual: (id<OREqual>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> left  = [self concreteVar:[cstr left]];
 //      id<CPIntVar> right = [self concreteVar:[cstr right]];
@@ -395,6 +477,7 @@
 
 -(void) visitAffine: (id<ORAffine>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> y = [self concreteVar:[cstr left]];
 //      id<CPIntVar> x = [self concreteVar:[cstr right]];
@@ -406,6 +489,7 @@
 
 -(void) visitNEqual: (id<ORNEqual>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> left = [cstr left];
 //      id<ORIntVar> right = [cstr right];
@@ -419,6 +503,7 @@
 }
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> left = [cstr left];
 //      id<ORIntVar> right = [cstr right];
@@ -432,6 +517,7 @@
 }
 -(void) visitPlus: (id<ORPlus>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> res = [cstr res];
 //      id<ORIntVar> left = [cstr left];
@@ -451,6 +537,7 @@
 }
 -(void) visitMult: (id<ORMult>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> res = [cstr res];
 //      id<ORIntVar> left = [cstr left];
@@ -468,6 +555,7 @@
 }
 -(void) visitSquare: (id<ORSquare>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] ==NULL) {
 //      id<CPIntVar> res = [self concreteVar:[cstr res]];
 //      id<CPIntVar> op  = [self concreteVar:[cstr op]];
@@ -481,6 +569,7 @@
 
 -(void) visitMod: (id<ORMod>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> res = [self concreteVar:[cstr res]];
 //      id<CPIntVar> left = [self concreteVar:[cstr left]];
@@ -492,6 +581,7 @@
 }
 -(void) visitModc: (id<ORModc>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> res = [self concreteVar:[cstr res]];
 //      id<CPIntVar> left = [self concreteVar:[cstr left]];
@@ -505,6 +595,7 @@
 
 -(void) visitAbs: (id<ORAbs>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> res = [cstr res];
 //      id<ORIntVar> left = [cstr left];
@@ -520,6 +611,7 @@
 }
 -(void) visitOr: (id<OROr>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> res = [cstr res];
 //      id<ORIntVar> left = [cstr left];
@@ -537,6 +629,7 @@
 }
 -(void) visitAnd:( id<ORAnd>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> res = [cstr res];
 //      id<ORIntVar> left = [cstr left];
@@ -555,6 +648,7 @@
 }
 -(void) visitImply: (id<ORImply>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> res = [cstr res];
 //      id<ORIntVar> left = [cstr left];
@@ -572,6 +666,7 @@
 }
 -(void) visitElementCst: (id<ORElementCst>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntArray> array = [cstr array];
 //      id<ORIntVar> idx = [cstr idx];
@@ -590,6 +685,7 @@
 }
 -(void) visitElementVar: (id<ORElementVar>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVarArray> array = [self concreteArray:[cstr array]];
 //      id<CPIntVar> idx = [self concreteVar:[cstr idx]];
@@ -605,6 +701,8 @@
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
+   
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> b = [cstr b];
 //      id<ORIntVar> x = [cstr x];
@@ -618,6 +716,8 @@
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>) cstr
 {
+   
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> b = [cstr b];
 //      id<ORIntVar> x = [cstr x];
@@ -634,6 +734,7 @@
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> b = [cstr b];
 //      id<ORIntVar> x = [cstr x];
@@ -647,6 +748,7 @@
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> b = [cstr b];
 //      id<ORIntVar> x = [cstr x];
@@ -662,6 +764,7 @@
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> b = [cstr b];
 //      id<ORIntVar> x = [cstr x];
@@ -675,6 +778,7 @@
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> b = [self concreteVar:[cstr b]];
 //      id<CPIntVar> x = [self concreteVar:[cstr x]];
@@ -686,6 +790,7 @@
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<ORIntVar> b = [cstr b];
 //      id<ORIntVar> x = [cstr x];
@@ -699,6 +804,7 @@
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVar> b = [self concreteVar:[cstr b]];
 //      id<CPIntVar> x = [self concreteVar:[cstr x]];
@@ -710,6 +816,7 @@
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
 //      id<CPConstraint> concreteCstr = [CPFactory sumbool:x eq:[cstr cst]];
@@ -719,11 +826,13 @@
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>) cstr
 {
-   if ([cstr dereference] == NULL)
-      @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolLEqualc not yet implemented"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+//   if ([cstr dereference] == NULL)
+//      @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolLEqualc not yet implemented"];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
 //      id<CPConstraint> concreteCstr = [CPFactory sumbool:x geq:[cstr cst]];
@@ -733,6 +842,7 @@
 }
 -(void) visitSumEqualc:(id<ORSumEqc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
 //      id<CPConstraint> concreteCstr = [CPFactory sum:x eq:[cstr cst]];
@@ -742,6 +852,7 @@
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
 //      id<CPConstraint> concreteCstr = [CPFactory sum:x leq:[cstr cst]];
@@ -751,11 +862,46 @@
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
+
+-(void) visitLinearEq: (id<ORLinearEq>) c
+{
+   if ([c dereference] == NULL) {
+      id<ORIntVarArray> x = [c vars];
+      id<ORIntArray> a = [c coefs];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<LPVariableArray> dx = [x dereference];
+      [a visit: self];
+      id<ORIntArray> da = [a dereference];
+      NSLog(@" array %@ ",dx);
+      LPConstraintI* concreteCstr = [_lpsolver createEQ: dx coef: da cst: -cst];
+      [c setImpl:concreteCstr];
+      [_lpsolver postConstraint: concreteCstr];
+   }
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) c
+{
+   if ([c dereference] == NULL) {
+      id<ORIntVarArray> x = [c vars];
+      id<ORIntArray> a = [c coefs];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<LPVariableArray> dx = [x dereference];
+      [a visit: self];
+      id<ORIntArray> da = [a dereference];
+      NSLog(@" array leq %@ ",da);
+      LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: da cst: -cst];
+      [c setImpl:concreteCstr];
+      [_lpsolver postConstraint: concreteCstr];
+   }
 }
 
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -767,6 +913,7 @@
 
 -(void) visitBitOr:(id<ORBitOr>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -779,6 +926,7 @@
 
 -(void) visitBitAnd:(id<ORBitAnd>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -790,6 +938,7 @@
 }
 -(void) visitBitNot:(id<ORBitNot>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -801,6 +950,7 @@
 
 -(void) visitBitXor:(id<ORBitXor>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -813,6 +963,7 @@
 
 -(void) visitBitShiftL:(id<ORBitShiftL>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -825,6 +976,7 @@
 
 -(void) visitBitRotateL:(id<ORBitRotateL>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -837,6 +989,7 @@
 
 -(void) visitBitSum:(id<ORBitSum>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> x = [self concreteVar:[cstr left]];
 //      id<CPBitVar> y = [self concreteVar:[cstr right]];
@@ -851,6 +1004,7 @@
 
 -(void) visitBitIf:(id<ORBitIf>)cstr
 {
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 //   if ([cstr dereference] == NULL) {
 //      id<CPBitVar> w = [self concreteVar:[cstr res]];
 //      id<CPBitVar> x = [self concreteVar:[cstr trueIf]];
@@ -865,11 +1019,11 @@
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-//   if ([e dereference] == NULL) {
-//      id<ORInteger> n = [ORFactory integer: _engine value: [e value]];
-//      [n makeImpl];
-//      [e setImpl: n];
-//   }
+   if ([e dereference] == NULL) {
+      id<ORInteger> n = [ORFactory integer: _lpsolver value: [e value]];
+      [n makeImpl];
+      [e setImpl: n];
+   }
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {

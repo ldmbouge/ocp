@@ -35,8 +35,8 @@ int main(int argc, const char * argv[])
    
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
-   [model add: [Sum(model,j,Columns,[x[j] muli: b[j]]) eq: o]];
-   [model minimize: o];
+   [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
+   [model maximize: o];
 //   NSLog(@"Model %@",model);
    id<LPProgram> lp = [ORFactory createLPProgram: model];
    [lp solve];

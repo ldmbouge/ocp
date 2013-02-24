@@ -13,6 +13,8 @@
 #import <objmp/LPType.h>
 #import <objmp/LPSolverI.h>
 
+
+
 @implementation LPGurobiSolver;
 
 -(LPGurobiSolver*) initLPGurobiSolver
@@ -91,6 +93,7 @@
 -(LPOutcome) solve
 {
    GRBoptimize(_model);
+   [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {

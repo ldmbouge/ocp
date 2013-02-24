@@ -52,6 +52,7 @@
 +(id<ORModel>) createModel;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel;
 +(id<ORModelTransformation>) createFlattener;
++(id<ORModelTransformation>) createLPFlattener;
 +(id<ORModelTransformation>) createLinearizer;
 +(id<ORSolutionPool>) createSolutionPool;
 @end
