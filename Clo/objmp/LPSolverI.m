@@ -954,10 +954,8 @@
    id<ORIntRange> R = [var range];
    ORInt low = R.low;
    ORInt up = R.up;
-   for(ORInt i = low; i <= up; i++) {
-      NSLog(@" %d -> %d * var(%d)",i,[coef at: i],[var[i] idx]);
+   for(ORInt i = low; i <= up; i++) 
       [t add: [coef at: i] times: var[i]];
-   }
    return [self createLEQ: t rhs: -cst];
 }
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
@@ -966,9 +964,8 @@
    id<ORIntRange> R = [var range];
    ORInt low = R.low;
    ORInt up = R.up;
-   for(ORInt i = low; i <= up; i++) {
+   for(ORInt i = low; i <= up; i++) 
       [t add: [coef at: i] times: var[i]];
-   }
    return [self createEQ: t rhs: -cst];
 }
 -(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x

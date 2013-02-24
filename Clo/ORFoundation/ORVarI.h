@@ -58,6 +58,8 @@
 @end
 
 @interface ORFloatVarI : ORExprI<ORFloatVar>
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker;
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker up: (ORFloat) up;
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
 -(ORFloat) value;
 -(ORFloat) min;

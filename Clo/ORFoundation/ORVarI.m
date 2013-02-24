@@ -359,6 +359,7 @@
    id<ORTracker>    _tracker;
    ORFloat          _low;
    ORFloat          _up;
+   bool             _hasBounds;
    ORUInt           _name;
 }
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
@@ -368,14 +369,36 @@
    _tracker = track;
    _low = low;
    _up = up;
+   _hasBounds = true;
    [track trackVariable: self];
    return self;
 }
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track up: (ORFloat) up
+{
+   self = [super init];
+   _impl = nil;
+   _tracker = track;
+   _low = 0;
+   _up = up;
+   _hasBounds = true;
+   [track trackVariable: self];
+   return self;
+}
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track
+{
+   self = [super init];
+   _impl = nil;
+   _tracker = track;
+   _hasBounds = false;
+   [track trackVariable: self];
+   return self;
+}
+
 -(void) dealloc
 {
    [super dealloc];
 }
--(void)encodeWithCoder:(NSCoder *)aCoder
+-(void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
@@ -383,7 +406,7 @@
    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
--(id)initWithCoder:(NSCoder *)aDecoder
+-(id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
    _impl = [aDecoder decodeObject];

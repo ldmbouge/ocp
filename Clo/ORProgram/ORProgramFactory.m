@@ -209,7 +209,7 @@
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
-   id<LPProgram> lpprogram = [LPSolverFactory solver];
+   id<LPProgram> lpprogram = [LPSolverFactory solver: model];
    [model setImpl: lpprogram];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;

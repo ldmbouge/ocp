@@ -18,16 +18,19 @@
 
 @implementation LPSolver
 {
-   LPSolverI* _lpsolver;
+   LPSolverI*  _lpsolver;
+   id<ORModel> _model;
 }
--(id<LPProgram>) initLPSolver
+-(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
    self = [super init];
    _lpsolver = [LPFactory solver];
+   _model = model;
    return self;
 }
 -(void) dealloc
 {
+   [_lpsolver release];
    [super dealloc];
 }
 -(LPSolverI*) solver
@@ -37,14 +40,15 @@
 -(void) solve
 {
    [_lpsolver solve];
-   NSLog(@"I am pretending to solve this baby");
+   id<ORSolution> s = [_model captureSolution];
+   NSLog(@"Solution = %@",s);
 }
 @end
 
 
 @implementation LPSolverFactory
-+(id<LPProgram>) solver
++(id<LPProgram>) solver: (id<ORModel>) model
 {
-   return [[LPSolver alloc] initLPSolver];
+   return [[LPSolver alloc] initLPSolver: model];
 }
 @end
