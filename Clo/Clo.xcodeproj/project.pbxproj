@@ -174,6 +174,57 @@
 		5B6CFD7916D91CD600BCB95F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B6CFD8716D9200800BCB95F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */; };
 		5B6CFD8816D9242A00BCB95F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777581594D27C00ADE34E /* main.mm */; };
+		5B6CFD8B16D9396C00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8C16D939C400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8D16D939C800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8E16D939CB00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8F16D939D000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9016D939D300BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9116D939D700BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9216D939DB00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9316D939DE00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9416D939E200BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9516D939E500BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9616D939E800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9716D939EC00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9816D939F000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9916D939F400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9A16D939F900BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9B16D939FD00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9C16D93A0000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9D16D93A0600BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9E16D93A0900BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9F16D93A0D00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA016D93A1000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA116D93A1800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA216D93A1B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA316D93A1E00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA416D93A2100BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA516D93A2500BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA616D93A2800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA716D93A2B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA816D93A2F00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA916D93A3200BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAA16D93A3900BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAB16D93A3C00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAC16D93A4000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAD16D93A4400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAE16D93A5E00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAF16D93A6500BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB016D93A6800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB116D93A6B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB216D93A6F00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB316D93A7200BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB416D93A7600BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB516D93A7B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB616D93A7D00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB716D93A8100BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB816D93A8400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB916D93A8700BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBA16D93A8B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBB16D93A8F00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBC16D93A9300BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBD16D93A9700BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B6E89251379D3E9005DB4CA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89241379D3E9005DB4CA /* CoreData.framework */; };
 		5B6E89271379D3E9005DB4CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6E892A1379D3EA005DB4CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6E89291379D3EA005DB4CA /* main.m */; };
@@ -3375,6 +3426,8 @@
 		5B6CFD7316D90F2200BCB95F /* rbg049a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg049a.tw; sourceTree = "<group>"; };
 		5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
 		5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORCmdLineArgs.h; sourceTree = "<group>"; };
+		5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORCmdLineArgs.m; sourceTree = "<group>"; };
 		5B6E89201379D3E9005DB4CA /* Clo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clo; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6E89241379D3E9005DB4CA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5B6E89261379D3E9005DB4CA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -5090,6 +5143,8 @@
 				B1CC832315D3BEC4008DE335 /* model */,
 				B1595B4113C11F2A001FCB61 /* Sudoku */,
 				B1C4F3FE161F87070010A5C8 /* queensModel */,
+				5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */,
+				5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */,
 			);
 			name = "Objective-CP Examples";
 			sourceTree = "<group>";
@@ -8204,6 +8259,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B2000F1156D58A800D80105 /* mainView.m in Sources */,
+				5B6CFDA216D93A1B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8212,6 +8268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B28CAE71668FC63008AB802 /* main.m in Sources */,
+				5B6CFDB216D93A6F00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8220,6 +8277,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B28CB0A16691F0D008AB802 /* main.m in Sources */,
+				5B6CFDB316D93A7200BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8228,6 +8286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B5096E51619B6CC00171F9D /* main.m in Sources */,
+				5B6CFDAF16D93A6500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8236,6 +8295,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B558C0A1563F01000D2BCD7 /* main.m in Sources */,
+				5B6CFDA316D93A1E00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8244,6 +8304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B5F5480165D6EB300E674DA /* main.m in Sources */,
+				5B6CFDB116D93A6B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8284,6 +8345,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B6A960515879F1600019903 /* main.m in Sources */,
+				5B6CFD9E16D93A0900BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8292,6 +8354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B6E892A1379D3EA005DB4CA /* main.m in Sources */,
+				5B6CFDAD16D93A4400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8300,6 +8363,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B76D99315AAADBE00F8B445 /* main.m in Sources */,
+				5B6CFD9716D939EC00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8308,6 +8372,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B778BB6154F1D030078EB07 /* main.m in Sources */,
+				5B6CFDA416D93A2100BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8316,6 +8381,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B7B476F15F0E4AD005FF875 /* main.m in Sources */,
+				5B6CFDAE16D93A5E00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8324,6 +8390,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B7D695B15B9C91D00C9A10C /* main.m in Sources */,
+				5B6CFD9016D939D300BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8331,6 +8398,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B6CFD8B16D9396C00BCB95F /* ORCmdLineArgs.m in Sources */,
 				5B80561516076DFE00659ECC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8340,6 +8408,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B8DA1FA15B98BC300684FD8 /* main.m in Sources */,
+				5B6CFD9116D939D700BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8478,6 +8547,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BA345811680B7BD00485366 /* main.m in Sources */,
+				5B6CFDB816D93A8400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8499,6 +8569,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B6CFD8816D9242A00BCB95F /* main.mm in Sources */,
+				5B6CFD9516D939E500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8507,6 +8578,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BB170131582820500D4791A /* main.m in Sources */,
+				5B6CFDA116D93A1800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8515,6 +8587,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BB3836813B3C0E1005B7D52 /* main.m in Sources */,
+				5B6CFDAB16D93A3C00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8546,6 +8619,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BBB08C816C551960087ACF0 /* main.m in Sources */,
+				5B6CFDBA16D93A8B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8554,6 +8628,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC0918F167F7F9A009A7712 /* main.m in Sources */,
+				5B6CFDB516D93A7B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8562,6 +8637,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC091B2167F9095009A7712 /* main.m in Sources */,
+				5B6CFDB616D93A7D00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8570,6 +8646,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC091D5167F9D5B009A7712 /* main.m in Sources */,
+				5B6CFDB716D93A8100BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8578,6 +8655,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC116A51595067900E0F5C8 /* main.m in Sources */,
+				5B6CFD9B16D939FD00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8586,6 +8664,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BCCC4081417F8CE0079E833 /* main.m in Sources */,
+				5B6CFDA716D93A2B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8594,6 +8673,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BE5A7EF158A8390006703CB /* main.m in Sources */,
+				5B6CFD9D16D93A0600BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8602,6 +8682,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BE777451594C9E500ADE34E /* main.m in Sources */,
+				5B6CFD9C16D93A0000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8610,6 +8691,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BE7C25015A94BDF00B2CBC1 /* main.m in Sources */,
+				5B6CFD9816D939F000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8618,6 +8700,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BEAD78A15ABE38500A012FE /* main.m in Sources */,
+				5B6CFD9616D939E800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8626,6 +8709,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BEEF61513970B6F002ADBD4 /* main.m in Sources */,
+				5B6CFDAC16D93A4000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8634,6 +8718,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BF1387516822EFC005EAC6B /* main.m in Sources */,
+				5B6CFDB916D93A8700BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8676,6 +8761,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B103534F13BBD82D00627058 /* main.m in Sources */,
+				5B6CFDAA16D93A3900BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8684,6 +8770,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B111FC0413CF3D10003C5119 /* main.m in Sources */,
+				5B6CFDA816D93A2F00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8692,6 +8779,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B12ED8C5159E0C2200713C8E /* main.m in Sources */,
+				5B6CFD9A16D939F900BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8700,6 +8788,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15441F016D17713001BD7B3 /* main.m in Sources */,
+				5B6CFDBB16D93A8F00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8717,6 +8806,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15442A316D1A247001BD7B3 /* main.m in Sources */,
+				5B6CFDBC16D93A9300BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8725,6 +8815,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15442C916D1AAD1001BD7B3 /* main.m in Sources */,
+				5B6CFDBD16D93A9700BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8733,6 +8824,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1595B4313C11F2A001FCB61 /* main.m in Sources */,
+				5B6CFDA916D93A3200BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8741,6 +8833,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15F6DE315B1361700158FA0 /* main.m in Sources */,
+				5B6CFD9316D939DE00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8749,6 +8842,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1672FD5158491DE00EFE5C3 /* main.m in Sources */,
+				5B6CFDA016D93A1000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8757,6 +8851,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1672FF11584A7A500EFE5C3 /* main.m in Sources */,
+				5B6CFD9F16D93A0D00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8765,6 +8860,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1771599155798AA00BA14BF /* main.m in Sources */,
+				5B6CFDA516D93A2500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8773,6 +8869,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B181E11B15D7465500AB44DA /* main.m in Sources */,
+				5B6CFD8E16D939CB00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8781,6 +8878,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B189512B15DE52D100B77813 /* main.m in Sources */,
+				5B6CFD8D16D939C800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8789,6 +8887,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B189514215E0FA5F00B77813 /* main.m in Sources */,
+				5B6CFD8C16D939C400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8797,6 +8896,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1935C6315B90ECE00107399 /* main.m in Sources */,
+				5B6CFD9216D939DB00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8805,6 +8905,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B19ABA0E146D68FE004EB77E /* main.m in Sources */,
+				5B6CFDA616D93A2800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8813,6 +8914,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1B68C79159FC16E008BC463 /* main.m in Sources */,
+				5B6CFD9916D939F400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8821,6 +8923,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1C4F400161F87070010A5C8 /* main.m in Sources */,
+				5B6CFDB016D93A6800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8839,6 +8942,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1CC832515D3BEC4008DE335 /* main.m in Sources */,
+				5B6CFD8F16D939D000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8856,6 +8960,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1F531DD15AED4B100E89F98 /* main.m in Sources */,
+				5B6CFD9416D939E200BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8865,6 +8970,7 @@
 			files = (
 				F548AA76167FB1C600726814 /* main.m in Sources */,
 				F548AAB21680B3A500726814 /* MD4.m in Sources */,
+				5B6CFDB416D93A7600BCB95F /* ORCmdLineArgs.m in Sources */,
 				F55DEFB716C9F33E005818AF /* MD5.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

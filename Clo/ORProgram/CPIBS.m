@@ -168,7 +168,7 @@
    NSMutableDictionary*    _impacts;
 }
 
--(id)initCPIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPIBS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
@@ -176,15 +176,19 @@
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
-   [cp addHeuristic:self];
    return self;
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPIBS* cp = [[CPIBS alloc] initCPIBS:_cp restricted:_rvars];
+   return cp;
 }
 -(void)dealloc
 {
    [_impacts release];
    [super dealloc];
 }
--(id<CPProgram>)solver
+-(id<CPCommonProgram>)solver
 {
    return _cp;
 }

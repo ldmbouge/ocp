@@ -100,10 +100,9 @@
 }
 -(void) addHeuristic: (id<CPHeuristic>) h
 {
-   ORInt k = [NSThread threadID];
-   return [_solver[k] addHeuristic: h];
+   for(ORInt i=0;i < _nb;i++)
+      [_solver[i] addHeuristic:[h copyWithZone:nil]];
 }
-
 -(void) waitWorkers
 {
    [_terminated lock];

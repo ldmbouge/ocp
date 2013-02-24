@@ -114,6 +114,6 @@ void mallocWatch()
 NSString* mallocReport()
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"using: %ld peak:%ld",nbBytes,peakBytes];
+   [buf appendFormat:@"%ld,%ld",nbBytes,peakBytes];
    return buf;
 }

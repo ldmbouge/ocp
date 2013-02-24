@@ -19,7 +19,7 @@
    id<ORVarArray> _rvars;
    id<CPProgram>     _cp;
 }
--(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
+-(CPFirstFail*)initCPFirstFail:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPIntVar>)x;
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
 -(void)initInternal:(id<ORVarArray>)t;

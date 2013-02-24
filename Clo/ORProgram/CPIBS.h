@@ -23,9 +23,9 @@
 @interface CPIBS : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
-   id<CPProgram>      _cp;
+   id<CPCommonProgram>   _cp;
 }
--(id)initCPIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
+-(id)initCPIBS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPIntVar>)x;
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;

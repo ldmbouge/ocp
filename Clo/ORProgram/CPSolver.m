@@ -438,7 +438,7 @@
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      id<ORIntVar> x = nil;//*last;
+      id<ORIntVar> x = *last;
       if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
@@ -563,6 +563,67 @@
       [_search fail];
 }
 
+
+-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
+{
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createFF
+{
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createWDeg
+{
+   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createDDeg
+{
+   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createIBS
+{
+   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createABS
+{
+   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
 @end
 
 /******************************************************************************************/

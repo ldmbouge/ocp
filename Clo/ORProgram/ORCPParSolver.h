@@ -26,4 +26,14 @@
 -(void)onSolution:(ORClosure)onSolution;
 -(void) doOnSolution;
 -(void) doOnExit;
+-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createFF;
+-(id<CPHeuristic>) createWDeg;
+-(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createIBS;
+-(id<CPHeuristic>) createABS;
 @end

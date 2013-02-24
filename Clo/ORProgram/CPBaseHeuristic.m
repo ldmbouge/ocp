@@ -9,10 +9,11 @@
 
  ***********************************************************************/
 
+#import <ORUtilities/ORUtilities.h>
 #import "CPBaseHeuristic.h"
 #import <objcp/CPVar.h>
-
 @implementation CPBaseHeuristic
+
 -(void) initHeuristic: (NSMutableArray*) array
 {
    __block ORUInt nbViews = 0;
@@ -32,5 +33,51 @@
 -(void) initInternal: (id<ORVarArray>) t
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
+}
+@end
+
+
+@implementation CPVirtualHeuristic {
+   id<ORBindingArray> _binding;
+}
+-(CPVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings
+{
+   self = [super init];
+   _binding = bindings;
+   return self;
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   return [[CPVirtualHeuristic alloc] initWithBindings:[_binding retain]];
+}
+-(void)dealloc
+{
+   [_binding release];
+   [super dealloc];
+}
+-(ORFloat) varOrdering: (id<ORIntVar>)x
+{
+   return [_binding[[NSThread threadID]] varOrdering:x];
+}
+-(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+{
+   return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
+}
+-(void) initInternal: (id<CPIntVarArray>) t
+{
+   [_binding[[NSThread threadID]] initInternal:t];
+}
+-(void) initHeuristic: (NSMutableArray*) array
+{
+   [_binding[[NSThread threadID]] initHeuristic:array];
+}
+-(id<ORIntVarArray>) allIntVars
+{
+   return [_binding[[NSThread threadID]] allIntVars];
+}
+-(id<CPCommonProgram>)solver
+{
+   id<CPHeuristic> h = _binding[[NSThread threadID]];
+   return [h solver];
 }
 @end
