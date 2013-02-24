@@ -9,14 +9,15 @@
  
  ***********************************************************************/
 
-#import "ORFlatten.h"
+#import "ORLPFlatten.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
+#import "ORLPDecompose.h"
 
-@interface ORNOopVisit : NSObject<ORVisitor>
+@interface ORLPNOopVisit : NSObject<ORVisitor>
 @end
 
-@implementation ORNOopVisit
+@implementation ORLPNOopVisit
 -(void) visitRandomStream:(id) v {}
 -(void) visitZeroOneStream:(id) v {}
 -(void) visitUniformDistribution:(id) v{}
@@ -122,7 +123,7 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e  {}
 @end
 
-@interface ORFlattenObjects : ORNOopVisit<ORVisitor> {
+@interface ORLPFlattenObjects : ORLPNOopVisit<ORVisitor> {
    id<ORAddToModel> _theModel;
 }
 -(id)init:(id<ORAddToModel>)m;
@@ -136,7 +137,7 @@
 -(void) visitTable:(id<ORTable>) v;
 @end
 
-@interface ORFlattenConstraint : ORNOopVisit<ORVisitor> {
+@interface ORLPFlattenConstraint : ORLPNOopVisit<ORVisitor> {
    id<ORAddToModel> _theModel;
 }
 -(id)init:(id<ORAddToModel>)m;
@@ -196,31 +197,31 @@
 @end
 
 
-@interface ORFlattenObjective : NSObject<ORVisitor>
+@interface ORLPFlattenObjective : NSObject<ORVisitor>
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitMinimize: (id<ORObjectiveFunction>) v;
 -(void) visitMaximize: (id<ORObjectiveFunction>) v;
 @end
 
 
-@implementation ORFlatten
--(id)initORFlatten
+@implementation ORLPFlatten
+-(id)initORLPFlatten
 {
    self = [super init];
    return self;
 }
--(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)batch
+-(void) apply: (id<ORModel>) m into: (id<ORAddToModel>) batch
 {
    [m applyOnVar:^(id<ORVar> x) {
       [batch addVariable:x];
    } onObjects:^(id<ORObject> x) {
-      ORFlattenObjects* fo = [[ORFlattenObjects alloc] init:batch];
+      ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:batch];
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [ORFlatten flatten:c into:batch];
+      [ORLPFlatten flatten:c into:batch];
    } onObjective:^(id<ORObjective> o) {
-      ORFlattenObjective* fo = [[ORFlattenObjective alloc] init:batch];
+      ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:batch];
       [o visit:fo];
       [fo release];
    }];
@@ -228,26 +229,31 @@
 
 +(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
 {
-   ORFlattenConstraint* fc = [[ORFlattenConstraint alloc] init:m];
+   ORLPFlattenConstraint* fc = [[ORLPFlattenConstraint alloc] init:m];
    [c visit:fc];
    [fc release];
 }
 +(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
+   ORLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
    switch ([expr type]) {
-      case ORRBad: assert(NO);
-      case ORREq: {
-         if ([terms size] != 0) {
-            [terms postEQZ:model annotation:note];
+      case ORRBad:
+         assert(NO);
+      case ORREq:
+         {
+            [terms postLinearEq: model annotation: note];
          }
-      }break;
-      case ORRNEq: {
-         [terms postNEQZ:model annotation:note];
-      }break;
-      case ORRLEq: {
-         [terms postLEQZ:model annotation:note];
-      }break;
+         break;
+      case ORRNEq:
+         {
+            @throw [[ORExecutionError alloc] initORExecutionError: "No != constraint supported in LP yet"];
+         }
+         break;
+      case ORRLEq:
+         {
+           [terms postLinearLeq: model annotation: note];
+         }
+         break;
       default:
          assert(terms == nil);
          break;
@@ -256,7 +262,7 @@
 }
 @end
 
-@implementation ORFlattenObjects 
+@implementation ORLPFlattenObjects
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -297,7 +303,7 @@
 }
 @end
 
-@implementation ORFlattenConstraint 
+@implementation ORLPFlattenConstraint
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -327,7 +333,7 @@
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]]
+      [ORLPFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]]
                               into: _theModel
                         annotation: DomainConsistency];
    ORInt s = 0;
@@ -335,10 +341,10 @@
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s]
+   [ORLPFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s]
                            into: _theModel
                      annotation: DomainConsistency];
-                                             
+   
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
@@ -347,7 +353,7 @@
    id<ORGroup> ng = [ORFactory group:_theModel type:[g type]];
    id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_theModel group:ng];
    [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
-      [ORFlatten flatten:ck into:a2g];
+      [ORLPFlatten flatten:ck into:a2g];
    }];
    [_theModel addConstraint:ng];
    [a2g release];
@@ -362,11 +368,11 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
+   [ORLPFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   [_theModel addConstraint:cstr];   
+   [_theModel addConstraint:cstr];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
@@ -552,7 +558,7 @@
 }
 @end
 
-@implementation ORFlattenObjective {
+@implementation ORLPFlattenObjective {
    id<ORAddToModel> _theModel;
 }
 -(id)init:(id<ORAddToModel>)m

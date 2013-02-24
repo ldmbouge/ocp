@@ -652,6 +652,13 @@
 		B103534113BBD7B200627058 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B103534B13BBD81300627058 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B103534F13BBD82D00627058 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B103534313BBD7B200627058 /* main.m */; };
+		B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614516D969CD00E95A39 /* ORLPFlatten.h */; };
+		B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
+		B103614A16D96B0100E95A39 /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */; };
+		B103614D16D9AAA500E95A39 /* ORLPDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORLPDecompose.h */; };
+		B103614E16D9AAA500E95A39 /* ORLPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORLPDecompose.m */; };
+		B103615116D9AB9A00E95A39 /* ORLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORLinear.h */; };
+		B103615216D9AB9A00E95A39 /* ORLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORLinear.m */; };
 		B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B111FC0413CF3D10003C5119 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B111FC0313CF3D10003C5119 /* main.m */; };
 		B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */ = {isa = PBXBuildFile; fileRef = B11D862115CD8AE20019729B /* ORExplorerI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -682,7 +689,6 @@
 		B154429716D19E92001BD7B3 /* LPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B154420016D189F1001BD7B3 /* LPSolverI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B154429916D19EB9001BD7B3 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		B154429A16D19F54001BD7B3 /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */; };
 		B15442A016D1A247001BD7B3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B15442A316D1A247001BD7B3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442A216D1A247001BD7B3 /* main.m */; };
 		B15442A716D1A247001BD7B3 /* GraveYard.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B15442A616D1A247001BD7B3 /* GraveYard.1 */; };
@@ -3658,6 +3664,13 @@
 		B103534713BBD7B200627058 /* queensAC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensAC.1; sourceTree = "<group>"; };
 		B103536213BCFF2300627058 /* CPCreateI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCreateI.h; sourceTree = "<group>"; };
 		B103536313BCFF2300627058 /* CPCreateI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCreateI.m; sourceTree = "<group>"; };
+		B103614516D969CD00E95A39 /* ORLPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPFlatten.h; sourceTree = "<group>"; };
+		B103614616D969CD00E95A39 /* ORLPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLPFlatten.m; sourceTree = "<group>"; };
+		B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = ../../../../../../Library/gurobi500/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<group>"; };
+		B103614B16D9AAA500E95A39 /* ORLPDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPDecompose.h; sourceTree = "<group>"; };
+		B103614C16D9AAA500E95A39 /* ORLPDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLPDecompose.m; sourceTree = "<group>"; };
+		B103614F16D9AB9A00E95A39 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
+		B103615016D9AB9A00E95A39 /* ORLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinear.m; sourceTree = "<group>"; };
 		B10ECF0E150C34DE00B82836 /* ORFactoryI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFactoryI.h; sourceTree = "<group>"; };
 		B10ECF0F150C34DE00B82836 /* ORFactoryI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFactoryI.m; sourceTree = "<group>"; };
 		B10ECF12150C382000B82836 /* ORSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSet.h; sourceTree = "<group>"; };
@@ -4432,7 +4445,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B154429A16D19F54001BD7B3 /* libgurobi.so.5.0.0 in Frameworks */,
+				B103614A16D96B0100E95A39 /* libgurobi.so.5.0.0 in Frameworks */,
 				B154429916D19EB9001BD7B3 /* ORUtilities.framework in Frameworks */,
 				B154429816D19EB3001BD7B3 /* ORFoundation.framework in Frameworks */,
 				B154428116D19D8F001BD7B3 /* Cocoa.framework in Frameworks */,
@@ -4891,6 +4904,7 @@
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
+				B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */,
 				5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */,
 				B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */,
 				B15441FC16D17A75001BD7B3 /* gurobi_c.h */,
@@ -5476,11 +5490,17 @@
 				5BAD1152161E5E430014EBCB /* Supporting Files */,
 				5BDF5FAA161F81B800E5E1FA /* ORFlatten.h */,
 				5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */,
+				B103614516D969CD00E95A39 /* ORLPFlatten.h */,
+				B103614616D969CD00E95A39 /* ORLPFlatten.m */,
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
 				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
 				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
 				5B1391841629A99D0029FD29 /* ORDecompose.h */,
 				5B1391851629A99D0029FD29 /* ORDecompose.m */,
+				B103614B16D9AAA500E95A39 /* ORLPDecompose.h */,
+				B103614C16D9AAA500E95A39 /* ORLPDecompose.m */,
+				B103614F16D9AB9A00E95A39 /* ORLinear.h */,
+				B103615016D9AB9A00E95A39 /* ORLinear.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -6512,6 +6532,9 @@
 				5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */,
 				5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */,
 				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
+				B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */,
+				B103614D16D9AAA500E95A39 /* ORLPDecompose.h in Headers */,
+				B103615116D9AB9A00E95A39 /* ORLinear.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8491,6 +8514,9 @@
 				3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */,
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
 				3737A3A9166B0867002D3A57 /* ORModelTransformation.m in Sources */,
+				B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */,
+				B103614E16D9AAA500E95A39 /* ORLPDecompose.m in Sources */,
+				B103615216D9AB9A00E95A39 /* ORLinear.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

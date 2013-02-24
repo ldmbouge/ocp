@@ -198,12 +198,12 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener];
    [flat apply: model into:batch];
    [batch release];
    
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
-   [model visit: concretizer];
+   [flatModel visit: concretizer];
    [concretizer release];
 }
 

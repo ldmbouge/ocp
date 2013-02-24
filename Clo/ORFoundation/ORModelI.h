@@ -271,11 +271,35 @@
 -(ORInt)cst;
 @end
 
+
+
 @interface ORSumGEqc : ORConstraintI<ORSumGEqc>
 -(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end
+
+@interface ORLinearLeq : ORConstraintI<ORLinearLeq>
+-(ORLinearLeq*) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@interface ORLinearGeq : ORConstraintI<ORLinearGeq>
+-(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@interface ORLinearEq : ORConstraintI<ORLinearEq>
+-(ORLinearEq*) initLinearEq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt) c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n;

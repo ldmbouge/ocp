@@ -822,11 +822,12 @@
    ORFloat* bucket = (ORFloat*) alloca(sizeIdx * sizeof(ORFloat));
    LPVariableI** bucketVar = (LPVariableI**) alloca(sizeIdx * sizeof(LPVariableI*));
    bucket -= lidx;
+   bucketVar -= lidx;
    for(ORInt i = lidx; i <= uidx; i++)
       bucket[i] = 0.0;
    for(ORInt i = 0; i < _size; i++) {
       int idx = [_var[i] idx];
-      bucket[idx] += _coef[idx];
+      bucket[idx] += _coef[i];
       bucketVar[idx] = _var[i];
    }
    int nb = 0;
@@ -946,6 +947,43 @@
       [t add: coef[i] times: var[i]];
    return [self createLEQ: t rhs: rhs];
 }
+
+-(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   id<ORIntRange> R = [var range];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++) {
+      NSLog(@" %d -> %d * var(%d)",i,[coef at: i],[var[i] idx]);
+      [t add: [coef at: i] times: var[i]];
+   }
+   return [self createLEQ: t rhs: -cst];
+}
+-(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   id<ORIntRange> R = [var range];
+   ORInt low = R.low;
+   ORInt up = R.up;
+   for(ORInt i = low; i <= up; i++) {
+      [t add: [coef at: i] times: var[i]];
+   }
+   return [self createEQ: t rhs: -cst];
+}
+-(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   [t add: 1 times: x];
+   return [self createMinimize: t];
+}
+-(LPObjectiveI*)  createObjectiveMaximize: (LPVariableI*) x
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   [t add: 1 times: x];
+   return [self createMaximize: t];
+}
+
 -(LPConstraintI*) createGEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
    LPLinearTermI* t = [self createLinearTerm];

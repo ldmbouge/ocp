@@ -36,6 +36,8 @@ typedef struct IRange {
 -(ORFloat)   reducedCost;
 @end
 
+
+
 @protocol LPConstraint <NSObject>
 -(LPConstraintType)    type;
 -(ORInt)               size;
