@@ -26,7 +26,7 @@
 @end
 
 @interface ABSProbe : NSObject {
-   ORInt*            _tab;
+   ORFloat*          _tab;
    int                _sz;
    int               _low;
    int                _up;
@@ -35,13 +35,13 @@
 -(ABSProbe*)initABSProbe:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addVar:(id<ORVar>)var;
--(void)scanProbe:(void(^)(ORInt varID,ORInt activity))block;
+-(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block;
 @end
 
 @interface ABSProbeAggregator : NSObject {
-   id<ORVarArray>    _vars;
-   ORInt*            _sum;
-   ORInt*          _sumsq;
+   id<ORVarArray>   _vars;
+   ORFloat*          _sum;
+   ORFloat*        _sumsq;
    int                _sz;
    int               _low;
    int                _up;
@@ -100,10 +100,10 @@
       _up  = max(_up,vid);
    }];
    _sz = _up - _low + 1;
-   _sum   = malloc(sizeof(ORInt)*_sz);
-   _sumsq = malloc(sizeof(ORInt)*_sz);
-   memset(_sum,0,sizeof(ORInt)*_sz);
-   memset(_sumsq,0,sizeof(ORInt)*_sz);
+   _sum   = malloc(sizeof(ORFloat)*_sz);
+   _sumsq = malloc(sizeof(ORFloat)*_sz);
+   memset(_sum,0,sizeof(ORFloat)*_sz);
+   memset(_sumsq,0,sizeof(ORFloat)*_sz);
    _sum   -= _low;
    _sumsq -= _low;
    _inProbe = [[NSMutableSet alloc] initWithCapacity:32];
@@ -126,14 +126,15 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"[AGGREG(%d,%d) = ",_sz,_nbProbes];
    [_inProbe enumerateObjectsUsingBlock:^(NSNumber* key, BOOL *stop) {
-      [buf appendFormat:@"<%d , %d>,",key.intValue,_sum[key.intValue]];
+      ORInt kv = key.intValue;
+      [buf appendFormat:@"<%d , %f , %f>,",kv,_sum[kv],_sumsq[kv]];
    }];
    [buf appendString:@"]"];
    return buf;
 }
 -(void)addProbe:(ABSProbe*)p
 {
-   [p scanProbe:^(ORInt varID, ORInt activity) {
+   [p scanProbe:^(ORInt varID, ORFloat activity) {
       NSNumber* key = [[NSNumber alloc] initWithInt:varID];
       [_inProbe addObject:key];
       [key release];
@@ -169,12 +170,12 @@
 -(ORFloat)avgActivity:(ORInt)x
 {
    assert(_low <= x && x <= _up);
-   return ((ORFloat)_sum[x]) / _nbProbes;
+   return _sum[x] / _nbProbes;
 }
 -(ORFloat)avgSQActivity:(ORInt)x
 {
    assert(_low <= x && x <= _up);
-   return ((ORFloat)_sumsq[x]) / _nbProbes;
+   return _sumsq[x] / _nbProbes;
 }
 -(NSSet*)variableIDs
 {
@@ -217,8 +218,8 @@
       _up  = max(_up,[obj getId]);
    }];
    _sz = _up - _low + 1;
-   _tab = malloc(sizeof(ORInt)*_sz);
-   memset(_tab,0,sizeof(ORInt)*_sz);
+   _tab = malloc(sizeof(ORFloat)*_sz);
+   memset(_tab,0,sizeof(ORFloat)*_sz);
    _tab -= _low;
    _inProbe = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
@@ -239,7 +240,7 @@
    assert(_low <= idx && idx <= _up);
    _tab[idx] += 1;
 }
--(void)scanProbe:(void(^)(ORInt varID,ORInt activity))block
+-(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block
 {
    for(NSNumber* key in _inProbe) {
       assert(_low <= key.intValue && key.intValue <= _up);
@@ -251,7 +252,7 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"(%d) [",_sz];
    for(NSNumber* key in _inProbe) {
-      [buf appendFormat:@"<%@,%d>,",key,_tab[key.intValue]];
+      [buf appendFormat:@"<%@,%f>,",key,_tab[key.intValue]];
    }
    [buf appendString:@"]"];
    return buf;
@@ -477,7 +478,7 @@
    ORBounds b = [x bounds];
    while (true) {
       double p   = [_valPr next];
-      ORInt v    = b.min + floor(p / (1.0 / (b.max - b.min + 1)));
+      ORInt v    = b.min + floor(p * ((ORFloat)(b.max - b.min + 1)));
       if ([x member:v])
          return v;
    }
@@ -622,11 +623,14 @@
          [probe release];
       }
       carryOn = [self moreProbes];
-   } while (carryOn && cntProbes < 10 * maxProbes);
-   for(ABSNogood* b in killSet) {
-      [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];//diff:[b variable] with:[b value]];
-      NSLog(@"Imposing SAC %@",b);
-   }
+   } while (carryOn && cntProbes < maxProbes);
+   [_solver atomic:^ORStatus {
+      for(ABSNogood* b in killSet) {
+         [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
+         NSLog(@"Imposing SAC %@",b);
+      }
+      return ORSuspend;
+   }];
    [killSet release];
    [varPr release];
    [_valPr release];

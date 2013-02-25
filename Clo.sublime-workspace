@@ -3,18 +3,30 @@
 	{
 		"selected_items":
 		[
+			[
+				"ORObjec",
+				"ORObjectiveFunction	"
+			],
+			[
+				"import",
+				"import <header>	"
+			],
+			[
+				"forall",
+				"forall:(id<ORIntIterator>) orderedBy:^ORInt(ORInt)o do:^(ORInt)b	void"
+			],
+			[
+				"obj",
+				"objects	NSArray *"
+			],
+			[
+				"ORSolu",
+				"ORSolutionPool	"
+			]
 		]
 	},
 	"buffers":
 	[
-		{
-			"contents": "",
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -22,6 +34,26 @@
 		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"ctags",
+				"CTags: Rebuild Tags"
+			],
+			[
+				"cta",
+				"CTags: Show Symbols (file)"
+			],
+			[
+				"toggl",
+				"Toggle Block Comment"
+			],
+			[
+				"comment",
+				"Toggle Block Comment"
+			],
+			[
+				"View",
+				"View: Toggle Open Files in Side Bar"
+			],
 			[
 				"reindent",
 				"Indentation: Reindent Lines"
@@ -35,7 +67,7 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 437.0
+		"width": 800.0
 	},
 	"console":
 	{
@@ -52,6 +84,36 @@
 	},
 	"file_history":
 	[
+		"/Users/ldm/work/platform/Clo/Clo/Clo.xcodeproj/project.pbxproj",
+		"/Users/ldm/work/platform/Clo/Clo.xcodeproj/project.pbxproj",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORTracer.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.m",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.h",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngine.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORConcretizer.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORConcretizer.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPConcretizer.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPProgramI.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPMultiStartSolver.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPSolverI.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPCreateI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPCreateI.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPParallel.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPParallel.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPProgram.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORParCPConcretizer.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORParCPConcretizer.h",
+		"/Users/ldm/work/RComet/compiler/benchcp/queens.co",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorer.h",
+		"/Users/ldm/work/platform/Clo.sublime-project",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
 		"/Users/ldm/.bashrc",
 		"/Users/ldm/Desktop/script.py",
 		"/Users/ldm/Desktop/histo.history",
@@ -66,6 +128,7 @@
 		"height": 0.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
@@ -73,6 +136,30 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"<0,",
+			"<<<<",
+			"CPSemanticProgram",
+			"CPSemSolver",
+			"\n",
+			"CPSemSolver",
+			"CPSemanticSolver",
+			"CPParallelAdapter",
+			"ORExplorer",
+			"controllerFactory",
+			"installProblem",
+			"ORControllerFactory",
+			"controllerFactory",
+			"installProblem",
+			"install",
+			"SemTracer",
+			"return",
+			"_solver[k]",
+			"return",
+			"_solver[k]",
+			"multiStart",
+			"addModel",
+			"CPMultiStartSolver",
+			"MultiSartSolver",
 			"|",
 			"nobtf",
 			"breaks",
@@ -97,41 +184,14 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"input":
 	{
@@ -160,13 +220,17 @@
 		]
 	},
 	"menu_visible": true,
+	"output.clang":
+	{
+		"height": 112.0
+	},
 	"output.exec":
 	{
 		"height": 116.0
 	},
 	"replace":
 	{
-		"height": 0.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -174,6 +238,46 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"orexp",
+				"ORFoundation/ORExplorer.h"
+			],
+			[
+				"",
+				"ORFoundation/ORExplorerI.h"
+			],
+			[
+				"cpsolver",
+				"ORProgram/CPSolver.h"
+			],
+			[
+				"cpengine",
+				"CPUKernel/CPEngineI.h"
+			],
+			[
+				"orconcre",
+				"ORProgram/ORConcretizer.h"
+			],
+			[
+				"orcpcon",
+				"ORProgram/CPConcretizer.m"
+			],
+			[
+				"cpprogram",
+				"ORProgram/CPProgramI.m"
+			],
+			[
+				"cpmulti",
+				"ORProgram/CPMultiStartSolver.m"
+			],
+			[
+				"orcp",
+				"ORProgram/ORParCPConcretizer.h"
+			],
+			[
+				"orcppar",
+				"ORProgram/ORCPParSolver.h"
+			]
 		],
 		"width": 0.0
 	},
@@ -186,7 +290,7 @@
 		"width": 0.0
 	},
 	"show_minimap": true,
-	"show_open_files": false,
+	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
 	"side_bar_width": 150.0,

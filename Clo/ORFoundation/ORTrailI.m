@@ -377,7 +377,7 @@ void  assignTRId(TRId* v,id val,ORTrailI* trail)
 }
 void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 {
-   trailIdNCFun(trail, &v->_val);
+   inline_trailIdNCFun(trail, &v->_val);
    v->_val = val;
 }
 ORInt getTRIntArray(TRIntArray a,int i)
