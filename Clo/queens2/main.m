@@ -15,7 +15,7 @@
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])
 {
@@ -33,10 +33,10 @@ int main (int argc, const char * argv[])
    [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
 
    id<CPProgram> cp = [ORFactory createCPProgram: model];
-   id<CPHeuristic> h = [ORFactory createFF:cp];
-  [cp solveAll:
+   id<CPHeuristic> h = [cp createFF];
+   [cp solveAll:
    ^() {
-       //[CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
+       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
        [cp labelHeuristic:h];
        //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
        [nbSolutions incr];

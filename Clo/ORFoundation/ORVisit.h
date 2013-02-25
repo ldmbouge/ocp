@@ -36,6 +36,7 @@
 -(void) visitTable:(id<ORTable>) v;
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c;
+-(void) visitGroup:(id<ORGroup>)g;
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f;
 -(void) visitFail:(id<ORFail>)cstr;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
@@ -62,6 +63,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
@@ -84,6 +86,12 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c;
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c;
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+
+-(void) visitLinearGeq: (id<ORLinearGeq>) c;
+-(void) visitLinearLeq: (id<ORLinearLeq>) c;
+-(void) visitLinearEq: (id<ORLinearEq>) c;
+
+
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;

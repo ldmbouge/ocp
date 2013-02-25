@@ -11,8 +11,8 @@
 
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
-#import "ORSolution.h"
 
+@protocol ORSolution;
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
 -(void) wheneverNotifiedDo: (id) closure;

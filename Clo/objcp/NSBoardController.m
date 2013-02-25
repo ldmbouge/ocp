@@ -10,15 +10,12 @@
  ***********************************************************************/
 
 #import "NSBoardController.h"
-#import "CPConstraintI.h"
-#import "CPIntVarI.h"
-#import "CPEngineI.h"
-#import "CPSolverI.h"
+#import <ORProgram/CPProgram.h>
 #import "CPWatch.h"
 
 @interface CPGrid : NSObject {
-   id<ORIntRange> _rows;
-   id<ORIntRange> _cols;
+   ORRange _rows;
+   ORRange _cols;
    NSColor* _red;
    NSColor* _green;
    NSColor* _back;
@@ -34,10 +31,10 @@
 -(CPGrid*)initGrid:(id<ORIntRange>)rows by:(id<ORIntRange>)cols
 {
    self = [super init];
-   _rows = rows;
-   _cols = cols;
-   ORInt nbRows = [_rows up] - [_rows low] + 1;
-   ORInt nbCols = [_cols up] - [_cols low] + 1;
+   _rows = (ORRange){[rows low],[rows up]};
+   _cols = (ORRange){[cols low],[cols up]};;
+   ORInt nbRows = _rows.up - _rows.low + 1;
+   ORInt nbCols = _cols.up - _cols.low + 1;
    _values = malloc(sizeof(enum CPDomValue)*nbRows*nbCols);
    for(ORInt i=0;i<nbRows*nbCols;i++)
       _values[i] = Possible;
@@ -53,28 +50,28 @@
 }
 -(void)toggleRow:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv
 {
-   ORInt nbCols = [_cols up] - [_cols low] + 1;
-   _values[(r - [_rows low]) * nbCols + c - [_cols low]] = dv;
+   ORInt nbCols = _cols.up - _cols.low + 1;
+   _values[(r - _rows.low) * nbCols + c - _cols.low] = dv;
 }
 -(void)drawRect:(NSRect)dirtyRect inView:(NSView*)view
 {
    NSRect bnds  = [view frame];
-   ORInt nbRows = [_rows size];
-   ORInt nbCols = [_cols size];
+   ORInt nbRows = _rows.up - _rows.low + 1;
+   ORInt nbCols = _cols.up - _cols.low + 1;
    float stripW = bnds.size.width / nbCols;
    float stripH = bnds.size.height/ nbRows;
    float colW = stripW - 6;
    float rowH = stripH - 6;
-   for(ORInt i=[_rows low];i<=[_rows up];i++) {
-      for(ORInt j=[_cols low]; j <= [_cols up];j++) {      
-         enum CPDomValue dv = _values[(i - [_rows low]) * nbCols + j - [_cols low]];
+   for(ORInt i=_rows.low;i<=_rows.up;i++) {
+      for(ORInt j=_cols.low; j <= _cols.up;j++) {
+         enum CPDomValue dv = _values[(i - _rows.low) * nbCols + j - _cols.low];
          switch(dv) {
             case Possible: [_back setFill];break;
             case Required: [_green setFill];break;
             case Removed:  [_red setFill];break;
          }
-         CGFloat x = (j-[_cols low])*stripW;
-         CGFloat y = (i-[_rows low])*stripH;
+         CGFloat x = (j-_cols.low)*stripW;
+         CGFloat y = (i-_rows.low)*stripH;
          NSRectFill(NSMakeRect(x + 3 + bnds.origin.x, 
                                y + 3 + bnds.origin.y, 
                                colW, rowH));
@@ -128,12 +125,13 @@
       [grid toggleRow:r col:c to:dv];
    }
    [_drawOn performSelectorOnMainThread:@selector(refresh) withObject:nil waitUntilDone:NO];
-//   [_drawOn setNeedsDisplay:TRUE];
 }
-//-(void)watchSearch: (CPSolverI*)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
-//{
-//   [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
-//}
+-(void)watchSearch: (id<CPProgram>)cp onChoose:(ORClosure) onc onFail:(ORClosure) onf
+{
+  [[cp explorer] setController: [[CPViewController alloc] initCPViewController:[[cp explorer] controller]
+                                                                      onChoose:onc
+                                                                        onFail:onf]];
+}
 
 -(void)pause
 {

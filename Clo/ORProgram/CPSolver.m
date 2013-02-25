@@ -120,8 +120,8 @@
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
-   ORClosure             _doOnSol;
-   ORClosure             _doOnExit;
+   NSMutableArray*       _doOnSolArray;
+   NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
 }
 -(CPCoreSolver*) initCPCoreSolver
@@ -131,9 +131,10 @@
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
    _objective = nil;
-   _doOnSol = _doOnExit = nil;
    _sPool   = [ORFactory createSolutionPool];
    _closed = false;
+   _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
+   _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
 }
 -(void) dealloc
@@ -142,9 +143,9 @@
    [_portal release];
    [_returnLabel release];
    [_failLabel release];
-   [_doOnSol release];
-   [_doOnExit release];
    [_sPool release];
+   [_doOnSolArray release];
+   [_doOnExitArray release];
    [super dealloc];
 }
 -(NSString*) description
@@ -202,56 +203,102 @@
 {
    [_hSet push: h];
 }
--(void) onSolution: (ORClosure)onSol onExit:(ORClosure)onExit
+-(void) onSolution: (ORClosure) onSolution
 {
-   [_doOnSol release];
-   _doOnSol = [onSol copy];
-   [_doOnExit release];
-   _doOnExit = [onExit copy];
-   
+   [_doOnSolArray addObject: [onSolution copy]];
+}
+-(void) onExit: (ORClosure) onExit
+{
+   [_doOnExitArray addObject: [onExit copy]];
 }
 -(id<ORSolutionPool>) solutionPool
 {
    return _sPool;
+}
+-(id<ORSolutionPool>) globalSolutionPool
+{
+   return _sPool;
+}
+-(void) doOnSolution
+{
+   [_doOnSolArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
+      block();
+   }];
+}
+-(void) doOnExit
+{
+   [_doOnExitArray enumerateObjectsUsingBlock:^(ORClosure block, NSUInteger idx, BOOL *stop) {
+      block();
+   }];
 }
 -(void) solve: (ORClosure) search
 {
    _objective = [_engine objective];
    if (_objective != nil) {
       [_search optimizeModel: self using: search
-                  onSolution: _doOnSol
-                      onExit: _doOnExit];
-      printf("Optimal Solution: %d %d\n",[_objective primalBound],[NSThread threadID]);
+                  onSolution: ^{ [self doOnSolution];}
+                      onExit: ^{ [self doOnExit];}
+       ];
+      printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       [_search solveModel: self using: search
-               onSolution: _doOnSol
-                   onExit: _doOnExit];
+               onSolution: ^{ [self doOnSolution];}
+                   onExit: ^{ [self doOnExit];}
+       ];
    }
 }
 -(void) solveAll: (ORClosure) search
 {
+   ORInt nbs = (ORInt) [_doOnSolArray count];
+   ORInt nbe = (ORInt) [_doOnExitArray count];
    [_search solveAllModel: self using: search
-               onSolution: _doOnSol
-                   onExit: _doOnExit];
+               onSolution: ^{
+                  for(ORInt i = 0; i < nbs; i++)
+                     ((ORClosure) [_doOnSolArray objectAtIndex: i])();
+               }
+                   onExit: ^{
+                      for(ORInt i = 0; i < nbe; i++)
+                         ((ORClosure) [_doOnExitArray objectAtIndex: i])();
+                   }
+    ];
 }
--(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
+-(id<ORForall>) forall: (id<ORIntIterable>) S
+{
+   return [ORControl forall: self set: S];
+}
+-(void) forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    [ORControl forall: S suchThat: nil orderedBy: order do: body];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    [ORControl forall: S suchThat: filter orderedBy: order do: body];  
+}
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+{
+   id<ORForall> forall = [ORControl forall: self set: S];
+   [forall orderedBy:o1];
+   [forall orderedBy:o2];
+   [forall do: b];
+}
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+{
+   id<ORForall> forall = [ORControl forall: self set: S];
+   [forall suchThat: suchThat];
+   [forall orderedBy:o1];
+   [forall orderedBy:o2];
+   [forall do: b];
 }
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
    [_search try: left or: right];   
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
    [_search tryall: range suchThat: filter in: body];   
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];  
 }
@@ -377,20 +424,36 @@
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
    id<ORIntVarArray> av = [h allIntVars];
-   id<ORSelect> select = [ORFactory select: _engine
+   id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
-                                       orderedBy: ^ORFloat(ORInt i) { return [h varOrdering:av[i]]; }];
+                                       orderedBy: ^ORFloat(ORInt i) {
+                                          ORFloat rv = [h varOrdering:av[i]];
+                                          return rv;
+                                       }];
+   id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   [_trail trailClosure:^{
+      free(last);
+   }];
+   *last = nil;
+   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      ORInt i = [select max];
-      if (i == MAXINT)
-         return;
-      //NSLog(@"Chose variable: %d",i);
-      id<ORIntVar> x = av[i];
+      id<ORIntVar> x = *last;
+      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+         ORInt i = [select max];
+         if (i == MAXINT)
+            return;
+         //NSLog(@"Chose variable: %d",i);
+         x = av[i];
+         *last = x;
+      }/* else {
+         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+      }*/
+      [failStamp setValue:[_search nbFailures]];
       id<ORSelect> valSelect = [ORFactory select: _engine
-                                                 range:RANGE(_engine,[x min],[x max])
-                                              suchThat:^bool(ORInt v)    { return [x member:v];}
-                                             orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
+                                           range:RANGE(_engine,[x min],[x max])
+                                        suchThat:^bool(ORInt v)    { return [x member:v];}
+                                       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
       do {
          ORInt curVal = [valSelect max];
          if (curVal == MAXINT)
@@ -402,7 +465,6 @@
          }];
       } while(![x bound]);
    } while (true);
-   
 }
 -(void) label: (id<ORIntVar>) mx
 {
@@ -501,6 +563,67 @@
       [_search fail];
 }
 
+
+-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
+{
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
+{
+   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:rvars];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createFF
+{
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createWDeg
+{
+   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createDDeg
+{
+   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createIBS
+{
+   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
+-(id<CPHeuristic>) createABS
+{
+   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:nil];
+   [self addHeuristic:h];
+   return h;
+}
 @end
 
 /******************************************************************************************/
@@ -861,10 +984,6 @@
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
-}
-+(id<CPProgram>) multiStartSolver: (ORInt) k
-{
-   return [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
 }
 @end
 

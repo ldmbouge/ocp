@@ -56,11 +56,14 @@
 -(void)            solveAll: (ORClosure) body;
 -(void)               close;
 
--(void)              forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
--(void)              forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(id<ORForall>)      forall: (id<ORIntIterable>) S;
+-(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
+-(void)              forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b;
 -(void)                 try: (ORClosure) left or: (ORClosure) right;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
--(void)              tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
+-(void)              tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
 
 -(void)           limitTime: (ORLong) maxTime in: (ORClosure) cl;
 
@@ -70,8 +73,22 @@
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)      nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution;
 -(void)      nestedSolveAll: (ORClosure) body;
--(void)          onSolution: (ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)          onSolution: (ORClosure) onSolution;
+-(void)              onExit: (ORClosure) onExit;
+-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createFF;
+-(id<CPHeuristic>) createWDeg;
+-(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createIBS;
+-(id<CPHeuristic>) createABS;
+-(void) doOnSolution;
+-(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
+-(id<ORSolutionPool>) globalSolutionPool;
 @end
 
 // CPSolver with syntactic DFS Search

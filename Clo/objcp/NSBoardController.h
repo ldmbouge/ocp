@@ -10,13 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPFactory.h>
 #import <objcp/CPWatch.h>
 
+@protocol CPProgram;
+
 @interface NSBoardController : NSObject {
-   NSView* _drawOn;
-   NSMutableArray* _toDraw;
-   NSCondition*    _pause;
+   NSView*           _drawOn;
+   NSMutableArray*   _toDraw;
+   NSCondition*       _pause;
    BOOL            _isPaused;
    BOOL            _canPause;
 }
@@ -28,6 +29,6 @@
 -(void)neverStop;
 -(void)toggleGrid:(id)grid row:(ORInt)r col:(ORInt)c to:(enum CPDomValue)dv;
 -(void)drawRect:(NSRect)dirtyRect inView:(id)view;
-//-(void)watchSearch:(id<CPSolver>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
+-(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end
 

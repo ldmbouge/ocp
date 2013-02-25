@@ -10,36 +10,9 @@
  ***********************************************************************/
 
 #import "CPEngineI.h"
-#import "CPBasicConstraint.h"
 #import "CPTypes.h"
 #import "CPAC3Event.h"
 #import "ORFoundation/ORSetI.h"
-
-#define AC5LOADED(q) ((q)->_csz)
-#define ISLOADED(q)  ((q)->_csz)
-
-typedef struct AC3Entry {
-   ConstraintCallback   cb;
-   CPCoreConstraint*    cstr;
-} AC3Entry;
-
-@interface CPAC3Queue : NSObject {
-   @package
-   ORInt      _mxs;
-   ORInt      _csz;
-   AC3Entry*  _tab;
-   ORInt    _enter;
-   ORInt     _exit;
-   ORInt     _mask;
-}
--(id)initAC3Queue:(ORInt)sz;
--(void)dealloc;
--(AC3Entry)deQueue;
--(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr;
--(void)reset;
--(bool)loaded;
-@end
-
 
 @implementation CPAC3Queue
 -(id) initAC3Queue: (ORInt) sz
@@ -122,28 +95,11 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 }
 @end
 
-@interface CPAC5Queue : NSObject {
-   @package
-   ORInt           _mxs;
-   ORInt           _csz;
-   id<CPAC5Event>* _tab;
-   ORInt         _enter;
-   ORInt          _exit;
-   ORInt          _mask;
-}
--(id) initAC5Queue: (ORInt) sz;
--(void) dealloc;
--(id<CPAC5Event>) deQueue;
--(void) enQueue: (id<CPAC5Event>)cb;
--(void) reset;
--(bool) loaded;
-@end
-
 @implementation CPAC5Queue
 -(id) initAC5Queue:(ORInt)sz
 {
    self = [super init];
-   _mxs = sz;
+   _mxs = sz; 
    _csz = 0;
    _mask = _mxs - 1;
    _tab = malloc(sizeof(id<CPAC5Event>)*_mxs);
@@ -241,7 +197,13 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id<ORIntVarArray>)intVars
 {
-   return (id<ORIntVarArray>)[_engine intVars];
+   ORInt nbVars = (ORInt) [[_engine variables] count];
+   id<ORIntVarArray> iva = (id<ORIntVarArray>)[ORFactory idArray:_engine range:RANGE(_engine,0,nbVars-1)];
+   __block ORInt k = 0;
+   [[_engine variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [iva set:obj at:k++];
+   }];
+   return iva;
 }
 -(NSArray*) variables
 {
@@ -283,7 +245,6 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    }
 }
 @end
-
 
 @implementation CPEngineI
 -(CPEngineI*) initEngine: (id<ORTrail>) trail
@@ -339,7 +300,14 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return _oStore;
 }
-
+-(void)setLastFailure:(id<CPConstraint>)lastToFail
+{
+   _last = lastToFail;
+}
+-(void)incNbPropagation:(ORUInt)add
+{
+   _nbpropag += add;
+}
 -(ORUInt) nbPropagation
 {
    return _nbpropag;
@@ -401,7 +369,12 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       while (list) {
          assert(list->_cstr);
          list->_cstr->_todo = CPTocheck;
-         AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);
+         id<CPGroup> group = [list->_cstr group];
+         if (group) {
+            AC3enQueue(_ac3[LOWEST_PRIO], nil, group);
+            [group scheduleAC3:list];
+         } else
+            AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);
          list = list->_node;
       } 
       ++mlist;
@@ -437,6 +410,62 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       }
    }
    return ORSuspend;
+}
+
+ORStatus propagateFDM(CPEngineI* fdm)
+{
+   if (fdm->_propagating > 0)
+      return ORDelay;
+   ++fdm->_propagating;
+   ORStatus status = fdm->_status = ORSuspend;
+   bool done = false;
+   CPAC5Queue* ac5 = fdm->_ac5;
+   CPAC3Queue** ac3 = fdm->_ac3;
+   id<CPConstraint>* last = &fdm->_last;
+   *last = nil;
+   ORInt nbp = 0;
+   @try {
+      while (!done) {
+         // AC5 manipulates the list
+         while (AC5LOADED(ac5)) {
+            id<CPAC5Event> evt = deQueueAC5(ac5);
+            nbp += [evt execute];
+         }
+         // Processing AC3
+         int p = HIGHEST_PRIO;
+         while (p>=LOWEST_PRIO && !ISLOADED(ac3[p]))
+            --p;
+         done = p < LOWEST_PRIO;
+         while (!done) {
+            status = executeAC3(AC3deQueue(ac3[p]),last);
+            nbp += status !=ORSkip;
+            if (AC5LOADED(ac5))
+               break;
+            p = HIGHEST_PRIO;
+            while (p >= LOWEST_PRIO && !ISLOADED(ac3[p]))
+               --p;
+            done = p < LOWEST_PRIO;
+         }
+      }
+      if (fdm->_propagDone)
+         [fdm->_propagDone notify];
+      fdm->_status = status;
+      fdm->_nbpropag += nbp;
+      --fdm->_propagating;
+      return status;
+   }
+   @catch (ORFailException *exception) {
+      for(ORInt p=NBPRIORITIES-1;p>=0;--p)
+         AC3reset(ac3[p]);
+      AC5reset(ac5);
+      if (fdm->_propagFail)
+         [fdm->_propagFail notifyWith:[*last getId]];
+      [exception release];
+      fdm->_status = ORFailure;
+      fdm->_nbpropag += nbp;
+      --fdm->_propagating;
+      return ORFailure;
+   } 
 }
 
 -(ORStatus) propagate
@@ -492,30 +521,12 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (status == ORSuspend || status == ORSuccess)
-      return fdm->_propagIMP(fdm,@selector(propagate));
+      return propagateFDM(fdm);// fdm->_propagIMP(fdm,@selector(propagate));
    else if (status== ORFailure) {
       for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
          AC3reset(fdm->_ac3[p]);
       return ORFailure;
    } else return status;
-/*
-   switch (status) {
-      case ORFailure:
-         for(ORInt p=HIGHEST_PRIO;p>=LOWEST_PRIO;--p)
-            AC3reset(fdm->_ac3[p]);
-         break;
-      case ORSuccess:
-      case ORSuspend:
-         //status = [fdm propagate];
-         status = fdm->_propagIMP(fdm,@selector(propagate));
-         break;
-      case ORDelay:
-         break;
-      default:
-         break;
-   }
-   return status;
- */
 }
 
 -(ORStatus) enforceObjective
@@ -525,7 +536,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _status = ORSuspend;
       ORStatus ok = [_objective check];
       if (ok)
-         ok = [self propagate];
+         ok = propagateFDM(self);// [self propagate];
       return ok;
    } @catch (ORFailException *exception) {
       [exception release];
@@ -604,32 +615,18 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 {
    if (_state == CPOpen) {
       _state = CPClosing;
+      _propagating++;
       for(id<ORConstraint> c in _mStore) {
          [self post:c];
          if (_status == ORFailure)
             return ORFailure;
       }
+      _propagating--;
+      _status = internalPropagate(self, ORSuspend);
       _state = CPClosed;
    }
    //printf("Closing CPEngine\n");
    return ORSuspend;
-}
-
-// TOCHECK
--(id<ORIntVarArray>)intVars
-{
-   __block ORInt nbIntVars = 0;
-   [[self variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      if ([obj conformsToProtocol:@protocol(CPIntVar)])
-         nbIntVars++;
-   }];
-   id<ORIntVarArray> rv = (id<ORIntVarArray>)[ORFactory idArray:self range:RANGE(self,0,nbIntVars-1)];
-   nbIntVars = 0;
-   [[self variables] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      if ([obj conformsToProtocol:@protocol(CPIntVar)])
-         [rv set:obj at:nbIntVars++];
-   }];
-   return rv;
 }
 
 -(id<ORBasicModel>)model

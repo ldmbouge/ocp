@@ -13,13 +13,15 @@
 #import <ORFoundation/ORModel.h>
 #import <ORModeling/ORSolver.h>
 #import <ORModeling/ORSolution.h>
+#import <ORModeling/ORModelTransformation.h>
+
 
 @protocol ORModelTransformation;
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
--(void) add: (id<ORConstraint>) cstr;
--(void) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
+-(id<ORConstraint>) add: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
@@ -32,8 +34,10 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
--(id<ORSolution>)solution;
--(void)restore:(id<ORSolution>)s;
+-(id<ORSolution>) captureSolution;
+-(id<ORSolutionPool>) solutions;
+-(id<ORSolution>) bestSolution;
+-(void) restore: (id<ORSolution>) s;
 @end
 
 @protocol ORAddToModel <ORTracker>
@@ -47,7 +51,9 @@
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel;
 +(id<ORModelTransformation>) createFlattener;
++(id<ORModelTransformation>) createLPFlattener;
 +(id<ORModelTransformation>) createLinearizer;
 +(id<ORSolutionPool>) createSolutionPool;
 @end

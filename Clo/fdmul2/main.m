@@ -13,7 +13,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPError.h>
 
 ORInt ipow(ORInt b,ORInt e)
@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
        */
       
       id<CPProgram>   cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createFF:cp];
+      id<CPHeuristic> h = [cp createFF];
 
       [cp solve: ^{
          @try {

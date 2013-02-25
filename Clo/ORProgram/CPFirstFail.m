@@ -19,12 +19,16 @@
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
-   [cp addHeuristic:self];
    _cp = cp;
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    return self;
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPFirstFail * cp = [[CPFirstFail alloc] initCPFirstFail:_cp restricted:_rvars];
+   return cp;
 }
 -(void)dealloc
 {
@@ -39,11 +43,12 @@
    return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
--(float)varOrdering:(id<CPIntVar>)x
+-(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   return - [x domsize];
+   float rv = - [x domsize];
+   return rv;
 }
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }

@@ -11,7 +11,7 @@
 
 #import <ORProgram/CPHeuristic.h>
 #import <ORProgram/CPBaseHeuristic.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPVar.h>
@@ -23,11 +23,11 @@
 @interface CPIBS : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
-   id<CPProgram>      _cp;
+   id<CPCommonProgram>   _cp;
 }
--(id)initCPIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
--(float)varOrdering:(id<CPIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
+-(id)initCPIBS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
+-(ORFloat)varOrdering:(id<CPIntVar>)x;
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
 -(void)initImpacts;

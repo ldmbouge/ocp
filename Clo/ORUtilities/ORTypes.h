@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-
+#import <Foundation/Foundation.h>
 #if !defined(__APPLE__) || defined(__IPHONE_NA)
 typedef unsigned long long uint64;
 typedef long long sint64;
@@ -27,6 +27,8 @@ typedef sint64 ORLong;
 typedef uint64 ORULong;
 typedef double ORFloat;
 
+//#define minOf(a,b) ((a) < (b) ? (a) : (b))
+//#define maxOf(a,b) ((a) > (b) ? (a) : (b))
 static inline ORLong minOf(ORLong a,ORLong b) { return a < b ? a : b;}
 static inline ORLong maxOf(ORLong a,ORLong b) { return a > b ? a : b;}
 

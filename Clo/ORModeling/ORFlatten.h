@@ -15,8 +15,8 @@
 
 
 @interface ORFlatten : NSObject<ORModelTransformation>
--(id)initORFlatten;
--(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
-+(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
-+(void)flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
+-(id) initORFlatten;
+-(void) apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
++(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
++(void) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
 @end

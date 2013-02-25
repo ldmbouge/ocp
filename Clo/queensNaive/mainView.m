@@ -16,12 +16,12 @@
 #import "ORFoundation/ORFoundation.h"
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 13;
+      ORInt n = argc >= 2 ? atoi(argv[1]) : 8;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl, 0, n-1);
       long startTime = [ORRuntimeMonitor cputime];
@@ -42,7 +42,7 @@ int main (int argc, const char * argv[])
       NSLog(@"Writing ? %s",ok ? "OK" : "KO");
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h2 = [ORFactory createIBS:cp];
+      id<CPHeuristic> h2 = [cp createIBS];
       //   id<CPHeuristic> h2 = [CPFactory createDDeg:cp];
       //   id<CPHeuristic> h2  = [CPFactory createWDeg:cp];
       //   id<CPHeuristic> h2 = [CPFactory createFF:cp];

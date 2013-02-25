@@ -34,6 +34,21 @@
    return [[ORTrailI alloc] init];
 }
 
++(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
+{
+   id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];
+   [model trackObject:o];
+   return o;
+}
++(id<ORGroup>)group:(id<ORTracker>)model
+{
+   return [self group:model type:DefaultGroup];
+}
++(id<ORGroup>)bergeGroup:(id<ORTracker>)model
+{
+   return [self group:model type:BergeGroup];
+}
+
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
@@ -158,19 +173,19 @@
     return m;
 }
 
-+(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker over: (id<ORIntIterator>) r
++(id<IntEnumerator>) intEnumerator: (id<ORTracker>) tracker over: (id<ORIntIterable>) r
 {
    id<IntEnumerator> ite = [r enumerator];
    [tracker trackObject: ite];
    return ite;
 }
-+(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
++(id<ORSelect>) select: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
 {
    ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: false];
    [tracker trackObject: o];
    return o;
 }
-+(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
++(id<ORSelect>) selectRandom: (id<ORTracker>) tracker range: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order
 {
    ORSelectI* o = [[ORSelectI alloc] initORSelectI: range suchThat: filter orderedBy: order randomized: YES];
    [tracker trackObject: o];
@@ -268,13 +283,13 @@
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++) {
-      o[k] = clo(k);
+      [o  set:clo(k) at:k];
    }
    return (id<ORIntVarArray>)o;
 }
 +(id<ORIntVarArray>) intVarArrayDereference: (id<ORTracker>) tracker array: (id<ORIntVarArray>) x
 {
-   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([x[i] dereference]); }];
+   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([[x at:i] dereference]); }];
 }
 
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(ORInt,ORInt)) clo
@@ -386,7 +401,7 @@
    ORInt sz = (ORInt)[m count];
    id<ORIdArray> flat = [ORFactory idArray: tracker range: RANGE(tracker,0,sz-1)];
    for(ORInt i=0;i<sz;i++)
-      flat[i] = [m flat:i];
+      [flat set:[m flat:i] at:i];
    return (id<ORIntVarArray>)flat;
 }
 @end
@@ -482,20 +497,20 @@
    return [self validate:o onError:"No CP tracker in negate Expression"];
 }
 
-+(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker over: S suchThat: f of: e];
    [tracker trackObject: o];
    return o;
 }
-+(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
++(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    ORExprProdI* o = [[ORExprProdI alloc] initORExprProdI: tracker over: S suchThat: f of: e];
    [tracker trackObject: o];
    return o;
 }
 
-+(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
++(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker over: S suchThat: f of: e];
    [tracker trackObject: o];
@@ -550,6 +565,12 @@
    [model trackConstraint:o];
    return o;
 }
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leq: (id<ORIntVar>) y
+{
+   id<ORConstraint> o = [[ORReifyLEqual alloc] initReify: b equiv: x leq: y annotation:Default];
+   [model trackConstraint:o];
+   return o;
+}
 +(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumBoolGEqc alloc] initSumBool: x geqi: c];
@@ -580,6 +601,20 @@
    [model trackConstraint:o];
    return o;
 }
++(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  eq: (ORInt) c
+{
+   id<ORConstraint> o = [[ORLinearEq alloc] initLinearEq: x coef: coef cst: c];
+   [model trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  leq: (ORInt) c
+{
+   id<ORConstraint> o = [[ORLinearLeq alloc] initLinearLeq: x coef: coef cst: c];
+   [model trackConstraint:o];
+   return o;
+}
+
+
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
@@ -679,11 +714,17 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z
++(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORMult alloc] initORMult:z eq:x times:y];
-   [model trackConstraint:o];
-   return o;
+   if ([x getId] == [y getId]) {
+      id<ORConstraint> o = [[ORSquare alloc] initORSquare:z square:x annotation:n];
+      [model trackConstraint:o];
+      return o;
+   } else {
+      id<ORConstraint> o = [[ORMult alloc] initORMult:z eq:x times:y];
+      [model trackConstraint:o];
+      return o;
+   }
 }
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
@@ -801,9 +842,9 @@
    id<ORTracker> tracker = [x tracker];
    id<ORIntRange> R = RANGE(tracker,0,2);
    id<ORIdArray> a = [ORFactory idArray:tracker range:R];
-   a[0] = x;
-   a[1] = y;
-   a[2] = z;
+   [a set:x at:0];
+   [a set:y at:1];
+   [a set:z at:2];
    id<ORConstraint> o = [self tableConstraint: (id<ORIntVarArray>) a table: table];
    [tracker trackConstraint:o];
    return o;

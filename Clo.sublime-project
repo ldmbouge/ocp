@@ -1,0 +1,10 @@
+{
+	"folders":
+	[
+		{
+			"path": "Clo"	,
+			"folder_exclude_patterns" : ["*.lproj"],
+			"file_exclude_patterns" : ["*.pch","*.1"]		
+		}
+	]
+}

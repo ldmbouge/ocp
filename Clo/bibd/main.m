@@ -13,7 +13,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 void show(id<ORIntVarMatrix> M)
 {
@@ -35,7 +35,7 @@ int main(int argc, const char * argv[])
    mallocWatch();
    @autoreleasepool {
       ORLong t0 = [ORRuntimeMonitor cputime];
-      ORInt a = argc >= 2 ? atoi(argv[1]) : 0;
+      ORInt a = argc >= 2 ? atoi(argv[1]) : 10;
       ORInt instances[14][3] = {
          {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
          {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},

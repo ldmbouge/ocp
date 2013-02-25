@@ -43,8 +43,67 @@
 {
    [visitor visitConstraint:self];
 }
-
 @end
+
+@implementation ORGroupI {
+   NSMutableArray* _content;
+   id<ORTracker>     _model;
+   ORUInt             _name;
+   enum ORGroupType     _gt;
+}
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
+{
+   self = [super init];
+   _model = model;
+   _content = [[NSMutableArray alloc] initWithCapacity:8];
+   _name = -1;
+   _gt = gt;
+   return self;
+}
+-(void)dealloc
+{
+   [_content release];
+   [super dealloc];
+}
+-(void) setId: (ORUInt) name
+{
+   _name = name;
+}
+-(id<ORConstraint>)add:(id<ORConstraint>)c
+{
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+      c = [ORFactory algebraicConstraint:_model expr: (id<ORRelation>)c annotation:Default];
+   [_content addObject:c];
+   return c;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@",[self class],self,_impl];
+   [buf appendString:@"{"];
+   [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+      [buf appendFormat:@"%@,",[obj description]];
+   }];
+   [buf appendString:@"}"];
+   return buf;
+}
+-(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block
+{
+   [_content enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
+      block(obj);
+   }];
+}
+
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitGroup:self];
+}
+-(enum ORGroupType)type
+{
+   return _gt;
+}
+@end
+
 
 @implementation ORFail
 -(ORFail*)init
@@ -286,6 +345,7 @@
    _b = b;
    _x = x;
    _y = y;
+   assert(a != 0);
    _note = n;
    return self;
 }
@@ -503,6 +563,43 @@
 -(id<ORIntVar>) right
 {
    return _z;
+}
+@end
+
+@implementation ORSquare { // z == x^2
+   id<ORIntVar> _z;
+   id<ORIntVar> _x;
+   ORAnnotation _n;
+}
+-(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _z = z;
+   _n = n;
+   return self;
+}
+-(id<ORIntVar>)res
+{
+   return _z;
+}
+-(id<ORIntVar>)op
+{
+   return _x;
+}
+-(ORAnnotation)annotation
+{
+   return _n;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ ^ 2)",[self class],self,_impl,_z,_x];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitSquare:self];
 }
 @end
 
@@ -1262,7 +1359,7 @@
    id<ORIntVarArray> _ia;
    ORInt              _c;   
 }
--(ORSumLEqc*)initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c
+-(ORSumLEqc*) initSum:(id<ORIntVarArray>)ia leqi:(ORInt)c
 {
    self = [super initORConstraintI];
    _ia = ia;
@@ -1316,6 +1413,120 @@
    return _ia;
 }
 -(ORInt)cst
+{
+   return _c;
+}
+@end
+
+@implementation ORLinearGeq {
+   id<ORIntVarArray> _ia;
+   id<ORIntArray>    _coefs;
+   ORInt             _c;
+}
+-(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) coefs cst: (ORInt) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitLinearGeq: self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORIntArray>) coefs
+{
+   return _coefs;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORLinearLeq {
+   id<ORIntVarArray> _ia;
+   id<ORIntArray>    _coefs;
+   ORInt             _c;
+}
+-(ORLinearLeq*) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) coefs cst:(ORInt)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitLinearLeq: self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORIntArray>) coefs
+{
+   return _coefs;
+}
+-(ORInt) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORLinearEq {
+   id<ORIntVarArray> _ia;
+   id<ORIntArray>    _coefs;
+   ORInt             _c;
+}
+-(ORLinearEq*) initLinearEq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) coefs cst:(ORInt) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void)visit: (id<ORVisitor>) v
+{
+   [v visitLinearEq: self];
+}
+-(id<ORIntVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORIntArray>) coefs
+{
+   return _coefs;
+}
+-(ORInt) cst
 {
    return _c;
 }

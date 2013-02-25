@@ -13,7 +13,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPError.h>
 #include <malloc/malloc.h>
 
@@ -45,7 +45,7 @@ int main(int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
       //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
-      id<CPHeuristic> h = [ORFactory createFF:cp restricted:sx];
+      id<CPHeuristic> h = [cp createFF:sx];
 
       [cp solve: ^{
          [cp labelHeuristic:h];

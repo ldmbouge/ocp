@@ -16,10 +16,9 @@
 
 @implementation CPWDeg
 
--(CPWDeg*)initCPWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
+-(CPWDeg*)initCPWDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
-   [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPEngineI*)[cp engine];
    _vars = nil;
@@ -28,7 +27,11 @@
    _cv = 0;
    return self;
 }
-
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPWDeg* cp = [[CPWDeg alloc] initCPWDeg:_cp restricted:_rvars];
+   return cp;
+}
 -(void)dealloc
 {
    if (_w) free(_w);
@@ -45,7 +48,7 @@
    free(_map);
    [super dealloc];
 }
--(id<CPProgram>)solver
+-(id<CPCommonProgram>)solver
 {
    return _cp;
 }
@@ -59,7 +62,7 @@
 
 // pvh: see question below for the importance of _cv
 
--(float) varOrdering:(id<CPIntVar>)x
+-(ORFloat) varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
@@ -71,7 +74,7 @@
    return h / [x domsize];
 }
 
--(float) valOrdering:(int) v forVar:(id<CPIntVar>)x
+-(ORFloat) valOrdering:(int) v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }

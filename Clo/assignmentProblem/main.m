@@ -14,12 +14,12 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPFactory.h>
-#import "../ORModeling/ORLinearize.h"
-#import "../ORModeling/ORFlatten.h"
 #import "ORRunnable.h"
 #import "ORParallelRunnable.h"
+#import <ORModeling/ORLinearize.h>
+#import <ORModeling/ORFlatten.h>
 
 int main (int argc, const char * argv[])
 {

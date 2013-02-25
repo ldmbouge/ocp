@@ -11,14 +11,29 @@
 
 
 #import <Foundation/Foundation.h>
+#import <ORProgram/CPProgram.h> 
+#import <ORProgram/CPSolver.h>
 
-/*
-@interface CPParSolverI : CPSemSolverI<CPParSolver> {
+@interface CPParSolverI : NSObject<CPProgram> {
    ORInt              _nbWorkers;
+   id<ORSolutionPool> _globalPool;
+   ORClosure          _onSol;
 }
--(CPSemSolverI*)          initForWorkers:(ORInt)nbt withController:(Class)ctrlClass;
--(CPCoreSolverI*)         initFor: (CPEngineI*) fdm;
+-(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass;
 -(ORInt)nbWorkers;
--(id<CPSolver>)dereference;
+-(id<CPProgram>)dereference;
+-(id<ORSolutionPool>)globalSolutionPool;
+-(void)onSolution:(ORClosure)onSolution;
+-(void) doOnSolution;
+-(void) doOnExit;
+-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createFF;
+-(id<CPHeuristic>) createWDeg;
+-(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createIBS;
+-(id<CPHeuristic>) createABS;
 @end
-*/

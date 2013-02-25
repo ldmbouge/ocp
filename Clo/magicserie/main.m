@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])
 {
@@ -27,6 +27,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          NSLog(@"x = %@",x);
+         NSLog(@"model: %@",[[cp engine] model]);
          for(ORInt i=0;i<n;i++) {
             while (![x[i] bound]) {
                ORInt v = [x[i] min];
@@ -54,36 +55,3 @@ int main (int argc, const char * argv[])
    }
    return 0;
 }
-
-
-/*
-
-int main (int argc, const char * argv[])
-{
-   const ORInt n = 128;  // 128 -> 494 fails
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> R = RANGE(cp,0,n-1);
-   id<ORIntSet> RS = [ORFactory intSet: cp];
-   [R iterate: ^(ORInt e) { [RS insert: e]; } ];
-   NSLog(@"%@",RS);
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: R];
-   [cp solve: ^{
-      for(ORInt i=0;i<n;i++)
-         [cp add: [SUM(j,RS,[x[j] eqi: i]) eq: x[i] ]];
-      [cp add: [SUM(i,RS,[x[i] muli: i]) eqi: n ]];
-   }
-       using: ^{
-          [CPLabel array: x];
-          for(ORInt i = 0; i < n; i++)
-             printf("%d ",[x[i] value]);
-          printf("\n");
-       }
-    ];
-   NSLog(@"Solver status: %@\n",cp);
-   [cp release];
-   [CPFactory shutdown];
-   return 0;
-}
-
-
-*/

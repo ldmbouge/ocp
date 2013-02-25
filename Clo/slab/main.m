@@ -16,10 +16,11 @@
 #import "ORFoundation/ORSemBDSController.h"
 #import "ORFoundation/ORSemDFSController.h"
 #import <ORProgram/ORProgram.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    id<ORModel> mdl = [ORFactory createModel];
    FILE* dta = fopen("slab.dat","r");
    ORInt nbCap;
@@ -114,6 +115,7 @@ int main(int argc, const char * argv[])
    NSLog(@"Quitting");
    [cp release];
    [ORFactory shutdown];
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 

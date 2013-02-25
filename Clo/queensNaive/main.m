@@ -11,8 +11,8 @@
 
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORConcretizer.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgramFactory.h>
 
 
 NSString* indent(int t)

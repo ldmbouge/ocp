@@ -16,13 +16,14 @@
 
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @public
-   CPTodo          _todo:2;
+   CPTodo            _todo;
    bool      _idempotent:1;
-   int        _priority:29;
+   int        _priority:31;
    ORUInt            _name;
    IMP          _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
+   id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m;
 -(ORStatus) doIt;
@@ -32,4 +33,6 @@
 -(ORUInt) getId;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
+-(void)setGroup:(id<CPGroup>)g;
+-(id<CPGroup>)group;
 @end

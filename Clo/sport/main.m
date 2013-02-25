@@ -13,7 +13,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
-#import <ORProgram/ORConcretizer.h>
+#import <ORProgram/ORProgramFactory.h>
 
 //20639 choices
 //20579 fail
@@ -59,15 +59,7 @@ int main(int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:
        ^() {
-          /*
-           for(ORInt p = 1; p <= n/2 ; p++) {
-           id<ORIntVarArray> ap =  [CPFactory intVarArray:cp range: Weeks with: ^id<ORIntVar>(ORInt w) { return [game at: p : w]; }];
-           id<ORIntVarArray> aw =  [CPFactory intVarArray:cp range: Periods with: ^id<ORIntVar>(ORInt w) { return [game at: w : p]; }];
-           [CPLabel array: ap orderedBy: ^ORInt(ORInt i) { return [[ap at:i] domsize];}];
-           [CPLabel array: aw orderedBy: ^ORInt(ORInt i) { return [[aw at:i] domsize];}];
-           }
-           */
-          [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [[allgames at:i] domsize];}];
+           [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [[allgames at:i] domsize];}];
           NSLog(@"after");
           [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [[allteams at:i] domsize];}];
           ORLong endTime = [ORRuntimeMonitor cputime];

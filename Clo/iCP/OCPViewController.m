@@ -51,7 +51,7 @@
 {
    int n = 8;
    ORRange R = (ORRange){1,n};
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPProgram> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];

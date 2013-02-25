@@ -54,6 +54,7 @@
 -(id) visitLEqual: (id<ORLEqual>)c engine: (id<CPEngine>) engine;
 -(id) visitPlus: (id<ORPlus>)c engine: (id<CPEngine>) engine;
 -(id) visitMult: (id<ORMult>)c engine: (id<CPEngine>) engine;
+-(id) visitSquare: (id<ORSquare>)c engine:(id<CPEngine>)engine;
 -(id) visitMod: (id<ORMod>)c engine:(id<CPEngine>) engine;
 -(id) visitModc: (id<ORModc>)c engine:(id<CPEngine>) engine;
 -(id) visitAbs: (id<ORAbs>)c engine: (id<CPEngine>) engine;
@@ -149,6 +150,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
@@ -243,6 +245,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;

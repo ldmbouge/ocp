@@ -17,7 +17,7 @@
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
-#import "ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 
 @protocol ORObjective;
 
@@ -25,6 +25,16 @@
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;
 -(NSString*) description;
+@end
+
+
+@interface ORGroupI : ORModelingObjectI<ORGroup>
+-(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
+-(id<ORConstraint>)add:(id<ORConstraint>)c;
+-(NSString*) description;
+-(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
+-(void) setId: (ORUInt) name;
+-(enum ORGroupType)type;
 @end
 
 @interface ORFail : ORConstraintI<ORFail>
@@ -106,6 +116,13 @@
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(id<ORIntVar>) right;
+@end
+
+@interface ORSquare : ORConstraintI<ORSquare>
+-(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n;
+-(id<ORIntVar>)res;
+-(id<ORIntVar>)op;
+-(ORAnnotation) annotation;
 @end
 
 @interface ORMod : ORConstraintI<ORMod>
@@ -254,11 +271,35 @@
 -(ORInt)cst;
 @end
 
+
+
 @interface ORSumGEqc : ORConstraintI<ORSumGEqc>
 -(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end
+
+@interface ORLinearLeq : ORConstraintI<ORLinearLeq>
+-(ORLinearLeq*) initLinearLeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@interface ORLinearGeq : ORConstraintI<ORLinearGeq>
+-(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
+@interface ORLinearEq : ORConstraintI<ORLinearEq>
+-(ORLinearEq*) initLinearEq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt) c;
+-(id<ORIntVarArray>) vars;
+-(id<ORIntArray>) coefs;
+-(ORInt) cst;
+@end
+
 
 @interface ORAlldifferentI : ORConstraintI<ORAlldifferent>
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n;

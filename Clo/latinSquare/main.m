@@ -26,6 +26,7 @@ NSString* tab(int d)
 
 int main(int argc, const char * argv[])
 {
+   mallocWatch();
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor wctime];
       [ORStreamManager setRandomized];
@@ -64,29 +65,18 @@ int main(int argc, const char * argv[])
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       id<ORIntVarArray> av = All2(model, ORIntVar, i, R, j, R, [z at:i :j]);
-      id<CPHeuristic> h = [ORFactory createFF:cp restricted:av];
+      id<CPHeuristic> h = [cp createFF:av];
       [cp solve:^{
          id<ORBasicModel> bm = [[cp engine] model];
-         NSArray* bmv = [bm variables];
-         //NSLog(@"BASIC: %@",bm);
+         NSLog(@"BASIC: %@",bm);
          __block ORInt d = 0;
          [cp forall:[av range] suchThat:^bool(ORInt i) { return ![av[i] bound];} orderedBy:^ORInt(ORInt i) { return [av[i] domsize];} do:^(ORInt i) {
-/*            [bmv enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-               printf("%ld : %s\n",idx,[[obj description] cStringUsingEncoding:NSASCIIStringEncoding]);
-            }];
- */
             [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) {
-               //NSLog(@"member?(%@,%d) == %d",av[i],j,[av[i] member:j]);
                return [av[i] member:j];
             } in:^(ORInt j) {
                [cp label:av[i] with:j];
-               //printf("%sTried label ok %d - %d \n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],i,j);
-               //printf("%sx[21] = %s\n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],[[av[21] description] cStringUsingEncoding:NSASCIIStringEncoding]);
             } onFailure:^(ORInt j) {
-               //printf("%sabout to try to remove %d",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],j);
                [cp diff:av[i] with:j];
-               //printf("%sTried diff ok  %d - %d \n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],i,j);
-               //printf("%sx[21] = %s\n",[tab(d) cStringUsingEncoding:NSASCIIStringEncoding],[[av[21] description] cStringUsingEncoding:NSASCIIStringEncoding]);
             }];
             d = d + 1;
          }];
@@ -135,6 +125,7 @@ int main(int argc, const char * argv[])
       [cp release];
       [ORFactory shutdown];
    }
+   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 

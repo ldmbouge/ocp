@@ -12,11 +12,24 @@
 #import <CPUKernel/CPUKernel.h>
 #import "CPEngineI.h"
 #import "CPAC3Event.h"
+#import "CPGroup.h"
 
 @implementation CPFactory
 +(id<CPEngine>) engine: (id<ORTrail>) trail
 {
    return [[CPEngineI alloc] initEngine: trail];
+}
++(id<CPGroup>)group:(id<CPEngine>)engine
+{
+   id<CPGroup> g = [[CPGroup alloc] init:engine];
+   [engine trackObject:g];
+   return g;
+}
++(id<CPGroup>)bergeGroup:(id<CPEngine>)engine
+{
+   id<CPGroup> g = [[CPBergeGroup alloc] init:engine];
+   [engine trackObject:g];
+   return g;
 }
 @end
 

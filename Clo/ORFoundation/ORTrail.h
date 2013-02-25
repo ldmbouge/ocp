@@ -69,7 +69,7 @@ typedef struct {
    ORUInt _mgc;
 } FXInt;
 
-@interface ORTrailFunction
+@interface ORTrailFunction : NSObject
 void trailIntFun(id<ORTrail> t,int* ptr);
 void trailUIntFun(id<ORTrail> t,unsigned* ptr);
 void trailIdNCFun(id<ORTrail> t,id* ptr);

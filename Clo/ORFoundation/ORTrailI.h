@@ -160,6 +160,16 @@ static inline void inline_trailIntFun(ORTrailI* t,int* ptr)
    ++(t->_seg[t->_cSeg]->top);
 }
 
+static inline void inline_trailLongFun(ORTrailI* t,long long* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGLong;
+   s->longVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
+
 static inline void inline_trailPointerFun(ORTrailI* t,void** ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
@@ -191,31 +201,32 @@ static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
 }
 
 
-static inline void inline_assignTRInt(TRInt* v,int val,ORTrailI* trail)
+static inline void inline_assignTRInt(TRInt* v,int val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailIntFun(trail, &v->_val);
+      inline_trailIntFun((ORTrailI*)trail, &v->_val);
    }
    v->_val = val;
 }
 
-static inline void  inline_assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
+static inline void  inline_assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailUIntFun(trail, &v->_val);
+      inline_trailUIntFun((ORTrailI*)trail, &v->_val);
    }
    v->_val = val;
 }
-static inline void  inline_assignTRLong(TRLong* v,long long val,ORTrailI* trail)
+static inline void  inline_assignTRLong(TRLong* v,long long val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      [trail trailLong:&v->_val];
+      inline_trailLongFun((ORTrailI*)trail,&v->_val);
+      //[trail trailLong:&v->_val];
    }
    v->_val = val;
 }

@@ -13,6 +13,7 @@
 #import "ORModelI.h"
 #import "ORFlatten.h"
 #import "ORCopy.h"
+#import "ORLPFlatten.h"
 #import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
@@ -26,15 +27,25 @@
     [copier release];
     return copyModel;
 }
-+(id<ORModelTransformation>)createFlattener
+
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel
+{
+   return [[ORBatchModel alloc]  init: flatModel];
+}
+
++(id<ORModelTransformation>) createFlattener
 {
    return [[[ORFlatten alloc] initORFlatten] autorelease];
 }
-+(id<ORModelTransformation>)createLinearizer
++(id<ORModelTransformation>) createLPFlattener
+{
+   return [[[ORLPFlatten alloc] initORLPFlatten] autorelease];
+}
++(id<ORModelTransformation>) createLinearizer
 {
     return [[[ORLinearize alloc] initORLinearize] autorelease];
 }
-+(id<ORSolutionPool>)createSolutionPool
++(id<ORSolutionPool>) createSolutionPool
 {
    return [[ORSolutionPoolI alloc] init];
 }

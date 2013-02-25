@@ -22,12 +22,12 @@
 @interface CPABS : CPBaseHeuristic<CPHeuristic> {
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
-   id<CPProgram>      _cp;
+   id<CPCommonProgram>      _cp;
 }
--(id)initCPABS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
--(float)varOrdering:(id<CPIntVar>)x;
--(float)valOrdering:(int)v forVar:(id<CPIntVar>)x;
+-(id)initCPABS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
+-(ORFloat)varOrdering:(id<CPIntVar>)x;
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
 -(void)initInternal:(id<ORVarArray>)t;
 -(id<CPIntVarArray>)allIntVars;
--(id<CPProgram>)solver;
+-(id<CPCommonProgram>)solver;
 @end

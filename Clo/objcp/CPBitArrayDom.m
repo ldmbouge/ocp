@@ -76,8 +76,9 @@
 {
    NSMutableString* string = [[NSMutableString alloc] init];
    for(int i=0; i< _wordLength;i++){
-      unsigned int boundLow = ~ _up[i]._val;
-      unsigned int boundUp = _low[i]._val;
+      unsigned int boundLow = (~ _up[i]._val) & (~_low[i]._val);
+      unsigned int boundUp = _up[i]._val & _low[i]._val;
+      unsigned int err = ~_up[i]._val & _low[i]._val;
       unsigned int mask = CP_DESC_MASK;
       if (i<_wordLength-1)
          for (int j=0; j<32; j++){
@@ -85,6 +86,8 @@
                [string appendString: @"0"];
             else if ((mask & boundUp) != 0)
                [string appendString: @"1"];
+            else if ((mask & err) != 0)
+               [string appendString: @"X"];
             else
                [string appendString: @"?"];
             mask >>= 1;
@@ -96,6 +99,8 @@
                [string appendString: @"0"];
             else if ((mask & boundUp) !=0)
                [string appendString: @"1"];
+            else if ((mask & err) != 0)
+               [string appendString: @"X"];
             else
                [string appendString: @"?"];
             mask >>= 1;
@@ -628,6 +633,13 @@
     return _up;
 }
 
+-(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow
+{
+   *currUp = _up;
+   *currLow = _low;
+}
+
+
 -(void) setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x
 {
    bool lmod =  false;
@@ -651,6 +663,23 @@
     [self updateFreeBitCount];
     if (umod)
        [x bitFixedEvt:_freebits._val sender:self];
+}
+-(void) setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x
+{
+   bool umod = false;
+   bool lmod = false;
+   
+   for(int i=0;i<_wordLength;i++){
+      umod |= _up[i]._val != newUp[i];
+      assignTRUInt(&_up[i], newUp[i], _trail);
+      lmod |= _low[i]._val != newLow[i];
+      assignTRUInt(&_low[i], newLow[i], _trail);
+
+   }
+   [self updateFreeBitCount];
+   if (umod || lmod)
+      [x bitFixedEvt:_freebits._val sender:self];
+   
 }
 
 -(void)enumerateWith:(void(^)(unsigned int*,ORInt))body

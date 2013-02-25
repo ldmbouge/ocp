@@ -16,20 +16,24 @@
 @implementation CPDDeg {
    CPEngineI*    _solver;
 }
--(id)initCPDDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPDDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
-   [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPEngineI*)[cp engine];
    _rvars = rvars;
    return self;
 }
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPDDeg* cp = [[CPDDeg alloc] initCPDDeg:_cp restricted:_rvars];
+   return cp;
+}
 -(void)dealloc
 {
    [super dealloc];
 }
--(id<CPProgram>)solver
+-(id<CPCommonProgram>)solver
 {
    return _cp;
 }
@@ -37,7 +41,7 @@
 {
    return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
--(float)varOrdering: (id<ORIntVar>) ox
+-(ORFloat)varOrdering: (id<ORIntVar>) ox
 {
    id<CPIntVar> x = (id<CPIntVar>) [ox dereference];
    __block float h = 0.0;
@@ -47,7 +51,7 @@
    }
    return h / [x domsize];
 }
--(float)valOrdering:(int)v forVar:(id<ORIntVar>)x
+-(ORFloat)valOrdering:(int)v forVar:(id<ORIntVar>)x
 {
    return -v;   
 }

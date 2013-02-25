@@ -37,4 +37,6 @@
 -(id) copy;
 -(void) restoreDomain:(id<CPDom>)toRestore;
 -(void) restoreValue:(ORInt)toRestore;
+-(void) enumerateWithBlock:(void(^)(ORInt))block;
+-(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end

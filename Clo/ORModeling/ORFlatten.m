@@ -35,6 +35,7 @@
 -(void) visitTable:(id<ORTable>) v  {}
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
+-(void) visitGroup:(id<ORGroup>)g {}
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  {}
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
@@ -61,6 +62,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c  {}
 -(void) visitPlus: (id<ORPlus>)c  {}
 -(void) visitMult: (id<ORMult>)c  {}
+-(void) visitSquare:(id<ORSquare>)c {}
 -(void) visitMod: (id<ORMod>)c {}
 -(void) visitModc: (id<ORModc>)c {}
 -(void) visitAbs: (id<ORAbs>)c  {}
@@ -83,6 +85,12 @@
 -(void) visitSumEqualc:(id<ORSumEqc>)c  {}
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c  {}
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c  {}
+
+-(void) visitLinearGeq: (id<ORLinearGeq>) c {}
+-(void) visitLinearLeq: (id<ORLinearLeq>) c {}
+-(void) visitLinearEq: (id<ORLinearEq>) c {}
+
+
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
 -(void) visitBitOr:(id<ORBitOr>)c {}
@@ -114,7 +122,9 @@
 -(void) visitExprVarSubI: (id<ORExpr>) e  {}
 @end
 
-@interface ORFlattenObjects : ORNOopVisit<ORVisitor>
+@interface ORFlattenObjects : ORNOopVisit<ORVisitor> {
+   id<ORAddToModel> _theModel;
+}
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
@@ -126,7 +136,9 @@
 -(void) visitTable:(id<ORTable>) v;
 @end
 
-@interface ORFlattenConstraint : ORNOopVisit<ORVisitor>
+@interface ORFlattenConstraint : ORNOopVisit<ORVisitor> {
+   id<ORAddToModel> _theModel;
+}
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -146,6 +158,7 @@
 -(void) visitLEqual: (id<ORLEqual>)c;
 -(void) visitPlus: (id<ORPlus>)c;
 -(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare:(id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
 -(void) visitAbs: (id<ORAbs>)c;
@@ -219,7 +232,7 @@
    [c visit:fc];
    [fc release];
 }
-+(void)flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
@@ -243,9 +256,7 @@
 }
 @end
 
-@implementation ORFlattenObjects {
-   id<ORAddToModel> _theModel;
-}
+@implementation ORFlattenObjects 
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -286,9 +297,7 @@
 }
 @end
 
-@implementation ORFlattenConstraint {
-   id<ORAddToModel> _theModel;
-}
+@implementation ORFlattenConstraint 
 -(id)init:(id<ORAddToModel>)m
 {
    self = [super init];
@@ -332,6 +341,16 @@
                                              
    for(ORInt b = brlow; b <= brup; b++)
       [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
+}
+-(void) visitGroup:(id<ORGroup>)g
+{
+   id<ORGroup> ng = [ORFactory group:_theModel type:[g type]];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_theModel group:ng];
+   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
+      [ORFlatten flatten:ck into:a2g];
+   }];
+   [_theModel addConstraint:ng];
+   [a2g release];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
@@ -386,6 +405,10 @@
    [_theModel addConstraint:c];
 }
 -(void) visitMult: (id<ORMult>)c
+{
+   [_theModel addConstraint:c];
+}
+-(void) visitSquare:(id<ORSquare>)c
 {
    [_theModel addConstraint:c];
 }
