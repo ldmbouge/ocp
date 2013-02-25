@@ -309,3 +309,17 @@
     [_model maximize:[v var]];
 }
 @end
+
+@implementation ORFactory(Linearize)
++(id<ORModel>) linearizeModel:(id<ORModel>)m {
+    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
+    id<ORModel> lm = [ORFactory createModel];
+    ORBatchModel* batch = [[ORBatchModel alloc] init: lm];
+    [linearizer apply: m into: batch];
+    id<ORModel> clm = [ORFactory cloneModel: lm];
+    [lm release];
+    [batch release];
+    [linearizer release];
+    return clm;
+}
+@end

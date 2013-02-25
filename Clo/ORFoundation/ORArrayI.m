@@ -140,6 +140,18 @@
 {
    return _up;
 }
+-(ORInt) max {
+    ORInt v = _array[0];
+    for(int i = 1; i < _nb; i++)
+        if(_array[i] > v) v = _array[i];
+    return v;
+}
+-(ORInt) min {
+    ORInt v = _array[0];
+    for(int i = 1; i < _nb; i++)
+        if(_array[i] < v) v = _array[i];
+    return v;
+}
 -(NSUInteger)count
 {
    return _nb;

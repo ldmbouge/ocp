@@ -64,7 +64,13 @@
    [tracker trackObject: o];
    return o;
 }
-
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt[]) values {
+    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: 0];
+    for(ORInt i = [o.range low]; i <= [o.range up]; i++)
+        [o set: values[i - [o.range low]]  at: i];
+    [tracker trackObject: o];
+    return o;
+}
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range with:clo];

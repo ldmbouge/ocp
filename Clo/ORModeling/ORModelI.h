@@ -58,10 +58,12 @@
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-   NSMutableSet* _all;
+    NSMutableSet* _all;
+    id<ORSolutionInformer> _solutionAddedInformer;
 }
 -(id)init;
 -(void)addSolution:(id<ORSolution>)s;
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
 @end

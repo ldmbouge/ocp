@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
+#import "ORSolution.h"
 
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
@@ -28,6 +29,10 @@
 
 @protocol ORIdxIntInformer<ORInformer>
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
+@end
+
+@protocol ORSolutionInformer<ORInformer>
+-(void) notifyWithSolution: (id<ORSolution>)s;
 @end
 
 @protocol ORBarrier<NSObject> 

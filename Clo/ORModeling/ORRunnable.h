@@ -19,12 +19,14 @@
 -(bool) providesLowerBoundStream;
 -(bool) providesLowerBoundPool;
 -(bool) providesUpperBoundPool;
+-(bool) providesSolutionStream;
 -(bool) acceptsUpperBound;
 -(bool) acceptsUpperBoundStream;
 -(bool) acceptsLowerBound;
 -(bool) acceptsLowerBoundStream;
 -(bool) acceptsLowerBoundPool;
 -(bool) acceptsUpperBoundPool;
+-(bool) acceptsSolutionStream;
 @end
 
 @interface ORSignatureI : NSObject<ORSignature> {
@@ -36,12 +38,14 @@
     bool providesLowerBoundStream;
     bool providesLowerBoundPool;
     bool providesUpperBoundPool;
+    bool providesSolutionStream;
     bool acceptsUpperBound;
     bool acceptsUpperBoundStream;
     bool acceptsLowerBound;
     bool acceptsLowerBoundStream;
     bool acceptsLowerBoundPool;
     bool acceptsUpperBoundPool;
+    bool acceptsSolutionStream;
 }
 -(bool) matches: (id<ORSignature>)sig;
 @property(readonly) bool isComplete;
@@ -51,12 +55,14 @@
 @property(readonly) bool providesLowerBoundStream;
 @property(readonly) bool providesLowerBoundPool;
 @property(readonly) bool providesUpperBoundPool;
+@property(readonly) bool providesSolutionStream;
 @property(readonly) bool acceptsUpperBound;
 @property(readonly) bool acceptsUpperBoundStream;
 @property(readonly) bool acceptsLowerBound;
 @property(readonly) bool acceptsLowerBoundStream;
 @property(readonly) bool acceptsLowerBoundPool;
 @property(readonly) bool acceptsUpperBoundPool;
+@property(readonly) bool acceptsSolutionStream;
 @end
 
 @interface ORFactory(ORSignature)
@@ -65,7 +71,9 @@
 
 @protocol ORRunnable<NSObject>
 -(id<ORSignature>) signature;
+-(id<ORModel>) model;
 -(void) run;
+-(void) onExit: (ORClosure)block;
 @end
 
 @protocol ORUpperBoundStreamConsumer<ORRunnable>
@@ -76,6 +84,14 @@
 -(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
 @end
 
+@protocol ORSolutionStreamConsumer<ORRunnable>
+-(id<ORSolutionInformer>) solutionStreamInformer;
+@end
+
+@protocol ORSolutionStreamProvider<ORRunnable>
+-(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c;
+@end
+
 @protocol ORRunnableTransform
 -(id<ORRunnable>) apply: (id<ORRunnable>)r;
 @end
@@ -84,13 +100,33 @@
 -(id<ORRunnable>) apply: (id<ORRunnable>)r0 and: (id<ORRunnable>)r1;
 @end
 
-@protocol CPRunnable<ORUpperBoundStreamConsumer, ORUpperBoundStreamProvider>
+@protocol ORUpperBoundedRunnable<ORUpperBoundStreamConsumer, ORUpperBoundStreamProvider,
+                                    ORSolutionStreamConsumer, ORSolutionStreamProvider>
+@end
+
+@interface ORUpperBoundedRunnableI : NSObject<ORUpperBoundedRunnable> {
+@protected
+    id<ORModel> _model;
+    id<ORSignature> _sig;
+    ORClosure _exitBlock;
+    id<ORIntInformer> _upperBoundStreamInformer;
+    id<ORSolutionInformer> _solutionStreamInformer;
+    NSMutableArray* _upperBoundStreamConsumers;
+    NSMutableArray* _solutionStreamConsumers;
+}
+
+-(id) initWithModel: (id<ORModel>)m;
+@end
+
+@protocol CPRunnable<ORUpperBoundedRunnable>
 -(id<CPProgram>) solver;
 @end
 
-@interface CPRunnableI : NSObject<CPRunnable>
+@interface CPRunnableI : ORUpperBoundedRunnableI<CPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(id<ORSignature>) signature;
 -(id<CPProgram>) solver;
+-(id<ORModel>) model;
 -(void) run;
+-(void) restore: (id<ORSolution>)s;
 @end

@@ -29,6 +29,8 @@
 -(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
+-(ORInt) max;
+-(ORInt) min;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;

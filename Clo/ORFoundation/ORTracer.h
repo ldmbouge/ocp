@@ -16,6 +16,7 @@
 @protocol OREngine;
 @protocol ORProblem;
 @protocol ORCheckpoint;
+@protocol ORTrail;
 @class ORCommandList;
 @class ORTrailI;
 @class SemTracer;

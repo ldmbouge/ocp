@@ -19,6 +19,9 @@
 @protocol OREngine;
 @protocol ORSearchController;
 @protocol ORSelect;
+@protocol ORTrail;
+@protocol ORTRIntArray;
+@protocol ORTRIntMatrix;
 
 @interface ORFactory : NSObject
 +(void) shutdown;
@@ -28,6 +31,7 @@
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt[]) values;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo;
 

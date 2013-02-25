@@ -24,12 +24,14 @@
 @synthesize providesUpperBound;
 @synthesize providesUpperBoundPool;
 @synthesize providesUpperBoundStream;
+@synthesize providesSolutionStream;
 @synthesize acceptsLowerBound;
 @synthesize acceptsLowerBoundPool;
 @synthesize acceptsLowerBoundStream;
 @synthesize acceptsUpperBound;
 @synthesize acceptsUpperBoundPool;
 @synthesize acceptsUpperBoundStream;
+@synthesize acceptsSolutionStream;
 
 @end
 
@@ -42,12 +44,14 @@
 -(ORMutableSignatureI*) lowerOut;
 -(ORMutableSignatureI*) lowerStreamOut;
 -(ORMutableSignatureI*) lowerPoolOut;
+-(ORMutableSignatureI*) solutionStreamOut;
 -(ORMutableSignatureI*) upperIn;
 -(ORMutableSignatureI*) upperStreamIn;
 -(ORMutableSignatureI*) upperPoolIn;
 -(ORMutableSignatureI*) lowerIn;
 -(ORMutableSignatureI*) lowerStreamIn;
 -(ORMutableSignatureI*) lowerPoolIn;
+-(ORMutableSignatureI*) solutionStreamIn;
 @end
 
 @implementation ORMutableSignatureI
@@ -66,12 +70,14 @@
     providesUpperBound = NO;
     providesUpperBoundPool = NO;
     providesUpperBoundStream = NO;
+    providesSolutionStream = NO;
     acceptsLowerBound = NO;
     acceptsLowerBoundPool = NO;
     acceptsLowerBoundStream = NO;
     acceptsUpperBound = NO;
     acceptsUpperBoundPool = NO;
     acceptsUpperBoundStream = NO;
+    acceptsSolutionStream = NO;
 }
 
 -(ORMutableSignatureI*) complete { isComplete = YES; return self; }
@@ -81,12 +87,14 @@
 -(ORMutableSignatureI*) lowerOut { providesLowerBound = YES; return self; }
 -(ORMutableSignatureI*) lowerStreamOut { providesLowerBoundStream = YES; return self; }
 -(ORMutableSignatureI*) lowerPoolOut { providesLowerBoundPool = YES; return self; }
+-(ORMutableSignatureI*) solutionStreamOut { providesSolutionStream = YES; return self; }
 -(ORMutableSignatureI*) upperIn { acceptsUpperBound = YES; return self; }
 -(ORMutableSignatureI*) upperStreamIn { acceptsUpperBoundStream = YES; return self; }
 -(ORMutableSignatureI*) upperPoolIn { acceptsUpperBoundPool = YES; return self; }
 -(ORMutableSignatureI*) lowerIn { acceptsLowerBound = YES; return self; }
 -(ORMutableSignatureI*) lowerStreamIn { acceptsLowerBoundStream = YES; return self; }
 -(ORMutableSignatureI*) lowerPoolIn { acceptsLowerBoundPool = YES; return self; }
+-(ORMutableSignatureI*) solutionStreamIn { acceptsSolutionStream = YES; return self; }
 @end
 
 @implementation ORFactory(ORSignature)
@@ -97,55 +105,87 @@
 }
 @end
 
-@interface CPRunnableI(Private)
--(void) setupRun;
-@end
+@implementation ORUpperBoundedRunnableI
 
-@implementation CPRunnableI {
-    id<ORModel> _model;
-    id<CPProgram> _program;
-    id<ORSignature> _sig;
-    id<ORIntInformer> _upperBoundStreamInformer;
-    NSMutableArray* _upperBoundStreamConsumers;
-}
-
--(id) initWithModel: (id<ORModel>)m {
+-(id) initWithModel:(id<ORModel>)m {
     if((self = [super init]) != nil) {
         _model = [m retain];
-        _program = [ORFactory createCPProgram: _model];
         _sig = nil;
         _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
         _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
+        _solutionStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
     }
     return self;
 }
 
+-(id<ORModel>) model { return _model; }
+
+-(void) onExit: (ORClosure)block {
+    _exitBlock = block;
+}
+
 -(void) dealloc {
     [_model release];
-    [_program release];
     [_upperBoundStreamInformer release];
     [_upperBoundStreamConsumers release];
+    [_solutionStreamInformer release];
+    [_solutionStreamConsumers release];
     [_sig release];
     [super dealloc];
 }
 
+
 -(id<ORSignature>) signature {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.upperStreamOut.upperStreamIn"];
+        _sig = [ORFactory createSignature: @"complete.upperStreamOut.upperStreamIn.solutionStreamOut.solutionStreamIn"];
     }
     return _sig;
 }
 
--(id<CPProgram>) solver { return _program; }
+-(void) run {}
 
 -(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c {
     NSLog(@"Adding upper bound consumer...");
     [_upperBoundStreamConsumers addObject: c];
 }
 
+-(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c {
+    NSLog(@"Adding solution stream consumer...");
+    [_solutionStreamConsumers addObject: c];
+}
+
 -(id<ORIntInformer>) upperBoundStreamInformer {
     return _upperBoundStreamInformer;
 }
+
+-(id<ORSolutionInformer>) solutionStreamInformer {
+    return _solutionStreamInformer;
+}
+
+@end
+
+@interface CPRunnableI(Private)
+-(void) setupRun;
+@end
+
+@implementation CPRunnableI {
+    id<CPProgram> _program;    
+}
+
+-(id) initWithModel: (id<ORModel>)m {
+    if((self = [super initWithModel: m]) != nil) {
+        _program = [ORFactory createCPProgram: _model];
+    }
+    return self;
+}
+
+-(void) dealloc {
+    [_program release];
+    [super dealloc];
+}
+
+-(id<CPProgram>) solver { return _program; }
 
 -(void) setupRun {
     [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(ORInt b) {
@@ -161,10 +201,23 @@
     
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution: ^void () {
+        id<ORSolution> s = [_model solution];
+        [[_program solutionPool] addSolution:s];
+        [s release];
         NSLog(@"(%p) objective tightened: %i", self, [[[_program engine] objective] primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
             [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
-    } onExit: nil];
+        NSMutableArray* sp = _solutionStreamConsumers;
+        for(id<ORSolutionStreamConsumer> c in sp)
+            [[c solutionStreamInformer] notifyWithSolution: s];
+    } onExit: ^ {
+        if(_exitBlock) _exitBlock();
+        else {
+            id<ORSolution> best = [[_program solutionPool] best];
+            [_model restore:best];
+            [best release];
+        }
+    }];
     
     [_program solve:
      ^() {
@@ -172,6 +225,14 @@
          [_program labelHeuristic: h];
      }];
     NSLog(@"Finishing CP runnable(%p)...", _program);
+}
+
+-(void) restore: (id<ORSolution>)s {
+    [[_program engine] enforce: ^ORStatus() {
+        [_model restore: s];
+        return ORSuccess;
+    }];
+    
 }
 
 @end

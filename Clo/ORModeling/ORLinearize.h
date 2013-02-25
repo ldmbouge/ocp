@@ -15,3 +15,7 @@
 -(id)initORLinearize;
 -(void) apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
 @end
+
+@interface ORFactory(Linearize)
++(id<ORModel>) linearizeModel: (id<ORModel>)m;
+@end

@@ -14,6 +14,7 @@
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORSolver.H"
+#import "ORConcurrencyI.h"
 #import "ORCopy.h"
 
 @implementation ORModelI
@@ -363,9 +364,10 @@
 @implementation ORSolutionPoolI
 -(id)init
 {
-   self = [super init];
-   _all = [[NSMutableSet alloc] initWithCapacity:64];
-   return self;
+    self = [super init];
+    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
+    return self;
 }
 -(void)dealloc
 {
@@ -374,13 +376,17 @@
 }
 -(void)addSolution:(id<ORSolution>)s
 {
-   [_all addObject:s];
+    [_all addObject:s];
+    [_solutionAddedInformer notifyWithSolution: s];
 }
 -(void)enumerateWith:(void(^)(id<ORSolution>))block
 {
    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
       block(obj);
    }];
+}
+-(id<ORInformer>)solutionAdded {
+    return _solutionAddedInformer;
 }
 -(NSString*)description
 {

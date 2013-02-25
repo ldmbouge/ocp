@@ -9,16 +9,13 @@
 #import <Foundation/Foundation.h>
 #import "ORRunnable.h"
 
-@protocol ORParallelRunnable<ORRunnable>
--(id<ORSignature>) signature;
--(void) run;
+@protocol ORParallelRunnable<ORUpperBoundedRunnable>
 -(id<ORRunnable>) primaryRunnable;
 -(id<ORRunnable>) secondaryRunnable;
 @end
 
-@interface ORParallelRunnableI : NSObject<ORParallelRunnable>
+@interface ORParallelRunnableI : ORUpperBoundedRunnableI
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1;
--(id<ORSignature>) signature;
 -(void) run;
 -(id<ORRunnable>) primaryRunnable;
 -(id<ORRunnable>) secondaryRunnable;

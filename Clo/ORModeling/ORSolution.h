@@ -10,7 +10,9 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFOundation/ORModel.h>
+#import <ORFoundation/ORModel.h>
+#import "ORConcurrency.h"
+#import <ORFoundation/ORVar.h>
 
 @protocol ORSolution <ORObject>
 -(id<ORSnapshot>) value:(id)var;
@@ -23,5 +25,6 @@
 @protocol ORSolutionPool <NSObject>
 -(void)addSolution:(id<ORSolution>)s;
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
 @end

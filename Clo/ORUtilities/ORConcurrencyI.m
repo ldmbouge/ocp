@@ -211,6 +211,14 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    };
    [_eventList addEvent:[wrap copy]];
 }
+-(void) dispatchWithSolution:(id<ORSolution>)s
+{
+    ORSolution2Void tClo = (ORSolution2Void)_closure;
+    ORClosure wrap = ^{
+        tClo(s);
+    };
+    [_eventList addEvent:[wrap copy]];
+}
 @end
 
 @implementation ORInformerI 
@@ -289,6 +297,20 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
          [barrier join]; 
       [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
    }
+}
+
+-(void) notifyWithSolution:(id<ORSolution>)s
+{
+    @synchronized(self) {
+        for(id event in _whenList)
+            [event dispatchWithSolution: s];
+        [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+        for(id event in _wheneverList)
+            [event dispatchWithSolution: s];
+        for(ORBarrierI* barrier in _sleeperList)
+            [barrier join];
+        [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+    }
 }
 
 -(void) dealloc 
