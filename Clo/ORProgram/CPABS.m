@@ -401,7 +401,7 @@
 }
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInt:[[x dereference] getId]];
    ABSVariableActivity* varAct  = [_varActivity objectForKey:key];
    ORFloat rv = [varAct activity];
    [key release];
@@ -409,7 +409,7 @@
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInt:[[x dereference] getId]];
    ABSValueActivity* vAct = [_valActivity objectForKey:key];
    ORFloat rv = [vAct activityForValue:v];
    [key release];
@@ -510,7 +510,7 @@
 -(void)installActivities
 {
    NSSet* varIDs = [_aggregator variableIDs];
-   id<CPIntVarArray> vars = [self allIntVars];
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
    ORInt nbProbes = [_aggregator nbProbes];
    for(NSNumber* key in varIDs) {
       __block id<CPIntVar> x = nil;
