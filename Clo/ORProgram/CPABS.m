@@ -58,6 +58,7 @@
 -(ORFloat)avgSQActivity:(ORInt)x;
 -(NSSet*)variableIDs;
 -(void)enumerateForVariabe:(ORInt)x using:(void(^)(id value,id activity,BOOL* stop))block;
+-(NSString*)description;
 @end
 
 @interface ABSVariableActivity : NSObject {
@@ -91,15 +92,14 @@
 {
    self = [super init];
    _vars = vars;
-   __block ORInt minIDX = MAXINT;
-   __block ORInt maxIDX = MININT;
+   _low = MAXINT;
+   _up  = MININT;
    [vars enumerateWith:^(id<ORIntVar> obj, int idx) {
-      minIDX = min(minIDX,[obj getId]);
-      maxIDX = max(maxIDX,[obj getId]);
+      ORInt vid = [obj getId];
+      _low = min(_low,vid);
+      _up  = max(_up,vid);
    }];
-   _sz = maxIDX - minIDX + 1;
-   _low = minIDX;
-   _up  = maxIDX;
+   _sz = _up - _low + 1;
    _sum   = malloc(sizeof(ORInt)*_sz);
    _sumsq = malloc(sizeof(ORInt)*_sz);
    memset(_sum,0,sizeof(ORInt)*_sz);
@@ -120,6 +120,16 @@
    [_inProbe release];
    [_values release];
    [super dealloc];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"[AGGREG(%d,%d) = ",_sz,_nbProbes];
+   [_inProbe enumerateObjectsUsingBlock:^(NSNumber* key, BOOL *stop) {
+      [buf appendFormat:@"<%d , %d>,",key.intValue,_sum[key.intValue]];
+   }];
+   [buf appendString:@"]"];
+   return buf;
 }
 -(void)addProbe:(ABSProbe*)p
 {
@@ -200,15 +210,13 @@
 -(ABSProbe*)initABSProbe:(id<ORVarArray>)vars
 {
    self = [super init];
-   __block ORInt minIDX = MAXINT;
-   __block ORInt maxIDX = MININT;
+   _low = MAXINT;
+   _up  = MININT;
    [vars enumerateWith:^(id<ORIntVar> obj, int idx) {
-      minIDX = min(minIDX,[obj getId]);
-      maxIDX = max(maxIDX,[obj getId]);
+      _low = min(_low,[obj getId]);
+      _up  = max(_up,[obj getId]);
    }];
-   _sz = maxIDX - minIDX + 1;
-   _low = minIDX;
-   _up  = maxIDX;
+   _sz = _up - _low + 1;
    _tab = malloc(sizeof(ORInt)*_sz);
    memset(_tab,0,sizeof(ORInt)*_sz);
    _tab -= _low;
@@ -225,7 +233,7 @@
 -(void)addVar:(id<ORVar>)var
 {
    ORInt idx = [var getId];
-   NSNumber* vid = [[NSNumber alloc]  initWithInt:idx];
+   NSNumber* vid = [[NSNumber alloc] initWithInt:idx];
    [_inProbe addObject:vid];
    [vid release];
    assert(_low <= idx && idx <= _up);
@@ -237,6 +245,16 @@
       assert(_low <= key.intValue && key.intValue <= _up);
       block(key.intValue,_tab[key.intValue]);
    }
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"(%d) [",_sz];
+   for(NSNumber* key in _inProbe) {
+      [buf appendFormat:@"<%@,%d>,",key,_tab[key.intValue]];
+   }
+   [buf appendString:@"]"];
+   return buf;
 }
 @end
 
@@ -362,7 +380,7 @@
    _vars = nil;
    _rvars = rvars;
    _agingRate = 0.999;
-   _conf      = 0.1;
+   _conf      = 0.2;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -470,6 +488,7 @@
    int nbProbes = [_aggregator nbProbes];
    BOOL more = NO;
    NSSet* varIDs = [_aggregator variableIDs];
+   //NSLog(@"AGG: %@",_aggregator);
    for(NSNumber* vid in varIDs) {
       int k = [vid intValue];
       ORFloat muk = [_aggregator avgActivity:k];
@@ -480,6 +499,7 @@
       ORFloat upCI  = muk + 1.95 * ratiok;
       ORFloat low  = muk * (1.0 - prc);
       ORFloat up   = muk * (1.0 + prc);
+      //NSLog(@"MOREPROBE: k=%d  %lf [%lf .. %lf] : [%lf .. %lf]  muk = %lf muk2 = %lf ratiok = %lf",k,prc,lowCI,upCI,low,up,muk,muk2,ratiok);
       more |= (low > lowCI || up < upCI );
       if (more)
          break;
@@ -529,19 +549,40 @@
    id<ORTracer> tracer = [_cp tracer];
    id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
-   id<ORSelect> varSel = [ORFactory selectRandom:nil range:[vars range] suchThat:^bool(ORInt i) { return ![vars[i] bound];} orderedBy:nil];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
+   __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
+   __block ORInt nbVS = 0;
+   id<ORZeroOneStream> varPr = [ORCrFactory zeroOneStream];
    do {
-      for(ORInt c=0;c < nbInRound;c++) {
+      for(ORInt c=0;c <= nbInRound;c++) {
          [_solver clearStatus];
          cntProbes++;
          ABSProbe* probe = [[ABSProbe alloc] initABSProbe:vars];
          ORInt depth = 0;
-         while (depth <= probeDepth) {
+         BOOL allBound = NO;
+         while (depth <= probeDepth && !allBound) {
             [tracer pushNode];
-            ORInt i = [varSel any];
-            if (i != MAXINT) { // we found someone
+            nbVS = 0;
+            [[vars range] enumerateWithBlock:^(ORInt i) {
+               if (![vars[i] bound])
+                  vs[nbVS++] = i;
+            }];
+
+            /*
+            NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+            [buf  appendString:@"["];
+            for(ORInt j=0;j < nbVS; j++) 
+               [buf appendFormat:@"%d ",vs[j]];
+            [buf  appendString:@"]"];
+            */
+
+            ORInt idx = (ORInt)floor([varPr next] * nbVS);
+            ORInt i = vs[idx];
+
+            //NSLog(@"chose %i from VS = %@",i, buf);
+
+            if (nbVS) { // we found someone
                id<CPIntVar> xi = (id<CPIntVar>)[vars[i] dereference];
                ORInt v = [self chooseValue:xi];
                ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
@@ -562,15 +603,21 @@
                   depth++;
                   break;
                }
-            }
+            } else allBound = YES;
             depth++;
          }
-         if (depth > probeDepth  && [_solver objective]==nil) {
-            NSLog(@"Found a solution in a CSP while probing!");
-            return ;
+         if (depth > probeDepth || allBound) {
+            if ([_solver objective]==nil) {
+               NSLog(@"Found a solution in a CSP while probing!");
+               return ;
+            } else {
+               NSLog(@"Found a local optimum = %@",[_solver objective]);
+               [[_solver objective] updatePrimalBound];
+            }
          }
          while (depth-- != 0)
             [tracer popNode];
+         //NSLog(@"THEPROBE: %@",probe);
          [_aggregator addProbe:probe];
          [probe release];
       }
@@ -581,7 +628,7 @@
       NSLog(@"Imposing SAC %@",b);
    }
    [killSet release];
-   [varSel release];
+   [varPr release];
    [_valPr release];
 }
 @end

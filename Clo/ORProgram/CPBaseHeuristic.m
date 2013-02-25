@@ -18,14 +18,16 @@
 {
    __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
-      nbViews += ([obj varClass] == CPVCShift || [obj varClass] == CPVCAffine);
+      enum CPVarClass vc = [obj varClass];
+      nbViews += (vc == CPVCShift || vc == CPVCAffine || vc == CPVCFlip);
    }];
    ORULong l = [array count] - nbViews;
    id<ORTracker> cp = [[array objectAtIndex:0] tracker];
    id<ORVarArray> direct = (id<ORVarArray>)[ORFactory idArray:cp range:RANGE(cp,0,(ORInt)l-1) ];
    __block ORUInt k = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
-      if (!([obj varClass] == CPVCShift || [obj varClass] == CPVCAffine))
+      enum CPVarClass vc = [obj varClass];
+      if (!(vc == CPVCShift || vc == CPVCAffine || vc == CPVCFlip))
          [direct set:obj at:k++];
    }];
    [self initInternal: direct];   

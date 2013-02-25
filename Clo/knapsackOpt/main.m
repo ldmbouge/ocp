@@ -70,9 +70,10 @@ int main(int argc, const char * argv[])
             [mdl add:[ORFactory knapsack:x weight:w capacity:c]];
          }
          [mdl maximize: obj];
-         
          id<CPProgram> cp  = [args makeProgram:mdl];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //NSLog(@"MODEL: %@",mdl);
+
          [cp solve: ^{
             [cp labelHeuristic:h];
             @autoreleasepool {
