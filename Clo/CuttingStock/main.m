@@ -37,6 +37,8 @@ int main (int argc, const char * argv[])
     }];
     
     id<ORIntVarArray> cut = [ORFactory intVarArray: master range: shelves domain: RANGE(master, 0, [demand max])];
+    NSLog(@"done");
+    
     /*
     id<ORIntVar> objSum = [ORFactory sum: master over: shelves suchThat: nil of:^id<ORExpr>(ORInt i) {
         return [cut at: i];

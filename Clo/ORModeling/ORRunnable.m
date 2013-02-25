@@ -8,7 +8,6 @@
 
 #import "ORRunnable.h"
 #import "ORFactory.h"
-#import "ORConcretizer.h"
 #import "ORConcurrencyI.h"
 
 @implementation ORSignatureI
@@ -197,20 +196,19 @@
 -(void) run {
     NSLog(@"Running CP runnable(%p)...", _program);
     [self setupRun];
-    id<CPHeuristic> h = [ORFactory createFF: _program];
-    
+    id<CPHeuristic> h = [_program createFF];
     // When a solution is found, pass the objective value to consumers.
-    [_program onSolution: ^void () {
-        id<ORSolution> s = [_model solution];
-        [[_program solutionPool] addSolution:s];
-        [s release];
+    [_program onSolution:^{
+        id<ORSolution> s = [_model captureSolution];
         NSLog(@"(%p) objective tightened: %i", self, [[[_program engine] objective] primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
             [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
         NSMutableArray* sp = _solutionStreamConsumers;
         for(id<ORSolutionStreamConsumer> c in sp)
             [[c solutionStreamInformer] notifyWithSolution: s];
-    } onExit: ^ {
+    }];
+    
+    [_program onExit: ^ {
         if(_exitBlock) _exitBlock();
         else {
             id<ORSolution> best = [[_program solutionPool] best];
