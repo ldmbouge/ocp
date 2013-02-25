@@ -203,6 +203,11 @@
 {
    [_hSet push: h];
 }
+-(void) restartHeuristics
+{
+  [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h restart];} with:[_engine variables]];
+}
+
 -(void) onSolution: (ORClosure) onSolution
 {
    [_doOnSolArray addObject: [onSolution copy]];

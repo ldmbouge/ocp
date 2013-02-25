@@ -61,23 +61,25 @@
 -(NSString*)description;
 @end
 
-@interface ABSVariableActivity : NSObject {
+@interface ABSVariableActivity : NSObject<NSCopying> {
    @package
    id        _theVar;
    ORFloat _activity;
 }
 -(id)initABSVariableActivity:(id)var activity:(ORFloat)initial;
+-(id)copyWithZone:(NSZone*)zone;
 -(void)dealloc;
 -(void)aging:(ORFloat)rate;
 -(ORFloat)activity;
 -(void)increase;
 @end
 
-@interface ABSValueActivity : NSObject {
+@interface ABSValueActivity : NSObject<NSCopying> {
    id                    _theVar;
    NSMutableDictionary*  _values;
 }
 -(id)initABSActivity:(id)var;
+-(id)copyWithZone:(NSZone*)zone;
 -(void)dealloc;
 -(void)setActivity:(ORFloat)a forValue:(ORInt)v;
 -(void)addActivity:(ORFloat)a forValue:(ORInt)v;
@@ -267,6 +269,11 @@
    _activity = initial;
    return self;
 }
+-(id)copyWithZone:(NSZone*)zone
+{
+   return [[ABSVariableActivity alloc] initABSVariableActivity:_theVar activity:_activity];
+}
+
 -(void)dealloc
 {
    [super dealloc];
@@ -299,6 +306,17 @@
    _values = [[NSMutableDictionary alloc] initWithCapacity:32];
    return self;
 }
+-(id)copyWithZone:(NSZone*)zone
+{
+   ABSValueActivity* copy = [[ABSValueActivity alloc] initABSActivity:_theVar];
+   NSMutableDictionary* cv = [[NSMutableDictionary alloc] initWithCapacity:[_values count]];
+   [_values enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, NSNumber* value, BOOL *stop) { 
+      [cv addObject:[value copy] forKey:key];
+   }];
+   copy->_values = cv;
+   return copy;
+}
+
 -(void)dealloc
 {
    [_values release];
@@ -367,6 +385,9 @@
    ORULong                     _nbv;
    NSMutableDictionary*       _varActivity;
    NSMutableDictionary*       _valActivity;
+   NSMutableDictionary*       _varBackup;
+   NSMutableDictionary*       _valBackup;
+   BOOL                       _freshBackup;
    ORFloat                      _agingRate;
    ORFloat                      _conf;
    id<ORZeroOneStream>          _valPr;
@@ -380,6 +401,7 @@
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
+   _varBackup = _valBackup = nil;
    _agingRate = 0.999;
    _conf      = 0.2;
    return self;
@@ -393,6 +415,8 @@
 {
    [_varActivity release];
    [_valActivity release];
+   [_varBackup release];
+   [_valBackup release];
    [_aggregator release];
    [super dealloc];
 }
@@ -445,6 +469,7 @@
    }
    [valAct addActivity:nbActive forValue:val];
    [key release];
+   _freshBackup = NO;
 }
 -(void)initInternal:(id<ORVarArray>)t
 {
@@ -533,6 +558,15 @@
          }];
       }
    }
+   _varBackup = [[NSMutableDictionary alloc] initWithCapacity:[_varActivity count]];
+   [_varActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
+      [_varBackup addObject:[act copy] forKey:key];
+   }];
+   _valBackup = [[NSMutableDictionary alloc] initWithCapacity:[_valActivity count]];
+   [_valActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSValueActivity* act, BOOL *stop) {
+      [_valBackup addObject:[act copy] forKey:key];
+   }];
+   _freshBackup = YES;
 }
 
 -(void)initActivities
@@ -634,5 +668,20 @@
    [killSet release];
    [varPr release];
    [_valPr release];
+}
+
+-(void) restart
+{
+   NSLog(@"restart(ABS) -- must be stealing now...");
+   if (!_freshBackup) {
+      [_varActivity removeAllObjects];
+      [_valActivity removeAllObjects];
+      [_varBackup enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
+         [_varActivity addObject:[act copy] forKey:key];
+      }];
+      [_valBackup enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSValueActivity* act, BOOL *stop) {
+         [_valActivity addObject:[act copy] forKey:key];
+      }];
+   }
 }
 @end

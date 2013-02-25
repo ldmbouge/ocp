@@ -290,6 +290,7 @@
    [theSub release];
    if (status == ORFailure)
       [[cp explorer] fail];
+    [cp restartHeuristics];
 }
 -(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
 {

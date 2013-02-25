@@ -36,6 +36,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
 }
+-(void) restart
+{
+   NSLog(@"Restart of based heuristic called... Nothing to do.");
+}
 @end
 
 

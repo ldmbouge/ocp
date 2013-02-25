@@ -38,6 +38,8 @@
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void) onSolution: (ORClosure) onSolution;
 -(void) onExit: (ORClosure) onExit;
+-(void) addHeuristic: (id<CPHeuristic>) h;
+-(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;

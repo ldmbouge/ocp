@@ -21,6 +21,7 @@
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
 -(void) initInternal: (id<CPIntVarArray>) t;
 -(void) initHeuristic: (NSMutableArray*) array;
+-(void) restart;
 -(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;
 @end
