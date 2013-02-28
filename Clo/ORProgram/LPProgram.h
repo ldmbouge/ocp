@@ -11,8 +11,8 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <objmp/LPSolverI.h>
 
+@class LPSolverI;
 
 @protocol LPProgram <NSObject>
 -(LPSolverI*) solver;
