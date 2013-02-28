@@ -12,6 +12,7 @@
 
 #import "ORCPParSolver.h"
 #import <ORProgram/CPParallel.h>
+#import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPObjectQueue.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
@@ -104,27 +105,23 @@
 {
   return [[self dereference] close];
 }
--(void) addHeuristic: (id<CPHeuristic>) h
-{
-  [[self dereference] addHeuristic:h];
-}
--(id<ORForall>) forall: (id<ORIntIterator>) S
+-(id<ORForall>) forall: (id<ORIntIterable>) S
 {
   return [[self dereference] forall:S];
 }
--(void) forall: (id<ORIntIterator>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
   [[self dereference] forall:S orderedBy:order do:body];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
   [[self dereference] forall:S suchThat:filter orderedBy:order do:body];
 }
--(void) forall: (id<ORIntIterator>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
   [[self dereference] forall:S orderedBy:o1 and:o2 do:b];
 }
--(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
+-(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
   [[self dereference] forall:S suchThat:suchThat orderedBy:o1 and:o2  do:b];
 }
@@ -132,11 +129,11 @@
 {
    [[[self dereference] explorer] try: left or: right];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body];
 }
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
@@ -155,6 +152,10 @@
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {
    [[self dereference] addConstraintDuringSearch: c annotation:n];
+}
+-(void) addHeuristic:(id<CPHeuristic>)h
+{
+   assert(FALSE);
 }
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
@@ -311,6 +312,7 @@
                                if (w == myID) continue;
                                id<ORObjective> wwObj = [[_workers[w] objective] dereference];
                                [wwObj tightenPrimalBound:myBound];
+                               //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
                             }
                          }
                              onExit: nil
@@ -382,6 +384,76 @@
    [self waitWorkers]; // wait until all the workers are done.
 }
 
+-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createFF:rvars];
+  return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createWDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createDDeg:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createIBS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createABS:rvars];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createFF
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createFF];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createWDeg
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createWDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createDDeg
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createDDeg];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createIBS
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createIBS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createABS
+{
+  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nbWorkers];
+  for(ORInt i=0;i < _nbWorkers;i++)
+    binding[i] = [_workers[i] createABS];
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
 @end
 
 
@@ -391,18 +463,15 @@
 
 @implementation ORControllerFactory
 -(id)initFactory:(CPSemanticSolver*)solver rootControllerClass:(Class)class nestedControllerClass:(Class)nc
-{
-  self = [super init];
+{  self = [super init];
   _solver = solver;
   _ctrlClass = class;
   _nestedClass = nc;
-  return self;
-}
+  return self;}
 -(id<ORSearchController>)makeRootController
 {
   return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
-}
--(id<ORSearchController>)makeNestedController
+}-(id<ORSearchController>)makeNestedController
 {
   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
 }

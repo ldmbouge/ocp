@@ -10,8 +10,19 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORProgram/CPHeuristic.h>
 
 @interface CPBaseHeuristic : NSObject 
 -(void)initHeuristic:(NSMutableArray*)array;
 -(void)initInternal:(id<ORVarArray>)t;
+@end
+
+@interface CPVirtualHeuristic: NSObject<CPHeuristic> 
+-(CPVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings;
+-(ORFloat) varOrdering: (id<ORIntVar>)x;
+-(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
+-(void) initInternal: (id<CPIntVarArray>) t;
+-(void) initHeuristic: (NSMutableArray*) array;
+-(id<ORIntVarArray>) allIntVars;
+-(id<CPCommonProgram>)solver;
 @end

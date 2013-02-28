@@ -33,8 +33,8 @@ int main (int argc, const char * argv[])
    [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
 
    id<CPProgram> cp = [ORFactory createCPProgram: model];
-   id<CPHeuristic> h = [ORFactory createFF:cp];
-  [cp solveAll:
+   id<CPHeuristic> h = [cp createFF];
+   [cp solveAll:
    ^() {
        [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
        [cp labelHeuristic:h];

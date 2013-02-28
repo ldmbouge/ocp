@@ -17,6 +17,7 @@
 // CP Solver
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/ORCPParSolver.h>
+#import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
 #import "ORFlatten.h"
 #import "CPSolver.h"
@@ -34,48 +35,6 @@
 // PVH to factorize this
 
 @implementation ORFactory (Concretization)
-
-+(id<CPHeuristic>) createFF: (id<CPProgram>) cp restricted: (id<ORVarArray>) rvars
-{
-   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createFF: (id<CPProgram>)cp
-{
-   return [[CPFirstFail alloc] initCPFirstFail:cp restricted:nil];
-}
-+(id<CPHeuristic>) createWDeg: (id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPWDeg alloc] initCPWDeg:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createDDeg: (id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPDDeg alloc] initCPDDeg:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createIBS: (id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPIBS alloc] initCPIBS:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createABS: (id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-{
-   return [[CPABS alloc] initCPABS:cp restricted:rvars];
-}
-+(id<CPHeuristic>) createWDeg: (id<CPProgram>)cp;
-{
-   return [[CPWDeg alloc] initCPWDeg:cp restricted:nil];
-}
-+(id<CPHeuristic>) createDDeg: (id<CPProgram>)cp
-{
-   return [[CPDDeg alloc] initCPDDeg:cp restricted:nil];
-}
-+(id<CPHeuristic>) createIBS: (id<CPProgram>)cp
-{
-   return [[CPIBS alloc] initCPIBS:cp restricted:nil];
-}
-+(id<CPHeuristic>) createABS: (id<CPProgram>)cp
-{
-   return [[CPABS alloc] initCPABS:cp restricted:nil];
-}
-
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];
@@ -198,7 +157,7 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener];
    [flat apply: model into:batch];
    [batch release];
    
@@ -211,6 +170,7 @@
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver];
    [model setImpl: lpprogram];
+   [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
 @end

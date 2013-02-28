@@ -112,7 +112,7 @@
    [_controller._val exitTry];
 }
 
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
    [self tryall: range suchThat: filter in: body onFailure: NULL];
 }
@@ -140,7 +140,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    return (struct TAOutput){value,found};
 }
 
--(void) tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
+-(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
    [_controller._val startTryall];
    id<IntEnumerator> ite = [ORFactory intEnumerator: _engine over: range];

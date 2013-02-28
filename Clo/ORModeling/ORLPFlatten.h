@@ -12,10 +12,8 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
-
-
-@interface ORFlatten : NSObject<ORModelTransformation>
--(id) initORFlatten;
+@interface ORLPFlatten : NSObject<ORModelTransformation>
+-(id) initORLPFlatten;
 -(void) apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
 +(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
 +(void) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;

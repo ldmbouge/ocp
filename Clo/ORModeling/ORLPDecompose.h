@@ -13,19 +13,11 @@
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <ORModeling/ORLinear.h>
-#import <objcp/CPData.h>
 
-@protocol ORModel;
-@protocol ORAddToModel;
+@interface ORLPNormalizer : NSObject<ORVisitor>
++(ORLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
 
-
-@interface ORNormalizer : NSObject<ORVisitor> {
-   id<ORLinear>     _terms;
-   id<ORAddToModel>   _model;
-   ORAnnotation         _n;
-}
-+(ORLinear*)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
--(id)initORNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
+-(id) initORLPNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
@@ -46,5 +38,4 @@
 -(void) visitExprConjunctI:(ORConjunctI*)e;
 -(void) visitExprImplyI:(ORImplyI*)e;
 @end
-
 

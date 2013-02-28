@@ -49,7 +49,7 @@ int main(int argc, const char * argv[])
        */
       
       id<CPProgram>   cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createFF:cp];
+      id<CPHeuristic> h = [cp createFF];
 
       [cp solve: ^{
          @try {

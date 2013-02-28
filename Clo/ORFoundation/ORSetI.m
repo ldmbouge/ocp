@@ -45,26 +45,26 @@
 -(ORInt) min
 {
     __block ORInt value = MAXINT;
-    [self iterate:^void (ORInt e) { if(e < value) value = e; }];
+    [self enumerateWithBlock:^(ORInt e) { if(e < value) value = e; }];
     return value;
 }
 -(ORInt) max
 {
     __block ORInt value = MININT;
-    [self iterate:^void (ORInt e) { if(e > value) value = e; }];
+    [self enumerateWithBlock:^(ORInt e) { if(e > value) value = e; }];
     return value;
 }
 -(ORInt) size
 {
     return [_avl size];
 }
--(void) iterate: (ORInt2Void) f
+-(void) enumerateWithBlock:(ORInt2Void) f
 {
    [_avl iterateOverKey: f];
 }
 -(void) copyInto: (id<ORIntSet>) S
 {
-   [self iterate: ^void(ORInt e) { [S insert: e]; } ];
+   [self enumerateWithBlock:^(ORInt e) { [S insert: e]; } ];
 }
 -(NSString*) description
 {
@@ -178,11 +178,6 @@
 -(ORInt) size
 {
    return (_up - _low + 1);
-}
--(void) iterate: (ORInt2Void) f
-{
-   for(ORInt i = _low; i <= _up; i++)
-      f(i);
 }
 -(void)enumerateWithBlock:(void(^)(ORInt))block
 {

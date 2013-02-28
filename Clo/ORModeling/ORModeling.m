@@ -12,6 +12,7 @@
 #import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
 #import "ORFlatten.h"
+#import "ORLPFlatten.h"
 #import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
@@ -26,6 +27,10 @@
 +(id<ORModelTransformation>) createFlattener
 {
    return [[[ORFlatten alloc] initORFlatten] autorelease];
+}
++(id<ORModelTransformation>) createLPFlattener
+{
+   return [[[ORLPFlatten alloc] initORLPFlatten] autorelease];
 }
 +(id<ORModelTransformation>) createLinearizer
 {

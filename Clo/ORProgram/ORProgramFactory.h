@@ -20,18 +20,6 @@
 +(id<CPSemanticProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass;
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k;
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
-
-+(id<CPHeuristic>) createFF:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-+(id<CPHeuristic>) createWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-+(id<CPHeuristic>) createDDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-+(id<CPHeuristic>) createIBS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-+(id<CPHeuristic>) createABS:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars;
-+(id<CPHeuristic>) createFF:(id<CPProgram>)cp;
-+(id<CPHeuristic>) createWDeg:(id<CPProgram>)cp;
-+(id<CPHeuristic>) createDDeg:(id<CPProgram>)cp;
-+(id<CPHeuristic>) createIBS:(id<CPProgram>)cp;
-+(id<CPHeuristic>) createABS:(id<CPProgram>)cp;
-
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model;
 
 @end

@@ -113,7 +113,7 @@
    }
    else /* partial block -- must be last block so finish up */
    { /* Find out how many bytes and residual bits there are */
-      numBytes = count >> 3;
+      numBytes = (unsigned int)count >> 3;
       numBits =  count & 7;
       unsigned char *X = (unsigned char*)data;
       unsigned char *XX = (unsigned char*)paddedData;

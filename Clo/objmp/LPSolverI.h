@@ -51,6 +51,14 @@
 -(ORInt) nb;
 @end
 
+@protocol LPVariableArray <ORVarArray>
+-(LPVariableI*) at: (ORInt) value;
+-(void) set: (LPVariableI*) x at: (ORInt) value;
+-(LPVariableI*) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (LPVariableI*) newValue atIndexedSubscript: (NSUInteger) idx;
+@end
+
+
 @interface LPConstraintI : NSObject 
 {
 @protected
@@ -243,6 +251,11 @@
 -(LPConstraintI*) createEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
 -(LPObjectiveI*)  createMinimize: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef;
 -(LPObjectiveI*)  createMaximize: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef;
+
+-(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
+-(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
+-(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x;
+-(LPObjectiveI*)  createObjectiveMaximize: (LPVariableI*) x;
 
 -(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
 -(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;

@@ -57,8 +57,8 @@
 @interface CPFactory (expression)
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op;
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs;
-+(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORExpr>) sum: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
++(id<ORRelation>) or: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 @end
 
 @interface CPFactory (BV)

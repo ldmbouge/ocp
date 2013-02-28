@@ -15,6 +15,7 @@
 #import "LPSolver.h"
 #import <objmp/LPSolverI.h>
 
+
 @implementation LPSolver
 {
    LPSolverI* _lpsolver;
@@ -35,6 +36,7 @@
 }
 -(void) solve
 {
+   [_lpsolver solve];
    NSLog(@"I am pretending to solve this baby");
 }
 @end

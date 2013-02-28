@@ -2305,6 +2305,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
   return _primalBound;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"MINIMIZE(%@) with f* = %d",[_x description],_primalBound];
+   return buf;
+}
 @end
 
 @implementation CPIntVarMaximize
@@ -2373,5 +2379,11 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 -(ORInt) primalBound
 {
   return _primalBound;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"MAXIMIZE(%@) with f* = %d",[_x description],_primalBound];
+   return buf;
 }
 @end

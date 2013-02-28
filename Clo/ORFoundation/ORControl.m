@@ -16,7 +16,7 @@
 
 
 @interface ORForallI : NSObject <ORForall>
--(ORForallI*) initORForallI: (id<ORTracker>) tracker set: (id<ORIntIterator>) S;
+-(ORForallI*) initORForallI: (id<ORTracker>) tracker set: (id<ORIntIterable>) S;
 -(id<ORForall>) suchThat: (ORInt2Bool) suchThat;
 -(id<ORForall>) orderedBy: (ORInt2Int) orderedBy;
 -(void) do: (ORInt2Void) body;
@@ -25,11 +25,11 @@
 @implementation ORForallI 
 {
    id<ORTracker>     _tracker;
-   id<ORIntIterator> _S;
+   id<ORIntIterable> _S;
    NSMutableArray*   _arraySuchThat;
    NSMutableArray*   _arrayOrderedBy;
 }
--(ORForallI*) initORForallI: (id<ORTracker>) tracker set: (id<ORIntIterator>) S
+-(ORForallI*) initORForallI: (id<ORTracker>) tracker set: (id<ORIntIterable>) S
 {
    self = [super init];
    _tracker = tracker;
@@ -125,7 +125,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 
 
 @implementation ORFactory (Control)
-+(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterator>) S
++(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterable>) S
 {
    id<ORForall> forall = [[ORForallI alloc] initORForallI:tracker set:S];
    [tracker trackObject: forall];
@@ -134,11 +134,11 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 @end;
 
 @implementation ORControl
-+(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterator>) S
++(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterable>) S
 {
    return [ORFactory forall: tracker set: S];
 }
-+(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) order do: (ORInt2Void) body
++(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
    ORInt sz = [S size];
    ORInt* value = alloca(sizeof(ORInt)*sz);

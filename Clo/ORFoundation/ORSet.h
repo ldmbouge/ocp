@@ -13,13 +13,13 @@
 #import "ORFoundation/ORAVLTree.h"
 #import "ORObject.h"
 
-@protocol ORIntIterator <ORObject>
--(void) iterate: (ORInt2Void) f;
+@protocol ORIntIterable <ORObject>
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(ORInt) size;
 -(id<IntEnumerator>) enumerator;
 @end
 
-@protocol ORIntSet <ORIntIterator>
+@protocol ORIntSet <ORIntIterable>
 -(bool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
@@ -29,11 +29,11 @@
 -(void) copyInto: (id<ORIntSet>) S;
 @end
 
-@protocol ORIntRange <ORIntIterator>
+@protocol ORIntRange <ORIntIterable>
 -(ORInt) low;
 -(ORInt) up;
 -(bool) isDefined;
 -(bool) inRange: (ORInt)e;
 -(NSString*) description;
--(void)enumerateWithBlock:(void(^)(ORInt))block;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 @end

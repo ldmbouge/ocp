@@ -153,7 +153,7 @@
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(id<ORExpr>) initORExprSumI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
@@ -168,7 +168,7 @@
 @interface ORExprProdI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 -(id<ORExpr>) initORExprProdI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
@@ -183,7 +183,7 @@
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterator>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 -(id<ORExpr>) initORExprAggOrI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;

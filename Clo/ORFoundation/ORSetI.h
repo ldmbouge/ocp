@@ -28,7 +28,7 @@
 -(ORInt) max;
 -(ORInt) size;
 -(void) copyInto: (id<ORIntSet>) S;
--(void) iterate: (ORInt2Void) f;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
 -(void)visit:(id<ORVisitor>)v;
@@ -43,12 +43,11 @@
 -(bool) isDefined;
 -(bool) inRange: (ORInt)e;
 -(ORInt) size;
--(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
 -(void)visit:(id<ORVisitor>)v;
 -(id<IntEnumerator>) enumerator;
 //-(id<IntEnumerator>) tailableEnumerator;
--(void)enumerateWithBlock:(void(^)(int))block;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end

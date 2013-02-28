@@ -43,6 +43,16 @@
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
+-(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createFF;
+-(id<CPHeuristic>) createWDeg;
+-(id<CPHeuristic>) createDDeg;
+-(id<CPHeuristic>) createIBS;
+-(id<CPHeuristic>) createABS;
 @end
 
 // Pure DFS CPSolver
@@ -60,16 +70,6 @@
 +(id<CPProgram>) solver;
 +(id<CPSemanticProgramDFS>) semanticSolverDFS;
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass;
-
-+(id<CPProgram>) multiStartSolver: (ORInt) k;
-@end
-
-// MultiStart DFS CPSolver
-@interface CPMultiStartSolver : NSObject<CPProgram>
--(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
--(id<CPProgram>) at: (ORInt) i;
--(ORInt) nb;
--(id<ORSolutionPool>) globalSolutionPool;
 @end
 
 

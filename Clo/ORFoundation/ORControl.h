@@ -22,10 +22,10 @@
 
 
 @interface ORFactory (Control)
-+(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterator>) S;
++(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterable>) S;
 @end;
 
 @interface ORControl : NSObject
-+(void) forall: (id<ORIntIterator>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) order do: (ORInt2Void) body;
-+(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterator>) S;
++(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) order do: (ORInt2Void) body;
++(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterable>) S;
 @end
