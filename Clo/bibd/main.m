@@ -10,10 +10,10 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFactory.h>
-#import <objcp/CPConstraint.h>
-#import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgramFactory.h>
+
+#import "ORCmdLineArgs.h"
 
 void show(id<ORIntVarMatrix> M)
 {
@@ -32,74 +32,57 @@ void show(id<ORIntVarMatrix> M)
 
 int main(int argc, const char * argv[])
 {
-   mallocWatch();
    @autoreleasepool {
-      ORLong t0 = [ORRuntimeMonitor cputime];
-      ORInt a = argc >= 2 ? atoi(argv[1]) : 10;
-      ORInt instances[14][3] = {
-         {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
-         {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},
-         {7,3,300},{8,4,5},{8,4,6},{8,4,7}
-      };
-      ORInt v = instances[a][0],k = instances[a][1],l = instances[a][2];
-      ORInt b = (v*(v-1)*l)/(k*(k-1));
-      ORInt r = l*(v-1)/(k-1);
-      
-      id<ORModel> mdl = [ORFactory createModel];
-      id<ORIntRange> Rows = RANGE(mdl,1,v);
-      id<ORIntRange> Cols = RANGE(mdl,1,b);
-      
-      id<ORIntVarMatrix> M = [ORFactory boolVarMatrix:mdl range:Rows :Cols];
-      for(ORInt i=Rows.low;i<=Rows.up;i++)
-         [mdl add: [Sum(mdl,x, Cols, [M at:i :x]) eqi:r]];
-      for(ORInt i=Cols.low;i<=Cols.up;i++)
-         [mdl add: [Sum(mdl,x, Rows, [M at:x :i]) eqi:k]];
-      for(ORInt i=Rows.low;i<=Rows.up;i++)
-         for(ORInt j=i+1;j <= v;j++)
-//            [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] and: [M at:j :x]]) eqi:l]];
-            [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eqi:l]];
-      for(ORInt i=1;i <= v-1;i++) {
-         [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
-                              leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
-      }
-      for(ORInt j=1;j <= b-1;j++) {
-         [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
-                              leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
-      }
-      
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      [cp solve:^{
-         NSLog(@"Start...");
-         [cp labelArray:[ORFactory flattenMatrix:M]];
-         NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
-         show(M);
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult() {
+         ORInt a = [args size];
+         ORInt instances[14][3] = {
+            {7,3,1},{6,3,2},{8,4,3},{7,3,20},{7,3,30},
+            {7,3,40},{7,3,45},{7,3,50},{7,3,55},{7,3,60},
+            {7,3,300},{8,4,5},{8,4,6},{8,4,7}
+         };
+         ORInt v = instances[a][0],k = instances[a][1],l = instances[a][2];
+         ORInt b = (v*(v-1)*l)/(k*(k-1));
+         ORInt r = l*(v-1)/(k-1);
+
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORIntRange> Rows = RANGE(mdl,1,v);
+         id<ORIntRange> Cols = RANGE(mdl,1,b);
+
+         id<ORIntVarMatrix> M = [ORFactory boolVarMatrix:mdl range:Rows :Cols];
+         for(ORInt i=Rows.low;i<=Rows.up;i++)
+            [mdl add: [Sum(mdl,x, Cols, [M at:i :x]) eqi:r]];
+         for(ORInt i=Cols.low;i<=Cols.up;i++)
+            [mdl add: [Sum(mdl,x, Rows, [M at:x :i]) eqi:k]];
+         for(ORInt i=Rows.low;i<=Rows.up;i++)
+            for(ORInt j=i+1;j <= v;j++)
+               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eqi:l]];
+         for(ORInt i=1;i <= v-1;i++) {
+            [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
+               leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
+         }
+         for(ORInt j=1;j <= b-1;j++) {
+            [mdl add: [ORFactory lex:All(mdl,ORIntVar, i, Rows, [M at:i :j+1])
+               leq:All(mdl,ORIntVar, i, Rows, [M at:i :j])]];
+         }
+
+         id<CPProgram> cp =  [args makeProgram:mdl];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
+         [cp solve:^{
+            NSLog(@"Start...");
+            [cp labelHeuristic:h];
+            id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
+            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [flat[i] domsize];}];
+            //[cp labelArray:[ORFactory flattenMatrix:M]];
+            NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
+            show(M);
+         }];
+         NSLog(@"Solver: %@",cp);
+         struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         [ORFactory shutdown];
+         return res;
       }];
-      NSLog(@"Solver: %@",cp);
-      [cp release];
-      [ORFactory shutdown];
-      ORLong t1 = [ORRuntimeMonitor cputime];
-      NSLog(@"time: %lld",t1 - t0);
    }
-   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
-/*
-explore<m> {
-   
-   forall(i in 1..v-1)
-   m.post(lexleq(all(j in Cols) M[i+1,j],all(j in Cols) M[i,j]));
-   forall(j in 1..b-1)
-   m.post(lexleq(all(i in Rows) M[i,j+1],all(i in Rows) M[i,j]));
-   
-} using {
-   
-   show(M);
-   cout << "searching...." << endl;
-   var<CP>{int}[] x = m.getIntVariables();
-   range R = x.rng();
-   forall(i in R: !x[i].bound())
-   label(x[i]);
-   
-}
-*/
-

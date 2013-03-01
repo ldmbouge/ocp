@@ -14,7 +14,7 @@
 		"cmd" : [
 			"xcodebuild", "-workspace" , "ObjecticeCP.xcworkspace",
 			"-configuration", "Release",
-			"-scheme" , "knapsackOpt"
+			"-scheme" , "Clo"
 		]
 	}
 	]
