@@ -8,7 +8,7 @@
 
 #import "ORMallocWatch.h"
 
-#if defined(__unix__)
+#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 
 #include <stdlib.h>
 #include <unistd.h>

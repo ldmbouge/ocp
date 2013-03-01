@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "UIBoardController.h"
+#import "NSBoardController.h"
 #import <ORProgram/CPProgram.h>
 #import "CPWatch.h"
 
