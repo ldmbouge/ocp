@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPWatch.h>
 
 @interface UIBoardController : NSObject {
@@ -22,7 +23,7 @@
 }
 -(UIBoardController*)initBoardController:(UIView*)theView;
 -(void)dealloc;
--(id)makeGrid:(ORRange) rows by:(ORRange)cols;
+-(id)makeGrid:(id<ORIntRange>) rows by:(id<ORIntRange>)cols;
 -(void)pause;
 -(void)resume;
 -(void)neverStop;

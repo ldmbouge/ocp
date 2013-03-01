@@ -8,6 +8,8 @@
 
 #import "ORMallocWatch.h"
 
+#if defined(__unix__)
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <malloc/malloc.h>
@@ -117,3 +119,14 @@ NSString* mallocReport()
    [buf appendFormat:@"%ld,%ld",nbBytes,peakBytes];
    return buf;
 }
+
+#else
+void mallocWatch()
+{}
+NSString* mallocReport()
+{
+   return @"iOS no report";
+}
+
+
+#endif

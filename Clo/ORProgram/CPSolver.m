@@ -14,11 +14,13 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import <objcp/CPBitVar.h>
+
 #import "CPProgram.h"
 #import "CPSolver.h"
-#import <objcp/CPBitVar.h>
 #import "CPConcretizer.h"
 
 // to do 23/12/2012

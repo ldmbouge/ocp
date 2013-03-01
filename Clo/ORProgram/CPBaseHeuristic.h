@@ -30,5 +30,5 @@
 -(void) initHeuristic: (NSMutableArray*) array;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;
--(id<CPCommonProgram>)solver;
+-(id<CPProgram>)solver;
 @end

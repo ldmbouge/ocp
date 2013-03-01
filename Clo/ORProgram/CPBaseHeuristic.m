@@ -97,7 +97,7 @@
 {
    return [_binding[[NSThread threadID]] allIntVars];
 }
--(id<CPCommonProgram>)solver
+-(id<CPProgram>)solver
 {
    id<CPHeuristic> h = _binding[[NSThread threadID]];
    return [h solver];

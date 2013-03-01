@@ -168,11 +168,11 @@
 		5B681198161F991D00F4480F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B681199161F99C700F4480F /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E8161F2DB100DB249A /* CPConcretizer.h */; settings = {ATTRIBUTES = (); }; };
 		5B68119A161F99C700F4480F /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5E9161F2DB100DB249A /* CPConcretizer.m */; };
-		5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */; };
+		5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
 		5B68119D161F99C700F4480F /* ORProgramFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FA161F5FCC00C7298D /* ORProgramFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORProgramFactory.m */; };
-		5B68119F161F99C700F4480F /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* CPSolver.h */; };
+		5B68119F161F99C700F4480F /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* CPSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B6811A0161F99C700F4480F /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
 		5B6A960215879F1600019903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
@@ -575,6 +575,7 @@
 		5BBB08E116C551C80087ACF0 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BBB08E416C562520087ACF0 /* CPGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBB08E216C562520087ACF0 /* CPGroup.h */; };
 		5BBB08E516C562520087ACF0 /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
+		5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442E416D1B414001BD7B3 /* LPConcretizer.m */; };
 		5BBFBFE11661211300FB7505 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5BBFBFE21661211300FB7505 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BBFBFE31661211300FB7505 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -627,6 +628,42 @@
 		5BD8BEB716E11FC700D9BF0B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BD8BEB816E11FC700D9BF0B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BD8BEB916E11FC700D9BF0B /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BD8BEBA16E123E200D9BF0B /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
+		5BD8BEBB16E123E200D9BF0B /* ORUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5E015AE907F002FF2B3 /* ORUtilities.m */; };
+		5BD8BEBC16E123E200D9BF0B /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
+		5BD8BEBD16E123E200D9BF0B /* OREngine.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C010EF15CDBC3A00ED7027 /* OREngine.m */; };
+		5BD8BEBE16E123E200D9BF0B /* ORExplorerI.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862215CD8AE20019729B /* ORExplorerI.m */; };
+		5BD8BEBF16E123E200D9BF0B /* ORLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862615CD8E310019729B /* ORLimit.m */; };
+		5BD8BEC016E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC82F615D27C66008DE335 /* ORModelI.m */; };
+		5BD8BEC116E123E200D9BF0B /* ORObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA339164AADAD00CE9AED /* ORObject.m */; };
+		5BD8BEC216E123E200D9BF0B /* ORSelectorI.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511F15DE434900B77813 /* ORSelectorI.m */; };
+		5BD8BEC316E123E200D9BF0B /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
+		5BD8BEC416E123E200D9BF0B /* ORTrailI.m in Sources */ = {isa = PBXBuildFile; fileRef = B198E75915D90768000BE64A /* ORTrailI.m */; };
+		5BD8BEC516E123E200D9BF0B /* ORVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */; };
+		5BD8BEC616E123E200D9BF0B /* ORProgramFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORProgramFactory.m */; };
+		5BD8BEC716E123E200D9BF0B /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5E9161F2DB100DB249A /* CPConcretizer.m */; };
+		5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
+		5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
+		5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
+		5BD8BECD16E123E200D9BF0B /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737A3A8166B0867002D3A57 /* ORModelTransformation.m */; };
+		5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
+		5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1165161E5F2B0014EBCB /* ORModelI.m */; };
+		5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */; };
+		5BD8BED116E123E200D9BF0B /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
+		5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
+		5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
+		5BD8BED416E123E200D9BF0B /* ORLPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORLPDecompose.m */; };
+		5BD8BED516E123E200D9BF0B /* ORLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORLinear.m */; };
+		5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9348741655451D00757F89 /* CPUKernel.m */; };
+		5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
+		5BD8BED816E123E200D9BF0B /* CPTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B93486316553E6E00757F89 /* CPTypes.m */; };
+		5BD8BED916E123E200D9BF0B /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
+		5BD8BEDA16E123E200D9BF0B /* CPEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B30E16D16528F4800BD0718 /* CPEvent.m */; };
+		5BD8BEDB16E1289100D9BF0B /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
+		5BD8BEDC16E1289100D9BF0B /* ORControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B15B2F6715C4A86F0027A7E6 /* ORControl.m */; };
+		5BD8BEDD16E1289100D9BF0B /* CPABS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8259851608BB04006CE539 /* CPABS.m */; };
+		5BD8BEE016E1299300D9BF0B /* LPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442B016D1A3F7001BD7B3 /* LPSolver.m */; };
+		5BD8BEE116E12A0600D9BF0B /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420116D189F1001BD7B3 /* LPSolverI.m */; };
 		5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDE360316D905BE0030559D /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
@@ -8651,6 +8688,43 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */,
+				5BD8BEE116E12A0600D9BF0B /* LPSolverI.m in Sources */,
+				5BD8BEE016E1299300D9BF0B /* LPSolver.m in Sources */,
+				5BD8BEDB16E1289100D9BF0B /* ORCommand.m in Sources */,
+				5BD8BEDC16E1289100D9BF0B /* ORControl.m in Sources */,
+				5BD8BEDD16E1289100D9BF0B /* CPABS.m in Sources */,
+				5BD8BEBA16E123E200D9BF0B /* ORMallocWatch.m in Sources */,
+				5BD8BEBB16E123E200D9BF0B /* ORUtilities.m in Sources */,
+				5BD8BEBC16E123E200D9BF0B /* ORController.m in Sources */,
+				5BD8BEBD16E123E200D9BF0B /* OREngine.m in Sources */,
+				5BD8BEBE16E123E200D9BF0B /* ORExplorerI.m in Sources */,
+				5BD8BEBF16E123E200D9BF0B /* ORLimit.m in Sources */,
+				5BD8BEC016E123E200D9BF0B /* ORModelI.m in Sources */,
+				5BD8BEC116E123E200D9BF0B /* ORObject.m in Sources */,
+				5BD8BEC216E123E200D9BF0B /* ORSelectorI.m in Sources */,
+				5BD8BEC316E123E200D9BF0B /* ORTracer.m in Sources */,
+				5BD8BEC416E123E200D9BF0B /* ORTrailI.m in Sources */,
+				5BD8BEC516E123E200D9BF0B /* ORVarI.m in Sources */,
+				5BD8BEC616E123E200D9BF0B /* ORProgramFactory.m in Sources */,
+				5BD8BEC716E123E200D9BF0B /* CPConcretizer.m in Sources */,
+				5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */,
+				5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */,
+				5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */,
+				5BD8BECD16E123E200D9BF0B /* ORModelTransformation.m in Sources */,
+				5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */,
+				5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */,
+				5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */,
+				5BD8BED116E123E200D9BF0B /* ORLPFlatten.m in Sources */,
+				5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */,
+				5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */,
+				5BD8BED416E123E200D9BF0B /* ORLPDecompose.m in Sources */,
+				5BD8BED516E123E200D9BF0B /* ORLinear.m in Sources */,
+				5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */,
+				5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */,
+				5BD8BED816E123E200D9BF0B /* CPTypes.m in Sources */,
+				5BD8BED916E123E200D9BF0B /* CPGroup.m in Sources */,
+				5BD8BEDA16E123E200D9BF0B /* CPEvent.m in Sources */,
 				B15F6DB615B10D0400158FA0 /* ORFoundation.m in Sources */,
 				B15F6DB715B10D0400158FA0 /* ORData.m in Sources */,
 				B15F6DB815B10D0400158FA0 /* ORParallel.m in Sources */,

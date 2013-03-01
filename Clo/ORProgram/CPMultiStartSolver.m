@@ -13,6 +13,7 @@
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORProgram/CPMultiStartSolver.h>
+#import <ORProgram/CPBaseHeuristic.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 

@@ -33,5 +33,4 @@
    UIRectFill(dirtyRect);
    [_delegate drawRect:dirtyRect inView:self];
 }
-
 @end

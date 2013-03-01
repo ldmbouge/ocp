@@ -6,7 +6,9 @@
 //  Copyright (c) 2013 CSE. All rights reserved.
 //
 
+#if defined(__unix__)
 #import <Cocoa/Cocoa.h>
+#endif
 
 void mallocWatch();
 NSString* mallocReport();

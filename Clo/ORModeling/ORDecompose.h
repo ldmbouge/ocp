@@ -12,8 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <ORModeling/ORLinear.h>
 #import <objcp/CPData.h>
+#import "ORLinear.h"
 
 @protocol ORModel;
 @protocol ORAddToModel;

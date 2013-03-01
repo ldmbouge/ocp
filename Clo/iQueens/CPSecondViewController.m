@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPSecondViewController.h"
-#import "CPEngineController.h"
+#import "CPSolverController.h"
 
 @interface CPSecondViewController ()
 
@@ -46,7 +46,6 @@
 {
    [log insertText:txt];
 }
-
 - (IBAction)run:(id)sender 
 {
    [NSThread detachNewThreadSelector:@selector(runModel) toTarget:_solver withObject:nil];
