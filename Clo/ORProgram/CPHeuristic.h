@@ -16,7 +16,7 @@
 @protocol CPIntVarArray;
 @protocol CPProgram;
 
-@protocol CPHeuristic <NSObject,NSCopying>
+@protocol CPHeuristic <NSObject>
 -(ORFloat) varOrdering: (id<ORIntVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
 -(void) initInternal: (id<CPIntVarArray>) t;

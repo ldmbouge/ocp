@@ -65,6 +65,10 @@
 {
    return _solver[[NSThread threadID]];
 }
+-(void)  restartHeuristics
+{
+   [[self dereference] restartHeuristics];
+}
 -(id<CPPortal>) portal
 {
    return [[self dereference] portal];

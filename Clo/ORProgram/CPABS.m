@@ -311,7 +311,7 @@
    ABSValueActivity* copy = [[ABSValueActivity alloc] initABSActivity:_theVar];
    NSMutableDictionary* cv = [[NSMutableDictionary alloc] initWithCapacity:[_values count]];
    [_values enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, NSNumber* value, BOOL *stop) { 
-      [cv addObject:[value copy] forKey:key];
+      [cv setObject:[value copy] forKey:key];
    }];
    copy->_values = cv;
    return copy;
@@ -560,11 +560,11 @@
    }
    _varBackup = [[NSMutableDictionary alloc] initWithCapacity:[_varActivity count]];
    [_varActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
-      [_varBackup addObject:[act copy] forKey:key];
+      [_varBackup setObject:[act copy] forKey:key];
    }];
    _valBackup = [[NSMutableDictionary alloc] initWithCapacity:[_valActivity count]];
    [_valActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSValueActivity* act, BOOL *stop) {
-      [_valBackup addObject:[act copy] forKey:key];
+      [_valBackup setObject:[act copy] forKey:key];
    }];
    _freshBackup = YES;
 }
@@ -677,10 +677,10 @@
       [_varActivity removeAllObjects];
       [_valActivity removeAllObjects];
       [_varBackup enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
-         [_varActivity addObject:[act copy] forKey:key];
+         [_varActivity setObject:[act copy] forKey:key];
       }];
       [_valBackup enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSValueActivity* act, BOOL *stop) {
-         [_valActivity addObject:[act copy] forKey:key];
+         [_valActivity setObject:[act copy] forKey:key];
       }];
    }
 }

@@ -45,7 +45,7 @@
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
-
+-(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;

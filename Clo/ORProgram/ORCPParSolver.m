@@ -73,6 +73,10 @@
 {
    return _workers[[NSThread threadID]];
 }
+-(void) restartHeuristics
+{
+   assert(NO);
+}
 -(NSMutableArray*) variables
 {
    return [[[self dereference] engine] variables];
