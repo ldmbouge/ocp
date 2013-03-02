@@ -239,7 +239,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(NSString*)description
 {
    id<CPDom> dom = [self domain];
-   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+   NSMutableString* s = [NSMutableString stringWithCapacity:64];
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
@@ -1345,6 +1345,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    [theTrail trailClosure:^{
       _tab[toFix] = nil;
       _loseValIMP[toFix] = nil;
+      _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
    ORInt nbBare = 0;
@@ -1427,6 +1428,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus)bindEvt:(id<CPDom>)sender
 {
+   // If _nb > 0 but the _tab entries are nil, this would inadvertently
+   // set ok to ORFailure which is wrong. Hence it is critical to also
+   // backtrack the size of the array in addVar.
    for(ORInt i=0;i<_nb;i++) {
        ORStatus ok = [_tab[i] bindEvt:sender];
       if (!ok) return ok;

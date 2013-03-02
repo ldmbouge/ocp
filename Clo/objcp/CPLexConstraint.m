@@ -88,6 +88,7 @@ STATE2:
       else {
          [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]];               // T3: INFER: x_q <= y_q
       }
+      return;
    } else if (LEX_XGY(i)) {    // transition STATE 2 -> T2
       assignTRInt(&_active,NO,_trail);
       if (bound(_ya[LEX_Q]))
@@ -96,15 +97,17 @@ STATE2:
          [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
                                              to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER: x_q < y_q
       }
+      return;
    } else if (LEX_XLEQY(i)) {  // transition STATE 2 -> STATE 3
       assignTRInt(&_s,i = max(i + 1,LEX_S),_trail);
       goto STATE3;
    } else if (LEX_XGEQY(i)) {  // transition 2 -> 4
       assignTRInt(&_s,i = max(i + 1,LEX_S),_trail);
       goto STATE4;
-   } else {                           // ****************** ENTERING STATE D1
-      assignTRInt(&_u,2,_trail);      // remember we were in state 2 (where to resume).
    }
+   // ****************** ENTERING STATE D1
+   assignTRInt(&_u,2,_trail);      // remember we were in state 2 (where to resume).
+   return;
 STATE3:
    // ****************** ENTERING STATE 3
    while(i <= up && LEX_XEQ_LEQY(i))
@@ -117,10 +120,12 @@ STATE3:
       else {
          [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q] to:_ya[LEX_Q]]]; // T3: INFER x_q <= y_q
       }
+      return;
    }
    // transition 3 -> D3
    // ****************** ENTERING STATE D3
    assignTRInt(&_u,3,_trail);
+   return;
 STATE4:
    // ****************** ENTERING STATE 4
    while(i<=up && LEX_XEQ_GEQY(i))
@@ -134,6 +139,7 @@ STATE4:
          [_engine addInternal:[CPFactory lEqual:_xa[LEX_Q]
                                              to:[CPFactory intVar:_ya[LEX_Q] shift:-1]]]; // T2: INFER x_q < y_q
       }
+      return;
    }
    // transition 4 -> D2
    // ****************** ENTERING STATE D2

@@ -971,6 +971,7 @@
 {
    id<CPEngine> engine = [[xa at: [xa low]] engine];
    self = [super initCPCoreConstraint:engine];
+   _xa = xa;
    _nb = [xa count];
    _x  = malloc(sizeof(CPIntVarI*)*_nb);
    ORInt low = [xa low];
@@ -1014,39 +1015,44 @@
    _nbZero = makeTRInt(_trail, (ORInt)_nb - nbTrue - nbPos);
    for(ORInt k=0;k < _nb;k++) {
       if (bound(_x[k])) continue;
-      [_x[k] whenBindDo:^{
-         if (minDom(_x[k])) {  // ONE more TRUE
-            if (_nbOne._val + 1 == _c) {
-               ORInt nb1 = 0;
-               for(ORInt i=0;i<_nb;i++) {
-                  nb1 += (minDom(_x[i])==YES);   // already a ONE
-                  if (!bound(_x[i]))
-                     [_x[i] bind:FALSE];
-               }
-               if (nb1 != _c)
-                  failNow();                     // too many ONES!
-            }
-            else
-               assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
-         } else { // ONE more FALSE
-            if (_nb - _nbZero._val -  1 == _c) { // we have maxed out the # of FALSE
-               ORInt nb1 = 0;
-               for(ORInt i=0;i < _nb;i++) {
-                  nb1 += (minDom(_x[i])==YES);   // already a ONE
-                  if (!bound(_x[i])) {
-                     [_x[i] bind:TRUE];
-                     ++nb1;                      // We just added another ONE
-                  }
-               }
-               if (nb1 != _c)
-                  failNow();
-            }
-            else
-               assignTRInt(&_nbZero, _nbZero._val + 1, _trail);
-         }
-      } onBehalf:self];
+      [_x[k] whenBindDo:^{ [self propagateIdx:k];} onBehalf:self];
    }
    return ORSuspend;
+}
+-(void)propagateIdx:(ORInt)k
+{
+   ORInt nb1 = 0;
+   if ([_x[k] min]) {  // ONE more TRUE
+      if (_nbOne._val + 1 == _c) {
+         for(ORInt i=0;i<_nb;i++) {
+            nb1 += ([_x[i] min]==YES);   // already a ONE
+            if (![_x[i] bound])
+               [_x[i] bind:FALSE];
+         }
+         if (nb1 != _c)
+            failNow();                     // too many ONES!
+      }
+      else
+         assignTRInt(&_nbOne,_nbOne._val + 1,_trail);
+   } else { // ONE more FALSE
+      if (_nb - _nbZero._val -  1 == _c) { // we have maxed out the # of FALSE
+         for(ORInt i=0;i < _nb;i++) {
+            //printf("%d / %lld\n",i,_nb);
+            ORInt mv =[_x[i] min];
+            //ORInt mv =minDom(_x[i]);  // [ldm] If I use this line, the program crashes (bibd -q3 -h2) during inits (Release only!)
+            nb1 += (mv == 1);   // already a ONE
+            //nb1 += (minDom(_x[i])==YES);   // already a ONE
+            if (!bound(_x[i])) {
+               [_x[i] bind:TRUE];
+               ++nb1;                      // We just added another ONE
+            }
+         }
+         if (nb1 != _c)
+            failNow();
+      }
+      else
+         assignTRInt(&_nbZero, _nbZero._val + 1, _trail);
+   }   
 }
 -(NSSet*)allVars
 {

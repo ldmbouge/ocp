@@ -3,26 +3,6 @@
 	{
 		"selected_items":
 		[
-			[
-				"ORObjec",
-				"ORObjectiveFunction	"
-			],
-			[
-				"import",
-				"import <header>	"
-			],
-			[
-				"forall",
-				"forall:(id<ORIntIterator>) orderedBy:^ORInt(ORInt)o do:^(ORInt)b	void"
-			],
-			[
-				"obj",
-				"objects	NSArray *"
-			],
-			[
-				"ORSolu",
-				"ORSolutionPool	"
-			]
 		]
 	},
 	"buffers":
@@ -35,24 +15,64 @@
 		"selected_items":
 		[
 			[
-				"ctags",
-				"CTags: Rebuild Tags"
+				"install",
+				"Package Control: Install Package"
 			],
 			[
-				"cta",
-				"CTags: Show Symbols (file)"
+				"clang",
+				"SublimeClang: Clear cache"
 			],
 			[
-				"toggl",
-				"Toggle Block Comment"
+				"Sub",
+				"Set Syntax: SublimeClangErrorPanel"
 			],
 			[
-				"comment",
-				"Toggle Block Comment"
+				"sub",
+				"Preferences: SublimeClang Settings – Default"
 			],
 			[
-				"View",
-				"View: Toggle Open Files in Side Bar"
+				"subl",
+				"Preferences: SublimeClang Settings – User"
+			],
+			[
+				"Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Upgrade",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Upgr",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"upd",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"upgra",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"git",
+				"Git: Status"
+			],
+			[
+				"git stat",
+				"Git: Status"
 			],
 			[
 				"reindent",
@@ -67,11 +87,11 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 800.0
+		"width": 449.0
 	},
 	"console":
 	{
-		"height": 139.0
+		"height": 303.0
 	},
 	"distraction_free":
 	{
@@ -84,36 +104,25 @@
 	},
 	"file_history":
 	[
-		"/Users/ldm/work/platform/Clo/Clo/Clo.xcodeproj/project.pbxproj",
-		"/Users/ldm/work/platform/Clo/Clo.xcodeproj/project.pbxproj",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORTracer.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.m",
-		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.h",
-		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngine.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/ORConcretizer.m",
-		"/Users/ldm/work/platform/Clo/ORProgram/ORConcretizer.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/CPConcretizer.m",
-		"/Users/ldm/work/platform/Clo/ORProgram/CPProgramI.m",
-		"/Users/ldm/work/platform/Clo/ORProgram/CPMultiStartSolver.m",
-		"/Users/ldm/work/platform/Clo/objcp/CPSolverI.m",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.h",
-		"/Users/ldm/work/platform/Clo/objcp/CPCreateI.h",
-		"/Users/ldm/work/platform/Clo/objcp/CPCreateI.m",
-		"/Users/ldm/work/platform/Clo/objcp/CPParallel.m",
-		"/Users/ldm/work/platform/Clo/objcp/CPParallel.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/CPProgram.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.m",
-		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.h",
-		"/Users/ldm/work/platform/Clo/ORProgram/ORParCPConcretizer.m",
-		"/Users/ldm/work/platform/Clo/ORProgram/ORParCPConcretizer.h",
-		"/Users/ldm/work/RComet/compiler/benchcp/queens.co",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.m",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.h",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorer.h",
-		"/Users/ldm/work/platform/Clo.sublime-project",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.m",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPGroup.h",
 		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORModelI.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.m",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.h",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORModel.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORVar.h",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.m",
+		"/Users/ldm/work/platform/Clo.sublime-project",
+		"/Users/ldm/Documents/courses/CSE4100/tex/hw2.tex",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/SublimeClang/SublimeClang.sublime-settings",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPAC3Event.h",
 		"/Users/ldm/.bashrc",
 		"/Users/ldm/Desktop/script.py",
 		"/Users/ldm/Desktop/histo.history",
@@ -128,7 +137,6 @@
 		"height": 0.0,
 		"where_history":
 		[
-			""
 		]
 	},
 	"find_state":
@@ -136,30 +144,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"<0,",
-			"<<<<",
-			"CPSemanticProgram",
-			"CPSemSolver",
+			"CPBitAdd",
+			"Add",
+			"ORIntVar",
+			"ORSumBoolGEqc",
+			"{}\n",
+			" \n",
+			"	",
 			"\n",
-			"CPSemSolver",
-			"CPSemanticSolver",
-			"CPParallelAdapter",
-			"ORExplorer",
-			"controllerFactory",
-			"installProblem",
-			"ORControllerFactory",
-			"controllerFactory",
-			"installProblem",
-			"install",
-			"SemTracer",
-			"return",
-			"_solver[k]",
-			"return",
-			"_solver[k]",
-			"multiStart",
-			"addModel",
-			"CPMultiStartSolver",
-			"MultiSartSolver",
+			"flattenExpression",
+			"flatten:",
+			"sum:",
+			"scaledViews:",
+			"oneView",
+			"affine",
+			"Affine",
+			"affine",
+			"affineVar",
+			"AFFineVar",
 			"|",
 			"nobtf",
 			"breaks",
@@ -195,7 +197,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -222,7 +224,11 @@
 	"menu_visible": true,
 	"output.clang":
 	{
-		"height": 112.0
+		"height": 100.0
+	},
+	"output.clang_static_analyzer":
+	{
+		"height": 0.0
 	},
 	"output.exec":
 	{
@@ -239,44 +245,28 @@
 		"selected_items":
 		[
 			[
-				"orexp",
-				"ORFoundation/ORExplorer.h"
+				"bitcon",
+				"objcp/CPBitConstraint.m"
 			],
 			[
-				"",
-				"ORFoundation/ORExplorerI.h"
+				"orflatte",
+				"ORModeling/ORFlatten.h"
 			],
 			[
-				"cpsolver",
-				"ORProgram/CPSolver.h"
+				"ormodeli",
+				"ORFoundation/ORModelI.h"
 			],
 			[
-				"cpengine",
-				"CPUKernel/CPEngineI.h"
+				"orfact",
+				"ORFoundation/ORFactory.m"
 			],
 			[
-				"orconcre",
-				"ORProgram/ORConcretizer.h"
+				"ordecom",
+				"ORModeling/ORDecompose.m"
 			],
 			[
-				"orcpcon",
-				"ORProgram/CPConcretizer.m"
-			],
-			[
-				"cpprogram",
-				"ORProgram/CPProgramI.m"
-			],
-			[
-				"cpmulti",
-				"ORProgram/CPMultiStartSolver.m"
-			],
-			[
-				"orcp",
-				"ORProgram/ORParCPConcretizer.h"
-			],
-			[
-				"orcppar",
-				"ORProgram/ORCPParSolver.h"
+				"orflatt",
+				"ORModeling/ORFlatten.m"
 			]
 		],
 		"width": 0.0
@@ -290,9 +280,9 @@
 		"width": 0.0
 	},
 	"show_minimap": true,
-	"show_open_files": true,
+	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 192.0,
 	"status_bar_visible": true
 }
