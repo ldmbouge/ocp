@@ -47,4 +47,5 @@
 -(void)enQueue:(id)obj;
 -(bool)empty;
 -(void)reset;
+-(ORInt)size;
 @end

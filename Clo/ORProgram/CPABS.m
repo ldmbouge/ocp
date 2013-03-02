@@ -530,7 +530,7 @@
       if (more)
          break;
    }
-   NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
+   //NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
    return more;
 }
 -(void)installActivities
@@ -578,7 +578,8 @@
       if ([_vars[i] bound]) continue;
       mxp += log([(id)_vars[i] domsize]);
    }
-   const int maxProbes = (int)10 * mxp;
+   const ORInt maxProbes = (int)10 * mxp;
+   NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
@@ -586,6 +587,7 @@
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
+   NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
    __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
    __block ORInt nbVS = 0;
    id<ORZeroOneStream> varPr = [ORCrFactory zeroOneStream];
@@ -631,8 +633,9 @@
                if (s == ORFailure) {
                   if (depth == 0) {
                      ABSNogood* nogood = [[ABSNogood alloc] initABSNogood:xi value:v];
-                     NSLog(@"Adding SAC %@",nogood);
+                     //NSLog(@"Adding SAC %@",nogood);
                      [killSet addObject:nogood];
+                     [localKill addObject:nogood];
                      [nogood release];
                   }
                   depth++;
@@ -655,9 +658,15 @@
          //NSLog(@"THEPROBE: %@",probe);
          [_aggregator addProbe:probe];
          [probe release];
+         for(ABSNogood* b in localKill) {
+            [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];            
+            NSLog(@"Imposing local SAC %@",b);
+         }
+         [localKill removeAllObjects];
       }
       carryOn = [self moreProbes];
    } while (carryOn && cntProbes < maxProbes);
+   
    [_solver atomic:^ORStatus {
       for(ABSNogood* b in killSet) {
          [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
@@ -665,6 +674,8 @@
       }
       return ORSuspend;
    }];
+   
+   NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);
    [killSet release];
    [varPr release];
    [_valPr release];

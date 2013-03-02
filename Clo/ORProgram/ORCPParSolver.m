@@ -31,6 +31,7 @@
    NSCondition*    _terminated;
    ORInt               _nbDone;
    Class               _defCon;
+   BOOL         _doneSearching;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
@@ -46,6 +47,7 @@
       _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
+   _doneSearching = NO;
    return self;
 }
 -(void)dealloc
@@ -296,7 +298,7 @@
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
+-(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(BOOL)allSols
 {
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
@@ -323,13 +325,25 @@
                              onExit: nil
                             control: parc];
    } else {
-      [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
-                         onSolution: ^ {
+      NSLog(@"ALLSOL IS: %d",allSols);
+      if (allSols) {
+        [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
+                           onSolution: ^ {
+                              [self doOnSolution];
+                              [me doOnSolution];
+                           }
+                               onExit:nil
+                              control:parc];
+      } else {
+        [[me explorer] nestedSolve:^() { [self setupWork:root forCP:me];body();}
+                        onSolution: ^ {
                             [self doOnSolution];
                             [me doOnSolution];
+                            _doneSearching = YES;
                          }
                              onExit:nil
-                            control:parc];
+                            control:parc];        
+      }
    }
 }
 
@@ -337,7 +351,9 @@
 {
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
+   NSNumber* allSols  = [input objectAtIndex:2];
    [NSThread setThreadID:myID];
+   _doneSearching = NO;
    [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
       if (myID == 0) {
@@ -349,9 +365,11 @@
       }
       NSData* cpRoot = nil;
       while ((cpRoot = [_queue deQueue]) !=nil) {
-         [self setupAndGo:cpRoot forCP:myID searchWith:mySearch];
+         if (!_doneSearching)
+            [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
          [cpRoot release];
       }
+      NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));
    }];
    // Final tear down. The worker is done with the model.
    NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
@@ -373,7 +391,7 @@
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                         [search copy],nil]];
+                                         [search copy],@(YES),nil]];
    }
    [self waitWorkers]; // wait until all the workers are done.
    
@@ -384,7 +402,7 @@
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                         [search copy],nil]];
+                                         [search copy],@(NO),nil]];
    }
    [self waitWorkers]; // wait until all the workers are done.
 }
