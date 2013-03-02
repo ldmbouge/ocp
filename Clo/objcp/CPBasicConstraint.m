@@ -2338,7 +2338,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 -(ORStatus) post
 {
   if (![_x bound]) 
-    [_x whenChangeMaxDo: ^ {  [_x updateMin: _primalBound]; } onBehalf:self];
+    [_x whenChangeMaxDo: ^ {  
+      [_x updateMin: _primalBound + 1]; 
+   } onBehalf:self];
   return ORSuspend;
 }
 
