@@ -11,7 +11,7 @@
 
 #import "CPABS.h"
 #import "CPEngineI.h"
-#import "CPStatisticsMonitor.h"
+#import <objcp/CPStatisticsMonitor.h>
 #import "ORTracer.h"
 
 @interface ABSNogood : NSObject {

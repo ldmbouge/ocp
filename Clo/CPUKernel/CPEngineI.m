@@ -559,7 +559,11 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
          }];
       }
    } @catch (ORFailException* ex) {
+#if defined(__linux__)      
+      [ex release];
+#else
       CFRelease(ex);
+#endif
       _status = ORFailure;
    }
    return _status;

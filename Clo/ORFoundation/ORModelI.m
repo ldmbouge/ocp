@@ -9,10 +9,9 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORError.h>
 #import "ORModelI.h"
-#import "ORError.h"
 
 @implementation ORConstraintI
 {

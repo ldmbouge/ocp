@@ -23,6 +23,10 @@
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 
+#if defined(__linux__)
+#import <values.h>
+#endif
+
 // to do 23/12/2012
 //
 // 1. Look at IncModel to implement the incremental addition of constraints

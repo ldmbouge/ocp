@@ -9,10 +9,10 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORError.h>
+#import <ORModeling/ORSolver.h>
 #import "ORModelI.h"
-#import "ORError.h"
-#import "ORSolver.H"
 
 @implementation ORModelI
 {

@@ -32,7 +32,7 @@ static void initPool()
 {
    @try {
       __block ORInt nbP = 0;
-      scanListWithBlock(_theList, ^(ConstraintIntCallBack trigger) {
+      scanListWithBlock(_theList,(void(^)(id)) ^(ConstraintIntCallBack trigger) {
          trigger(_theVal);
          ++nbP;
       });
@@ -56,7 +56,7 @@ static void initPool()
    id ptr = pthread_getspecific(pkey);
    if (ptr) {
       pthread_setspecific(pkey,*(id*)ptr);
-   } else ptr = [super allocWithZone:nil];
+   } else ptr = [super allocWithZone:NULL];
    // now generic code.
    *(Class*)ptr = self;
    id rv = [ptr initValueLoss:value notify:list];

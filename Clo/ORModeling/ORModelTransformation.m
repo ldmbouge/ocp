@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import "ORModelTransformation.h"
-#import "ORTracker.h"
-#import "ORSetI.h"
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORSetI.h>
 
 @implementation ORExprDomainEvaluatorI {
     id<ORTracker> _tracker;

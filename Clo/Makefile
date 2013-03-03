@@ -1,4 +1,6 @@
-TARGETS = objcp queens2 queensAC Sudoku magicserie queensACSem
+TARGETS = ORUtilities ORFoundation CPUKernel objcp ORProgram ORModeling \
+	queens2 queensAC Sudoku magicserie queensACSem
+	
 .PHONY: $(TARGETS)
 
 all: $(TARGETS)

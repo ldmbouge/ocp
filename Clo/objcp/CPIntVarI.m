@@ -1343,8 +1343,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
-      _tab[toFix] = nil;
-      _loseValIMP[toFix] = nil;
+      _tab[toFix] = NULL;
+      _loseValIMP[toFix] = NULL;
       _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
@@ -1385,8 +1385,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
    [theTrail trailClosure:^{
-      _tab[toFix] = nil;
-      _loseValIMP[toFix] = nil;
+      _tab[toFix] = NULL;
+      _loseValIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;

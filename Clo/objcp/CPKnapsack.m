@@ -117,7 +117,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    _up  = [_x up];
    _xb  = malloc(sizeof(CPIntVarI*)*_nb);
    for(ORInt k=_low;k<= _up;k++)
-      _xb[k - _low] = (CPIntVarI*)_x[k];
+      _xb[k - _low] = (CPIntVarI*)[_x at:k];
    _support = malloc(sizeof(TRInt)*_nb*2);
    for(ORInt k=0;k<_nb*2;k++)
       _support[k] = makeTRInt(_trail, 0);

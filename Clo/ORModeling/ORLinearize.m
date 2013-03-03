@@ -7,8 +7,8 @@
 //
 
 #import <ORModeling/ORLinearize.h>
+#import <ORFoundation/ORSetI.h>
 #import "ORModelI.h"
-#import "ORSetI.h"
 
 @interface ORLinearizeConstraint : NSObject<ORVisitor>
 -(id)init:(id<ORAddToModel>)m;
