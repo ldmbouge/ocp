@@ -37,7 +37,7 @@
 }
 -(void)setGroup:(id<CPGroup>)g
 {
-   assert(FALSE);
+   assert(0);
 }
 -(id<CPGroup>)group
 {

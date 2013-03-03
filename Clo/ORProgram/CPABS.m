@@ -11,10 +11,8 @@
 
 #import "CPABS.h"
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
 #import "CPStatisticsMonitor.h"
 #import "ORTracer.h"
-
 
 @interface ABSNogood : NSObject {
    id<CPIntVar> _var;

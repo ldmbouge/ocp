@@ -12,6 +12,9 @@
 #import "ORDataI.h"
 #import "ORSet.h"
 #import <sys/time.h>
+#import <sys/types.h>
+#import <sys/resource.h>
+#import <unistd.h>
 #import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)

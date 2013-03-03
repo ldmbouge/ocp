@@ -11,6 +11,8 @@
 
 #import "ORFoundation.h"
 #import "ORSelectorI.h"
+#import <math.h>
+#import <values.h>
 
 @implementation OROPTSelect
 {

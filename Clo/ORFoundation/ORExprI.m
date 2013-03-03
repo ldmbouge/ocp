@@ -813,7 +813,7 @@
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
    _e = [ORFactory integer: tracker value: 0];
-   if (f!=nil) {
+   if (f!= NULL) {
       while ([ite more]) {
          ORInt i = [ite next];
          if (f(i))
@@ -886,7 +886,7 @@
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
    _e = [ORFactory integer: tracker value: 1];
-   if (f!=nil) {
+   if (f!=NULL) {
       while ([ite more]) {
          ORInt i = [ite next];
          if (f(i))
@@ -959,7 +959,7 @@
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
    _e = [ORFactory integer: cp value: 0];
-   if (f!=nil) {
+   if (f!=NULL) {
       while ([ite more]) {
          ORInt i = [ite next];
          if (!f(i))
