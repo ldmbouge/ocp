@@ -12,7 +12,8 @@
 #import "ORTracker.h"
 #import "ORFactory.h"
 #import "ORControl.h"
-
+#import <math.h>
+#import <values.h>
 
 
 @interface ORForallI : NSObject <ORForall>

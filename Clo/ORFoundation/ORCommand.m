@@ -41,11 +41,11 @@
 {
    ORCommandList* nList = [[ORCommandList alloc] initCPCommandList:_ndId];
    struct CNode* cur = _head;
-   struct CNode* first = nil;
-   struct CNode* last  = nil;
+   struct CNode* first = NULL;
+   struct CNode* last  = NULL;
    while (cur) {
       struct CNode* cpy = malloc(sizeof(struct CNode));
-      cpy->_next = nil;
+      cpy->_next = NULL;
       cpy->_c = [cur->_c retain];
       if (last) {
          last->_next = cpy;

@@ -141,7 +141,7 @@
 {
    ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
    for(ORInt i = [r low]; i <= [r up]; i++)
-      if (f == nil || f(i))
+      if (f == NULL || f(i))
          [o insert: e(i)];
    [tracker trackObject: o];
    return o;
@@ -151,7 +151,7 @@
 {
     ORInt m = MAXINT;
     for(ORInt i = [r low]; i <= [r up]; i++) {
-        if (filter == nil || filter(i)) {
+        if (filter == NULL || filter(i)) {
             ORInt x = e(i);
             if(x < m) m = x;
         }
@@ -163,7 +163,7 @@
 {
     ORInt m = MININT;
     for(ORInt i = [r low]; i <= [r up]; i++) {
-        if (filter == nil || filter(i)) {
+        if (filter == NULL || filter(i)) {
             ORInt x = e(i);
             if(x > m) m = x;
         }
