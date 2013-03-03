@@ -12,7 +12,9 @@
 #import "ORFoundation.h"
 #import "ORSelectorI.h"
 #import <math.h>
+#if defined(__linux__)
 #import <values.h>
+#endif
 
 @implementation OROPTSelect
 {
