@@ -12,7 +12,7 @@
 #import "CPABS.h"
 #import "CPEngineI.h"
 #import <objcp/CPStatisticsMonitor.h>
-#import "ORTracer.h"
+#import <ORFoundation/ORTracer.h>
 
 @interface ABSNogood : NSObject {
    id<CPIntVar> _var;

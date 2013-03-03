@@ -2,8 +2,7 @@
 #include $(GNUSTEP_MAKEFILES)/common.make
 
 OC = ~/clang32/bin/clang
-CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I.. -I. \
-#	-I../ORUtilities -I../ORFoundation -I../CPUKernel \
+CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I.. -I. -I../CPUKernel \
 	-fblocks -fobjc-nonfragile-abi
 
 LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries -lgnustep-base -lobjc 

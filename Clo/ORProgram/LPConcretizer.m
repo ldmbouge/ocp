@@ -33,8 +33,11 @@ int maini()
 {
    
    @try {
-      
+#if defined(__linux__)
+      LPSolverI* lp = NULL;
+#else
       LPSolverI* lp = [LPFactory solver];
+#endif
       [lp print];
       
       LPVariableI* x[nbColumns];
