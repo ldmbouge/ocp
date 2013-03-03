@@ -439,13 +439,16 @@
                                           return rv;
                                        }];
    id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   id<ORRandomStream> valStream = [ORCrFactory randomStream];
    [_trail trailClosure:^{
       free(last);
+      [valStream release];
    }];
+   
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      id<ORIntVar> x = *last;
+      id<ORIntVar> x = nil;//*last;
       if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
@@ -457,6 +460,35 @@
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
       [failStamp setValue:[_search nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORInt low = [x min];
+      ORInt up  = [x max];
+      ORInt bestIndex = low - 1;
+      for(ORInt v = low;v <= up;v++) {
+        if ([x member:v]) {
+          ORFloat vValue = [h valOrdering:v forVar:x];
+          if (vValue > bestValue) {
+            bestValue = vValue;
+            bestIndex = v;
+            bestRand  = [valStream next];
+          } else if (vValue == bestValue) {
+            ORLong rnd = [valStream next];
+            if (rnd < bestRand) {
+              bestIndex = v;
+              bestRand = rnd;
+            }
+          }
+        }
+      }
+      if (bestIndex != low - 1)  {
+        [self try: ^{
+          [self label: x with: bestIndex];
+        } or: ^{
+           [self diff:x with: bestIndex];
+        }];
+      }
+      /*
       id<ORSelect> valSelect = [ORFactory select: _engine
                                            range:RANGE(_engine,[x min],[x max])
                                         suchThat:^bool(ORInt v)    { return [x member:v];}
@@ -471,6 +503,7 @@
             [self diff: x with: curVal];
          }];
       } while(![x bound]);
+      */
    } while (true);
 }
 -(void) label: (id<ORIntVar>) mx
