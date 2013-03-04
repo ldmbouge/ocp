@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       id<ORIntVarArray> av = All2(model, ORIntVar, i, R, j, R, [z at:i :j]);
-      id<CPHeuristic> h = [ORFactory createFF:cp restricted:av];
+      id<CPHeuristic> h = [cp createFF:av];
       [cp solve:^{
          id<ORBasicModel> bm = [[cp engine] model];
          NSLog(@"BASIC: %@",bm);

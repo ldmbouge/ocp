@@ -152,12 +152,15 @@ static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
 
 static inline void inline_trailIntFun(ORTrailI* t,int* ptr)
 {
-   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
-   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   struct Segment* seg = t->_seg[t->_cSeg];
+   if (seg->top >= NBSLOT-1) {
+      [t resize];
+      seg = t->_seg[t->_cSeg];
+   }
+   struct Slot* s = seg->tab + seg->top++;
    s->ptr = ptr;
    s->code = TAGInt;
    s->intVal = *ptr;
-   ++(t->_seg[t->_cSeg]->top);
 }
 
 static inline void inline_trailLongFun(ORTrailI* t,long long* ptr)
@@ -191,16 +194,16 @@ static inline void inline_trailUIntFun(ORTrailI* t,unsigned* ptr)
 }
 static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
 {
-   id obj = *ptr;
-   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
-   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   struct Segment* seg = t->_seg[t->_cSeg];
+   if (seg->top >= NBSLOT-1) {
+      [t resize];
+      seg = t->_seg[t->_cSeg];
+   }
+   struct Slot* s = seg->tab + seg->top++;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = obj;
-   ++(t->_seg[t->_cSeg]->top);
+   s->idVal = *ptr;
 }
-
-
 static inline void inline_assignTRInt(TRInt* v,int val,id<ORTrail> trail)
 {
    ORInt cmgc = ((ORTrailI*)trail)->_magic;

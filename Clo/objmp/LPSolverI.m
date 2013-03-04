@@ -10,7 +10,10 @@
  ***********************************************************************/
 
 #import "LPSolverI.h"
+
+#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
 #import "LPGurobi.h"
+#endif
 
 @implementation LPConstraintI;
 
@@ -851,7 +854,11 @@
 -(LPSolverI*) initLPSolverI
 {
    [super init];
+#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
    _lp = [[LPGurobiSolver alloc] initLPGurobiSolver];
+#else
+   _lp = nil; // [ldm] we do not have GUROBI on IOS
+#endif
    _nbVars = 0;
    _maxVars = 32;
    _var = (LPVariableI**) malloc(_maxVars * sizeof(LPVariableI*));

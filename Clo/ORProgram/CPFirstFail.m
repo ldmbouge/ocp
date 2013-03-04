@@ -19,12 +19,16 @@
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
-   [cp addHeuristic:self];
    _cp = cp;
    _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    return self;
+}
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPFirstFail * cp = [[CPFirstFail alloc] initCPFirstFail:_cp restricted:_rvars];
+   return cp;
 }
 -(void)dealloc
 {

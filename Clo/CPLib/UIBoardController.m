@@ -13,7 +13,6 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPI.h"
 #import "CPWatch.h"
 
 
@@ -25,7 +24,7 @@
    UIColor* _back;
    enum CPDomValue* _values;
 }
--(CPGrid*)initGrid:(ORRange)rows by:(ORRange)cols;
+-(CPGrid*)initGrid:(id<ORIntRange>)rows by:(id<ORIntRange>)cols;
 -(void)toggleRow:(NSInteger)r col:(NSInteger)c to:(enum CPDomValue)dv;
 -(void)drawRect:(CGRect)dirtyRect inView:(UIView*)view;
 @end
@@ -110,7 +109,7 @@
    }];
 }
 
--(id)makeGrid:(ORRange) rows by:(ORRange)cols
+-(id)makeGrid:(id<ORIntRange>) rows by:(id<ORIntRange>)cols
 {
    CPGrid* g = nil;
    @synchronized(self) {
@@ -130,7 +129,9 @@
 }
 -(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf
 {
-   [cp setController: [[CPViewController alloc] initCPViewController:[cp controller] onChoose:onc onFail:onf]];
+   [[cp explorer] setController: [[CPViewController alloc] initCPViewController:[[cp explorer] controller]
+                                                                       onChoose:onc
+                                                                         onFail:onf]];
 }
 
 -(void)pause

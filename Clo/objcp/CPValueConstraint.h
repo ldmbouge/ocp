@@ -143,9 +143,10 @@
 @end
 
 @interface CPSumBoolEq : CPCoreConstraint<NSCoding> {
-   CPIntVarI**       _x;
-   ORLong           _nb;
-   ORInt             _c;
+   id<CPIntVarArray> _xa;
+   CPIntVarI**        _x;
+   ORLong            _nb;
+   ORInt              _c;
 }
 -(id) initCPSumBool:(id)x eq:(ORInt)c;
 -(void) dealloc;

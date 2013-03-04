@@ -609,6 +609,21 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
    return _status;
 }
+-(ORStatus) atomic:(Void2ORStatus)cl
+{
+   ORInt oldPropag = _propagating;
+   @try {
+      _propagating++;
+      ORStatus status = cl();
+      _propagating--;
+      _status = internalPropagate(self,status);
+   } @catch (ORFailException* exception) {
+      [exception release];
+      _propagating = oldPropag;
+      _status = ORFailure;
+   }
+   return _status;
+}
 
 -(ORStatus) close
 {

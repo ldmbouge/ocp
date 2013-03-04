@@ -23,7 +23,7 @@ int main(int argc, const char * argv[])
       NSArray *arguments = [[NSProcessInfo processInfo] arguments];
       NSLog(@"Driver loading file: %@",arguments);
       NSData* model = [NSData dataWithContentsOfFile:[arguments objectAtIndex:1]];
-      id<CPSolver> cp = [NSKeyedUnarchiver unarchiveObjectWithData:model];
+      id<CPProgram> cp = [NSKeyedUnarchiver unarchiveObjectWithData:model];
       id<CPHeuristic> h = nil;
       if ([arguments count] >= 4 && [[arguments objectAtIndex:2] isEqual:@"-h"]) {
          if ([[arguments objectAtIndex:3] isEqual:@"ff"]) {

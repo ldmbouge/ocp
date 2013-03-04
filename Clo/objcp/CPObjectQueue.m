@@ -117,6 +117,14 @@
    }
    return rv;
 }
+-(ORInt)size
+{
+   ORInt rv = 0;
+   @synchronized(self) {
+      rv = _nbUsed;
+   }
+   return rv;
+}
 -(void) resize
 {
    id* nt = malloc(sizeof(id)*_mxs*2);

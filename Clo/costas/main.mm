@@ -92,8 +92,7 @@ int main(int argc, const char * argv[])
       //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
 
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createABS:cp];
-      
+      id<CPHeuristic> h = [cp createABS];      
       [cp solve: ^{
           NSLog(@"Search");
          [cp labelHeuristic:h];

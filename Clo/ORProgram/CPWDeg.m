@@ -16,10 +16,9 @@
 
 @implementation CPWDeg
 
--(CPWDeg*)initCPWDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
+-(CPWDeg*)initCPWDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
-   [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPEngineI*)[cp engine];
    _vars = nil;
@@ -28,7 +27,11 @@
    _cv = 0;
    return self;
 }
-
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPWDeg* cp = [[CPWDeg alloc] initCPWDeg:_cp restricted:_rvars];
+   return cp;
+}
 -(void)dealloc
 {
    if (_w) free(_w);
@@ -45,7 +48,7 @@
    free(_map);
    [super dealloc];
 }
--(id<CPProgram>)solver
+-(id<CPCommonProgram>)solver
 {
    return _cp;
 }

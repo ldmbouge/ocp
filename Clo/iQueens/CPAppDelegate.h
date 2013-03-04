@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <UIKit/UIKit.h>
-#import "CPEngineController.h"
+#import "CPSolverController.h"
 
 @interface CPAppDelegate : UIResponder <UIApplicationDelegate> {
    CPEngineController* _solver;

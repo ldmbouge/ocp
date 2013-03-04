@@ -14,18 +14,12 @@
 #import <ORProgram/CPProgram.h> 
 #import <ORProgram/CPSolver.h>
 
-@interface CPParSolverI : NSObject<CPProgram> {
-   ORInt              _nbWorkers;
-   id<ORSolutionPool> _globalPool;
-   ORClosure          _onSol;
-}
--(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass;
--(ORInt)nbWorkers;
--(id<CPProgram>)dereference;
--(id<ORSolutionPool>)globalSolutionPool;
--(void)onSolution:(ORClosure)onSolution;
--(void) doOnSolution;
--(void) doOnExit;
+// MultiStart DFS CPSolver
+@interface CPMultiStartSolver : NSObject<CPProgram>
+-(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
+-(id<CPProgram>) at: (ORInt) i;
+-(ORInt) nb;
+-(id<ORSolutionPool>) globalSolutionPool;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;

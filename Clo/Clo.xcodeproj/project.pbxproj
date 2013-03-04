@@ -39,6 +39,16 @@
 		5B1391861629A99D0029FD29 /* ORDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B1391841629A99D0029FD29 /* ORDecompose.h */; };
 		5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
 		5B178C2A139697CA001D1C86 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF51391329D000997E5 /* Foundation.framework */; };
+		5B19097C16DAAB45006D1D24 /* eq20.1 in Resources */ = {isa = PBXBuildFile; fileRef = 5B19097A16DAAB45006D1D24 /* eq20.1 */; };
+		5B19098316DAACA7006D1D24 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B19098E16DAACBB006D1D24 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B19098F16DAAD0A006D1D24 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B19097B16DAAB45006D1D24 /* main.m */; };
+		5B19099C16DAAD42006D1D24 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B19099D16DAAD43006D1D24 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B19099E16DAAD43006D1D24 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B19099F16DAAD43006D1D24 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B1909A016DAAD43006D1D24 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B1909A116DAAD43006D1D24 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B196C1D1642D3B900C9CED2 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B196C1E1642D3B900C9CED2 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B196C1F1642D3B900C9CED2 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -158,11 +168,11 @@
 		5B681198161F991D00F4480F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B681199161F99C700F4480F /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E8161F2DB100DB249A /* CPConcretizer.h */; settings = {ATTRIBUTES = (); }; };
 		5B68119A161F99C700F4480F /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5E9161F2DB100DB249A /* CPConcretizer.m */; };
-		5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */; };
+		5B68119B161F99C700F4480F /* ORCPParSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B68119C161F99C700F4480F /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
 		5B68119D161F99C700F4480F /* ORProgramFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FA161F5FCC00C7298D /* ORProgramFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B68119E161F99C700F4480F /* ORProgramFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORProgramFactory.m */; };
-		5B68119F161F99C700F4480F /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* CPSolver.h */; };
+		5B68119F161F99C700F4480F /* CPSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B17832FE161F636A00C7298D /* CPSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B6811A0161F99C700F4480F /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
 		5B6A960215879F1600019903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
@@ -174,6 +184,57 @@
 		5B6CFD7916D91CD600BCB95F /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B6CFD8716D9200800BCB95F /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */; };
 		5B6CFD8816D9242A00BCB95F /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5BE777581594D27C00ADE34E /* main.mm */; };
+		5B6CFD8B16D9396C00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8C16D939C400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8D16D939C800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8E16D939CB00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD8F16D939D000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9016D939D300BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9116D939D700BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9216D939DB00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9316D939DE00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9416D939E200BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9516D939E500BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9616D939E800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9716D939EC00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9816D939F000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9916D939F400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9A16D939F900BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9B16D939FD00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9C16D93A0000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9D16D93A0600BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9E16D93A0900BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFD9F16D93A0D00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA016D93A1000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA116D93A1800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA216D93A1B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA316D93A1E00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA416D93A2100BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA516D93A2500BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA616D93A2800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA716D93A2B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA816D93A2F00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDA916D93A3200BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAA16D93A3900BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAB16D93A3C00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAC16D93A4000BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAD16D93A4400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAE16D93A5E00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDAF16D93A6500BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB016D93A6800BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB116D93A6B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB216D93A6F00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB316D93A7200BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB416D93A7600BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB516D93A7B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB616D93A7D00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB716D93A8100BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB816D93A8400BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDB916D93A8700BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBA16D93A8B00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBB16D93A8F00BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBC16D93A9300BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6CFDBD16D93A9700BCB95F /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B6E89251379D3E9005DB4CA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89241379D3E9005DB4CA /* CoreData.framework */; };
 		5B6E89271379D3E9005DB4CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6E892A1379D3EA005DB4CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6E89291379D3EA005DB4CA /* main.m */; };
@@ -406,8 +467,6 @@
 		5B9EE53415175D4F00619B47 /* cont.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642EF139D49320056F448 /* cont.m */; settings = {COMPILER_FLAGS = "-O3"; }; };
 		5B9EE53515175D4F00619B47 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F0139D49320056F448 /* context.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE53615175D4F00619B47 /* context.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F1139D49320056F448 /* context.m */; };
-		5B9EE53815175D4F00619B47 /* CPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F2139D49320056F448 /* CPSolverI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5B9EE53915175D4F00619B47 /* CPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F3139D49320056F448 /* CPSolverI.m */; };
 		5B9EE53D15175D4F00619B47 /* ORSet.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF12150C382000B82836 /* ORSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE53E15175D4F00619B47 /* ORSetI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF14150C38CB00B82836 /* ORSetI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE53F15175D4F00619B47 /* ORSetI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF15150C38CB00B82836 /* ORSetI.m */; };
@@ -425,8 +484,6 @@
 		5B9EE54F15175D4F00619B47 /* CPConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = B169F9C714EF87D500B2F3A6 /* CPConstraint.m */; };
 		5B9EE55015175D4F00619B47 /* CPConstraintI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F4139D49320056F448 /* CPConstraintI.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5B9EE55115175D4F00619B47 /* CPConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = B17EB195146C55010097E18D /* CPConstraintI.m */; };
-		5B9EE55215175D4F00619B47 /* CPCreateI.h in Headers */ = {isa = PBXBuildFile; fileRef = B103536213BCFF2300627058 /* CPCreateI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5B9EE55315175D4F00619B47 /* CPCreateI.m in Sources */ = {isa = PBXBuildFile; fileRef = B103536313BCFF2300627058 /* CPCreateI.m */; };
 		5B9EE55715175D4F00619B47 /* CPDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B3606901392A8DA008B0EE8 /* CPDom.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE55815175D4F00619B47 /* CPEquationBC.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB3835A13B3B624005B7D52 /* CPEquationBC.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B9EE55915175D4F00619B47 /* CPEquationBC.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3835B13B3B624005B7D52 /* CPEquationBC.m */; };
@@ -500,6 +557,7 @@
 		5BB3836813B3C0E1005B7D52 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BB3836713B3C0E1005B7D52 /* main.m */; };
 		5BB3837113B3C0F5005B7D52 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BB4239F162CA2B300B0EF42 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BB9541F16DA888500932681 /* CPMultiStartSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BBA3F8A151CCB0C00D6F6AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5BBA3FA0151CCB1F00D6F6AD /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5BBA56D6153F33E70089118E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
@@ -517,6 +575,7 @@
 		5BBB08E116C551C80087ACF0 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BBB08E416C562520087ACF0 /* CPGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBB08E216C562520087ACF0 /* CPGroup.h */; };
 		5BBB08E516C562520087ACF0 /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
+		5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442E416D1B414001BD7B3 /* LPConcretizer.m */; };
 		5BBFBFE11661211300FB7505 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5BBFBFE21661211300FB7505 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BBFBFE31661211300FB7505 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -565,6 +624,46 @@
 		5BD2DFCA15A3CECC00D4C616 /* ORSetI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF14150C38CB00B82836 /* ORSetI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BD2DFCB15A3D19D00D4C616 /* ORFactoryI.m in Sources */ = {isa = PBXBuildFile; fileRef = B10ECF0F150C34DE00B82836 /* ORFactoryI.m */; };
 		5BD2DFCC15A3D1A300D4C616 /* ORFactoryI.h in Headers */ = {isa = PBXBuildFile; fileRef = B10ECF0E150C34DE00B82836 /* ORFactoryI.h */; };
+		5BD8BEB616E11FC700D9BF0B /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5BD8BEB716E11FC700D9BF0B /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BD8BEB816E11FC700D9BF0B /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BD8BEB916E11FC700D9BF0B /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BD8BEBA16E123E200D9BF0B /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
+		5BD8BEBB16E123E200D9BF0B /* ORUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B60E5E015AE907F002FF2B3 /* ORUtilities.m */; };
+		5BD8BEBC16E123E200D9BF0B /* ORController.m in Sources */ = {isa = PBXBuildFile; fileRef = B139DEA015CCE3F8007D523E /* ORController.m */; };
+		5BD8BEBD16E123E200D9BF0B /* OREngine.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C010EF15CDBC3A00ED7027 /* OREngine.m */; };
+		5BD8BEBE16E123E200D9BF0B /* ORExplorerI.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862215CD8AE20019729B /* ORExplorerI.m */; };
+		5BD8BEBF16E123E200D9BF0B /* ORLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862615CD8E310019729B /* ORLimit.m */; };
+		5BD8BEC016E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC82F615D27C66008DE335 /* ORModelI.m */; };
+		5BD8BEC116E123E200D9BF0B /* ORObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA339164AADAD00CE9AED /* ORObject.m */; };
+		5BD8BEC216E123E200D9BF0B /* ORSelectorI.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511F15DE434900B77813 /* ORSelectorI.m */; };
+		5BD8BEC316E123E200D9BF0B /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
+		5BD8BEC416E123E200D9BF0B /* ORTrailI.m in Sources */ = {isa = PBXBuildFile; fileRef = B198E75915D90768000BE64A /* ORTrailI.m */; };
+		5BD8BEC516E123E200D9BF0B /* ORVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */; };
+		5BD8BEC616E123E200D9BF0B /* ORProgramFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FB161F5FCC00C7298D /* ORProgramFactory.m */; };
+		5BD8BEC716E123E200D9BF0B /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5E9161F2DB100DB249A /* CPConcretizer.m */; };
+		5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
+		5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
+		5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
+		5BD8BECD16E123E200D9BF0B /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737A3A8166B0867002D3A57 /* ORModelTransformation.m */; };
+		5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
+		5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1165161E5F2B0014EBCB /* ORModelI.m */; };
+		5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */; };
+		5BD8BED116E123E200D9BF0B /* ORLPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614616D969CD00E95A39 /* ORLPFlatten.m */; };
+		5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
+		5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
+		5BD8BED416E123E200D9BF0B /* ORLPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORLPDecompose.m */; };
+		5BD8BED516E123E200D9BF0B /* ORLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORLinear.m */; };
+		5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9348741655451D00757F89 /* CPUKernel.m */; };
+		5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
+		5BD8BED816E123E200D9BF0B /* CPTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B93486316553E6E00757F89 /* CPTypes.m */; };
+		5BD8BED916E123E200D9BF0B /* CPGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBB08E316C562520087ACF0 /* CPGroup.m */; };
+		5BD8BEDA16E123E200D9BF0B /* CPEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B30E16D16528F4800BD0718 /* CPEvent.m */; };
+		5BD8BEDB16E1289100D9BF0B /* ORCommand.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124715CCA930001ED0D4 /* ORCommand.m */; };
+		5BD8BEDC16E1289100D9BF0B /* ORControl.m in Sources */ = {isa = PBXBuildFile; fileRef = B15B2F6715C4A86F0027A7E6 /* ORControl.m */; };
+		5BD8BEDD16E1289100D9BF0B /* CPABS.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B8259851608BB04006CE539 /* CPABS.m */; };
+		5BD8BEE016E1299300D9BF0B /* LPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B15442B016D1A3F7001BD7B3 /* LPSolver.m */; };
+		5BD8BEE116E12A0600D9BF0B /* LPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B154420116D189F1001BD7B3 /* LPSolverI.m */; };
 		5BDAC4B51649AAF400F8D0B7 /* ORSolution.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BDE360516D905BE0030559D /* ORMallocWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BDE360316D905BE0030559D /* ORMallocWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BDE360616D905BE0030559D /* ORMallocWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDE360416D905BE0030559D /* ORMallocWatch.m */; };
@@ -927,6 +1026,48 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9348691655451C00757F89;
 			remoteInfo = CPUKernel;
+		};
+		5B19099016DAAD36006D1D24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B19099216DAAD36006D1D24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B19099416DAAD36006D1D24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B19099616DAAD36006D1D24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B19099816DAAD36006D1D24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B19099A16DAAD36006D1D24 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
 		};
 		5B196C151642D3B200C9CED2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2111,6 +2252,34 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5BD8BEAE16E11FBD00D9BF0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BD8BEB016E11FBD00D9BF0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BD8BEB216E11FBD00D9BF0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5BD8BEB416E11FBD00D9BF0B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
 		5BDF5FAE161F849E00E5E1FA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -2772,6 +2941,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		5B19098016DAACA7006D1D24 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5B2000E8156D585E00D80105 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3302,6 +3480,9 @@
 		5B1391851629A99D0029FD29 /* ORDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORDecompose.m; sourceTree = "<group>"; };
 		5B150017156EB0E800897252 /* CPBaseHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBaseHeuristic.h; sourceTree = "<group>"; };
 		5B150019156EB1A500897252 /* CPBaseHeuristic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBaseHeuristic.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B19097A16DAAB45006D1D24 /* eq20.1 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.man; path = eq20.1; sourceTree = "<group>"; };
+		5B19097B16DAAB45006D1D24 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B19098216DAACA7006D1D24 /* eq20 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = eq20; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000ED156D585E00D80105 /* queensNaive copy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "queensNaive copy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B2000F0156D58A800D80105 /* mainView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = mainView.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B27ABDC15B1518300E4A3DF /* mknap1-0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mknap1-0.txt"; sourceTree = "<group>"; };
@@ -3381,6 +3562,8 @@
 		5B6CFD7316D90F2200BCB95F /* rbg049a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg049a.tw; sourceTree = "<group>"; };
 		5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
 		5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORCmdLineArgs.h; sourceTree = "<group>"; };
+		5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ORCmdLineArgs.m; sourceTree = "<group>"; };
 		5B6E89201379D3E9005DB4CA /* Clo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Clo; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B6E89241379D3E9005DB4CA /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		5B6E89261379D3E9005DB4CA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -3560,6 +3743,7 @@
 		5BB3836713B3C0E1005B7D52 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BB3836A13B3C0E1005B7D52 /* magicserie-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "magicserie-Prefix.pch"; sourceTree = "<group>"; };
 		5BB3836B13B3C0E1005B7D52 /* magicserie.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = magicserie.1; sourceTree = "<group>"; };
+		5BB9541F16DA888500932681 /* CPMultiStartSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPMultiStartSolver.h; sourceTree = "<group>"; };
 		5BBA3F88151CCB0C00D6F6AD /* queensGui.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = queensGui.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBA56D4153F33E70089118E /* iQueens.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iQueens.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BBB08C416C551960087ACF0 /* order */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = order; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3615,8 +3799,6 @@
 		5BE642EF139D49320056F448 /* cont.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = cont.m; sourceTree = "<group>"; };
 		5BE642F0139D49320056F448 /* context.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = context.h; sourceTree = "<group>"; };
 		5BE642F1139D49320056F448 /* context.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = context.m; sourceTree = "<group>"; };
-		5BE642F2139D49320056F448 /* CPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSolverI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		5BE642F3139D49320056F448 /* CPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPSolverI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BE642F4139D49320056F448 /* CPConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPConstraintI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5BE642FD139D49320056F448 /* CPEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPEngine.h; sourceTree = "<group>"; };
 		5BE64310139D49610056F448 /* ORTrail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTrail.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -3662,8 +3844,6 @@
 		B103534313BBD7B200627058 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B103534613BBD7B200627058 /* queensAC-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "queensAC-Prefix.pch"; sourceTree = "<group>"; };
 		B103534713BBD7B200627058 /* queensAC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensAC.1; sourceTree = "<group>"; };
-		B103536213BCFF2300627058 /* CPCreateI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPCreateI.h; sourceTree = "<group>"; };
-		B103536313BCFF2300627058 /* CPCreateI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPCreateI.m; sourceTree = "<group>"; };
 		B103614516D969CD00E95A39 /* ORLPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPFlatten.h; sourceTree = "<group>"; };
 		B103614616D969CD00E95A39 /* ORLPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLPFlatten.m; sourceTree = "<group>"; };
 		B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = ../../../../../../Library/gurobi500/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<group>"; };
@@ -3775,7 +3955,6 @@
 		B181E11A15D7465500AB44DA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B181E11D15D7465500AB44DA /* sportModel-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sportModel-Prefix.pch"; sourceTree = "<group>"; };
 		B181E11E15D7465500AB44DA /* sportModel.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = sportModel.1; sourceTree = "<group>"; };
-		B181E12715D7B62600AB44DA /* CPSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPSolver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B189033D142C266D007F6EAD /* CPTrigger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPTrigger.h; sourceTree = "<group>"; };
 		B189033E142C266E007F6EAD /* CPTrigger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPTrigger.m; sourceTree = "<group>"; };
 		B189511A15DE25D800B77813 /* ORSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSelector.h; sourceTree = "<group>"; };
@@ -3875,6 +4054,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5B19097F16DAACA7006D1D24 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B19099C16DAAD42006D1D24 /* CPUKernel.framework in Frameworks */,
+				5B19099D16DAAD43006D1D24 /* objcp.framework in Frameworks */,
+				5B19099E16DAAD43006D1D24 /* ORFoundation.framework in Frameworks */,
+				5B19099F16DAAD43006D1D24 /* ORModeling.framework in Frameworks */,
+				5B1909A016DAAD43006D1D24 /* ORProgram.framework in Frameworks */,
+				5B1909A116DAAD43006D1D24 /* ORUtilities.framework in Frameworks */,
+				5B19098316DAACA7006D1D24 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B2000E5156D585E00D80105 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -4626,6 +4819,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BD8BEB616E11FC700D9BF0B /* CPUKernel.framework in Frameworks */,
+				5BD8BEB716E11FC700D9BF0B /* ORModeling.framework in Frameworks */,
+				5BD8BEB816E11FC700D9BF0B /* ORProgram.framework in Frameworks */,
+				5BD8BEB916E11FC700D9BF0B /* ORUtilities.framework in Frameworks */,
 				B1C9DF3015A8047000EE924C /* ORFoundation.framework in Frameworks */,
 				B1C9DF2F15A8046C00EE924C /* objcp.framework in Frameworks */,
 				B1C9DF1515A8045C00EE924C /* Cocoa.framework in Frameworks */,
@@ -4850,6 +5047,7 @@
 				B17832FF161F636A00C7298D /* CPSolver.m */,
 				B15442AF16D1A3F7001BD7B3 /* LPSolver.h */,
 				B15442B016D1A3F7001BD7B3 /* LPSolver.m */,
+				5BB9541F16DA888500932681 /* CPMultiStartSolver.h */,
 				B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */,
 				5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */,
 				5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */,
@@ -5006,6 +5204,7 @@
 				B154428016D19D8E001BD7B3 /* objmp.framework */,
 				B154429F16D1A247001BD7B3 /* GraveYard */,
 				B15442C516D1AAD0001BD7B3 /* testLPConcretization */,
+				5B19098216DAACA7006D1D24 /* eq20 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -5104,6 +5303,8 @@
 				B1CC832315D3BEC4008DE335 /* model */,
 				B1595B4113C11F2A001FCB61 /* Sudoku */,
 				B1C4F3FE161F87070010A5C8 /* queensModel */,
+				5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */,
+				5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */,
 			);
 			name = "Objective-CP Examples";
 			sourceTree = "<group>";
@@ -5383,8 +5584,6 @@
 				B1C25AA01557540E009CB8A8 /* CPCircuitI.m */,
 				B169F9C614EF87D500B2F3A6 /* CPConstraint.h */,
 				B169F9C714EF87D500B2F3A6 /* CPConstraint.m */,
-				B103536213BCFF2300627058 /* CPCreateI.h */,
-				B103536313BCFF2300627058 /* CPCreateI.m */,
 				B1A0A5F615CDAB42005992E7 /* CPData.h */,
 				5B3606901392A8DA008B0EE8 /* CPDom.h */,
 				5B91C334159FAB2D00158EEA /* CPElement.h */,
@@ -5407,9 +5606,6 @@
 				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
 				5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */,
 				5B40C21014F80A7D0041D162 /* CPObjectQueue.m */,
-				B181E12715D7B62600AB44DA /* CPSolver.h */,
-				5BE642F2139D49320056F448 /* CPSolverI.h */,
-				5BE642F3139D49320056F448 /* CPSolverI.m */,
 				B17715B31557D9D200BA14BF /* CPTableI.h */,
 				B17715B41557D9D200BA14BF /* CPTableI.m */,
 				5B92975513A01F45002AA188 /* CPValueConstraint.h */,
@@ -5554,6 +5750,8 @@
 		5BB898F71697564D00FED099 /* eq20 */ = {
 			isa = PBXGroup;
 			children = (
+				5B19097A16DAAB45006D1D24 /* eq20.1 */,
+				5B19097B16DAAB45006D1D24 /* main.m */,
 				5BB898FA1697564D00FED099 /* Supporting Files */,
 			);
 			path = eq20;
@@ -6395,6 +6593,7 @@
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
+				5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6467,7 +6666,6 @@
 				5B9EE53D15175D4F00619B47 /* ORSet.h in Headers */,
 				5B9EE53E15175D4F00619B47 /* ORSetI.h in Headers */,
 				5B9EE54215175D4F00619B47 /* ORAVLTree.h in Headers */,
-				5B9EE55215175D4F00619B47 /* CPCreateI.h in Headers */,
 				5B9EE55715175D4F00619B47 /* CPDom.h in Headers */,
 				5B9EE55815175D4F00619B47 /* CPEquationBC.h in Headers */,
 				5B9EE55A15175D4F00619B47 /* CPError.h in Headers */,
@@ -6497,7 +6695,6 @@
 				5B815B1F15A2E4FD0063ECD7 /* CPHeuristic.h in Headers */,
 				5B8F1A2F15A2D495009CCE42 /* CPWDeg.h in Headers */,
 				5B8F1A3515A2D495009CCE42 /* CPElement.h in Headers */,
-				5B9EE53815175D4F00619B47 /* CPSolverI.h in Headers */,
 				5B9EE55015175D4F00619B47 /* CPConstraintI.h in Headers */,
 				5B8C7E4215867E8B007042CA /* CPBitVarI.h in Headers */,
 				5B799CB015A6C017006DD012 /* ORFoundation.h in Headers */,
@@ -6606,6 +6803,29 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		5B19098116DAACA7006D1D24 /* eq20 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B19098B16DAACA7006D1D24 /* Build configuration list for PBXNativeTarget "eq20" */;
+			buildPhases = (
+				5B19097E16DAACA7006D1D24 /* Sources */,
+				5B19097F16DAACA7006D1D24 /* Frameworks */,
+				5B19098016DAACA7006D1D24 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B19099116DAAD36006D1D24 /* PBXTargetDependency */,
+				5B19099316DAAD36006D1D24 /* PBXTargetDependency */,
+				5B19099516DAAD36006D1D24 /* PBXTargetDependency */,
+				5B19099716DAAD36006D1D24 /* PBXTargetDependency */,
+				5B19099916DAAD36006D1D24 /* PBXTargetDependency */,
+				5B19099B16DAAD36006D1D24 /* PBXTargetDependency */,
+			);
+			name = eq20;
+			productName = eq20;
+			productReference = 5B19098216DAACA7006D1D24 /* eq20 */;
+			productType = "com.apple.product-type.tool";
+		};
 		5B2000E0156D585E00D80105 /* queensNaiveView */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B2000EA156D585E00D80105 /* Build configuration list for PBXNativeTarget "queensNaiveView" */;
@@ -7898,6 +8118,10 @@
 			buildRules = (
 			);
 			dependencies = (
+				5BD8BEAF16E11FBD00D9BF0B /* PBXTargetDependency */,
+				5BD8BEB116E11FBD00D9BF0B /* PBXTargetDependency */,
+				5BD8BEB316E11FBD00D9BF0B /* PBXTargetDependency */,
+				5BD8BEB516E11FBD00D9BF0B /* PBXTargetDependency */,
 				B1C9DF2E15A8046800EE924C /* PBXTargetDependency */,
 				B1C9DF2C15A8046500EE924C /* PBXTargetDependency */,
 			);
@@ -8076,6 +8300,7 @@
 				B15441EB16D17713001BD7B3 /* testMIP */,
 				B154429E16D1A247001BD7B3 /* GraveYard */,
 				B15442C416D1AAD0001BD7B3 /* testLPConcretization */,
+				5B19098116DAACA7006D1D24 /* eq20 */,
 			);
 		};
 /* End PBXProject section */
@@ -8174,6 +8399,7 @@
 				5BFD594A15A3ACA500825BC3 /* InfoPlist.strings in Resources */,
 				5B7B478315F0F538005FF875 /* test-n30-e50.col in Resources */,
 				5B7B478615F0F733005FF875 /* smallColoring.col in Resources */,
+				5B19097C16DAAB45006D1D24 /* eq20.1 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8222,11 +8448,21 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5B19097E16DAACA7006D1D24 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B19098F16DAAD0A006D1D24 /* main.m in Sources */,
+				5B19098E16DAACBB006D1D24 /* ORCmdLineArgs.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B2000E3156D585E00D80105 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				5B2000F1156D58A800D80105 /* mainView.m in Sources */,
+				5B6CFDA216D93A1B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8235,6 +8471,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B28CAE71668FC63008AB802 /* main.m in Sources */,
+				5B6CFDB216D93A6F00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8243,6 +8480,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B28CB0A16691F0D008AB802 /* main.m in Sources */,
+				5B6CFDB316D93A7200BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8251,6 +8489,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B5096E51619B6CC00171F9D /* main.m in Sources */,
+				5B6CFDAF16D93A6500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8259,6 +8498,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B558C0A1563F01000D2BCD7 /* main.m in Sources */,
+				5B6CFDA316D93A1E00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8267,6 +8507,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B5F5480165D6EB300E674DA /* main.m in Sources */,
+				5B6CFDB116D93A6B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8307,6 +8548,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B6A960515879F1600019903 /* main.m in Sources */,
+				5B6CFD9E16D93A0900BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8315,6 +8557,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B6E892A1379D3EA005DB4CA /* main.m in Sources */,
+				5B6CFDAD16D93A4400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8323,6 +8566,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B76D99315AAADBE00F8B445 /* main.m in Sources */,
+				5B6CFD9716D939EC00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8331,6 +8575,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B778BB6154F1D030078EB07 /* main.m in Sources */,
+				5B6CFDA416D93A2100BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8339,6 +8584,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B7B476F15F0E4AD005FF875 /* main.m in Sources */,
+				5B6CFDAE16D93A5E00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8347,6 +8593,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B7D695B15B9C91D00C9A10C /* main.m in Sources */,
+				5B6CFD9016D939D300BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8354,6 +8601,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5B6CFD8B16D9396C00BCB95F /* ORCmdLineArgs.m in Sources */,
 				5B80561516076DFE00659ECC /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8363,6 +8611,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B8DA1FA15B98BC300684FD8 /* main.m in Sources */,
+				5B6CFD9116D939D700BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8439,6 +8688,43 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BBBBE1216E12CF600C10F7C /* LPConcretizer.m in Sources */,
+				5BD8BEE116E12A0600D9BF0B /* LPSolverI.m in Sources */,
+				5BD8BEE016E1299300D9BF0B /* LPSolver.m in Sources */,
+				5BD8BEDB16E1289100D9BF0B /* ORCommand.m in Sources */,
+				5BD8BEDC16E1289100D9BF0B /* ORControl.m in Sources */,
+				5BD8BEDD16E1289100D9BF0B /* CPABS.m in Sources */,
+				5BD8BEBA16E123E200D9BF0B /* ORMallocWatch.m in Sources */,
+				5BD8BEBB16E123E200D9BF0B /* ORUtilities.m in Sources */,
+				5BD8BEBC16E123E200D9BF0B /* ORController.m in Sources */,
+				5BD8BEBD16E123E200D9BF0B /* OREngine.m in Sources */,
+				5BD8BEBE16E123E200D9BF0B /* ORExplorerI.m in Sources */,
+				5BD8BEBF16E123E200D9BF0B /* ORLimit.m in Sources */,
+				5BD8BEC016E123E200D9BF0B /* ORModelI.m in Sources */,
+				5BD8BEC116E123E200D9BF0B /* ORObject.m in Sources */,
+				5BD8BEC216E123E200D9BF0B /* ORSelectorI.m in Sources */,
+				5BD8BEC316E123E200D9BF0B /* ORTracer.m in Sources */,
+				5BD8BEC416E123E200D9BF0B /* ORTrailI.m in Sources */,
+				5BD8BEC516E123E200D9BF0B /* ORVarI.m in Sources */,
+				5BD8BEC616E123E200D9BF0B /* ORProgramFactory.m in Sources */,
+				5BD8BEC716E123E200D9BF0B /* CPConcretizer.m in Sources */,
+				5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */,
+				5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */,
+				5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */,
+				5BD8BECD16E123E200D9BF0B /* ORModelTransformation.m in Sources */,
+				5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */,
+				5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */,
+				5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */,
+				5BD8BED116E123E200D9BF0B /* ORLPFlatten.m in Sources */,
+				5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */,
+				5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */,
+				5BD8BED416E123E200D9BF0B /* ORLPDecompose.m in Sources */,
+				5BD8BED516E123E200D9BF0B /* ORLinear.m in Sources */,
+				5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */,
+				5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */,
+				5BD8BED816E123E200D9BF0B /* CPTypes.m in Sources */,
+				5BD8BED916E123E200D9BF0B /* CPGroup.m in Sources */,
+				5BD8BEDA16E123E200D9BF0B /* CPEvent.m in Sources */,
 				B15F6DB615B10D0400158FA0 /* ORFoundation.m in Sources */,
 				B15F6DB715B10D0400158FA0 /* ORData.m in Sources */,
 				B15F6DB815B10D0400158FA0 /* ORParallel.m in Sources */,
@@ -8470,7 +8756,6 @@
 				5BF8F02B1520E2A800821CE2 /* ORConcurrencyI.m in Sources */,
 				5B9EE53415175D4F00619B47 /* cont.m in Sources */,
 				5B9EE53615175D4F00619B47 /* context.m in Sources */,
-				5B9EE53915175D4F00619B47 /* CPSolverI.m in Sources */,
 				5B9EE53F15175D4F00619B47 /* ORSetI.m in Sources */,
 				5B9EE54115175D4F00619B47 /* CPAllDifferentDC.m in Sources */,
 				5B9EE54315175D4F00619B47 /* ORAVLTree.m in Sources */,
@@ -8479,7 +8764,6 @@
 				5B9EE54815175D4F00619B47 /* CPCardinality.m in Sources */,
 				5B9EE54F15175D4F00619B47 /* CPConstraint.m in Sources */,
 				5B9EE55115175D4F00619B47 /* CPConstraintI.m in Sources */,
-				5B9EE55315175D4F00619B47 /* CPCreateI.m in Sources */,
 				5B9EE55915175D4F00619B47 /* CPEquationBC.m in Sources */,
 				5B9EE55B15175D4F00619B47 /* CPError.m in Sources */,
 				5B9EE56215175D4F00619B47 /* CPExprI.m in Sources */,
@@ -8501,6 +8785,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BA345811680B7BD00485366 /* main.m in Sources */,
+				5B6CFDB816D93A8400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8525,6 +8810,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5B6CFD8816D9242A00BCB95F /* main.mm in Sources */,
+				5B6CFD9516D939E500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8533,6 +8819,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BB170131582820500D4791A /* main.m in Sources */,
+				5B6CFDA116D93A1800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8541,6 +8828,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BB3836813B3C0E1005B7D52 /* main.m in Sources */,
+				5B6CFDAB16D93A3C00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8572,6 +8860,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BBB08C816C551960087ACF0 /* main.m in Sources */,
+				5B6CFDBA16D93A8B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8580,6 +8869,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC0918F167F7F9A009A7712 /* main.m in Sources */,
+				5B6CFDB516D93A7B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8588,6 +8878,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC091B2167F9095009A7712 /* main.m in Sources */,
+				5B6CFDB616D93A7D00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8596,6 +8887,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC091D5167F9D5B009A7712 /* main.m in Sources */,
+				5B6CFDB716D93A8100BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8604,6 +8896,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BC116A51595067900E0F5C8 /* main.m in Sources */,
+				5B6CFD9B16D939FD00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8612,6 +8905,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BCCC4081417F8CE0079E833 /* main.m in Sources */,
+				5B6CFDA716D93A2B00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8620,6 +8914,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BE5A7EF158A8390006703CB /* main.m in Sources */,
+				5B6CFD9D16D93A0600BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8628,6 +8923,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BE777451594C9E500ADE34E /* main.m in Sources */,
+				5B6CFD9C16D93A0000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8636,6 +8932,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BE7C25015A94BDF00B2CBC1 /* main.m in Sources */,
+				5B6CFD9816D939F000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8644,6 +8941,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BEAD78A15ABE38500A012FE /* main.m in Sources */,
+				5B6CFD9616D939E800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8652,6 +8950,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BEEF61513970B6F002ADBD4 /* main.m in Sources */,
+				5B6CFDAC16D93A4000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8660,6 +8959,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BF1387516822EFC005EAC6B /* main.m in Sources */,
+				5B6CFDB916D93A8700BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8702,6 +9002,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B103534F13BBD82D00627058 /* main.m in Sources */,
+				5B6CFDAA16D93A3900BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8710,6 +9011,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B111FC0413CF3D10003C5119 /* main.m in Sources */,
+				5B6CFDA816D93A2F00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8718,6 +9020,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B12ED8C5159E0C2200713C8E /* main.m in Sources */,
+				5B6CFD9A16D939F900BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8726,6 +9029,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15441F016D17713001BD7B3 /* main.m in Sources */,
+				5B6CFDBB16D93A8F00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8743,6 +9047,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15442A316D1A247001BD7B3 /* main.m in Sources */,
+				5B6CFDBC16D93A9300BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8751,6 +9056,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15442C916D1AAD1001BD7B3 /* main.m in Sources */,
+				5B6CFDBD16D93A9700BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8759,6 +9065,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1595B4313C11F2A001FCB61 /* main.m in Sources */,
+				5B6CFDA916D93A3200BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8767,6 +9074,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B15F6DE315B1361700158FA0 /* main.m in Sources */,
+				5B6CFD9316D939DE00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8775,6 +9083,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1672FD5158491DE00EFE5C3 /* main.m in Sources */,
+				5B6CFDA016D93A1000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8783,6 +9092,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1672FF11584A7A500EFE5C3 /* main.m in Sources */,
+				5B6CFD9F16D93A0D00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8791,6 +9101,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1771599155798AA00BA14BF /* main.m in Sources */,
+				5B6CFDA516D93A2500BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8799,6 +9110,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B181E11B15D7465500AB44DA /* main.m in Sources */,
+				5B6CFD8E16D939CB00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8807,6 +9119,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B189512B15DE52D100B77813 /* main.m in Sources */,
+				5B6CFD8D16D939C800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8815,6 +9128,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B189514215E0FA5F00B77813 /* main.m in Sources */,
+				5B6CFD8C16D939C400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8823,6 +9137,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1935C6315B90ECE00107399 /* main.m in Sources */,
+				5B6CFD9216D939DB00BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8831,6 +9146,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B19ABA0E146D68FE004EB77E /* main.m in Sources */,
+				5B6CFDA616D93A2800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8839,6 +9155,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1B68C79159FC16E008BC463 /* main.m in Sources */,
+				5B6CFD9916D939F400BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8847,6 +9164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1C4F400161F87070010A5C8 /* main.m in Sources */,
+				5B6CFDB016D93A6800BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8865,6 +9183,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1CC832515D3BEC4008DE335 /* main.m in Sources */,
+				5B6CFD8F16D939D000BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8882,6 +9201,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1F531DD15AED4B100E89F98 /* main.m in Sources */,
+				5B6CFD9416D939E200BCB95F /* ORCmdLineArgs.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8891,6 +9211,7 @@
 			files = (
 				F548AA76167FB1C600726814 /* main.m in Sources */,
 				F548AAB21680B3A500726814 /* MD4.m in Sources */,
+				5B6CFDB416D93A7600BCB95F /* ORCmdLineArgs.m in Sources */,
 				F55DEFB716C9F33E005818AF /* MD5.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8947,6 +9268,36 @@
 			isa = PBXTargetDependency;
 			target = 5B9348691655451C00757F89 /* CPUKernel */;
 			targetProxy = 5B137AE91666C750008C7049 /* PBXContainerItemProxy */;
+		};
+		5B19099116DAAD36006D1D24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B19099016DAAD36006D1D24 /* PBXContainerItemProxy */;
+		};
+		5B19099316DAAD36006D1D24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B19099216DAAD36006D1D24 /* PBXContainerItemProxy */;
+		};
+		5B19099516DAAD36006D1D24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B19099416DAAD36006D1D24 /* PBXContainerItemProxy */;
+		};
+		5B19099716DAAD36006D1D24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B19099616DAAD36006D1D24 /* PBXContainerItemProxy */;
+		};
+		5B19099916DAAD36006D1D24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B19099816DAAD36006D1D24 /* PBXContainerItemProxy */;
+		};
+		5B19099B16DAAD36006D1D24 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B19099A16DAAD36006D1D24 /* PBXContainerItemProxy */;
 		};
 		5B196C161642D3B200C9CED2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -9793,6 +10144,26 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BD34C9C139D6AF60075CD81 /* PBXContainerItemProxy */;
 		};
+		5BD8BEAF16E11FBD00D9BF0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BD8BEAE16E11FBD00D9BF0B /* PBXContainerItemProxy */;
+		};
+		5BD8BEB116E11FBD00D9BF0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BD8BEB016E11FBD00D9BF0B /* PBXContainerItemProxy */;
+		};
+		5BD8BEB316E11FBD00D9BF0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BD8BEB216E11FBD00D9BF0B /* PBXContainerItemProxy */;
+		};
+		5BD8BEB516E11FBD00D9BF0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5BD8BEB416E11FBD00D9BF0B /* PBXContainerItemProxy */;
+		};
 		5BDF5FAF161F849E00E5E1FA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -10437,6 +10808,49 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		5B19098C16DAACA7006D1D24 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "eq20/eq20-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B19098D16DAACA7006D1D24 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "eq20/eq20-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5B2000EB156D585E00D80105 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -10583,7 +10997,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "ORUtilities/ORUtilities-Prefix.pch";
@@ -10605,7 +11018,6 @@
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -10631,7 +11043,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORProgram/ORProgram-Prefix.pch";
@@ -10656,7 +11067,6 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -10907,7 +11317,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "CPUKernel/CPUKernel-Prefix.pch";
@@ -10960,7 +11369,6 @@
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -10980,7 +11388,6 @@
 				INFOPLIST_FILE = "objcp/objcp-Info.plist";
 				LD_DYLIB_INSTALL_NAME = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -11164,7 +11571,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORModeling/ORModeling-Prefix.pch";
@@ -11629,7 +12035,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ORFoundation/ORFoundation-Prefix.pch";
@@ -11649,7 +12054,6 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -11800,7 +12204,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objmp/objmp-Prefix.pch";
@@ -11830,7 +12233,6 @@
 				CLANG_WARN_EMPTY_BODY = YES;
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
@@ -12269,7 +12671,6 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "objlp/objlp-Prefix.pch";
@@ -12280,7 +12681,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objlp/objlp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Debug;
@@ -12302,7 +12702,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				INFOPLIST_FILE = "objlp/objlp-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
 				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
@@ -12370,6 +12769,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5B19098B16DAACA7006D1D24 /* Build configuration list for PBXNativeTarget "eq20" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B19098C16DAACA7006D1D24 /* Debug */,
+				5B19098D16DAACA7006D1D24 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		5B2000EA156D585E00D80105 /* Build configuration list for PBXNativeTarget "queensNaiveView" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

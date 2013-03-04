@@ -16,20 +16,24 @@
 @implementation CPDDeg {
    CPEngineI*    _solver;
 }
--(id)initCPDDeg:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
+-(id)initCPDDeg:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
-   [cp addHeuristic:self];
    _cp = cp;
    _solver  = (CPEngineI*)[cp engine];
    _rvars = rvars;
    return self;
 }
+- (id)copyWithZone:(NSZone *)zone
+{
+   CPDDeg* cp = [[CPDDeg alloc] initCPDDeg:_cp restricted:_rvars];
+   return cp;
+}
 -(void)dealloc
 {
    [super dealloc];
 }
--(id<CPProgram>)solver
+-(id<CPCommonProgram>)solver
 {
    return _cp;
 }

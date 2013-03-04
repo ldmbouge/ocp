@@ -141,7 +141,7 @@ void foo() {
 
 int main (int argc, const char * argv[])
 {
-    id<CPSolver> cp = [CPFactory createSolver];
+    id<CPProgram> cp = [CPFactory createSolver];
     id<ORVoidInformer> informer = [ORConcurrency voidInformer];
     NSMutableArray* array = [[NSMutableArray alloc] init];
     for(ORInt i = 1; i <= 10; i++)

@@ -8,6 +8,8 @@
 
 #import "ORMallocWatch.h"
 
+#if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <malloc/malloc.h>
@@ -114,6 +116,17 @@ void mallocWatch()
 NSString* mallocReport()
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"using: %ld peak:%ld",nbBytes,peakBytes];
+   [buf appendFormat:@"%ld,%ld",nbBytes,peakBytes];
    return buf;
 }
+
+#else
+void mallocWatch()
+{}
+NSString* mallocReport()
+{
+   return @"iOS no report";
+}
+
+
+#endif

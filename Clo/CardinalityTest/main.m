@@ -24,7 +24,7 @@
 int main(int argc, const char * argv[])
 {
    ORInt n = 14;
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPProgram> cp = [CPFactory createSolver];
    id<ORIntRange> Periods = RANGE(cp,1,n/2);
    id<ORIntRange> Teams = RANGE(cp,1,n);
    id<ORIntRange> Weeks = RANGE(cp,1,n-1);

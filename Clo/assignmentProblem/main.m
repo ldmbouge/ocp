@@ -46,7 +46,7 @@ int main (int argc, const char * argv[])
     NSLog(@"FLAT: %@",lin);
    
     id<CPProgram> cp = [ORFactory createCPProgram: lin];
-    id<CPHeuristic> h = [ORFactory createFF: cp];
+    id<CPHeuristic> h = [cp createFF];
     [cp solve:
      ^() {
         NSLog(@"here...");
@@ -60,7 +60,7 @@ int main (int argc, const char * argv[])
     NSLog(@"SOL: %@", assignCost);
    [ORFactory shutdown];
    
-    //id<CPSolver> cp = [ORFactory createCPProgram: model];
+    //id<CPProgram> cp = [ORFactory createCPProgram: model];
     //[cp solve:
     //^() {
     //    [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];

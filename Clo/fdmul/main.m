@@ -51,7 +51,7 @@ int main(int argc, const char * argv[])
       [mdl add: [[x[14] plus:c[8]] eq:x[19]]];
 
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [ORFactory createFF:cp];
+      id<CPHeuristic> h = [cp createFF];
       
       [cp solve: ^{
          [cp labelHeuristic:h];

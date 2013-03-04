@@ -9,14 +9,11 @@
 
  ***********************************************************************/
 
-#import "CPEngineController.h"
-#import <objcp/CPConstraint.h>
-#import <objcp/DFSController.h>
-#import <objcp/CPEngine.h>
-#import <objcp/CPSolver.h>
-#import <objcp/CPFactory.h>
-
+#import "CPSolverController.h"
 #import "CPSecondViewController.h"
+
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgram.h>
 
 
 @implementation CPEngineController
@@ -41,16 +38,13 @@
    return self;
 }
 
--(void)visualize:(id<ORIntVarArray>)x on:(id<CPSolver>)cp
+-(void)visualize:(id<ORIntVarArray>)x on:(id<CPProgram>)cp
 {
    UIBoardController* board = [_view1 boardController];
-   ORBounds dom = [[x at: [x low]] bounds];
-   ORRange cols = {[x low],[x up]};
-   ORRange rows = {dom.min,dom.max};
-   id grid = [board makeGrid:rows by: cols];
+   id grid = [board makeGrid:[[x at:[x  low]] domain] by: [x range]];
    for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = [x at:i];
-      [cp add: [CPFactory watchVariable:xi 
+      [cp addConstraintDuringSearch: [CPFactory watchVariable:xi 
                             onValueLost:^void(ORInt val) {
                                [board toggleGrid:grid row:val col:i to:Removed];
                             } 
@@ -63,7 +57,9 @@
                           onValueUnbind:^void(ORInt val) {
                              [board toggleGrid:grid row:val col:i to:Possible];
                           }
-                ]];
+                ]
+       annotation:Default
+       ];
    }
    [board watchSearch:cp 
               onChoose: ^void() { [board pause];}  
@@ -74,34 +70,36 @@
 -(void)runModel 
 {
    int n = 8;
-   ORRange R = (ORRange){1,n};
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORInteger> nbSolutions = [CPFactory integer:cp value:0];
-   [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:i]; }]; 
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
-   [cp solveAll: 
-    ^() {
-       [cp add: [CPFactory alldifferent: x annotation:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xp annotation:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xn annotation:ValueConsistency]];
-       [self visualize:x on:cp];
-    }   
-          using: 
-    ^() {
-       [CPLabel array: x orderedBy: ^int(int i) { return [[x at:i] domsize];}];
-       [_view2 performSelectorOnMainThread:@selector(insertText:) 
-                                withObject:[NSString stringWithFormat:@"sol [%d]: %@\n",[nbSolutions value],[x description]] 
-                             waitUntilDone:YES];
-       [nbSolutions incr];
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
+   id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
+   id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
+   id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i]; }];
+   [model add: [ORFactory alldifferent: x]];
+   [model add: [ORFactory alldifferent: xp]];
+   [model add: [ORFactory alldifferent: xn]];
+   id<CPProgram> cp = [ORFactory createCPProgram:model];
+   id<ORInteger> nbSolutions = [ORFactory integer:model value:0];
+   [cp solveAll: ^{
+      [self visualize:x on:cp];
+      [cp labelArray: x orderedBy: ^ORFloat(int i) { return [[x at:i] domsize];}];
+      @autoreleasepool {
+         id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
+            return [x[i] value];
+         }];
+         NSString* buf = [NSString stringWithFormat:@"sol [%d]: %@\n",[nbSolutions value],xs];
+         [_view2 performSelectorOnMainThread:@selector(insertText:)
+                                  withObject:buf
+                               waitUntilDone:YES];
+      }
+      [nbSolutions incr];
     }
     ];
    [_view2 performSelectorOnMainThread:@selector(insertText:) 
-                            withObject:[NSString stringWithFormat:@"GOT %ld solutions\nSolver status %@",[nbSolutions value],cp] 
+                            withObject:[NSString stringWithFormat:@"GOT %d solutions\nSolver status %@",[nbSolutions value],cp]
                          waitUntilDone:NO];
    [cp release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
 }
 
 @end
