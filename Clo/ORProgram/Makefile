@@ -5,7 +5,11 @@ OC = ~/clang32/bin/clang
 CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I.. -I. -I../CPUKernel \
 	-fblocks -fobjc-nonfragile-abi
 
-LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries -lgnustep-base -lobjc 
+LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries \
+	-L../ORUtilities -L../ORFoundation -L../CPUKernel -L../ORModeling -L../objcp \
+	-lORUtilities -lORFoundation -lCPUKernel -lORModeling -lobjcp \
+	-lgnustep-base -lobjc 
+
 SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \
 	CPSolver.m  LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  CPDDeg.m    \
 	CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m

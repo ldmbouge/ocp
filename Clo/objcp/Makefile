@@ -4,7 +4,11 @@
 OC = ~/clang32/bin/clang
 
 CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel -fblocks -fobjc-nonfragile-abi
-LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries -lgnustep-base -lobjc 
+LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries \
+	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
+	-lORUtilities -lORFoundation -lCPUKernel \
+	-lgnustep-base -lobjc 
+
 SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m        CPConstraint.m  \
 	CPEvent.m    CPKnapsack.m           CPTableI.m CPAssignmentI.m      CPBitArray.m  \
 	CPCardinalityDC.m  CPElement.m     CPExprI.m    CPLexConstraint.m  CPValueConstraint.m \
