@@ -1,4 +1,4 @@
-LIBS    = ORUtilities ORFoundation CPUKernel objcp ORProgram ORModeling
+LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram 
 TARGETS = $(LIBS) queens2 knapsack
 
 # queensAC Sudoku magicserie queensACSem

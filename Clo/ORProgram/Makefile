@@ -21,6 +21,10 @@ OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libORProgram.so.1 
 all: $(LIBNAME)
 	@echo "Done..."
+	@if [ ! -f $(basename $(LIBNAME)) ];  \
+	then \
+	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
+	fi
 
 $(LIBNAME): $(OFILES)
 	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)

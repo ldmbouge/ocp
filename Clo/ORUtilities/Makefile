@@ -16,6 +16,10 @@ LIBNAME = libORUtilities.so.1
 #LIBNAME = libORUtilities.a
 all: $(LIBNAME)
 	@echo "Done..."
+	@if [ ! -f $(basename $(LIBNAME)) ];  \
+	then \
+	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
+	fi
 
 $(LIBNAME): $(OFILES)
 	@$(OC) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
