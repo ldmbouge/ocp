@@ -448,7 +448,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       }
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
-         nbp += status != ORSkip;
+         nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       if (fdm->_propagDone)
@@ -461,7 +461,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
    @catch (ORFailException *exception) {
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
-         nbp += status != ORSkip;
+         nbp += as != ORSkip;
          assert(as != ORFailure);
       }
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)

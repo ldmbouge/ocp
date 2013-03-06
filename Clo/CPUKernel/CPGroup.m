@@ -106,10 +106,20 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
             done = p < LOWEST_PRIO;
          }
       }
+      while (ISLOADED(_ac3[ALWAYS_PRIO])) {
+         ORStatus as = executeAC3([_ac3[ALWAYS_PRIO] deQueue],&last);
+         nbp += as != ORSkip;
+         assert(as != ORFailure);
+      }
       [_engine incNbPropagation:nbp];
       return status;
    }
    @catch (ORFailException *exception) {
+      while (ISLOADED(_ac3[ALWAYS_PRIO])) {
+         ORStatus as = executeAC3([_ac3[ALWAYS_PRIO] deQueue],&last);
+         nbp += as != ORSkip;
+         assert(as != ORFailure);
+      }
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
          [_ac3[p] reset];
       [_ac5 reset];
