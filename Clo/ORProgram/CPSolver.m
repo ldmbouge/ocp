@@ -452,7 +452,7 @@
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      id<ORIntVar> x = nil;//*last;
+      id<ORIntVar> x = *last;
       if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
