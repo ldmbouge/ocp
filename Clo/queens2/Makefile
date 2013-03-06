@@ -10,6 +10,13 @@ LFLAGS = -g `/usr/GNUstep/System/Tools/gnustep-config --base-libs`  \
 	-lobjcp -lORUtilities -lORFoundation -lORModeling -lCPUKernel -lORProgram 
 SRCS = main.m
 
+	# -Wl,-rpath,../objcp \
+	# -Wl,-rpath,../ORFoundation \
+	# -Wl,-rpath,../ORUtilities \
+	# -Wl,-rpath,../ORModeling \
+	# -Wl,-rpath,../CPUKernel \
+	# -Wl,-rpath,../ORProgram \
+
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libobjcp.so.1 
