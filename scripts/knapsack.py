@@ -17,7 +17,7 @@ class Runner:
 	def run(self,runs,heuristic,timeOut):
 		for i in range(1,runs+1):
 			full = self.path + '/' + self.bin;
-			h = subprocess.Popen((full,'-h{0}'.format(heuristic),'-q5','-p2','-r1','-t{0}'.format(timeOut)),
+			h = subprocess.Popen((full,'-h{0}'.format(heuristic),'-q4','-p2','-r1','-t{0}'.format(timeOut)),
 				stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 			h.wait()
 			err = h.stderr.read()
@@ -30,6 +30,6 @@ class Runner:
 			print 'Iteration ' , i , ' on heuristic ' , heuristic
 
 timeOut = 300
-p = Runner('knapsack','parks-ocp5.csv')
+p = Runner('knapsackOpt','parkso-ocp4.csv')
 for h in [1,2]:
 	p.run(50,h,timeOut)

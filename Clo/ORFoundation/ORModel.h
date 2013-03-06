@@ -330,7 +330,10 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveValue <ORObject>
+-(ORInt)value;
 -(ORFloat)key;
+-(ORInt)primal;
+-(void)updateWith:(id<ORObjectiveValue>)other;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
