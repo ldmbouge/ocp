@@ -13220,6 +13220,7 @@
 				5B3848C916E6E59300498DCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B3848E916E7883B00498DCF /* Build configuration list for PBXNativeTarget "partition" */ = {
 			isa = XCConfigurationList;
@@ -13228,6 +13229,7 @@
 				5B3848EB16E7883B00498DCF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B5096EC1619B6CC00171F9D /* Build configuration list for PBXNativeTarget "testDistrib" */ = {
 			isa = XCConfigurationList;

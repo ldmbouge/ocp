@@ -98,6 +98,20 @@
 {
    return [[self solutions] best];
 }
+
+-(void) addVariable:(id<ORVar>) var
+{
+   [self captureVariable: var];   
+}
+-(void )addObject:(id) object
+{
+   [self trackObject:object];
+}
+-(void) addConstraint:(id<ORConstraint>) cstr
+{
+   [self trackConstraint:cstr];
+   [self add: cstr];
+}
 -(void) restore: (id<ORSolution>) s
 {
    NSArray* av = [self variables];
@@ -230,7 +244,7 @@
 }
 -(void) addVariable: (id<ORVar>) var
 {
-   [_target captureVariable: var];
+   [_target addVariable: var];
 }
 -(void) addObject: (id) object
 {
