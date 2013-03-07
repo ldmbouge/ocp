@@ -43,16 +43,21 @@ myKS <- function(file,field)
 	ks4.ibs <- ks4[which(ks4$method=='IBS'),]
 	ks4.ibsh <- hist(ks4.ibs[,field],nclass=20)
 	ks4.absh <- hist(ks4.abs[,field],nclass=20)
-	plot(ks4.absh,col=rgb(0,0,1,1/4),main="ABS vs. IBS (ks4)",
+	plot(ks4.absh,col=rgb(0,0,1,1/4),main=paste("ABS vs. IBS (",file,")",sep=""),
 		xlim=c(0,max(ks4.absh$breaks,ks4.ibsh$breaks)),
 		ylim=c(0,max(ks4.absh$counts,ks4.ibsh$counts)),
 		xlab=field)
+	abline(v=mean(ks4.abs[,field]),col="blue",lwd=3)
+	abline(v=mean(ks4.ibs[,field]),col="red",lwd=3)
+	print(summary(ks4.abs[,field]))
+	print(summary(ks4.ibs[,field]))
 	plot(ks4.ibsh,col=rgb(1,0,0,1/4),add=T)
 }
 
 myKS("~/Desktop/ks-ocp4.csv",'X.f')
-myKS("~/Desktop/ks-ocp5.csv",'X.f')
 myKS("~/Desktop/ks-ocp4.csv",'cpu')
-myKS("~/Desktop/ks-ocp5.csv",'cpu')
 myKS("~/Desktop/comet-ocp4.csv",'cpu')
 myKS("~/Desktop/comet-ocp4.csv",'fail')
+
+myKS("~/Desktop/ks-ocp5.csv",'X.f')
+myKS("~/Desktop/ks-ocp5.csv",'cpu')
