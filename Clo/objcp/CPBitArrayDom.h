@@ -37,7 +37,7 @@
 -(ORUInt)               getSize;
 -(int)                  domsize;
 -(void)                 updateFreeBitCount;
--(bool)                 bound;
+-(BOOL)                 bound;
 -(uint64)               min;
 -(uint64)               max;
 -(unsigned int*)        minArray;

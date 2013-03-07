@@ -43,9 +43,9 @@ enum CPDomClass {
 -(ORInt)imin;
 -(ORInt)imax;
 -(ORBounds)bounds;
--(bool)bound;
+-(BOOL)bound;
 -(ORInt)domsize;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt)findMax:(ORInt)from;
 -(int(^)())getMin;
@@ -71,8 +71,8 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 }
 -(CPBitDom*)initBitDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(void)dealloc;
--(bool)get:(ORInt)b;
--(bool)member:(ORInt)b;
+-(BOOL)get:(ORInt)b;
+-(BOOL)member:(ORInt)b;
 -(void)set:(ORInt)b at:(bool)v;
 -(ORInt)setAllZeroFrom:(ORInt)from to:(ORInt)to;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
@@ -107,12 +107,12 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORInt) max;
 -(ORInt) imin;
 -(ORInt) imax;
--(bool) bound;
+-(BOOL) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
--(bool) get:(ORInt)b;
--(bool) member:(ORInt)v;
+-(BOOL) get:(ORInt)b;
+-(BOOL) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
 -(id) copyWithZone:(NSZone *)zone;

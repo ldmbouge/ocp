@@ -3,7 +3,9 @@
 
 OC = ~/clang32/bin/clang
 
-CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel -fblocks -fobjc-nonfragile-abi
+CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel \
+	-fblocks -fobjc-nonfragile-abi 
+
 LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries \
 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
 	-lORUtilities -lORFoundation -lCPUKernel \
@@ -29,7 +31,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	$(OC) $(CFLAGS) -c $< 
+	@$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

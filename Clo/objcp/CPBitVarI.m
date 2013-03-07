@@ -158,7 +158,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     }
 }
 
--(bool)bound
+-(BOOL)bound
 {
     return [_dom bound];
 }

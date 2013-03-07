@@ -166,7 +166,7 @@ typedef struct  {
 
 // access
 
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
@@ -214,7 +214,7 @@ typedef struct  {
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
@@ -241,7 +241,7 @@ typedef struct  {
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
@@ -266,7 +266,7 @@ typedef struct  {
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
@@ -292,7 +292,7 @@ typedef struct  {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;

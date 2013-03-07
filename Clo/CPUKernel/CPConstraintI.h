@@ -17,7 +17,7 @@
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @public
    CPTodo            _todo;
-   bool      _idempotent:1;
+   BOOL      _idempotent:1;
    int        _priority:31;
    ORUInt            _name;
    IMP          _propagate;

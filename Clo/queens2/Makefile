@@ -4,18 +4,12 @@
 OC = ~/clang32/bin/clang
 
 CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. \
-	-fblocks -fobjc-nonfragile-abi
+	-fblocks -fobjc-nonfragile-abi 
+	
 LFLAGS = -g `/usr/GNUstep/System/Tools/gnustep-config --base-libs`  \
 	-L../objcp -L../ORFoundation -L../ORUtilities -L../ORModeling -L../CPUKernel -L../ORProgram \
 	-lobjcp -lORUtilities -lORFoundation -lORModeling -lCPUKernel -lORProgram 
 SRCS = main.m
-
-	# -Wl,-rpath,../objcp \
-	# -Wl,-rpath,../ORFoundation \
-	# -Wl,-rpath,../ORUtilities \
-	# -Wl,-rpath,../ORModeling \
-	# -Wl,-rpath,../CPUKernel \
-	# -Wl,-rpath,../ORProgram \
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))

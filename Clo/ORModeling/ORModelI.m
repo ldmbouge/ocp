@@ -281,6 +281,9 @@
 }
 @end
 
+
+typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
+
 @implementation ORBatchGroup {
    id<ORAddToModel>     _target;
    id<ORGroup>        _theGroup;
@@ -340,7 +343,7 @@
    NSArray* av = [model variables];
    ORULong sz = [av count];
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
-   [av enumerateObjectsUsingBlock:^(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
       id<ORSavable> shot = [obj snapshot];
       if (shot)
          [snapshots addObject: shot];

@@ -167,7 +167,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return YES;
 }
--(bool)bound
+-(BOOL) bound
 {
    assert(_dom);
     return [_dom bound];
@@ -705,7 +705,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:1 shift:_b];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -836,7 +836,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:_a shift:_b];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -1008,7 +1008,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:-1 shift:0];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -1107,7 +1107,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:[self min] up:[self max]];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [self domsize]<= 1;
 }

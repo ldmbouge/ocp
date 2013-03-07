@@ -10,6 +10,16 @@ all: $(TARGETS)
 
 objcp:
 	@make -C objcp
+ORUtilities:
+	@make -C ORUtilities
+ORFoundation:
+	@make -C ORFoundation
+ORModeling:
+	@make -C ORModeling
+CPUKernel:
+	@make -C CPUKernel
+ORProgram:
+	@make -C ORProgram
 
 queens2: 
 	echo $< 
@@ -28,9 +38,14 @@ magicserie: objcp
 	make -C magicserie
 
 clean:
-	make -C objcp clean
-	make -C Sudoku clean
-	make -C queens2 clean
-	make -C queensAC clean
-	make -C queensACSem clean
-	make -C magicserie clean
+	@make -C objcp clean
+	@make -C ORUtilities clean
+	@make -C ORFoundation clean
+	@make -C ORModeling clean
+	@make -C ORProgram clean
+	@make -C CPUKernel clean
+	@make -C Sudoku clean
+	@make -C queens2 clean
+	@make -C queensAC clean
+	@make -C queensACSem clean
+	@make -C magicserie clean

@@ -69,7 +69,7 @@ typedef struct  {
 -(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
 -(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
--(bool) bound;
+-(BOOL) bound;
 -(uint64) min;
 -(uint64) max;
 -(CPBitArrayDom*) domain;

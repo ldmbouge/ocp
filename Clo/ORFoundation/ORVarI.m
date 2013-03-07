@@ -516,7 +516,7 @@
 {
    return _bLen;
 }
--(bool) bound
+-(BOOL) bound
 {
    if (_impl)
       return [[_impl dereference] bound];
