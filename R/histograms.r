@@ -33,3 +33,26 @@ plot(nobtf.ah,col=rgb(0,1,0,1/4),add=T)
 plot(btf.ah,col=rgb(1,0,0,1/4),xlim=c(0,max(nobtf.ah$breaks,btf.ah$breaks)),
 	main="Comparative Histograms (BTF ON/OFF) + ABS")
 plot(nobtf.ah,col=rgb(0,0,1,1/4),add=T)
+
+
+myKS <- function(file,field)
+{
+	#fails
+	ks4 <- read.csv(file)
+	ks4.abs <- ks4[which(ks4$method=='ABS'),]
+	ks4.ibs <- ks4[which(ks4$method=='IBS'),]
+	ks4.ibsh <- hist(ks4.ibs[,field],nclass=20)
+	ks4.absh <- hist(ks4.abs[,field],nclass=20)
+	plot(ks4.absh,col=rgb(0,0,1,1/4),main="ABS vs. IBS (ks4)",
+		xlim=c(0,max(ks4.absh$breaks,ks4.ibsh$breaks)),
+		ylim=c(0,max(ks4.absh$counts,ks4.ibsh$counts)),
+		xlab=field)
+	plot(ks4.ibsh,col=rgb(1,0,0,1/4),add=T)
+}
+
+myKS("~/Desktop/ks-ocp4.csv",'X.f')
+myKS("~/Desktop/ks-ocp5.csv",'X.f')
+myKS("~/Desktop/ks-ocp4.csv",'cpu')
+myKS("~/Desktop/ks-ocp5.csv",'cpu')
+myKS("~/Desktop/comet-ocp4.csv",'cpu')
+myKS("~/Desktop/comet-ocp4.csv",'fail')

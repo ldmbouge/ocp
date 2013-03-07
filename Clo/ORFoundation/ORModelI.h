@@ -385,11 +385,14 @@
 @interface ORIntObjectiveValue : NSObject<ORObjectiveValue> {
    ORInt     _value;
    ORInt _direction;
+   ORInt    _pBound;
 }
--(id)initObjectiveValue:(id<ORIntVar>)var minimize:(BOOL)b;
+-(id)initObjectiveValue:(id<ORIntVar>)var minimize:(BOOL)b primalBound:(ORInt)pb;
 -(ORInt)value;
+-(ORInt)primal;
 -(ORFloat)key;
 -(NSString*)description;
+-(void)updateWith:(id<ORObjectiveValue>)other;
 @end
 
 @interface ORMinimizeI : ORObjectiveFunctionI<ORObjectiveFunction>

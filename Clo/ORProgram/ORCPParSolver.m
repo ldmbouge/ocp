@@ -32,6 +32,11 @@
    ORInt               _nbDone;
    Class               _defCon;
    BOOL         _doneSearching;
+   
+   NSCondition*      _allClosed;
+   ORInt              _nbClosed;
+   id<ORObjectiveValue> _primal;
+   BOOL                _boundOk;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
@@ -41,8 +46,12 @@
    memset(_workers,0,sizeof(id<CPSemanticProgram>)*_nbWorkers);
    _queue = [[PCObjectQueue alloc] initPCQueue:128 nbWorkers:_nbWorkers];
    _terminated = [[NSCondition alloc] init];
+   _allClosed  = [[NSCondition alloc] init];
    _defCon     = ctrlClass;
    _nbDone     = 0;
+   _nbClosed   = 0;
+   _boundOk    = NO;
+   _primal     = NULL;
    for(ORInt i=0;i<_nbWorkers;i++)
       _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
    _globalPool = [ORFactory createSolutionPool];
@@ -56,6 +65,7 @@
    free(_workers);
    [_queue release];
    [_terminated release];
+   [_allClosed release];
    [_globalPool release];
    [_onSol release];
    [super dealloc];
@@ -356,6 +366,30 @@
    _doneSearching = NO;
    [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
+      // The probing can already tigthen the bound of the objective.
+      // We want all the workers to start with the best.
+      id<ORObjectiveFunction> ok  = [_workers[myID] objective];
+      if (ok) {
+         [_allClosed lock];
+         if (_nbClosed == 0)
+            _primal = [ok value];
+         else
+            [_primal updateWith:[ok value]];
+         while (_nbClosed < _nbWorkers - 1) {
+            _nbClosed += 1;
+            [_allClosed wait];
+         }
+         [_allClosed signal];
+         if (_boundOk == NO) {
+            _boundOk = YES;
+            for(ORInt w=0;w < _nbWorkers;w++) {
+               id<ORObjective> wwObj = [[_workers[w] objective] dereference];
+               [wwObj tightenPrimalBound:[_primal primal]];
+            }
+         }
+         [_allClosed unlock];
+      }
+      
       if (myID == 0) {
          // The first guy produces a sub-problem that is the root of the whole tree.
          id<ORProblem> root = [[_workers[myID] tracer] captureProblem];

@@ -313,6 +313,8 @@ typedef int (^intgetter) (void) ;
 -(ORInt)       primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORObjective>
@@ -325,4 +327,6 @@ typedef int (^intgetter) (void) ;
 -(ORInt)       primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 @end

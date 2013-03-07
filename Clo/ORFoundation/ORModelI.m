@@ -1952,10 +1952,11 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORIntObjectiveValue
--(id)initObjectiveValue:(id<ORIntVar>)var  minimize:(BOOL)b
+-(id)initObjectiveValue:(id<ORIntVar>)var  minimize:(BOOL)b  primalBound:(ORInt)pb
 {
    self = [super init];
-   _value = [var value];
+   _value = [var bound] ? [var value] : pb;
+   _pBound = pb;
    _direction = b ? 1 : -1;
    return self;
 }
@@ -1963,10 +1964,24 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _value;
 }
+-(ORInt)primal
+{
+   return _pBound;
+}
 -(ORFloat)key
 {
    return _value * _direction;
 }
+-(void)updateWith:(ORIntObjectiveValue*)other
+{
+   ORFloat ok = other->_direction * other->_pBound;
+   ORFloat me = _direction * _pBound;
+   if (ok < me) {
+      _value = [other value];
+      _pBound = [other primal];
+   }
+}
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -2008,7 +2023,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORObjectiveValue>)value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:YES];
+   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:YES primalBound:MAXINT];
 }
 @end
 
@@ -2035,10 +2050,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORObjectiveValue>)value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:NO];
+   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:NO primalBound:MININT];
 }
 @end
-
 
 @implementation ORBitEqual {
    id<ORBitVar> _x;
