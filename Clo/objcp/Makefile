@@ -4,7 +4,7 @@
 OC = ~/clang32/bin/clang
 
 CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel \
-	-fblocks -fobjc-nonfragile-abi 
+	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries \
 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
@@ -24,10 +24,10 @@ OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libobjcp.so.1 
 all: $(LIBNAME)
-	@echo "Done..."
+	@echo "Done... " 
 
 $(LIBNAME): $(OFILES)
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<

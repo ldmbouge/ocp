@@ -19,12 +19,12 @@ all: $(LIBNAME)
 	@echo "Done..."
 
 $(LIBNAME): $(OFILES)
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	$(OC) $(CFLAGS) -c $< 
+	@$(OC) $(CFLAGS) -c $< 
 
 clean:
-	rm -rf *.o *~
+	@rm -rf *.o *~
 

@@ -3,7 +3,7 @@
 
 OC = ~/clang32/bin/clang
 CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I.. -I. -I../ORUtilities \
-	-fblocks -fobjc-nonfragile-abi 
+	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries -L../ORUtilities \
 	-lgnustep-base -lobjc \

@@ -4,7 +4,7 @@
 OC = ~/clang32/bin/clang
 
 CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. \
-	-fblocks -fobjc-nonfragile-abi 
+	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 	
 LFLAGS = -g `/usr/GNUstep/System/Tools/gnustep-config --base-libs`  \
 	-L../objcp -L../ORFoundation -L../ORUtilities -L../ORModeling -L../CPUKernel -L../ORProgram \
@@ -20,10 +20,10 @@ all: $(EXE)
 	@echo "Done..."
 
 $(EXE): $(OFILES) ../objcp/libobjcp.so.1
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) -o $(EXE)
+	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) -o $(EXE)
 
 %.$(OBJEXT): %.m
-	@echo "compiling m"  $<
+	@echo "Compiling m"  $<
 	@$(OC) $(CFLAGS) -c $< 
 
 clean:

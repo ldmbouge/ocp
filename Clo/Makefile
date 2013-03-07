@@ -1,41 +1,42 @@
-TARGETS = ORUtilities ORFoundation CPUKernel objcp ORProgram ORModeling \
-	queens2 
+LIBS    = ORUtilities ORFoundation CPUKernel objcp ORProgram ORModeling
+TARGETS = $(LIBS) queens2 
 
 	# queensAC Sudoku magicserie queensACSem
 
-.PHONY: $(TARGETS)
+VIEWS=1
+
+.PHONY: $(TARGETS) $(LIBS)
 
 all: $(TARGETS)
-	@echo "Done..."
+	@echo "Done all..."
 
 objcp:
-	@make -C objcp
+	@make -C objcp USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 ORUtilities:
-	@make -C ORUtilities
+	@make -C ORUtilities USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 ORFoundation:
-	@make -C ORFoundation
+	@make -C ORFoundation USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 ORModeling:
-	@make -C ORModeling
+	@make -C ORModeling USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 CPUKernel:
-	@make -C CPUKernel
+	@make -C CPUKernel USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 ORProgram:
-	@make -C ORProgram
+	@make -C ORProgram USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 
 queens2: 
-	echo $< 
-	make -C queens2
+	@make -C queens2 USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 
-queensAC:  objcp
-	make -C queensAC all
+queensAC:  $(LIBS)
+	@make -C queensAC all USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 
-queensACSem:  objcp
-	make -C queensACSem
+queensACSem:  $(LIBS)
+	@make -C queensACSem USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 
-Sudoku: objcp
-	make -C Sudoku
+Sudoku: $(LIBS)
+	@make -C Sudoku USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 
-magicserie: objcp
-	make -C magicserie
+magicserie: $(LIBS)
+	@make -C magicserie USER_DEFINES='-DUSEVIEWS=$(VIEWS)'
 
 clean:
 	@make -C objcp clean
