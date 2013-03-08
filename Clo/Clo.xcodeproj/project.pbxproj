@@ -5677,7 +5677,6 @@
 			isa = PBXGroup;
 			children = (
 				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
-				3737A3A8166B0867002D3A57 /* ORModelTransformation.m */,
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
 				5BAD1159161E5E430014EBCB /* ORModeling.m */,
@@ -5689,6 +5688,7 @@
 				B103614516D969CD00E95A39 /* ORLPFlatten.h */,
 				B103614616D969CD00E95A39 /* ORLPFlatten.m */,
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
+				3737A3A8166B0867002D3A57 /* ORModelTransformation.m */,
 				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
 				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
 				5B1391841629A99D0029FD29 /* ORDecompose.h */,

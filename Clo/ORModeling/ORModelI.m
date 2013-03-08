@@ -19,7 +19,8 @@
    NSMutableArray*          _vars;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
-   ORObjectiveFunctionI*    _objective;
+   // pvh to clean once generalized
+   id<ORObjectiveFunction>  _objective;
    ORUInt                   _name;
 }
 -(ORModelI*) initORModelI
@@ -153,13 +154,32 @@
 
 -(void) minimize: (id<ORIntVar>) x
 {
-   _objective = [[ORMinimizeI alloc] initORMinimizeI: x];
+   _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
 }
 
 -(void) maximize: (id<ORIntVar>) x
 {
-   _objective = [[ORMaximizeI alloc] initORMaximizeI: x];
+   _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
 }
+
+-(void) maximizeExpr: (id<ORExpr>) e
+{
+   _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
+}
+-(void) minimizeExpr: (id<ORExpr>) e
+{
+   _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
+}
+
+-(void) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: (id<ORIntArray>) coef];
+}
+-(void) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: (id<ORIntArray>) coef];
+}
+
 
 -(void) trackObject: (id) obj;
 {
@@ -253,6 +273,23 @@
 {
    [_target maximize: x];
 }
+-(void) minimizeExpr: (id<ORExpr>) x
+{
+   [_target minimizeExpr: x];
+}
+-(void) maximizeExpr:(id<ORExpr>) x
+{
+   [_target maximizeExpr: x];
+}
+-(void) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   [_target minimize: array coef: coef];
+}
+-(void) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+  [_target maximize: array coef: coef];
+}
+
 -(void) trackObject: (id) obj
 {
    [_target trackObject:obj];
@@ -298,6 +335,23 @@
 {
    [_target maximize:x];
 }
+-(void) minimizeExpr: (id<ORExpr>) x
+{
+   [_target minimizeExpr: x];
+}
+-(void) maximizeExpr:(id<ORExpr>) x
+{
+   [_target maximizeExpr: x];
+}
+-(void) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   [_target minimize: array coef: coef];
+}
+-(void) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   [_target maximize: array coef: coef];
+}
+
 -(id<ORAddToModel>) model
 {
    return _target;

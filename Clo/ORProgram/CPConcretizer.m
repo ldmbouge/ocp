@@ -320,7 +320,7 @@
    }
 }
 
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -331,7 +331,7 @@
       [_engine setObjective: [v dereference]];
    }
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -342,6 +342,24 @@
       [_engine setObjective: [v dereference]];
    }
 }
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeExpr not yet implemented"]; 
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of maximizeExpr not yet implemented"];    
+}
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
+}
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
+}
+
+
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
    if ([cstr dereference] == NULL) {

@@ -334,14 +334,27 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveFunction <ORObject>
--(id<ORIntVar>) var;
--(id<ORObjectiveValue>)value;
+-(id<ORObjectiveValue>) value;
 @end
+
+@protocol ORObjectiveFunctionVar <ORObjectiveFunction>
+-(id<ORIntVar>) var;
+@end
+
+@protocol ORObjectiveFunctionExpr <ORObjectiveFunction>
+-(id<ORExpr>) expr;
+@end
+
+@protocol ORObjectiveFunctionLinear <ORObjectiveFunction>
+-(id<ORIntVarArray>) array;
+-(id<ORIntArray>) coef;
+@end
+
 
 @protocol ORObjective <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
 -(void)     updatePrimalBound;
--(void) tightenPrimalBound:(ORInt)newBound;
+-(void)     tightenPrimalBound: (ORInt) newBound;
 -(ORInt)    primalBound;
 @end
 

@@ -20,8 +20,7 @@
 
 @interface ORLinearizeObjective : NSObject<ORVisitor>
 -(id)init:(id<ORAddToModel>)m;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+
 @end
 
 @implementation ORLinearize
@@ -311,12 +310,23 @@
     _model = m;
     return self;
 }
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
     [_model minimize:[v var]];
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
     [_model maximize:[v var]];
 }
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   assert(false);
+//   [_model minimize:[v var]];
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   assert(false);
+//   [_model maximize:[v var]];
+}
+
 @end

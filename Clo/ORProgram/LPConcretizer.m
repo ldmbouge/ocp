@@ -99,7 +99,7 @@
    }
 }
 
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -109,7 +109,7 @@
       [_lpsolver solve];
    }
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -119,6 +119,44 @@
       [_lpsolver postObjective: concreteObj];
    }
 }
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+      @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+      @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
+}
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) obj
+{
+   if ([obj dereference] == NULL) {
+      id<ORIntVarArray> x = [obj array];
+      id<ORIntArray> a = [obj coef];
+      [x visit: self];
+      id<LPVariableArray> dx = [x dereference];
+      [a visit: self];
+      id<ORIntArray> da = [a dereference];
+      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: dx coef: da];
+      [obj setImpl: concreteObj];
+      [_lpsolver postObjective: concreteObj];
+   }
+}
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
+{
+   if ([obj dereference] == NULL) {
+      id<ORIntVarArray> x = [obj array];
+      id<ORIntArray> a = [obj coef];
+      [x visit: self];
+      id<LPVariableArray> dx = [x dereference];
+      [a visit: self];
+      id<ORIntArray> da = [a dereference];
+      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: dx coef: da];
+      [obj setImpl: concreteObj];
+      [_lpsolver postObjective: concreteObj];
+   }
+
+}
+
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
    if ([c dereference] == NULL) {

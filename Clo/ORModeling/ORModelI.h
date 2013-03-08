@@ -40,6 +40,10 @@
 -(void) addConstraint: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
+-(void) minimizeExpr: (id<ORExpr>) e;
+-(void) maximizeExpr: (id<ORExpr>) e;
+-(void) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(void) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
@@ -52,6 +56,8 @@
 -(void) addConstraint: (id<ORConstraint>) cstr;
 -(void) minimize: (id<ORIntVar>) x;
 -(void) maximize: (id<ORIntVar>) x;
+-(void) minimizeExpr: (id<ORExpr>) e;
+-(void) maximizeExpr: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;

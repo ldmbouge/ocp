@@ -254,8 +254,12 @@
 
 -(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
+
+
 -(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x;
 -(LPObjectiveI*)  createObjectiveMaximize: (LPVariableI*) x;
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef;
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef;
 
 -(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
 -(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;

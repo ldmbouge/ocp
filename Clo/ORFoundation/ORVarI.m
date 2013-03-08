@@ -28,7 +28,7 @@
 {
    self = [super init];
    _name = [v getId];
-   _value = [v min];
+   _value = [v value];
    return self;
 }
 -(void)restoreInto:(NSArray*)av

@@ -339,6 +339,14 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
 }
+-(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+{
+   [model minimize: [self variables: model] coef: [self coefficients: model]];
+}
+-(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+{
+   [model maximize: [self variables: model] coef: [self coefficients: model]];
+}
 @end
 
 

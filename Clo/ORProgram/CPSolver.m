@@ -688,6 +688,22 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
 }
+-(void) minimizeExpr:(id<ORExpr>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"];
+}
+-(void) maximizeExpr:(id<ORExpr>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
+}
+-(void) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"];   
+}
+-(void) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];   
+}
 -(void) trackObject: (id) obj
 {
    [_solver trackObject:obj];

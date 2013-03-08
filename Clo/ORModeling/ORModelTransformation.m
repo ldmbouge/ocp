@@ -45,7 +45,9 @@
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitGroup:(id<ORGroup>)g            { _result = [ORFactory undefinedIntRange]; }
--(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitFail:(id<ORFail>)cstr  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitRestrict:(id<ORRestrict>)cstr  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr  { _result = [ORFactory undefinedIntRange]; }
@@ -59,8 +61,12 @@
 -(void) visitPacking:(id<ORPacking>) cstr  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitAssignment:(id<ORAssignment>)cstr { _result = [ORFactory undefinedIntRange]; }
--(void) visitMinimize: (id<ORObjectiveFunction>) v  { _result = [ORFactory undefinedIntRange]; }
--(void) visitMaximize: (id<ORObjectiveFunction>) v  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v  { _result = [ORFactory undefinedIntRange]; }
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitEqualc: (id<OREqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitNEqualc: (id<ORNEqualc>)c  { _result = [ORFactory undefinedIntRange]; }
 -(void) visitLEqualc: (id<ORLEqualc>)c  { _result = [ORFactory undefinedIntRange]; }

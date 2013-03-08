@@ -138,8 +138,12 @@
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitAssignment:(id<ORAssignment>)cstr;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
@@ -233,8 +237,14 @@
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
+
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;

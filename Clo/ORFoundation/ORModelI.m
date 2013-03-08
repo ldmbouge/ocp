@@ -1918,8 +1918,8 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
-@implementation ORObjectiveFunctionI
--(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORIntVar>) x
+@implementation ORObjectiveFunctionVarI
+-(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x
 {
    self = [super init];
    _var = x;
@@ -1934,11 +1934,11 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _impl != nil;
 }
--(void) setImpl:(id<ORObjectiveFunction>)impl
+-(void) setImpl: (id<ORObjectiveFunction>) impl
 {
    _impl = impl;
 }
--(id<ORObjectiveFunction>)impl
+-(id<ORObjectiveFunction>) impl
 {
    return _impl;
 }
@@ -1948,7 +1948,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
-   [visitor visitObjectiveFunction:self];
+   [visitor visitObjectiveFunctionVar:self];
 }
 @end
 
@@ -1986,10 +1986,83 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
-@implementation ORMinimizeI
--(ORMinimizeI*) initORMinimizeI: (id<ORIntVar>) x
+@implementation ORObjectiveFunctionExprI
+-(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) e
 {
-   self = [super initORObjectiveFunctionI: x];
+   self = [super init];
+   _expr = e;
+   _impl = nil;
+   return self;
+}
+-(id<ORExpr>) expr
+{
+   return _expr;
+}
+-(BOOL) concretized
+{
+   return _impl != nil;
+}
+-(void) setImpl:(id<ORObjectiveFunction>)impl
+{
+   _impl = impl;
+}
+-(id<ORObjectiveFunction>)impl
+{
+   return _impl;
+}
+-(id<ORObjectiveFunction>) dereference
+{
+   return [_impl dereference];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitObjectiveFunctionExpr: self];
+}
+@end
+
+@implementation ORObjectiveFunctionLinearI
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   self = [super init];
+   _array = array;
+   _coef = coef;
+   _impl = nil;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _array;
+}
+-(id<ORIntArray>) coef
+{
+   return _coef;
+}
+-(BOOL) concretized
+{
+   return _impl != nil;
+}
+-(void) setImpl:(id<ORObjectiveFunction>)impl
+{
+   _impl = impl;
+}
+-(id<ORObjectiveFunction>)impl
+{
+   return _impl;
+}
+-(id<ORObjectiveFunction>) dereference
+{
+   return [_impl dereference];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitObjectiveFunctionLinear: self];
+}
+@end
+
+@implementation ORMinimizeVarI
+-(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x
+{
+   self = [super initORObjectiveFunctionVarI: x];
    return self;
 }
 -(void)dealloc
@@ -2005,7 +2078,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)visit:(id<ORVisitor>)v
 {
-   [v visitMinimize:self];
+   [v visitMinimizeVar:self];
 }
 -(id<ORObjectiveValue>)value
 {
@@ -2013,10 +2086,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
-@implementation ORMaximizeI
--(ORMaximizeI*) initORMaximizeI:(id<ORIntVar>) x
+@implementation ORMaximizeVarI
+-(ORMaximizeVarI*) initORMaximizeVarI:(id<ORIntVar>) x
 {
-   self = [super initORObjectiveFunctionI:x];
+   self = [super initORObjectiveFunctionVarI:x];
    return self;
 }
 -(void)dealloc
@@ -2032,11 +2105,121 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)visit:(id<ORVisitor>)v
 {
-   [v visitMaximize:self];
+   [v visitMaximizeVar:self];
 }
 -(id<ORObjectiveValue>)value
 {
    return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:NO];
+}
+@end
+
+@implementation ORMaximizeExprI
+-(ORMaximizeExprI*) initORMaximizeExprI:(id<ORExpr>) e
+{
+   self = [super initORObjectiveFunctionExprI: e];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMaximizeExprI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_expr];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMaximizeExpr:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return NULL;
+}
+@end
+
+@implementation ORMinimizeExprI
+-(ORMinimizeExprI*) initORMinimizeExprI:(id<ORExpr>) e
+{
+   self = [super initORObjectiveFunctionExprI: e];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMinimizeExprI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_expr];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMinimizeExpr:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   ORInt v = [_expr min];
+   ORInt v1 = [_expr max];
+   return NULL;
+}
+@end
+
+@implementation ORMaximizeLinearI
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   self = [super initORObjectiveFunctionLinearI: array coef: coef];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMaximizeExprI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMaximizeI: %p  --> %@ %@> ",self,_array,_coef];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMaximizeLinear:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return NULL;
+}
+@end
+
+@implementation ORMinimizeLinearI
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+{
+   self = [super initORObjectiveFunctionLinearI: array coef: coef];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMinimizeLinearI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMinimizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMinimizeLinear:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return NULL;
 }
 @end
 

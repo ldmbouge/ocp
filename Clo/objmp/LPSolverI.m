@@ -1031,6 +1031,25 @@
    [o setNb: _createdObjs++];
    return o;
 }
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   ORInt low = [var low];
+   ORInt up = [var up];
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createMinimize: t];
+}
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   ORInt low = [var low];
+   ORInt up = [var up];
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createMaximize: t];
+}
+
 -(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
 {
    [t close];
