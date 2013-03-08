@@ -121,7 +121,7 @@ typedef struct  {
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(void) setId:(ORUInt)name;
--(ORUInt)getId;
+-(ORInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
@@ -172,7 +172,7 @@ typedef struct  {
 -(ORInt) value;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool) member:(ORInt)v;
+-(BOOL) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
@@ -218,7 +218,7 @@ typedef struct  {
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -245,7 +245,7 @@ typedef struct  {
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -270,7 +270,7 @@ typedef struct  {
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -297,7 +297,7 @@ typedef struct  {
 -(ORInt) max;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;

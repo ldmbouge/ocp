@@ -42,7 +42,7 @@ typedef struct  {
 -(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
 -(void) setId:(ORUInt)name;
--(ORUInt) getId;
+-(ORInt) getId;
 -(NSString*) description;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
@@ -79,7 +79,7 @@ typedef struct  {
 -(ORBounds) bounds;
 -(unsigned int) domsize;
 -(unsigned int) lsFreeBit;
--(bool) member:(unsigned int*)v;
+-(BOOL) member:(unsigned int*)v;
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;

@@ -3,10 +3,10 @@
 
 OC = ~/clang32/bin/clang
 
-CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel \
+CFLAGS = -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
-LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries \
+LFLAGS = -L/usr/GNUstep/System/Library/Libraries $(USER_DEFINES) \
 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
 	-lORUtilities -lORFoundation -lCPUKernel \
 	-lgnustep-base -lobjc 

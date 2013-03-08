@@ -3,10 +3,10 @@
 
 OC = ~/clang32/bin/clang
 
-CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -I.. \
+CFLAGS = -I/usr/GNUstep/System/Library/Headers -I. -I.. \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
-	
-LFLAGS = -g `/usr/GNUstep/System/Tools/gnustep-config --base-libs`  \
+
+LFLAGS = `/usr/GNUstep/System/Tools/gnustep-config --base-libs` $(USER_DEFINES) \
 	-L../objcp -L../ORFoundation -L../ORUtilities -L../ORModeling -L../CPUKernel -L../ORProgram \
 	-lobjcp -lORUtilities -lORFoundation -lORModeling -lCPUKernel -lORProgram 
 SRCS = main.m
@@ -27,5 +27,5 @@ $(EXE): $(OFILES) ../objcp/libobjcp.so.1
 	@$(OC) $(CFLAGS) -c $< 
 
 clean:
-	rm -rf *.o *~
+	rm -rf *.o *~ $(EXE)
 

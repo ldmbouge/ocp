@@ -500,7 +500,7 @@
 {
    _name = vid;
 }
--(ORUInt) getId
+-(ORInt) getId
 {
    return _name;
 }

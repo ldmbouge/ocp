@@ -100,7 +100,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     _name = name;
 }
--(ORUInt)getId
+-(ORInt)getId
 {
    return _name;
 }
@@ -208,7 +208,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert(_dom);
    return [_dom countFrom:from to:to];
 }
--(bool)member:(ORInt)v
+-(BOOL)member:(ORInt)v
 {
    assert(_dom);
     return [_dom member:v];
@@ -725,7 +725,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    bnd.max += _b;
    return bnd;
 }
--(bool)member: (ORInt) v
+-(BOOL)member: (ORInt) v
 {
     return [_dom member:v-_b];
 }
@@ -860,7 +860,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _a > 0 ? b.max * _a + _b : b.min * _a + _b
    };
 }
--(bool)member: (ORInt) v
+-(BOOL)member: (ORInt) v
 {
     ORInt r = (v - _b) % _a;
     if (r != 0) return NO;
@@ -1025,7 +1025,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORBounds b = [_x bounds];
    return (ORBounds){-b.max,-b.min};
 }
--(bool)member:(ORInt)v
+-(BOOL)member:(ORInt)v
 {
    return [_x member:-v];
 }
@@ -1128,7 +1128,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       else return 1;
    }
 }
--(bool)member:(ORInt)val
+-(BOOL)member:(ORInt)val
 {
    ORInt lb = [_secondary min];
    ORInt ub = [_secondary max];
