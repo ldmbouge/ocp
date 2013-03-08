@@ -14,6 +14,7 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPBaseHeuristic.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 

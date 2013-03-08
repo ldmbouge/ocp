@@ -1929,6 +1929,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _var;
 }
+-(id<ORObjectiveValue>)value
+{
+  return NULL;
+}
 -(BOOL) concretized
 {
    return _impl != nil;

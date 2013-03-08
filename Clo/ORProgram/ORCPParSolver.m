@@ -13,6 +13,7 @@
 #import "ORCPParSolver.h"
 #import <ORProgram/CPParallel.h>
 #import <ORProgram/CPBaseHeuristic.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {

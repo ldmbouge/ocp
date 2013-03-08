@@ -11,8 +11,8 @@ LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries \
 	-lgnustep-base -lobjc 
 
 SRCS = CPABS.m CPConcretizer.m  CPFirstFail.m  CPMultiStartSolver.m  \
-	CPSolver.m  LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  CPDDeg.m    \
-	CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m
+	CPSolver.m  LPConcretizer.m  ORCPParSolver.m CPBaseHeuristic.m  \
+	CPDDeg.m CPIBS.m CPParallel.m  CPWDeg.m  LPSolver.m ORProgramFactory.m
 
 
 
@@ -23,7 +23,7 @@ all: $(LIBNAME)
 	@echo "Done..."
 
 $(LIBNAME): $(OFILES)
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<

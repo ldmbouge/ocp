@@ -378,6 +378,7 @@
 }
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 -(BOOL) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
