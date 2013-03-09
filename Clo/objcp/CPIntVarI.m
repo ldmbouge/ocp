@@ -421,7 +421,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -443,7 +443,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -463,7 +463,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -485,7 +485,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORStatus s = _recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._domEvt._val;
    k += mList[k] != NULL;

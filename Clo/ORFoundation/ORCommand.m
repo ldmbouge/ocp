@@ -99,18 +99,17 @@
 {
    return _ndId;
 }
--(bool)apply:(bool(^)(id<ORCommand>))clo
+-(BOOL)apply:(BOOL(^)(id<ORCommand>))clo
 {
-   struct CNode* cur = _head;
-   while (cur) {
-      bool ok = clo(cur->_c);
-      if (!ok)
-         return false;
+   struct CNode* cur = self->_head;
+   BOOL ok = YES;
+   while (cur && ok) {
+      ok = clo(cur->_c);
       cur = cur->_next;
    }
-   return true;
+   return YES;
 }
--(bool)empty
+-(BOOL)empty
 {
    return _head==0;
 }

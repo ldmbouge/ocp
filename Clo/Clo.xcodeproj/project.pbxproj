@@ -538,6 +538,8 @@
 		5BA345981680B7D400485366 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BA345991680B7D400485366 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BA3459A1680B7D400485366 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BAC7AC316EBAD1900BE6F81 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5BAC7AC416EBAD3100BE6F81 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5BAD1150161E5E430014EBCB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5BAD1156161E5E430014EBCB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5BAD1154161E5E430014EBCB /* InfoPlist.strings */; };
 		5BAD115A161E5E430014EBCB /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
@@ -8734,6 +8736,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAC7AC316EBAD1900BE6F81 /* ORCmdLineArgs.m in Sources */,
 				5B3848C216E6E59300498DCF /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8742,6 +8745,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BAC7AC416EBAD3100BE6F81 /* ORCmdLineArgs.m in Sources */,
 				5B3848E416E7883B00498DCF /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

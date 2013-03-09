@@ -17,8 +17,8 @@
 @interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
 @public
    CPTodo            _todo;
-   BOOL      _idempotent:1;
-   int        _priority:31;
+   BOOL       _idempotent;
+   ORInt       _priority;
    ORUInt            _name;
    IMP          _propagate;
    id<ORTrail>      _trail;

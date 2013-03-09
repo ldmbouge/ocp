@@ -64,12 +64,12 @@
 			<key>orderHint</key>
 			<integer>38</integer>
 		</dict>
-		<key>ORProgram.xcscheme</key>
+		<key>ORProgram.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>60</integer>
 		</dict>
-		<key>ORUtilities.xcscheme</key>
+		<key>ORUtilities.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>61</integer>
@@ -84,7 +84,7 @@
 			<key>orderHint</key>
 			<integer>40</integer>
 		</dict>
-		<key>SportDemo.xcscheme</key>
+		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>60</integer>
@@ -143,11 +143,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>30</integer>
-		</dict>
-		<key>debruijn.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>64</integer>
 		</dict>
 		<key>debruijn.xcscheme_^#shared#^_</key>
 		<dict>
@@ -214,11 +209,6 @@
 			<key>orderHint</key>
 			<integer>26</integer>
 		</dict>
-		<key>latinSquare.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>54</integer>
-		</dict>
 		<key>latinSquare.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -248,11 +238,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>33</integer>
-		</dict>
-		<key>market2s.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>65</integer>
 		</dict>
 		<key>market2s.xcscheme_^#shared#^_</key>
 		<dict>
@@ -319,11 +304,6 @@
 			<key>orderHint</key>
 			<integer>50</integer>
 		</dict>
-		<key>perfect.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>67</integer>
-		</dict>
 		<key>perfect.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -359,11 +339,6 @@
 			<key>orderHint</key>
 			<integer>36</integer>
 		</dict>
-		<key>queensModel.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>66</integer>
-		</dict>
 		<key>queensModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -373,11 +348,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>7</integer>
-		</dict>
-		<key>queensNaive.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>57</integer>
 		</dict>
 		<key>queensNaive.xcscheme_^#shared#^_</key>
 		<dict>
@@ -403,11 +373,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>25</integer>
-		</dict>
-		<key>sportModel.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>63</integer>
 		</dict>
 		<key>sportModel.xcscheme_^#shared#^_</key>
 		<dict>
