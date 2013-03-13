@@ -45,7 +45,6 @@ int main (int argc, const char * argv[])
        ];
      printf("GOT %d solutions\n",[nbSolutions value]);
      
-     
      NSLog(@"Solver status: %@\n",cp);
      NSLog(@"Quitting");
      [cp release];
