@@ -85,7 +85,7 @@ int maini()
 }
 -(ORLPConcretizer*) initORLPConcretizer: (id<LPProgram>) program
 {
-   maini();
+   //maini(); // [ldm] testing leftover?
    self = [super init];
    _program = [program retain];
    _lpsolver = [program solver];

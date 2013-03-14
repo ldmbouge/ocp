@@ -37,9 +37,10 @@ int main(int argc, const char * argv[])
       [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
    [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
    [model maximize: o];
-//   NSLog(@"Model %@",model);
+   NSLog(@"Model %@",model);
    id<LPProgram> lp = [ORFactory createLPProgram: model];
    [lp solve];
    NSLog(@"we are done");
+   NSLog(@"Array is: %@",x);
    return 0;
 }
