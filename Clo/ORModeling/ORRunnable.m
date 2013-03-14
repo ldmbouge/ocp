@@ -8,6 +8,7 @@
 
 #import "ORRunnable.h"
 #import "ORFactory.h"
+#import "ORProgramFactory.h"
 #import "ORConcurrencyI.h"
 
 @implementation ORSignatureI
@@ -232,5 +233,44 @@
     }];
     
 }
+
+@end
+
+@implementation LPRunnableI {
+    id<ORModel> _model;
+    id<ORSignature> _sig;
+    id<LPProgram> _program;
+}
+
+-(id) initWithModel: (id<ORModel>)m {
+    if((self = [super init]) != nil) {
+        _model = m;
+        _sig = nil;
+        _program = [ORFactory createLPProgram: _model];
+    }
+    return self;
+}
+
+-(void) dealloc {
+    [_program release];
+    [super dealloc];
+}
+
+-(id<ORSignature>) signature {
+    if(_sig == nil) {
+        _sig = [ORFactory createSignature: @"complete"];
+    }
+    return _sig;
+}
+
+-(id<LPProgram>) solver { return _program; }
+
+-(void) run {
+    NSLog(@"Running LP runnable(%p)...", _program);
+    [_program solve];
+    NSLog(@"Finishing LP runnable(%p)...", _program);
+}
+
+-(void) onExit: (ORClosure)block {}
 
 @end

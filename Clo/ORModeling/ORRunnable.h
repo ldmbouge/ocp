@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "CPProgram.h"
+#import "LPProgram.h"
 #import "ORTypes.h"
 
 @protocol ORSignature<NSObject>
@@ -130,3 +131,16 @@
 -(void) run;
 -(void) restore: (id<ORSolution>)s;
 @end
+
+@protocol LPRunnable <ORRunnable>
+-(id<LPProgram>) solver;
+@end
+
+@interface LPRunnableI : NSObject<LPRunnable>
+-(id) initWithModel: (id<ORModel>)m;
+-(id<ORSignature>) signature;
+-(id<LPProgram>) solver;
+-(id<ORModel>) model;
+-(void) run;
+@end
+
