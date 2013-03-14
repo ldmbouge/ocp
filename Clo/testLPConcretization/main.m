@@ -31,10 +31,10 @@ int main(int argc, const char * argv[])
    // most of this is bogus; just testing without introducing floats
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Columns];
-   id<ORIntVar>      o = [ORFactory intVar: model domain: Columns];
-   
+   id<ORFloatVar>      o = [ORFactory floatVar: model low:0 up:nbColumns-1];
+   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
-      [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+      ca[i] = [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
    [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
    [model maximize: o];
    NSLog(@"Model %@",model);
@@ -42,5 +42,6 @@ int main(int argc, const char * argv[])
    [lp solve];
    NSLog(@"we are done");
    NSLog(@"Array is: %@",x);
+   NSLog(@"Objective: %@  [%f]",o,[o value]);
    return 0;
 }

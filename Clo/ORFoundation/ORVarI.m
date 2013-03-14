@@ -355,7 +355,6 @@
 @implementation ORFloatVarI
 {
 @protected
-   id<ORFloatVar>   _impl;
    id<ORTracker>    _tracker;
    ORFloat          _low;
    ORFloat          _up;
