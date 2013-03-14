@@ -28,12 +28,16 @@
    _delegate = delegate;
 }
 
+
 - (void)drawRect:(NSRect)dirtyRect
 {
    //NSLog(@"drawRect: ");
    [[NSColor whiteColor] setFill];
    NSRectFill(dirtyRect);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-method-access"
    [_delegate drawRect:dirtyRect inView:self];
+#pragma clang diagnostic pop
 }
 
 -(void)refresh

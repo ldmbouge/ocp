@@ -11,7 +11,6 @@
 
 #import "CPDDeg.h"
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
 
 @implementation CPDDeg {
    CPEngineI*    _solver;

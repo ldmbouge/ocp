@@ -11,10 +11,8 @@
 
 #import "CPABS.h"
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
-#import "CPStatisticsMonitor.h"
-#import "ORTracer.h"
-
+#import <objcp/CPStatisticsMonitor.h>
+#import <ORFoundation/ORTracer.h>
 
 @interface ABSNogood : NSObject {
    id<CPIntVar> _var;
@@ -26,7 +24,7 @@
 @end
 
 @interface ABSProbe : NSObject {
-   ORInt*            _tab;
+   ORFloat*          _tab;
    int                _sz;
    int               _low;
    int                _up;
@@ -35,13 +33,13 @@
 -(ABSProbe*)initABSProbe:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addVar:(id<ORVar>)var;
--(void)scanProbe:(void(^)(ORInt varID,ORInt activity))block;
+-(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block;
 @end
 
 @interface ABSProbeAggregator : NSObject {
-   id<ORVarArray>    _vars;
-   ORInt*            _sum;
-   ORInt*          _sumsq;
+   id<ORVarArray>   _vars;
+   ORFloat*          _sum;
+   ORFloat*        _sumsq;
    int                _sz;
    int               _low;
    int                _up;
@@ -61,23 +59,25 @@
 -(NSString*)description;
 @end
 
-@interface ABSVariableActivity : NSObject {
+@interface ABSVariableActivity : NSObject<NSCopying> {
    @package
    id        _theVar;
    ORFloat _activity;
 }
 -(id)initABSVariableActivity:(id)var activity:(ORFloat)initial;
+-(id)copyWithZone:(NSZone*)zone;
 -(void)dealloc;
 -(void)aging:(ORFloat)rate;
 -(ORFloat)activity;
 -(void)increase;
 @end
 
-@interface ABSValueActivity : NSObject {
+@interface ABSValueActivity : NSObject<NSCopying> {
    id                    _theVar;
    NSMutableDictionary*  _values;
 }
 -(id)initABSActivity:(id)var;
+-(id)copyWithZone:(NSZone*)zone;
 -(void)dealloc;
 -(void)setActivity:(ORFloat)a forValue:(ORInt)v;
 -(void)addActivity:(ORFloat)a forValue:(ORInt)v;
@@ -100,10 +100,10 @@
       _up  = max(_up,vid);
    }];
    _sz = _up - _low + 1;
-   _sum   = malloc(sizeof(ORInt)*_sz);
-   _sumsq = malloc(sizeof(ORInt)*_sz);
-   memset(_sum,0,sizeof(ORInt)*_sz);
-   memset(_sumsq,0,sizeof(ORInt)*_sz);
+   _sum   = malloc(sizeof(ORFloat)*_sz);
+   _sumsq = malloc(sizeof(ORFloat)*_sz);
+   memset(_sum,0,sizeof(ORFloat)*_sz);
+   memset(_sumsq,0,sizeof(ORFloat)*_sz);
    _sum   -= _low;
    _sumsq -= _low;
    _inProbe = [[NSMutableSet alloc] initWithCapacity:32];
@@ -126,14 +126,15 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"[AGGREG(%d,%d) = ",_sz,_nbProbes];
    [_inProbe enumerateObjectsUsingBlock:^(NSNumber* key, BOOL *stop) {
-      [buf appendFormat:@"<%d , %d>,",key.intValue,_sum[key.intValue]];
+      ORInt kv = key.intValue;
+      [buf appendFormat:@"<%d , %f , %f>,",kv,_sum[kv],_sumsq[kv]];
    }];
    [buf appendString:@"]"];
    return buf;
 }
 -(void)addProbe:(ABSProbe*)p
 {
-   [p scanProbe:^(ORInt varID, ORInt activity) {
+   [p scanProbe:^(ORInt varID, ORFloat activity) {
       NSNumber* key = [[NSNumber alloc] initWithInt:varID];
       [_inProbe addObject:key];
       [key release];
@@ -169,12 +170,12 @@
 -(ORFloat)avgActivity:(ORInt)x
 {
    assert(_low <= x && x <= _up);
-   return ((ORFloat)_sum[x]) / _nbProbes;
+   return _sum[x] / _nbProbes;
 }
 -(ORFloat)avgSQActivity:(ORInt)x
 {
    assert(_low <= x && x <= _up);
-   return ((ORFloat)_sumsq[x]) / _nbProbes;
+   return _sumsq[x] / _nbProbes;
 }
 -(NSSet*)variableIDs
 {
@@ -217,8 +218,8 @@
       _up  = max(_up,[obj getId]);
    }];
    _sz = _up - _low + 1;
-   _tab = malloc(sizeof(ORInt)*_sz);
-   memset(_tab,0,sizeof(ORInt)*_sz);
+   _tab = malloc(sizeof(ORFloat)*_sz);
+   memset(_tab,0,sizeof(ORFloat)*_sz);
    _tab -= _low;
    _inProbe = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
@@ -239,7 +240,7 @@
    assert(_low <= idx && idx <= _up);
    _tab[idx] += 1;
 }
--(void)scanProbe:(void(^)(ORInt varID,ORInt activity))block
+-(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block
 {
    for(NSNumber* key in _inProbe) {
       assert(_low <= key.intValue && key.intValue <= _up);
@@ -251,7 +252,7 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"(%d) [",_sz];
    for(NSNumber* key in _inProbe) {
-      [buf appendFormat:@"<%@,%d>,",key,_tab[key.intValue]];
+      [buf appendFormat:@"<%@,%f>,",key,_tab[key.intValue]];
    }
    [buf appendString:@"]"];
    return buf;
@@ -266,6 +267,11 @@
    _activity = initial;
    return self;
 }
+-(id)copyWithZone:(NSZone*)zone
+{
+   return [[ABSVariableActivity alloc] initABSVariableActivity:_theVar activity:_activity];
+}
+
 -(void)dealloc
 {
    [super dealloc];
@@ -298,6 +304,18 @@
    _values = [[NSMutableDictionary alloc] initWithCapacity:32];
    return self;
 }
+-(id)copyWithZone:(NSZone*)zone
+{
+   ABSValueActivity* copy = [[ABSValueActivity alloc] initABSActivity:_theVar];
+   NSMutableDictionary* cv = [[NSMutableDictionary alloc] initWithCapacity:[_values count]];
+   for(NSNumber* key in _values) {
+      NSNumber* value = [_values objectForKey:key];
+      [cv setObject:[value copy] forKey:key];
+   }
+   copy->_values = cv;
+   return copy;
+}
+
 -(void)dealloc
 {
    [_values release];
@@ -345,16 +363,22 @@
 }
 -(void)enumerate:(void(^)(id value,id activity,BOOL* stop))block
 {
-   [_values enumerateKeysAndObjectsUsingBlock:block];
+   BOOL stop = NO;
+   for(NSNumber* key in _values) {
+      block(key,[_values objectForKey:key],&stop);
+      if (stop)
+         return ;
+   }
 }
 
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<ValueActivity(%@) = [",_theVar];
-   [_values enumerateKeysAndObjectsUsingBlock:^(NSNumber* value, NSNumber* act, BOOL *stop) {
+   for(NSNumber* value in _values) {
+      NSNumber* act = [_values objectForKey:value];
       [buf appendFormat:@"%@ : %@,",value,act];
-   }];
+   }
    [buf appendFormat:@"]"];
    return buf;
 }
@@ -366,6 +390,9 @@
    ORULong                     _nbv;
    NSMutableDictionary*       _varActivity;
    NSMutableDictionary*       _valActivity;
+   NSMutableDictionary*       _varBackup;
+   NSMutableDictionary*       _valBackup;
+   BOOL                       _freshBackup;
    ORFloat                      _agingRate;
    ORFloat                      _conf;
    id<ORZeroOneStream>          _valPr;
@@ -379,6 +406,7 @@
    _monitor = nil;
    _vars = nil;
    _rvars = rvars;
+   _varBackup = _valBackup = nil;
    _agingRate = 0.999;
    _conf      = 0.2;
    return self;
@@ -392,6 +420,8 @@
 {
    [_varActivity release];
    [_valActivity release];
+   [_varBackup release];
+   [_valBackup release];
    [_aggregator release];
    [super dealloc];
 }
@@ -417,11 +447,12 @@
 }
 -(void)updateActivities:(id<ORVar>)forVar andVal:(ORInt)val
 {
-   [_varActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
+   for(NSNumber* key in _varActivity) {
+      ABSVariableActivity* act = [_varActivity objectForKey:key];
       if (![act->_theVar bound]) {
          [act aging:_agingRate];
       }
-   }];
+   }
    __block int nbActive = 0;
    [_monitor scanActive:^(CPVarInfo *vInfo) {
       NSNumber* key = [[NSNumber alloc] initWithInt:[vInfo getVarID]];
@@ -444,6 +475,7 @@
    }
    [valAct addActivity:nbActive forValue:val];
    [key release];
+   _freshBackup = NO;
 }
 -(void)initInternal:(id<ORVarArray>)t
 {
@@ -477,7 +509,7 @@
    ORBounds b = [x bounds];
    while (true) {
       double p   = [_valPr next];
-      ORInt v    = b.min + floor(p / (1.0 / (b.max - b.min + 1)));
+      ORInt v    = b.min + floor(p * ((ORFloat)(b.max - b.min + 1)));
       if ([x member:v])
          return v;
    }
@@ -504,7 +536,7 @@
       if (more)
          break;
    }
-   NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
+   //NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
    return more;
 }
 -(void)installActivities
@@ -532,6 +564,17 @@
          }];
       }
    }
+   _varBackup = [[NSMutableDictionary alloc] initWithCapacity:[_varActivity count]];
+   for(NSNumber* key in _varActivity) {
+      ABSVariableActivity* act = [_varActivity objectForKey:key];
+      [_varBackup setObject:[act copy] forKey:key];
+   }
+   _valBackup = [[NSMutableDictionary alloc] initWithCapacity:[_valActivity count]];
+   for(NSNumber* key in _valActivity) {
+      ABSValueActivity* act = [_valActivity objectForKey:key];
+      [_valBackup setObject:[act copy] forKey:key];
+   }
+   _freshBackup = YES;
 }
 
 -(void)initActivities
@@ -543,7 +586,8 @@
       if ([_vars[i] bound]) continue;
       mxp += log([(id)_vars[i] domsize]);
    }
-   const int maxProbes = (int)10 * mxp;
+   const ORInt maxProbes = (int)10 * mxp;
+   NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
@@ -551,6 +595,7 @@
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
+   NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
    __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
    __block ORInt nbVS = 0;
    id<ORZeroOneStream> varPr = [ORCrFactory zeroOneStream];
@@ -596,8 +641,9 @@
                if (s == ORFailure) {
                   if (depth == 0) {
                      ABSNogood* nogood = [[ABSNogood alloc] initABSNogood:xi value:v];
-                     NSLog(@"Adding SAC %@",nogood);
+                     //NSLog(@"Adding SAC %@",nogood);
                      [killSet addObject:nogood];
+                     [localKill addObject:nogood];
                      [nogood release];
                   }
                   depth++;
@@ -613,6 +659,7 @@
             } else {
                NSLog(@"Found a local optimum = %@",[_solver objective]);
                [[_solver objective] updatePrimalBound];
+               NSLog(@"after updatePrimalBound = %@",[_solver objective]);
             }
          }
          while (depth-- != 0)
@@ -620,15 +667,43 @@
          //NSLog(@"THEPROBE: %@",probe);
          [_aggregator addProbe:probe];
          [probe release];
+         for(ABSNogood* b in localKill) {
+            [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];            
+            NSLog(@"Imposing local SAC %@",b);
+         }
+         [localKill removeAllObjects];
       }
       carryOn = [self moreProbes];
-   } while (carryOn && cntProbes < 10 * maxProbes);
-   for(ABSNogood* b in killSet) {
-      [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];//diff:[b variable] with:[b value]];
-      NSLog(@"Imposing SAC %@",b);
-   }
+   } while (carryOn && cntProbes < maxProbes);
+   
+   [_solver atomic:^ORStatus {
+      for(ABSNogood* b in killSet) {
+         [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
+         NSLog(@"Imposing SAC %@",b);
+      }
+      return ORSuspend;
+   }];
+   
+   NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);
    [killSet release];
    [varPr release];
    [_valPr release];
+}
+
+-(void) restart
+{
+   NSLog(@"restart(ABS) -- must be stealing now...");
+   if (!_freshBackup) {
+      [_varActivity removeAllObjects];
+      [_valActivity removeAllObjects];
+      for(NSNumber* key in _varBackup) {
+         ABSVariableActivity* act = [_varBackup objectForKey:key];
+         [_varActivity setObject:[act copy] forKey:key];
+      }
+      for(NSNumber* key in _valBackup) {
+         ABSValueActivity* act = [_valBackup objectForKey:key];
+         [_valActivity setObject:[act copy] forKey:key];
+      }
+   }
 }
 @end

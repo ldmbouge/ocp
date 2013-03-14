@@ -121,7 +121,7 @@ typedef struct  {
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(void) setId:(ORUInt)name;
--(ORUInt)getId;
+-(ORInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
@@ -166,13 +166,13 @@ typedef struct  {
 
 // access
 
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool) member:(ORInt)v;
+-(BOOL) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
@@ -214,11 +214,11 @@ typedef struct  {
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -241,11 +241,11 @@ typedef struct  {
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -266,11 +266,11 @@ typedef struct  {
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -292,12 +292,12 @@ typedef struct  {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;

@@ -23,7 +23,11 @@
 -(id<LPProgram>) initLPSolver
 {
    self = [super init];
+#if defined(__linux__)
+   _lpsolver = NULL;
+#else
    _lpsolver = [LPFactory solver];
+#endif
    return self;
 }
 -(void) dealloc

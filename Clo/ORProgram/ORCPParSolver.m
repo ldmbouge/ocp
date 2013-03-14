@@ -13,6 +13,7 @@
 #import "ORCPParSolver.h"
 #import <ORProgram/CPParallel.h>
 #import <ORProgram/CPBaseHeuristic.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPObjectQueue.h>
 
 @interface ORControllerFactory : NSObject<ORControllerFactory> {
@@ -31,6 +32,12 @@
    NSCondition*    _terminated;
    ORInt               _nbDone;
    Class               _defCon;
+   BOOL         _doneSearching;
+   
+   NSCondition*      _allClosed;
+   ORInt              _nbClosed;
+   id<ORObjectiveValue> _primal;
+   BOOL                _boundOk;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
@@ -40,12 +47,17 @@
    memset(_workers,0,sizeof(id<CPSemanticProgram>)*_nbWorkers);
    _queue = [[PCObjectQueue alloc] initPCQueue:128 nbWorkers:_nbWorkers];
    _terminated = [[NSCondition alloc] init];
+   _allClosed  = [[NSCondition alloc] init];
    _defCon     = ctrlClass;
    _nbDone     = 0;
+   _nbClosed   = 0;
+   _boundOk    = NO;
+   _primal     = NULL;
    for(ORInt i=0;i<_nbWorkers;i++)
       _workers[i] = [CPSolverFactory semanticSolver:ctrlClass];
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
+   _doneSearching = NO;
    return self;
 }
 -(void)dealloc
@@ -54,6 +66,7 @@
    free(_workers);
    [_queue release];
    [_terminated release];
+   [_allClosed release];
    [_globalPool release];
    [_onSol release];
    [super dealloc];
@@ -72,6 +85,10 @@
 -(id<CPCommonProgram>)dereference
 {
    return _workers[[NSThread threadID]];
+}
+-(void) restartHeuristics
+{
+   assert(NO);
 }
 -(NSMutableArray*) variables
 {
@@ -290,8 +307,9 @@
    [theSub release];
    if (status == ORFailure)
       [[cp explorer] fail];
+    [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body
+-(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(BOOL)allSols
 {
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
@@ -318,13 +336,25 @@
                              onExit: nil
                             control: parc];
    } else {
-      [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
-                         onSolution: ^ {
+      NSLog(@"ALLSOL IS: %d",allSols);
+      if (allSols) {
+        [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
+                           onSolution: ^ {
+                              [self doOnSolution];
+                              [me doOnSolution];
+                           }
+                               onExit:nil
+                              control:parc];
+      } else {
+        [[me explorer] nestedSolve:^() { [self setupWork:root forCP:me];body();}
+                        onSolution: ^ {
                             [self doOnSolution];
                             [me doOnSolution];
+                            _doneSearching = YES;
                          }
                              onExit:nil
-                            control:parc];
+                            control:parc];        
+      }
    }
 }
 
@@ -332,9 +362,35 @@
 {
    ORInt myID = [[input objectAtIndex:0] intValue];
    ORClosure mySearch = [input objectAtIndex:1];
+   NSNumber* allSols  = [input objectAtIndex:2];
    [NSThread setThreadID:myID];
+   _doneSearching = NO;
    [[_workers[myID] explorer] search: ^() {
       [_workers[myID] close];
+      // The probing can already tigthen the bound of the objective.
+      // We want all the workers to start with the best.
+      id<ORObjectiveFunction> ok  = [_workers[myID] objective];
+      if (ok) {
+         [_allClosed lock];
+         if (_nbClosed == 0)
+            _primal = [ok value];
+         else
+            [_primal updateWith:[ok value]];
+         while (_nbClosed < _nbWorkers - 1) {
+            _nbClosed += 1;
+            [_allClosed wait];
+         }
+         [_allClosed signal];
+         if (_boundOk == NO) {
+            _boundOk = YES;
+            for(ORInt w=0;w < _nbWorkers;w++) {
+               id<ORObjective> wwObj = [[_workers[w] objective] dereference];
+               [wwObj tightenPrimalBound:[_primal primal]];
+            }
+         }
+         [_allClosed unlock];
+      }
+      
       if (myID == 0) {
          // The first guy produces a sub-problem that is the root of the whole tree.
          id<ORProblem> root = [[_workers[myID] tracer] captureProblem];
@@ -344,9 +400,11 @@
       }
       NSData* cpRoot = nil;
       while ((cpRoot = [_queue deQueue]) !=nil) {
-         [self setupAndGo:cpRoot forCP:myID searchWith:mySearch];
+         if (!_doneSearching)
+            [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
          [cpRoot release];
       }
+      NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));
    }];
    // Final tear down. The worker is done with the model.
    NSLog(@"Worker[%d] = %@",myID,_workers[myID]);
@@ -368,7 +426,7 @@
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                         [search copy],nil]];
+                                         [search copy],@(YES),nil]];
    }
    [self waitWorkers]; // wait until all the workers are done.
    
@@ -379,7 +437,7 @@
       [NSThread detachNewThreadSelector:@selector(workerSolve:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects:[NSNumber numberWithInt:i],
-                                         [search copy],nil]];
+                                         [search copy],@(NO),nil]];
    }
    [self waitWorkers]; // wait until all the workers are done.
 }

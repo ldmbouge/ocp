@@ -26,12 +26,12 @@
 -(ORInt) max;
 -(ORInt) imin;
 -(ORInt) imax;
--(bool) bound;
+-(BOOL) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
--(bool) get:(ORInt)b;
--(bool) member:(ORInt)v;
+-(BOOL) get:(ORInt)b;
+-(BOOL) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
 -(id) copy;

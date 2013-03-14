@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORModeling/ORFlatten.h>
 #import "ORProgramFactory.h"
 
 // CP Solver
@@ -19,7 +20,6 @@
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
-#import "ORFlatten.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPDDeg.h"

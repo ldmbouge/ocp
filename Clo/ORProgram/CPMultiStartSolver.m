@@ -13,6 +13,8 @@
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORProgram/CPMultiStartSolver.h>
+#import <ORProgram/CPBaseHeuristic.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 
@@ -64,6 +66,10 @@
 -(CPSolver*)dereference
 {
    return _solver[[NSThread threadID]];
+}
+-(void)  restartHeuristics
+{
+   [[self dereference] restartHeuristics];
 }
 -(id<CPPortal>) portal
 {

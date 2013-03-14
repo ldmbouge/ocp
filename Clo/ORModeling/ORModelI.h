@@ -11,7 +11,7 @@
 
 #import <ORModeling/ORModeling.h>
 
-@interface ORModelI : ORModelingObjectI<ORModel>
+@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel>
 -(ORModelI*)              initORModelI;
 -(void)                   dealloc;
 -(NSString*)              description;
@@ -30,12 +30,17 @@
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
+-(void) addVariable:(id<ORVar>) var;
+-(void )addObject:(id) object;
+-(void) addConstraint:(id<ORConstraint>) cstr;
+-(void) minimize:(id<ORIntVar>) x;
+-(void) maximize:(id<ORIntVar>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
--(ORBatchModel*)init: (ORModelI*) model;
+-(ORBatchModel*)init: (id<ORModel>) model;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
 -(void) addConstraint: (id<ORConstraint>) cstr;

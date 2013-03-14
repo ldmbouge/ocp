@@ -161,7 +161,7 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 {
    @synchronized(self) {
       ORClosure cl = nil;
-      while ((cl = EvtdeQueue(_queue)) != nil) {
+      while ((cl = EvtdeQueue(_queue)) != (ORClosure)nil) {
          cl();
          Block_release(cl);      
       }

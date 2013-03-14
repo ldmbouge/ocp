@@ -330,7 +330,10 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveValue <ORObject>
+-(ORInt)value;
 -(ORFloat)key;
+-(ORInt)primal;
+-(void)updateWith:(id<ORObjectiveValue>)other;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -348,7 +351,7 @@ enum ORGroupType {
 
 @protocol ORASolver <NSObject,ORTracker>
 -(id<ORObjective>)    objective;
--(ORStatus)           close;
+-(void)               close;
 -(id<OREngine>)       engine;
 -(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
 -(id<ORSolutionPool>) globalSolutionPool;    // Solution pool for parallel computing (to use internally)

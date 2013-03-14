@@ -44,6 +44,7 @@
    _priority = prio;
    return self;
 }
+
 -(void)dealloc
 {
    //NSLog(@"CPEventNode::dealloc] %p\n",self);
@@ -51,6 +52,7 @@
    [_node release];
    [super dealloc];
 }
+
 -(id)trigger
 {
    return _trigger;

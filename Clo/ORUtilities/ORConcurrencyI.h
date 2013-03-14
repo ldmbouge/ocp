@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORConcurrency.h"
-#import "ORUtilities/ORTypes.h"
+#import <ORUtilities/ORConcurrency.h>
+#import <ORUtilities/ORTypes.h>
 
 @interface ORBarrierI : NSObject<ORBarrier> {
     ORInt _nb;

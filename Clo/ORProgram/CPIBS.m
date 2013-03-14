@@ -16,6 +16,10 @@
 #import <objcp/CPVar.h>
 #import "CPConcretizer.h"
 
+#if defined(__linux__)
+#import <values.h>
+#endif
+
 @interface CPKillRange : NSObject {
 @package
    ORInt _low;

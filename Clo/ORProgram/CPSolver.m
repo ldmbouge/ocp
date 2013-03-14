@@ -14,12 +14,18 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORFlatten.h>
+#import <ORProgram/ORProgram.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
+#import <objcp/CPBitVar.h>
+
 #import "CPProgram.h"
 #import "CPSolver.h"
-#import <objcp/CPBitVar.h>
 #import "CPConcretizer.h"
+
+#if defined(__linux__)
+#import <values.h>
+#endif
 
 // to do 23/12/2012
 //
@@ -203,6 +209,11 @@
 {
    [_hSet push: h];
 }
+-(void) restartHeuristics
+{
+  [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h restart];} with:[_engine variables]];
+}
+
 -(void) onSolution: (ORClosure) onSolution
 {
    [_doOnSolArray addObject: [onSolution copy]];
@@ -432,9 +443,12 @@
                                           return rv;
                                        }];
    id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   id<ORRandomStream> valStream = [ORCrFactory randomStream];
    [_trail trailClosure:^{
       free(last);
+      [valStream release];
    }];
+   
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
@@ -450,6 +464,35 @@
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
       [failStamp setValue:[_search nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORInt low = [x min];
+      ORInt up  = [x max];
+      ORInt bestIndex = low - 1;
+      for(ORInt v = low;v <= up;v++) {
+        if ([x member:v]) {
+          ORFloat vValue = [h valOrdering:v forVar:x];
+          if (vValue > bestValue) {
+            bestValue = vValue;
+            bestIndex = v;
+            bestRand  = [valStream next];
+          } else if (vValue == bestValue) {
+            ORLong rnd = [valStream next];
+            if (rnd < bestRand) {
+              bestIndex = v;
+              bestRand = rnd;
+            }
+          }
+        }
+      }
+      if (bestIndex != low - 1)  {
+        [self try: ^{
+          [self label: x with: bestIndex];
+        } or: ^{
+           [self diff:x with: bestIndex];
+        }];
+      }
+      /*
       id<ORSelect> valSelect = [ORFactory select: _engine
                                            range:RANGE(_engine,[x min],[x max])
                                         suchThat:^bool(ORInt v)    { return [x member:v];}
@@ -464,6 +507,7 @@
             [self diff: x with: curVal];
          }];
       } while(![x bound]);
+      */
    } while (true);
 }
 -(void) label: (id<ORIntVar>) mx

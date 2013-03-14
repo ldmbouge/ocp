@@ -100,7 +100,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     _name = name;
 }
--(ORUInt)getId
+-(ORInt)getId
 {
    return _name;
 }
@@ -167,7 +167,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return YES;
 }
--(bool)bound
+-(BOOL) bound
 {
    assert(_dom);
     return [_dom bound];
@@ -208,7 +208,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert(_dom);
    return [_dom countFrom:from to:to];
 }
--(bool)member:(ORInt)v
+-(BOOL)member:(ORInt)v
 {
    assert(_dom);
     return [_dom member:v];
@@ -239,7 +239,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(NSString*)description
 {
    id<CPDom> dom = [self domain];
-   NSMutableString* s = [[NSMutableString stringWithCapacity:64] autorelease];
+   NSMutableString* s = [NSMutableString stringWithCapacity:64];
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
@@ -421,7 +421,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -443,7 +443,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -463,7 +463,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -485,7 +485,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORStatus s = _recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._domEvt._val;
    k += mList[k] != NULL;
@@ -705,7 +705,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:1 shift:_b];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -725,7 +725,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    bnd.max += _b;
    return bnd;
 }
--(bool)member: (ORInt) v
+-(BOOL)member: (ORInt) v
 {
     return [_dom member:v-_b];
 }
@@ -836,7 +836,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:_a shift:_b];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -860,7 +860,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _a > 0 ? b.max * _a + _b : b.min * _a + _b
    };
 }
--(bool)member: (ORInt) v
+-(BOOL)member: (ORInt) v
 {
     ORInt r = (v - _b) % _a;
     if (r != 0) return NO;
@@ -1008,7 +1008,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:-1 shift:0];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -1025,7 +1025,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORBounds b = [_x bounds];
    return (ORBounds){-b.max,-b.min};
 }
--(bool)member:(ORInt)v
+-(BOOL)member:(ORInt)v
 {
    return [_x member:-v];
 }
@@ -1107,7 +1107,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:[self min] up:[self max]];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [self domsize]<= 1;
 }
@@ -1128,7 +1128,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       else return 1;
    }
 }
--(bool)member:(ORInt)val
+-(BOOL)member:(ORInt)val
 {
    ORInt lb = [_secondary min];
    ORInt ub = [_secondary max];
@@ -1343,8 +1343,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
-      _tab[toFix] = nil;
-      _loseValIMP[toFix] = nil;
+      _tab[toFix] = NULL;
+      _loseValIMP[toFix] = NULL;
+      _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
    ORInt nbBare = 0;
@@ -1384,8 +1385,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
    [theTrail trailClosure:^{
-      _tab[toFix] = nil;
-      _loseValIMP[toFix] = nil;
+      _tab[toFix] = NULL;
+      _loseValIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;
@@ -1427,6 +1428,9 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus)bindEvt:(id<CPDom>)sender
 {
+   // If _nb > 0 but the _tab entries are nil, this would inadvertently
+   // set ok to ORFailure which is wrong. Hence it is critical to also
+   // backtrack the size of the array in addVar.
    for(ORInt i=0;i<_nb;i++) {
        ORStatus ok = [_tab[i] bindEvt:sender];
       if (!ok) return ok;

@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 #import "ORObject.h"
 #import "ORData.h"
 #import "ORTracker.h"

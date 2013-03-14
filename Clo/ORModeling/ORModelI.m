@@ -9,7 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORError.h>
+#import <ORModeling/ORSolver.h>
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORSolver.H"
@@ -98,6 +100,20 @@
 -(id<ORSolution>) bestSolution
 {
    return [[self solutions] best];
+}
+
+-(void) addVariable:(id<ORVar>) var
+{
+   [self captureVariable: var];   
+}
+-(void )addObject:(id) object
+{
+   [self trackObject:object];
+}
+-(void) addConstraint:(id<ORConstraint>) cstr
+{
+   [self trackConstraint:cstr];
+   [self add: cstr];
 }
 -(void) restore: (id<ORSolution>) s
 {
@@ -237,7 +253,7 @@
 }
 -(void) addVariable: (id<ORVar>) var
 {
-   [_target captureVariable: var];
+   [_target addVariable: var];
 }
 -(void) addObject: (id) object
 {
@@ -273,6 +289,9 @@
    [_target trackConstraint: obj];
 }
 @end
+
+
+typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 @implementation ORBatchGroup {
    id<ORAddToModel>     _target;
@@ -333,7 +352,7 @@
    NSArray* av = [model variables];
    ORULong sz = [av count];
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
-   [av enumerateObjectsUsingBlock:^(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
       id<ORSavable> shot = [obj snapshot];
       if (shot)
          [snapshots addObject: shot];

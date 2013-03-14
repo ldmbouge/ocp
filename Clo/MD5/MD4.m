@@ -34,6 +34,12 @@
    return self;
 }
 
+-(void) dealloc
+{
+   [ORFactory shutdown];
+   [super dealloc];
+}
+
 -(bool) getMessage:(NSString *)fname
 {
    NSFileManager *fm;

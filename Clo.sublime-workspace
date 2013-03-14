@@ -7,14 +7,6 @@
 	},
 	"buffers":
 	[
-		{
-			"contents": "",
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"command_palette":
@@ -22,6 +14,66 @@
 		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"clang",
+				"SublimeClang: Clear cache"
+			],
+			[
+				"Sub",
+				"Set Syntax: SublimeClangErrorPanel"
+			],
+			[
+				"sub",
+				"Preferences: SublimeClang Settings – Default"
+			],
+			[
+				"subl",
+				"Preferences: SublimeClang Settings – User"
+			],
+			[
+				"Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Upgrade",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Upgr",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"upd",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"upgra",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"git",
+				"Git: Status"
+			],
+			[
+				"git stat",
+				"Git: Status"
+			],
 			[
 				"reindent",
 				"Indentation: Reindent Lines"
@@ -35,11 +87,11 @@
 				"Package Control: Install Package"
 			]
 		],
-		"width": 437.0
+		"width": 449.0
 	},
 	"console":
 	{
-		"height": 139.0
+		"height": 303.0
 	},
 	"distraction_free":
 	{
@@ -52,6 +104,25 @@
 	},
 	"file_history":
 	[
+		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.m",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPGroup.h",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORModelI.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.m",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.h",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORModel.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORVar.h",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.m",
+		"/Users/ldm/work/platform/Clo.sublime-project",
+		"/Users/ldm/Documents/courses/CSE4100/tex/hw2.tex",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/SublimeClang/SublimeClang.sublime-settings",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPAC3Event.h",
 		"/Users/ldm/.bashrc",
 		"/Users/ldm/Desktop/script.py",
 		"/Users/ldm/Desktop/histo.history",
@@ -73,6 +144,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"CPBitAdd",
+			"Add",
+			"ORIntVar",
+			"ORSumBoolGEqc",
+			"{}\n",
+			" \n",
+			"	",
+			"\n",
+			"flattenExpression",
+			"flatten:",
+			"sum:",
+			"scaledViews:",
+			"oneView",
+			"affine",
+			"Affine",
+			"affine",
+			"affineVar",
+			"AFFineVar",
 			"|",
 			"nobtf",
 			"breaks",
@@ -97,45 +186,18 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"auto_name": "",
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 0.0
+		"height": 34.0
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -160,13 +222,21 @@
 		]
 	},
 	"menu_visible": true,
+	"output.clang":
+	{
+		"height": 100.0
+	},
+	"output.clang_static_analyzer":
+	{
+		"height": 0.0
+	},
 	"output.exec":
 	{
 		"height": 116.0
 	},
 	"replace":
 	{
-		"height": 0.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -174,6 +244,30 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"bitcon",
+				"objcp/CPBitConstraint.m"
+			],
+			[
+				"orflatte",
+				"ORModeling/ORFlatten.h"
+			],
+			[
+				"ormodeli",
+				"ORFoundation/ORModelI.h"
+			],
+			[
+				"orfact",
+				"ORFoundation/ORFactory.m"
+			],
+			[
+				"ordecom",
+				"ORModeling/ORDecompose.m"
+			],
+			[
+				"orflatt",
+				"ORModeling/ORFlatten.m"
+			]
 		],
 		"width": 0.0
 	},
@@ -189,6 +283,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 192.0,
 	"status_bar_visible": true
 }

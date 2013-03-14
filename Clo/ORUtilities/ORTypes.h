@@ -62,7 +62,7 @@ typedef struct ORBounds {
 } ORBounds;
 
 @protocol IntEnumerator <NSObject>
--(bool) more;
+-(BOOL) more;
 -(ORInt) next;
 @end
 

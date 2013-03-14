@@ -18,7 +18,8 @@
 @class CPCoreConstraint;
 
 #define NBPRIORITIES ((ORInt)8)
-#define LOWEST_PRIO  ((ORInt)0)
+#define ALWAYS_PRIO  ((ORInt)0)
+#define LOWEST_PRIO  ((ORInt)1)
 #define HIGHEST_PRIO ((ORInt)7)
 
 @protocol CPEngine <OREngine>

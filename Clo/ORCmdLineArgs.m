@@ -76,7 +76,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
           randomized,
           nbThreads,
           size,
-          run.found ? 1 : 0,
+          run.found,
           restartRate,
           run.nbFailures,
           run.nbChoices,

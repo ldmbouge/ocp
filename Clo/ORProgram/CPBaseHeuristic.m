@@ -12,8 +12,8 @@
 #import <ORUtilities/ORUtilities.h>
 #import "CPBaseHeuristic.h"
 #import <objcp/CPVar.h>
-@implementation CPBaseHeuristic
 
+@implementation CPBaseHeuristic
 -(void) initHeuristic: (NSMutableArray*) array
 {
    __block ORUInt nbViews = 0;
@@ -35,6 +35,26 @@
 -(void) initInternal: (id<ORVarArray>) t
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];      
+}
+-(ORFloat) varOrdering: (id<ORIntVar>)x
+{
+   return 0.0;
+}
+-(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+{
+   return 0.0;
+}
+-(void) restart
+{
+   NSLog(@"Restart of based heuristic called... Nothing to do.");
+}
+-(id<ORIntVarArray>) allIntVars
+{
+   return nil;
+}
+-(id<CPProgram>)solver
+{
+   return nil;
 }
 @end
 
@@ -77,9 +97,14 @@
 {
    return [_binding[[NSThread threadID]] allIntVars];
 }
--(id<CPCommonProgram>)solver
+-(id<CPProgram>)solver
 {
    id<CPHeuristic> h = _binding[[NSThread threadID]];
    return [h solver];
+}
+-(void) restart
+{
+   id<CPHeuristic> h = _binding[[NSThread threadID]];
+   return [h restart];
 }
 @end

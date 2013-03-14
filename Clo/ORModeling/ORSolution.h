@@ -11,8 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
-#import "ORConcurrency.h"
-#import <ORFoundation/ORVar.h>
 
 @protocol ORSolution <ORObject>
 -(id<ORSnapshot>) value:(id)var;

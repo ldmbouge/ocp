@@ -95,7 +95,7 @@ BOOL refresh(CPVarInfo* vi)
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
       _varInfo[nbW++] = vInfo; // [ldm] vInfo is in the _varInfo dico with refcnt = 1 from here on.
       [obj whenChangeDo: ^ { makeVarActive(vInfo);}
-               priority: LOWEST_PRIO+1
+               priority: ALWAYS_PRIO
                onBehalf: self]; 
    }
    [[_engine propagateDone] wheneverNotifiedDo:^{
@@ -114,6 +114,14 @@ BOOL refresh(CPVarInfo* vi)
       NSLog(@"Monitor was notified of propagDONE: %d - %@",_nbActive,buf);
       [buf release];
        */
+   }];
+   [[_engine propagateFail] wheneverNotifiedDo: ^{
+      _nbActive = 0;
+      for(ORUInt i=0;i<_nbVI;i++) {
+         CPVarInfo* vInfo = _varInfo[i];
+         if (refresh(vInfo))
+            _curActive[_nbActive++] = vInfo;
+      }      
    }];
    return ORSuspend;
 }

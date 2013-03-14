@@ -99,7 +99,7 @@
 }
 
 -(void) createMD5Block:(ORUInt*)data withCount:(uint64)count andMask:(uint32*)messageMask{
-   uint32 numBits, numBytes;
+   uint64 numBits, numBytes;
    uint32 mask;
    ORUInt      paddedData[16];
    MD5Block* newBlock;
@@ -119,7 +119,7 @@
       unsigned char *XX = (unsigned char*)paddedData;
       /* Copy X into XX since we need to modify it */
       for (int i=0;i<=numBytes;i++)   XX[i] = X[i];
-      for (int i=numBytes+1;i<64;i++) XX[i] = 0;
+      for (uint64 i=numBytes+1;i<64;i++) XX[i] = 0;
       /* Add padding '1' bit and low-order zeros in last byte */
       mask = 1 << (7 - numBits);
       XX[numBytes] = (XX[numBytes] | mask) & ~( mask - 1);
@@ -147,10 +147,15 @@
    
 }
 
--(void) preimage:(NSString*)filename withMask:(uint32*) mask
+-(NSString*) preimage:(NSString*)filename withMask:(uint32*) mask
 {
+   clock_t start;
+   NSMutableString *results = [NSMutableString stringWithString:@""];
+
    id<ORBitVar>* digest;
    id<ORBitVar>* digestVars = malloc(4*sizeof(id<ORBitVar>));
+
+   start = clock();
    
    [self getMessage:filename];
    [self getMD5Digest:filename];
@@ -182,6 +187,9 @@
    
    
    id<CPProgram,CPBV> cp = [ORFactory createCPProgram: _m];
+   id<CPEngine> engine = [cp engine];
+   id<ORExplorer> explorer = [cp explorer];
+
    [cp solve: ^() {
       @try {
 //         fflush(stderr);
@@ -200,6 +208,7 @@
          }
          NSLog(@"Message Blocks (With Data Recovered)");
          //         id<ORBitVar>* bitVars;
+         clock_t searchStart = clock();
          for(int i=0; i<_numBlocks;i++){
             bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
             for(int j=0;j<16;j++){
@@ -207,6 +216,8 @@
                NSLog(@"%@\n",bitVars[j]);
             }
          }
+         clock_t searchFinish = clock();
+
          //         NSLog(@"Temporary Variables:\n");
          //         for(int i=0;i<[_temps count];i++)
          //         {
@@ -225,6 +236,20 @@
             NSLog(@"%@",digest[i]);
             NSLog(@"%@\n\n",digestVars[i]);
          }
+         double totalTime, searchTime;
+         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+         
+         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
+         [results appendString:str];
+         
+         NSLog(@"Number propagations: %d",[engine nbPropagation]);
+         NSLog(@"     Number choices: %d",[explorer nbChoices]);
+         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
+         NSLog(@"    Search Time (s): %f",searchTime);
+         NSLog(@"     Total Time (s): %f\n\n",totalTime);
+         
+
       }
       @catch (NSException *exception) {
          
@@ -232,7 +257,7 @@
          
       }
    }];
-   
+   return results;
 }
 -(id<ORBitVar>*) stateModel
 {

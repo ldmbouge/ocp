@@ -62,6 +62,7 @@ enum CPEngineState {
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;
 -(ORStatus)  enforce:(Void2ORStatus)cl;
+-(ORStatus)  atomic:(Void2ORStatus)cl;
 -(NSMutableArray*) variables;
 -(NSMutableArray*) constraints;
 -(NSMutableArray*) objects;

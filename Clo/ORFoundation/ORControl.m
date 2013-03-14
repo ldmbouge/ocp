@@ -12,7 +12,10 @@
 #import "ORTracker.h"
 #import "ORFactory.h"
 #import "ORControl.h"
-
+#import <math.h>
+#if defined(__linux__)
+#import <values.h>
+#endif
 
 
 @interface ORForallI : NSObject <ORForall>

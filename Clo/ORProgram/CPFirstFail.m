@@ -11,7 +11,6 @@
 
 #import "CPFirstFail.h"
 #import "CPEngine.h"
-#import "CPIntVarI.h"
 
 @implementation CPFirstFail {
    id<CPEngine>    _engine;

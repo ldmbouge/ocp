@@ -447,6 +447,11 @@ ORStatus propagateFDM(CPEngineI* fdm)
             done = p < LOWEST_PRIO;
          }
       }
+      while (ISLOADED(ac3[ALWAYS_PRIO])) {
+         ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
+         nbp += as != ORSkip;
+         assert(as != ORFailure);
+      }
       if (fdm->_propagDone)
          [fdm->_propagDone notify];
       fdm->_status = status;
@@ -455,6 +460,11 @@ ORStatus propagateFDM(CPEngineI* fdm)
       return status;
    }
    @catch (ORFailException *exception) {
+      while (ISLOADED(ac3[ALWAYS_PRIO])) {
+         ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
+         nbp += as != ORSkip;
+         assert(as != ORFailure);
+      }
       for(ORInt p=NBPRIORITIES-1;p>=0;--p)
          AC3reset(ac3[p]);
       AC5reset(ac5);
@@ -560,7 +570,11 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
          }];
       }
    } @catch (ORFailException* ex) {
+#if defined(__linux__)      
+      [ex release];
+#else
       CFRelease(ex);
+#endif
       _status = ORFailure;
    }
    return _status;
@@ -606,6 +620,21 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       _status = internalPropagate(self,status);
    } @catch (ORFailException *exception) {
       [exception release];
+      _status = ORFailure;
+   }
+   return _status;
+}
+-(ORStatus) atomic:(Void2ORStatus)cl
+{
+   ORInt oldPropag = _propagating;
+   @try {
+      _propagating++;
+      ORStatus status = cl();
+      _propagating--;
+      _status = internalPropagate(self,status);
+   } @catch (ORFailException* exception) {
+      [exception release];
+      _propagating = oldPropag;
       _status = ORFailure;
    }
    return _status;

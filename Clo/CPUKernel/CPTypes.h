@@ -11,6 +11,11 @@
 
 #import <ORFoundation/ORFoundation.h>
 
+#if defined(__linux__)
+ #define TRUE 1
+ #define FALSE 0
+#endif
+
 @protocol CPSolver;
 
 typedef ORStatus(*UBType)(id,SEL,...);

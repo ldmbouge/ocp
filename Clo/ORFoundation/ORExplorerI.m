@@ -85,7 +85,7 @@
    _nbf++;
    //[_engine clearStatus];
    [_controller._val fail];
-   assert(FALSE);
+   assert(0);
 }
 
 -(void) try: (ORClosure) left or: (ORClosure) right

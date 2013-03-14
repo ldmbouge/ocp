@@ -12,7 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
-#import <ORModeling/ORLinear.h>
+#import "ORLinear.h"
 
 @interface ORLPNormalizer : NSObject<ORVisitor>
 +(ORLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;

@@ -56,7 +56,7 @@
 }
 -(NSUInteger)hash
 {
-   return _name << 16 + _value;
+   return (_name << 16) + _value;
 }
 -(NSString*)description
 {   
@@ -410,12 +410,12 @@
 }
 -(id) snapshot  // [ldm] to fix
 {
-   assert(FALSE);
+   assert(0);
    return nil;
 }
 -(void)restore:(id<ORSnapshot>)s  // [ldm] to fix
 {
-   assert(FALSE);
+   assert(0);
 }
 
 -(ORFloat) value
@@ -500,7 +500,7 @@
 {
    _name = vid;
 }
--(ORUInt) getId
+-(ORInt) getId
 {
    return _name;
 }
@@ -516,7 +516,7 @@
 {
    return _bLen;
 }
--(bool) bound
+-(BOOL) bound
 {
    if (_impl)
       return [[_impl dereference] bound];
