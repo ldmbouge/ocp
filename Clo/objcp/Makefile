@@ -1,12 +1,14 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = ~/clang32/bin/clang
+#OC = ~ldm/clang32/bin/clang
+OC = clang
+GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I/usr/GNUstep/System/Library/Headers -I. -I.. -I../CPUKernel \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
-LFLAGS = -L/usr/GNUstep/System/Library/Libraries $(USER_DEFINES) \
+LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
 	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
 	-lORUtilities -lORFoundation -lCPUKernel \
 	-lgnustep-base -lobjc 
@@ -36,7 +38,7 @@ $(LIBNAME): $(OFILES)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

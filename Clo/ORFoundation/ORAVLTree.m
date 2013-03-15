@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "ORAVLTree.h"
-#import "ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 #import "ORError.h"
 
 @interface ORAVLTreeIterator : NSEnumerator {
