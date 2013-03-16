@@ -3,76 +3,264 @@
 	{
 		"selected_items":
 		[
+			[
+				"ORObjec",
+				"ORObjectiveFunction	"
+			],
+			[
+				"import",
+				"import <header>	"
+			],
+			[
+				"forall",
+				"forall:(id<ORIntIterator>) orderedBy:^ORInt(ORInt)o do:^(ORInt)b	void"
+			],
+			[
+				"obj",
+				"objects	NSArray *"
+			],
+			[
+				"ORSolu",
+				"ORSolutionPool	"
+			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "Clo/ORModeling/ORSolution.h",
+			"settings":
+			{
+				"buffer_size": 859,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORModeling/ORLinearize.m",
+			"settings":
+			{
+				"buffer_size": 10777,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/ORModelI.m",
+			"settings":
+			{
+				"buffer_size": 45601,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORModeling/ORModelI.h",
+			"settings":
+			{
+				"buffer_size": 2637,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORModeling/ORModelI.m",
+			"settings":
+			{
+				"buffer_size": 11165,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORModeling/ORModelTransformation.m",
+			"settings":
+			{
+				"buffer_size": 9397,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPABS.m",
+			"settings":
+			{
+				"buffer_size": 21031,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPFirstFail.m",
+			"settings":
+			{
+				"buffer_size": 1314,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPSolver.m",
+			"settings":
+			{
+				"buffer_size": 32113,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPDDeg.m",
+			"settings":
+			{
+				"buffer_size": 1905,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPIBS.m",
+			"settings":
+			{
+				"buffer_size": 10065,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPWDeg.m",
+			"settings":
+			{
+				"buffer_size": 3004,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/ORProgramFactory.m",
+			"settings":
+			{
+				"buffer_size": 5922,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/CPUKernel/CPEngineI.m",
+			"settings":
+			{
+				"buffer_size": 16814,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/LPSolver.m",
+			"settings":
+			{
+				"buffer_size": 1076,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/LPConcretizer.m",
+			"settings":
+			{
+				"buffer_size": 40319,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/Makefile",
+			"settings":
+			{
+				"buffer_size": 844,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORModeling/Makefile",
+			"settings":
+			{
+				"buffer_size": 817,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/Makefile",
+			"settings":
+			{
+				"buffer_size": 1073,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/CPUKernel/Makefile",
+			"settings":
+			{
+				"buffer_size": 769,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/objcp/Makefile",
+			"settings":
+			{
+				"buffer_size": 1201,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/Makefile",
+			"settings":
+			{
+				"buffer_size": 973,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/queens2/Makefile",
+			"settings":
+			{
+				"buffer_size": 789,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORUtilities/Makefile",
+			"settings":
+			{
+				"buffer_size": 757,
+				"line_ending": "Unix"
+			}
+		}
 	],
-	"build_system": "",
+	"build_system": "Packages/Makefile/Make.sublime-build",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 75.0,
 		"selected_items":
 		[
+			[
+				"comment",
+				"Toggle Block Comment"
+			],
+			[
+				"enable",
+				"Package Control: Enable Package"
+			],
+			[
+				"pack",
+				"Package Control: Disable Package"
+			],
 			[
 				"install",
 				"Package Control: Install Package"
 			],
 			[
-				"clang",
-				"SublimeClang: Clear cache"
-			],
-			[
-				"Sub",
-				"Set Syntax: SublimeClangErrorPanel"
-			],
-			[
-				"sub",
-				"Preferences: SublimeClang Settings – Default"
-			],
-			[
-				"subl",
-				"Preferences: SublimeClang Settings – User"
-			],
-			[
-				"Instal",
+				"Install ",
 				"Package Control: Install Package"
 			],
 			[
-				"Upgrade",
-				"Package Control: Upgrade Package"
+				"ctags",
+				"CTags: Rebuild Tags"
 			],
 			[
-				"Upgr",
-				"Package Control: Upgrade Package"
+				"cta",
+				"CTags: Show Symbols (file)"
 			],
 			[
-				"Add re",
-				"Package Control: Add Repository"
+				"toggl",
+				"Toggle Block Comment"
 			],
 			[
-				"remove",
-				"Package Control: Remove Package"
-			],
-			[
-				"upd",
-				"Package Control: Upgrade Package"
-			],
-			[
-				"disabl",
-				"Package Control: Disable Package"
-			],
-			[
-				"upgra",
-				"Package Control: Upgrade Package"
-			],
-			[
-				"git",
-				"Git: Status"
-			],
-			[
-				"git stat",
-				"Git: Status"
+				"View",
+				"View: Toggle Open Files in Side Bar"
 			],
 			[
 				"reindent",
@@ -91,7 +279,7 @@
 	},
 	"console":
 	{
-		"height": 303.0
+		"height": 139.0
 	},
 	"distraction_free":
 	{
@@ -104,25 +292,76 @@
 	},
 	"file_history":
 	[
-		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.m",
-		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.h",
-		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.h",
-		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.m",
-		"/Users/ldm/work/platform/Clo/CPUKernel/CPGroup.h",
-		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
-		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.h",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORModelI.h",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.h",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.m",
-		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.h",
-		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.m",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORModel.h",
-		"/Users/ldm/work/platform/Clo/ORFoundation/ORVar.h",
-		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.m",
+		"/home/ldm/work/platform/Clo/ORUtilities/Makefile",
+		"/home/ldm/work/platform/Clo/ORUtilities/ORConcurrency.h",
+		"/home/ldm/work/platform/Clo/ORUtilities/ORConcurrencyI.h",
+		"/home/ldm/work/platform/Clo/ORUtilities/ORConcurrencyI.m",
+		"/home/ldm/work/platform/Clo/objcp/CPIntVarI.h",
+		"/home/ldm/work/platform/Clo/ORUtilities/ORMallocWatch.h",
+		"/home/ldm/work/platform/Clo/ORFoundation/Makefile",
+		"/home/ldm/work/platform/Clo/ORUtilities/ORTypes.h",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORAVLTree.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORControl.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORControl.h",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORExprI.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORCommand.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORDataI.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORExplorerI.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORFactory.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORSelectorI.m",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORVarI.m",
+		"/home/ldm/work/platform/Clo/Makefile",
+		"/home/ldm/work/platform/Clo/ORProgram/Makefile",
+		"/home/ldm/work/platform/Clo/CPUKernel/Makefile",
+		"/home/ldm/work/platform/Clo/CPUKernel/CPGroup.m",
+		"/home/ldm/work/platform/Clo/CPUKernel/CPTypes.m",
+		"/home/ldm/work/platform/Clo/ORProgram/CPABS.m",
+		"/home/ldm/work/platform/Clo/CPUKernel/CPEngineI.m",
+		"/home/ldm/work/platform/Clo/objcp/Makefile",
+		"/home/ldm/work/platform/Clo/objcp/CPFactory.m",
+		"/home/ldm/work/platform/Clo/objcp/CPTableI.h",
+		"/home/ldm/work/platform/Clo/objcp/CPAllDifferentDC.m",
+		"/home/ldm/work/platform/Clo/objcp/CPConstraint.m",
+		"/home/ldm/work/platform/Clo/objcp/CPEvent.m",
+		"/home/ldm/work/platform/Clo/objcp/CPKnapsack.m",
+		"/home/ldm/work/platform/Clo/CPUKernel/CPTypes.h",
+		"/home/ldm/work/platform/Clo/objcp/CPElement.m",
+		"/home/ldm/work/platform/Clo/objcp/CPIntVarI.m",
+		"/home/ldm/work/platform/Clo/objcp/CPBasicConstraint.m",
+		"/home/ldm/work/platform/Clo/objcp/CPBasicConstraint.h",
+		"/home/ldm/work/platform/Clo/ORModeling/ORModeling.h",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORArrayI.h",
+		"/home/ldm/work/platform/Clo/ORFoundation/ORFoundation.h",
+		"/Users/ldm/work/platform/Clo/Clo/Clo.xcodeproj/project.pbxproj",
+		"/Users/ldm/work/platform/Clo/Clo.xcodeproj/project.pbxproj",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORTracer.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.m",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.h",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngine.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORConcretizer.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORConcretizer.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPConcretizer.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPProgramI.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPMultiStartSolver.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPSolverI.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPCreateI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPCreateI.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPParallel.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPParallel.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPProgram.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORParCPConcretizer.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORParCPConcretizer.h",
+		"/Users/ldm/work/RComet/compiler/benchcp/queens.co",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorer.h",
 		"/Users/ldm/work/platform/Clo.sublime-project",
-		"/Users/ldm/Documents/courses/CSE4100/tex/hw2.tex",
-		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/SublimeClang/SublimeClang.sublime-settings",
-		"/Users/ldm/work/platform/Clo/CPUKernel/CPAC3Event.h",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
 		"/Users/ldm/.bashrc",
 		"/Users/ldm/Desktop/script.py",
 		"/Users/ldm/Desktop/histo.history",
@@ -137,6 +376,7 @@
 		"height": 0.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
@@ -144,24 +384,41 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"CPBitAdd",
-			"Add",
-			"ORIntVar",
-			"ORSumBoolGEqc",
-			"{}\n",
-			" \n",
-			"	",
+			"-rpath",
+			"LPSolverI",
+			"CFRelease",
+			"ORObjective",
+			"MAXFLOAT",
+			"ORFoundation",
+			"EvtdeQueue",
+			"EvtDeQueue",
+			"ORUtilities",
+			" \"",
+			"CFLAGS",
+			"<0,",
+			"<<<<",
+			"CPSemanticProgram",
+			"CPSemSolver",
 			"\n",
-			"flattenExpression",
-			"flatten:",
-			"sum:",
-			"scaledViews:",
-			"oneView",
-			"affine",
-			"Affine",
-			"affine",
-			"affineVar",
-			"AFFineVar",
+			"CPSemSolver",
+			"CPSemanticSolver",
+			"CPParallelAdapter",
+			"ORExplorer",
+			"controllerFactory",
+			"installProblem",
+			"ORControllerFactory",
+			"controllerFactory",
+			"installProblem",
+			"install",
+			"SemTracer",
+			"return",
+			"_solver[k]",
+			"return",
+			"_solver[k]",
+			"multiStart",
+			"addModel",
+			"CPMultiStartSolver",
+			"MultiSartSolver",
 			"|",
 			"nobtf",
 			"breaks",
@@ -186,8 +443,659 @@
 	"groups":
 	[
 		{
+			"selected": 4,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Clo/ORModeling/ORSolution.h",
+					"settings":
+					{
+						"buffer_size": 859,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								739,
+								739
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Clo/ORModeling/ORLinearize.m",
+					"settings":
+					{
+						"buffer_size": 10777,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								676,
+								676
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Clo/ORFoundation/ORModelI.m",
+					"settings":
+					{
+						"buffer_size": 45601,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1433,
+								1433
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2657.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Clo/ORModeling/ORModelI.h",
+					"settings":
+					{
+						"buffer_size": 2637,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Clo/ORModeling/ORModelI.m",
+					"settings":
+					{
+						"buffer_size": 11165,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6095,
+								6095
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5798.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Clo/ORModeling/ORModelTransformation.m",
+					"settings":
+					{
+						"buffer_size": 9397,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								736,
+								736
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "Clo/ORProgram/CPABS.m",
+					"settings":
+					{
+						"buffer_size": 21031,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								809,
+								809
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Clo/ORProgram/CPFirstFail.m",
+					"settings":
+					{
+						"buffer_size": 1314,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								747,
+								747
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 51.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "Clo/ORProgram/CPSolver.m",
+					"settings":
+					{
+						"buffer_size": 32113,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								816,
+								816
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "Clo/ORProgram/CPDDeg.m",
+					"settings":
+					{
+						"buffer_size": 1905,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								723,
+								723
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "Clo/ORProgram/CPIBS.m",
+					"settings":
+					{
+						"buffer_size": 10065,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								663,
+								663
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "Clo/ORProgram/CPWDeg.m",
+					"settings":
+					{
+						"buffer_size": 3004,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								753,
+								753
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "Clo/ORProgram/ORProgramFactory.m",
+					"settings":
+					{
+						"buffer_size": 5922,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								896,
+								896
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "Clo/CPUKernel/CPEngineI.m",
+					"settings":
+					{
+						"buffer_size": 16814,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								13479,
+								13479
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 9270.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "Clo/ORProgram/LPSolver.m",
+					"settings":
+					{
+						"buffer_size": 1076,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								785,
+								785
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "Clo/ORProgram/LPConcretizer.m",
+					"settings":
+					{
+						"buffer_size": 40319,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								874,
+								874
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 44.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "Clo/Makefile",
+					"settings":
+					{
+						"buffer_size": 844,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								449,
+								449
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "Clo/ORModeling/Makefile",
+					"settings":
+					{
+						"buffer_size": 817,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								209,
+								209
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "Clo/ORFoundation/Makefile",
+					"settings":
+					{
+						"buffer_size": 1073,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								226,
+								226
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 19,
+					"file": "Clo/CPUKernel/Makefile",
+					"settings":
+					{
+						"buffer_size": 769,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								226,
+								226
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 20,
+					"file": "Clo/objcp/Makefile",
+					"settings":
+					{
+						"buffer_size": 1201,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								225,
+								225
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 21,
+					"file": "Clo/ORProgram/Makefile",
+					"settings":
+					{
+						"buffer_size": 973,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								224,
+								224
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 22,
+					"file": "Clo/queens2/Makefile",
+					"settings":
+					{
+						"buffer_size": 789,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								212,
+								212
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 23,
+					"file": "Clo/ORUtilities/Makefile",
+					"settings":
+					{
+						"buffer_size": 757,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								757,
+								757
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -197,7 +1105,7 @@
 	},
 	"input":
 	{
-		"height": 31.0
+		"height": 0.0
 	},
 	"layout":
 	{
@@ -224,11 +1132,7 @@
 	"menu_visible": true,
 	"output.clang":
 	{
-		"height": 100.0
-	},
-	"output.clang_static_analyzer":
-	{
-		"height": 0.0
+		"height": 112.0
 	},
 	"output.exec":
 	{
@@ -245,28 +1149,336 @@
 		"selected_items":
 		[
 			[
-				"bitcon",
-				"objcp/CPBitConstraint.m"
-			],
-			[
-				"orflatte",
-				"ORModeling/ORFlatten.h"
-			],
-			[
 				"ormodeli",
-				"ORFoundation/ORModelI.h"
+				"ORModeling/ORModelI.m"
 			],
 			[
-				"orfact",
+				"ormodeli.m",
+				"ORFoundation/ORModelI.m"
+			],
+			[
+				"oruti/mak",
+				"ORUtilities/Makefile"
+			],
+			[
+				"orpro/make",
+				"ORProgram/Makefile"
+			],
+			[
+				"objcp/mak",
+				"objcp/Makefile"
+			],
+			[
+				"modeling/mak",
+				"ORModeling/Makefile"
+			],
+			[
+				"puk/mak",
+				"CPUKernel/Makefile"
+			],
+			[
+				"ormod/make",
+				"ORModeling/Makefile"
+			],
+			[
+				"orfoun/mak",
+				"ORFoundation/Makefile"
+			],
+			[
+				"makef",
+				"Makefile"
+			],
+			[
+				"queens2/make",
+				"queens2/Makefile"
+			],
+			[
+				"lpsolver.m",
+				"ORProgram/LPSolver.m"
+			],
+			[
+				"lpconcre",
+				"ORProgram/LPConcretizer.m"
+			],
+			[
+				"cpabs",
+				"ORProgram/CPABS.m"
+			],
+			[
+				"",
+				"ORProgram/Makefile"
+			],
+			[
+				"lpsolver",
+				"ORProgram/LPSolver.m"
+			],
+			[
+				"orprogram/make",
+				"ORProgram/Makefile"
+			],
+			[
+				"cpenginei",
+				"CPUKernel/CPEngineI.m"
+			],
+			[
+				"orprogramfac",
+				"ORProgram/ORProgramFactory.m"
+			],
+			[
+				"cpwdeg",
+				"ORProgram/CPWDeg.m"
+			],
+			[
+				"cpibs",
+				"ORProgram/CPIBS.m"
+			],
+			[
+				"cpddeg",
+				"ORProgram/CPDDeg.m"
+			],
+			[
+				"cpsolver.m",
+				"ORProgram/CPSolver.m"
+			],
+			[
+				"cpfirst",
+				"ORProgram/CPFirstFail.m"
+			],
+			[
+				"orprogr/make",
+				"ORProgram/Makefile"
+			],
+			[
+				"queens2",
+				"queens2/Makefile"
+			],
+			[
+				"makefile",
+				"Makefile"
+			],
+			[
+				"ormodeltr",
+				"ORModeling/ORModelTransformation.m"
+			],
+			[
+				"ormodeli.",
+				"ORModeling/ORModelI.m"
+			],
+			[
+				"orlinearize",
+				"ORModeling/ORLinearize.m"
+			],
+			[
+				"orsolutio",
+				"ORModeling/ORSolution.h"
+			],
+			[
+				"ormode/make",
+				"ORModeling/Makefile"
+			],
+			[
+				"ormodeling",
+				"ORModeling/ORModeling.h"
+			],
+			[
+				"cpbasiccon",
+				"objcp/CPBasicConstraint.h"
+			],
+			[
+				"cpbasicc",
+				"objcp/CPBasicConstraint.m"
+			],
+			[
+				"cpintvari.m",
+				"objcp/CPIntVarI.m"
+			],
+			[
+				"orfounda/orarrai.h",
+				"ORFoundation/ORArrayI.h"
+			],
+			[
+				"cpelement",
+				"objcp/CPElement.m"
+			],
+			[
+				"cptypes",
+				"CPUKernel/CPTypes.h"
+			],
+			[
+				"cpkna",
+				"objcp/CPKnapsack.m"
+			],
+			[
+				"cpevent.m",
+				"objcp/CPEvent.m"
+			],
+			[
+				"cpcons",
+				"objcp/CPConstraint.m"
+			],
+			[
+				"cpalldi",
+				"objcp/CPAllDifferentDC.m"
+			],
+			[
+				"make",
+				"objcp/Makefile"
+			],
+			[
+				"cpfac",
+				"objcp/CPFactory.m"
+			],
+			[
+				"cptablei",
+				"objcp/CPTableI.h"
+			],
+			[
+				"objcp/make",
+				"objcp/Makefile"
+			],
+			[
+				"cpuker/cpengine",
+				"CPUKernel/CPEngineI.m"
+			],
+			[
+				"orpro/mak",
+				"ORProgram/Makefile"
+			],
+			[
+				"cpgroup.m",
+				"CPUKernel/CPGroup.m"
+			],
+			[
+				"cpuker/make",
+				"CPUKernel/Makefile"
+			],
+			[
+				"orf/make",
+				"ORFoundation/Makefile"
+			],
+			[
+				"orut/make",
+				"ORUtilities/Makefile"
+			],
+			[
+				"orfoun/make",
+				"ORFoundation/Makefile"
+			],
+			[
+				"orvari.m",
+				"ORFoundation/ORVarI.m"
+			],
+			[
+				"orsele",
+				"ORFoundation/ORSelectorI.m"
+			],
+			[
+				"orfac",
 				"ORFoundation/ORFactory.m"
 			],
 			[
-				"ordecom",
-				"ORModeling/ORDecompose.m"
+				"orexp",
+				"ORFoundation/ORExplorerI.m"
 			],
 			[
-				"orflatt",
-				"ORModeling/ORFlatten.m"
+				"ordatai",
+				"ORFoundation/ORDataI.m"
+			],
+			[
+				"orcommand",
+				"ORFoundation/ORCommand.m"
+			],
+			[
+				"orexpri",
+				"ORFoundation/ORExprI.m"
+			],
+			[
+				"orfoundat/make",
+				"ORFoundation/Makefile"
+			],
+			[
+				"orexpri.m",
+				"ORFoundation/ORExprI.m"
+			],
+			[
+				"orcontrol.h",
+				"ORFoundation/ORControl.h"
+			],
+			[
+				"orcontrol.m",
+				"ORFoundation/ORControl.m"
+			],
+			[
+				"oravlt",
+				"ORFoundation/ORAVLTree.m"
+			],
+			[
+				"ortypes",
+				"ORUtilities/ORTypes.h"
+			],
+			[
+				"orfounda/make",
+				"ORFoundation/Makefile"
+			],
+			[
+				"malloc",
+				"ORUtilities/ORMallocWatch.h"
+			],
+			[
+				"orfounda",
+				"ORFoundation/ORFoundation.h"
+			],
+			[
+				"cpintvari",
+				"objcp/CPIntVarI.h"
+			],
+			[
+				"orconcurr",
+				"ORUtilities/ORConcurrencyI.m"
+			],
+			[
+				"orut/orconc",
+				"ORUtilities/ORConcurrencyI.h"
+			],
+			[
+				"oruti/orcon",
+				"ORUtilities/ORConcurrency.h"
+			],
+			[
+				"orutmake",
+				"ORUtilities/Makefile"
+			],
+			[
+				"cpsolver",
+				"ORProgram/CPSolver.h"
+			],
+			[
+				"cpengine",
+				"CPUKernel/CPEngineI.h"
+			],
+			[
+				"orconcre",
+				"ORProgram/ORConcretizer.h"
+			],
+			[
+				"orcpcon",
+				"ORProgram/CPConcretizer.m"
+			],
+			[
+				"cpprogram",
+				"ORProgram/CPProgramI.m"
+			],
+			[
+				"cpmulti",
+				"ORProgram/CPMultiStartSolver.m"
+			],
+			[
+				"orcp",
+				"ORProgram/ORParCPConcretizer.h"
+			],
+			[
+				"orcppar",
+				"ORProgram/ORCPParSolver.h"
 			]
 		],
 		"width": 0.0
@@ -280,9 +1492,9 @@
 		"width": 0.0
 	},
 	"show_minimap": true,
-	"show_open_files": false,
+	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 192.0,
+	"side_bar_width": 231.0,
 	"status_bar_visible": true
 }
