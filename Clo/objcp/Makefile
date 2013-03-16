@@ -5,7 +5,7 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel -msse4.1 \
 	-fPIC -fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
@@ -13,12 +13,16 @@ LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
 	-lORUtilities -lORFoundation -lCPUKernel \
 	-lgnustep-base -lobjc 
 
-SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m        CPConstraint.m  \
-	CPEvent.m    CPKnapsack.m           CPTableI.m CPAssignmentI.m      CPBitArray.m  \
-	CPCardinalityDC.m  CPElement.m     CPExprI.m    CPLexConstraint.m  CPValueConstraint.m \
-	CPBasicConstraint.m  CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
-	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m    \
-	CPCircuitI.m CPError.m  CPIntVarI.m  CPStatisticsMonitor.m 
+SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m CPConstraint.m  \
+	CPEvent.m  CPKnapsack.m CPTableI.m CPAssignmentI.m CPBitArray.m  \
+	CPCardinalityDC.m  CPElement.m     CPExprI.m    \
+	CPLexConstraint.m  CPValueConstraint.m \
+	CPBasicConstraint.m  CPFloatConstraint.m \
+	CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
+	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m \
+	CPFloatDom.m    \
+	CPCircuitI.m CPError.m  CPIntVarI.m CPFloatVarI.m \
+	CPStatisticsMonitor.m 
 
 #	./NSBoardController.m
 

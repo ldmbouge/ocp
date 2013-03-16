@@ -14,7 +14,7 @@
 #import <ORFoundation/ORFactory.h>
 #import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
-#import "ORSet.h"
+#import <ORFoundation/ORSet.h>
 
 
 @protocol ORModelTransformation;

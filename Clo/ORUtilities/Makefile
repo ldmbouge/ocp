@@ -3,7 +3,7 @@ GNUSTEP_MAKEFILES=/opt/kitkit-1.0-rc1/share/GNUstep/Makefiles
 
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
-CFLAGS = -I$(GNUstep)/include -I. -I.. -fPIC \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -fPIC -msse4.1 \
 	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
 LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES)
 

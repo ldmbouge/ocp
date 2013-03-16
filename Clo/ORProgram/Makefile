@@ -4,7 +4,7 @@
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
-CFLAGS = -I$(GNUstep)/include -I.. -I. -I../CPUKernel -fPIC \
+CFLAGS = -I$(GNUstep)/include -I.. -I. -I../CPUKernel -fPIC -msse4.1 \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
