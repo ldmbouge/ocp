@@ -20,6 +20,10 @@
 {
    return nil;
 }
+-(ORUInt)getId
+{
+   return 0;
+}
 -(ORInt) min
 {
    return 0;

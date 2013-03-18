@@ -690,6 +690,8 @@
 -(void)       trackObject: (id) obj;
 -(void)       trackVariable: (id) obj;
 -(void)       trackConstraint: (id) obj;
+-(void) compiling:(id<ORConstraint>)cstr;
+-(NSSet*)compiledMap;
 @end
 
 @implementation ORRTModel
@@ -742,6 +744,13 @@
 -(void) trackConstraint:(id) obj
 {
    [_solver trackConstraint:obj];
+}
+-(void) compiling:(id<ORConstraint>)cstr
+{
+}
+-(NSSet*)compiledMap
+{
+   return NULL;
 }
 @end
 

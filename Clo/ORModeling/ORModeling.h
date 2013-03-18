@@ -46,11 +46,13 @@
 -(void) addConstraint:(id<ORConstraint>) cstr;
 -(void) minimize:(id<ORIntVar>) x;
 -(void) maximize:(id<ORIntVar>) x;
+-(void) compiling:(id<ORConstraint>)cstr;
+-(NSSet*)compiledMap;
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel;
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
 +(id<ORModelTransformation>) createFlattener;
 +(id<ORModelTransformation>) createLPFlattener;
 +(id<ORModelTransformation>) createLinearizer;

@@ -30,6 +30,7 @@
 @end
 
 @protocol ORConstraint <ORObject>
+-(ORUInt)getId;
 @end
 
 enum ORGroupType {

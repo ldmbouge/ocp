@@ -68,6 +68,10 @@
 {
    _name = name;
 }
+-(ORUInt)getId
+{
+   return _name;
+}
 -(id<ORConstraint>)add:(id<ORConstraint>)c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
