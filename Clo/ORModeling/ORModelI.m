@@ -21,6 +21,9 @@
    NSMutableArray*          _oStore;
    ORObjectiveFunctionI*    _objective;
    ORUInt                   _name;
+   NSMutableDictionary*     _cMap;
+   NSMutableSet*            _ccSet;  // used only while constructing _cMap
+   id<ORConstraint>         _cc;     // used only while constructing _cMap
 }
 -(ORModelI*) initORModelI
 {
@@ -30,6 +33,9 @@
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    _name = 0;
+   _cMap = [[NSMutableDictionary alloc] initWithCapacity:32];
+   _ccSet = [[NSMutableSet alloc] initWithCapacity:32];
+   _cc = NULL;
    return self;
 }
 
@@ -39,6 +45,7 @@
    [_vars release];
    [_mStore release];
    [_oStore release];
+   [_cMap release];
    [super dealloc];
 }
 -(void) captureVariable: (id<ORVar>) x
@@ -98,7 +105,6 @@
 {
    return [[self solutions] best];
 }
-
 -(void) addVariable:(id<ORVar>) var
 {
    [self captureVariable: var];   
@@ -111,6 +117,19 @@
 {
    [self trackConstraint:cstr];
    [self add: cstr];
+   if (_cc)
+      [_ccSet addObject:cstr];
+}
+-(void) compiling:(id<ORConstraint>)cstr
+{
+   _cc = cstr;
+   [_ccSet removeAllObjects];
+}
+-(NSSet*)compiledMap
+{
+   NSSet* rv = [[NSSet alloc] initWithSet:_ccSet];
+   [self mappedConstraints:_cc toSet:rv];
+   return rv;
 }
 -(void) restore: (id<ORSolution>) s
 {
@@ -136,9 +155,21 @@
    for(id<ORConstraint> c in _mStore)
       [buf appendFormat:@"\t%@\n",c];
    [buf appendFormat:@"}\n"];
+   [buf appendFormat:@"map: %@",_cMap];
    return buf;
 }
-
+-(NSSet*) constraintsFor:(id<ORConstraint>)c
+{
+   return [_cMap objectForKey:@([c getId])];
+}
+-(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc
+{
+   [_cMap setObject:soc forKey:@([c getId])];
+}
+-(NSDictionary*) cMap
+{
+   return _cMap;
+}
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
@@ -235,11 +266,17 @@
 @implementation ORBatchModel
 {
    ORModelI* _target;
+   ORModelI* _src;
+   id<ORConstraint>     _cc;
+   NSMutableSet*     _ccSet;
 }
--(ORBatchModel*)init: (ORModelI*) theModel
+-(ORBatchModel*)init: (ORModelI*) theModel source:(ORModelI*)src
 {
    self = [super init];
    _target = theModel;
+   _src    = src;
+   _cc     = NULL;
+   _ccSet  = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
 }
 -(void) addVariable: (id<ORVar>) var
@@ -254,6 +291,9 @@
 {
    [_target trackConstraint:cstr];
    [_target add: cstr];
+   if (_cc) {
+      [_ccSet addObject:cstr];
+   }
 }
 -(id<ORModel>) model
 {
@@ -278,6 +318,17 @@
 -(void) trackConstraint: (id) obj
 {
    [_target trackConstraint: obj];
+}
+-(void) compiling:(id<ORConstraint>)cstr
+{
+   _cc = cstr;
+   [_ccSet removeAllObjects];
+}
+-(NSSet*)compiledMap
+{
+   NSSet* rv = [[NSSet alloc] initWithSet:_ccSet];
+   [_src mappedConstraints:_cc toSet:rv];
+   return rv;
 }
 @end
 
@@ -330,6 +381,13 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(void)trackConstraint:(id)obj
 {
    [_target trackConstraint:obj];
+}
+-(void) compiling:(id<ORConstraint>)cstr
+{
+}
+-(NSSet*)compiledMap
+{
+   return NULL;
 }
 @end
 

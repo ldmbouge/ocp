@@ -18,11 +18,13 @@
 
 @implementation LPSolver
 {
-   LPSolverI* _lpsolver;
+   LPSolverI*  _lpsolver;
+   id<ORModel>      _src;
 }
 -(id<LPProgram>) initLPSolver
 {
    self = [super init];
+   _src = NULL;
 #if defined(__linux__)
    _lpsolver = NULL;
 #else
@@ -42,6 +44,23 @@
 {
    [_lpsolver solve];
    NSLog(@"I am pretending to solve this baby");
+}
+-(void)setSource:(id<ORModel>)src
+{
+   _src = src;
+}
+-(ORFloat)dual:(id<ORConstraint>)c
+{
+   ORFloat rv;
+   @autoreleasepool {
+      NSDictionary* cMap = [_src cMap];
+      NSSet* cSet = [cMap objectForKey:@([c getId])];
+      assert([cSet count] == 1);
+      for(LPConstraintI* c in cSet) {
+         rv = [[c dereference] dual];
+      }
+   }
+   return rv;
 }
 @end
 

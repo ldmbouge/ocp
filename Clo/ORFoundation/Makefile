@@ -1,12 +1,12 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = ~/clang32/bin/clang
-CFLAGS = -I/usr/GNUstep/System/Library/Headers -I.. -I. -I../ORUtilities \
-	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
-
-LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries -L../ORUtilities \
-	-lgnustep-base -lobjc \
+OC = clang
+GNUstep = /opt/kitkit-1.0-rc1
+CFLAGS = -I$(GNUstep)/include -I. -I.. \
+	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
+LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES) \
+	-L../ORUtilities \
 	-lORUtilities $(USER_DEFINES)
 
 SRCS = context.m   ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
@@ -22,13 +22,18 @@ OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libORFoundation.so.1 
 all: $(LIBNAME)
 	@echo "Done..."
+	@if [ ! -f $(basename $(LIBNAME)) ];  \
+	then \
+	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
+	fi
 
 $(LIBNAME): $(OFILES)
 	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
+
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
-	@$(OC) $(CFLAGS) -c $< 
+	$(OC) $(CFLAGS) -c $< 
 
 clean:
 	rm -rf *.o *~

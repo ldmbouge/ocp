@@ -30,16 +30,31 @@ int main(int argc, const char * argv[])
    
    // most of this is bogus; just testing without introducing floats
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Columns];
-   id<ORIntVar>      o = [ORFactory intVar: model domain: Columns];
-   
+   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns low:0 up:nbColumns-1];
+   id<ORFloatVar>      o = [ORFactory floatVar: model low:0 up:nbColumns-1];
+   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
-      [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+      ca[i] = [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
    [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
    [model maximize: o];
-//   NSLog(@"Model %@",model);
    id<LPProgram> lp = [ORFactory createLPProgram: model];
+   NSLog(@"Model %@",model);
    [lp solve];
    NSLog(@"we are done");
+   NSLog(@"Array is: %@",x);
+   
+   // model already "knows" the solver that implements it (_impl)
+   // Now model also records a map from "high-level constraints" to "{implementation constraints}"
+   // So model could consult the map to go and retrieve the dual value for the implementation constraints.
+   // catch -> that's LP specific functionality in an abstract model! Makes no sense.
+   // -> instead have the LPProgram do it by asking the model its map and consulting the mapping to finally
+   //    ask the right implementation constraint.
+
+   [ca enumerateWith:^(id<ORConstraint> obj, int idx) {
+      ORFloat dca = [lp dual:obj];
+      NSLog(@"Dual value for constraint[%d] is %f",idx,dca);
+   }];
+   
+   NSLog(@"Objective: %@  [%f]",o,[o value]);
    return 0;
 }

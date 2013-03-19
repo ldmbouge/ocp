@@ -355,7 +355,6 @@
 @implementation ORFloatVarI
 {
 @protected
-   id<ORFloatVar>   _impl;
    id<ORTracker>    _tracker;
    ORFloat          _low;
    ORFloat          _up;
@@ -393,12 +392,16 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
+-(BOOL) isVariable
+{
+   return YES;
+}
 -(NSString*) description
 {
    if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f)",_name,_low,_up];
+      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
    else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
+      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
 }
 -(void) setId: (ORUInt) name
 {
@@ -421,7 +424,7 @@
 -(ORFloat) value
 {
    if (_impl)
-      return [(id<ORIntVar>) [_impl dereference] value];
+      return [(id<ORFloatVar>) [_impl dereference] value];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    

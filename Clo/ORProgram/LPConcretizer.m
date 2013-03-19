@@ -85,7 +85,7 @@ int maini()
 }
 -(ORLPConcretizer*) initORLPConcretizer: (id<LPProgram>) program
 {
-   maini();
+   //maini(); // [ldm] testing leftover?
    self = [super init];
    _program = [program retain];
    _lpsolver = [program solver];
@@ -142,7 +142,10 @@ int maini()
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet for Float Variables"];
+   if ([v dereference] == NULL) {
+      LPVariableI* cv = [_lpsolver createVariable];
+      [v setImpl: cv];
+   }
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
@@ -302,7 +305,7 @@ int maini()
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   //@throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
