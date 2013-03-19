@@ -21,6 +21,7 @@
 -(bool) providesLowerBoundPool;
 -(bool) providesUpperBoundPool;
 -(bool) providesSolutionStream;
+-(bool) providesColumn;
 -(bool) acceptsUpperBound;
 -(bool) acceptsUpperBoundStream;
 -(bool) acceptsLowerBound;
@@ -28,6 +29,7 @@
 -(bool) acceptsLowerBoundPool;
 -(bool) acceptsUpperBoundPool;
 -(bool) acceptsSolutionStream;
+-(bool) acceptsColumn;
 @end
 
 @interface ORSignatureI : NSObject<ORSignature> {
@@ -40,6 +42,7 @@
     bool providesLowerBoundPool;
     bool providesUpperBoundPool;
     bool providesSolutionStream;
+    bool providesColumn;
     bool acceptsUpperBound;
     bool acceptsUpperBoundStream;
     bool acceptsLowerBound;
@@ -47,6 +50,7 @@
     bool acceptsLowerBoundPool;
     bool acceptsUpperBoundPool;
     bool acceptsSolutionStream;
+    bool acceptsColumn;
 }
 -(bool) matches: (id<ORSignature>)sig;
 @property(readonly) bool isComplete;
@@ -57,6 +61,7 @@
 @property(readonly) bool providesLowerBoundPool;
 @property(readonly) bool providesUpperBoundPool;
 @property(readonly) bool providesSolutionStream;
+@property(readonly) bool providesColumn;
 @property(readonly) bool acceptsUpperBound;
 @property(readonly) bool acceptsUpperBoundStream;
 @property(readonly) bool acceptsLowerBound;
@@ -64,6 +69,7 @@
 @property(readonly) bool acceptsLowerBoundPool;
 @property(readonly) bool acceptsUpperBoundPool;
 @property(readonly) bool acceptsSolutionStream;
+@property(readonly) bool acceptsColumn;
 @end
 
 @interface ORFactory(ORSignature)
@@ -134,12 +140,14 @@
 
 @protocol LPRunnable <ORRunnable>
 -(id<LPProgram>) solver;
+-(id<ORFloatArray>) duals;
 @end
 
 @interface LPRunnableI : NSObject<LPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(id<ORSignature>) signature;
 -(id<LPProgram>) solver;
+-(id<ORFloatArray>) duals;
 -(id<ORModel>) model;
 -(void) run;
 @end

@@ -92,12 +92,36 @@
    [tracker trackObject: o];
    return o;
 }
-
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORInt(^)(ORInt,ORInt)) clo
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range: r1 range: r2 with:clo];    
    [tracker trackObject: o];
    return o;
+}
++(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) value
+{
+    ORFloatArrayI* o = [[ORFloatArrayI alloc] initORFloatArray: tracker range:range value: (ORFloat) value];
+    [tracker trackObject: o];
+    return o;
+}
++(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORFloat[]) values {
+    ORFloatArrayI* o = [[ORFloatArrayI alloc] initORFloatArray: tracker range:range value: 0];
+    for(ORInt i = [o.range low]; i <= [o.range up]; i++)
+        [o set: values[i - [o.range low]]  at: i];
+    [tracker trackObject: o];
+    return o;
+}
++(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo
+{
+    ORFloatArrayI* o = [[ORFloatArrayI alloc] initORFloatArray: tracker range:range with:clo];
+    [tracker trackObject: o];
+    return o;
+}
++(ORFloatArrayI*) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORFloat(^)(ORInt,ORInt)) clo
+{
+    ORFloatArrayI* o = [[ORFloatArrayI alloc] initORFloatArray: tracker range: r1 range: r2 with:clo];
+    [tracker trackObject: o];
+    return o;
 }
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {

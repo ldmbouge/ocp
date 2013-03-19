@@ -10,6 +10,7 @@
 #import "ORFactory.h"
 #import "ORProgramFactory.h"
 #import "ORConcurrencyI.h"
+#import <objmp/LPSolverI.h>
 
 @implementation ORSignatureI
 
@@ -25,6 +26,7 @@
 @synthesize providesUpperBoundPool;
 @synthesize providesUpperBoundStream;
 @synthesize providesSolutionStream;
+@synthesize providesColumn;
 @synthesize acceptsLowerBound;
 @synthesize acceptsLowerBoundPool;
 @synthesize acceptsLowerBoundStream;
@@ -32,6 +34,7 @@
 @synthesize acceptsUpperBoundPool;
 @synthesize acceptsUpperBoundStream;
 @synthesize acceptsSolutionStream;
+@synthesize acceptsColumn;
 
 @end
 
@@ -45,6 +48,7 @@
 -(ORMutableSignatureI*) lowerStreamOut;
 -(ORMutableSignatureI*) lowerPoolOut;
 -(ORMutableSignatureI*) solutionStreamOut;
+-(ORMutableSignatureI*) columnOut;
 -(ORMutableSignatureI*) upperIn;
 -(ORMutableSignatureI*) upperStreamIn;
 -(ORMutableSignatureI*) upperPoolIn;
@@ -52,6 +56,7 @@
 -(ORMutableSignatureI*) lowerStreamIn;
 -(ORMutableSignatureI*) lowerPoolIn;
 -(ORMutableSignatureI*) solutionStreamIn;
+-(ORMutableSignatureI*) columnIn;
 @end
 
 @implementation ORMutableSignatureI
@@ -71,6 +76,7 @@
     providesUpperBoundPool = NO;
     providesUpperBoundStream = NO;
     providesSolutionStream = NO;
+    providesColumn = NO;
     acceptsLowerBound = NO;
     acceptsLowerBoundPool = NO;
     acceptsLowerBoundStream = NO;
@@ -78,6 +84,7 @@
     acceptsUpperBoundPool = NO;
     acceptsUpperBoundStream = NO;
     acceptsSolutionStream = NO;
+    acceptsColumn = NO;
 }
 
 -(ORMutableSignatureI*) complete { isComplete = YES; return self; }
@@ -88,6 +95,7 @@
 -(ORMutableSignatureI*) lowerStreamOut { providesLowerBoundStream = YES; return self; }
 -(ORMutableSignatureI*) lowerPoolOut { providesLowerBoundPool = YES; return self; }
 -(ORMutableSignatureI*) solutionStreamOut { providesSolutionStream = YES; return self; }
+-(ORMutableSignatureI*) columnOut { providesColumn = YES; return self; }
 -(ORMutableSignatureI*) upperIn { acceptsUpperBound = YES; return self; }
 -(ORMutableSignatureI*) upperStreamIn { acceptsUpperBoundStream = YES; return self; }
 -(ORMutableSignatureI*) upperPoolIn { acceptsUpperBoundPool = YES; return self; }
@@ -95,6 +103,7 @@
 -(ORMutableSignatureI*) lowerStreamIn { acceptsLowerBoundStream = YES; return self; }
 -(ORMutableSignatureI*) lowerPoolIn { acceptsLowerBoundPool = YES; return self; }
 -(ORMutableSignatureI*) solutionStreamIn { acceptsSolutionStream = YES; return self; }
+-(ORMutableSignatureI*) columnIn { acceptsColumn = YES; return self; }
 @end
 
 @implementation ORFactory(ORSignature)
@@ -258,12 +267,16 @@
 
 -(id<ORSignature>) signature {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete"];
+        _sig = [ORFactory createSignature: @"complete.acceptsColumn"];
     }
     return _sig;
 }
 
 -(id<LPProgram>) solver { return _program; }
+
+-(id<ORFloatArray>) duals {
+    return [[_program solver] duals];
+}
 
 -(void) run {
     NSLog(@"Running LP runnable(%p)...", _program);

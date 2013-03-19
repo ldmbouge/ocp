@@ -1197,6 +1197,12 @@
 {
    return [_lp dual: cstr];
 }
+-(id<ORFloatArray>) duals {
+    id<ORFloatArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORFloat(ORInt i) {
+        return [self dual: _cstr[i]];
+    }];
+    return [arr autorelease];
+}
 -(ORFloat) objectiveValue
 {
    if (_obj)

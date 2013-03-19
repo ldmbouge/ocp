@@ -40,8 +40,8 @@
 }
 -(void) solve
 {
-   [_lpsolver solve];
-   NSLog(@"I am pretending to solve this baby");
+    NSLog(@"I am pretending to solve this baby");
+    [_lpsolver solve];
 }
 @end
 

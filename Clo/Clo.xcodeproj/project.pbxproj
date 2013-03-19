@@ -42,6 +42,10 @@
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		3792E18216DBEC7500FA2C85 /* ORCopy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3792E18016DBEC7500FA2C85 /* ORCopy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3792E18316DBEC7500FA2C85 /* ORCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3792E18116DBEC7500FA2C85 /* ORCopy.m */; };
+		379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 379CDEEB16F17D71000E7338 /* ORModelTransformation.h */; };
+		37AD9F3E16F2C04400B0F6F9 /* ORColumnGeneration.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */; };
+		37AD9F3F16F2C04400B0F6F9 /* ORColumnGeneration.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */; };
+		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 		5B137ADA1666B1D0008C7049 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B137ADB1666B1D0008C7049 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5B137ADC1666B1D0008C7049 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
@@ -679,7 +683,7 @@
 		5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B17832FF161F636A00C7298D /* CPSolver.m */; };
 		5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
 		5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */; };
-		5BD8BECD16E123E200D9BF0B /* ORModelTransformation.m in Sources */ = {isa = PBXBuildFile; fileRef = 3737A3A8166B0867002D3A57 /* ORModelTransformation.m */; };
+		5BD8BECD16E123E200D9BF0B /* (null) in Sources */ = {isa = PBXBuildFile; };
 		5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1159161E5E430014EBCB /* ORModeling.m */; };
 		5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BAD1165161E5F2B0014EBCB /* ORModelI.m */; };
 		5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BDF5FAB161F81B800E5E1FA /* ORFlatten.m */; };
@@ -1032,6 +1036,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
+		};
+		37EB3C6116F17E96003ABD4B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
 		};
 		5B137AD01666B1C8008C7049 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3662,6 +3673,9 @@
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		3792E18016DBEC7500FA2C85 /* ORCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCopy.h; sourceTree = "<group>"; };
 		3792E18116DBEC7500FA2C85 /* ORCopy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCopy.m; sourceTree = "<group>"; };
+		379CDEEB16F17D71000E7338 /* ORModelTransformation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelTransformation.h; sourceTree = "<group>"; };
+		37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORColumnGeneration.h; sourceTree = "<group>"; };
+		37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORColumnGeneration.m; sourceTree = "<group>"; };
 		5B074A26142E5B2D0055B72D /* ORSemDFSController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSemDFSController.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5B074A27142E5B2D0055B72D /* ORSemDFSController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORSemDFSController.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B0ECEBD1562C4FB000D1A08 /* CPHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPHeuristic.h; sourceTree = "<group>"; };
@@ -4110,7 +4124,6 @@
 		B1571ECC13EE06AE007B5E88 /* LPMatrixSolver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = LPMatrixSolver.h; path = ../mpwrapper/LPMatrixSolver.h; sourceTree = "<group>"; };
 		B1571EF613EEBC00007B5E88 /* MPMatrixSolverFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MPMatrixSolverFactory.h; path = ../mpwrapperfactory/MPMatrixSolverFactory.h; sourceTree = "<group>"; };
 		B1571EF713EEBC00007B5E88 /* MPMatrixSolverFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = MPMatrixSolverFactory.m; path = ../mpwrapperfactory/MPMatrixSolverFactory.m; sourceTree = "<group>"; };
-		B1571F0713EEC144007B5E88 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi461/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B1583D3113A4CF7D0002FBD8 /* CPExprI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPExprI.m; sourceTree = "<group>"; };
 		B1595B3E13C11F2A001FCB61 /* Sudoku */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sudoku; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1595B4213C11F2A001FCB61 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -4258,6 +4271,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */,
 				37095B4516DBF1B3001BCEEC /* objcp.framework in Frameworks */,
 				37095B4116DBF1AC001BCEEC /* ORFoundation.framework in Frameworks */,
 				37095B4216DBF1AC001BCEEC /* ORModeling.framework in Frameworks */,
@@ -5403,7 +5417,6 @@
 				B1255E83161A0129009A7AC3 /* libgurobi.so.4.6.1 */,
 				5BCC8DEA15F8269900CCA8B9 /* libgurobi_g++4.2.a */,
 				5BCC8DEB15F8269900CCA8B9 /* libgurobi46.so */,
-				B1571F0713EEC144007B5E88 /* gurobi_c.h */,
 				B111FBF913CF3C81003C5119 /* Foundation.framework */,
 				5B9ABCEF1391329D000997E5 /* objcp.framework */,
 				B1943A1015B0E33C00E1771B /* data */,
@@ -5977,6 +5990,7 @@
 		5BAD1151161E5E430014EBCB /* ORModeling */ = {
 			isa = PBXGroup;
 			children = (
+				379CDEEB16F17D71000E7338 /* ORModelTransformation.h */,
 				37095B1E16DBEEEB001BCEEC /* ORParallelRunnable.h */,
 				37095B1F16DBEEEB001BCEEC /* ORParallelRunnable.m */,
 				37095B2016DBEEEB001BCEEC /* ORRunnable.h */,
@@ -6003,6 +6017,8 @@
 				B103614C16D9AAA500E95A39 /* ORLPDecompose.m */,
 				B103614F16D9AB9A00E95A39 /* ORLinear.h */,
 				B103615016D9AB9A00E95A39 /* ORLinear.m */,
+				37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */,
+				37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -7041,6 +7057,8 @@
 				3792E18216DBEC7500FA2C85 /* ORCopy.h in Headers */,
 				37095B2216DBEEEC001BCEEC /* ORParallelRunnable.h in Headers */,
 				37095B2416DBEEEC001BCEEC /* ORRunnable.h in Headers */,
+				379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */,
+				37AD9F3E16F2C04400B0F6F9 /* ORColumnGeneration.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7123,6 +7141,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				37EB3C6216F17E96003ABD4B /* PBXTargetDependency */,
 				37095B3516DBF18B001BCEEC /* PBXTargetDependency */,
 				37095B3716DBF18B001BCEEC /* PBXTargetDependency */,
 				37095B3916DBF18B001BCEEC /* PBXTargetDependency */,
@@ -9117,7 +9136,7 @@
 				5BD8BEC916E123E200D9BF0B /* CPSolver.m in Sources */,
 				5BD8BECB16E123E200D9BF0B /* CPMultiStartSolver.m in Sources */,
 				5BD8BECC16E123E200D9BF0B /* ORCPParSolver.m in Sources */,
-				5BD8BECD16E123E200D9BF0B /* ORModelTransformation.m in Sources */,
+				5BD8BECD16E123E200D9BF0B /* (null) in Sources */,
 				5BD8BECE16E123E200D9BF0B /* ORModeling.m in Sources */,
 				5BD8BECF16E123E200D9BF0B /* ORModelI.m in Sources */,
 				5BD8BED016E123E200D9BF0B /* ORFlatten.m in Sources */,
@@ -9211,6 +9230,7 @@
 				37095B2316DBEEEC001BCEEC /* ORParallelRunnable.m in Sources */,
 				37095B2516DBEEEC001BCEEC /* ORRunnable.m in Sources */,
 				37095B4716DBF214001BCEEC /* main.m in Sources */,
+				37AD9F3F16F2C04400B0F6F9 /* ORColumnGeneration.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9657,6 +9677,11 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 37095B3E16DBF18B001BCEEC /* PBXContainerItemProxy */;
+		};
+		37EB3C6216F17E96003ABD4B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 37EB3C6116F17E96003ABD4B /* PBXContainerItemProxy */;
 		};
 		5B137AD11666B1C8008C7049 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13389,6 +13414,7 @@
 				37095B3316DBF174001BCEEC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B19098B16DAACA7006D1D24 /* Build configuration list for PBXNativeTarget "eq20" */ = {
 			isa = XCConfigurationList;

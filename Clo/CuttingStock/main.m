@@ -21,6 +21,7 @@
 #import "../ORModeling/ORFlatten.h"
 #import "ORRunnable.h"
 #import "ORParallelRunnable.h"
+#import "ORColumnGeneration.h"
 
 int main (int argc, const char * argv[])
 {
@@ -46,15 +47,16 @@ int main (int argc, const char * argv[])
                geqi: [demand at: i]]];
     }
 
-    id<ORRunnable> mr = [[LPRunnableI alloc] initWithModel: master];
-    [mr run];
+    id<LPRunnable> runnable = [[LPRunnableI alloc] initWithModel: master];
+    ORColumnGeneration* cg = [[ORColumnGeneration alloc] initWithMaster: runnable slave: nil];
+    [cg run];
     
-    for(id<ORIntVar> v in [master variables])
-        NSLog(@"var(%@): %i", [v description], [v value]);
+    //for(id<ORIntVar> v in [master variables])
+    //    NSLog(@"var(%@): %i", [v description], [v value]);
     
     //NSLog(@"%@", [master description]);
-    NSLog(@"master objective: %i", [masterObj value]);
-    NSLog(@"master done");
+    //NSLog(@"master objective: %i", [masterObj value]);
+    //NSLog(@"master done");
     
     //id<ORModel> slave = [ORFactory createModel];
     //id<ORIntVarArray> use = [ORFactory intVarArray: slave range: shelves domain: RANGE(master, 0, boardWidth)];

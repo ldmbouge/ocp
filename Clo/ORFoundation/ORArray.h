@@ -32,6 +32,20 @@
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
 @end
 
+@protocol ORFloatArray <ORObject>
+-(ORFloat) at: (ORInt) value;
+-(void) set: (ORFloat) value at: (ORInt) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(ORFloat) max;
+-(ORFloat) min;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+-(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
+@end
+
 @protocol ORIntSetArray <ORObject>
 -(id<ORIntSet>) at: (ORInt) idx;
 -(void) set: (id<ORIntSet>) value at: (ORInt)idx;
