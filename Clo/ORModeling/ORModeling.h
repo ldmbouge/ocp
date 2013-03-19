@@ -23,8 +23,8 @@
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
--(void) minimize: (id<ORIntVar>) x;
--(void) maximize: (id<ORIntVar>) x;
+-(void) minimize: (id<ORVar>) x;
+-(void) maximize: (id<ORVar>) x;
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
          onObjects:(void(^)(id<ORObject>))doObjs
      onConstraints:(void(^)(id<ORObject>))doCons
@@ -34,6 +34,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
+-(NSDictionary*) cMap;
 -(id<ORSolution>) captureSolution;
 -(id<ORSolutionPool>) solutions;
 -(id<ORSolution>) bestSolution;

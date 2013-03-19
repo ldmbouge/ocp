@@ -26,6 +26,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
+-(NSDictionary*) cMap;
 -(NSSet*) constraintsFor:(id<ORConstraint>)c;
 -(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
 -(id<ORSolution>) captureSolution;

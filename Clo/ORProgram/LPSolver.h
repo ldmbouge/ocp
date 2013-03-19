@@ -15,6 +15,8 @@
 // LPSolver
 @interface LPSolver : NSObject<LPProgram>
 -(id<LPProgram>) initLPSolver;
+-(ORFloat)dual:(id<ORConstraint>)c;
+-(void)setSource:(id<ORModel>)src;
 @end
 
 // LPSolverFactory

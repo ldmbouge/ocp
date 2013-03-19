@@ -22,8 +22,8 @@
    ORObjectiveFunctionI*    _objective;
    ORUInt                   _name;
    NSMutableDictionary*     _cMap;
-   NSMutableSet*            _ccSet;
-   id<ORConstraint>         _cc;
+   NSMutableSet*            _ccSet;  // used only while constructing _cMap
+   id<ORConstraint>         _cc;     // used only while constructing _cMap
 }
 -(ORModelI*) initORModelI
 {
@@ -127,9 +127,10 @@
 }
 -(NSSet*)compiledMap
 {
-   return [[NSSet alloc] initWithSet:_ccSet];
+   NSSet* rv = [[NSSet alloc] initWithSet:_ccSet];
+   [self mappedConstraints:_cc toSet:rv];
+   return rv;
 }
-
 -(void) restore: (id<ORSolution>) s
 {
    NSArray* av = [self variables];
@@ -154,17 +155,21 @@
    for(id<ORConstraint> c in _mStore)
       [buf appendFormat:@"\t%@\n",c];
    [buf appendFormat:@"}\n"];
+   [buf appendFormat:@"map: %@",_cMap];
    return buf;
 }
 -(NSSet*) constraintsFor:(id<ORConstraint>)c
 {
-   return NULL;
+   return [_cMap objectForKey:@([c getId])];
 }
 -(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc
 {
    [_cMap setObject:soc forKey:@([c getId])];
 }
-
+-(NSDictionary*) cMap
+{
+   return _cMap;
+}
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
@@ -321,7 +326,9 @@
 }
 -(NSSet*)compiledMap
 {
-   return [[NSSet alloc] initWithSet:_ccSet];
+   NSSet* rv = [[NSSet alloc] initWithSet:_ccSet];
+   [_src mappedConstraints:_cc toSet:rv];
+   return rv;
 }
 @end
 
