@@ -7,13 +7,73 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "Clo/ORProgram/CPSolver.m",
+			"settings":
+			{
+				"buffer_size": 32107,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/ORSelectorI.m",
+			"settings":
+			{
+				"buffer_size": 2756,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/ORFactory.m",
+			"settings":
+			{
+				"buffer_size": 33328,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/ORSelectorI.h",
+			"settings":
+			{
+				"buffer_size": 1161,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORProgram/CPABS.m",
+			"settings":
+			{
+				"buffer_size": 21161,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/ORSetI.m",
+			"settings":
+			{
+				"buffer_size": 4538,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Clo/ORFoundation/ORSetI.h",
+			"settings":
+			{
+				"buffer_size": 1561,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"command_palette":
 	{
-		"height": 392.0,
+		"height": 87.0,
 		"selected_items":
 		[
+			[
+				"indent",
+				"Indentation: Reindent Lines"
+			],
 			[
 				"install",
 				"Package Control: Install Package"
@@ -104,6 +164,26 @@
 	},
 	"file_history":
 	[
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPFactory.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPIntVarI.m",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPParallel.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPParallel.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPObjectQueue.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPObjectQueue.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPLexConstraint.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORLimit.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPBasicConstraint.m",
+		"/Users/ldm/work/platform/Clo/knapsackOpt/main.m",
+		"/Users/ldm/work/platform/Clo/knapsack/main.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPABS.m",
 		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.m",
 		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.h",
 		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.h",
@@ -144,6 +224,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"  ",
+			"Condition",
+			"Nested",
+			"initCPIntVarCore:",
+			"initCPIntVarView:",
+			"initIVarShiftView:",
+			"initIVarIShift",
 			"CPBitAdd",
 			"Add",
 			"ORIntVar",
@@ -186,8 +273,201 @@
 	"groups":
 	[
 		{
+			"selected": 5,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Clo/ORProgram/CPSolver.m",
+					"settings":
+					{
+						"buffer_size": 32107,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 5752.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Clo/ORFoundation/ORSelectorI.m",
+					"settings":
+					{
+						"buffer_size": 2756,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 638.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Clo/ORFoundation/ORFactory.m",
+					"settings":
+					{
+						"buffer_size": 33328,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2312.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Clo/ORFoundation/ORSelectorI.h",
+					"settings":
+					{
+						"buffer_size": 1161,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								822,
+								822
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Clo/ORProgram/CPABS.m",
+					"settings":
+					{
+						"buffer_size": 21161,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 210.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Clo/ORFoundation/ORSetI.m",
+					"settings":
+					{
+						"buffer_size": 4538,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								755,
+								755
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "Clo/ORFoundation/ORSetI.h",
+					"settings":
+					{
+						"buffer_size": 1561,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Objective-C/Objective-C.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 114.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -244,6 +524,90 @@
 		"height": 0.0,
 		"selected_items":
 		[
+			[
+				"orseti",
+				"ORFoundation/ORSetI.m"
+			],
+			[
+				"cpabs",
+				"ORProgram/CPABS.m"
+			],
+			[
+				"orsele",
+				"ORFoundation/ORSelectorI.h"
+			],
+			[
+				"orfac",
+				"ORFoundation/ORFactory.m"
+			],
+			[
+				"cpsolver",
+				"ORProgram/CPSolver.m"
+			],
+			[
+				"knap/main",
+				"knapsack/main.m"
+			],
+			[
+				"knapsackop",
+				"knapsackOpt/main.m"
+			],
+			[
+				"cpbasiccon",
+				"objcp/CPBasicConstraint.m"
+			],
+			[
+				"cppar",
+				"ORProgram/ORCPParSolver.m"
+			],
+			[
+				"cpobje",
+				"objcp/CPObjectQueue.h"
+			],
+			[
+				"knapsa",
+				"knapsack/main.m"
+			],
+			[
+				"orlimit",
+				"ORFoundation/ORLimit.m"
+			],
+			[
+				"orexpo",
+				"ORFoundation/ORExplorerI.m"
+			],
+			[
+				"cpso",
+				"ORProgram/CPSolver.h"
+			],
+			[
+				"orcontr",
+				"ORFoundation/ORController.m"
+			],
+			[
+				"cpparall",
+				"ORProgram/CPParallel.m"
+			],
+			[
+				"cppars",
+				"ORProgram/ORCPParSolver.m"
+			],
+			[
+				"cpintvari",
+				"objcp/CPIntVarI.m"
+			],
+			[
+				"cpfac",
+				"objcp/CPFactory.m"
+			],
+			[
+				"cpengine",
+				"CPUKernel/CPEngineI.m"
+			],
+			[
+				"cplex",
+				"objcp/CPLexConstraint.m"
+			],
 			[
 				"bitcon",
 				"objcp/CPBitConstraint.m"
