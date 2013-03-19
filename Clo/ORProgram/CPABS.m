@@ -655,7 +655,8 @@
          if (depth > probeDepth || allBound) {
             if ([_solver objective]==nil) {
                NSLog(@"Found a solution in a CSP while probing!");
-               return ;
+               if ([self oneSol])
+                  return ;
             } else {
                NSLog(@"Found a local optimum = %@",[_solver objective]);
                [[_solver objective] updatePrimalBound];

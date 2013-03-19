@@ -498,6 +498,12 @@
 {
    return _up;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"%f",[_solver value:self]];
+   return buf;
+}
 -(void) resize
 {
    if (_size == _maxSize) {

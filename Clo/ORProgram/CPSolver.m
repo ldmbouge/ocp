@@ -126,6 +126,7 @@
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
+   BOOL                  _oneSol;
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
@@ -139,6 +140,7 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _closed = false;
+   _oneSol = YES;
    _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
@@ -201,7 +203,8 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine variables]];
+      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av oneSol:_oneSol];}
+                   with: [_engine variables]];
       [ORConcurrency pumpEvents];
    }
 }
@@ -246,6 +249,7 @@
 {
    _objective = [_engine objective];
    if (_objective != nil) {
+      _oneSol = NO;
       [_search optimizeModel: self using: search
                   onSolution: ^{ [self doOnSolution];}
                       onExit: ^{ [self doOnExit];}
@@ -253,6 +257,7 @@
       printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
+      _oneSol = YES;
       [_search solveModel: self using: search
                onSolution: ^{ [self doOnSolution];}
                    onExit: ^{ [self doOnExit];}
@@ -261,6 +266,7 @@
 }
 -(void) solveAll: (ORClosure) search
 {
+   _oneSol = NO;
    ORInt nbs = (ORInt) [_doOnSolArray count];
    ORInt nbe = (ORInt) [_doOnExitArray count];
    [_search solveAllModel: self using: search
@@ -684,6 +690,8 @@
 -(void)       trackObject: (id) obj;
 -(void)       trackVariable: (id) obj;
 -(void)       trackConstraint: (id) obj;
+-(void) compiling:(id<ORConstraint>)cstr;
+-(NSSet*)compiledMap;
 @end
 
 @implementation ORRTModel
@@ -736,6 +744,13 @@
 -(void) trackConstraint:(id) obj
 {
    [_solver trackConstraint:obj];
+}
+-(void) compiling:(id<ORConstraint>)cstr
+{
+}
+-(NSSet*)compiledMap
+{
+   return NULL;
 }
 @end
 

@@ -1,4 +1,4 @@
-LIBS    = ORUtilities ORFoundation CPUKernel objcp ORProgram ORModeling
+LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram 
 TARGETS = $(LIBS) queens2 knapsack
 
 # queensAC Sudoku magicserie queensACSem
@@ -8,7 +8,7 @@ CFL= -O3
 
 .PHONY: $(TARGETS)
 
-all: $(TARGETS)
+all: $(TARGETS) queens2
 	@echo "Done all..."
 
 objcp:
@@ -23,11 +23,11 @@ CPUKernel:
 	@make -C CPUKernel USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 ORProgram:
 	@make -C ORProgram USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-
 queens2: 
-	@make -C queens2 USER_DEFINES='-DUSEVIEWS=$(VIEWS)  $(CFL)'
+	@make -C queens2 USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+
 knapsack: 
-	@make -C knapsack USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+	make -C knapsack USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 
 queensAC:  $(LIBS)
 	@make -C queensAC all USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'

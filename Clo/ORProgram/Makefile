@@ -1,11 +1,13 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = ~/clang32/bin/clang
-CFLAGS = -I/usr/GNUstep/System/Library/Headers -I.. -I. -I../CPUKernel \
+OC = clang
+GNUstep = /opt/kitkit-1.0-rc1
+
+CFLAGS = -I$(GNUstep)/include -I.. -I. -I../CPUKernel \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
-LFLAGS = -L/usr/GNUstep/System/Library/Libraries $(USER_DEFINES) \
+LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
 	-L../ORUtilities -L../ORFoundation -L../CPUKernel -L../ORModeling -L../objcp \
 	-lORUtilities -lORFoundation -lCPUKernel -lORModeling -lobjcp \
 	-lgnustep-base -lobjc 
@@ -21,6 +23,10 @@ OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libORProgram.so.1 
 all: $(LIBNAME)
 	@echo "Done..."
+	@if [ ! -f $(basename $(LIBNAME)) ];  \
+	then \
+	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
+	fi
 
 $(LIBNAME): $(OFILES)
 	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)

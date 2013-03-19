@@ -219,7 +219,10 @@
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
+      [batch compiling:c];
       [ORLPFlatten flatten:c into:batch];
+      NSSet* map = [batch compiledMap];
+      NSLog(@"Got a Map %@",map);
    } onObjective:^(id<ORObjective> o) {
       ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:batch];
       [o visit:fo];

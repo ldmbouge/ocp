@@ -20,6 +20,7 @@
 +(ORLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
 +(ORLinear*) addToLinear: (id<ORLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
 -(void) visitIntVar: (id<ORIntVar>) e;
+-(void) visitFloatVar:(id<ORFloatVar>)e;
 -(void) visitAffineVar:(id<ORIntVar>)e;
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
@@ -113,6 +114,7 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
+-(void) visitFloatVar:(id<ORFloatVar>)e    {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -142,6 +144,10 @@
    return self;
 }
 -(void) visitIntVar: (id<ORIntVar>) e
+{
+   [_terms addTerm:e by:1];
+}
+-(void) visitFloatVar:(id<ORFloatVar>)e
 {
    [_terms addTerm:e by:1];
 }

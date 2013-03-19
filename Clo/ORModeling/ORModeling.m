@@ -27,10 +27,9 @@
     [copier release];
     return copyModel;
 }
-
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
 {
-   return [[ORBatchModel alloc]  init: flatModel];
+   return [[ORBatchModel alloc]  init: flatModel source:srcModel];
 }
 
 +(id<ORModelTransformation>) createFlattener
