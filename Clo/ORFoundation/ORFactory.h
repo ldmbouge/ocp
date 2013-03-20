@@ -88,6 +88,8 @@
 +(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 +(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m;
 
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
+
 +(id<ORTrailableIntArray>) trailableIntArray: (id<OREngine>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
 +(id<ORTrailableInt>) trailableInt: (id<OREngine>) solver value: (ORInt) value;
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;

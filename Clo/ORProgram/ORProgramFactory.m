@@ -164,13 +164,14 @@
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
-   NSLog(@"flat: %@",flatModel);
+   //NSLog(@"flat: %@",flatModel);
 }
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver];
    [model setImpl: lpprogram];
+   [lpprogram setSource:model];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }

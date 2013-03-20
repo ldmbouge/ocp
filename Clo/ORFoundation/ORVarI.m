@@ -392,6 +392,10 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
+-(BOOL) isVariable
+{
+   return YES;
+}
 -(NSString*) description
 {
    if (_impl == nil)
