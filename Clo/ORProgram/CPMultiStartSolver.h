@@ -30,4 +30,5 @@
 -(id<CPHeuristic>) createDDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
+-(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 @end

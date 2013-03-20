@@ -441,6 +441,11 @@
    }
    [self waitWorkers]; // wait until all the workers are done.
 }
+-(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
+{
+   assert(FALSE);
+   return NULL;
+}
 
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars
 {

@@ -113,9 +113,19 @@
          @synchronized(gp) {
             [gp addSolution: s];
          }
+         id<ORObjective> objective = [[cp objective] dereference];
+         if (objective != NULL) {
+            ORInt myBound = [objective primalBound];
+            for(ORInt w=0;w < k;w++) {
+               if (w == i) continue;
+               id<ORObjective> wwObj = [[[cpprogram at:w] objective] dereference];
+               [wwObj tightenPrimalBound:myBound];
+               //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
+            }
+         }
+         
          [s release];
-      }
-      ];
+      }];
    }
    return cpprogram;
 }

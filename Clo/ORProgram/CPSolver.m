@@ -613,6 +613,11 @@
       [_search fail];
 }
 
+-(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
+{
+   assert(FALSE);
+   return NULL;
+}
 
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
 {

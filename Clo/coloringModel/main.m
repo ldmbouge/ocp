@@ -65,13 +65,17 @@ int main(int argc, const char * argvri[])
       }
       [model minimize: m];
       
-//      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      //id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
-      // id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 2];
-      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:4 with:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
+//      id<CPHeuristic> h = [cp createFF:c];
+      id<CPHeuristic> h = [cp createPortfolio:@[@"createIBS:",@"createABS:",@"createWDeg:",@"createFF:"] with:c];
+      //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
       [cp solve: ^{
+         [cp labelHeuristic:h];
+         /*
          [cp forall: V
            suchThat:^bool(ORInt i) { return ![c[i] bound];}
           orderedBy: ^ORInt(ORInt i) { return [c[i] domsize]; }
@@ -86,7 +90,7 @@ int main(int argc, const char * argvri[])
                      }
                      ];
                  }
-         ];
+         ];*/
          [cp label:m with:[m min]];
          NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
       }];

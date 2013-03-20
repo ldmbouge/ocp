@@ -497,7 +497,11 @@
    }];
    
    [[_cp engine] clearStatus];
-   NSLog(@"ABS ready...");
+   [[_cp engine] enforceObjective];
+   if ([[_cp engine] objective] != NULL)
+      NSLog(@"ABS ready... %@",[[_cp engine] objective]);
+   else
+      NSLog(@"ABS ready...");
 }
 -(id<CPIntVarArray>)allIntVars
 {
@@ -658,7 +662,7 @@
                if ([self oneSol])
                   return ;
             } else {
-               NSLog(@"Found a local optimum = %@",[_solver objective]);
+               NSLog(@"ABS found a local optimum = %@",[_solver objective]);
                [[_solver objective] updatePrimalBound];
                NSLog(@"after updatePrimalBound = %@",[_solver objective]);
             }
@@ -670,7 +674,7 @@
          [probe release];
          for(ABSNogood* b in localKill) {
             [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];            
-            NSLog(@"Imposing local SAC %@",b);
+            //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
       }
@@ -678,9 +682,9 @@
    } while (carryOn && cntProbes < maxProbes);
    
    [_solver atomic:^ORStatus {
+      NSLog(@"Imposing %ld SAC constraints",[killSet count]);
       for(ABSNogood* b in killSet) {
          [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
-         NSLog(@"Imposing SAC %@",b);
       }
       return ORSuspend;
    }];
