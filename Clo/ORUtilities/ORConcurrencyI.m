@@ -219,6 +219,22 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     };
     [_eventList addEvent:[wrap copy]];
 }
+-(void) dispatchWithIntArray:(id<ORIntArray>)arr
+{
+    ORIntArray2Void tClo = (ORIntArray2Void)_closure;
+    ORClosure wrap = ^{
+        tClo(arr);
+    };
+    [_eventList addEvent:[wrap copy]];
+}
+-(void) dispatchWithFloatArray:(id<ORFloatArray>)arr
+{
+    ORFloatArray2Void tClo = (ORFloatArray2Void)_closure;
+    ORClosure wrap = ^{
+        tClo(arr);
+    };
+    [_eventList addEvent:[wrap copy]];
+}
 @end
 
 @implementation ORInformerI 
@@ -307,6 +323,34 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
         [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
         for(id event in _wheneverList)
             [event dispatchWithSolution: s];
+        for(ORBarrierI* barrier in _sleeperList)
+            [barrier join];
+        [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+    }
+}
+
+-(void) notifyWithIntArray:(id<ORIntArray>)arr
+{
+    @synchronized(self) {
+        for(id event in _whenList)
+            [event dispatchWithIntArray: arr];
+        [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+        for(id event in _wheneverList)
+            [event dispatchWithIntArray: arr];
+        for(ORBarrierI* barrier in _sleeperList)
+            [barrier join];
+        [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+    }
+}
+
+-(void) notifyWithFloatArray:(id<ORFloatArray>)arr
+{
+    @synchronized(self) {
+        for(id event in _whenList)
+            [event dispatchWithFloatArray: arr];
+        [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+        for(id event in _wheneverList)
+            [event dispatchWithFloatArray: arr];
         for(ORBarrierI* barrier in _sleeperList)
             [barrier join];
         [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.

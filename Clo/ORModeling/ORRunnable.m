@@ -38,33 +38,39 @@
 
 @end
 
-@interface ORMutableSignatureI : ORSignatureI
--(void) clear;
--(ORMutableSignatureI*) complete;
--(ORMutableSignatureI*) upperOut;
--(ORMutableSignatureI*) upperStreamOut;
--(ORMutableSignatureI*) upperPoolOut;
--(ORMutableSignatureI*) lowerOut;
--(ORMutableSignatureI*) lowerStreamOut;
--(ORMutableSignatureI*) lowerPoolOut;
--(ORMutableSignatureI*) solutionStreamOut;
--(ORMutableSignatureI*) columnOut;
--(ORMutableSignatureI*) upperIn;
--(ORMutableSignatureI*) upperStreamIn;
--(ORMutableSignatureI*) upperPoolIn;
--(ORMutableSignatureI*) lowerIn;
--(ORMutableSignatureI*) lowerStreamIn;
--(ORMutableSignatureI*) lowerPoolIn;
--(ORMutableSignatureI*) solutionStreamIn;
--(ORMutableSignatureI*) columnIn;
-@end
-
 @implementation ORMutableSignatureI
 -(id) init {
     if((self = [super init]) != nil) {
         [self clear];
     }
     return self;
+}
+
+-(id) initFromSignature: (id<ORSignature>)sig {
+    if((self = [super init]) != nil) {
+        [self copy: sig];
+    }
+    return self;
+}
+
+-(void) copy: (id<ORSignature>)sig {
+    isComplete = [sig isComplete];
+    providesLowerBound = [sig providesLowerBound];
+    providesLowerBoundPool = [sig providesLowerBoundPool];
+    providesLowerBoundStream = [sig providesLowerBoundStream];
+    providesUpperBound = [sig providesUpperBound];
+    providesUpperBoundPool = [sig providesUpperBoundPool];
+    providesUpperBoundStream = [sig providesUpperBoundStream];
+    providesSolutionStream = [sig providesSolutionStream];
+    providesColumn = [sig providesColumn];
+    acceptsLowerBound = [sig acceptsLowerBound];
+    acceptsLowerBoundPool = [sig acceptsLowerBoundPool];
+    acceptsLowerBoundStream = [sig acceptsLowerBoundStream];
+    acceptsUpperBound = [sig acceptsUpperBound];
+    acceptsUpperBoundPool = [sig acceptsUpperBoundPool];
+    acceptsUpperBoundStream = [sig acceptsUpperBoundStream];
+    acceptsSolutionStream = [sig acceptsSolutionStream];
+    acceptsColumn = [sig acceptsColumn];
 }
 
 -(void) clear {
@@ -253,7 +259,7 @@
 
 -(id) initWithModel: (id<ORModel>)m {
     if((self = [super init]) != nil) {
-        _model = m;
+        _model = [m retain];
         _sig = nil;
         _program = [ORFactory createLPProgram: _model];
     }
@@ -261,13 +267,16 @@
 }
 
 -(void) dealloc {
+    [_model release];
     [_program release];
     [super dealloc];
 }
 
+-(id<ORModel>) model { return _model; }
+
 -(id<ORSignature>) signature {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.acceptsColumn"];
+        _sig = [ORFactory createSignature: @"complete"];
     }
     return _sig;
 }
@@ -286,4 +295,11 @@
 
 -(void) onExit: (ORClosure)block {}
 
+@end
+
+@implementation ORFactory(ORRunnable)
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m {
+    id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
+    return r;
+}
 @end

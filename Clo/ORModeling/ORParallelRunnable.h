@@ -24,3 +24,7 @@
 @interface ORParallelRunnableTransform : NSObject<ORRunnableBinaryTransform>
 -(id<ORRunnable>) apply:(id<ORRunnable>)r0 and:(id<ORRunnable>)r1;
 @end
+
+@interface ORFactory(ORParallelRunnable)
++(id<ORParallelRunnable>) parallelRunnable: (id<ORRunnable>)r0 with: (id<ORRunnable>)r1;
+@end

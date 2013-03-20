@@ -24,9 +24,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		37095B2216DBEEEC001BCEEC /* ORParallelRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 37095B1E16DBEEEB001BCEEC /* ORParallelRunnable.h */; };
+		37095B2216DBEEEC001BCEEC /* ORParallelRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 37095B1E16DBEEEB001BCEEC /* ORParallelRunnable.h */; settings = {ATTRIBUTES = (); }; };
 		37095B2316DBEEEC001BCEEC /* ORParallelRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 37095B1F16DBEEEB001BCEEC /* ORParallelRunnable.m */; };
-		37095B2416DBEEEC001BCEEC /* ORRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 37095B2016DBEEEB001BCEEC /* ORRunnable.h */; };
+		37095B2416DBEEEC001BCEEC /* ORRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 37095B2016DBEEEB001BCEEC /* ORRunnable.h */; settings = {ATTRIBUTES = (); }; };
 		37095B2516DBEEEC001BCEEC /* ORRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 37095B2116DBEEEC001BCEEC /* ORRunnable.m */; };
 		37095B2B16DBF173001BCEEC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCE1139131EE000997E5 /* CoreFoundation.framework */; };
 		37095B3016DBF173001BCEEC /* CuttingStock.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 37095B2F16DBF173001BCEEC /* CuttingStock.1 */; };
@@ -43,7 +43,7 @@
 		3792E18216DBEC7500FA2C85 /* ORCopy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3792E18016DBEC7500FA2C85 /* ORCopy.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3792E18316DBEC7500FA2C85 /* ORCopy.m in Sources */ = {isa = PBXBuildFile; fileRef = 3792E18116DBEC7500FA2C85 /* ORCopy.m */; };
 		379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */ = {isa = PBXBuildFile; fileRef = 379CDEEB16F17D71000E7338 /* ORModelTransformation.h */; };
-		37AD9F3E16F2C04400B0F6F9 /* ORColumnGeneration.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */; };
+		37AD9F3E16F2C04400B0F6F9 /* ORColumnGeneration.h in Headers */ = {isa = PBXBuildFile; fileRef = 37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */; settings = {ATTRIBUTES = (); }; };
 		37AD9F3F16F2C04400B0F6F9 /* ORColumnGeneration.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */; };
 		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 		5B137ADA1666B1D0008C7049 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -5142,6 +5142,19 @@
 			path = CuttingStock;
 			sourceTree = "<group>";
 		};
+		377A996A16F913C600366BE4 /* ORRunnable */ = {
+			isa = PBXGroup;
+			children = (
+				37095B1E16DBEEEB001BCEEC /* ORParallelRunnable.h */,
+				37095B1F16DBEEEB001BCEEC /* ORParallelRunnable.m */,
+				37095B2016DBEEEB001BCEEC /* ORRunnable.h */,
+				37095B2116DBEEEC001BCEEC /* ORRunnable.m */,
+				37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */,
+				37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */,
+			);
+			name = ORRunnable;
+			sourceTree = "<group>";
+		};
 		5B27ABDB15B1518300E4A3DF /* MKNAP */ = {
 			isa = PBXGroup;
 			children = (
@@ -5990,11 +6003,8 @@
 		5BAD1151161E5E430014EBCB /* ORModeling */ = {
 			isa = PBXGroup;
 			children = (
+				377A996A16F913C600366BE4 /* ORRunnable */,
 				379CDEEB16F17D71000E7338 /* ORModelTransformation.h */,
-				37095B1E16DBEEEB001BCEEC /* ORParallelRunnable.h */,
-				37095B1F16DBEEEB001BCEEC /* ORParallelRunnable.m */,
-				37095B2016DBEEEB001BCEEC /* ORRunnable.h */,
-				37095B2116DBEEEC001BCEEC /* ORRunnable.m */,
 				3792E18016DBEC7500FA2C85 /* ORCopy.h */,
 				3792E18116DBEC7500FA2C85 /* ORCopy.m */,
 				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
@@ -6017,8 +6027,6 @@
 				B103614C16D9AAA500E95A39 /* ORLPDecompose.m */,
 				B103614F16D9AB9A00E95A39 /* ORLinear.h */,
 				B103615016D9AB9A00E95A39 /* ORLinear.m */,
-				37AD9F3C16F2C04400B0F6F9 /* ORColumnGeneration.h */,
-				37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";

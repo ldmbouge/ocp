@@ -50,6 +50,8 @@ static inline ORInt bindDown(ORLong a) { return (a > (ORLong)FDMININT) ? (ORInt)
 @protocol ORExpr;
 @protocol ORRelation;
 @protocol ORSolution;
+@protocol ORIntArray;
+@protocol ORFloatArray;
 
 typedef struct ORRange {
    ORInt low;
@@ -80,6 +82,8 @@ typedef bool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
 typedef void (^ORSolution2Void)(id<ORSolution>);
+typedef void (^ORIntArray2Void)(id<ORIntArray>);
+typedef void (^ORFloatArray2Void)(id<ORFloatArray>);
 typedef int (^ORIntxInt2Int)(ORInt,ORInt);
 typedef ORFloat (^ORInt2Float)(ORInt);
 typedef id<ORExpr> (^ORInt2Expr)(ORInt);

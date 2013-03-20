@@ -40,10 +40,9 @@ int main (int argc, const char * argv[])
     [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
     
     id<ORModel> lm = [ORFactory linearizeModel: model];
-    id<ORRunnable> r0 = [[CPRunnableI alloc] initWithModel: model];
-    id<ORRunnable> r1 = [[CPRunnableI alloc] initWithModel: lm];
-    id<ORRunnableBinaryTransform> parTran = [[ORParallelRunnableTransform alloc] init];
-    id<ORRunnable> pr = [parTran apply: r0 and: r1];
+    id<ORRunnable> r0 = [ORFactory CPRunnable: model];
+    id<ORRunnable> r1 = [ORFactory CPRunnable: lm];
+    id<ORRunnable> pr = [ORFactory parallelRunnable: r0 with: r1];
     [pr run];
     
     for(id<ORIntVar> v in [lm variables])

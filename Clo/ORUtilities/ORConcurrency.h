@@ -13,6 +13,9 @@
 #import "ORUtilities/ORTypes.h"
 
 @protocol ORSolution;
+@protocol ORIntArray;
+@protocol ORFloatArray;
+
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
 -(void) wheneverNotifiedDo: (id) closure;
@@ -33,6 +36,14 @@
 
 @protocol ORSolutionInformer<ORInformer>
 -(void) notifyWithSolution: (id<ORSolution>)s;
+@end
+
+@protocol IntArrayInformer <ORInformer>
+-(void) notifyWithIntArray: (id<ORIntArray>)arr;
+@end
+
+@protocol ORFloatArrayInformer <ORInformer>
+-(void) notifyWithFloatArray: (id<ORFloatArray>)arr;
 @end
 
 @protocol ORBarrier<NSObject> 

@@ -1238,7 +1238,7 @@
 }
 -(id<ORFloatArray>) duals {
     id<ORFloatArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORFloat(ORInt i) {
-        return [self dual: _cstr[i]];
+        return [_cstr[i] dual];
     }];
     return [arr autorelease];
 }

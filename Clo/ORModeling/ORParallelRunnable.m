@@ -24,8 +24,8 @@
 
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1 {
     if((self = [super initWithModel: [r0 model]]) != nil) {
-        _r0 = r0;
-        _r1 = r1;
+        _r0 = [r0 retain];
+        _r1 = [r1 retain];
         _t0 = nil;
         _t1 = nil;
         _solutionPool = [[ORSolutionPoolI alloc] init];
@@ -88,9 +88,16 @@
 @end
 
 @implementation ORParallelRunnableTransform
-
 -(id<ORRunnable>) apply:(id<ORRunnable>)r0 and:(id<ORRunnable>)r1 {
     return [[[ORParallelRunnableI alloc] initWithPrimary: r0 secondary: r1] autorelease];
 }
+@end
 
+@implementation ORFactory(ORParallelRunnable)
++(id<ORParallelRunnable>) parallelRunnable: (id<ORRunnable>)r0 with: (id<ORRunnable>)r1 {
+    ORParallelRunnableTransform* t = [[ORParallelRunnableTransform alloc] init];
+    id<ORParallelRunnable> par = (id<ORParallelRunnable>)[t apply: r0 and: r1];
+    [t release];
+    return par;
+}
 @end

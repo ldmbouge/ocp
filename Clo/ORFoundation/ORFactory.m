@@ -123,6 +123,11 @@
     [tracker trackObject: o];
     return o;
 }
++(id<ORFloatArray>) floatArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr {
+    return [ORFactory floatArray: tracker range: [arr range] with:^ORFloat(ORInt i) {
+        return (ORFloat)[[arr at: i] literal];
+    }];
+}
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];

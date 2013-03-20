@@ -11,6 +11,9 @@
 #import "LPProgram.h"
 #import "ORTypes.h"
 
+//Forward Declarations
+@protocol  ORModel;
+
 @protocol ORSignature<NSObject>
 -(bool) matches: (id<ORSignature>)sig;
 -(bool) isComplete;
@@ -72,6 +75,30 @@
 @property(readonly) bool acceptsColumn;
 @end
 
+@interface ORMutableSignatureI : ORSignatureI
+-(id) init;
+-(id) initFromSignature: (id<ORSignature>)sig;
+-(void) copy: (id<ORSignature>)sig;
+-(void) clear;
+-(ORMutableSignatureI*) complete;
+-(ORMutableSignatureI*) upperOut;
+-(ORMutableSignatureI*) upperStreamOut;
+-(ORMutableSignatureI*) upperPoolOut;
+-(ORMutableSignatureI*) lowerOut;
+-(ORMutableSignatureI*) lowerStreamOut;
+-(ORMutableSignatureI*) lowerPoolOut;
+-(ORMutableSignatureI*) solutionStreamOut;
+-(ORMutableSignatureI*) columnOut;
+-(ORMutableSignatureI*) upperIn;
+-(ORMutableSignatureI*) upperStreamIn;
+-(ORMutableSignatureI*) upperPoolIn;
+-(ORMutableSignatureI*) lowerIn;
+-(ORMutableSignatureI*) lowerStreamIn;
+-(ORMutableSignatureI*) lowerPoolIn;
+-(ORMutableSignatureI*) solutionStreamIn;
+-(ORMutableSignatureI*) columnIn;
+@end
+
 @interface ORFactory(ORSignature)
 +(id<ORSignature>) createSignature: (NSString*)sigString;
 @end
@@ -123,6 +150,8 @@
 }
 
 -(id) initWithModel: (id<ORModel>)m;
+-(id<ORModel>) model;
+-(id<ORSignature>) signature;
 @end
 
 @protocol CPRunnable<ORUpperBoundedRunnable>
@@ -131,9 +160,7 @@
 
 @interface CPRunnableI : ORUpperBoundedRunnableI<CPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
--(id<ORSignature>) signature;
 -(id<CPProgram>) solver;
--(id<ORModel>) model;
 -(void) run;
 -(void) restore: (id<ORSolution>)s;
 @end
@@ -152,3 +179,6 @@
 -(void) run;
 @end
 
+@interface ORFactory(ORRunnable)
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m;
+@end
