@@ -107,6 +107,10 @@
          _tab[i-1] = _tab[i];
          _cpTab[i-1] = _cpTab[i];
       }
+      /*
+      NSCont* c = _tab[_sz - 1];
+      id<ORCheckpoint> cp = _cpTab[_sz - 1];
+       */
       --_sz;
       ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
       [cp release];
