@@ -108,6 +108,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}
+-(void) visitExprDivI: (id<ORExpr>) e  {}
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}

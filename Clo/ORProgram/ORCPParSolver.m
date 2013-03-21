@@ -336,7 +336,7 @@
                              onExit: nil
                             control: parc];
    } else {
-      NSLog(@"ALLSOL IS: %d",allSols);
+      //NSLog(@"ALLSOL IS: %d",allSols);
       if (allSols) {
         [[me explorer] nestedSolveAll:^() { [self setupWork:root forCP:me];body();}
                            onSolution: ^ {

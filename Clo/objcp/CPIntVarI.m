@@ -652,30 +652,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    return rv;
 }
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_vc];
-   [aCoder encodeObject:_dom];
-   [aCoder encodeObject:_fdm];
-   [aCoder encodeObject:_recv];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_vc];
-   _dom = [[aDecoder decodeObject] retain];
-   _fdm = [aDecoder decodeObject];
-   ORInt low = [_dom imin];
-   ORInt up  = [_dom imax];
-   setUpNetwork(&_net, [_fdm trail],low,up-low+1);
-   _triggers = nil;
-   _recv = [[aDecoder decodeObject] retain];
-   return self;
-}
-
 @end
 
 // ---------------------------------------------------------------------
@@ -788,17 +764,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(NSString*) description
 {
    return [super description];
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
-    return self;
 }
 -(id)snapshot
 {
@@ -966,19 +931,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(NSString*)description
 {
    return [super description];
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_a];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_a];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
-    return self;
 }
 -(id)snapshot
 {
@@ -1276,19 +1228,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_v];
-   [aCoder encodeObject:_secondary];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_v];
-   _secondary = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 /*****************************************************************************************/
@@ -1465,28 +1404,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    return ORSuspend;
 }
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_tab[k]];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   _tab = malloc(sizeof(id<CPIntVarNotifier>)*_mx);
-   _loseValIMP   = malloc(sizeof(IMP)*_mx);
-   for(ORInt k=0;k<_nb;k++) {
-      _tab[k] = [aDecoder decodeObject];
-      _loseValIMP[k] = (UBType)[(id)_tab[k] methodForSelector:@selector(loseValEvt:sender:)];
-   }
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-   return self;
-}
 @end
 
 @implementation CPLiterals
@@ -1585,28 +1502,5 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    return [_pos[val - _ofs] loseValEvt:val sender:sender];
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeObject:_ref];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_ofs];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_pos[k]];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   _ref = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_ofs];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-   _pos = malloc(sizeof(CPIntVarI*)*_nb);
-   for(ORInt k=0;k<_nb;k++) {
-      _pos[k] = [aDecoder decodeObject];
-   }
-   return self;
 }
 @end
