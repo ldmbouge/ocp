@@ -25,6 +25,7 @@
 -(bool) providesUpperBoundPool;
 -(bool) providesSolutionStream;
 -(bool) providesColumn;
+-(bool) providesConstraint;
 -(bool) acceptsUpperBound;
 -(bool) acceptsUpperBoundStream;
 -(bool) acceptsLowerBound;
@@ -33,6 +34,7 @@
 -(bool) acceptsUpperBoundPool;
 -(bool) acceptsSolutionStream;
 -(bool) acceptsColumn;
+-(bool) acceptsConstraint;
 @end
 
 @interface ORSignatureI : NSObject<ORSignature> {
@@ -46,6 +48,7 @@
     bool providesUpperBoundPool;
     bool providesSolutionStream;
     bool providesColumn;
+    bool providesConstraint;
     bool acceptsUpperBound;
     bool acceptsUpperBoundStream;
     bool acceptsLowerBound;
@@ -54,6 +57,7 @@
     bool acceptsUpperBoundPool;
     bool acceptsSolutionStream;
     bool acceptsColumn;
+    bool acceptsConstraint;
 }
 -(bool) matches: (id<ORSignature>)sig;
 @property(readonly) bool isComplete;
@@ -65,6 +69,7 @@
 @property(readonly) bool providesUpperBoundPool;
 @property(readonly) bool providesSolutionStream;
 @property(readonly) bool providesColumn;
+@property(readonly) bool providesConstraint;
 @property(readonly) bool acceptsUpperBound;
 @property(readonly) bool acceptsUpperBoundStream;
 @property(readonly) bool acceptsLowerBound;
@@ -73,6 +78,7 @@
 @property(readonly) bool acceptsUpperBoundPool;
 @property(readonly) bool acceptsSolutionStream;
 @property(readonly) bool acceptsColumn;
+@property(readonly) bool acceptsConstraint;
 @end
 
 @interface ORMutableSignatureI : ORSignatureI
@@ -89,6 +95,7 @@
 -(ORMutableSignatureI*) lowerPoolOut;
 -(ORMutableSignatureI*) solutionStreamOut;
 -(ORMutableSignatureI*) columnOut;
+-(ORMutableSignatureI*) constraintOut;
 -(ORMutableSignatureI*) upperIn;
 -(ORMutableSignatureI*) upperStreamIn;
 -(ORMutableSignatureI*) upperPoolIn;
@@ -97,6 +104,7 @@
 -(ORMutableSignatureI*) lowerPoolIn;
 -(ORMutableSignatureI*) solutionStreamIn;
 -(ORMutableSignatureI*) columnIn;
+-(ORMutableSignatureI*) constraintIn;
 @end
 
 @interface ORFactory(ORSignature)
@@ -168,6 +176,7 @@
 @protocol LPRunnable <ORRunnable>
 -(id<LPProgram>) solver;
 -(id<ORFloatArray>) duals;
+-(void) injectColumn: (id<ORFloatArray>) col;
 @end
 
 @interface LPRunnableI : NSObject<LPRunnable>
@@ -175,10 +184,12 @@
 -(id<ORSignature>) signature;
 -(id<LPProgram>) solver;
 -(id<ORFloatArray>) duals;
+-(void) injectColumn: (id<ORFloatArray>) col;
 -(id<ORModel>) model;
 -(void) run;
 @end
 
 @interface ORFactory(ORRunnable)
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m;
++(id<LPRunnable>) LPRunnable: (id<ORModel>)m;
 @end

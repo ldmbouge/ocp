@@ -13,6 +13,7 @@
 #import "ORUtilities/ORTypes.h"
 
 @protocol ORSolution;
+@protocol ORConstraint;
 @protocol ORIntArray;
 @protocol ORFloatArray;
 
@@ -38,7 +39,11 @@
 -(void) notifyWithSolution: (id<ORSolution>)s;
 @end
 
-@protocol IntArrayInformer <ORInformer>
+@protocol ORConstraintInformer<ORInformer>
+-(void) notifyWithConstraint: (id<ORConstraint>)c;
+@end
+
+@protocol ORIntArrayInformer <ORInformer>
 -(void) notifyWithIntArray: (id<ORIntArray>)arr;
 @end
 

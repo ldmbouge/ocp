@@ -9,32 +9,33 @@
  
  ***********************************************************************/
 
+
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import "ORRunnable.h"
 
-typedef id<ORRunnable> (^ORFloatArray2Runnable)(id<ORFloatArray>);
-typedef id<ORFloatArray> (^ORRunnable2FloatArray)(id<ORRunnable>);
+typedef id<ORRunnable> (^ORSolution2Runnable)(id<ORSolution>);
+typedef id<ORConstraint> (^ORRunnable2Constraint)(id<ORRunnable>);
 
-@protocol ORColumnProvider<ORRunnable>
--(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
+@protocol ORConstraintConsumer<ORRunnable>
+-(id<ORConstraintInformer>) constraintInformer;
 @end
 
-@protocol ORColumnConsumer<ORRunnable>
--(id<ORFloatArrayInformer>) columnInformer;
+@protocol ORConstraintProvider<ORRunnable>
+-(void) addConstraintConsumer: (id<ORConstraintConsumer>)c;
 @end
 
-@interface ORColumnGeneration : NSObject<ORColumnConsumer>
--(id) initWithMaster: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock;
+@interface ORLogicBenders : NSObject<ORConstraintConsumer>
+-(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
 -(void) onExit: (ORClosure)block;
 @end
 
-@interface ORColumnGenerator : NSObject<ORColumnProvider>
--(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (ORRunnable2FloatArray)block;
+@interface ORCutGenerator : NSObject<ORConstraintProvider>
+-(id) initWithRunnable: (id<ORRunnable>)r cutTransform: (ORRunnable2Constraint)block;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
@@ -42,7 +43,7 @@ typedef id<ORFloatArray> (^ORRunnable2FloatArray)(id<ORRunnable>);
 -(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
 @end
 
-@interface ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock;
-+(id<ORRunnable>) generateColumn: (id<ORRunnable>)r using: (ORRunnable2FloatArray)block;
+@interface ORFactory(ORLogicBenders)
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock;
++(id<ORRunnable>) generateCut: (id<ORRunnable>)r using: (ORRunnable2Constraint)block;
 @end

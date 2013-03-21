@@ -46,8 +46,8 @@ int main (int argc, const char * argv[])
                geqi: [demand at: i]]];
     }
 
-    id<LPRunnable> lp = [[LPRunnableI alloc] initWithModel: master];
-    ORColumnGeneration* cg = [[ORColumnGeneration alloc] initWithMaster: lp slave: ^id<ORRunnable>(id<ORFloatArray> duals) {
+    id<LPRunnable> lp = [ORFactory LPRunnable: master];
+    id<ORRunnable> cg = [ORFactory columnGeneration: lp slave: ^id<ORRunnable>(id<ORFloatArray> duals) {
         id<ORModel> slave = [ORFactory createModel];
         id<ORIntVarArray> use = [ORFactory intVarArray: slave range: shelves domain: RANGE(slave, 0, boardWidth)];
         id<ORFloatArray> cost = duals;
@@ -66,10 +66,6 @@ int main (int argc, const char * argv[])
     //NSLog(@"%@", [master description]);
     //NSLog(@"master objective: %i", [masterObj value]);
     //NSLog(@"master done");
-    
-    //id<ORModel> slave = [ORFactory createModel];
-    //id<ORIntVarArray> use = [ORFactory intVarArray: slave range: shelves domain: RANGE(master, 0, boardWidth)];
-    //id<ORIntArray> cost = [ORFactory intArray: slave range: shelves with: ^ORInt(ORInt i) { return }];
     
     return 0;
 }

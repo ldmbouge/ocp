@@ -43,7 +43,8 @@
 -(void) main;
 @end
 
-@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer, ORSolutionInformer> {
+@interface ORInformerI : NSObject<ORVoidInformer,ORIntInformer,ORIdxIntInformer,
+    ORSolutionInformer, ORConstraintInformer, ORIntArrayInformer, ORFloatArrayInformer> {
     NSLock* _lock;
     NSMutableArray* _whenList;
     NSMutableArray* _wheneverList;

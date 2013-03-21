@@ -112,68 +112,6 @@
 }
 @end
 
-@implementation ORFloatExprI
-{
-	ORFloat           _value;
-    id<ORTracker> _tracker;
-}
-
--(ORFloatExprI*) initORFloatI:(id<ORTracker>)tracker value:(ORFloat) value
-{
-    self = [super init];
-    _value = value;
-    _tracker = tracker;
-    return self;
-}
--(ORFloat) value
-{
-    return _value;
-}
--(ORFloat) setValue: (ORFloat) value
-{
-    return _value = value;
-}
--(ORInt) min
-{
-    return (ORInt)_value;
-}
--(ORInt) max
-{
-    return (ORInt)_value;
-}
--(BOOL) isConstant
-{
-    return YES;
-}
--(BOOL) isVariable
-{
-    return NO;
-}
--(id<ORTracker>) tracker
-{
-    return _tracker;
-}
--(NSString*)description
-{
-    return [NSString stringWithFormat:@"%f",_value];
-}
-- (void) encodeWithCoder:(NSCoder *)aCoder
-{
-    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
-}
-- (id) initWithCoder:(NSCoder *)aDecoder
-{
-    self = [super init];
-    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
-    return self;
-}
--(void) visit: (id<ORVisitor>) visitor
-{
-    [visitor visitFloatExprI: self];
-}
-@end
-
-
 static ORInt _nbStreams;
 static ORInt _deterministic;
 

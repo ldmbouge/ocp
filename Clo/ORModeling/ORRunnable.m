@@ -27,6 +27,7 @@
 @synthesize providesUpperBoundStream;
 @synthesize providesSolutionStream;
 @synthesize providesColumn;
+@synthesize providesConstraint;
 @synthesize acceptsLowerBound;
 @synthesize acceptsLowerBoundPool;
 @synthesize acceptsLowerBoundStream;
@@ -35,6 +36,7 @@
 @synthesize acceptsUpperBoundStream;
 @synthesize acceptsSolutionStream;
 @synthesize acceptsColumn;
+@synthesize acceptsConstraint;
 
 @end
 
@@ -63,6 +65,7 @@
     providesUpperBoundStream = [sig providesUpperBoundStream];
     providesSolutionStream = [sig providesSolutionStream];
     providesColumn = [sig providesColumn];
+    providesConstraint = [sig providesConstraint];
     acceptsLowerBound = [sig acceptsLowerBound];
     acceptsLowerBoundPool = [sig acceptsLowerBoundPool];
     acceptsLowerBoundStream = [sig acceptsLowerBoundStream];
@@ -71,6 +74,7 @@
     acceptsUpperBoundStream = [sig acceptsUpperBoundStream];
     acceptsSolutionStream = [sig acceptsSolutionStream];
     acceptsColumn = [sig acceptsColumn];
+    acceptsConstraint = [sig acceptsConstraint];
 }
 
 -(void) clear {
@@ -83,6 +87,7 @@
     providesUpperBoundStream = NO;
     providesSolutionStream = NO;
     providesColumn = NO;
+    providesConstraint = NO;
     acceptsLowerBound = NO;
     acceptsLowerBoundPool = NO;
     acceptsLowerBoundStream = NO;
@@ -91,6 +96,7 @@
     acceptsUpperBoundStream = NO;
     acceptsSolutionStream = NO;
     acceptsColumn = NO;
+    acceptsConstraint = NO;
 }
 
 -(ORMutableSignatureI*) complete { isComplete = YES; return self; }
@@ -102,6 +108,7 @@
 -(ORMutableSignatureI*) lowerPoolOut { providesLowerBoundPool = YES; return self; }
 -(ORMutableSignatureI*) solutionStreamOut { providesSolutionStream = YES; return self; }
 -(ORMutableSignatureI*) columnOut { providesColumn = YES; return self; }
+-(ORMutableSignatureI*) constraintOut { providesConstraint = YES; return self; }
 -(ORMutableSignatureI*) upperIn { acceptsUpperBound = YES; return self; }
 -(ORMutableSignatureI*) upperStreamIn { acceptsUpperBoundStream = YES; return self; }
 -(ORMutableSignatureI*) upperPoolIn { acceptsUpperBoundPool = YES; return self; }
@@ -110,6 +117,7 @@
 -(ORMutableSignatureI*) lowerPoolIn { acceptsLowerBoundPool = YES; return self; }
 -(ORMutableSignatureI*) solutionStreamIn { acceptsSolutionStream = YES; return self; }
 -(ORMutableSignatureI*) columnIn { acceptsColumn = YES; return self; }
+-(ORMutableSignatureI*) constraintIn { acceptsConstraint = YES; return self; }
 @end
 
 @implementation ORFactory(ORSignature)
@@ -137,7 +145,7 @@
 -(id<ORModel>) model { return _model; }
 
 -(void) onExit: (ORClosure)block {
-    _exitBlock = block;
+    _exitBlock = [block copy];
 }
 
 -(void) dealloc {
@@ -147,6 +155,7 @@
     [_solutionStreamInformer release];
     [_solutionStreamConsumers release];
     [_sig release];
+    [_exitBlock release];
     [super dealloc];
 }
 
@@ -287,6 +296,10 @@
     return [[_program solver] duals];
 }
 
+-(void) injectColumn: (id<ORFloatArray>) col {
+    
+}
+
 -(void) run {
     NSLog(@"Running LP runnable(%p)...", _program);
     [_program solve];
@@ -300,6 +313,10 @@
 @implementation ORFactory(ORRunnable)
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m {
     id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
+    return r;
+}
++(id<LPRunnable>) LPRunnable: (id<ORModel>)m {
+    id<LPRunnable> r = [[LPRunnableI alloc] initWithModel: m];
     return r;
 }
 @end

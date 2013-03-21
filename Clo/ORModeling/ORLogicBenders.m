@@ -9,23 +9,24 @@
  
  ***********************************************************************/
 
-#import "ORColumnGeneration.h"
+
+#import "ORLogicBenders.h"
 #import "ORConcurrencyI.h"
 
-@implementation ORColumnGeneration {
-    @protected
-    id<LPRunnable> _master;
-    ORFloatArray2Runnable _slaveBlock;
+@implementation ORLogicBenders {
+@protected
+    id<ORRunnable> _master;
+    ORSolution2Runnable _slaveBlock;
     id<ORSignature> _sig;
-    id<ORFloatArrayInformer> _columnInformer;
+    id<ORConstraintInformer> _constraintInformer;
 }
 
--(id) initWithMaster: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock {
+-(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock {
     if((self = [super init]) != nil) {
         _master = [master retain];
         _slaveBlock = [slaveBlock copy];
         _sig = nil;
-        _columnInformer = [[ORInformerI alloc] initORInformerI];
+        _constraintInformer = [[ORInformerI alloc] initORInformerI];
     }
     return self;
 }
@@ -33,14 +34,14 @@
 -(void) dealloc {
     [_master release];
     [_sig release];
-    [_columnInformer release];
+    [_constraintInformer release];
     [_slaveBlock release];
     [super dealloc];
 }
 
 -(id<ORSignature>) signature {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.columnIn"];
+        _sig = [ORFactory createSignature: @"complete.constraintIn"];
     }
     return _sig;
 }
@@ -48,49 +49,48 @@
 -(id<ORModel>) model { return [_master model]; }
 
 -(void) run {
-    ORFloat reducedCost = 0.0;
+    bool isFeasible = NO;
     do {
         [_master run];
-        id<ORFloatArray> duals = [[_master duals] retain];
-        id<ORRunnable> slave = [_slaveBlock(duals) retain];
-        [duals release];
-        if(![[slave signature] providesColumn]) {
+        id<ORSolution> solution = [[_master model] bestSolution];
+        id<ORRunnable> slave = [_slaveBlock(solution) retain];
+        if(![[slave signature] providesConstraint]) {
             [NSException raise: NSGenericException
-                        format: @"Invalid Signature(ORColumnGeneration): Slave does not produce a column."];
+                        format: @"Invalid Signature(ORLogicBenders): Slave does not produce a constraint."];
         }
-        [[self columnInformer] whenNotifiedDo: ^(id<ORFloatArray> column) { [_master injectColumn: column]; }];
+        [[self constraintInformer] whenNotifiedDo: ^(id<ORConstraint> c) { /* Add cut */ }];
         [slave run];
-        reducedCost = [[[[slave model] objective] value] key];
+        isFeasible = [[slave model] bestSolution] != nil; // FIX: Not sure how to check if feasible from the modeling layer.
         [slave release];
-    } while(reducedCost >= -0.00001);
+    } while(!isFeasible);
 }
 
 -(void) onExit: (ORClosure)block {}
 
--(id<ORFloatArrayInformer>) columnInformer { return _columnInformer; }
+-(id<ORConstraintInformer>) constraintInformer { return _constraintInformer; }
 
 @end
 
-@implementation ORColumnGenerator {
-    @private
+@implementation ORCutGenerator {
+@private
     id<ORRunnable> _runnable;
-    ORRunnable2FloatArray _transform;
+    ORRunnable2Constraint _transform;
     id<ORSignature> _sig;
-    NSMutableArray* _columnConsumers;
+    NSMutableArray* _constraintConsumers;
 }
 
--(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (ORRunnable2FloatArray)block {
+-(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (ORRunnable2Constraint)block {
     if((self = [super init]) != nil) {
         _runnable = [r retain];
         _transform = [block copy];
-        _columnConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+        _constraintConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
     }
     return self;
 }
 
 -(void) dealloc {
     [_runnable release];
-    [_columnConsumers release];
+    [_constraintConsumers release];
     [_transform release];
     [super dealloc];
 }
@@ -98,7 +98,7 @@
 -(id<ORSignature>) signature {
     if(_sig == nil) {
         ORMutableSignatureI* sig = [[ORMutableSignatureI alloc] initFromSignature: [_runnable signature]];
-        _sig = [sig columnOut];
+        _sig = [sig constraintOut];
     }
     return _sig;
 }
@@ -107,9 +107,9 @@
 
 -(void) run {
     [_runnable run];
-    id<ORFloatArray> column = _transform(_runnable);
-    for(id<ORColumnConsumer> c in _columnConsumers)
-        [[c columnInformer] notifyWithFloatArray: column];
+    id<ORConstraint> constraint = _transform(_runnable);
+    for(id<ORConstraintConsumer> c in _constraintConsumers)
+        [[c constraintInformer] notifyWithConstraint: constraint];
 }
 
 -(void) onExit: (ORClosure)block {
@@ -129,18 +129,18 @@
     return NO;
 }
 
--(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c {
-    [_columnConsumers addObject: c];
+-(void) addConstraintConsumer:(id<ORConstraintConsumer>)c {
+    [_constraintConsumers addObject: c];
 }
 
 @end
 
-@implementation ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock {
-    return [[ORColumnGeneration alloc] initWithMaster: master slave: slaveBlock];
+@implementation ORFactory(ORLogicBenders)
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock {
+    return [[ORLogicBenders alloc] initWithMaster: master slave: slaveBlock];
 }
-+(id<ORRunnable>) generateColumn: (id<ORRunnable>)r using: (ORRunnable2FloatArray)block {
-    ORColumnGenerator* generator = [[ORColumnGenerator alloc] initWithRunnable: r solutionTransform: block];
++(id<ORRunnable>) generateCut: (id<ORRunnable>)r using: (ORRunnable2Constraint)block {
+    ORCutGenerator* generator = [[ORCutGenerator alloc] initWithRunnable: r solutionTransform: block];
     return generator;
 }
 @end
