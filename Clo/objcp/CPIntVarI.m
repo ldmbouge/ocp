@@ -538,7 +538,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void)restoreValue:(ORInt)toRestore
 {
-   [_dom restoreValue:toRestore];
+   [_dom restoreValue:toRestore for:self];
 }
 -(void)restore:(id<ORSnapshot>)s
 {

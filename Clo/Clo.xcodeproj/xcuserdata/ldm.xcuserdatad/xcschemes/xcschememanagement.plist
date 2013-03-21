@@ -34,6 +34,11 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>CuttingStock.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>64</integer>
+		</dict>
 		<key>Euler.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -42,7 +47,7 @@
 		<key>GraveYard.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>55</integer>
+			<integer>54</integer>
 		</dict>
 		<key>LPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
@@ -52,7 +57,7 @@
 		<key>MD5.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>56</integer>
+			<integer>55</integer>
 		</dict>
 		<key>ORFoundation.xcscheme_^#shared#^_</key>
 		<dict>
@@ -67,7 +72,7 @@
 		<key>ORProgram.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>60</integer>
+			<integer>59</integer>
 		</dict>
 		<key>ORUtilities.xcscheme_^#shared#^_</key>
 		<dict>
@@ -77,12 +82,17 @@
 		<key>SHA1.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>58</integer>
+			<integer>57</integer>
 		</dict>
 		<key>Silly.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>40</integer>
+		</dict>
+		<key>SportDemo.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>63</integer>
 		</dict>
 		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
@@ -208,6 +218,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>26</integer>
+		</dict>
+		<key>latinSquare.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>62</integer>
 		</dict>
 		<key>latinSquare.xcscheme_^#shared#^_</key>
 		<dict>
@@ -387,7 +402,7 @@
 		<key>testLPConcretization.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>57</integer>
+			<integer>56</integer>
 		</dict>
 		<key>testLPWrapper.xcscheme</key>
 		<dict>
@@ -397,7 +412,7 @@
 		<key>testMIP.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>59</integer>
+			<integer>58</integer>
 		</dict>
 		<key>testPacking.xcscheme</key>
 		<dict>
@@ -422,6 +437,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>37095B2916DBF173001BCEEC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>5B19098116DAACA7006D1D24</key>
 		<dict>
 			<key>primary</key>

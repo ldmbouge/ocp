@@ -69,7 +69,9 @@
 -(void) visitUniformDistribution:(id) v{}
 -(void) visitIntSet:(id<ORIntSet>)v {
     id<ORIntSet> o = [[ORIntSetI allocWithZone: _zone] initORIntSetI];
-    [v iterate: ^(ORInt i) { [o insert: i]; }];
+    [v enumerateWithBlock:^(ORInt i) {
+       [o insert: i];
+    }];
     [_copyModel trackObject: o];
     _result = o;
 }
@@ -447,54 +449,54 @@
     id<ORInteger> o = [[ORIntegerI allocWithZone: _zone] initORIntegerI: _copyModel value: [e value]];
     _result = o;
 }
--(void) visitExprPlusI: (id<ORExpr>) e  {
+-(void) visitExprPlusI: (ORExprPlusI*) e  {
     id<ORExpr> o = [[ORExprPlusI allocWithZone: _zone] initORExprPlusI: [self copyObject: [e left]]
                                                                    and: [self copyObject: [e right]]];
     _result = o;
 }
--(void) visitExprMinusI: (id<ORExpr>) e  {
+-(void) visitExprMinusI: (ORExprMinusI*) e  {
     id<ORExpr> o = [[ORExprMinusI allocWithZone: _zone] initORExprMinusI: [self copyObject: [e left]]
                                                                      and: [self copyObject: [e right]]];
     _result = o;
 }
--(void) visitExprMulI: (id<ORExpr>) e  {
+-(void) visitExprMulI: (ORExprMulI*) e  {
     id<ORExpr> o = [[ORExprMulI allocWithZone: _zone] initORExprMulI: [self copyObject: [e left]]
                                                                  and: [self copyObject: [e right]]];
     _result = o;
 }
--(void) visitExprEqualI: (id<ORExpr>) e  {
+-(void) visitExprEqualI: (ORExprEqualI*) e  {
     id<ORExpr> o = [[ORExprEqualI allocWithZone: _zone] initORExprEqualI: [self copyObject: [e left]]
                                                                      and: [self copyObject: [e right]]];
     _result = o;
 }
--(void) visitExprNEqualI: (id<ORExpr>) e  {
+-(void) visitExprNEqualI: (ORExprNotEqualI*) e  {
     id<ORExpr> o = [[ORExprNotEqualI allocWithZone: _zone] initORExprNotEqualI: [self copyObject: [e left]]
                                                                            and: [self copyObject: [e right]]];
     _result = o;
 }
--(void) visitExprLEqualI: (id<ORExpr>) e {
+-(void) visitExprLEqualI: (ORExprLEqualI*) e {
     id<ORExpr> o = [[ORExprLEqualI allocWithZone: _zone] initORExprLEqualI: [self copyObject: [e left]]
                                                                        and: [self copyObject: [e right]]];
     _result = o;
 }
--(void) visitExprSumI: (id<ORExpr>) e {
+-(void) visitExprSumI: (ORExprSumI*) e {
     id<ORExpr> o = [[ORExprSumI allocWithZone: _zone] initORExprSumI: [self copyObject: [e expr]]];
     _result = o;
 }
--(void) visitExprProdI: (id<ORExpr>) e {
+-(void) visitExprProdI: (ORExprProdI*) e {
     id<ORExpr> o = [[ORExprProdI allocWithZone: _zone] initORExprProdI: [self copyObject: [e expr]]];
     _result = o;
 }
--(void) visitExprAbsI:(id<ORExpr>) e {
+-(void) visitExprAbsI:(ORExprAbsI*) e {
     id<ORExpr> o = [[ORExprAbsI allocWithZone: _zone] initORExprAbsI: [self copyObject: [e operand]]];
     _result = o;
 
 }
--(void) visitExprNegateI:(id<ORExpr>) e {
+-(void) visitExprNegateI:(ORExprNegateI*) e {
     id<ORExpr> o = [[ORExprNegateI allocWithZone: _zone] initORNegateI:[self copyObject: [e operand]]];
     _result = o;
 }
--(void) visitExprCstSubI: (id<ORExpr>) e  {
+-(void) visitExprCstSubI: (ORExprCstSubI*) e  {
     ORExprCstSubI* o = [[ORExprCstSubI allocWithZone: _zone] initORExprCstSubI: [self copyObject: [e array]]
                                                                          index: [self copyObject: [e index]]];
     _result = o;
