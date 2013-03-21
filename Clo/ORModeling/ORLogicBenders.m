@@ -79,7 +79,7 @@
     NSMutableArray* _constraintConsumers;
 }
 
--(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (ORRunnable2Constraint)block {
+-(id) initWithRunnable: (id<ORRunnable>)r cutTransform: (ORRunnable2Constraint)block {
     if((self = [super init]) != nil) {
         _runnable = [r retain];
         _transform = [block copy];
@@ -129,7 +129,8 @@
     return NO;
 }
 
--(void) addConstraintConsumer:(id<ORConstraintConsumer>)c {
+-(void) addConstraintConsumer:(id<ORConstraintConsumer>)c
+{
     [_constraintConsumers addObject: c];
 }
 
@@ -140,7 +141,7 @@
     return [[ORLogicBenders alloc] initWithMaster: master slave: slaveBlock];
 }
 +(id<ORRunnable>) generateCut: (id<ORRunnable>)r using: (ORRunnable2Constraint)block {
-    ORCutGenerator* generator = [[ORCutGenerator alloc] initWithRunnable: r solutionTransform: block];
+    ORCutGenerator* generator = [[ORCutGenerator alloc] initWithRunnable: r cutTransform: block];
     return generator;
 }
 @end
