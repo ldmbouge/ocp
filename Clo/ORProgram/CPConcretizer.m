@@ -502,8 +502,9 @@
    if ([cstr dereference] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> left = [self concreteVar:[cstr left]];
+      ORAnnotation annotation = [cstr annotation];
       ORInt right = [cstr right];
-      id<CPConstraint> concreteCstr  = [CPFactory mod:left modi:right equal:res];
+      id<CPConstraint> concreteCstr  = [CPFactory mod:left modi:right equal:res annotation:annotation];
       [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
    }

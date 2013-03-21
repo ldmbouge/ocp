@@ -492,7 +492,7 @@ struct CPVarPair {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];
       id<ORIntVar> lV = [ORSubst normSide:lT for:_model annotation:_c];
-      [_model addConstraint:[ORFactory mod:_model var:lV modi:[rT independent] equal:_rv]];
+      [_model addConstraint:[ORFactory mod:_model var:lV modi:[rT independent] equal:_rv annotation:_c]];
    } else {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];

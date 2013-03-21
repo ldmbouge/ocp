@@ -133,10 +133,11 @@
 @end
 
 @interface ORModc : ORConstraintI<ORModc>
--(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z;
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(ORInt) right;
+-(ORAnnotation) annotation;
 @end
 
 // PVH: should add annotation

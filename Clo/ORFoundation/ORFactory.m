@@ -739,9 +739,9 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z
++(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z];
+   id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z annotation:n];
    [model trackConstraint:o];
    return o;
 }
