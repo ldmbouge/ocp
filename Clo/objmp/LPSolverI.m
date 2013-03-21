@@ -1203,11 +1203,12 @@
 {
    return [_lp dual: cstr];
 }
--(id<ORFloatArray>) duals {
+-(id<ORFloatArray>) duals
+{
     id<ORFloatArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORFloat(ORInt i) {
         return [_cstr[i] dual];
     }];
-    return [arr autorelease];
+   return arr; // [arr autorelease]; [ldm] makes no sense to auto-release. All the objects are tracked. This array in tracked in self (LPSolverI instance!)
 }
 -(ORFloat) objectiveValue
 {

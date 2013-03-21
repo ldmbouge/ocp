@@ -53,7 +53,8 @@
         [_master run];
         id<ORFloatArray> duals = [[_master duals] retain];
         id<ORRunnable> slave = [_slaveBlock(duals) retain];
-        [duals release];
+        //[duals release];  // [ldm] This is an issue too. The master tracks the guy permanently. This will remove it even though it sits in the master object store!
+        //If the array is really meant to be transient, then the master should _not_ track it.
         if(![[slave signature] providesColumn]) {
             [NSException raise: NSGenericException
                         format: @"Invalid Signature(ORColumnGeneration): Slave does not produce a column."];

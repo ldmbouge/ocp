@@ -41,21 +41,24 @@
 @end
 
 @implementation ORMutableSignatureI
--(id) init {
+-(id) init
+{
     if((self = [super init]) != nil) {
         [self clear];
     }
     return self;
 }
 
--(id) initFromSignature: (id<ORSignature>)sig {
+-(id) initFromSignature: (id<ORSignature>)sig
+{
     if((self = [super init]) != nil) {
         [self copy: sig];
     }
     return self;
 }
 
--(void) copy: (id<ORSignature>)sig {
+-(void) copy: (id<ORSignature>)sig
+{
     isComplete = [sig isComplete];
     providesLowerBound = [sig providesLowerBound];
     providesLowerBoundPool = [sig providesLowerBoundPool];
@@ -130,7 +133,8 @@
 
 @implementation ORUpperBoundedRunnableI
 
--(id) initWithModel:(id<ORModel>)m {
+-(id) initWithModel:(id<ORModel>)m
+{
     if((self = [super init]) != nil) {
         _model = [m retain];
         _sig = nil;
@@ -144,11 +148,13 @@
 
 -(id<ORModel>) model { return _model; }
 
--(void) onExit: (ORClosure)block {
+-(void) onExit: (ORClosure)block
+{
     _exitBlock = [block copy];
 }
 
--(void) dealloc {
+-(void) dealloc
+{
     [_model release];
     [_upperBoundStreamInformer release];
     [_upperBoundStreamConsumers release];
@@ -160,7 +166,8 @@
 }
 
 
--(id<ORSignature>) signature {
+-(id<ORSignature>) signature
+{
     if(_sig == nil) {
         _sig = [ORFactory createSignature: @"complete.upperStreamOut.upperStreamIn.solutionStreamOut.solutionStreamIn"];
     }
@@ -169,21 +176,25 @@
 
 -(void) run {}
 
--(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c {
+-(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c
+{
     NSLog(@"Adding upper bound consumer...");
     [_upperBoundStreamConsumers addObject: c];
 }
 
--(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c {
+-(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c
+{
     NSLog(@"Adding solution stream consumer...");
     [_solutionStreamConsumers addObject: c];
 }
 
--(id<ORIntInformer>) upperBoundStreamInformer {
+-(id<ORIntInformer>) upperBoundStreamInformer
+{
     return _upperBoundStreamInformer;
 }
 
--(id<ORSolutionInformer>) solutionStreamInformer {
+-(id<ORSolutionInformer>) solutionStreamInformer
+{
     return _solutionStreamInformer;
 }
 
@@ -197,28 +208,32 @@
     id<CPProgram> _program;    
 }
 
--(id) initWithModel: (id<ORModel>)m {
+-(id) initWithModel: (id<ORModel>)m
+{
     if((self = [super initWithModel: m]) != nil) {
         _program = [ORFactory createCPProgram: _model];
     }
     return self;
 }
 
--(void) dealloc {
+-(void) dealloc
+{
     [_program release];
     [super dealloc];
 }
 
 -(id<CPProgram>) solver { return _program; }
 
--(void) setupRun {
+-(void) setupRun
+{
     [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(ORInt b) {
         NSLog(@"(%p) recieved upper bound: %i", self, b);
         [[[_program engine] objective] tightenPrimalBound: b];
     }];
 }
 
--(void) run {
+-(void) run
+{
     NSLog(@"Running CP runnable(%p)...", _program);
     [self setupRun];
     id<CPHeuristic> h = [_program createFF];
@@ -266,7 +281,8 @@
     id<LPProgram> _program;
 }
 
--(id) initWithModel: (id<ORModel>)m {
+-(id) initWithModel: (id<ORModel>)m
+{
     if((self = [super init]) != nil) {
         _model = [m retain];
         _sig = nil;
@@ -275,7 +291,8 @@
     return self;
 }
 
--(void) dealloc {
+-(void) dealloc
+{
     [_model release];
     [_program release];
     [super dealloc];
@@ -283,7 +300,8 @@
 
 -(id<ORModel>) model { return _model; }
 
--(id<ORSignature>) signature {
+-(id<ORSignature>) signature
+{
     if(_sig == nil) {
         _sig = [ORFactory createSignature: @"complete"];
     }
@@ -292,15 +310,17 @@
 
 -(id<LPProgram>) solver { return _program; }
 
--(id<ORFloatArray>) duals {
+-(id<ORFloatArray>) duals
+{
     return [[_program solver] duals];
 }
 
--(void) injectColumn: (id<ORFloatArray>) col {
-    
+-(void) injectColumn: (id<ORFloatArray>) col
+{    
 }
 
--(void) run {
+-(void) run
+{
     NSLog(@"Running LP runnable(%p)...", _program);
     [_program solve];
     NSLog(@"Finishing LP runnable(%p)...", _program);
@@ -311,11 +331,13 @@
 @end
 
 @implementation ORFactory(ORRunnable)
-+(id<ORRunnable>) CPRunnable: (id<ORModel>)m {
++(id<ORRunnable>) CPRunnable: (id<ORModel>)m
+{
     id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;
 }
-+(id<LPRunnable>) LPRunnable: (id<ORModel>)m {
++(id<LPRunnable>) LPRunnable: (id<ORModel>)m
+{
     id<LPRunnable> r = [[LPRunnableI alloc] initWithModel: m];
     return r;
 }

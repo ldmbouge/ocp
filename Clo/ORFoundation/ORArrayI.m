@@ -206,7 +206,7 @@
 @implementation ORFloatArrayI
 {
     id<ORTracker> _tracker;
-    ORFloat*          _array;
+    ORFloat*        _array;
     ORInt             _low;
     ORInt              _up;
     ORInt              _nb;
@@ -217,7 +217,7 @@
 {
     self = [super init];
     _tracker = tracker;
-    _array = malloc(nb * sizeof(ORInt));
+    _array = malloc(nb * sizeof(ORFloat));
     _low = 0;
     _up = nb-1;
     _nb = nb;
@@ -230,7 +230,7 @@
 {
     self = [super init];
     _tracker = tracker;
-    _array = malloc(nb * sizeof(ORInt));
+    _array = malloc(nb * sizeof(ORFloat));
     _low = 0;
     _up = nb-1;
     _nb = nb;
@@ -247,7 +247,7 @@
     _up = range.up;
     _nb = _up - _low + 1;
     _range = range;
-    _array = malloc(_nb * sizeof(ORInt));
+    _array = malloc(_nb * sizeof(ORFloat));
     _array -= _low;
     for (ORInt i=_low ; i <= _up; i++)
         _array[i] = value;
@@ -261,7 +261,7 @@
     _up = range.up;
     _nb = _up - _low + 1;
     _range = range;
-    _array = malloc(_nb * sizeof(ORInt));
+    _array = malloc(_nb * sizeof(ORFloat));
     _array -= _low;
     for (ORInt i=_low ; i <= _up; i++)
         _array[i] = clo(i);
@@ -275,7 +275,7 @@
     _low = 0;
     _up = _nb-1;
     _range = [ORFactory intRange: tracker low: _low up: _up];
-    _array = malloc(_nb * sizeof(ORInt));
+    _array = malloc(_nb * sizeof(ORFloat));
     int k = 0;
     for (ORInt i=r1.low ; i <= r1.up; i++)
         for (ORInt j=r2.low ; j <= r2.up; j++)

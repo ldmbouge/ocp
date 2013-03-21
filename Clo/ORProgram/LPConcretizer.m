@@ -405,7 +405,7 @@ int maini()
       [o visit: self];
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: [o dereference]];
       [v setImpl: concreteObj];
-      [_lpsolver solve];
+      [_lpsolver postObjective: concreteObj];
    }
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v

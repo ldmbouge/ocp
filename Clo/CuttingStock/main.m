@@ -37,14 +37,14 @@ int main (int argc, const char * argv[])
         if(i == j) return (ORInt)floor(boardWidth / [shelf at: i]);
         return 0.0;
     }];
-    id<ORIntVarArray> cut = [ORFactory intVarArray: master range: shelves domain: RANGE(master, 0, [demand max])];    
-    id<ORIntVar> masterObj = [ORFactory intVar: master domain: RANGE(master, 0, shelfCount * [demand max])];
-    [master minimize: masterObj];
-    [master add: [masterObj eq: Sum(master, i, shelves, [cut at: i])]];
+    id<ORFloatVarArray> cut = [ORFactory floatVarArray: master range: shelves low:0 up:[demand max]];
+    id<ORFloatVar> masterObj = [ORFactory floatVar: master  low:0 up:shelfCount*[demand max]];
+    [master add: [masterObj eq: Sum(master, i, shelves, cut[i])]];
     for(ORInt i = [shelves low]; i <= [shelves up]; i++) {
         [master add: [Sum(master, j, shelves, [[cut at: j] muli: [columns at: j * shelfCount + i]])
                geqi: [demand at: i]]];
     }
+    [master minimize: masterObj];
 
     id<LPRunnable> lp = [ORFactory LPRunnable: master];
     id<ORRunnable> cg = [ORFactory columnGeneration: lp slave: ^id<ORRunnable>(id<ORFloatArray> duals) {
