@@ -91,7 +91,7 @@
 }
 -(LPOutcome) solve
 {
-   int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
+   //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
    [self printModelToFile: "/Users/ldm/lookatgurobi.lp"];
    int status;

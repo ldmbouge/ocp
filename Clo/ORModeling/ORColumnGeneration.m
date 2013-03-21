@@ -52,6 +52,7 @@
     do {
         [_master run];
         id<ORFloatArray> duals = [[_master duals] retain];
+       NSLog(@"Show me the duals: %@",duals);
         id<ORRunnable> slave = [_slaveBlock(duals) retain];
         //[duals release];  // [ldm] This is an issue too. The master tracks the guy permanently. This will remove it even though it sits in the master object store!
         //If the array is really meant to be transient, then the master should _not_ track it.
