@@ -226,6 +226,16 @@ typedef int (^intgetter) (void) ;
 -(ORStatus) post;
 @end
 
+@interface CPModcDC : CPCoreConstraint { // y == x MOD c (DCConsistency)
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   ORInt      _c;
+}
+-(id)initCPModcDC:(id)x mod:(ORInt)c equal:(id)y;
+-(ORStatus) post;
+@end
+
+
 @interface CPModBC : CPCoreConstraint { // z == x MOD y
    CPIntVarI* _x;
    CPIntVarI* _y;

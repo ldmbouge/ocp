@@ -128,6 +128,7 @@ enum ORGroupType {
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(ORInt) right;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORAbs <ORConstraint>

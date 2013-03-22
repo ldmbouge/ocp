@@ -25,6 +25,7 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprDivI: (ORExprDivI*) e;
 -(void) visitExprModI: (ORExprModI*) e;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
@@ -60,6 +61,7 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprDivI: (ORExprDivI*) e;
 -(void) visitExprModI: (ORExprModI*) e;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
@@ -179,6 +181,7 @@ struct CPVarPair {
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
+-(void) visitExprDivI: (ORExprDivI*) e     {}
 -(void) visitExprModI: (ORExprModI*) e     {}
 -(void) visitExprSumI: (ORExprSumI*) e     {}
 -(void) visitExprProdI: (ORExprProdI*) e   {}
@@ -289,6 +292,10 @@ struct CPVarPair {
          [_terms addTerm:alpha by:1];
       }
    }
+}
+-(void) visitExprDivI:(ORExprDivI *)e
+{
+   // TODO:ldm
 }
 -(void) visitExprModI: (ORExprModI*) e
 {
@@ -484,6 +491,11 @@ struct CPVarPair {
    [lT release];
    [rT release];
 }
+-(void) visitExprDivI: (ORExprDivI*) e
+{
+   // TODO:ldm
+}
+
 -(void) visitExprModI:(ORExprModI *)e
 {
    ORLinear* lT = [ORLinearizer linearFrom:[e left] model:_model annotation:_c];
@@ -492,7 +504,7 @@ struct CPVarPair {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];
       id<ORIntVar> lV = [ORSubst normSide:lT for:_model annotation:_c];
-      [_model addConstraint:[ORFactory mod:_model var:lV modi:[rT independent] equal:_rv]];
+      [_model addConstraint:[ORFactory mod:_model var:lV modi:[rT independent] equal:_rv annotation:_c]];
    } else {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];

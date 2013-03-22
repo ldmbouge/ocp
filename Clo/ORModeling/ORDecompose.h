@@ -34,6 +34,7 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprDivI: (ORExprDivI*) e;
 -(void) visitExprModI: (ORExprModI*) e;
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprProdI: (ORExprProdI*) e;

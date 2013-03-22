@@ -474,6 +474,11 @@
    id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right]; 
    return [self validate:o onError:"No CP tracker in Mul Expression"];
 }
++(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right
+{
+   id<ORExpr> o = [[ORExprDivI alloc] initORExprDivI: left and: right];
+   return [self validate:o onError:"No CP tracker in Div Expression"];
+}
 +(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right
 {
    id<ORExpr> o = [[ORExprModI alloc] initORExprModI: left mod: right];
@@ -781,9 +786,9 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z
++(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z];
+   id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z annotation:n];
    [model trackConstraint:o];
    return o;
 }

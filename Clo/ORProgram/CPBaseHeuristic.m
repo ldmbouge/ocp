@@ -50,7 +50,7 @@
 }
 -(void) restart
 {
-   NSLog(@"Restart of based heuristic called... Nothing to do.");
+   //NSLog(@"Restart of based heuristic called... Nothing to do.");
 }
 -(id<ORIntVarArray>) allIntVars
 {

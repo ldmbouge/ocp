@@ -647,13 +647,15 @@
    id<ORIntVar> _x;
    ORInt        _y;
    id<ORIntVar> _z;
+   ORAnnotation _n;
 }
--(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
    _z = z;
+   _n = n;
    return self;
 }
 -(NSString*) description
@@ -677,6 +679,10 @@
 -(ORInt) right
 {
    return _y;
+}
+-(ORAnnotation) annotation
+{
+   return _n;
 }
 @end
 
