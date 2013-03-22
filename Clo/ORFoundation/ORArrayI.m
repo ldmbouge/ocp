@@ -792,6 +792,15 @@
       _flat[i] = 0;
    return self;
 }
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block {
+   self = [self initORIntMatrix: tracker range: r0 : r1];
+   for(ORInt i = _low[0]; i <= _up[0]; i++) {
+      for(ORInt j = _low[1]; j <= _up[1]; j++) {
+         [self set: block(i, j) at: i : j];
+      }
+   }
+   return self;
+}
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix
 {
    self = [super init];
