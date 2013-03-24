@@ -238,7 +238,7 @@
       [ORLPFlatten flatten:c into:batch];
       NSSet* map = [batch compiledMap];
       NSLog(@"Got a Map %@",map);
-   } onObjective:^(id<ORObjective> o) {
+   } onObjective:^(id<ORObjectiveFunction> o) {
       NSLog(@"objective %@ ",o);
       if (o) {
          ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:batch];

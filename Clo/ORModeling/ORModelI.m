@@ -595,12 +595,16 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
          sel = obj;
       } else {
          id<ORObjectiveValue> nv = [obj objectiveValue];
-         if ([nv key] < [bestSoFar key]) {
+         if ([bestSoFar compare: nv] == 1) {
+            [bestSoFar release];
             bestSoFar = nv;
             sel = obj;
          }
+         else
+            [nv release];
       }
    }];
+   [bestSoFar release];
    return [sel retain];
 }
 @end

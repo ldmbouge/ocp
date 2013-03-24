@@ -374,6 +374,32 @@
 -(id<ORIntVar>) cost;
 @end
 
+
+@interface ORObjectiveValueIntI : NSObject<ORObjectiveValueInt> {
+   ORInt _value;
+   ORInt _direction;
+   ORInt _pBound;
+}
+-(id) initObjectiveValueIntI: (ORInt) pb minimize: (BOOL) b ;
+-(ORInt)value;
+-(ORInt)primal;
+-(ORFloat)key;
+-(NSString*)description;
+@end
+
+@interface ORObjectiveValueFloatI : NSObject<ORObjectiveValueFloat> {
+   ORFloat _value;
+   ORInt _direction;
+   ORInt _pBound;
+}
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (BOOL) b ;
+-(ORFloat)value;
+-(ORFloat)primal;
+-(ORFloat)key;
+-(NSString*)description;
+@end
+
+
 @interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;
 -(id<ORObjectiveValue>) value;
@@ -385,7 +411,7 @@
 }
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
--(id<ORObjectiveValue>)value;
+-(id<ORObjectiveValue>) value;
 -(BOOL) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
@@ -410,19 +436,6 @@
 -(id<ORExpr>) expr;
 -(BOOL) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
-@end
-
-@interface ORIntObjectiveValue : NSObject<ORObjectiveValue> {
-   ORInt     _value;
-   ORInt _direction;
-   ORInt    _pBound;
-}
--(id)initObjectiveValue:(id<ORIntVar>)var minimize:(BOOL)b primalBound:(ORInt)pb;
--(ORInt)value;
--(ORInt)primal;
--(ORFloat)key;
--(NSString*)description;
--(void)updateWith:(id<ORObjectiveValue>)other;
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>

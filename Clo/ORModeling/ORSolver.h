@@ -21,14 +21,14 @@
 -(id<ORConstraint>) packing: (id<ORPacking>) cstr;
 -(id<ORConstraint>) algebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(id<ORConstraint>) tableConstraint: (id<ORTableConstraint>) cstr;
--(id<ORObjective>) minimize: (id<ORObjectiveFunction>) v;
--(id<ORObjective>) maximize: (id<ORObjectiveFunction>) v;
+-(id<ORObjectiveFunction>) minimize: (id<ORObjectiveFunction>) v;
+-(id<ORObjectiveFunction>) maximize: (id<ORObjectiveFunction>) v;
 @end
 
 @protocol ORSolver <NSObject,ORASolver,ORTracker>
 -(id<ORTracer>)    tracer;
 -(id<OREngine>)    engine;
--(id<ORObjective>) objective;
+-(id<ORSearchObjectiveFunction>) objective;
 -(id<ORSolverConcretizer>) concretizer;
 -(void)            addModel: (id) model;
 

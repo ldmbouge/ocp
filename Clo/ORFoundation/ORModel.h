@@ -332,10 +332,16 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveValue <ORObject>
--(ORFloat) key;
+-(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
+-(ORInt) compare: (id<ORObjectiveValue>) other;
+@end
+
+@protocol ORObjectiveValueInt <ORObjectiveValue>
 -(ORInt) value;
-//-(ORInt)primal;
-//-(void)updateWith:(id<ORObjectiveValue>)other;
+@end
+
+@protocol ORObjectiveValueFloat <ORObjectiveValue>
+-(ORFloat) value;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -355,17 +361,16 @@ enum ORGroupType {
 -(id<ORIntArray>) coef;
 @end
 
-
-@protocol ORObjective <NSObject,ORObjectiveFunction>
+@protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
+-(id<ORObjectiveValue>) primalBound;
 -(void)     updatePrimalBound;
--(void)     tightenPrimalBound: (ORInt) newBound;
--(ORInt)    primalBound;
+-(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 @end
 
 
 @protocol ORASolver <NSObject,ORTracker>
--(id<ORObjective>)    objective;
+-(id<ORSearchObjectiveFunction>)    objective;
 -(void)               close;
 -(id<OREngine>)       engine;
 -(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)

@@ -49,7 +49,7 @@
         ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: batch];
         [c visit: lc];
         [lc release];
-    } onObjective:^(id<ORObjective> o) {
+    } onObjective:^(id<ORObjectiveFunction> o) {
         ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: batch];
         [o visit: lo];
     }];

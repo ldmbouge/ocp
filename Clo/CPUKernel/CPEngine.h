@@ -26,8 +26,8 @@
 -(void) scheduleTrigger: (ConstraintCallback) cb onBehalf: (id<CPConstraint>)c;
 -(void) scheduleAC3: (id<CPEventNode>*) mlist;
 -(void) scheduleAC5: (id<CPAC5Event>) evt;
--(void) setObjective: (id<ORObjective>) obj;
--(id<ORObjective>) objective;
+-(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
+-(id<ORSearchObjectiveFunction>) objective;
 -(ORStatus) addInternal: (id<ORConstraint>) c;
 -(ORStatus) add: (id<ORConstraint>) c;
 -(ORStatus) post: (id<ORConstraint>) c;

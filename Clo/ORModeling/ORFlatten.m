@@ -234,7 +234,7 @@
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
       [ORFlatten flatten:c into:batch];
-   } onObjective:^(id<ORObjective> o) {
+   } onObjective:^(id<ORObjectiveFunction> o) {
       ORFlattenObjective* fo = [[ORFlattenObjective alloc] init:batch];
       [o visit:fo];
       [fo release];
@@ -592,8 +592,8 @@
    id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
    [terms addTerm: alpha by: -1];
    [terms postEQZ: _theModel annotation: Default];
-   [_theModel minimize: alpha];
-   ORMinimizeVarI* objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: alpha];
+   id<ORObjectiveFunction> objective = [_theModel minimize: alpha];
+//   ORMinimizeVarI* objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: alpha];
    [e setImpl: objective];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
@@ -604,8 +604,8 @@
    id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
    [terms addTerm: alpha by: -1];
    [terms postEQZ: _theModel annotation: Default];
-   [_theModel maximize: alpha];
-   ORMaximizeVarI* objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: alpha];
+   id<ORObjectiveFunction> objective = [_theModel maximize: alpha];
+//   ORMaximizeVarI* objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: alpha];
    [e setImpl: objective];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v

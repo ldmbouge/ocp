@@ -117,7 +117,7 @@
 @protected
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
-   id<ORObjective>       _objective;
+   id<ORSearchObjectiveFunction>  _objective;
    id<ORTrail>           _trail;
    id<ORTracer>          _tracer;
    CPHeuristicSet*       _hSet;
@@ -189,7 +189,7 @@
 {
    return _search;
 }
--(id<ORObjectiveFunction>) objective
+-(id<ORSearchObjectiveFunction>) objective
 {
    return [_engine objective];
 }
@@ -254,7 +254,7 @@
                   onSolution: ^{ [self doOnSolution];}
                       onExit: ^{ [self doOnExit];}
        ];
-      printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
+      NSLog(@"Optimal Solution: %@ thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       _oneSol = YES;

@@ -601,13 +601,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
 }
 
--(void) setObjective: (id<ORObjective>) obj
+-(void) setObjective: (id<ORSearchObjectiveFunction>) obj
 {
    [_objective release];
    _objective = [obj retain];
 }
 
--(id<ORObjective>) objective
+-(id<ORSearchObjectiveFunction>) objective
 {
    return _objective;
 }
