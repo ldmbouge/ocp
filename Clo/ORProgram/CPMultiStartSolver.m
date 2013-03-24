@@ -14,6 +14,7 @@
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <ORProgram/CPBaseHeuristic.h>
+#import <ORModeling/ORModeling.h>
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 
@@ -142,10 +143,25 @@
 -(void) solve: (ORClosure) search
 {
    _nbDone = 0;
+   ORClosure objClosure = ^ {
+      id<ORObjective> myObjective = [[_solver[0] objective] dereference];
+      if (myObjective) {
+         id<ORObjectiveValue> primal = [myObjective value];
+         for(ORInt i=1;i < _nb;i++) {
+            id<ORObjective> yourObjective = [[_solver[i] objective] dereference];
+            [primal updateWith:[yourObjective value]];
+         }
+         for(ORInt i=0;i < _nb;i++) {
+            id<ORObjective> yourObjective = [[_solver[i] objective] dereference];
+            [yourObjective tightenPrimalBound:[primal primal]];
+         }
+      }
+      search();
+   };
    for(ORInt i = 0; i < _nb; i++) {
       [NSThread detachNewThreadSelector:@selector(solveOne:)
                                toTarget:self
-                             withObject:[NSArray arrayWithObjects: [search copy],[NSNumber numberWithInt:i],nil]];
+                             withObject:[NSArray arrayWithObjects: [objClosure copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
    [_sPool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
@@ -332,74 +348,72 @@
    return _sPool;
 }
 
+-(id<CPHeuristic>)setupHeuristic:(SEL)selector with:(id<ORVarArray>)rvars
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+   for(ORInt i=0;i < _nb;i++) {
+      binding[i] = [_solver[i] performSelector:selector withObject:rvars];
+   }
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+
+-(id<CPHeuristic>)setupHeuristic:(SEL)selector
+{
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+   for(ORInt i=0;i < _nb;i++) {
+      binding[i] = [_solver[i] performSelector:selector];
+   }
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
+{
+   assert([hs count] >= _nb);
+   id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
+   for(ORInt i=0;i < _nb;i++) {
+      SEL todo = NSSelectorFromString([hs objectAtIndex:i]);
+      binding[i] = [_solver[i] performSelector:todo withObject:vars];
+   }
+   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createFF:rvars];
-  return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd with:rvars];
 }
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createWDeg:rvars];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd with:rvars];
 }
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createDDeg:rvars];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd with:rvars];
 }
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createIBS:rvars];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd with:rvars];
 }
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createABS:rvars];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd with:rvars];
 }
 -(id<CPHeuristic>) createFF
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createFF];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createWDeg
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createWDeg];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createDDeg
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createDDeg];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createIBS
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createIBS];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd];
 }
 -(id<CPHeuristic>) createABS
 {
-  id<ORBindingArray> binding = [ORFactory bindingArray:self nb:_nb];
-  for(ORInt i=0;i < _nb;i++)
-    binding[i] = [_solver[i] createABS];
-   return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+   return [self setupHeuristic:_cmd];
 }
 @end

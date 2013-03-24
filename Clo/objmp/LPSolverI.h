@@ -49,6 +49,7 @@
 -(ORFloat) reducedCost;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
+-(NSString*)description;
 @end
 
 @protocol LPVariableArray <ORVarArray>

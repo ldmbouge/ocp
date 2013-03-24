@@ -12,7 +12,6 @@
 #import "CPWDeg.h"
 #import "CPEngineI.h"
 #import "ORFoundation/ORModel.h"
-#import "CPIntVarI.h"
 
 @implementation CPWDeg
 

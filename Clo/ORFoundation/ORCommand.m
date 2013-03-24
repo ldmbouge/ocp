@@ -41,11 +41,11 @@
 {
    ORCommandList* nList = [[ORCommandList alloc] initCPCommandList:_ndId];
    struct CNode* cur = _head;
-   struct CNode* first = nil;
-   struct CNode* last  = nil;
+   struct CNode* first = NULL;
+   struct CNode* last  = NULL;
    while (cur) {
       struct CNode* cpy = malloc(sizeof(struct CNode));
-      cpy->_next = nil;
+      cpy->_next = NULL;
       cpy->_c = [cur->_c retain];
       if (last) {
          last->_next = cpy;
@@ -99,18 +99,17 @@
 {
    return _ndId;
 }
--(bool)apply:(bool(^)(id<ORCommand>))clo
+-(BOOL)apply:(BOOL(^)(id<ORCommand>))clo
 {
-   struct CNode* cur = _head;
-   while (cur) {
-      bool ok = clo(cur->_c);
-      if (!ok)
-         return false;
+   struct CNode* cur = self->_head;
+   BOOL ok = YES;
+   while (cur && ok) {
+      ok = clo(cur->_c);
       cur = cur->_next;
    }
-   return true;
+   return YES;
 }
--(bool)empty
+-(BOOL)empty
 {
    return _head==0;
 }

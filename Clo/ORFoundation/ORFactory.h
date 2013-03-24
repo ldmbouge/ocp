@@ -79,6 +79,8 @@
 +(id<ORIntVarMatrix>) boolVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 +(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m;
 
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
+
 +(id<ORTrailableIntArray>) trailableIntArray: (id<OREngine>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
 +(id<ORTrailableInt>) trailableInt: (id<OREngine>) solver value: (ORInt) value;
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
@@ -93,6 +95,7 @@
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right;
 +(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right;
 +(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right;
++(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right;
 +(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right;
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right;
 +(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right;
@@ -145,7 +148,7 @@
 +(id<ORConstraint>) less:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y;
 +(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)c;
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
-+(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z;
++(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z annotation:(ORAnnotation)n;
 +(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y annotation:(ORAnnotation)c;
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y
                  annotation:(ORAnnotation)note;

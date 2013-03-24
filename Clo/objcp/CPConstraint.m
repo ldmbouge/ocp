@@ -206,7 +206,7 @@
          [[x tracker] trackObject: o];
          return o;
       }
-      default:assert(FALSE);return nil;
+      default:assert(0);return nil;
    }
 }
 
@@ -225,7 +225,7 @@
          [[x tracker] trackObject: o];
          return o;
       }
-      default:assert(FALSE);return nil;
+      default:assert(0);return nil;
    }
 }
 
@@ -424,9 +424,17 @@
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y
++(id<ORConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y annotation:(ORAnnotation)note
 {
-   id<ORConstraint> o = [[CPModcBC alloc] initCPModcBC:x mod:c equal:y];
+   id<ORConstraint> o = NULL;
+   switch(note) {
+      case DomainConsistency:
+         o = [[CPModcDC alloc] initCPModcDC:x mod:c equal:y];
+         break;
+      default:
+         o = [[CPModcBC alloc] initCPModcBC:x mod:c equal:y];
+         break;
+   }
    [[x tracker] trackObject:o];
    return o;
 }

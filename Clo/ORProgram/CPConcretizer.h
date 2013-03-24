@@ -92,6 +92,7 @@
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMinusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMulI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
+-(id) visitExprDivI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprModI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprNEqualI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -193,6 +194,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprDivI: (id<ORExpr>) e;
 -(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
@@ -293,6 +295,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprDivI: (id<ORExpr>) e;
 -(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;

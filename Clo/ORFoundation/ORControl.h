@@ -13,7 +13,6 @@
 #import "ORFoundation/ORSet.h"
 
 
-
 @protocol ORForall <NSObject>
 -(id<ORForall>) suchThat: (ORInt2Bool) suchThat;
 -(id<ORForall>) orderedBy: (ORInt2Int) orderedBy;

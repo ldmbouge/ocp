@@ -113,7 +113,7 @@
 {
     return pow(2.0, _freebits._val);
 }
--(bool) bound
+-(BOOL) bound
 {
     return _freebits._val==0;
 }

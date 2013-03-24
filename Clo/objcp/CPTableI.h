@@ -12,10 +12,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORData.h>
-#import "CPTypes.h"
+#import <ORFoundation/ORDataI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPConstraintI.h>
 #import "CPIntVarI.h"
-#import "CPConstraintI.h"
-#import "ORDataI.h"
 
 @interface CPTableCstrI : CPCoreConstraint<CPConstraint,NSCoding> {
     CPIntVarI**     _var;

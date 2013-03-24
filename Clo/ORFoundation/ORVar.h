@@ -21,13 +21,13 @@
 @end
 
 @protocol ORSavable<NSObject>
--(ORUInt) getId;
+-(ORInt) getId;
 -(id) snapshot;
 -(void)restore:(id<ORSnapshot>)s;
 @end
 
 @protocol ORVar <ORObject,ORSavable,ORExpr>
--(ORUInt) getId;
+-(ORInt) getId;
 -(BOOL) bound;
 -(NSSet*) constraints;
 @end
@@ -48,14 +48,14 @@
 @end
 
 @protocol ORBitVar <ORVar>
--(bool) bound;
+-(BOOL) bound;
 -(uint64)min;
 -(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
 -(unsigned int)  domsize;
--(bool) member: (unsigned int*) v;
+-(BOOL) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end
 
@@ -78,6 +78,14 @@
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
 -(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol ORFloatVarArray <ORVarArray>
+-(id<ORFloatVar>) at: (ORInt) value;
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

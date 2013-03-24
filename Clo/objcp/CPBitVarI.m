@@ -134,7 +134,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     _name = name;
 }
--(ORUInt) getId
+-(ORInt) getId
 {
    return _name;
 }
@@ -158,7 +158,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     }
 }
 
--(bool)bound
+-(BOOL)bound
 {
     return [_dom bound];
 }
@@ -207,7 +207,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    return [_dom lsFreeBit];
 }
 
--(bool)member:(unsigned int*)v
+-(BOOL)member:(unsigned int*)v
 {
     return [_dom member:v];
 }

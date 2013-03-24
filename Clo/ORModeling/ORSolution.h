@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFOundation/ORModel.h>
+#import <ORFoundation/ORModel.h>
 
 @protocol ORSolution <ORObject>
 -(id<ORSnapshot>) value:(id)var;

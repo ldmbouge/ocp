@@ -11,10 +11,8 @@
 
 #import "CPABS.h"
 #import "CPEngineI.h"
-#import "CPIntVarI.h"
-#import "CPStatisticsMonitor.h"
-#import "ORTracer.h"
-
+#import <objcp/CPStatisticsMonitor.h>
+#import <ORFoundation/ORTracer.h>
 
 @interface ABSNogood : NSObject {
    id<CPIntVar> _var;
@@ -310,9 +308,10 @@
 {
    ABSValueActivity* copy = [[ABSValueActivity alloc] initABSActivity:_theVar];
    NSMutableDictionary* cv = [[NSMutableDictionary alloc] initWithCapacity:[_values count]];
-   [_values enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, NSNumber* value, BOOL *stop) { 
+   for(NSNumber* key in _values) {
+      NSNumber* value = [_values objectForKey:key];
       [cv setObject:[value copy] forKey:key];
-   }];
+   }
    copy->_values = cv;
    return copy;
 }
@@ -364,16 +363,22 @@
 }
 -(void)enumerate:(void(^)(id value,id activity,BOOL* stop))block
 {
-   [_values enumerateKeysAndObjectsUsingBlock:block];
+   BOOL stop = NO;
+   for(NSNumber* key in _values) {
+      block(key,[_values objectForKey:key],&stop);
+      if (stop)
+         return ;
+   }
 }
 
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<ValueActivity(%@) = [",_theVar];
-   [_values enumerateKeysAndObjectsUsingBlock:^(NSNumber* value, NSNumber* act, BOOL *stop) {
+   for(NSNumber* value in _values) {
+      NSNumber* act = [_values objectForKey:value];
       [buf appendFormat:@"%@ : %@,",value,act];
-   }];
+   }
    [buf appendFormat:@"]"];
    return buf;
 }
@@ -442,11 +447,12 @@
 }
 -(void)updateActivities:(id<ORVar>)forVar andVal:(ORInt)val
 {
-   [_varActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
+   for(NSNumber* key in _varActivity) {
+      ABSVariableActivity* act = [_varActivity objectForKey:key];
       if (![act->_theVar bound]) {
          [act aging:_agingRate];
       }
-   }];
+   }
    __block int nbActive = 0;
    [_monitor scanActive:^(CPVarInfo *vInfo) {
       NSNumber* key = [[NSNumber alloc] initWithInt:[vInfo getVarID]];
@@ -491,7 +497,11 @@
    }];
    
    [[_cp engine] clearStatus];
-   NSLog(@"ABS ready...");
+   [[_cp engine] enforceObjective];
+   if ([[_cp engine] objective] != NULL)
+      NSLog(@"ABS ready... %@",[[_cp engine] objective]);
+   else
+      NSLog(@"ABS ready...");
 }
 -(id<CPIntVarArray>)allIntVars
 {
@@ -559,13 +569,15 @@
       }
    }
    _varBackup = [[NSMutableDictionary alloc] initWithCapacity:[_varActivity count]];
-   [_varActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
+   for(NSNumber* key in _varActivity) {
+      ABSVariableActivity* act = [_varActivity objectForKey:key];
       [_varBackup setObject:[act copy] forKey:key];
-   }];
+   }
    _valBackup = [[NSMutableDictionary alloc] initWithCapacity:[_valActivity count]];
-   [_valActivity enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSValueActivity* act, BOOL *stop) {
+   for(NSNumber* key in _valActivity) {
+      ABSValueActivity* act = [_valActivity objectForKey:key];
       [_valBackup setObject:[act copy] forKey:key];
-   }];
+   }
    _freshBackup = YES;
 }
 
@@ -647,10 +659,12 @@
          if (depth > probeDepth || allBound) {
             if ([_solver objective]==nil) {
                NSLog(@"Found a solution in a CSP while probing!");
-               return ;
+               if ([self oneSol])
+                  return ;
             } else {
-               NSLog(@"Found a local optimum = %@",[_solver objective]);
+               NSLog(@"ABS found a local optimum = %@",[_solver objective]);
                [[_solver objective] updatePrimalBound];
+               NSLog(@"after updatePrimalBound = %@",[_solver objective]);
             }
          }
          while (depth-- != 0)
@@ -660,7 +674,7 @@
          [probe release];
          for(ABSNogood* b in localKill) {
             [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];            
-            NSLog(@"Imposing local SAC %@",b);
+            //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
       }
@@ -668,9 +682,9 @@
    } while (carryOn && cntProbes < maxProbes);
    
    [_solver atomic:^ORStatus {
+      NSLog(@"Imposing %ld SAC constraints",[killSet count]);
       for(ABSNogood* b in killSet) {
          [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
-         NSLog(@"Imposing SAC %@",b);
       }
       return ORSuspend;
    }];
@@ -687,12 +701,14 @@
    if (!_freshBackup) {
       [_varActivity removeAllObjects];
       [_valActivity removeAllObjects];
-      [_varBackup enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSVariableActivity* act, BOOL *stop) {
+      for(NSNumber* key in _varBackup) {
+         ABSVariableActivity* act = [_varBackup objectForKey:key];
          [_varActivity setObject:[act copy] forKey:key];
-      }];
-      [_valBackup enumerateKeysAndObjectsUsingBlock:^(NSNumber* key, ABSValueActivity* act, BOOL *stop) {
+      }
+      for(NSNumber* key in _valBackup) {
+         ABSValueActivity* act = [_valBackup objectForKey:key];
          [_valActivity setObject:[act copy] forKey:key];
-      }];
+      }
    }
 }
 @end

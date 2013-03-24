@@ -419,9 +419,9 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    _x = x;
    _array = y;
    _z = z;
-   _s = _c = nil;
-   _inter = nil;
-   _iva = nil;
+   _s = _c = NULL;
+   _inter = NULL;
+   _iva = NULL;
    _minCI = _maxCI = _nbCI = 0;
    _minA = _nbVal = 0;
    return self;   

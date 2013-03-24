@@ -11,15 +11,14 @@
 
 
 #import "ORFoundation/ORFoundation.h"
-#import "ORUtilities/ORUtilities.h"
+#import <ORFoundation/cont.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORUtilities/ORUtilities.h>
+#import <CPUKernel/CPEngineI.h>
 #import "CPFactory.h"
 #import "CPData.h"
-#import "cont.h"
 #import "CPTableI.h"
-#import "CPEngineI.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "CPEngineI.h"
 #import "CPBitVarI.h"
 
 @implementation CPFactory (DataStructure)
@@ -120,7 +119,7 @@
    ORInt sz = (ORInt)[m count];
    id<ORIdArray> flat = [ORFactory idArray: tracker range: RANGE(tracker,0,sz-1)];
    for(ORInt i=0;i<sz;i++)
-      flat[i] = [m flat:i];
+      [flat set:[m flat:i] at:i];
    return (id<CPIntVarArray>)flat;
 }
 +(id<ORIntSet>) intSet: (id<ORTracker>) cp 

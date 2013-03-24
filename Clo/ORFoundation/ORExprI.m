@@ -20,6 +20,10 @@
 {
    return nil;
 }
+-(ORUInt)getId
+{
+   return 0;
+}
 -(ORInt) min
 {
    return 0;
@@ -68,6 +72,15 @@
 {
    return [ORFactory expr:self mul:[ORFactory integer:[self tracker] value:e]];
 }
+-(id<ORExpr>) div: (id<ORExpr>) e
+{
+   return [ORFactory expr:self div:e];
+}
+-(id<ORExpr>) divi: (ORInt) e
+{
+   return [ORFactory expr:self div:[ORFactory integer:[self tracker] value:e]];
+}
+
 -(id<ORExpr>) mod: (id<ORExpr>) e
 {
    return [ORFactory expr:self mod:e];
@@ -454,8 +467,7 @@
 }
 @end
 
-
-@implementation ORExprMulI 
+@implementation ORExprMulI
 -(id<ORExpr>) initORExprMulI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
    self = [super initORExprBinaryI:left and:right];
@@ -485,6 +497,49 @@
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [rv appendFormat:@"(%@ * %@)",[_left description],[_right description]];
+   return rv;
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprDivI
+-(id<ORExpr>) initORExprDivI: (id<ORExpr>) left and: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORInt) min
+{
+   ORInt m1 = min([_left min] / [_right min],[_left min] / [_right max]);
+   ORInt m2 = min([_left max] / [_right min],[_left max] / [_right max]);
+   return min(m1,m2);
+}
+-(ORInt) max
+{
+   ORInt m1 = max([_left min] / [_right min],[_left min] / [_right max]);
+   ORInt m2 = max([_left max] / [_right min],[_left max] / [_right max]);
+   return max(m1,m2);
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitExprDivI: self];
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ / %@)",[_left description],[_right description]];
    return rv;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
@@ -813,7 +868,7 @@
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
    _e = [ORFactory integer: tracker value: 0];
-   if (f!=nil) {
+   if (f!= NULL) {
       while ([ite more]) {
          ORInt i = [ite next];
          if (f(i))
@@ -886,7 +941,7 @@
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
    _e = [ORFactory integer: tracker value: 1];
-   if (f!=nil) {
+   if (f!=NULL) {
       while ([ite more]) {
          ORInt i = [ite next];
          if (f(i))
@@ -959,7 +1014,7 @@
    self = [super init];
    id<IntEnumerator> ite = [S enumerator];
    _e = [ORFactory integer: cp value: 0];
-   if (f!=nil) {
+   if (f!=NULL) {
       while ([ite more]) {
          ORInt i = [ite next];
          if (!f(i))

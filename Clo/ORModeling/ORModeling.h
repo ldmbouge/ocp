@@ -23,6 +23,7 @@
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
+
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e;
@@ -39,6 +40,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
+-(NSDictionary*) cMap;
 -(id<ORSolution>) captureSolution;
 -(id<ORSolutionPool>) solutions;
 -(id<ORSolution>) bestSolution;
@@ -49,17 +51,21 @@
 -(void) addVariable:(id<ORVar>) var;
 -(void )addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
+
 -(id<ORObjectiveFunction>) minimize:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(void) compiling:(id<ORConstraint>)cstr;
+-(NSSet*)compiledMap;
+
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel;
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
 +(id<ORModelTransformation>) createFlattener;
 +(id<ORModelTransformation>) createLPFlattener;
 +(id<ORModelTransformation>) createLinearizer;

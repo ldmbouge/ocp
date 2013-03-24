@@ -42,7 +42,7 @@ typedef struct  {
 -(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
 -(void) setId:(ORUInt)name;
--(ORUInt) getId;
+-(ORInt) getId;
 -(NSString*) description;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
@@ -69,7 +69,7 @@ typedef struct  {
 -(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
 -(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
--(bool) bound;
+-(BOOL) bound;
 -(uint64) min;
 -(uint64) max;
 -(CPBitArrayDom*) domain;
@@ -79,7 +79,7 @@ typedef struct  {
 -(ORBounds) bounds;
 -(unsigned int) domsize;
 -(unsigned int) lsFreeBit;
--(bool) member:(unsigned int*)v;
+-(BOOL) member:(unsigned int*)v;
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;

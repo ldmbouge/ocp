@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B484DEF16A4527900592A78"
+               BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
                BuildableName = "partition"
                BlueprintName = "partition"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B484DEF16A4527900592A78"
+            BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
             BuildableName = "partition"
             BlueprintName = "partition"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -51,13 +51,38 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B484DEF16A4527900592A78"
+            BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
             BuildableName = "partition"
             BlueprintName = "partition"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-q10"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-p2"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
       <AdditionalOptions>
+         <AdditionalOption
+            key = "MallocScribble"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "DYLD_INSERT_LIBRARIES"
+            value = "/usr/lib/libgmalloc.dylib"
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocGuardEdges"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
@@ -69,7 +94,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B484DEF16A4527900592A78"
+            BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
             BuildableName = "partition"
             BlueprintName = "partition"
             ReferencedContainer = "container:Clo.xcodeproj">

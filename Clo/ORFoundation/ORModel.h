@@ -30,6 +30,7 @@
 @end
 
 @protocol ORConstraint <ORObject>
+-(ORUInt)getId;
 @end
 
 enum ORGroupType {
@@ -127,6 +128,7 @@ enum ORGroupType {
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(ORInt) right;
+-(ORAnnotation) annotation;
 @end
 
 @protocol ORAbs <ORConstraint>
@@ -331,6 +333,9 @@ enum ORGroupType {
 
 @protocol ORObjectiveValue <ORObject>
 -(ORFloat) key;
+-(ORInt) value;
+//-(ORInt)primal;
+//-(void)updateWith:(id<ORObjectiveValue>)other;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
@@ -361,7 +366,7 @@ enum ORGroupType {
 
 @protocol ORASolver <NSObject,ORTracker>
 -(id<ORObjective>)    objective;
--(ORStatus)           close;
+-(void)               close;
 -(id<OREngine>)       engine;
 -(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
 -(id<ORSolutionPool>) globalSolutionPool;    // Solution pool for parallel computing (to use internally)

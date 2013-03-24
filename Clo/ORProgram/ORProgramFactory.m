@@ -12,6 +12,7 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORModeling/ORFlatten.h>
 #import "ORProgramFactory.h"
 
 // CP Solver
@@ -19,7 +20,6 @@
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
-#import "ORFlatten.h"
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPDDeg.h"
@@ -38,7 +38,7 @@
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into:batch];
    [batch release];
@@ -89,7 +89,7 @@
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
    [model setImpl: cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into: batch];
    [batch release];
@@ -114,9 +114,19 @@
          @synchronized(gp) {
             [gp addSolution: s];
          }
+         id<ORObjective> objective = [[cp objective] dereference];
+         if (objective != NULL) {
+            ORInt myBound = [objective primalBound];
+            for(ORInt w=0;w < k;w++) {
+               if (w == i) continue;
+               id<ORObjective> wwObj = [[[cpprogram at:w] objective] dereference];
+               [wwObj tightenPrimalBound:myBound];
+               //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
+            }
+         }
+         
          [s release];
-      }
-      ];
+      }];
    }
    return cpprogram;
 }
@@ -126,7 +136,7 @@
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
    [model setImpl:cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
    id<ORModelTransformation> flat = [ORFactory createFlattener];
    [flat apply: model into: batch];
    [batch release];
@@ -157,14 +167,15 @@
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
    id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel];
-   id<ORModelTransformation> flat = [ORFactory createLPFlattener];
-   [flat apply: model into:batch];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
+   id<ORModelTransformation> flattener = [ORFactory createLPFlattener];
+   [flattener apply: model into:batch];
    [batch release];
    
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
    [flatModel visit: concretizer];
    [concretizer release];
+   //NSLog(@"flat: %@",flatModel);
 }
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model

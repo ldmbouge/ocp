@@ -72,8 +72,8 @@
 
 @interface ORBitVarI : ORExprI<ORBitVar>
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
--(ORUInt) getId;
--(bool) bound;
+-(ORInt) getId;
+-(BOOL) bound;
 -(uint64)min;
 -(uint64)max;
 -(ORUInt*)low;

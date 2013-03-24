@@ -104,7 +104,7 @@ typedef struct  {
 
 
 
-@interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf> {
 @package
    enum CPVarClass                      _vc;
    ORUInt                         _isBool:1;
@@ -113,14 +113,14 @@ typedef struct  {
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
-   id<CPIntVarNotifier,NSCoding>      _recv;
+   id<CPIntVarNotifier>               _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(void) setId:(ORUInt)name;
--(ORUInt)getId;
+-(ORInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
@@ -165,13 +165,13 @@ typedef struct  {
 
 // access
 
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool) member:(ORInt)v;
+-(BOOL) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
@@ -213,11 +213,11 @@ typedef struct  {
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -240,11 +240,11 @@ typedef struct  {
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -265,11 +265,11 @@ typedef struct  {
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -291,12 +291,12 @@ typedef struct  {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(bool) bound;
+-(BOOL) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool)member:(ORInt)v;
+-(BOOL)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -413,7 +413,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPIntVarMultiCast : NSObject<CPIntVarNotifier,NSCoding> {
+@interface CPIntVarMultiCast : NSObject<CPIntVarNotifier> {
    id<CPIntVarNotifier>* _tab;
    BOOL        _tracksLoseEvt;
    ORInt                  _nb;
@@ -432,7 +432,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
-@interface CPLiterals : NSObject<CPIntVarNotifier,NSCoding> {
+@interface CPLiterals : NSObject<CPIntVarNotifier> {
    CPIntVarI*  _ref;
    CPIntVarI** _pos;
    ORInt        _nb;

@@ -133,10 +133,11 @@
 @end
 
 @interface ORModc : ORConstraintI<ORModc>
--(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z;
+-(ORModc*)initORModc:(id<ORIntVar>)x mod:(ORInt)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
 -(ORInt) right;
+-(ORAnnotation) annotation;
 @end
 
 // PVH: should add annotation
@@ -384,6 +385,7 @@
 }
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 -(BOOL) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
@@ -413,11 +415,14 @@
 @interface ORIntObjectiveValue : NSObject<ORObjectiveValue> {
    ORInt     _value;
    ORInt _direction;
+   ORInt    _pBound;
 }
--(id)initObjectiveValue:(id<ORIntVar>)var minimize:(BOOL)b;
+-(id)initObjectiveValue:(id<ORIntVar>)var minimize:(BOOL)b primalBound:(ORInt)pb;
 -(ORInt)value;
+-(ORInt)primal;
 -(ORFloat)key;
 -(NSString*)description;
+-(void)updateWith:(id<ORObjectiveValue>)other;
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>

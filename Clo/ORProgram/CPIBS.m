@@ -16,6 +16,10 @@
 #import <objcp/CPVar.h>
 #import "CPConcretizer.h"
 
+#if defined(__linux__)
+#import <values.h>
+#endif
+
 @interface CPKillRange : NSObject {
 @package
    ORInt _low;
@@ -234,8 +238,11 @@
       [key release];
    }];
    [[_cp engine] clearStatus];
-   
-   NSLog(@"IBS ready... ");
+   [[_cp engine] enforceObjective];
+   if ([[_cp engine] objective] != NULL)
+      NSLog(@"IBS ready... %@",[[_cp engine] objective]);
+   else
+      NSLog(@"IBS ready... ");
 }
 
 -(id<ORIntVarArray>)allIntVars
@@ -331,7 +338,7 @@
          rank++;
       }
       [sacs release];
-      NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
+      //NSLog(@"ROUND(X) : %@  impact: %f",v,[self varOrdering:v]);
    }
    //NSLog(@"VARS AT END OF INIT:%@ ",av);
 }

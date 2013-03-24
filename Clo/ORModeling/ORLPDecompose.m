@@ -14,7 +14,6 @@
 #import "ORLinear.h"
 
 
-
 @implementation ORLPNormalizer
 {
    id<ORLinear>     _terms;
@@ -86,10 +85,12 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
+-(void) visitFloatVar:(id<ORFloatVar>)e    {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
+-(void) visitExprDivI: (ORExprDivI*) e     {}
 -(void) visitExprModI: (ORExprModI*) e     {}
 -(void) visitExprSumI: (ORExprSumI*) e     {}
 -(void) visitExprProdI: (ORExprProdI*) e   {}
@@ -115,6 +116,10 @@
    return self;
 }
 -(void) visitIntVar: (id<ORIntVar>) e
+{
+   [_terms addTerm:e by:1];
+}
+-(void) visitFloatVar:(id<ORFloatVar>)e
 {
    [_terms addTerm:e by:1];
 }
@@ -153,6 +158,11 @@
       assert(false);
    }
 }
+-(void) visitExprDivI: (ORExprDivI*) e
+{
+   // TODO:ldm
+}
+
 -(void) visitExprModI: (ORExprModI*) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];

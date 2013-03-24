@@ -22,7 +22,7 @@
 -(NSString*) description;
 -(void) addCommand: (id<ORCommand>) c;
 -(NSData*) packFromSolver: (id<OREngine>) engine;
--(bool) apply: (bool(^)(id<ORCommand>))clo;
+-(BOOL) apply: (BOOL(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
 @end
 
@@ -250,7 +250,7 @@
 {
    [_cstrs insert:c];
 }
--(bool)apply:(bool(^)(id<ORCommand>))clo
+-(BOOL)apply:(BOOL(^)(id<ORCommand>))clo
 {
    return [_cstrs apply:clo];
 }
@@ -598,7 +598,7 @@
    ORUInt ub = [_cmds size];
    ORProblemI* np = [[ORProblemI alloc] init];
    for(ORInt i=0;i< ub;i++) {
-      [[_cmds peekAt:i] apply:^bool(id<ORCommand> theCommand) {
+      [[_cmds peekAt:i] apply:^BOOL(id<ORCommand> theCommand) {
          [np addCommand:[theCommand retain]];
          return true;
       }];
@@ -608,12 +608,12 @@
 
 -(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<OREngine>)fdm
 {
-   //NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
    /*
-    NSLog(@"restoreCP  : %@",acp);
+    NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
+   NSLog(@"restoreCP  : %@",acp);
    NSLog(@"into tracer: %@",_cmds);
    NSLog(@"-----------------------------");
-   */
+    */
    [fdm clearStatus];
    ORCmdStack* toRestore = [acp commands];
    int i=0;
@@ -638,8 +638,8 @@
          [_trStack pushNode:[theList getNodeId]];
          [_trail incMagic];
          @try {
-            bool pOk = [theList apply:^bool(id<ORCommand> c) {
-               return [c doIt];
+            BOOL pOk = [theList apply:^BOOL(id<ORCommand> c) {
+               return [c doIt] != ORFailure;
             }];
             if (!pOk) {
                //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);

@@ -23,6 +23,10 @@
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 
+#if defined(__linux__)
+#import <values.h>
+#endif
+
 // to do 23/12/2012
 //
 // 1. Look at IncModel to implement the incremental addition of constraints
@@ -122,6 +126,7 @@
    id<ORIdxIntInformer>  _returnLabel;
    id<ORIdxIntInformer>  _failLabel;
    BOOL                  _closed;
+   BOOL                  _oneSol;
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
@@ -135,6 +140,7 @@
    _objective = nil;
    _sPool   = [ORFactory createSolutionPool];
    _closed = false;
+   _oneSol = YES;
    _doOnSolArray = [[NSMutableArray alloc] initWithCapacity: 1];
    _doOnExitArray = [[NSMutableArray alloc] initWithCapacity: 1];
    return self;
@@ -197,7 +203,8 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av];} with: [_engine variables]];
+      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av oneSol:_oneSol];}
+                   with: [_engine variables]];
       [ORConcurrency pumpEvents];
    }
 }
@@ -242,6 +249,7 @@
 {
    _objective = [_engine objective];
    if (_objective != nil) {
+      _oneSol = NO;
       [_search optimizeModel: self using: search
                   onSolution: ^{ [self doOnSolution];}
                       onExit: ^{ [self doOnExit];}
@@ -249,6 +257,7 @@
       printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
+      _oneSol = YES;
       [_search solveModel: self using: search
                onSolution: ^{ [self doOnSolution];}
                    onExit: ^{ [self doOnExit];}
@@ -257,6 +266,7 @@
 }
 -(void) solveAll: (ORClosure) search
 {
+   _oneSol = NO;
    ORInt nbs = (ORInt) [_doOnSolArray count];
    ORInt nbe = (ORInt) [_doOnExitArray count];
    [_search solveAllModel: self using: search
@@ -439,9 +449,12 @@
                                           return rv;
                                        }];
    id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   id<ORRandomStream> valStream = [ORCrFactory randomStream];
    [_trail trailClosure:^{
       free(last);
+      [valStream release];
    }];
+   
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
@@ -457,6 +470,35 @@
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
       [failStamp setValue:[_search nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORInt low = [x min];
+      ORInt up  = [x max];
+      ORInt bestIndex = low - 1;
+      for(ORInt v = low;v <= up;v++) {
+        if ([x member:v]) {
+          ORFloat vValue = [h valOrdering:v forVar:x];
+          if (vValue > bestValue) {
+            bestValue = vValue;
+            bestIndex = v;
+            bestRand  = [valStream next];
+          } else if (vValue == bestValue) {
+            ORLong rnd = [valStream next];
+            if (rnd < bestRand) {
+              bestIndex = v;
+              bestRand = rnd;
+            }
+          }
+        }
+      }
+      if (bestIndex != low - 1)  {
+        [self try: ^{
+          [self label: x with: bestIndex];
+        } or: ^{
+           [self diff:x with: bestIndex];
+        }];
+      }
+      /*
       id<ORSelect> valSelect = [ORFactory select: _engine
                                            range:RANGE(_engine,[x min],[x max])
                                         suchThat:^bool(ORInt v)    { return [x member:v];}
@@ -471,6 +513,7 @@
             [self diff: x with: curVal];
          }];
       } while(![x bound]);
+      */
    } while (true);
 }
 -(void) label: (id<ORIntVar>) mx
@@ -570,6 +613,11 @@
       [_search fail];
 }
 
+-(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
+{
+   assert(FALSE);
+   return NULL;
+}
 
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
 {
@@ -638,7 +686,7 @@
 /******************************************************************************************/
 
 @interface ORRTModel : NSObject<ORAddToModel>
--(ORRTModel*) init:(CPSolver*)solver;
+-(ORRTModel*) init:(CPSolver*) solver;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject: (id) object;
 -(void) addConstraint: (id<ORConstraint>) cstr;
@@ -647,6 +695,8 @@
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
 -(void) trackConstraint: (id) obj;
+-(void) compiling: (id<ORConstraint>) cstr;
+-(NSSet*) compiledMap;
 @end
 
 @implementation ORRTModel
@@ -715,6 +765,13 @@
 -(void) trackConstraint:(id) obj
 {
    [_solver trackConstraint:obj];
+}
+-(void) compiling:(id<ORConstraint>)cstr
+{
+}
+-(NSSet*)compiledMap
+{
+   return NULL;
 }
 @end
 

@@ -13,9 +13,13 @@
 #import "CPBaseHeuristic.h"
 #import <objcp/CPVar.h>
 
-@implementation CPBaseHeuristic
--(void) initHeuristic: (NSMutableArray*) array
+@implementation CPBaseHeuristic {
+   BOOL _oneSol;
+}
+-(void) initHeuristic: (NSMutableArray*) array oneSol:(BOOL)oneSol
 {
+   self = [super init];
+   _oneSol = oneSol;
    __block ORUInt nbViews = 0;
    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
       enum CPVarClass vc = [obj varClass];
@@ -46,7 +50,7 @@
 }
 -(void) restart
 {
-   NSLog(@"Restart of based heuristic called... Nothing to do.");
+   //NSLog(@"Restart of based heuristic called... Nothing to do.");
 }
 -(id<ORIntVarArray>) allIntVars
 {
@@ -55,6 +59,10 @@
 -(id<CPProgram>)solver
 {
    return nil;
+}
+-(BOOL)oneSol
+{
+   return _oneSol;
 }
 @end
 
@@ -89,9 +97,9 @@
 {
    [_binding[[NSThread threadID]] initInternal:t];
 }
--(void) initHeuristic: (NSMutableArray*) array
+-(void) initHeuristic: (NSMutableArray*) array oneSol:(BOOL)oneSol
 {
-   [_binding[[NSThread threadID]] initHeuristic:array];
+   [_binding[[NSThread threadID]] initHeuristic:array oneSol:oneSol];
 }
 -(id<ORIntVarArray>) allIntVars
 {

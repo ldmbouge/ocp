@@ -116,6 +116,7 @@
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}
+-(void) visitExprDivI: (id<ORExpr>) e  {}
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
@@ -233,7 +234,10 @@
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
+      [batch compiling:c];
       [ORLPFlatten flatten:c into:batch];
+      NSSet* map = [batch compiledMap];
+      NSLog(@"Got a Map %@",map);
    } onObjective:^(id<ORObjective> o) {
       NSLog(@"objective %@ ",o);
       if (o) {

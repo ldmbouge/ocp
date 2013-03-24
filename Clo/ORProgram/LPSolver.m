@@ -24,8 +24,12 @@
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
    self = [super init];
+#if defined(__linux__)
+   _lpsolver = NULL;
+#else
    _lpsolver = [LPFactory solver];
    _model = model;
+#endif
    return self;
 }
 -(void) dealloc
@@ -42,6 +46,19 @@
    [_lpsolver solve];
    id<ORSolution> s = [_model captureSolution];
    NSLog(@"Solution = %@",s);
+}
+-(ORFloat) dual: (id<ORConstraint>) c
+{
+   ORFloat rv;
+   @autoreleasepool {
+      NSDictionary* cMap = [_model cMap];
+      NSSet* cSet = [cMap objectForKey:@([c getId])];
+      assert([cSet count] == 1);
+      for(LPConstraintI* c in cSet) {
+         rv = [[c dereference] dual];
+      }
+   }
+   return rv;
 }
 @end
 

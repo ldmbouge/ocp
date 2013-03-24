@@ -56,7 +56,7 @@
 }
 -(NSUInteger)hash
 {
-   return _name << 16 + _value;
+   return (_name << 16) + _value;
 }
 -(NSString*)description
 {   
@@ -355,7 +355,6 @@
 @implementation ORFloatVarI
 {
 @protected
-   id<ORFloatVar>   _impl;
    id<ORTracker>    _tracker;
    ORFloat          _low;
    ORFloat          _up;
@@ -416,12 +415,16 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
+-(BOOL) isVariable
+{
+   return YES;
+}
 -(NSString*) description
 {
    if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f)",_name,_low,_up];
+      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
    else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
+      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
 }
 -(void) setId: (ORUInt) name
 {
@@ -433,18 +436,18 @@
 }
 -(id) snapshot  // [ldm] to fix
 {
-   assert(FALSE);
+   assert(0);
    return nil;
 }
 -(void)restore:(id<ORSnapshot>)s  // [ldm] to fix
 {
-   assert(FALSE);
+   assert(0);
 }
 
 -(ORFloat) value
 {
    if (_impl)
-      return [(id<ORIntVar>) [_impl dereference] value];
+      return [(id<ORFloatVar>) [_impl dereference] value];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -523,7 +526,7 @@
 {
    _name = vid;
 }
--(ORUInt) getId
+-(ORInt) getId
 {
    return _name;
 }
@@ -539,7 +542,7 @@
 {
    return _bLen;
 }
--(bool) bound
+-(BOOL) bound
 {
    if (_impl)
       return [[_impl dereference] bound];

@@ -100,7 +100,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     _name = name;
 }
--(ORUInt)getId
+-(ORInt)getId
 {
    return _name;
 }
@@ -167,7 +167,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return YES;
 }
--(bool)bound
+-(BOOL) bound
 {
    assert(_dom);
     return [_dom bound];
@@ -208,7 +208,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert(_dom);
    return [_dom countFrom:from to:to];
 }
--(bool)member:(ORInt)v
+-(BOOL)member:(ORInt)v
 {
    assert(_dom);
     return [_dom member:v];
@@ -421,7 +421,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -443,7 +443,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -463,7 +463,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
    if (s==ORFailure) return s;
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
@@ -485,7 +485,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORStatus s = _recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
    if (s==ORFailure) return s;
 
-   id<CPEventNode> mList[5];
+   id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._domEvt._val;
    k += mList[k] != NULL;
@@ -652,30 +652,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    return rv;
 }
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_vc];
-   [aCoder encodeObject:_dom];
-   [aCoder encodeObject:_fdm];
-   [aCoder encodeObject:_recv];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_vc];
-   _dom = [[aDecoder decodeObject] retain];
-   _fdm = [aDecoder decodeObject];
-   ORInt low = [_dom imin];
-   ORInt up  = [_dom imax];
-   setUpNetwork(&_net, [_fdm trail],low,up-low+1);
-   _triggers = nil;
-   _recv = [[aDecoder decodeObject] retain];
-   return self;
-}
-
 @end
 
 // ---------------------------------------------------------------------
@@ -705,7 +681,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:1 shift:_b];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -725,7 +701,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    bnd.max += _b;
    return bnd;
 }
--(bool)member: (ORInt) v
+-(BOOL)member: (ORInt) v
 {
     return [_dom member:v-_b];
 }
@@ -789,17 +765,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [super description];
 }
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
-    return self;
-}
 -(id)snapshot
 {
    return nil;
@@ -836,7 +801,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:_a shift:_b];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -860,7 +825,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _a > 0 ? b.max * _a + _b : b.min * _a + _b
    };
 }
--(bool)member: (ORInt) v
+-(BOOL)member: (ORInt) v
 {
     ORInt r = (v - _b) % _a;
     if (r != 0) return NO;
@@ -967,19 +932,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [super description];
 }
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-    [super encodeWithCoder:aCoder];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_a];
-    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_b];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-    self = [super initWithCoder:aDecoder];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_a];
-    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_b];
-    return self;
-}
 -(id)snapshot
 {
    return nil;
@@ -1008,7 +960,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:-1 shift:0];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [_x bound];
 }
@@ -1025,7 +977,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORBounds b = [_x bounds];
    return (ORBounds){-b.max,-b.min};
 }
--(bool)member:(ORInt)v
+-(BOOL)member:(ORInt)v
 {
    return [_x member:-v];
 }
@@ -1107,7 +1059,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:[self min] up:[self max]];
 }
--(bool) bound
+-(BOOL) bound
 {
    return [self domsize]<= 1;
 }
@@ -1128,7 +1080,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       else return 1;
    }
 }
--(bool)member:(ORInt)val
+-(BOOL)member:(ORInt)val
 {
    ORInt lb = [_secondary min];
    ORInt ub = [_secondary max];
@@ -1276,19 +1228,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [super encodeWithCoder:aCoder];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_v];
-   [aCoder encodeObject:_secondary];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super initWithCoder:aDecoder];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_v];
-   _secondary = [aDecoder decodeObject];
-   return self;
-}
 @end
 
 /*****************************************************************************************/
@@ -1343,8 +1282,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
-      _tab[toFix] = nil;
-      _loseValIMP[toFix] = nil;
+      _tab[toFix] = NULL;
+      _loseValIMP[toFix] = NULL;
       _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
@@ -1385,8 +1324,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
    [theTrail trailClosure:^{
-      _tab[toFix] = nil;
-      _loseValIMP[toFix] = nil;
+      _tab[toFix] = NULL;
+      _loseValIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;
@@ -1464,28 +1403,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       if (!ok) return ok;
    }
    return ORSuspend;
-}
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_tab[k]];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_mx];
-   _tab = malloc(sizeof(id<CPIntVarNotifier>)*_mx);
-   _loseValIMP   = malloc(sizeof(IMP)*_mx);
-   for(ORInt k=0;k<_nb;k++) {
-      _tab[k] = [aDecoder decodeObject];
-      _loseValIMP[k] = (UBType)[(id)_tab[k] methodForSelector:@selector(loseValEvt:sender:)];
-   }
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-   return self;
 }
 @end
 
@@ -1585,28 +1502,5 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    return [_pos[val - _ofs] loseValEvt:val sender:sender];
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeObject:_ref];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_ofs];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-   for(ORInt k=0;k<_nb;k++)
-      [aCoder encodeObject:_pos[k]];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   _ref = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_ofs];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
-   _pos = malloc(sizeof(CPIntVarI*)*_nb);
-   for(ORInt k=0;k<_nb;k++) {
-      _pos[k] = [aDecoder decodeObject];
-   }
-   return self;
 }
 @end

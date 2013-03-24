@@ -141,7 +141,7 @@
 {
    ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
    for(ORInt i = [r low]; i <= [r up]; i++)
-      if (f == nil || f(i))
+      if (f == NULL || f(i))
          [o insert: e(i)];
    [tracker trackObject: o];
    return o;
@@ -151,7 +151,7 @@
 {
     ORInt m = MAXINT;
     for(ORInt i = [r low]; i <= [r up]; i++) {
-        if (filter == nil || filter(i)) {
+        if (filter == NULL || filter(i)) {
             ORInt x = e(i);
             if(x < m) m = x;
         }
@@ -163,7 +163,7 @@
 {
     ORInt m = MININT;
     for(ORInt i = [r low]; i <= [r up]; i++) {
-        if (filter == nil || filter(i)) {
+        if (filter == NULL || filter(i)) {
             ORInt x = e(i);
             if(x > m) m = x;
         }
@@ -270,6 +270,15 @@
 {
    return [[ORBindingArrayI alloc] initORBindingArray: nb];
 }
+
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:[ORFactory floatVar:tracker low:low up:up] at:k];
+   return (id<ORFloatVarArray>)o;
+}
+
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain
 {
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
@@ -427,6 +436,11 @@
 {
    id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right]; 
    return [self validate:o onError:"No CP tracker in Mul Expression"];
+}
++(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right
+{
+   id<ORExpr> o = [[ORExprDivI alloc] initORExprDivI: left and: right];
+   return [self validate:o onError:"No CP tracker in Div Expression"];
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right
 {
@@ -730,9 +744,9 @@
    [model trackConstraint:o];
    return o;
 }
-+(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z
++(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z];
+   id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z annotation:n];
    [model trackConstraint:o];
    return o;
 }

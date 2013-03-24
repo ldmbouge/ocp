@@ -11,7 +11,7 @@
 
 #import <ORModeling/ORModeling.h>
 
-@interface ORModelI : ORModelingObjectI<ORModel>
+@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel>
 -(ORModelI*)              initORModelI;
 -(void)                   dealloc;
 -(NSString*)              description;
@@ -26,15 +26,23 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
+-(NSDictionary*) cMap;
+-(NSSet*) constraintsFor:(id<ORConstraint>)c;
+-(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
 -(id<ORSolution>) captureSolution;
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
+-(void) addVariable:(id<ORVar>) var;
+-(void) addObject:(id) object;
+-(void) addConstraint:(id<ORConstraint>) cstr;
+-(id<ORObjectiveFunction>) minimize:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
--(ORBatchModel*)init: (ORModelI*) model;
+-(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
 -(void) addConstraint: (id<ORConstraint>) cstr;
@@ -47,6 +55,8 @@
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
+-(void) compiling:(id<ORConstraint>)cstr;
+-(NSSet*)compiledMap;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
@@ -61,6 +71,7 @@
 -(id<ORAddToModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
+-(void) compiling:(id<ORConstraint>)cstr;
 @end
 
 @interface ORSolutionI : NSObject<ORSolution>

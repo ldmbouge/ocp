@@ -115,12 +115,14 @@
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}
+-(void) visitExprDivI: (id<ORExpr>) e  {}
 -(void) visitExprEqualI: (id<ORExpr>) e  {}
 -(void) visitExprNEqualI: (id<ORExpr>) e  {}
 -(void) visitExprLEqualI: (id<ORExpr>) e  {}
 -(void) visitExprSumI: (id<ORExpr>) e  {}
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}
+-(void) visitExprModI:(id<ORExpr>)e   {}
 -(void) visitExprNegateI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}

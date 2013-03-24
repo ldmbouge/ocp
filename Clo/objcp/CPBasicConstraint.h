@@ -226,6 +226,16 @@ typedef int (^intgetter) (void) ;
 -(ORStatus) post;
 @end
 
+@interface CPModcDC : CPCoreConstraint { // y == x MOD c (DCConsistency)
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   ORInt      _c;
+}
+-(id)initCPModcDC:(id)x mod:(ORInt)c equal:(id)y;
+-(ORStatus) post;
+@end
+
+
 @interface CPModBC : CPCoreConstraint { // z == x MOD y
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -313,6 +323,8 @@ typedef int (^intgetter) (void) ;
 -(ORInt)       primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORObjective>
@@ -325,4 +337,6 @@ typedef int (^intgetter) (void) ;
 -(ORInt)       primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
+-(id<ORIntVar>) var;
+-(id<ORObjectiveValue>)value;
 @end

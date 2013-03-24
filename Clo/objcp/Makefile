@@ -1,28 +1,40 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
+#OC = ~ldm/clang32/bin/clang
 OC = clang
-CFLAGS = -g -I/usr/GNUstep/System/Library/Headers -I. -fblocks -fobjc-nonfragile-abi
-LFLAGS = -g -L/usr/GNUstep/System/Library/Libraries -lgnustep-base -lobjc 
-SRCS =./CPFactory.m ./SemBDSController.m ./CPCardinality.m ./CPBitArray.m ./CPCommand.m \
-	./CPParallel.m ./CPCreateI.m ./CPSelector.m ./CPTrigger.m ./CPObjectQueue.m ./CPLabel.m \
-	./CPWatch.m ./CPAllDifferentDC.m ./CPExplorerI.m ./CPSolverI.m ./CPCrFactory.m ./CPSetI.m \
-	./CPConstraintI.m ./CPConstraint.m ./CPTracer.m ./CPValueConstraint.m ./CPError.m \
-	./CPFactoryI.m ./CPAVLTree.m ./CPBitDom.m ./CPEvents.m ./CPTrail.m ./CPWDeg.m \
-	./CPEquationBC.m ./CPI.m ./cont.m ./CPExprI.m ./CPBitVarI.m ./CPIntVarI.m ./context.m \
-	./CPBasicConstraint.m ./CPController.m  ./CPLimit.m ./DFSController.m \
-	./CPBitArrayDom.m ./CPArrayI.m ./CPConcurrencyI.m ./CPDataI.m ./CPBitConstraint.m \
-	./SemDFSController.m 
+GNUstep = /opt/kitkit-1.0-rc1
+
+CFLAGS = -I$(GNUstep)/include -I. -I.. -I../CPUKernel \
+	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
+
+LFLAGS = -L$(GNUstep)/lib $(USER_DEFINES) \
+	-L../ORUtilities -L../ORFoundation -L../CPUKernel \
+	-lORUtilities -lORFoundation -lCPUKernel \
+	-lgnustep-base -lobjc 
+
+SRCS = CPAllDifferentDC.m   CPBitArrayDom.m    CPBitVarI.m        CPConstraint.m  \
+	CPEvent.m    CPKnapsack.m           CPTableI.m CPAssignmentI.m      CPBitArray.m  \
+	CPCardinalityDC.m  CPElement.m     CPExprI.m    CPLexConstraint.m  CPValueConstraint.m \
+	CPBasicConstraint.m  CPBitConstraint.m  CPCardinality.m    CPEquationBC.m  \
+	CPFactory.m  CPObjectQueue.m CPWatch.m CPBinPacking.m CPBitDom.m    \
+	CPCircuitI.m CPError.m  CPIntVarI.m  CPStatisticsMonitor.m 
+
 #	./NSBoardController.m
 
 OBJEXT=o
 OFILES=$(addsuffix .$(OBJEXT),$(notdir $(basename $(SRCS))))
 LIBNAME = libobjcp.so.1 
 all: $(LIBNAME)
-	@echo "Done..."
+	@echo "Done... " 
+	@if [ ! -f $(basename $(LIBNAME)) ];  \
+	then \
+	  ln -s $(LIBNAME) $(basename $(LIBNAME)); \
+	fi
+
 
 $(LIBNAME): $(OFILES)
-	$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	@$(OC) $(CFLAGS) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 
 %.$(OBJEXT): %.m
 	@echo "compiling m"  $<
