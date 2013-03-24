@@ -373,7 +373,12 @@
 -(id<ORIntVar>) cost;
 @end
 
-@interface ORObjectiveFunctionVarI : ORModelingObjectI<ORObjectiveFunctionVar>
+@interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction>
+-(ORObjectiveFunctionI*) initORObjectiveFunctionI;
+-(id<ORObjectiveValue>) value;
+@end
+
+@interface ORObjectiveFunctionVarI : ORObjectiveFunctionI<ORObjectiveFunctionVar>
 {
    id<ORIntVar>             _var;
 }
@@ -383,7 +388,7 @@
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
-@interface ORObjectiveFunctionLinearI : ORModelingObjectI<ORObjectiveFunctionLinear>
+@interface ORObjectiveFunctionLinearI : ORObjectiveFunctionI<ORObjectiveFunctionLinear>
 {
    id<ORIntVarArray> _array;
    id<ORIntArray> _coef;
@@ -395,7 +400,7 @@
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
-@interface ORObjectiveFunctionExprI : ORModelingObjectI<ORObjectiveFunctionExpr>
+@interface ORObjectiveFunctionExprI : ORObjectiveFunctionI<ORObjectiveFunctionExpr>
 {
    id<ORExpr> _expr;
 }

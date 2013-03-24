@@ -152,32 +152,38 @@
    _objective = o;
 }
 
--(void) minimize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
 {
    _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
+   return _objective;
 }
 
--(void) maximize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x
 {
    _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
+    return _objective;
 }
 
--(void) maximizeExpr: (id<ORExpr>) e
+-(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e
 {
    _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
+    return _objective;
 }
--(void) minimizeExpr: (id<ORExpr>) e
+-(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e
 {
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
+    return _objective;
 }
 
--(void) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: (id<ORIntArray>) coef];
+    return _objective;
 }
--(void) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: (id<ORIntArray>) coef];
+    return _objective;
 }
 
 
@@ -265,29 +271,29 @@
 {
    return _target;
 }
--(void) minimize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
 {
-   [_target minimize:x];
+   return [_target minimize:x];
 }
--(void) maximize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x
 {
-   [_target maximize: x];
+   return [_target maximize: x];
 }
--(void) minimizeExpr: (id<ORExpr>) x
+-(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) x
 {
-   [_target minimizeExpr: x];
+   return [_target minimizeExpr: x];
 }
--(void) maximizeExpr:(id<ORExpr>) x
+-(id<ORObjectiveFunction>) maximizeExpr:(id<ORExpr>) x
 {
-   [_target maximizeExpr: x];
+   return [_target maximizeExpr: x];
 }
--(void) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
-   [_target minimize: array coef: coef];
+   return [_target minimize: array coef: coef];
 }
--(void) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
-  [_target maximize: array coef: coef];
+  return [_target maximize: array coef: coef];
 }
 
 -(void) trackObject: (id) obj
@@ -327,29 +333,29 @@
 {
    [_theGroup add:cstr];
 }
--(void) minimize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
 {
-   [_target minimize:x];
+   return [_target minimize:x];
 }
--(void) maximize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x
 {
-   [_target maximize:x];
+   return [_target maximize:x];
 }
--(void) minimizeExpr: (id<ORExpr>) x
+-(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) x
 {
-   [_target minimizeExpr: x];
+   return [_target minimizeExpr: x];
 }
--(void) maximizeExpr:(id<ORExpr>) x
+-(id<ORObjectiveFunction>) maximizeExpr:(id<ORExpr>) x
 {
-   [_target maximizeExpr: x];
+   return [_target maximizeExpr: x];
 }
--(void) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
-   [_target minimize: array coef: coef];
+   return [_target minimize: array coef: coef];
 }
--(void) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
-   [_target maximize: array coef: coef];
+   return [_target maximize: array coef: coef];
 }
 
 -(id<ORAddToModel>) model

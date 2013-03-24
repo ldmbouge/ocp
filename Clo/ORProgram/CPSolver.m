@@ -639,14 +639,14 @@
 
 @interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*)solver;
--(void)       addVariable: (id<ORVar>) var;
--(void)       addObject: (id) object;
--(void)       addConstraint: (id<ORConstraint>) cstr;
--(void)       minimize: (id<ORIntVar>) x;
--(void)       maximize: (id<ORIntVar>) x;
--(void)       trackObject: (id) obj;
--(void)       trackVariable: (id) obj;
--(void)       trackConstraint: (id) obj;
+-(void) addVariable: (id<ORVar>) var;
+-(void) addObject: (id) object;
+-(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(void) trackObject: (id) obj;
+-(void) trackVariable: (id) obj;
+-(void) trackConstraint: (id) obj;
 @end
 
 @implementation ORRTModel
@@ -680,27 +680,27 @@
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
 }
--(void) minimize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimize:(id<ORIntVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"]; 
 }
--(void) maximize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
 }
--(void) minimizeExpr:(id<ORExpr>) x
+-(id<ORObjectiveFunction>) minimizeExpr:(id<ORExpr>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"];
 }
--(void) maximizeExpr:(id<ORExpr>) x
+-(id<ORObjectiveFunction>) maximizeExpr:(id<ORExpr>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
 }
--(void) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"];   
 }
--(void) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];   
 }

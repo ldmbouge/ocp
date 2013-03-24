@@ -83,14 +83,11 @@ int main(int argc, const char * argv[])
    ORLong startTime = [ORRuntimeMonitor wctime];
    id<ORIntVarArray> slab = [ORFactory intVarArray: model range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [ORFactory intVarArray: model range: Slabs domain: Capacities];
-//   id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,nbSize*maxCapacities)];
-   
-//   [model add: [obj eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
+
    [model add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
-   [model minimizeExpr: Sum(model,s,Slabs,[loss elt: [load at: s]])];
-//   [model minimize: obj];
+   id<ORObjectiveFunction> obj = [model minimizeExpr: Sum(model,s,Slabs,[loss elt: [load at: s]])];
    
    id<CPProgram> cp = [ORFactory createCPProgram:model];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
@@ -98,7 +95,7 @@ int main(int argc, const char * argv[])
    //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
    [cp solve: ^{
       __block ORInt depth = 0;
-
+      printf(" Starting search \n");
       [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![slab[o] bound];} orderedBy:^ORInt(ORInt o) { return ([slab[o] domsize]);} do: ^(ORInt o){
 #define TESTTA 1
 #if TESTTA==0
@@ -134,14 +131,11 @@ int main(int argc, const char * argv[])
 #endif
           depth++;
       }];
-      printf("\n");
-//      printf("obj: %d %p\n",[obj min],[NSThread currentThread]);
-      //printf("Slab: ");
-      //for(ORInt i = 1; i <= nbSize; i++)
-      //   printf("%d ",[slab[i] value]);
-      //printf("\n");
-   }];
-   
+      NSLog(@"Objective value: %@",[obj value]);
+      NSLog(@"Objective value: %f",[[obj value] key]);
+    }];
+   id<ORSolution> sol = [model bestSolution];
+   NSLog(@"Solution %@",sol);
    ORLong endTime = [ORRuntimeMonitor wctime];
    NSLog(@"Execution Time (WC): %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);

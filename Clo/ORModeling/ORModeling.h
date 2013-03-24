@@ -23,12 +23,12 @@
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
--(void) minimize: (id<ORIntVar>) x;
--(void) maximize: (id<ORIntVar>) x;
--(void) minimizeExpr: (id<ORExpr>) e;
--(void) maximizeExpr: (id<ORExpr>) e;
--(void) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
--(void) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
          onObjects:(void(^)(id<ORObject>))doObjs
@@ -49,12 +49,12 @@
 -(void) addVariable:(id<ORVar>) var;
 -(void )addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
--(void) minimize:(id<ORIntVar>) x;
--(void) maximize:(id<ORIntVar>) x;
--(void) minimizeExpr: (id<ORExpr>) e;
--(void) maximizeExpr: (id<ORExpr>) e;
--(void) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
--(void) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(id<ORObjectiveFunction>) minimize:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 @end
 
 @interface ORFactory (ORModeling)

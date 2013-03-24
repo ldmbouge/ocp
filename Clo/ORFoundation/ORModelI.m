@@ -1918,6 +1918,18 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 @end
 
+@implementation ORObjectiveFunctionI
+-(ORObjectiveFunctionI*) initORObjectiveFunctionI
+{
+   self = [super init];
+   return self;
+}
+-(id<ORObjectiveValue>) value
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORObjectiveFunctionI: Method value/0 not implemented"];   
+}
+@end
+
 @implementation ORObjectiveFunctionVarI
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x
 {
@@ -1971,7 +1983,8 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
+//   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
+   [buf appendFormat:@"%d",_value];
    return buf;
 }
 -(BOOL)isEqual:(id)object
@@ -2006,7 +2019,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    _impl = impl;
 }
--(id<ORObjectiveFunction>)impl
+-(id<ORObjectiveFunction>) impl
 {
    return _impl;
 }
@@ -2130,13 +2143,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_expr];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void) visit:(id<ORVisitor>)v
 {
    [v visitMaximizeExpr:self];
 }
 -(id<ORObjectiveValue>) value
 {
-   return NULL;
+   return [((ORObjectiveFunctionI*) _impl) value];
 }
 @end
 
@@ -2163,9 +2176,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORObjectiveValue>) value
 {
-   ORInt v = [_expr min];
-   ORInt v1 = [_expr max];
-   return NULL;
+   return [((ORObjectiveFunctionI*) _impl) value];
 }
 @end
 

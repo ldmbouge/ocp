@@ -56,6 +56,7 @@
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [model captureSolution];
+//      NSLog(@"Found solution with value: %@",[s objectiveValue]);
       [sp addSolution: s];
       [s release];
    }];

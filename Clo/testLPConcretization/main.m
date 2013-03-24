@@ -37,11 +37,12 @@ int main(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
 //   [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
-   [model maximizeExpr: Sum(model,j,Columns,[x[j] muli: c[j]])];
+   id<ORObjectiveFunction> obj = [model maximizeExpr: Sum(model,j,Columns,[x[j] muli: c[j]])];
 //   [model maximizeExpr: o];
 //   NSLog(@"Model %@",model);
    id<LPProgram> lp = [ORFactory createLPProgram: model];
    [lp solve];
+   NSLog(@"Objective value: %@",[obj value]);
    NSLog(@"we are done");
    return 0;
 }

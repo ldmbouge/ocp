@@ -591,11 +591,20 @@
    [terms addTerm: alpha by: -1];
    [terms postEQZ: _theModel annotation: Default];
    [_theModel minimize: alpha];
+   ORMinimizeVarI* objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: alpha];
+   [e setImpl: objective];
 }
--(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   assert(false);
-//   [_theModel maximize:[v var]];
+   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _theModel annotation: Default];
+   ORInt lb = [terms min];
+   ORInt ub = [terms max];
+   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
+   [terms addTerm: alpha by: -1];
+   [terms postEQZ: _theModel annotation: Default];
+   [_theModel maximize: alpha];
+   ORMaximizeVarI* objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: alpha];
+   [e setImpl: objective];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
