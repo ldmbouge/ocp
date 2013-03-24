@@ -83,12 +83,14 @@ int main(int argc, const char * argv[])
    ORLong startTime = [ORRuntimeMonitor wctime];
    id<ORIntVarArray> slab = [ORFactory intVarArray: model range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [ORFactory intVarArray: model range: Slabs domain: Capacities];
+//   id<ORIntVar> o = [ORFactory intVar: model domain: RANGE(model,0,10000)];
 
    [model add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
-   id<ORObjectiveFunction> obj = [model minimizeExpr: Sum(model,s,Slabs,[loss elt: [load at: s]])];
-   
+//   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
+   id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
+//   id<ORObjectiveFunction> obj = [model minimize: o];
    id<CPProgram> cp = [ORFactory createCPProgram:model];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall

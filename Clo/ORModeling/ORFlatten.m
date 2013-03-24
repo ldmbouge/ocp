@@ -587,25 +587,25 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
    ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _theModel annotation: Default];
-   ORInt lb = [terms min];
-   ORInt ub = [terms max];
-   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
-   [terms addTerm: alpha by: -1];
-   [terms postEQZ: _theModel annotation: Default];
-   id<ORObjectiveFunction> objective = [_theModel minimize: alpha];
-//   ORMinimizeVarI* objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: alpha];
+   id<ORIntVar> alpha = [ORSubst normSide:terms for:_theModel annotation:Default];
+//   ORInt lb = [terms min];
+//   ORInt ub = [terms max];
+//   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
+//   [terms addTerm: alpha by: -1];
+//   [terms postEQZ: _theModel annotation: Default];
+   id<ORObjectiveFunction> objective = [_theModel minimizeVar: alpha];
    [e setImpl: objective];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
    ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _theModel annotation: Default];
-   ORInt lb = [terms min];
-   ORInt ub = [terms max];
-   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
-   [terms addTerm: alpha by: -1];
-   [terms postEQZ: _theModel annotation: Default];
-   id<ORObjectiveFunction> objective = [_theModel maximize: alpha];
-//   ORMaximizeVarI* objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: alpha];
+   id<ORIntVar> alpha = [ORSubst normSide:terms for:_theModel annotation:Default];
+//   ORInt lb = [terms min];
+//   ORInt ub = [terms max];
+//   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
+//   [terms addTerm: alpha by: -1];
+//   [terms postEQZ: _theModel annotation: Default];
+   id<ORObjectiveFunction> objective = [_theModel maximizeVar: alpha];
    [e setImpl: objective];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v

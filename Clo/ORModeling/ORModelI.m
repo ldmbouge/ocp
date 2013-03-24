@@ -11,7 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
-#import <ORModeling/ORSolver.h>
 #import "ORModelI.h"
 
 @implementation ORModelI
@@ -58,7 +57,8 @@
 {
    _name = name;
 }
--(id<ORSolver>) solver
+// PVH TOCLEANTODAY
+-(id<ORASolver>) solver
 {
    return nil;
 }
@@ -197,24 +197,24 @@
    _objective = o;
 }
 
--(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
    return _objective;
 }
 
--(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
     return _objective;
 }
 
--(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e
 {
    _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
     return _objective;
 }
--(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e
 {
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
     return _objective;
@@ -325,21 +325,23 @@
 {
    return _target;
 }
--(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
+
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
-   return [_target minimize:x];
+   return [_target minimizeVar:x];
 }
--(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+{
+   return [_target maximizeVar: x];
+}
+
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) x
+{
+   return [_target minimize: x];
+}
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x
 {
    return [_target maximize: x];
-}
--(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) x
-{
-   return [_target minimizeExpr: x];
-}
--(id<ORObjectiveFunction>) maximizeExpr:(id<ORExpr>) x
-{
-   return [_target maximizeExpr: x];
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
@@ -401,21 +403,21 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    [_theGroup add:cstr];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
+//-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
+//{
+//   return [_target minimize:x];
+//}
+//-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x
+//{
+//   return [_target maximize:x];
+//}
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) x
 {
-   return [_target minimize:x];
+   return [_target minimize: x];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x
 {
-   return [_target maximize:x];
-}
--(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) x
-{
-   return [_target minimizeExpr: x];
-}
--(id<ORObjectiveFunction>) maximizeExpr:(id<ORExpr>) x
-{
-   return [_target maximizeExpr: x];
+   return [_target maximize: x];
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
 {
@@ -593,18 +595,15 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
       if (bestSoFar == nil) {
          bestSoFar = [obj objectiveValue];
          sel = obj;
-      } else {
+      }
+      else {
          id<ORObjectiveValue> nv = [obj objectiveValue];
          if ([bestSoFar compare: nv] == 1) {
-            [bestSoFar release];
             bestSoFar = nv;
             sel = obj;
          }
-         else
-            [nv release];
       }
    }];
-   [bestSoFar release];
    return [sel retain];
 }
 @end

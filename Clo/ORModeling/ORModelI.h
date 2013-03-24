@@ -35,8 +35,8 @@
 -(void) addVariable:(id<ORVar>) var;
 -(void) addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
--(id<ORObjectiveFunction>) minimize:(id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -46,10 +46,10 @@
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
 -(void) addConstraint: (id<ORConstraint>) cstr;
--(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 -(id<ORModel>) model;
@@ -64,10 +64,10 @@
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
 -(void) addConstraint: (id<ORConstraint>) cstr;
--(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) minimizeExpr: (id<ORExpr>) e;
--(id<ORObjectiveFunction>) maximizeExpr: (id<ORExpr>) e;
+//-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
+//-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;

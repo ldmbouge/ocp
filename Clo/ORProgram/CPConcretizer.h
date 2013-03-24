@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORSolver.h>
 #import <ORProgram/CPSolver.h>
 
 @interface ORCPBasicConcretizer  : NSObject

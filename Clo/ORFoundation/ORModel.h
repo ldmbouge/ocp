@@ -370,7 +370,7 @@ enum ORGroupType {
 
 
 @protocol ORASolver <NSObject,ORTracker>
--(id<ORSearchObjectiveFunction>)    objective;
+-(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
 -(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
