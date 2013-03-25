@@ -599,12 +599,14 @@
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
-   [_theModel minimize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
+   id<ORObjectiveFunction> objective = [_theModel minimize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
+   [v setImpl: objective];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
-   [_theModel maximize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
+   id<ORObjectiveFunction> objective = [_theModel maximize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
+   [v setImpl: objective];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {

@@ -588,11 +588,6 @@
 {
    ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _theModel annotation: Default];
    id<ORIntVar> alpha = [ORSubst normSide:terms for:_theModel annotation:Default];
-//   ORInt lb = [terms min];
-//   ORInt ub = [terms max];
-//   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
-//   [terms addTerm: alpha by: -1];
-//   [terms postEQZ: _theModel annotation: Default];
    id<ORObjectiveFunction> objective = [_theModel minimizeVar: alpha];
    [e setImpl: objective];
 }
@@ -600,11 +595,6 @@
 {
    ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _theModel annotation: Default];
    id<ORIntVar> alpha = [ORSubst normSide:terms for:_theModel annotation:Default];
-//   ORInt lb = [terms min];
-//   ORInt ub = [terms max];
-//   id<ORIntVar> alpha = [ORFactory intVar: _theModel domain: [ORFactory intRange: _theModel low: lb up: ub]];
-//   [terms addTerm: alpha by: -1];
-//   [terms postEQZ: _theModel annotation: Default];
    id<ORObjectiveFunction> objective = [_theModel maximizeVar: alpha];
    [e setImpl: objective];
 }

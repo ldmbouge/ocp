@@ -2306,7 +2306,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORObjectiveValue>) value
 {
-   return NULL;
+   return [((ORObjectiveFunctionI*) _impl) value];
 }
 @end
 

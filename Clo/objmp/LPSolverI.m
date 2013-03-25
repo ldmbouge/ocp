@@ -370,9 +370,9 @@
 {
    _posted = true;
 }
--(ORFloat) value
+-(id<ORObjectiveValue>) value
 {
-   return [_solver lpValue] + _cst;
+   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
 }
 -(ORInt) nb
 {
@@ -403,6 +403,11 @@
    printf("minimize ");
    [super print];
 }
+-(id<ORObjectiveValue>) value
+{
+   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
+}
+
 @end
 
 @implementation LPMaximize;
@@ -421,6 +426,10 @@
 {
    printf("maximize ");
    [super print];
+}
+-(id<ORObjectiveValue>) value
+{
+   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: false];
 }
 @end
 
@@ -1219,7 +1228,7 @@
 {
    return [_lp dual: cstr];
 }
--(ORFloat) objectiveValue
+-(id<ORObjectiveValue>) objectiveValue
 {
    if (_obj)
       return [_obj value];
@@ -1227,7 +1236,7 @@
       @throw [[NSException alloc] initWithName:@"LPSolver Error"
                                         reason:@"No objective function posted"
                                       userInfo:nil];
-   return 0.0;
+   return NULL;
 }
 -(ORFloat) lpValue
 {
