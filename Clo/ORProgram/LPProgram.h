@@ -13,6 +13,7 @@
 #import <ORFoundation/ORFoundation.h>
 
 @class LPSolverI;
+@protocol ORModel;
 
 @protocol LPProgram <NSObject>
 -(LPSolverI*) solver;
