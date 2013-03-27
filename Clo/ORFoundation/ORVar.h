@@ -16,8 +16,9 @@
 
 @protocol ORSnapshot
 -(void) restoreInto: (NSArray*) av;
--(int)  intValue;
+-(ORInt)  intValue;
 -(BOOL) boolValue;
+-(ORFloat) floatValue;
 @end
 
 @protocol ORSavable<NSObject>

@@ -71,7 +71,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if ([v dereference] == NULL) {
-      LPVariableI* cv = [_lpsolver createVariable];
+      LPIntVariableI* cv = [_lpsolver createIntVariable];
       [v setImpl: cv];
    }
 }

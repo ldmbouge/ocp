@@ -91,7 +91,7 @@ int main(int argc, const char * argv[])
 //   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
    id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
 //   id<ORObjectiveFunction> obj = [model minimize: o];
-   id<CPProgram> cp = [ORFactory createCPProgram:model];
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
    //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];

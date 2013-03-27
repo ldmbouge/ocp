@@ -578,7 +578,7 @@
 {
    return [_solver createColumn:_low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
 }
--(ORFloat) value
+-(ORInt) value
 {
    return [_solver value: self];
 }
@@ -588,6 +588,19 @@
 }
 @end
 
+
+@implementation LPIntVariableI
+-(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
+{
+   [super initLPVariableI: solver low: low up: up];
+   return self;
+}
+-(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver
+{
+   [super initLPVariableI: solver];
+   return self;
+}
+@end
 
 @implementation LPColumnI
 
@@ -920,6 +933,20 @@
    [self addVariable: v];
    return v;
 }
+-(LPVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
+{
+   LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self low: low up: up];
+   [v setNb: _createdVars++];
+   [self addVariable: v];
+   return v;
+}
+-(LPIntVariableI*) createIntVariable
+{
+   LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self];
+   [v setNb: _createdVars++];
+   [self addVariable: v];
+   return v;
+}
 -(LPVariableI*) createVariable: (ORFloat) low up: (ORFloat) up
 {
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self low: low up: up];
@@ -927,6 +954,7 @@
    [self addVariable: v];
    return v;
 }
+
 -(LPColumnI*) createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) cstr coef: (ORFloat*) coef
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef];
@@ -1208,7 +1236,11 @@
 {
    return [_lp status];
 }
--(ORFloat) value: (LPVariableI*) var
+-(ORInt) value: (LPIntVariableI*) var
+{
+   return (ORInt) [_lp value: var];
+}
+-(ORFloat) floatValue: (LPVariableI*) var
 {
    return [_lp value: var];
 }
