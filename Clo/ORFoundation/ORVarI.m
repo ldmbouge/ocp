@@ -36,11 +36,15 @@
    id<ORIntVar> theVar = [av objectAtIndex:_name];
    [theVar restore:self];
 }
--(int)intValue
+-(ORInt) intValue
 {
    return _value;
 }
--(BOOL)boolValue
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(BOOL) boolValue
 {
    return _value;
 }
@@ -79,6 +83,81 @@
 }
 @end
 
+@interface ORFloatVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORFloat   _value;
+}
+-(ORFloatVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v;
+-(void)restoreInto:(NSArray*)av;
+-(ORFloat) floatValue;
+-(ORInt) intValue;
+-(NSString*) description;
+-(BOOL) isEqual: (id) object;
+-(NSUInteger) hash;
+@end
+
+@implementation ORFloatVarSnapshot
+-(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v
+{
+   self = [super init];
+   _name = [v getId];
+   _value = [v value];
+   return self;
+}
+-(void) restoreInto: (NSArray*) av
+{
+   id<ORFloatVar> theVar = [av objectAtIndex:_name];
+   [theVar restore:self];
+} 
+-(ORInt) intValue
+{
+   return (ORInt) _value;
+}
+-(BOOL) boolValue
+{
+   return (BOOL) _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(BOOL) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORFloatVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value;
+      }
+      else
+            return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger)hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"int(%d) : %f",_name,_value];
+   return buf;
+}
+
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id)initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+@end
 
 @implementation ORIntVarI
 {
@@ -147,8 +226,9 @@
 }
 -(ORInt) value
 {
-   if (_impl)
+   if (_impl) {
       return [(id<ORIntVar>)[_impl dereference] value];
+   }
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -434,14 +514,13 @@
 {
    return _name;
 }
--(id) snapshot  // [ldm] to fix
+-(id) snapshot  
 {
-   assert(0);
-   return nil;
+   return [[ORFloatVarSnapshot alloc] initFloatVarSnapshot: self];
 }
--(void)restore:(id<ORSnapshot>)s  // [ldm] to fix
+-(void) restore:(id<ORSnapshot>) s   
 {
-   assert(0);
+   [[_impl dereference] restore: s];   
 }
 
 -(ORFloat) value

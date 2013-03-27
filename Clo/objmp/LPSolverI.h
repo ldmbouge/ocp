@@ -45,12 +45,19 @@
 -(void) print;
 -(void) del;
 -(LPColumnI*) column;
--(ORFloat) value;
+-(ORInt) value;
+-(ORFloat) floatValue;
 -(ORFloat) reducedCost;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
 @end
+
+@interface LPIntVariableI : LPVariableI
+-(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver;
+-(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
+@end
+
 
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;
@@ -239,13 +246,15 @@
 -(LPSolverI*) initLPSolverI;
 -(void) dealloc;
 
-+(LPSolverI*)     create;
--(LPVariableI*)   createVariable;
--(LPVariableI*)   createVariable: (ORFloat) low up: (ORFloat) up;
--(LPColumnI*)     createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
--(LPColumnI*)     createColumn: (ORFloat) low up: (ORFloat) up;
++(LPSolverI*)      create;
+-(LPVariableI*)    createVariable;
+-(LPIntVariableI*) createVariable: (ORFloat) low up: (ORFloat) up;
+-(LPIntVariableI*) createIntVariable;
+-(LPVariableI*)    createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
+-(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up;
 
--(LPLinearTermI*) createLinearTerm;
+-(LPLinearTermI*)  createLinearTerm;
 
 -(LPConstraintI*) createLEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
 -(LPConstraintI*) createGEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
@@ -280,7 +289,8 @@
 -(LPOutcome) solve;
 
 -(LPOutcome) status;
--(ORFloat) value: (LPVariableI*) var;
+-(ORInt) value: (LPIntVariableI*) var;
+-(ORFloat) floatValue: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;
 -(ORFloat) reducedCost: (LPVariableI*) var;
