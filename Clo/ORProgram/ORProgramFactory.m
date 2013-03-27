@@ -35,16 +35,23 @@
 // PVH to factorize this
 
 @implementation ORFactory (Concretization)
+
++(id<CPProgram>)concretizeCP:(id<ORModel>)m
+{
+   id<CPProgram> mp = [CPSolverFactory solver];
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: mp];
+   [m visit: concretizer];
+   [concretizer release];
+   [mp setSource:m];
+   return mp;
+}
+
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
-   id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into:batch];
-   [batch release];
-   
+   id<ORModel> fm = [model flatten];
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   [flatModel visit: concretizer];
+   [fm visit: concretizer];
+   [cpprogram setSource:model];
    [concretizer release];
 }
 

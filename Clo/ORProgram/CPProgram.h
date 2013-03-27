@@ -14,6 +14,7 @@
 #import <ORProgram/CPHeuristic.h>
 #import <objcp/CPData.h>
 
+@protocol ORModel;
 @protocol ORSearchController;
 @protocol CPEngine;
 @protocol ORExplorer;
@@ -30,6 +31,7 @@
 @end
 
 @protocol CPCommonProgram <ORASolver>
+-(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
@@ -90,6 +92,7 @@
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
+-(ORInt)intValue:(id<ORIntVar>)x;
 @end
 
 // CPSolver with syntactic DFS Search

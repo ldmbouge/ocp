@@ -44,6 +44,13 @@
 -(id<ORSolutionPool>) solutions;
 -(id<ORSolution>) bestSolution;
 -(void) restore: (id<ORSolution>) s;
+-(id<ORModel>)flatten;
+-(id<ORModel>)copy;
+-(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)source;
+-(id<ORModel>)rootModel;
+-(void)map:(id)key toObject:(id)object;
+-(id)lookup:(id)key;
 @end
 
 @protocol ORAddToModel <ORTracker>

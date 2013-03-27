@@ -274,6 +274,11 @@
 			<key>orderHint</key>
 			<integer>61</integer>
 		</dict>
+		<key>models.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>65</integer>
+		</dict>
 		<key>mpinterface.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -468,6 +473,11 @@
 			<true/>
 		</dict>
 		<key>5B28CB0416691F0C008AB802</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B2D92C817036DA8007F330B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
