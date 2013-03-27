@@ -9,7 +9,11 @@ GNUstep = /opt/kitkit-1.0-rc1
 CFLAGS = -I$(GNUstep)/include -I. -I.. \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
-LFLAGS = `$(GNUstep)/bin/gnustep-config --base-libs` $(USER_DEFINES)\
+#### `$(GNUstep)/bin/gnustep-config --base-libs` 
+
+LFLAGS = -rdynamic -pthread -fexceptions -fgnu-runtime \
+	-L$(GNUstep)/lib -lgnustep-base -lobjc -lm \
+	$(USER_DEFINES)\
 	-L../objcp -L../ORFoundation -L../ORUtilities -L../ORModeling \
 	-L../CPUKernel -L../ORProgram \
 	-lobjcp -lORUtilities -lORFoundation -lORModeling -lCPUKernel \
