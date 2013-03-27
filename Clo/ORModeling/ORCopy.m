@@ -44,7 +44,7 @@
         [self copyObject: x];
     } onConstraints:^(id<ORConstraint> c) {
         [self copyObject: c];
-    } onObjective:^(id<ORObjective> o) {
+    } onObjective:^(id<ORObjectiveFunction> o) {
         [self copyObject: o];
     }];
     
@@ -215,15 +215,17 @@
     [_copyModel add: c];
     _result = c;
 }
+
+// TOFIX: ldm
 -(void) visitMinimize: (id<ORObjectiveFunction>) v  {
-    id<ORObjectiveFunction> o = [[ORMinimizeI allocWithZone: _zone] initORMinimizeI: [self copyObject: [v var]]];
-    [_copyModel optimize: o];
-    _result = o;
+//    id<ORObjectiveFunction> o = [[ORMinimizeI allocWithZone: _zone] initORMinimizeI: [self copyObject: [v var]]];
+//    [_copyModel optimize: o];
+//    _result = o;
 }
 -(void) visitMaximize: (id<ORObjectiveFunction>) v  {
-    id<ORObjectiveFunction> o = [[ORMaximizeI allocWithZone: _zone] initORMaximizeI: [self copyObject: [v var]]];
-    [_copyModel optimize: o];
-    _result = o;
+//    id<ORObjectiveFunction> o = [[ORMaximizeI allocWithZone: _zone] initORMaximizeI: [self copyObject: [v var]]];
+//    [_copyModel optimize: o];
+//    _result = o;
 }
 -(void) visitEqualc: (id<OREqualc>)cstr  {
     id<OREqualc> c = [[OREqualc allocWithZone: _zone] initOREqualc: [self copyObject: [cstr left]]

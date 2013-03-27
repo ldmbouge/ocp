@@ -13,7 +13,6 @@
 #import <ORFoundation/ORError.h>
 #import "ORModelI.h"
 #import "ORError.h"
-#import "ORSolver.H"
 #import "ORConcurrencyI.h"
 #import "ORCopy.h"
 

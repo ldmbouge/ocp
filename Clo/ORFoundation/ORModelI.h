@@ -19,8 +19,6 @@
 #import "ORVisit.h"
 #import <ORUtilities/ORTypes.h>
 
-@protocol ORObjective;
-
 @interface ORConstraintI : ORModelingObjectI<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(void) setId: (ORUInt) name;

@@ -62,7 +62,8 @@
         }
         [[self columnInformer] whenNotifiedDo: ^(id<ORFloatArray> column) { [_master injectColumn: column]; }];
         [slave run];
-        reducedCost = [[[[slave model] objective] value] key];
+       id<ORObjectiveValueFloat> ov = [[[slave model] objective] value];
+        reducedCost = [ov value];
         [slave release];
     } while(reducedCost >= -0.00001);
 }
