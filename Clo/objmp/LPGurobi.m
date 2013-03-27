@@ -27,7 +27,6 @@
                                       userInfo:nil];
    }
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
-   
    return self;
 }
 
@@ -92,8 +91,9 @@
 }
 -(LPOutcome) solve
 {
+   //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
+   [self printModelToFile: "/Users/ldm/lookatgurobi.lp"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {

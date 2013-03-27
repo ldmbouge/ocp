@@ -164,6 +164,7 @@
    id<ORExpr> _e;
 }
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
 -(id<ORExpr>) initORExprSumI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;

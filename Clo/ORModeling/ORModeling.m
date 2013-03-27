@@ -12,6 +12,7 @@
 #import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
 #import "ORFlatten.h"
+#import "ORCopy.h"
 #import "ORLPFlatten.h"
 #import "ORLinearize.h"
 
@@ -20,10 +21,17 @@
 {
    return [[[ORModelI alloc]  initORModelI] autorelease];
 }
++(id<ORModel>) cloneModel: (id<ORModel>)m {
+    ORCopy* copier = [[ORCopy alloc] initORCopy: nil];
+    id<ORModel> copyModel = [copier copyModel: m];
+    [copier release];
+    return copyModel;
+}
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
 {
    return [[ORBatchModel alloc]  init: flatModel source:srcModel];
 }
+
 +(id<ORModelTransformation>) createFlattener
 {
    return [[[ORFlatten alloc] initORFlatten] autorelease];
@@ -39,5 +47,8 @@
 +(id<ORSolutionPool>) createSolutionPool
 {
    return [[ORSolutionPoolI alloc] init];
+}
++(id<ORConstraintSet>) createConstraintSet {
+    return [[ORConstraintSetI alloc] init];
 }
 @end

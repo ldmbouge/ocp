@@ -29,12 +29,36 @@
 -(void) set: (ORInt) value at:(ORInt)idx;
 -(ORInt) low;
 -(ORInt) up;
+-(ORInt) max;
+-(ORInt) min;
 -(id<ORIntRange>) range;
 -(NSUInteger)count;
 -(NSString*)description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
+- (void)encodeWithCoder:(NSCoder *)aCoder;
+- (id)initWithCoder:(NSCoder *)aDecoder;
+@end
+
+@interface ORFloatArrayI : ORDualUseObjectI<NSCoding,ORFloatArray>
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORFloat) v;
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORFloat(^)(ORInt)) clo;
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) v;
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (ORFloat(^)(ORInt)) clo;
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORFloat(^)(ORInt,ORInt)) clo;
+-(void) dealloc;
+-(ORFloat) at: (ORInt) value;
+-(void) set: (ORFloat) value at:(ORInt)idx;
+-(ORInt) low;
+-(ORInt) up;
+-(ORFloat) max;
+-(ORFloat) min;
+-(id<ORIntRange>) range;
+-(NSUInteger)count;
+-(NSString*)description;
+-(id<ORTracker>) tracker;
+-(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
 - (void)encodeWithCoder:(NSCoder *)aCoder;
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
@@ -64,6 +88,7 @@
 
 @interface ORIntMatrixI : ORDualUseObjectI<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix;
 -(void) dealloc;

@@ -295,6 +295,7 @@
 -(ORFloat) upperBound: (LPVariableI*) var;
 -(ORFloat) reducedCost: (LPVariableI*) var;
 -(ORFloat) dual: (LPConstraintI*) cstr;
+-(id<ORFloatArray>) duals;
 -(id<ORObjectiveValue>) objectiveValue;
 -(ORFloat) lpValue;
 

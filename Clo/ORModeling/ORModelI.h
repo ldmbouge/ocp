@@ -32,6 +32,7 @@
 -(id<ORSolution>) captureSolution;
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
+-(id) copyWithZone:(NSZone*)zone;
 -(void) addVariable:(id<ORVar>) var;
 -(void) addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
@@ -86,10 +87,21 @@
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-   NSMutableSet* _all;
+    NSMutableSet* _all;
+    id<ORSolutionInformer> _solutionAddedInformer;
 }
 -(id)init;
 -(void)addSolution:(id<ORSolution>)s;
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
+@end
+
+@interface ORConstraintSetI : NSObject<ORConstraintSet> {
+    NSMutableSet* _all;
+}
+-(id)init;
+-(void)addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

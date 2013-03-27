@@ -52,7 +52,7 @@ enum CPDomClass {
 -(NSString*)description;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore;
+-(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
@@ -87,7 +87,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;
 -(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore;
+-(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
 -(void)translate:(ORInt)shift;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
@@ -116,8 +116,8 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
 -(id) copyWithZone:(NSZone *)zone;
--(void) restoreDomain:(id<CPDom>)toRestore;
--(void) restoreValue:(ORInt)toRestore;
+-(void) restoreDomain:(id<CPDom>)toRestore ;
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end

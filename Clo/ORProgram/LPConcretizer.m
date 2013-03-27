@@ -301,7 +301,27 @@
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
+-(void) visitMinimize: (id<ORObjectiveFunction>) v
+{
+   if ([v dereference] == NULL) {
+      id<ORIntVar> o = [v var];
+      [o visit: self];
+      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: [o dereference]];
+      [v setImpl: concreteObj];
+      [_lpsolver postObjective: concreteObj];
+   }
+}
+-(void) visitMaximize: (id<ORObjectiveFunction>) v
+{
+   if ([v dereference] == NULL) {
+      id<ORIntVar> o = [v var];
+      [o visit: self];
+      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: [o dereference]];
+      [v setImpl: concreteObj];
+      [_lpsolver postObjective: concreteObj];
+   }
 }
 -(void) visitEqualc: (id<OREqualc>) cstr
 {

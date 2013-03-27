@@ -1482,7 +1482,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) <= %d)",[self class],self,_impl,_ia,_coefs,_c];
    return buf;
 }
 -(void) visit: (id<ORVisitor>) v

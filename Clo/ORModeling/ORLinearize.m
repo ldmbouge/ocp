@@ -282,12 +282,10 @@
     // Create the index variable if needed.
     if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)]) indexVar = (id<ORIntVar>)[cstSubExpr index];
     else {
-        id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
+       id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
        id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
-        indexVar = [ORFactory intVar: _model domain: dom];
-        // [ldm] Removed next line. Redundant since the factory already adds the variable.
-        // [_model addVariable: indexVar];
-        [_model addConstraint: [indexVar eq: linearIndexExpr]];
+       indexVar = [ORFactory intVar: _model domain: dom];
+       [_model addConstraint: [indexVar eq: linearIndexExpr]];
     }
     id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
     id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
@@ -295,8 +293,6 @@
     }];
     id<ORIntRange> dom = [ORFactory intRange:_model low:[linearSumExpr min] up:[linearSumExpr max]];
     id<ORIntVar> sumVar = [ORFactory intVar: _model domain: dom];
-    // [ldm] Removed next line. Redundant since the factory already adds the variable.
-    //[_model addVariable: sumVar];
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
 }
@@ -330,4 +326,18 @@
 //   [_model maximize:[v var]];
 }
 
+@end
+
+@implementation ORFactory(Linearize)
++(id<ORModel>) linearizeModel:(id<ORModel>)m {
+    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
+    id<ORModel> lm = [ORFactory createModel];
+    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
+    [linearizer apply: m into: batch];
+    id<ORModel> clm = [ORFactory cloneModel: lm];
+    [lm release];
+    [batch release];
+    [linearizer release];
+    return clm;
+}
 @end

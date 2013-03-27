@@ -12,6 +12,10 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
 #import "ORModelI.h"
+#import "ORError.h"
+#import "ORSolver.H"
+#import "ORConcurrencyI.h"
+#import "ORCopy.h"
 
 @implementation ORModelI
 {
@@ -38,7 +42,6 @@
    _cc = NULL;
    return self;
 }
-
 -(void) dealloc
 {
    NSLog(@"ORModelI [%p] dealloc called...\n",self);
@@ -268,6 +271,12 @@
    for(id<ORObject> c in _mStore)
       [c visit: visitor];
    [_objective visit: visitor];
+}
+-(id) copyWithZone:(NSZone*)zone {
+    ORCopy* copier = [[ORCopy alloc] initORCopy: zone];
+    id<ORModel> m = [copier copyModel: self];
+    [copier release];
+    return m;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -553,9 +562,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 @implementation ORSolutionPoolI
 -(id) init
 {
-   self = [super init];
-   _all = [[NSMutableSet alloc] initWithCapacity:64];
-   return self;
+    self = [super init];
+    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
+    return self;
 }
 
 -(void) dealloc
@@ -566,7 +576,8 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) addSolution:(id<ORSolution>)s
 {
-   [_all addObject:s];
+    [_all addObject:s];
+    [_solutionAddedInformer notifyWithSolution: s];
 }
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
@@ -576,7 +587,12 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    }];
 }
 
--(NSString*) description
+-(id<ORInformer>)solutionAdded 
+{
+    return _solutionAddedInformer;
+}
+
+-(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
@@ -607,3 +623,35 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    return [sel retain];
 }
 @end
+
+@implementation ORConstraintSetI
+-(id) init
+{
+    self = [super init];
+    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    return self;
+}
+
+-(void) dealloc
+{
+    [_all release];
+    [super dealloc];
+}
+
+-(void) addConstraint:(id<ORConstraint>)c
+{
+    [_all addObject: c];
+}
+
+-(ORInt) size {
+    return (ORInt)[_all count];
+}
+
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block
+{
+    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+        block(obj);
+    }];
+}
+@end
+

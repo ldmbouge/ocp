@@ -884,6 +884,33 @@
    [ite release]; // [ldm] fixed memory leak.
    return self;
 }
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e {
+    self = [super init];
+    id<IntEnumerator> ite1 = [S1 enumerator];
+    id<IntEnumerator> ite2 = [S2 enumerator];
+    _e = [ORFactory integer: tracker value: 0];
+    if (f!= NULL) {
+        while ([ite1 more]) {
+            ORInt i = [ite1 next];
+            while ([ite2 more]) {
+                ORInt j = [ite2 next];
+                if (f(i, j)) _e = [_e plus: e(i, j)];
+            }
+        }
+    }
+    else {
+        while ([ite1 more]) {
+            ORInt i = [ite1 next];
+            while ([ite2 more]) {
+                ORInt j = [ite2 next];
+                _e = [_e plus: e(i, j)];
+            }
+        }
+    }
+    [ite1 release]; // [ldm] fixed memory leak.
+    [ite2 release];
+    return self;
+}
 -(id<ORExpr>) initORExprSumI: (id<ORExpr>) e
 {
    self = [super init];
