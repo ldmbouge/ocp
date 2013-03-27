@@ -578,11 +578,11 @@
 }
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   [_theModel minimize:[v var]];
+   [_theModel minimizeVar:[v var]];
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   [_theModel maximize:[v var]];
+   [_theModel maximizeVar:[v var]];
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {

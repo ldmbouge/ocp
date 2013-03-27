@@ -2179,13 +2179,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)dealloc
 {
-   NSLog(@"ORMinimizeI dealloc'd (%p)...",self);
+   NSLog(@"ORMinimizeVarI dealloc'd (%p)...",self);
    [super dealloc];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_var];
+   [buf appendFormat:@"<ORMinimizeVarI: %p  --> %@> ",self,_var];
    return buf;
 }
 -(void)visit:(id<ORVisitor>) v
@@ -2210,13 +2210,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)dealloc
 {
-   NSLog(@"ORMaximizeI dealloc'd (%p)...",self);
+   NSLog(@"ORMaximizeVarI dealloc'd (%p)...",self);
    [super dealloc];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_var];
+   [buf appendFormat:@"<ORMaximizeVarI: %p  --> %@> ",self,_var];
    return buf;
 }
 -(void)visit:(id<ORVisitor>) v
@@ -2243,7 +2243,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_expr];
+   [buf appendFormat:@"<ORMaximizeExprI: %p  --> %@> ",self,_expr];
    return buf;
 }
 -(void) visit:(id<ORVisitor>)v
@@ -2270,7 +2270,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_expr];
+   [buf appendFormat:@"<ORMinimizeExprI: %p  --> %@> ",self,_expr];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2291,13 +2291,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void)dealloc
 {
-   NSLog(@"ORMaximizeExprI dealloc'd (%p)...",self);
+   NSLog(@"ORMaximizeLinearI dealloc'd (%p)...",self);
    [super dealloc];
 }
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMaximizeI: %p  --> %@ %@> ",self,_array,_coef];
+   [buf appendFormat:@"<ORMaximizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
