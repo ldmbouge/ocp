@@ -586,6 +586,10 @@
 {
    return [_solver reducedCost: self];
 }
+-(BOOL) isInteger
+{
+   return false;
+}
 @end
 
 
@@ -599,6 +603,10 @@
 {
    [super initLPVariableI: solver];
    return self;
+}
+-(BOOL) isInteger
+{
+   return true;
 }
 @end
 

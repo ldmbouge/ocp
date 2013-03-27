@@ -237,7 +237,7 @@
 {
    return [[ORIntVarSnapshot alloc] initIntVarSnapshot:self];
 }
--(void)restore:(id<ORSnapshot>)s
+-(void) restore:(id<ORSnapshot>)s
 {
    [[_impl dereference] restore:s];
 }

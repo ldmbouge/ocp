@@ -51,11 +51,13 @@
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
+-(BOOL) isInteger;
 @end
 
 @interface LPIntVariableI : LPVariableI
 -(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver;
 -(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
+-(BOOL) isInteger;
 @end
 
 
