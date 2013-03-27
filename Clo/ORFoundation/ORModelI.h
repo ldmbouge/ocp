@@ -27,7 +27,6 @@
 -(NSString*) description;
 @end
 
-
 @interface ORGroupI : ORModelingObjectI<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
 -(id<ORConstraint>)add:(id<ORConstraint>)c;

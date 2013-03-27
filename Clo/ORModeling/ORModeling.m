@@ -48,4 +48,7 @@
 {
    return [[ORSolutionPoolI alloc] init];
 }
++(id<ORConstraintSet>) createConstraintSet {
+    return [[ORConstraintSetI alloc] init];
+}
 @end

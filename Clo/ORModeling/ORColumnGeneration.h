@@ -25,7 +25,7 @@ typedef id<ORFloatArray> (^ORRunnable2FloatArray)(id<ORRunnable>);
 -(id<ORFloatArrayInformer>) columnInformer;
 @end
 
-@interface ORColumnGeneration : NSObject<ORColumnConsumer>
+@interface ORColumnGeneration : NSObject<ORColumnConsumer, ORRunnable>
 -(id) initWithMaster: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;

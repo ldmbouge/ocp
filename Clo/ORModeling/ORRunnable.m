@@ -28,6 +28,7 @@
 @synthesize providesSolutionStream;
 @synthesize providesColumn;
 @synthesize providesConstraint;
+@synthesize providesConstraintSet;
 @synthesize acceptsLowerBound;
 @synthesize acceptsLowerBoundPool;
 @synthesize acceptsLowerBoundStream;
@@ -37,6 +38,7 @@
 @synthesize acceptsSolutionStream;
 @synthesize acceptsColumn;
 @synthesize acceptsConstraint;
+@synthesize acceptsConstraintSet;
 
 @end
 
@@ -69,6 +71,7 @@
     providesSolutionStream = [sig providesSolutionStream];
     providesColumn = [sig providesColumn];
     providesConstraint = [sig providesConstraint];
+    providesConstraintSet = [sig providesConstraintSet];
     acceptsLowerBound = [sig acceptsLowerBound];
     acceptsLowerBoundPool = [sig acceptsLowerBoundPool];
     acceptsLowerBoundStream = [sig acceptsLowerBoundStream];
@@ -78,6 +81,7 @@
     acceptsSolutionStream = [sig acceptsSolutionStream];
     acceptsColumn = [sig acceptsColumn];
     acceptsConstraint = [sig acceptsConstraint];
+    acceptsConstraintSet = [sig acceptsConstraintSet];
 }
 
 -(void) clear {
@@ -91,6 +95,7 @@
     providesSolutionStream = NO;
     providesColumn = NO;
     providesConstraint = NO;
+    providesConstraintSet = NO;
     acceptsLowerBound = NO;
     acceptsLowerBoundPool = NO;
     acceptsLowerBoundStream = NO;
@@ -100,6 +105,7 @@
     acceptsSolutionStream = NO;
     acceptsColumn = NO;
     acceptsConstraint = NO;
+    acceptsConstraintSet = NO;
 }
 
 -(ORMutableSignatureI*) complete { isComplete = YES; return self; }
@@ -112,6 +118,7 @@
 -(ORMutableSignatureI*) solutionStreamOut { providesSolutionStream = YES; return self; }
 -(ORMutableSignatureI*) columnOut { providesColumn = YES; return self; }
 -(ORMutableSignatureI*) constraintOut { providesConstraint = YES; return self; }
+-(ORMutableSignatureI*) constraintSetOut { providesConstraintSet = YES; return self; }
 -(ORMutableSignatureI*) upperIn { acceptsUpperBound = YES; return self; }
 -(ORMutableSignatureI*) upperStreamIn { acceptsUpperBoundStream = YES; return self; }
 -(ORMutableSignatureI*) upperPoolIn { acceptsUpperBoundPool = YES; return self; }
@@ -121,6 +128,7 @@
 -(ORMutableSignatureI*) solutionStreamIn { acceptsSolutionStream = YES; return self; }
 -(ORMutableSignatureI*) columnIn { acceptsColumn = YES; return self; }
 -(ORMutableSignatureI*) constraintIn { acceptsConstraint = YES; return self; }
+-(ORMutableSignatureI*) constraintSetIn { acceptsConstraintSet = YES; return self; }
 @end
 
 @implementation ORFactory(ORSignature)
@@ -331,7 +339,7 @@
 @end
 
 @implementation ORFactory(ORRunnable)
-+(id<ORRunnable>) CPRunnable: (id<ORModel>)m
++(id<CPRunnable>) CPRunnable: (id<ORModel>)m
 {
     id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;

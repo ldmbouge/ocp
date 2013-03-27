@@ -33,6 +33,12 @@
 -(ORUInt)getId;
 @end
 
+@protocol ORConstraintSet <NSObject>
+-(void)addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+@end
+
 enum ORGroupType {
    DefaultGroup = 0,
    BergeGroup = 1

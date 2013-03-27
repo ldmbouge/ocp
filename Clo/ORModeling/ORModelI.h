@@ -90,3 +90,12 @@
 -(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
 @end
+
+@interface ORConstraintSetI : NSObject<ORConstraintSet> {
+    NSMutableSet* _all;
+}
+-(id)init;
+-(void)addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+@end

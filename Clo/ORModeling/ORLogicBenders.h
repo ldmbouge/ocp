@@ -15,35 +15,26 @@
 #import <ORModeling/ORModeling.h>
 #import "ORRunnable.h"
 
-typedef id<ORRunnable> (^ORSolution2Runnable)(id<ORSolution>);
-typedef id<ORConstraint> (^ORRunnable2Constraint)(id<ORRunnable>);
+typedef id<ORProcess> (^ORSolution2Process)(id<ORSolution>);
+typedef id<ORConstraintSet> (^ORVoid2ConstraintSet)();
 
-@protocol ORConstraintConsumer<ORRunnable>
--(id<ORConstraintInformer>) constraintInformer;
-@end
 
-@protocol ORConstraintProvider<ORRunnable>
--(void) addConstraintConsumer: (id<ORConstraintConsumer>)c;
-@end
-
-@interface ORLogicBenders : NSObject<ORConstraintConsumer>
--(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock;
+@interface ORLogicBenders : NSObject<ORConstraintSetConsumer, ORRunnable>
+-(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Process)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
 -(void) onExit: (ORClosure)block;
 @end
 
-@interface ORCutGenerator : NSObject<ORConstraintProvider>
--(id) initWithRunnable: (id<ORRunnable>)r cutTransform: (ORRunnable2Constraint)block;
+@interface ORCutGenerator : NSObject<ORConstraintSetProducer>
+-(id) initWithBlock: (ORVoid2ConstraintSet)block;
 -(id<ORSignature>) signature;
--(id<ORModel>) model;
 -(void) run;
--(void) onExit: (ORClosure)block;
--(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
+-(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c;
 @end
 
 @interface ORFactory(ORLogicBenders)
-+(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock;
-+(id<ORRunnable>) generateCut: (id<ORRunnable>)r using: (ORRunnable2Constraint)block;
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Process)slaveBlock;
++(id<ORProcess>) generateCuts: (ORVoid2ConstraintSet)block;
 @end

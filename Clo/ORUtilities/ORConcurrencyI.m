@@ -243,6 +243,14 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     };
     [_eventList addEvent:[wrap copy]];
 }
+-(void) dispatchWithConstraintSet:(id<ORConstraintSet>)set
+{
+    ORConstraintSet2Void tClo = (ORConstraintSet2Void)_closure;
+    ORClosure wrap = ^{
+        tClo(set);
+    };
+    [_eventList addEvent:[wrap copy]];
+}
 @end
 
 @implementation ORInformerI 
@@ -373,6 +381,20 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
         [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
         for(id event in _wheneverList)
             [event dispatchWithFloatArray: arr];
+        for(ORBarrierI* barrier in _sleeperList)
+            [barrier join];
+        [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+    }
+}
+
+-(void) notifyWithConstraintSet:(id<ORConstraintSet>)s
+{
+    @synchronized(self) {
+        for(id event in _whenList)
+            [event dispatchWithConstraintSet: s];
+        [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+        for(id event in _wheneverList)
+            [event dispatchWithConstraintSet: s];
         for(ORBarrierI* barrier in _sleeperList)
             [barrier join];
         [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.

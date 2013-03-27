@@ -26,6 +26,7 @@
 -(bool) providesSolutionStream;
 -(bool) providesColumn;
 -(bool) providesConstraint;
+-(bool) providesConstraintSet;
 -(bool) acceptsUpperBound;
 -(bool) acceptsUpperBoundStream;
 -(bool) acceptsLowerBound;
@@ -35,6 +36,7 @@
 -(bool) acceptsSolutionStream;
 -(bool) acceptsColumn;
 -(bool) acceptsConstraint;
+-(bool) acceptsConstraintSet;
 @end
 
 @interface ORSignatureI : NSObject<ORSignature> {
@@ -49,6 +51,7 @@
     bool providesSolutionStream;
     bool providesColumn;
     bool providesConstraint;
+    bool providesConstraintSet;
     bool acceptsUpperBound;
     bool acceptsUpperBoundStream;
     bool acceptsLowerBound;
@@ -58,6 +61,7 @@
     bool acceptsSolutionStream;
     bool acceptsColumn;
     bool acceptsConstraint;
+    bool acceptsConstraintSet;
 }
 -(bool) matches: (id<ORSignature>)sig;
 @property(readonly) bool isComplete;
@@ -70,6 +74,7 @@
 @property(readonly) bool providesSolutionStream;
 @property(readonly) bool providesColumn;
 @property(readonly) bool providesConstraint;
+@property(readonly) bool providesConstraintSet;
 @property(readonly) bool acceptsUpperBound;
 @property(readonly) bool acceptsUpperBoundStream;
 @property(readonly) bool acceptsLowerBound;
@@ -79,6 +84,7 @@
 @property(readonly) bool acceptsSolutionStream;
 @property(readonly) bool acceptsColumn;
 @property(readonly) bool acceptsConstraint;
+@property(readonly) bool acceptsConstraintSet;
 @end
 
 @interface ORMutableSignatureI : ORSignatureI
@@ -96,6 +102,7 @@
 -(ORMutableSignatureI*) solutionStreamOut;
 -(ORMutableSignatureI*) columnOut;
 -(ORMutableSignatureI*) constraintOut;
+-(ORMutableSignatureI*) constraintSetOut;
 -(ORMutableSignatureI*) upperIn;
 -(ORMutableSignatureI*) upperStreamIn;
 -(ORMutableSignatureI*) upperPoolIn;
@@ -105,33 +112,45 @@
 -(ORMutableSignatureI*) solutionStreamIn;
 -(ORMutableSignatureI*) columnIn;
 -(ORMutableSignatureI*) constraintIn;
+-(ORMutableSignatureI*) constraintSetIn;
 @end
 
 @interface ORFactory(ORSignature)
 +(id<ORSignature>) createSignature: (NSString*)sigString;
 @end
 
-@protocol ORRunnable<NSObject>
+@protocol ORProcess<NSObject>
 -(id<ORSignature>) signature;
--(id<ORModel>) model;
 -(void) run;
+@end
+
+@protocol ORRunnable<ORProcess>
+-(id<ORModel>) model;
 -(void) onExit: (ORClosure)block;
 @end
 
-@protocol ORUpperBoundStreamConsumer<ORRunnable>
+@protocol ORUpperBoundStreamConsumer<ORProcess>
 -(id<ORIntInformer>) upperBoundStreamInformer;
 @end
 
-@protocol ORUpperBoundStreamProvider<ORRunnable>
+@protocol ORUpperBoundStreamProvider<ORProcess>
 -(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
 @end
 
-@protocol ORSolutionStreamConsumer<ORRunnable>
+@protocol ORSolutionStreamConsumer<ORProcess>
 -(id<ORSolutionInformer>) solutionStreamInformer;
 @end
 
-@protocol ORSolutionStreamProvider<ORRunnable>
+@protocol ORSolutionStreamProvider<ORProcess>
 -(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c;
+@end
+
+@protocol ORConstraintSetConsumer<ORProcess>
+-(id<ORConstraintSetInformer>) constraintSetInformer;
+@end
+
+@protocol ORConstraintSetProducer<ORProcess>
+-(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c;
 @end
 
 @protocol ORRunnableTransform
@@ -142,7 +161,7 @@
 -(id<ORRunnable>) apply: (id<ORRunnable>)r0 and: (id<ORRunnable>)r1;
 @end
 
-@protocol ORUpperBoundedRunnable<ORUpperBoundStreamConsumer, ORUpperBoundStreamProvider,
+@protocol ORUpperBoundedRunnable<ORRunnable, ORUpperBoundStreamConsumer, ORUpperBoundStreamProvider,
                                     ORSolutionStreamConsumer, ORSolutionStreamProvider>
 @end
 
@@ -162,7 +181,7 @@
 -(id<ORSignature>) signature;
 @end
 
-@protocol CPRunnable<ORUpperBoundedRunnable>
+@protocol CPRunnable<ORUpperBoundedRunnable, ORRunnable>
 -(id<CPProgram>) solver;
 @end
 
@@ -190,6 +209,6 @@
 @end
 
 @interface ORFactory(ORRunnable)
-+(id<ORRunnable>) CPRunnable: (id<ORModel>)m;
++(id<CPRunnable>) CPRunnable: (id<ORModel>)m;
 +(id<LPRunnable>) LPRunnable: (id<ORModel>)m;
 @end

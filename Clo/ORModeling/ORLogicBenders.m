@@ -16,17 +16,17 @@
 @implementation ORLogicBenders {
 @protected
     id<ORRunnable> _master;
-    ORSolution2Runnable _slaveBlock;
+    ORSolution2Process _slaveBlock;
     id<ORSignature> _sig;
-    id<ORConstraintInformer> _constraintInformer;
+    id<ORConstraintSetInformer> _constraintSetInformer;
 }
 
--(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock {
+-(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Process)slaveBlock {
     if((self = [super init]) != nil) {
         _master = [master retain];
         _slaveBlock = [slaveBlock copy];
         _sig = nil;
-        _constraintInformer = [[ORInformerI alloc] initORInformerI];
+        _constraintSetInformer = [[ORInformerI alloc] initORInformerI];
     }
     return self;
 }
@@ -34,14 +34,14 @@
 -(void) dealloc {
     [_master release];
     [_sig release];
-    [_constraintInformer release];
+    [_constraintSetInformer release];
     [_slaveBlock release];
     [super dealloc];
 }
 
 -(id<ORSignature>) signature {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.constraintIn"];
+        _sig = [ORFactory createSignature: @"complete.constraintSetIn"];
     }
     return _sig;
 }
@@ -49,99 +49,81 @@
 -(id<ORModel>) model { return [_master model]; }
 
 -(void) run {
-    bool isFeasible = NO;
+    __block BOOL isFeasible = NO;
     do {
         [_master run];
         id<ORSolution> solution = [[_master model] bestSolution];
-        id<ORRunnable> slave = [_slaveBlock(solution) retain];
+        id<ORProcess> slave = _slaveBlock(solution);
         if(![[slave signature] providesConstraint]) {
             [NSException raise: NSGenericException
                         format: @"Invalid Signature(ORLogicBenders): Slave does not produce a constraint."];
         }
-        [[self constraintInformer] whenNotifiedDo: ^(id<ORConstraint> c) { /* Add cut */ }];
+        [[self constraintSetInformer] whenNotifiedDo: ^(id<ORConstraintSet> set) {
+            if(set == nil || [set size] == 0) isFeasible = YES;
+            else [set enumerateWith:^(id<ORConstraint> c) { [[_master model] add: c]; } ]; // Inject cuts
+        }];
         [slave run];
-        isFeasible = [[slave model] bestSolution] != nil; // FIX: Not sure how to check if feasible from the modeling layer.
         [slave release];
     } while(!isFeasible);
 }
 
 -(void) onExit: (ORClosure)block {}
 
--(id<ORConstraintInformer>) constraintInformer { return _constraintInformer; }
+-(id<ORConstraintSetInformer>) constraintSetInformer { return _constraintSetInformer; }
 
 @end
 
 @implementation ORCutGenerator {
 @private
-    id<ORRunnable> _runnable;
-    ORRunnable2Constraint _transform;
+    ORVoid2ConstraintSet _block;
     id<ORSignature> _sig;
-    NSMutableArray* _constraintConsumers;
+    NSMutableArray* _constraintSetConsumers;
 }
 
--(id) initWithRunnable: (id<ORRunnable>)r cutTransform: (ORRunnable2Constraint)block {
+-(id) initWithBlock: (ORVoid2ConstraintSet)block
+{
     if((self = [super init]) != nil) {
-        _runnable = [r retain];
-        _transform = [block copy];
-        _constraintConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+        _block = [block copy];
+        _constraintSetConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
     }
     return self;
 }
 
--(void) dealloc {
-    [_runnable release];
-    [_constraintConsumers release];
-    [_transform release];
+-(void) dealloc
+{
+    [_constraintSetConsumers release];
+    [_block release];
     [super dealloc];
 }
 
--(id<ORSignature>) signature {
+-(id<ORSignature>) signature
+{
     if(_sig == nil) {
-        ORMutableSignatureI* sig = [[ORMutableSignatureI alloc] initFromSignature: [_runnable signature]];
-        _sig = [sig constraintOut];
+        _sig = [ORFactory createSignature: @"constraintSetOut"];
     }
     return _sig;
 }
 
--(id<ORModel>) model { return [_runnable model]; }
-
--(void) run {
-    [_runnable run];
-    id<ORConstraint> constraint = _transform(_runnable);
-    for(id<ORConstraintConsumer> c in _constraintConsumers)
-        [[c constraintInformer] notifyWithConstraint: constraint];
-}
-
--(void) onExit: (ORClosure)block {
-    [_runnable onExit: block];
-}
-
-- (void)forwardInvocation:(NSInvocation *)anInvocation {
-    if ([_runnable respondsToSelector:
-         [anInvocation selector]])
-        [anInvocation invokeWithTarget: _runnable];
-    else [super forwardInvocation:anInvocation];
-}
-
-- (BOOL)respondsToSelector:(SEL)aSelector {
-    if([super respondsToSelector:aSelector]) return YES;
-    else if([_runnable respondsToSelector: aSelector]) return YES;
-    return NO;
-}
-
--(void) addConstraintConsumer:(id<ORConstraintConsumer>)c
+-(void) run
 {
-    [_constraintConsumers addObject: c];
+    id<ORConstraintSet> set = _block();
+    for(id<ORConstraintSetConsumer> c in _constraintSetConsumers)
+        [[c constraintSetInformer] notifyWithConstraintSet: set];
+}
+
+-(void) addConstraintSetConsumer:(id<ORConstraintSetConsumer>)c
+{
+    [_constraintSetConsumers addObject: c];
 }
 
 @end
 
 @implementation ORFactory(ORLogicBenders)
-+(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Runnable)slaveBlock {
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Process)slaveBlock {
     return [[ORLogicBenders alloc] initWithMaster: master slave: slaveBlock];
 }
-+(id<ORRunnable>) generateCut: (id<ORRunnable>)r using: (ORRunnable2Constraint)block {
-    ORCutGenerator* generator = [[ORCutGenerator alloc] initWithRunnable: r cutTransform: block];
++(id<ORProcess>) generateCuts: (ORVoid2ConstraintSet)block {
+    ORCutGenerator* generator = [[ORCutGenerator alloc] initWithBlock: block];
     return generator;
 }
 @end

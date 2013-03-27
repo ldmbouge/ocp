@@ -21,6 +21,7 @@
 #import "ORRunnable.h"
 #import "ORLogicBenders.h"
 #import "SSCPLPInstanceParser.h"
+#import "CPEngineI.h"
 
 /*
  Single Source Capacitated Plant Location Problem
@@ -32,6 +33,39 @@
 
  Instances can be founds at: http://www-eio.upc.es/~elena/sscplp/
 */
+
+
+// Returns the minimum number of bins required to fit items
+ORInt FirstFitDecreasingHeuristic(ORInt maxBinSize, id<ORIntArray> items) {
+    // Sort items
+    NSMutableArray* sortedItems = [[NSMutableArray alloc] initWithCapacity: [items count]];
+    [items enumerateWith:^(ORInt obj, ORInt idx) { [sortedItems addObject: [NSNumber numberWithInt: obj]]; } ];
+    [sortedItems sortUsingSelector:@selector(compare:)];
+    
+    // Create bins
+    ORInt maxNbBins = (ORInt)[items count];
+    ORInt bins[maxNbBins];
+    for(ORInt i = 0; i < maxNbBins; i++) bins[i] = 0;
+    
+    // Greedily fill bins
+    ORInt binCount = 1;
+    for(NSNumber* n in [sortedItems reverseObjectEnumerator]) {
+        BOOL foundBin = NO;
+        for(ORInt b = 0; b < binCount; b++) {
+            if(bins[b] + [n intValue] <= maxBinSize) {
+                bins[b] += [n intValue];
+                foundBin = YES;
+                break;
+            }
+        }
+        if(!foundBin) {
+            binCount++;
+            bins[binCount - 1] = [n intValue];
+        }
+    }
+    [sortedItems release];
+    return binCount;
+}
 
 
 int main(int argc, const char * argv[])
@@ -117,18 +151,42 @@ int main(int argc, const char * argv[])
    }   
    
    id<ORRunnable> ip = [ORFactory LPRunnable: master]; // This should be an IP.
-   id<ORRunnable> benders = [ORFactory logicBenders: ip slave: ^id<ORRunnable>(id<ORSolution> solution) {
-      id<ORModel> slave = [ORFactory createModel];
-      id<ORIntSet> clientsAssigned[n]; // I_j
-      for (ORInt j = 0; j < n; j++) {
-         clientsAssigned[j] = [ORFactory collect: slave range: I
-                                        suchThat: ^bool(ORInt i) { return [[x at: i : j] value] == 1; }
-                                              of: ^ORInt(ORInt i) { return i; }];
-      }
-      
-      // Need to finish
-      
-      return nil;
+   id<ORRunnable> benders = [ORFactory logicBenders: ip slave: ^id<ORProcess>(id<ORSolution> solution) {
+       return [ORFactory generateCuts: ^id<ORConstraintSet>() {
+           id<ORConstraintSet> cuts = [ORFactory createConstraintSet];
+           for (ORInt j = 0; j < n; j++) {
+               id<ORIntSet> Ij = [ORFactory collect: master range: I suchThat: ^bool(ORInt i) { return [[x at: i : j] value] == 1; } of: ^ORInt(ORInt e) { return e; } ];
+               id<IntEnumerator> enumIj = [Ij enumerator];
+               id<ORIntArray> dist = [ORFactory intArray: master range: RANGE(master, 1, [Ij size]) with: ^ORInt(ORInt e) { return [enumIj next]; }];
+               ORInt numVehFFD = FirstFitDecreasingHeuristic(l, dist);
+               if(numVehFFD > [[numVeh at: j] value]) {
+                   // Run subproblems
+                   for(ORInt numVehBinPacking = [[numVeh at: j] value]; numVehBinPacking <= numVehFFD; numVehBinPacking++) {
+                       id<ORModel> subproblem = [ORFactory createModel];
+                       id<ORIntVarArray> load = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 1, numVehBinPacking) domain: RANGE(subproblem, 0, l)];
+                       id<ORIntVarArray> truck = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 1, (ORInt)[dist count]) domain: RANGE(subproblem, 1, [[numVeh at: j] value])];
+                       [subproblem add: [ORFactory packing: truck itemSize: dist load: load]];
+                       id<CPRunnable> r = [ORFactory CPRunnable: subproblem];
+                       [r run];
+                       CPEngineI* engine = (CPEngineI*)[[r solver] engine];
+                       if([engine status] == ORFailure) {
+                           // Add Cut to pool
+                           id<ORExpr> numVehValue = [ORFactory integer: master value: [[numVeh at: j] value]];
+                           id<ORExpr> one = [ORFactory integer: master value: 1];
+                           [cuts addConstraint: [[numVeh at: j] geq:
+                                                 [numVehValue sub: [ORFactory sum: master over: Ij suchThat: nil of:
+                                                                    ^id<ORExpr>(ORInt i) { return [one sub: [x at: i : j]]; }]]]];
+                           [r release];
+                           [subproblem release];
+                       }
+                       else { [r release]; [subproblem release]; break; }
+                   }
+                   
+               }
+               [dist release];
+           }
+           return cuts;
+       }];
    }];
    [benders run];
    

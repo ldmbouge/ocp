@@ -42,6 +42,10 @@
     [super dealloc];
 }
 
+-(id<ORModel>) model {
+    return [_r0 model];
+}
+
 -(void) connectRunnables {
     if([[_r0 signature] providesUpperBoundStream] && [[_r1 signature] acceptsUpperBoundStream])
         [((id<ORUpperBoundStreamProvider>)_r0) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)_r1];

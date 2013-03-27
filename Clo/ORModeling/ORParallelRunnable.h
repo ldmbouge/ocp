@@ -17,6 +17,7 @@
 @interface ORParallelRunnableI : ORUpperBoundedRunnableI
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1;
 -(void) run;
+-(id<ORModel>) model;
 -(id<ORRunnable>) primaryRunnable;
 -(id<ORRunnable>) secondaryRunnable;
 @end

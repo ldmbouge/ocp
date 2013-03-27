@@ -19,8 +19,8 @@
 
 -(id) initWithClients: (NSInteger)m plants: (NSInteger)n {
    if((self = [super init]) != nil) {
-      numberOfClients = m;
-      numberOfPlants = n;
+      numberOfClients = (ORInt)m;
+      numberOfPlants = (ORInt)n;
       cost = malloc(sizeof(ORFloat*) * m);
       for(NSInteger i = 0; i < m; i++) cost[i] = malloc(sizeof(ORFloat) * n);
       capacity = malloc(n * sizeof(ORFloat));

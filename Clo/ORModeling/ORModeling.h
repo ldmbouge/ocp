@@ -59,5 +59,6 @@
 +(id<ORModelTransformation>) createLPFlattener;
 +(id<ORModelTransformation>) createLinearizer;
 +(id<ORSolutionPool>) createSolutionPool;
++(id<ORConstraintSet>) createConstraintSet;
 @end
 

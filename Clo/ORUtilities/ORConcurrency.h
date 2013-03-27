@@ -16,6 +16,7 @@
 @protocol ORConstraint;
 @protocol ORIntArray;
 @protocol ORFloatArray;
+@protocol ORConstraintSet;
 
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
@@ -49,6 +50,10 @@
 
 @protocol ORFloatArrayInformer <ORInformer>
 -(void) notifyWithFloatArray: (id<ORFloatArray>)arr;
+@end
+
+@protocol ORConstraintSetInformer <ORInformer>
+-(void) notifyWithConstraintSet: (id<ORConstraintSet>)s;
 @end
 
 @protocol ORBarrier<NSObject> 
