@@ -10,11 +10,11 @@
  ***********************************************************************/
 
 #import "ORModeling.h"
-#import "ORLPDecompose.h"
+#import "ORMIPDecompose.h"
 #import "ORLinear.h"
 
 
-@implementation ORLPNormalizer
+@implementation ORMIPNormalizer
 {
    id<ORLinear>     _terms;
    id<ORAddToModel>   _model;
@@ -22,13 +22,13 @@
 }
 +(ORLinear*) normalize: (ORExprI*) rel into: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
-   ORLPNormalizer* v = [[ORLPNormalizer alloc] initORLPNormalizer: model annotation:n];
+   ORMIPNormalizer* v = [[ORMIPNormalizer alloc] initORMIPNormalizer: model annotation:n];
    [rel visit:v];
    ORLinear* rv = v->_terms;
    [v release];
    return rv;
 }
--(id) initORLPNormalizer: (id<ORAddToModel>) model annotation: (ORAnnotation) n
+-(id) initORMIPNormalizer: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    self = [super init];
    _terms = nil;
@@ -48,41 +48,41 @@
    else if (lc || rc) {
       ORInt c = lc ? [[e left] min] : [[e right] min];
       ORExprI* other = lc ? [e right] : [e left];
-      ORLinear* lin  = [ORLPLinearizer linearFrom:other model:_model annotation:_n];
+      ORLinear* lin  = [ORMIPLinearizer linearFrom:other model:_model annotation:_n];
       [lin addIndependent: - c];
       _terms = lin;
    }
    else {
-      ORLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
+      ORLinear* linLeft = [ORMIPLinearizer linearFrom:[e left] model:_model annotation:_n];
       ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
-      [ORLPLinearizer addToLinear: linRight from: [e right] model: _model annotation: _n];
+      [ORMIPLinearizer addToLinear: linRight from: [e right] model: _model annotation: _n];
       [linRight release];
       _terms = linLeft;
    }
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   ORLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
+   ORLinear* linLeft = [ORMIPLinearizer linearFrom:[e left] model:_model annotation:_n];
    ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
-   [ORLPLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
+   [ORMIPLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
    [linRight release];
    _terms = linLeft;
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitFloatVar:(id<ORFloatVar>)e    {}
@@ -101,13 +101,13 @@
 -(void) visitExprVarSubI:(ORExprVarSubI*)e {}
 @end
 
-@implementation ORLPLinearizer
+@implementation ORMIPLinearizer
 {
    id<ORLinear>        _terms;
    id<ORAddToModel>    _model;
    ORAnnotation        _n;
 }
--(id) initORLPLinearizer: (id<ORLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
+-(id) initORMIPLinearizer: (id<ORLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    self = [super init];
    _terms = t;
@@ -121,11 +121,11 @@
 }
 -(void) visitFloatVar:(id<ORFloatVar>)e
 {
-   [_terms addTerm: e by: 1];
+   [_terms addTerm:e by:1];
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   [_terms addTerm: e by: 1];
+   [_terms addTerm:e by:1];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -165,39 +165,39 @@
 
 -(void) visitExprModI: (ORExprModI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
 {
@@ -213,23 +213,23 @@
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 +(ORLinear*) linearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
    ORLinear* rv = [[ORLinear alloc] initORLinear:4];
-   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer:rv model: model annotation:cons];
+   ORMIPLinearizer* v = [[ORMIPLinearizer alloc] initORMIPLinearizer:rv model: model annotation:cons];
    [e visit:v];
    [v release];
    return rv;
 }
 +(ORLinear*) addToLinear: (id<ORLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer:terms model: model annotation:cons];
+   ORMIPLinearizer* v = [[ORMIPLinearizer alloc] initORMIPLinearizer:terms model: model annotation:cons];
    [e visit:v];
    [v release];
    return terms;

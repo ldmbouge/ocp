@@ -14,6 +14,7 @@
 #import "ORFlatten.h"
 #import "ORCopy.h"
 #import "ORLPFlatten.h"
+#import "ORMIPFlatten.h"
 #import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
@@ -40,6 +41,11 @@
 {
    return [[[ORLPFlatten alloc] initORLPFlatten] autorelease];
 }
++(id<ORModelTransformation>) createMIPFlattener
+{
+   return [[[ORMIPFlatten alloc] initORMIPFlatten] autorelease];
+}
+
 +(id<ORModelTransformation>) createLinearizer
 {
     return [[[ORLinearize alloc] initORLinearize] autorelease];

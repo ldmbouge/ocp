@@ -226,13 +226,25 @@
 }
 -(ORInt) value
 {
+   return [self intValue];
+}
+-(ORInt) intValue
+{
    if (_impl) {
-      return [(id<ORIntVar>)[_impl dereference] value];
+      return [(id<ORIntVar>)[_impl dereference] intValue];
    }
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
 }
+-(ORFloat) floatValue
+{
+   if (_impl) {
+      return [(id<ORIntVar>)[_impl dereference] floatValue];
+   }
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+}
+
 -(id) snapshot
 {
    return [[ORIntVarSnapshot alloc] initIntVarSnapshot:self];
@@ -522,11 +534,14 @@
 {
    [[_impl dereference] restore: s];   
 }
-
 -(ORFloat) value
 {
+   return [self floatValue];
+}
+-(ORFloat) floatValue
+{
    if (_impl)
-      return [(id<ORFloatVar>) [_impl dereference] value];
+      return [(id<ORFloatVar>) [_impl dereference] floatValue];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    

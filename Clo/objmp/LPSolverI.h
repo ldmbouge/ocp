@@ -291,7 +291,7 @@
 -(LPOutcome) solve;
 
 -(LPOutcome) status;
--(ORInt) value: (LPIntVariableI*) var;
+-(ORInt)   intValue: (LPIntVariableI*) var;
 -(ORFloat) floatValue: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;
