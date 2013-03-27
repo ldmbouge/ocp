@@ -17,7 +17,6 @@
 @protocol LPProgram <NSObject>
 -(LPSolverI*) solver;
 -(void) solve;
--(void)setSource:(id<ORModel>)src;
 -(ORFloat)dual:(id<ORConstraint>)c;
 @end
 

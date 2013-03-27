@@ -2394,16 +2394,16 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
          _primalBound = bound;
    }
 }
--(void) tightenPrimalBound:(ORInt)newBound
+-(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
    @synchronized(self) {
-      if (newBound < _primalBound)
-         _primalBound = newBound;
+      if ([newBound value] < _primalBound)
+         _primalBound = [newBound value];
    }
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:(id<ORIntVar>)_x minimize:YES primalBound:_primalBound];
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
 }
 -(ORStatus) check 
 {
@@ -2416,9 +2416,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    }
    return ORSuspend;
 }
--(ORInt) primalBound
+-(id<ORObjectiveValue>) primalBound
 {
-  return _primalBound;
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize:YES];
 }
 -(NSString*)description
 {
@@ -2463,9 +2463,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    return [[NSSet alloc] initWithObjects:_x, nil];
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc]initObjectiveValue:(id<ORIntVar>)_x minimize:NO primalBound:_primalBound];
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
 }
 
 -(ORUInt)nbUVars
@@ -2480,10 +2480,10 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
     _primalBound = bound;
 }
 
--(void) tightenPrimalBound:(ORInt)newBound
+-(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
-   if (newBound > _primalBound)
-      _primalBound = newBound;
+   if ([newBound value] > _primalBound)
+      _primalBound = [newBound value];
 }
 
 -(ORStatus) check 
@@ -2498,10 +2498,11 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    return ORSuspend;  
 }
 
--(ORInt) primalBound
+-(id<ORObjectiveValue>) primalBound
 {
-  return _primalBound;
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
 }
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

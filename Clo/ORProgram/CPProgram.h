@@ -33,7 +33,7 @@
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
--(id<ORObjectiveFunction>) objective;
+-(id<ORSearchObjectiveFunction>) objective;
 -(id<CPPortal>)      portal;
 -(id<ORTracer>)      tracer;
 

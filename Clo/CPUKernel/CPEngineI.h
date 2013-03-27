@@ -33,7 +33,7 @@ enum CPEngineState {
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
-   id<ORObjective>          _objective;
+   id<ORSearchObjectiveFunction> _objective;
    CPAC3Queue*              _ac3[NBPRIORITIES];
    CPAC5Queue*              _ac5;
    ORStatus                _status;
@@ -56,8 +56,8 @@ enum CPEngineState {
 -(void)      scheduleAC3:(id<CPEventNode>*)mlist;
 -(void)      scheduleAC5:(id<CPAC5Event>)evt;
 -(ORStatus)  propagate;
--(void) setObjective: (id<ORObjective>) obj;
--(id<ORObjective>)objective;
+-(void) setObjective: (id<ORSearchObjectiveFunction>) obj;
+-(id<ORSearchObjectiveFunction>)objective;
 -(ORStatus)  addInternal:(id<ORConstraint>) c;
 -(ORStatus)  add:(id<ORConstraint>)c;
 -(ORStatus)  post:(id<ORConstraint>)c;

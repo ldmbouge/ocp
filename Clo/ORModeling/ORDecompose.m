@@ -11,74 +11,6 @@
 #import "ORDecompose.h"
 #import "ORModeling/ORModeling.h"
 
-
-@interface ORSubst   : NSObject<ORVisitor> {
-   id<ORIntVar>      _rv;
-   id<ORAddToModel> _model;
-   ORAnnotation       _c;
-}
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORIntVar>)x;
--(id<ORIntVar>)result;
--(void) visitIntVar: (id<ORIntVar>) e;
--(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitExprPlusI: (ORExprPlusI*) e;
--(void) visitExprMinusI: (ORExprMinusI*) e;
--(void) visitExprMulI: (ORExprMulI*) e;
--(void) visitExprDivI: (ORExprDivI*) e;
--(void) visitExprModI: (ORExprModI*) e;
--(void) visitExprEqualI:(ORExprEqualI*)e;
--(void) visitExprNEqualI:(ORExprNotEqualI*)e;
--(void) visitExprLEqualI:(ORExprLEqualI*)e;
--(void) visitExprSumI: (ORExprSumI*) e;
--(void) visitExprProdI: (ORExprProdI*) e;
--(void) visitExprAggOrI: (ORExprAggOrI*) e;
--(void) visitExprAbsI:(ORExprAbsI *)e;
--(void) visitExprNegateI:(ORExprNegateI*)e;
--(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprVarSubI:(ORExprVarSubI*)e;
--(void) visitExprDisjunctI:(ORDisjunctI*)e;
--(void) visitExprConjunctI:(ORConjunctI*)e;
--(void) visitExprImplyI:(ORImplyI*)e;
-+(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c;
-+(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c;
-+(id<ORIntVar>)normSide:(ORLinear*)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
-@end
-
-@interface ORLinearizer : NSObject<ORVisitor> {
-   id<ORLinear>   _terms;
-   id<ORAddToModel>    _model;
-   ORAnnotation       _n;
-   id<ORIntVar>       _eqto;
-}
--(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-+(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-+(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
-+(ORLinear*)addToLinear:(id<ORLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
--(void) visitIntVar: (id<ORIntVar>) e;
--(void) visitAffineVar:(id<ORIntVar>)e;
--(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitExprPlusI: (ORExprPlusI*) e;
--(void) visitExprMinusI: (ORExprMinusI*) e;
--(void) visitExprMulI: (ORExprMulI*) e;
--(void) visitExprDivI: (ORExprDivI*) e;
--(void) visitExprModI: (ORExprModI*) e;
--(void) visitExprEqualI:(ORExprEqualI*)e;
--(void) visitExprNEqualI:(ORExprNotEqualI*)e;
--(void) visitExprLEqualI:(ORExprLEqualI*)e;
--(void) visitExprSumI: (ORExprSumI*) e;
--(void) visitExprProdI: (ORExprProdI*) e;
--(void) visitExprAggOrI: (ORExprAggOrI*) e;
--(void) visitExprAbsI:(ORExprAbsI*) e;
--(void) visitExprNegateI:(ORExprNegateI*)e;
--(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprVarSubI:(ORExprVarSubI*)e;
--(void) visitExprDisjunctI:(ORDisjunctI*)e;
--(void) visitExprConjunctI:(ORConjunctI*)e;
--(void) visitExprImplyI:(ORImplyI*)e;
-@end
-
-
 @implementation ORNormalizer
 +(ORLinear*)normalize:(ORExprI*)rel into:(id<ORAddToModel>) model annotation:(ORAnnotation)n
 {
@@ -193,6 +125,12 @@ struct CPVarPair {
 @end
 
 @implementation ORLinearizer
+{
+   id<ORLinear>   _terms;
+   id<ORAddToModel>    _model;
+   ORAnnotation       _n;
+   id<ORIntVar>       _eqto;
+}
 
 -(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n
 {
