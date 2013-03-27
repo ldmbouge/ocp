@@ -510,7 +510,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%f",[_solver value:self]];
+   [buf appendFormat:@"%f",[_solver floatValue:self]];
    return buf;
 }
 -(void) resize
@@ -582,6 +582,11 @@
 {
    return [_solver value: self];
 }
+-(ORFloat) floatValue
+{
+   return [_solver floatValue:self];
+}
+
 -(ORFloat) reducedCost
 {
    return [_solver reducedCost: self];

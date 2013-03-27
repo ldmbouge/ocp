@@ -730,29 +730,29 @@
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
 }
--(id<ORObjectiveFunction>) minimize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimizeVar: not allowed during search"];
 }
--(id<ORObjectiveFunction>) maximize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximizeVar: not allowed during search"];
 }
--(id<ORObjectiveFunction>) minimizeExpr:(id<ORExpr>) x
+-(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize: not allowed during search"];
 }
--(id<ORObjectiveFunction>) maximizeExpr:(id<ORExpr>) x
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize: not allowed during search"];
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize:coef: not allowed during search"];   
 }
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
 -(void) trackObject: (id) obj
 {

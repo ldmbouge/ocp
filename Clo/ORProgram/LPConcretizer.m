@@ -303,7 +303,7 @@
 {
       @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimize: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -313,7 +313,7 @@
       [_lpsolver postObjective: concreteObj];
    }
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximize: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];

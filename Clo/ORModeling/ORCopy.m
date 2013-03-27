@@ -216,17 +216,39 @@
     _result = c;
 }
 
-// TOFIX: ldm
--(void) visitMinimize: (id<ORObjectiveFunction>) v  {
-//    id<ORObjectiveFunction> o = [[ORMinimizeI allocWithZone: _zone] initORMinimizeI: [self copyObject: [v var]]];
-//    [_copyModel optimize: o];
-//    _result = o;
+-(void) visitMinimizeVar: (ORObjectiveFunctionVarI*) v
+{
+   id<ORIntVar> vc = [self copyObject:[v var]];
+   _result = [_copyModel minimizeVar:vc];
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v  {
-//    id<ORObjectiveFunction> o = [[ORMaximizeI allocWithZone: _zone] initORMaximizeI: [self copyObject: [v var]]];
-//    [_copyModel optimize: o];
-//    _result = o;
+-(void) visitMaximizeVar: (ORObjectiveFunctionVarI*) v
+{
+   id<ORIntVar> vc = [self copyObject:[v var]];
+   _result = [_copyModel maximizeVar:vc];
 }
+-(void) visitMaximizeExpr: (ORObjectiveFunctionExprI*) e
+{
+   ORExprI* ec = [self copyObject:[e expr]];
+   _result = [_copyModel maximize:ec];
+}
+-(void) visitMinimizeExpr: (ORObjectiveFunctionExprI*) e
+{
+   ORExprI* ec = [self copyObject:[e expr]];
+   _result = [_copyModel minimize:ec];
+}
+-(void) visitMaximizeLinear: (ORObjectiveFunctionLinearI*) o
+{
+   id<ORIntVarArray> cv = [self copyObject:[o array]];
+   id<ORIntArray> cCoef = [self copyObject:[o coef]];
+   _result = [_copyModel maximize:cv coef:cCoef];
+}
+-(void) visitMinimizeLinear: (ORObjectiveFunctionLinearI*) o
+{
+   id<ORIntVarArray> cv = [self copyObject:[o array]];
+   id<ORIntArray> cCoef = [self copyObject:[o coef]];
+   _result = [_copyModel minimize:cv coef:cCoef];
+}
+
 -(void) visitEqualc: (id<OREqualc>)cstr  {
     id<OREqualc> c = [[OREqualc allocWithZone: _zone] initOREqualc: [self copyObject: [cstr left]]
                                                                eqi: [cstr cst]];
@@ -295,7 +317,8 @@
 }
 -(void) visitModc: (id<ORModc>)cstr {
     id<ORModc> c = [[ORModc allocWithZone: _zone] initORModc: [self copyObject: [cstr left]] mod: [cstr right]
-                                                       equal: [self copyObject: [cstr res]]];
+                                                       equal: [self copyObject: [cstr res]]
+                                                  annotation: [cstr annotation]];
     [_copyModel add: c];
     _result = c;
 }
