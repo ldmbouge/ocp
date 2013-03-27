@@ -411,14 +411,14 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    [_theGroup add:cstr];
 }
-//-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x
-//{
-//   return [_target minimize:x];
-//}
-//-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x
-//{
-//   return [_target maximize:x];
-//}
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
+{
+   return [_target minimizeVar:x];
+}
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
+{
+   return [_target maximizeVar:x];
+}
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) x
 {
    return [_target minimize: x];

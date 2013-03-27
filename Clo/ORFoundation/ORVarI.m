@@ -87,7 +87,7 @@
    ORUInt    _name;
    ORFloat   _value;
 }
--(ORFloatVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v;
+-(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v;
 -(void)restoreInto:(NSArray*)av;
 -(ORFloat) floatValue;
 -(ORInt) intValue;

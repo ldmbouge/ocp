@@ -48,6 +48,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(BOOL)boolValue;
 @end
 
+// TOFIX: GREG
 @implementation CPBitVarSnapshot
 -(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v
 {
@@ -82,6 +83,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(BOOL)boolValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;
+}
+-(ORFloat) floatValue
+{
+   return _asDom ? [_rep._dom min] : _rep._value;   
 }
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
