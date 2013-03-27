@@ -912,6 +912,18 @@
 }
 @end
 
+@implementation ORFactory (ObjectiveValue)
++(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (BOOL) b
+{
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: f minimize: b];
+}
++(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (BOOL) b
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: v minimize: b];
+}
+@end
+
+
 @implementation ORFactory (BV)
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {

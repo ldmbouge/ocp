@@ -19,21 +19,22 @@
 @implementation LPSolver
 {
    LPSolverI*  _lpsolver;
-   id<ORModel>      _src;
+   id<ORModel> _model;
 }
--(id<LPProgram>) initLPSolver
+-(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
    self = [super init];
-   _src = NULL;
 #if defined(__linux__)
    _lpsolver = NULL;
 #else
    _lpsolver = [LPFactory solver];
+   _model = model;
 #endif
    return self;
 }
 -(void) dealloc
 {
+   [_lpsolver release];
    [super dealloc];
 }
 -(LPSolverI*) solver
@@ -42,18 +43,15 @@
 }
 -(void) solve
 {
-    NSLog(@"I am pretending to solve this baby");
-    [_lpsolver solve];
+   [_lpsolver solve];
+   id<ORSolution> s = [_model captureSolution];
+   NSLog(@"Solution = %@",s);
 }
--(void)setSource:(id<ORModel>)src
-{
-   _src = src;
-}
--(ORFloat)dual:(id<ORConstraint>)c
+-(ORFloat) dual: (id<ORConstraint>) c
 {
    ORFloat rv;
    @autoreleasepool {
-      NSDictionary* cMap = [_src cMap];
+      NSDictionary* cMap = [_model cMap];
       NSSet* cSet = [cMap objectForKey:@([c getId])];
       assert([cSet count] == 1);
       for(LPConstraintI* c in cSet) {
@@ -66,8 +64,8 @@
 
 
 @implementation LPSolverFactory
-+(id<LPProgram>) solver
++(id<LPProgram>) solver: (id<ORModel>) model
 {
-   return [[LPSolver alloc] initLPSolver];
+   return [[LPSolver alloc] initLPSolver: model];
 }
 @end

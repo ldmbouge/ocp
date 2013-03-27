@@ -11,7 +11,6 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
-#import <ORModeling/ORSolver.h>
 #import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
 
@@ -23,8 +22,14 @@
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
--(void) minimize: (id<ORVar>) x;
--(void) maximize: (id<ORVar>) x;
+
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
          onObjects:(void(^)(id<ORObject>))doObjs
      onConstraints:(void(^)(id<ORObject>))doCons
@@ -45,10 +50,16 @@
 -(void) addVariable:(id<ORVar>) var;
 -(void )addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
--(void) minimize:(id<ORIntVar>) x;
--(void) maximize:(id<ORIntVar>) x;
+
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) var coef: (id<ORIntArray>) coef;
 -(void) compiling:(id<ORConstraint>)cstr;
 -(NSSet*)compiledMap;
+
 @end
 
 @interface ORFactory (ORModeling)

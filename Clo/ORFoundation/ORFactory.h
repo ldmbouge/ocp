@@ -194,6 +194,12 @@
 +(id<ORConstraint>) bit:(id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z;
 @end
 
+@interface ORFactory (ObjectiveValue)
++(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (BOOL) b;
++(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (BOOL) b;
+@end
+
+
 #define RANGE(track,a,b)      [ORFactory intRange: track low: a up: b]
 #define Sum(track,P,R,E)      [ORFactory sum:  track over:(R) suchThat:nil of:^id<ORExpr>(ORInt P) { return (id<ORExpr>)(E);}]
 #define Sum2(track,I,R1,J,R2,E)      [ORFactory sum: track over:(R1) over:(R2) suchThat:nil of:^id<ORExpr>(ORInt I, ORInt J) { return (id<ORExpr>)(E);}]

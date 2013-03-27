@@ -14,6 +14,32 @@
 #import <CPUKernel/CPConstraintI.h>
 #import "ORLinear.h"
 
+@interface ORLPLinearizer : NSObject<ORVisitor>
+-(id) initORLPLinearizer: (id<ORLinear>)t model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(ORLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(ORLinear*) addToLinear: (id<ORLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
+-(void) visitIntVar: (id<ORIntVar>) e;
+-(void) visitAffineVar:(id<ORIntVar>)e;
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitExprPlusI: (ORExprPlusI*) e;
+-(void) visitExprMinusI: (ORExprMinusI*) e;
+-(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprModI: (ORExprModI*) e;
+-(void) visitExprEqualI:(ORExprEqualI*)e;
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e;
+-(void) visitExprLEqualI:(ORExprLEqualI*)e;
+-(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprProdI: (ORExprProdI*) e;
+-(void) visitExprAggOrI: (ORExprAggOrI*) e;
+-(void) visitExprAbsI:(ORExprAbsI*) e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
+-(void) visitExprCstSubI:(ORExprCstSubI*)e;
+-(void) visitExprVarSubI:(ORExprVarSubI*)e;
+-(void) visitExprDisjunctI:(ORDisjunctI*)e;
+-(void) visitExprConjunctI:(ORConjunctI*)e;
+-(void) visitExprImplyI:(ORImplyI*)e;
+@end
+
 @interface ORLPNormalizer : NSObject<ORVisitor>
 +(ORLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
 

@@ -180,7 +180,6 @@
 		5B558C0A1563F01000D2BCD7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B558C091563F01000D2BCD7 /* main.m */; };
 		5B558C0E1563F01000D2BCD7 /* queensNaive.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B558C0D1563F01000D2BCD7 /* queensNaive.1 */; };
 		5B558C121563F28100D2BCD7 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B57E5DB161F167900DB249A /* ORSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0124415CCA4C8001ED0D4 /* ORSolver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B57E5DF161F275200DB249A /* ORExpr.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EA915A3DDA600AD0820 /* ORExpr.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B57E5E0161F275F00DB249A /* ORExprI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B920EAD15A3F5B000AD0820 /* ORExprI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B57E5E1161F276800DB249A /* ORExprI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EAE15A3F5B000AD0820 /* ORExprI.m */; };
@@ -4275,7 +4274,6 @@
 		B19ABA11146D68FE004EB77E /* AtomicTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = AtomicTest.1; sourceTree = "<group>"; };
 		B19ABA24146DC7FA004EB77E /* CPCardinality.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPCardinality.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B19ABA25146DC7FA004EB77E /* CPCardinality.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPCardinality.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B1A0124415CCA4C8001ED0D4 /* ORSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORSolver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1A0124615CCA92F001ED0D4 /* ORCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCommand.h; sourceTree = "<group>"; };
 		B1A0124715CCA930001ED0D4 /* ORCommand.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCommand.m; sourceTree = "<group>"; };
 		B1A0124A15CCAE71001ED0D4 /* ORTracer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ORTracer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -6118,7 +6116,10 @@
 				3792E18016DBEC7500FA2C85 /* ORCopy.h */,
 				3792E18116DBEC7500FA2C85 /* ORCopy.m */,
 				5BDAC4B41649AAF400F8D0B7 /* ORSolution.h */,
+<<<<<<< HEAD
 				B1A0124415CCA4C8001ED0D4 /* ORSolver.h */,
+=======
+>>>>>>> modeling
 				5BAD1158161E5E430014EBCB /* ORModeling.h */,
 				5BAD1159161E5E430014EBCB /* ORModeling.m */,
 				5BAD1164161E5F2B0014EBCB /* ORModelI.h */,
@@ -6129,6 +6130,7 @@
 				B103614516D969CD00E95A39 /* ORLPFlatten.h */,
 				B103614616D969CD00E95A39 /* ORLPFlatten.m */,
 				5BDF5FA8161F817500E5E1FA /* ORModelTransformation.h */,
+				3737A3A8166B0867002D3A57 /* ORModelTransformation.m */,
 				3783F12E1620C6E30085E8C2 /* ORLinearize.h */,
 				3783F12F1620C6E30085E8C2 /* ORLinearize.m */,
 				5B1391841629A99D0029FD29 /* ORDecompose.h */,
@@ -7162,7 +7164,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				5BAD1168161E61500014EBCB /* ORModeling.h in Headers */,
-				5B57E5DB161F167900DB249A /* ORSolver.h in Headers */,
 				5BDF5FA9161F817500E5E1FA /* ORModelTransformation.h in Headers */,
 				5BDF5FAC161F81B800E5E1FA /* ORFlatten.h in Headers */,
 				3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */,
@@ -13174,7 +13175,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -13192,7 +13193,7 @@
 				GCC_PREFIX_HEADER = "testLPConcretization/testLPConcretization-Prefix.pch";
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

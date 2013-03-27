@@ -56,6 +56,7 @@
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [model captureSolution];
+//      NSLog(@"Found solution with value: %@",[s objectiveValue]);
       [sp addSolution: s];
       [s release];
    }];
@@ -113,17 +114,17 @@
          @synchronized(gp) {
             [gp addSolution: s];
          }
-         id<ORObjective> objective = [[cp objective] dereference];
+         id<ORSearchObjectiveFunction> objective = [cp objective];
          if (objective != NULL) {
-            ORInt myBound = [objective primalBound];
+            id<ORObjectiveValue> myBound = [objective primalBound];
             for(ORInt w=0;w < k;w++) {
                if (w == i) continue;
-               id<ORObjective> wwObj = [[[cpprogram at:w] objective] dereference];
-               [wwObj tightenPrimalBound:myBound];
+               id<ORSearchObjectiveFunction> wwObj = [[cpprogram at:w] objective];
+               [wwObj tightenPrimalBound: myBound];
                //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
             }
+            [myBound release];
          }
-         
          [s release];
       }];
    }
@@ -179,9 +180,8 @@
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
-   id<LPProgram> lpprogram = [LPSolverFactory solver];
+   id<LPProgram> lpprogram = [LPSolverFactory solver: model];
    [model setImpl: lpprogram];
-   [lpprogram setSource:model];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }

@@ -138,7 +138,7 @@
 -(void) delVariable: (LPVariableI*) var;
 -(void) addVariable: (LPVariableI*) var coef: (ORFloat) coef;
 -(void) addCst: (ORFloat) cst;
--(ORFloat) value;
+-(id<ORObjectiveValue>) value;
 -(void) setPosted;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
@@ -255,8 +255,12 @@
 
 -(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
 -(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
+
+
 -(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x;
 -(LPObjectiveI*)  createObjectiveMaximize: (LPVariableI*) x;
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef;
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef;
 
 -(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
 -(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -282,7 +286,7 @@
 -(ORFloat) reducedCost: (LPVariableI*) var;
 -(ORFloat) dual: (LPConstraintI*) cstr;
 -(id<ORFloatArray>) duals;
--(ORFloat) objectiveValue;
+-(id<ORObjectiveValue>) objectiveValue;
 -(ORFloat) lpValue;
 
 -(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb;
