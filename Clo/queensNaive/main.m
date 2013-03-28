@@ -32,8 +32,8 @@ int main (int argc, const char * argv[])
    for(ORUInt i =0;i < n; i++) {
       for(ORUInt j=i+1;j< n;j++) {
          [model add: [x[i] neq: x[j]]];
-         [model add: [x[i] neq: [x[j] plusi: (i-j)]]];
-         [model add: [x[i] neq: [x[j] plusi: (j-i)]]];
+         [model add: [x[i] neq: [x[j] plus: @(i-j)]]];
+         [model add: [x[i] neq: [x[j] plus: @(j-i)]]];
       }
    }
 //   NSLog(@"initial model: %@",model);

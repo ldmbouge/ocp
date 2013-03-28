@@ -63,7 +63,7 @@ int main(int argc, const char * argv[])
          
          id<ORIntVarArray> x = All(mdl,ORIntVar, i, N, [ORFactory intVar:mdl domain:RANGE(mdl,0,1)]);
          id<ORIntVar> obj = [ORFactory intVar:mdl domain:RANGE(mdl,0,sp)];
-         [mdl add: [Sum(mdl,i, N, [x[i] muli:p[i]]) eq: obj]];
+         [mdl add: [Sum(mdl,i, N, [x[i] mul:@(p[i])]) eq: obj]];
          for(int i=0;i<m;i++) {
             id<ORIntArray> w = [ORFactory intArray:mdl range:N with:^ORInt(ORInt j) {return r[i][j];}];
             id<ORIntVar>   c = [ORFactory intVar:mdl domain:RANGE(mdl,0,b[i])];

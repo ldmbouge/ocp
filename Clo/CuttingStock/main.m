@@ -41,8 +41,8 @@ int main (int argc, const char * argv[])
     id<ORFloatVar> masterObj = [ORFactory floatVar: master  low:0 up:shelfCount*[demand max]];
     [master add: [masterObj eq: Sum(master, i, shelves, cut[i])]];
     for(ORInt i = [shelves low]; i <= [shelves up]; i++) {
-        [master add: [Sum(master, j, shelves, [[cut at: j] muli: [columns at: j * shelfCount + i]])
-               geqi: [demand at: i]]];
+        [master add: [Sum(master, j, shelves, [[cut at: j] mul: @([columns at: j * shelfCount + i])])
+                geq: @([demand at: i])]];
     }
     [master minimize: masterObj];
 
@@ -53,8 +53,8 @@ int main (int argc, const char * argv[])
         id<ORFloatArray> cost = duals;
         id<ORIntVar> objective = [ORFactory intVar: slave domain: RANGE(slave, shelfCount * [cost min] * boardWidth, shelfCount * [cost max] * boardWidth)];
         [slave minimize: objective];
-        [slave add: [Sum(slave, i, shelves, [[use at: i] muli: (ORInt)[cost at: i]]) eq: objective]];
-        [slave add: [Sum(slave, i, shelves, [[use at: i] muli: [shelf at: i]]) leqi: boardWidth]];
+        [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])])  eq: objective]];
+        [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
         id<ORRunnable> slaveRunnable = [ORFactory CPRunnable: slave];
         return [ORFactory generateColumn: slaveRunnable using: ^id<ORFloatArray>(id<ORRunnable> r) { return [ORFactory floatArray: [r model] intVarArray: use]; }];
     }];

@@ -46,7 +46,7 @@ int main(int argc, const char * argv[])
          for(ORInt j=0; j <= n-1; j++) {
             [model add:[[m2  elt:[z at:i :j]] eq: [x at:i :j]] annotation:DomainConsistency];
             [model add:[[m1  elt:[z at:i :j]] eq: [y at:i :j]] annotation:DomainConsistency];
-            [model add:[[z at:i :j] eq: [[[[[x at:i :j] subi: 1] muli:n] plus: [y at:i :j]] subi: 1]] annotation:DomainConsistency];
+            [model add:[[z at:i :j] eq: [[[[[x at:i :j] sub: @1] mul:@(n)] plus: [y at:i :j]] sub: @1]] annotation:DomainConsistency];
          }
       }
 

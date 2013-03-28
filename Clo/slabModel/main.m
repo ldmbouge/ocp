@@ -87,7 +87,7 @@ int main(int argc, const char * argv[])
 
    [model add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
-      [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
+      [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
 //   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
    id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
 //   id<ORObjectiveFunction> obj = [model minimize: o];
@@ -134,7 +134,7 @@ int main(int argc, const char * argv[])
           depth++;
       }];
       NSLog(@"Objective value: %@",[obj value]);
-      NSLog(@"Objective value: %d",[[obj value] value]);
+      //NSLog(@"Objective value: %d",[[obj value] value]);
     }];
    id<ORSolution> sol = [model bestSolution];
    NSLog(@"Solution %@",sol);

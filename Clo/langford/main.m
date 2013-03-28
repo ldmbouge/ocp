@@ -36,7 +36,7 @@ int main(int argc, const char * argv[])
       [model add:[ORFactory cardinality:x low:occ up:occ]];
       for(ORInt i=1;i<=k;i++)
          for(ORInt j=1;j<=n;j++)
-            [model add:[[x elt:[p at:i :j]] eqi:j] annotation:DomainConsistency];  // onDomain
+            [model add:[[x elt:[p at:i :j]] eq:@(j)] annotation:DomainConsistency];  // onDomain
       
       for(ORInt i=1;i<=k-1;i++)
          for(ORInt j=1;j<=n;j++)
@@ -44,7 +44,7 @@ int main(int argc, const char * argv[])
 
       for(ORInt i=1;i<=k-1;i++)
          for(ORInt j=1;j<=n;j++)
-            [model add:[[x elt:[[p at:i :j] plusi:1+j]] eqi:j] annotation:DomainConsistency]; // onDomain
+            [model add:[[x elt:[[p at:i :j] plus:@(1+j)]] eq:@(j)] annotation:DomainConsistency]; // onDomain
       [model add: [x[1] leq: x[k*n]]];
       
       __block ORInt nbSol = 0;

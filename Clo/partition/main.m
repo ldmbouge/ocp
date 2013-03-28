@@ -43,13 +43,13 @@ int main(int argc, const char * argv[])
             [model add:[sy[i] eq:[y[i] mul:y[i]]] annotation:DomainConsistency];
          }
          [model add:[ORFactory alldifferent:xy annotation:DomainConsistency]];
-         [model add:[[Sum(model, i, V, x[i])  sub:Sum(model, j, V, y[j])] eqi:0]];
-         [model add:[[Sum(model, i, V, sx[i]) sub:Sum(model, j, V, sy[j])] eqi:0]];
-         [model add:[Sum(model,i,V,x[i])  eqi:2 * n * (2 * n + 1) / 4 ]];
-         [model add:[Sum(model,i,V,y[i])  eqi:2 * n * (2 * n + 1) / 4 ]];
+         [model add:[[Sum(model, i, V, x[i])  sub:Sum(model, j, V, y[j])] eq:@0]];
+         [model add:[[Sum(model, i, V, sx[i]) sub:Sum(model, j, V, sy[j])] eq:@0]];
+         [model add:[Sum(model,i,V,x[i])  eq:@(2 * n * (2 * n + 1) / 4) ]];
+         [model add:[Sum(model,i,V,y[i])  eq:@(2 * n * (2 * n + 1) / 4) ]];
          
-         [model add:[Sum(model,i,V,sx[i])  eqi:2 * n * (2 * n + 1)*(4*n+1) / 12 ]];
-         [model add:[Sum(model,i,V,sx[i])  eqi:2 * n * (2 * n + 1)*(4*n+1) / 12 ]];
+         [model add:[Sum(model,i,V,sx[i])  eq:@(2 * n * (2 * n + 1)*(4*n+1) / 12) ]];
+         [model add:[Sum(model,i,V,sx[i])  eq:@(2 * n * (2 * n + 1)*(4*n+1) / 12) ]];
 
          id<CPProgram> cp  = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:xy];

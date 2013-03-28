@@ -19,29 +19,18 @@
 #import "ORVisit.h"
 
 @interface ORExprI: ORDualUseObjectI<ORExpr,NSCoding>
-
 -(id<ORExpr>) abs;
--(id<ORExpr>) plus: (id<ORExpr>) e;
--(id<ORExpr>) subi: (ORInt) e;
--(id<ORExpr>) sub: (id<ORExpr>) e;
--(id<ORExpr>) mul: (id<ORExpr>) e;
--(id<ORExpr>) muli: (ORInt) e;
--(id<ORExpr>) div: (id<ORExpr>) e;
--(id<ORExpr>) divi: (ORInt) e;
--(id<ORExpr>) mod: (id<ORExpr>) e;
--(id<ORExpr>) modi: (ORInt) e;
--(id<ORRelation>) eq: (id<ORExpr>) e;
--(id<ORRelation>) eqi: (ORInt) e;
--(id<ORRelation>) neq: (id<ORExpr>) e;
--(id<ORRelation>) neqi: (ORInt) e;
--(id<ORRelation>) leq: (id<ORExpr>) e;
--(id<ORRelation>) leqi: (ORInt) e;
--(id<ORRelation>) geq: (id<ORExpr>) e;
--(id<ORRelation>) geqi: (ORInt) e;
--(id<ORRelation>) lt: (id<ORExpr>) e;
--(id<ORRelation>) lti: (ORInt) e;
--(id<ORRelation>) gt: (id<ORExpr>) e;
--(id<ORRelation>) gti: (ORInt) e;
+-(id<ORExpr>) plus: (id) e;
+-(id<ORExpr>) sub: (id) e;
+-(id<ORExpr>) mul: (id) e;
+-(id<ORExpr>) div: (id) e;
+-(id<ORExpr>) mod: (id) e;
+-(id<ORRelation>) eq: (id) e;
+-(id<ORRelation>) neq: (id) e;
+-(id<ORRelation>) leq: (id) e;
+-(id<ORRelation>) geq: (id) e;
+-(id<ORRelation>) lt: (id) e;
+-(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;

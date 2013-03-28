@@ -27,27 +27,27 @@ int main(int argc, const char * argv[])
       id<ORIntArray> lb = [ORFactory intArray:mdl range:D value:2];
       [mdl add:[ORFactory cardinality  :x low:lb up:lb]];
       
-      [mdl add: [[x[0] mul:x[3]]             eq:[x[6] plus:[c[0] muli:10]]]];
-      [mdl add: [[[x[1] mul:x[3]] plus:c[0]] eq:[x[7] plus:[c[1] muli:10]]]];
+      [mdl add: [[x[0] mul:x[3]]             eq:[x[6] plus:[c[0] mul:@10]]]];
+      [mdl add: [[[x[1] mul:x[3]] plus:c[0]] eq:[x[7] plus:[c[1] mul:@10]]]];
       [mdl add: [[[x[2] mul:x[3]] plus:c[1]] eq:x[8]]];
       
-      [mdl add: [[x[0] mul:x[4]]             eq:[x[9] plus:[c[2]  muli:10]]]];
-      [mdl add: [[[x[1] mul:x[4]] plus:c[2]] eq:[x[10] plus:[c[3] muli:10]]]];
+      [mdl add: [[x[0] mul:x[4]]             eq:[x[9] plus:[c[2]  mul:@10]]]];
+      [mdl add: [[[x[1] mul:x[4]] plus:c[2]] eq:[x[10] plus:[c[3] mul:@10]]]];
       [mdl add: [[[x[2] mul:x[4]] plus:c[3]] eq:x[11]]];
       
-      [mdl add: [[x[0] mul:x[5]]             eq:[x[12] plus:[c[4] muli:10]]]];
-      [mdl add: [[[x[1] mul:x[5]] plus:c[4]] eq:[x[13] plus:[c[5] muli:10]]]];
+      [mdl add: [[x[0] mul:x[5]]             eq:[x[12] plus:[c[4] mul:@10]]]];
+      [mdl add: [[[x[1] mul:x[5]] plus:c[4]] eq:[x[13] plus:[c[5] mul:@10]]]];
       [mdl add: [[[x[2] mul:x[5]] plus:c[5]] eq:x[14]]];
       
       [mdl add: [x[6]             eq:x[15]]];
-      [mdl add: [[x[7] plus:x[9]] eq:[x[16] plus:[c[6] muli:10]]]];
+      [mdl add: [[x[7] plus:x[9]] eq:[x[16] plus:[c[6] mul:@10]]]];
       
       id<ORIntVar>* px  = (id<ORIntVar>[]){x[8],x[10],x[12],c[6]};
       id<ORIntVar>* ppx = (id<ORIntVar>[]){x[11],x[13],c[7]};
       id<ORExpr> lhs1 = Sum(mdl, i, RANGE(mdl, 0, 3), px[i]);
       id<ORExpr> lhs2 = Sum(mdl,i,RANGE(mdl,0,2),ppx[i]);
-      [mdl add: [lhs1              eq:[x[17] plus:[c[7] muli:10]]]];
-      [mdl add: [lhs2              eq:[x[18] plus:[c[8] muli:10]]]];
+      [mdl add: [lhs1              eq:[x[17] plus:[c[7] mul:@10]]]];
+      [mdl add: [lhs2              eq:[x[18] plus:[c[8] mul:@10]]]];
       [mdl add: [[x[14] plus:c[8]] eq:x[19]]];
 
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];

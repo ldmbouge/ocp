@@ -28,22 +28,22 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:square domain:sidel];
          id<ORIntVarArray> y = [ORFactory intVarArray:model range:square domain:sidel];
          [square enumerateWithBlock:^(ORInt i) {
-            [model add:[x[i] leqi:s - side[i] + 1]];
-            [model add:[y[i] leqi:s - side[i] + 1]];
+            [model add:[x[i] leq:@(s - side[i] + 1)]];
+            [model add:[y[i] leq:@(s - side[i] + 1)]];
          }];
          [square enumerateWithBlock:^(ORInt i) {
             [square enumerateWithBlock:^(ORInt j) {
                if (i < j) {
-                  [model add: [[[[[x[i] plusi:side[i]]  leq:x[j]] or:
-                                 [[x[j] plusi:side[j]]  leq:x[i]]] or:
-                                [[y[i] plusi:side[i]]  leq:y[j]]] or:
-                               [[y[j] plusi:side[j]]  leq:y[i]]]];
+                  [model add: [[[[[x[i] plus:@(side[i])]  leq:x[j]] or:
+                                 [[x[j] plus:@(side[j])]  leq:x[i]]] or:
+                                [[y[i] plus:@(side[i])]  leq:y[j]]] or:
+                               [[y[j] plus:@(side[j])]  leq:y[i]]]];
                }
             }];
          }];
          [sidel enumerateWithBlock:^(ORInt k) {
-            [model add:[Sum(model, i, square, [[[x[i] leqi:k] and:[x[i] geqi:k - side[i] + 1]] muli:side[i]]) eqi:s]];
-            [model add:[Sum(model, i, square, [[[y[i] leqi:k] and:[y[i] geqi:k - side[i] + 1]] muli:side[i]]) eqi:s]];
+            [model add:[Sum(model, i, square, [[[x[i] leq:@(k)] and:[x[i] geq:@(k - side[i] + 1)]] mul:@(side[i])]) eq:@(s)]];
+            [model add:[Sum(model, i, square, [[[y[i] leq:@(k)] and:[y[i] geq:@(k - side[i] + 1)]] mul:@(side[i])]) eq:@(s)]];
          }];
          //NSLog(@"model: %@",model);
          id<CPProgram> cp  = [args makeProgram:model];

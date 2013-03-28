@@ -61,9 +61,9 @@ int main(int argc, const char * argv[])
          id<ORIntRange> N = RANGE(mdl,0,n-1);
          
          id<ORIntVarArray> x = All(mdl,ORIntVar, i, N, [ORFactory intVar:mdl domain:RANGE(mdl,0,1)]);
-         [mdl add:[Sum(mdl, i, N, [x[i] muli:p[i]]) eqi:opt]];
+         [mdl add:[Sum(mdl, i, N, [x[i] mul:@(p[i])]) eq:@(opt)]];
          for(int i=0;i<m;i++) {
-            [mdl add:[Sum(mdl,j,N,[x[j] muli:r[i][j]]) leqi:b[i]]];
+            [mdl add:[Sum(mdl,j,N,[x[j] mul:@(r[i][j])]) leq:@(b[i])]];
             /*
              id<ORIntArray> w = [CPFactory intArray:mdl range:N with:^ORInt(ORInt j) {return r[i][j];}];
              id<ORIntVar>   c = [CPFactory intVar:mdl domain:RANGE(mdl,0,b[i])];

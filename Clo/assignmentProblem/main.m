@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
     ORInt n = 6;
     id<ORIntRange> R = RANGE(model,1,n);
     
-    id<ORUniformDistribution> distr = [CPFactory uniformDistribution: model range: RANGE(model, 1, 20)];
+    id<ORUniformDistribution> distr = [ORFactory uniformDistribution: model range: RANGE(model, 1, 20)];
     id<ORIntArray> cost =[ORFactory intArray: model range: R range: R with: ^ORInt (ORInt i, ORInt j) { return [distr next]; }];
     
     //id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
     
     [model minimize: assignCost];
     [model add: [ORFactory alldifferent: tasks]];
-    [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
+    [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plus:@((i-1)*n -  1)]])]];
     
     id<ORModel> lm = [ORFactory linearizeModel: model];
     id<ORRunnable> r0 = [ORFactory CPRunnable: model];

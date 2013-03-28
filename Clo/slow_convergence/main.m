@@ -28,19 +28,19 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> y = [ORFactory intVarArray:model range:R domain:dom];
       id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain:dom];
       for(ORInt i=2;i<=n;i++)
-         [model add:[[y[i-1] sub:y[i]] leqi:0]];
+         [model add:[[y[i-1] sub:y[i]] leq:@0]];
 
       for(ORInt i=1;i<=n;i++)
-         [model add:[[y[0] sub:y[i]] leqi:n-i+1]];
+         [model add:[[y[0] sub:y[i]] leq:@(n-i+1)]];
       
-      [model add:[[y[n] sub:x[0]] leqi:0]];
+      [model add:[[y[n] sub:x[0]] leq:@0]];
       
       for(ORInt i=1;i<=n-1;i++) {
          for(ORInt j=i+1;j<=n;j++) {
-            [model add:[[x[i] sub:x[j]] leqi:0]];
+            [model add:[[x[i] sub:x[j]] leq:@0]];
          }
       }
-      [model add:[y[0] geqi:n]];
+      [model add:[y[0] geq:@(n)]];
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^{
          [cp labelArray:[model intVars]];

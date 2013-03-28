@@ -88,8 +88,8 @@
       return [ORFactory intVar:_model domain:RANGE(_model,0,1)];
    }];
    id<ORExpr> sumBinVars = Sum(_model, i,[x domain], o[i]);
-   id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] muli: i]);
-   [_model addConstraint: [sumBinVars eqi: 1]];
+   id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
+   [_model addConstraint: [sumBinVars eq: @(1)]];
    [_model addConstraint: [sumExpr eq: x]];
    return o;
 }
@@ -119,7 +119,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: varsOfC[i]];
                                        return binArr[d];
                                    }];
-        [_model addConstraint: [sumExpr eqi: 1]];
+        [_model addConstraint: [sumExpr eq: @(1)]];
     }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
@@ -289,7 +289,7 @@
     }
     id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
     id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
-        return [[binIndexVar at: i] muli: [[cstSubExpr array] at: i ]];
+        return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
     }];
     id<ORIntRange> dom = [ORFactory intRange:_model low:[linearSumExpr min] up:[linearSumExpr max]];
     id<ORIntVar> sumVar = [ORFactory intVar: _model domain: dom];

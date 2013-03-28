@@ -29,10 +29,9 @@ typedef struct  {
 } CPBitEventNetwork;
 
 
-@interface CPBitVarI : NSObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
+@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
 @protected
-    ORUInt                             _name;
     CPEngineI*                       _engine;
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
@@ -41,8 +40,6 @@ typedef struct  {
 }
 -(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
--(void) setId:(ORUInt)name;
--(ORInt) getId;
 -(NSString*) description;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;

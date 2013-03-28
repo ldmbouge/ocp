@@ -135,14 +135,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
         [_triggers release];    
     [super dealloc];
 }
--(void) setId:(ORUInt)name
-{
-    _name = name;
-}
--(ORInt) getId
-{
-   return _name;
-}
 -(id<CPEngine>) engine
 {
     return _engine;

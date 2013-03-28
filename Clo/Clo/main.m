@@ -67,7 +67,7 @@ int test2()
       id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
       ORInt y = 3;
       id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];
-      [model add:[[x modi:y] eq:z] annotation:DomainConsistency];
+      [model add:[[x mod:@(y)] eq:z] annotation:DomainConsistency];
       __block int nbSol = 0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solveAll:^{
