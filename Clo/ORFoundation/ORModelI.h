@@ -21,7 +21,6 @@
 
 @interface ORConstraintI : ORModelingObjectI<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
--(void) setId: (ORUInt) name;
 -(NSString*) description;
 @end
 

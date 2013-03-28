@@ -14,23 +14,11 @@
 #import "ORModelI.h"
 
 @implementation ORConstraintI
-{
-   @protected
-   ORUInt _name;
-}
 -(ORConstraintI*) initORConstraintI
 {
    self = [super init];
    _impl = nil;   
    return self;
-}
--(void) setId: (ORUInt) name;
-{
-   _name = name;
-}
--(ORUInt) getId
-{
-   return _name;
 }
 -(NSString*) description
 {
@@ -47,7 +35,6 @@
 @implementation ORGroupI {
    NSMutableArray* _content;
    id<ORTracker>     _model;
-   ORUInt             _name;
    enum ORGroupType     _gt;
 }
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
@@ -63,14 +50,6 @@
 {
    [_content release];
    [super dealloc];
-}
--(void) setId: (ORUInt) name
-{
-   _name = name;
-}
--(ORUInt)getId
-{
-   return _name;
 }
 -(id<ORConstraint>)add:(id<ORConstraint>)c
 {
