@@ -126,7 +126,7 @@
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   [_terms addTerm:e by:1];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -161,7 +161,7 @@
       [_terms addTerm:x by:coef];
    }
    else {
-      assert(false);
+      @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
    }
 }
 -(void) visitExprDivI: (ORExprDivI*) e

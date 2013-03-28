@@ -44,8 +44,8 @@
 -(void) solve
 {
    [_lpsolver solve];
-   id<ORSolution> s = [_model captureSolution];
-   NSLog(@"Solution = %@",s);
+//   id<ORSolution> s = [_model captureSolution];
+//   NSLog(@"Solution = %@",s);
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {

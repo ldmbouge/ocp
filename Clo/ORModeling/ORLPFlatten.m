@@ -241,10 +241,9 @@
    } onConstraints:^(id<ORConstraint> c) {
       [batch compiling:c];
       [ORLPFlatten flatten:c into:batch];
-      NSSet* map = [batch compiledMap];
-      NSLog(@"Got a Map %@",map);
+//      NSSet* map = [batch compiledMap];
+//      NSLog(@"Got a Map %@",map);
    } onObjective:^(id<ORObjectiveFunction> o) {
-      NSLog(@"objective %@ ",o);
       if (o) {
          ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:batch];
          [o visit:fo];

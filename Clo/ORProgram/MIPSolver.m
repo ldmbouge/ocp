@@ -44,8 +44,8 @@
 -(void) solve
 {
    [_MIPsolver solve];
-   id<ORSolution> s = [_model captureSolution];
-   NSLog(@"Solution = %@",s);
+//   id<ORSolution> s = [_model captureSolution];
+//   NSLog(@"Solution = %@",s);
 }
 @end
 

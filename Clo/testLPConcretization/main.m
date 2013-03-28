@@ -23,15 +23,6 @@ float coef[7][12] = {
    {  0,   0,  40, 70,   4,  63,   0,  0, 60,   0, 4, 0},
    {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
 
-//NSNumber* a[7][12] = {
-//   { @19,   @1,  @10,  @1,   @1,  @14, @152, @11,  @1,   @1, @1, @1},
-//   {  @0,   @4,  @53,  @0,   @0,  @80,   @0,  @4,  @5,   @0, @0, @0},
-//   {  @4, @660,   @3,  @0,  @30,   @0,   @3,  @0,  @4,  @90, @0, @0},
-//   {  @7,   @0,  @18,  @6, @770, @330,   @7,  @0,  @0,   @6, @0, @0},
-//   {  @0,  @20,   @0,  @4,  @52,   @3,   @0,  @0,  @0,   @5, @4, @0},
-//   {  @0,   @0,  @40, @70,   @4,  @63,   @0,  @0, @60,   @0, @4, @0},
-//   {  @0,  @32,   @0,  @0,   @0,   @5,   @0,  @3,  @0, @660, @0, @9}};
-
 int main1(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
@@ -43,7 +34,6 @@ int main1(int argc, const char * argv[])
    [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
    id<LPProgram> lp = [ORFactory createLPProgram: model];
    
-   NSLog(@"Model %@",model);
    [lp solve];
    NSLog(@"Objective value: %@",[[model objective] value]);
    id<ORSolution> sol = [model captureSolution];
@@ -62,7 +52,6 @@ int main2(int argc, const char * argv[])
    id<ORObjectiveFunction> obj = [model maximize: Sum(model,j,Columns,[x[j] mul: @(c[j])])];
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
-   NSLog(@"Model %@",model);
    [mip solve];
    NSLog(@"Objective value: %@",[obj value]);
    id<ORSolution> sol = [model captureSolution];

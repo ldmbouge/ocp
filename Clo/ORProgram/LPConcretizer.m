@@ -83,34 +83,15 @@
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-//   if ([v dereference] == NULL) {
-//      id<CPBitVar> cv = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
-//     [v setImpl:cv];
-//   }
 }
 
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-//   if ([v dereference] == NULL) {
-//      id<ORIntVar> mBase = [v base];
-//      [mBase visit: self];
-//      ORInt a = [v scale];
-//      ORInt b = [v shift];
-//      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>)[mBase dereference] scale:a shift:b];
-//      [v setImpl: cv];
-//   }
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-//   if ([v dereference] == NULL) {
-//      id<ORIntVar> mBase = [v base];
-//      [mBase visit:self];
-//      ORInt lit = [v literal];
-//      id<CPIntVar> cv = [CPFactory reifyView:(id<CPIntVar>)[mBase dereference] eqi:lit];
-//      [v setImpl:cv];
-//   }
 }
 
 -(void) visitIdArray: (id<ORIdArray>) v
@@ -149,23 +130,11 @@
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_lpsolver solve];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_lpsolver postObjective: concreteObj];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
@@ -202,7 +171,6 @@
       [obj setImpl: concreteObj];
       [_lpsolver postObjective: concreteObj];
    }
-
 }
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
@@ -249,7 +217,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    if ([e dereference] == NULL) {
-      id<ORInteger> n = [ORFactory integer: _lpsolver value: [e value]];
+      id<ORInteger> n = [ORFactory integer: _lpsolver value: [e intValue]];
       [n makeImpl];
       [e setImpl: n];
    }
@@ -257,7 +225,7 @@
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    if ([e dereference] == NULL) {
-      id<ORFloatNumber> n = [ORFactory float: _lpsolver value: [e value]];
+      id<ORFloatNumber> n = [ORFactory float: _lpsolver value: [e floatValue]];
       [n makeImpl];
       [e setImpl: n];
    }
@@ -292,11 +260,11 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Packing constraints"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   //@throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   // This is called only when the original constraint is stored in a data structure
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -328,23 +296,11 @@
 }
 -(void) visitMinimize: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_lpsolver postObjective: concreteObj];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitMaximize: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_lpsolver postObjective: concreteObj];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
@@ -476,7 +432,7 @@
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
-      @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
 {

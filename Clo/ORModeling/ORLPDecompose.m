@@ -41,12 +41,12 @@
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] min] == [[e right] min];
+      bool isOk = [[e left] floatValue] == [[e right] floatValue];
       if (!isOk)
          [_model addConstraint: [ORFactory fail:_model]];
    }
    else if (lc || rc) {
-      ORInt c = lc ? [[e left] min] : [[e right] min];
+      ORFloat c = lc ? [[e left] floatValue] : [[e right] floatValue];
       ORExprI* other = lc ? [e right] : [e left];
       ORFloatLinear* lin  = [ORLPLinearizer linearFrom:other model:_model annotation:_n];
       [lin addIndependent: - c];
@@ -126,7 +126,7 @@
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   [_terms addTerm: e by: 1];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -160,7 +160,7 @@
       [_terms addTerm: x by: coef];
    }
    else {
-      assert(false);
+      @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
    }
 }
 -(void) visitExprDivI: (ORExprDivI*) e
