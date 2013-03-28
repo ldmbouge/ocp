@@ -60,6 +60,18 @@
    }
    return rv;
 }
+-(void) trackObject: (id) obj
+{
+   [_lpsolver trackObject:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_lpsolver trackVariable:obj];
+}
+-(void) trackConstraint:(id) obj
+{
+   [_lpsolver trackConstraint:obj];
+}
 @end
 
 

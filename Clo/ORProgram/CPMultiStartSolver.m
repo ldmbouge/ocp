@@ -88,9 +88,9 @@
 {
    return [[self dereference] nbFailures];
 }
--(id<OREngine>) engine
+-(id<ORSearchEngine>) engine
 {
-   return [[self dereference] engine];
+   return (id<ORSearchEngine>) [[self dereference] engine];
 }
 -(id<ORExplorer>) explorer
 {

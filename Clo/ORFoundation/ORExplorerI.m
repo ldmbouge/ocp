@@ -17,14 +17,14 @@
 @implementation ORCoreExplorerI
 {
    @protected
-   id<OREngine>           _engine;
+   id<ORSearchEngine>           _engine;
    id<ORTrail>             _trail;
    TRId               _controller;
    ORInt                     _nbf;
    ORInt                     _nbc;
    id<ORControllerFactory> _cFact;
 }
--(id) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
+-(id) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
 {
    self = [super init];
    _engine = engine;
@@ -415,7 +415,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 @end
 
 @implementation ORExplorerI
--(ORExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
+-(ORExplorerI*) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
 {
    self = [super initORExplorer:engine withTracer:tracer ctrlFactory:cFact];
    return self;
@@ -444,7 +444,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 @end
 
 @implementation ORSemExplorerI
--(ORSemExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
+-(ORSemExplorerI*) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact
 {
    self = [super initORExplorer:engine withTracer:tracer ctrlFactory:cFact];
    return self;
@@ -485,11 +485,11 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 @end
 
 @implementation ORExplorerFactory
-+(id<ORExplorer>) explorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
++(id<ORExplorer>) explorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
 {
    return [[ORExplorerI alloc] initORExplorer: engine withTracer: tracer ctrlFactory: cFact];
 }
-+(id<ORExplorer>) semanticExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
++(id<ORExplorer>) semanticExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory: (id<ORControllerFactory>) cFact
 {
    return [[ORSemExplorerI alloc] initORExplorer: engine withTracer: tracer ctrlFactory: cFact];
 }

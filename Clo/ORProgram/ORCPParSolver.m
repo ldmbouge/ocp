@@ -308,7 +308,7 @@
 
 -(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
 {
-   id<ORProblem> theSub = [SemTracer unpackProblem:root forEngine:[cp engine]];
+   id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
    //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
    [theSub release];

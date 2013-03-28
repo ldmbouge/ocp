@@ -15,7 +15,7 @@
 @class MIPSolverI;
 @protocol ORModel;
 
-@protocol MIPProgram <NSObject>
+@protocol MIPProgram <ORASolver>
 -(MIPSolverI*) solver;
 -(void) solve;
 @end

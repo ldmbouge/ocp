@@ -16,7 +16,7 @@
 #import "ORModelI.h"
 #import "ORTrail.h"
 
-@protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORSearchController;
 @protocol ORSelect;
 @protocol ORTrail;
@@ -96,8 +96,8 @@
 
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
 
-+(id<ORTrailableIntArray>) trailableIntArray: (id<OREngine>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
-+(id<ORTrailableInt>) trailableInt: (id<OREngine>) solver value: (ORInt) value;
++(id<ORTrailableIntArray>) trailableIntArray: (id<ORSearchEngine>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
++(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) solver value: (ORInt) value;
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;

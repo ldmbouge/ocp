@@ -47,6 +47,19 @@
 //   id<ORSolution> s = [_model captureSolution];
 //   NSLog(@"Solution = %@",s);
 }
+-(void) trackObject: (id) obj
+{
+   [_MIPsolver trackObject:obj];
+}
+-(void) trackVariable: (id) obj
+{
+   [_MIPsolver trackVariable:obj];
+}
+-(void) trackConstraint:(id) obj
+{
+   [_MIPsolver trackConstraint:obj];
+}
+
 @end
 
 

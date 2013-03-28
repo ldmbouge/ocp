@@ -159,7 +159,7 @@
 
 @implementation CPEqualBC
 
--(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c
+-(id) initCPEqualBC: (CPIntVarI*) x and: (CPIntVarI*) y  and: (ORInt) c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -224,7 +224,7 @@
 
 
 @implementation CPEqualDC
--(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c
+-(id) initCPEqualDC: (CPIntVarI*) x and: (CPIntVarI*) y  and: (ORInt) c
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -312,7 +312,7 @@
 @end
 
 @implementation CPAffineBC
--(id)initCPAffineBC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b
+-(id)initCPAffineBC:(CPIntVarI*)y equal:(ORInt)a times:(CPIntVarI*)x plus:(ORInt)b
 {
    self = [super initCPCoreConstraint:[y engine]];
    _x = x;
@@ -384,7 +384,7 @@
 @end
 
 @implementation CPAffineAC
--(id)initCPAffineAC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b
+-(id)initCPAffineAC:(CPIntVarI*)y equal:(ORInt)a times:(CPIntVarI*)x plus:(ORInt)b
 {
    self = [super initCPCoreConstraint:[y engine]];
    _x = x;
@@ -452,7 +452,7 @@
 @end
 
 @implementation CPEqual3BC
--(id) initCPEqual3BC: (id) x plus: (id) y  equal: (id) z
+-(id) initCPEqual3BC: (CPIntVarI*) x plus: (CPIntVarI*) y  equal: (CPIntVarI*) z
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -523,7 +523,7 @@
 @end
 
 @implementation CPEqual3DC
--(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z
+-(id) initCPEqual3DC: (CPIntVarI*) x plus: (CPIntVarI*) y  equal: (CPIntVarI*) z
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -757,7 +757,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 @implementation CPNotEqual
 
--(id)initCPNotEqual:(id) x and:(id) y  and: (ORInt) c
+-(id)initCPNotEqual:(CPIntVarI*) x and:(CPIntVarI*) y  and: (ORInt) c
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -885,7 +885,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @end
 
 @implementation CPLEqualBC
--(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c
+-(id) initCPLEqualBC:(CPIntVarI*)x and:(CPIntVarI*) y plus:(ORInt) c
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -1168,7 +1168,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @end
 
 @implementation CPAndDC
--(id)initCPAndDC:(id)b equal:(id<CPIntVar>) x and: (id<CPIntVar>) y
+-(id)initCPAndDC:(CPIntVarI*)b equal:(id<CPIntVar>) x and: (id<CPIntVar>) y
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = (CPIntVarI*) b;
@@ -1653,7 +1653,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 @end
 
 @implementation CPSquareBC
--(id)initCPSquareBC:(id)z equalSquare:(id)x
+-(id)initCPSquareBC:(CPIntVarI*)z equalSquare:(CPIntVarI*)x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;

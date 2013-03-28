@@ -22,7 +22,7 @@
 #define LOWEST_PRIO  ((ORInt)1)
 #define HIGHEST_PRIO ((ORInt)7)
 
-@protocol CPEngine <OREngine>
+@protocol CPEngine <ORSearchEngine>
 -(void) scheduleTrigger: (ConstraintCallback) cb onBehalf: (id<CPConstraint>)c;
 -(void) scheduleAC3: (id<CPEventNode>*) mlist;
 -(void) scheduleAC5: (id<CPAC5Event>) evt;

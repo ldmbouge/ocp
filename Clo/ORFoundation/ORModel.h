@@ -18,6 +18,7 @@
 @protocol ORIntVar;
 @protocol ORBitVar;
 @protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
 @protocol ORSolution;
 @protocol ORSolutionPool;

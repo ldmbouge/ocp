@@ -15,7 +15,7 @@
 @class LPSolverI;
 @protocol ORModel;
 
-@protocol LPProgram <NSObject>
+@protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
 -(void) solve;
 -(ORFloat)dual:(id<ORConstraint>)c;

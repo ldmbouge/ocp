@@ -80,7 +80,7 @@
    return o;
 }
 
-+(id<ORTrailableInt>) trailableInt: (id<OREngine>) engine value: (ORInt) value
++(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) engine value: (ORInt) value
 {
    ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [engine trail] value:value];
    [engine trackObject: o];
@@ -404,21 +404,21 @@
    return [self intVarArray:cp range:r1 :r2 with:clo];
 }
 
-+(id<ORTrailableIntArray>) trailableIntArray: (id<OREngine>) engine range: (id<ORIntRange>) range value: (ORInt) value
++(id<ORTrailableIntArray>) trailableIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) range value: (ORInt) value
 {
    id<ORIdArray> o = [ORFactory idArray:engine range:range];
    for(ORInt k=range.low;k <= range.up;k++)
       [o set: [ORFactory trailableInt: engine value: value] at:k];
    return (id<ORTrailableIntArray>) o;
 }
-+(id<ORTRIntArray>) TRIntArray: (id<OREngine>) engine range: (id<ORIntRange>) R
++(id<ORTRIntArray>) TRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
 {
    ORTRIntArrayI* o = [[ORTRIntArrayI alloc] initORTRIntArray: engine range: R];
    [engine trackObject: o];
    return o;
 }
 
-+(id<ORTRIntMatrix>) TRIntMatrix: (id<OREngine>) engine range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
++(id<ORTRIntMatrix>) TRIntMatrix: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2
 {
    ORTRIntMatrixI* o = [[ORTRIntMatrixI alloc] initORTRIntMatrix: engine range: R1 : R2];
    [engine trackObject: o];

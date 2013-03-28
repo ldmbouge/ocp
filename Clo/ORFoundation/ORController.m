@@ -215,7 +215,7 @@
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];

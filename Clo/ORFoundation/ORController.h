@@ -99,7 +99,7 @@
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
--(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

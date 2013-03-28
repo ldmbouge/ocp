@@ -32,7 +32,7 @@
    @private
    id<ORModel>    _m;
 //   id<ORExplorer> _explorer;
-//   id<OREngine>   _engine;
+//   id<ORSearchEngine>   _engine;
    
    NSFileManager  *_fm;
    NSMutableArray *_digest;

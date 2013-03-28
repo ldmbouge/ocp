@@ -14,7 +14,7 @@
 #import <CPUKernel/CPEngineI.h>
 
 @implementation CPCoreConstraint
--(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m
+-(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m
 {
    self = [super init];
    _todo = CPTocheck;

@@ -528,7 +528,7 @@ void freeTRIntArray(TRIntArray a)
 
 
 @implementation ORTRIntArrayI
--(ORTRIntArrayI*) initORTRIntArray: (id<OREngine>) engine range: (id<ORIntRange>) R
+-(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
 {
    self = [super init];
    _trail = (ORTrailI*)[engine trail];
@@ -618,7 +618,7 @@ void freeTRIntArray(TRIntArray a)
 
 @implementation ORTRIntMatrixI
 
--(ORTRIntMatrixI*) initORTRIntMatrix:(id<OREngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+-(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSearchEngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    self = [super init];
    _trail = (ORTrailI*)[engine trail];
@@ -646,7 +646,7 @@ void freeTRIntArray(TRIntArray a)
    return self;
 }
 
--(ORTRIntMatrixI*) initORTRIntMatrix:(id<OREngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+-(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSearchEngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    self = [super init];
    _trail = (ORTrailI*)[engine trail];

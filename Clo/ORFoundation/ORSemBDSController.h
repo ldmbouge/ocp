@@ -25,9 +25,9 @@
    ORInt              _nbDisc;
    SemTracer*         _tracer;
    id<ORCheckpoint>   _atRoot;
-   id<OREngine>       _solver;
+   id<ORSearchEngine>       _solver;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;
