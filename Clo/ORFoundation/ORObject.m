@@ -13,12 +13,30 @@
 #import "ORObject.h"
 #import "ORError.h"
 
+@implementation ORObject
+-(id)init
+{
+   [super init];
+   _impl = NULL;
+   _name = 0;
+   memset(_ba,0,sizeof(_ba));
+   return self;
+}
+-(void)setId:(ORUInt)name
+{
+   _name = name;
+}
+-(ORUInt)getId
+{
+   return _name;
+}
+@end
+
 @protocol ORVisitor;
 @implementation ORModelingObjectI
 -(id) init
 {
-   [super init];
-   _impl = NULL;
+   self = [super init];
    return self;
 }
 -(void) setImpl: (id) impl
@@ -49,13 +67,12 @@
    NSLog(@"%@",self);
    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: a modeling object cannot be an implementation"];
 }
-@end;
+@end
 
 @implementation ORDualUseObjectI
 -(id) init
 {
-   [super init];
-   _impl = NULL;
+   self = [super init];
    return self;
 }
 -(void) setImpl: (id) impl
@@ -90,5 +107,5 @@
    NSLog(@"%@",self);
    @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
 }
-@end;
+@end
 

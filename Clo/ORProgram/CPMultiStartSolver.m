@@ -25,6 +25,7 @@
 
 @implementation CPMultiStartSolver {
    CPSolver**     _solver;
+   id<ORModel>    _source;
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
@@ -33,6 +34,7 @@
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
    self = [super init];
+   _source = NULL;
    _solver = (CPSolver**) malloc(k*sizeof(CPSolver*));
    _nb = k;
    for(ORInt i = 0; i < _nb; i++)
@@ -45,6 +47,7 @@
 }
 -(void) dealloc
 {
+   [_source release];
    [_sPool release];
    for(ORInt i = 0; i < _nb; i++)
       [_solver[i] release];
@@ -52,6 +55,12 @@
    [_terminated release];
    [super dealloc];
 }
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
+}
+
 -(ORInt) nb
 {
    return _nb;
@@ -420,5 +429,11 @@
 -(id<CPHeuristic>) createABS
 {
    return [self setupHeuristic:_cmd];
+}
+
+-(ORInt)intValue:(id<ORIntVar>)x
+{
+   id<ORIntVar> y = [[_source rootModel] lookup:x];
+   return y.value;
 }
 @end

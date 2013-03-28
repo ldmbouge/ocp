@@ -10,24 +10,28 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORData.h"
+#import <ORFoundation/ORData.h>
 
 // pvh: Do I need the implementation to be visible
 
-@interface ORModelingObjectI : NSObject<ORObject>
-{
-   id _impl;
+@interface ORObject : NSObject<ORObject> {
+   id      _impl;
+   ORUInt  _name;
+   BOOL    _ba[4];
 }
+-(id)init;
+-(void)setId:(ORUInt)name;
+-(ORUInt)getId;
+@end
+
+@interface ORModelingObjectI : ORObject<ORObject>
 -(id) init;
 -(void) setImpl: (id) impl;
 -(id) impl;
 -(void) makeImpl;
 @end;
 
-@interface ORDualUseObjectI : NSObject<ORObject>
-{
-   id _impl;
-}
+@interface ORDualUseObjectI : ORObject<ORObject>
 -(id) init;
 -(void) setImpl: (id) impl;
 -(id) impl;

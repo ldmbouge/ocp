@@ -24,6 +24,12 @@
    // pvh to clean once generalized
    id<ORObjectiveFunction>  _objective;
    ORUInt                   _name;
+   id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
+   id<ORModel>              _original;  // that's the pointer to the original copy we were cloned from.
+   // ===================================
+   NSMutableDictionary*     _orig2Me;
+   // ===================================
+   // "Old" flattening map
    NSMutableDictionary*     _cMap;
    NSMutableSet*            _ccSet;  // used only while constructing _cMap
    id<ORConstraint>         _cc;     // used only while constructing _cMap
@@ -31,24 +37,66 @@
 -(ORModelI*) initORModelI
 {
    self = [super init];
+   _source = _original = NULL;
    _vars  = [[NSMutableArray alloc] init];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    _name = 0;
+   _orig2Me = NULL;
    _cMap = [[NSMutableDictionary alloc] initWithCapacity:32];
    _ccSet = [[NSMutableSet alloc] initWithCapacity:32];
    _cc = NULL;
    return self;
 }
+-(ORModelI*)initORModelI:(ORULong)nb
+{
+   self = [self initORModelI];
+   _orig2Me = [[NSMutableDictionary alloc] initWithCapacity:nb];
+   return self;
+}
+-(void)map:(id)key toObject:(id)object
+{
+   NSValue* v = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
+   [_orig2Me setObject:object forKey:v];
+}
+-(id)lookup:(id)key
+{
+   NSValue* kv = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
+   id rv = [_orig2Me objectForKey:kv];
+   [kv release];
+   return rv;
+}
 -(void) dealloc
 {
    NSLog(@"ORModelI [%p] dealloc called...\n",self);
+   [_source release];
    [_vars release];
    [_mStore release];
    [_oStore release];
    [_cMap release];
+   [_orig2Me release];
    [super dealloc];
+}
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
+}
+-(id<ORModel>)original
+{
+   return _original==NULL ? self : _original;
+}
+-(id<ORModel>)source
+{
+   return _source;
+}
+-(id<ORModel>)rootModel
+{
+   id<ORModel> cur = self;
+   while ([cur source] != NULL)
+      cur = [cur source];
+   return cur;
 }
 -(void) captureVariable: (id<ORVar>) x
 {
@@ -144,6 +192,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
+   [buf appendFormat:@"Original: [%p]\n",_original];
    [buf appendFormat:@"vars[%ld] = {\n",[_vars count]];
    for(id<ORVar> v in _vars)
       [buf appendFormat:@"\t%@\n",v];
@@ -158,7 +207,10 @@
    for(id<ORConstraint> c in _mStore)
       [buf appendFormat:@"\t%@\n",c];
    [buf appendFormat:@"}\n"];
-   [buf appendFormat:@"map: %@",_cMap];
+   if (_objective != nil) {
+      [buf appendFormat:@"Objective: %@\n",_objective];
+   }
+   //[buf appendFormat:@"map: %@",_cMap];
    return buf;
 }
 -(NSSet*) constraintsFor:(id<ORConstraint>)c
@@ -233,7 +285,6 @@
     return _objective;
 }
 
-
 -(void) trackObject: (id) obj;
 {
    [_oStore addObject:obj];
@@ -271,11 +322,23 @@
       [c visit: visitor];
    [_objective visit: visitor];
 }
--(id) copyWithZone:(NSZone*)zone {
-    ORCopy* copier = [[ORCopy alloc] initORCopy: zone];
-    id<ORModel> m = [copier copyModel: self];
-    [copier release];
-    return m;
+-(id) copyWithZone:(NSZone*)zone
+{
+   ORCopy* copier = [[ORCopy alloc] initORCopy: zone];
+   ORModelI* m = (ORModelI*)[copier copyModel: self];
+   [copier release];
+   m->_original = self;
+   return m;
+}
+-(id<ORModel>)flatten
+{
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
+   id<ORModelTransformation> flat = [ORFactory createFlattener];
+   [flat apply: self into:batch];
+   [batch release];
+   [flatModel setSource:self];
+   return flatModel;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

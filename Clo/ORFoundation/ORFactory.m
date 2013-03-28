@@ -34,6 +34,24 @@
    return [[ORTrailI alloc] init];
 }
 
++(id<ORRandomStream>) randomStream: (id<ORTracker>) cp
+{
+   id<ORRandomStream> o = [ORCrFactory randomStream];
+   [cp trackObject: o];
+   return o;
+}
++(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
+{
+   id<ORZeroOneStream> o = (id<ORZeroOneStream>) [ORCrFactory zeroOneStream];
+   [cp trackObject: o];
+   return o;
+}
++(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
+{
+   id<ORUniformDistribution> o = (id<ORUniformDistribution>) [ORCrFactory uniformDistribution:r];
+   [cp trackObject: o];
+   return o;
+}
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
 {
    id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];

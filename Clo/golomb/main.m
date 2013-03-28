@@ -32,17 +32,17 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray>  m = [ORFactory intVarArray:model range:R domain:D];
          //int length[15] = {0,0,1,3,6,11,17,25,34,44,55,72,85,106,127};
          [model minimize:m[n]];
-         [model add:[m[1] eqi:0]];
+         [model add:[m[1] eq:@0]];
          for(ORInt i=1;i<=n;i++)
             for(ORInt j=i+1;j <= n;j++)
                [model add:[[d at:i :j] eq: [m[j] sub: m[i]]]];
          
          for(ORInt j=1;j<=n;j++)
-            [model add: [m[j] geqi: j * (j-1) / 2]];
+            [model add: [m[j] geq: @(j * (j-1) / 2)]];
          
          for(ORInt i=1;i<=n;i++)
             for(ORInt j=i+1;j <= n;j++)
-               [model add:[[d at:i :j] geqi: (j-1-(i-1))*(j-1-(i-1)+1)/2]];
+               [model add:[[d at:i :j] geq: @((j-1-(i-1))*(j-1-(i-1)+1)/2)]];
          
          for(ORInt i=2;i<=n;i++)
             [model add:[m[i-1] leq: m[i]]];

@@ -115,6 +115,7 @@
 
 @implementation CPCoreSolver {
 @protected
+   id<ORModel>           _source;
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORSearchObjectiveFunction>  _objective;
@@ -134,6 +135,7 @@
 -(CPCoreSolver*) initCPCoreSolver
 {
    self = [super init];
+   _source = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
@@ -147,6 +149,7 @@
 }
 -(void) dealloc
 {
+   [_source release];
    [_hSet release];
    [_portal release];
    [_returnLabel release];
@@ -156,6 +159,12 @@
    [_doOnExitArray release];
    [super dealloc];
 }
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
+}
+
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
@@ -419,6 +428,7 @@
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
+   x = [[_source rootModel] lookup:x];
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++)
@@ -678,6 +688,11 @@
    id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:nil];
    [self addHeuristic:h];
    return h;
+}
+-(ORInt)intValue:(id<ORIntVar>)x
+{
+   id<CPIntVar> y = [[_source rootModel] lookup:x];
+   return y.value;
 }
 @end
 

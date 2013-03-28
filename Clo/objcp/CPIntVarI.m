@@ -95,15 +95,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
-
--(void) setId:(ORUInt)name
-{
-    _name = name;
-}
--(ORInt)getId
-{
-   return _name;
-}
 -(BOOL) isBool
 {
    return _isBool;
@@ -192,6 +183,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return 0;
    }
 }
+
 -(ORInt) intValue
 {
    assert(_dom);
@@ -202,6 +194,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return 0;
    }
 }
+
 -(ORBounds) bounds
 {
    assert(_dom);
@@ -694,6 +687,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [_x bound];
 }
+-(ORInt) value
+{
+   assert([_x bound]);
+   return [_x value] + _b;
+}
 -(ORInt)min
 {
     return [_x min]+_b;
@@ -813,6 +811,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(BOOL) bound
 {
    return [_x bound];
+}
+-(ORInt) value
+{
+   assert([_x bound]);
+   return _a * [_x value] + _b;
 }
 -(ORInt) min
 {
@@ -973,6 +976,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [_x bound];
 }
+-(ORInt) value
+{
+   assert([_x bound]);
+   return - [_x value];
+}
 -(ORInt) min
 {
    return - [_x max];
@@ -1071,6 +1079,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(BOOL) bound
 {
    return [self domsize]<= 1;
+}
+-(ORInt) value
+{
+   assert([_secondary bound]);
+   return [_secondary value]==_v;
 }
 -(ORInt) min
 {

@@ -20,7 +20,6 @@
    _todo = CPTocheck;
    _idempotent = NO;
    _priority = HIGHEST_PRIO;
-   _name = 0;
    _propagate = [self methodForSelector:@selector(propagate)];
    _trail = [[m trail] retain];
    _active  = makeTRInt(_trail,true);
@@ -44,14 +43,6 @@
 }
 -(void) propagate
 {}
--(void) setId:(ORUInt)name
-{
-   _name = name;
-}
--(ORUInt)getId
-{ 
-   return _name;
-}
 -(NSSet*)allVars
 {
    return [[NSSet alloc] init];

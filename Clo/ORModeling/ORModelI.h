@@ -11,8 +11,9 @@
 
 #import <ORModeling/ORModeling.h>
 
-@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel>
+@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
+-(ORModelI*)              initORModelI:(ORULong)nb;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
@@ -40,6 +41,13 @@
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)original;
+-(id<ORModel>)source;
+-(id<ORModel>)flatten;
+-(id<ORModel>)rootModel;
+-(void)map:(id)key toObject:(id)object;
+-(id)lookup:(id)key;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>

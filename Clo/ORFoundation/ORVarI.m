@@ -164,9 +164,6 @@
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
-   BOOL           _dense;
-   BOOL           _isBool;
-   ORUInt         _name;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
@@ -174,8 +171,8 @@
    _impl = nil;
    _tracker = track;
    _domain = domain;
-   _dense = true;
-   _isBool = ([domain low] == 0 && [domain up] == 1);
+   _ba[0] = YES; // dense
+   _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
    return self;
 }
@@ -188,8 +185,8 @@
    [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_dense];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_isBool];
+   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_ba[0]];
+   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_ba[1]];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id)initWithCoder:(NSCoder *)aDecoder
@@ -198,8 +195,8 @@
    _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_dense];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_isBool];
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_ba[0]];
+   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_ba[1]];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
@@ -211,18 +208,9 @@
 -(NSString*) description
 {
    if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_dense ? 'D':'S'];
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
    else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_dense ? 'D':'S',_impl];
-}
-
--(void) setId: (ORUInt) name
-{
-   _name = name;
-}
--(ORInt) getId
-{
-   return _name;
+      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_ba[0] ? 'D':'S',_impl];
 }
 -(ORInt) value
 {
@@ -303,7 +291,7 @@
    if (_impl)
       return [(id<ORIntVar>)[_impl dereference] isBool];
    else
-      return _isBool;
+      return _ba[1]; // isBool
 }
 -(NSSet*)constraints
 {
@@ -322,7 +310,7 @@
 }
 -(BOOL) hasDenseDomain
 {
-   return _dense;
+   return _ba[0]; // dense
 }
 -(ORInt)scale
 {
@@ -382,7 +370,7 @@
 }
 -(NSString*) description
 {
-   char d = _dense ? 'D':'S';
+   char d = _ba[0] ? 'D':'S';
    if (_impl == nil)
       return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : nil)",_name,[_domain description],d,_a,_x,_b];
    else
@@ -450,8 +438,7 @@
    id<ORTracker>    _tracker;
    ORFloat          _low;
    ORFloat          _up;
-   bool             _hasBounds;
-   ORUInt           _name;
+   BOOL             _hasBounds;
 }
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
 {
@@ -518,15 +505,7 @@
    else
       return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
 }
--(void) setId: (ORUInt) name
-{
-   _name = name;
-}
--(ORInt) getId
-{
-   return _name;
-}
--(id) snapshot  
+-(id) snapshot
 {
    return [[ORFloatVarSnapshot alloc] initFloatVarSnapshot: self];
 }
@@ -593,7 +572,6 @@
    ORUInt*          _up;
    ORUInt           _bLen;
    ORUInt           _nb;
-   ORUInt           _name;
 }
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
@@ -605,7 +583,6 @@
    _up = malloc(sizeof(ORUInt)*_nb);
    memcpy(_low,low,sizeof(ORUInt)*_nb);
    memcpy(_up,up,sizeof(ORUInt)*_nb);
-   _name = -1;
    _tracker = tracker;
    [tracker trackVariable: self];
    return self;
@@ -615,14 +592,6 @@
    free(_low);
    free(_up);
    [super dealloc];
-}
--(void) setId:(ORUInt)vid
-{
-   _name = vid;
-}
--(ORInt) getId
-{
-   return _name;
 }
 -(ORUInt*)low
 {

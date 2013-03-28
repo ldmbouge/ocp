@@ -40,7 +40,9 @@
 -(id<ORModel>) copyModel:(id<ORModel>)model
 {
    _origModel = [model retain];
-   _copyModel = [[ORModelI alloc] initORModelI];
+   ORULong nbThings = [[_origModel variables] count] + [[_origModel objects] count] + [[_origModel constraints] count];
+   _copyModel = [[ORModelI alloc] initORModelI:nbThings];
+   
    _mapping = [[NSMapTable alloc] init];
    
    [_origModel applyOnVar:^(id<ORVar> x) {
@@ -65,6 +67,7 @@
       [o visit: self];
       c = _result;
       [_mapping setObject: c forKey: o];
+      [_copyModel map:o toObject:c];
    }
    return c;
 }

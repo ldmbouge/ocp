@@ -29,8 +29,8 @@ int main(int argc, const char * argv[])
       id<ORIntRange> R = RANGE(model,1,4);
       ORInt t = 711;
       id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain:RANGE(model,0,t)];
-      [model add:[Sum(model, i, R, x[i]) eqi:t]];
-      [model add:[Prod(model,i, R, x[i]) eqi:t * 100 * 100 * 100]];
+      [model add:[Sum(model, i, R, x[i]) eq:@(t)]];
+      [model add:[Prod(model,i, R, x[i]) eq:@(t * 100 * 100 * 100)]];
       [model add:[x[1] lt:x[2]]];
       [model add:[x[2] lt:x[3]]];
       [model add:[x[3] lt:x[4]]];

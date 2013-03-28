@@ -33,7 +33,7 @@
    ORInt               _nbDone;
    Class               _defCon;
    BOOL         _doneSearching;
-   
+   id<ORModel>        _source;
    NSCondition*      _allClosed;
    ORInt              _nbClosed;
    id<ORObjectiveValue> _primal;
@@ -42,6 +42,7 @@
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
    self = [super init];
+   _source = NULL;
    _nbWorkers = nbt;
    _workers   = malloc(sizeof(id<CPSemanticProgram>)*_nbWorkers);
    memset(_workers,0,sizeof(id<CPSemanticProgram>)*_nbWorkers);
@@ -64,12 +65,18 @@
 {
    NSLog(@"CPParSolverI (%p) dealloc'd...",self);
    free(_workers);
+   [_source release];
    [_queue release];
    [_terminated release];
    [_allClosed release];
    [_globalPool release];
    [_onSol release];
    [super dealloc];
+}
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
 }
 -(ORInt)nbWorkers
 {
@@ -522,6 +529,11 @@
   for(ORInt i=0;i < _nbWorkers;i++)
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
+}
+-(ORInt)intValue:(id<ORIntVar>)x
+{
+   id<ORIntVar> y = [[_source rootModel] lookup:x];
+   return y.value;
 }
 @end
 

@@ -67,7 +67,7 @@ int main(int argc, const char * argv[])
          for(ORUInt j=R.low;j<=R.up;j++) {
             if (i < j)
                [mdl add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
-            else [mdl add:[[diff at:i :j] eqi: 0]];
+            else [mdl add:[[diff at:i :j] eq: @0]];
          }
       }
       for(ORInt i=1;i<=n-1;i++) {
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
       [mdl add:[[costas at:1] leq:[costas at:n]]];
       for(ORUInt i=R.low;i<=R.up;i++) {
          for(ORUInt j=i+1;j<=R.up;j++) {
-            [mdl add:[[diff at:i :j] neqi:0]];
+            [mdl add:[[diff at:i :j] neq:@0]];
          }
       }
       for (ORInt k=3; k<=n; k++) {

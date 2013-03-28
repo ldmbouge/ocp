@@ -350,7 +350,7 @@
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]]
+      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult(@([itemSize at:i]),[item[i] eq: @(b)])) eq: binSize[b]]
                               into: _theModel
                         annotation: DomainConsistency];
    ORInt s = 0;
@@ -358,7 +358,7 @@
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s]
+   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eq: @(s)]
                            into: _theModel
                      annotation: DomainConsistency];
                                              
