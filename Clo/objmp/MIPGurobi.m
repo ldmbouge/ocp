@@ -88,7 +88,7 @@
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
+   [self printModelToFile: "/Users/pvh/lookatgurobi.mps"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
