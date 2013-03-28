@@ -354,6 +354,8 @@ enum ORGroupType {
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(ORInt) compare: (id<ORObjectiveValue>) other;
+//-(ORInt) intValue;
+//-(ORFloat) floatValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>

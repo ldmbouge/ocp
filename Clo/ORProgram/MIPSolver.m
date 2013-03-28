@@ -20,6 +20,7 @@
 {
    MIPSolverI*  _MIPsolver;
    id<ORModel> _model;
+   id<ORSolutionPool> _sPool;
 }
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model
 {
@@ -30,11 +31,13 @@
    _MIPsolver = [MIPFactory solver];
    _model = model;
 #endif
+   _sPool = [ORFactory createSolutionPool];  
    return self;
 }
 -(void) dealloc
 {
    [_MIPsolver release];
+   [_sPool release];
    [super dealloc];
 }
 -(MIPSolverI*) solver
@@ -44,8 +47,8 @@
 -(void) solve
 {
    [_MIPsolver solve];
-//   id<ORSolution> s = [_model captureSolution];
-//   NSLog(@"Solution = %@",s);
+   id<ORSolution> s = [_model captureSolution];
+   [_sPool addSolution: s];
 }
 -(void) trackObject: (id) obj
 {
@@ -59,7 +62,14 @@
 {
    [_MIPsolver trackConstraint:obj];
 }
-
+-(id<ORSolutionPool>) solutionPool
+{
+   return _sPool;
+}
+-(id<ORSolutionPool>) globalSolutionPool
+{
+   return _sPool;
+}
 @end
 
 

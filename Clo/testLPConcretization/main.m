@@ -35,8 +35,8 @@ int main1(int argc, const char * argv[])
    id<LPProgram> lp = [ORFactory createLPProgram: model];
    
    [lp solve];
-   NSLog(@"Objective value: %@",[[model objective] value]);
-   id<ORSolution> sol = [model captureSolution];
+//   NSLog(@"Objective value: %@",[[model objective] value]);
+   id<ORSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    NSLog(@"we are done");
    return 0;
@@ -49,13 +49,14 @@ int main2(int argc, const char * argv[])
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Columns];   
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[x[j] mul: @(coef[i][j])]) leq: @(b[i])]];
-   id<ORObjectiveFunction> obj = [model maximize: Sum(model,j,Columns,[x[j] mul: @(c[j])])];
+   [model maximize: Sum(model,j,Columns,[x[j] mul: @(c[j])])];
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
-   NSLog(@"Objective value: %@",[obj value]);
-   id<ORSolution> sol = [model captureSolution];
+   id<ORSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
+   for(ORInt i = 0; i < nbColumns; i++)
+      printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
    
    return 0;

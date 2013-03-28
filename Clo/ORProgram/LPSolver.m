@@ -20,6 +20,7 @@
 {
    LPSolverI*  _lpsolver;
    id<ORModel> _model;
+   id<ORSolutionPool> _sPool;
 }
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
@@ -30,11 +31,13 @@
    _lpsolver = [LPFactory solver];
    _model = model;
 #endif
+   _sPool = [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
 {
    [_lpsolver release];
+   [_sPool release];
    [super dealloc];
 }
 -(LPSolverI*) solver
@@ -44,7 +47,8 @@
 -(void) solve
 {
    [_lpsolver solve];
-//   id<ORSolution> s = [_model captureSolution];
+   id<ORSolution> s = [_model captureSolution];
+   [_sPool addSolution: s];
 //   NSLog(@"Solution = %@",s);
 }
 -(ORFloat) dual: (id<ORConstraint>) c
@@ -72,6 +76,15 @@
 {
    [_lpsolver trackConstraint:obj];
 }
+-(id<ORSolutionPool>) solutionPool
+{
+   return _sPool;
+}
+-(id<ORSolutionPool>) globalSolutionPool
+{
+   return _sPool;
+}
+
 @end
 
 
