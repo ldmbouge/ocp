@@ -372,6 +372,11 @@
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
     return self;
 }
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitFloatArray: self];
+}
+
 @end
 
 

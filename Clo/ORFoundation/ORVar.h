@@ -36,6 +36,7 @@
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
 -(ORInt) value;
+-(ORInt) intValue;
 -(ORFloat) floatValue;
 -(ORInt) min;
 -(ORInt) max;

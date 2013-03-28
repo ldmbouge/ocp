@@ -45,7 +45,6 @@
 -(void) print;
 -(void) del;
 -(LPColumnI*) column;
--(ORInt) value;
 -(ORFloat) floatValue;
 -(ORFloat) reducedCost;
 -(void) setNb: (ORInt) nb;
@@ -264,8 +263,8 @@
 -(LPObjectiveI*)  createMinimize: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef;
 -(LPObjectiveI*)  createMaximize: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef;
 
--(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
--(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
+-(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
+-(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
 
 
 -(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x;
@@ -291,7 +290,6 @@
 -(LPOutcome) solve;
 
 -(LPOutcome) status;
--(ORInt)   intValue: (LPIntVariableI*) var;
 -(ORFloat) floatValue: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;

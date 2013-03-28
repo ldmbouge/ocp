@@ -24,6 +24,7 @@
 -(void) visitIntSet:(id<ORIntSet>)v{}
 -(void) visitIntRange:(id<ORIntRange>)v{}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
+-(void) visitFloatArray:(id<ORIntArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}
@@ -98,6 +99,8 @@
 -(void) visitLinearGeq: (id<ORLinearGeq>) c {}
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
+-(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
 
 
 // Bit
@@ -137,6 +140,7 @@
 }
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
+-(void) visitFloatArray:(id<ORIntArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntSet:(id<ORIntSet>)v;
@@ -256,7 +260,7 @@
 }
 +(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
+   ORFloatLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
@@ -294,6 +298,11 @@
 {
    [_theModel addObject:v];
 }
+-(void) visitFloatArray:(id<ORFloatArray>)v
+{
+   [_theModel addObject:v];
+}
+
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
    [_theModel addObject:v];
@@ -598,13 +607,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
+   ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
    id<ORObjectiveFunction> objective = [_theModel minimize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
    [v setImpl: objective];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
+   ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
    id<ORObjectiveFunction> objective = [_theModel maximize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
    [v setImpl: objective];
 }

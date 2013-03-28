@@ -1,4 +1,4 @@
-/************************************************************************
+;/************************************************************************
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
@@ -137,6 +137,15 @@
       [v setImpl: dx];
    }
 }
+-(void) visitFloatArray:(id<ORFloatArray>) v
+{
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORFloatArray> dx = [ORFactory floatArray: _lpsolver range: R with: ^ORFloat(ORInt i) { return [v at: i]; }];
+      [dx makeImpl];
+      [v setImpl: dx];
+   }
+}
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
@@ -183,12 +192,12 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
    if ([obj dereference] == NULL) {
-      id<ORIntVarArray> x = [obj array];
-      id<ORIntArray> a = [obj coef];
+      id<ORVarArray> x = [obj array];
+      id<ORFloatArray> a = [obj coef];
       [x visit: self];
       id<LPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMaximize: dx coef: da];
       [obj setImpl: concreteObj];
       [_lpsolver postObjective: concreteObj];
@@ -198,34 +207,45 @@
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
+
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+{
    if ([c dereference] == NULL) {
-      id<ORIntVarArray> x = [c vars];
-      id<ORIntArray> a = [c coefs];
-      ORInt cst = [c cst];
+      id<ORVarArray> x = [c vars];
+      id<ORFloatArray> a = [c coefs];
+      ORFloat cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       LPConstraintI* concreteCstr = [_lpsolver createEQ: dx coef: da cst: -cst];
       [c setImpl:concreteCstr];
       [_lpsolver postConstraint: concreteCstr];
    }
 }
--(void) visitLinearLeq: (id<ORLinearLeq>) c
+-(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
 {
    if ([c dereference] == NULL) {
-      id<ORIntVarArray> x = [c vars];
-      id<ORIntArray> a = [c coefs];
+      id<ORVarArray> x = [c vars];
+      id<ORFloatArray> a = [c coefs];
       ORInt cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: da cst: -cst];
       [c setImpl:concreteCstr];
       [_lpsolver postConstraint: concreteCstr];
    }
 }
+
+
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    if ([e dereference] == NULL) {

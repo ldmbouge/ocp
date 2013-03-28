@@ -29,6 +29,7 @@
 -(id) visitIdArray: (id<ORIdArray>) v engine: (id<CPEngine>) engine;
 -(id) visitIdMatrix: (id<ORIdMatrix>) v engine: (id<CPEngine>) engine;
 -(id) visitIntArray:(id<ORIntArray>) v engine: (id<CPEngine>) engine;
+-(id) visitFloatArray:(id<ORFloatArray>) v engine: (id<CPEngine>) engine;
 -(id) visitIntMatrix:(id<ORIntMatrix>) v engine: (id<CPEngine>) engine;
 -(id) visitRestrict:(id<ORRestrict>)cstr engine: (id<CPEngine>) engine;
 -(id) visitAlldifferent: (id<ORAlldifferent>) cstr engine: (id<CPEngine>) engine;
@@ -125,6 +126,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORIntArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -226,6 +228,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORIntArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;

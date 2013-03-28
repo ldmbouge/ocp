@@ -145,5 +145,5 @@ int main3(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main3(argc,argv);
+   return main2(argc,argv);
 }

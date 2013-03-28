@@ -222,14 +222,14 @@
     return _objective;
 }
 
--(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
-   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: (id<ORIntArray>) coef];
+   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
     return _objective;
 }
--(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
-   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: (id<ORIntArray>) coef];
+   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
     return _objective;
 }
 
@@ -351,11 +351,11 @@
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    return [_target minimize: array coef: coef];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
   return [_target maximize: array coef: coef];
 }
@@ -427,11 +427,11 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [_target maximize: x];
 }
--(id<ORObjectiveFunction>) minimize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    return [_target minimize: array coef: coef];
 }
--(id<ORObjectiveFunction>) maximize: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    return [_target maximize: array coef: coef];
 }

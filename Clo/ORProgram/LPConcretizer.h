@@ -30,6 +30,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORFloatArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -87,6 +88,9 @@
 
 -(void) visitLinearEq: (id<ORLinearEq>) c;
 -(void) visitLinearLeq: (id<ORLinearLeq>) c;
+
+-(void) visitFloatLinearEq: (id<ORLinearEq>) c;
+-(void) visitFloatLinearLeq: (id<ORLinearLeq>) c;
 
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;

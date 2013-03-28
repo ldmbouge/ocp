@@ -169,6 +169,7 @@ typedef struct  {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
+-(ORInt) intValue;
 -(ORBounds)bounds;
 -(ORInt) domsize;
 -(BOOL) member:(ORInt)v;

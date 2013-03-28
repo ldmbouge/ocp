@@ -13,6 +13,7 @@
 #import <ORFoundation/ORArray.h>
 
 @protocol ORIntVarArray;
+@protocol ORVarArray;
 @protocol ORExpr;
 @protocol ORIntVar;
 @protocol ORBitVar;
@@ -277,6 +278,18 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol ORFloatLinearEq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
+@protocol ORFloatLinearLeq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
@@ -363,8 +376,8 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveFunctionLinear <ORObjectiveFunction>
--(id<ORIntVarArray>) array;
--(id<ORIntArray>) coef;
+-(id<ORVarArray>) array;
+-(id<ORFloatArray>) coef;
 @end
 
 @protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>

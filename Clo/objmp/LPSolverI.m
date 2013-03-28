@@ -1007,7 +1007,7 @@
    return [self createLEQ: t rhs: rhs];
 }
 
--(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+-(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    LPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
@@ -1017,7 +1017,7 @@
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
 }
--(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+-(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    LPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
@@ -1083,7 +1083,7 @@
    [o setNb: _createdObjs++];
    return o;
 }
--(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
 {
    LPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];
@@ -1092,7 +1092,7 @@
       [t add: [coef at: i] times: var[i]];
    return [self createMinimize: t];
 }
--(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
 {
    LPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];

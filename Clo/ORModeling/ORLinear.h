@@ -57,10 +57,10 @@
 -(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
 -(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
 
--(void) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+//-(void) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+//-(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+//-(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+//-(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 @end
 
 @interface ORLinearFlip : NSObject<ORLinear> {

@@ -11,7 +11,7 @@
 
 #import "ORModeling.h"
 #import "ORMIPDecompose.h"
-#import "ORLinear.h"
+#import "ORFloatLinear.h"
 
 
 @implementation ORMIPNormalizer
@@ -103,11 +103,11 @@
 
 @implementation ORMIPLinearizer
 {
-   id<ORLinear>        _terms;
-   id<ORAddToModel>    _model;
-   ORAnnotation        _n;
+   id<ORFloatLinear> _terms;
+   id<ORAddToModel> _model;
+   ORAnnotation _n;
 }
--(id) initORMIPLinearizer: (id<ORLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
+-(id) initORMIPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    self = [super init];
    _terms = t;
@@ -139,8 +139,8 @@
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
    [[e left] visit:self];
-   id<ORLinear> old = _terms;
-   _terms = [[ORLinearFlip alloc] initORLinearFlip: _terms];
+   id<ORFloatLinear> old = _terms;
+   _terms = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: _terms];
    [[e right] visit:self];
    [_terms release];
    _terms = old;
@@ -160,9 +160,8 @@
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
-   // TODO:ldm
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
-
 -(void) visitExprModI: (ORExprModI*) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];

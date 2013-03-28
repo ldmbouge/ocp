@@ -140,6 +140,15 @@
       [v setImpl: dx];
    }
 }
+-(void) visitFloatArray:(id<ORFloatArray>) v
+{
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORFloatArray> dx = [ORFactory floatArray: _MIPsolver range: R with: ^ORFloat(ORInt i) { return [v at: i]; }];
+      [dx makeImpl];
+      [v setImpl: dx];
+   }
+}
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
@@ -201,34 +210,69 @@
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+//   if ([c dereference] == NULL) {
+//      id<ORIntVarArray> x = [c vars];
+//      id<ORIntArray> a = [c coefs];
+//      ORInt cst = [c cst];
+//      [x visit: self];
+//      id<MIPVariableArray> dx = [x dereference];
+//      [a visit: self];
+//      id<ORIntArray> da = [a dereference];
+//      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: da cst: -cst];
+//      [c setImpl:concreteCstr];
+//      [_MIPsolver postConstraint: concreteCstr];
+//   }
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+//   if ([c dereference] == NULL) {
+//      id<ORIntVarArray> x = [c vars];
+//      id<ORIntArray> a = [c coefs];
+//      ORInt cst = [c cst];
+//      [x visit: self];
+//      id<MIPVariableArray> dx = [x dereference];
+//      [a visit: self];
+//      id<ORIntArray> da = [a dereference];
+//      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: da cst: -cst];
+//      [c setImpl:concreteCstr];
+//      [_MIPsolver postConstraint: concreteCstr];
+//   }
+}
+
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
+{
    if ([c dereference] == NULL) {
-      id<ORIntVarArray> x = [c vars];
-      id<ORIntArray> a = [c coefs];
-      ORInt cst = [c cst];
+      id<ORVarArray> x = [c vars];
+      id<ORFloatArray> a = [c coefs];
+      ORFloat cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: da cst: -cst];
       [c setImpl:concreteCstr];
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
--(void) visitLinearLeq: (id<ORLinearLeq>) c
+-(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
 {
    if ([c dereference] == NULL) {
-      id<ORIntVarArray> x = [c vars];
-      id<ORIntArray> a = [c coefs];
-      ORInt cst = [c cst];
+      id<ORVarArray> x = [c vars];
+      id<ORFloatArray> a = [c coefs];
+      ORFloat cst = [c cst];
       [x visit: self];
       id<MIPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: da cst: -cst];
       [c setImpl:concreteCstr];
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
+
+
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    if ([e dereference] == NULL) {

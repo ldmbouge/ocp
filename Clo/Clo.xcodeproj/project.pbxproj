@@ -993,6 +993,8 @@
 		B1E1C7A317037586006AACFC /* ORMIPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A117037586006AACFC /* ORMIPDecompose.m */; };
 		B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */; };
 		B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */; };
+		B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A817038783006AACFC /* ORFloatLinear.h */; };
+		B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORFloatLinear.m */; };
 		B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = B1F531D015AED1DB00E89F98 /* CPBinPacking.h */; };
 		B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
@@ -4336,6 +4338,8 @@
 		B1E1C7A117037586006AACFC /* ORMIPDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMIPDecompose.m; sourceTree = "<group>"; };
 		B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMIPFlatten.h; sourceTree = "<group>"; };
 		B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMIPFlatten.m; sourceTree = "<group>"; };
+		B1E1C7A817038783006AACFC /* ORFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatLinear.h; sourceTree = "<group>"; };
+		B1E1C7A917038784006AACFC /* ORFloatLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatLinear.m; sourceTree = "<group>"; };
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OREngine.h; sourceTree = "<group>"; };
@@ -6154,6 +6158,8 @@
 				B1E1C7A117037586006AACFC /* ORMIPDecompose.m */,
 				B103614F16D9AB9A00E95A39 /* ORLinear.h */,
 				B103615016D9AB9A00E95A39 /* ORLinear.m */,
+				B1E1C7A817038783006AACFC /* ORFloatLinear.h */,
+				B1E1C7A917038784006AACFC /* ORFloatLinear.m */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -7180,6 +7186,7 @@
 				3795ADF216FABEAB00308567 /* ORLogicBenders.h in Headers */,
 				B1E1C7A217037586006AACFC /* ORMIPDecompose.h in Headers */,
 				B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */,
+				B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9389,6 +9396,7 @@
 				3795ADF316FABEAB00308567 /* ORLogicBenders.m in Sources */,
 				B1E1C7A317037586006AACFC /* ORMIPDecompose.m in Sources */,
 				B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */,
+				B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

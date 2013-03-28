@@ -23,6 +23,7 @@
 -(void) visitIntSet:(id<ORIntSet>)v{}
 -(void) visitIntRange:(id<ORIntRange>)v{}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
+-(void) visitFloatArray:(id<ORFloatArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}
@@ -97,6 +98,8 @@
 -(void) visitLinearGeq: (id<ORLinearGeq>) c {}
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
+-(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
 
 
 // Bit
@@ -137,6 +140,7 @@
 }
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
+-(void) visitFloatArray:(id<ORFloatArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntSet:(id<ORIntSet>)v;
@@ -279,6 +283,10 @@
    return self;
 }
 -(void) visitIntArray:(id<ORIntArray>)v
+{
+   [_theModel addObject:v];
+}
+-(void) visitFloatArray:(id<ORFloatArray>)v
 {
    [_theModel addObject:v];
 }

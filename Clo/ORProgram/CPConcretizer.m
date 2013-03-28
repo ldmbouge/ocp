@@ -140,7 +140,16 @@
       [dx makeImpl];
       [v setImpl: dx];
    }
-   
+}
+
+-(void) visitFloatArray:(id<ORIntArray>) v
+{
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORFloatArray> dx = [ORFactory floatArray: _engine range: R with: ^ORFloat(ORInt i) { return [v at: i]; }];
+      [dx makeImpl];
+      [v setImpl: dx];
+   }
 }
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {

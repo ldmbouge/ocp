@@ -1541,6 +1541,82 @@
 }
 @end
 
+@implementation ORFloatLinearEq {
+   id<ORVarArray> _ia;
+   id<ORFloatArray>  _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %f)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitFloatLinearEq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORFloatLinearLeq {
+   id<ORVarArray> _ia;
+   id<ORFloatArray> _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) <= %f)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitFloatLinearLeq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+@end
+
 // ========================================================================================================
 
 
@@ -2133,7 +2209,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveFunctionLinearI
--(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    self = [super init];
    _array = array;
@@ -2141,11 +2217,11 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    _impl = nil;
    return self;
 }
--(id<ORIntVarArray>) array
+-(id<ORVarArray>) array
 {
    return _array;
 }
--(id<ORIntArray>) coef
+-(id<ORFloatArray>) coef
 {
    return _coef;
 }
@@ -2284,7 +2360,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMaximizeLinearI
--(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    self = [super initORObjectiveFunctionLinearI: array coef: coef];
    return self;
@@ -2311,7 +2387,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMinimizeLinearI
--(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORIntVarArray>) array coef: (id<ORIntArray>) coef
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    self = [super initORObjectiveFunctionLinearI: array coef: coef];
    return self;

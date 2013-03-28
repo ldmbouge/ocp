@@ -124,7 +124,7 @@
       nbN += (_terms[k]._coef < 0);
    return nbN;
 }
-int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
+static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return t2->_coef - t1->_coef;
 }
@@ -331,22 +331,22 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    }
 }
 
--(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
-}
--(void)postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
-}
--(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   [model minimize: [self variables: model] coef: [self coefficients: model]];
-}
--(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   [model maximize: [self variables: model] coef: [self coefficients: model]];
-}
+//-(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+//{
+//   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
+//}
+//-(void)postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+//{
+//   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
+//}
+//-(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+//{
+//   [model minimize: [self variables: model] coef: [self coefficients: model]];
+//}
+//-(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+//{
+//   [model maximize: [self variables: model] coef: [self coefficients: model]];
+//}
 @end
 
 

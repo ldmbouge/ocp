@@ -192,7 +192,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return 0;
    }
 }
-
+-(ORInt) intValue
+{
+   assert(_dom);
+   if ([_dom bound])
+      return [_dom min];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      return 0;
+   }
+}
 -(ORBounds) bounds
 {
    assert(_dom);

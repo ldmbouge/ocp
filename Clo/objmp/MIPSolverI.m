@@ -817,7 +817,7 @@
    return [self createLEQ: t rhs: rhs];
 }
 
--(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+-(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    MIPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
@@ -827,7 +827,7 @@
       [t add: [coef at: i] times: var[i]];
    return [self createLEQ: t rhs: -cst];
 }
--(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+-(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    MIPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];

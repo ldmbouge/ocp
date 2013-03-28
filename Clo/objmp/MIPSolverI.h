@@ -44,7 +44,6 @@
 -(void) addObjective: (MIPObjectiveI*) obj coef: (ORFloat) coef;
 -(void) print;
 -(void) del;
--(ORInt) intValue;
 -(ORFloat) floatValue;
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
@@ -56,6 +55,7 @@
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver;
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
 -(BOOL) isInteger;
+-(ORInt) intValue;
 @end
 
 
@@ -221,8 +221,8 @@
 -(MIPObjectiveI*)  createMinimize: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
 -(MIPObjectiveI*)  createMaximize: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef;
 
--(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
--(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst;
+-(MIPConstraintI*) createLEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
+-(MIPConstraintI*) createEQ: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst;
 
 
 -(MIPObjectiveI*)  createObjectiveMinimize: (MIPVariableI*) x;

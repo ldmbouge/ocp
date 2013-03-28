@@ -97,6 +97,16 @@
    [_copyModel trackObject: o];
    _result = o;
 }
+-(void) visitFloatArray:(id<ORFloatArray>)v
+{
+   id<ORFloatArray> o = [[ORFloatArrayI allocWithZone: _zone]
+                         initORFloatArray: _copyModel range: [self copyObject: [v range]] with: ^ORFloat(ORInt i) {
+                          return [v at: i];
+                       }];
+   [_copyModel trackObject: o];
+   _result = o;
+}
+
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
    id<ORIntMatrix> o = [[ORIntMatrixI allocWithZone: _zone] initORIntMatrix: _copyModel with: (ORIntMatrixI*)v];
@@ -260,14 +270,14 @@
 }
 -(void) visitMaximizeLinear: (ORObjectiveFunctionLinearI*) o
 {
-   id<ORIntVarArray> cv = [self copyObject:[o array]];
-   id<ORIntArray> cCoef = [self copyObject:[o coef]];
+   id<ORVarArray> cv = [self copyObject:[o array]];
+   id<ORFloatArray> cCoef = [self copyObject:[o coef]];
    _result = [_copyModel maximize:cv coef:cCoef];
 }
 -(void) visitMinimizeLinear: (ORObjectiveFunctionLinearI*) o
 {
-   id<ORIntVarArray> cv = [self copyObject:[o array]];
-   id<ORIntArray> cCoef = [self copyObject:[o coef]];
+   id<ORVarArray> cv = [self copyObject:[o array]];
+   id<ORFloatArray> cCoef = [self copyObject:[o coef]];
    _result = [_copyModel minimize:cv coef:cCoef];
 }
 
