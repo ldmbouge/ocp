@@ -41,7 +41,6 @@ int main2(int argc, const char * argv[])
    id<ORSolution> sol = [model captureSolution];
    NSLog(@"Solution: %@",sol);
    NSLog(@"we are done");
-   NSLog(@"Array is: %@",x);
    
    // model already "knows" the solver that implements it (_impl)
    // Now model also records a map from "high-level constraints" to "{implementation constraints}"
@@ -92,7 +91,6 @@ int main1(int argc, const char * argv[])
    id<ORSolution> sol = [model captureSolution];
    NSLog(@"Solution: %@",sol);
    NSLog(@"we are done");
-   NSLog(@"Array is: %@",x);
    
    // model already "knows" the solver that implements it (_impl)
    // Now model also records a map from "high-level constraints" to "{implementation constraints}"
@@ -110,7 +108,42 @@ int main1(int argc, const char * argv[])
    return 0;
 }
 
+int main3(int argc, const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   
+   // most of this is bogus; just testing without introducing floats
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Columns];   
+   for(ORInt i = 0; i < nbRows; i++)
+      [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+   id<ORObjectiveFunction> obj = [model maximize: Sum(model,j,Columns,[x[j] muli: c[j]])];
+   id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+   
+   NSLog(@"Model %@",model);
+   [mip solve];
+   NSLog(@"Objective value: %@",[obj value]);
+   id<ORSolution> sol = [model captureSolution];
+   NSLog(@"Solution: %@",sol);
+   NSLog(@"we are done");
+   
+   // model already "knows" the solver that implements it (_impl)
+   // Now model also records a map from "high-level constraints" to "{implementation constraints}"
+   // So model could consult the map to go and retrieve the dual value for the implementation constraints.
+   // catch -> that's LP specific functionality in an abstract model! Makes no sense.
+   // -> instead have the LPProgram do it by asking the model its map and consulting the mapping to finally
+   //    ask the right implementation constraint.
+   
+   //   [ca enumerateWith:^(id<ORConstraint> obj, int idx) {
+   //      ORFloat dca = [lp dual:obj];
+   //      NSLog(@"Dual value for constraint[%d] is %f",idx,dca);
+   //   }];
+   
+   //   NSLog(@"Objective: %@  [%f]",o,[o value]);
+   return 0;
+}
+
 int main(int argc, const char * argv[])
 {
-   return main2(argc,argv);
+   return main3(argc,argv);
 }

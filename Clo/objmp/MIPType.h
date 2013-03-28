@@ -2,21 +2,20 @@
  Mozilla Public License
  
  Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
-
+ 
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
+ 
  ***********************************************************************/
 
-#import <gurobiwrapper/lpgurobi.h>
-#import "MPMatrixSolverFactory.h"
+@class MIPConstraintI;
+@class MIPObjectiveI;
+@class MIPSolverI;
+@class MIPVariableI;
+@class MIPIntVariableI;
+@class MIPLinearTermI;
 
-@implementation MPMatrixSolverFactory
-
-+(id<LPMatrixSolver>) lpMatrixSolver
-{
-   return [[LPGurobiSolver alloc] initLPGurobiSolver];
-}
-@end;
-
+typedef enum { MIPinfeasible, MIPoptimal, MIPsuboptimal, MIPunbounded, MIPerror} MIPOutcome;
+typedef enum { MIPgeq, MIPleq, MIPeq } MIPConstraintType;
+typedef enum { MIPminimize, MIPmaximize } MIPObjectiveType;

@@ -51,11 +51,13 @@
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
+-(BOOL) isInteger;
 @end
 
 @interface LPIntVariableI : LPVariableI
 -(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver;
 -(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
+-(BOOL) isInteger;
 @end
 
 
@@ -289,7 +291,7 @@
 -(LPOutcome) solve;
 
 -(LPOutcome) status;
--(ORInt) value: (LPIntVariableI*) var;
+-(ORInt)   intValue: (LPIntVariableI*) var;
 -(ORFloat) floatValue: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;

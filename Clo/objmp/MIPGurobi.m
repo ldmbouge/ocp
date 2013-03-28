@@ -9,15 +9,13 @@
  
  ***********************************************************************/
 
-#import "LPGurobi.h"
-#import <objmp/LPType.h>
-#import <objmp/LPSolverI.h>
+#import "MIPGurobi.h"
+#import <objmp/MIPType.h>
+#import <objmp/MIPSolverI.h>
 
+@implementation MIPGurobiSolver;
 
-
-@implementation LPGurobiSolver;
-
--(LPGurobiSolver*) initLPGurobiSolver
+-(MIPGurobiSolver*) initMIPGurobiSolver
 {
    [super init];
    int error = GRBloadenv(&_env, "");
@@ -37,7 +35,7 @@
    [super dealloc];
 }
 
--(void) addVariable: (LPVariableI*) var;
+-(void) addVariable: (MIPVariableI*) var;
 {
    if ([var isInteger]) {
       if ([var hasBounds])
@@ -52,95 +50,93 @@
    GRBupdatemodel(_model);
 }
 
--(void) addConstraint: (LPConstraintI*) cstr
+-(void) addConstraint: (MIPConstraintI*) cstr
 {
    [self postConstraint: cstr];
    GRBupdatemodel(_model);
 }
--(void) delConstraint: (LPConstraintI*) cstr
+-(void) delConstraint: (MIPConstraintI*) cstr
 {
    int todel[] = { [cstr idx] };
    GRBdelconstrs(_model,1,todel);
    GRBupdatemodel(_model);
 }
--(void) delVariable: (LPVariableI*) var
+-(void) delVariable: (MIPVariableI*) var
 {
    int todel[] = { [var idx] };
    GRBdelvars(_model,1,todel);
    GRBupdatemodel(_model);
 }
--(void) addObjective: (LPObjectiveI*) obj
+-(void) addObjective: (MIPObjectiveI*) obj
 {
    int s = [obj size];
    int* idx = [obj col];
    ORFloat* coef = [obj coef];
    _objectiveType = [obj type];
    for(ORInt i = 0; i < s; i++)
-      if (_objectiveType == LPminimize)
+      if (_objectiveType == MIPminimize)
          GRBsetdblattrelement(_model,"Obj",idx[i],coef[i]);
       else
          GRBsetdblattrelement(_model,"Obj",idx[i],-coef[i]);
-}
-
--(void) addColumn: (LPColumnI*) col
-{
-   ORFloat o = [col objCoef];
-   if (_objectiveType == LPmaximize)
-      o = -o;
-   GRBaddvar(_model,[col size],[col cstrIdx],[col coef],o,[col low],[col up],GRB_CONTINUOUS,NULL);
-   GRBupdatemodel(_model);
 }
 
 -(void) close
 {
    
 }
--(LPOutcome) solve
+-(MIPOutcome) solve
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/ldm/lookatgurobi.lp"];
+   [self printModelToFile: "/Users/ldm/lookatgurobi.mip"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
       case GRB_OPTIMAL:
-         _status = LPoptimal;
+         _status = MIPoptimal;
          break;
       case GRB_INFEASIBLE:
-         _status = LPinfeasible;
+         _status = MIPinfeasible;
          break;
       case GRB_SUBOPTIMAL:
-         _status = LPsuboptimal;
+         _status = MIPsuboptimal;
          break;
       case GRB_UNBOUNDED:
-         _status = LPunbounded;
+         _status = MIPunbounded;
          break;
       default:
-         _status = LPerror;
+         _status = MIPerror;
    }
    return _status;
 }
 
--(LPOutcome) status
+-(MIPOutcome) status
 {
    return _status;
 }
 
--(ORFloat) value: (LPVariableI*) var
+-(ORInt) intValue: (MIPIntVariableI*) var
+{
+   ORFloat value;
+   GRBgetdblattrelement(_model,"X",[var idx],&value);
+   return (ORInt) value;
+}
+
+-(ORFloat) floatValue: (MIPVariableI*) var
 {
    ORFloat value;
    GRBgetdblattrelement(_model,"X",[var idx],&value);
    return value;
 }
 
--(ORFloat) lowerBound: (LPVariableI*) var
+-(ORFloat) lowerBound: (MIPVariableI*) var
 {
    ORFloat value;
    GRBgetdblattrelement(_model,"LB",[var idx],&value);
    return value;
 }
 
--(ORFloat) upperBound: (LPVariableI*) var
+-(ORFloat) upperBound: (MIPVariableI*) var
 {
    ORFloat value;
    GRBgetdblattrelement(_model,"UB",[var idx],&value);
@@ -151,49 +147,35 @@
 {
    ORFloat objVal;
    GRBgetdblattr(_model,"ObjVal",&objVal);
-   if (_objectiveType == LPmaximize)
+   if (_objectiveType == MIPmaximize)
       return -objVal;
    else
       return objVal;
 }
 
--(ORFloat) reducedCost: (LPVariableI*) var
-{
-   ORFloat value;
-   GRBgetdblattrelement(_model,"RC",[var idx],&value);
-   return value;
-}
-
--(ORFloat) dual: (LPConstraintI*) cstr
-{
-   ORFloat value;
-   GRBgetdblattrelement(_model,"Pi",[cstr idx],&value);
-   return value;
-}
-
--(void) setBounds: (LPVariableI*) var low: (ORFloat) low up: (ORFloat) up
+-(void) setBounds: (MIPVariableI*) var low: (ORFloat) low up: (ORFloat) up
 {
    GRBsetdblattrelement(_model,"LB",[var idx],low);
    GRBsetdblattrelement(_model,"UB",[var idx],low);
 }
 
--(void) setUnboundUpperBound: (LPVariableI*) var
+-(void) setUnboundUpperBound: (MIPVariableI*) var
 {
    GRBsetdblattrelement(_model,"UB",[var idx],1e21);
 }
 
--(void) setUnboundLowerBound: (LPVariableI*) var
+-(void) setUnboundLowerBound: (MIPVariableI*) var
 {
    GRBsetdblattrelement(_model,"LB",[var idx],-1e21);
 }
 
--(void) updateLowerBound: (LPVariableI*) var lb: (ORFloat) lb
+-(void) updateLowerBound: (MIPVariableI*) var lb: (ORFloat) lb
 {
    if (lb > [self lowerBound: var])
       GRBsetdblattrelement(_model,"LB",[var idx],lb);
 }
 
--(void) updateUpperBound: (LPVariableI*) var ub: (ORFloat) ub
+-(void) updateUpperBound: (MIPVariableI*) var ub: (ORFloat) ub
 {
    if (ub < [self upperBound: var])
       GRBsetdblattrelement(_model,"UB",[var idx],ub);
@@ -214,16 +196,16 @@
    GRBsetstrparam(_env,name,val);
 }
 
--(void) postConstraint: (LPConstraintI*) cstr
+-(void) postConstraint: (MIPConstraintI*) cstr
 {
    switch ([cstr type]) {
-      case LPleq:
+      case MIPleq:
          GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_LESS_EQUAL,[cstr rhs],NULL);
          break;
-      case LPgeq:
+      case MIPgeq:
          GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_GREATER_EQUAL,[cstr rhs],NULL);
          break;
-      case LPeq:
+      case MIPeq:
          GRBaddconstr(_model,[cstr size],[cstr col],[cstr coef],GRB_EQUAL,[cstr rhs],NULL);
          break;
       default:
@@ -237,7 +219,7 @@
    GRBgetintattr(_model,"NumConstrs",&nbConstraints);
    int nbVars;
    GRBgetintattr(_model,"NumVars",&nbVars);
-   printf("LPGurobiSolver with %d variables and %d constraints \n",nbVars,nbConstraints);
+   printf("MIPGurobiSolver with %d variables and %d constraints \n",nbVars,nbConstraints);
 }
 
 -(void) printModelToFile: (char*) fileName

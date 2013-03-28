@@ -32,6 +32,11 @@
 #import "LPSolver.h"
 #import "LPConcretizer.h"
 
+// MIP Solver
+#import "MIPProgram.h"
+#import "MIPSolver.h"
+#import "MIPConcretizer.h"
+
 // PVH to factorize this
 
 @implementation ORFactory (Concretization)
@@ -192,5 +197,28 @@
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
+
++(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
+{
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
+   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener];
+   [flattener apply: model into:batch];
+   [batch release];
+   
+   id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
+   [flatModel visit: concretizer];
+   [concretizer release];
+   //NSLog(@"flat: %@",flatModel);
+}
+
++(id<MIPProgram>) createMIPProgram: (id<ORModel>) model
+{
+   id<MIPProgram> mipprogram = [MIPSolverFactory solver: model];
+   [model setImpl: mipprogram];
+   [self createMIPProgram: model program: mipprogram];
+   return mipprogram;
+}
+
 @end
 
