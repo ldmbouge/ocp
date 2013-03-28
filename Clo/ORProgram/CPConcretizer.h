@@ -89,6 +89,7 @@
 -(void) visitBitIf:(id<ORBitIf>)c engine: (id<CPEngine>) engine;
 //
 -(id) visitIntegerI: (id<ORInteger>) e engine: (id<CPEngine>) engine;
+-(id) visitFloatI: (id<ORFloatNumber>) e engine: (id<CPEngine>) engine;
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMinusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMulI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -192,6 +193,7 @@
 
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
@@ -294,6 +296,7 @@
 -(void) visitBitIf:(id<ORBitIf>)c;
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;

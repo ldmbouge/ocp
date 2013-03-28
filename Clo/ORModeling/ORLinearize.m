@@ -253,6 +253,9 @@
 -(void) visitIntegerI: (id<ORInteger>) e  {
     _exprResult = e;
 }
+-(void) visitFloatI: (id<ORFloatNumber>) e  {
+   _exprResult = e;
+}
 
 -(void) visitExprPlusI: (id<ORExpr>) e  {
     ORExprBinaryI* binExpr = (ORExprBinaryI*)e;

@@ -178,12 +178,12 @@
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
    if ([obj dereference] == NULL) {
-      id<ORIntVarArray> x = [obj array];
-      id<ORIntArray> a = [obj coef];
+      id<ORVarArray> x = [obj array];
+      id<ORFloatArray> a = [obj coef];
       [x visit: self];
       id<LPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       LPObjectiveI* concreteObj = [_lpsolver createObjectiveMinimize: dx coef: da];
       [obj setImpl: concreteObj];
       [_lpsolver postObjective: concreteObj];
@@ -254,7 +254,14 @@
       [e setImpl: n];
    }
 }
-
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   if ([e dereference] == NULL) {
+      id<ORFloatNumber> n = [ORFactory float: _lpsolver value: [e value]];
+      [n makeImpl];
+      [e setImpl: n];
+   }
+}
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];

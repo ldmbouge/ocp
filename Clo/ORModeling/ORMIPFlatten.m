@@ -13,6 +13,7 @@
 #import "ORModelI.h"
 #import "ORDecompose.h"
 #import "ORMIPDecompose.h"
+#import "ORFloatLinear.h"
 
 @interface ORMIPNOopVisit : NSObject<ORVisitor>
 @end
@@ -117,6 +118,7 @@
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
+-(void) visitFloatI: (id<ORFloatNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}
@@ -259,9 +261,9 @@
    [c visit:fc];
    [fc release];
 }
-+(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(void) flattenExpression:(id<ORExpr>) expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORLinear* terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
+   ORFloatLinear* terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
@@ -607,13 +609,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORLinear* terms = [ORMIPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
+   ORFloatLinear* terms = [ORMIPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
    id<ORObjectiveFunction> objective = [_theModel minimize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
    [v setImpl: objective];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORLinear* terms = [ORMIPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
+   ORFloatLinear* terms = [ORMIPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
    id<ORObjectiveFunction> objective = [_theModel maximize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
    [v setImpl: objective];
 }

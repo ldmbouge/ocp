@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c)  2012 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -17,13 +17,13 @@
 
 
 @implementation NSNumber (Expressions)
--(id<ORExpr>)asExpression:(id<ORTracker>)tracker
+-(id<ORExpr>) asExpression:(id<ORTracker>) tracker
 {
    const char* tt = [self objCType];
    if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
       return [ORFactory integer:tracker value:[self intValue]];
-   else if (strcmp(tt,@encode(ORFloat))==0 || strcmp(tt,@encode(double))==0)
-      return [ORFactory integer:tracker value:[self intValue]];  // should really be double
+   else if (strcmp(tt,@encode(float))==0 || strcmp(tt,@encode(double))==0)
+      return [ORFactory float:tracker value:[self floatValue]];  
    else if (strcmp(tt,@encode(BOOL))==0 || strcmp(tt,@encode(bool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else {
@@ -31,39 +31,39 @@
    }
    return NULL;
 }
--(id<ORExpr>)mul:(id<ORExpr>)r
+-(id<ORExpr>) mul: (id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] mul:r];
 }
--(id<ORExpr>)plus:(id<ORExpr>)r
+-(id<ORExpr>)  plus: (id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] plus:r];
 }
--(id<ORExpr>)sub:(id<ORExpr>)r
+-(id<ORExpr>)  sub:(id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] sub:r];
 }
--(id<ORExpr>)div:(id<ORExpr>)r
+-(id<ORExpr>)  div:(id<ORExpr>)  r
 {
    return [[self asExpression:[r tracker]] div:r];
 }
--(id<ORExpr>) mod: (id<ORExpr>) e
+-(id<ORExpr>)   mod: (id<ORExpr>)   e
 {
    return [[self asExpression:[e tracker]] mod:e];
 }
--(id<ORRelation>) eq: (id<ORExpr>) e
+-(id<ORRelation>)   eq: (id<ORExpr>)   e
 {
    return [[self asExpression:[e tracker]] eq:e];
 }
--(id<ORRelation>) neq: (id<ORExpr>) e
+-(id<ORRelation>)   neq: (id<ORExpr>)   e
 {
    return [[self asExpression:[e tracker]] neq:e];
 }
--(id<ORRelation>) leq: (id<ORExpr>) e
+-(id<ORRelation>)   leq: (id<ORExpr>)   e
 {
    return [[self asExpression:[e tracker]] leq:e];
 }
--(id<ORRelation>) geq: (id<ORExpr>) e
+-(id<ORRelation>)   geq: (id<ORExpr>)   e
 {
    return [[self asExpression:[e tracker]] geq:e];
 }
@@ -84,10 +84,22 @@
 }
 -(ORInt) min
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "min not defined on expression"];
    return 0;
 }
 -(ORInt) max
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "max not defined on expression"];
+   return 0;
+}
+-(ORInt) intValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "intvalue not defined on expression"];
+   return 0;
+}
+-(ORFloat) floatValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
    return 0;
 }
 -(BOOL) isConstant

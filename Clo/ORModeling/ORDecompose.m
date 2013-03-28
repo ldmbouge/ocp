@@ -110,6 +110,7 @@ struct CPVarPair {
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitFloatI: (id<ORFloatNumber>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
@@ -177,6 +178,11 @@ struct CPVarPair {
    } else
       [_terms addIndependent:[e value]];
 }
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a FloatNumber"];
+}
+
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    if (_eqto) {
@@ -397,6 +403,10 @@ struct CPVarPair {
    if (!_rv)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
    [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a FloatNumber"];   
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

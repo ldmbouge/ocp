@@ -181,12 +181,12 @@
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
    if ([obj dereference] == NULL) {
-      id<ORIntVarArray> x = [obj array];
-      id<ORIntArray> a = [obj coef];
+      id<ORVarArray> x = [obj array];
+      id<ORFloatArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: da];
       [obj setImpl: concreteObj];
       [_MIPsolver postObjective: concreteObj];
@@ -195,12 +195,12 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
    if ([obj dereference] == NULL) {
-      id<ORIntVarArray> x = [obj array];
-      id<ORIntArray> a = [obj coef];
+      id<ORVarArray> x = [obj array];
+      id<ORFloatArray> a = [obj coef];
       [x visit: self];
       id<MIPVariableArray> dx = [x dereference];
       [a visit: self];
-      id<ORIntArray> da = [a dereference];
+      id<ORFloatArray> da = [a dereference];
       MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: da];
       [obj setImpl: concreteObj];
       [_MIPsolver postObjective: concreteObj];
@@ -277,6 +277,14 @@
 {
    if ([e dereference] == NULL) {
       id<ORInteger> n = [ORFactory integer: _MIPsolver value: [e value]];
+      [n makeImpl];
+      [e setImpl: n];
+   }
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   if ([e dereference] == NULL) {
+      id<ORFloatNumber> n = [ORFactory float: _MIPsolver value: [e value]];
       [n makeImpl];
       [e setImpl: n];
    }

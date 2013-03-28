@@ -116,6 +116,7 @@
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
+-(void) visitFloatI: (id<ORFloatNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}

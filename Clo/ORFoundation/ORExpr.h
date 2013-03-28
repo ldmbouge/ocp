@@ -36,6 +36,8 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORTracker>) tracker;
 -(ORInt) min;
 -(ORInt) max;
+-(ORFloat) floatValue;
+-(ORInt) intValue;
 -(BOOL) isConstant;
 -(BOOL) isVariable;
 -(id<ORExpr>) abs;

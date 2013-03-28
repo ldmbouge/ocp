@@ -893,7 +893,7 @@
    [o setNb: _createdObjs++];
    return o;
 }
--(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef
+-(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef
 {
    MIPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];
@@ -902,7 +902,7 @@
       [t add: [coef at: i] times: var[i]];
    return [self createMinimize: t];
 }
--(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef
+-(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef
 {
    MIPLinearTermI* t = [self createLinearTerm];
    ORInt low = [var low];

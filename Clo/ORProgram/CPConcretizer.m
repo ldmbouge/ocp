@@ -906,6 +906,14 @@
       [e setImpl: n];
    }
 }
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   if ([e dereference] == NULL) {
+      id<ORFloatNumber> n = [ORFactory float: _engine value: [e value]];
+      [n makeImpl];
+      [e setImpl: n];
+   }
+}
 -(void) visitExprPlusI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   

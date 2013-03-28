@@ -87,6 +87,7 @@
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitFloatVar:(id<ORFloatVar>)e    {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitFloatI: (id<ORFloatNumber>) e {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
@@ -131,6 +132,10 @@
 {
    [_terms addIndependent:[e value]];
 }
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   [_terms addIndependent:[e value]];
+}
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    [[e left] visit:self];
@@ -150,9 +155,9 @@
    BOOL cv = [[e left] isConstant] && [[e right] isVariable];
    BOOL vc = [[e left] isVariable] && [[e right] isConstant];
    if (cv || vc) {
-      ORInt coef = cv ? [[e left] min] : [[e right] min];
+      ORFloat coef = cv ? [[e left] floatValue] : [[e right] floatValue];
       id       x = cv ? [e right] : [e left];
-      [_terms addTerm:x by:coef];
+      [_terms addTerm: x by: coef];
    }
    else {
       assert(false);
@@ -160,12 +165,11 @@
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
-   // TODO:ldm
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for div"];  
 }
-
 -(void) visitExprModI: (ORExprModI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for mod"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
