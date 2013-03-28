@@ -17,39 +17,63 @@
 
 
 @implementation NSNumber (Expressions)
--(id<ORExpr>)asIntExpression:(id<ORTracker>)tracker
-{
-   const char* tt = [self objCType];
-   const char* eit = @encode(ORInt);
-   if (strcmp(tt,eit)==0)
-      return [ORFactory integer:tracker value:[self intValue]];
-   else return NULL;
-}
--(id<ORExpr>)asFloatExpression:(id<ORTracker>)tracker
-{
-   const char* tt = [self objCType];
-   const char* eit = @encode(ORInt);
-   if (strcmp(tt,eit)==0)
-      return [ORFactory integer:tracker value:[self intValue]];
-   else return NULL;
-}
 -(id<ORExpr>)asExpression:(id<ORTracker>)tracker
 {
    const char* tt = [self objCType];
-   const char* eit = @encode(ORInt);
-   const char* eft = @encode(ORFloat);
-   const char* ebt = @encode(BOOL);
-   if (strcmp(tt,eit)==0)
+   if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
       return [ORFactory integer:tracker value:[self intValue]];
-   else if (strcmp(tt,eft)==0)
+   else if (strcmp(tt,@encode(ORFloat))==0 || strcmp(tt,@encode(double))==0)
       return [ORFactory integer:tracker value:[self intValue]];  // should really be double
-   else if (strcmp(tt,ebt)==0)
+   else if (strcmp(tt,@encode(BOOL))==0 || strcmp(tt,@encode(bool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
-   else return NULL;
+   else {
+      assert(NO);
+   }
+   return NULL;
 }
 -(id<ORExpr>)mul:(id<ORExpr>)r
 {
    return [[self asExpression:[r tracker]] mul:r];
+}
+-(id<ORExpr>)plus:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] plus:r];
+}
+-(id<ORExpr>)sub:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] sub:r];
+}
+-(id<ORExpr>)div:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] div:r];
+}
+-(id<ORExpr>) mod: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] mod:e];
+}
+-(id<ORRelation>) eq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] eq:e];
+}
+-(id<ORRelation>) neq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] neq:e];
+}
+-(id<ORRelation>) leq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] leq:e];
+}
+-(id<ORRelation>) geq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] geq:e];
+}
+-(id<ORRelation>) lt: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] lt:e];
+}
+-(id<ORRelation>) gt: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] gt:e];
 }
 @end
 

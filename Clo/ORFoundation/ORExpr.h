@@ -66,8 +66,16 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 
 @interface NSNumber (Expressions)
 -(id<ORExpr>)asExpression:(id<ORTracker>)tracker;
--(id<ORExpr>)asIntExpression:(id<ORTracker>)tracker;
--(id<ORExpr>)asFloatExpression:(id<ORTracker>)tracker;
--(id<ORExpr>)mul:(id<ORExpr>)r;
+-(id<ORExpr>) plus: (id<ORExpr>) e;
+-(id<ORExpr>) sub: (id<ORExpr>) e;
+-(id<ORExpr>) mul: (id<ORExpr>) e;
+-(id<ORExpr>) div: (id<ORExpr>) e;
+-(id<ORExpr>) mod: (id<ORExpr>) e;
+-(id<ORRelation>) eq: (id<ORExpr>) e;
+-(id<ORRelation>) neq: (id<ORExpr>) e;
+-(id<ORRelation>) leq: (id<ORExpr>) e;
+-(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORRelation>) lt: (id<ORExpr>) e;
+-(id<ORRelation>) gt: (id<ORExpr>) e;
 @end
 
