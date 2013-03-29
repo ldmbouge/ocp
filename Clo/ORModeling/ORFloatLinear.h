@@ -49,8 +49,8 @@
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
 -(ORInt) size;
--(void)  postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
--(void)  postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+-(id<ORConstraint>)  postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
+-(id<ORConstraint>)  postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 -(void)  postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 -(void)  postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 @end

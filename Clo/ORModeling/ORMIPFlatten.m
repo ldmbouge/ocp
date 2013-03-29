@@ -343,249 +343,221 @@
 }
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   id<ORIntVarArray> item = [cstr item];
-   id<ORIntVarArray> binSize = [cstr binSize];
-   id<ORIntArray>    itemSize = [cstr itemSize];
-   id<ORIntRange> BR = [binSize range];
-   id<ORIntRange> IR = [item range];
-   id<ORTracker> tracker = [item tracker];
-   ORInt brlow = [BR low];
-   ORInt brup = [BR up];
-   for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORMIPFlatten flattenExpression: [Sum(tracker,i,IR,mult(@([itemSize at:i]),[item[i] eq: @(b)])) eq: binSize[b]]
-                                into: _theModel
-                          annotation: DomainConsistency];
-   ORInt s = 0;
-   ORInt irlow = [IR low];
-   ORInt irup = [IR up];
-   for(ORInt i = irlow; i <= irup; i++)
-      s += [itemSize at:i];
-   [ORMIPFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eq: @(s)]
-                             into: _theModel
-                       annotation: DomainConsistency];
-   
-   for(ORInt b = brlow; b <= brup; b++)
-      [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitGroup:(id<ORGroup>)g
 {
-   id<ORGroup> ng = [ORFactory group:_theModel type:[g type]];
-   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_theModel group:ng];
-   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
-      [ORMIPFlatten flatten:ck into:a2g];
-   }];
-   [_theModel addConstraint:ng];
-   [a2g release];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORMIPFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitAffine: (id<ORAffine>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitPlus: (id<ORPlus>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitMult: (id<ORMult>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSquare:(id<ORSquare>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitMod: (id<ORMod>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitModc: (id<ORModc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitOr: (id<OROr>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitImply: (id<ORImply>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitCircuit:(id<ORCircuit>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitNoCycle:(id<ORNoCycle>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSumEqualc:(id<ORSumEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitOr:(id<ORBitOr>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitAnd:(id<ORBitAnd>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitNot:(id<ORBitNot>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitXor:(id<ORBitXor>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 @end
 
@@ -620,12 +592,10 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   assert(FALSE);
-   //   [_theModel minimize:[v var]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   assert(FALSE);
-   //   [_theModel maximize:[v var]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
 @end

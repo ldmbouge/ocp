@@ -164,12 +164,13 @@
 {
    [self trackObject:object];
 }
--(void) addConstraint:(id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr
 {
    [self trackConstraint:cstr];
    [self add: cstr];
    if (_cc)
       [_ccSet addObject:cstr];
+   return cstr;
 }
 -(void) compiling:(id<ORConstraint>)cstr
 {
@@ -384,13 +385,14 @@
 {
    [_target trackObject: object];
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [_target trackConstraint:cstr];
    [_target add: cstr];
    if (_cc) {
       [_ccSet addObject: cstr];
    }
+   return cstr;
 }
 -(id<ORModel>) model
 {
@@ -470,9 +472,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    [_target addObject:object];
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [_theGroup add:cstr];
+   return cstr;
 }
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {

@@ -16,6 +16,7 @@
 @interface LPSolver : NSObject<LPProgram>
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
 -(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORFloatVar>) x;
 @end
 
 // LPSolverFactory

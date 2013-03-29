@@ -39,7 +39,9 @@ int main_lp(int argc, const char * argv[])
    id<ORSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbRows; i++)
-      printf("dual x[%d] = %f \n",i,[lp dual: ca[i]]);
+      printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
+   for(ORInt i = 0; i < nbColumns; i++)
+      printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
    NSLog(@"we are done");
    return 0;
 }

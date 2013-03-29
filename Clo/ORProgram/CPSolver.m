@@ -704,7 +704,7 @@
 -(ORRTModel*) init:(CPSolver*) solver;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject: (id) object;
--(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
 -(void) trackObject: (id) obj;
@@ -739,11 +739,12 @@
 {
    [_solver trackObject: object];
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
+   return cstr;
 }
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
 {

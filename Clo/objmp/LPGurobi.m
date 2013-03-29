@@ -52,10 +52,11 @@
    GRBupdatemodel(_model);
 }
 
--(void) addConstraint: (LPConstraintI*) cstr
+-(LPConstraintI*) addConstraint: (LPConstraintI*) cstr
 {
    [self postConstraint: cstr];
    GRBupdatemodel(_model);
+   return cstr;
 }
 -(void) delConstraint: (LPConstraintI*) cstr
 {

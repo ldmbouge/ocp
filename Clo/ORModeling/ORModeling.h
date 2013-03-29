@@ -56,7 +56,7 @@
 @protocol ORAddToModel <ORTracker>
 -(void) addVariable:(id<ORVar>) var;
 -(void )addObject:(id) object;
--(void) addConstraint:(id<ORConstraint>) cstr;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x;

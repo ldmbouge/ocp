@@ -790,7 +790,7 @@
 {
    return [[MIPLinearTermI alloc] initMIPLinearTermI: self];
 }
--(void) addConstraint: (MIPConstraintI*) cstr
+-(MIPConstraintI*) addConstraint: (MIPConstraintI*) cstr
 {
    if (_nbCstrs == _maxCstrs) {
       MIPConstraintI** ncstr = (MIPConstraintI**) malloc(2 * _maxCstrs * sizeof(MIPConstraintI*));
@@ -807,7 +807,7 @@
    ORFloat* coef = [cstr coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addConstraint: cstr coef: coef[i]];
-   
+   return cstr;
 }
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {

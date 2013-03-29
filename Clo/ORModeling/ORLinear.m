@@ -218,9 +218,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       }break;
       case 2: {
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            return [model addConstraint:[ORFactory notEqual:model var:_terms[0]._var to:_terms[1]._var plus:-_indep]];
+            [model addConstraint:[ORFactory notEqual:model var:_terms[0]._var to:_terms[1]._var plus:-_indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
-            return [model addConstraint:[ORFactory notEqual:model var:_terms[1]._var to:_terms[0]._var plus:-_indep]];
+            [model addConstraint:[ORFactory notEqual:model var:_terms[1]._var to:_terms[0]._var plus:-_indep]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
@@ -247,9 +247,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          return;
       case 1: {
          if (_terms[0]._coef == 1) {
-            return [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
+            [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
          } else if (_terms[0]._coef == -1) {
-            return [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:_indep]];
+            [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:_indep]];
          } else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
@@ -302,9 +302,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       case 0: assert(FALSE);return;
       case 1: {  // x <= c
          if (_terms[0]._coef == 1)
-            return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
+            [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
          else if (_terms[0]._coef == -1)
-            return [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
+            [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
          else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
@@ -317,9 +317,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       }break;
       case 2: {  // x <= y
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            return [model addConstraint:[ORFactory lEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+            [model addConstraint:[ORFactory lEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
-            return [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
+            [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];

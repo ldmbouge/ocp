@@ -36,7 +36,7 @@
 -(id) copyWithZone:(NSZone*)zone;
 -(void) addVariable:(id<ORVar>) var;
 -(void) addObject:(id) object;
--(void) addConstraint:(id<ORConstraint>) cstr;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
@@ -54,7 +54,7 @@
 -(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
--(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
@@ -72,9 +72,7 @@
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
--(void) addConstraint: (id<ORConstraint>) cstr;
-//-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
-//-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
@@ -109,7 +107,7 @@
     NSMutableSet* _all;
 }
 -(id)init;
--(void)addConstraint:(id<ORConstraint>)c;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
 -(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

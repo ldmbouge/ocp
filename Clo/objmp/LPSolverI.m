@@ -980,7 +980,7 @@
 {
    return [[LPLinearTermI alloc] initLPLinearTermI: self];
 }
--(void) addConstraint: (LPConstraintI*) cstr
+-(LPConstraintI*) addConstraint: (LPConstraintI*) cstr
 {
    if (_nbCstrs == _maxCstrs) {
       LPConstraintI** ncstr = (LPConstraintI**) malloc(2 * _maxCstrs * sizeof(LPConstraintI*));
@@ -997,6 +997,7 @@
    ORFloat* coef = [cstr coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addConstraint: cstr coef: coef[i]];
+   return cstr;
    
 }
 -(LPConstraintI*) createLEQ: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs

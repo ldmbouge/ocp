@@ -241,8 +241,6 @@
    } onConstraints:^(id<ORConstraint> c) {
       [batch compiling:c];
       [ORLPFlatten flatten:c into:batch];
-//      NSSet* map = [batch compiledMap];
-//      NSLog(@"Got a Map %@",map);
    } onObjective:^(id<ORObjectiveFunction> o) {
       if (o) {
          ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:batch];
@@ -252,21 +250,22 @@
    }];
 }
 
-+(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
++(void) flatten: (id<ORConstraint>) c into: (id<ORAddToModel>)m
 {
    ORLPFlattenConstraint* fc = [[ORLPFlattenConstraint alloc] init:m];
    [c visit:fc];
    [fc release];
 }
-+(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    ORFloatLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
+   id<ORConstraint> cstr = NULL;
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
       case ORREq:
          {
-            [terms postLinearEq: model annotation: note];
+            cstr = [terms postLinearEq: model annotation: note];
          }
          break;
       case ORRNEq:
@@ -276,7 +275,7 @@
          break;
       case ORRLEq:
          {
-           [terms postLinearLeq: model annotation: note];
+           cstr = [terms postLinearLeq: model annotation: note];
          }
          break;
       default:
@@ -284,6 +283,7 @@
          break;
    }
    [terms release];
+   return cstr;
 }
 @end
 
@@ -309,7 +309,7 @@
 }
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
-   [_theModel addObject:v];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
@@ -342,249 +342,224 @@
 }
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
+
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
+
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   id<ORIntVarArray> item = [cstr item];
-   id<ORIntVarArray> binSize = [cstr binSize];
-   id<ORIntArray>    itemSize = [cstr itemSize];
-   id<ORIntRange> BR = [binSize range];
-   id<ORIntRange> IR = [item range];
-   id<ORTracker> tracker = [item tracker];
-   ORInt brlow = [BR low];
-   ORInt brup = [BR up];
-   for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORLPFlatten flattenExpression: [Sum(tracker,i,IR,mult(@([itemSize at:i]),[item[i] eq: @(b)])) eq: binSize[b]]
-                              into: _theModel
-                        annotation: DomainConsistency];
-   ORInt s = 0;
-   ORInt irlow = [IR low];
-   ORInt irup = [IR up];
-   for(ORInt i = irlow; i <= irup; i++)
-      s += [itemSize at:i];
-   [ORLPFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eq: @(s)]
-                           into: _theModel
-                     annotation: DomainConsistency];
-   
-   for(ORInt b = brlow; b <= brup; b++)
-      [_theModel addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitGroup:(id<ORGroup>)g
 {
-   id<ORGroup> ng = [ORFactory group:_theModel type:[g type]];
-   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_theModel group:ng];
-   [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
-      [ORLPFlatten flatten:ck into:a2g];
-   }];
-   [_theModel addConstraint:ng];
-   [a2g release];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORLPFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
+   id<ORConstraint> impl = [ORLPFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
+   [cstr setImpl: impl];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   [_theModel addConstraint:cstr];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitEqualc: (id<OREqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitEqual: (id<OREqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitAffine: (id<ORAffine>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitNEqual: (id<ORNEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitLEqual: (id<ORLEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitPlus: (id<ORPlus>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitMult: (id<ORMult>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSquare:(id<ORSquare>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitMod: (id<ORMod>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitModc: (id<ORModc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitAbs: (id<ORAbs>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitOr: (id<OROr>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitAnd:( id<ORAnd>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitImply: (id<ORImply>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitElementCst: (id<ORElementCst>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitCircuit:(id<ORCircuit>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitNoCycle:(id<ORNoCycle>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitLexLeq:(id<ORLexLeq>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSumEqualc:(id<ORSumEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitOr:(id<ORBitOr>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitAnd:(id<ORBitAnd>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitNot:(id<ORBitNot>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitXor:(id<ORBitXor>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
-   [_theModel addConstraint:c];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 @end
 
@@ -619,12 +594,10 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   assert(FALSE);
-   //   [_theModel minimize:[v var]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
-   assert(FALSE);
-   //   [_theModel maximize:[v var]];
+   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in LP"];
 }
 @end

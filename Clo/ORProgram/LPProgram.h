@@ -19,5 +19,6 @@
 -(LPSolverI*) solver;
 -(void) solve;
 -(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORFloatVar>) v;
 @end
 

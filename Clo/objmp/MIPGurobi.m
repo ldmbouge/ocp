@@ -50,10 +50,11 @@
    GRBupdatemodel(_model);
 }
 
--(void) addConstraint: (MIPConstraintI*) cstr
+-(MIPConstraintI*) addConstraint: (MIPConstraintI*) cstr
 {
    [self postConstraint: cstr];
    GRBupdatemodel(_model);
+   return cstr;
 }
 -(void) delConstraint: (MIPConstraintI*) cstr
 {
