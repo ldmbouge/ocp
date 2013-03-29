@@ -23,7 +23,7 @@ float coef[7][12] = {
    {  0,   0,  40, 70,   4,  63,   0,  0, 60,   0, 4, 0},
    {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
 
-int main1(int argc, const char * argv[])
+int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
@@ -38,11 +38,13 @@ int main1(int argc, const char * argv[])
 //   NSLog(@"Objective value: %@",[[model objective] value]);
    id<ORSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
+   for(ORInt i = 0; i < nbRows; i++)
+      printf("dual x[%d] = %f \n",i,[lp dual: ca[i]]);
    NSLog(@"we are done");
    return 0;
 }
 
-int main2(int argc, const char * argv[])
+int main_mip(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
@@ -64,5 +66,5 @@ int main2(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main2(argc,argv);
+   return main_lp(argc,argv);
 }

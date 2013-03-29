@@ -18,6 +18,6 @@
 @protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
 -(void) solve;
--(ORFloat)dual:(id<ORConstraint>)c;
+-(ORFloat) dual: (id<ORConstraint>) c;
 @end
 

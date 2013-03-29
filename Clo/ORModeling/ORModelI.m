@@ -389,7 +389,7 @@
    [_target trackConstraint:cstr];
    [_target add: cstr];
    if (_cc) {
-      [_ccSet addObject:cstr];
+      [_ccSet addObject: cstr];
    }
 }
 -(id<ORModel>) model

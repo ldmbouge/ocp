@@ -53,16 +53,17 @@
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
-   ORFloat rv;
-   @autoreleasepool {
-      NSDictionary* cMap = [_model cMap];
-      NSSet* cSet = [cMap objectForKey:@([c getId])];
-      assert([cSet count] == 1);
-      for(LPConstraintI* c in cSet) {
-         rv = [[c dereference] dual];
-      }
-   }
-   return rv;
+//   ORFloat rv;
+//   @autoreleasepool {
+//      NSDictionary* cMap = [_model cMap];
+//      NSSet* cSet = [cMap objectForKey:@([c getId])];
+//      assert([cSet count] == 1);
+//      for(LPConstraintI* c in cSet) {
+//         rv = [[c dereference] dual];
+//      }
+//   }
+//   return rv;
+   return [_lpsolver dual: [c dereference]];
 }
 -(void) trackObject: (id) obj
 {
