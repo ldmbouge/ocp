@@ -53,13 +53,6 @@
 -(BOOL) isInteger;
 @end
 
-@interface LPIntVariableI : LPVariableI
--(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver;
--(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(BOOL) isInteger;
-@end
-
-
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;
 -(void) set: (LPVariableI*) x at: (ORInt) value;
@@ -252,9 +245,7 @@
 
 +(LPSolverI*)      create;
 -(LPVariableI*)    createVariable;
--(LPIntVariableI*) createVariable: (ORFloat) low up: (ORFloat) up;
--(LPIntVariableI*) createIntVariable;
--(LPVariableI*)    createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(LPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
 -(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
 -(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up;
 -(LPColumnI*)      createColumn;

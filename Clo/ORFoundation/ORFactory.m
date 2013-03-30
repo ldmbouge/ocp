@@ -324,6 +324,10 @@
 {
    return [[ORFloatVarI alloc]  initORFloatVarI: tracker low: low up: up];
 }
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker
+{
+   return [[ORFloatVarI alloc]  initORFloatVarI: tracker];
+}
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen
 {
    return [[ORBitVarI alloc] initORBitVarI:tracker low:low up:up bitLength:bLen];
@@ -338,6 +342,13 @@
    id<ORIdArray> o = [ORFactory idArray:tracker range:range];
    for(ORInt k=range.low;k <= range.up;k++)
       [o set:[ORFactory floatVar:tracker low:low up:up] at:k];
+   return (id<ORFloatVarArray>)o;
+}
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range 
+{
+   id<ORIdArray> o = [ORFactory idArray:tracker range:range];
+   for(ORInt k=range.low;k <= range.up;k++)
+      [o set:[ORFactory floatVar:tracker] at:k];
    return (id<ORFloatVarArray>)o;
 }
 

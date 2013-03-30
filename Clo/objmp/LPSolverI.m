@@ -584,24 +584,6 @@
 }
 @end
 
-
-@implementation LPIntVariableI
--(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
-{
-   [super initLPVariableI: solver low: low up: up];
-   return self;
-}
--(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver
-{
-   [super initLPVariableI: solver];
-   return self;
-}
--(BOOL) isInteger
-{
-   return true;
-}
-@end
-
 @implementation LPColumnI
 
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver
@@ -941,22 +923,6 @@
 -(LPVariableI*) createVariable
 {
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self];
-   [v setNb: _createdVars++];
-   [self addVariable: v];
-   [self trackVariable: v];
-   return v;
-}
--(LPVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
-{
-   LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self low: low up: up];
-   [v setNb: _createdVars++];
-   [self addVariable: v];
-   [self trackVariable: v];
-   return v;
-}
--(LPIntVariableI*) createIntVariable
-{
-   LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self];
    [v setNb: _createdVars++];
    [self addVariable: v];
    [self trackVariable: v];

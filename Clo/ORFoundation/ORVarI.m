@@ -564,6 +564,18 @@
 {
    [v visitFloatVar: self];
 }
+-(BOOL) hasBounds
+{
+   return _hasBounds;
+}
+-(ORFloat) low
+{
+   return _low;
+}
+-(ORFloat) up
+{
+   return _up;
+}
 @end
 
 @implementation ORBitVarI {

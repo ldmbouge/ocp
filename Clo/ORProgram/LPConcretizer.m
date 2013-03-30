@@ -75,7 +75,11 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if ([v dereference] == NULL) {
-      LPVariableI* cv = [_lpsolver createVariable];
+      LPVariableI* cv;
+      if ([v hasBounds])
+         cv = [_lpsolver createVariable: [v low] up: [v up]];
+      else
+         cv = [_lpsolver createVariable];
       [v setImpl: cv];
    }
 }

@@ -63,6 +63,9 @@
 @end
 
 @protocol ORFloatVar <ORVar>
+-(BOOL) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
 -(ORFloat) value;
 -(ORFloat) floatValue;
 -(ORFloat) min;

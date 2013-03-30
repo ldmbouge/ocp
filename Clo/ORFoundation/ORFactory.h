@@ -75,9 +75,11 @@
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
 +(id<ORIntVar>) boolVar: (id<ORTracker>) solver;
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen;
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
++(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker;
 
 +(id<ORVarArray>) varArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with: (id<ORVar>(^)(ORInt)) clo;
-+(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
+
 
 +(id<ORBindingArray>) bindingArray: (id<ORTracker>) tracker nb: (ORInt) nb;
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range domain: (id<ORIntRange>) domain;
@@ -95,6 +97,7 @@
 +(id<ORIntVarArray>) flattenMatrix:(id<ORIntVarMatrix>)m;
 
 +(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range low:(ORFloat)low up:(ORFloat)up;
++(id<ORFloatVarArray>) floatVarArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
 +(id<ORTrailableIntArray>) trailableIntArray: (id<ORSearchEngine>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
 +(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) solver value: (ORInt) value;

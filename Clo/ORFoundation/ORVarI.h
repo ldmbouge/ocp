@@ -63,14 +63,17 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker;
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker up: (ORFloat) up;
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
+-(BOOL) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
 -(ORFloat) value;
 -(ORFloat) floatValue;
 -(ORFloat) min;
 -(ORFloat) max;
 -(NSSet*) constraints;
 -(void) visit: (id<ORVisitor>)v;
--(void)encodeWithCoder:(NSCoder *)aCoder;
--(id)initWithCoder:(NSCoder *)aDecoder;
+-(void) encodeWithCoder:(NSCoder *)aCoder;
+-(id) initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORBitVarI : ORExprI<ORBitVar>

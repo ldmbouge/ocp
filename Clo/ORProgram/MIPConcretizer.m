@@ -77,8 +77,14 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if ([v dereference] == NULL) {
-      MIPVariableI* cv = [_MIPsolver createVariable];
-      [v setImpl: cv];
+      if ([v dereference] == NULL) {
+         MIPVariableI* cv;
+         if ([v hasBounds])
+            cv = [_MIPsolver createVariable: [v low] up: [v up]];
+         else
+            cv = [_MIPsolver createVariable];
+         [v setImpl: cv];
+      }
    }
 }
 
