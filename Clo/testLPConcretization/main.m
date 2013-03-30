@@ -57,6 +57,7 @@ int main_lp(int argc, const char * argv[])
    sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    NSLog(@"we are done (Part II)");
+   [lp release];
    return 0;
 }
 

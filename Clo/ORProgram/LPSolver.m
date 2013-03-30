@@ -63,6 +63,7 @@
 }
 -(void) dealloc
 {
+   NSLog(@"LPSolver dealloc");
    [_lpsolver release];
    [_sPool release];
    [super dealloc];
@@ -89,13 +90,16 @@
 -(id<LPColumn>) createColumn
 {
    LPColumnI* col = [_lpsolver createColumn];
-   return [[LPColumn alloc] initLPColumn: self with: col];
+   id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
+   [self trackObject: o];
+   return o;
 }
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
 {
-   // PVH to fix these bounds
    LPColumnI* col = [_lpsolver createColumn: low up: up];
-   return [[LPColumn alloc] initLPColumn: self with: col];
+   id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
+   [self trackObject: o];
+   return o;
 }
 
 -(void) addColumn: (LPColumn*) column
