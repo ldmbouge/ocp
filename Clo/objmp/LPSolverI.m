@@ -46,7 +46,6 @@
 
 -(void) dealloc
 {
-   NSLog(@"dealloc LPConstraintI");
    free(_var);
    if (_col)
       free(_col);
@@ -281,7 +280,6 @@
 
 -(void) dealloc
 {
-   NSLog(@"dealloc LPObjectiveI");
    if (_col)
       free(_col);
    free(_var);
@@ -470,7 +468,6 @@
 }
 -(void) dealloc
 {
-   NSLog(@"dealloc LPVariableI");
    free(_cstr);
    if (_cstrIdx)
       free(_cstrIdx);
@@ -669,7 +666,6 @@
 
 -(void) dealloc
 {
-   NSLog(@"dealloc LPColumnI");
    if (_cstrIdx)
       free(_cstrIdx);
    free(_cstr);
@@ -810,7 +806,6 @@
 }
 -(void) dealloc
 {
-   NSLog(@"dealloc LPLinearTermI");
    free(_var);
    free(_coef);
    [super dealloc];
@@ -924,7 +919,6 @@
 }
 -(void) dealloc
 {
-   NSLog(@"dealloc LPSolverI");
    free(_var);
    free(_cstr);
    [_oStore release];
@@ -949,7 +943,7 @@
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self];
    [v setNb: _createdVars++];
    [self addVariable: v];
-    [self trackVariable: v];
+   [self trackVariable: v];
    return v;
 }
 -(LPVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
@@ -1364,7 +1358,6 @@
 
 -(void) trackVariable: (id) var
 {
-   NSLog(@"Track Variable");
    [_oStore addObject: var];
    [var release];
 }

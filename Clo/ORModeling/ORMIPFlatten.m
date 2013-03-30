@@ -260,15 +260,16 @@
    [c visit:fc];
    [fc release];
 }
-+(void) flattenExpression:(id<ORExpr>) expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>) expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    ORFloatLinear* terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
+   id<ORConstraint> cstr = NULL;
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
       case ORREq:
       {
-         [terms postLinearEq: model annotation: note];
+         cstr = [terms postLinearEq: model annotation: note];
       }
          break;
       case ORRNEq:
@@ -278,7 +279,7 @@
          break;
       case ORRLEq:
       {
-         [terms postLinearLeq: model annotation: note];
+         cstr = [terms postLinearLeq: model annotation: note];
       }
          break;
       default:
@@ -286,6 +287,7 @@
          break;
    }
    [terms release];
+   return cstr;
 }
 @end
 
@@ -369,9 +371,11 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
 }
--(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
+-(id<ORConstraint>) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Cannot flatten in MIP yet"];
+   id<ORConstraint> impl = [ORMIPFlatten flattenExpression: [cstr expr] into:_theModel annotation:[cstr annotation]];
+   [cstr setImpl: impl];
+   return cstr;
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

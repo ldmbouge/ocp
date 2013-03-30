@@ -263,7 +263,7 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {

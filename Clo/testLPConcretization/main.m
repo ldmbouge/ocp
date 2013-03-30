@@ -77,11 +77,11 @@ int main_mip(int argc, const char * argv[])
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");
-   
+   [mip release];
    return 0;
 }
 
 int main(int argc, const char * argv[])
 {
-   return main_lp(argc,argv);
+   return main_mip(argc,argv);
 }

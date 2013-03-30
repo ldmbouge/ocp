@@ -34,7 +34,6 @@
 }
 -(void) dealloc
 {
-   NSLog(@"LPColumn dealloc");
    [super dealloc];
 }
 -(void) addObjCoef: (ORFloat) coef
@@ -68,7 +67,6 @@
 }
 -(void) dealloc
 {
-   NSLog(@"LPSolver dealloc");
    [_lpsolver release];
    [_sPool release];
    [super dealloc];
