@@ -88,13 +88,21 @@
 }
 -(id<LPColumn>) createColumn
 {
-   // PVH to fix these bounds
-   LPColumnI* col = [_lpsolver createColumn: 0 up: MAXINT];
+   LPColumnI* col = [_lpsolver createColumn];
    return [[LPColumn alloc] initLPColumn: self with: col];
 }
+-(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
+{
+   // PVH to fix these bounds
+   LPColumnI* col = [_lpsolver createColumn: low up: up];
+   return [[LPColumn alloc] initLPColumn: self with: col];
+}
+
 -(void) addColumn: (LPColumn*) column
 {
    [_lpsolver postColumn: [column impl]];
+   id<ORSolution> s = [_model captureSolution];
+   [_sPool addSolution: s];
 }
 -(void) trackObject: (id) obj
 {

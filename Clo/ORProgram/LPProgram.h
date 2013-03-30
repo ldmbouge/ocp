@@ -24,6 +24,7 @@
 -(LPSolverI*) solver;
 -(void) solve;
 -(id<LPColumn>) createColumn;
+-(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up;
 -(void) addColumn: (id<LPColumn>) column;
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) v;

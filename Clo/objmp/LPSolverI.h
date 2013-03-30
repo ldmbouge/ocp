@@ -171,6 +171,7 @@
    int                   _nb;
    int                   _maxSize;
    int                   _idx;
+   BOOL                  _hasBounds;
    ORFloat               _low;
    ORFloat               _up;
    ORFloat               _objCoef;
@@ -182,12 +183,14 @@
    ORFloat*              _tmpCoef;
    
 }
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver;
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
 -(void)      dealloc;
 
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
+-(BOOL) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORFloat) objCoef;
@@ -254,6 +257,7 @@
 -(LPVariableI*)    createIntVariable: (ORFloat) low up: (ORFloat) up;
 -(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
 -(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up;
+-(LPColumnI*)      createColumn;
 
 -(LPLinearTermI*)  createLinearTerm;
 

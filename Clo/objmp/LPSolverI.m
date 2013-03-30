@@ -624,6 +624,7 @@
 {
    [super init];
    _solver = solver;
+   _hasBounds = true;
    _low = low;
    _up = up;
    _size = size;
@@ -649,6 +650,7 @@
 {
    [super init];
    _solver = solver;
+   _hasBounds = true;
    _low = low;
    _up = up;
    _size = 0;
@@ -658,6 +660,19 @@
    _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
    return self;
 }
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver
+{
+   [super init];
+   _solver = solver;
+   _hasBounds = false;
+   _size = 0;
+   _maxSize = 8;
+   _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
+   _cstrIdx = NULL;
+   _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
+   return self;
+}
+
 -(void) dealloc
 {
    if (_cstrIdx)
@@ -696,6 +711,10 @@
 -(void) setIdx: (ORInt) idx
 {
    _idx = idx;
+}
+-(BOOL) hasBounds
+{
+   return _hasBounds;
 }
 -(ORFloat) low
 {
@@ -976,6 +995,12 @@
    [c setNb: _createdCols++];
    return c;
 }
+-(LPColumnI*) createColumn
+{
+   LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self];
+   [c setNb: _createdCols++];
+   return c;
+}
 -(LPLinearTermI*) createLinearTerm
 {
    return [[LPLinearTermI alloc] initLPLinearTermI: self];
@@ -1210,7 +1235,11 @@
 
 -(LPVariableI*) postColumn: (LPColumnI*) col
 {
-   LPVariableI* v = [self createVariable: [col low] up: [col up]];
+   LPVariableI* v;
+   if ([col hasBounds])
+      v = [self createVariable: [col low] up: [col up]];
+   else
+      v = [self createVariable];
    [col setIdx: [v idx]];
    [col fill: v obj: _obj];
    if (_isClosed) {
