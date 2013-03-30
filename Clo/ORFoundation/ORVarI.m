@@ -164,6 +164,7 @@
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
+   BOOL           _hasBounds;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
@@ -171,11 +172,14 @@
    _impl = nil;
    _tracker = track;
    _domain = domain;
+   _hasBounds = true;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
    return self;
 }
+
+
 -(void) dealloc
 {
    [super dealloc];
@@ -255,6 +259,15 @@
    else
       return [_domain up];
 }
+-(ORInt) low
+{
+   return [_domain low];
+}
+-(ORInt) up
+{
+   return [_domain up];
+}
+
 -(ORInt) domsize
 {
    if (_impl)

@@ -69,7 +69,7 @@
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if ([v dereference] == NULL) {
-      MIPIntVariableI* cv = [_MIPsolver createIntVariable];
+      MIPIntVariableI* cv = [_MIPsolver createIntVariable: [v low] up: [v up]];
       [v setImpl: cv];
    }
 }

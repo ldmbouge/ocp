@@ -38,6 +38,8 @@
 -(ORInt) value;
 -(ORInt) intValue;
 -(ORFloat) floatValue;
+-(ORInt) low;
+-(ORInt) up;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;

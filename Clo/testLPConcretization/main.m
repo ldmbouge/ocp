@@ -65,7 +65,7 @@ int main_mip(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORIntRange> Domains = [ORFactory intRange: model low: 0 up: 100];
+   id<ORIntRange> Domains = [ORFactory intRange: model low: 0 up: MAXINT];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domains];
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[x[j] mul: @(coef[i][j])]) leq: @(b[i])]];

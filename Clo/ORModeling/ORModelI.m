@@ -703,9 +703,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
     [super dealloc];
 }
 
--(void) addConstraint:(id<ORConstraint>)c
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
 {
-    [_all addObject: c];
+   [_all addObject: c];
+   return c;
 }
 
 -(ORInt) size {

@@ -751,7 +751,7 @@
    [self trackVariable: v];
    return v;
 }
--(MIPVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
+-(MIPIntVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
 {
    MIPIntVariableI* v = [[MIPIntVariableI alloc] initMIPIntVariableI: self low: low up: up];
    [v setNb: _createdVars++];

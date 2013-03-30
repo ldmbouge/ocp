@@ -210,9 +210,9 @@
 
 +(MIPSolverI*)      create;
 -(MIPVariableI*)    createVariable;
--(MIPIntVariableI*) createVariable: (ORFloat) low up: (ORFloat) up;
+-(MIPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
 -(MIPIntVariableI*) createIntVariable;
--(MIPVariableI*)    createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(MIPIntVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up;
 -(MIPLinearTermI*)  createLinearTerm;
 
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;

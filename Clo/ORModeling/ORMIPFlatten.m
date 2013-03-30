@@ -163,7 +163,7 @@
 -(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitAssignment:(id<ORAssignment>)cstr;
--(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(id<ORConstraint>) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
