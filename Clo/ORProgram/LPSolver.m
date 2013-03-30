@@ -32,6 +32,11 @@
    _lpsolver = lpsolver;
    return self;
 }
+-(void) dealloc
+{
+   NSLog(@"LPColumn dealloc");
+   [super dealloc];
+}
 -(void) addObjCoef: (ORFloat) coef
 {
    [(LPColumnI*)_impl addObjCoef: coef];

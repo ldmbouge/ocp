@@ -32,7 +32,7 @@
       _maxSize = 1;
    _var = (LPVariableI**) malloc(_maxSize * sizeof(LPVariableI*));
    for(ORInt i = 0; i < _size; i++)
-      _var[i] = [var[i] retain];
+      _var[i] = var[i];
    _col = NULL;
    _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
    for(ORInt i = 0; i < _size; i++)
@@ -46,8 +46,7 @@
 
 -(void) dealloc
 {
-   for(ORInt i = 0; i < _size; i++)
-      [_var[i] release];
+   NSLog(@"dealloc LPConstraintI");
    free(_var);
    if (_col)
       free(_col);
@@ -150,7 +149,6 @@
          break;
       }
    if (k >= 0) {
-      [_var[k] release];
       _size--;
       for(ORInt i = k; i < _size; i++) {
          _coef[i] = _coef[i+1];
@@ -161,7 +159,7 @@
 -(void) addVariable: (LPVariableI*) var coef: (ORFloat) coef
 {
    [self resize];
-   _var[_size] = [var retain];
+   _var[_size] = var;
    _coef[_size] = coef;
    _size++;
 }
@@ -254,7 +252,7 @@
       _maxSize++;
    _var = (LPVariableI**) malloc(_maxSize * sizeof(LPVariableI*));
    for(ORInt i = 0; i < _size; i++)
-      _var[i] = [var[i] retain];
+      _var[i] = var[i];
    _col = NULL;
    _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
    for(ORInt i = 0; i < _size; i++)
@@ -283,10 +281,9 @@
 
 -(void) dealloc
 {
+   NSLog(@"dealloc LPObjectiveI");
    if (_col)
       free(_col);
-   for(ORInt i = 0; i < _size; i++)
-      [_var[i] release];
    free(_var);
    free(_coef);
    if (_tmpVar)
@@ -347,7 +344,6 @@
          break;
       }
    if (k >= 0) {
-      [_var[k] release];
       _size--;
       for(ORInt i = k; i < _size; i++) {
          _coef[i] = _coef[i+1];
@@ -358,7 +354,7 @@
 -(void) addVariable: (LPVariableI*) var coef: (ORFloat) coef
 {
    [self resize];
-   _var[_size] = [var retain];
+   _var[_size] = var;
    _coef[_size] = coef;
    _size++;
 }
@@ -474,8 +470,7 @@
 }
 -(void) dealloc
 {
-   for(ORInt i = 0; i < _size; i++)
-      [_cstr[i] release];
+   NSLog(@"dealloc LPVariableI");
    free(_cstr);
    if (_cstrIdx)
       free(_cstrIdx);
@@ -532,7 +527,7 @@
 -(void) addConstraint: (LPConstraintI*) c coef: (ORFloat) coef
 {
    [self resize];
-   _cstr[_size] = [c retain];
+   _cstr[_size] = c;
    _coef[_size] = coef;
    _size++;
 }
@@ -546,7 +541,6 @@
       }
    }
    if (k < _size) {
-      [_cstr[k] release];
       _size--;
       for(ORInt i = k; i < _size; i++) {
          _cstr[i] = _cstr[i+1];
@@ -634,7 +628,7 @@
    _objCoef = obj;
    _cstr = (LPConstraintI**) malloc(_maxSize * sizeof(LPConstraintI*));
    for(ORInt i = 0; i < _size; i++)
-      _cstr[i] = [cstr[i] retain];
+      _cstr[i] = cstr[i];
    _cstrIdx = NULL;
    _coef = (ORFloat*) malloc(_maxSize * sizeof(ORFloat));
    for(ORInt i = 0; i < _size; i++)
@@ -675,10 +669,9 @@
 
 -(void) dealloc
 {
+   NSLog(@"dealloc LPColumnI");
    if (_cstrIdx)
       free(_cstrIdx);
-   for(ORInt i = 0; i < _size; i++)
-      [_cstr[i] release];
    free(_cstr);
    free(_coef);
    if (_tmpCstr)
@@ -786,7 +779,7 @@
 -(void) addConstraint: (LPConstraintI*) cstr coef: (ORFloat) coef
 {
    [self resize];
-   _cstr[_size] = [cstr retain];
+   _cstr[_size] = cstr;
    _coef[_size] = coef;
    _size++;
 }
@@ -817,8 +810,7 @@
 }
 -(void) dealloc
 {
-   for(ORInt i = 0; i < _size; i++)
-      [_var[i] release];
+   NSLog(@"dealloc LPLinearTermI");
    free(_var);
    free(_coef);
    [super dealloc];
@@ -862,7 +854,7 @@
 -(void) add: (ORFloat) coef times: (LPVariableI*) var
 {
    [self resize];
-   _var[_size] = [var retain];
+   _var[_size] = var;
    _coef[_size] = coef;
    _size++;
 }
@@ -932,12 +924,10 @@
 }
 -(void) dealloc
 {
-   for(ORInt i = 0; i < _nbVars; i++)
-      [_var[i] release];
-   for(ORInt i = 0; i < _nbCstrs; i++)
-      [_cstr[i] release];
+   NSLog(@"dealloc LPSolverI");
    free(_var);
    free(_cstr);
+   [_oStore release];
    [super dealloc];
 }
 -(void) addVariable: (LPVariableI*) v
@@ -951,7 +941,7 @@
       _maxVars *= 2;
    }
    [v setIdx: _nbVars];
-   _var[_nbVars++] = [v retain];
+   _var[_nbVars++] = v;
 }
 
 -(LPVariableI*) createVariable
@@ -959,6 +949,7 @@
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self];
    [v setNb: _createdVars++];
    [self addVariable: v];
+    [self trackVariable: v];
    return v;
 }
 -(LPVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
@@ -966,6 +957,7 @@
    LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self low: low up: up];
    [v setNb: _createdVars++];
    [self addVariable: v];
+   [self trackVariable: v];
    return v;
 }
 -(LPIntVariableI*) createIntVariable
@@ -973,6 +965,7 @@
    LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self];
    [v setNb: _createdVars++];
    [self addVariable: v];
+   [self trackVariable: v];
    return v;
 }
 -(LPVariableI*) createVariable: (ORFloat) low up: (ORFloat) up
@@ -980,6 +973,7 @@
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self low: low up: up];
    [v setNb: _createdVars++];
    [self addVariable: v];
+   [self trackVariable: v];
    return v;
 }
 
@@ -987,23 +981,28 @@
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef];
    [c setNb: _createdCols++];
+   [self trackObject: c];
    return c;
 }
 -(LPColumnI*) createColumn: (ORFloat) low up: (ORFloat) up
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up];
    [c setNb: _createdCols++];
+   [self trackObject: c];
    return c;
 }
 -(LPColumnI*) createColumn
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self];
    [c setNb: _createdCols++];
+   [self trackObject: c];
    return c;
 }
 -(LPLinearTermI*) createLinearTerm
 {
-   return [[LPLinearTermI alloc] initLPLinearTermI: self];
+   LPLinearTermI* o = [[LPLinearTermI alloc] initLPLinearTermI: self];
+   [self trackObject: o];
+   return o;
 }
 -(LPConstraintI*) addConstraint: (LPConstraintI*) cstr
 {
@@ -1015,7 +1014,7 @@
       _cstr = ncstr;
       _maxCstrs *= 2;
    }
-   _cstr[_nbCstrs++] = [cstr retain];
+   _cstr[_nbCstrs++] = cstr;
    
    int size = [cstr size];
    LPVariableI** var = [cstr var];
@@ -1100,6 +1099,7 @@
    [t close];
    LPObjectiveI* o = [[LPMaximize alloc] initLPMaximize: self size: [t size] var: [t var] coef: [t coef]];
    [o setNb: _createdObjs++];
+   [self trackObject: o];
    return o;
 }
 -(LPObjectiveI*) createMinimize: (LPLinearTermI*) t
@@ -1107,6 +1107,7 @@
    [t close];
    LPObjectiveI* o = [[LPMinimize alloc] initLPMinimize: self size: [t size] var: [t var] coef: [t coef]];
    [o setNb: _createdObjs++];
+   [self trackObject: o];
    return o;
 }
 -(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
@@ -1133,6 +1134,7 @@
    [t close];
    LPConstraintI* c = [[LPConstraintLEQ alloc] initLPConstraintLEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
+   [self trackObject: c];
    return c;
 }
 -(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -1140,6 +1142,7 @@
    [t close];
    LPConstraintI* c = [[LPConstraintGEQ alloc] initLPConstraintGEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
+   [self trackObject: c];
    return c;
 }
 -(LPConstraintI*) createEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -1147,6 +1150,7 @@
    [t close];
    LPConstraintI* c = [[LPConstraintEQ alloc] initLPConstraintEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
+   [self trackObject: c];
    return c;
 }
 
@@ -1181,7 +1185,6 @@
    if (k >= 0) {
       [_lp delConstraint: cstr];
       [cstr del];
-      [_cstr[k] release];
       _nbCstrs--;
       for(ORInt i = k; i < _nbCstrs; i++) {
          _cstr[i] = _cstr[i+1];
@@ -1206,7 +1209,6 @@
    if (k >= 0) {
       [_lp delVariable: var];
       [var del];
-      [_var[k] release];
       _nbVars--;
       for(ORInt i = k; i < _nbVars; i++) {
          _var[i] = _var[i+1];
@@ -1300,7 +1302,7 @@
     id<ORFloatArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORFloat(ORInt i) {
         return [_cstr[i] dual];
     }];
-   return arr; // [arr autorelease]; [ldm] makes no sense to auto-release. All the objects are tracked. This array in tracked in self (LPSolverI instance!)
+   return arr;
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
@@ -1341,13 +1343,6 @@
 
 -(void) print;
 {
-//   
-//    for(ORInt i = 0; i < _nbVars; i++) {
-//    [_var[i] print];
-//    printf("\n");
-//    }
-//    printf("\n");
-//    
    if (_obj || _nbCstrs > 0) {
       if (_obj)
          [_obj print];
@@ -1369,6 +1364,7 @@
 
 -(void) trackVariable: (id) var
 {
+   NSLog(@"Track Variable");
    [_oStore addObject: var];
    [var release];
 }
