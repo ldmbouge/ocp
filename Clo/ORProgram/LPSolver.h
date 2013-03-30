@@ -17,6 +17,8 @@
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) x;
+-(id<LPColumn>) createColumn;
+-(void) addColumn: (id<LPColumn>) column;
 @end
 
 // LPSolverFactory

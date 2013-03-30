@@ -26,8 +26,8 @@ float coef[7][12] = {
 int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns low:0 up:nbColumns-1];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-2];
+   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns low:0 up:nbColumns-2];
    id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
       ca[i] = [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
@@ -40,9 +40,23 @@ int main_lp(int argc, const char * argv[])
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
-   for(ORInt i = 0; i < nbColumns; i++)
+   for(ORInt i = 0; i < nbColumns-1; i++)
       printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
-   NSLog(@"we are done");
+   NSLog(@"we are done (Part I) \n\n");
+   
+   id<LPColumn> column = [lp createColumn];
+   [column addObjCoef: c[nbColumns - 1]];
+   for(ORInt i = 0; i < nbRows; i++)
+      [column addConstraint: ca[i] coef: coef[i][nbColumns-1]];
+   [lp addColumn: column];
+   for(ORInt i = 0; i < nbRows; i++)
+      printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
+   for(ORInt i = 0; i < nbColumns-1; i++)
+      printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
+   //   NSLog(@"Objective value: %@",[[model objective] value]);
+   sol = [[lp solutionPool] best];
+   NSLog(@"Solution: %@",sol);
+   NSLog(@"we are done (Part II)");
    return 0;
 }
 

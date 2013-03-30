@@ -15,6 +15,33 @@
 #import "LPSolver.h"
 #import <objmp/LPSolverI.h>
 
+@interface LPColumn : ORModelingObjectI<LPColumn>
+-(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;
+-(void) addObjCoef: (ORFloat) coef;
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+@end
+
+@implementation LPColumn
+{
+   LPSolver* _lpsolver;
+}
+-(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col
+{
+   self = [super init];
+   _impl = col;
+   _lpsolver = lpsolver;
+   return self;
+}
+-(void) addObjCoef: (ORFloat) coef
+{
+   [(LPColumnI*)_impl addObjCoef: coef];
+}
+// pvh to fix: will need more interesting dereference once we have multiple clones
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef
+{
+   [(LPColumnI*) _impl addConstraint: [cstr dereference] coef: coef];
+}
+@end
 
 @implementation LPSolver
 {
@@ -58,6 +85,16 @@
 -(ORFloat) reducedCost: (id<ORFloatVar>) v
 {
    return [_lpsolver reducedCost: [v dereference]];
+}
+-(id<LPColumn>) createColumn
+{
+   // PVH to fix these bounds
+   LPColumnI* col = [_lpsolver createColumn: 0 up: MAXINT];
+   return [[LPColumn alloc] initLPColumn: self with: col];
+}
+-(void) addColumn: (LPColumn*) column
+{
+   [_lpsolver postColumn: [column impl]];
 }
 -(void) trackObject: (id) obj
 {

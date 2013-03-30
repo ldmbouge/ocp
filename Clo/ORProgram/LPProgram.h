@@ -15,9 +15,16 @@
 @class LPSolverI;
 @protocol ORModel;
 
+@protocol LPColumn <NSObject>
+-(void) addObjCoef: (ORFloat) coef;
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+@end
+
 @protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
 -(void) solve;
+-(id<LPColumn>) createColumn;
+-(void) addColumn: (id<LPColumn>) column;
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) v;
 @end
