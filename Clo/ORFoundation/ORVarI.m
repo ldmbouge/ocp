@@ -83,19 +83,6 @@
 }
 @end
 
-@interface ORFloatVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORFloat   _value;
-}
--(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v;
--(void)restoreInto:(NSArray*)av;
--(ORFloat) floatValue;
--(ORInt) intValue;
--(NSString*) description;
--(BOOL) isEqual: (id) object;
--(NSUInteger) hash;
-@end
-
 @implementation ORFloatVarSnapshot
 -(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v
 {
@@ -141,7 +128,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"int(%d) : %f",_name,_value];
+   [buf appendFormat:@"float(%d) : %f",_name,_value];
    return buf;
 }
 

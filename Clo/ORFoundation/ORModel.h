@@ -390,7 +390,7 @@ enum ORGroupType {
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 @end
 
-
+// pvh: to reconsider the solution pool in this interface; not sure I like them here
 @protocol ORASolver <NSObject,ORTracker>
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;

@@ -689,9 +689,9 @@
    [self addHeuristic:h];
    return h;
 }
--(ORInt)intValue:(id<ORIntVar>)x
+-(ORInt) intValue: (id<ORIntVar>) x
 {
-   id<CPIntVar> y = [[_source rootModel] lookup:x];
+   id<CPIntVar> y = [[_source rootModel] lookup: x];
    return y.value;
 }
 @end

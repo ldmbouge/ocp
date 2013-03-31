@@ -90,3 +90,17 @@
 -(NSSet*) constraints;
 -(NSString*)stringValue;
 @end
+
+@interface ORFloatVarSnapshot : NSObject <ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORFloat   _value;
+}
+-(ORFloatVarSnapshot*) initFloatVarSnapshot: (id<ORFloatVar>) v;
+-(void)restoreInto:(NSArray*)av;
+-(ORFloat) floatValue;
+-(ORInt) intValue;
+-(NSString*) description;
+-(BOOL) isEqual: (id) object;
+-(NSUInteger) hash;
+@end
+

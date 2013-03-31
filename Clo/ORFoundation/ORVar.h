@@ -15,7 +15,6 @@
 #import "ORModel.h"
 
 @protocol ORSnapshot
--(void) restoreInto: (NSArray*) av;
 -(ORInt)  intValue;
 -(BOOL) boolValue;
 -(ORFloat) floatValue;

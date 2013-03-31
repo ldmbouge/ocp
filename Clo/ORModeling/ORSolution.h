@@ -14,10 +14,11 @@
 
 @protocol ORSolution <ORObject>
 -(id<ORSnapshot>) value:(id)var;
--(ORInt) intValue: (id) var;
--(BOOL) boolValue: (id) var;
+-(ORInt) intValue: (id<ORIntVar>) var;
+-(BOOL) boolValue: (id<ORIntVar>) var;
+-(ORFloat) floatValue: (id<ORFloatVar>) var;
 -(NSUInteger) count;
--(id<ORObjectiveValue>)objectiveValue;
+-(id<ORObjectiveValue>) objectiveValue;
 @end
 
 @protocol ORSolutionPool <NSObject>

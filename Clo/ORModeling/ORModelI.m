@@ -592,6 +592,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [[_shots objectAtIndex:[var getId]] boolValue];   
 }
+-(ORFloat) floatValue: (id) var
+{
+   return [(id<ORSnapshot>) [_shots objectAtIndex:[var getId]] floatValue];
+}
 -(NSUInteger) count
 {
    return [_shots count];   
