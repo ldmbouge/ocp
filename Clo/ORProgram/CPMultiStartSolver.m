@@ -29,7 +29,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
-   id<ORSolutionPool> _sPool;
+   id<ORCPSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -42,7 +42,7 @@
    
    _terminated = [[NSCondition alloc] init];
    
-   _sPool   = [ORFactory createSolutionPool];
+   _sPool   = (id<ORCPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -178,7 +178,7 @@
                              withObject:[NSArray arrayWithObjects: [objClosure copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
-   [_sPool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
+   [_sPool enumerateWith: ^void(id<ORCPSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
 }
 
 -(void) solveAll: (ORClosure) search
@@ -353,11 +353,11 @@
 {}
 -(void) doOnExit
 {}
--(id<ORSolutionPool>) solutionPool
+-(id<ORCPSolutionPool>) solutionPool
 {
-   return [[self dereference] solutionPool];
+   return (id<ORCPSolutionPool>) [[self dereference] solutionPool];
 }
--(id<ORSolutionPool>) globalSolutionPool
+-(id<ORCPSolutionPool>) globalSolutionPool
 {
    return _sPool;
 }
@@ -431,9 +431,20 @@
    return [self setupHeuristic:_cmd];
 }
 
--(ORInt)intValue:(id<ORIntVar>)x
+-(ORInt) intValue: (id<ORIntVar>) x
 {
-   id<ORIntVar> y = [[_source rootModel] lookup:x];
-   return y.value;
+   return [[self dereference] intValue: x];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+   return [[self dereference] floatValue: x];
+}
+-(BOOL) boolValue: (id<ORIntVar>)x
+{
+   return [[self dereference] boolValue: x];
+}
+-(id<ORCPSolution>) captureSolution
+{
+   return (id<ORCPSolution>) [[self dereference] captureSolution];
 }
 @end

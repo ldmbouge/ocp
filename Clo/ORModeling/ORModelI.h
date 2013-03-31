@@ -27,11 +27,10 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
--(NSDictionary*) cMap;
--(NSSet*) constraintsFor:(id<ORConstraint>)c;
--(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
--(id<ORSolution>) captureSolution;
--(void)restore:(id<ORSolution>)s;
+// pvh: This should go
+   -(NSDictionary*) cMap;
+   -(NSSet*) constraintsFor:(id<ORConstraint>)c;
+   -(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(void) addVariable:(id<ORVar>) var;

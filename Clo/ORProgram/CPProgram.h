@@ -106,6 +106,7 @@
 
 -(ORInt) intValue: (id<ORIntVar>) x;
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(BOOL) boolValue: (id<ORIntVar>) x;
 @end
 
 // CPSolver with syntactic DFS Search

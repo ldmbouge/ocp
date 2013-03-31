@@ -144,18 +144,6 @@
 {
    return [NSArray arrayWithArray: _oStore];
 }
--(id<ORSolution>) captureSolution
-{
-   return [[ORSolutionI alloc] initSolution:self];
-}
--(id<ORSolutionPool>) solutions
-{
-   return [((id<ORASolver>) _impl) globalSolutionPool];
-}
--(id<ORSolution>) bestSolution
-{
-   return [[self solutions] best];
-}
 -(void) addVariable:(id<ORVar>) var
 {
    [self captureVariable: var];   
@@ -527,105 +515,105 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 @end
 
-@implementation ORSolutionI {
-   NSArray*                _shots;
-   id<ORObjectiveValue> _objValue;
-}
--(ORSolutionI*) initSolution: (id<ORModel>) model
-{
-   self = [super init];
-   NSArray* av = [model variables];
-   ORULong sz = [av count];
-   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
-   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
-      id<ORSavable> shot = [obj snapshot];
-      if (shot)
-         [snapshots addObject: shot];
-      [shot release];
-   }];
-   _shots = snapshots;
-   if ([model objective])
-      _objValue = [[model objective] value];
-   else
-      _objValue = nil;
-   return self;
-}
--(void) dealloc
-{
-   [_shots release];
-   [_objValue release];
-   [super dealloc];
-}
--(BOOL)isEqual:(id)object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORSolutionI* other = object;
-      if (_objValue && other->_objValue) {
-         if ([_objValue isEqual:other->_objValue]) {
-            return [_shots isEqual:other->_shots];
-         } else return NO;
-      } else return NO;
-   }
-   else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return [_shots hash];
-}
--(id<ORObjectiveValue>)objectiveValue
-{
-   return _objValue;
-}
--(id<ORSnapshot>) value:(id)var
-{
-   NSUInteger idx = [var getId];
-   if (idx < [_shots count])
-      return [_shots objectAtIndex:idx];
-   else return nil;
-}
--(ORInt) intValue: (id) var
-{
-   return [[_shots objectAtIndex:[var getId]] intValue];   
-}
--(BOOL) boolValue: (id) var
-{
-   return [[_shots objectAtIndex:[var getId]] boolValue];   
-}
--(ORFloat) floatValue: (id) var
-{
-   return [(id<ORSnapshot>) [_shots objectAtIndex:[var getId]] floatValue];
-}
--(NSUInteger) count
-{
-   return [_shots count];   
-}
-- (void) encodeWithCoder: (NSCoder *)aCoder
-{
-   [aCoder encodeObject:_shots];
-   [aCoder encodeObject:_objValue];
-}
-- (id) initWithCoder:(NSCoder *) aDecoder
-{
-   self = [super init];
-   _shots = [[aDecoder decodeObject] retain];
-   _objValue = [aDecoder decodeObject];
-   return self;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   if (_objValue)
-      [buf appendFormat:@"SOL[%@](",_objValue];
-   else
-      [buf appendString:@"SOL("];
-   NSUInteger last = [_shots count] - 1;
-   [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
-   }];
-   return buf;
-}
-@end
+//@implementation ORSolutionI {
+//   NSArray*                _shots;
+//   id<ORObjectiveValue> _objValue;
+//}
+//-(ORSolutionI*) initSolution: (id<ORModel>) model
+//{
+//   self = [super init];
+//   NSArray* av = [model variables];
+//   ORULong sz = [av count];
+//   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+//   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
+//      id<ORSavable> shot = [obj snapshot];
+//      if (shot)
+//         [snapshots addObject: shot];
+//      [shot release];
+//   }];
+//   _shots = snapshots;
+//   if ([model objective])
+//      _objValue = [[model objective] value];
+//   else
+//      _objValue = nil;
+//   return self;
+//}
+//-(void) dealloc
+//{
+//   [_shots release];
+//   [_objValue release];
+//   [super dealloc];
+//}
+//-(BOOL)isEqual:(id)object
+//{
+//   if ([object isKindOfClass:[self class]]) {
+//      ORSolutionI* other = object;
+//      if (_objValue && other->_objValue) {
+//         if ([_objValue isEqual:other->_objValue]) {
+//            return [_shots isEqual:other->_shots];
+//         } else return NO;
+//      } else return NO;
+//   }
+//   else
+//      return NO;
+//}
+//-(NSUInteger)hash
+//{
+//   return [_shots hash];
+//}
+//-(id<ORObjectiveValue>)objectiveValue
+//{
+//   return _objValue;
+//}
+//-(id<ORSnapshot>) value:(id)var
+//{
+//   NSUInteger idx = [var getId];
+//   if (idx < [_shots count])
+//      return [_shots objectAtIndex:idx];
+//   else return nil;
+//}
+//-(ORInt) intValue: (id) var
+//{
+//   return [[_shots objectAtIndex:[var getId]] intValue];   
+//}
+//-(BOOL) boolValue: (id) var
+//{
+//   return [[_shots objectAtIndex:[var getId]] boolValue];   
+//}
+//-(ORFloat) floatValue: (id) var
+//{
+//   return [(id<ORSnapshot>) [_shots objectAtIndex:[var getId]] floatValue];
+//}
+//-(NSUInteger) count
+//{
+//   return [_shots count];   
+//}
+//- (void) encodeWithCoder: (NSCoder *)aCoder
+//{
+//   [aCoder encodeObject:_shots];
+//   [aCoder encodeObject:_objValue];
+//}
+//- (id) initWithCoder:(NSCoder *) aDecoder
+//{
+//   self = [super init];
+//   _shots = [[aDecoder decodeObject] retain];
+//   _objValue = [aDecoder decodeObject];
+//   return self;
+//}
+//-(NSString*)description
+//{
+//   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//   if (_objValue)
+//      [buf appendFormat:@"SOL[%@](",_objValue];
+//   else
+//      [buf appendString:@"SOL("];
+//   NSUInteger last = [_shots count] - 1;
+//   [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+//      [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
+//   }];
+//   return buf;
+//}
+//@end
 
 
 @implementation ORSolutionPoolI

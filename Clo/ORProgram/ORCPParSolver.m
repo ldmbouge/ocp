@@ -530,10 +530,21 @@
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
--(ORInt)intValue:(id<ORIntVar>)x
+-(ORInt) intValue: (id<ORIntVar>) x
 {
-   id<ORIntVar> y = [[_source rootModel] lookup:x];
-   return y.value;
+   return [[self dereference] intValue: x];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+   return [[self dereference] floatValue: x];
+}
+-(BOOL) boolValue: (id<ORIntVar>) x
+{
+   return [((id<CPCommonProgram>) [self dereference]) boolValue: x];
+}
+-(id<ORCPSolution>) captureSolution
+{
+   return (id<ORCPSolution>) [[self dereference] captureSolution];
 }
 @end
 

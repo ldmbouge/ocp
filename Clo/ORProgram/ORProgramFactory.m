@@ -121,7 +121,7 @@
       id<ORSolutionPool> lp = [cp solutionPool];
       id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
       [cp onSolution: ^{
-         id<ORSolution> s = [model captureSolution];
+         id<ORSolution> s = [cp captureSolution];
          [lp addSolution: s];
          @synchronized(gp) {
             [gp addSolution: s];
@@ -163,16 +163,14 @@
       [NSThread setThreadID:i];
       id<CPProgram> pi = [cpprogram dereference];
       [pi onSolution:^{
-         [[pi solutionPool] addSolution:[model captureSolution]];
+         id<ORCPSolution> sol = [pi captureSolution];
+         [[pi solutionPool] addSolution: sol];
+         @synchronized(global) {
+            [global addSolution:sol];
+         }
       }];
       [ORFactory createCPProgram:flatModel program: pi]; // [ldm] it is already flat. This flattens _again_
    }
-   [cpprogram onSolution: ^ {
-      id<ORSolution> s = [model captureSolution];
-      @synchronized(global) {
-         [global addSolution:s];
-      }
-   }];
    return cpprogram;
 }
 

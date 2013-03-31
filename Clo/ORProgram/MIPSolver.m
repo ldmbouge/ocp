@@ -47,8 +47,9 @@
 -(void) solve
 {
    [_MIPsolver solve];
-   id<ORSolution> s = [_model captureSolution];
-   [_sPool addSolution: s];
+//   id<ORMIPSolution> s = [self captureSolution];
+//   [_sPool addSolution: s];
+//   [s release];
 }
 -(void) trackObject: (id) obj
 {

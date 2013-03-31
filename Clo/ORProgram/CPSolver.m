@@ -1468,9 +1468,12 @@
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {
-   // pvh: This needs to be fixed. I am using what works now until ldm fixes this. 
-//   id<CPIntVar> y = [[_model rootModel] lookup: x];
-//   return y.value;
+   // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
+   return [x intValue];
+}
+-(BOOL) boolValue: (id<ORIntVar>) x
+{
+   // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
    return [x intValue];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x

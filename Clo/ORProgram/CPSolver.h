@@ -45,9 +45,9 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORSolutionPool>) solutionPool;
--(id<ORSolutionPool>) globalSolutionPool;
--(id<ORSolution>) captureSolution;
+-(id<ORCPSolutionPool>) solutionPool;
+-(id<ORCPSolutionPool>) globalSolutionPool;
+-(id<ORCPSolution>) captureSolution;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
 
