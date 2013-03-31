@@ -178,7 +178,7 @@
 }
 @end
 
-@interface ORLPSolutionI : NSObject<ORSolution>
+@interface ORLPSolutionI : NSObject<ORLPSolution>
 -(ORLPSolutionI*) initORLPSolutionI: (id<ORModel>) model with: (id<LPProgram>) solver;
 -(id<ORSnapshot>) value: (id<ORFloatVar>) var;
 -(ORFloat) reducedCost: (id<ORFloatVar>) var;
@@ -228,6 +228,7 @@
 
 -(void) dealloc
 {
+   NSLog(@"dealloc ORLPSolutionI");
    [_varShots release];
    [_cstrShots release];
    [_objValue release];
@@ -275,7 +276,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No boolean variable in LP solutions"];
 }
-
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
    return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] floatValue];
@@ -361,7 +361,7 @@
 {
    LPSolverI*  _lpsolver;
    id<ORModel> _model;
-   id<ORSolutionPool> _sPool;
+   id<ORLPSolutionPool> _sPool;
 }
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model
 {
@@ -372,11 +372,12 @@
    _lpsolver = [LPFactory solver];
    _model = model;
 #endif
-   _sPool = [ORFactory createSolutionPool];
+   _sPool = (id<ORLPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
 {
+   NSLog(@"dealloc LPSolver");
    [_lpsolver release];
    [_sPool release];
    [super dealloc];
@@ -388,11 +389,9 @@
 -(void) solve
 {
    [_lpsolver solve];
-//   id<ORSolution> s = [_model captureSolution];
-//   [_sPool addSolution: s];
-//   NSLog(@"Solution = %@",s);
-   ORLPSolutionI* sol = [[ORLPSolutionI alloc] initORLPSolutionI: _model with: self];
+   ORLPSolutionI* sol = [self captureSolution];
    [_sPool addSolution: sol];
+   [sol release];
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
@@ -424,8 +423,9 @@
 -(void) addColumn: (LPColumn*) column
 {
    [_lpsolver postColumn: [column impl]];
-   id<ORSolution> s = [_model captureSolution];
-   [_sPool addSolution: s];
+   ORLPSolutionI* sol = [self captureSolution];
+   [_sPool addSolution: sol];
+   [sol release];
 }
 -(void) trackObject: (id) obj
 {
@@ -439,17 +439,17 @@
 {
    [_lpsolver trackConstraint:obj];
 }
--(id<ORSolutionPool>) solutionPool
+-(id<ORLPSolutionPool>) solutionPool
 {
    return _sPool;
 }
--(id<ORSolutionPool>) globalSolutionPool
+-(id<ORLPSolutionPool>) globalSolutionPool
 {
    return _sPool;
 }
--(id<ORLPSolutionPool>) lpSolutionPool
+-(id<ORLPSolution>) captureSolution
 {
-   return (id<ORLPSolutionPool>) _sPool;
+   return [[ORLPSolutionI alloc] initORLPSolutionI: _model with: self];
 }
 @end
 

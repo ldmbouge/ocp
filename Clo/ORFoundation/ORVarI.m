@@ -1,150 +1,94 @@
-//
-//  ORVarI.m
-//  Clo
-//
-//  Created by Laurent Michel on 10/5/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import "ORVarI.h"
 #import "ORError.h"
 #import "ORFactory.h"
 
-@interface ORIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORInt     _value;
-}
--(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v;
--(void)restoreInto:(NSArray*)av;
--(int)intValue;
--(BOOL)boolValue;
--(NSString*)description;
--(BOOL)isEqual:(id)object;
--(NSUInteger)hash;
-@end
-
-@implementation ORIntVarSnapshot
--(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v
-{
-   self = [super init];
-   _name = [v getId];
-   _value = [v value];
-   return self;
-}
--(void)restoreInto:(NSArray*)av
-{
-   id<ORIntVar> theVar = [av objectAtIndex:_name];
-   [theVar restore:self];
-}
--(ORInt) intValue
-{
-   return _value;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(BOOL) boolValue
-{
-   return _value;
-}
--(BOOL)isEqual:(id)object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORIntVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _value == other->_value;
-      } else return NO;
-   } else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return (_name << 16) + _value;
-}
--(NSString*)description
-{   
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"int(%d) : %d",_name,_value];
-   return buf;
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
-   return self;
-}
-@end
-
-@implementation ORFloatVarSnapshot
--(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v
-{
-   self = [super init];
-   _name = [v getId];
-   _value = [v value];
-   return self;
-}
--(void) restoreInto: (NSArray*) av
-{
-   id<ORFloatVar> theVar = [av objectAtIndex:_name];
-   [theVar restore:self];
-} 
--(ORInt) intValue
-{
-   return (ORInt) _value;
-}
--(BOOL) boolValue
-{
-   return (BOOL) _value;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(BOOL) isEqual: (id) object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORFloatVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _value == other->_value;
-      }
-      else
-            return NO;
-   }
-   else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return (_name << 16) + (ORInt) _value;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"float(%d) : %f",_name,_value];
-   return buf;
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
-   return self;
-}
-@end
+//@interface ORIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+//   ORUInt    _name;
+//   ORInt     _value;
+//}
+//-(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v;
+//-(void)restoreInto:(NSArray*)av;
+//-(int)intValue;
+//-(BOOL)boolValue;
+//-(NSString*)description;
+//-(BOOL)isEqual:(id)object;
+//-(NSUInteger)hash;
+//@end
+//
+//
+//@implementation ORFloatVarSnapshot
+//-(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v
+//{
+//   self = [super init];
+//   _name = [v getId];
+//   _value = [v value];
+//   return self;
+//}
+//-(void) restoreInto: (NSArray*) av
+//{
+//   id<ORFloatVar> theVar = [av objectAtIndex:_name];
+//   [theVar restore:self];
+//} 
+//-(ORInt) intValue
+//{
+//   return (ORInt) _value;
+//}
+//-(BOOL) boolValue
+//{
+//   return (BOOL) _value;
+//}
+//-(ORFloat) floatValue
+//{
+//   return _value;
+//}
+//-(BOOL) isEqual: (id) object
+//{
+//   if ([object isKindOfClass:[self class]]) {
+//      ORFloatVarSnapshot* other = object;
+//      if (_name == other->_name) {
+//         return _value == other->_value;
+//      }
+//      else
+//            return NO;
+//   }
+//   else
+//      return NO;
+//}
+//-(NSUInteger)hash
+//{
+//   return (_name << 16) + (ORInt) _value;
+//}
+//-(NSString*) description
+//{
+//   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//   [buf appendFormat:@"float(%d) : %f",_name,_value];
+//   return buf;
+//}
+//
+//- (void)encodeWithCoder: (NSCoder *) aCoder
+//{
+//   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+//   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+//}
+//- (id)initWithCoder: (NSCoder *) aDecoder
+//{
+//   self = [super init];
+//   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+//   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+//   return self;
+//}
+//@end
 
 @implementation ORIntVarI
 {
@@ -222,11 +166,6 @@
    }
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-}
-
--(id) snapshot
-{
-   return [[ORIntVarSnapshot alloc] initIntVarSnapshot:self];
 }
 -(void) restore:(id<ORSnapshot>)s
 {
@@ -504,10 +443,6 @@
       return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
    else
       return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
-}
--(id) snapshot
-{
-   return [[ORFloatVarSnapshot alloc] initFloatVarSnapshot: self];
 }
 -(void) restore:(id<ORSnapshot>) s   
 {

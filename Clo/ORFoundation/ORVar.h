@@ -22,7 +22,6 @@
 
 @protocol ORSavable<NSObject>
 -(ORInt) getId;
--(id) snapshot;
 -(void)restore:(id<ORSnapshot>)s;
 @end
 

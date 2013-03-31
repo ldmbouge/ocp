@@ -16,6 +16,8 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
+
+
 @interface CPHeuristicSet : NSObject
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;
@@ -45,12 +47,16 @@
 -(void) doOnExit;
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
--(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<ORSolution>) captureSolution;
+
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
+
+// pvh: do we have to put these here. Any way to externalize them.
+-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;

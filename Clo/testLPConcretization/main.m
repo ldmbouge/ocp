@@ -36,12 +36,16 @@ int main_lp(int argc, const char * argv[])
    
    [lp solve];
 //   NSLog(@"Objective value: %@",[[model objective] value]);
-   id<ORLPSolution> sol = [[lp lpSolutionPool] best];
+   id<ORSolutionPool> test = [lp solutionPool];
+   NSLog(@"test %@",test);
+   
+   id<ORLPSolution> sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    for(ORInt i = 0; i < nbColumns-1; i++)
       printf("x[%d] = %10.5f : %10.5f \n",i,[sol floatValue: x[i]],[sol reducedCost: x[i]]);
    for(ORInt i = 0; i < nbRows; i++)
       printf("dual c[%d] = %f \n",i,[sol dual: ca[i]]);
+   [sol release];
    NSLog(@"we are done (Part I) \n\n");
    
    id<LPColumn> column = [lp createColumn];
@@ -54,9 +58,10 @@ int main_lp(int argc, const char * argv[])
    for(ORInt i = 0; i < nbColumns-1; i++)
       printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
    //   NSLog(@"Objective value: %@",[[model objective] value]);
-   sol = [[lp lpSolutionPool] best];
+   sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
    NSLog(@"we are done (Part II)");
+   [sol release];
    [lp release];
    return 0;
 }

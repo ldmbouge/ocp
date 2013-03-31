@@ -13,17 +13,16 @@
 #import <ORFoundation/ORModel.h>
 
 @protocol ORSolution <ORObject>
--(id<ORSnapshot>) value:(id)var;
+-(id<ORSnapshot>) value: (id) var;
 -(ORInt) intValue: (id<ORIntVar>) var;
 -(BOOL) boolValue: (id<ORIntVar>) var;
 -(ORFloat) floatValue: (id<ORFloatVar>) var;
--(NSUInteger) count;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 
 @protocol ORSolutionPool <NSObject>
--(void)addSolution:(id<ORSolution>)s;
--(void)enumerateWith:(void(^)(id<ORSolution>))block;
--(id<ORInformer>)solutionAdded;
--(id<ORSolution>)best;
+-(void) addSolution: (id<ORSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORSolution>) best;
 @end

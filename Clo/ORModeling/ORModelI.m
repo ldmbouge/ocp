@@ -639,6 +639,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) dealloc
 {
+   NSLog(@"dealloc ORSolutionPoolI");
    [_all release];
    [super dealloc];
 }

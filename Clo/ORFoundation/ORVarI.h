@@ -17,6 +17,7 @@
 #import "ORExprI.h"
 #import "ORVisit.h"
 
+
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 // [ldm] All the methods below were missing??????
@@ -37,7 +38,6 @@
 -(void) visit: (id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
--(id) snapshot;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI
@@ -91,16 +91,4 @@
 -(NSString*)stringValue;
 @end
 
-@interface ORFloatVarSnapshot : NSObject <ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORFloat   _value;
-}
--(ORFloatVarSnapshot*) initFloatVarSnapshot: (id<ORFloatVar>) v;
--(void)restoreInto:(NSArray*)av;
--(ORFloat) floatValue;
--(ORInt) intValue;
--(NSString*) description;
--(BOOL) isEqual: (id) object;
--(NSUInteger) hash;
-@end
 

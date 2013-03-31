@@ -86,7 +86,7 @@
 -(ORInt) intValue: (id) var;
 -(BOOL) boolValue: (id) var;
 -(id<ORSnapshot>) value:(id)var;
--(NSUInteger) count;
+//-(NSUInteger) count;
 -(BOOL)isEqual:(id)object;
 -(NSUInteger)hash;
 -(id<ORObjectiveValue>)objectiveValue;
