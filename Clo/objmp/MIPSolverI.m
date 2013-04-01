@@ -458,7 +458,7 @@
    
    return self;
 }
--(bool) hasBounds
+-(ORBool) hasBounds
 {
    return _hasBounds;
 }
@@ -565,7 +565,7 @@
 {
    return [_solver floatValue:self];
 }
--(BOOL) isInteger
+-(ORBool) isInteger
 {
    return false;
 }
@@ -583,7 +583,7 @@
    [super initMIPVariableI: solver];
    return self;
 }
--(BOOL) isInteger
+-(ORBool) isInteger
 {
    return true;
 }
@@ -1023,7 +1023,7 @@
       [_MIP addObjective: _obj];
    }
 }
--(bool) isClosed
+-(ORBool) isClosed
 {
    return _isClosed;
 }

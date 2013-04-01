@@ -26,7 +26,7 @@
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d;
 -(struct BDSNode)pop;
 -(ORInt)size;
--(bool)empty;
+-(ORBool)empty;
 -(NSString*)description;
 @end
 
@@ -65,7 +65,7 @@
 {
    return _sz;
 }
--(bool)empty
+-(ORBool)empty
 {
    return _sz == 0;
 }
@@ -185,7 +185,7 @@
    } else return nil;
 }
 
--(BOOL)willingToShare
+-(ORBool)willingToShare
 {
    return [_next size] >= 1;
 }

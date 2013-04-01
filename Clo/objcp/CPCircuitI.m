@@ -68,7 +68,7 @@
 {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(bool) at:&_noCycle];
+    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
 }
 
 -(id) initWithCoder:(NSCoder*) aDecoder
@@ -76,7 +76,7 @@
     self = [super initWithCoder:aDecoder];
     [self initInstanceVariables];
     _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(bool) at:&_noCycle];
+    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
     return self;
 }
 

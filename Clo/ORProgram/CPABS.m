@@ -518,7 +518,7 @@
          return v;
    }
 }
--(BOOL)moreProbes
+-(ORBool)moreProbes
 {
    const ORFloat prc = _conf;
    int nbProbes = [_aggregator nbProbes];

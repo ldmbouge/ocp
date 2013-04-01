@@ -43,8 +43,8 @@
    [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_ba[0]];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_ba[1]];
+   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
+   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_ba[1]];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id)initWithCoder:(NSCoder *)aDecoder
@@ -53,13 +53,13 @@
    _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_ba[0]];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_ba[1]];
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_ba[1]];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
 
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }
@@ -129,14 +129,14 @@
       return b;
    }
 }
--(BOOL) member: (ORInt) v
+-(ORBool) member: (ORInt) v
 {
    if (_impl)
       return [(id<ORIntVar>)[_impl dereference] member: v];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
--(BOOL) bound
+-(ORBool) bound
 {
    if (_impl)
       return [(id<ORIntVar>)[_impl dereference] bound];
@@ -144,7 +144,7 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
--(BOOL) isBool
+-(ORBool) isBool
 {
    if (_impl)
       return [(id<ORIntVar>)[_impl dereference] isBool];
@@ -166,7 +166,7 @@
 {
    return _domain;
 }
--(BOOL) hasDenseDomain
+-(ORBool) hasDenseDomain
 {
    return _ba[0]; // dense
 }
@@ -352,7 +352,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }
@@ -375,7 +375,7 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
--(BOOL) bound
+-(ORBool) bound
 {
    if (_impl)
       return [[_impl dereference] bound];
@@ -414,7 +414,7 @@
 {
    [v visitFloatVar: self];
 }
--(BOOL) hasBounds
+-(ORBool) hasBounds
 {
    return _hasBounds;
 }
@@ -467,7 +467,7 @@
 {
    return _bLen;
 }
--(BOOL) bound
+-(ORBool) bound
 {
    if (_impl)
       return [[_impl dereference] bound];
@@ -498,7 +498,7 @@
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }
 }
--(bool) member: (unsigned int*) v
+-(ORBool) member: (unsigned int*) v
 {
    if (_impl)
       return [(id<ORBitVar>)[_impl dereference] member:v];
@@ -548,7 +548,7 @@
    return self;
 }
 
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }

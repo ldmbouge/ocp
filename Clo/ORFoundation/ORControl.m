@@ -82,8 +82,8 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 {
    ORInt sz = [_S size];
    ORInt* value = alloca(sizeof(ORInt)*sz);
-   bool* used = alloca(sizeof(bool)*sz);
-   memset(used,0,sizeof(bool)*sz);
+   bool* used = alloca(sizeof(ORBool)*sz);
+   memset(used,0,sizeof(ORBool)*sz);
    ORInt nbo = (ORInt) [_arrayOrderedBy count];
    float* best = alloca(sizeof(float)*nbo);
    id<IntEnumerator> ite = [_S enumerator];
@@ -145,8 +145,8 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 {
    ORInt sz = [S size];
    ORInt* value = alloca(sizeof(ORInt)*sz);
-   bool* used = alloca(sizeof(bool)*sz);
-   memset(used,0,sizeof(bool)*sz);
+   bool* used = alloca(sizeof(ORBool)*sz);
+   memset(used,0,sizeof(ORBool)*sz);
    id<IntEnumerator> ite = [S enumerator];
    ORInt nb = 0;
    while ([ite more]) {

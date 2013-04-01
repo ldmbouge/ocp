@@ -95,7 +95,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
--(BOOL) isBool
+-(ORBool) isBool
 {
    return _isBool;
 }
@@ -150,15 +150,15 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return self;
    else return nil;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return NO;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }
--(BOOL) bound
+-(ORBool) bound
 {
    assert(_dom);
     return [_dom bound];
@@ -210,7 +210,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert(_dom);
    return [_dom countFrom:from to:to];
 }
--(BOOL)member:(ORInt)v
+-(ORBool)member:(ORInt)v
 {
    assert(_dom);
     return [_dom member:v];
@@ -287,7 +287,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 #define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil)
 
--(bool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
     return TRACKSINTVAR;
 }
@@ -666,7 +666,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:1 shift:_b];
 }
--(BOOL) bound
+-(ORBool) bound
 {
    return [_x bound];
 }
@@ -691,7 +691,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    bnd.max += _b;
    return bnd;
 }
--(BOOL)member: (ORInt) v
+-(ORBool)member: (ORInt) v
 {
     return [_dom member:v-_b];
 }
@@ -787,7 +787,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:_a shift:_b];
 }
--(BOOL) bound
+-(ORBool) bound
 {
    return [_x bound];
 }
@@ -816,7 +816,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       _a > 0 ? b.max * _a + _b : b.min * _a + _b
    };
 }
--(BOOL)member: (ORInt) v
+-(ORBool)member: (ORInt) v
 {
     ORInt r = (v - _b) % _a;
     if (r != 0) return NO;
@@ -947,7 +947,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:-1 shift:0];
 }
--(BOOL) bound
+-(ORBool) bound
 {
    return [_x bound];
 }
@@ -969,7 +969,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORBounds b = [_x bounds];
    return (ORBounds){-b.max,-b.min};
 }
--(BOOL)member:(ORInt)v
+-(ORBool)member:(ORInt)v
 {
    return [_x member:-v];
 }
@@ -1047,7 +1047,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:[self min] up:[self max]];
 }
--(BOOL) bound
+-(ORBool) bound
 {
    return [self domsize]<= 1;
 }
@@ -1073,7 +1073,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       else return 1;
    }
 }
--(BOOL)member:(ORInt)val
+-(ORBool)member:(ORInt)val
 {
    ORInt lb = [_secondary min];
    ORInt ub = [_secondary max];
@@ -1350,7 +1350,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     _tracksLoseEvt = true;
 }
--(bool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
     return _tracksLoseEvt;
 }
@@ -1442,7 +1442,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    _tracksLoseEvt = YES;
 }
--(bool) tracksLoseEvt:(id<CPDom>)sender
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
    return _tracksLoseEvt;
 }

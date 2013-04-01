@@ -22,7 +22,7 @@
 -(NSString*) description;
 -(void) addCommand: (id<ORCommand>) c;
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
--(BOOL) apply: (BOOL(^)(id<ORCommand>))clo;
+-(ORBool) apply: (BOOL(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
 @end
 
@@ -250,7 +250,7 @@
 {
    [_cstrs insert:c];
 }
--(BOOL)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
 {
    return [_cstrs apply:clo];
 }

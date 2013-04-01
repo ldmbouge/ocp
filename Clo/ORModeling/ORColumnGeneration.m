@@ -126,7 +126,7 @@
     else [super forwardInvocation:anInvocation];
 }
 
-- (BOOL)respondsToSelector:(SEL)aSelector {
+- (ORBool)respondsToSelector:(SEL)aSelector {
     if([super respondsToSelector:aSelector]) return YES;
     else if([_runnable respondsToSelector: aSelector]) return YES;
     return NO;

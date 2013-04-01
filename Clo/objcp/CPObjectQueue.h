@@ -25,7 +25,7 @@
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)obj;
--(bool)empty;
+-(ORBool)empty;
 -(void)reset;
 @end
 
@@ -45,7 +45,7 @@
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)obj;
--(bool)empty;
+-(ORBool)empty;
 -(void)reset;
 -(ORInt)size;
 @end

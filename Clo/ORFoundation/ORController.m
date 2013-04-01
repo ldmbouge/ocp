@@ -105,7 +105,7 @@
 {
    [_controller succeeds]; // failAll is meant to be handled by the first controller in the chain. (The actual policy)
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return [_controller isFinitelyFailed];
 }
@@ -201,7 +201,7 @@
    [_controller cleanup];
    [_parent fail];
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return _isFF;
 }

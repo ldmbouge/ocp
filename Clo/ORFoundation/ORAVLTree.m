@@ -35,7 +35,7 @@
 }
 -(ORAVLTreeNode<Position>*)initAVLTreeNode:(ORInt)key object:(id)o;
 -(void)dealloc;
--(bool)balanced;
+-(ORBool)balanced;
 -(void)fixSize;
 -(void)fixHeight;
 -(void) iterateOverKey: (ORInt2Void) f;
@@ -66,7 +66,7 @@
    [_data release];
    [super dealloc];
 }
--(bool)balanced 
+-(ORBool)balanced 
 {
    ORInt bal = LEFTHEIGHT(self) - RIGHTHEIGHT(self);
    return -1 <= bal && bal <= 1;
@@ -411,7 +411,7 @@ static inline void rightRotate(ORAVLTree* t,ORAVLTreeNode* z)
     [_theTree release];
     [super dealloc];
 }
--(BOOL) more
+-(ORBool) more
 {
     return (_cur != NULL);
 }

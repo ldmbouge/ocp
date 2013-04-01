@@ -118,7 +118,7 @@
    } else return nil;
 }
 
--(BOOL)willingToShare
+-(ORBool)willingToShare
 {
    return _sz >= 1;
 }

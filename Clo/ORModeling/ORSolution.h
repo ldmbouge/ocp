@@ -15,7 +15,7 @@
 @protocol ORSolution <ORObject>
 -(id<ORSnapshot>) value: (id) var;
 -(ORInt) intValue: (id<ORIntVar>) var;
--(BOOL) boolValue: (id<ORIntVar>) var;
+-(ORBool) boolValue: (id<ORIntVar>) var;
 -(ORFloat) floatValue: (id<ORFloatVar>) var;
 -(id<ORObjectiveValue>) objectiveValue;
 @end

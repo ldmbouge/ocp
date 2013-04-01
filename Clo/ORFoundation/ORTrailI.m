@@ -454,7 +454,7 @@ ORInt trailMagic(ORTrailI* trail)
 {
    _sz = 0;
 }
--(bool)empty
+-(ORBool)empty
 {
    return _sz == 0;
 }

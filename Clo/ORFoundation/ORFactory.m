@@ -973,11 +973,11 @@
 @end
 
 @implementation ORFactory (ObjectiveValue)
-+(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (BOOL) b
++(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (ORBool) b
 {
    return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: f minimize: b];
 }
-+(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (BOOL) b
++(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: v minimize: b];
 }

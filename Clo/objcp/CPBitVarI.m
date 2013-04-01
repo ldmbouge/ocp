@@ -44,7 +44,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 }
 -(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v;
 -(int)intValue;
--(BOOL)boolValue;
+-(ORBool)boolValue;
 @end
 
 // TOFIX: GREG
@@ -70,7 +70,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    return _asDom ? [_rep._dom min] : _rep._value;
 }
--(BOOL)boolValue
+-(ORBool)boolValue
 {
    return _asDom ? [_rep._dom min] : _rep._value;
 }
@@ -81,7 +81,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 - (void)encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_asDom];
+   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_asDom];
    if (_asDom) {
       [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
    } else {
@@ -92,7 +92,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_asDom];
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_asDom];
    if (_asDom)
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_rep._value];
    else {
@@ -145,7 +145,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     }
 }
 
--(BOOL)bound
+-(ORBool)bound
 {
     return [_dom bound];
 }
@@ -194,7 +194,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    return [_dom lsFreeBit];
 }
 
--(BOOL)member:(unsigned int*)v
+-(ORBool)member:(unsigned int*)v
 {
     return [_dom member:v];
 }
@@ -217,7 +217,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    return self;
 }
 
--(bool) tracksLoseEvt
+-(ORBool) tracksLoseEvt
 {
     return _triggers != nil;
 }
@@ -466,7 +466,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_mx];
    for(ORInt k=0;k<_nb;k++)
       [aCoder encodeObject:_tab[k]];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];
+   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];
 }
 - (id)initWithCoder: (NSCoder *) aDecoder
 {
@@ -476,7 +476,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
    _tab = malloc(sizeof(CPBitVarI*)*_mx);
    for(ORInt k=0;k<_nb;k++)
       _tab[k] = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_tracksLoseEvt];   
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_tracksLoseEvt];   
    return self;
 }
 @end

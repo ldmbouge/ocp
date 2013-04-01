@@ -207,8 +207,8 @@
 @end
 
 @interface ORFactory (ObjectiveValue)
-+(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (BOOL) b;
-+(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (BOOL) b;
++(id<ORObjectiveValue>) objectiveValueFloat: (ORFloat) f minimize: (ORBool) b;
++(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b;
 @end
 
 

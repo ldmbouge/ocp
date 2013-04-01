@@ -64,7 +64,7 @@ typedef struct AC3Entry {
 -(AC3Entry)deQueue;
 -(void)enQueue:(ConstraintCallback)cb cstr:(CPCoreConstraint*)cstr;
 -(void)reset;
--(bool)loaded;
+-(ORBool)loaded;
 @end
 
 @interface CPAC5Queue : NSObject {
@@ -81,6 +81,6 @@ typedef struct AC3Entry {
 -(id<CPAC5Event>) deQueue;
 -(void) enQueue: (id<CPAC5Event>)cb;
 -(void) reset;
--(bool) loaded;
+-(ORBool) loaded;
 @end
 

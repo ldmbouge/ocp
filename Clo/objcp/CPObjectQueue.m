@@ -32,7 +32,7 @@
       _enter = _exit = 0;
    }
 }
--(bool)empty
+-(ORBool)empty
 {
    bool rv = false;
    @synchronized(self) {
@@ -109,7 +109,7 @@
    _enter = _exit = 0;
    [_avail unlock];
 }
--(bool)empty
+-(ORBool)empty
 {
    bool rv;
    @synchronized(self) {

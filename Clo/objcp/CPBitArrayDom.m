@@ -113,7 +113,7 @@
 {
     return pow(2.0, _freebits._val);
 }
--(BOOL) bound
+-(ORBool) bound
 {
     return _freebits._val==0;
 }
@@ -186,14 +186,14 @@
     return _wordLength;
 }
 
--(bool) getBit:(unsigned int) idx
+-(ORBool) getBit:(unsigned int) idx
 {
    if (BITFREE(idx)) 
       @throw [[ORExecutionError alloc] initORExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
    return _low[WORDIDX(idx)]._val  & ONEAT(idx);
 }
 
--(ORStatus) setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x
+-(ORStatus) setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
 {
    if (BITFREE(idx)) {
       if (val)
@@ -208,7 +208,7 @@
    [x bitFixedEvt:_freebits._val sender:self];
    return ORSuspend;
 }
--(bool) isFree:(unsigned int)idx
+-(ORBool) isFree:(unsigned int)idx
 {
    return BITFREE(idx);
 }
@@ -239,7 +239,7 @@
 //   NSLog(@"%d free bits\n", freeBits);
    assignTRInt(&(_freebits), freeBits, _trail);
 }
--(bool) member:(unsigned int*) val
+-(ORBool) member:(unsigned int*) val
 {
    for(int i=0; i<_wordLength;i++){
       if ((val[i] & ~_up[i]._val)!=0)

@@ -438,7 +438,7 @@
 {
    return [[self dereference] floatValue: x];
 }
--(BOOL) boolValue: (id<ORIntVar>)x
+-(ORBool) boolValue: (id<ORIntVar>)x
 {
    return [[self dereference] boolValue: x];
 }

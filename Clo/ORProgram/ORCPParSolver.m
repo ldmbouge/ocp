@@ -312,7 +312,7 @@
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(BOOL)allSols
+-(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
@@ -534,7 +534,7 @@
 {
    return [[self dereference] floatValue: x];
 }
--(BOOL) boolValue: (id<ORIntVar>) x
+-(ORBool) boolValue: (id<ORIntVar>) x
 {
    return [((id<CPCommonProgram>) [self dereference]) boolValue: x];
 }

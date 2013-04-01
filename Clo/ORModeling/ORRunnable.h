@@ -15,28 +15,28 @@
 @protocol  ORModel;
 
 @protocol ORSignature<NSObject>
--(bool) matches: (id<ORSignature>)sig;
--(bool) isComplete;
--(bool) providesUpperBound;
--(bool) providesUpperBoundStream;
--(bool) providesLowerBound;
--(bool) providesLowerBoundStream;
--(bool) providesLowerBoundPool;
--(bool) providesUpperBoundPool;
--(bool) providesSolutionStream;
--(bool) providesColumn;
--(bool) providesConstraint;
--(bool) providesConstraintSet;
--(bool) acceptsUpperBound;
--(bool) acceptsUpperBoundStream;
--(bool) acceptsLowerBound;
--(bool) acceptsLowerBoundStream;
--(bool) acceptsLowerBoundPool;
--(bool) acceptsUpperBoundPool;
--(bool) acceptsSolutionStream;
--(bool) acceptsColumn;
--(bool) acceptsConstraint;
--(bool) acceptsConstraintSet;
+-(ORBool) matches: (id<ORSignature>)sig;
+-(ORBool) isComplete;
+-(ORBool) providesUpperBound;
+-(ORBool) providesUpperBoundStream;
+-(ORBool) providesLowerBound;
+-(ORBool) providesLowerBoundStream;
+-(ORBool) providesLowerBoundPool;
+-(ORBool) providesUpperBoundPool;
+-(ORBool) providesSolutionStream;
+-(ORBool) providesColumn;
+-(ORBool) providesConstraint;
+-(ORBool) providesConstraintSet;
+-(ORBool) acceptsUpperBound;
+-(ORBool) acceptsUpperBoundStream;
+-(ORBool) acceptsLowerBound;
+-(ORBool) acceptsLowerBoundStream;
+-(ORBool) acceptsLowerBoundPool;
+-(ORBool) acceptsUpperBoundPool;
+-(ORBool) acceptsSolutionStream;
+-(ORBool) acceptsColumn;
+-(ORBool) acceptsConstraint;
+-(ORBool) acceptsConstraintSet;
 @end
 
 @interface ORSignatureI : NSObject<ORSignature> {
@@ -63,7 +63,7 @@
     bool acceptsConstraint;
     bool acceptsConstraintSet;
 }
--(bool) matches: (id<ORSignature>)sig;
+-(ORBool) matches: (id<ORSignature>)sig;
 @property(readonly) bool isComplete;
 @property(readonly) bool providesUpperBound;
 @property(readonly) bool providesUpperBoundStream;

@@ -40,7 +40,7 @@
 @protocol ORProblem <NSObject>
 -(void) addCommand: (id<ORCommand>) c;
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
--(bool) apply: (bool(^)(id<ORCommand>))clo;
+-(ORBool) apply: (bool(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
 @end
 

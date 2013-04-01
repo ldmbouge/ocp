@@ -36,5 +36,5 @@
 @interface ORAVLTreeKeyIntEnumerator : NSObject<IntEnumerator>
 -(ORAVLTreeKeyIntEnumerator*) initORAVLTreeKeyIntEnumerator: (ORAVLTree*) tree;
 -(ORInt) next;
--(BOOL)  more;
+-(ORBool)  more;
 @end

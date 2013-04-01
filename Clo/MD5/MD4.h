@@ -52,7 +52,7 @@
 //-(MD4*) initExplicitMD4:(id<ORModel>)m;
 -(void) dealloc;
 
--(bool) getMessage:(NSString*) fname;
+-(ORBool) getMessage:(NSString*) fname;
 -(NSMutableArray*) getMD4Digest:(NSString*)fname;
 -(void) createMD4Blocks:(uint32*)mask;
 //-(void) createMD4Block:(uint32*)data withCount:(uint64)count;

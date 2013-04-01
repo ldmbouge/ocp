@@ -35,7 +35,7 @@
    _enter = _exit = 0;
    _csz = 0;
 }
--(bool) loaded
+-(ORBool) loaded
 {
    //ORInt nb = (_mxs + _enter - _exit)  & _mask;
    return _csz > 0;
@@ -116,7 +116,7 @@ inline static AC3Entry AC3deQueue(CPAC3Queue* q)
    _enter = _exit = 0;
    _csz = 0;
 }
--(bool)loaded
+-(ORBool)loaded
 {
    return _csz > 0;
 }
@@ -676,7 +676,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _status;
 }
 
--(bool) closed
+-(ORBool) closed
 {
    return _state == CPClosed;
 }

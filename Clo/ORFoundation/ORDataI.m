@@ -80,11 +80,11 @@
 {
    return _value;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return YES;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return NO;
 }
@@ -137,11 +137,11 @@
 {
    return _value = value;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return YES;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return NO;
 }

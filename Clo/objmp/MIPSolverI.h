@@ -33,7 +33,7 @@
 }
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver;
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(bool) hasBounds;
+-(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORInt) idx;
@@ -48,13 +48,13 @@
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
--(BOOL) isInteger;
+-(ORBool) isInteger;
 @end
 
 @interface MIPIntVariableI : MIPVariableI
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver;
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(BOOL) isInteger;
+-(ORBool) isInteger;
 -(ORInt) intValue;
 @end
 
@@ -243,7 +243,7 @@
 -(MIPObjectiveI*) postObjective: (MIPObjectiveI*) obj;
 
 -(void) close;
--(bool) isClosed;
+-(ORBool) isClosed;
 -(MIPOutcome) solve;
 
 -(MIPOutcome) status;

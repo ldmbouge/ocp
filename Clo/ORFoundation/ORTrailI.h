@@ -97,7 +97,7 @@
 -(void) popNode:(ORInt) x;
 -(void) popNode;
 -(void) reset;
--(bool) empty;
+-(ORBool) empty;
 -(ORInt)size;
 @end
 

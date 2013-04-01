@@ -75,7 +75,7 @@
 {
    return (ORBounds){_min._val,_max._val};
 }
--(BOOL) bound
+-(ORBool) bound
 {
    return _sz._val == 1;
 }
@@ -83,11 +83,11 @@
 {
    return _sz._val;
 }
--(BOOL) get:(ORInt)v
+-(ORBool) get:(ORInt)v
 {
    return _min._val <= v && v <= _max._val;
 }
--(BOOL) member:(ORInt) v
+-(ORBool) member:(ORInt) v
 {
    return _min._val <= v && v <= _max._val;
 }
@@ -411,16 +411,16 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    return dom->_imin + ((mw << 5) + mb);   
 }
 
--(BOOL) get:(ORInt)b
+-(ORBool) get:(ORInt)b
 {
    return GETBIT(b);
 }
--(BOOL) member:(ORInt)b
+-(ORBool) member:(ORInt)b
 {
    return b >= _min._val && b <= _max._val && GETBIT(b);
 }
 
--(void)set:(ORInt)b at:(bool)v
+-(void)set:(ORInt)b at:(ORBool)v
 {
    if (b >=_imin && b<=_imax) {
       b -= _imin;
@@ -896,7 +896,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
    else
       return [_theDom imin] * _a + _b;
 }
--(BOOL) bound
+-(ORBool) bound
 {
    return [_theDom bound];
 }
@@ -918,14 +918,14 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
    ORInt t2 = (to  - _b) / _a;
    return [_theDom countFrom:f2 to:t2];
 }
--(BOOL) get:(ORInt)b
+-(ORBool) get:(ORInt)b
 {
    if ((b - _b)  % _a)
       return NO;
    else
       return [_theDom get:(b - _b)/_a];
 }
--(BOOL) member:(ORInt)v
+-(ORBool) member:(ORInt)v
 {
    if ((v - _b) % _a)
       return NO;

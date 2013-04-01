@@ -14,7 +14,7 @@
 
 @implementation ORSignatureI
 
--(bool) matches: (id<ORSignature>)sig {
+-(ORBool) matches: (id<ORSignature>)sig {
     return YES;
 }
 

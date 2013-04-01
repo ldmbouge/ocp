@@ -26,7 +26,7 @@
 -(ORFloat) floatValue;
 -(ORFloat) reducedCost;
 -(NSString*) description;
--(BOOL) isEqual: (id) object;
+-(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 @end
 
@@ -43,7 +43,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "intValue not implemented"];
 }
--(BOOL) boolValue
+-(ORBool) boolValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "boolValue not implemented"];
 }
@@ -55,7 +55,7 @@
 {
    return _reducedCost;
 }
--(BOOL) isEqual: (id) object
+-(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
       ORLPFloatVarSnapshot* other = object;
@@ -102,7 +102,7 @@
 -(ORLPConstraintSnapshot*) initLPConstraintSnapshot: (id<ORConstraint>) cstr with: (id<LPProgram>) solver;
 -(ORFloat) dual;
 -(NSString*) description;
--(BOOL) isEqual: (id) object;
+-(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 @end
 
@@ -118,7 +118,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "intValue not implemented"];
 }
--(BOOL) boolValue
+-(ORBool) boolValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "boolValue not implemented"];
 }
@@ -130,7 +130,7 @@
 {
    return _dual;
 }
--(BOOL) isEqual: (id) object
+-(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
       ORLPConstraintSnapshot* other = object;
@@ -174,7 +174,7 @@
 -(ORFloat) reducedCost: (id<ORFloatVar>) var;
 -(ORFloat) dual: (id<ORConstraint>) var;
 -(NSUInteger) count;
--(BOOL)isEqual: (id) object;
+-(ORBool)isEqual: (id) object;
 -(NSUInteger) hash;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
@@ -225,7 +225,7 @@
    [super dealloc];
 }
 
--(BOOL) isEqual: (id) object
+-(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass: [self class]]) {
       ORLPSolutionI* other = object;
@@ -262,7 +262,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No boolean variable in LP solutions"];   
 }
--(BOOL) boolValue: (id) var
+-(ORBool) boolValue: (id) var
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No boolean variable in LP solutions"];
 }

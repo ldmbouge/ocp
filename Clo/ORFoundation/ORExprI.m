@@ -24,7 +24,7 @@
       return [ORFactory integer:tracker value:[self intValue]];
    else if (strcmp(tt,@encode(float))==0 || strcmp(tt,@encode(double))==0)
       return [ORFactory float:tracker value:[self floatValue]];  
-   else if (strcmp(tt,@encode(BOOL))==0 || strcmp(tt,@encode(bool))==0)
+   else if (strcmp(tt,@encode(ORBool))==0 || strcmp(tt,@encode(ORBool))==0)
       return [ORFactory integer:tracker value:[self boolValue]];
    else {
       assert(NO);
@@ -102,11 +102,11 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "floatValue not defined on expression"];
    return 0;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return NO;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return NO;
 }
@@ -277,7 +277,7 @@
 {
    return _tracker;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_left isConstant] && [_right isConstant];
 }
@@ -325,7 +325,7 @@
 {
    return _op;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_op isConstant];
 }
@@ -377,7 +377,7 @@
 {
    return _op;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_op isConstant];
 }
@@ -445,7 +445,7 @@
 {
    return _array;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_index isConstant];
 }
@@ -1014,7 +1014,7 @@
 {
    return [_e max];
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_e isConstant];
 }
@@ -1087,7 +1087,7 @@
 {
    return [_e max];
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_e isConstant];
 }
@@ -1160,7 +1160,7 @@
 {
    return [_e max];
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_e isConstant];
 }
@@ -1228,7 +1228,7 @@
 {
    return _array;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return [_index isConstant];
 }

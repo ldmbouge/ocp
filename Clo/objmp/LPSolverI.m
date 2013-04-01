@@ -462,7 +462,7 @@
    
    return self;
 }
--(bool) hasBounds
+-(ORBool) hasBounds
 {
    return _hasBounds;
 }
@@ -578,7 +578,7 @@
 {
    return [_solver reducedCost: self];
 }
--(BOOL) isInteger
+-(ORBool) isInteger
 {
    return false;
 }
@@ -683,7 +683,7 @@
 {
    _idx = idx;
 }
--(BOOL) hasBounds
+-(ORBool) hasBounds
 {
    return _hasBounds;
 }
@@ -1222,7 +1222,7 @@
       [_lp addObjective: _obj];
    }
 }
--(bool) isClosed
+-(ORBool) isClosed
 {
    return _isClosed;
 }

@@ -40,9 +40,9 @@
 }
 -(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
 -(int) intValue;
--(BOOL) boolValue;
+-(ORBool) boolValue;
 -(NSString*) description;
--(BOOL)isEqual: (id) object;
+-(ORBool)isEqual: (id) object;
 -(NSUInteger) hash;
 @end
 
@@ -62,11 +62,11 @@
 {
    return _value;
 }
--(BOOL) boolValue
+-(ORBool) boolValue
 {
    return _value;
 }
--(BOOL)isEqual: (id) object
+-(ORBool)isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
       ORCPIntVarSnapshot* other = object;
@@ -111,7 +111,7 @@
 -(ORFloat) floatValue;
 -(ORInt) intValue;
 -(NSString*) description;
--(BOOL) isEqual: (id) object;
+-(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 @end
 
@@ -128,7 +128,7 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "intValue called on a snapshot for float variables"];
    return 0;
 }
--(BOOL) boolValue
+-(ORBool) boolValue
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "boolValue called on a snapshot for float variables"];
    return 0;
@@ -137,7 +137,7 @@
 {
    return _value;
 }
--(BOOL) isEqual: (id) object
+-(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass:[self class]]) {
       ORCPFloatVarSnapshot* other = object;
@@ -677,7 +677,7 @@
 @interface ORCPSolutionI : NSObject<ORCPSolution>
 -(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver;
 -(id<ORSnapshot>) value: (id<ORFloatVar>) var;
--(BOOL) isEqual: (id) object;
+-(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
@@ -719,7 +719,7 @@
    [super dealloc];
 }
 
--(BOOL) isEqual: (id) object
+-(ORBool) isEqual: (id) object
 {
    if ([object isKindOfClass: [self class]]) {
       ORCPSolutionI* other = object;
@@ -756,7 +756,7 @@
 {
    return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] intValue];
 }
--(BOOL) boolValue: (id) var
+-(ORBool) boolValue: (id) var
 {
    return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] boolValue];
 }
@@ -1166,7 +1166,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
 }
--(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
@@ -1322,7 +1322,7 @@
 {
    [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
 }
--(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(bool)val
+-(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:i with: val];
 }
@@ -1456,7 +1456,7 @@
    // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
    return [x intValue];
 }
--(BOOL) boolValue: (id<ORIntVar>) x
+-(ORBool) boolValue: (id<ORIntVar>) x
 {
    // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
    return [x intValue];
@@ -1648,7 +1648,7 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    ORStatus status = [_engine enforce:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
@@ -1766,7 +1766,7 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    ORStatus status = [_engine enforce:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)

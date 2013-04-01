@@ -21,7 +21,7 @@
 
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
--(bool) member: (ORInt) v;
+-(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
 -(ORInt) min;
@@ -40,8 +40,8 @@
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
--(bool) isDefined;
--(bool) inRange: (ORInt)e;
+-(ORBool) isDefined;
+-(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
 -(NSString*) description;
 -(void)visit:(id<ORVisitor>)v;

@@ -95,7 +95,7 @@ typedef struct  {
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
 -(CPLiterals*)literals;
 -(void) setTracksLoseEvt;
--(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt) dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt) dsz sender:(id<CPDom>)sender;
@@ -116,7 +116,7 @@ typedef struct  {
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
--(BOOL) isBool;
+-(ORBool) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
@@ -125,7 +125,7 @@ typedef struct  {
 -(CPLiterals*)literals;
 
 // needed for speeding the code when not using AC5
--(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -160,14 +160,14 @@ typedef struct  {
 
 // access
 
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
 -(ORInt) intValue;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(BOOL) member:(ORInt)v;
+-(ORBool) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
@@ -206,11 +206,11 @@ typedef struct  {
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -232,11 +232,11 @@ typedef struct  {
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -256,11 +256,11 @@ typedef struct  {
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -281,12 +281,12 @@ typedef struct  {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;

@@ -33,7 +33,7 @@
 }
 -(LPVariableI*) initLPVariableI: (LPSolverI*) solver;
 -(LPVariableI*) initLPVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(bool) hasBounds;
+-(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORInt) idx;
@@ -50,7 +50,7 @@
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
--(BOOL) isInteger;
+-(ORBool) isInteger;
 @end
 
 @protocol LPVariableArray <ORVarArray>
@@ -183,7 +183,7 @@
 
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
--(BOOL) hasBounds;
+-(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORFloat) objCoef;
@@ -281,7 +281,7 @@
 -(LPVariableI*) postColumn: (LPColumnI*) col;
 
 -(void) close;
--(bool) isClosed;
+-(ORBool) isClosed;
 -(LPOutcome) solve;
 
 -(LPOutcome) status;
