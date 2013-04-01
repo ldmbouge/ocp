@@ -676,12 +676,14 @@
 
 @interface ORCPSolutionI : NSObject<ORCPSolution>
 -(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver;
--(id<ORSnapshot>) value: (id<ORFloatVar>) var;
+-(id<ORSnapshot>) value: (id) var;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
 -(id<ORObjectiveValue>) objectiveValue;
 @end
 
+
+// PVH: need to be generalized when the global numbering will be available
 @implementation ORCPSolutionI {
    NSArray*             _varShots;
    id<ORObjectiveValue> _objValue;

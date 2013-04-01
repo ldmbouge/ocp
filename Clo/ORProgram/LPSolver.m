@@ -208,9 +208,9 @@
       [shot release];
    }];
    _cstrShots = snapshots;
-   
+   // PVH to change
    if ([model objective])
-      _objValue = [[model objective] value];
+      _objValue = [solver objectiveValue];
    else
       _objValue = nil;
    return self;
@@ -432,6 +432,10 @@
 -(id<ORLPSolutionPool>) solutionPool
 {
    return _sPool;
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [_lpsolver objectiveValue];
 }
 -(id<ORLPSolution>) captureSolution
 {

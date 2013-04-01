@@ -20,6 +20,7 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
 -(id<LPColumn>) createColumn;
 -(void) addColumn: (id<LPColumn>) column;
+-(id<ORObjectiveValue>) objectiveValue;
 -(id<ORLPSolution>) captureSolution;
 @end
 

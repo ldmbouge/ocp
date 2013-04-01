@@ -42,6 +42,7 @@
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) v;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(id<ORObjectiveValue>) objectiveValue;
 -(id<ORLPSolutionPool>) solutionPool;
 -(id<ORLPSolution>) captureSolution;
 @end

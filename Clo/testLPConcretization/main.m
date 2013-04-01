@@ -57,9 +57,9 @@ int main_lp(int argc, const char * argv[])
       printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
    for(ORInt i = 0; i < nbColumns-1; i++)
       printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
-   //   NSLog(@"Objective value: %@",[[model objective] value]);
    sol = [[lp solutionPool] best];
    NSLog(@"Solution: %@",sol);
+   NSLog(@"Objective function: %@",[sol objectiveValue]);
    NSLog(@"we are done (Part II)");
    [sol release];
    [lp release];
@@ -78,8 +78,9 @@ int main_mip(int argc, const char * argv[])
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
-   id<ORSolution> sol = [[mip solutionPool] best];
+   id<ORMIPSolution> sol = [[mip solutionPool] best];
    NSLog(@"Solution: %@",sol);
+   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
    NSLog(@"we are done");

@@ -15,6 +15,9 @@
 // MIPSolver
 @interface MIPSolver : NSObject<MIPProgram>
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model;
+-(id<ORObjectiveValue>) objectiveValue;
+-(id<ORMIPSolutionPool>) solutionPool;
+-(id<ORMIPSolution>) captureSolution;
 @end
 
 // MIPSolverFactory
