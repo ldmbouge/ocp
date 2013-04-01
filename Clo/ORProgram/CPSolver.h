@@ -46,7 +46,6 @@
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolutionPool>) globalSolutionPool;
 -(id<ORCPSolution>) captureSolution;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;

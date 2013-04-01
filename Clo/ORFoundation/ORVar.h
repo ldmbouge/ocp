@@ -22,7 +22,7 @@
 
 @protocol ORSavable<NSObject>
 -(ORInt) getId;
--(void)restore:(id<ORSnapshot>)s;
+//-(void)restore:(id<ORSnapshot>)s;
 @end
 
 @protocol ORVar <ORObject,ORSavable,ORExpr>

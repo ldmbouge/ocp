@@ -43,7 +43,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
    BOOL         _asDom;
 }
 -(CPBitVarSnapshot*)initCPBitVarSnapshot:(CPBitVarI*)v;
--(void)restoreInto:(NSArray*)av;
 -(int)intValue;
 -(BOOL)boolValue;
 @end
@@ -66,15 +65,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
    if (_asDom)
       [_rep._dom release];
    [super dealloc];
-}
--(void)restoreInto:(NSArray*)av
-{
-   CPBitVarI* theVar = [av objectAtIndex:_name];
-   if (_asDom) {
-      [theVar restoreDomain:_rep._dom];
-   } else {
-      [theVar restoreValue:_rep._value];
-   }
 }
 -(int)intValue
 {
@@ -212,11 +202,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(NSString*)description
 {
     return [_dom description];
-}
-
--(id)snapshot
-{
-   return [[CPBitVarSnapshot alloc] initCPBitVarSnapshot:self];
 }
 -(void)restoreDomain:(id<CPDom>)toRestore
 {

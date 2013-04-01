@@ -291,17 +291,13 @@
 }
 -(void) doOnSolution
 {
-   _onSol();
+   [[self dereference] doOnSolution];
 }
 -(void) doOnExit
 {
 }
 
 -(id<ORSolutionPool>) solutionPool
-{
-   return [[self dereference] solutionPool];
-}
--(id<ORSolutionPool>) globalSolutionPool
 {
    return _globalPool;
 }

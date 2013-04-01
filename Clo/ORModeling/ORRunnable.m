@@ -260,7 +260,7 @@
         if(_exitBlock) _exitBlock();
         else {
             id<ORSolution> best = [[_program solutionPool] best];
-            [_model restore:best];
+//            [_model restore:best];
             [best release];
         }
     }];
@@ -273,13 +273,13 @@
     NSLog(@"Finishing CP runnable(%p)...", _program);
 }
 
--(void) restore: (id<ORSolution>)s {
-    [[_program engine] enforce: ^ORStatus() {
-        [_model restore: s];
-        return ORSuccess;
-    }];
-    
-}
+//-(void) restore: (id<ORSolution>)s {
+//    [[_program engine] enforce: ^ORStatus() {
+//        [_model restore: s];
+//        return ORSuccess;
+//    }];
+//    
+//}
 
 @end
 

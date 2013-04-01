@@ -119,11 +119,13 @@
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
       id<ORSolutionPool> lp = [cp solutionPool];
-      id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
+      id<ORSolutionPool> gp = [cpprogram solutionPool];
       [cp onSolution: ^{
          id<ORSolution> s = [cp captureSolution];
          [lp addSolution: s];
          @synchronized(gp) {
+//            NSLog(@"Adding a global solution with cost %@",[s objectiveValue]);
+//            NSLog(@"Solution %@",s);
             [gp addSolution: s];
          }
          id<ORSearchObjectiveFunction> objective = [cp objective];
@@ -158,7 +160,7 @@
          [c setImpl: ba];
       }
    }
-   id<ORSolutionPool> global = [cpprogram globalSolutionPool];
+   id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
       id<CPProgram> pi = [cpprogram dereference];

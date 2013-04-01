@@ -395,8 +395,7 @@ enum ORGroupType {
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
--(id<ORSolutionPool>) globalSolutionPool;    // Solution pool for parallel computing (to use internally)
+-(id<ORSolutionPool>) solutionPool;          
 @end
 
 // ====== Bit Constraints =====================================

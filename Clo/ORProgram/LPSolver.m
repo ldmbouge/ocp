@@ -23,7 +23,6 @@
    
 }
 -(ORLPFloatVarSnapshot*) initLPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<LPProgram>) solver;
--(void)restoreInto:(NSArray*)av;
 -(ORFloat) floatValue;
 -(ORFloat) reducedCost;
 -(NSString*) description;
@@ -39,10 +38,6 @@
    _value = [solver floatValue: v];
    _reducedCost = [solver reducedCost: v];
    return self;
-}
--(void) restoreInto: (NSArray*) av
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "restoreInto not implemented"];
 }
 -(ORInt) intValue
 {
@@ -105,7 +100,6 @@
    ORFloat   _dual;
 }
 -(ORLPConstraintSnapshot*) initLPConstraintSnapshot: (id<ORConstraint>) cstr with: (id<LPProgram>) solver;
--(void)restoreInto:(NSArray*)av;
 -(ORFloat) dual;
 -(NSString*) description;
 -(BOOL) isEqual: (id) object;
@@ -119,10 +113,6 @@
    _name = [cstr getId];
    _dual = [solver dual: cstr];
    return self;
-}
--(void) restoreInto: (NSArray*) av
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "restoreInto not implemented"];
 }
 -(ORInt) intValue
 {
@@ -440,10 +430,6 @@
    [_lpsolver trackConstraint:obj];
 }
 -(id<ORLPSolutionPool>) solutionPool
-{
-   return _sPool;
-}
--(id<ORLPSolutionPool>) globalSolutionPool
 {
    return _sPool;
 }

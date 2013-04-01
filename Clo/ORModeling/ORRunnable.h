@@ -189,7 +189,7 @@
 -(id) initWithModel: (id<ORModel>)m;
 -(id<CPProgram>) solver;
 -(void) run;
--(void) restore: (id<ORSolution>)s;
+//-(void) restore: (id<ORSolution>)s;
 @end
 
 @protocol LPRunnable <ORRunnable>

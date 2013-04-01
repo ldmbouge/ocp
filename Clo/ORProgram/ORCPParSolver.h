@@ -23,7 +23,6 @@
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)nbWorkers;
 -(id<CPProgram>)dereference;
--(id<ORSolutionPool>)globalSolutionPool;
 -(void)onSolution:(ORClosure)onSolution;
 -(void) doOnSolution;
 -(void) doOnExit;

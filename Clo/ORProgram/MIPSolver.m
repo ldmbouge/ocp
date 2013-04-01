@@ -67,10 +67,6 @@
 {
    return _sPool;
 }
--(id<ORSolutionPool>) globalSolutionPool
-{
-   return _sPool;
-}
 @end
 
 

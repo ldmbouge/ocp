@@ -39,7 +39,6 @@
    ORInt     _value;
 }
 -(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
--(void) restoreInto: (NSArray*) av;
 -(int) intValue;
 -(BOOL) boolValue;
 -(NSString*) description;
@@ -54,11 +53,6 @@
    _name = [v getId];
    _value = [solver intValue: v];
    return self;
-}
--(void) restoreInto: (NSArray*) av
-{
-   id<ORIntVar> theVar = [av objectAtIndex:_name];
-   [theVar restore:self];
 }
 -(ORInt) intValue
 {
@@ -114,7 +108,6 @@
    ORFloat   _value;
 }
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
--(void) restoreInto: (NSArray*) av;
 -(ORFloat) floatValue;
 -(ORInt) intValue;
 -(NSString*) description;
@@ -129,11 +122,6 @@
    _name = [v getId];
    _value = [solver floatValue: v];
    return self;
-}
--(void) restoreInto: (NSArray*) av
-{
-   id<ORFloatVar> theVar = [av objectAtIndex:_name];
-   [theVar restore:self];
 }
 -(ORInt) intValue
 {
@@ -709,13 +697,14 @@
    [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
       [obj visit: visit];
       id shot = [visit snapshot];
-      [snapshots addObject: shot];
+      if (shot)
+         [snapshots addObject: shot];
       [shot release];
    }];
    _varShots = snapshots;
    
    if ([model objective])
-      _objValue = [[model objective] value];
+      _objValue = [[solver objective] value];
    else
       _objValue = nil;
    [visit release];
@@ -1008,10 +997,6 @@
    [_doOnExitArray addObject: [onExit copy]];
 }
 -(id<ORSolutionPool>) solutionPool
-{
-   return _sPool;
-}
--(id<ORSolutionPool>) globalSolutionPool
 {
    return _sPool;
 }
@@ -1499,8 +1484,6 @@
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
 -(void) trackConstraint: (id) obj;
--(void) compiling: (id<ORConstraint>) cstr;
--(NSSet*) compiledMap;
 @end
 
 @implementation ORRTModel

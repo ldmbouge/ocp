@@ -174,9 +174,6 @@ typedef struct  {
 -(ORInt) scale;
 -(id<ORIntVar>)base;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
--(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore;
--(void)restore:(id<ORSnapshot>)s;
 
 // update
 -(ORStatus)     updateMin: (ORInt) newMin;
@@ -185,7 +182,7 @@ typedef struct  {
 -(ORStatus)     bind:(ORInt) val;
 -(ORStatus)     remove:(ORInt) val;
 -(ORStatus)     inside:(ORIntSetI*) S;
-//-(id)           snapshot;
+
 // Class methods
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
@@ -224,7 +221,6 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPIntView : CPIntVarI { // Affine View
@@ -251,7 +247,6 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
@@ -276,7 +271,6 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
@@ -301,7 +295,6 @@ typedef struct  {
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
--(id) snapshot;
 @end
 
 static inline BOOL bound(CPIntVarI* x)

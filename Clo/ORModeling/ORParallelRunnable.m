@@ -71,9 +71,9 @@
         [_solutionPool addSolution: s];
     }];
     
-    [_r0 onExit: ^() { [(CPRunnableI*)_r0 restore: [_solutionPool best]]; }];
-    [_r1 onExit: ^() { [(CPRunnableI*)_r1 restore: [_solutionPool best]]; }];
-    
+//    [_r0 onExit: ^() { [(CPRunnableI*)_r0 restore: [_solutionPool best]]; }];
+//    [_r1 onExit: ^() { [(CPRunnableI*)_r1 restore: [_solutionPool best]]; }];
+   
     _t0 = [[NSThread alloc] initWithTarget: _r0 selector: @selector(run) object: nil];
     [_t0 start];
     _t1 = [[NSThread alloc] initWithTarget: _r1 selector: @selector(run) object: nil];

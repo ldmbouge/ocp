@@ -61,8 +61,6 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(void) compiling:(id<ORConstraint>)cstr;
--(NSSet*)compiledMap;
 
 @end
 

@@ -534,23 +534,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     }
     return ORSuspend;
 }
--(void)restoreDomain:(id<CPDom>)toRestore
-{
-   [_dom restoreDomain:toRestore];
-}
--(void)restoreValue:(ORInt)toRestore
-{
-   [_dom restoreValue:toRestore for:self];
-}
--(void)restore:(id<ORSnapshot>)s
-{
-    [_dom restoreValue:[s intValue] for: self];
-}
--(id) snapshot
-{
-   assert(FALSE);
-   return nil;
-}
 
 -(id<ORIntVar>) dereference
 {
@@ -772,10 +755,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [super description];
 }
--(id)snapshot
-{
-   return nil;
-}
 @end
 
 // ---------------------------------------------------------------------
@@ -944,10 +923,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [super description];
 }
--(id)snapshot
-{
-   return nil;
-}
 @end
 
 @implementation CPIntFlipView
@@ -1040,10 +1015,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    return [super loseValEvt:-val sender:sender];
-}
--(id)snapshot
-{
-   return nil;
 }
 -(NSString*)description
 {
@@ -1245,10 +1216,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    else
       [buf appendFormat:@"var<%d>+={0,1} (LIT=%d)",_name,_v];
    return buf;
-}
--(id) snapshot
-{
-   return nil;
 }
 @end
 

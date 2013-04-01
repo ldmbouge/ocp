@@ -239,7 +239,6 @@
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [batch compiling:c];
       [ORLPFlatten flatten:c into:batch];
    } onObjective:^(id<ORObjectiveFunction> o) {
       if (o) {

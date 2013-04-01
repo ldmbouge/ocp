@@ -178,7 +178,6 @@
                              withObject:[NSArray arrayWithObjects: [objClosure copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
-   [_sPool enumerateWith: ^void(id<ORCPSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
 }
 
 -(void) solveAll: (ORClosure) search
@@ -350,14 +349,14 @@
       [_solver[k] onExit: onExit];
 }
 -(void) doOnSolution
-{}
--(void) doOnExit
-{}
--(id<ORCPSolutionPool>) solutionPool
 {
-   return (id<ORCPSolutionPool>) [[self dereference] solutionPool];
+   @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
 }
--(id<ORCPSolutionPool>) globalSolutionPool
+-(void) doOnExit
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
+}
+-(id<ORCPSolutionPool>) solutionPool
 {
    return _sPool;
 }

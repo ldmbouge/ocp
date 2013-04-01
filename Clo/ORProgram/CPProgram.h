@@ -101,7 +101,6 @@
 -(void) doOnSolution;
 -(void) doOnExit;
 -(id<ORCPSolutionPool>) solutionPool;
--(id<ORCPSolutionPool>) globalSolutionPool;
 -(id<ORCPSolution>) captureSolution;
 
 -(ORInt) intValue: (id<ORIntVar>) x;

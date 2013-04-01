@@ -63,8 +63,6 @@
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
--(void) compiling:(id<ORConstraint>)cstr;
--(NSSet*)compiledMap;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
@@ -77,18 +75,6 @@
 -(id<ORAddToModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
--(void) compiling:(id<ORConstraint>)cstr;
-@end
-
-@interface ORSolutionI : NSObject<ORSolution>
--(ORSolutionI*) initSolution: (id<ORModel>) model;
--(ORInt) intValue: (id) var;
--(BOOL) boolValue: (id) var;
--(id<ORSnapshot>) value:(id)var;
-//-(NSUInteger) count;
--(BOOL)isEqual:(id)object;
--(NSUInteger)hash;
--(id<ORObjectiveValue>)objectiveValue;
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
