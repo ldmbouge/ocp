@@ -668,12 +668,14 @@
 @implementation ORAbs { // x = |y|
    id<ORIntVar> _x;
    id<ORIntVar> _y;
+   ORAnnotation _annotation;
 }
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
+   _annotation = Default;
    return self;
 }
 -(NSString*) description
@@ -693,6 +695,10 @@
 -(id<ORIntVar>) left
 {
    return _y;
+}
+-(ORAnnotation) annotation
+{
+   return _annotation;
 }
 @end
 
@@ -1649,6 +1655,15 @@
    _low = low;
    _up = up;
    _n = DomainConsistency;
+   return self;
+}
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _low = low;
+   _up = up;
+   _n = c;
    return self;
 }
 -(id<ORIntVarArray>) array

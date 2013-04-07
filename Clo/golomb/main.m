@@ -56,9 +56,10 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp  = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
-         
+         id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
          [cp solve: ^{
             [cp labelHeuristic:h];
+            [cp once: ^{ [cp labelArray:fd];}];
             NSLog(@"Optimum: %d",[m[n] value]);
          }];         
          NSLog(@"Solver status: %@\n",cp);

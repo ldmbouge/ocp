@@ -33,22 +33,21 @@
    return [[ORBatchModel alloc]  init: flatModel source:srcModel];
 }
 
-+(id<ORModelTransformation>) createFlattener
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORFlatten alloc] initORFlatten] autorelease];
+   return [[[ORFlatten alloc] initORFlatten:into] autorelease];
 }
-+(id<ORModelTransformation>) createLPFlattener
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORLPFlatten alloc] initORLPFlatten] autorelease];
+   return [[[ORLPFlatten alloc] initORLPFlatten:into] autorelease];
 }
-+(id<ORModelTransformation>) createMIPFlattener
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORMIPFlatten alloc] initORMIPFlatten] autorelease];
+   return [[[ORMIPFlatten alloc] initORMIPFlatten:into] autorelease];
 }
-
-+(id<ORModelTransformation>) createLinearizer
++(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {
-    return [[[ORLinearize alloc] initORLinearize] autorelease];
+   return [[[ORLinearize alloc] initORLinearize:into] autorelease];
 }
 +(id<ORSolutionPool>) createSolutionPool
 {

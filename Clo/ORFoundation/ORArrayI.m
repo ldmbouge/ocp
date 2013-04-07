@@ -519,8 +519,7 @@
 // Matrix ------------------------------------------------------------------
 
 
-@implementation ORIdMatrixI
-{
+@implementation ORIdMatrixI {
    id*              _flat;
    ORInt           _arity;
    id<ORIntRange>* _range;
@@ -530,7 +529,6 @@
    ORInt*              _i;
    ORInt              _nb;
 }
-
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 {
    self = [super init];
@@ -619,6 +617,10 @@
 -(id) flat: (ORInt) i
 {
    return _flat[i];
+}
+-(void) setFlat:(id) x at:(ORInt)i
+{
+   _flat[i] = x;
 }
 -(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {

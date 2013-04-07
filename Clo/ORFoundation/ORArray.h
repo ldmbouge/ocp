@@ -79,6 +79,7 @@
 -(id) flat:(ORInt)i;
 -(id) at: (ORInt) i1 : (ORInt) i2;
 -(id) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) setFlat:(id) x at:(ORInt)i;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
 -(ORInt) arity;

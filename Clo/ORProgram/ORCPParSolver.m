@@ -552,7 +552,8 @@
 -(id<ORSearchController>)makeRootController
 {
   return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
-}-(id<ORSearchController>)makeNestedController
+}
+-(id<ORSearchController>)makeNestedController
 {
   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
 }

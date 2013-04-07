@@ -224,29 +224,32 @@
 @end
 
 
-@implementation ORMIPFlatten
--(id)initORMIPFlatten
+@implementation ORMIPFlatten {
+   id<ORAddToModel> _into;
+}
+-(id)initORMIPFlatten:(id<ORAddToModel>)into
 {
    self = [super init];
+   _into = into;
    return self;
 }
--(void) apply: (id<ORModel>) m into: (id<ORAddToModel>) batch
+-(void) apply: (id<ORModel>) m
 {
    [m applyOnVar:^(id<ORVar> x) {
-      [batch addVariable:x];
+      [_into addVariable:x];
    } onObjects:^(id<ORObject> x) {
-      ORMIPFlattenObjects* fo = [[ORMIPFlattenObjects alloc] init:batch];
+      ORMIPFlattenObjects* fo = [[ORMIPFlattenObjects alloc] init:_into];
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [batch compiling:c];
-      [ORMIPFlatten flatten:c into:batch];
-      NSSet* map = [batch compiledMap];
+      [_into compiling:c];
+      [ORMIPFlatten flatten:c into:_into];
+      NSSet* map = [_into compiledMap];
       NSLog(@"Got a Map %@",map);
    } onObjective:^(id<ORObjectiveFunction> o) {
       NSLog(@"objective %@ ",o);
       if (o) {
-         ORMIPFlattenObjective* fo = [[ORMIPFlattenObjective alloc] init:batch];
+         ORMIPFlattenObjective* fo = [[ORMIPFlattenObjective alloc] init:_into];
          [o visit:fo];
          [fo release];
       }

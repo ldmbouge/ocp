@@ -40,6 +40,7 @@
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;
+-(void)setId:(ORUInt)name;
 @end
 
 @interface ORTableI : ORDualUseObjectI<ORTable,NSCoding> {

@@ -11,6 +11,8 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
+#import "ORVarI.h"
+#import "ORSetI.h"
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORConcurrencyI.h"
@@ -24,6 +26,8 @@
    // pvh to clean once generalized
    id<ORObjectiveFunction>  _objective;
    ORUInt                   _name;
+   ORUInt                   _nbObjects; // number of objects registered with this model.
+   // ===================================
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    id<ORModel>              _original;  // that's the pointer to the original copy we were cloned from.
    // ===================================
@@ -43,6 +47,7 @@
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    _name = 0;
+   _nbObjects = 0;
    _orig2Me = NULL;
    _cMap = [[NSMutableDictionary alloc] initWithCapacity:32];
    _ccSet = [[NSMutableSet alloc] initWithCapacity:32];
@@ -62,10 +67,14 @@
 }
 -(id)lookup:(id)key
 {
-   NSValue* kv = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
-   id rv = [_orig2Me objectForKey:kv];
-   [kv release];
-   return rv;
+   if (_orig2Me == NULL)
+      return key;
+   else {
+      NSValue* kv = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
+      id rv = [_orig2Me objectForKey:kv];
+      [kv release];
+      return rv;
+   }
 }
 -(void) dealloc
 {
@@ -100,6 +109,7 @@
 }
 -(void) captureVariable: (id<ORVar>) x
 {
+   
    [_vars addObject:x];
    [_oStore addObject:x];
 }
@@ -285,18 +295,20 @@
     return _objective;
 }
 
--(void) trackObject: (id) obj;
+-(void) trackObject: (id) obj
 {
+   [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
--(void) trackVariable: (id) var;
+-(void) trackVariable: (id) var
 {
-   [var setId: (ORUInt) [_vars count]];
+   [var setId:_nbObjects++];
    [_vars addObject:var];
    [_oStore addObject:var];
 }
 -(void) trackConstraint:(id)obj
 {
+   [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
@@ -334,8 +346,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: self into:batch];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: self];
    [batch release];
    [flatModel setSource:self];
    return flatModel;
@@ -583,11 +595,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 -(ORInt) intValue: (id) var
 {
-   return [[_shots objectAtIndex:[var getId]] intValue];   
+   ORUInt vid = [var getId];
+   ORUInt idx = (ORUInt) [_shots indexOfObjectPassingTest:^BOOL(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+      return *stop = [obj getId] == vid;
+   }];
+   return [[_shots objectAtIndex:idx] intValue];
 }
 -(BOOL) boolValue: (id) var
 {
-   return [[_shots objectAtIndex:[var getId]] boolValue];   
+   ORUInt vid = [var getId];
+   ORUInt idx = (ORUInt) [_shots indexOfObjectPassingTest:^BOOL(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+      return *stop = [obj getId] == vid;
+   }];
+   return [[_shots objectAtIndex:idx] boolValue];
 }
 -(NSUInteger) count
 {

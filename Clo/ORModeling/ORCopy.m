@@ -21,11 +21,11 @@
 @end
 
 @implementation ORCopy {
-   NSZone* _zone;
+   NSZone*          _zone;
    id<ORModel> _origModel;
-   ORModelI* _copyModel;
-   NSMapTable* _mapping;
-   id _result;
+   ORModelI*   _copyModel;
+   NSMapTable*   _mapping;
+   id             _result;
 }
 
 -(id)initORCopy: (NSZone*)zone
@@ -43,7 +43,9 @@
    ORULong nbThings = [[_origModel variables] count] + [[_origModel objects] count] + [[_origModel constraints] count];
    _copyModel = [[ORModelI alloc] initORModelI:nbThings];
    
-   _mapping = [[NSMapTable alloc] init];
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                            capacity:nbThings];
    
    [_origModel applyOnVar:^(id<ORVar> x) {
       [self copyObject: x];
@@ -187,7 +189,9 @@
 // Copy Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  {}
--(void) visitFail:(id<ORFail>)cstr  {}
+-(void) visitFail:(id<ORFail>)cstr
+{
+}
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
    id<ORIntSet> restriction = [self copyObject: [cstr restriction]];

@@ -182,6 +182,12 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker arity:(ORInt)arity ranges:(id<ORIntRange>*)ranges
+{
+   ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix:tracker arity:arity ranges:ranges];
+   [tracker trackObject:o];
+   return o;
+}
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) m
 {
    ORIdMatrixI* o = [[ORIdMatrixI alloc] initORIdMatrix: tracker withDereferenced: m];
@@ -628,6 +634,12 @@
    [model trackConstraint:o];
    return o;
 }
++(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x neq: (id<ORIntVar>) y annotation:(ORAnnotation)c
+{
+   id<ORConstraint> o = [[ORReifyNEqual alloc] initReify: b equiv: x neq: y annotation:c];
+   [model trackConstraint:o];
+   return o;
+}
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x neqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyNEqualc alloc] initReify: b equiv: x neqi: i];
@@ -679,6 +691,12 @@
 +(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x leqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumLEqc alloc] initSum:x leqi:c];
+   [model trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
+{
+   id<ORConstraint> o = [[ORSumGEqc alloc] initSum:x geqi:c];
    [model trackConstraint:o];
    return o;
 }
@@ -822,6 +840,12 @@
       return o;
    }
 }
++(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORIntVar>)x equal:(id<ORIntVar>)res annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORSquare alloc] initORSquare:res square:x annotation:n];
+   [model trackConstraint:o];
+   return o;
+}
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
    id<ORConstraint> o = [[ORMod alloc] initORMod:x mod:y equal:z];
@@ -930,6 +954,12 @@
 +(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
    id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up];
+   [[x tracker] trackConstraint:o];
+   return o;
+}
++(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c
+{
+   id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up annotation:c];
    [[x tracker] trackConstraint:o];
    return o;
 }

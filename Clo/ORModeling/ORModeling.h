@@ -55,7 +55,7 @@
 
 @protocol ORAddToModel <ORTracker>
 -(void) addVariable:(id<ORVar>) var;
--(void )addObject:(id) object;
+-(void) addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
 
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
@@ -73,10 +73,10 @@
 +(id<ORModel>) createModel;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
-+(id<ORModelTransformation>) createFlattener;
-+(id<ORModelTransformation>) createLPFlattener;
-+(id<ORModelTransformation>) createMIPFlattener;
-+(id<ORModelTransformation>) createLinearizer;
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORSolutionPool>) createSolutionPool;
 +(id<ORConstraintSet>) createConstraintSet;
 @end
