@@ -27,7 +27,6 @@
                                       userInfo:nil];
    }
    GRBnewmodel(_env, &_model, "", 0, NULL, NULL, NULL, NULL, NULL);
-   
    return self;
 }
 
@@ -40,7 +39,13 @@
 
 -(void) addVariable: (LPVariableI*) var;
 {
-   if ([var hasBounds])
+   if ([var isInteger]) {
+      if ([var hasBounds])
+         GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,NULL);
+      else
+         GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_INTEGER,NULL);
+   }
+   else if ([var hasBounds])
       GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_CONTINUOUS,NULL);
    else
       GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_CONTINUOUS,NULL);
@@ -92,6 +97,7 @@
 }
 -(LPOutcome) solve
 {
+   //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
    [self printModelToFile: "/Users/pvh/lookatgurobi.lp"];
    int status;

@@ -1871,6 +1871,115 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+@implementation CPModcDC {
+   id<ORTrailableIntArray> _r;
+}
+-(id)initCPModcDC:(CPIntVarI*)x mod:(ORInt)c equal:(CPIntVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _c = c;
+   return self;
+}
+-(ORStatus)post
+{
+   if (_x.min >= 0)
+      [_y updateMin:0];
+   if (_x.max <= 0)
+      [_y updateMax:0];
+   if (bound(_x))
+      [_y bind:_x.min % _c];
+   else if (bound(_y)) {
+      ORBounds bx = bounds(_x);
+      ORInt rem  = _y.min;
+      for(int k=bx.min;k <= bx.max;k++) {
+         if (!memberBitDom(_x, k)) continue;
+         ORInt rk = k % _c;
+         if (rk != rem)
+            [_x remove:k];
+      }
+   }
+   else {
+      [_y updateMin: - _c + 1 andMax:_c - 1];
+      ORInt qxMax = _x.max / _c;
+      ORInt qxMin = _x.min / _c;
+      if (qxMin == qxMax) {
+         ORInt lr = _x.min % _c;
+         ORInt up = _x.max % _c;
+         [_y updateMin:lr andMax:up];
+      }
+      ORBounds xb = bounds(_x);
+      BOOL outside = xb.min % _c < _y.min;
+      while(outside && xb.min < xb.max) {
+         if (!memberBitDom(_x, ++xb.min))
+            continue;
+         outside = xb.min % _c < _y.min;
+      }
+      [_x updateMin:xb.min];
+      outside = xb.max % _c > _y.max;
+      while(outside && xb.min < xb.max) {
+         if (!memberBitDom(_x,--xb.max))
+            continue;
+         outside = xb.max % _c > _y.max;
+      }
+      [_x updateMax:xb.max];
+      ORBounds yb = bounds(_y);
+      _r = [ORFactory trailableIntArray:[_x engine] range:RANGE([_x engine],yb.min,yb.max) value:0];
+      xb = bounds(_x);
+      for(int k=xb.min ; k <= xb.max;k++) {
+         if (!memberBitDom(_x, k)) continue;
+         ORInt rk = k % _c;
+         if (rk >= yb.min && rk <= yb.max)
+            [_r[rk] incr];
+         else
+            [_x remove:k];
+      }
+      if (!bound(_x))
+         [_x whenLoseValue:self do:^void(ORInt v) {
+            ORInt valr = v % _c;
+            if (valr >= _y.min && valr <= _y.max) {
+               [_r[valr] decr];
+               if (_r[valr].value == 0)
+                  [_y remove:valr];
+            }
+         }];
+      if (!bound(_y))
+         [_y whenLoseValue:self do:^void(ORInt v) {
+            ORBounds xb = bounds(_x);
+            for(int k=xb.min;k<=xb.max;) {
+               if (!memberBitDom(_x, k)) {
+                  k++;
+                  continue;
+               }
+               else {
+                  ORInt rk = k % _c;
+                  if (rk == v) {
+                     [_x remove:k];
+                     k += abs(_c);
+                  }
+                  else 
+                     k += 1;
+               }
+            }
+         }];
+   }
+   return ORSuspend;
+}
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPModcDC:%02d %@ == %@ MOD %d>",_name,_y,_x,_c];
+}
+@end
+
 @implementation CPModBC
 -(id)initCPModBC:(CPIntVarI*)x mod:(CPIntVarI*)y equal:(CPIntVarI*)z
 {
@@ -2109,6 +2218,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+
+
+
 @implementation CPAllDifferenceVC
 -(id) initCPAllDifferenceVC:(CPIntVarI**)x nb:(ORInt) n
 {
@@ -2282,16 +2394,16 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
          _primalBound = bound;
    }
 }
--(void) tightenPrimalBound:(ORInt)newBound
+-(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
    @synchronized(self) {
-      if (newBound < _primalBound)
-         _primalBound = newBound;
+      if ([newBound value] < _primalBound)
+         _primalBound = [newBound value];
    }
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:(id<ORIntVar>)_x minimize:YES primalBound:_primalBound];
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
 }
 -(ORStatus) check 
 {
@@ -2304,9 +2416,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    }
    return ORSuspend;
 }
--(ORInt) primalBound
+-(id<ORObjectiveValue>) primalBound
 {
-  return _primalBound;
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize:YES];
 }
 -(NSString*)description
 {
@@ -2351,9 +2463,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    return [[NSSet alloc] initWithObjects:_x, nil];
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc]initObjectiveValue:(id<ORIntVar>)_x minimize:NO primalBound:_primalBound];
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
 }
 
 -(ORUInt)nbUVars
@@ -2368,10 +2480,10 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
     _primalBound = bound;
 }
 
--(void) tightenPrimalBound:(ORInt)newBound
+-(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
-   if (newBound > _primalBound)
-      _primalBound = newBound;
+   if ([newBound value] > _primalBound)
+      _primalBound = [newBound value];
 }
 
 -(ORStatus) check 
@@ -2386,10 +2498,11 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    return ORSuspend;  
 }
 
--(ORInt) primalBound
+-(id<ORObjectiveValue>) primalBound
 {
-  return _primalBound;
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
 }
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

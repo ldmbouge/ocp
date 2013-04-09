@@ -35,12 +35,12 @@ int main(int argc, const char * argv[])
       id<ORIntArray> lb = [ORFactory intArray:mdl range:D value:2];
       [mdl add:[ORFactory cardinality:x low:lb up:lb]];
       
-      id<ORExpr> lhs1 = Sum(mdl,i,RANGE(mdl,0,2),[x[i] muli:ipow(10,i)]);
-      [mdl add: [[lhs1 mul:x[3]] eq: Sum(mdl,i,RANGE(mdl,6,8),[x[i] muli:ipow(10,i-6)])]];
-      [mdl add: [[lhs1 mul:x[4]] eq: Sum(mdl,i,RANGE(mdl,9,11),[x[i] muli:ipow(10,i-9)])]];
-      [mdl add: [[lhs1 mul:x[5]] eq: Sum(mdl,i,RANGE(mdl,12,14),[x[i] muli:ipow(10,i-12)])]];
+      id<ORExpr> lhs1 = Sum(mdl,i,RANGE(mdl,0,2),[x[i] mul:@(ipow(10,i))]);
+      [mdl add: [[lhs1 mul:x[3]] eq: Sum(mdl,i,RANGE(mdl,6,8),[x[i] mul:@(ipow(10,i-6))])]];
+      [mdl add: [[lhs1 mul:x[4]] eq: Sum(mdl,i,RANGE(mdl,9,11),[x[i] mul:@(ipow(10,i-9))])]];
+      [mdl add: [[lhs1 mul:x[5]] eq: Sum(mdl,i,RANGE(mdl,12,14),[x[i] mul:@(ipow(10,i-12))])]];
       int* coefs = (int[]){1,10,100,10,100,1000,100,1000,10000};
-      [mdl add: [Sum(mdl,i,RANGE(mdl,1,5),[x[14+i] muli: ipow(10,i-1)]) eq: Sum(mdl,i,RANGE(mdl,6,14), [x[i] muli:coefs[i-6]])]];
+      [mdl add: [Sum(mdl,i,RANGE(mdl,1,5),[x[14+i] mul: @(ipow(10,i-1))]) eq: Sum(mdl,i,RANGE(mdl,6,14), [x[i] mul:@(coefs[i-6])])]];
       
       /*
       NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:mdl];

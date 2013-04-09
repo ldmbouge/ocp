@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORSetI.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
@@ -103,25 +102,20 @@ typedef struct  {
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
 @end
 
-
-
-@interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf> {
 @package
    enum CPVarClass                      _vc;
-   ORUInt                         _isBool:1;
-   ORUInt                          _name:31;
+   BOOL                             _isBool;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
-   id<CPIntVarNotifier,NSCoding>      _recv;
+   id<CPIntVarNotifier>               _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
--(void) setId:(ORUInt)name;
--(ORInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
@@ -170,6 +164,7 @@ typedef struct  {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
+-(ORInt) intValue;
 -(ORBounds)bounds;
 -(ORInt) domsize;
 -(BOOL) member:(ORInt)v;
@@ -414,7 +409,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPIntVarMultiCast : NSObject<CPIntVarNotifier,NSCoding> {
+@interface CPIntVarMultiCast : NSObject<CPIntVarNotifier> {
    id<CPIntVarNotifier>* _tab;
    BOOL        _tracksLoseEvt;
    ORInt                  _nb;
@@ -433,7 +428,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
-@interface CPLiterals : NSObject<CPIntVarNotifier,NSCoding> {
+@interface CPLiterals : NSObject<CPIntVarNotifier> {
    CPIntVarI*  _ref;
    CPIntVarI** _pos;
    ORInt        _nb;

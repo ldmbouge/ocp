@@ -12,7 +12,9 @@
 #import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
 #import "ORFlatten.h"
+#import "ORCopy.h"
 #import "ORLPFlatten.h"
+#import "ORMIPFlatten.h"
 #import "ORLinearize.h"
 
 @implementation ORFactory (ORModeling)
@@ -20,10 +22,17 @@
 {
    return [[[ORModelI alloc]  initORModelI] autorelease];
 }
-+(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel
-{
-   return [[ORBatchModel alloc]  init: flatModel];
++(id<ORModel>) cloneModel: (id<ORModel>)m {
+    ORCopy* copier = [[ORCopy alloc] initORCopy: nil];
+    id<ORModel> copyModel = [copier copyModel: m];
+    [copier release];
+    return copyModel;
 }
++(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
+{
+   return [[ORBatchModel alloc]  init: flatModel source:srcModel];
+}
+
 +(id<ORModelTransformation>) createFlattener
 {
    return [[[ORFlatten alloc] initORFlatten] autorelease];
@@ -32,6 +41,11 @@
 {
    return [[[ORLPFlatten alloc] initORLPFlatten] autorelease];
 }
++(id<ORModelTransformation>) createMIPFlattener
+{
+   return [[[ORMIPFlatten alloc] initORMIPFlatten] autorelease];
+}
+
 +(id<ORModelTransformation>) createLinearizer
 {
     return [[[ORLinearize alloc] initORLinearize] autorelease];
@@ -39,5 +53,8 @@
 +(id<ORSolutionPool>) createSolutionPool
 {
    return [[ORSolutionPoolI alloc] init];
+}
++(id<ORConstraintSet>) createConstraintSet {
+    return [[ORConstraintSetI alloc] init];
 }
 @end

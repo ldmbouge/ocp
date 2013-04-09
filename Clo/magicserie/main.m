@@ -21,8 +21,8 @@ int main (int argc, const char * argv[])
       id<ORIntRange> R = RANGE(mdl,0,n-1);
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       for(ORInt i=0;i<n;i++)
-         [mdl add: [Sum(mdl,j,R,[x[j] eqi: i]) eq: x[i] ]];
-      [mdl add: [Sum(mdl,i,R,[x[i] muli: i]) eqi: n ]];
+         [mdl add: [Sum(mdl,j,R,[x[j] eq: @(i)]) eq: x[i] ]];
+      [mdl add: [Sum(mdl,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{

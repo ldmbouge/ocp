@@ -16,8 +16,9 @@
 
 @protocol ORSnapshot
 -(void) restoreInto: (NSArray*) av;
--(int)  intValue;
+-(ORInt)  intValue;
 -(BOOL) boolValue;
+-(ORFloat) floatValue;
 @end
 
 @protocol ORSavable<NSObject>
@@ -35,6 +36,8 @@
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
 -(ORInt) value;
+-(ORInt) intValue;
+-(ORFloat) floatValue;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
@@ -61,6 +64,7 @@
 
 @protocol ORFloatVar <ORVar>
 -(ORFloat) value;
+-(ORFloat) floatValue;
 -(ORFloat) min;
 -(ORFloat) max;
 @end
@@ -78,6 +82,14 @@
 -(void) set: (id<ORIntVar>) x at: (ORInt) value;
 -(id<ORIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol ORFloatVarArray <ORVarArray>
+-(id<ORFloatVar>) at: (ORInt) value;
+-(void) set: (id<ORFloatVar>) x at: (ORInt) value;
+-(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

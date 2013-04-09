@@ -51,14 +51,14 @@ int main(int argc, const char * argv[])
       for(ORInt w=RWomen.low;w <= RWomen.up;w++) 
          rw[w] = [ORFactory intArray:mdl range:RMen with:^ORInt(ORInt m) { return rankWPtr[(w-1) * 5 + m-1];}];
       for(ORInt i=RMen.low;i <= RMen.up;i++)
-         [mdl add: [[husband elt: wife[i]] eqi: i]];
+         [mdl add: [[husband elt: wife[i]] eq: @(i)]];
       for(ORInt i=RWomen.low;i <= RWomen.up;i++)
-         [mdl add: [[wife elt: husband[i]] eqi: i]];
+         [mdl add: [[wife elt: husband[i]] eq: @(i)]];
       
       for(ORInt m=RMen.low;m <= RMen.up;m++) {
          for(ORInt w=RWomen.low;w <= RWomen.up;w++) {
-            [mdl add: [[[rm[m] elt:wife[m]] gti: [rm[m] at:w]] imply: [[rw[w] elt:husband[w]] lti: [rw[w] at:m]]]];
-            [mdl add: [[[rw[w] elt:husband[w]] gti: [rw[w] at:m]] imply: [[rm[m] elt:wife[m]] lti: [rm[m] at:w]]]];
+            [mdl add: [[[rm[m] elt:wife[m]] gt: @([rm[m] at:w])] imply: [[rw[w] elt:husband[w]] lt: @([rw[w] at:m])]]];
+            [mdl add: [[[rw[w] elt:husband[w]] gt: @([rw[w] at:m])] imply: [[rm[m] elt:wife[m]] lt: @([rm[m] at:w])]]];
          }
       }
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];

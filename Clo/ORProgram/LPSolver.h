@@ -14,11 +14,12 @@
 
 // LPSolver
 @interface LPSolver : NSObject<LPProgram>
--(id<LPProgram>) initLPSolver;
+-(id<LPProgram>) initLPSolver: (id<ORModel>) model;
+-(ORFloat) dual: (id<ORConstraint>) c;
 @end
 
 // LPSolverFactory
 @interface LPSolverFactory : NSObject
-+(id<LPProgram>) solver;
++(id<LPProgram>) solver: (id<ORModel>) model;
 @end
 

@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
       for(ORInt i=2;i<=m;i++)
          [model add: [x[1] leq: x[i]]];
       for(ORInt i=1;i<=m;i++)
-         [model add: [x[i] eq: Sum(model, j, RANGE(model,1,n), [[binary at:i :j] muli: (ORInt)pow(base,n-j)])]];
+         [model add: [x[i] eq: Sum(model, j, RANGE(model,1,n), [[binary at:i :j] mul: @((ORInt)pow(base,n-j))])]];
       for(ORInt i=2;i<=m;i++) {
          for(ORInt j=2;j<=n;j++) {
             [model add: [[binary at:i-1 :j] eq:[binary at:i :j-1]]];
@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
          [model add:[code[i] eq:[binary at:i :1]]];
       
       for(ORInt i=0;i<base;i++)
-         [model add:[Sum(model, j, RANGE(model,1,m), [code[j] eqi:i]) eq:gcc[i]]];
+         [model add:[Sum(model, j, RANGE(model,1,m), [code[j] eq:@(i)]) eq:gcc[i]]];
       
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];

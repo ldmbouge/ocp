@@ -12,10 +12,36 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
-#import "ORLinear.h"
+#import "ORFloatLinear.h"
+
+@interface ORLPLinearizer : NSObject<ORVisitor>
+-(id) initORLPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(ORFloatLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(ORFloatLinear*) addToLinear: (id<ORFloatLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
+-(void) visitIntVar: (id<ORIntVar>) e;
+-(void) visitAffineVar:(id<ORIntVar>)e;
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitExprPlusI: (ORExprPlusI*) e;
+-(void) visitExprMinusI: (ORExprMinusI*) e;
+-(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprModI: (ORExprModI*) e;
+-(void) visitExprEqualI:(ORExprEqualI*)e;
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e;
+-(void) visitExprLEqualI:(ORExprLEqualI*)e;
+-(void) visitExprSumI: (ORExprSumI*) e;
+-(void) visitExprProdI: (ORExprProdI*) e;
+-(void) visitExprAggOrI: (ORExprAggOrI*) e;
+-(void) visitExprAbsI:(ORExprAbsI*) e;
+-(void) visitExprNegateI:(ORExprNegateI*)e;
+-(void) visitExprCstSubI:(ORExprCstSubI*)e;
+-(void) visitExprVarSubI:(ORExprVarSubI*)e;
+-(void) visitExprDisjunctI:(ORDisjunctI*)e;
+-(void) visitExprConjunctI:(ORConjunctI*)e;
+-(void) visitExprImplyI:(ORImplyI*)e;
+@end
 
 @interface ORLPNormalizer : NSObject<ORVisitor>
-+(ORLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORFloatLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
 
 -(id) initORLPNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
@@ -26,6 +52,7 @@
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
+-(void) visitExprDivI: (ORExprDivI*) e;
 -(void) visitExprModI: (ORExprModI*) e;
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprProdI: (ORExprProdI*) e;

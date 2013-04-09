@@ -33,7 +33,7 @@ int test1()
       id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
       id<ORIntVar> y = [ORFactory intVar:model domain:RANGE(model,1,3)];
       id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];
-      [model add:[ORFactory mod:model var:x mod:y equal:z]];
+      [model add:[[x mod:y] eq:z]];
       __block int nbSol = 0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solveAll:^{
@@ -41,7 +41,7 @@ int test1()
          [cp label:y];
          [cp label:z];
          @autoreleasepool {
-            NSLog(@"values: %@",[NSArray arrayWithObjects:x,y,z, nil]);
+            NSLog(@"values: %@",@[@(x.value),@(y.value),@(z.value)]);
          }
          assert([x value] % [y value] == [z value]);
          nbSol++;
@@ -67,14 +67,15 @@ int test2()
       id<ORIntVar> x = [ORFactory intVar:model domain:RANGE(model,-10,10)];
       ORInt y = 3;
       id<ORIntVar> z = [ORFactory intVar:model domain:RANGE(model,0,10)];
-      [model add:[ORFactory mod:model var:x modi:y equal:z]];
+      [model add:[[x mod:@(y)] eq:z] annotation:DomainConsistency];
       __block int nbSol = 0;
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solveAll:^{
+         NSLog(@"MODEL: %@",[[cp engine] model]);
          [cp label:x];
-         [cp label:z];
+         //[cp label:z];
          @autoreleasepool {
-            NSLog(@"values: %@",[NSArray arrayWithObjects:x,[NSNumber numberWithInt:y],z, nil]);
+            NSLog(@"values: %@",@[@(x.value),@(y),@(z.value)]);
          }
          assert([x value] % y == [z value]);
          nbSol++;
@@ -87,6 +88,7 @@ int test2()
       }
       NSLog(@"#sol: %d - %d",nbSol,nbc);
       assert(nbSol == nbc);
+      NSLog(@"Solver: %@",cp);
       [ORFactory shutdown];
    }
    return 0;

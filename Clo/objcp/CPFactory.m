@@ -166,25 +166,6 @@
 {
    return [ORFactory TRIntMatrix: cp range: R1 : R2];
 }
-
-+(id<ORRandomStream>) randomStream: (id<ORTracker>) cp
-{
-   id<ORRandomStream> o = [ORCrFactory randomStream];
-   [cp trackObject: o];
-   return o;
-}
-+(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
-{
-   id<ORZeroOneStream> o = (id<ORZeroOneStream>) [ORCrFactory zeroOneStream];
-   [cp trackObject: o];
-   return o;
-}
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
-{
-   id<ORUniformDistribution> o = (id<ORUniformDistribution>) [ORCrFactory uniformDistribution:r];
-   [cp trackObject: o];
-   return o;
-}
 @end
 
 

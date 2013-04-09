@@ -19,27 +19,18 @@
 #import "ORVisit.h"
 
 @interface ORExprI: ORDualUseObjectI<ORExpr,NSCoding>
-
 -(id<ORExpr>) abs;
--(id<ORExpr>) plus: (id<ORExpr>) e;
--(id<ORExpr>) subi: (ORInt) e;
--(id<ORExpr>) sub: (id<ORExpr>) e;
--(id<ORExpr>) mul: (id<ORExpr>) e;
--(id<ORExpr>) muli: (ORInt) e;
--(id<ORExpr>) mod: (id<ORExpr>) e;
--(id<ORExpr>) modi: (ORInt) e;
--(id<ORRelation>) eq: (id<ORExpr>) e;
--(id<ORRelation>) eqi: (ORInt) e;
--(id<ORRelation>) neq: (id<ORExpr>) e;
--(id<ORRelation>) neqi: (ORInt) e;
--(id<ORRelation>) leq: (id<ORExpr>) e;
--(id<ORRelation>) leqi: (ORInt) e;
--(id<ORRelation>) geq: (id<ORExpr>) e;
--(id<ORRelation>) geqi: (ORInt) e;
--(id<ORRelation>) lt: (id<ORExpr>) e;
--(id<ORRelation>) lti: (ORInt) e;
--(id<ORRelation>) gt: (id<ORExpr>) e;
--(id<ORRelation>) gti: (ORInt) e;
+-(id<ORExpr>) plus: (id) e;
+-(id<ORExpr>) sub: (id) e;
+-(id<ORExpr>) mul: (id) e;
+-(id<ORExpr>) div: (id) e;
+-(id<ORExpr>) mod: (id) e;
+-(id<ORRelation>) eq: (id) e;
+-(id<ORRelation>) neq: (id) e;
+-(id<ORRelation>) leq: (id) e;
+-(id<ORRelation>) geq: (id) e;
+-(id<ORRelation>) lt: (id) e;
+-(id<ORRelation>) gt: (id) e;
 -(id<ORExpr>) neg;
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
@@ -107,6 +98,14 @@
 -(void) visit: (id<ORVisitor>)v;
 @end
 
+@interface ORExprDivI : ORExprBinaryI<ORExpr,NSCoding>
+-(id<ORExpr>) initORExprDivI: (id<ORExpr>) left and: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
 @interface ORExprModI: ORExprBinaryI<ORExpr,NSCoding>
 -(id<ORExpr>) initORExprModI: (id<ORExpr>) left mod: (id<ORExpr>) right;
 -(ORInt) min;
@@ -154,6 +153,7 @@
    id<ORExpr> _e;
 }
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
 -(id<ORExpr>) initORExprSumI: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;

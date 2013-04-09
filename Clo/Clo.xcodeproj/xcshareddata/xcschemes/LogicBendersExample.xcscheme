@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
-               BuildableName = "progressive"
-               BlueprintName = "progressive"
+               BlueprintIdentifier = "37A715C716FB93F900E02DC6"
+               BuildableName = "LogicBendersExample"
+               BlueprintName = "LogicBendersExample"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
-            BuildableName = "progressive"
-            BlueprintName = "progressive"
+            BlueprintIdentifier = "37A715C716FB93F900E02DC6"
+            BuildableName = "LogicBendersExample"
+            BlueprintName = "LogicBendersExample"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -51,9 +51,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
-            BuildableName = "progressive"
-            BlueprintName = "progressive"
+            BlueprintIdentifier = "37A715C716FB93F900E02DC6"
+            BuildableName = "LogicBendersExample"
+            BlueprintName = "LogicBendersExample"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -69,9 +69,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
-            BuildableName = "progressive"
-            BlueprintName = "progressive"
+            BlueprintIdentifier = "37A715C716FB93F900E02DC6"
+            BuildableName = "LogicBendersExample"
+            BlueprintName = "LogicBendersExample"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

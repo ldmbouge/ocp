@@ -45,11 +45,6 @@
 +(id<ORBarrier>)  barrier: (id<ORTracker>) cp value: (ORInt) nb;
 
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;
-
-+(id<ORRandomStream>) randomStream: (id<ORTracker>) cp ;
-+(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp ;
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r;
-
 +(id<ORTRIntArray>)  TRIntArray: (id<ORTracker>) cp range: (id<ORIntRange>) R;
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 @end
@@ -64,6 +59,7 @@
 @interface CPFactory (BV)
 +(id<CPBitVar>) bitVar:(id<CPEngine>)engine withLow: (ORUInt*) low andUp:(ORUInt*) up andLength:(int) len;
 @end
+
 
 
 #define FORALL(p,S,c,b,body) [cp forall:(S) suchThat:^bool(ORInt p) { return (c);} orderedBy:^ORInt(ORInt p) { return (b);} do:(body)];

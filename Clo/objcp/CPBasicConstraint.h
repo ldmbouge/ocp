@@ -226,6 +226,16 @@ typedef int (^intgetter) (void) ;
 -(ORStatus) post;
 @end
 
+@interface CPModcDC : CPCoreConstraint { // y == x MOD c (DCConsistency)
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   ORInt      _c;
+}
+-(id)initCPModcDC:(id)x mod:(ORInt)c equal:(id)y;
+-(ORStatus) post;
+@end
+
+
 @interface CPModBC : CPCoreConstraint { // z == x MOD y
    CPIntVarI* _x;
    CPIntVarI* _y;
@@ -303,28 +313,28 @@ typedef int (^intgetter) (void) ;
 -(ORUInt)nbUVars;
 @end
 
-@interface CPIntVarMinimize : CPCoreConstraint<ORObjective>
+@interface CPIntVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
 -(void)      dealloc;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
--(void)      tightenPrimalBound:(ORInt)newBound;
--(ORInt)       primalBound;
+-(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
 @end
 
-@interface CPIntVarMaximize : CPCoreConstraint<ORObjective>
+@interface CPIntVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
 -(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
 -(void)      dealloc;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
--(void)      tightenPrimalBound:(ORInt)newBound;
--(ORInt)       primalBound;
+-(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;

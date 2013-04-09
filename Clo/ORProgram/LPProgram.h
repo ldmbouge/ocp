@@ -13,9 +13,11 @@
 #import <ORFoundation/ORFoundation.h>
 
 @class LPSolverI;
+@protocol ORModel;
 
 @protocol LPProgram <NSObject>
 -(LPSolverI*) solver;
 -(void) solve;
+-(ORFloat)dual:(id<ORConstraint>)c;
 @end
 

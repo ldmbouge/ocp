@@ -510,6 +510,12 @@ void freeTRIntArray(TRIntArray a)
    assignTRInt(&_trint,_trint._val-1,_trail);
    return _trint._val;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:32] autorelease];
+   [buf appendFormat:@"TR<int>(%d)",_trint._val];
+   return buf;
+}
 -(void)visit:(id<ORVisitor>)visitor
 {
    [visitor visitTrailableInt:self];

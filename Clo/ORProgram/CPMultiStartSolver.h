@@ -17,6 +17,7 @@
 // MultiStart DFS CPSolver
 @interface CPMultiStartSolver : NSObject<CPProgram>
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
+-(void) setSource:(id<ORModel>)src;
 -(id<CPProgram>) at: (ORInt) i;
 -(ORInt) nb;
 -(id<ORSolutionPool>) globalSolutionPool;
@@ -30,4 +31,5 @@
 -(id<CPHeuristic>) createDDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
+-(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 @end

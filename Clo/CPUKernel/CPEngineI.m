@@ -72,6 +72,7 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
    q->_tab[q->_enter] = (AC3Entry){cb,cstr};
    q->_enter = (q->_enter+1) & q->_mask;
    ++q->_csz;
+   assert(cb || cstr);
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
@@ -601,13 +602,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
 }
 
--(void) setObjective: (id<ORObjective>) obj
+-(void) setObjective: (id<ORSearchObjectiveFunction>) obj
 {
    [_objective release];
    _objective = [obj retain];
 }
 
--(id<ORObjective>) objective
+-(id<ORSearchObjectiveFunction>) objective
 {
    return _objective;
 }

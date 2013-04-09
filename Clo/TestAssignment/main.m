@@ -56,7 +56,7 @@ int main (int argc, const char * argv[])
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
-   id<ORUniformDistribution> distr = [CPFactory uniformDistribution: mdl range: Cities];
+   id<ORUniformDistribution> distr = [ORFactory uniformDistribution: mdl range: Cities];
       
    id<ORInteger> nbRestarts = [ORFactory integer: mdl value:0];
    id<ORInteger> nbSolutions = [ORFactory integer: mdl value:1];
@@ -64,7 +64,7 @@ int main (int argc, const char * argv[])
    id<ORIntVar> assignmentCost = [ORFactory intVar:mdl domain: RANGE(mdl,0,10000)];
    
    for(ORInt i = 0; i < nbCities; i++)
-      [mdl add: [x[i] neqi: i]];
+      [mdl add: [x[i] neq: @(i)]];
    [mdl add: [ORFactory alldifferent: x]];
    [mdl add: [ORFactory circuit: x]];
    [mdl add: [ORFactory assignment: x matrix: cost cost:assignmentCost]];

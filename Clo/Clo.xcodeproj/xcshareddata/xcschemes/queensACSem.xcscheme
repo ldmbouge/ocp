@@ -50,7 +50,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-q8"
+            argument = "-q12"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

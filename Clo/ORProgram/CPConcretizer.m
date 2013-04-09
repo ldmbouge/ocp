@@ -140,7 +140,16 @@
       [dx makeImpl];
       [v setImpl: dx];
    }
-   
+}
+
+-(void) visitFloatArray:(id<ORIntArray>) v
+{
+   if ([v dereference] == NULL) {
+      id<ORIntRange> R = [v range];
+      id<ORFloatArray> dx = [ORFactory floatArray: _engine range: R with: ^ORFloat(ORInt i) { return [v at: i]; }];
+      [dx makeImpl];
+      [v setImpl: dx];
+   }
 }
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
@@ -320,7 +329,7 @@
    }
 }
 
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -331,7 +340,7 @@
       [_engine setObjective: [v dereference]];
    }
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if ([v dereference] == NULL) {
       id<ORIntVar> o = [v var];
@@ -342,6 +351,24 @@
       [_engine setObjective: [v dereference]];
    }
 }
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeExpr not yet implemented"]; 
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of maximizeExpr not yet implemented"];    
+}
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
+}
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
+}
+
+
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
    if ([cstr dereference] == NULL) {
@@ -502,8 +529,9 @@
    if ([cstr dereference] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> left = [self concreteVar:[cstr left]];
+      ORAnnotation annotation = [cstr annotation];
       ORInt right = [cstr right];
-      id<CPConstraint> concreteCstr  = [CPFactory mod:left modi:right equal:res];
+      id<CPConstraint> concreteCstr  = [CPFactory mod:left modi:right equal:res annotation:annotation];
       [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
    }
@@ -880,71 +908,75 @@
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprMinusI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];    
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];    
 }
 -(void) visitExprMulI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];    
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];    
+}
+-(void) visitExprDivI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
 -(void) visitExprModI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];      
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];      
 }
 -(void) visitExprEqualI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprNEqualI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprLEqualI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprSumI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprProdI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
 -(void) visitExprAbsI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprNegateI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprDisjunctI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprConjunctI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprImplyI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of experession not yet implemented"];   
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];   
 }
 @end
 

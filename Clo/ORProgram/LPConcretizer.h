@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORSolver.h>
 #import <ORProgram/CPSolver.h>
 
 
@@ -31,6 +30,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORFloatArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -44,8 +44,14 @@
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitAssignment:(id<ORAssignment>)cstr;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
+
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
@@ -83,10 +89,14 @@
 -(void) visitLinearEq: (id<ORLinearEq>) c;
 -(void) visitLinearLeq: (id<ORLinearLeq>) c;
 
+-(void) visitFloatLinearEq: (id<ORLinearEq>) c;
+-(void) visitFloatLinearLeq: (id<ORLinearLeq>) c;
+
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprDivI: (id<ORExpr>) e;
 -(void) visitExprModI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;

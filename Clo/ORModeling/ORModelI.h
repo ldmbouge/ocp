@@ -11,8 +11,9 @@
 
 #import <ORModeling/ORModeling.h>
 
-@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel>
+@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
+-(ORModelI*)              initORModelI:(ORULong)nb;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   setId: (ORUInt) name;
@@ -26,28 +27,45 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
+-(NSDictionary*) cMap;
+-(NSSet*) constraintsFor:(id<ORConstraint>)c;
+-(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
 -(id<ORSolution>) captureSolution;
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
+-(id) copyWithZone:(NSZone*)zone;
 -(void) addVariable:(id<ORVar>) var;
--(void )addObject:(id) object;
+-(void) addObject:(id) object;
 -(void) addConstraint:(id<ORConstraint>) cstr;
--(void) minimize:(id<ORIntVar>) x;
--(void) maximize:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)original;
+-(id<ORModel>)source;
+-(id<ORModel>)flatten;
+-(id<ORModel>)rootModel;
+-(void)map:(id)key toObject:(id)object;
+-(id)lookup:(id)key;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
--(ORBatchModel*)init: (id<ORModel>) model;
+-(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
 -(void) addConstraint: (id<ORConstraint>) cstr;
--(void) minimize: (id<ORIntVar>) x;
--(void) maximize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
+-(void) compiling:(id<ORConstraint>)cstr;
+-(NSSet*)compiledMap;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
@@ -55,11 +73,14 @@
 -(void) addVariable: (id<ORVar>) var;
 -(void) addObject:(id)object;
 -(void) addConstraint: (id<ORConstraint>) cstr;
--(void) minimize: (id<ORIntVar>) x;
--(void) maximize: (id<ORIntVar>) x;
+//-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
+//-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
+-(void) compiling:(id<ORConstraint>)cstr;
 @end
 
 @interface ORSolutionI : NSObject<ORSolution>
@@ -74,10 +95,21 @@
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-   NSMutableSet* _all;
+    NSMutableSet* _all;
+    id<ORSolutionInformer> _solutionAddedInformer;
 }
 -(id)init;
 -(void)addSolution:(id<ORSolution>)s;
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
+@end
+
+@interface ORConstraintSetI : NSObject<ORConstraintSet> {
+    NSMutableSet* _all;
+}
+-(id)init;
+-(void)addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
