@@ -197,7 +197,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return (ORBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
 }
 
--(unsigned int)domsize
+-(ORULong)domsize
 {
     return [_dom domsize];
 }

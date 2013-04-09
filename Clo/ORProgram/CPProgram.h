@@ -9,6 +9,7 @@
  
  ***********************************************************************/
 
+#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
 #import <ORProgram/CPHeuristic.h>
@@ -122,8 +123,8 @@
 @protocol CPSemanticProgram <CPCommonProgram>
 @end
 
-
 @protocol CPBV
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
+-(void) labelBitVarsFirstFail: (NSArray*)vars;
 @end

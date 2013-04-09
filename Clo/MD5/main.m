@@ -58,7 +58,7 @@ int main(int argc, const char * argv[])
    myMD5 = [MD5 initMD5];
    [str appendString:[myMD5 preimage:filename withMask:mask]];
    [myMD5 dealloc];
-   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5Data.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataFirstFail.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
    [pool drain];
    return 0;

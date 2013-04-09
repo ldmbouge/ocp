@@ -212,7 +212,8 @@
          for(int i=0; i<_numBlocks;i++){
             bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
             for(int j=0;j<16;j++){
-               [cp labelUpFromLSB:bitVars[j]];
+//             [cp labelUpFromLSB:bitVars[j]];
+               [cp labelBitVarsFirstFail:[engine variables]];
                NSLog(@"%@\n",bitVars[j]);
             }
          }

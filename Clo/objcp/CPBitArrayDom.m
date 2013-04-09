@@ -109,9 +109,10 @@
    }
    return string;
 }
--(int) domsize
-{
-    return pow(2.0, _freebits._val);
+-(ORULong) domsize
+{  
+   //return pow(2.0, _freebits._val);
+   return 1 << _freebits._val;
 }
 -(BOOL) bound
 {

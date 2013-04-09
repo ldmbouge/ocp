@@ -35,7 +35,7 @@
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
 -(ORUInt)               getSize;
--(int)                  domsize;
+-(ORULong)              domsize;
 -(void)                 updateFreeBitCount;
 -(BOOL)                 bound;
 -(uint64)               min;

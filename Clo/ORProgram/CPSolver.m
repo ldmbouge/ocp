@@ -416,6 +416,65 @@
    }
 }
 
+-(void) labelBitVarsFirstFail: (NSArray*)vars
+{
+   NSMutableArray* unboundBitVars = [[NSMutableArray alloc] init];
+   CPBitVarI* minDom;
+   int minIndex;
+   ORULong minDomSize;
+   ORLong numVars;
+   
+   int j;
+   
+   ORULong thisDomSize;
+   numVars = [vars count];
+   for(int i=0;i<numVars;i++)
+      if (![vars[i] bound]) {
+         [unboundBitVars addObject:vars[i]];
+      }
+
+//   NSLog(@"%lld total variables.",numVars);
+
+   
+   minDom = (CPBitVarI*)[unboundBitVars[0] dereference];
+   minDomSize = [minDom domsize];
+//   NSLog(@"%lld is size of first Min Domain",minDomSize);
+   minIndex = 0;
+   
+   numVars = [unboundBitVars count];
+   while (numVars > 0) {
+      for(int i=0;i<numVars;i++){
+         if ((thisDomSize=[[unboundBitVars[i] dereference]domsize]) < minDomSize) {
+            minDom = [unboundBitVars[i] dereference];
+            minDomSize = thisDomSize;
+            minIndex = i;
+         }
+      }
+   
+      while ((j=[minDom lsFreeBit])>=0) {
+         NSAssert(j>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
+         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
+                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      }
+      //NSLog(@"Labeled BitVar with domain size %lld",minDomSize);
+      for (int i=0;i<numVars; i++){
+         if ([unboundBitVars[i] bound]) {
+            [unboundBitVars removeObjectAtIndex:i];
+            i--;
+            numVars--;
+         }
+      }
+      //[unboundBitVars removeObjectAtIndex:minIndex];
+      //numVars = [unboundBitVars count];
+      if(numVars>0){
+         minDom = unboundBitVars[0];
+         minIndex = 0;
+         minDomSize = [minDom domsize];
+         //NSLog(@"%lld BitVars remain",numVars);
+      }
+   }
+
+}
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
