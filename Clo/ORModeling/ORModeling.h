@@ -66,7 +66,7 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(void) compiling:(id<ORConstraint>)cstr;
 -(NSSet*)compiledMap;
-
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORFactory (ORModeling)

@@ -169,29 +169,29 @@
 -(void) visitIntVar: (ORIntVarI*) v
 {
    id<ORIntRange> cd = [self copyOnce:[v domain]];
-   _result = [[ORIntVarI alloc] initORIntVarI:_into domain:cd];
+   _result = [[ORIntVarI alloc] initORIntVarI:[_into tracker] domain:cd];
    [v setImpl:_result];
 }
 -(void) visitBitVar: (ORBitVarI*) v
 {
-   _result = [[ORBitVarI alloc] initORBitVarI:_into low:[v low] up:[v up] bitLength:[v bitLength]];
+   _result = [[ORBitVarI alloc] initORBitVarI:[_into tracker] low:[v low] up:[v up] bitLength:[v bitLength]];
    [v setImpl:_result];
 }
 -(void) visitFloatVar: (ORFloatVarI*) v
 {
-   _result = [[ORFloatVarI alloc] initORFloatVarI:_into low:[v min] up:[v max]];
+   _result = [[ORFloatVarI alloc] initORFloatVarI:[_into tracker] low:[v min] up:[v max]];
    [v setImpl:_result];
 }
 -(void) visitIntVarLitEQView:(ORIntVarLitEQView*)v
 {
    id<ORIntVar> bc = [self copyOnce:[v base]];
-   _result = [[ORIntVarLitEQView alloc] initORIntVarLitEQView:_into var:bc eqi:[v literal]];
+   _result = [[ORIntVarLitEQView alloc] initORIntVarLitEQView:[_into tracker] var:bc eqi:[v literal]];
    [v setImpl:_result];
 }
 -(void) visitAffineVar:(ORIntVarAffineI*) v
 {
    id<ORIntVar> vc = [self copyOnce:[v base]];
-   _result = [[ORIntVarAffineI alloc] initORIntVarAffineI:_into var:vc scale:[v scale] shift:[v shift]];
+   _result = [[ORIntVarAffineI alloc] initORIntVarAffineI:[_into tracker] var:vc scale:[v scale] shift:[v shift]];
    [v setImpl:_result];
 }
 
@@ -200,20 +200,20 @@
 -(void) visitIntArray:(id<ORIntArray>)v
 {
    id<ORIntRange> cr = [self copyOnce:[v range]];
-   _result = [ORFactory intArray:_into range:cr with:^ORInt(ORInt i) {
+   _result = [ORFactory intArray:[_into tracker] range:cr with:^ORInt(ORInt i) {
       return [v at:i];
    }];
 }
 -(void) visitFloatArray:(id<ORFloatArray>)v
 {
    id<ORIntRange> cr = [self copyOnce:[v range]];
-   _result = [ORFactory floatArray:_into range:cr with:^ORFloat(ORInt i) {
+   _result = [ORFactory floatArray:[_into tracker] range:cr with:^ORFloat(ORInt i) {
       return [v at:i];
    }];
 }
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
-   _result = [ORFactory intMatrix:_into with:v];
+   _result = [ORFactory intMatrix:[_into tracker] with:v];
 }
 -(void) visitTrailableInt:(id<ORTrailableInt>)v
 {
@@ -221,7 +221,7 @@
 }
 -(void) visitIntSet:(id<ORIntSet>)v
 {
-   id<ORIntSet> o = [ORFactory intSet:_into];
+   id<ORIntSet> o = [ORFactory intSet:[_into tracker]];
    [v enumerateWithBlock:^(ORInt i) {
       [o insert: i];
    }];
@@ -234,7 +234,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    id<ORIntRange> cr = [self copyOnce:[v range]];
-   id<ORIdArray> ca = [ORFactory idArray:_into range:cr];
+   id<ORIdArray> ca = [ORFactory idArray:[_into tracker] range:cr];
    [v enumerateWith:^(id obj, int idx) {
       ca[idx] = [self copyOnce:obj];
    }];
@@ -261,13 +261,13 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntRange>* arc = alloca(sizeof(id<ORIntRange>)*arity);
    for(ORInt i=0;i<arity;i++)
       arc[i] = [self copyOnce:[v range:i]];
-   id<ORIdMatrix> o = [ORFactory idMatrix:_into arity:arity ranges:arc];
+   id<ORIdMatrix> o = [ORFactory idMatrix:[_into tracker] arity:arity ranges:arc];
    copyRec(self,0,0,arity,arc,v,o);
    _result = o;
 }
 -(void) visitTable:(id<ORTable>) v
 {
-   _result = [ORFactory table:_into with:v];
+   _result = [ORFactory table:[_into tracker] with:v];
 }
 
 // ======================================================================================================
@@ -276,7 +276,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cv = [self copyOnce:[cstr var]];
    id<ORIntSet> cs = [self copyOnce:[cstr restriction]];
-   _result = [ORFactory restrict:_into var:cv to:cs];
+   _result = [ORFactory restrict:[_into tracker] var:cv to:cs];
    [_into addConstraint:_result];
    [cstr setImpl:_result];
 }
@@ -324,8 +324,8 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 }
 -(void) visitGroup:(id<ORGroup>)g
 {
-   id<ORGroup> ng = [ORFactory group:_into type:[g type]];
-   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:_into group:ng];
+   id<ORGroup> ng = [ORFactory group:[_into tracker] type:[g type]];
+   id<ORAddToModel> a2g = [[ORBatchGroup alloc] init:[_into tracker] group:ng];
    [g enumerateObjectWithBlock:^(id<ORConstraint> ck) {
       [ORFlatten flatten:ck into:a2g];
    }];
@@ -365,28 +365,28 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 -(void) visitEqualc: (id<OREqualc>)c
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
-   _result = [ORFactory equalc:_into var:cl to:[c cst]];
+   _result = [ORFactory equalc:[_into tracker] var:cl to:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
-   _result = [ORFactory notEqualc:_into var:cl to:[c cst]];
+   _result = [ORFactory notEqualc:[_into tracker] var:cl to:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitLEqualc: (id<ORLEqualc>)c
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
-   _result = [ORFactory  lEqualc:_into var:cl to:[c cst]];
+   _result = [ORFactory  lEqualc:[_into tracker] var:cl to:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitGEqualc: (id<ORGEqualc>)c
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
-   _result = [ORFactory gEqualc:_into var:cl to:[c cst]];
+   _result = [ORFactory gEqualc:[_into tracker] var:cl to:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -394,7 +394,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory equal:_into var:cl to:cr plus:[c cst] annotation:[c annotation]];
+   _result = [ORFactory equal:[_into tracker] var:cl to:cr plus:[c cst] annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -402,7 +402,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory model:_into var:cl equal:[c coef] times:cr plus:[c cst] annotation:[c annotation]];
+   _result = [ORFactory model:[_into tracker] var:cl equal:[c coef] times:cr plus:[c cst] annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -410,7 +410,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory notEqual:_into var:cl to:cr plus:[c cst]];
+   _result = [ORFactory notEqual:[_into tracker] var:cl to:cr plus:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -418,7 +418,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory lEqual:_into var:cl to:cr plus:[c cst]];
+   _result = [ORFactory lEqual:[_into tracker] var:cl to:cr plus:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -427,7 +427,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory equal3:_into var:co to:cl plus:cr annotation:[c annotation]];
+   _result = [ORFactory equal3:[_into tracker] var:co to:cl plus:cr annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -436,7 +436,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory mult:_into var:cl by:cr equal:co annotation:Default];
+   _result = [ORFactory mult:[_into tracker] var:cl by:cr equal:co annotation:Default];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -444,7 +444,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> ci = [self copyOnce:[c op]];
-   _result = [ORFactory square:_into var:ci equal:co annotation:[c annotation]];
+   _result = [ORFactory square:[_into tracker] var:ci equal:co annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -453,7 +453,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory mod:_into var:cl mod:cr equal:co];
+   _result = [ORFactory mod:[_into tracker] var:cl mod:cr equal:co];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -461,7 +461,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
-   _result = [ORFactory mod:_into var:cl modi:[c right] equal:co annotation:[c annotation]];
+   _result = [ORFactory mod:[_into tracker] var:cl modi:[c right] equal:co annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -469,7 +469,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
-   _result = [ORFactory abs:_into var:cl equal:co annotation:[c annotation]];
+   _result = [ORFactory abs:[_into tracker] var:cl equal:co annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -478,7 +478,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory model:_into boolean:cl or:cr equal:co];
+   _result = [ORFactory model:[_into tracker] boolean:cl or:cr equal:co];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -487,7 +487,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory model:_into boolean:cl and:cr equal:co];
+   _result = [ORFactory model:[_into tracker] boolean:cl and:cr equal:co];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -496,7 +496,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> co = [self copyOnce:[c res]];
    id<ORIntVar> cl = [self copyOnce:[c left]];
    id<ORIntVar> cr = [self copyOnce:[c right]];
-   _result = [ORFactory model:_into boolean:cl imply:cr equal:co];
+   _result = [ORFactory model:[_into tracker] boolean:cl imply:cr equal:co];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -505,7 +505,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntArray> ca = [self copyOnce:[c array]];
    id<ORIntVar>   ci = [self copyOnce:[c idx]];
    id<ORIntVar>   co = [self copyOnce:[c res]];
-   _result = [ORFactory element:_into var:ci idxCstArray:ca equal:co annotation:[c annotation]];
+   _result = [ORFactory element:[_into tracker] var:ci idxCstArray:ca equal:co annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -514,7 +514,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVarArray> ca = [self copyOnce:[c array]];
    id<ORIntVar>      ci = [self copyOnce:[c idx]];
    id<ORIntVar>      co = [self copyOnce:[c res]];
-   _result = [ORFactory element:_into var:ci idxVarArray:ca equal:co annotation:[c annotation]];
+   _result = [ORFactory element:[_into tracker] var:ci idxVarArray:ca equal:co annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -544,7 +544,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
-   _result = [ORFactory reify:_into boolean:cb with:cx eqi:[c cst]];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cx eqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -553,7 +553,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
    id<ORIntVar> cy = [self copyOnce:[c y]];
-   _result = [ORFactory reify:_into boolean:cb with:cx eq:cy annotation:[c annotation]];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cx eq:cy annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -561,7 +561,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
-   _result = [ORFactory reify:_into boolean:cb with:cx neqi:[c cst]];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cx neqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -570,7 +570,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
    id<ORIntVar> cy = [self copyOnce:[c y]];
-   _result = [ORFactory reify:_into boolean:cb with:cx neq:cy annotation:[c annotation]];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cx neq:cy annotation:[c annotation]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -578,7 +578,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
-   _result = [ORFactory reify:_into boolean:cb with:cx leqi:[c cst]];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cx leqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -587,7 +587,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
    id<ORIntVar> cy = [self copyOnce:[c y]];
-   _result = [ORFactory reify:_into boolean:cb  with:cx leq:cy];
+   _result = [ORFactory reify:[_into tracker] boolean:cb  with:cx leq:cy];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -595,7 +595,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 {
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
-   _result = [ORFactory reify:_into boolean:cb with:cx geqi:[c cst]];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cx geqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
@@ -604,49 +604,49 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> cb = [self copyOnce:[c b]];
    id<ORIntVar> cx = [self copyOnce:[c x]];
    id<ORIntVar> cy = [self copyOnce:[c y]];
-   _result = [ORFactory reify:_into boolean:cb with:cy leq:cx];
+   _result = [ORFactory reify:[_into tracker] boolean:cb with:cy leq:cx];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
 {
    id<ORIntVarArray> ca = [self copyOnce:[c vars]];
-   _result = [ORFactory sumbool:_into array:ca eqi:[c cst]];
+   _result = [ORFactory sumbool:[_into tracker] array:ca eqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
 {
    id<ORIntVarArray> ca = [self copyOnce:[c vars]];
-   _result = [ORFactory sumbool:_into array:ca leqi:[c cst]];
+   _result = [ORFactory sumbool:[_into tracker] array:ca leqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
 {
    id<ORIntVarArray> ca = [self copyOnce:[c vars]];
-   _result = [ORFactory sumbool:_into array:ca geqi:[c cst]];
+   _result = [ORFactory sumbool:[_into tracker] array:ca geqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitSumEqualc:(id<ORSumEqc>)c
 {
    id<ORIntVarArray> ca = [self copyOnce:[c vars]];
-   _result = [ORFactory sum:_into array:ca eqi:[c cst]];
+   _result = [ORFactory sum:[_into tracker] array:ca eqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>)c
 {
    id<ORIntVarArray> ca = [self copyOnce:[c vars]];
-   _result = [ORFactory sum:_into array:ca leqi:[c cst]];
+   _result = [ORFactory sum:[_into tracker] array:ca leqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>)c
 {
    id<ORIntVarArray> ca = [self copyOnce:[c vars]];
-   _result = [ORFactory sum:_into array:ca geqi:[c cst]];
+   _result = [ORFactory sum:[_into tracker] array:ca geqi:[c cst]];
    [_into addConstraint:_result];
    [c setImpl:_result];
 }

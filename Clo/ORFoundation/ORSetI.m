@@ -54,6 +54,16 @@
     [self enumerateWithBlock:^(ORInt e) { if(e > value) value = e; }];
     return value;
 }
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2
+{
+   id<ORIntSet> rv = [ORFactory intSet:nil];
+   [self enumerateWithBlock:^(ORInt e) {
+      if ([s2 member:e])
+         [rv insert:e];
+   }];
+   return rv;
+}
+
 -(ORInt) size
 {
     return [_avl size];
@@ -155,6 +165,7 @@
    self = [super init];
    _low = low;
    _up = up;
+   assert(!(_low == 0 && _up == 0));
    return self;
 }
 -(void) dealloc

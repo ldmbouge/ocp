@@ -44,7 +44,8 @@ int main(int argc, const char * argv[])
          [sidel enumerateWithBlock:^(ORInt k) {
             [model add:[Sum(model, i, square, [[[x[i] leq:@(k)] and:[x[i] geq:@(k - side[i] + 1)]] mul:@(side[i])]) eq:@(s)]];
             [model add:[Sum(model, i, square, [[[y[i] leq:@(k)] and:[y[i] geq:@(k - side[i] + 1)]] mul:@(side[i])]) eq:@(s)]];
-         }];
+         }
+         ];
          //NSLog(@"model: %@",model);
          id<CPProgram> cp  = [args makeProgram:model];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];

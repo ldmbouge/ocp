@@ -24,6 +24,8 @@
 -(id<ORIntVar>)var:(ORInt)k;
 -(ORInt)coef:(ORInt)k;
 -(ORInt)independent;
+-(BOOL)isZero;
+-(BOOL)isOne;
 @end
 
 @interface ORLinear : NSObject<ORLinear> {
@@ -53,6 +55,8 @@
 -(ORInt)size;
 -(ORInt)min;
 -(ORInt)max;
+-(BOOL)isZero;
+-(BOOL)isOne;
 -(void)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
 -(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
 -(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
@@ -70,5 +74,7 @@
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
+-(BOOL)isZero;
+-(BOOL)isOne;
 @end
 

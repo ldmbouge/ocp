@@ -712,6 +712,7 @@
 -(void) trackConstraint: (id) obj;
 -(void) compiling: (id<ORConstraint>) cstr;
 -(NSSet*) compiledMap;
+-(id<ORTracker>)tracker;
 @end
 
 @implementation ORRTModel
@@ -744,6 +745,10 @@
    [cstr visit: _concretizer];
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
 {

@@ -60,6 +60,10 @@
    _orig2Me = [[NSMutableDictionary alloc] initWithCapacity:nb];
    return self;
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void)map:(id)key toObject:(id)object
 {
    NSValue* v = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
@@ -294,20 +298,27 @@
    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
     return _objective;
 }
+static id danger = nil;
 
 -(void) trackObject: (id) obj
 {
+   if (self == danger)
+      NSLog(@"OOPPPPPPSSSIES");
    [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
 -(void) trackVariable: (id) var
 {
+   if (self == danger)
+      NSLog(@"OOPPPPPPSSSIES");
    [var setId:_nbObjects++];
    [_vars addObject:var];
    [_oStore addObject:var];
 }
 -(void) trackConstraint:(id)obj
 {
+   if (self == danger)
+      NSLog(@"OOPPPPPPSSSIES");
    [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
@@ -319,7 +330,7 @@
    for(id<ORObject> c in _vars)
       doVar(c);
    for(id<ORObject> c in _oStore)
-      doObjs(c);
+      doObjs(c);   
    for(id<ORObject> c in _mStore)
       doCons(c);
    doObjective(_objective);
@@ -347,6 +358,7 @@
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   danger = flat;
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
@@ -408,7 +420,10 @@
 {
    return _target;
 }
-
+-(id<ORTracker>)tracker
+{
+   return _target;
+}
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
    return [_target minimizeVar:x];
@@ -473,6 +488,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    _target = model;
    _theGroup = group;
    return self;
+}
+-(id<ORTracker>)tracker
+{
+   return [_target tracker];
 }
 -(void) addVariable: (id<ORVar>) var
 {

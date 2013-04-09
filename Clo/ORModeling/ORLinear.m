@@ -27,6 +27,14 @@
    free(_terms);
    [super dealloc];
 }
+-(BOOL)isZero
+{
+   return _nb == 0 && _indep == 0;
+}
+-(BOOL)isOne
+{
+   return _nb== 0 && _indep == 1;
+}
 -(void)setIndependent:(ORInt)idp
 {
    _indep = idp;
@@ -357,6 +365,15 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    _real = r;
    return self;
 }
+-(BOOL)isZero
+{
+   return [_real isZero];
+}
+-(BOOL)isOne
+{
+   return [_real size] == 0 && [_real independent] == -1;
+}
+
 -(void) setIndependent:(ORInt)idp
 {
    [_real setIndependent:-idp];
