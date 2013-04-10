@@ -57,9 +57,10 @@
 -(ORInt)max;
 -(BOOL)isZero;
 -(BOOL)isOne;
--(void)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
 
 //-(void) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 //-(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;

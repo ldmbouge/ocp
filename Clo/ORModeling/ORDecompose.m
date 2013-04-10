@@ -95,8 +95,11 @@ struct CPVarPair {
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
-   [_model addConstraint:[ORFactory model:_model boolean:vars.lV or:vars.rV equal:vars.boolVar]];
+   ORLinear* linLeft  = [ORLinearizer linearFrom:[e left] model:_model annotation:_n];
+   [ORLinearizer addToLinear:linLeft from:[e right] model:_model annotation:_n];
+   _terms = linLeft;
+//   struct CPVarPair vars = [self visitLogical:[e left] right:[e right]];
+//   [_model addConstraint:[ORFactory model:_model boolean:vars.lV or:vars.rV equal:vars.boolVar]];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
@@ -584,17 +587,31 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORSubst normSide:linOther for:_model annotation:_c];
-   if (_rv==nil)
-      _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar leqi:c]];
+   if ([[theVar domain] up] <= c) {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,1,1)];
+      else
+         [_model addConstraint:[ORFactory equalc:_model var:_rv to:1]];
+   } else {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar leqi:c]];
+   }
 }
 -(void) reifyGEQc:(ORExprI*)theOther constant:(ORInt)c
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORSubst normSide:linOther for:_model annotation:_c];
-   if (_rv==nil)
-      _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
+   if ([[theVar domain] low] >= c) {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,1,1)];
+      else
+         [_model addConstraint:[ORFactory equalc:_model var:_rv to:1]];
+   } else {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
+   }
 }
 -(void) reifyLEQ:(ORExprI*)left right:(ORExprI*)right
 {
@@ -670,9 +687,21 @@ static inline ORLong maxSeq(ORLong v[4])  {
    ORLinear* linRight = [ORLinearizer linearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORSubst normSide:linLeft  for:_model annotation:_c];
    id<ORIntVar> rV = [ORSubst normSide:linRight for:_model annotation:_c];
-   if (_rv==nil)
-      _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
-   [_model addConstraint:[ORFactory model:_model boolean:lV and:rV equal:_rv]];
+   if ([[lV domain] low] >= 1) {
+      if (_rv)
+         [_model addConstraint:[ORFactory equal:_model var:_rv to:rV plus:0 annotation:_c]];
+      else
+         _rv = rV;
+   } else if ([[rV domain] low] >= 1) {
+      if (_rv)
+         [_model addConstraint:[ORFactory equal:_model var:_rv to:lV plus:0 annotation:_c]];
+      else
+         _rv = lV;
+   } else {
+      if (_rv==nil)
+         _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
+      [_model addConstraint:[ORFactory model:_model boolean:lV and:rV equal:_rv]];
+   }
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {

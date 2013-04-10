@@ -19,5 +19,5 @@
 -(id)initORFlatten:(id<ORAddToModel>) into;
 -(void) apply:(id<ORModel>)m;
 +(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
-+(void) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
 @end

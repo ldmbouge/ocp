@@ -162,7 +162,8 @@
    } else {
       _result = NULL;
       [obj visit:self];
-      [_map setObject:_result forKey:obj];
+      if (_result != NULL)
+         [_map setObject:_result forKey:obj];
       return _result;
    }
 }
@@ -196,6 +197,12 @@
 }
 
 // ======================================================================================================
+
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   id<ORInteger> ce = [ORFactory integer:[_into tracker] value:[e value]];
+   _result = ce;
+}
 
 -(void) visitIntArray:(id<ORIntArray>)v
 {
@@ -352,7 +359,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
+   _result = [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -782,9 +789,12 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    [m applyOnVar:^(id<ORVar> x) {
       [self copyOnce:x];
    } onObjects:^(id<ORObject> x) {
-      [self copyOnce:x];
+      id cx = [self copyOnce:x];
+      if ([x conformsToProtocol:@protocol(ORAlgebraicConstraint)] && cx == NULL)
+         cx = [self copyOnce:x];
    } onConstraints:^(id<ORConstraint> c) {
-      [self copyOnce:c];
+      id cc = [self copyOnce:c];
+      assert(cc != NULL);
    } onObjective:^(id<ORObjectiveFunction> o) {
       [self copyOnce:o];
    }];
@@ -797,27 +807,32 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    [flattener release];
 }
 
-+(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
+   id<ORConstraint> rv = NULL;
    ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad: assert(NO);
       case ORREq: {
          if ([terms size] != 0) {
-            [terms postEQZ:model annotation:note];
+            rv = [terms postEQZ:model annotation:note];
          }
       }break;
       case ORRNEq: {
-         [terms postNEQZ:model annotation:note];
+         rv = [terms postNEQZ:model annotation:note];
       }break;
       case ORRLEq: {
-         [terms postLEQZ:model annotation:note];
+         rv = [terms postLEQZ:model annotation:note];
+      }break;
+      case ORRDisj: {
+         rv = [terms postDISJ:model annotation:note];
       }break;
       default:
          assert(terms == nil);
          break;
    }
    [terms release];
+   return rv;
 }
 @end
 

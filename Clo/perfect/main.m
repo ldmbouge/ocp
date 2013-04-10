@@ -34,10 +34,10 @@ int main(int argc, const char * argv[])
          [square enumerateWithBlock:^(ORInt i) {
             [square enumerateWithBlock:^(ORInt j) {
                if (i < j) {
-                  [model add: [[[[[x[i] plus:@(side[i])]  leq:x[j]] or:
-                                 [[x[j] plus:@(side[j])]  leq:x[i]]] or:
-                                [[y[i] plus:@(side[i])]  leq:y[j]]] or:
-                               [[y[j] plus:@(side[j])]  leq:y[i]]]];
+                  [model add: [[[[[x[i] plus:@(side[i])] leq:x[j]]  or:
+                                 [[x[j] plus:@(side[j])] leq:x[i]]] or:
+                                 [[y[i] plus:@(side[i])] leq:y[j]]] or:
+                                 [[y[j] plus:@(side[j])] leq:y[i]]]];
                }
             }];
          }];
@@ -50,7 +50,10 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp  = [args makeProgram:model];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          [cp solveAll:^{
-            //NSLog(@"start(x)...");
+            id<ORBasicModel> bm = [[cp engine] model];
+            NSLog(@"start(x)  %ld %ld %ld",[[bm variables] count],[[bm objects] count],[[bm constraints] count]);
+            //NSLog(@"CONSTRAINTS: %@",[bm constraints]);
+
             [sidel enumerateWithBlock:^(ORInt p) {
                [square enumerateWithBlock:^(ORInt i) {
                   [cp try:^{
@@ -74,6 +77,7 @@ int main(int argc, const char * argv[])
             id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [y[i] value];}];
             NSLog(@"x = %@",xs);
             NSLog(@"y = %@",ys);
+
          }];
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

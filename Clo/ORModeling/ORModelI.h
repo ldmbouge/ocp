@@ -34,9 +34,9 @@
 -(void)restore:(id<ORSolution>)s;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
--(void) addVariable:(id<ORVar>) var;
--(void) addObject:(id) object;
--(void) addConstraint:(id<ORConstraint>) cstr;
+-(id<ORVar>) addVariable:(id<ORVar>) var;
+-(id) addObject:(id) object;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
@@ -52,9 +52,9 @@
 
 @interface ORBatchModel : NSObject<ORAddToModel>
 -(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject:(id)object;
--(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject:(id)object;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
@@ -70,9 +70,9 @@
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject:(id)object;
--(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject:(id)object;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 //-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 //-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;

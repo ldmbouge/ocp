@@ -702,9 +702,9 @@
 
 @interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*) solver;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject: (id) object;
--(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject: (id) object;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
 -(void) trackObject: (id) obj;
@@ -732,19 +732,22 @@
    [_concretizer release];
    [super dealloc];
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_solver trackVariable:var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addObject: (id) object
 {
    [_solver trackObject: object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
+   return cstr;
 }
 -(id<ORTracker>)tracker
 {

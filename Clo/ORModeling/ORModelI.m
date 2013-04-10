@@ -170,20 +170,23 @@
 {
    return [[self solutions] best];
 }
--(void) addVariable:(id<ORVar>) var
+-(id<ORVar>) addVariable:(id<ORVar>) var
 {
-   [self captureVariable: var];   
+   [self captureVariable: var];
+   return var;
 }
--(void )addObject:(id) object
+-(id) addObject:(id) object
 {
    [self trackObject:object];
+   return object;
 }
--(void) addConstraint:(id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr
 {
    [self trackConstraint:cstr];
    [self add: cstr];
    if (_cc)
       [_ccSet addObject:cstr];
+   return cstr;
 }
 -(void) compiling:(id<ORConstraint>)cstr
 {
@@ -400,21 +403,24 @@ static id danger = nil;
    _ccSet  = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable: var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addObject: (id) object
 {
    [_target trackObject: object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [_target trackConstraint:cstr];
    [_target add: cstr];
    if (_cc) {
       [_ccSet addObject:cstr];
    }
+   return cstr;
 }
 -(id<ORModel>) model
 {
@@ -493,17 +499,20 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [_target tracker];
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable:var];
+   return var;
 }
--(void) addObject:(id)object
+-(id) addObject:(id)object
 {
    [_target addObject:object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [_theGroup add:cstr];
+   return cstr;
 }
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {

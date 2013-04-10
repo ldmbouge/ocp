@@ -53,7 +53,11 @@
 
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
+   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model objects] count],[[model constraints] count]);
    id<ORModel> fm = [model flatten];
+   NSLog(@"FLAT  %ld %ld %ld",[[fm variables] count],[[fm objects] count],[[fm constraints] count]);
+   //NSLog(@"FC: %@",[fm constraints]);
+   
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [fm visit: concretizer];
    [cpprogram setSource:model];
