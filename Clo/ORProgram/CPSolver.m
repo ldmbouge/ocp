@@ -427,63 +427,71 @@
 
 -(void) labelBitVarsFirstFail: (NSArray*)vars
 {
-   NSMutableArray* unboundBitVars = [[NSMutableArray alloc] init];
    CPBitVarI* minDom;
-   int minIndex;
    ORULong minDomSize;
-   ORLong numVars;
-   
-   int j;
-   
    ORULong thisDomSize;
+   ORLong numVars;
+   bool freeVars = false;
+   
    numVars = [vars count];
-   for(int i=0;i<numVars;i++)
-      if (![vars[i] bound]) {
-         [unboundBitVars addObject:vars[i]];
-      }
+   int j;
+   int numBound;
 
-//   NSLog(@"%lld total variables.",numVars);
+   for(int i=0;i<numVars;i++){
+      if ([vars[i] bound])
+         continue;
+      if ([vars[i] domsize] <= 0)
+         continue;
+      minDom = (CPBitVarI*)[vars[i] dereference];
+      minDomSize = [minDom domsize];
+      freeVars = true;
+      break;
+   }
 
-   
-   minDom = (CPBitVarI*)[unboundBitVars[0] dereference];
-   minDomSize = [minDom domsize];
-//   NSLog(@"%lld is size of first Min Domain",minDomSize);
-   minIndex = 0;
-   
-   numVars = [unboundBitVars count];
-   while (numVars > 0) {
+//   NSLog(@"%lld unbound variables.",numVars);
+   while (freeVars) {
+      freeVars = false;
+      numBound = 0;
       for(int i=0;i<numVars;i++){
-         if ((thisDomSize=[[unboundBitVars[i] dereference]domsize]) < minDomSize) {
-            minDom = [unboundBitVars[i] dereference];
+         if ([vars[i] bound]){
+            numBound++;
+            continue;
+         }
+         if ([vars[i] domsize] <= 0)
+            continue;
+         if (!freeVars) {
+            minDom = [vars[i] dereference];
+            minDomSize = [minDom domsize];
+            freeVars = true;
+            continue;
+         }
+         thisDomSize=[[vars[i] dereference] domsize];
+         if(thisDomSize==0)
+            continue;
+         if (thisDomSize < minDomSize) {
+            minDom = [vars[i] dereference];
             minDomSize = thisDomSize;
-            minIndex = i;
          }
       }
-   
-      while ((j=[minDom lsFreeBit])>=0) {
-         NSAssert(j>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
+      if (!freeVars)
+         break;
+      NSLog(@"%d//%lld bound.",numBound, numVars);
+//      j=[minDom randomFreeBit];
+      
+      NSLog(@"Labeling %@ at %d.", minDom, j);
+//         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
+//                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      while ([minDom domsize] > 0) {
+         j= [minDom randomFreeBit];
          [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
                    or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
       }
-      //NSLog(@"Labeled BitVar with domain size %lld",minDomSize);
-      for (int i=0;i<numVars; i++){
-         if ([unboundBitVars[i] bound]) {
-            [unboundBitVars removeObjectAtIndex:i];
-            i--;
-            numVars--;
-         }
-      }
-      //[unboundBitVars removeObjectAtIndex:minIndex];
-      //numVars = [unboundBitVars count];
-      if(numVars>0){
-         minDom = unboundBitVars[0];
-         minIndex = 0;
-         minDomSize = [minDom domsize];
-         //NSLog(@"%lld BitVars remain",numVars);
-      }
-   }
 
+      NSLog(@"Labeled %@ at %d.", minDom, j);
+   }
 }
+
+
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {

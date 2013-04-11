@@ -25,10 +25,12 @@ int main(int argc, const char * argv[])
 {
    NSAutoreleasePool* pool;// = [[NSAutoreleasePool alloc] init];
 
+   pool = [[NSAutoreleasePool alloc] init];
+
 //   MD4 *myMD4;
    MD5 *myMD5 = [MD5 initMD5];
-   NSString *filename = @"lorem-mssg.txt";
-//   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
+//   NSString *filename = @"lorem-mssg.txt";
+   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    
    NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
    
@@ -41,7 +43,7 @@ int main(int argc, const char * argv[])
    for(int i=0;i<16;i++){
       twobytemask = 0xFFFF0000;
       for(int j=0;j<4;j++){
-         pool = [[NSAutoreleasePool alloc] init];
+//         pool = [[NSAutoreleasePool alloc] init];
          mask[i] = ~twobytemask;
          if ((j==3) && (i<15)) {
             mask[i+1] = 0x00FFFFFF;
@@ -50,14 +52,14 @@ int main(int argc, const char * argv[])
          [str appendString:[myMD5 preimage:filename withMask:mask]];
          [myMD5 dealloc];
          twobytemask >>= 8;
-         [pool drain];
+//         [pool drain];
       }
       mask[i] = 0xFFFFFFFF;
    }
-//   mask[0] = 0xFFFF0000;
-   myMD5 = [MD5 initMD5];
-   [str appendString:[myMD5 preimage:filename withMask:mask]];
-   [myMD5 dealloc];
+//   mask[0] = 0xFFFFFF00;
+//   myMD5 = [MD5 initMD5];
+//   [str appendString:[myMD5 preimage:filename withMask:mask]];
+//   [myMD5 dealloc];
    [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataFirstFail.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
    [pool drain];

@@ -199,6 +199,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom domsize];
 }
 
+-(unsigned int) randomFreeBit
+{
+   return [_dom randomFreeBit];
+}
+
 -(unsigned int) lsFreeBit
 {
    return [_dom lsFreeBit];

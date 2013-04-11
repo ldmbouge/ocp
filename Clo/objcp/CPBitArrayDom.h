@@ -25,7 +25,7 @@
     TRUInt*         _up;
     unsigned int    _wordLength;
     unsigned int    _bitLength;
-    TRInt            _freebits;
+    TRUInt            _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
 }
@@ -48,6 +48,7 @@
 -(ORStatus)             setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x;
 -(bool)                 isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
+-(unsigned int)         randomFreeBit;
 -(bool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;

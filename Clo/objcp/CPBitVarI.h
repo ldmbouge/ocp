@@ -76,6 +76,7 @@ typedef struct  {
 -(ORBounds) bounds;
 -(ORULong) domsize;
 -(unsigned int) lsFreeBit;
+-(unsigned int) randomFreeBit;
 -(BOOL) member:(unsigned int*)v;
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
