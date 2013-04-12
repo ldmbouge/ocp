@@ -796,7 +796,9 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
       id cx = [self copyOnce:x];
    } onConstraints:^(id<ORConstraint> c) {
       id cc = [self copyOnce:c];
-      assert(cc != NULL);
+      if (cc == NULL) {
+         //NSLog(@"Warning... copyOnce returned null on object.");
+      }
    } onObjective:^(id<ORObjectiveFunction> o) {
       [self copyOnce:o];
    }];

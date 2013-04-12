@@ -56,10 +56,20 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp  = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
-         id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
+         //id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
          [cp solve: ^{
-            [cp labelHeuristic:h];
-            [cp once: ^{ [cp labelArray:fd];}];
+            for(ORInt i=1;i<=n;i++) {
+               if ([m[i] bound]) continue;
+               [cp tryall:D suchThat:^bool(ORInt v) {
+                  return [m[i] member:v];
+               } in:^(ORInt v) {
+                  [cp label:m[i] with:v];
+               } onFailure:^(ORInt v) {
+                  [cp diff:m[i] with:v];
+               }];
+            }
+            //[cp labelHeuristic:h];
+            //[cp once: ^{ [cp labelArray:fd];}];
             NSLog(@"Optimum: %d",[m[n] value]);
          }];         
          NSLog(@"Solver status: %@\n",cp);

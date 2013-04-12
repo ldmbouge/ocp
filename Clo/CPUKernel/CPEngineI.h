@@ -80,3 +80,5 @@ enum CPEngineState {
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 @end
+
+void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);

@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
          id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
          ORInt T = n * (n*n + 1)/2;
          id<ORIntVarMatrix> s = [ORFactory intVarMatrix:model range:R :R domain:D];
-         [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [s at:i :j])]];
+         [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [s at:i :j]) annotation:DomainConsistency]];
          for(ORInt i=1;i <= n;i++) {
             [model add:[Sum(model, j, R, [s at:i :j]) eq: @(T)]];
             [model add:[Sum(model, j, R, [s at:j :i]) eq: @(T)]];
