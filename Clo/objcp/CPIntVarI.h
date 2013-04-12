@@ -329,6 +329,7 @@ static inline ORBounds bounds(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
+         /*
       case CPVCShift: {
          ORBounds b = bounds(((CPIntShiftView*)x)->_x);
          return (ORBounds){b.min + ((CPIntShiftView*)x)->_b,b.max + ((CPIntShiftView*)x)->_b};
@@ -341,10 +342,8 @@ static inline ORBounds bounds(CPIntVarI* x)
             return (ORBounds){fmin,fmax};
          else
             return (ORBounds){fmax,fmin};
-      }
-      case CPVCEQLiteral: return [x bounds];
-      case CPVCFlip: return [x bounds];
-      default:assert(NO);return (ORBounds){0,0};
+      }*/
+      default: return [x bounds];
    }
 }
 #undef DOMX
@@ -370,7 +369,7 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
 {
    switch (x->_vc) {
       case CPVCBare:
-         return domMember((CPBoundsDom*)x->_dom, value);
+         return getCPDom((CPBitDom*)x->_dom, value);
          break;
       default:
          return [x member:value];

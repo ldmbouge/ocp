@@ -84,7 +84,16 @@ int main1(int argc, const char * argv[])
    id<ORIntVarArray> slab = [ORFactory intVarArray: model range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [ORFactory intVarArray: model range: Slabs domain: Capacities];
 //   id<ORIntVar> o = [ORFactory intVar: model domain: RANGE(model,0,10000)];
-
+   NSLog(@"CO: %@",coloredOrder);
+   for(ORInt i=[Colors low];i <= [Colors up];i++)
+      for(ORInt j=[Colors low];j <= [Colors up];j++) {
+         if (i!=j) {
+            id<ORIntSet> ns = [coloredOrder[i] inter:coloredOrder[j]];
+            if ([ns size] !=0)
+               NSLog(@"INTER %d | %d = %@",i,j,ns);
+         }
+      }
+      
    [model add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];

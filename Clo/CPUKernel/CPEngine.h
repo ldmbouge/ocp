@@ -55,6 +55,7 @@ typedef struct AC3Entry {
    ORInt      _mxs;
    ORInt      _csz;
    AC3Entry*  _tab;
+   AC3Entry* _last;
    ORInt    _enter;
    ORInt     _exit;
    ORInt     _mask;

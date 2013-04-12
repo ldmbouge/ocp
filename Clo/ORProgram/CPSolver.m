@@ -44,6 +44,7 @@
 -(NSString*) description;
 -(ORBool)isEqual: (id) object;
 -(NSUInteger) hash;
+-(ORUInt)getId;
 @end
 
 @implementation ORCPIntVarSnapshot
@@ -54,6 +55,11 @@
    _value = [solver intValue: v];
    return self;
 }
+-(ORUInt)getId
+{
+   return _name;
+}
+
 -(ORInt) intValue
 {
    return _value;
@@ -748,7 +754,9 @@
 }
 -(id<ORSnapshot>) value: (id) var
 {
-   NSUInteger idx = [var getId];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
    if (idx < [_varShots count])
       return [_varShots objectAtIndex:idx];
    else
@@ -756,11 +764,17 @@
 }
 -(ORInt) intValue: (id) var
 {
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] intValue];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
 }
 -(ORBool) boolValue: (id) var
 {
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] boolValue];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] boolValue];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
@@ -1513,8 +1527,8 @@
 
 @interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*) solver;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject: (id) object;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject: (id) object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
@@ -1540,13 +1554,15 @@
    [_concretizer release];
    [super dealloc];
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_solver trackVariable:var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addObject: (id) object
 {
    [_solver trackObject: object];
+   return object;
 }
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
@@ -1554,6 +1570,10 @@
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
    return cstr;
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
 {

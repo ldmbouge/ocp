@@ -35,7 +35,7 @@ enum CPDomClass {
 -(CPBoundsDom*)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
-//-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORInt)min;
@@ -82,7 +82,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(NSString*)description;
 -(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
-//-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;

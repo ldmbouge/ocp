@@ -21,7 +21,6 @@
 
 @interface ORConstraintI : ORModelingObjectI<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
--(void) setId: (ORUInt) name;
 -(NSString*) description;
 @end
 
@@ -30,7 +29,6 @@
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
--(void) setId: (ORUInt) name;
 -(enum ORGroupType)type;
 @end
 
@@ -142,6 +140,7 @@
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
+-(ORAnnotation) annotation;
 @end
 
 @interface OROr : ORConstraintI<OROr>
@@ -269,15 +268,11 @@
 -(ORInt)cst;
 @end
 
-
-
 @interface ORSumGEqc : ORConstraintI<ORSumGEqc>
 -(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end
-
-
 
 @interface ORLinearGeq : ORConstraintI<ORLinearGeq>
 -(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
@@ -324,6 +319,7 @@
 
 @interface ORCardinalityI : ORConstraintI<ORCardinality>
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c;
 -(id<ORIntVarArray>) array;
 -(id<ORIntArray>) low;
 -(id<ORIntArray>) up;

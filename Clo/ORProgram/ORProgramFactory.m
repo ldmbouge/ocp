@@ -51,9 +51,22 @@
    return mp;
 }
 
++(id<CPCommonProgram>)concretizeCP:(id<ORModel>)m program: (id<CPCommonProgram>) cpprogram
+{
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   [m visit: concretizer];
+   [concretizer release];
+   [cpprogram setSource:m];
+   return cpprogram;
+}
+
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
+   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model objects] count],[[model constraints] count]);
    id<ORModel> fm = [model flatten];
+   NSLog(@"FLAT  %ld %ld %ld",[[fm variables] count],[[fm objects] count],[[fm constraints] count]);
+   //NSLog(@"FC: %@",[fm constraints]);
+   
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [fm visit: concretizer];
    [cpprogram setSource:model];
@@ -102,8 +115,8 @@
    [model setImpl: cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into: batch];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: model];
    [batch release];
    
    NSArray* objects = [flatModel objects];
@@ -151,8 +164,8 @@
    [model setImpl:cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into: batch];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: model];
    [batch release];
    for(id<ORObject> c in [flatModel objects]) {
       if ([c impl] == NULL) {
@@ -160,6 +173,13 @@
          [c setImpl: ba];
       }
    }
+   for(id<ORObject> c in [flatModel constraints]) {
+      if ([c impl] == NULL) {
+         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+         [c setImpl: ba];
+      }
+   }
+   
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
@@ -171,7 +191,7 @@
             [global addSolution:sol];
          }
       }];
-      [ORFactory createCPProgram:flatModel program: pi]; // [ldm] it is already flat. This flattens _again_
+      [ORFactory concretizeCP:flatModel program:pi];
    }
    return cpprogram;
 }
@@ -180,8 +200,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flattener = [ORFactory createLPFlattener];
-   [flattener apply: model into:batch];
+   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
+   [flattener apply: model];
    [batch release];
    
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
@@ -202,8 +222,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
-   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener];
-   [flattener apply: model into:batch];
+   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
+   [flattener apply: model];
    [batch release];
    
    id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];

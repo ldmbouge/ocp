@@ -22,6 +22,8 @@
    _csz = 0;
    _mask = _mxs - 1;
    _tab = malloc(sizeof(AC3Entry)*_mxs);
+   _tab[_mxs - 1] = (AC3Entry){0,0};
+   _last = _tab+_mxs-1;
    _enter = _exit = 0;
    return self;
 }
@@ -32,16 +34,18 @@
 }
 -(void) reset
 {
+   _tab[_mxs - 1] = (AC3Entry){0,0};
+   _last = _tab + _mxs - 1;
    _enter = _exit = 0;
    _csz = 0;
 }
 -(ORBool) loaded
 {
-   //ORInt nb = (_mxs + _enter - _exit)  & _mask;
    return _csz > 0;
 }
 -(void) resize
 {
+   long lx = _last - _tab;
    AC3Entry* nt = malloc(sizeof(AC3Entry)*_mxs*2);
    AC3Entry* ptr = nt;
    ORInt cur = _exit;
@@ -52,27 +56,28 @@
    while (cur != _enter);
    free(_tab);
    _tab = nt;
+   _last = nt + lx;
    _exit = 0;
-   _enter = _mxs-1;
+   _enter = _mxs;
    _mxs <<= 1;
    _mask = _mxs - 1;
 }
 inline static void AC3reset(CPAC3Queue* q)
 {
+   q->_last = q->_tab+q->_mxs-1;
    q->_enter = q->_exit = 0;
    q->_csz = 0;
 }
 inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstraint> cstr)
 {
-   if (q->_csz == q->_mxs-1)
+   if (q->_csz == q->_mxs)
       [q resize];
-   AC3Entry* last = q->_tab+ (q->_enter == 0 ? q->_mxs -1 : q->_enter - 1);
-   if (q->_csz > 0 && last->cb == cb && last->cstr == cstr)
+   if (q->_csz > 0 && q->_last->cb == cb && q->_last->cstr == cstr)
       return;
-   q->_tab[q->_enter] = (AC3Entry){cb,cstr};
+   q->_last  = q->_tab + q->_enter;
+   *q->_last = (AC3Entry){cb,cstr};
    q->_enter = (q->_enter+1) & q->_mask;
-   ++q->_csz;
-   assert(cb || cstr);
+   q->_csz += 1;
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
@@ -362,23 +367,30 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    AC3enQueue(_ac3[HIGHEST_PRIO], cb, c);
 }
 
--(void) scheduleAC3: (id<CPEventNode>*) mlist
+void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist)
 {
    while (*mlist) {
       CPEventNode* list = *mlist;
       while (list) {
-         assert(list->_cstr);
-         list->_cstr->_todo = CPTocheck;
-         id<CPGroup> group = [list->_cstr group];
-         if (group) {
-            AC3enQueue(_ac3[LOWEST_PRIO], nil, group);
-            [group scheduleAC3:list];
-         } else
-            AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);
+         CPCoreConstraint* lc = list->_cstr;
+         if (lc->_active._val) {
+            lc->_todo = CPTocheck;
+            id<CPGroup> group = lc->_group;
+            if (group) {
+               AC3enQueue(fdm->_ac3[LOWEST_PRIO], nil, group);
+               [group scheduleAC3:list];
+            } else
+               AC3enQueue(fdm->_ac3[list->_priority], list->_trigger,lc);
+         }
          list = list->_node;
-      } 
+      }
       ++mlist;
    }
+}
+
+-(void) scheduleAC3: (id<CPEventNode>*) mlist
+{
+   scheduleAC3(self, mlist);
 }
 
 // PVH: there is a discrepancy between the AC3 and AC5 queues. AC5 uses CPEventNode; AC3 works with the trigger directly
@@ -428,6 +440,7 @@ ORStatus propagateFDM(CPEngineI* fdm)
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(ac5)) {
+                        
             id<CPAC5Event> evt = deQueueAC5(ac5);
             nbp += [evt execute];
          }

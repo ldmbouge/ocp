@@ -71,9 +71,9 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
          [cp solve:^{
             NSLog(@"Start...");
-            //id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
-            [cp labelHeuristic:h];
-            //[cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [flat[i] domsize];}];
+            id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
+            //[cp labelHeuristic:h];
+            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [flat[i] domsize];}];
             //[cp labelArray:[ORFactory flattenMatrix:M]];
             NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
             show(M);

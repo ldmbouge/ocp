@@ -82,7 +82,8 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
          for(ORInt p = Periods.low; p <= Periods.up; p++) {
             [cp forall:Guests suchThat:^bool(ORInt g) { return ![[boat at:g :p] bound];}
-             orderedBy:nil do:^(ORInt g) {
+             orderedBy:nil//^ORInt(ORInt g) { return - [[boat at:g :p] domsize];}
+                    do:^(ORInt g) {
                 [cp tryall:Hosts suchThat:^bool(ORInt h) { return [[boat at: g: p] member:h];}
                         in:^(ORInt h) {
                            [cp label:[boat at:g :p] with:h];

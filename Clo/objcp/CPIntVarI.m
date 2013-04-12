@@ -190,7 +190,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if ([_dom bound])
       return [_dom min];
    else {
-      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      //@throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
       return 0;
    }
 }
@@ -436,8 +436,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = _net._bindEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
-   if (_triggers != nil)
+   scheduleAC3(_fdm,mList);
+   if (_triggers)
       [_triggers bindEvt:_fdm];
    return ORSuspend;
 }
@@ -456,8 +456,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = dsz==1 ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
-    if (dsz==1 && _triggers != nil)
+   scheduleAC3(_fdm,mList);
+   if (_triggers && dsz==1)
         [_triggers bindEvt:_fdm];
    return ORSuspend;
 }
@@ -466,18 +466,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
    if (s==ORFailure) return s;
    id<CPEventNode> mList[6];
-   ORUInt k = 0;
-   mList[k] = _net._boundsEvt._val;
-   k += mList[k] != NULL;
-   mList[k] = _net._maxEvt._val;
-   k += mList[k] != NULL;
-   mList[k] = _net._domEvt._val;
-   k += mList[k] != NULL;
-   mList[k] = dsz==1 ? _net._bindEvt._val : NULL;
-   k += mList[k] != NULL;
-   mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
-   if (dsz==1 && _triggers != nil)
+   id<CPEventNode>* ptr = mList;
+   *ptr  = _net._boundsEvt._val;
+   ptr += *ptr != NULL;
+   *ptr = _net._domEvt._val;
+   ptr += *ptr != NULL;
+   *ptr = _net._maxEvt._val;
+   ptr += *ptr != NULL;
+   *ptr = dsz==1 ? _net._bindEvt._val : NULL;
+   ptr += *ptr != NULL;
+   *ptr = NULL;
+   scheduleAC3(_fdm,mList);
+   if (_triggers && dsz==1)
       [_triggers bindEvt:_fdm];
    return ORSuspend;
 }
@@ -492,11 +492,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = _net._domEvt._val;
    k += mList[k] != NULL;
    mList[k] = NULL;
-   [_fdm scheduleAC3:mList];
+   scheduleAC3(_fdm,mList);
    if (_net._ac5._val) {
       [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
    }
-   if (_triggers != nil)
+   if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
    return ORSuspend;
 }
@@ -510,10 +510,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   ORStatus s = [_dom updateMin:newMin for:self];
-   if (s)   s = [_dom updateMax:newMax for:self];
-   return s;
-//   return [_dom updateMin:newMin andMax:newMax for:_recv];
+   //ORStatus s = [_dom updateMin:newMin for:self];
+   //if (s)   s = [_dom updateMax:newMax for:self];
+   //return s;
+   return [_dom updateMin:newMin andMax:newMax for:self];
 }
 
 -(ORStatus) bind: (ORInt) val
@@ -675,6 +675,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert([_x bound]);
    return [_x value] + _b;
 }
+-(ORInt) intValue
+{
+   assert([_x bound]);
+   return [_x value] + _b;
+}
 -(ORInt)min
 {
     return [_x min]+_b;
@@ -792,6 +797,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return [_x bound];
 }
 -(ORInt) value
+{
+   assert([_x bound]);
+   return _a * [_x value] + _b;
+}
+-(ORInt) intValue
 {
    assert([_x bound]);
    return _a * [_x value] + _b;
@@ -956,6 +966,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    assert([_x bound]);
    return - [_x value];
 }
+-(ORInt) intValue
+{
+   assert([_x bound]);
+   return - [_x value];
+}
 -(ORInt) min
 {
    return - [_x max];
@@ -1052,6 +1067,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return [self domsize]<= 1;
 }
 -(ORInt) value
+{
+   assert([_secondary bound]);
+   return [_secondary value]==_v;
+}
+-(ORInt) intValue
 {
    assert([_secondary bound]);
    return [_secondary value]==_v;
