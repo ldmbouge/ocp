@@ -129,6 +129,7 @@
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
 -(void)             perform: (ORClosure) body onLimit: (ORClosure) onRestart;
 -(void)           portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void)       switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 @end
 
 

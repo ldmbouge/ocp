@@ -289,6 +289,22 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
    }
    [self popController];
 }
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
+{
+   NSCont* enter = [NSCont takeContinuation];
+   if ([enter nbCalls]==0) {
+      ORSwitchOnDepth* controller = [[ORSwitchOnDepth alloc] initORSwitchOnDepth: depth next: enter withTrail: _trail];
+      [self push: controller];
+      [controller release];
+      s1();
+      [self popController];
+   }
+   else {
+      [self popController];
+      s2();
+   }
+}
+
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
 {
    id<ORInteger> isPruned = [ORFactory integer: _engine value: 0];

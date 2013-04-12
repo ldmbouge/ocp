@@ -36,6 +36,7 @@
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart;
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 -(void) once: (ORClosure) cl;
 -(void) limitSolutions: (ORInt) maxSolutions  in: (ORClosure) cl;
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;

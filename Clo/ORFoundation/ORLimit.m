@@ -307,5 +307,36 @@
 }
 @end
 
+@implementation ORSwitchOnDepth
+{
+   id<ORTrail>  _trail;
+   ORInt        _limit;
+   NSCont*      _next;
+   TRInt        _depth;
+
+}
+-(id) initORSwitchOnDepth: (ORInt) limit next: (NSCont*) next withTrail: (id<ORTrail>) trail;
+{
+   self = [super initORDefaultController];
+   _trail = trail;
+   _limit = limit;
+   _next  = [next retain];
+   _depth = makeTRInt(_trail,0);
+   return self;
+}
+-(void) dealloc
+{
+   [_next letgo];
+   [super dealloc];
+}
+-(void) startTry
+{
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   if (_depth._val > _limit)
+      [_next call];
+   else
+      [_controller startTry];
+}
+@end
 
 

@@ -1359,6 +1359,10 @@
 {
    [_search portfolio: s1 then: s2];
 }
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
+{
+   [_search switchOnDepth: s1 to: s2 limit: depth];
+}
 -(void) once: (ORClosure) cl
 {
    [_search once: cl];

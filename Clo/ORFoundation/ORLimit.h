@@ -91,3 +91,9 @@
 -(ORBool)    isPruned;
 @end
 
+@interface ORSwitchOnDepth : ORDefaultController <NSCopying,ORSearchController>
+-(id)    initORSwitchOnDepth: (ORInt) limit next: (NSCont*) next withTrail: (id<ORTrail>) trail;
+-(void)  dealloc;
+-(void)  startTry;
+@end
+
