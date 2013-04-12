@@ -40,7 +40,7 @@
    [super dealloc];
 }
 
--(bool) getMessage:(NSString *)fname
+-(ORBool) getMessage:(NSString *)fname
 {
    NSFileManager *fm;
    NSData *message;

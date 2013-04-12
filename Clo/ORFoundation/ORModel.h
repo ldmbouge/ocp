@@ -18,6 +18,7 @@
 @protocol ORIntVar;
 @protocol ORBitVar;
 @protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
 @protocol ORSolution;
 @protocol ORSolutionPool;
@@ -354,6 +355,8 @@ enum ORGroupType {
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(ORInt) compare: (id<ORObjectiveValue>) other;
+//-(ORInt) intValue;
+//-(ORFloat) floatValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
@@ -388,13 +391,12 @@ enum ORGroupType {
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 @end
 
-
+// pvh: to reconsider the solution pool in this interface; not sure I like them here
 @protocol ORASolver <NSObject,ORTracker>
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
--(id<ORSolutionPool>) globalSolutionPool;    // Solution pool for parallel computing (to use internally)
+-(id<ORSolutionPool>) solutionPool;          
 @end
 
 // ====== Bit Constraints =====================================

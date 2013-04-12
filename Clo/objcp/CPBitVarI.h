@@ -50,7 +50,7 @@ typedef struct  {
 -(void) whenChangePropagate:  (CPCoreConstraint*) c;
 
 // need for speeding the code when not using AC5
--(bool) tracksLoseEvt;
+-(ORBool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -66,7 +66,7 @@ typedef struct  {
 -(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
 -(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
--(BOOL) bound;
+-(ORBool) bound;
 -(uint64) min;
 -(uint64) max;
 -(CPBitArrayDom*) domain;
@@ -76,7 +76,7 @@ typedef struct  {
 -(ORBounds) bounds;
 -(unsigned int) domsize;
 -(unsigned int) lsFreeBit;
--(BOOL) member:(unsigned int*)v;
+-(ORBool) member:(unsigned int*)v;
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;

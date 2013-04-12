@@ -50,6 +50,12 @@ typedef enum {
 -(void) decr;
 @end
 
+@protocol ORFloatNumber <ORObject,ORExpr>
+-(ORFloat) value;
+-(ORFloat) floatValue;
+-(ORFloat) setValue: (ORFloat) value;
+@end
+
 @protocol ORTrailableInt <ORObject>
 -(ORInt) value;
 -(ORInt) setValue: (ORInt) value;

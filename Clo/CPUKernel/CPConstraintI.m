@@ -14,7 +14,7 @@
 #import <CPUKernel/CPEngineI.h>
 
 @implementation CPCoreConstraint
--(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m
+-(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m
 {
    self = [super init];
    _todo = CPTocheck;
@@ -74,7 +74,7 @@
 {
     [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_todo];
-    [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
+    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_idempotent];
     [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_priority];    
 }
 - (id)initWithCoder:(NSCoder *)aDecoder
@@ -82,7 +82,7 @@
     self = [super init];
     [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_todo];
-    [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_idempotent];
+    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_idempotent];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_priority]; 
     return self;
 }

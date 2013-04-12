@@ -65,17 +65,17 @@ int main(int argc, const char * argvri[])
       }
       [model minimize: m];
       
-      //id<CPProgram> cp = [ORFactory createCPProgram: model];
+//      id<CPProgram> cp = [ORFactory createCPProgram: model];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgramDFS: model];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
-      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
+//      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
 //      id<CPHeuristic> h = [cp createFF:c];
-      id<CPHeuristic> h = [cp createPortfolio:@[@"createIBS:",@"createABS:",@"createWDeg:",@"createFF:"] with:c];
-      //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
+//      id<CPHeuristic> h = [cp createPortfolio:@[@"createIBS:",@"createABS:",@"createWDeg:",@"createFF:"] with:c];
+      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:4 with:[ORSemDFSController class]];
       [cp solve: ^{
-         [cp labelHeuristic:h];
-         /*
+//         [cp labelHeuristic:h];
+         
          [cp forall: V
            suchThat:^bool(ORInt i) { return ![c[i] bound];}
           orderedBy: ^ORInt(ORInt i) { return [c[i] domsize]; }
@@ -90,16 +90,17 @@ int main(int argc, const char * argvri[])
                      }
                      ];
                  }
-         ];*/
+         ];
          [cp label:m with:[m min]];
          NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
       }];
-      id<ORSolution> sol = [model bestSolution];
-      for(ORInt i=1; i <= nbv; i++)
-         NSLog(@"Variable %d has color %d",i,[sol intValue: c[i]]);
-      NSLog(@"Solution retrieved: %@",sol);
+//      id<ORSolution> sol = [[cp solutionPool] best];
+//      NSLog(@"Objective Value: %@",[sol objectiveValue]);
+//      for(ORInt i=1; i <= nbv; i++)
+//         NSLog(@"Variable %d has color %d",i,[sol intValue: c[i]]);
+//      NSLog(@"Solution retrieved: %@",sol);
       
-      id<ORSolutionPool> pool = [model solutions];
+      id<ORSolutionPool> pool = [cp solutionPool];
       [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
       
       

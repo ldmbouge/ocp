@@ -24,7 +24,7 @@
    TRInt           _active;
    id<CPGroup>      _group;
 }
--(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m;
+-(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
 -(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;

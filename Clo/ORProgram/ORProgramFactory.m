@@ -51,6 +51,15 @@
    return mp;
 }
 
++(id<CPCommonProgram>)concretizeCP:(id<ORModel>)m program: (id<CPCommonProgram>) cpprogram
+{
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   [m visit: concretizer];
+   [concretizer release];
+   [cpprogram setSource:m];
+   return cpprogram;
+}
+
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model objects] count],[[model constraints] count]);
@@ -71,7 +80,7 @@
    [model setImpl: cpprogram];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
-      id<ORSolution> s = [model captureSolution];
+      id<ORSolution> s = [cpprogram captureSolution];
 //      NSLog(@"Found solution with value: %@",[s objectiveValue]);
       [sp addSolution: s];
       [s release];
@@ -123,11 +132,13 @@
       id<CPProgram> cp = [cpprogram at: i];
       [ORFactory createCPProgram: flatModel program: cp];
       id<ORSolutionPool> lp = [cp solutionPool];
-      id<ORSolutionPool> gp = [cpprogram globalSolutionPool];
+      id<ORSolutionPool> gp = [cpprogram solutionPool];
       [cp onSolution: ^{
-         id<ORSolution> s = [model captureSolution];
+         id<ORSolution> s = [cp captureSolution];
          [lp addSolution: s];
          @synchronized(gp) {
+//            NSLog(@"Adding a global solution with cost %@",[s objectiveValue]);
+//            NSLog(@"Solution %@",s);
             [gp addSolution: s];
          }
          id<ORSearchObjectiveFunction> objective = [cp objective];
@@ -162,21 +173,26 @@
          [c setImpl: ba];
       }
    }
-   id<ORSolutionPool> global = [cpprogram globalSolutionPool];
+   for(id<ORObject> c in [flatModel constraints]) {
+      if ([c impl] == NULL) {
+         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+         [c setImpl: ba];
+      }
+   }
+   
+   id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
       id<CPProgram> pi = [cpprogram dereference];
       [pi onSolution:^{
-         [[pi solutionPool] addSolution:[model captureSolution]];
+         id<ORCPSolution> sol = [pi captureSolution];
+         [[pi solutionPool] addSolution: sol];
+         @synchronized(global) {
+            [global addSolution:sol];
+         }
       }];
-      [ORFactory createCPProgram:flatModel program: pi]; // [ldm] it is already flat. This flattens _again_
+      [ORFactory concretizeCP:flatModel program:pi];
    }
-   [cpprogram onSolution: ^ {
-      id<ORSolution> s = [model captureSolution];
-      @synchronized(global) {
-         [global addSolution:s];
-      }
-   }];
    return cpprogram;
 }
 

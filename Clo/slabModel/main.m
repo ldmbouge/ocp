@@ -145,8 +145,10 @@ int main(int argc, const char * argv[])
       NSLog(@"Objective value: %@",[obj value]);
       //NSLog(@"Objective value: %d",[[obj value] value]);
     }];
-   id<ORSolution> sol = [model bestSolution];
-   NSLog(@"Solution %@",sol);
+   id<ORCPSolution> sol = [[cp solutionPool] best];
+   for(ORInt i = [SetOrders low]; i <= [SetOrders up]; i++)
+      printf("slab[%d] = %d \n",i,[sol intValue: slab[i]]);
+   printf("\n");
    ORLong endTime = [ORRuntimeMonitor wctime];
    NSLog(@"Execution Time (WC): %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);

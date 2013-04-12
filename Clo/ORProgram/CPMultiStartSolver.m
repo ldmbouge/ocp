@@ -29,7 +29,7 @@
    ORInt          _nb;
    NSCondition*   _terminated;
    ORInt          _nbDone;
-   id<ORSolutionPool> _sPool;
+   id<ORCPSolutionPool> _sPool;
 }
 -(CPMultiStartSolver*) initCPMultiStartSolver: (ORInt) k
 {
@@ -42,7 +42,7 @@
    
    _terminated = [[NSCondition alloc] init];
    
-   _sPool   = [ORFactory createSolutionPool];
+   _sPool   = (id<ORCPSolutionPool>) [ORFactory createSolutionPool];
    return self;
 }
 -(void) dealloc
@@ -88,9 +88,9 @@
 {
    return [[self dereference] nbFailures];
 }
--(id<OREngine>) engine
+-(id<ORSearchEngine>) engine
 {
-   return [[self dereference] engine];
+   return (id<ORSearchEngine>) [[self dereference] engine];
 }
 -(id<ORExplorer>) explorer
 {
@@ -178,7 +178,6 @@
                              withObject:[NSArray arrayWithObjects: [objClosure copy],[NSNumber numberWithInt:i],nil]];
    }
    [self waitWorkers];
-   [_sPool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];
 }
 
 -(void) solveAll: (ORClosure) search
@@ -350,14 +349,14 @@
       [_solver[k] onExit: onExit];
 }
 -(void) doOnSolution
-{}
--(void) doOnExit
-{}
--(id<ORSolutionPool>) solutionPool
 {
-   return [[self dereference] solutionPool];
+   @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
 }
--(id<ORSolutionPool>) globalSolutionPool
+-(void) doOnExit
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "do OnSolution never called on CPMultiStartProgram"];
+}
+-(id<ORCPSolutionPool>) solutionPool
 {
    return _sPool;
 }
@@ -431,9 +430,20 @@
    return [self setupHeuristic:_cmd];
 }
 
--(ORInt)intValue:(id<ORIntVar>)x
+-(ORInt) intValue: (id<ORIntVar>) x
 {
-   id<ORIntVar> y = [[_source rootModel] lookup:x];
-   return y.value;
+   return [[self dereference] intValue: x];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+   return [[self dereference] floatValue: x];
+}
+-(ORBool) boolValue: (id<ORIntVar>)x
+{
+   return [[self dereference] boolValue: x];
+}
+-(id<ORCPSolution>) captureSolution
+{
+   return (id<ORCPSolution>) [[self dereference] captureSolution];
 }
 @end

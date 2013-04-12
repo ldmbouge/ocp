@@ -546,6 +546,11 @@
    id<ORInteger> o = [[ORIntegerI allocWithZone: _zone] initORIntegerI: _copyModel value: [e value]];
    _result = o;
 }
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   id<ORFloatNumber> o = [[ORFloatI allocWithZone: _zone] initORFloatI: _copyModel value: [e value]];
+   _result = o;
+}
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
    id<ORExpr> o = [[ORExprPlusI allocWithZone: _zone] initORExprPlusI: [self copyObject: [e left]]

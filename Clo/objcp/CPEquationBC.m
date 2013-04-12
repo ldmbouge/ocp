@@ -18,7 +18,7 @@
 
 -(CPEquationBC*) initCPEquationBC: (ORIdArrayI*) x equal: (ORInt) c
 {
-   id<OREngine> engine = [[x at:[x low]] engine];
+   id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
    _idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
@@ -274,7 +274,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 @implementation CPINEquationBC 
 -(CPINEquationBC*) initCPINEquationBC: (ORIdArrayI*) x lequal: (ORInt) c
 {
-   id<OREngine> engine = [[x at:[x low]] engine];
+   id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
    self = [super initCPCoreConstraint:engine];
    _idempotent = YES;
    _priority = HIGHEST_PRIO - 1;

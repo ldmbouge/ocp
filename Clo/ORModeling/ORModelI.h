@@ -27,11 +27,10 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
--(NSDictionary*) cMap;
--(NSSet*) constraintsFor:(id<ORConstraint>)c;
--(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
--(id<ORSolution>) captureSolution;
--(void)restore:(id<ORSolution>)s;
+// pvh: This should go
+   -(NSDictionary*) cMap;
+   -(NSSet*) constraintsFor:(id<ORConstraint>)c;
+   -(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(id<ORVar>) addVariable:(id<ORVar>) var;
@@ -64,8 +63,6 @@
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
--(void) compiling:(id<ORConstraint>)cstr;
--(NSSet*)compiledMap;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
@@ -73,25 +70,11 @@
 -(id<ORVar>) addVariable: (id<ORVar>) var;
 -(id) addObject:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
-//-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
-//-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
--(void) compiling:(id<ORConstraint>)cstr;
-@end
-
-@interface ORSolutionI : NSObject<ORSolution>
--(ORSolutionI*) initSolution: (id<ORModel>) model;
--(ORInt) intValue: (id) var;
--(BOOL) boolValue: (id) var;
--(id<ORSnapshot>) value:(id)var;
--(NSUInteger) count;
--(BOOL)isEqual:(id)object;
--(NSUInteger)hash;
--(id<ORObjectiveValue>)objectiveValue;
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
@@ -109,7 +92,7 @@
     NSMutableSet* _all;
 }
 -(id)init;
--(void)addConstraint:(id<ORConstraint>)c;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
 -(ORInt) size;
 -(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end

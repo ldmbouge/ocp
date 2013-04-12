@@ -134,7 +134,7 @@ static void freeTriggers(CPTrigger* list)
    return [[CPTrigger alloc] initTrigger:todo onBehalf:c];
 }
 
-+(CPTriggerMap*)triggerMapFrom:(ORInt)low to:(ORInt)up dense:(bool)dense
++(CPTriggerMap*)triggerMapFrom:(ORInt)low to:(ORInt)up dense:(ORBool)dense
 {
     if (dense) {
         CPTriggerMap* tMap = [[CPDenseTriggerMap  alloc] initDenseTriggerMap:low size:up-low+1];

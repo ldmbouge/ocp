@@ -115,6 +115,7 @@
 
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
+-(void) visitFloatI: (id<ORFloatNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
 -(void) visitExprMulI: (id<ORExpr>) e  {}
@@ -338,6 +339,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    }];
    [_into addConstraint:ng];
    [a2g release];
+   _result = ng;
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
@@ -759,6 +761,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
    id<ORObjectiveFunction> objective = [_into minimizeVar: alpha];
    [e setImpl: objective];
+   _result = objective;
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
@@ -766,6 +769,7 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
    id<ORObjectiveFunction> objective = [_into maximizeVar: alpha];
    [e setImpl: objective];
+   _result = objective;
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {
@@ -790,8 +794,6 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
       [self copyOnce:x];
    } onObjects:^(id<ORObject> x) {
       id cx = [self copyOnce:x];
-      if ([x conformsToProtocol:@protocol(ORAlgebraicConstraint)] && cx == NULL)
-         cx = [self copyOnce:x];
    } onConstraints:^(id<ORConstraint> c) {
       id cc = [self copyOnce:c];
       assert(cc != NULL);

@@ -24,6 +24,14 @@
 -(id<ORTracker>) tracker;
 @end
 
+@interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
+-(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORFloat) value;
+-(ORFloat) floatValue;
+-(ORFloat) setValue: (ORFloat) value;
+-(id<ORTracker>) tracker;
+@end
+
 @interface ORRandomStreamI : NSObject<ORRandomStream>
 -(ORRandomStreamI*) init;
 -(void) dealloc;

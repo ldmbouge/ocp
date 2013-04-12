@@ -2025,21 +2025,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
   return NULL;
 }
--(BOOL) concretized
+-(ORBool) concretized
 {
    return _impl != nil;
-}
--(void) setImpl: (id<ORObjectiveFunction>) impl
-{
-   _impl = impl;
-}
--(id<ORObjectiveFunction>) impl
-{
-   return _impl;
-}
--(id<ORObjectiveFunction>) dereference
-{
-   return [_impl dereference];
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
@@ -2048,7 +2036,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveValueIntI
--(id) initObjectiveValueIntI: (ORInt) pb minimize: (BOOL) b
+-(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b
 {
    self = [super init];
    _value = pb;
@@ -2075,7 +2063,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"%d",_value];
    return buf;
 }
--(BOOL)isEqual:(id)object
+-(ORBool)isEqual:(id)object
 {
    if ([object isKindOfClass:[self class]]) {
       return _value == [((ORObjectiveValueIntI*)object) value];
@@ -2106,7 +2094,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveValueFloatI
--(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (BOOL) b
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b
 {
    self = [super init];
    _value = pb;
@@ -2134,7 +2122,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    return buf;
 }
 
--(BOOL)isEqual:(id)object
+-(ORBool)isEqual:(id)object
 {
    if ([object isKindOfClass:[self class]]) {
       return _value == [((ORObjectiveValueFloatI*)object) value];
@@ -2180,21 +2168,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _expr;
 }
--(BOOL) concretized
+-(ORBool) concretized
 {
    return _impl != nil;
-}
--(void) setImpl:(id<ORObjectiveFunction>)impl
-{
-   _impl = impl;
-}
--(id<ORObjectiveFunction>) impl
-{
-   return _impl;
-}
--(id<ORObjectiveFunction>) dereference
-{
-   return [_impl dereference];
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
@@ -2219,21 +2195,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _coef;
 }
--(BOOL) concretized
+-(ORBool) concretized
 {
    return _impl != nil;
-}
--(void) setImpl:(id<ORObjectiveFunction>)impl
-{
-   _impl = impl;
-}
--(id<ORObjectiveFunction>)impl
-{
-   return _impl;
-}
--(id<ORObjectiveFunction>) dereference
-{
-   return [_impl dereference];
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

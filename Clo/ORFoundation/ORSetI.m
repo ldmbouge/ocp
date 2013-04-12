@@ -30,7 +30,7 @@
     [_avl release];
     [super dealloc];
 }
--(bool) member: (ORInt) v
+-(ORBool) member: (ORInt) v
 {
     return [_avl findNodeForKey:v] != NULL;
 }
@@ -117,13 +117,13 @@
 @interface ORIntRangeEnumerator : NSObject<IntEnumerator>
 -(ORIntRangeEnumerator*) initORIntRangeEnumerator: (ORInt) low up: (ORInt) up;
 -(ORInt) next;
--(BOOL) more;
+-(ORBool) more;
 @end
 
 @interface ORTrailIableIntRangeEnumerator : NSObject<IntEnumerator>
 -(ORTrailIableIntRangeEnumerator*) initORTrailIableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up;
 -(ORInt) next;
--(BOOL) more;
+-(ORBool) more;
 @end
 
 @implementation ORIntRangeEnumerator {
@@ -148,7 +148,7 @@
 {
    return ++_i;
 }
--(BOOL) more
+-(ORBool) more
 {
    return (_i < _up);
 }
@@ -180,10 +180,10 @@
 {
    return _up;
 }
--(bool) isDefined {
+-(ORBool) isDefined {
     return _low <= _up;
 }
--(bool) inRange: (ORInt)e {
+-(ORBool) inRange: (ORInt)e {
     return e >= _low && e <= _up;
 }
 -(ORInt) size

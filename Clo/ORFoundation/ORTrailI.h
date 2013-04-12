@@ -15,7 +15,7 @@
 #import "ORFoundation/ORTrail.h"
 #import "ORFoundation/ORSet.h"
 
-@protocol OREngine;
+@protocol ORSearchEngine;
 
 #define NBSLOT 8192
 
@@ -97,7 +97,7 @@
 -(void) popNode:(ORInt) x;
 -(void) popNode;
 -(void) reset;
--(bool) empty;
+-(ORBool) empty;
 -(ORInt)size;
 @end
 
@@ -311,7 +311,7 @@ static inline V* get##T(T* v) { return v->_val;}
    ORInt        _up;
    ORInt        _nb;
 }
--(ORTRIntArrayI*) initORTRIntArray: (id<OREngine>) cp range: (id<ORIntRange>) R;
+-(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
@@ -337,8 +337,8 @@ static inline V* get##T(T* v) { return v->_val;}
    ORInt*          _i;
    ORInt           _nb;
 }
--(ORTRIntMatrixI*) initORTRIntMatrix: (id<OREngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(ORTRIntMatrixI*) initORTRIntMatrix: (id<OREngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;
 -(ORInt) at: (ORInt) i0 : (ORInt) i1;
 -(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;

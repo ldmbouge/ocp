@@ -39,34 +39,28 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) objects;
+// pvh: this should go
 -(NSDictionary*) cMap;
--(id<ORSolution>) captureSolution;
--(id<ORSolutionPool>) solutions;
--(id<ORSolution>) bestSolution;
--(void) restore: (id<ORSolution>) s;
--(id<ORModel>)flatten;
--(id<ORModel>)copy;
--(void) setSource:(id<ORModel>)src;
--(id<ORModel>)source;
--(id<ORModel>)rootModel;
--(void)map:(id)key toObject:(id)object;
--(id)lookup:(id)key;
+-(id<ORModel>) flatten;
+-(id<ORModel>) copy;
+-(void) setSource: (id<ORModel>) src;
+-(id<ORModel>) source;
+-(id<ORModel>) rootModel;
+-(void) map: (id) key toObject: (id) object;
+-(id) lookup: (id) key;
 @end
 
 @protocol ORAddToModel <ORTracker>
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addObject:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
-
+-(id<ORTracker>)tracker;
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
--(void) compiling:(id<ORConstraint>)cstr;
--(NSSet*)compiledMap;
--(id<ORTracker>)tracker;
 @end
 
 @interface ORFactory (ORModeling)

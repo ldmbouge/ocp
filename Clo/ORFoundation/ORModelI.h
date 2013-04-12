@@ -390,7 +390,7 @@
    ORInt _direction;
    ORInt _pBound;
 }
--(id) initObjectiveValueIntI: (ORInt) pb minimize: (BOOL) b ;
+-(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
 -(ORInt)primal;
 -(ORFloat)key;
@@ -402,7 +402,7 @@
    ORInt _direction;
    ORInt _pBound;
 }
--(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (BOOL) b ;
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b ;
 -(ORFloat)value;
 -(ORFloat)primal;
 -(ORFloat)key;
@@ -422,7 +422,7 @@
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>) value;
--(BOOL) concretized;
+-(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -434,7 +434,7 @@
 -(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
--(BOOL) concretized;
+-(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -444,7 +444,7 @@
 }
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) expr;
 -(id<ORExpr>) expr;
--(BOOL) concretized;
+-(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 

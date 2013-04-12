@@ -291,7 +291,7 @@
 }
 -(void) doOnSolution
 {
-   _onSol();
+   [[self dereference] doOnSolution];
 }
 -(void) doOnExit
 {
@@ -299,16 +299,12 @@
 
 -(id<ORSolutionPool>) solutionPool
 {
-   return [[self dereference] solutionPool];
-}
--(id<ORSolutionPool>) globalSolutionPool
-{
    return _globalPool;
 }
 
 -(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
 {
-   id<ORProblem> theSub = [SemTracer unpackProblem:root forEngine:[cp engine]];
+   id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
    //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
    [theSub release];
@@ -316,7 +312,7 @@
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(BOOL)allSols
+-(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
@@ -530,10 +526,21 @@
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
--(ORInt)intValue:(id<ORIntVar>)x
+-(ORInt) intValue: (id<ORIntVar>) x
 {
-   id<ORIntVar> y = [[_source rootModel] lookup:x];
-   return y.value;
+   return [[self dereference] intValue: x];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+   return [[self dereference] floatValue: x];
+}
+-(ORBool) boolValue: (id<ORIntVar>) x
+{
+   return [((id<CPCommonProgram>) [self dereference]) boolValue: x];
+}
+-(id<ORCPSolution>) captureSolution
+{
+   return (id<ORCPSolution>) [[self dereference] captureSolution];
 }
 @end
 

@@ -87,7 +87,7 @@
    [str appendString:@"}"];
    return str;
 }
--(bool)equalTo:(ORCommandList*)cList
+-(ORBool)equalTo:(ORCommandList*)cList
 {
    return _ndId == cList->_ndId;
 }
@@ -99,7 +99,7 @@
 {
    return _ndId;
 }
--(BOOL)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
 {
    struct CNode* cur = self->_head;
    BOOL ok = YES;
@@ -109,7 +109,7 @@
    }
    return YES;
 }
--(BOOL)empty
+-(ORBool)empty
 {
    return _head==0;
 }

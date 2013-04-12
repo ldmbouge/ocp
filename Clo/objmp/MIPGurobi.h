@@ -29,7 +29,7 @@
 -(void) dealloc;
 
 -(void) addVariable: (MIPVariableI*) var;
--(void) addConstraint: (MIPConstraintI*) cstr;
+-(MIPConstraintI*) addConstraint: (MIPConstraintI*) cstr;
 -(void) delVariable: (MIPVariableI*) var;
 -(void) delConstraint: (MIPConstraintI*) cstr;
 -(void) addObjective: (MIPObjectiveI*) obj;

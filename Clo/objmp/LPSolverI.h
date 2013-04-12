@@ -33,7 +33,7 @@
 }
 -(LPVariableI*) initLPVariableI: (LPSolverI*) solver;
 -(LPVariableI*) initLPVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(bool) hasBounds;
+-(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORInt) idx;
@@ -50,15 +50,8 @@
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
--(BOOL) isInteger;
+-(ORBool) isInteger;
 @end
-
-@interface LPIntVariableI : LPVariableI
--(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver;
--(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(BOOL) isInteger;
-@end
-
 
 @protocol LPVariableArray <ORVarArray>
 -(LPVariableI*) at: (ORInt) value;
@@ -171,6 +164,7 @@
    int                   _nb;
    int                   _maxSize;
    int                   _idx;
+   BOOL                  _hasBounds;
    ORFloat               _low;
    ORFloat               _up;
    ORFloat               _objCoef;
@@ -182,12 +176,14 @@
    ORFloat*              _tmpCoef;
    
 }
+-(LPColumnI*) initLPColumnI: (LPSolverI*) solver;
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
 -(void)      dealloc;
 
 -(ORInt) idx;
 -(void) setIdx: (ORInt) idx;
+-(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORFloat) objCoef;
@@ -249,11 +245,10 @@
 
 +(LPSolverI*)      create;
 -(LPVariableI*)    createVariable;
--(LPIntVariableI*) createVariable: (ORFloat) low up: (ORFloat) up;
--(LPIntVariableI*) createIntVariable;
--(LPVariableI*)    createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(LPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
 -(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) idx coef: (ORFloat*) coef;
 -(LPColumnI*)      createColumn: (ORFloat) low up: (ORFloat) up;
+-(LPColumnI*)      createColumn;
 
 -(LPLinearTermI*)  createLinearTerm;
 
@@ -269,8 +264,8 @@
 
 -(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x;
 -(LPObjectiveI*)  createObjectiveMaximize: (LPVariableI*) x;
--(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef;
--(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef;
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef;
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef;
 
 -(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
 -(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -286,7 +281,7 @@
 -(LPVariableI*) postColumn: (LPColumnI*) col;
 
 -(void) close;
--(bool) isClosed;
+-(ORBool) isClosed;
 -(LPOutcome) solve;
 
 -(LPOutcome) status;

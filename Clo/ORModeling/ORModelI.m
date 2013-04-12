@@ -158,18 +158,6 @@
 {
    return [NSArray arrayWithArray: _oStore];
 }
--(id<ORSolution>) captureSolution
-{
-   return [[ORSolutionI alloc] initSolution:self];
-}
--(id<ORSolutionPool>) solutions
-{
-   return [((id<ORASolver>) _impl) globalSolutionPool];
-}
--(id<ORSolution>) bestSolution
-{
-   return [[self solutions] best];
-}
 -(id<ORVar>) addVariable:(id<ORVar>) var
 {
    [self captureVariable: var];
@@ -187,24 +175,6 @@
    if (_cc)
       [_ccSet addObject:cstr];
    return cstr;
-}
--(void) compiling:(id<ORConstraint>)cstr
-{
-   _cc = cstr;
-   [_ccSet removeAllObjects];
-}
--(NSSet*)compiledMap
-{
-   NSSet* rv = [[NSSet alloc] initWithSet:_ccSet];
-   [self mappedConstraints:_cc toSet:rv];
-   return rv;
-}
--(void) restore: (id<ORSolution>) s
-{
-   NSArray* av = [self variables];
-   [av enumerateObjectsUsingBlock:^(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
-      [obj restore:[s value:obj]];
-   }];
 }
 -(NSString*) description
 {
@@ -271,59 +241,57 @@
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
+   [self trackObject: _objective];
    return _objective;
 }
 
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
+   [self trackObject: _objective];
     return _objective;
 }
 
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e
 {
    _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
+   [self trackObject: _objective];
     return _objective;
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e
 {
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
+   [self trackObject: _objective];
     return _objective;
 }
 
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
+   [self trackObject: _objective];
     return _objective;
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
+   [self trackObject: _objective];
     return _objective;
 }
-static id danger = nil;
-
 -(void) trackObject: (id) obj
 {
-   if (self == danger)
-      NSLog(@"OOPPPPPPSSSIES");
    [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
 -(void) trackVariable: (id) var
 {
-   if (self == danger)
-      NSLog(@"OOPPPPPPSSSIES");
    [var setId:_nbObjects++];
    [_vars addObject:var];
    [_oStore addObject:var];
 }
 -(void) trackConstraint:(id)obj
 {
-   if (self == danger)
-      NSLog(@"OOPPPPPPSSSIES");
    [obj setId:_nbObjects++];
-   [_oStore addObject:obj];
+   //[_oStore addObject:obj];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
           onObjects: (void(^)(id<ORObject>)) doObjs
@@ -333,7 +301,7 @@ static id danger = nil;
    for(id<ORObject> c in _vars)
       doVar(c);
    for(id<ORObject> c in _oStore)
-      doObjs(c);   
+      doObjs(c);
    for(id<ORObject> c in _mStore)
       doCons(c);
    doObjective(_objective);
@@ -361,7 +329,6 @@ static id danger = nil;
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
-   danger = flat;
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
@@ -418,7 +385,7 @@ static id danger = nil;
    [_target trackConstraint:cstr];
    [_target add: cstr];
    if (_cc) {
-      [_ccSet addObject:cstr];
+      [_ccSet addObject: cstr];
    }
    return cstr;
 }
@@ -467,17 +434,6 @@ static id danger = nil;
 -(void) trackConstraint: (id) obj
 {
    [_target trackConstraint: obj];
-}
--(void) compiling:(id<ORConstraint>)cstr
-{
-   _cc = cstr;
-   [_ccSet removeAllObjects];
-}
--(NSSet*)compiledMap
-{
-   NSSet* rv = [[NSSet alloc] initWithSet:_ccSet];
-   [_src mappedConstraints:_cc toSet:rv];
-   return rv;
 }
 @end
 
@@ -555,119 +511,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    [_target trackConstraint:obj];
 }
--(void) compiling:(id<ORConstraint>)cstr
-{
-}
--(NSSet*)compiledMap
-{
-   return NULL;
-}
 @end
-
-@implementation ORSolutionI {
-   NSArray*                _shots;
-   id<ORObjectiveValue> _objValue;
-}
--(ORSolutionI*) initSolution: (id<ORModel>) model
-{
-   self = [super init];
-   NSArray* av = [model variables];
-   ORULong sz = [av count];
-   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
-   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
-      id<ORSavable> shot = [obj snapshot];
-      if (shot)
-         [snapshots addObject: shot];
-      [shot release];
-   }];
-   _shots = snapshots;
-   if ([model objective])
-      _objValue = [[model objective] value];
-   else
-      _objValue = nil;
-   return self;
-}
--(void) dealloc
-{
-   [_shots release];
-   [_objValue release];
-   [super dealloc];
-}
--(BOOL)isEqual:(id)object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORSolutionI* other = object;
-      if (_objValue && other->_objValue) {
-         if ([_objValue isEqual:other->_objValue]) {
-            return [_shots isEqual:other->_shots];
-         } else return NO;
-      } else return NO;
-   }
-   else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return [_shots hash];
-}
--(id<ORObjectiveValue>)objectiveValue
-{
-   return _objValue;
-}
--(id<ORSnapshot>) value:(id)var
-{
-   NSUInteger idx = [var getId];
-   if (idx < [_shots count])
-      return [_shots objectAtIndex:idx];
-   else return nil;
-}
--(ORInt) intValue: (id) var
-{
-   ORUInt vid = [var getId];
-   ORUInt idx = (ORUInt) [_shots indexOfObjectPassingTest:^BOOL(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
-      return *stop = [obj getId] == vid;
-   }];
-   return [[_shots objectAtIndex:idx] intValue];
-}
--(BOOL) boolValue: (id) var
-{
-   ORUInt vid = [var getId];
-   ORUInt idx = (ORUInt) [_shots indexOfObjectPassingTest:^BOOL(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
-      return *stop = [obj getId] == vid;
-   }];
-   return [[_shots objectAtIndex:idx] boolValue];
-}
--(NSUInteger) count
-{
-   return [_shots count];   
-}
-- (void) encodeWithCoder: (NSCoder *)aCoder
-{
-   [aCoder encodeObject:_shots];
-   [aCoder encodeObject:_objValue];
-}
-- (id) initWithCoder:(NSCoder *) aDecoder
-{
-   self = [super init];
-   _shots = [[aDecoder decodeObject] retain];
-   _objValue = [aDecoder decodeObject];
-   return self;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   if (_objValue)
-      [buf appendFormat:@"SOL[%@](",_objValue];
-   else
-      [buf appendString:@"SOL("];
-   NSUInteger last = [_shots count] - 1;
-   [_shots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
-      [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
-   }];
-   return buf;
-}
-@end
-
 
 @implementation ORSolutionPoolI
 -(id) init
@@ -680,6 +524,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) dealloc
 {
+   NSLog(@"dealloc ORSolutionPoolI");
    [_all release];
    [super dealloc];
 }
@@ -748,9 +593,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
     [super dealloc];
 }
 
--(void) addConstraint:(id<ORConstraint>)c
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c
 {
-    [_all addObject: c];
+   [_all addObject: c];
+   return c;
 }
 
 -(ORInt) size {

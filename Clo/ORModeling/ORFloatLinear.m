@@ -98,14 +98,14 @@
       _terms[k]._coef *= s;
    _indep  *= s;
 }
--(BOOL) allPositive
+-(ORBool) allPositive
 {
    BOOL ap = YES;
    for(ORInt k=0;k<_nb;k++)
       ap &= _terms[k]._coef > 0;
    return ap;
 }
--(BOOL) allNegative
+-(ORBool) allNegative
 {
    BOOL an = YES;
    for(ORInt k=0;k<_nb;k++)
@@ -159,13 +159,13 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
    return _nb;
 }
 
--(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   [model addConstraint:[ORFactory floatSum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
+   return [model addConstraint:[ORFactory floatSum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
 }
--(void) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
+-(id<ORConstraint>) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   [model addConstraint:[ORFactory floatSum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
+   return [model addConstraint:[ORFactory floatSum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
 }
 -(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {

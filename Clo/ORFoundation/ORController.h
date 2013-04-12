@@ -18,7 +18,7 @@
 
 @protocol ORStealing
 -(ORHeist*) steal;
--(BOOL)willingToShare;
+-(ORBool)willingToShare;
 @end
 
 @interface ORHeist : NSObject {
@@ -55,7 +55,7 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(BOOL)       isFinitelyFailed;
+-(ORBool)       isFinitelyFailed;
 -(id)         copy;
 @end
 
@@ -86,7 +86,7 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(BOOL)       isFinitelyFailed;
+-(ORBool)       isFinitelyFailed;
 @end
 
 @interface ORNestedController : ORDefaultController
@@ -95,11 +95,11 @@
 -(void) fail;
 -(void) succeeds;
 -(void) finitelyFailed;
--(BOOL) isFinitelyFailed;
+-(ORBool) isFinitelyFailed;
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
--(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

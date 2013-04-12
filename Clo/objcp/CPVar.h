@@ -39,13 +39,13 @@ enum CPVarClass {
 -(ORInt) max;
 -(ORInt) domsize;
 -(ORBounds) bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
+-(ORBool) member: (ORInt) v;
+-(ORBool) isBool;
 -(id<ORIntVar>) dereference;
 -(ORInt) scale;
 -(ORInt) shift;
 -(id<ORIntVar>) base;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(ORStatus) bind:(ORInt) val;
 -(ORStatus) remove:(ORInt) val;

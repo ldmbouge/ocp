@@ -35,9 +35,9 @@
 -(void)dealloc;
 -(void)insert: (id<ORCommand>) c;
 -(id<ORCommand>)removeFirst;
--(BOOL)empty;
--(bool)equalTo:(ORCommandList*)cList;
+-(ORBool)empty;
+-(ORBool)equalTo:(ORCommandList*)cList;
 -(ORInt) getNodeId;
 -(void) setNodeId:(ORInt)nid;
--(BOOL)apply:(BOOL(^)(id<ORCommand>))clo;
+-(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;
 @end

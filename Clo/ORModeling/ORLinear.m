@@ -104,14 +104,14 @@
       _terms[k]._coef *= s;
    _indep  *= s;
 }
--(BOOL)allPositive
+-(ORBool)allPositive
 {
    BOOL ap = YES;
    for(ORInt k=0;k<_nb;k++)
       ap &= _terms[k]._coef > 0;
    return ap;
 }
--(BOOL)allNegative
+-(ORBool)allNegative
 {
    BOOL an = YES;
    for(ORInt k=0;k<_nb;k++)

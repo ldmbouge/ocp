@@ -30,6 +30,16 @@
 -(id<ORInformer>) propagateDone;
 @end
 
+@protocol ORCPSolution <ORSolution>
+@end
+
+@protocol ORCPSolutionPool <ORSolutionPool>
+-(void) addSolution: (id<ORCPSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORCPSolution>) best;
+@end
+
 @protocol CPCommonProgram <ORASolver>
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
@@ -90,9 +100,12 @@
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORSolutionPool>) solutionPool;
--(id<ORSolutionPool>) globalSolutionPool;
--(ORInt)intValue:(id<ORIntVar>)x;
+-(id<ORCPSolutionPool>) solutionPool;
+-(id<ORCPSolution>) captureSolution;
+
+-(ORInt) intValue: (id<ORIntVar>) x;
+-(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORBool) boolValue: (id<ORIntVar>) x;
 @end
 
 // CPSolver with syntactic DFS Search
