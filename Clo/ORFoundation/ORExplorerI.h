@@ -52,6 +52,8 @@
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
+-(void)            perform: (ORClosure) body onLimit: (ORClosure) action;
+-(void)          portfolio: (ORClosure) s1 then: (ORClosure) s2;
 @end
 
 @interface ORExplorerI : ORCoreExplorerI<ORExplorer>

@@ -39,9 +39,9 @@
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
--(ORInt)scale;
--(ORInt)shift;
--(ORInt)literal;
+-(ORInt) scale;
+-(ORInt) shift;
+-(ORInt) literal;
 -(id<ORIntVar>)base;
 @end
 

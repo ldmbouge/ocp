@@ -29,12 +29,8 @@
 -(ORInt) addChoice: (NSCont*) k
 {
    if (_nbSolutions >= _maxSolutions)
-      [_controller fail];
+      [_controller fail: true];
    return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) succeeds
 {
@@ -70,10 +66,6 @@
    else
       return -1;
 }
--(void) fail
-{
-   [_controller fail];
-}
 -(void) startTryRight
 {
    assignTRInt(&_nbDiscrepancies,_nbDiscrepancies._val + 1,_trail);
@@ -105,14 +97,10 @@
 {
    return [_controller addChoice: k];
 }
--(void) fail
-{
-   [_controller fail];
-}
 -(void) startTryLeft
 {
    if (_nbFailures >= _maxFailures)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryLeft];
 }
@@ -120,7 +108,7 @@
 {
    _nbFailures++;
    if (_nbFailures >= _maxFailures)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryRight];
 }
@@ -128,7 +116,7 @@
 {
    _nbFailures++;
    if (_nbFailures >= _maxFailures)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryallOnFailure];
 }
@@ -163,20 +151,16 @@
    // forever).
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime) {
-      [_controller fail];
+      [_controller fail: true];
       return 0;
    } else
       return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryLeft
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryLeft];
 }
@@ -184,7 +168,7 @@
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryRight];
 }
@@ -192,7 +176,7 @@
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryallOnFailure];
 }
@@ -223,10 +207,6 @@
    if (_canImprove() == ORFailure)
       [_controller fail];
    return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryLeft
 {
@@ -281,12 +261,8 @@
 -(ORInt) addChoice:(NSCont*) k
 {
    if (_condition())
-      [_controller fail];
+      [_controller fail: true];
    return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryLeft
 {
@@ -304,6 +280,32 @@
 }
 @end
 
+@implementation ORLimitMonitor
+{
+   ORBool _pruned;
+}
+-(id) initORLimitMonitor
+{
+   self = [super initORDefaultController];
+   _pruned = false;
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"ORLimitMonitor dealloc called...\n");
+   [super dealloc];
+}
+-(void) fail: (ORBool) pruned
+{
+   if (pruned)
+      _pruned = pruned;
+   [self fail];
+}
+-(ORBool) isPruned
+{
+   return _pruned;
+}
+@end
 
 
 

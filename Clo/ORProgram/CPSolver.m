@@ -1337,6 +1337,14 @@
 {
    [_search repeat: body onRepeat: onRepeat until: isDone];
 }
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onLimit;
+{
+   [_search perform: body onLimit: onLimit];
+}
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
+{
+   [_search portfolio: s1 then: s2];
+}
 -(void) once: (ORClosure) cl
 {
    [_search once: cl];
@@ -1456,11 +1464,13 @@
 -(ORInt) intValue: (id<ORIntVar>) x
 {
    // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
+   x = [x dereference];
    return [x intValue];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
    // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
+   x = [x dereference];
    return [x intValue];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
@@ -1469,6 +1479,31 @@
 //   return y.value;
    @throw [[ORExecutionError alloc] initORExecutionError: "No CP Float Variables yet"];
    return 0.0;
+}
+-(ORBool) bound: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x bound];
+}
+-(ORInt)  min: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x min];
+}
+-(ORInt)  max: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x max];
+}
+-(ORInt)  domsize: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x domsize];
+}
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x member: v];
 }
 @end
 

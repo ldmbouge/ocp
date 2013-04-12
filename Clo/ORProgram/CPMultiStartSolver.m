@@ -429,10 +429,34 @@
 {
    return [self setupHeuristic:_cmd];
 }
-
 -(ORInt) intValue: (id<ORIntVar>) x
 {
    return [[self dereference] intValue: x];
+}
+-(ORBool) bound: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x bound];
+}
+-(ORInt)  min: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x min];
+}
+-(ORInt)  max: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x max];
+}
+-(ORInt)  domsize: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x domsize];
+}
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
+{
+   x = [x dereference];
+   return [x member: v];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {

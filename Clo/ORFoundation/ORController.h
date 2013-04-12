@@ -39,6 +39,7 @@
 
 -(ORInt)      addChoice: (NSCont*) k;
 -(void)       fail;
+-(void)       fail: (BOOL) pruned;
 -(void)       succeeds;
 -(void)       trust;
 
@@ -68,8 +69,9 @@
 -(id<ORSearchController>) controller;
 -(void)       setup;
 -(void)       cleanup;
--(ORInt)  addChoice: (NSCont*) k;
+-(ORInt)      addChoice: (NSCont*) k;
 -(void)       fail;
+-(void)       fail: (ORBool) pruned;
 -(void)       succeeds;
 -(void)       trust;
 
