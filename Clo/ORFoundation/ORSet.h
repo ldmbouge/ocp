@@ -27,6 +27,7 @@
 -(ORInt) max;
 -(NSString*) description;
 -(void) copyInto: (id<ORIntSet>) S;
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 @end
 
 @protocol ORIntRange <ORIntIterable>

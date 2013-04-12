@@ -36,7 +36,7 @@
 -(ORInt) findMax:(ORInt)from;
 -(id) copy;
 -(void) restoreDomain:(id<CPDom>)toRestore;
--(void) restoreValue:(ORInt)toRestore;
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end

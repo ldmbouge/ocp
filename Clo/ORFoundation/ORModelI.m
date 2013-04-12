@@ -14,23 +14,11 @@
 #import "ORModelI.h"
 
 @implementation ORConstraintI
-{
-   @protected
-   ORUInt _name;
-}
 -(ORConstraintI*) initORConstraintI
 {
    self = [super init];
    _impl = nil;   
    return self;
-}
--(void) setId: (ORUInt) name;
-{
-   _name = name;
-}
--(ORUInt) getId
-{
-   return _name;
 }
 -(NSString*) description
 {
@@ -47,7 +35,6 @@
 @implementation ORGroupI {
    NSMutableArray* _content;
    id<ORTracker>     _model;
-   ORUInt             _name;
    enum ORGroupType     _gt;
 }
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
@@ -63,14 +50,6 @@
 {
    [_content release];
    [super dealloc];
-}
--(void) setId: (ORUInt) name
-{
-   _name = name;
-}
--(ORUInt)getId
-{
-   return _name;
 }
 -(id<ORConstraint>)add:(id<ORConstraint>)c
 {
@@ -689,12 +668,14 @@
 @implementation ORAbs { // x = |y|
    id<ORIntVar> _x;
    id<ORIntVar> _y;
+   ORAnnotation _annotation;
 }
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
+   _annotation = Default;
    return self;
 }
 -(NSString*) description
@@ -715,6 +696,10 @@
 {
    return _y;
 }
+-(ORAnnotation) annotation
+{
+   return _annotation;
+}
 @end
 
 
@@ -734,7 +719,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ || %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ || %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -771,7 +756,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ && %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ && %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1482,7 +1467,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) <= %d)",[self class],self,_impl,_ia,_coefs,_c];
    return buf;
 }
 -(void) visit: (id<ORVisitor>) v
@@ -1536,6 +1521,82 @@
    return _coefs;
 }
 -(ORInt) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORFloatLinearEq {
+   id<ORVarArray> _ia;
+   id<ORFloatArray>  _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearEq*) initFloatLinearEq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat) c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %f)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitFloatLinearEq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+@end
+
+@implementation ORFloatLinearLeq {
+   id<ORVarArray> _ia;
+   id<ORFloatArray> _coefs;
+   ORFloat _c;
+}
+-(ORFloatLinearLeq*) initFloatLinearLeq: (id<ORVarArray>) ia coef: (id<ORFloatArray>) coefs cst:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _ia = ia;
+   _coefs = coefs;
+   _c  = c;
+   return self;
+   
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) <= %f)",[self class],self,_impl,_ia,_coefs,_c];
+   return buf;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitFloatLinearLeq: self];
+}
+-(id<ORVarArray>) vars
+{
+   return _ia;
+}
+-(id<ORFloatArray>) coefs
+{
+   return _coefs;
+}
+-(ORFloat) cst
 {
    return _c;
 }
@@ -1596,6 +1657,15 @@
    _n = DomainConsistency;
    return self;
 }
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _low = low;
+   _up = up;
+   _n = c;
+   return self;
+}
 -(id<ORIntVarArray>) array
 {
    return _x;
@@ -1636,7 +1706,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORAlgebraicConstraintI : %p IS %@>",self,_expr];
+   [buf appendFormat:@"<ORAlgebraicConstraintI : %p(%d) IS %@>",self,[self getId],_expr];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1928,7 +1998,19 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveFunctionI
--(ORObjectiveFunctionI*) initORObjectiveFunctionI: (id<ORIntVar>) x
+-(ORObjectiveFunctionI*) initORObjectiveFunctionI
+{
+   self = [super init];
+   return self;
+}
+-(id<ORObjectiveValue>) value
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ORObjectiveFunctionI: Method value/0 not implemented"];   
+}
+@end
+
+@implementation ORObjectiveFunctionVarI
+-(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x
 {
    self = [super init];
    _var = x;
@@ -1942,6 +2024,200 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORObjectiveValue>)value
 {
   return NULL;
+}
+-(BOOL) concretized
+{
+   return _impl != nil;
+}
+-(void) setImpl: (id<ORObjectiveFunction>) impl
+{
+   _impl = impl;
+}
+-(id<ORObjectiveFunction>) impl
+{
+   return _impl;
+}
+-(id<ORObjectiveFunction>) dereference
+{
+   return [_impl dereference];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitObjectiveFunctionVar:self];
+}
+@end
+
+@implementation ORObjectiveValueIntI
+-(id) initObjectiveValueIntI: (ORInt) pb minimize: (BOOL) b
+{
+   self = [super init];
+   _value = pb;
+   _pBound = pb;
+   _direction = b ? 1 : -1;
+   return self;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(ORInt) primal
+{
+   return _pBound;
+}
+-(ORFloat) key
+{
+   return _value * _direction;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+//   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
+   [buf appendFormat:@"%d",_value];
+   return buf;
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]]) {
+      return _value == [((ORObjectiveValueIntI*)object) value];
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   return _value;
+}
+-(id<ORObjectiveValue>) best: (ORObjectiveValueIntI*) other
+{
+   if ([self key] <= [other key])
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _value minimize: _direction == 1];
+   else
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [other value] minimize: _direction == 1];
+}
+-(ORInt) compare: (ORObjectiveValueIntI*) other
+{
+   ORInt mykey = [self key];
+   ORInt okey = [other key];
+   if (mykey < okey)
+      return -1;
+   else if (mykey == okey)
+      return 0;
+   else
+      return 1;
+}
+@end
+
+@implementation ORObjectiveValueFloatI
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (BOOL) b
+{
+   self = [super init];
+   _value = pb;
+   _pBound = pb;
+   _direction = b ? 1 : -1;
+   return self;
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) primal
+{
+   return _pBound;
+}
+-(ORFloat) key
+{
+   return _value * _direction;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   //   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
+   [buf appendFormat:@"%f",_value];
+   return buf;
+}
+
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]]) {
+      return _value == [((ORObjectiveValueFloatI*)object) value];
+   } else return NO;
+}
+
+- (NSUInteger) hash
+{
+   return _value;
+}
+
+-(id<ORObjectiveValue>) best: (ORObjectiveValueFloatI*) other
+{
+   if ([self key] <= [other key])
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _value minimize: _direction == 1];
+   else
+      return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [other value] minimize: _direction == 1];
+}
+
+-(ORInt) compare: (ORObjectiveValueFloatI*) other
+{
+   ORInt mykey = [self key];
+   ORInt okey = [other key];
+   if (mykey < okey)
+      return -1;
+   else if (mykey == okey)
+      return 0;
+   else
+      return 1;
+}
+@end
+
+
+@implementation ORObjectiveFunctionExprI
+-(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) e
+{
+   self = [super init];
+   _expr = e;
+   _impl = nil;
+   return self;
+}
+-(id<ORExpr>) expr
+{
+   return _expr;
+}
+-(BOOL) concretized
+{
+   return _impl != nil;
+}
+-(void) setImpl:(id<ORObjectiveFunction>)impl
+{
+   _impl = impl;
+}
+-(id<ORObjectiveFunction>) impl
+{
+   return _impl;
+}
+-(id<ORObjectiveFunction>) dereference
+{
+   return [_impl dereference];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitObjectiveFunctionExpr: self];
+}
+@end
+
+@implementation ORObjectiveFunctionLinearI
+-(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   self = [super init];
+   _array = array;
+   _coef = coef;
+   _impl = nil;
+   return self;
+}
+-(id<ORVarArray>) array
+{
+   return _array;
+}
+-(id<ORFloatArray>) coef
+{
+   return _coef;
 }
 -(BOOL) concretized
 {
@@ -1961,110 +2237,173 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
-   [visitor visitObjectiveFunction:self];
+   [visitor visitObjectiveFunctionLinear: self];
 }
 @end
 
-@implementation ORIntObjectiveValue
--(id)initObjectiveValue:(id<ORIntVar>)var  minimize:(BOOL)b  primalBound:(ORInt)pb
+@implementation ORMinimizeVarI
+-(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x
 {
-   self = [super init];
-   _value = [var bound] ? [var value] : pb;
-   _pBound = pb;
-   _direction = b ? 1 : -1;
-   return self;
-}
--(ORInt)value
-{
-   return _value;
-}
--(ORInt)primal
-{
-   return _pBound;
-}
--(ORFloat)key
-{
-   return _value * _direction;
-}
--(void)updateWith:(ORIntObjectiveValue*)other
-{
-   ORFloat ok = other->_direction * other->_pBound;
-   ORFloat me = _direction * _pBound;
-   if (ok < me) {
-      _value = [other value];
-      _pBound = [other primal];
-   }
-}
-
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%s(%d)",_direction==1 ? "min" : "max",_value];
-   return buf;
-}
--(BOOL)isEqual:(id)object
-{
-   if ([object isKindOfClass:[self class]]) {
-      return _value == [((ORIntObjectiveValue*)object) value];
-   } else return NO;
-}
-- (NSUInteger)hash
-{
-   return _value;
-}
-@end
-
-@implementation ORMinimizeI
--(ORMinimizeI*) initORMinimizeI: (id<ORIntVar>) x
-{
-   self = [super initORObjectiveFunctionI: x];
+   self = [super initORObjectiveFunctionVarI: x];
    return self;
 }
 -(void)dealloc
 {
-   NSLog(@"ORMinimizeI dealloc'd (%p)...",self);
+   NSLog(@"ORMinimizeVarI dealloc'd (%p)...",self);
    [super dealloc];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMinimizeI: %p  --> %@> ",self,_var];
+   [buf appendFormat:@"<ORMinimizeVarI: %p  --> %@> ",self,_var];
    return buf;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(id<ORVisitor>) v
 {
-   [v visitMinimize:self];
+   [v visitMinimizeVar:self];
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:YES primalBound:MAXINT];
+   return [((id<ORSearchObjectiveFunction>) _impl) value];
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [_impl primalBound];
 }
 @end
 
-@implementation ORMaximizeI
--(ORMaximizeI*) initORMaximizeI:(id<ORIntVar>) x
+@implementation ORMaximizeVarI
+-(ORMaximizeVarI*) initORMaximizeVarI:(id<ORIntVar>) x
 {
-   self = [super initORObjectiveFunctionI:x];
+   self = [super initORObjectiveFunctionVarI:x];
    return self;
 }
 -(void)dealloc
 {
-   NSLog(@"ORMaximizeI dealloc'd (%p)...",self);
+   NSLog(@"ORMaximizeVarI dealloc'd (%p)...",self);
    [super dealloc];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORMaximizeI: %p  --> %@> ",self,_var];
+   [buf appendFormat:@"<ORMaximizeVarI: %p  --> %@> ",self,_var];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>) v
+{
+   [v visitMaximizeVar:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_var value] minimize: NO];
+}
+@end
+
+@implementation ORMaximizeExprI
+-(ORMaximizeExprI*) initORMaximizeExprI:(id<ORExpr>) e
+{
+   self = [super initORObjectiveFunctionExprI: e];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMaximizeExprI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMaximizeExprI: %p  --> %@> ",self,_expr];
+   return buf;
+}
+-(void) visit:(id<ORVisitor>)v
+{
+   [v visitMaximizeExpr:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return [((ORObjectiveFunctionI*) _impl) value];
+}
+@end
+
+@implementation ORMinimizeExprI
+-(ORMinimizeExprI*) initORMinimizeExprI:(id<ORExpr>) e
+{
+   self = [super initORObjectiveFunctionExprI: e];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMinimizeExprI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMinimizeExprI: %p  --> %@> ",self,_expr];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
 {
-   [v visitMaximize:self];
+   [v visitMinimizeExpr:self];
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:_var minimize:NO primalBound:MININT];
+   return [((ORObjectiveFunctionI*) _impl) value];
+}
+@end
+
+@implementation ORMaximizeLinearI
+-(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   self = [super initORObjectiveFunctionLinearI: array coef: coef];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMaximizeLinearI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMaximizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMaximizeLinear:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return [((ORObjectiveFunctionI*) _impl) value];
+}
+@end
+
+@implementation ORMinimizeLinearI
+-(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   self = [super initORObjectiveFunctionLinearI: array coef: coef];
+   return self;
+}
+-(void)dealloc
+{
+   NSLog(@"ORMinimizeLinearI dealloc'd (%p)...",self);
+   [super dealloc];
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORMinimizeLinearI: %p  --> %@ %@> ",self,_array,_coef];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMinimizeLinear:self];
+}
+-(id<ORObjectiveValue>) value
+{
+   return NULL;
 }
 @end
 

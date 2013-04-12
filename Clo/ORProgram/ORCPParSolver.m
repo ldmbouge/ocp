@@ -33,7 +33,7 @@
    ORInt               _nbDone;
    Class               _defCon;
    BOOL         _doneSearching;
-   
+   id<ORModel>        _source;
    NSCondition*      _allClosed;
    ORInt              _nbClosed;
    id<ORObjectiveValue> _primal;
@@ -42,6 +42,7 @@
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
    self = [super init];
+   _source = NULL;
    _nbWorkers = nbt;
    _workers   = malloc(sizeof(id<CPSemanticProgram>)*_nbWorkers);
    memset(_workers,0,sizeof(id<CPSemanticProgram>)*_nbWorkers);
@@ -64,12 +65,18 @@
 {
    NSLog(@"CPParSolverI (%p) dealloc'd...",self);
    free(_workers);
+   [_source release];
    [_queue release];
    [_terminated release];
    [_allClosed release];
    [_globalPool release];
    [_onSol release];
    [super dealloc];
+}
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
 }
 -(ORInt)nbWorkers
 {
@@ -318,20 +325,21 @@
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   id<ORObjective> objective = [[me objective] dereference];
+   id<ORSearchObjectiveFunction> objective = [[me objective] dereference];
    if (objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
                             [self doOnSolution];
                             [me doOnSolution];
-                            ORInt myBound = [objective primalBound];
+                            id<ORObjectiveValue> myBound = [objective primalBound];
                             for(ORInt w=0;w < _nbWorkers;w++) {
                                if (w == myID) continue;
-                               id<ORObjective> wwObj = [[_workers[w] objective] dereference];
-                               [wwObj tightenPrimalBound:myBound];
+                               id<ORSearchObjectiveFunction> wwObj = [_workers[w] objective];
+                               [wwObj tightenPrimalBound: myBound];
                                //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
                             }
+                            [myBound release];
                          }
                              onExit: nil
                             control: parc];
@@ -369,13 +377,18 @@
       [_workers[myID] close];
       // The probing can already tigthen the bound of the objective.
       // We want all the workers to start with the best.
-      id<ORObjectiveFunction> ok  = [_workers[myID] objective];
+      id<ORSearchObjectiveFunction> ok  = [_workers[myID] objective];
       if (ok) {
          [_allClosed lock];
          if (_nbClosed == 0)
-            _primal = [ok value];
-         else
-            [_primal updateWith:[ok value]];
+            _primal = [ok primalBound];
+         else {
+            id<ORObjectiveValue> newValue = [ok primalBound];
+            id<ORObjectiveValue> bestValue = [_primal best: newValue];
+            [_primal release];
+            [newValue release];
+            _primal = bestValue;
+         }
          while (_nbClosed < _nbWorkers - 1) {
             _nbClosed += 1;
             [_allClosed wait];
@@ -384,8 +397,8 @@
          if (_boundOk == NO) {
             _boundOk = YES;
             for(ORInt w=0;w < _nbWorkers;w++) {
-               id<ORObjective> wwObj = [[_workers[w] objective] dereference];
-               [wwObj tightenPrimalBound:[_primal primal]];
+               id<ORSearchObjectiveFunction> wwObj = [_workers[w] objective];
+               [wwObj tightenPrimalBound: _primal];
             }
          }
          [_allClosed unlock];
@@ -517,6 +530,11 @@
     binding[i] = [_workers[i] createABS];
    return [[CPVirtualHeuristic alloc] initWithBindings:binding];
 }
+-(ORInt)intValue:(id<ORIntVar>)x
+{
+   id<ORIntVar> y = [[_source rootModel] lookup:x];
+   return y.value;
+}
 @end
 
 
@@ -534,7 +552,8 @@
 -(id<ORSearchController>)makeRootController
 {
   return [[_ctrlClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
-}-(id<ORSearchController>)makeNestedController
+}
+-(id<ORSearchController>)makeNestedController
 {
   return [[_nestedClass alloc] initTheController:[_solver tracer] engine:[_solver engine]];
 }

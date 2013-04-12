@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModeling.h>
-#import <ORModeling/ORSolver.h>
 #import <ORProgram/CPSolver.h>
 
 @interface ORCPBasicConcretizer  : NSObject
@@ -30,6 +29,7 @@
 -(id) visitIdArray: (id<ORIdArray>) v engine: (id<CPEngine>) engine;
 -(id) visitIdMatrix: (id<ORIdMatrix>) v engine: (id<CPEngine>) engine;
 -(id) visitIntArray:(id<ORIntArray>) v engine: (id<CPEngine>) engine;
+-(id) visitFloatArray:(id<ORFloatArray>) v engine: (id<CPEngine>) engine;
 -(id) visitIntMatrix:(id<ORIntMatrix>) v engine: (id<CPEngine>) engine;
 -(id) visitRestrict:(id<ORRestrict>)cstr engine: (id<CPEngine>) engine;
 -(id) visitAlldifferent: (id<ORAlldifferent>) cstr engine: (id<CPEngine>) engine;
@@ -126,6 +126,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORIntArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -139,8 +140,12 @@
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
 -(void) visitAssignment:(id<ORAssignment>)cstr;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;
@@ -223,6 +228,7 @@
 -(void) visitIdArray: (id<ORIdArray>) v;
 -(void) visitIdMatrix: (id<ORIdMatrix>) v;
 -(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORIntArray>) v;
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
@@ -235,8 +241,14 @@
 -(void) visitLexLeq:(id<ORLexLeq>) cstr;
 -(void) visitPackOne:(id<ORPackOne>) cstr;
 -(void) visitKnapsack:(id<ORKnapsack>) cstr;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
+
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;

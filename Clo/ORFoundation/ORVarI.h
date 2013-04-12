@@ -22,6 +22,8 @@
 // [ldm] All the methods below were missing??????
 -(id<ORIntRange>) domain;
 -(ORInt) value;
+-(ORInt) intValue;
+-(ORFloat) floatValue;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
@@ -58,8 +60,11 @@
 @end
 
 @interface ORFloatVarI : ORExprI<ORFloatVar>
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker;
+-(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker up: (ORFloat) up;
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
 -(ORFloat) value;
+-(ORFloat) floatValue;
 -(ORFloat) min;
 -(ORFloat) max;
 -(NSSet*) constraints;
@@ -70,7 +75,6 @@
 
 @interface ORBitVarI : ORExprI<ORBitVar>
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
--(ORInt) getId;
 -(BOOL) bound;
 -(uint64)min;
 -(uint64)max;

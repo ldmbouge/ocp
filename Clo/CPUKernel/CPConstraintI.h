@@ -14,12 +14,11 @@
 
 @class CPEngineI;
 
-@interface CPCoreConstraint : NSObject<NSCoding,ORCommand,CPConstraint> {
+@interface CPCoreConstraint : ORObject<NSCoding,ORCommand,CPConstraint> {
 @public
    CPTodo            _todo;
-   BOOL       _idempotent;
-   ORInt       _priority;
-   ORUInt            _name;
+   BOOL        _idempotent;
+   ORInt         _priority;
    IMP          _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
@@ -29,8 +28,6 @@
 -(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;
--(void) setId: (ORUInt) name;
--(ORUInt) getId;
 -(NSSet*) allVars;
 -(ORUInt) nbUVars;
 -(void)setGroup:(id<CPGroup>)g;

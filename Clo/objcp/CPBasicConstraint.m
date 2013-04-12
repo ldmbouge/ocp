@@ -909,8 +909,16 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(void) propagate
 {
-   [_x updateMax:[_y max] + _c];
-   [_y updateMin:[_x min] - _c];
+   if (bound(_x)) {
+      assignTRInt(&_active, NO, _trail);
+      [_y updateMin:_x.min - _c];
+   } else if (bound(_y)) {
+      assignTRInt(&_active, NO, _trail);
+      [_x updateMax:_y.max + _c];
+   } else {
+      [_x updateMax:[_y max] + _c];
+      [_y updateMin:[_x min] - _c];
+   }
 }
 -(NSSet*)allVars
 {
@@ -1125,17 +1133,27 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    if (bound(_b)) {
       BOOL bVal = minDom(_b);
       if (bVal) {
-         if (maxDom(_x)==0)      [_y bind:TRUE];
-         else if (maxDom(_y)==0) [_x bind:TRUE];
+         if (maxDom(_x)==0) {
+            assignTRInt(&_active, NO, _trail);
+            [_y bind:TRUE];
+         }
+         else if (maxDom(_y)==0) {
+            assignTRInt(&_active, NO, _trail);
+            [_x bind:TRUE];
+         }
       } else {
+         assignTRInt(&_active, NO, _trail);
          [_x bind:NO];
          [_y bind:NO];
       }
    } else {
-      if (bound(_x) && bound(_y))
+      if (bound(_x) && bound(_y)) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:minDom(_x) || minDom(_y)];
-      else if (minDom(_x)>0 || minDom(_y)>0)
+      } else if (minDom(_x)>0 || minDom(_y)>0) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:TRUE];
+      }
    }
 }
 -(NSSet*)allVars
@@ -1190,18 +1208,28 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    ORBounds bb = bounds(_b);
    if (bb.min == bb.max) {
       if (bb.min) {
+         assignTRInt(&_active, NO, _trail);
          [_x bind:TRUE];
          [_y bind:TRUE];
       } else {
-         if (minDom(_x)==1)      [_y bind:FALSE];
-         else if (minDom(_y)==1) [_x bind:FALSE];
+         if (minDom(_x)==1) {
+            assignTRInt(&_active, NO, _trail);
+            [_y bind:FALSE];
+         }
+         else if (minDom(_y)==1) {
+            assignTRInt(&_active, NO, _trail);
+            [_x bind:FALSE];
+         }
       }
    } else {
       ORBounds bx = bounds(_x),by = bounds(_y);
-      if (bx.min==bx.max && by.min==by.max)
+      if (bx.min==bx.max && by.min==by.max) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:bx.min && by.min];
-      else if (bx.max==0 || by.max==0)
+      } else if (bx.max==0 || by.max==0) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:FALSE];
+      }
    }
 }
 -(NSSet*)allVars
@@ -2394,16 +2422,16 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
          _primalBound = bound;
    }
 }
--(void) tightenPrimalBound:(ORInt)newBound
+-(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
    @synchronized(self) {
-      if (newBound < _primalBound)
-         _primalBound = newBound;
+      if ([newBound value] < _primalBound)
+         _primalBound = [newBound value];
    }
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc] initObjectiveValue:(id<ORIntVar>)_x minimize:YES primalBound:_primalBound];
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
 }
 -(ORStatus) check 
 {
@@ -2416,9 +2444,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    }
    return ORSuspend;
 }
--(ORInt) primalBound
+-(id<ORObjectiveValue>) primalBound
 {
-  return _primalBound;
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize:YES];
 }
 -(NSString*)description
 {
@@ -2463,9 +2491,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    return [[NSSet alloc] initWithObjects:_x, nil];
 }
--(id<ORObjectiveValue>)value
+-(id<ORObjectiveValue>) value
 {
-   return [[ORIntObjectiveValue alloc]initObjectiveValue:(id<ORIntVar>)_x minimize:NO primalBound:_primalBound];
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize: NO];
 }
 
 -(ORUInt)nbUVars
@@ -2480,10 +2508,10 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
     _primalBound = bound;
 }
 
--(void) tightenPrimalBound:(ORInt)newBound
+-(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
-   if (newBound > _primalBound)
-      _primalBound = newBound;
+   if ([newBound value] > _primalBound)
+      _primalBound = [newBound value];
 }
 
 -(ORStatus) check 
@@ -2498,10 +2526,11 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    return ORSuspend;  
 }
 
--(ORInt) primalBound
+-(id<ORObjectiveValue>) primalBound
 {
-  return _primalBound;
+   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
 }
+
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];

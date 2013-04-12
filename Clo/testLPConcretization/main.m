@@ -24,24 +24,73 @@ float coef[7][12] = {
    {  0,  32,   0,  0,   0,   5,   0,  3,  0, 660, 0, 9}};
 
 
-int main(int argc, const char * argv[])
+int main2(int argc, const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns low:0 up:nbColumns-1];
+   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+   for(ORInt i = 0; i < nbRows; i++)
+      ca[i] = [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+   [model maximize: Sum(model,j,Columns,[x[j] muli: c[j]])];
+   id<LPProgram> lp = [ORFactory createLPProgram: model];
+   
+   NSLog(@"Model %@",model);
+   [lp solve];
+   NSLog(@"Objective value: %@",[[model objective] value]);
+   id<ORSolution> sol = [model captureSolution];
+   NSLog(@"Solution: %@",sol);
+   NSLog(@"we are done");
+   
+   // model already "knows" the solver that implements it (_impl)
+   // Now model also records a map from "high-level constraints" to "{implementation constraints}"
+   // So model could consult the map to go and retrieve the dual value for the implementation constraints.
+   // catch -> that's LP specific functionality in an abstract model! Makes no sense.
+   // -> instead have the LPProgram do it by asking the model its map and consulting the mapping to finally
+   //    ask the right implementation constraint.
+   
+   //   [ca enumerateWith:^(id<ORConstraint> obj, int idx) {
+   //      ORFloat dca = [lp dual:obj];
+   //      NSLog(@"Dual value for constraint[%d] is %f",idx,dca);
+   //   }];
+   
+   //   NSLog(@"Objective: %@  [%f]",o,[o value]);
+   return 0;
+}
+
+int main1(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
    
    // most of this is bogus; just testing without introducing floats
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns low:0 up:nbColumns-1];
-   id<ORFloatVar>      o = [ORFactory floatVar: model low:0 up:nbColumns-1];
-   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Columns];
+//   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns];
+//   id<ORIntVar>      o = [ORFactory intVar: model domain: Columns];
+   
    for(ORInt i = 0; i < nbRows; i++)
-      ca[i] = [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
-   [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
-   [model maximize: o];
+      [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+//   [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
+   id<ORObjectiveFunction> obj = [model maximize: Sum(model,j,Columns,[x[j] muli: c[j]])];
+//   [model maximizeExpr: o];
+//   NSLog(@"Model %@",model);
+//=======
+//   id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns low:0 up:nbColumns-1];
+//   id<ORFloatVar>      o = [ORFactory floatVar: model low:0 up:nbColumns-1];
+//   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+//   for(ORInt i = 0; i < nbRows; i++)
+//      ca[i] = [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+//   [model add: [Sum(model,j,Columns,[x[j] muli: c[j]]) eq: o]];
+//   [model maximize: o];
+//>>>>>>> 59fe343c99c52477bcafa24fe98497d22235c26b
    id<LPProgram> lp = [ORFactory createLPProgram: model];
+   
    NSLog(@"Model %@",model);
    [lp solve];
+   NSLog(@"Objective value: %@",[obj value]);
+   id<ORSolution> sol = [model captureSolution];
+   NSLog(@"Solution: %@",sol);
    NSLog(@"we are done");
-   NSLog(@"Array is: %@",x);
    
    // model already "knows" the solver that implements it (_impl)
    // Now model also records a map from "high-level constraints" to "{implementation constraints}"
@@ -50,11 +99,51 @@ int main(int argc, const char * argv[])
    // -> instead have the LPProgram do it by asking the model its map and consulting the mapping to finally
    //    ask the right implementation constraint.
 
-   [ca enumerateWith:^(id<ORConstraint> obj, int idx) {
-      ORFloat dca = [lp dual:obj];
-      NSLog(@"Dual value for constraint[%d] is %f",idx,dca);
-   }];
+//   [ca enumerateWith:^(id<ORConstraint> obj, int idx) {
+//      ORFloat dca = [lp dual:obj];
+//      NSLog(@"Dual value for constraint[%d] is %f",idx,dca);
+//   }];
    
-   NSLog(@"Objective: %@  [%f]",o,[o value]);
+//   NSLog(@"Objective: %@  [%f]",o,[o value]);
    return 0;
+}
+
+int main3(int argc, const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   
+   // most of this is bogus; just testing without introducing floats
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Columns];   
+   for(ORInt i = 0; i < nbRows; i++)
+      [model add: [Sum(model,j,Columns,[x[j] muli: coef[i][j]]) leqi: b[i]]];
+   id<ORObjectiveFunction> obj = [model maximize: Sum(model,j,Columns,[x[j] muli: c[j]])];
+   id<MIPProgram> mip = [ORFactory createMIPProgram: model];
+   
+   NSLog(@"Model %@",model);
+   [mip solve];
+   NSLog(@"Objective value: %@",[obj value]);
+   id<ORSolution> sol = [model captureSolution];
+   NSLog(@"Solution: %@",sol);
+   NSLog(@"we are done");
+   
+   // model already "knows" the solver that implements it (_impl)
+   // Now model also records a map from "high-level constraints" to "{implementation constraints}"
+   // So model could consult the map to go and retrieve the dual value for the implementation constraints.
+   // catch -> that's LP specific functionality in an abstract model! Makes no sense.
+   // -> instead have the LPProgram do it by asking the model its map and consulting the mapping to finally
+   //    ask the right implementation constraint.
+   
+   //   [ca enumerateWith:^(id<ORConstraint> obj, int idx) {
+   //      ORFloat dca = [lp dual:obj];
+   //      NSLog(@"Dual value for constraint[%d] is %f",idx,dca);
+   //   }];
+   
+   //   NSLog(@"Objective: %@  [%f]",o,[o value]);
+   return 0;
+}
+
+int main(int argc, const char * argv[])
+{
+   return main2(argc,argv);
 }

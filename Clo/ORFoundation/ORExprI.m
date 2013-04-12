@@ -15,14 +15,72 @@
 #import "ORError.h"
 #import "ORModel.h"
 
+
+@implementation NSNumber (Expressions)
+-(id<ORExpr>)asExpression:(id<ORTracker>)tracker
+{
+   const char* tt = [self objCType];
+   if (strcmp(tt,@encode(ORInt))==0 || strcmp(tt,@encode(ORUInt)) ==0 || strcmp(tt,@encode(ORLong)) ==0 || strcmp(tt,@encode(ORULong)) ==0)
+      return [ORFactory integer:tracker value:[self intValue]];
+   else if (strcmp(tt,@encode(ORFloat))==0 || strcmp(tt,@encode(double))==0)
+      return [ORFactory integer:tracker value:[self intValue]];  // should really be double
+   else if (strcmp(tt,@encode(BOOL))==0 || strcmp(tt,@encode(bool))==0)
+      return [ORFactory integer:tracker value:[self boolValue]];
+   else {
+      assert(NO);
+   }
+   return NULL;
+}
+-(id<ORExpr>)mul:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] mul:r];
+}
+-(id<ORExpr>)plus:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] plus:r];
+}
+-(id<ORExpr>)sub:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] sub:r];
+}
+-(id<ORExpr>)div:(id<ORExpr>)r
+{
+   return [[self asExpression:[r tracker]] div:r];
+}
+-(id<ORExpr>) mod: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] mod:e];
+}
+-(id<ORRelation>) eq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] eq:e];
+}
+-(id<ORRelation>) neq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] neq:e];
+}
+-(id<ORRelation>) leq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] leq:e];
+}
+-(id<ORRelation>) geq: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] geq:e];
+}
+-(id<ORRelation>) lt: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] lt:e];
+}
+-(id<ORRelation>) gt: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] gt:e];
+}
+@end
+
 @implementation ORExprI
 -(id<ORTracker>) tracker
 {
    return nil;
-}
--(ORUInt)getId
-{
-   return 0;
 }
 -(ORInt) min
 {
@@ -48,94 +106,104 @@
 {
    return [ORFactory exprAbs:self];
 }
--(id<ORExpr>) plus: (id<ORExpr>) e
+-(id<ORExpr>) plus: (id) e
 {
-   return [ORFactory expr: self plus: e];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self plus:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self plus:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) plusi: (ORInt) e
+-(id<ORExpr>) sub: (id) e
 {
-   return [ORFactory expr: self plus:[ORFactory integer:[self tracker] value:e]];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self sub:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self sub:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) subi: (ORInt) e
+-(id<ORExpr>) mul: (id) e
 {
-   return [ORFactory expr: self sub:[ORFactory integer:[self tracker] value:e]];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self mul:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self mul:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) sub: (id<ORExpr>) e
+-(id<ORExpr>) div: (id) e
 {
-   return [ORFactory expr:self sub:e];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self div:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self div:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) mul: (id<ORExpr>) e
+-(id<ORExpr>) mod: (id) e
 {
-   return [ORFactory expr:self mul:e];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self mod:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self mod:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) muli: (ORInt) e
+-(id<ORRelation>) eq: (id) e
 {
-   return [ORFactory expr:self mul:[ORFactory integer:[self tracker] value:e]];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self equal:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self equal:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) div: (id<ORExpr>) e
+-(id<ORRelation>) neq: (id) e
 {
-   return [ORFactory expr:self div:e];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self neq:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self neq:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) divi: (ORInt) e
+-(id<ORRelation>) leq: (id) e
 {
-   return [ORFactory expr:self div:[ORFactory integer:[self tracker] value:e]];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self leq:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self leq:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
-
--(id<ORExpr>) mod: (id<ORExpr>) e
+-(id<ORRelation>) geq: (id) e
 {
-   return [ORFactory expr:self mod:e];
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self geq:e];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self geq:[e asExpression:[self tracker]]];
+   else
+      return NULL;
 }
--(id<ORExpr>) modi: (ORInt) e
+-(id<ORRelation>) lt: (id) e
 {
-   return [ORFactory expr:self mod:[ORFactory integer:[self tracker] value:e]];
+   id re = NULL;
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      re = e;
+   else if ([e isKindOfClass:[NSNumber class]])
+      re = [e asExpression:[self tracker]];
+   return [ORFactory expr:self leq:[re sub:[ORFactory integer:[self tracker] value:1]]];
 }
--(id<ORRelation>) eq: (id<ORExpr>) e
+-(id<ORRelation>) gt: (id) e
 {
-   return [ORFactory expr:self equal:e];
-}
--(id<ORRelation>) eqi: (ORInt) e
-{
-   return [ORFactory expr:self equal:[ORFactory integer:[self tracker] value:e]];
-}
--(id<ORRelation>) neq: (id<ORExpr>) e
-{
-   return [ORFactory expr:self neq:e];
-}
--(id<ORRelation>) neqi: (ORInt) c
-{
-   return [ORFactory expr:self neq: [ORFactory integer:[self tracker] value: c]];
-}
--(id<ORRelation>) leq: (id<ORExpr>) e
-{
-   return [ORFactory expr:self leq:e];
-}
--(id<ORRelation>) leqi: (ORInt) c
-{
-   return [ORFactory expr:self leq: [ORFactory integer:[self tracker] value: c]];
-}
--(id<ORRelation>) geq: (id<ORExpr>) e
-{
-   return [ORFactory expr:self geq:e];
-}
--(id<ORRelation>) geqi: (ORInt) c
-{
-   return [ORFactory expr:self geq: [ORFactory integer:[self tracker] value: c]];
-}
--(id<ORRelation>) lt: (id<ORExpr>) e
-{
-   return [ORFactory expr:self leq:[e sub:[ORFactory integer:[self tracker] value:1]]];
-}
--(id<ORRelation>) gt: (id<ORExpr>) e
-{
-   return [ORFactory expr:self geq:[e plus:[ORFactory integer:[self tracker] value:1]]];
-}
--(id<ORRelation>) lti: (ORInt) e
-{
-   return [ORFactory expr:self leq:[ORFactory integer:[self tracker] value:e-1]];
-}
--(id<ORRelation>) gti: (ORInt) e
-{
-   return [ORFactory expr:self geq:[ORFactory integer:[self tracker] value:e+1]];
+   id re = NULL;
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      re = e;
+   else if ([e isKindOfClass:[NSNumber class]])
+      re = [e asExpression:[self tracker]];
+   return [ORFactory expr:self geq:[re plus:[ORFactory integer:[self tracker] value:1]]];
 }
 -(id<ORExpr>)neg
 {
@@ -884,6 +952,33 @@
    [ite release]; // [ldm] fixed memory leak.
    return self;
 }
+-(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e {
+    self = [super init];
+    id<IntEnumerator> ite1 = [S1 enumerator];
+    id<IntEnumerator> ite2 = [S2 enumerator];
+    _e = [ORFactory integer: tracker value: 0];
+    if (f!= NULL) {
+        while ([ite1 more]) {
+            ORInt i = [ite1 next];
+            while ([ite2 more]) {
+                ORInt j = [ite2 next];
+                if (f(i, j)) _e = [_e plus: e(i, j)];
+            }
+        }
+    }
+    else {
+        while ([ite1 more]) {
+            ORInt i = [ite1 next];
+            while ([ite2 more]) {
+                ORInt j = [ite2 next];
+                _e = [_e plus: e(i, j)];
+            }
+        }
+    }
+    [ite1 release]; // [ldm] fixed memory leak.
+    [ite2 release];
+    return self;
+}
 -(id<ORExpr>) initORExprSumI: (id<ORExpr>) e
 {
    self = [super init];
@@ -1144,9 +1239,9 @@
 @end
 
 
-id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r)
+id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r)
 {
-   return [r muli: l];
+   return [r mul: l];
 }
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r)
 {

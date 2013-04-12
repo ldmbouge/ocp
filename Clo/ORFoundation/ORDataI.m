@@ -112,7 +112,6 @@
 }
 @end
 
-
 static ORInt _nbStreams;
 static ORInt _deterministic;
 
@@ -202,6 +201,7 @@ static ORInt _deterministic;
 
 @implementation ORUniformDistributionI
 {
+   ORUInt           _name;
    id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
@@ -222,6 +222,10 @@ static ORInt _deterministic;
 -(ORInt) next
 {
    return _range.low + [_stream next] % _size;
+}
+-(void)setId:(ORUInt)name
+{
+   _name = name;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

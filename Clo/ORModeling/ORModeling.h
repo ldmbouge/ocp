@@ -11,20 +11,25 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORModel.h>
-#import <ORModeling/ORSolver.h>
 #import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
 
 
 @protocol ORModelTransformation;
 
-@protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding>
+@protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;
--(void) minimize: (id<ORVar>) x;
--(void) maximize: (id<ORVar>) x;
+
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
          onObjects:(void(^)(id<ORObject>))doObjs
      onConstraints:(void(^)(id<ORObject>))doCons
@@ -39,24 +44,40 @@
 -(id<ORSolutionPool>) solutions;
 -(id<ORSolution>) bestSolution;
 -(void) restore: (id<ORSolution>) s;
+-(id<ORModel>)flatten;
+-(id<ORModel>)copy;
+-(void) setSource:(id<ORModel>)src;
+-(id<ORModel>)source;
+-(id<ORModel>)rootModel;
+-(void)map:(id)key toObject:(id)object;
+-(id)lookup:(id)key;
 @end
 
 @protocol ORAddToModel <ORTracker>
--(void) addVariable:(id<ORVar>) var;
--(void )addObject:(id) object;
--(void) addConstraint:(id<ORConstraint>) cstr;
--(void) minimize:(id<ORIntVar>) x;
--(void) maximize:(id<ORIntVar>) x;
+-(id<ORVar>) addVariable:(id<ORVar>) var;
+-(id) addObject:(id) object;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
+
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(void) compiling:(id<ORConstraint>)cstr;
 -(NSSet*)compiledMap;
+-(id<ORTracker>)tracker;
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
-+(id<ORModelTransformation>) createFlattener;
-+(id<ORModelTransformation>) createLPFlattener;
-+(id<ORModelTransformation>) createLinearizer;
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORSolutionPool>) createSolutionPool;
++(id<ORConstraintSet>) createConstraintSet;
 @end
 

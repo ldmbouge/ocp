@@ -24,6 +24,7 @@
 -(void) visitIntSet:(id<ORIntSet>)v{}
 -(void) visitIntRange:(id<ORIntRange>)v{}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
+-(void) visitFloatArray:(id<ORIntArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
 -(void) visitTrailableInt:(id<ORTrailableInt>)v  {}
 -(void) visitIntVar: (id<ORIntVar>) v  {}
@@ -37,7 +38,9 @@
 // micro-Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitGroup:(id<ORGroup>)g {}
--(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  {}
+-(void) visitObjectiveFunctionVar:(id<ORObjectiveFunctionVar>)f  {}
+-(void) visitObjectiveFunctionExpr:(id<ORObjectiveFunctionExpr>)f  {}
+-(void) visitObjectiveFunctionLinear:(id<ORObjectiveFunctionLinear>)f  {}
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr  {}
@@ -51,8 +54,14 @@
 -(void) visitPacking:(id<ORPacking>) cstr  {}
 -(void) visitKnapsack:(id<ORKnapsack>) cstr  {}
 -(void) visitAssignment:(id<ORAssignment>)cstr {}
--(void) visitMinimize: (id<ORObjectiveFunction>) v  {}
--(void) visitMaximize: (id<ORObjectiveFunction>) v  {}
+
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v {}
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v {}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e {}
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e {}
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o {}
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o {}
+
 -(void) visitEqualc: (id<OREqualc>)c  {}
 -(void) visitNEqualc: (id<ORNEqualc>)c  {}
 -(void) visitLEqualc: (id<ORLEqualc>)c  {}
@@ -90,6 +99,8 @@
 -(void) visitLinearGeq: (id<ORLinearGeq>) c {}
 -(void) visitLinearLeq: (id<ORLinearLeq>) c {}
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
+-(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
+-(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
 
 
 // Bit
@@ -129,6 +140,7 @@
 }
 -(id)init:(id<ORAddToModel>)m;
 -(void) visitIntArray:(id<ORIntArray>)v;
+-(void) visitFloatArray:(id<ORIntArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
 -(void) visitTrailableInt:(id<ORTrailableInt>)v;
 -(void) visitIntSet:(id<ORIntSet>)v;
@@ -200,34 +212,46 @@
 
 @interface ORLPFlattenObjective : NSObject<ORVisitor>
 -(id)init:(id<ORAddToModel>)m;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
+
 @end
 
 
-@implementation ORLPFlatten
--(id)initORLPFlatten
+@implementation ORLPFlatten {
+   id<ORAddToModel> _into;
+}
+-(id)initORLPFlatten:(id<ORAddToModel>)into
 {
    self = [super init];
+   _into = into;
    return self;
 }
--(void) apply: (id<ORModel>) m into: (id<ORAddToModel>) batch
+-(void) apply: (id<ORModel>) m
 {
    [m applyOnVar:^(id<ORVar> x) {
-      [batch addVariable:x];
+      [_into addVariable:x];
    } onObjects:^(id<ORObject> x) {
-      ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:batch];
+      ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:_into];
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [batch compiling:c];
-      [ORLPFlatten flatten:c into:batch];
-      NSSet* map = [batch compiledMap];
+      [_into compiling:c];
+      [ORLPFlatten flatten:c into:_into];
+      NSSet* map = [_into compiledMap];
       NSLog(@"Got a Map %@",map);
-   } onObjective:^(id<ORObjective> o) {
-      ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:batch];
-      [o visit:fo];
-      [fo release];
+   } onObjective:^(id<ORObjectiveFunction> o) {
+      NSLog(@"objective %@ ",o);
+      if (o) {
+         ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:_into];
+         [o visit:fo];
+         [fo release];
+      }
    }];
 }
 
@@ -239,7 +263,7 @@
 }
 +(void) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
+   ORFloatLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
@@ -277,6 +301,11 @@
 {
    [_theModel addObject:v];
 }
+-(void) visitFloatArray:(id<ORFloatArray>)v
+{
+   [_theModel addObject:v];
+}
+
 -(void) visitIntMatrix:(id<ORIntMatrix>)v
 {
    [_theModel addObject:v];
@@ -337,7 +366,7 @@
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORLPFlatten flattenExpression: [Sum(tracker,i,IR,mult([itemSize at:i],[item[i] eqi: b])) eq: binSize[b]]
+      [ORLPFlatten flattenExpression: [Sum(tracker,i,IR,mult(@([itemSize at:i]),[item[i] eq: @(b)])) eq: binSize[b]]
                               into: _theModel
                         annotation: DomainConsistency];
    ORInt s = 0;
@@ -345,7 +374,7 @@
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [ORLPFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eqi: s]
+   [ORLPFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eq: @(s)]
                            into: _theModel
                      annotation: DomainConsistency];
    
@@ -571,12 +600,34 @@
    _theModel = m;
    return self;
 }
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    [_theModel minimize:[v var]];
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
    [_theModel maximize:[v var]];
+}
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
+   id<ORObjectiveFunction> objective = [_theModel minimize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
+   [v setImpl: objective];
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _theModel annotation: Default];
+   id<ORObjectiveFunction> objective = [_theModel maximize: [terms variables: _theModel] coef: [terms coefficients: _theModel]];
+   [v setImpl: objective];
+}
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
+{
+   assert(FALSE);
+   //   [_theModel minimize:[v var]];
+}
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) v
+{
+   assert(FALSE);
+   //   [_theModel maximize:[v var]];
 }
 @end

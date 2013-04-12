@@ -11,50 +11,20 @@
 
 #import "ORModeling.h"
 #import "ORLPDecompose.h"
-#import "ORLinear.h"
-
-
-
-@interface ORLPLinearizer : NSObject<ORVisitor>
--(id) initORLPLinearizer: (id<ORLinear>)t model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
-+(ORLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
-+(ORLinear*) addToLinear: (id<ORLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
--(void) visitIntVar: (id<ORIntVar>) e;
--(void) visitFloatVar:(id<ORFloatVar>)e;
--(void) visitAffineVar:(id<ORIntVar>)e;
--(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitExprPlusI: (ORExprPlusI*) e;
--(void) visitExprMinusI: (ORExprMinusI*) e;
--(void) visitExprMulI: (ORExprMulI*) e;
--(void) visitExprDivI: (ORExprDivI*) e;
--(void) visitExprModI: (ORExprModI*) e;
--(void) visitExprEqualI:(ORExprEqualI*)e;
--(void) visitExprNEqualI:(ORExprNotEqualI*)e;
--(void) visitExprLEqualI:(ORExprLEqualI*)e;
--(void) visitExprSumI: (ORExprSumI*) e;
--(void) visitExprProdI: (ORExprProdI*) e;
--(void) visitExprAggOrI: (ORExprAggOrI*) e;
--(void) visitExprAbsI:(ORExprAbsI*) e;
--(void) visitExprNegateI:(ORExprNegateI*)e;
--(void) visitExprCstSubI:(ORExprCstSubI*)e;
--(void) visitExprVarSubI:(ORExprVarSubI*)e;
--(void) visitExprDisjunctI:(ORDisjunctI*)e;
--(void) visitExprConjunctI:(ORConjunctI*)e;
--(void) visitExprImplyI:(ORImplyI*)e;
-@end
+#import "ORFloatLinear.h"
 
 
 @implementation ORLPNormalizer
 {
-   id<ORLinear>     _terms;
+   id<ORFloatLinear>  _terms;
    id<ORAddToModel>   _model;
-   ORAnnotation         _n;
+   ORAnnotation       _n;
 }
-+(ORLinear*) normalize: (ORExprI*) rel into: (id<ORAddToModel>) model annotation: (ORAnnotation) n
++(ORFloatLinear*) normalize: (ORExprI*) rel into: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    ORLPNormalizer* v = [[ORLPNormalizer alloc] initORLPNormalizer: model annotation:n];
-   [rel visit:v];
-   ORLinear* rv = v->_terms;
+   [rel visit: v];
+   ORFloatLinear* rv = v->_terms;
    [v release];
    return rv;
 }
@@ -78,13 +48,13 @@
    else if (lc || rc) {
       ORInt c = lc ? [[e left] min] : [[e right] min];
       ORExprI* other = lc ? [e right] : [e left];
-      ORLinear* lin  = [ORLPLinearizer linearFrom:other model:_model annotation:_n];
+      ORFloatLinear* lin  = [ORLPLinearizer linearFrom:other model:_model annotation:_n];
       [lin addIndependent: - c];
       _terms = lin;
    }
    else {
-      ORLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
-      ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+      ORFloatLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
+      ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
       [ORLPLinearizer addToLinear: linRight from: [e right] model: _model annotation: _n];
       [linRight release];
       _terms = linLeft;
@@ -92,8 +62,8 @@
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   ORLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
-   ORLinearFlip* linRight = [[ORLinearFlip alloc] initORLinearFlip: linLeft];
+   ORFloatLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
+   ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
    [ORLPLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
    [linRight release];
    _terms = linLeft;
@@ -133,11 +103,11 @@
 
 @implementation ORLPLinearizer
 {
-   id<ORLinear>        _terms;
+   id<ORFloatLinear>   _terms;
    id<ORAddToModel>    _model;
    ORAnnotation        _n;
 }
--(id) initORLPLinearizer: (id<ORLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
+-(id) initORLPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    self = [super init];
    _terms = t;
@@ -149,13 +119,13 @@
 {
    [_terms addTerm:e by:1];
 }
--(void) visitFloatVar:(id<ORFloatVar>)e
+-(void) visitFloatVar:(id<ORFloatVar>) e
 {
-   [_terms addTerm:e by:1];
+   [_terms addTerm: e by: 1];
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   [_terms addTerm:e by:1];
+   [_terms addTerm: e by: 1];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -169,8 +139,8 @@
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
    [[e left] visit:self];
-   id<ORLinear> old = _terms;
-   _terms = [[ORLinearFlip alloc] initORLinearFlip: _terms];
+   id<ORFloatLinear> old = _terms;
+   _terms = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: _terms];
    [[e right] visit:self];
    [_terms release];
    _terms = old;
@@ -249,17 +219,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
-+(ORLinear*) linearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
++(ORFloatLinear*) linearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   ORLinear* rv = [[ORLinear alloc] initORLinear:4];
-   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer:rv model: model annotation:cons];
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: rv model: model annotation:cons];
    [e visit:v];
    [v release];
    return rv;
 }
-+(ORLinear*) addToLinear: (id<ORLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
++(ORFloatLinear*) addToLinear: (id<ORFloatLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer:terms model: model annotation:cons];
+   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: terms model: model annotation:cons];
    [e visit:v];
    [v release];
    return terms;

@@ -47,13 +47,13 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> open = [ORFactory intVarArray: mdl range:Warehouses domain: RANGE(mdl,0,1)];
       id<ORIntVar>      obj  = [ORFactory intVar:mdl domain:RANGE(mdl,0,maxCost*sizeof(cap))];
       
-      [mdl add: [obj eq: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] muli:fixed]) ]]];
+      [mdl add: [obj eq: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] mul:@(fixed)]) ]]];
       for(ORUInt i=Warehouses.low;i <= Warehouses.up;i++) {
-         [mdl add: [Sum(mdl,s, Stores, [supp[s] eqi:i]) leqi:cap[i]]];
+         [mdl add: [Sum(mdl,s, Stores, [supp[s] eq:@(i)]) leq:@(cap[i])]];
       }
       for(ORUInt i=Stores.low;i <= Stores.up; i++) {
          id<ORIntArray> row = [ORFactory intArray:mdl range:Warehouses with:^ORInt(ORInt j) { return conn[i*5+j];}];
-         [mdl add: [[open elt:supp[i]] eqi:YES]];
+         [mdl add: [[open elt:supp[i]] eq:@1]];
          [mdl add: [cost[i] eq:[row elt:supp[i]]]];
       }
       [mdl minimize: obj];

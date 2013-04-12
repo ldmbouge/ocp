@@ -84,7 +84,7 @@ int main(int argc, const char * argv[])
          [mdl add: [obj eq: Sum(mdl,s,Slabs,[loss elt: [load at: s]])]];
          [mdl add: [ORFactory packing: slab itemSize: weight load: load]];
          for(ORInt s = Slabs.low; s <= Slabs.up; s++)
-            [mdl add: [Sum(mdl,c,Colors,Or(mdl,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
+            [mdl add: [Sum(mdl,c,Colors,Or(mdl,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
          [mdl minimize: obj];
          
          id<CPProgram> cp  = [args makeProgram:mdl];

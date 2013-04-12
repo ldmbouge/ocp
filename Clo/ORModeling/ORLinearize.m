@@ -20,38 +20,40 @@
 
 @interface ORLinearizeObjective : NSObject<ORVisitor>
 -(id)init:(id<ORAddToModel>)m;
--(void) visitMinimize: (id<ORObjectiveFunction>) v;
--(void) visitMaximize: (id<ORObjectiveFunction>) v;
+
 @end
 
-@implementation ORLinearize
--(id)initORLinearize
+@implementation ORLinearize {
+   id<ORAddToModel> _into;
+}
+-(id)initORLinearize:(id<ORAddToModel>)into
 {
-    self = [super init];
-    return self;
+   self = [super init];
+   _into = into;
+   return self;
 }
 
 +(id<ORModel>)linearize:(id<ORModel>)model
 {
-   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
    id<ORModel> lin = [ORFactory createModel];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
-   [linearizer apply: model into: lm];
+   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize :lm];
+   [linearizer apply: model];
    return lin;
 }
 
--(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)batch
+-(void)apply:(id<ORModel>)m 
 {
     [m applyOnVar:^(id<ORVar> x) {
-        [batch addVariable: x];
+        [_into addVariable: x];
     } onObjects:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
-        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: batch];
+        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
         [c visit: lc];
         [lc release];
-    } onObjective:^(id<ORObjective> o) {
-        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: batch];
+    } onObjective:^(id<ORObjectiveFunction> o) {
+        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
         [o visit: lo];
     }];
 }
@@ -89,8 +91,8 @@
       return [ORFactory intVar:_model domain:RANGE(_model,0,1)];
    }];
    id<ORExpr> sumBinVars = Sum(_model, i,[x domain], o[i]);
-   id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] muli: i]);
-   [_model addConstraint: [sumBinVars eqi: 1]];
+   id<ORExpr> sumExpr    = Sum(_model, i,[x domain], [o[i] mul: @(i)]);
+   [_model addConstraint: [sumBinVars eq: @(1)]];
    [_model addConstraint: [sumExpr eq: x]];
    return o;
 }
@@ -120,7 +122,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: varsOfC[i]];
                                        return binArr[d];
                                    }];
-        [_model addConstraint: [sumExpr eqi: 1]];
+        [_model addConstraint: [sumExpr eq: @(1)]];
     }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
@@ -283,21 +285,17 @@
     // Create the index variable if needed.
     if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)]) indexVar = (id<ORIntVar>)[cstSubExpr index];
     else {
-        id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
+       id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
        id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
-        indexVar = [ORFactory intVar: _model domain: dom];
-        // [ldm] Removed next line. Redundant since the factory already adds the variable.
-        // [_model addVariable: indexVar];
-        [_model addConstraint: [indexVar eq: linearIndexExpr]];
+       indexVar = [ORFactory intVar: _model domain: dom];
+       [_model addConstraint: [indexVar eq: linearIndexExpr]];
     }
     id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
     id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
-        return [[binIndexVar at: i] muli: [[cstSubExpr array] at: i ]];
+        return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
     }];
     id<ORIntRange> dom = [ORFactory intRange:_model low:[linearSumExpr min] up:[linearSumExpr max]];
     id<ORIntVar> sumVar = [ORFactory intVar: _model domain: dom];
-    // [ldm] Removed next line. Redundant since the factory already adds the variable.
-    //[_model addVariable: sumVar];
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
 }
@@ -312,12 +310,38 @@
     _model = m;
     return self;
 }
--(void) visitMinimize: (id<ORObjectiveFunction>) v
+-(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
     [_model minimize:[v var]];
 }
--(void) visitMaximize: (id<ORObjectiveFunction>) v
+-(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
     [_model maximize:[v var]];
+}
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   assert(false);
+//   [_model minimize:[v var]];
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
+{
+   assert(false);
+//   [_model maximize:[v var]];
+}
+
+@end
+
+@implementation ORFactory(Linearize)
++(id<ORModel>) linearizeModel:(id<ORModel>)m
+{
+   id<ORModel> lm = [ORFactory createModel];
+   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
+   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
+   [linearizer apply: m];
+   id<ORModel> clm = [ORFactory cloneModel: lm];
+   [lm release];
+   [batch release];
+   [linearizer release];
+   return clm;
 }
 @end

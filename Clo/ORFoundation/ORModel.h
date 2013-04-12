@@ -13,6 +13,7 @@
 #import <ORFoundation/ORArray.h>
 
 @protocol ORIntVarArray;
+@protocol ORVarArray;
 @protocol ORExpr;
 @protocol ORIntVar;
 @protocol ORBitVar;
@@ -31,6 +32,12 @@
 
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
+@end
+
+@protocol ORConstraintSet <NSObject>
+-(void)addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
 enum ORGroupType {
@@ -134,6 +141,7 @@ enum ORGroupType {
 @protocol ORAbs <ORConstraint>
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
+-(ORAnnotation) annotation;
 @end
 
 @protocol OROr <ORConstraint>
@@ -271,6 +279,18 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol ORFloatLinearEq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
+@protocol ORFloatLinearLeq <ORConstraint>
+-(id<ORVarArray>) vars;
+-(id<ORFloatArray>) coefs;
+-(ORFloat) cst;
+@end
+
 @protocol ORAlldifferent <ORConstraint>
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
@@ -332,27 +352,45 @@ enum ORGroupType {
 @end
 
 @protocol ORObjectiveValue <ORObject>
--(ORInt)value;
--(ORFloat)key;
--(ORInt)primal;
--(void)updateWith:(id<ORObjectiveValue>)other;
+-(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
+-(ORInt) compare: (id<ORObjectiveValue>) other;
+@end
+
+@protocol ORObjectiveValueInt <ORObjectiveValue>
+-(ORInt) value;
+@end
+
+@protocol ORObjectiveValueFloat <ORObjectiveValue>
+-(ORFloat) value;
 @end
 
 @protocol ORObjectiveFunction <ORObject>
--(id<ORIntVar>) var;
--(id<ORObjectiveValue>)value;
+-(id<ORObjectiveValue>) value;
 @end
 
-@protocol ORObjective <NSObject,ORObjectiveFunction>
+@protocol ORObjectiveFunctionVar <ORObjectiveFunction>
+-(id<ORIntVar>) var;
+@end
+
+@protocol ORObjectiveFunctionExpr <ORObjectiveFunction>
+-(id<ORExpr>) expr;
+@end
+
+@protocol ORObjectiveFunctionLinear <ORObjectiveFunction>
+-(id<ORVarArray>) array;
+-(id<ORFloatArray>) coef;
+@end
+
+@protocol ORSearchObjectiveFunction <NSObject,ORObjectiveFunction>
 -(ORStatus) check;
+-(id<ORObjectiveValue>) primalBound;
 -(void)     updatePrimalBound;
--(void) tightenPrimalBound:(ORInt)newBound;
--(ORInt)    primalBound;
+-(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 @end
 
 
 @protocol ORASolver <NSObject,ORTracker>
--(id<ORObjective>)    objective;
+-(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
 -(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)

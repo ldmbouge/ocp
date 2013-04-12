@@ -221,11 +221,23 @@
    _max._val = [toRestore max];
    _sz._val  = [toRestore domsize];
 }
--(void) restoreValue:(ORInt) toRestore
+-(void) restoreValue:(ORInt) toRestore for:(id<CPIntVarNotifier>)x
 {
-   _min._val = toRestore;
-   _max._val = toRestore;
-   _sz._val  = 1;
+    ORInt oldMin = _min._val;
+    ORInt oldMax = _max._val;
+    
+    _min._val = toRestore;
+    _max._val = toRestore;
+    _sz._val  = 1;
+    
+    if ([x tracksLoseEvt:self]) {
+        ORStatus ok = ORSuspend;
+        for(ORInt k=oldMin;k<=oldMax && ok;k++)
+            if (k != toRestore)
+                ok = [x loseValEvt:k sender:self];
+        if (!ok) return;
+    };
+    [x bindEvt:self];
 }
 -(void) enumerateWithBlock:(void(^)(ORInt))block
 {
@@ -700,11 +712,23 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       _bits[k] = toRestore->_bits[k];
    }
 }
--(void)restoreValue:(ORInt)toRestore
+-(void)restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x
 {
+    ORInt oldMin = _min._val;
+    ORInt oldMax = _max._val;
+    
    _min._val = toRestore;
    _max._val = toRestore;
    _sz._val  = 1;
+    
+    if ([x tracksLoseEvt:self]) {
+        ORStatus ok = ORSuspend;
+        for(ORInt k=oldMin;k<=oldMax && ok;k++)
+            if (GETBIT(k) && k != toRestore)
+                ok = [x loseValEvt:k sender:self];
+        if (!ok) return;
+    };
+    [x bindEvt:self];
 }
 
 -(void)translate:(ORInt)shift
@@ -934,7 +958,7 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
 {
    assert(FALSE);
 }
--(void) restoreValue:(ORInt)toRestore
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
 }

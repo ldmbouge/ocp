@@ -62,14 +62,14 @@ int main(int argc, const char * argv[])
          id<ORIntRange> N = RANGE(mdl,0,n-1);
          
          id<ORIntVarArray> x = All(mdl,ORIntVar, i, N, [ORFactory intVar:mdl domain:RANGE(mdl,0,1)]);
-         id<ORIntVar> obj = [ORFactory intVar:mdl domain:RANGE(mdl,0,sp)];
-         [mdl add: [Sum(mdl,i, N, [x[i] muli:p[i]]) eq: obj]];
+//         id<ORIntVar> obj = [ORFactory intVar:mdl domain:RANGE(mdl,0,sp)];
+//         [mdl add: [Sum(mdl,i, N, [x[i] muli:p[i]]) eq: obj]];
          for(int i=0;i<m;i++) {
             id<ORIntArray> w = [ORFactory intArray:mdl range:N with:^ORInt(ORInt j) {return r[i][j];}];
             id<ORIntVar>   c = [ORFactory intVar:mdl domain:RANGE(mdl,0,b[i])];
             [mdl add:[ORFactory knapsack:x weight:w capacity:c]];
          }
-         [mdl maximize: obj];
+         [mdl maximize: Sum(mdl,i, N, [x[i] mul:@(p[i])])];
          id<CPProgram> cp  = [args makeProgram:mdl];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          //NSLog(@"MODEL: %@",mdl);
@@ -81,19 +81,19 @@ int main(int argc, const char * argv[])
                [b appendString:@"["];
                for(ORInt i=0;i<=n-1;i++)
                   [b appendFormat:@"%d%c",[x[i] value],i < n-1 ? ',' : ']'];
-               NSLog(@"sol: %@ obj = %@  <-- %d",b,[obj dereference],[NSThread threadID]);
+//               NSLog(@"sol: %@ obj = %@  <-- %d",b,[obj dereference],[NSThread threadID]);
             }
          }];
-         [mdl restore:[[cp globalSolutionPool] best]];
+         id<ORSolution> best = [[cp globalSolutionPool] best];
          ORInt tot = 0;
          for(int k=0;k<n;k++)
-            tot += p[k] * [x[k] value];
+            tot += p[k] * [best intValue:x[k]];
          assert(tot == opt);
          NSLog(@"objective: %d == %d",tot,opt);
          for(int i=0;i<m;i++) {
             ORInt lhs = 0;
             for(int j=0;j<n;j++)
-               lhs += r[i][j] * [[x at:j] min];
+               lhs += r[i][j] * [best intValue:x[j]];
             assert(lhs <= b[i]);
             NSLog(@"C[%d] %d <= %d",i,lhs,b[i]);
          }

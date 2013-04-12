@@ -23,5 +23,6 @@
 @protocol ORSolutionPool <NSObject>
 -(void)addSolution:(id<ORSolution>)s;
 -(void)enumerateWith:(void(^)(id<ORSolution>))block;
+-(id<ORInformer>)solutionAdded;
 -(id<ORSolution>)best;
 @end

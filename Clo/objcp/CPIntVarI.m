@@ -95,15 +95,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return nil;
 }
-
--(void) setId:(ORUInt)name
-{
-    _name = name;
-}
--(ORInt)getId
-{
-   return _name;
-}
 -(BOOL) isBool
 {
    return _isBool;
@@ -183,6 +174,17 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return [_dom max];
 }
 -(ORInt) value
+{
+   assert(_dom);
+   if ([_dom bound])
+      return [_dom min];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      return 0;
+   }
+}
+
+-(ORInt) intValue
 {
    assert(_dom);
    if ([_dom bound])
@@ -538,11 +540,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void)restoreValue:(ORInt)toRestore
 {
-   [_dom restoreValue:toRestore];
+   [_dom restoreValue:toRestore for:self];
 }
 -(void)restore:(id<ORSnapshot>)s
 {
-   [_dom restoreValue:[s intValue]];
+    [_dom restoreValue:[s intValue] for: self];
 }
 -(id) snapshot
 {
@@ -685,6 +687,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [_x bound];
 }
+-(ORInt) value
+{
+   assert([_x bound]);
+   return [_x value] + _b;
+}
+-(ORInt) intValue
+{
+   assert([_x bound]);
+   return [_x value] + _b;
+}
 -(ORInt)min
 {
     return [_x min]+_b;
@@ -804,6 +816,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(BOOL) bound
 {
    return [_x bound];
+}
+-(ORInt) value
+{
+   assert([_x bound]);
+   return _a * [_x value] + _b;
+}
+-(ORInt) intValue
+{
+   assert([_x bound]);
+   return _a * [_x value] + _b;
 }
 -(ORInt) min
 {
@@ -964,6 +986,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [_x bound];
 }
+-(ORInt) value
+{
+   assert([_x bound]);
+   return - [_x value];
+}
+-(ORInt) intValue
+{
+   assert([_x bound]);
+   return - [_x value];
+}
 -(ORInt) min
 {
    return - [_x max];
@@ -1062,6 +1094,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(BOOL) bound
 {
    return [self domsize]<= 1;
+}
+-(ORInt) value
+{
+   assert([_secondary bound]);
+   return [_secondary value]==_v;
+}
+-(ORInt) intValue
+{
+   assert([_secondary bound]);
+   return [_secondary value]==_v;
 }
 -(ORInt) min
 {

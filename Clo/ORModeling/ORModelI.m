@@ -11,16 +11,29 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
-#import <ORModeling/ORSolver.h>
+#import "ORVarI.h"
+#import "ORSetI.h"
 #import "ORModelI.h"
+#import "ORError.h"
+#import "ORConcurrencyI.h"
+#import "ORCopy.h"
 
 @implementation ORModelI
 {
    NSMutableArray*          _vars;
    NSMutableArray*          _mStore;
    NSMutableArray*          _oStore;
-   ORObjectiveFunctionI*    _objective;
+   // pvh to clean once generalized
+   id<ORObjectiveFunction>  _objective;
    ORUInt                   _name;
+   ORUInt                   _nbObjects; // number of objects registered with this model.
+   // ===================================
+   id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
+   id<ORModel>              _original;  // that's the pointer to the original copy we were cloned from.
+   // ===================================
+   NSMutableDictionary*     _orig2Me;
+   // ===================================
+   // "Old" flattening map
    NSMutableDictionary*     _cMap;
    NSMutableSet*            _ccSet;  // used only while constructing _cMap
    id<ORConstraint>         _cc;     // used only while constructing _cMap
@@ -28,28 +41,79 @@
 -(ORModelI*) initORModelI
 {
    self = [super init];
+   _source = _original = NULL;
    _vars  = [[NSMutableArray alloc] init];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    _name = 0;
+   _nbObjects = 0;
+   _orig2Me = NULL;
    _cMap = [[NSMutableDictionary alloc] initWithCapacity:32];
    _ccSet = [[NSMutableSet alloc] initWithCapacity:32];
    _cc = NULL;
    return self;
 }
-
+-(ORModelI*)initORModelI:(ORULong)nb
+{
+   self = [self initORModelI];
+   _orig2Me = [[NSMutableDictionary alloc] initWithCapacity:nb];
+   return self;
+}
+-(id<ORTracker>)tracker
+{
+   return self;
+}
+-(void)map:(id)key toObject:(id)object
+{
+   NSValue* v = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
+   [_orig2Me setObject:object forKey:v];
+}
+-(id)lookup:(id)key
+{
+   if (_orig2Me == NULL)
+      return key;
+   else {
+      NSValue* kv = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
+      id rv = [_orig2Me objectForKey:kv];
+      [kv release];
+      return rv;
+   }
+}
 -(void) dealloc
 {
    NSLog(@"ORModelI [%p] dealloc called...\n",self);
+   [_source release];
    [_vars release];
    [_mStore release];
    [_oStore release];
    [_cMap release];
+   [_orig2Me release];
    [super dealloc];
+}
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
+}
+-(id<ORModel>)original
+{
+   return _original==NULL ? self : _original;
+}
+-(id<ORModel>)source
+{
+   return _source;
+}
+-(id<ORModel>)rootModel
+{
+   id<ORModel> cur = self;
+   while ([cur source] != NULL)
+      cur = [cur source];
+   return cur;
 }
 -(void) captureVariable: (id<ORVar>) x
 {
+   
    [_vars addObject:x];
    [_oStore addObject:x];
 }
@@ -57,7 +121,8 @@
 {
    _name = name;
 }
--(id<ORSolver>) solver
+// PVH TOCLEANTODAY
+-(id<ORASolver>) solver
 {
    return nil;
 }
@@ -105,20 +170,23 @@
 {
    return [[self solutions] best];
 }
--(void) addVariable:(id<ORVar>) var
+-(id<ORVar>) addVariable:(id<ORVar>) var
 {
-   [self captureVariable: var];   
+   [self captureVariable: var];
+   return var;
 }
--(void )addObject:(id) object
+-(id) addObject:(id) object
 {
    [self trackObject:object];
+   return object;
 }
--(void) addConstraint:(id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr
 {
    [self trackConstraint:cstr];
    [self add: cstr];
    if (_cc)
       [_ccSet addObject:cstr];
+   return cstr;
 }
 -(void) compiling:(id<ORConstraint>)cstr
 {
@@ -141,6 +209,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:512] autorelease];
+   [buf appendFormat:@"Original: [%p]\n",_original];
    [buf appendFormat:@"vars[%ld] = {\n",[_vars count]];
    for(id<ORVar> v in _vars)
       [buf appendFormat:@"\t%@\n",v];
@@ -155,7 +224,10 @@
    for(id<ORConstraint> c in _mStore)
       [buf appendFormat:@"\t%@\n",c];
    [buf appendFormat:@"}\n"];
-   [buf appendFormat:@"map: %@",_cMap];
+   if (_objective != nil) {
+      [buf appendFormat:@"Objective: %@\n",_objective];
+   }
+   //[buf appendFormat:@"map: %@",_cMap];
    return buf;
 }
 -(NSSet*) constraintsFor:(id<ORConstraint>)c
@@ -196,28 +268,61 @@
    _objective = o;
 }
 
--(void) minimize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
-   _objective = [[ORMinimizeI alloc] initORMinimizeI: x];
+   _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
+   return _objective;
 }
 
--(void) maximize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
 {
-   _objective = [[ORMaximizeI alloc] initORMaximizeI: x];
+   _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
+    return _objective;
 }
 
--(void) trackObject: (id) obj;
+-(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e
 {
+   _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
+    return _objective;
+}
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e
+{
+   _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
+    return _objective;
+}
+
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
+    return _objective;
+}
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
+    return _objective;
+}
+static id danger = nil;
+
+-(void) trackObject: (id) obj
+{
+   if (self == danger)
+      NSLog(@"OOPPPPPPSSSIES");
+   [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
--(void) trackVariable: (id) var;
+-(void) trackVariable: (id) var
 {
-   [var setId: (ORUInt) [_vars count]];
+   if (self == danger)
+      NSLog(@"OOPPPPPPSSSIES");
+   [var setId:_nbObjects++];
    [_vars addObject:var];
    [_oStore addObject:var];
 }
 -(void) trackConstraint:(id)obj
 {
+   if (self == danger)
+      NSLog(@"OOPPPPPPSSSIES");
+   [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
@@ -228,7 +333,7 @@
    for(id<ORObject> c in _vars)
       doVar(c);
    for(id<ORObject> c in _oStore)
-      doObjs(c);
+      doObjs(c);   
    for(id<ORObject> c in _mStore)
       doCons(c);
    doObjective(_objective);
@@ -242,6 +347,25 @@
    for(id<ORObject> c in _mStore)
       [c visit: visitor];
    [_objective visit: visitor];
+}
+-(id) copyWithZone:(NSZone*)zone
+{
+   ORCopy* copier = [[ORCopy alloc] initORCopy: zone];
+   ORModelI* m = (ORModelI*)[copier copyModel: self];
+   [copier release];
+   m->_original = self;
+   return m;
+}
+-(id<ORModel>)flatten
+{
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   danger = flat;
+   [flat apply: self];
+   [batch release];
+   [flatModel setSource:self];
+   return flatModel;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
@@ -279,34 +403,59 @@
    _ccSet  = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable: var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addObject: (id) object
 {
    [_target trackObject: object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [_target trackConstraint:cstr];
    [_target add: cstr];
    if (_cc) {
       [_ccSet addObject:cstr];
    }
+   return cstr;
 }
 -(id<ORModel>) model
 {
    return _target;
 }
--(void) minimize: (id<ORIntVar>) x
+-(id<ORTracker>)tracker
 {
-   [_target minimize:x];
+   return _target;
 }
--(void) maximize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
-   [_target maximize: x];
+   return [_target minimizeVar:x];
 }
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+{
+   return [_target maximizeVar: x];
+}
+
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) x
+{
+   return [_target minimize: x];
+}
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x
+{
+   return [_target maximize: x];
+}
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   return [_target minimize: array coef: coef];
+}
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+  return [_target maximize: array coef: coef];
+}
+
 -(void) trackObject: (id) obj
 {
    [_target trackObject:obj];
@@ -346,26 +495,50 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    _theGroup = group;
    return self;
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORTracker>)tracker
+{
+   return [_target tracker];
+}
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable:var];
+   return var;
 }
--(void) addObject:(id)object
+-(id) addObject:(id)object
 {
    [_target addObject:object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [_theGroup add:cstr];
+   return cstr;
 }
--(void) minimize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
-   [_target minimize:x];
+   return [_target minimizeVar:x];
 }
--(void) maximize: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
 {
-   [_target maximize:x];
+   return [_target maximizeVar:x];
 }
+-(id<ORObjectiveFunction>) minimize: (id<ORExpr>) x
+{
+   return [_target minimize: x];
+}
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x
+{
+   return [_target maximize: x];
+}
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   return [_target minimize: array coef: coef];
+}
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
+{
+   return [_target maximize: array coef: coef];
+}
+
 -(id<ORAddToModel>) model
 {
    return _target;
@@ -450,11 +623,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 }
 -(ORInt) intValue: (id) var
 {
-   return [[_shots objectAtIndex:[var getId]] intValue];   
+   ORUInt vid = [var getId];
+   ORUInt idx = (ORUInt) [_shots indexOfObjectPassingTest:^BOOL(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+      return *stop = [obj getId] == vid;
+   }];
+   return [[_shots objectAtIndex:idx] intValue];
 }
 -(BOOL) boolValue: (id) var
 {
-   return [[_shots objectAtIndex:[var getId]] boolValue];   
+   ORUInt vid = [var getId];
+   ORUInt idx = (ORUInt) [_shots indexOfObjectPassingTest:^BOOL(id<ORSavable> obj, NSUInteger idx, BOOL *stop) {
+      return *stop = [obj getId] == vid;
+   }];
+   return [[_shots objectAtIndex:idx] boolValue];
 }
 -(NSUInteger) count
 {
@@ -491,9 +672,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 @implementation ORSolutionPoolI
 -(id) init
 {
-   self = [super init];
-   _all = [[NSMutableSet alloc] initWithCapacity:64];
-   return self;
+    self = [super init];
+    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
+    return self;
 }
 
 -(void) dealloc
@@ -504,7 +686,8 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) addSolution:(id<ORSolution>)s
 {
-   [_all addObject:s];
+    [_all addObject:s];
+    [_solutionAddedInformer notifyWithSolution: s];
 }
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
@@ -514,7 +697,12 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    }];
 }
 
--(NSString*) description
+-(id<ORInformer>)solutionAdded 
+{
+    return _solutionAddedInformer;
+}
+
+-(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
@@ -533,9 +721,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
       if (bestSoFar == nil) {
          bestSoFar = [obj objectiveValue];
          sel = obj;
-      } else {
+      }
+      else {
          id<ORObjectiveValue> nv = [obj objectiveValue];
-         if ([nv key] < [bestSoFar key]) {
+         if ([bestSoFar compare: nv] == 1) {
             bestSoFar = nv;
             sel = obj;
          }
@@ -544,3 +733,35 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    return [sel retain];
 }
 @end
+
+@implementation ORConstraintSetI
+-(id) init
+{
+    self = [super init];
+    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    return self;
+}
+
+-(void) dealloc
+{
+    [_all release];
+    [super dealloc];
+}
+
+-(void) addConstraint:(id<ORConstraint>)c
+{
+    [_all addObject: c];
+}
+
+-(ORInt) size {
+    return (ORInt)[_all count];
+}
+
+-(void) enumerateWith:(void(^)(id<ORConstraint>))block
+{
+    [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+        block(obj);
+    }];
+}
+@end
+

@@ -17,6 +17,7 @@
 // MultiStart DFS CPSolver
 @interface CPMultiStartSolver : NSObject<CPProgram>
 -(id<CPProgram>) initCPMultiStartSolver: (ORInt) k;
+-(void) setSource:(id<ORModel>)src;
 -(id<CPProgram>) at: (ORInt) i;
 -(ORInt) nb;
 -(id<ORSolutionPool>) globalSolutionPool;

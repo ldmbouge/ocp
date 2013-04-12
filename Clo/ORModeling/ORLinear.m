@@ -27,6 +27,14 @@
    free(_terms);
    [super dealloc];
 }
+-(BOOL)isZero
+{
+   return _nb == 0 && _indep == 0;
+}
+-(BOOL)isOne
+{
+   return _nb== 0 && _indep == 1;
+}
 -(void)setIndependent:(ORInt)idp
 {
    _indep = idp;
@@ -124,7 +132,7 @@
       nbN += (_terms[k]._coef < 0);
    return nbN;
 }
-int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
+static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return t2->_coef - t1->_coef;
 }
@@ -199,32 +207,33 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    return min(MAXINT,bindUp(ub));
 }
 
--(void)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
+   id<ORConstraint> rv = NULL;
    switch(_nb) {
-      case 0: assert(NO);return;
+      case 0: assert(NO);return rv;
       case 1: {
          if (_terms[0]._coef == 1) {
-            [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:- _indep]];
+            rv = [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:- _indep]];
          } else if (_terms[0]._coef == -1) {
-            [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:_indep]];
+            rv = [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:_indep]];
          } else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
             ORInt cr = - _indep % _terms[0]._coef;
             if (cr == 0)
-               [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:nc]];
+               rv = [model addConstraint:[ORFactory notEqualc:model var:_terms[0]._var to:nc]];
          }
       }break;
       case 2: {
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            return [model addConstraint:[ORFactory notEqual:model var:_terms[0]._var to:_terms[1]._var plus:-_indep]];
+            rv = [model addConstraint:[ORFactory notEqual:model var:_terms[0]._var to:_terms[1]._var plus:-_indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
-            return [model addConstraint:[ORFactory notEqual:model var:_terms[1]._var to:_terms[0]._var plus:-_indep]];
+            rv = [model addConstraint:[ORFactory notEqual:model var:_terms[1]._var to:_terms[0]._var plus:-_indep]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
-            [model addConstraint:[ORFactory notEqual:model var:xp to:yp plus:- _indep]];
+            rv = [model addConstraint:[ORFactory notEqual:model var:xp to:yp plus:- _indep]];
          }
       }break;
       default: {
@@ -234,41 +243,43 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
                                          domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
          [self addTerm:alpha by:-1];
          [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
-         [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
+         rv = [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
       }break;
    }
+   return rv;
 }
--(void)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    // [ldm] This should *never* raise an exception, but return a ORFailure.
+   id<ORConstraint> rv = NULL;
    switch (_nb) {
       case 0:
          assert(NO);
-         return;
+         return NULL;
       case 1: {
          if (_terms[0]._coef == 1) {
-            return [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
+            rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:-_indep]];
          } else if (_terms[0]._coef == -1) {
-            return [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:_indep]];
+            rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:_indep]];
          } else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
             ORInt cr = - _indep % _terms[0]._coef;
             if (cr != 0)
-               [model addConstraint:[ORFactory fail:model]];
+               rv = [model addConstraint:[ORFactory fail:model]];
             else
-               [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:nc]];
+               rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:nc]];
          }
       }break;
       case 2: {
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            [model addConstraint:[ORFactory equal:model var:_terms[0]._var to:_terms[1]._var plus:-_indep annotation:cons]];
+            rv = [model addConstraint:[ORFactory equal:model var:_terms[0]._var to:_terms[1]._var plus:-_indep annotation:cons]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1) {
-            [model addConstraint:[ORFactory equal:model var:_terms[1]._var to:_terms[0]._var plus:-_indep annotation:cons]];
+            rv = [model addConstraint:[ORFactory equal:model var:_terms[1]._var to:_terms[0]._var plus:-_indep annotation:cons]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef];
-            [model addConstraint:[ORFactory equal:model var:xp to:yp plus:- _indep annotation:cons]];
+            rv = [model addConstraint:[ORFactory equal:model var:xp to:yp plus:- _indep annotation:cons]];
          }
       }break;
       case 3: {
@@ -280,7 +291,7 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale: _terms[0]._coef  shift: _indep];
          id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale: _terms[1]._coef];
          id<ORIntVar> zp = [ORFactory intVar:model var:_terms[2]._var scale: - _terms[2]._coef];
-         [model  addConstraint:[ORFactory equal3:model var:zp to:xp plus:yp annotation:cons]];
+         rv = [model  addConstraint:[ORFactory equal3:model var:zp to:xp plus:yp annotation:cons]];
       }break;
       default: {
          ORInt sumCoefs = 0;
@@ -289,56 +300,73 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
                sumCoefs += (_terms[k]._coef == 1);
          if (sumCoefs == _nb) {
             id<ORIntVarArray> boolVars = All(model,ORIntVar, i, RANGE(model,0,_nb-1), _terms[i]._var);
-            [model addConstraint:[ORFactory sumbool:model array:boolVars eqi: - _indep]];
+            rv = [model addConstraint:[ORFactory sumbool:model array:boolVars eqi: - _indep]];
          }
          else
-            [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi: - _indep]];
+            rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi: - _indep]];
       }
    }
+   return rv;
 }
--(void)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
+   id<ORConstraint> rv = NULL;
    switch(_nb) {
-      case 0: assert(FALSE);return;
+      case 0: assert(FALSE);return NULL;
       case 1: {  // x <= c
          if (_terms[0]._coef == 1)
-            return [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
+            rv = [model addConstraint: [ORFactory lEqualc:model var:_terms[0]._var to:- _indep]];
          else if (_terms[0]._coef == -1)
-            return [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
+            rv = [model addConstraint: [ORFactory gEqualc:model var:_terms[0]._var to: _indep]];
          else {
             assert(_terms[0]._coef != 0);
             ORInt nc = - _indep / _terms[0]._coef;
             ORInt cr = - _indep % _terms[0]._coef;
             if (nc < 0 && cr != 0)
-               [model addConstraint:[ORFactory lEqualc:model var:_terms[0]._var to:nc - 1]];
+               rv = [model addConstraint:[ORFactory lEqualc:model var:_terms[0]._var to:nc - 1]];
             else
-               [model addConstraint:[ORFactory lEqualc:model var:_terms[0]._var to:nc]];
+               rv = [model addConstraint:[ORFactory lEqualc:model var:_terms[0]._var to:nc]];
          }
       }break;
       case 2: {  // x <= y
          if (_terms[0]._coef == 1 && _terms[1]._coef == -1) {
-            return [model addConstraint:[ORFactory lEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
+            rv = [model addConstraint:[ORFactory lEqual:model var: _terms[0]._var to:_terms[1]._var plus:- _indep]];
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
-            return [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
+            rv = [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
             id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
             id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
-            [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
+            rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
          }
       }break;
       default:
-         [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] leqi:- _indep]];
+         rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] leqi:- _indep]];
    }
+   return rv;
+}
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   id<ORConstraint> rv = NULL;
+   switch (_nb) {
+      case 0: assert(FALSE);return NULL;
+      case 1: {
+         assert(_terms[0]._coef == 1 && _indep == 0);
+         rv = [model addConstraint:[ORFactory equalc:model var:_terms[0]._var to:1]];
+      }break;
+      case 2: {
+         assert(_terms[0]._coef == 1 && _terms[1]._coef == 1 && _indep == 0);
+         id<ORIntVar> nx = [ORFactory intVar:model var:_terms[0]._var scale:-1];
+         id<ORIntVar> y  = _terms[1]._var;
+         rv = [model addConstraint:[ORFactory lEqual:model var:nx to:y plus:-1]];
+         //rv = [model addConstraint:[ORFactory sumbool:model array:[self scaledViews:model] geqi:1]];
+      }break;
+      default:
+         rv = [model addConstraint:[ORFactory sumbool:model array:[self scaledViews:model] geqi:1]];
+         break;
+   }
+   return rv;
 }
 
--(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] eq: -_indep]];
-}
--(void)postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   [model addConstraint:[ORFactory sum: model array: [self variables: model] coef: [self coefficients: model] leq: -_indep]];
-}
 @end
 
 
@@ -349,6 +377,15 @@ int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    _real = r;
    return self;
 }
+-(BOOL)isZero
+{
+   return [_real isZero];
+}
+-(BOOL)isOne
+{
+   return [_real size] == 0 && [_real independent] == -1;
+}
+
 -(void) setIndependent:(ORInt)idp
 {
    [_real setIndependent:-idp];

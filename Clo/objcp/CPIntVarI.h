@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORSetI.h>
 #import <CPUKernel/CPTrigger.h>
 #import <CPUKernel/CPConstraintI.h>
@@ -103,13 +102,10 @@ typedef struct  {
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
 @end
 
-
-
-@interface CPIntVarI : NSObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf> {
+@interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf> {
 @package
    enum CPVarClass                      _vc;
-   ORUInt                         _isBool:1;
-   ORUInt                          _name:31;
+   BOOL                             _isBool;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
@@ -120,8 +116,6 @@ typedef struct  {
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
--(void) setId:(ORUInt)name;
--(ORInt)getId;
 -(BOOL) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
@@ -170,6 +164,7 @@ typedef struct  {
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
+-(ORInt) intValue;
 -(ORBounds)bounds;
 -(ORInt) domsize;
 -(BOOL) member:(ORInt)v;

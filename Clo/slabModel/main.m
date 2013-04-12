@@ -83,21 +83,30 @@ int main(int argc, const char * argv[])
    ORLong startTime = [ORRuntimeMonitor wctime];
    id<ORIntVarArray> slab = [ORFactory intVarArray: model range: SetOrders domain: Slabs];
    id<ORIntVarArray> load = [ORFactory intVarArray: model range: Slabs domain: Capacities];
-   id<ORIntVar> obj = [ORFactory intVar: model domain: RANGE(model,0,nbSize*maxCapacities)];
-   
-   [model add: [obj eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
+//   id<ORIntVar> o = [ORFactory intVar: model domain: RANGE(model,0,10000)];
+   NSLog(@"CO: %@",coloredOrder);
+   for(ORInt i=[Colors low];i <= [Colors up];i++)
+      for(ORInt j=[Colors low];j <= [Colors up];j++) {
+         if (i!=j) {
+            id<ORIntSet> ns = [coloredOrder[i] inter:coloredOrder[j]];
+            if ([ns size] !=0)
+               NSLog(@"INTER %d | %d = %@",i,j,ns);
+         }
+      }
+      
    [model add: [ORFactory packing: slab itemSize: weight load: load]];
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
-      [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eqi: s])) leqi: 2]];
-   [model minimize: obj];
-   
-   id<CPProgram> cp = [ORFactory createCPProgram:model];
+      [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
+//   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
+   id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
+//   id<ORObjectiveFunction> obj = [model minimize: o];
+   id<CPProgram> cp = [ORFactory createCPProgram: model];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
    //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
    [cp solve: ^{
       __block ORInt depth = 0;
-
+      printf(" Starting search \n");
       [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![slab[o] bound];} orderedBy:^ORInt(ORInt o) { return ([slab[o] domsize]);} do: ^(ORInt o){
 #define TESTTA 1
 #if TESTTA==0
@@ -133,14 +142,11 @@ int main(int argc, const char * argv[])
 #endif
           depth++;
       }];
-      printf("\n");
-      printf("obj: %d %p\n",[obj min],[NSThread currentThread]);
-      //printf("Slab: ");
-      //for(ORInt i = 1; i <= nbSize; i++)
-      //   printf("%d ",[slab[i] value]);
-      //printf("\n");
-   }];
-   
+      NSLog(@"Objective value: %@",[obj value]);
+      //NSLog(@"Objective value: %d",[[obj value] value]);
+    }];
+   id<ORSolution> sol = [model bestSolution];
+   NSLog(@"Solution %@",sol);
    ORLong endTime = [ORRuntimeMonitor wctime];
    NSLog(@"Execution Time (WC): %lld \n",endTime - startTime);
    NSLog(@"Solver status: %@\n",cp);

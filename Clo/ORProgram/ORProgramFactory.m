@@ -32,19 +32,35 @@
 #import "LPSolver.h"
 #import "LPConcretizer.h"
 
+// MIP Solver
+#import "MIPProgram.h"
+#import "MIPSolver.h"
+#import "MIPConcretizer.h"
+
 // PVH to factorize this
 
 @implementation ORFactory (Concretization)
+
++(id<CPProgram>)concretizeCP:(id<ORModel>)m
+{
+   id<CPProgram> mp = [CPSolverFactory solver];
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: mp];
+   [m visit: concretizer];
+   [concretizer release];
+   [mp setSource:m];
+   return mp;
+}
+
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
-   id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into:batch];
-   [batch release];
+   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model objects] count],[[model constraints] count]);
+   id<ORModel> fm = [model flatten];
+   NSLog(@"FLAT  %ld %ld %ld",[[fm variables] count],[[fm objects] count],[[fm constraints] count]);
+   //NSLog(@"FC: %@",[fm constraints]);
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   [flatModel visit: concretizer];
+   [fm visit: concretizer];
+   [cpprogram setSource:model];
    [concretizer release];
 }
 
@@ -56,6 +72,7 @@
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [model captureSolution];
+//      NSLog(@"Found solution with value: %@",[s objectiveValue]);
       [sp addSolution: s];
       [s release];
    }];
@@ -89,8 +106,8 @@
    [model setImpl: cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into: batch];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: model];
    [batch release];
    
    NSArray* objects = [flatModel objects];
@@ -113,17 +130,17 @@
          @synchronized(gp) {
             [gp addSolution: s];
          }
-         id<ORObjective> objective = [[cp objective] dereference];
+         id<ORSearchObjectiveFunction> objective = [cp objective];
          if (objective != NULL) {
-            ORInt myBound = [objective primalBound];
+            id<ORObjectiveValue> myBound = [objective primalBound];
             for(ORInt w=0;w < k;w++) {
                if (w == i) continue;
-               id<ORObjective> wwObj = [[[cpprogram at:w] objective] dereference];
-               [wwObj tightenPrimalBound:myBound];
+               id<ORSearchObjectiveFunction> wwObj = [[cpprogram at:w] objective];
+               [wwObj tightenPrimalBound: myBound];
                //NSLog(@"TIGHT: %@  -- thread %d",wwObj,[NSThread threadID]);
             }
+            [myBound release];
          }
-         
          [s release];
       }];
    }
@@ -136,8 +153,8 @@
    [model setImpl:cpprogram];
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: model into: batch];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: model];
    [batch release];
    for(id<ORObject> c in [flatModel objects]) {
       if ([c impl] == NULL) {
@@ -167,8 +184,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flattener = [ORFactory createLPFlattener];
-   [flattener apply: model into:batch];
+   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
+   [flattener apply: model];
    [batch release];
    
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
@@ -179,11 +196,33 @@
 
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
-   id<LPProgram> lpprogram = [LPSolverFactory solver];
+   id<LPProgram> lpprogram = [LPSolverFactory solver: model];
    [model setImpl: lpprogram];
-   [lpprogram setSource:model];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
+
++(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
+{
+   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
+   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
+   [flattener apply: model];
+   [batch release];
+   
+   id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
+   [flatModel visit: concretizer];
+   [concretizer release];
+   //NSLog(@"flat: %@",flatModel);
+}
+
++(id<MIPProgram>) createMIPProgram: (id<ORModel>) model
+{
+   id<MIPProgram> mipprogram = [MIPSolverFactory solver: model];
+   [model setImpl: mipprogram];
+   [self createMIPProgram: model program: mipprogram];
+   return mipprogram;
+}
+
 @end
 

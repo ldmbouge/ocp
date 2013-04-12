@@ -38,9 +38,9 @@ int main(int argc, const char * argv[])
       id<ORIntVarArray> denom = [ORFactory intVarArray:model range:RANGE(model,1,3) domain:RANGE(model,0,100)];
       id<ORIntVar> rhs = [ORFactory intVar:model domain:RANGE(model,0,1000000)];
       [model add:[ORFactory alldifferent:ad]];
-      [model add:[denom[1] eq: [[B muli:10] plus: C]]];
-      [model add:[denom[2] eq: [[E muli:10] plus: F]]];
-      [model add:[denom[3] eq: [[H muli:10] plus: I]]];
+      [model add:[denom[1] eq: [[B mul:@10] plus: C]]];
+      [model add:[denom[2] eq: [[E mul:@10] plus: F]]];
+      [model add:[denom[3] eq: [[H mul:@10] plus: I]]];
       [model add:[rhs eq: Prod(model, k, RANGE(model,1,3), denom[k])]];
       [model add:[[[[[A mul:denom[2]] mul: denom[3]] plus:
                     [[D mul: denom[1]] mul:denom[3]]] plus:

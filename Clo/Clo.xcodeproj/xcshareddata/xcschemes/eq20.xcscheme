@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5BB898F31697564D00FED099"
+               BlueprintIdentifier = "5B19098116DAACA7006D1D24"
                BuildableName = "eq20"
                BlueprintName = "eq20"
                ReferencedContainer = "container:Clo.xcodeproj">
@@ -32,7 +32,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BB898F31697564D00FED099"
+            BlueprintIdentifier = "5B19098116DAACA7006D1D24"
             BuildableName = "eq20"
             BlueprintName = "eq20"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -51,7 +51,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BB898F31697564D00FED099"
+            BlueprintIdentifier = "5B19098116DAACA7006D1D24"
             BuildableName = "eq20"
             BlueprintName = "eq20"
             ReferencedContainer = "container:Clo.xcodeproj">
@@ -69,7 +69,7 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5BB898F31697564D00FED099"
+            BlueprintIdentifier = "5B19098116DAACA7006D1D24"
             BuildableName = "eq20"
             BlueprintName = "eq20"
             ReferencedContainer = "container:Clo.xcodeproj">

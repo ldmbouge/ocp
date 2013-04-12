@@ -72,6 +72,7 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
    q->_tab[q->_enter] = (AC3Entry){cb,cstr};
    q->_enter = (q->_enter+1) & q->_mask;
    ++q->_csz;
+   assert(cb || cstr);
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
@@ -367,13 +368,15 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       CPEventNode* list = *mlist;
       while (list) {
          assert(list->_cstr);
-         list->_cstr->_todo = CPTocheck;
-         id<CPGroup> group = [list->_cstr group];
-         if (group) {
-            AC3enQueue(_ac3[LOWEST_PRIO], nil, group);
-            [group scheduleAC3:list];
-         } else
-            AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);
+         if (list->_cstr->_active._val) {
+            list->_cstr->_todo = CPTocheck;
+            id<CPGroup> group = list->_cstr->_group;
+            if (group) {
+               AC3enQueue(_ac3[LOWEST_PRIO], nil, group);
+               [group scheduleAC3:list];
+            } else
+               AC3enQueue(_ac3[list->_priority], list->_trigger,list->_cstr);
+         }
          list = list->_node;
       } 
       ++mlist;
@@ -427,6 +430,9 @@ ORStatus propagateFDM(CPEngineI* fdm)
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(ac5)) {
+            
+            assert(0);
+            
             id<CPAC5Event> evt = deQueueAC5(ac5);
             nbp += [evt execute];
          }
@@ -601,13 +607,13 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    }
 }
 
--(void) setObjective: (id<ORObjective>) obj
+-(void) setObjective: (id<ORSearchObjectiveFunction>) obj
 {
    [_objective release];
    _objective = [obj retain];
 }
 
--(id<ORObjective>) objective
+-(id<ORSearchObjectiveFunction>) objective
 {
    return _objective;
 }

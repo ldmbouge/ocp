@@ -115,9 +115,10 @@
 
 @implementation CPCoreSolver {
 @protected
+   id<ORModel>           _source;
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
-   id<ORObjective>       _objective;
+   id<ORSearchObjectiveFunction>  _objective;
    id<ORTrail>           _trail;
    id<ORTracer>          _tracer;
    CPHeuristicSet*       _hSet;
@@ -134,6 +135,7 @@
 -(CPCoreSolver*) initCPCoreSolver
 {
    self = [super init];
+   _source = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
@@ -147,6 +149,7 @@
 }
 -(void) dealloc
 {
+   [_source release];
    [_hSet release];
    [_portal release];
    [_returnLabel release];
@@ -156,6 +159,12 @@
    [_doOnExitArray release];
    [super dealloc];
 }
+-(void) setSource:(id<ORModel>)src
+{
+   [_source release];
+   _source = [src retain];
+}
+
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
@@ -189,7 +198,7 @@
 {
    return _search;
 }
--(id<ORObjectiveFunction>) objective
+-(id<ORSearchObjectiveFunction>) objective
 {
    return [_engine objective];
 }
@@ -254,7 +263,7 @@
                   onSolution: ^{ [self doOnSolution];}
                       onExit: ^{ [self doOnExit];}
        ];
-      printf("Optimal Solution: %d thread:%d\n",[_objective primalBound],[NSThread threadID]);
+      NSLog(@"Optimal Solution: %@ thread:%d\n",[_objective primalBound],[NSThread threadID]);
    }
    else {
       _oneSol = YES;
@@ -419,6 +428,7 @@
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
+   x = [[_source rootModel] lookup:x];
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++)
@@ -679,6 +689,11 @@
    [self addHeuristic:h];
    return h;
 }
+-(ORInt)intValue:(id<ORIntVar>)x
+{
+   id<CPIntVar> y = [[_source rootModel] lookup:x];
+   return y.value;
+}
 @end
 
 /******************************************************************************************/
@@ -686,17 +701,18 @@
 /******************************************************************************************/
 
 @interface ORRTModel : NSObject<ORAddToModel>
--(ORRTModel*) init:(CPSolver*)solver;
--(void)       addVariable: (id<ORVar>) var;
--(void)       addObject: (id) object;
--(void)       addConstraint: (id<ORConstraint>) cstr;
--(void)       minimize: (id<ORIntVar>) x;
--(void)       maximize: (id<ORIntVar>) x;
--(void)       trackObject: (id) obj;
--(void)       trackVariable: (id) obj;
--(void)       trackConstraint: (id) obj;
--(void) compiling:(id<ORConstraint>)cstr;
--(NSSet*)compiledMap;
+-(ORRTModel*) init:(CPSolver*) solver;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject: (id) object;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(void) trackObject: (id) obj;
+-(void) trackVariable: (id) obj;
+-(void) trackConstraint: (id) obj;
+-(void) compiling: (id<ORConstraint>) cstr;
+-(NSSet*) compiledMap;
+-(id<ORTracker>)tracker;
 @end
 
 @implementation ORRTModel
@@ -716,27 +732,50 @@
    [_concretizer release];
    [super dealloc];
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_solver trackVariable:var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addObject: (id) object
 {
    [_solver trackObject: object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
    id<CPConstraint> c = [cstr dereference];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
+   return cstr;
 }
--(void) minimize:(id<ORIntVar>) x
+-(id<ORTracker>)tracker
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize/1 not allowed during search"]; 
+   return _solver;
 }
--(void) maximize:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize/1 not allowed during search"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimizeVar: not allowed during search"];
+}
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximizeVar: not allowed during search"];
+}
+-(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize: not allowed during search"];
+}
+-(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize: not allowed during search"];
+}
+-(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimize:coef: not allowed during search"];   
+}
+-(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
 -(void) trackObject: (id) obj
 {

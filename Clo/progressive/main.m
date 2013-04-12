@@ -74,7 +74,7 @@ int main(int argc, const char * argv[])
          [mdl add: [ORFactory alldifferent: All(mdl,ORIntVar, p, Periods, [boat at:g :p]) ]];
       for(ORInt g1 = Guests.low; g1 <= Guests.up; g1++)
          for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
-            [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leqi: 1]];
+            [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leq: @1]];
       for(ORInt p = Periods.low; p <= Periods.up; p++)
          [mdl add: [ORFactory packing: All(mdl,ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
       

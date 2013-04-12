@@ -32,11 +32,11 @@ int main(int argc, const char * argv[])
          id<ORIntVarMatrix> s = [ORFactory intVarMatrix:model range:R :R domain:D];
          [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [s at:i :j])]];
          for(ORInt i=1;i <= n;i++) {
-            [model add:[Sum(model, j, R, [s at:i :j]) eqi: T]];
-            [model add:[Sum(model, j, R, [s at:j :i]) eqi: T]];
+            [model add:[Sum(model, j, R, [s at:i :j]) eq: @(T)]];
+            [model add:[Sum(model, j, R, [s at:j :i]) eq: @(T)]];
          }
-         [model add:[Sum(model, i, R, [s at:i :i]) eqi: T]];
-         [model add:[Sum(model, i, R, [s at:i :n-i+1]) eqi: T]];
+         [model add:[Sum(model, i, R, [s at:i :i]) eq: @(T)]];
+         [model add:[Sum(model, i, R, [s at:i :n-i+1]) eq: @(T)]];
          for(ORInt i=1;i<=n-1;i++) {
             [model add:[[s at:i :i]     lt:[s at:i+1 :i+1]]];
             [model add:[[s at:i :n-i+1] lt:[s at:i+1 :n-i]]];

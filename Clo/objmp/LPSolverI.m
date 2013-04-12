@@ -370,9 +370,9 @@
 {
    _posted = true;
 }
--(ORFloat) value
+-(id<ORObjectiveValue>) value
 {
-   return [_solver lpValue] + _cst;
+   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
 }
 -(ORInt) nb
 {
@@ -403,6 +403,11 @@
    printf("minimize ");
    [super print];
 }
+-(id<ORObjectiveValue>) value
+{
+   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: true];
+}
+
 @end
 
 @implementation LPMaximize;
@@ -421,6 +426,10 @@
 {
    printf("maximize ");
    [super print];
+}
+-(id<ORObjectiveValue>) value
+{
+   return [ORFactory objectiveValueFloat: [_solver lpValue] + _cst minimize: false];
 }
 @end
 
@@ -501,7 +510,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"%f",[_solver value:self]];
+   [buf appendFormat:@"%f",[_solver floatValue:self]];
    return buf;
 }
 -(void) resize
@@ -569,16 +578,38 @@
 {
    return [_solver createColumn:_low up:_up size:_size obj:_objCoef cstr:_cstr coef:_coef];
 }
--(ORFloat) value
+-(ORFloat) floatValue
 {
-   return [_solver value: self];
+   return [_solver floatValue:self];
 }
+
 -(ORFloat) reducedCost
 {
    return [_solver reducedCost: self];
 }
+-(BOOL) isInteger
+{
+   return false;
+}
 @end
 
+
+@implementation LPIntVariableI
+-(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
+{
+   [super initLPVariableI: solver low: low up: up];
+   return self;
+}
+-(LPIntVariableI*) initLPIntVariableI: (LPSolverI*) solver
+{
+   [super initLPVariableI: solver];
+   return self;
+}
+-(BOOL) isInteger
+{
+   return true;
+}
+@end
 
 @implementation LPColumnI
 
@@ -911,6 +942,20 @@
    [self addVariable: v];
    return v;
 }
+-(LPVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up
+{
+   LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self low: low up: up];
+   [v setNb: _createdVars++];
+   [self addVariable: v];
+   return v;
+}
+-(LPIntVariableI*) createIntVariable
+{
+   LPIntVariableI* v = [[LPIntVariableI alloc] initLPIntVariableI: self];
+   [v setNb: _createdVars++];
+   [self addVariable: v];
+   return v;
+}
 -(LPVariableI*) createVariable: (ORFloat) low up: (ORFloat) up
 {
    LPVariableI* v = [[LPVariableI alloc] initLPVariableI: self low: low up: up];
@@ -918,6 +963,7 @@
    [self addVariable: v];
    return v;
 }
+
 -(LPColumnI*) createColumn: (ORFloat) low up: (ORFloat) up size: (ORInt) size obj: (ORFloat) obj cstr: (LPConstraintI**) cstr coef: (ORFloat*) coef
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef];
@@ -961,27 +1007,24 @@
    return [self createLEQ: t rhs: rhs];
 }
 
--(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+-(LPConstraintI*) createLEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    LPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
    ORInt low = R.low;
    ORInt up = R.up;
-   for(ORInt i = low; i <= up; i++) {
-      NSLog(@" %d -> %d * var(%d)",i,[coef at: i],[var[i] idx]);
+   for(ORInt i = low; i <= up; i++) 
       [t add: [coef at: i] times: var[i]];
-   }
    return [self createLEQ: t rhs: -cst];
 }
--(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORIntArray>) coef cst: (ORInt) cst
+-(LPConstraintI*) createEQ: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef cst: (ORFloat) cst
 {
    LPLinearTermI* t = [self createLinearTerm];
    id<ORIntRange> R = [var range];
    ORInt low = R.low;
    ORInt up = R.up;
-   for(ORInt i = low; i <= up; i++) {
+   for(ORInt i = low; i <= up; i++) 
       [t add: [coef at: i] times: var[i]];
-   }
    return [self createEQ: t rhs: -cst];
 }
 -(LPObjectiveI*)  createObjectiveMinimize: (LPVariableI*) x
@@ -1040,6 +1083,25 @@
    [o setNb: _createdObjs++];
    return o;
 }
+-(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   ORInt low = [var low];
+   ORInt up = [var up];
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createMinimize: t];
+}
+-(LPObjectiveI*)  createObjectiveMaximize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
+{
+   LPLinearTermI* t = [self createLinearTerm];
+   ORInt low = [var low];
+   ORInt up = [var up];
+   for(ORInt i = low; i <= up; i++)
+      [t add: [coef at: i] times: var[i]];
+   return [self createMaximize: t];
+}
+
 -(LPConstraintI*) createLEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
 {
    [t close];
@@ -1183,7 +1245,7 @@
 {
    return [_lp status];
 }
--(ORFloat) value: (LPVariableI*) var
+-(ORFloat) floatValue: (LPVariableI*) var
 {
    return [_lp value: var];
 }
@@ -1203,7 +1265,14 @@
 {
    return [_lp dual: cstr];
 }
--(ORFloat) objectiveValue
+-(id<ORFloatArray>) duals
+{
+    id<ORFloatArray> arr = [ORFactory floatArray: self range: RANGE(self, 0, _nbCstrs-1) with: ^ORFloat(ORInt i) {
+        return [_cstr[i] dual];
+    }];
+   return arr; // [arr autorelease]; [ldm] makes no sense to auto-release. All the objects are tracked. This array in tracked in self (LPSolverI instance!)
+}
+-(id<ORObjectiveValue>) objectiveValue
 {
    if (_obj)
       return [_obj value];
@@ -1211,7 +1280,7 @@
       @throw [[NSException alloc] initWithName:@"LPSolver Error"
                                         reason:@"No objective function posted"
                                       userInfo:nil];
-   return 0.0;
+   return NULL;
 }
 -(ORFloat) lpValue
 {
