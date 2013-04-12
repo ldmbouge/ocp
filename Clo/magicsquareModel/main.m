@@ -53,25 +53,29 @@ int main(int argc, const char * argv[])
          __block BOOL found = NO;
          [cp solve:^{
             [cp limitTime:maxTime in: ^ {
-               [cp repeat:^{
-                  [cp limitFailures:[nbFailures value] in: ^ {
-                     [cp labelHeuristic:h];
-                     @autoreleasepool {
-                        for(ORInt i =1;i <= n;i++) {
-                           NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-                           for (ORInt j=1; j<=n; j++) {
-                              [buf appendFormat:@"%3d ",[[s at:i :j] value]];
+               ///[cp repeat:^{
+               while(!found) {
+                  [cp try:^{
+                     [cp limitFailures:[nbFailures value] in: ^ {
+                        [cp labelHeuristic:h];
+                        @autoreleasepool {
+                           for(ORInt i =1;i <= n;i++) {
+                              NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+                              for (ORInt j=1; j<=n; j++) {
+                                 [buf appendFormat:@"%3d ",[[s at:i :j] value]];
+                              }
+                              NSLog(@"%@",buf);
                            }
-                           NSLog(@"%@",buf);
                         }
-                     }
-                     found = YES;
+                        found = YES;
+                     }];
+                  } or:^{
+                     [nbFailures setValue:(float)[nbFailures value] * rf];
+                     [nbRestarts incr];
+                     NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
                   }];
-               } onRepeat:^{
-                  [nbFailures setValue:(float)[nbFailures value] * rf];
-                  [nbRestarts incr];
-                  NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
-               }];
+               //} onRepeat:^{
+               };
             }];
             
          }];
