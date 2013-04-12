@@ -1,0 +1,407 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 87.0,
+		"selected_items":
+		[
+			[
+				"indent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"clang",
+				"SublimeClang: Clear cache"
+			],
+			[
+				"Sub",
+				"Set Syntax: SublimeClangErrorPanel"
+			],
+			[
+				"sub",
+				"Preferences: SublimeClang Settings – Default"
+			],
+			[
+				"subl",
+				"Preferences: SublimeClang Settings – User"
+			],
+			[
+				"Instal",
+				"Package Control: Install Package"
+			],
+			[
+				"Upgrade",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Upgr",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"Add re",
+				"Package Control: Add Repository"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"upd",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"disabl",
+				"Package Control: Disable Package"
+			],
+			[
+				"upgra",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"git",
+				"Git: Status"
+			],
+			[
+				"git stat",
+				"Git: Status"
+			],
+			[
+				"reindent",
+				"Indentation: Reindent Lines"
+			],
+			[
+				"latex",
+				"LaTeXTools: View PDF"
+			],
+			[
+				"Install",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 449.0
+	},
+	"console":
+	{
+		"height": 303.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/ldm/work/platform/Clo.sublime-project",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPFactory.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPIntVarI.m",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPEngineI.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORController.h",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPParallel.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORExplorerI.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPParallel.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPObjectQueue.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPObjectQueue.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPLexConstraint.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORLimit.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/ORCPParSolver.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPBasicConstraint.m",
+		"/Users/ldm/work/platform/Clo/knapsackOpt/main.m",
+		"/Users/ldm/work/platform/Clo/knapsack/main.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPSolver.m",
+		"/Users/ldm/work/platform/Clo/ORProgram/CPABS.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.m",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitVarI.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.h",
+		"/Users/ldm/work/platform/Clo/objcp/CPBitConstraint.m",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPGroup.h",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/User/SublimeClang.sublime-settings",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORModelI.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORFactory.m",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.h",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORDecompose.m",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORModel.h",
+		"/Users/ldm/work/platform/Clo/ORFoundation/ORVar.h",
+		"/Users/ldm/work/platform/Clo/ORModeling/ORFlatten.m",
+		"/Users/ldm/Documents/courses/CSE4100/tex/hw2.tex",
+		"/Users/ldm/Library/Application Support/Sublime Text 2/Packages/SublimeClang/SublimeClang.sublime-settings",
+		"/Users/ldm/work/platform/Clo/CPUKernel/CPAC3Event.h",
+		"/Users/ldm/.bashrc",
+		"/Users/ldm/Desktop/script.py",
+		"/Users/ldm/Desktop/histo.history",
+		"/Users/ldm/.cshrc"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"  ",
+			"Condition",
+			"Nested",
+			"initCPIntVarCore:",
+			"initCPIntVarView:",
+			"initIVarShiftView:",
+			"initIVarIShift",
+			"CPBitAdd",
+			"Add",
+			"ORIntVar",
+			"ORSumBoolGEqc",
+			"{}\n",
+			" \n",
+			"	",
+			"\n",
+			"flattenExpression",
+			"flatten:",
+			"sum:",
+			"scaledViews:",
+			"oneView",
+			"affine",
+			"Affine",
+			"affine",
+			"affineVar",
+			"AFFineVar",
+			"|",
+			"nobtf",
+			"breaks",
+			"btf",
+			"\n ",
+			"btf",
+			"'foo.csv'"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.clang":
+	{
+		"height": 100.0
+	},
+	"output.clang_static_analyzer":
+	{
+		"height": 0.0
+	},
+	"output.exec":
+	{
+		"height": 116.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"orseti",
+				"ORFoundation/ORSetI.m"
+			],
+			[
+				"cpabs",
+				"ORProgram/CPABS.m"
+			],
+			[
+				"orsele",
+				"ORFoundation/ORSelectorI.h"
+			],
+			[
+				"orfac",
+				"ORFoundation/ORFactory.m"
+			],
+			[
+				"cpsolver",
+				"ORProgram/CPSolver.m"
+			],
+			[
+				"knap/main",
+				"knapsack/main.m"
+			],
+			[
+				"knapsackop",
+				"knapsackOpt/main.m"
+			],
+			[
+				"cpbasiccon",
+				"objcp/CPBasicConstraint.m"
+			],
+			[
+				"cppar",
+				"ORProgram/ORCPParSolver.m"
+			],
+			[
+				"cpobje",
+				"objcp/CPObjectQueue.h"
+			],
+			[
+				"knapsa",
+				"knapsack/main.m"
+			],
+			[
+				"orlimit",
+				"ORFoundation/ORLimit.m"
+			],
+			[
+				"orexpo",
+				"ORFoundation/ORExplorerI.m"
+			],
+			[
+				"cpso",
+				"ORProgram/CPSolver.h"
+			],
+			[
+				"orcontr",
+				"ORFoundation/ORController.m"
+			],
+			[
+				"cpparall",
+				"ORProgram/CPParallel.m"
+			],
+			[
+				"cppars",
+				"ORProgram/ORCPParSolver.m"
+			],
+			[
+				"cpintvari",
+				"objcp/CPIntVarI.m"
+			],
+			[
+				"cpfac",
+				"objcp/CPFactory.m"
+			],
+			[
+				"cpengine",
+				"CPUKernel/CPEngineI.m"
+			],
+			[
+				"cplex",
+				"objcp/CPLexConstraint.m"
+			],
+			[
+				"bitcon",
+				"objcp/CPBitConstraint.m"
+			],
+			[
+				"orflatte",
+				"ORModeling/ORFlatten.h"
+			],
+			[
+				"ormodeli",
+				"ORFoundation/ORModelI.h"
+			],
+			[
+				"orfact",
+				"ORFoundation/ORFactory.m"
+			],
+			[
+				"ordecom",
+				"ORModeling/ORDecompose.m"
+			],
+			[
+				"orflatt",
+				"ORModeling/ORFlatten.m"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"/Users/ldm/work/platform/Clo.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 192.0,
+	"status_bar_visible": true
+}

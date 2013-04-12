@@ -51,27 +51,26 @@
 @end
 
 @protocol ORAddToModel <ORTracker>
--(void) addVariable:(id<ORVar>) var;
--(void )addObject:(id) object;
+-(id<ORVar>) addVariable:(id<ORVar>) var;
+-(id) addObject:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
-
+-(id<ORTracker>)tracker;
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
-
 @end
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
-+(id<ORModelTransformation>) createFlattener;
-+(id<ORModelTransformation>) createLPFlattener;
-+(id<ORModelTransformation>) createMIPFlattener;
-+(id<ORModelTransformation>) createLinearizer;
++(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into;
++(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into;
 +(id<ORSolutionPool>) createSolutionPool;
 +(id<ORConstraintSet>) createConstraintSet;
 @end

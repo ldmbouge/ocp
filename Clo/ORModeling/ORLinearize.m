@@ -23,34 +23,37 @@
 
 @end
 
-@implementation ORLinearize
--(id)initORLinearize
+@implementation ORLinearize {
+   id<ORAddToModel> _into;
+}
+-(id)initORLinearize:(id<ORAddToModel>)into
 {
-    self = [super init];
-    return self;
+   self = [super init];
+   _into = into;
+   return self;
 }
 
 +(id<ORModel>)linearize:(id<ORModel>)model
 {
-   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
    id<ORModel> lin = [ORFactory createModel];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
-   [linearizer apply: model into: lm];
+   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize :lm];
+   [linearizer apply: model];
    return lin;
 }
 
--(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)batch
+-(void)apply:(id<ORModel>)m 
 {
     [m applyOnVar:^(id<ORVar> x) {
-        [batch addVariable: x];
+        [_into addVariable: x];
     } onObjects:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
-        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: batch];
+        ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
         [c visit: lc];
         [lc release];
     } onObjective:^(id<ORObjectiveFunction> o) {
-        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: batch];
+        ORLinearizeObjective* lo = [[ORLinearizeObjective alloc] init: _into];
         [o visit: lo];
     }];
 }
@@ -332,15 +335,16 @@
 @end
 
 @implementation ORFactory(Linearize)
-+(id<ORModel>) linearizeModel:(id<ORModel>)m {
-    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize];
-    id<ORModel> lm = [ORFactory createModel];
-    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
-    [linearizer apply: m into: batch];
-    id<ORModel> clm = [ORFactory cloneModel: lm];
-    [lm release];
-    [batch release];
-    [linearizer release];
-    return clm;
++(id<ORModel>) linearizeModel:(id<ORModel>)m
+{
+   id<ORModel> lm = [ORFactory createModel];
+   ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
+   id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
+   [linearizer apply: m];
+   id<ORModel> clm = [ORFactory cloneModel: lm];
+   [lm release];
+   [batch release];
+   [linearizer release];
+   return clm;
 }
 @end

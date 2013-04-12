@@ -64,9 +64,6 @@
 @end
 
 @interface ORIdArrayI : ORDualUseObjectI<NSCoding,ORIdArray>
-{
-
-}
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
@@ -108,12 +105,14 @@
 {
    id<ORTracker>  _tracker;
 }
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) matrix;
 -(void) dealloc;
 -(ORInt) arity;
 -(id) flat:(ORInt)i;
+-(void) setFlat:(id) x at:(ORInt)i;
 -(id) at: (ORInt) i0 : (ORInt) i1;
 -(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1;

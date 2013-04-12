@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
          
          [model minimize: assignCost];
          [model add: [ORFactory alldifferent: tasks]];
-         [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plusi:(i-1)*n -  1]])]];
+         [model add: [assignCost eq: Sum(model, i, R, [cost elt: [tasks[i] plus:@((i-1)*n -  1)]])]];
          
          id<ORModel> m0 = [model copy];
          id<ORModel> cm = [m0 flatten];

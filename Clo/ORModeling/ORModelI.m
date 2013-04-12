@@ -11,6 +11,8 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
+#import "ORVarI.h"
+#import "ORSetI.h"
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORConcurrencyI.h"
@@ -24,6 +26,8 @@
    // pvh to clean once generalized
    id<ORObjectiveFunction>  _objective;
    ORUInt                   _name;
+   ORUInt                   _nbObjects; // number of objects registered with this model.
+   // ===================================
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    id<ORModel>              _original;  // that's the pointer to the original copy we were cloned from.
    // ===================================
@@ -43,6 +47,7 @@
    _oStore = [[NSMutableArray alloc] initWithCapacity:32];
    _objective = nil;
    _name = 0;
+   _nbObjects = 0;
    _orig2Me = NULL;
    _cMap = [[NSMutableDictionary alloc] initWithCapacity:32];
    _ccSet = [[NSMutableSet alloc] initWithCapacity:32];
@@ -55,6 +60,10 @@
    _orig2Me = [[NSMutableDictionary alloc] initWithCapacity:nb];
    return self;
 }
+-(id<ORTracker>)tracker
+{
+   return self;
+}
 -(void)map:(id)key toObject:(id)object
 {
    NSValue* v = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
@@ -62,10 +71,14 @@
 }
 -(id)lookup:(id)key
 {
-   NSValue* kv = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
-   id rv = [_orig2Me objectForKey:kv];
-   [kv release];
-   return rv;
+   if (_orig2Me == NULL)
+      return key;
+   else {
+      NSValue* kv = [[NSValue alloc] initWithBytes:&key objCType:@encode(void*)];
+      id rv = [_orig2Me objectForKey:kv];
+      [kv release];
+      return rv;
+   }
 }
 -(void) dealloc
 {
@@ -100,6 +113,7 @@
 }
 -(void) captureVariable: (id<ORVar>) x
 {
+   
    [_vars addObject:x];
    [_oStore addObject:x];
 }
@@ -144,13 +158,15 @@
 {
    return [NSArray arrayWithArray: _oStore];
 }
--(void) addVariable:(id<ORVar>) var
+-(id<ORVar>) addVariable:(id<ORVar>) var
 {
-   [self captureVariable: var];   
+   [self captureVariable: var];
+   return var;
 }
--(void )addObject:(id) object
+-(id) addObject:(id) object
 {
    [self trackObject:object];
+   return object;
 }
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr
 {
@@ -261,20 +277,21 @@
    [self trackObject: _objective];
     return _objective;
 }
-
--(void) trackObject: (id) obj;
+-(void) trackObject: (id) obj
 {
+   [obj setId:_nbObjects++];
    [_oStore addObject:obj];
 }
--(void) trackVariable: (id) var;
+-(void) trackVariable: (id) var
 {
-   [var setId: (ORUInt) [_vars count]];
+   [var setId:_nbObjects++];
    [_vars addObject:var];
    [_oStore addObject:var];
 }
 -(void) trackConstraint:(id)obj
 {
-   [_oStore addObject:obj];
+   [obj setId:_nbObjects++];
+   //[_oStore addObject:obj];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
           onObjects: (void(^)(id<ORObject>)) doObjs
@@ -311,8 +328,8 @@
 {
    id<ORModel> flatModel = [ORFactory createModel];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
-   id<ORModelTransformation> flat = [ORFactory createFlattener];
-   [flat apply: self into:batch];
+   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: self];
    [batch release];
    [flatModel setSource:self];
    return flatModel;
@@ -353,13 +370,15 @@
    _ccSet  = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable: var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addObject: (id) object
 {
    [_target trackObject: object];
+   return object;
 }
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
@@ -374,7 +393,10 @@
 {
    return _target;
 }
-
+-(id<ORTracker>)tracker
+{
+   return _target;
+}
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
    return [_target minimizeVar:x];
@@ -429,13 +451,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    _theGroup = group;
    return self;
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORTracker>)tracker
+{
+   return [_target tracker];
+}
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable:var];
+   return var;
 }
--(void) addObject:(id)object
+-(id) addObject:(id)object
 {
    [_target addObject:object];
+   return object;
 }
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
@@ -484,7 +512,6 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    [_target trackConstraint:obj];
 }
 @end
-
 
 @implementation ORSolutionPoolI
 -(id) init

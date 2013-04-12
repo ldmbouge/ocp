@@ -226,25 +226,28 @@
 @end
 
 
-@implementation ORMIPFlatten
--(id)initORMIPFlatten
+@implementation ORMIPFlatten {
+   id<ORAddToModel> _into;
+}
+-(id)initORMIPFlatten:(id<ORAddToModel>)into
 {
    self = [super init];
+   _into = into;
    return self;
 }
--(void) apply: (id<ORModel>) m into: (id<ORAddToModel>) batch
+-(void) apply: (id<ORModel>) m
 {
    [m applyOnVar:^(id<ORVar> x) {
-      [batch addVariable:x];
+      [_into addVariable:x];
    } onObjects:^(id<ORObject> x) {
-      ORMIPFlattenObjects* fo = [[ORMIPFlattenObjects alloc] init:batch];
+      ORMIPFlattenObjects* fo = [[ORMIPFlattenObjects alloc] init:_into];
       [x visit:fo];
       [fo release];
    } onConstraints:^(id<ORConstraint> c) {
-      [ORMIPFlatten flatten:c into:batch];
+      [ORMIPFlatten flatten:c into:_into];
    } onObjective:^(id<ORObjectiveFunction> o) {
       if (o) {
-         ORMIPFlattenObjective* fo = [[ORMIPFlattenObjective alloc] init:batch];
+         ORMIPFlattenObjective* fo = [[ORMIPFlattenObjective alloc] init:_into];
          [o visit:fo];
          [fo release];
       }

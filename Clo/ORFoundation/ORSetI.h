@@ -32,6 +32,7 @@
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
 -(void)visit:(id<ORVisitor>)v;
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end

@@ -33,8 +33,8 @@
    -(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
--(void) addVariable:(id<ORVar>) var;
--(void) addObject:(id) object;
+-(id<ORVar>) addVariable:(id<ORVar>) var;
+-(id) addObject:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
@@ -51,8 +51,8 @@
 
 @interface ORBatchModel : NSObject<ORAddToModel>
 -(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject:(id)object;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
@@ -67,8 +67,8 @@
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject:(id)object;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addObject:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;

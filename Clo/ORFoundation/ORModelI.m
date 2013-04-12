@@ -14,23 +14,11 @@
 #import "ORModelI.h"
 
 @implementation ORConstraintI
-{
-   @protected
-   ORUInt _name;
-}
 -(ORConstraintI*) initORConstraintI
 {
    self = [super init];
    _impl = nil;   
    return self;
-}
--(void) setId: (ORUInt) name;
-{
-   _name = name;
-}
--(ORUInt) getId
-{
-   return _name;
 }
 -(NSString*) description
 {
@@ -47,7 +35,6 @@
 @implementation ORGroupI {
    NSMutableArray* _content;
    id<ORTracker>     _model;
-   ORUInt             _name;
    enum ORGroupType     _gt;
 }
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt
@@ -63,14 +50,6 @@
 {
    [_content release];
    [super dealloc];
-}
--(void) setId: (ORUInt) name
-{
-   _name = name;
-}
--(ORUInt)getId
-{
-   return _name;
 }
 -(id<ORConstraint>)add:(id<ORConstraint>)c
 {
@@ -689,12 +668,14 @@
 @implementation ORAbs { // x = |y|
    id<ORIntVar> _x;
    id<ORIntVar> _y;
+   ORAnnotation _annotation;
 }
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y
 {
    self = [super initORConstraintI];
    _x = x;
    _y = y;
+   _annotation = Default;
    return self;
 }
 -(NSString*) description
@@ -715,6 +696,10 @@
 {
    return _y;
 }
+-(ORAnnotation) annotation
+{
+   return _annotation;
+}
 @end
 
 
@@ -734,7 +719,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ || %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ || %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -771,7 +756,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ && %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ && %@)",[self class],self,_impl,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1672,6 +1657,15 @@
    _n = DomainConsistency;
    return self;
 }
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _low = low;
+   _up = up;
+   _n = c;
+   return self;
+}
 -(id<ORIntVarArray>) array
 {
    return _x;
@@ -1712,7 +1706,7 @@
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<ORAlgebraicConstraintI : %p IS %@>",self,_expr];
+   [buf appendFormat:@"<ORAlgebraicConstraintI : %p(%d) IS %@>",self,[self getId],_expr];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2035,18 +2029,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _impl != nil;
 }
--(void) setImpl: (id<ORObjectiveFunction>) impl
-{
-   _impl = impl;
-}
--(id<ORObjectiveFunction>) impl
-{
-   return _impl;
-}
--(id<ORObjectiveFunction>) dereference
-{
-   return [_impl dereference];
-}
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitObjectiveFunctionVar:self];
@@ -2190,18 +2172,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _impl != nil;
 }
--(void) setImpl:(id<ORObjectiveFunction>)impl
-{
-   _impl = impl;
-}
--(id<ORObjectiveFunction>) impl
-{
-   return _impl;
-}
--(id<ORObjectiveFunction>) dereference
-{
-   return [_impl dereference];
-}
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitObjectiveFunctionExpr: self];
@@ -2228,18 +2198,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(ORBool) concretized
 {
    return _impl != nil;
-}
--(void) setImpl:(id<ORObjectiveFunction>)impl
-{
-   _impl = impl;
-}
--(id<ORObjectiveFunction>)impl
-{
-   return _impl;
-}
--(id<ORObjectiveFunction>) dereference
-{
-   return [_impl dereference];
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

@@ -23,7 +23,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitSolution dealloc called...\n");
+   //NSLog(@"ORLimitSolution dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
@@ -60,7 +60,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitSolution dealloc called...\n");
+   //NSLog(@"ORLimitSolution dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
