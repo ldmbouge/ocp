@@ -209,13 +209,19 @@
          NSLog(@"Message Blocks (With Data Recovered)");
          //         id<ORBitVar>* bitVars;
          clock_t searchStart = clock();
+         NSMutableArray* messageVarArray = [[NSMutableArray alloc] init];
+//         [cp labelBitVarsFirstFail:[engine variables]];
          for(int i=0; i<_numBlocks;i++){
             bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-            [cp labelBitVarsFirstFail:[engine variables]];
             for(int j=0;j<16;j++){
-               //[cp labelUpFromLSB:bitVars[j]];
-               NSLog(@"%@\n",bitVars[j]);
+//               [cp labelDownFromMSB:bitVars[j]];
+               [messageVarArray addObject:bitVars[j]];
+//               NSLog(@"%@\n",bitVars[j]);
             }
+         }
+         [cp labelBitVarsFirstFail:messageVarArray];
+         for(int j=0;j<16;j++){
+            NSLog(@"%@\n",bitVars[j]);
          }
          clock_t searchFinish = clock();
 

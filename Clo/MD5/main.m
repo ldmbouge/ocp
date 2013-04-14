@@ -29,8 +29,8 @@ int main(int argc, const char * argv[])
 
 //   MD4 *myMD4;
    MD5 *myMD5 = [MD5 initMD5];
-//   NSString *filename = @"lorem-mssg.txt";
-   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
+   NSString *filename = @"lorem-mssg.txt";
+//   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    
    NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
    
@@ -49,6 +49,7 @@ int main(int argc, const char * argv[])
             mask[i+1] = 0x00FFFFFF;
          }
          myMD5 = [MD5 initMD5];
+         [str appendFormat:@"%d ",(i*16)+j];
          [str appendString:[myMD5 preimage:filename withMask:mask]];
          [myMD5 dealloc];
          twobytemask >>= 8;

@@ -26,6 +26,7 @@
 #import "CPWDeg.h"
 #import "CPIBS.h"
 #import "CPABS.h"
+#import "CPBitVarABS.h"
 
 // LP Solver
 #import "LPProgram.h"

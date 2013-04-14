@@ -111,15 +111,21 @@
 }
 -(ORULong) domsize
 {
-   [self updateFreeBitCount];
-   return _freebits._val;
-   //return pow(2.0, _freebits._val);
-   //return 1 << _freebits._val;
+//   [self updateFreeBitCount];
+   ORULong dSize = 0x00000001;
+   dSize <<= _freebits._val;
+   return dSize;
+
 }
 -(BOOL) bound
 {
-   [self updateFreeBitCount];
+//   [self updateFreeBitCount];
     return _freebits._val==0;
+}
+-(ORBounds) bounds
+{
+   ORBounds b = {(ORInt)[self min],(ORInt)[self max]};
+   return b;
 }
 
 -(uint64)   min
@@ -219,7 +225,7 @@
 -(unsigned int) lsFreeBit
 {
    int j;
-   [self updateFreeBitCount];
+   //[self updateFreeBitCount];
    //Assumes length is a multiple of 32 bits
    //Should work otherwise if extraneous bits are
    //all the same value in up and low (e.g. 0)
@@ -232,28 +238,56 @@
    }
    return -1;
 }
+-(unsigned int) msFreeBit
+{
+   unsigned int freeBits;
+   int j;
+   //[self updateFreeBitCount];
+   //Assumes length is a multiple of 32 bits
+   //Should work otherwise if extraneous bits are
+   //all the same value in up and low (e.g. 0)
+   
+   for(int i=0; i<_wordLength; i++){
+      //NSLog(@"%d leading zeroes in %x\n",__builtin_clz((_low[i]._val^_up[i]._val)), (_low[i]._val^_up[i]._val));
+      freeBits =_low[i]._val^_up[i]._val;
+      if (freeBits==0) {
+         continue;
+      }
+      else if (freeBits==0xFFFFFFFF) {
+         return _bitLength-((i*32)+1);
+      }
+      else if ((j=__builtin_clz(freeBits))!=0) {
+         return (_bitLength)-((i*32)+j+1);
+      }
+      else{
+         j=__builtin_clz(~freeBits);
+         return (_bitLength)-((i*32)+1);
+      }
+   }
+   return -1;
+}
 
 -(unsigned int) randomFreeBit
 {
-   [self updateFreeBitCount];
+   //[self updateFreeBitCount];
    int r = arc4random() % _freebits._val;
    unsigned int foundFreeBits =0;
-   unsigned int boundBits;
+   unsigned int unboundBits;
    unsigned int bitMask;
    
-   for(int i=_wordLength; i>=0;i--)
+   for(int i=0; i<_wordLength;i++)
    {
-      boundBits = (_low[i]._val ^ _up[i]._val);
-      bitMask = 1;
+      unboundBits = (_low[i]._val ^ _up[i]._val);
+      bitMask = 0x80000000;
       for(int j=31;j>=0;j--)
       {
-         if (boundBits & bitMask)
+         if (unboundBits & bitMask)
          {
             foundFreeBits++;
             if (foundFreeBits >= r)
                return (i*32+(31-j));
          }
-         bitMask <<= 1;
+         bitMask >>= 1;
       }
    }
    return -1;

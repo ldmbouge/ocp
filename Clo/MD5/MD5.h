@@ -42,6 +42,7 @@
 
 +(MD5*) initMD5;
 -(MD5*) initExplicitMD5;
+//-(void) dealloc;
 
 -(bool) getMessage:(NSString*) fname;
 -(NSMutableArray*) getMD5Digest:(NSString*)fname;

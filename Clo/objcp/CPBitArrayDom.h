@@ -37,6 +37,7 @@
 -(ORUInt)               getSize;
 -(ORULong)              domsize;
 -(void)                 updateFreeBitCount;
+-(ORBounds)             bounds;
 -(BOOL)                 bound;
 -(uint64)               min;
 -(uint64)               max;
@@ -48,6 +49,7 @@
 -(ORStatus)             setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x;
 -(bool)                 isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
+-(unsigned int)         msFreeBit;
 -(unsigned int)         randomFreeBit;
 -(bool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;

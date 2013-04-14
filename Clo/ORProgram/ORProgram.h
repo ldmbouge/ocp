@@ -18,6 +18,7 @@
 #import <ORProgram/CPWDeg.h>
 #import <ORProgram/CPIBS.h>
 #import <ORProgram/CPABS.h>
+#import <ORProgram/CPBitVarABS.h>
 #import <ORProgram/CPFirstFail.h>
 
 

@@ -14,11 +14,12 @@
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPVar.h>
 
-@protocol CPBitVar <NSObject>
+@protocol CPBitVar <CPVar>
 -(BOOL) bound;
 -(CPBitArrayDom*) domain;
 -(uint64)min;
 -(uint64)max;
+-(ORBounds) bounds;
 -(ORULong)  domsize;
 -(BOOL) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;

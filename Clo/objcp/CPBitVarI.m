@@ -139,6 +139,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return _engine;
 }
+
+-(id<ORTracker>) tracker
+{
+   return _engine;
+}
+
 -(id<CPBitVarNotifier>) delegate
 {
     return _recv;
@@ -207,6 +213,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(unsigned int) lsFreeBit
 {
    return [_dom lsFreeBit];
+}
+
+-(unsigned int) msFreeBit
+{
+   return [_dom msFreeBit];
 }
 
 -(BOOL)member:(unsigned int*)v
