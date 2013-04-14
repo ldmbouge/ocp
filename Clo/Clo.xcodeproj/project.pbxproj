@@ -318,7 +318,7 @@
 		5B778B9B154EF67C0078EB07 /* CPBitArrayDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B778B93154EF67C0078EB07 /* CPBitArrayDom.m */; };
 		5B778B9C154EF67C0078EB07 /* CPBitConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B778B94154EF67C0078EB07 /* CPBitConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B778B9D154EF67C0078EB07 /* CPBitConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B778B95154EF67C0078EB07 /* CPBitConstraint.m */; };
-		5B778B9E154EF67C0078EB07 /* CPBitVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B778B96154EF67C0078EB07 /* CPBitVarI.h */; };
+		5B778B9E154EF67C0078EB07 /* CPBitVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B778B96154EF67C0078EB07 /* CPBitVarI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B778B9F154EF67C0078EB07 /* CPBitVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B778B97154EF67C0078EB07 /* CPBitVarI.m */; };
 		5B778BA1154EF7DA0078EB07 /* CPBitVar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B778BA0154EF7DA0078EB07 /* CPBitVar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B778BB3154F1D030078EB07 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1015,6 +1015,8 @@
 		B1F531E715AED50000E89F98 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1F531EC15AED52200E89F98 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1F531ED15AED52700E89F98 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		F5066C06171AE93F00F309A6 /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C04171AE93F00F309A6 /* CPBitVarABS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F5066C08171AE93F00F309A6 /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C05171AE93F00F309A6 /* CPBitVarABS.m */; };
 		F50D95AA16835AE4001D5E3C /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		F50D95AB16835AE4001D5E3C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		F50D95AD16835AE4001D5E3C /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -4424,6 +4426,8 @@
 		B1F531DC15AED4B100E89F98 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531DF15AED4B100E89F98 /* testPacking-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testPacking-Prefix.pch"; sourceTree = "<group>"; };
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
+		F5066C04171AE93F00F309A6 /* CPBitVarABS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarABS.h; sourceTree = "<group>"; };
+		F5066C05171AE93F00F309A6 /* CPBitVarABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarABS.m; sourceTree = "<group>"; };
 		F548AA71167FB1C600726814 /* MD5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MD5; sourceTree = BUILT_PRODUCTS_DIR; };
 		F548AA75167FB1C600726814 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F548AA78167FB1C700726814 /* MD5-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MD5-Prefix.pch"; sourceTree = "<group>"; };
@@ -5622,6 +5626,8 @@
 				5B150017156EB0E800897252 /* CPBaseHeuristic.h */,
 				5B150019156EB1A500897252 /* CPBaseHeuristic.m */,
 				5B681183161F98FB00F4480F /* Supporting Files */,
+				F5066C04171AE93F00F309A6 /* CPBitVarABS.h */,
+				F5066C05171AE93F00F309A6 /* CPBitVarABS.m */,
 			);
 			path = ORProgram;
 			sourceTree = "<group>";
@@ -7145,6 +7151,7 @@
 				B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */,
 				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
+				F5066C06171AE93F00F309A6 /* CPBitVarABS.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
 				5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */,
@@ -7190,12 +7197,12 @@
 				5B778BA1154EF7DA0078EB07 /* CPBitVar.h in Headers */,
 				5B7408B115628C1400C05277 /* CPBitMacros.h in Headers */,
 				B1C010EC15CDAF7300ED7027 /* CPFactory.h in Headers */,
+				5B778B9E154EF67C0078EB07 /* CPBitVarI.h in Headers */,
 				B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */,
 				5B63C2D4156DB05E00C65B2A /* CPStatisticsMonitor.h in Headers */,
 				B17ABE9213CC852C00DC7288 /* CPIntVarI.h in Headers */,
 				B1C25AA11557540E009CB8A8 /* CPCircuitI.h in Headers */,
 				B17715B51557D9D200BA14BF /* CPTableI.h in Headers */,
-				5B778B9E154EF67C0078EB07 /* CPBitVarI.h in Headers */,
 				B1672FE215849EA300EFE5C3 /* CPCardinalityDC.h in Headers */,
 				5B91C336159FAB2D00158EEA /* CPElement.h in Headers */,
 				B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */,
@@ -9270,6 +9277,7 @@
 				5B378BB716D5245D002E1AB4 /* CPParallel.m in Sources */,
 				B1E1C7991703725B006AACFC /* MIPSolver.m in Sources */,
 				B1E1C79F1703741E006AACFC /* MIPConcretizer.m in Sources */,
+				F5066C08171AE93F00F309A6 /* CPBitVarABS.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13920,6 +13928,7 @@
 				5B2D92D317036DA8007F330B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B33370613A2B866001DFC38 /* Build configuration list for PBXAggregateTarget "allProgs" */ = {
 			isa = XCConfigurationList;
