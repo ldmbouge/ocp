@@ -1017,6 +1017,11 @@
 		B1F531ED15AED52700E89F98 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		F5066C06171AE93F00F309A6 /* CPBitVarABS.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C04171AE93F00F309A6 /* CPBitVarABS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F5066C08171AE93F00F309A6 /* CPBitVarABS.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C05171AE93F00F309A6 /* CPBitVarABS.m */; };
+		F5066C0C171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F5066C0D171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */; };
+		F5066C0E171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */; };
+		F5066C0F171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */; };
+		F5066C11171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */; };
 		F50D95AA16835AE4001D5E3C /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		F50D95AB16835AE4001D5E3C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		F50D95AD16835AE4001D5E3C /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -4428,6 +4433,8 @@
 		B1F531E015AED4B100E89F98 /* testPacking.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testPacking.1; sourceTree = "<group>"; };
 		F5066C04171AE93F00F309A6 /* CPBitVarABS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarABS.h; sourceTree = "<group>"; };
 		F5066C05171AE93F00F309A6 /* CPBitVarABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarABS.m; sourceTree = "<group>"; };
+		F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarFirstFail.h; sourceTree = "<group>"; };
+		F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarFirstFail.m; sourceTree = "<group>"; };
 		F548AA71167FB1C600726814 /* MD5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MD5; sourceTree = BUILT_PRODUCTS_DIR; };
 		F548AA75167FB1C600726814 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F548AA78167FB1C700726814 /* MD5-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MD5-Prefix.pch"; sourceTree = "<group>"; };
@@ -5628,6 +5635,8 @@
 				5B681183161F98FB00F4480F /* Supporting Files */,
 				F5066C04171AE93F00F309A6 /* CPBitVarABS.h */,
 				F5066C05171AE93F00F309A6 /* CPBitVarABS.m */,
+				F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */,
+				F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */,
 			);
 			path = ORProgram;
 			sourceTree = "<group>";
@@ -7151,6 +7160,7 @@
 				B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */,
 				5B93489216558D1000757F89 /* ORProgram.h in Headers */,
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
+				F5066C0C171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */,
 				F5066C06171AE93F00F309A6 /* CPBitVarABS.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
@@ -7211,6 +7221,7 @@
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
 				5B93488D16554E6C00757F89 /* CPEvent.h in Headers */,
+				F5066C0D171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7277,6 +7288,7 @@
 				5BF8F02D1520E2BA00821CE2 /* ORConcurrencyI.h in Headers */,
 				5B8C7E531586801F007042CA /* CPLib-Prefix.pch in Headers */,
 				5B8C7E541586801F007042CA /* UIBoardController.h in Headers */,
+				F5066C0E171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9278,6 +9290,7 @@
 				B1E1C7991703725B006AACFC /* MIPSolver.m in Sources */,
 				B1E1C79F1703741E006AACFC /* MIPConcretizer.m in Sources */,
 				F5066C08171AE93F00F309A6 /* CPBitVarABS.m in Sources */,
+				F5066C0F171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9515,6 +9528,7 @@
 				5B9EE58215175D4F00619B47 /* ORSemDFSController.m in Sources */,
 				5B9EE58415175D4F00619B47 /* ORSemBDSController.m in Sources */,
 				5B8C7E551586801F007042CA /* UIBoardController.m in Sources */,
+				F5066C11171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
