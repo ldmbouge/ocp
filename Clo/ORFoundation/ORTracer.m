@@ -21,8 +21,8 @@
 -(void) dealloc;
 -(NSString*) description;
 -(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<OREngine>) engine;
--(BOOL) apply: (BOOL(^)(id<ORCommand>))clo;
+-(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
+-(ORBool) apply: (BOOL(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
 @end
 
@@ -36,7 +36,7 @@
 -(void)pushCommandList:(ORCommandList*)aList;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<OREngine>) engine;
+-(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 @end
 
 
@@ -146,14 +146,14 @@
 @interface CPUnarchiver : NSKeyedUnarchiver
 #endif
 {
-   id<OREngine> _fdm;
+   id<ORSearchEngine> _fdm;
 }
--(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<OREngine>)fdm;
--(id<OREngine>)engine;
+-(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<ORSearchEngine>)fdm;
+-(id<ORSearchEngine>)engine;
 @end
 
 @implementation CPUnarchiver
--(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<OREngine>)fdm
+-(CPUnarchiver*)initForReadingWithData:(NSData*) data andSolver:(id<ORSearchEngine>)fdm
 {
    self = [super initForReadingWithData:data];
    _fdm = [fdm retain];
@@ -164,7 +164,7 @@
    [_fdm release];
    [super dealloc];
 }
--(id<OREngine>)engine
+-(id<ORSearchEngine>)engine
 {
    return _fdm;
 }
@@ -225,7 +225,7 @@
 {
    self = [super init];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_id];
-   id<OREngine> fdm = [aDecoder engine];
+   id<ORSearchEngine> fdm = [aDecoder engine];
    id theVar = [[[fdm variables] objectAtIndex:_id] retain];
    [self release];
    return theVar;
@@ -250,7 +250,7 @@
 {
    [_cstrs insert:c];
 }
--(BOOL)apply:(BOOL(^)(id<ORCommand>))clo
+-(ORBool)apply:(BOOL(^)(id<ORCommand>))clo
 {
    return [_cstrs apply:clo];
 }
@@ -276,7 +276,7 @@
    [buf appendFormat:@"<ORProblemI: %p @  %d  = %@>",self,_id,_cstrs];
    return buf;
 }
--(NSData*)packFromSolver:(id<OREngine>)fdm
+-(NSData*)packFromSolver:(id<ORSearchEngine>)fdm
 {
    NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
@@ -315,7 +315,7 @@
 @end
 
 @implementation SemTracer (Packing)
-+(id<ORProblem>)unpackProblem:(NSData*)msg forEngine:(id<OREngine>)fdm
++(id<ORProblem>)unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>)fdm
 {
    ORUInt nbProxies = 0;
    id arp  = [[NSAutoreleasePool alloc] init];
@@ -331,7 +331,7 @@
    free(proxies);
    return theProblem;
 }
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg forEngine:(id<OREngine>) fdm
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) fdm
 {
    id arp = [[NSAutoreleasePool alloc] init];
    ORUInt nbProxies = 0;
@@ -394,7 +394,7 @@
    _path = [[aDecoder decodeObject] retain];
    return self;
 }
--(NSData*)packFromSolver:(id<OREngine>) solver
+-(NSData*)packFromSolver:(id<ORSearchEngine>) solver
 {
    NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
 #if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
@@ -606,7 +606,7 @@
    return np;
 }
 
--(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<OREngine>)fdm
+-(ORStatus)restoreCheckpoint:(ORCheckpointI*)acp inSolver:(id<ORSearchEngine>)fdm
 {
    /*
     NSLog(@"SemTracer STATE: %@ - in thread %p",[self description],[NSThread currentThread]);
@@ -659,7 +659,7 @@
    return ORSuspend;
 }
 
--(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<OREngine>)fdm
+-(ORStatus)restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>)fdm
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];

@@ -32,7 +32,7 @@
    @private
    id<ORModel>    _m;
 //   id<ORExplorer> _explorer;
-//   id<OREngine>   _engine;
+//   id<ORSearchEngine>   _engine;
    
    NSFileManager  *_fm;
    NSMutableArray *_digest;
@@ -52,7 +52,7 @@
 //-(MD4*) initExplicitMD4:(id<ORModel>)m;
 -(void) dealloc;
 
--(bool) getMessage:(NSString*) fname;
+-(ORBool) getMessage:(NSString*) fname;
 -(NSMutableArray*) getMD4Digest:(NSString*)fname;
 -(void) createMD4Blocks:(uint32*)mask;
 //-(void) createMD4Block:(uint32*)data withCount:(uint64)count;

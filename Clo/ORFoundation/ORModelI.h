@@ -29,7 +29,6 @@
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
 -(void)enumerateObjectWithBlock:(void(^)(id<ORConstraint>))block;
--(void) setId: (ORUInt) name;
 -(enum ORGroupType)type;
 @end
 
@@ -141,6 +140,7 @@
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
+-(ORAnnotation) annotation;
 @end
 
 @interface OROr : ORConstraintI<OROr>
@@ -268,15 +268,11 @@
 -(ORInt)cst;
 @end
 
-
-
 @interface ORSumGEqc : ORConstraintI<ORSumGEqc>
 -(ORSumGEqc*)initSum:(id<ORIntVarArray>)ia geqi:(ORInt)c;
 -(id<ORIntVarArray>)vars;
 -(ORInt)cst;
 @end
-
-
 
 @interface ORLinearGeq : ORConstraintI<ORLinearGeq>
 -(ORLinearGeq*) initLinearGeq: (id<ORIntVarArray>) ia coef: (id<ORIntArray>) ca cst: (ORInt)c;
@@ -323,6 +319,7 @@
 
 @interface ORCardinalityI : ORConstraintI<ORCardinality>
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
+-(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c;
 -(id<ORIntVarArray>) array;
 -(id<ORIntArray>) low;
 -(id<ORIntArray>) up;
@@ -393,7 +390,7 @@
    ORInt _direction;
    ORInt _pBound;
 }
--(id) initObjectiveValueIntI: (ORInt) pb minimize: (BOOL) b ;
+-(id) initObjectiveValueIntI: (ORInt) pb minimize: (ORBool) b ;
 -(ORInt)value;
 -(ORInt)primal;
 -(ORFloat)key;
@@ -405,7 +402,7 @@
    ORInt _direction;
    ORInt _pBound;
 }
--(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (BOOL) b ;
+-(id) initObjectiveValueFloatI: (ORFloat) pb minimize: (ORBool) b ;
 -(ORFloat)value;
 -(ORFloat)primal;
 -(ORFloat)key;
@@ -425,7 +422,7 @@
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>) value;
--(BOOL) concretized;
+-(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -437,7 +434,7 @@
 -(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
--(BOOL) concretized;
+-(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -447,7 +444,7 @@
 }
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) expr;
 -(id<ORExpr>) expr;
--(BOOL) concretized;
+-(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 

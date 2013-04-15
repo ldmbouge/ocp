@@ -51,7 +51,7 @@
 {
    return _min;
 }
--(bool)bound
+-(ORBool)bound
 {
    return _min == _max;
 }

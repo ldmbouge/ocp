@@ -15,21 +15,14 @@
 #import "ORModel.h"
 
 @protocol ORSnapshot
--(void) restoreInto: (NSArray*) av;
 -(ORInt)  intValue;
--(BOOL) boolValue;
+-(ORBool) boolValue;
 -(ORFloat) floatValue;
 @end
 
-@protocol ORSavable<NSObject>
+@protocol ORVar <ORObject,ORExpr>
 -(ORInt) getId;
--(id) snapshot;
--(void)restore:(id<ORSnapshot>)s;
-@end
-
-@protocol ORVar <ORObject,ORSavable,ORExpr>
--(ORInt) getId;
--(BOOL) bound;
+-(ORBool) bound;
 -(NSSet*) constraints;
 @end
 
@@ -38,31 +31,36 @@
 -(ORInt) value;
 -(ORInt) intValue;
 -(ORFloat) floatValue;
+-(ORInt) low;
+-(ORInt) up;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) domsize;
 -(ORBounds) bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
--(ORInt)scale;
--(ORInt)shift;
--(ORInt)literal;
+-(ORBool) member: (ORInt) v;
+-(ORBool) isBool;
+-(ORInt) scale;
+-(ORInt) shift;
+-(ORInt) literal;
 -(id<ORIntVar>)base;
 @end
 
 @protocol ORBitVar <ORVar>
--(BOOL) bound;
+-(ORBool) bound;
 -(uint64)min;
 -(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
 -(ORULong)  domsize;
--(BOOL) member: (unsigned int*) v;
+-(ORBool) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end
 
 @protocol ORFloatVar <ORVar>
+-(ORBool) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
 -(ORFloat) value;
 -(ORFloat) floatValue;
 -(ORFloat) min;

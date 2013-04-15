@@ -51,7 +51,7 @@
 -(id<ORTracker>) tracker;
 -(ORExprI*) left;
 -(ORExprI*) right;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 @end
 
 @interface ORExprAbsI : ORExprI<ORExpr,NSCoding> {
@@ -63,7 +63,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORExprI*) operand;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 -(void) visit:(id<ORVisitor>)v;
 @end
 
@@ -78,7 +78,7 @@
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORIntArray>)array;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 -(void) visit:(id<ORVisitor>) v;
 @end
 
@@ -160,7 +160,7 @@
 -(ORInt) max;
 -(id<ORTracker>) tracker;
 -(ORExprI*) expr;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 -(NSString *) description;
 -(void) visit:(id<ORVisitor>)v;
 @end
@@ -175,7 +175,7 @@
 -(ORInt) max;
 -(id<ORTracker>) tracker;
 -(ORExprI*) expr;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 -(NSString *) description;
 -(void) visit: (id<ORVisitor>)v;
 @end
@@ -190,7 +190,7 @@
 -(ORInt) max;
 -(id<ORTracker>) tracker;
 -(ORExprI*) expr;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 -(NSString *) description;
 -(void) visit: (id<ORVisitor>)v;
 @end
@@ -245,7 +245,7 @@
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORIntVarArray>)array;
--(BOOL) isConstant;
+-(ORBool) isConstant;
 -(void) visit:(id<ORVisitor>) v;
 @end
 

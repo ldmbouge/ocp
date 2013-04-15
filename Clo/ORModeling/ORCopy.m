@@ -21,11 +21,11 @@
 @end
 
 @implementation ORCopy {
-   NSZone* _zone;
+   NSZone*          _zone;
    id<ORModel> _origModel;
-   ORModelI* _copyModel;
-   NSMapTable* _mapping;
-   id _result;
+   ORModelI*   _copyModel;
+   NSMapTable*   _mapping;
+   id             _result;
 }
 
 -(id)initORCopy: (NSZone*)zone
@@ -43,7 +43,9 @@
    ORULong nbThings = [[_origModel variables] count] + [[_origModel objects] count] + [[_origModel constraints] count];
    _copyModel = [[ORModelI alloc] initORModelI:nbThings];
    
-   _mapping = [[NSMapTable alloc] init];
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                            capacity:nbThings];
    
    [_origModel applyOnVar:^(id<ORVar> x) {
       [self copyObject: x];
@@ -156,11 +158,11 @@
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    id<ORIdArray> o = [[ORIdArrayI allocWithZone: _zone] initORIdArray: _copyModel range: [self copyObject: [v range]]];
+   [_copyModel trackObject: o];
    [v enumerateWith:^(id obj,int idx) {
       id newObj = [self copyObject: obj];
       [o set: newObj at: idx];
    }];
-   [_copyModel trackObject: o];
    _result = o;
 }
 
@@ -187,7 +189,9 @@
 // Copy Constraints
 -(void) visitConstraint:(id<ORConstraint>)c  {}
 -(void) visitObjectiveFunction:(id<ORObjectiveFunction>)f  {}
--(void) visitFail:(id<ORFail>)cstr  {}
+-(void) visitFail:(id<ORFail>)cstr
+{
+}
 -(void) visitRestrict:(id<ORRestrict>)cstr
 {
    id<ORIntSet> restriction = [self copyObject: [cstr restriction]];
@@ -540,6 +544,11 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    id<ORInteger> o = [[ORIntegerI allocWithZone: _zone] initORIntegerI: _copyModel value: [e value]];
+   _result = o;
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   id<ORFloatNumber> o = [[ORFloatI allocWithZone: _zone] initORFloatI: _copyModel value: [e value]];
    _result = o;
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e

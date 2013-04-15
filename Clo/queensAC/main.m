@@ -24,7 +24,7 @@
 // First solution
 // 22 choices 20 fail 277 propagations
 
-int main (int argc, const char * argv[])
+int main1(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -42,6 +42,49 @@ int main (int argc, const char * argv[])
       [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+          [nbSolutions incr];
+       }
+       ];
+      printf("GOT %d solutions\n",[nbSolutions value]);
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+      [ORFactory shutdown];
+   }
+   return 0;
+}
+
+int main (int argc, const char * argv[])
+{
+   @autoreleasepool {
+      ORInt n = 8;
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(mdl,1,n);
+      id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
+      id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
+      id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
+      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      [cp solveAll:
+       ^() {
+          [cp switchOnDepth:
+            ^() { [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}]; }
+                         to:
+            ^() {
+                  //NSLog(@"I switched %@\n",x);
+                   NSLog(@"I switched \n");
+                  for(ORInt i = 1; i <= 8; i++)
+                     printf("%d-%d ",x[i].min,x[i].max);
+               printf("\n");
+                  [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}]; } limit: 4
+           ];
+          for(ORInt i = 1; i <= 8; i++)
+             printf("%d ",x[i].value);
+          printf("\n");
           [nbSolutions incr];
        }
        ];

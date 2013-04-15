@@ -452,7 +452,7 @@ static void prune(CPAllDifferentDC* ad)
       for(ORInt w = bx.min; w <= bx.max; w++) {
          if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
             if (memberDom(x,w)) {
-               [x remove: w];
+               removeDom(x, w);
             }
          }
       }

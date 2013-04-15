@@ -185,10 +185,10 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
    BOOL** f = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
    BOOL** g = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
    for(ORInt k=0;k<_nb+1;k++) {
-      f[k] = malloc(sizeof(BOOL)*(U+1));
-      g[k] = malloc(sizeof(BOOL)*(U+1));
-      memset(f[k],0,sizeof(BOOL)*(U+1));
-      memset(g[k],0,sizeof(BOOL)*(U+1));
+      f[k] = malloc(sizeof(ORBool)*(U+1));
+      g[k] = malloc(sizeof(ORBool)*(U+1));
+      memset(f[k],0,sizeof(ORBool)*(U+1));
+      memset(g[k],0,sizeof(ORBool)*(U+1));
    }
    f += 1;  // make sure that column -1 exist (seed column) via reframing.
    g += 1;  // make sure that column -1 exist (seed column) via reframing.

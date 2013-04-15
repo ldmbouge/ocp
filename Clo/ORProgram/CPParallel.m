@@ -91,7 +91,7 @@
    [self finitelyFailed];  // [ldm] This is necessary since we *are* a nested controller after all (finitelyFailed is inherited)
    assert(FALSE);
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return NO;
 }
@@ -184,7 +184,7 @@
    [_controller fail];
    assert(FALSE);
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return NO;
 }

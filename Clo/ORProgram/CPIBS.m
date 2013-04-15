@@ -28,7 +28,7 @@
 }
 -(id)initCPKillRange:(ORInt)f to:(ORInt)to size:(ORUInt)sz;
 -(void)dealloc;
--(BOOL)isEqual:(CPKillRange*)kr;
+-(ORBool)isEqual:(CPKillRange*)kr;
 -(ORInt) low;
 -(ORInt) up;
 -(ORInt) killed;
@@ -47,7 +47,7 @@
 {
    [super dealloc];
 }
--(BOOL)isEqual:(CPKillRange*)kr
+-(ORBool)isEqual:(CPKillRange*)kr
 {
    return (_low == kr->_low && _up == kr->_up);
 }

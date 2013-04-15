@@ -16,6 +16,8 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
+
+
 @interface CPHeuristicSet : NSObject
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;
@@ -32,6 +34,9 @@
 -(void) setSource:(id<ORModel>)src;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart;
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 -(void) once: (ORClosure) cl;
 -(void) limitSolutions: (ORInt) maxSolutions  in: (ORClosure) cl;
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
@@ -43,14 +48,17 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORSolutionPool>) solutionPool;
--(id<ORSolutionPool>) globalSolutionPool;
--(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
--(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
--(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<ORCPSolutionPool>) solutionPool;
+-(id<ORCPSolution>) captureSolution;
+
+-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
+
+// pvh: do we have to put these here. Any way to externalize them.
+-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
+-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;

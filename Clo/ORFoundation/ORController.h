@@ -18,7 +18,7 @@
 
 @protocol ORStealing
 -(ORHeist*) steal;
--(BOOL)willingToShare;
+-(ORBool)willingToShare;
 @end
 
 @interface ORHeist : NSObject {
@@ -39,6 +39,7 @@
 
 -(ORInt)      addChoice: (NSCont*) k;
 -(void)       fail;
+-(void)       fail: (BOOL) pruned;
 -(void)       succeeds;
 -(void)       trust;
 
@@ -55,7 +56,7 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(BOOL)       isFinitelyFailed;
+-(ORBool)       isFinitelyFailed;
 -(id)         copy;
 @end
 
@@ -68,8 +69,9 @@
 -(id<ORSearchController>) controller;
 -(void)       setup;
 -(void)       cleanup;
--(ORInt)  addChoice: (NSCont*) k;
+-(ORInt)      addChoice: (NSCont*) k;
 -(void)       fail;
+-(void)       fail: (ORBool) pruned;
 -(void)       succeeds;
 -(void)       trust;
 
@@ -86,7 +88,7 @@
 -(void)       exitTryallBody;
 -(void)       startTryallOnFailure;
 -(void)       exitTryallOnFailure;
--(BOOL)       isFinitelyFailed;
+-(ORBool)       isFinitelyFailed;
 @end
 
 @interface ORNestedController : ORDefaultController
@@ -95,11 +97,11 @@
 -(void) fail;
 -(void) succeeds;
 -(void) finitelyFailed;
--(BOOL) isFinitelyFailed;
+-(ORBool) isFinitelyFailed;
 @end
 
 @interface ORDFSController : ORDefaultController <NSCopying,ORSearchController>
--(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

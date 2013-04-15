@@ -22,7 +22,7 @@
    return self;
 }
 
--(bool) getMessage:(NSString *)fname
+-(ORBool) getMessage:(NSString *)fname
 {
    NSFileManager *fm;
    NSData *message;

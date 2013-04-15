@@ -26,6 +26,7 @@ typedef uint32 ORUInt;
 typedef sint64 ORLong;
 typedef uint64 ORULong;
 typedef double ORFloat;
+typedef BOOL   ORBool;
 
 //#define minOf(a,b) ((a) < (b) ? (a) : (b))
 //#define maxOf(a,b) ((a) > (b) ? (a) : (b))
@@ -66,7 +67,7 @@ typedef struct ORBounds {
 } ORBounds;
 
 @protocol IntEnumerator <NSObject>
--(BOOL) more;
+-(ORBool) more;
 -(ORInt) next;
 @end
 

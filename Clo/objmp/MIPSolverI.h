@@ -33,7 +33,7 @@
 }
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver;
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(bool) hasBounds;
+-(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
 -(ORInt) idx;
@@ -48,13 +48,13 @@
 -(void) setNb: (ORInt) nb;
 -(ORInt) nb;
 -(NSString*)description;
--(BOOL) isInteger;
+-(ORBool) isInteger;
 @end
 
 @interface MIPIntVariableI : MIPVariableI
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver;
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up;
--(BOOL) isInteger;
+-(ORBool) isInteger;
 -(ORInt) intValue;
 @end
 
@@ -210,9 +210,9 @@
 
 +(MIPSolverI*)      create;
 -(MIPVariableI*)    createVariable;
--(MIPIntVariableI*) createVariable: (ORFloat) low up: (ORFloat) up;
+-(MIPVariableI*)    createVariable: (ORFloat) low up: (ORFloat) up;
 -(MIPIntVariableI*) createIntVariable;
--(MIPVariableI*)    createIntVariable: (ORFloat) low up: (ORFloat) up;
+-(MIPIntVariableI*) createIntVariable: (ORFloat) low up: (ORFloat) up;
 -(MIPLinearTermI*)  createLinearTerm;
 
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs;
@@ -227,8 +227,8 @@
 
 -(MIPObjectiveI*)  createObjectiveMinimize: (MIPVariableI*) x;
 -(MIPObjectiveI*)  createObjectiveMaximize: (MIPVariableI*) x;
--(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef;
--(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORIntArray>) coef;
+-(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef;
+-(MIPObjectiveI*)  createObjectiveMaximize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef;
 
 -(MIPConstraintI*) createLEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
 -(MIPConstraintI*) createGEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -243,7 +243,7 @@
 -(MIPObjectiveI*) postObjective: (MIPObjectiveI*) obj;
 
 -(void) close;
--(bool) isClosed;
+-(ORBool) isClosed;
 -(MIPOutcome) solve;
 
 -(MIPOutcome) status;

@@ -15,12 +15,12 @@
 #import <objcp/CPVar.h>
 
 @protocol CPBitVar <NSObject>
--(BOOL) bound;
+-(ORBool) bound;
 -(CPBitArrayDom*) domain;
 -(uint64)min;
 -(uint64)max;
 -(ORULong)  domsize;
--(BOOL) member: (unsigned int*) v;
+-(ORBool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end

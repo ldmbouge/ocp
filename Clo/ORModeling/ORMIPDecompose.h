@@ -12,15 +12,16 @@
 #import <ORFoundation/ORFoundation.h>
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
-#import "ORLinear.h"
+#import "ORFloatLinear.h"
 
 @interface ORMIPLinearizer : NSObject<ORVisitor>
--(id) initORMIPLinearizer: (id<ORLinear>)t model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
-+(ORLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
-+(ORLinear*) addToLinear: (id<ORLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
+-(id) initORMIPLinearizer: (id<ORFloatLinear>)t model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(ORFloatLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(ORFloatLinear*) addToLinear: (id<ORFloatLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
 -(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitAffineVar:(id<ORIntVar>)e;
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;
@@ -41,7 +42,7 @@
 @end
 
 @interface ORMIPNormalizer : NSObject<ORVisitor>
-+(ORLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORFloatLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
 
 -(id) initORMIPNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
 -(void) visitExprEqualI:(ORExprEqualI*)e;
@@ -49,6 +50,7 @@
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
 -(void) visitExprMulI: (ORExprMulI*) e;

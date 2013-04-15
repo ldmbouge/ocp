@@ -68,7 +68,7 @@ enum CPEngineState {
 -(NSMutableArray*) objects;
 -(ORStatus)  close;
 -(ORStatus)  status;
--(bool)      closed;
+-(ORBool)      closed;
 -(ORUInt) nbPropagation;
 -(ORUInt) nbVars;
 -(ORUInt) nbConstraints;
@@ -80,3 +80,5 @@ enum CPEngineState {
 -(void)incNbPropagation:(ORUInt)add;
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 @end
+
+void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);

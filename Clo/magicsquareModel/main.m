@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
          id<ORIntRange>  D = [ORFactory intRange:model low:1 up:n*n];
          ORInt T = n * (n*n + 1)/2;
          id<ORIntVarMatrix> s = [ORFactory intVarMatrix:model range:R :R domain:D];
-         [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [s at:i :j])]];
+         [model add:[ORFactory alldifferent:All2(model, ORIntVar, i, R, j, R, [s at:i :j]) annotation:DomainConsistency]];
          for(ORInt i=1;i <= n;i++) {
             [model add:[Sum(model, j, R, [s at:i :j]) eq: @(T)]];
             [model add:[Sum(model, j, R, [s at:j :i]) eq: @(T)]];
@@ -53,25 +53,29 @@ int main(int argc, const char * argv[])
          __block BOOL found = NO;
          [cp solve:^{
             [cp limitTime:maxTime in: ^ {
-               [cp repeat:^{
-                  [cp limitFailures:[nbFailures value] in: ^ {
-                     [cp labelHeuristic:h];
-                     @autoreleasepool {
-                        for(ORInt i =1;i <= n;i++) {
-                           NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-                           for (ORInt j=1; j<=n; j++) {
-                              [buf appendFormat:@"%3d ",[[s at:i :j] value]];
+               ///[cp repeat:^{
+               while(!found) {
+                  [cp try:^{
+                     [cp limitFailures:[nbFailures value] in: ^ {
+                        [cp labelHeuristic:h];
+                        @autoreleasepool {
+                           for(ORInt i =1;i <= n;i++) {
+                              NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+                              for (ORInt j=1; j<=n; j++) {
+                                 [buf appendFormat:@"%3d ",[[s at:i :j] value]];
+                              }
+                              NSLog(@"%@",buf);
                            }
-                           NSLog(@"%@",buf);
                         }
-                     }
-                     found = YES;
+                        found = YES;
+                     }];
+                  } or:^{
+                     [nbFailures setValue:(float)[nbFailures value] * rf];
+                     [nbRestarts incr];
+                     NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
                   }];
-               } onRepeat:^{
-                  [nbFailures setValue:(float)[nbFailures value] * rf];
-                  [nbRestarts incr];
-                  NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
-               }];
+               //} onRepeat:^{
+               };
             }];
             
          }];

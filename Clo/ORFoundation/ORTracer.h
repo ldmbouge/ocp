@@ -13,7 +13,7 @@
 
 
 @protocol ORCommand;
-@protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORProblem;
 @protocol ORCheckpoint;
 @protocol ORTrail;
@@ -32,15 +32,15 @@
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<OREngine>) engine;
-@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<OREngine>) engine;
+@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>) engine;
+@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>) engine;
 @optional -(id<ORProblem>) captureProblem;
 @end
 
 @protocol ORProblem <NSObject>
 -(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<OREngine>) engine;
--(bool) apply: (bool(^)(id<ORCommand>))clo;
+-(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
+-(ORBool) apply: (bool(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
 @end
 
@@ -48,7 +48,7 @@
 -(void)pushCommandList:(ORCommandList*)aList;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<OREngine>) engine;
+-(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
@@ -73,14 +73,14 @@
 -(id<ORTrail>)   trail;
 -(void)       addCommand:(id<ORCommand>)com;
 -(id<ORCheckpoint>)captureCheckpoint;
--(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<OREngine>) engine;
--(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<OREngine>) engine;
+-(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine;
+-(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine;
 -(id<ORProblem>)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;
 @end
 
 @interface SemTracer (Packing)
-+(id<ORProblem>)      unpackProblem:(NSData*)msg forEngine:(id<OREngine>) engine;
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg forEngine:(id<OREngine>) engine;
++(id<ORProblem>)      unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
 @end

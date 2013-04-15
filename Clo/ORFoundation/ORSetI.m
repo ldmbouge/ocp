@@ -30,7 +30,7 @@
     [_avl release];
     [super dealloc];
 }
--(bool) member: (ORInt) v
+-(ORBool) member: (ORInt) v
 {
     return [_avl findNodeForKey:v] != NULL;
 }
@@ -54,6 +54,16 @@
     [self enumerateWithBlock:^(ORInt e) { if(e > value) value = e; }];
     return value;
 }
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2
+{
+   id<ORIntSet> rv = [ORFactory intSet:nil];
+   [self enumerateWithBlock:^(ORInt e) {
+      if ([s2 member:e])
+         [rv insert:e];
+   }];
+   return rv;
+}
+
 -(ORInt) size
 {
     return [_avl size];
@@ -107,13 +117,13 @@
 @interface ORIntRangeEnumerator : NSObject<IntEnumerator>
 -(ORIntRangeEnumerator*) initORIntRangeEnumerator: (ORInt) low up: (ORInt) up;
 -(ORInt) next;
--(BOOL) more;
+-(ORBool) more;
 @end
 
 @interface ORTrailIableIntRangeEnumerator : NSObject<IntEnumerator>
 -(ORTrailIableIntRangeEnumerator*) initORTrailIableIntRangeEnumerator: (id<ORTracker>) track low: (ORInt) low up: (ORInt) up;
 -(ORInt) next;
--(BOOL) more;
+-(ORBool) more;
 @end
 
 @implementation ORIntRangeEnumerator {
@@ -138,7 +148,7 @@
 {
    return ++_i;
 }
--(BOOL) more
+-(ORBool) more
 {
    return (_i < _up);
 }
@@ -155,6 +165,7 @@
    self = [super init];
    _low = low;
    _up = up;
+   assert(!(_low == 0 && _up == 0));
    return self;
 }
 -(void) dealloc
@@ -169,10 +180,10 @@
 {
    return _up;
 }
--(bool) isDefined {
+-(ORBool) isDefined {
     return _low <= _up;
 }
--(bool) inRange: (ORInt)e {
+-(ORBool) inRange: (ORInt)e {
     return e >= _low && e <= _up;
 }
 -(ORInt) size

@@ -1,169 +1,24 @@
-//
-//  ORVarI.m
-//  Clo
-//
-//  Created by Laurent Michel on 10/5/12.
-//  Copyright (c) 2012 CSE. All rights reserved.
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
 
 #import "ORVarI.h"
 #import "ORError.h"
 #import "ORFactory.h"
-
-@interface ORIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORInt     _value;
-}
--(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v;
--(void)restoreInto:(NSArray*)av;
--(int)intValue;
--(BOOL)boolValue;
--(NSString*)description;
--(BOOL)isEqual:(id)object;
--(NSUInteger)hash;
-@end
-
-@implementation ORIntVarSnapshot
--(ORIntVarSnapshot*)initIntVarSnapshot:(id<ORIntVar>)v
-{
-   self = [super init];
-   _name = [v getId];
-   _value = [v value];
-   return self;
-}
--(void)restoreInto:(NSArray*)av
-{
-   id<ORIntVar> theVar = [av objectAtIndex:_name];
-   [theVar restore:self];
-}
--(ORInt) intValue
-{
-   return _value;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(BOOL) boolValue
-{
-   return _value;
-}
--(BOOL)isEqual:(id)object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORIntVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _value == other->_value;
-      } else return NO;
-   } else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return (_name << 16) + _value;
-}
--(NSString*)description
-{   
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"int(%d) : %d",_name,_value];
-   return buf;
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
-   return self;
-}
-@end
-
-@interface ORFloatVarSnapshot : NSObject<ORSnapshot,NSCoding> {
-   ORUInt    _name;
-   ORFloat   _value;
-}
--(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v;
--(void)restoreInto:(NSArray*)av;
--(ORFloat) floatValue;
--(ORInt) intValue;
--(NSString*) description;
--(BOOL) isEqual: (id) object;
--(NSUInteger) hash;
-@end
-
-@implementation ORFloatVarSnapshot
--(ORFloatVarSnapshot*)initFloatVarSnapshot:(id<ORFloatVar>)v
-{
-   self = [super init];
-   _name = [v getId];
-   _value = [v value];
-   return self;
-}
--(void) restoreInto: (NSArray*) av
-{
-   id<ORFloatVar> theVar = [av objectAtIndex:_name];
-   [theVar restore:self];
-} 
--(ORInt) intValue
-{
-   return (ORInt) _value;
-}
--(BOOL) boolValue
-{
-   return (BOOL) _value;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(BOOL) isEqual: (id) object
-{
-   if ([object isKindOfClass:[self class]]) {
-      ORFloatVarSnapshot* other = object;
-      if (_name == other->_name) {
-         return _value == other->_value;
-      }
-      else
-            return NO;
-   }
-   else
-      return NO;
-}
--(NSUInteger)hash
-{
-   return (_name << 16) + (ORInt) _value;
-}
--(NSString*) description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"int(%d) : %f",_name,_value];
-   return buf;
-}
-
-- (void)encodeWithCoder: (NSCoder *) aCoder
-{
-   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
-}
-- (id)initWithCoder: (NSCoder *) aDecoder
-{
-   self = [super init];
-   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
-   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
-   return self;
-}
-@end
 
 @implementation ORIntVarI
 {
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
+   BOOL           _hasBounds;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
@@ -171,11 +26,14 @@
    _impl = nil;
    _tracker = track;
    _domain = domain;
+   _hasBounds = true;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
    return self;
 }
+
+
 -(void) dealloc
 {
    [super dealloc];
@@ -185,8 +43,8 @@
    [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_ba[0]];
-   [aCoder encodeValueOfObjCType:@encode(BOOL) at:&_ba[1]];
+   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
+   [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_ba[1]];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
 }
 -(id)initWithCoder:(NSCoder *)aDecoder
@@ -195,13 +53,13 @@
    _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_ba[0]];
-   [aDecoder decodeValueOfObjCType:@encode(BOOL) at:&_ba[1]];
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
+   [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_ba[1]];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
 
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }
@@ -232,53 +90,59 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
-
--(id) snapshot
-{
-   return [[ORIntVarSnapshot alloc] initIntVarSnapshot:self];
-}
--(void) restore:(id<ORSnapshot>)s
-{
-   [[_impl dereference] restore:s];
-}
 -(ORInt) min
 {
-   if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] min];
+   id<ORIntVar> end = [_impl dereference];
+   if (end)
+      return [end min];
    else
       return [_domain low];
 }
 -(ORInt) max
 {
-   if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] max];
+   id<ORIntVar> end = [_impl dereference];
+   if (end)
+      return [end max];
    else
       return [_domain up];
 }
+-(ORInt) low
+{
+   return [_domain low];
+}
+-(ORInt) up
+{
+   return [_domain up];
+}
+
 -(ORInt) domsize
 {
-   if (_impl)
-      return [[_impl dereference] domsize];
-   else
+   if (_impl) {
+      id<ORIntVar> end = [_impl dereference];
+      if (end)
+         return [end domsize];
+      else return [_domain size];
+   } else
       return [_domain size];
 }
 -(ORBounds)bounds
 {
-   if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] bounds];
+   id<ORIntVar> end = [_impl dereference];
+   if (end)
+      return [end bounds];
    else {
       ORBounds b = {[_domain low],[_domain up]};
       return b;
    }
 }
--(BOOL) member: (ORInt) v
+-(ORBool) member: (ORInt) v
 {
    if (_impl)
       return [(id<ORIntVar>)[_impl dereference] member: v];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
--(BOOL) bound
+-(ORBool) bound
 {
    if (_impl)
       return [(id<ORIntVar>)[_impl dereference] bound];
@@ -286,17 +150,17 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
--(BOOL) isBool
+-(ORBool) isBool
 {
    if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] isBool];
+      return [(id<ORIntVar>)_impl isBool];
    else
       return _ba[1]; // isBool
 }
 -(NSSet*)constraints
 {
    if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] constraints];
+      return [(id<ORIntVar>)_impl constraints];
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
@@ -308,7 +172,7 @@
 {
    return _domain;
 }
--(BOOL) hasDenseDomain
+-(ORBool) hasDenseDomain
 {
    return _ba[0]; // dense
 }
@@ -494,7 +358,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
    return self;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }
@@ -505,14 +369,6 @@
    else
       return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
 }
--(id) snapshot
-{
-   return [[ORFloatVarSnapshot alloc] initFloatVarSnapshot: self];
-}
--(void) restore:(id<ORSnapshot>) s   
-{
-   [[_impl dereference] restore: s];   
-}
 -(ORFloat) value
 {
    return [self floatValue];
@@ -520,15 +376,15 @@
 -(ORFloat) floatValue
 {
    if (_impl)
-      return [(id<ORFloatVar>) [_impl dereference] floatValue];
+      return [(id<ORFloatVar>)_impl floatValue];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
 }
--(BOOL) bound
+-(ORBool) bound
 {
    if (_impl)
-      return [[_impl dereference] bound];
+      return [_impl bound];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -537,14 +393,14 @@
 -(ORFloat) min
 {
    if (_impl)
-      return [(id<ORFloatVar>)[_impl dereference] min];
+      return [(id<ORFloatVar>)_impl min];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 }
 -(ORFloat) max
 {
    if (_impl)
-      return [(id<ORFloatVar>)[_impl dereference] max];
+      return [(id<ORFloatVar>)_impl max];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
    
@@ -552,7 +408,7 @@
 -(NSSet*) constraints
 {
    if (_impl)
-      return [(id<ORFloatVar>)[_impl dereference] constraints];
+      return [(id<ORFloatVar>)_impl constraints];
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
@@ -563,6 +419,18 @@
 -(void) visit: (id<ORVisitor>) v
 {
    [v visitFloatVar: self];
+}
+-(ORBool) hasBounds
+{
+   return _hasBounds;
+}
+-(ORFloat) low
+{
+   return _low;
+}
+-(ORFloat) up
+{
+   return _up;
 }
 @end
 
@@ -605,7 +473,7 @@
 {
    return _bLen;
 }
--(BOOL) bound
+-(ORBool) bound
 {
    if (_impl)
       return [[_impl dereference] bound];
@@ -636,7 +504,7 @@
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }
 }
--(bool) member: (unsigned int*) v
+-(ORBool) member: (unsigned int*) v
 {
    if (_impl)
       return [(id<ORBitVar>)[_impl dereference] member:v];
@@ -660,13 +528,7 @@
 {
    return _tracker;
 }
--(id) snapshot
-{
-   return nil;
-}
--(void)restore:(id<ORSnapshot>)s
-{   
-}
+
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_impl];
@@ -692,7 +554,7 @@
    return self;
 }
 
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return YES;
 }

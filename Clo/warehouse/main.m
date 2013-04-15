@@ -56,7 +56,7 @@ int main(int argc, const char * argv[])
          [mdl add: [[open elt:supp[i]] eq:@1]];
          [mdl add: [cost[i] eq:[row elt:supp[i]]]];
       }
-      [mdl minimize: obj];
+      [mdl minimize: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] mul:@(fixed)])]];
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{

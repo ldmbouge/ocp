@@ -28,6 +28,6 @@
 -(void)set:(ORInt)v;
 -(void)reset;
 -(ORInt)get;
--(bool)bound;
+-(ORBool)bound;
 - (NSString *)description;
 @end

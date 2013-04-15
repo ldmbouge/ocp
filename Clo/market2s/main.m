@@ -80,11 +80,11 @@ int main(int argc, const char * argv[])
             }];
             NSLog(@"Solution: %@",x);
          }];
-         [model restore:[[cp solutionPool] best]];
+         id<ORSolution> best = [[cp solutionPool] best];
          for(int k=0;k < m;k++) {
             ORInt sum = 0;
             for(ORInt i=V.low;i <= V.up;++i)
-               sum += w[k][i] * [x[i] value];
+               sum += w[k][i] * [best intValue:x[i]];
             NSLog(@"got: %d == %d",sum,rhs[k]);
             assert(sum == rhs[k]);
          }

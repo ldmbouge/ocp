@@ -69,7 +69,7 @@ int main(int argc, const char * argv[])
             id<ORIntVar>   c = [ORFactory intVar:mdl domain:RANGE(mdl,0,b[i])];
             [mdl add:[ORFactory knapsack:x weight:w capacity:c]];
          }
-         [mdl maximize: Sum(mdl,i, N, [x[i] muli:p[i]])];
+         [mdl maximize: Sum(mdl,i, N, [x[i] mul: @(p[i])])];
          id<CPProgram> cp  = [args makeProgram:mdl];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          //NSLog(@"MODEL: %@",mdl);
@@ -84,16 +84,16 @@ int main(int argc, const char * argv[])
 //               NSLog(@"sol: %@ obj = %@  <-- %d",b,[obj dereference],[NSThread threadID]);
             }
          }];
-         [mdl restore:[[cp globalSolutionPool] best]];
+         id<ORCPSolution> sol = [[cp solutionPool] best];
          ORInt tot = 0;
          for(int k=0;k<n;k++)
-            tot += p[k] * [x[k] value];
+            tot += p[k] * [sol intValue: x[k]];
          assert(tot == opt);
          NSLog(@"objective: %d == %d",tot,opt);
          for(int i=0;i<m;i++) {
             ORInt lhs = 0;
             for(int j=0;j<n;j++)
-               lhs += r[i][j] * [[x at:j] min];
+               lhs += r[i][j] * [sol intValue: x[j]];
             assert(lhs <= b[i]);
             NSLog(@"C[%d] %d <= %d",i,lhs,b[i]);
          }

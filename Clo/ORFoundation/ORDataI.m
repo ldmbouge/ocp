@@ -56,6 +56,10 @@
    _tracker = tracker;
    return self;
 }
+-(ORFloat) floatValue
+{
+   return _value;
+}
 -(ORInt) value 
 {
    return _value;
@@ -80,11 +84,11 @@
 {
    return _value;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return YES;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return NO;
 }
@@ -109,6 +113,71 @@
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitIntegerI: self];
+}
+@end
+
+@implementation ORFloatI
+{
+	ORFloat       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORInt) min
+{
+   return (ORInt)floor(_value);
+}
+-(ORInt) max
+{
+   return (ORInt)ceil(_value);
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORFloat) setValue: (ORFloat) value
+{
+   return _value = value;
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%f",_value];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitFloatI: self];
 }
 @end
 
@@ -201,6 +270,7 @@ static ORInt _deterministic;
 
 @implementation ORUniformDistributionI
 {
+   ORUInt           _name;
    id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
@@ -221,6 +291,10 @@ static ORInt _deterministic;
 -(ORInt) next
 {
    return _range.low + [_stream next] % _size;
+}
+-(void)setId:(ORUInt)name
+{
+   _name = name;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {

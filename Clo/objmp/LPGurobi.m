@@ -52,10 +52,11 @@
    GRBupdatemodel(_model);
 }
 
--(void) addConstraint: (LPConstraintI*) cstr
+-(LPConstraintI*) addConstraint: (LPConstraintI*) cstr
 {
    [self postConstraint: cstr];
    GRBupdatemodel(_model);
+   return cstr;
 }
 -(void) delConstraint: (LPConstraintI*) cstr
 {
@@ -87,7 +88,10 @@
    ORFloat o = [col objCoef];
    if (_objectiveType == LPmaximize)
       o = -o;
-   GRBaddvar(_model,[col size],[col cstrIdx],[col coef],o,[col low],[col up],GRB_CONTINUOUS,NULL);
+   if ([col hasBounds])
+      GRBaddvar(_model,[col size],[col cstrIdx],[col coef],o,[col low],[col up],GRB_CONTINUOUS,NULL);
+   else
+      GRBaddvar(_model,[col size],[col cstrIdx],[col coef],o,0.0,GRB_INFINITY,GRB_CONTINUOUS,NULL);
    GRBupdatemodel(_model);
 }
 

@@ -95,7 +95,7 @@ typedef struct  {
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
 -(CPLiterals*)literals;
 -(void) setTracksLoseEvt;
--(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt) dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt) dsz sender:(id<CPDom>)sender;
@@ -116,7 +116,7 @@ typedef struct  {
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
--(BOOL) isBool;
+-(ORBool) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
@@ -125,7 +125,7 @@ typedef struct  {
 -(CPLiterals*)literals;
 
 // needed for speeding the code when not using AC5
--(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -160,23 +160,20 @@ typedef struct  {
 
 // access
 
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
 -(ORInt) intValue;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(BOOL) member:(ORInt)v;
+-(ORBool) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
 -(ORInt) scale;
 -(id<ORIntVar>)base;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
--(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore;
--(void)restore:(id<ORSnapshot>)s;
 
 // update
 -(ORStatus)     updateMin: (ORInt) newMin;
@@ -185,7 +182,7 @@ typedef struct  {
 -(ORStatus)     bind:(ORInt) val;
 -(ORStatus)     remove:(ORInt) val;
 -(ORStatus)     inside:(ORIntSetI*) S;
-//-(id)           snapshot;
+
 // Class methods
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
@@ -209,11 +206,11 @@ typedef struct  {
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -224,7 +221,6 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPIntView : CPIntVarI { // Affine View
@@ -236,11 +232,11 @@ typedef struct  {
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -251,7 +247,6 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
@@ -261,11 +256,11 @@ typedef struct  {
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
@@ -276,7 +271,6 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
@@ -287,12 +281,12 @@ typedef struct  {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -301,7 +295,6 @@ typedef struct  {
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
--(id) snapshot;
 @end
 
 static inline BOOL bound(CPIntVarI* x)
@@ -336,6 +329,7 @@ static inline ORBounds bounds(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
+         /*
       case CPVCShift: {
          ORBounds b = bounds(((CPIntShiftView*)x)->_x);
          return (ORBounds){b.min + ((CPIntShiftView*)x)->_b,b.max + ((CPIntShiftView*)x)->_b};
@@ -348,10 +342,8 @@ static inline ORBounds bounds(CPIntVarI* x)
             return (ORBounds){fmin,fmax};
          else
             return (ORBounds){fmax,fmin};
-      }
-      case CPVCEQLiteral: return [x bounds];
-      case CPVCFlip: return [x bounds];
-      default:assert(NO);return (ORBounds){0,0};
+      }*/
+      default: return [x bounds];
    }
 }
 #undef DOMX
@@ -377,7 +369,7 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
 {
    switch (x->_vc) {
       case CPVCBare:
-         return domMember((CPBoundsDom*)x->_dom, value);
+         return getCPDom((CPBitDom*)x->_dom, value);
          break;
       default:
          return [x member:value];

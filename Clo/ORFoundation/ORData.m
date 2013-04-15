@@ -18,6 +18,10 @@
 {
    return [[ORIntegerI alloc] initORIntegerI:nil value:value];
 }
++(id<ORFloatNumber>) float: (ORFloat) value
+{
+   return [[ORFloatI alloc] initORFloatI:nil value:value];
+}
 +(id<ORRandomStream>) randomStream
 {
    return [[ORRandomStreamI alloc] init];

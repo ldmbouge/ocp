@@ -100,12 +100,18 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "Call to Default Search Controller for method fail"];
 }
-
+-(void) fail: (ORBool) pruned
+{
+   if (_controller)
+      [_controller fail: pruned];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "Call to Default Search Controller for method fail/1"];
+}
 -(void) succeeds
 {
    [_controller succeeds]; // failAll is meant to be handled by the first controller in the chain. (The actual policy)
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return [_controller isFinitelyFailed];
 }
@@ -188,6 +194,11 @@
    [_controller fail];      // if we ever come back, the controller nodes supply is exhausted -> finitelyFailed.
    [self finitelyFailed];
 }
+-(void) fail: (ORBool) pruned
+{
+   [_controller fail: pruned];      // if we ever come back, the controller nodes supply is exhausted -> finitelyFailed.
+   [self finitelyFailed];
+}
 
 -(void) succeeds
 {
@@ -201,7 +212,7 @@
    [_controller cleanup];
    [_parent fail];
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return _isFF;
 }
@@ -215,7 +226,7 @@
    id<ORTracer>   _tracer;
    ORInt          _atRoot;
 }
--(id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -276,7 +287,10 @@
 {
    [_tracer trust];
 }
-
+-(void) fail: (ORBool) pruned
+{
+   [self fail];
+}
 -(void) fail
 {
    ORInt ofs = _sz-1;

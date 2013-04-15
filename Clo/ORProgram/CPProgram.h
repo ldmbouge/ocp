@@ -31,6 +31,16 @@
 -(id<ORInformer>) propagateDone;
 @end
 
+@protocol ORCPSolution <ORSolution>
+@end
+
+@protocol ORCPSolutionPool <ORSolutionPool>
+-(void) addSolution: (id<ORCPSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORCPSolution>) best;
+@end
+
 @protocol CPCommonProgram <ORASolver>
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
@@ -91,9 +101,20 @@
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORSolutionPool>) solutionPool;
--(id<ORSolutionPool>) globalSolutionPool;
--(ORInt)intValue:(id<ORIntVar>)x;
+-(id<ORCPSolutionPool>) solutionPool;
+-(id<ORCPSolution>) captureSolution;
+
+-(ORInt) intValue: (id<ORIntVar>) x;
+-(ORBool) bound: (id<ORIntVar>) x;
+-(ORInt)  min: (id<ORIntVar>) x;
+-(ORInt)  max: (id<ORIntVar>) x;
+-(ORInt)  domsize: (id<ORIntVar>) x;
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
+
+
+-(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORBool) boolValue: (id<ORIntVar>) x;
+
 @end
 
 // CPSolver with syntactic DFS Search
@@ -107,6 +128,9 @@
 
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
+-(void)             perform: (ORClosure) body onLimit: (ORClosure) onRestart;
+-(void)           portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void)       switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 @end
 
 

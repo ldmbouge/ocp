@@ -28,6 +28,7 @@ int main(int argc, const char * argv[])
       }];
       [model add:g];
       //NSLog(@"Group: %@",g);
+      //NSLog(@"MODEL %@",model);
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solve:^{
          NSLog(@"About to search...");
