@@ -17,6 +17,7 @@
 #import "ORError.h"
 #import "ORConcurrencyI.h"
 #import "ORCopy.h"
+#import "ORFlatten.h"
 
 @implementation ORModelI
 {
@@ -33,10 +34,6 @@
    // ===================================
    NSMutableDictionary*     _orig2Me;
    // ===================================
-   // "Old" flattening map
-   NSMutableDictionary*     _cMap;
-   NSMutableSet*            _ccSet;  // used only while constructing _cMap
-   id<ORConstraint>         _cc;     // used only while constructing _cMap
 }
 -(ORModelI*) initORModelI
 {
@@ -49,9 +46,6 @@
    _name = 0;
    _nbObjects = 0;
    _orig2Me = NULL;
-   _cMap = [[NSMutableDictionary alloc] initWithCapacity:32];
-   _ccSet = [[NSMutableSet alloc] initWithCapacity:32];
-   _cc = NULL;
    return self;
 }
 -(ORModelI*)initORModelI:(ORULong)nb
@@ -87,7 +81,6 @@
    [_vars release];
    [_mStore release];
    [_oStore release];
-   [_cMap release];
    [_orig2Me release];
    [super dealloc];
 }
@@ -172,8 +165,6 @@
 {
    [self trackConstraint:cstr];
    [self add: cstr];
-   if (_cc)
-      [_ccSet addObject:cstr];
    return cstr;
 }
 -(NSString*) description
@@ -197,25 +188,18 @@
    if (_objective != nil) {
       [buf appendFormat:@"Objective: %@\n",_objective];
    }
-   //[buf appendFormat:@"map: %@",_cMap];
    return buf;
-}
--(NSSet*) constraintsFor:(id<ORConstraint>)c
-{
-   return [_cMap objectForKey:@([c getId])];
-}
--(void) mappedConstraints:(id<ORConstraint>)c toSet:(NSSet*)soc
-{
-   [_cMap setObject:soc forKey:@([c getId])];
-}
--(NSDictionary*) cMap
-{
-   return _cMap;
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
-   if ([[c class] conformsToProtocol:@protocol(ORRelation)])
+   if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
+      if (_orig2Me != NULL) {
+         c = [ORReplace subst:(id)c with: ^id(id x) {
+            return [self lookup:x];
+         }];
+      }
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
+   }
    ORConstraintI* cstr = (ORConstraintI*) c;
    [cstr setId: (ORUInt) [_mStore count]];
    [_mStore addObject:c];
@@ -298,19 +282,19 @@
       onConstraints:(void(^)(id<ORObject>)) doCons
         onObjective:(void(^)(id<ORObject>)) doObjective
 {
-   for(id<ORObject> c in _vars)
-      doVar(c);
    for(id<ORObject> c in _oStore)
       doObjs(c);
+   for(id<ORObject> c in _vars)
+      doVar(c);
    for(id<ORObject> c in _mStore)
       doCons(c);
    doObjective(_objective);
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
-   for(id<ORObject> c in _vars)
-      [c visit: visitor];
    for(id<ORObject> c in _oStore)
+      [c visit: visitor];
+   for(id<ORObject> c in _vars)
       [c visit: visitor];
    for(id<ORObject> c in _mStore)
       [c visit: visitor];
@@ -358,16 +342,12 @@
 {
    ORModelI* _target;
    ORModelI* _src;
-   id<ORConstraint>     _cc;
-   NSMutableSet*     _ccSet;
 }
 -(ORBatchModel*)init: (ORModelI*) theModel source:(ORModelI*)src
 {
    self = [super init];
    _target = theModel;
    _src    = src;
-   _cc     = NULL;
-   _ccSet  = [[NSMutableSet alloc] initWithCapacity:32];
    return self;
 }
 -(id<ORVar>) addVariable: (id<ORVar>) var
@@ -384,9 +364,6 @@
 {
    [_target trackConstraint:cstr];
    [_target add: cstr];
-   if (_cc) {
-      [_ccSet addObject: cstr];
-   }
    return cstr;
 }
 -(id<ORModel>) model

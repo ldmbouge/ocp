@@ -158,11 +158,11 @@
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    id<ORIdArray> o = [[ORIdArrayI allocWithZone: _zone] initORIdArray: _copyModel range: [self copyObject: [v range]]];
+   [_copyModel trackObject: o];
    [v enumerateWith:^(id obj,int idx) {
       id newObj = [self copyObject: obj];
       [o set: newObj at: idx];
    }];
-   [_copyModel trackObject: o];
    _result = o;
 }
 

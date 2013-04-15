@@ -93,6 +93,7 @@
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
+-(ORUInt)getId;
 @end
 
 @implementation ORMIPIntVarSnapshot
@@ -102,6 +103,10 @@
    _name = [v getId];
    _value = [solver intValue: v];
    return self;
+}
+-(ORUInt)getId
+{
+   return _name;
 }
 -(ORInt) intValue
 {
@@ -731,15 +736,24 @@
 }
 -(ORInt) intValue: (id) var
 {
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] intValue];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [var getId] == [obj getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
 }
 -(ORBool) boolValue: (id) var
 {
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] intValue];   
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [var getId] == [obj getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] floatValue];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [var getId] == [obj getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
 -(NSUInteger) count
 {

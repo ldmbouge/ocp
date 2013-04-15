@@ -137,8 +137,6 @@
 @end
 
 @implementation ORFlatten {
-   id<ORAddToModel>   _into;
-   id               _result;
    NSMapTable*         _map;
 }
 -(id)initORFlatten:(id<ORAddToModel>) into
@@ -155,6 +153,10 @@
    [_map release];
    [super dealloc];
 }
+-(id<ORAddToModel>)target
+{
+   return _into;
+}
 -(id)copyOnce:(id)obj
 {
    id copy = [_map objectForKey:obj];
@@ -168,6 +170,19 @@
       return _result;
    }
 }
+-(void)apply:(id<ORModel>)m
+{
+   [m applyOnVar:^(id<ORVar> x) {
+      [self copyOnce:x];
+   } onObjects:^(id<ORObject> x) {
+      id cx = [self copyOnce:x];
+   } onConstraints:^(id<ORConstraint> c) {
+      id cc = [self copyOnce:c];
+   } onObjective:^(id<ORObjectiveFunction> o) {
+      [self copyOnce:o];
+   }];
+}
+
 -(void) visitIntVar: (ORIntVarI*) v
 {
    id<ORIntRange> cd = [self copyOnce:[v domain]];
@@ -788,21 +803,6 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
 
 // ====================================================================================================================
 
--(void)apply:(id<ORModel>)m
-{
-   [m applyOnVar:^(id<ORVar> x) {
-      [self copyOnce:x];
-   } onObjects:^(id<ORObject> x) {
-      id cx = [self copyOnce:x];
-   } onConstraints:^(id<ORConstraint> c) {
-      id cc = [self copyOnce:c];
-      if (cc == NULL) {
-         //NSLog(@"Warning... copyOnce returned null on object.");
-      }
-   } onObjective:^(id<ORObjectiveFunction> o) {
-      [self copyOnce:o];
-   }];
-}
 
 +(void)flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m
 {
@@ -838,5 +838,209 @@ void copyRec(ORFlatten* f,ORInt acc,ORInt d,ORInt arity,id<ORIntRange>* ranges,i
    [terms release];
    return rv;
 }
+@end
+
+typedef id(^Id2Id)(id);
+
+@implementation ORReplace {
+   Id2Id _f;
+   id<ORExpr> _result;
+}
+-(id)init:(id(^)(id))f
+{
+   self = [super init];
+   _f = f;
+   return self;
+}
+-(id<ORExpr>)doIt:(id<ORExpr>)e
+{
+   _result = nil;
+   [e visit:self];
+   return _result;
+}
++(id<ORExpr>)subst:(id<ORExpr>)e with:(id(^)(id))f
+{
+   ORReplace* s = [[ORReplace alloc] init:f];
+   id<ORExpr> rew = [s doIt:e];
+   [s release];
+   return rew;
+}
+
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _result = e;
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   _result = e;
+}
+-(void) visitExprPlusI: (ORExprPlusI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl plus:sr];
+}
+-(void) visitExprMinusI: (ORExprMinusI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl sub:sr];
+}
+-(void) visitExprMulI: (ORExprMulI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl mul:sr];
+}
+-(void) visitExprDivI: (ORExprDivI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl div:sr];
+}
+-(void) visitExprEqualI: (ORExprEqualI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl equal:sr];
+}
+-(void) visitExprNEqualI: (ORExprNotEqualI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl neq:sr];
+}
+-(void) visitExprLEqualI: (ORExprLEqualI*) e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl leq:sr];
+}
+-(void) visitExprSumI: (ORExprSumI*) e
+{
+   _result = [self doIt:[e expr]];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
+{
+   _result = [self doIt:[e expr]];
+}
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORExpr> op = [self doIt:[e operand]];
+   if (op == [e operand])
+      _result = e;
+   else
+      _result = [ORFactory exprAbs:op];
+}
+-(void) visitExprModI:(ORExprModI*)e
+{
+   id<ORExpr> sl = [self doIt:[e left]];
+   id<ORExpr> sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl mod:sr];
+}
+-(void) visitExprNegateI:(ORExprNegateI*) e
+{
+   id<ORExpr> op = [self doIt:[e operand]];
+   if (op == [e operand])
+      _result = e;
+   else
+      _result = [ORFactory exprNegate:op];
+}
+-(void) visitExprCstSubI: (ORExprCstSubI*) e
+{
+   id<ORExpr> idx = [self doIt:[e index]];
+   if (idx == [e index])
+      _result = e;
+   else
+      _result = [ORFactory elt:[e tracker] intArray:[e array] index:idx];
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*) e
+{
+   id sl = [self doIt:[e left]];
+   id sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl or:sr];
+}
+-(void) visitExprConjunctI: (ORConjunctI*) e
+{
+   id sl = [self doIt:[e left]];
+   id sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl and:sr];
+}
+-(void) visitExprImplyI: (ORImplyI*) e
+{
+   id sl = [self doIt:[e left]];
+   id sr = [self doIt:[e right]];
+   if (sl == [e left] && sr == [e right])
+      _result = e;
+   else
+      _result = [ORFactory expr:sl imply:sr];
+}
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   _result = [self doIt:[e expr]];
+}
+-(void) visitExprVarSubI: (ORExprVarSubI*) e
+{
+   id<ORExpr> idx = [self doIt:[e index]];
+   id<ORIntVarArray> ar = _f([e array]);
+   if (idx == [e index] && ar == [e array])
+      _result = e;
+   else
+      _result = [ORFactory elt:[e tracker] intVarArray:ar index:idx];
+}
+
+// Vars =============================================================
+
+-(void) visitIntVar: (ORIntVarI*) v
+{
+   _result = _f(v);
+}
+-(void) visitBitVar: (ORBitVarI*) v
+{
+   _result = _f(v);
+}
+-(void) visitFloatVar: (ORFloatVarI*) v
+{
+   _result = _f(v);
+}
+-(void) visitIntVarLitEQView:(ORIntVarLitEQView*)v
+{
+   _result = _f(v);
+}
+-(void) visitAffineVar:(ORIntVarAffineI*) v
+{
+   _result = _f(v);
+}
+
 @end
 

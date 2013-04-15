@@ -15,9 +15,17 @@
 @interface ORNOopVisit : NSObject<ORVisitor>
 @end
 
-@interface ORFlatten : ORNOopVisit<ORModelTransformation,ORVisitor>
+@interface ORFlatten : ORNOopVisit<ORModelTransformation,ORVisitor> {
+   id<ORAddToModel>   _into;
+   id               _result;
+}
 -(id)initORFlatten:(id<ORAddToModel>) into;
 -(void) apply:(id<ORModel>)m;
+-(id<ORAddToModel>)target;
 +(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
+@end
+
+@interface ORReplace : ORNOopVisit<ORModelTransformation,ORVisitor>
++(id<ORExpr>)subst:(id<ORExpr>)e with:(id(^)(id))f;
 @end

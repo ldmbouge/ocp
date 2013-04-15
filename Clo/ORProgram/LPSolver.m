@@ -28,6 +28,7 @@
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
+-(ORUInt)getId;
 @end
 
 @implementation ORLPFloatVarSnapshot
@@ -38,6 +39,10 @@
    _value = [solver floatValue: v];
    _reducedCost = [solver reducedCost: v];
    return self;
+}
+-(ORUInt)getId
+{
+   return _name;
 }
 -(ORInt) intValue
 {
@@ -104,6 +109,7 @@
 -(NSString*) description;
 -(ORBool) isEqual: (id) object;
 -(NSUInteger) hash;
+-(ORUInt)getId;
 @end
 
 @implementation ORLPConstraintSnapshot
@@ -113,6 +119,10 @@
    _name = [cstr getId];
    _dual = [solver dual: cstr];
    return self;
+}
+-(ORUInt)getId
+{
+   return _name;
 }
 -(ORInt) intValue
 {
@@ -268,15 +278,24 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
-   return [(id<ORSnapshot>) [_varShots objectAtIndex:[var getId]] floatValue];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
 -(ORFloat) reducedCost: (id<ORFloatVar>) var
 {
-   return [[_varShots objectAtIndex:[var getId]] reducedCost];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [[_varShots objectAtIndex:idx] reducedCost];
 }
 -(ORFloat) dual: (id<ORConstraint>) cstr
 {
-   return [[_cstrShots objectAtIndex:[cstr getId]] dual];
+   NSUInteger idx = [_cstrShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [cstr getId];
+   }];
+   return [[_cstrShots objectAtIndex:idx] dual];
 }
 -(NSUInteger) count
 {

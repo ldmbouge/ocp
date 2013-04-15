@@ -73,8 +73,8 @@ int main_mip(int argc, const char * argv[])
    id<ORIntRange> Domains = [ORFactory intRange: model low: 0 up: MAXINT];
    id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domains];
    for(ORInt i = 0; i < nbRows; i++)
-      [model add: [Sum(model,j,Columns,[x[j] mul: @(coef[i][j])]) leq: @(b[i])]];
-   [model maximize: Sum(model,j,Columns,[x[j] mul: @(c[j])])];
+      [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
+   [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];
@@ -88,7 +88,94 @@ int main_mip(int argc, const char * argv[])
    return 0;
 }
 
+int main_cp(int argc, const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+   id<ORIntRange> Domains = [ORFactory intRange: model low: 0 up: 10000];
+   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domains];
+   for(ORInt i = 0; i < nbRows; i++) // nbRows
+      [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
+   [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
+   NSLog(@"MODEL: %@",model);
+   id<CPProgram> mip = [ORFactory createCPProgram: model];
+   id<CPHeuristic> h = [mip createABS];
+   [mip solve:^{
+      NSLog(@"x = %@",x);
+      [mip labelHeuristic:h];
+      [mip labelArray:x orderedBy:^ORFloat(ORInt i) {
+         return -((ORInt)(c[i]) << 7) +  [mip domsize:x[i]];
+      }];
+   }];
+   id<ORSolution> sol = [[mip solutionPool] best];
+   NSLog(@"Solution: %@",sol);
+   printf("Objective value: %f \n",[((id<ORObjectiveValueFloat>) [sol objectiveValue]) value]);
+   for(ORInt i = 0; i < nbColumns; i++)
+      printf("x[%d] = %d \n",i,[sol intValue: x[i]]);
+   NSLog(@"we are done");
+   [mip release];
+   return 0;
+}
+
+#import <ORProgram/CPSolver.h>
+@interface CPSolver (Addons)
+-(void)labelFF:(id<ORIntVarArray>)x;
+@end
+
+@implementation CPSolver (Addons)
+-(void)labelFF:(id<ORIntVarArray>)x
+{
+   for (ORInt i=x.range.low; i <= x.range.up; i++) {
+      while (![self bound:x[i]]) {
+         ORInt v = [self min:x[i]];
+         [self try:^{
+            [self label:x[i] with:v];
+         } or:^{
+            [self diff:x[i] with:v];
+         }];
+      }
+   }
+}
+@end
+
+int main_both(int argc, const char * argv[])
+{
+   id<ORModel> model = [ORFactory createModel];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+   id<ORIntRange> Domains = [ORFactory intRange: model low: 0 up: 10000];
+   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domains];
+   for(ORInt i = 0; i < nbRows; i++)
+      [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
+   [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
+   NSLog(@"MODEL: %@",model);
+
+   id<ORModel>    cpm = [model copy];
+//   id<MIPProgram> mip = [ORFactory createMIPProgram:model];
+//   [mip solve];
+//   id<ORMIPSolution> mipSol = [[mip solutionPool] best];
+//   id<ORObjectiveValueFloat> mipOBJ = [mipSol objectiveValue];
+//   [cpm add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])]) geq:@((ORInt)[mipOBJ value])]];
+   NSLog(@"MODEL: %@",cpm);
+   
+   id<CPProgram>   cp = [ORFactory createCPProgram: cpm];
+
+   id<CPHeuristic> h = [cp createABS];
+   [cp solve:^{
+      [cp labelHeuristic:h];
+      NSLog(@"Got a solution: %@",[[cp objective] value]);
+   }];
+   id<ORSolution> cpSol = [[cp solutionPool] best];
+   NSLog(@"Solution: %@",cpSol);
+   printf("Objective value: %d \n",[[cpSol objectiveValue] value]);
+   for(ORInt i = 0; i < nbColumns; i++)
+      printf("x[%d] = %d \n",i,[cpSol intValue: x[i]]);
+   NSLog(@"we are done");
+   ///[mip release];
+   return 0;
+}
+
+
 int main(int argc, const char * argv[])
 {
-   return main_lp(argc,argv);
+   return main_both(argc,argv);
 }
