@@ -389,11 +389,6 @@
 			<key>orderHint</key>
 			<integer>11</integer>
 		</dict>
-		<key>slabLNSModel.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>67</integer>
-		</dict>
 		<key>slabModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -413,11 +408,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>38</integer>
-		</dict>
-		<key>stressLimit.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>66</integer>
 		</dict>
 		<key>testDistrib.xcscheme_^#shared#^_</key>
 		<dict>
