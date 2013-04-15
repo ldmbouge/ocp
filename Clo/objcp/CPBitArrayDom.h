@@ -20,14 +20,15 @@
 
 @interface CPBitArrayDom : NSObject {
 @private
-    id<ORTrail>        _trail;
+    id<ORTrail>     _trail;
     TRUInt*         _low;
     TRUInt*         _up;
     unsigned int    _wordLength;
     unsigned int    _bitLength;
-    TRUInt            _freebits;
+    TRUInt          _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
+    NSMutableArray*        _remValues;
 }
 -(CPBitArrayDom*)       initWithLength: (int) len withTrail:(id<ORTrail>) tr;
 -(CPBitArrayDom*)       initWithBitPat: (int) len withLow: (unsigned int*) low andUp:(unsigned int*) up andTrail:(id<ORTrail>)tr;
@@ -55,6 +56,7 @@
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;
 -(unsigned int)         getMaxRank;
+-(ORStatus)             remove:(unsigned int*)val;
 -(unsigned int*)        pred:(unsigned int*) x;
 -(ORStatus)             updateMin:(uint64)newMin for: (id<CPBitVarNotifier>)x;
 -(ORStatus)             updateMax:(uint64)newMax for: (id<CPBitVarNotifier>)x;

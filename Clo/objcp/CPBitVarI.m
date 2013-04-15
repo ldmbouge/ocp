@@ -8,7 +8,7 @@
  file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
  ***********************************************************************/
-
+#import "CPBitVar.h"
 #import "CPBitVarI.h"
 #import "CPEngineI.h"
 #import "CPTrigger.h"
@@ -24,6 +24,9 @@ static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t)
     net->_bitFixedEvt = makeTRId(t, nil);
     net->_minEvt    = makeTRId(t,nil);
     net->_maxEvt    = makeTRId(t,nil);
+    net->_bindEvt = makeTRId(t,nil);
+    net->_domEvt = makeTRId(t,nil);
+    net->_ac5 = makeTRId(t,nil);
 }
 
 static void deallocNetwork(CPBitEventNetwork* net) 
@@ -31,7 +34,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
     freeList(net->_boundsEvt._val);
     freeList(net->_bitFixedEvt._val);
     freeList(net->_minEvt._val);
-    freeList(net->_maxEvt._val);
+    freeList(net->_bindEvt._val);
+   freeList(net->_domEvt._val);
+   freeList(net->_ac5._val);
 }
 
 @interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
@@ -161,6 +166,12 @@ static void deallocNetwork(CPBitEventNetwork* net)
     }
 }
 
+
+-(enum CPVarClass)varClass
+{
+   return CPVCLiterals;
+}
+
 -(BOOL)bound
 {
     return [_dom bound];
@@ -199,7 +210,14 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return (ORBounds){(ORInt)[_dom min],(ORInt)[_dom max]};
 }
-
+-(ORUInt) maxRank
+{
+   return[_dom getMaxRank];
+}
+-(ORUInt*) atRank:(ORULong)rnk
+{
+   return[_dom atRank:rnk];
+}
 -(ORULong)domsize
 {
     return [_dom domsize];
@@ -261,8 +279,15 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO);
 }
-
--(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo 
+-(void) whenChangeDo:(CPCoreConstraint*) c
+{
+   hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO);
+}
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent(_engine, &_net._domEvt, todo, c, p);
+}
+-(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
 {
    hookupEvent(_engine, &_net._boundsEvt, todo, c, p);
 }
@@ -385,10 +410,13 @@ static void deallocNetwork(CPBitEventNetwork* net)
     return [_dom bind:val for:_recv];
 }
 
--(ORStatus)bind:(unsigned int *)val{
+-(ORStatus)bind:(ORUInt*)val{
     return [_dom bindToPat: val for:_recv];
 }
-
+-(ORStatus) remove:(unsigned int*)val
+{
+   return [_dom remove:(unsigned int*)val];
+}
 -(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)engine withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {
     [self initCPBitVarCore:engine low:low up:up length:len];

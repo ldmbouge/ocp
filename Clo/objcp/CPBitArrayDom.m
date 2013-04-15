@@ -109,6 +109,7 @@
    }
    return string;
 }
+
 -(ORULong) domsize
 {
 //   [self updateFreeBitCount];
@@ -126,6 +127,11 @@
 {
    ORBounds b = {(ORInt)[self min],(ORInt)[self max]};
    return b;
+}
+-(ORStatus) remove:(ORUInt*)val
+{
+   [_remValues addObject:(id)val];
+   return ORSuccess;
 }
 
 -(uint64)   min
@@ -306,13 +312,28 @@
 }
 -(bool) member:(unsigned int*) val
 {
+   bool isMember = true;
+   bool wasRemoved = false;
    for(int i=0; i<_wordLength;i++){
       if ((val[i] & ~_up[i]._val)!=0)
-         return false;
+         isMember = false;;
       if ((~val[i] & _low[i]._val)!=0)
-         return false;
+         isMember = false;
    }
-   return true;
+   for(int i=0;i<[_remValues count];i++)
+   {
+      wasRemoved = true;
+      for (int j=0; j<_wordLength; j++) {
+         if (((unsigned int*)_remValues[i])[j] != val[j]) {
+            wasRemoved = false;
+            break;
+         }
+      }
+      if (wasRemoved) {
+         return false;
+      }
+   }
+   return isMember;
 }
 
 -(unsigned long long) getRank: (unsigned int*) val

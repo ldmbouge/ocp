@@ -572,6 +572,7 @@
    ORUInt*          _up;
    ORUInt           _bLen;
    ORUInt           _nb;
+   
 }
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
@@ -601,6 +602,28 @@
 {
    return _up;
 }
+-(ORULong) maxRank
+{
+   if (_impl)
+      return [[_impl dereference] maxRank];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+-(ORULong) getRank:(ORUInt*)v
+{
+   if (_impl)
+      return [[_impl dereference] getRank:v];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+-(ORUInt*) atRank:(ORULong)r
+{
+   if (_impl)
+      return [[_impl dereference] atRank:r];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+
 -(ORUInt)bitLength
 {
    return _bLen;
@@ -609,6 +632,13 @@
 {
    if (_impl)
       return [[_impl dereference] bound];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+}
+-(ORBounds) bounds
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] bounds];
    else
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
@@ -628,13 +658,17 @@
       return (long long)_low[1]<<32 | _low[0];
    }
 }
--(unsigned int)  domsize
+-(ORULong)  domsize
 {
    if (_impl)
       return [(id<ORBitVar>)[_impl dereference] domsize];
    else {
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }
+}
+-(ORStatus) bind:(unsigned int *)val
+{
+   return [_impl bind:val];
 }
 -(bool) member: (unsigned int*) v
 {

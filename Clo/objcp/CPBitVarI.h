@@ -23,9 +23,12 @@
 
 typedef struct  {
    TRId         _boundsEvt;
-   TRId       _bitFixedEvt;
+   TRId           _bindEvt;
+   TRId            _domEvt;
    TRId            _minEvt;
    TRId            _maxEvt;
+   TRId               _ac5;
+   TRId       _bitFixedEvt;
 } CPBitEventNetwork;
 
 
@@ -40,6 +43,7 @@ typedef struct  {
 }
 -(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
+-(enum CPVarClass)varClass;
 -(NSString*) description;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
@@ -55,7 +59,9 @@ typedef struct  {
 
 // subscription
 -(void) whenBitFixed:(CPCoreConstraint*)c at:(int) p do:(ConstraintCallback) todo;
--(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
+-(void) whenChangeDo:(CPCoreConstraint*) c;
+-(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c;
+-(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo;
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
 -(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo; 
 
@@ -69,6 +75,7 @@ typedef struct  {
 -(BOOL) bound;
 -(uint64) min;
 -(uint64) max;
+-(ORUInt) maxRank;
 -(CPBitArrayDom*) domain;
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
@@ -90,7 +97,7 @@ typedef struct  {
 -(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(ORStatus)     bind:(unsigned int*) val;
 -(ORStatus)     bindUInt64:(uint64) val;
-//-(ORStatus)     remove:(int) val;
+-(ORStatus)     remove:(ORUInt*) val;
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 -(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods

@@ -132,4 +132,9 @@
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
 -(void) labelDownFromMSB:(id<CPBitVar>) x;
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
+
+-(id<CPHeuristic>) createBitVarFF;
+-(id<CPHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createBitVarABS;
+-(id<CPHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 @end

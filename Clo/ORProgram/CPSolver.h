@@ -51,11 +51,13 @@
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
+-(id<CPHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;
 -(id<CPHeuristic>) createIBS;
 -(id<CPHeuristic>) createABS;
+-(id<CPHeuristic>) createBitVarABS;
 @end
 
 // Pure DFS CPSolver

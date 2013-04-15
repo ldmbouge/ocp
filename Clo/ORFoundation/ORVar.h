@@ -56,8 +56,13 @@
 -(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
--(ORUInt)bitLength;
+-(ORBounds) bounds;
+-(ORUInt) bitLength;
 -(ORULong)  domsize;
+-(ORULong) maxRank;
+-(ORULong) getRank:(ORUInt*)r;
+-(ORUInt*) atRank:(ORULong) r;
+-(ORStatus) bind:(unsigned int*)val;
 -(BOOL) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end

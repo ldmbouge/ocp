@@ -81,7 +81,11 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(unsigned int)  domsize;
+-(ORULong)  domsize;
+-(ORULong)  maxRank;
+-(ORULong)  getRank:(ORUInt *)v;
+-(ORUInt*)  atRank:(ORULong)r;
+-(ORStatus) bind:(unsigned int *)val;
 -(bool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
 -(NSSet*) constraints;

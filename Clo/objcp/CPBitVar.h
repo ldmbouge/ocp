@@ -22,6 +22,7 @@
 -(ORBounds) bounds;
 -(ORULong)  domsize;
 -(BOOL) member: (unsigned int*) v;
+-(ORStatus) remove:(ORUInt*)val;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end

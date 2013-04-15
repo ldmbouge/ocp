@@ -20,6 +20,7 @@
 #import <ORProgram/CPABS.h>
 #import <ORProgram/CPBitVarABS.h>
 #import <ORProgram/CPFirstFail.h>
+#import <ORProgram/CPBitVarFirstFail.h>
 
 
 @interface CPUtilities : NSObject
