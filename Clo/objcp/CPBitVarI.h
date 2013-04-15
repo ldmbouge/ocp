@@ -74,9 +74,11 @@ typedef struct  {
 -(unsigned int*) maxArray;
 -(unsigned int) getWordLength;
 -(ORBounds) bounds;
--(unsigned int) domsize;
+-(ORULong) domsize;
 -(unsigned int) lsFreeBit;
+-(unsigned int) randomFreeBit;
 -(ORBool) member:(unsigned int*)v;
+
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;

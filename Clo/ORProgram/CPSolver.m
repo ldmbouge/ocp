@@ -1203,6 +1203,73 @@
    }
 }
 
+-(void) labelBitVarsFirstFail: (NSArray*)vars
+{
+   CPBitVarI* minDom;
+   ORULong minDomSize;
+   ORULong thisDomSize;
+   ORLong numVars;
+   bool freeVars = false;
+   
+   numVars = [vars count];
+   int j;
+   int numBound;
+
+   for(int i=0;i<numVars;i++){
+      if ([vars[i] bound])
+         continue;
+      if ([vars[i] domsize] <= 0)
+         continue;
+      minDom = (CPBitVarI*)[vars[i] dereference];
+      minDomSize = [minDom domsize];
+      freeVars = true;
+      break;
+   }
+
+//   NSLog(@"%lld unbound variables.",numVars);
+   while (freeVars) {
+      freeVars = false;
+      numBound = 0;
+      for(int i=0;i<numVars;i++){
+         if ([vars[i] bound]){
+            numBound++;
+            continue;
+         }
+         if ([vars[i] domsize] <= 0)
+            continue;
+         if (!freeVars) {
+            minDom = [vars[i] dereference];
+            minDomSize = [minDom domsize];
+            freeVars = true;
+            continue;
+         }
+         thisDomSize=[[vars[i] dereference] domsize];
+         if(thisDomSize==0)
+            continue;
+         if (thisDomSize < minDomSize) {
+            minDom = [vars[i] dereference];
+            minDomSize = thisDomSize;
+         }
+      }
+      if (!freeVars)
+         break;
+      NSLog(@"%d//%lld bound.",numBound, numVars);
+//      j=[minDom randomFreeBit];
+      
+      NSLog(@"Labeling %@ at %d.", minDom, j);
+//         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
+//                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      while ([minDom domsize] > 0) {
+         j= [minDom randomFreeBit];
+         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
+                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      }
+
+      NSLog(@"Labeled %@ at %d.", minDom, j);
+   }
+}
+
+
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {

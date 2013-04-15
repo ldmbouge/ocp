@@ -19,7 +19,7 @@
 -(CPBitArrayDom*) domain;
 -(uint64)min;
 -(uint64)max;
--(unsigned int)  domsize;
+-(ORULong)  domsize;
 -(ORBool) member: (unsigned int*) v;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
