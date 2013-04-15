@@ -79,12 +79,13 @@
    [ORFactory createCPProgram: model program: cpprogram];
    [model setImpl: cpprogram];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
-   [cpprogram onSolution:^{
+/*   [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
       //NSLog(@"Found solution with value: %@",[s objectiveValue]);
       [sp addSolution: s];
       [s release];
    }];
+ */
    return cpprogram;
 }
 
