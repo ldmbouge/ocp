@@ -78,7 +78,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(void)dealloc
 {
-    //NSLog(@"CIVar::dealloc %d\n",_name);
     if (_recv != nil)
         [_recv release];
     [_dom release];     
@@ -710,9 +709,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    a.low += _b;
    a.up  += _b;
    return a;
-//   ORInt low = [_dom findMax:v - _b - 1];
-//   ORInt up  = [_dom findMin:v - _b + 1];
-//   return (ORRange){low + _b,up + _b};
 }
 -(ORInt) shift
 {
@@ -773,7 +769,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORInt vUp  = a < 0 ? a * [x min] + b : a * [x max] + b;
    self = [super initCPIntVarView: [x engine] low:vLow up:vUp for:x];
    _vc = CPVCAffine;
-   //_dom = (CPBoundsDom*)[[x domain] retain];
    _dom = nil;
    _x = x;
    _a = a;
@@ -880,21 +875,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORStatus s = [self updateMin:newMin];
    if (s == ORFailure) return s;
    return [self updateMax:newMax];
-/*
-   ORStatus s;
-   ORInt tMin = (newMin - _b) / _a;
-   ORInt tMax = (newMax - _b) / _a;
-   if (_a > 0) {      
-      ORInt rMin = (newMin - _b) % _a;
-      s = [_dom updateMin:tMin + (rMin != 0) for:self];
-      if (s) s = [_dom updateMax:tMax for:self];
-   } else {
-      ORInt rMax = (newMax - _b) % _a;
-      s = [_dom updateMax:tMin for:self];
-      if (s) s = [_dom updateMin:tMax + (rMax!=0) for:self];
-   }
-   return s;
- */
 }
 
 -(ORStatus)bind: (ORInt) val
