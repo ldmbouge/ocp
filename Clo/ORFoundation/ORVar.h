@@ -58,12 +58,14 @@
 -(ORUInt*)up;
 -(ORBounds) bounds;
 -(ORUInt) bitLength;
--(ORULong)  domsize;
+-(ORInt)  domsize;
+-(ORULong) numPatterns;
 -(ORULong) maxRank;
 -(ORULong) getRank:(ORUInt*)r;
 -(ORUInt*) atRank:(ORULong) r;
 -(ORStatus) bind:(unsigned int*)val;
 -(BOOL) member: (unsigned int*) v;
+-(bool) isFree:(ORUInt)pos;
 -(NSString*)stringValue;
 @end
 
@@ -95,6 +97,14 @@
 -(void) set: (id<ORFloatVar>) x at: (ORInt) value;
 -(id<ORFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<ORFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol ORBitVarArray <ORVarArray>
+-(id<ORBitVar>) at: (ORInt) value;
+-(void) set: (id<ORBitVar>) x at: (ORInt) value;
+-(id<ORBitVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<ORBitVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

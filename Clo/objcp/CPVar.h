@@ -15,6 +15,7 @@
 
 @protocol CPEngine;
 @protocol ORTracer;
+@protocol CPBitVar;
 
 @protocol CPVar <NSObject>
 -(ORInt) getId;
@@ -68,6 +69,14 @@ enum CPVarClass {
 -(void) set: (id<CPIntVar>) x at: (ORInt) value;
 -(id<CPIntVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<CPIntVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+
+@protocol CPBitVarArray <CPVarArray>
+-(id<CPIntVar>) at: (ORInt) value;
+-(void) set: (id<CPBitVar>) x at: (ORInt) value;
+-(id<CPBitVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPBitVar>) newValue atIndexedSubscript: (NSUInteger) idx;
 -(id<ORASolver>) solver;
 @end
 

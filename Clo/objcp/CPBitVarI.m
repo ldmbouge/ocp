@@ -176,7 +176,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom bound];
 }
- 
+
+-(ORInt) bitLength
+{
+   return [_dom getLength];
+}
 -(uint64) min
 {
     return [_dom min];
@@ -218,9 +222,14 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    return[_dom atRank:rnk];
 }
--(ORULong)domsize
+-(ORInt)domsize
 {
     return [_dom domsize];
+}
+
+-(ORULong) numPatterns  
+{
+   return [_dom numPatterns];
 }
 
 -(unsigned int) randomFreeBit
@@ -237,12 +246,17 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    return [_dom msFreeBit];
 }
-
+-(ORStatus) bind:(ORUInt)bit to:(BOOL)value
+{
+   return [_dom setBit:bit to:value for:self];
+}
 -(BOOL)member:(unsigned int*)v
 {
     return [_dom member:v];
 }
-
+-(bool) isFree:(ORUInt)pos{
+   return [_dom isFree:pos];
+}
 -(NSString*)description
 {
     return [_dom description];
@@ -413,9 +427,9 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(ORStatus)bind:(ORUInt*)val{
     return [_dom bindToPat: val for:_recv];
 }
--(ORStatus) remove:(unsigned int*)val
+-(ORStatus) remove:(ORUInt)val
 {
-   return [_dom remove:(unsigned int*)val];
+   return [_dom remove:val];
 }
 -(CPBitVarI*) initCPExplicitBitVar: (id<CPEngine>)engine withLow:(unsigned int*)low andUp:(unsigned int*)up andLen: (unsigned int) len
 {

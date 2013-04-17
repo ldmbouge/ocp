@@ -409,6 +409,18 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var with:(ORUInt)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
+}
+-(void) diffBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method diffBVImpl not implemented"];
+}
+-(void) diffBVImpl:(id<CPBitVar,CPBitVarNotifier>)var with:(ORUInt)val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method diffBVImpl not implemented"];
+}
 
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
@@ -600,6 +612,99 @@
       */
    } while (true);
 }
+
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h 
+{
+   id<ORBitVarArray> av= [h allBitVars];
+   id<ORSelect> select = [ORFactory select: _engine
+                                           range: RANGE(_engine,[av low],[av up])
+                                        suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
+                                       orderedBy: ^ORFloat(ORInt i) {
+                                          ORFloat rv = [h varOrdering:av[i]];
+                                          return rv;
+                                       }];
+   id<ORBitVar>* last = malloc(sizeof(id<ORBitVar>));
+   id<ORRandomStream> valStream = [ORCrFactory randomStream];
+   [_trail trailClosure:^{
+      free(last);
+      [valStream release];
+   }];
+   
+   *last = nil;
+   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
+   do {
+      id<ORBitVar> x = *last;
+      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+         ORInt i = [select max];
+         if (i == MAXINT)
+            return;
+//         NSLog(@"Chose variable: %d",i);
+         x = (id<ORBitVar>)av[i];
+         *last = x;
+      }/* else {
+        NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
+        }*/
+      [failStamp setValue:[_search nbFailures]];
+      ORFloat bestValue = - MAXFLOAT;
+      ORLong bestRand = 0x7fffffffffffffff;
+      ORULong up  = [x bitLength];
+      ORInt bestIndex = -1;
+      for(ORInt v = 0;v < up;v++) {
+      if ([x isFree:v]) {
+            ORFloat vValue = [h valOrdering:v forVar:x];
+            if (vValue > bestValue) {
+               bestValue = vValue;
+               bestIndex = v;
+               bestRand  = [valStream next];
+            } else if (vValue == bestValue) {
+               ORLong rnd = [valStream next];
+               if (rnd < bestRand) {
+                  bestIndex = v;
+                  bestRand = rnd;
+               }
+            }
+         }
+      }
+      
+      if (bestIndex != - 1)  {
+//         NSLog(@"Trying %x at index %u",x,bestIndex);
+         [self try: ^{
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)[x dereference] at:bestIndex with:false];
+         } or: ^{
+            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)[x dereference] at:bestIndex with:true];
+         }];
+      }
+      /*
+       id<ORSelect> valSelect = [ORFactory select: _engine
+       range:RANGE(_engine,[x min],[x max])
+       suchThat:^bool(ORInt v)    { return [x member:v];}
+       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
+       do {
+       ORInt curVal = [valSelect max];
+       if (curVal == MAXINT)
+       break;
+       [self try:^{
+       [self label: x with: curVal];
+       } or:^{
+       [self diff: x with: curVal];
+       }];
+       } while(![x bound]);
+       */
+   } while (true);
+}
+-(void) labelBitVar: (id<CPBitVar>) var at:(ORUInt)idx with: (ORUInt) val
+{
+   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:idx with: val];
+}
+-(void) bitVarDiff: (id<CPBitVar>) var with: (ORUInt) val
+{
+   [self diffBVImpl: (id<CPBitVar,CPBitVarNotifier>) [var dereference] with: val];
+}
+
+
+
+
+
 -(void) label: (id<ORIntVar>) mx
 {
    id<CPIntVar> x = (id<CPIntVar>) [mx dereference];

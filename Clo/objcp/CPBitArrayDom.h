@@ -36,7 +36,8 @@
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
 -(ORUInt)               getSize;
--(ORULong)              domsize;
+-(ORInt)               domsize;
+-(ORULong)              numPatterns;
 -(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
 -(BOOL)                 bound;
@@ -56,7 +57,7 @@
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;
 -(unsigned int)         getMaxRank;
--(ORStatus)             remove:(unsigned int*)val;
+-(ORStatus)             remove:(ORUInt)val;
 -(unsigned int*)        pred:(unsigned int*) x;
 -(ORStatus)             updateMin:(uint64)newMin for: (id<CPBitVarNotifier>)x;
 -(ORStatus)             updateMax:(uint64)newMax for: (id<CPBitVarNotifier>)x;

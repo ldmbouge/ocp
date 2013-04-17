@@ -1022,6 +1022,8 @@
 		F5066C0E171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */; };
 		F5066C0F171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */; };
 		F5066C11171CA91D00F309A6 /* CPBitVarFirstFail.m in Sources */ = {isa = PBXBuildFile; fileRef = F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */; };
+		F5066C14171CC4AF00F309A6 /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C12171CC4AF00F309A6 /* CPBitVarHeuristic.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		F5066C15171CC4AF00F309A6 /* CPBitVarHeuristic.h in Headers */ = {isa = PBXBuildFile; fileRef = F5066C12171CC4AF00F309A6 /* CPBitVarHeuristic.h */; };
 		F50D95AA16835AE4001D5E3C /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		F50D95AB16835AE4001D5E3C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		F50D95AD16835AE4001D5E3C /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -4435,6 +4437,7 @@
 		F5066C05171AE93F00F309A6 /* CPBitVarABS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarABS.m; sourceTree = "<group>"; };
 		F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarFirstFail.h; sourceTree = "<group>"; };
 		F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPBitVarFirstFail.m; sourceTree = "<group>"; };
+		F5066C12171CC4AF00F309A6 /* CPBitVarHeuristic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPBitVarHeuristic.h; sourceTree = "<group>"; };
 		F548AA71167FB1C600726814 /* MD5 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MD5; sourceTree = BUILT_PRODUCTS_DIR; };
 		F548AA75167FB1C600726814 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		F548AA78167FB1C700726814 /* MD5-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MD5-Prefix.pch"; sourceTree = "<group>"; };
@@ -5637,6 +5640,7 @@
 				F5066C05171AE93F00F309A6 /* CPBitVarABS.m */,
 				F5066C0A171CA91C00F309A6 /* CPBitVarFirstFail.h */,
 				F5066C0B171CA91C00F309A6 /* CPBitVarFirstFail.m */,
+				F5066C12171CC4AF00F309A6 /* CPBitVarHeuristic.h */,
 			);
 			path = ORProgram;
 			sourceTree = "<group>";
@@ -7162,6 +7166,7 @@
 				B15442B116D1A3F7001BD7B3 /* LPSolver.h in Headers */,
 				F5066C0C171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */,
 				F5066C06171AE93F00F309A6 /* CPBitVarABS.h in Headers */,
+				F5066C14171CC4AF00F309A6 /* CPBitVarHeuristic.h in Headers */,
 				B15442E516D1B414001BD7B3 /* LPConcretizer.h in Headers */,
 				5B378BB616D52456002E1AB4 /* CPParallel.h in Headers */,
 				5BB9542016DA888500932681 /* CPMultiStartSolver.h in Headers */,
@@ -7289,6 +7294,7 @@
 				5B8C7E531586801F007042CA /* CPLib-Prefix.pch in Headers */,
 				5B8C7E541586801F007042CA /* UIBoardController.h in Headers */,
 				F5066C0E171CA91D00F309A6 /* CPBitVarFirstFail.h in Headers */,
+				F5066C15171CC4AF00F309A6 /* CPBitVarHeuristic.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

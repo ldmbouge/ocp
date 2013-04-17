@@ -110,13 +110,18 @@
    return string;
 }
 
--(ORULong) domsize
+-(ORInt) domsize
 {
-//   [self updateFreeBitCount];
+   return _freebits._val;
+
+}
+-(ORULong) numPatterns
+{
+   //   [self updateFreeBitCount];
    ORULong dSize = 0x00000001;
    dSize <<= _freebits._val;
    return dSize;
-
+   
 }
 -(BOOL) bound
 {
@@ -128,7 +133,7 @@
    ORBounds b = {(ORInt)[self min],(ORInt)[self max]};
    return b;
 }
--(ORStatus) remove:(ORUInt*)val
+-(ORStatus) remove:(ORUInt)val
 {
    [_remValues addObject:(id)val];
    return ORSuccess;

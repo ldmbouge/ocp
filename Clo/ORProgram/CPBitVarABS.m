@@ -17,11 +17,11 @@
 
 @interface ABSBitVarNogood : NSObject {
    id<CPBitVar> _var;
-   ORUInt*        _val;
+   ORUInt        _val;
 }
--(id)initABSBitVarNogood:(id<CPIntVar>)var value:(ORUInt*)val;
+-(id)initABSBitVarNogood:(id<CPBitVar>)var value:(ORUInt)val;
 -(id<CPBitVar>)variable;
--(ORUInt*)value;
+-(ORUInt)value;
 @end
 
 @interface ABSBitVarProbe : NSObject {
@@ -51,7 +51,7 @@
 -(ABSBitVarProbeAggregator*)initABSBitVarProbeAggregator:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addProbe:(ABSBitVarProbe*)p;
--(void)addAssignment:(id<CPBitVar>)x toValue:(unsigned int*)v withActivity:(ORFloat)act;
+-(void)addAssignment:(id<CPBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act;
 -(ORInt)nbProbes;
 -(ORFloat)avgActivity:(ORInt)x;
 -(ORFloat)avgSQActivity:(ORInt)x;
@@ -80,10 +80,10 @@
 -(id)initABSBitVarValueActivity:(id)var;
 -(id)copyWithZone:(NSZone*)zone;
 -(void)dealloc;
--(void)setActivity:(ORFloat)a forValue:(ORInt)v;
--(void)addActivity:(ORFloat)a forValue:(ORInt)v;
--(void)addProbeActivity:(ORFloat)a forValue:(unsigned int*)v;
--(ORFloat)activityForValue:(ORInt)v;
+-(void)setActivity:(ORFloat)a forValue:(ORUInt)v;
+-(void)addActivity:(ORFloat)a forValue:(ORUInt)v;
+-(void)addProbeActivity:(ORFloat)a forValue:(ORUInt)v;
+-(ORFloat)activityForValue:(ORUInt)v;
 -(void)enumerate:(void(^)(id value,id activity,BOOL* stop))block;
 -(NSString*)description;
 @end
@@ -145,7 +145,7 @@
    }];
    _nbProbes++;
 }
--(void)addAssignment:(id<CPBitVar>)x toValue:(unsigned int*)v withActivity:(ORFloat)act
+-(void)addAssignment:(id<CPBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSBitVarValueActivity* valueActivity = [_values objectForKey:key];
@@ -185,7 +185,7 @@
 @end
 
 @implementation ABSBitVarNogood
--(id)initABSBitVarNogood:(id<CPBitVar>)var value:(ORUInt*)val
+-(id)initABSBitVarNogood:(id<CPBitVar>)var value:(ORUInt)val
 {
    self = [super init];
    _var = var;
@@ -196,7 +196,7 @@
 {
    return _var;
 }
--(ORUInt*)value
+-(ORUInt)value
 {
    return _val;
 }
@@ -204,7 +204,7 @@
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    //TODO: Must fix this to work with bitvars longer than one word.
-   [buf appendFormat:@"<Nogood var(%d) ** %u>",[_var getId],*_val];
+   [buf appendFormat:@"<Nogood var(%d) ** %u>",[_var getId],_val];
    return buf;
 }
 @end
@@ -323,15 +323,15 @@
    [_values release];
    [super dealloc];
 }
--(void)setActivity:(ORFloat)a forValue:(ORInt)v
+-(void)setActivity:(ORFloat)a forValue:(ORUInt)v
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:v];
+   NSNumber* key = [[NSNumber alloc] initWithLong:v];
    [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
    [key release];
 }
--(void)addActivity:(ORFloat)a forValue:(ORInt)v
+-(void)addActivity:(ORFloat)a forValue:(ORUInt)v
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:v];
+   NSNumber* key = [[NSNumber alloc] initWithLong:v];
    NSNumber* valAct = [_values objectForKey:key];
    if (valAct==nil) {
       [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
@@ -341,9 +341,9 @@
    }
    [key release];
 }
--(void)addProbeActivity:(ORFloat)a forValue:(unsigned int*)v
+-(void)addProbeActivity:(ORFloat)a forValue:(ORUInt)v
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:*v];
+   NSNumber* key = [[NSNumber alloc] initWithLong:v];
    NSNumber* valAct = [_values objectForKey:key];
    if (valAct==nil) {
       [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
@@ -353,9 +353,9 @@
    }
    [key release];
 }
--(ORFloat)activityForValue:(ORInt)v
+-(ORFloat)activityForValue:(ORUInt)v
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:v];
+   NSNumber* key = [[NSNumber alloc] initWithLong:v];
    NSNumber* valAct = [_values objectForKey:key];
    [key release];
    if (valAct == nil)
@@ -439,7 +439,7 @@
    [key release];
    return rv / [x domsize];
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
+-(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPIntVar>)x
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[[x dereference] getId]];
    ABSBitVarValueActivity* vAct = [_valActivity objectForKey:key];
@@ -501,24 +501,22 @@
    [[_cp engine] clearStatus];
    [[_cp engine] enforceObjective];
    if ([[_cp engine] objective] != NULL)
-      NSLog(@"ABS ready... %@",[[_cp engine] objective]);
+      NSLog(@"BitVar ABS ready... %@",[[_cp engine] objective]);
    else
-      NSLog(@"ABS ready...");
+      NSLog(@"BitVar ABS ready...");
 }
--(id<ORVarArray>)allBitVars
+-(id<ORBitVarArray>)allBitVars
 {
-   return (id<ORVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORBitVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
 
--(unsigned int*)chooseValue:(id<ORBitVar>)x
+-(ORUInt)chooseValue:(id<ORBitVar>)x
 {
    //At rank?
-//   while (true) {
-      ORULong r = [x maxRank]/2;
-      ORUInt* v =  [x atRank:r];
-//      if ([x member:(unsigned int*)&v])
-         return v;
-//   }
+//   ORULong r = [x maxRank]/2;
+//   ORUInt v =  *[x atRank:r];
+//   return v;
+   return [(CPBitVarI*)x randomFreeBit];
 }
 -(BOOL)moreProbes
 {
@@ -590,7 +588,7 @@
    float mxp = 0;
    for(ORInt i = [_vars low];i <= [_vars up];i++) {
       if ([_vars[i] bound]) continue;
-      mxp += log([(id)_vars[i] domsize]);
+      mxp += log([(id<CPBitVar>)_vars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
    NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
@@ -635,8 +633,8 @@
             
             if (nbVS) { // we found someone
                id<ORBitVar> xi = (id<ORBitVar>)[vars[i] dereference];
-               ORUInt* v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
+               ORUInt v = [self chooseValue:xi];
+               ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:v to:false];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {

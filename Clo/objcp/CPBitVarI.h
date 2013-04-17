@@ -73,6 +73,7 @@ typedef struct  {
 -(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
 -(BOOL) bound;
+-(ORInt) bitLength;
 -(uint64) min;
 -(uint64) max;
 -(ORUInt) maxRank;
@@ -81,11 +82,13 @@ typedef struct  {
 -(unsigned int*) maxArray;
 -(unsigned int) getWordLength;
 -(ORBounds) bounds;
--(ORULong) domsize;
+-(ORInt) domsize;
+-(ORULong)  numPatterns;
 -(unsigned int) lsFreeBit;
 -(unsigned int) msFreeBit;
 -(unsigned int) randomFreeBit;
 -(BOOL) member:(unsigned int*)v;
+-(bool) isFree:(ORUInt)pos;
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;
@@ -95,9 +98,10 @@ typedef struct  {
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
 -(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
--(ORStatus)     bind:(unsigned int*) val;
+-(ORStatus)     bind:(ORUInt*) val;
+-(ORStatus)     bind:(ORUInt)bit to:(BOOL)value;
 -(ORStatus)     bindUInt64:(uint64) val;
--(ORStatus)     remove:(ORUInt*) val;
+-(ORStatus)     remove:(ORUInt) val;
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 -(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods

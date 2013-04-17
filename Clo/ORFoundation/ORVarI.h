@@ -81,7 +81,8 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(ORULong)  domsize;
+-(ORInt)  domsize;
+-(ORULong)  numPatterns;
 -(ORULong)  maxRank;
 -(ORULong)  getRank:(ORUInt *)v;
 -(ORUInt*)  atRank:(ORULong)r;

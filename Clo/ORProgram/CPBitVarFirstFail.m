@@ -37,7 +37,7 @@
 {
    return _cp;
 }
--(id<CPVarArray>)allVars
+-(id<CPVarArray>)allBitVars
 {
    return (id<CPVarArray>) (_rvars!=nil ? _rvars : _vars);
 }
@@ -47,7 +47,7 @@
    float rv = - [x domsize];
    return rv;
 }
--(ORFloat)valOrdering:(int)v forVar:(id<CPBitVar>)x
+-(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
 {
    return -v;
 }

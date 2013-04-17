@@ -658,7 +658,7 @@
       return (long long)_low[1]<<32 | _low[0];
    }
 }
--(ORULong)  domsize
+-(ORInt)  domsize
 {
    if (_impl)
       return [(id<ORBitVar>)[_impl dereference] domsize];
@@ -666,6 +666,16 @@
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }
 }
+
+-(ORULong)  numPatterns
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] numPatterns];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   }
+}
+
 -(ORStatus) bind:(unsigned int *)val
 {
    return [_impl bind:val];
@@ -677,6 +687,10 @@
    else {
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }
+}
+-(bool) isFree:(ORUInt)pos
+{
+   return [(id<ORBitVar>)[_impl dereference] isFree:pos];
 }
 -(void) visit: (id<ORVisitor>)v
 {

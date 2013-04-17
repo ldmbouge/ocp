@@ -16,13 +16,18 @@
 
 @protocol CPBitVar <CPVar>
 -(BOOL) bound;
+-(ORInt) bitLength;
+-(ORStatus) bind:(ORUInt)bit to:(BOOL)value;
+-(ORStatus) bind:(ORUInt*)pat;
 -(CPBitArrayDom*) domain;
 -(uint64)min;
 -(uint64)max;
 -(ORBounds) bounds;
--(ORULong)  domsize;
+-(ORInt)  domsize;
+-(ORULong)  numPatterns;
 -(BOOL) member: (unsigned int*) v;
--(ORStatus) remove:(ORUInt*)val;
+-(bool) isFree:(ORUInt)pos;
+-(ORStatus) remove:(ORUInt)val;
 -(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end

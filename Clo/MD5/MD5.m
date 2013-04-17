@@ -190,25 +190,42 @@
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 
-   //CPBitVarABS
+   //CPBitVarFF
    id<CPHeuristic> h = [cp createBitVarFF];
    [cp solve: ^{
       NSLog(@"Search");
-      
-      [cp labelHeuristic:h];
       for(int i=0;i<4;i++)
       {
          NSLog(@"%@",digest[i]);
          NSLog(@"%@\n\n",digestVars[i]);
       }
-      
-      NSLog(@"Number propagations: %d",[engine nbPropagation]);
-      NSLog(@"     Number choices: %d",[explorer nbChoices]);
-      NSLog(@"    Number Failures: %d", [explorer nbFailures]);
-//      NSLog(@"    Search Time (s): %f",searchTime);
-//      NSLog(@"     Total Time (s): %f\n\n",totalTime);
-      [cp release];
-      [ORFactory shutdown];
+      NSLog(@"Message Blocks (Original)");
+      id<ORBitVar>* bitVars;
+      for(int i=0; i<_numBlocks;i++){
+         bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+         for(int j=0;j<16;j++)
+            NSLog(@"%@\n",bitVars[j]);
+      }
+      NSLog(@"Message Blocks (With Data Recovered)");
+      clock_t searchStart = clock();
+      [cp labelBitVarHeuristic:h];
+      clock_t searchFinish = clock();
+
+         for(int j=0;j<16;j++){
+            NSLog(@"%@\n",bitVars[j]);
+         }
+
+         double totalTime, searchTime;
+         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
+         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
+
+         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
+         [results appendString:str];
+         NSLog(@"Number propagations: %d",[engine nbPropagation]);
+         NSLog(@"     Number choices: %d",[explorer nbChoices]);
+         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
+         NSLog(@"    Search Time (s): %f",searchTime);
+         NSLog(@"     Total Time (s): %f\n\n",totalTime);
 
    }];
 
@@ -232,8 +249,13 @@
 //         NSLog(@"Message Blocks (With Data Recovered)");
 //         //         id<ORBitVar>* bitVars;
 //         clock_t searchStart = clock();
+//         id<CPHeuristic> h = [cp createBitVarFF];
+//         [cp solve: ^{
+//         NSLog(@"Search");
+//         [cp labelBitVarHeuristic:h];
+//         }];
 ////         NSMutableArray* messageVarArray = [[NSMutableArray alloc] init];
-//         [cp labelBitVarsFirstFail:[engine variables]];
+////         [cp labelBitVarsFirstFail:[engine variables]];
 //         for(int i=0; i<_numBlocks;i++){
 //            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
 ////            for(int j=0;j<16;j++){
@@ -243,9 +265,6 @@
 ////            }
 //         }
 ////         [cp labelBitVarsFirstFail:messageVarArray];
-//         
-//         
-//         
 //         
 //         for(int j=0;j<16;j++){
 //            NSLog(@"%@\n",bitVars[j]);
@@ -263,10 +282,6 @@
 //         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
 //         for(int i=0;i<4;i++)
 //         {
-//            [cp labelUpFromLSB:digest[i]];
-//         }
-//         for(int i=0;i<4;i++)
-//         {
 //            NSLog(@"%@",digest[i]);
 //            NSLog(@"%@\n\n",digestVars[i]);
 //         }
@@ -282,9 +297,6 @@
 //         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
 //         NSLog(@"    Search Time (s): %f",searchTime);
 //         NSLog(@"     Total Time (s): %f\n\n",totalTime);
-////         [cp release];
-////         [ORFactory shutdown];
-//
 //      }
 //      @catch (NSException *exception) {
 //         
@@ -292,6 +304,7 @@
 //         
 //      }
 //   }];
+   [cp release];
    return results;
 }
 -(id<ORBitVar>*) stateModel
