@@ -55,7 +55,7 @@ typedef void(^ORID2Void)(id);
 void scanListWithBlock(id<CPEventNode> list,ORID2Void block);
 void collectList(id<CPEventNode> list,NSMutableSet* rv);
 void freeList(id<CPEventNode> list);
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority,id x);
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail;

@@ -233,25 +233,25 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(void) whenChangePropagate:  (CPCoreConstraint*) c 
 {
-   hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO);
+   hookupEvent(_engine, &_net._bitFixedEvt, nil, c, HIGHEST_PRIO,nil);
 }
 
 -(void) whenChangeBounds: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo 
 {
-   hookupEvent(_engine, &_net._boundsEvt, todo, c, p);
+   hookupEvent(_engine, &_net._boundsEvt, todo, c, p,nil);
 }
 -(void) whenChangeMin: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
 {
-   hookupEvent(_engine, &_net._minEvt, todo, c, p);
+   hookupEvent(_engine, &_net._minEvt, todo, c, p,nil);
 }
 -(void) whenChangeMax: (CPCoreConstraint*) c at: (int) p do: (ConstraintCallback) todo
 {
-   hookupEvent(_engine, &_net._maxEvt, todo, c, p);
+   hookupEvent(_engine, &_net._maxEvt, todo, c, p,nil);
 }
 
 -(void) whenBitFixed: (CPCoreConstraint*)c at:(int)p do: (ConstraintCallback) todo
 {
-   hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p);
+   hookupEvent(_engine, &_net._bitFixedEvt, todo, c, p,nil);
 }
 
 -(void) createTriggers

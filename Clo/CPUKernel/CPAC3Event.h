@@ -20,7 +20,8 @@
    id                 _trigger;  // type is {ConstraintCallback}
    CPCoreConstraint*     _cstr;
    ORInt             _priority;
+   id                       _x;
 }
--(id) initCPEventNode: (CPEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio;
+-(id) initCPEventNode: (CPEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio  var:(id)x;
 -(void)dealloc;
 @end

@@ -35,13 +35,14 @@
 
 
 @implementation CPEventNode
--(id)initCPEventNode:(CPEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
+-(id)initCPEventNode:(CPEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio var:(id)x
 {
    self = [super init];
    _node = [next retain];
    _trigger = [t copy];
    _cstr = c;
    _priority = prio;
+   _x = x;
    return self;
 }
 
@@ -97,12 +98,13 @@ void freeList(CPEventNode* list)
    }
 }
 
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority)
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority,id x)
 {
    id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
                                           trigger:todo
                                              cstr:c
-                                               at:priority];
+                                               at:priority
+                                             var:x];
    assignTRId(evtList, evt, [engine trail]);
    [evt release];
 }
