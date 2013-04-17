@@ -24,7 +24,7 @@
 int main(int argc, const char * argv[])
 {
    NSAutoreleasePool* pool;// = [[NSAutoreleasePool alloc] init];
-
+   int num = 0;
    pool = [[NSAutoreleasePool alloc] init];
 
 //   MD4 *myMD4;
@@ -43,17 +43,15 @@ int main(int argc, const char * argv[])
    for(int i=0;i<16;i++){
       twobytemask = 0xFFFF0000;
       for(int j=0;j<4;j++){
-//         pool = [[NSAutoreleasePool alloc] init];
          mask[i] = ~twobytemask;
          if ((j==3) && (i<15)) {
             mask[i+1] = 0x00FFFFFF;
          }
          myMD5 = [MD5 initMD5];
-         [str appendFormat:@"%d ",(i*16)+j];
+         [str appendFormat:@"%d ",num++];
          [str appendString:[myMD5 preimage:filename withMask:mask]];
          [myMD5 dealloc];
          twobytemask >>= 8;
-//         [pool drain];
       }
       mask[i] = 0xFFFFFFFF;
    }
@@ -61,7 +59,7 @@ int main(int argc, const char * argv[])
 //   myMD5 = [MD5 initMD5];
 //   [str appendString:[myMD5 preimage:filename withMask:mask]];
 //   [myMD5 dealloc];
-   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataFirstFail.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataFF-twobyte.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
    [pool drain];
    return 0;

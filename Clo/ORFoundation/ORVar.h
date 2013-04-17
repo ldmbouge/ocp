@@ -66,6 +66,8 @@
 -(ORStatus) bind:(unsigned int*)val;
 -(BOOL) member: (unsigned int*) v;
 -(bool) isFree:(ORUInt)pos;
+-(ORUInt) lsFreeBit;
+-(ORUInt) msFreeBit;
 -(NSString*)stringValue;
 @end
 

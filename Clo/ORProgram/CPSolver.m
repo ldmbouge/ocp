@@ -616,7 +616,7 @@
 -(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h 
 {
    id<ORBitVarArray> av= [h allBitVars];
-   id<ORSelect> select = [ORFactory select: _engine
+   id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) {
@@ -647,9 +647,10 @@
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
-      ORULong up  = [x bitLength];
+      ORUInt up  = [x msFreeBit];
+      ORUInt low = [x lsFreeBit];
       ORInt bestIndex = -1;
-      for(ORInt v = 0;v < up;v++) {
+      for(ORInt v = low;v <= up;v++) {
       if ([x isFree:v]) {
             ORFloat vValue = [h valOrdering:v forVar:x];
             if (vValue > bestValue) {

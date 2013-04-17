@@ -666,6 +666,22 @@
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }
 }
+-(ORUInt)  lsFreeBit
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] lsFreeBit];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   }
+}
+-(ORUInt)  msFreeBit
+{
+   if (_impl)
+      return [(id<ORBitVar>)[_impl dereference] msFreeBit];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+   }
+}
 
 -(ORULong)  numPatterns
 {
