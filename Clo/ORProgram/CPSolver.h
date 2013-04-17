@@ -31,6 +31,7 @@
 
 @interface CPCoreSolver : NSObject<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
+-(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;

@@ -213,6 +213,7 @@
    if (val <= _min._val) return [self updateMin:val+1 for:x];
    if (val >= _max._val) return [self updateMax:val-1 for:x];
    //@throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+   return ORSuspend;
 }
 
 -(void) restoreDomain:(id<CPDom>) toRestore

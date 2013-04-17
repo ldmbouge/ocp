@@ -84,7 +84,7 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(unsigned int)  domsize;
+-(ORInt)  domsize;
 -(ORBool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
 -(NSSet*) constraints;

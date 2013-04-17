@@ -161,6 +161,18 @@
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
+{
+   [[[self dereference] explorer] perform:body onLimit:onRestart];
+}
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
+{
+   [[[self dereference] explorer] portfolio:s1 then:s2];
+}
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
+{
+   [[[self dereference] explorer] switchOnDepth:s1 to:s2 limit:depth];
+}
 -(void) trackObject: (id) object
 {
    return [[self dereference] trackObject: object];
