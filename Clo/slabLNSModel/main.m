@@ -96,7 +96,7 @@ int main(int argc, const char * argv[])
             [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
          id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
          id<CPProgram> cp = [ORFactory createCPProgram: model];
-         __block ORInt lim = 64;
+         __block ORInt lim = 1000;
          __block BOOL improved = NO;
          [cp solve: ^{
             printf(" Starting search \n");
@@ -129,8 +129,7 @@ int main(int argc, const char * argv[])
                         }];
                      }];
                   }];
-                  if (!improved)
-                     lim *= 2;
+                  //if (!improved) lim *= 2;
                   NSLog(@"New limit: %d",lim);
                   //[[cp objective] tightenPrimalBound:[s objectiveValue]];
                }

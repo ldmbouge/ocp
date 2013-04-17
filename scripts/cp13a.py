@@ -46,14 +46,14 @@ class Runner:
 			print 'Iteration ' , i 
 
 
-p1 = Runner('perfect','perfect.csv')
-p1.run(50)
+# p1 = Runner('perfect','perfect.csv')
+# p1.run(50)
 
-p2 = Runner('sportModel','sportModel.csv')
-p2.run(50)
+# p2 = Runner('sportModel','sportModel.csv')
+# p2.run(50)
 
-p3 = Runner('slab','slab.csv')
-p3.run(50)
+# p3 = Runner('slab','slab.csv')
+# p3.run(50)
 
 p4 = Runner('slabLNSModel','slabLNSModel.csv')
 p4.run(50)
