@@ -698,7 +698,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool)member: (ORInt) v
 {
-    return [_dom member:v-_b];
+    return [_x member:v-_b];
 }
 -(ORInt) domsize
 {
