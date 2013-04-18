@@ -161,31 +161,33 @@
 
 -(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
-   if (newMin <= _min._val && newMax >= _max._val) return ORSuspend;
-   newMin = max(newMin,_min._val);
-   newMax = min(newMax,_max._val);
-   if (newMin > _max._val || newMin > newMax || newMax < _min._val)
+   if (newMin <= _min._val) return ORSuspend;
+   if (newMin > _max._val)
       failNow();
    ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
-   ORInt nbr = newMin - _min._val + _max._val - newMax;  // number of values removed.
+   ORInt nbr = newMin - _min._val + _max._val - newMax;
    ORInt nsz = _sz._val - nbr;
-   assignTRInt(&_sz,nsz,_trail);
+   assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_min, newMin, _trail);
-   assignTRInt(&_max, newMax, _trail);
-   assert(_min._val <= _max._val);
+   ORStatus ok = ORSuspend;
    if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
       for(ORInt k=oldMin;k< newMin && ok;k++)
          ok = [x loseValEvt:k sender:self];
+      if (!ok) return ok;
+   }
+   ok = [x changeMinEvt:nsz sender:self];
+   if (!ok) return ok;
+   if (newMax >= _max._val) return ORSuspend;
+   if (newMax < _min._val)
+      failNow();
+   assignTRInt(&_max, newMax, _trail);
+   if ([x tracksLoseEvt:self]) {
       for(ORInt k=newMax+1;k<= oldMax && ok;k++)
          ok = [x loseValEvt:k sender:self];
       if (!ok) return ok;
    }
-   ORStatus ok = [x changeMinEvt:nsz sender:self];
-   if (!ok) return ok;
-   ok = [x changeMaxEvt:nsz sender:self];
-   return ok;
+   return [x changeMaxEvt:nsz sender:self];
 }
 
 -(ORStatus)  bind:(ORInt)  val for:(id<CPIntVarNotifier>) x
