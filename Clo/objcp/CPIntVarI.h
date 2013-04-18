@@ -20,33 +20,6 @@
 #import <objcp/CPBitDom.h>
 
 @protocol CPIntVarSubscriber <NSObject>
-
-// AC3 Closure Event 
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
-
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
-
-// AC3 Constraint Event 
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x;
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x;
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x;
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x;
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x;
-
--(void) whenBindPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x;
--(void) whenChangePropagate:  (CPCoreConstraint*) c onVar:(id<CPIntVar>)x;
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x;
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x;
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x;
-
 // AC3 Closure Event
 -(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
@@ -74,14 +47,14 @@
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c;
 
 // AC5 Event
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo onVar:(id<CPIntVar>)x;
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo;
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo var:(id<CPIntVar>)x;
 
 // Triggers
 // create a trigger which executes todo when value val is removed.
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // create a trigger which executes todo when the variable is bound.
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // assign a trigger which is executed when value val is removed.
 -(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
@@ -154,27 +127,7 @@ typedef struct  {
 // needed for speeding the code when not using AC5
 -(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(void) setTracksLoseEvt;
-
-// subscription
-
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x; 
-
-// PVH: Why is this thing not with the same syntax
--(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo onVar:(id<CPIntVar>)x;
-
-// triggers
-
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) watch: (ORInt) val with: (id<CPTrigger>) t;
--(void) createTriggers;
-
 // notification
-
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender;
@@ -220,6 +173,7 @@ typedef struct  {
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
 -(id<ORIntVar>) dereference;
+-(ORInt)mapValue:(ORInt)v;
 @end
 
 @interface CPCoreIntVarI : ORObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf> {
@@ -242,18 +196,6 @@ typedef struct  {
 // needed for speeding the code when not using AC5
 -(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(void) setTracksLoseEvt;
-// subscription
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf: (CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
-// PVH: Why is this thing not with the same syntax
--(void) whenLoseValue: (CPCoreConstraint*)c do: (ConstraintIntCallBack) todo onVar:(id<CPIntVar>)x;
-// triggers
--(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x;
--(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 // notification
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender;
@@ -284,6 +226,7 @@ typedef struct  {
 -(ORStatus)     bind:(ORInt) val;
 -(ORStatus)     remove:(ORInt) val;
 -(ORStatus)     inside:(ORIntSetI*) S;
+-(ORInt)mapValue:(ORInt)v;
 @end
 // ---------------------------------------------------------------------
 // Views
@@ -311,9 +254,10 @@ typedef struct  {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(ORInt)mapValue:(ORInt)v;
 @end
 
-@interface CPIntView : CPIntVarI { // Affine View
+@interface CPIntView : CPCoreIntVarI { // Affine View
    @package
     ORInt _a;
     ORInt _b;
@@ -339,7 +283,7 @@ typedef struct  {
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
-@interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
+@interface CPIntFlipView : CPCoreIntVarI { // Flip View (y == -x)
    @package
    CPIntVarI*  _x;
 }
@@ -363,7 +307,7 @@ typedef struct  {
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
-@interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
+@interface CPEQLitView : CPCoreIntVarI { // Literal view b <=> x == v
    @package
    ORInt              _v;
    CPIntVarI* _secondary;  // pointer to the original variable (x)

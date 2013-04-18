@@ -32,8 +32,8 @@ static void initPool()
 {
    @try {
       __block ORInt nbP = 0;
-      scanListWithBlock(_theList,(void(^)(id)) ^(ConstraintIntCallBack trigger) {
-         trigger(_theVal);
+      scanListWithBlock(_theList,(void(^)(id,id)) ^(ConstraintIntCallBack trigger,id x) {
+         trigger([x mapValue:_theVal]);
          ++nbP;
       });
       //CFRelease(self);

@@ -35,7 +35,18 @@
 
 
 @implementation CPEventNode
--(id)initCPEventNode:(CPEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio var:(id)x
+-(id)initCPEventNode:(CPEventNode*)next trigger:(id)t cstr:(CPCoreConstraint*)c at:(ORInt)prio
+{
+   self = [super init];
+   _node = [next retain];
+   _trigger = [t copy];
+   _cstr = c;
+   _priority = prio;
+   _x = nil;
+   return self;
+}
+
+-(id) initCPEventNode: (CPEventNode*) next trigger: (id) t cstr: (CPCoreConstraint*) c at: (ORInt) prio var:(id)x
 {
    self = [super init];
    _node = [next retain];
@@ -63,19 +74,19 @@
    return _node;
 }
 
--(void)scanWithBlock:(void(^)(id))block
+-(void)scanWithBlock:(void(^)(id,id))block
 {
    CPEventNode* cur = self;
    while(cur) {
-      block(cur->_trigger);
+      block(cur->_trigger,cur->_x);
       cur = cur->_node;
    }
 }
 
-void scanListWithBlock(CPEventNode* cur,ORID2Void block)
+void scanListWithBlock(CPEventNode* cur,ORIDID2Void block)
 {
    while(cur) {
-      block(cur->_trigger);
+      block(cur->_trigger,cur->_x);
       cur = cur->_node;
    }
 }
@@ -98,14 +109,24 @@ void freeList(CPEventNode* list)
    }
 }
 
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority,id x)
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority)
 {
    id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
                                           trigger:todo
                                              cstr:c
-                                               at:priority
+                                               at:priority];
+   assignTRId(evtList, evt, [engine trail]);
+   [evt release];
+}
+void hookupEvent2(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority,id x)
+{
+   id evt = [[CPEventNode alloc] initCPEventNode:evtList->_val
+                                         trigger:todo
+                                            cstr:c
+                                              at:priority
                                              var:x];
    assignTRId(evtList, evt, [engine trail]);
    [evt release];
 }
+
 @end

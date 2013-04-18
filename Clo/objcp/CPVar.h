@@ -53,6 +53,7 @@ enum CPVarClass {
 -(ORStatus) updateMin: (ORInt) newMin;
 -(ORStatus) updateMax: (ORInt) newMax;
 -(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
+-(ORInt)mapValue:(ORInt)v;
 @end
 
 @protocol CPVarArray <ORVarArray>

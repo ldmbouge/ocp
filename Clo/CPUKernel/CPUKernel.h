@@ -47,15 +47,17 @@ typedef enum {
 @protocol CPEventNode <NSObject>
 -(id) trigger;                      // retrieves the closure responsible for responding to the event
 -(id<CPEventNode>) next;           // fetches the next event in the list *list suffix*
--(void)scanWithBlock:(void(^)(id))block;
+-(void)scanWithBlock:(void(^)(id,id))block;
 @end
 
 typedef void(^ORID2Void)(id);
+typedef void(^ORIDID2Void)(id,id);
 
-void scanListWithBlock(id<CPEventNode> list,ORID2Void block);
+void scanListWithBlock(id<CPEventNode> list,ORIDID2Void block);
 void collectList(id<CPEventNode> list,NSMutableSet* rv);
 void freeList(id<CPEventNode> list);
-void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority,id x);
+void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
+void hookupEvent2(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority,id x);
 
 @interface CPFactory : NSObject
 +(id<CPEngine>) engine: (id<ORTrail>) trail;

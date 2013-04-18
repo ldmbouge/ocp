@@ -157,6 +157,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return YES;
 }
+-(ORInt)mapValue:(ORInt)v
+{
+   return v;
+}
 -(ORBool) bound
 {
    assert(_dom);
@@ -297,98 +301,102 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 // AC3 Closure Events
 
--(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   hookupEvent(_fdm, &_net._bindEvt, todo, c, p,x);
+   hookupEvent(_fdm, &_net._bindEvt, todo, c, p);
 }
--(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   hookupEvent(_fdm, &_net._domEvt, todo, c, p,x);
+   hookupEvent(_fdm, &_net._domEvt, todo, c, p);
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   hookupEvent(_fdm, &_net._minEvt, todo, c, p,x);
+   hookupEvent(_fdm, &_net._minEvt, todo, c, p);
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c 
 {
-   hookupEvent(_fdm, &_net._maxEvt, todo, c, p,x);
+   hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c 
 {
-   hookupEvent(_fdm,&_net._boundsEvt, todo, c, p,x);
+   hookupEvent(_fdm,&_net._boundsEvt, todo, c,p);
 }
--(void)whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void)whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
+   [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void)whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void)whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c 
 {
-    [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
+    [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo  onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeMinDo: (ConstraintCallback) todo  onBehalf:(CPCoreConstraint*)c 
 {
-    [self whenChangeMinDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
+    [self whenChangeMinDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c 
 {
-    [self whenChangeMaxDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
+    [self whenChangeMaxDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c 
 {
-   [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
+   [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c];
 }
 
 // Constraint-based Events
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   hookupEvent(_fdm, &_net._bindEvt, nil, c, p,x);
+   hookupEvent(_fdm, &_net._bindEvt, nil, c, p);
 }
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {
-   hookupEvent(_fdm, &_net._domEvt, nil, c, p,x);
+   hookupEvent(_fdm, &_net._domEvt, nil, c, p);
 }
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   hookupEvent(_fdm, &_net._minEvt, nil, c, p,x);
+   hookupEvent(_fdm, &_net._minEvt, nil, c, p);
 }
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   hookupEvent(_fdm, &_net._maxEvt, nil, c, p,x);
+   hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
 }
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   hookupEvent(_fdm, &_net._boundsEvt, nil, c, p,x);
+   hookupEvent(_fdm, &_net._boundsEvt, nil, c,p);
 }
 
--(void) whenBindPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
+-(void) whenBindPropagate: (CPCoreConstraint*) c
 {
-    [self whenBindPropagate: c priority: c->_priority onVar:x];
+    [self whenBindPropagate: c priority: c->_priority];
 }
--(void) whenChangePropagate:  (CPCoreConstraint*) c  onVar:(id<CPIntVar>)x
+-(void) whenChangePropagate:  (CPCoreConstraint*) c  
 {
-    [self whenChangePropagate: c priority: c->_priority onVar:x];
+    [self whenChangePropagate: c priority: c->_priority];
 }
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c 
 {    
-    [self whenChangeMinPropagate: c priority: c->_priority onVar:x];
+    [self whenChangeMinPropagate: c priority: c->_priority];
 }
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c 
 {
-    [self whenChangeMaxPropagate: c priority: c->_priority onVar:x];
+    [self whenChangeMaxPropagate: c priority: c->_priority];
 }
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c 
 {
-   [self whenChangeBoundsPropagate: c priority: c->_priority onVar:x];
+   [self whenChangeBoundsPropagate: c priority: c->_priority];
 }
-
-// AC5 Events
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo onVar:(id<CPIntVar>)x
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
 {
    [_recv setTracksLoseEvt];
-   hookupEvent(_fdm, &_net._ac5, todo, c, HIGHEST_PRIO,x);
+   hookupEvent2(_fdm, &_net._ac5, todo, c, HIGHEST_PRIO,self);
+}
+// AC5 Events
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo var:(id<CPIntVar>)x
+{
+   [_recv setTracksLoseEvt];
+   hookupEvent2(_fdm, &_net._ac5, todo, c, HIGHEST_PRIO,x);
 }
 
--(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
@@ -402,7 +410,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [self createTriggers];
     [_triggers linkTrigger:t forValue:val];
 }
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
     [_recv setTracksLoseEvt];
     if (_triggers == nil)
@@ -417,94 +425,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         _triggers = [CPTriggerMap triggerMapFrom:low to:up dense:(up-low+1)<256];    
     }
 }
-
-// ---------------------------------------------------------
--(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
-{
-   [self whenBindDo:todo priority:p onBehalf:c onVar:self];
-}
--(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeDo:todo priority:p onBehalf:c onVar:self];
-}
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeMinDo:todo priority:p onBehalf:c onVar:self];
-}
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeMaxDo:todo priority:p onBehalf:c onVar:self];
-}
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeBoundsDo:todo priority:p onBehalf:c onVar:self];
-}
--(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   [self whenBindDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
-}
--(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
-}
--(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeMinDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
-}
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeMaxDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
-}
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
-{
-   [self whenChangeBoundsDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
-}
-// AC3 Constraint Event
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
-{
-   [self whenBindPropagate:c priority:p onVar:self];
-}
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
-{
-   [self whenChangePropagate:c priority:p onVar:self];
-}
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
-{
-   [self whenChangeMinPropagate:c priority:p onVar:self];
-}
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
-{
-   [self whenChangeMaxPropagate:c priority:p onVar:self];
-}
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
-{
-   [self whenChangeBoundsPropagate:c priority:p onVar:self];
-}
--(void) whenBindPropagate: (CPCoreConstraint*) c
-{
-   [self whenBindPropagate:c priority:HIGHEST_PRIO onVar:self];
-}
--(void) whenChangePropagate:  (CPCoreConstraint*) c
-{
-   [self whenChangePropagate:c priority:HIGHEST_PRIO onVar:self];
-}
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c
-{
-   [self whenChangeMinPropagate:c priority:HIGHEST_PRIO onVar:self];
-}
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c
-{
-   [self whenChangeMaxPropagate:c priority:HIGHEST_PRIO onVar:self];
-}
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
-{
-   [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO onVar:self];
-}
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
-{
-   [self whenLoseValue:c do:todo onVar:self];
-}
-// ---------------------------------------------------------
 
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
@@ -824,6 +744,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    assert(NO);
 }
+-(ORInt)mapValue:(ORInt)v
+{
+   assert(NO);
+   return v;
+}
 -(ORInt) min
 {
    assert(NO);
@@ -929,105 +854,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 
 // AC3 Closure Events
-
--(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void)whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   [self whenBindDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
-}
--(void)whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
-}
--(void) whenChangeMinDo: (ConstraintCallback) todo  onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeMinDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
-}
--(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeMaxDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
-}
--(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeBoundsDo: todo priority: HIGHEST_PRIO onBehalf:c onVar:x];
-}
-// Constraint-based Events
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) whenBindPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
-{
-   [self whenBindPropagate: c priority: c->_priority];
-}
--(void) whenChangePropagate:  (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
-{
-   [self whenChangePropagate: c priority: c->_priority];
-}
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeMinPropagate: c priority: c->_priority];
-}
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeMaxPropagate: c priority: c->_priority];
-}
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c onVar:(id<CPIntVar>)x
-{
-   [self whenChangeBoundsPropagate: c priority: c->_priority];
-}
-// AC5 Events
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
--(void) watch: (ORInt) val with: (id<CPTrigger>) t;
-{
-   assert(NO);
-}
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
-{
-   assert(NO);
-}
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
    assert(NO);
@@ -1073,89 +899,104 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 // AC3 Closure Event
 -(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   [self whenBindDo:todo priority:p onBehalf:c onVar:self];
+   assert(NO);
 }
 -(void) whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeDo:todo priority:p onBehalf:c onVar:self];
+   assert(NO);
 }
 -(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeMinDo:todo priority:p onBehalf:c onVar:self];
+   assert(NO);
 }
 -(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeMaxDo:todo priority:p onBehalf:c onVar:self];
+   assert(NO);
 }
 -(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeBoundsDo:todo priority:p onBehalf:c onVar:self];
+   assert(NO);
 }
-
 -(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenBindDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
+   [self whenBindDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenChangeDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
+   [self whenChangeDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeMinDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
+   [self whenChangeMinDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeMaxDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
+   [self whenChangeMaxDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
 -(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
-   [self whenChangeBoundsDo:todo priority:HIGHEST_PRIO onBehalf:c onVar:self];
+   [self whenChangeBoundsDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   [self whenBindPropagate:c priority:p onVar:self];
+   assert(NO);
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
 {
-   [self whenChangePropagate:c priority:p onVar:self];
+   assert(NO);
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   [self whenChangeMinPropagate:c priority:p onVar:self];
+   assert(NO);
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   [self whenChangeMaxPropagate:c priority:p onVar:self];
+   assert(NO);
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
 {
-   [self whenChangeBoundsPropagate:c priority:p onVar:self];
+   assert(NO);
 }
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
-   [self whenBindPropagate:c priority:HIGHEST_PRIO onVar:self];
+   [self whenBindPropagate:c priority:HIGHEST_PRIO];
 }
 -(void) whenChangePropagate:  (CPCoreConstraint*) c
 {
-   [self whenChangePropagate:c priority:HIGHEST_PRIO onVar:self];
+   [self whenChangePropagate:c priority:HIGHEST_PRIO];
 }
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeMinPropagate:c priority:HIGHEST_PRIO onVar:self];
+   [self whenChangeMinPropagate:c priority:HIGHEST_PRIO];
 }
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeMaxPropagate:c priority:HIGHEST_PRIO onVar:self];
+   [self whenChangeMaxPropagate:c priority:HIGHEST_PRIO];
 }
 -(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
 {
-   [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO onVar:self];
+   [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
 }
 -(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
 {
-   [self whenLoseValue:c do:todo onVar:self];
+   assert(NO);
+}
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo var:(id<CPIntVar>)x
+{
+   assert(NO);
+}
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   assert(NO);
+}
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   assert(NO);
+}
+-(void) watch:(ORInt) val with: (id<CPTrigger>) t
+{
+   assert(NO);
 }
 
 -(id<ORIntVar>) dereference
@@ -1188,6 +1029,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(id<CPDom>)domain
 {
    return [[CPAffineDom alloc] initAffineDom:[_x domain] scale:1 shift:_b];
+}
+-(ORInt)mapValue:(ORInt)v
+{
+   return [_x mapValue:v] + _b;
 }
 -(ORBool) bound
 {
@@ -1272,61 +1117,65 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 //==================================================================================================
 // TODO
--(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
 {
-   [_x whenBindDo:todo priority:p onBehalf:c onVar:self];
+   [_x whenBindDo:todo priority:p onBehalf:c ];
 }
--(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c 
 {
-   [_x whenChangeDo:todo priority:p onBehalf:c onVar:self];
+   [_x whenChangeDo:todo priority:p onBehalf:c ];
 }
--(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c 
 {
-   [_x whenChangeMinDo:todo priority:p onBehalf:c onVar:self];
+   [_x whenChangeMinDo:todo priority:p onBehalf:c];
 }
--(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c 
 {
-   [_x whenChangeMaxDo:todo priority:p onBehalf:c onVar:self];
+   [_x whenChangeMaxDo:todo priority:p onBehalf:c ];
 }
--(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c 
 {
-   [_x whenChangeBoundsDo:todo priority:p onBehalf:c onVar:self];
+   [_x whenChangeBoundsDo:todo priority:p onBehalf:c ];
 }
--(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   [_x whenBindPropagate:c priority:p onVar:self];
+   [_x whenBindPropagate:c priority:p];
 }
--(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   [_x whenChangePropagate:c priority:p onVar:self];
+   [_x whenChangePropagate:c priority:p];
 }
--(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   [_x whenChangeMinPropagate:c priority:p onVar:self];
+   [_x whenChangeMinPropagate:c priority:p];
 }
--(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   [_x whenChangeMaxPropagate:c priority:p onVar:self];
+   [_x whenChangeMaxPropagate:c priority:p];
 }
--(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p onVar:(id<CPIntVar>)x
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p 
 {
-   [_x whenChangeBoundsPropagate:c priority:p onVar:self];
+   [_x whenChangeBoundsPropagate:c priority:p];
 }
--(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo onVar:(id<CPIntVar>)x
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
 {
-   [_x whenLoseValue:c do:todo onVar:self];
+   [_x whenLoseValue:c do:todo var:self];
 }
--(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo var:(id<CPIntVar>)x
 {
-   return [_x setLoseTrigger:value - _b do:todo onBehalf:c onVar:self];
+   [_x whenLoseValue:c do:todo var:self];
+}
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   return [_x setLoseTrigger:value - _b do:todo onBehalf:c];
 }
 -(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 {
    [_x watch:val - _b with:t];
 }
--(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c onVar:(id<CPIntVar>)x
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c 
 {
-   return [_x setBindTrigger:todo onBehalf:c onVar:self];
+   return [_x setBindTrigger:todo onBehalf:c];
 }
 // Events ==========================================================
 -(ORStatus) bindEvt:(id<CPDom>)sender
@@ -1343,6 +1192,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
+   assert(NO);
    return [super loseValEvt: val+_b sender:sender];
 }
 @end
@@ -1356,9 +1206,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    ORInt vLow = a < 0 ? a * [x max] + b : a * [x min] + b;
    ORInt vUp  = a < 0 ? a * [x min] + b : a * [x max] + b;
-   self = [super initCPIntVarView: [x engine] low:vLow up:vUp for:x];
+   self = [super initCPCoreIntVarI:[x engine]];
    _vc = CPVCAffine;
-   _dom = nil;
    _x = x;
    _a = a;
    _b = b;
@@ -1379,6 +1228,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORBool) bound
 {
    return [_x bound];
+}
+-(ORInt)mapValue:(ORInt)v
+{
+   return _a * [_x mapValue:v] + _b;
 }
 -(ORInt) value
 {
@@ -1490,6 +1343,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
+   assert(NO);
    return [super loseValEvt:_a * val+_b sender:sender];
 }
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift
@@ -1502,6 +1356,78 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [super description];
 }
+//==================================================================================================
+// TODO
+-(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenBindDo:todo priority:p onBehalf:c ];
+}
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeDo:todo priority:p onBehalf:c ];
+}
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeMinDo:todo priority:p onBehalf:c];
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeMaxDo:todo priority:p onBehalf:c ];
+}
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeBoundsDo:todo priority:p onBehalf:c ];
+}
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenBindPropagate:c priority:p];
+}
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangePropagate:c priority:p];
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangeMinPropagate:c priority:p];
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangeMaxPropagate:c priority:p];
+}
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangeBoundsPropagate:c priority:p];
+}
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
+{
+   [_x whenLoseValue:c do:todo var:self];
+}
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo var:(id<CPIntVar>)x
+{
+   [_x whenLoseValue:c do:todo var:self];
+}
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   ORInt r = (value - _b) % _a;
+   if (r != 0)
+      return nil;
+   ORInt ov = (value - _b) / _a;
+
+   return [_x setLoseTrigger:ov do:todo onBehalf:c];
+}
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
+{
+   ORInt r = (val - _b) % _a;
+   if (r != 0)
+      return;
+   ORInt ov = (val - _b) / _a;
+   [_x watch:ov with:t];
+}
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   return [_x setBindTrigger:todo onBehalf:c];
+}
+// Events ==========================================================
 @end
 
 @implementation CPIntFlipView
@@ -1509,8 +1435,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super initCPIntVarView: [x engine] low:-[x max] up:-[x min] for:x];
    _vc = CPVCFlip;
-   //_dom = (CPBoundsDom*)[[x domain] retain];
-   _dom = nil;
    _x = x;
    return self;
 }
@@ -1529,6 +1453,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORBool) bound
 {
    return [_x bound];
+}
+-(ORInt)mapValue:(ORInt)v
+{
+   return - [_x mapValue:v];
 }
 -(ORInt) value
 {
@@ -1598,12 +1526,76 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
+   assert(NO);
    return [super loseValEvt:-val sender:sender];
 }
 -(NSString*)description
 {
    return [super description];
 }
+//==================================================================================================
+// TODO
+-(void)whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenBindDo:todo priority:p onBehalf:c ];
+}
+-(void)whenChangeDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeDo:todo priority:p onBehalf:c ];
+}
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeMinDo:todo priority:p onBehalf:c];
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeMaxDo:todo priority:p onBehalf:c ];
+}
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   [_x whenChangeBoundsDo:todo priority:p onBehalf:c ];
+}
+-(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenBindPropagate:c priority:p];
+}
+-(void) whenChangePropagate:  (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangePropagate:c priority:p];
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangeMinPropagate:c priority:p];
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangeMaxPropagate:c priority:p];
+}
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   [_x whenChangeBoundsPropagate:c priority:p];
+}
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo
+{
+   [_x whenLoseValue:c do:todo var:self];
+}
+-(void) whenLoseValue: (CPCoreConstraint*) c do: (ConstraintIntCallBack) todo var:(id<CPIntVar>)x
+{
+   [_x whenLoseValue:c do:todo var:self];
+}
+-(id<CPTrigger>) setLoseTrigger: (ORInt) value do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   return [_x setLoseTrigger:-value do:todo onBehalf:c];
+}
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
+{
+   [_x watch: - val with:t];
+}
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   return [_x setBindTrigger:todo onBehalf:c];
+}
+// Events ==========================================================
 @end
 
 @implementation CPEQLitView
