@@ -1443,14 +1443,14 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 static inline ORInt minDiv(ORLong c,ORLong d1,ORLong d2)  {
    const ORLong rd1 = c % d1,rd2 = c % d2;
-   const ORLong q1 = c / d1 - (rd1 && d1*c < 0);
-   const ORLong q2 = c / d2 - (rd2 && d2*c < 0);
+   const ORLong q1 = c / d1 + (rd1 && d1*c>0);
+   const ORLong q2 = c / d2 + (rd2 && d2*c>0);
    return bindDown(q1 < q2 ? q1 : q2);
 }
 static inline ORInt maxDiv(ORLong c,ORLong d1,ORLong d2)  { 
    const ORLong rd1 = c % d1,rd2 = c % d2;
-   const ORLong q1 = c / d1 + (rd1 && d1*c > 0);
-   const ORLong q2 = c / d2 + (rd2 && d2*c > 0);
+   const ORLong q1 = c / d1 - (rd1 && d1*c<0);
+   const ORLong q2 = c / d2 - (rd2 && d2*c<0);
    return bindUp(q1 > q2 ? q1 : q2);
 }
 static inline ORLong minSeq(ORLong v[4])  {
@@ -1466,18 +1466,18 @@ static inline ORLong maxSeq(ORLong v[4])  {
    return mx;
 }
 static inline int minDiv4(ORLong a,ORLong b,ORLong c,ORLong d) { 
-   const ORLong acr = a%c && a*c < 0;
-   const ORLong adr = a%d && a*d < 0;
-   const ORLong bcr = b%c && b*c < 0;
-   const ORLong bdr = b%d && b*d < 0;
-   return bindDown(minSeq((ORLong[4]){a/c - acr,a/d - adr,b/c - bcr,b/d - bdr}));
+   const ORLong acr = a%c && a*c>0;
+   const ORLong adr = a%d && a*d>0;
+   const ORLong bcr = b%c && b*c>0;
+   const ORLong bdr = b%d && b*d>0;
+   return bindDown(minSeq((ORLong[4]){a/c+acr,a/d+adr,b/c+bcr,b/d+bdr}));
 }
 static inline int maxDiv4(ORLong a,ORLong b,ORLong c,ORLong d) { 
-   const ORLong acr = a%c && a*c > 0;
-   const ORLong adr = a%d && a*d > 0;
-   const ORLong bcr = b%c && b*c > 0;
-   const ORLong bdr = b%d && b*d > 0;
-   return bindUp(maxSeq((ORLong[4]){a/c + acr,a/d + adr,b/c + bcr,b/d + bdr}));
+   const ORLong acr = a%c && a*c<0;
+   const ORLong adr = a%d && a*d<0;
+   const ORLong bcr = b%c && b*c<0;
+   const ORLong bdr = b%d && b*d<0;
+   return bindUp(maxSeq((ORLong[4]){a/c-acr,a/d-adr,b/c-bcr,b/d-bdr}));
 }
 // RXC:  Range | Variable | Constant
 static ORStatus propagateRXC(CPMultBC* mc,ORBounds r,CPIntVarI* x,ORInt c)
