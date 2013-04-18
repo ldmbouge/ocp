@@ -171,18 +171,7 @@
 
 +(id<CPIntVar>) reifyView: (CPIntVarI*) x eqi:(ORInt)c
 {
-   id<CPIntVarNotifier> mc = [x delegate];
-   if (mc == nil) {
-      mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
-      [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
-   }
-   CPLiterals* literals = [mc findLiterals:x];
-   id<CPIntVar> litView = [literals positiveForValue:c];
-   if (!litView) {
-      litView = [[CPEQLitView alloc] initEQLitViewFor:x equal:c];
-      [literals addPositive: litView forValue:c];
-   }
-   return litView;
+   assert(NO);
 }
 
 +(id<ORConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i

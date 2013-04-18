@@ -572,18 +572,10 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORSubst normSide:linOther for:_model annotation:_c];
-#if OLDREIFY==1
    if (_rv==nil) {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
    }
    [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
-#else
-   if (_rv != nil) {
-      [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar eqi:c]];
-   } else {
-      _rv = [ORFactory reifyView:_model var:theVar eqi:c];
-   }
-#endif
 }
 -(void) reifyNEQc:(ORExprI*)theOther constant:(ORInt)c
 {

@@ -46,6 +46,7 @@ int main(int argc, const char * argv[])
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
 
          [cp solve: ^{
+            NSLog(@"MODEL: %@",[[cp engine] model]);
             [cp labelHeuristic:h];
             [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
                return [[sx at:i] domsize];

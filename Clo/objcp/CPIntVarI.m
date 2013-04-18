@@ -428,7 +428,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
+   ORStatus s = ORSuspend;//_recv==nil ? ORSuspend : [_recv bindEvt:sender];
    if (s==ORFailure) return s;
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -450,7 +450,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
+   ORStatus s = ORSuspend;//_recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
    if (s==ORFailure) return s;
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -470,7 +470,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
+   ORStatus s = ORSuspend;//_recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
    if (s==ORFailure) return s;
    id<CPEventNode> mList[6];
    id<CPEventNode>* ptr = mList;
@@ -491,7 +491,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
    if (!TRACKSINTVAR) return ORSuspend;
-   ORStatus s = _recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
+   ORStatus s = ORSuspend;//_recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
    if (s==ORFailure) return s;
 
    id<CPEventNode> mList[6];
@@ -1433,7 +1433,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 @implementation CPIntFlipView
 -(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x
 {
-   self = [super initCPIntVarView: [x engine] low:-[x max] up:-[x min] for:x];
+   self = [super initCPCoreIntVarI:[x engine]];
    _vc = CPVCFlip;
    _x = x;
    return self;
@@ -1596,208 +1596,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    return [_x setBindTrigger:todo onBehalf:c];
 }
 // Events ==========================================================
-@end
-
-@implementation CPEQLitView
-
--(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v
-{
-   assert(x->_vc == CPVCBare);
-   self = [self initCPIntVarCore:[x engine] low: 0 up: 1];
-   _isBool = YES;
-   _secondary = x;
-   _v = v;
-   _vc = CPVCEQLiteral;
-   return self;
-}
-
--(void)dealloc
-{
-   [super dealloc];
-}
--(CPBitDom*)flatDomain
-{
-   return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:0 up:1];
-}
--(CPBitDom*)domain
-{
-   return [[CPBitDom alloc] initBitDomFor:[_fdm trail] low:[self min] up:[self max]];
-}
--(ORBool) bound
-{
-   return [self domsize]<= 1;
-}
--(ORInt) value
-{
-   assert([_secondary bound]);
-   return [_secondary value]==_v;
-}
--(ORInt) intValue
-{
-   assert([_secondary bound]);
-   return [_secondary value]==_v;
-}
--(ORInt) min
-{
-   if (bound(_secondary))
-      return minDom(_secondary)==_v;
-   else return 0;
-}
--(ORInt) max
-{
-   if (bound(_secondary))
-      return minDom(_secondary)==_v;
-   else {
-      ORBounds b = bounds(_secondary);
-      if (_v < b.min || _v > b.max || ! memberBitDom(_secondary, _v))
-         return 0;
-      else return 1;
-   }
-}
--(ORBool)member:(ORInt)val
-{
-   ORInt lb = [_secondary min];
-   ORInt ub = [_secondary max];
-   // [ldm] v should be a boolean (0,1)
-   // Case 1: lit IN    D(x)         => 0 IN D(self) AND 1 in D(self) : always say yes.
-   // Case 2: lit NOTIN D(x)         => 0 in D(self) AND 1 NOTIN D(self).
-   // Case 3: lit IN D(x) & |D(x)|=1 => 1 in D(self) AND 0 NOTIN D(self).
-   if (lb == ub && lb == _v) {
-      return val;
-   } else {
-      if (_v < lb || _v > ub || !memberBitDom(_secondary, _v))
-         return !val;
-      else {
-         return YES;
-      }
-   }
-}
--(ORBounds)bounds
-{
-   return (ORBounds){[self min],[self max]};
-}
--(ORInt) domsize
-{
-   if (bound(_secondary)) {
-      return 1;
-   } else {
-      if (memberDom(_secondary, _v))
-         return 2;
-      else return 1;
-   }
-}
-
--(ORRange)around:(ORInt)v
-{
-   return (ORRange){0,1};
-}
--(ORInt) shift
-{
-   return 0;
-}
--(ORInt) scale
-{
-   return 1;
-}
--(ORStatus)updateMin:(ORInt)newMin
-{
-   // newMin>=1 => x==v
-   // newMin==0 => nothing
-   if (newMin) {
-      return [_secondary bind:_v];
-   } else
-      return ORSuspend;
-}
--(ORStatus)updateMax:(ORInt)newMax
-{
-   // newMax == 0 => x != v
-   // newMax >= 1 => nothing
-   if (newMax==0) {
-      return [_secondary remove:_v];
-   } else
-      return ORSuspend;
-}
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
-{
-   ORStatus ok = ORSuspend;
-   if (newMin) {
-      ok = [_secondary bind:_v];
-   }
-   if (ok && newMax==0) {
-      ok = [_secondary remove:_v];
-   }
-   return ok;
-}
--(ORStatus)bind:(ORInt)val
-{
-   assert(val==0 || val==1);
-   // self=0 => x must loose _lit
-   // self=1 => x must be bound to _lit
-   if (val==0) {
-      return [_secondary remove:_v];
-   } else {
-      return [_secondary bind:_v];
-   }
-}
--(ORStatus)remove:(ORInt)val
-{
-   assert(val==0 || val==1);
-   // val==0 -> bind to 1 -> x must be bound to _lit
-   // val==1 -> bind to 0 -> x must loose _lit
-   if (val==0) {
-      return [_secondary bind:_v];
-   } else {
-      return [_secondary remove:_v];
-   }
-}
--(ORStatus)bindEvt:(id<CPDom>)sender
-{
-   assert(bound(_secondary));
-//   ORInt boundTo = minDom(_secondary);
-   return [super bindEvt:sender];
-}
-
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
-{
-   if (val == _v) {
-      // We lost the value being watched. So the boolean lost TRUE
-      return [super loseValEvt:TRUE sender:sender];
-   } else {
-      // We lost some other value. So we may have bound(_seconday) && minDom(_secondary)==_v      
-      if (bound(_secondary) && minDom(_secondary) == _v) {
-         return [super loseValEvt:FALSE sender:sender];
-      } else return ORSuspend;
-   }
-}
--(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
-{
-   ORInt myMin = [self min];
-   ORInt myMax = [self max];
-   if (myMin)
-      return [super bindEvt:sender];
-   else if (myMax==0)
-      return [super bindEvt:sender];
-   else return ORSuspend;
-}
--(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
-{
-   ORInt myMin = [self min];
-   ORInt myMax = [self max];
-   if (myMin)
-      return [super bindEvt:sender];
-   else if (myMax==0)
-      return [super bindEvt:sender];
-   else return ORSuspend;
-}
--(NSString*)description
-{
-   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   if ([self bound])
-      [buf appendFormat:@"var<%d>+=%d (LIT=%d)",_name,[self min],_v];
-   else
-      [buf appendFormat:@"var<%d>+={0,1} (LIT=%d)",_name,_v];
-   return buf;
-}
 @end
 
 /*****************************************************************************************/

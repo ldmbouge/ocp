@@ -307,30 +307,6 @@ typedef struct  {
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
-@interface CPEQLitView : CPCoreIntVarI { // Literal view b <=> x == v
-   @package
-   ORInt              _v;
-   CPIntVarI* _secondary;  // pointer to the original variable (x)
-}
--(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
--(void)dealloc;
--(CPBitDom*)flatDomain;
--(ORBool) bound;
--(ORInt) min;
--(ORInt) max;
--(ORBounds)bounds;
--(ORInt) domsize;
--(ORBool)member:(ORInt)v;
--(ORRange)around:(ORInt)v;
--(ORInt) shift;
--(ORInt) scale;
--(ORStatus)updateMin:(ORInt)newMin;
--(ORStatus)updateMax:(ORInt)newMax;
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
--(ORStatus)bind:(ORInt)val;
--(ORStatus)remove:(ORInt)val;
-@end
-
 static inline BOOL bound(CPIntVarI* x)
 {
    switch(x->_vc) {
