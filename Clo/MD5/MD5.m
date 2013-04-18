@@ -207,8 +207,13 @@
             NSLog(@"%@\n",bitVars[j]);
       }
       NSLog(@"Message Blocks (With Data Recovered)");
+      __block ORUInt maxFail = 4096;
       clock_t searchStart = clock();
-      [cp labelBitVarHeuristic:h];
+      [cp repeat:^{
+         [cp limitFailures:maxFail
+                        in:^{[cp labelBitVarHeuristic:h];}];}
+                  onRepeat:^{maxFail<<=1;}];
+//      [cp labelBitVarHeuristic:h];
       clock_t searchFinish = clock();
 
          for(int j=0;j<16;j++){

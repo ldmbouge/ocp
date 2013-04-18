@@ -3,7 +3,7 @@
 //  SHA1
 //
 //  Created by Greg Johnson on 4/17/13.
-//
+//  Copyright (c) 2013 Greg Johnson. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
