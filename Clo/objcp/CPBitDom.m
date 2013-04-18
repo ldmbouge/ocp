@@ -130,7 +130,7 @@
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_min, newMin, _trail);
-   
+   assert(_min._val <= _max._val);
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=oldMin;k< newMin && ok;k++)
@@ -149,7 +149,7 @@
    ORInt nsz = _sz._val - nbr;
    assignTRInt(&_max, newMax, _trail);
    assignTRInt(&_sz, nsz, _trail);
-   
+   assert(_min._val <= _max._val);   
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=newMax+1;k<= oldMax && ok;k++)
@@ -173,6 +173,7 @@
    assignTRInt(&_sz,nsz,_trail);
    assignTRInt(&_min, newMin, _trail);
    assignTRInt(&_max, newMax, _trail);
+   assert(_min._val <= _max._val);
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=oldMin;k< newMin && ok;k++)
@@ -197,6 +198,7 @@
    assignTRInt(&_min, val, _trail);
    assignTRInt(&_max, val, _trail);
    assignTRInt(&_sz, 1, _trail);
+   assert(_min._val <= _max._val);
    
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
@@ -602,6 +604,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    newMin = findMin(self,newMin);
    assignTRInt(&_min, newMin, _trail);
 
+   assert(_min._val <= _max._val);
+
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=oldMin;k< newMin && ok;k++)
@@ -624,6 +628,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    newMax = findMax(self,newMax);
    assignTRInt(&_max, newMax, _trail);
 
+   assert(_min._val <= _max._val);
+
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=newMax+1;k<= oldMax && ok;k++)
@@ -637,7 +643,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 -(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    ORStatus ok = ORSuspend;
-   if (newMin > _max._val || newMax < _min._val)
+   if (newMin > _max._val || newMax < _min._val || newMax < newMin)
       failNow();
    if (newMin > _min._val) {
       ORInt oldMin = _min._val;
@@ -646,6 +652,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       assignTRInt(&_sz, nsz, _trail);
       newMin = findMin(self,newMin);
       assignTRInt(&_min, newMin, _trail);
+
+      assert(_min._val <= _max._val);
       
       if ([x tracksLoseEvt:self]) {
          for(ORInt k=oldMin;k< newMin && ok;k++)
@@ -656,6 +664,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       ok = [x changeMinEvt:nsz sender:self];
       if (!ok) return ok;
    }
+   if (newMax < _min._val)
+      failNow();
    if (newMax < _max._val)  {
       ORInt oldMax = _max._val;
       ORInt nbr = countFrom(self,newMax+1,_max._val);
@@ -664,6 +674,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       newMax = findMax(self,newMax);
       assignTRInt(&_max, newMax, _trail);
       
+      assert(_min._val <= _max._val);
+
       if ([x tracksLoseEvt:self]) {
          ORStatus ok = ORSuspend;
          for(ORInt k=newMax+1;k<= oldMax && ok;k++)
@@ -687,7 +699,9 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    assignTRInt(&_min, val, _trail);
    assignTRInt(&_max, val, _trail);
    assignTRInt(&_sz, 1, _trail);
-   
+
+   assert(_min._val <= _max._val);
+
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=oldMin;k<=oldMax && ok;k++)
@@ -708,6 +722,9 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       inline_assignTRInt(&_sz, _sz._val - 1, _trail);
       ORInt newMin = findMin(self,_min._val + 1);
       inline_assignTRInt(&_min, newMin, _trail);
+
+      assert(_min._val <= _max._val);
+
       ORStatus ok = [x loseValEvt:oldMin sender:self];
       if (!ok) return ok;
       return [x changeMinEvt:_sz._val sender:self];
@@ -717,6 +734,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       inline_assignTRInt(&_sz, _sz._val - 1, _trail);
       ORInt newMax = findMax(self,_max._val - 1);
       inline_assignTRInt(&_max, newMax, _trail);
+      assert(_min._val <= _max._val);
       ORStatus ok = [x loseValEvt:oldMax sender:self];
       if (!ok) return ok;
       return [x changeMaxEvt:_sz._val sender:self];
