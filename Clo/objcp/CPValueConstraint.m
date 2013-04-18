@@ -1083,6 +1083,16 @@
       nb += ![_x[k] bound];
    return nb;
 }
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:32] autorelease];
+   [buf appendFormat:@"<CPSumBoolEq:%02d  [",_name];
+   for(ORInt k = 0;k < _nb;k++) {
+      [buf appendFormat:@"%@%c",_x[k],(k < (_nb-1)) ? ',' : ' '];
+   }
+   [buf appendFormat:@"] == %d>",_c];
+   return buf;
+}
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {

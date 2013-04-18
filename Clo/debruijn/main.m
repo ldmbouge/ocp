@@ -56,7 +56,7 @@ int main(int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       __block ORInt nbSol = 0;
       [cp solve:^{
-         //NSLog(@"MODEL: %@",[[cp engine] model]);
+         NSLog(@"MODEL: %@",[[cp engine] model]);
          NSLog(@"searching...");
          [cp labelArray:x];
          @autoreleasepool {

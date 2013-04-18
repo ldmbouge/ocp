@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          NSLog(@"x = %@",x);
-         NSLog(@"model: %@",[[cp engine] model]);
+         //NSLog(@"model: %@",[[cp engine] model]);
          for(ORInt i=0;i<n;i++) {
             while (![x[i] bound]) {
                ORInt v = [x[i] min];
