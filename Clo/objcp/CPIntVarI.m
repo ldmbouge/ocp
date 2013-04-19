@@ -484,18 +484,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
    if (!TRACKSINTVAR) return ORSuspend;
-   ORStatus s = _recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
-   if (s==ORFailure) return s;
-
-   id<CPEventNode> mList[6];
-   ORUInt k = 0;
-   mList[k] = _net._domEvt._val;
-   k += mList[k] != NULL;
-   mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
-   if (_net._ac5._val) {
-      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
+   ORStatus s = ORSuspend;
+   if (_recv !=nil) {
+      s = [_recv loseValEvt:val sender:sender];
+      if (s==ORFailure) return s;
    }
+   if (_net._domEvt._val != NULL) {
+      id<CPEventNode> mList[2];
+      mList[0] = _net._domEvt._val;
+      mList[1] = NULL;
+      scheduleAC3(_fdm,mList);
+   }
+   if (_net._ac5._val)
+      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
    return ORSuspend;
@@ -1064,7 +1065,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool) bound
 {
-   return [self domsize]<= 1;
+   if (bound(_secondary)) {
+      return TRUE;
+   } else {
+      if (memberDom(_secondary, _v))
+         return FALSE;
+      else return TRUE;
+   }
 }
 -(ORInt) value
 {
@@ -1078,19 +1085,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORInt) min
 {
-   if (bound(_secondary))
-      return minDom(_secondary)==_v;
+   ORBounds sb = bounds(_secondary);
+   if (sb.min == sb.max)
+      return sb.min==_v;
    else return 0;
 }
 -(ORInt) max
 {
-   if (bound(_secondary))
-      return minDom(_secondary)==_v;
-   else {
-      if (!memberDom(_secondary, _v))
-         return 0;
-      else return 1;
-   }
+   ORBounds sb = bounds(_secondary);
+   if (sb.min == sb.max)
+      return sb.min==_v;
+   else
+      return memberDom(_secondary, _v);
 }
 -(ORBool)member:(ORInt)val
 {
@@ -1112,7 +1118,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBounds)bounds
 {
-   return (ORBounds){[self min],[self max]};
+   ORBounds sb = bounds(_secondary);
+   ORBool b  = sb.min == sb.max;
+   if (b) {
+      ORBool bToV = sb.min == _v;
+      return (ORBounds){bToV,bToV};
+   } else
+      return (ORBounds){0,memberDom(_secondary, _v)};
 }
 -(ORInt) domsize
 {

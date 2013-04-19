@@ -2361,21 +2361,17 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       for(ORInt j=0;j<nbBoundVal;j++) {
          [_x[k] remove: vUse[j]];
       }
-      SEL minSEL = @selector(min);
-      IMP minIMP = [_x[k] methodForSelector:minSEL];
       [_x[k] whenBindDo: ^ {
-         //int vk = [_x[k] min];
-         ORInt vk = (ORInt) minIMP(_x[k],minSEL);
+         ORInt vk = minDom(_x[k]);
          for(ORLong i=up;i;--i) {
             if (i == k) 
                continue;
-            [_x[i] remove:vk];
+            removeDom(_x[i], vk);
          }
       } onBehalf:self];
    }
    return ORSuspend;
 }
-
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   
