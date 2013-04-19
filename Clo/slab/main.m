@@ -105,12 +105,6 @@ int main(int argc, const char * argv[])
              }
              ];
             printf("obj: %d \n",[obj min]);
-           /*  printf("\n");
-            printf("Slab: ");
-            for(ORInt i = 1; i <= nbSize; i++)
-               printf("%d ",[slab[i] value]);
-            printf("\n");
-            */
          }];
          
          NSLog(@"Solver status: %@\n",cp);

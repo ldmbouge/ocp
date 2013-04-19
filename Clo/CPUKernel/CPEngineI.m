@@ -81,7 +81,7 @@ inline static void AC3enQueue(CPAC3Queue* q,ConstraintCallback cb,id<CPConstrain
 }
 inline static AC3Entry AC3deQueue(CPAC3Queue* q)
 {
-   if (q->_enter != q->_exit) {
+   if (q->_csz > 0) {
       AC3Entry cb = q->_tab[q->_exit];
       q->_exit = (q->_exit+1) & q->_mask;
       --q->_csz;
