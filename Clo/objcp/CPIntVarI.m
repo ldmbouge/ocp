@@ -1262,12 +1262,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _mx  = n;
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
+   _minIMP   = malloc(sizeof(IMP)*_mx);
+   _maxIMP   = malloc(sizeof(IMP)*_mx);
    _tracksLoseEvt = false;
    [root setDelegate:self];
-//   _tab[0] = root;
-//   _tracksLoseEvt |= [_tab[0] tracksLoseEvt:nil];
-//   _loseValIMP[0] = (UBType)[root methodForSelector:@selector(loseValEvt:sender:)];
-//   _nb  = 1;
    _nb = 0;
    return self;
 }
@@ -1280,7 +1278,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {}
 -(void) dealloc
 {
-   //NSLog(@"multicast object %p dealloc'd\n",self);
    free(_tab);
    [super dealloc];
 }
@@ -1293,17 +1290,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
+      _minIMP     = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
+      _maxIMP     = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-   //[_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
    _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
+   _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
+   _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
       _tab[toFix] = NULL;
       _loseValIMP[toFix] = NULL;
+      _minIMP[toFix] = NULL;
+      _maxIMP[toFix] = NULL;
       _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
@@ -1336,16 +1338,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
+      _minIMP = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
+      _maxIMP = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = newLits;
    _loseValIMP[_nb] = (UBType)[newLits methodForSelector:@selector(loseValEvt:sender:)];
+   _minIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMinEvt:sender:)];
+   _maxIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMaxEvt:sender:)];
    _tracksLoseEvt = YES;
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
    [theTrail trailClosure:^{
       _tab[toFix] = NULL;
       _loseValIMP[toFix] = NULL;
+      _minIMP[toFix] = NULL;
+      _maxIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;
@@ -1396,18 +1404,25 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    return ORSuspend;
 }
+
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
+   SEL ms = @selector(changeMinEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
-      ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
+      //ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
+      assert(_minIMP[i]);
+      ORStatus ok = _minIMP[i](_tab[i],ms,dsz,sender);
       if (!ok) return ok;
    }
    return ORSuspend;
 }
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
+   SEL ms = @selector(changeMaxEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
-      ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
+      //ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
+      assert(_maxIMP[i]);
+      ORStatus ok = _maxIMP[i](_tab[i],ms,dsz,sender);
       if (!ok) return ok;
    }
    return ORSuspend;

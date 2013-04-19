@@ -19,6 +19,7 @@
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
 
+
 @protocol CPIntVarSubscriber <NSObject>
 
 // AC3 Closure Event 
@@ -81,6 +82,7 @@ typedef struct  {
 
 @class CPIntVarI;
 @class CPLiterals;
+@class CPIntVarMultiCast;
 // This is really an implementation protocol
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
 // PVH: my recommendation is to have an interface and this becomes the implementation class
@@ -110,7 +112,7 @@ typedef struct  {
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
-   id<CPIntVarNotifier>               _recv;
+   CPIntVarMultiCast*                 _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
@@ -407,6 +409,8 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
    ORInt                  _nb;
    ORInt                  _mx;
    UBType*        _loseValIMP;
+   UBType*            _minIMP;
+   UBType*            _maxIMP;
 }
 -(id)initVarMC:(ORInt)n root:(CPIntVarI*)root;
 -(void) dealloc;
