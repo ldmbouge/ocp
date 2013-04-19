@@ -124,7 +124,8 @@ int main(int argc, const char * argv[])
    
    for(int i=0;i<16;i++)
       mask[i] = 0xFFFFFFFF;
-//   mask[7] = 0xFF0000FF;
+//   mask[11] = 0xFFFFFF00;
+//   mask[12] = 0x00FFFFFF;
    for(int i=0;i<16;i++){
       twobytemask = 0xFFFF0000;
       for(int j=0;j<4;j++){
@@ -147,7 +148,7 @@ int main(int argc, const char * argv[])
 //   myMD5 = [MD5 initMD5];
 //   [str appendString:[myMD5 preimage:filename withMask:mask]];
 //   [myMD5 dealloc];
-   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataABS-twobyte-Random-Restart.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataABS-twobyte-fixedMaxprobes-conf.1.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
    [pool drain];
    return 0;

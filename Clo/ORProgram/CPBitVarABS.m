@@ -409,8 +409,8 @@
    _vars = nil;
    _rvars = rvars;
    _varBackup = _valBackup = nil;
-   _agingRate = 0.999;
-   _conf      = 0.2;
+   _agingRate = 0.5;
+   _conf      = 0.1;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -585,13 +585,13 @@
 {
    const ORInt nbInRound = 10;
    const ORInt probeDepth = (ORInt) [_vars count];
-   float mxp = 0;
+   int mxp = 0;
    for(ORInt i = [_vars low];i <= [_vars up];i++) {
       if ([_vars[i] bound]) continue;
-      mxp += log([(id<CPBitVar>)_vars[i] domsize]);
+      mxp += [(id<CPBitVar>)_vars[i] domsize];
    }
-   const ORInt maxProbes = (int)10 * mxp;
-   NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
+   const ORULong maxProbes = 10 * mxp;
+   NSLog(@"#vars:  %d --> maximum # probes: %llu  (MXP=%d)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
@@ -689,7 +689,7 @@
       return ORSuspend;
    }];
    
-   NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);
+   NSLog(@"Done probing (%d / %llu)...",cntProbes,maxProbes);
    [killSet release];
    [varPr release];
    [_valPr release];

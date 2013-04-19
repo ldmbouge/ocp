@@ -11,6 +11,8 @@
 #import <Foundation/NSString.h>
 
 #import <ORFoundation/ORAVLTree.h>
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSetI.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
 #import <objcp/CPObjectQueue.h>

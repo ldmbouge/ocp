@@ -191,7 +191,20 @@
    id<ORExplorer> explorer = [cp explorer];
 
    //CPBitVarFF
-   id<CPHeuristic> h = [cp createBitVarFF];
+   NSLog(@"Message Blocks (Original)");
+   id<ORBitVar>* bitVars;
+   for(int i=0; i<_numBlocks;i++){
+      bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+      for(int j=0;j<16;j++)
+         NSLog(@"%@\n",bitVars[j]);
+   }
+
+   id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
+   for(ORInt k=0;k <= 15;k++)
+      [o set:bitVars[k] at:k];
+
+   id<CPHeuristic> h = [cp createBitVarABS:(id<ORVarArray>)o];
+//   id<CPHeuristic> h = [cp createBitVarABS];
    [cp solve: ^{
       NSLog(@"Search");
       for(int i=0;i<4;i++)
@@ -199,15 +212,8 @@
          NSLog(@"%@",digest[i]);
          NSLog(@"%@\n\n",digestVars[i]);
       }
-      NSLog(@"Message Blocks (Original)");
-      id<ORBitVar>* bitVars;
-      for(int i=0; i<_numBlocks;i++){
-         bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-         for(int j=0;j<16;j++)
-            NSLog(@"%@\n",bitVars[j]);
-      }
       NSLog(@"Message Blocks (With Data Recovered)");
-      __block ORUInt maxFail = 4096;
+      __block ORUInt maxFail = 0x4000;
       clock_t searchStart = clock();
       [cp repeat:^{
          [cp limitFailures:maxFail

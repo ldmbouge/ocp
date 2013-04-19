@@ -328,9 +328,9 @@
       ORInt lastRank = (ORInt)[sacs count]-1;
       for(CPBitVarKillRange* kr in sacs) {
          if (rank == 0 && [kr low] == [v min]) {
-            [_engine enforce: ^ORStatus { return [v updateMin:[kr up]+1];}];  // gthen:v with:[kr up]];
+            [_engine enforce: ^ORStatus { return [v lsFreeBit:[kr up]+1];}];  // gthen:v with:[kr up]];
          } else if (rank == lastRank && [kr up] == [v max]) {
-            [_engine enforce: ^ORStatus { return [v updateMax:[kr low]-1];}]; // lthen:v with:[kr low]];
+            [_engine enforce: ^ORStatus { return [v msFreeBit:[kr low]-1];}]; // lthen:v with:[kr low]];
          } else {
             for(ORInt i=[kr low];i <= [kr up];i++)
                [_engine enforce: ^ORStatus { return [v remove:i];}];// diff:v with:i];
