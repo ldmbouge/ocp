@@ -53,8 +53,8 @@ class Runner:
 
 ac3 = [('bibd',6,0),('queensAC',12,0),('knapsack',4,0),('eq20',0,0),('partition',30,0),('perfect',0,0)]
 ac5 = [('latinSquare',7,0),('fdmul',0,0),('ais',30,0),('sport',0,0),('langford',3,9)]
-wl  = [('debruijn',0,0),('slab',0,0),('magic',300,0)]
-nbr = 50
+wl  = [('debruijn',0,0),('slab',0,0),('magicserie',300,0)]
+nbr = 1
 for i,b in enumerate(ac3):
 	print "Bench" , i , b[0] , b[1] , b[2]
 	p = Runner(b[0],b[0] + "-VARVIEW.csv")
