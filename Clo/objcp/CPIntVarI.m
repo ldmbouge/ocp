@@ -1087,8 +1087,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (bound(_secondary))
       return minDom(_secondary)==_v;
    else {
-      ORBounds b = bounds(_secondary);
-      if (_v < b.min || _v > b.max || ! memberBitDom(_secondary, _v))
+      if (!memberDom(_secondary, _v))
          return 0;
       else return 1;
    }
