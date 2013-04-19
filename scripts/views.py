@@ -27,13 +27,13 @@ class Runner:
 		return '/tmp'
 
 
-	def run(self,runs,arg1,arg2):
+	def run(self,runs,arg1,arg2,heur):
 		for i in range(1,runs+1):
 			full = self.path + '/' + self.bin;
 			#print 'ENV' , os.environ['DYLD_FRAMEWORK_PATH']
 			#print 'Running' , full
 			#print (full,'-q{0}'.format(arg2),'-n{0}'.format(arg1))
-			h = subprocess.Popen((full,'-q{0}'.format(arg1),'-n{0}'.format(arg2),'-r1'),
+			h = subprocess.Popen((full,'-q{0}'.format(arg1),'-n{0}'.format(arg2),heur),
 				stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 			h.wait()
 			err = h.stderr.read()
@@ -51,21 +51,23 @@ class Runner:
 #for depth in range(0,21):
 #	p.run(50,depth,16,bench)
 
-ac3 = [('bibd',6,0),('queensAC',12,0),('knapsack',4,0),('eq20',0,0),('partition',30,0),('perfect',0,0)]
-ac5 = [('latinSquare',7,0),('fdmul',0,0),('ais',30,0),('sport',0,0),('langford',3,9)]
+ac3 = [('bibd',6,0,''),('queensAC',12,0,''),('knapsack',4,0,''),
+       ('eq20',0,0,''),('partition',20,0,''),('perfect',0,0,'')]
+ac5 = [('latinSquare',7,0),('fdmul',0,0),('ais',30,0),('sport',0,0),
+       ('langford',3,9)]
 wl  = [('debruijn',0,0),('slab',0,0),('magicserie',300,0)]
-nbr = 1
+nbr = 50
 for i,b in enumerate(ac3):
-	print "Bench" , i , b[0] , b[1] , b[2]
+	print "Bench" , i , b[0] , b[1] , b[2] , b[3]
 	p = Runner(b[0],b[0] + "-VARVIEW.csv")
-	p.run(nbr,b[1],b[2])
+	p.run(nbr,b[1],b[2],b[3])
 
 for i,b in enumerate(ac5):
 	print "Bench" , i , b[0] , b[1] , b[2]
 	p = Runner(b[0],b[0] + "-VARVIEW.csv")
-	p.run(nbr,b[1],b[2])
+	p.run(nbr,b[1],b[2],'')
 
 for i,b in enumerate(wl):
 	print "Bench" , i , b[0] , b[1] , b[2]
 	p = Runner(b[0],b[0] + "-VARVIEW.csv")
-	p.run(nbr,b[1],b[2])
+	p.run(nbr,b[1],b[2],'')
