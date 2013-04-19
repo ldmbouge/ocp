@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
-               BuildableName = "partition"
-               BlueprintName = "partition"
+               BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
+               BuildableName = "progressive"
+               BlueprintName = "progressive"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
-            BuildableName = "partition"
-            BlueprintName = "partition"
+            BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
+            BuildableName = "progressive"
+            BlueprintName = "progressive"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -51,22 +51,12 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
-            BuildableName = "partition"
-            BlueprintName = "partition"
+            BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
+            BuildableName = "progressive"
+            BlueprintName = "progressive"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <CommandLineArguments>
-         <CommandLineArgument
-            argument = "-q30"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-p2"
-            isEnabled = "NO">
-         </CommandLineArgument>
-      </CommandLineArguments>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>
@@ -79,9 +69,9 @@
       <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "5B3848DF16E7883A00498DCF"
-            BuildableName = "partition"
-            BlueprintName = "partition"
+            BlueprintIdentifier = "B15F6DDD15B1361700158FA0"
+            BuildableName = "progressive"
+            BlueprintName = "progressive"
             ReferencedContainer = "container:Clo.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

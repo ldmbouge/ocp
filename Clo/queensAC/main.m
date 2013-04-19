@@ -18,6 +18,7 @@
 #import "ORFoundation/ORSemDFSController.h"
 #import <ORProgram/ORProgramFactory.h>
 
+#import "ORCmdLineArgs.h"
 //345 choices
 //254 fail
 //5027 propagations
@@ -27,29 +28,35 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      ORInt n = 8;
-      id<ORModel> mdl = [ORFactory createModel];
-      id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
-      id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
-      id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
-      id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
-      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-      
-      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      [cp solveAll:
-       ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
-          [nbSolutions incr];
-       }
-       ];
-      printf("GOT %d solutions\n",[nbSolutions value]);
-      NSLog(@"Solver status: %@\n",cp);
-      NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult() {
+         ORInt n = [args size];         
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORIntRange> R = RANGE(mdl,1,n);
+         id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+         id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
+         id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
+         id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
+         [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
+         [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
+         [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+         
+         id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+         [cp solveAll:
+          ^() {
+             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+             [nbSolutions incr];
+          }
+          ];
+         printf("GOT %d solutions\n",[nbSolutions value]);
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"Quitting");
+         struct ORResult res = REPORT([nbSolutions value], [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         
+         [cp release];
+         [ORFactory shutdown];
+         return res;
+      }];
    }
    return 0;
 }

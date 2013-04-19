@@ -23,7 +23,7 @@ enum Heuristic {
 };
 
 struct ORResult {
-   BOOL  found;
+   ORInt found;
    ORInt nbFailures;
    ORInt nbChoices;
    ORInt nbPropagations;

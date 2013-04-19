@@ -52,8 +52,6 @@ int main(int argc, const char * argv[])
          [cp solveAll:^{
             id<ORBasicModel> bm = [[cp engine] model];
             NSLog(@"start(x)  %ld %ld %ld",[[bm variables] count],[[bm objects] count],[[bm constraints] count]);
-            //NSLog(@"CONSTRAINTS: %@",[bm constraints]);
-
             [sidel enumerateWithBlock:^(ORInt p) {
                [square enumerateWithBlock:^(ORInt i) {
                   [cp try:^{
@@ -63,7 +61,6 @@ int main(int argc, const char * argv[])
                   }];
                }];
             }];
-            //NSLog(@"start(y)...");
             [sidel enumerateWithBlock:^(ORInt p) {
                [square enumerateWithBlock:^(ORInt i) {
                   [cp try:^{
@@ -86,7 +83,6 @@ int main(int argc, const char * argv[])
          return r;
       }];
    }
-   NSLog(@"malloc: %@",mallocReport());
    return 0;
 }
 
