@@ -431,8 +431,8 @@
       if (!bound(_y))
          [_y whenLoseValue:self do:^(ORInt v) {
             ORInt w = v - _b;
-            assert(w % _a == 0);
-            [_x remove:w / _a];
+            if (w % _a == 0)
+               [_x remove:w / _a];
          }];
    }
    return ORSuspend;
