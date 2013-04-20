@@ -35,8 +35,8 @@ int main(int argc, const char * argv[])
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
-         id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
-         id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
+         id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i annotation:Default]);
+         id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i annotation:Default]);
          [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
          [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
          [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];

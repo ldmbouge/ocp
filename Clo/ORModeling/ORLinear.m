@@ -246,7 +246,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          id<ORIntVar> alpha = [ORFactory intVar:[_terms[0]._var tracker]
                                          domain:[ORFactory intRange:[_terms[0]._var tracker] low:lb up:ub]];
          [self addTerm:alpha by:-1];
-         [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] eqi:-_indep]];
+         [model addConstraint:[ORFactory sum:model array:[self scaledViews:model annotation:cons] eqi:-_indep]];
          rv = [model addConstraint:[ORFactory notEqualc:model var:alpha to:0]];
       }break;
    }
@@ -340,13 +340,13 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          } else if (_terms[0]._coef == -1 && _terms[1]._coef == 1  && _indep == 0) {
             rv = [model addConstraint:[ORFactory lEqual:model var: _terms[1]._var to:_terms[0]._var plus:- _indep]];
          } else {
-            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef];
-            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep];
+            id<ORIntVar> xp = [ORFactory intVar:model var:_terms[0]._var scale:_terms[0]._coef annotation:cons];
+            id<ORIntVar> yp = [ORFactory intVar:model var:_terms[1]._var scale:- _terms[1]._coef shift:- _indep annotation:cons];
             rv = [model addConstraint:[ORFactory lEqual:model var:xp to:yp]];
          }
       }break;
       default:
-         rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model] leqi:- _indep]];
+         rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model annotation:cons] leqi:- _indep]];
    }
    return rv;
 }
@@ -361,13 +361,13 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
       }break;
       case 2: {
          assert(_terms[0]._coef == 1 && _terms[1]._coef == 1 && _indep == 0);
-         id<ORIntVar> nx = [ORFactory intVar:model var:_terms[0]._var scale:-1];
+         id<ORIntVar> nx = [ORFactory intVar:model var:_terms[0]._var scale:-1 annotation:cons];
          id<ORIntVar> y  = _terms[1]._var;
          rv = [model addConstraint:[ORFactory lEqual:model var:nx to:y plus:-1]];
          //rv = [model addConstraint:[ORFactory sumbool:model array:[self scaledViews:model] geqi:1]];
       }break;
       default:
-         rv = [model addConstraint:[ORFactory sumbool:model array:[self scaledViews:model] geqi:1]];
+         rv = [model addConstraint:[ORFactory sumbool:model array:[self scaledViews:model annotation:cons] geqi:1]];
          break;
    }
    return rv;

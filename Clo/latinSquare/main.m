@@ -69,8 +69,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> av = All2(model, ORIntVar, i, R, j, R, [z at:i :j]);
          id<CPHeuristic> h = [cp createFF:av];
          [cp solve:^{
-            id<ORBasicModel> bm = [[cp engine] model];
-            //NSLog(@"BASIC: %@",bm);
+            //NSLog(@"BASIC: %@",[[cp engine] model]);
             __block ORInt d = 0;
             [cp forall:[av range] suchThat:^bool(ORInt i) { return ![av[i] bound];} orderedBy:^ORInt(ORInt i) { return [av[i] domsize];} do:^(ORInt i) {
                [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) {

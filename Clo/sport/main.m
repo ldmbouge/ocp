@@ -65,7 +65,6 @@ int main(int argc, const char * argv[])
              [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [[allgames at:i] domsize];}];
              NSLog(@"after");
              [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [[allteams at:i] domsize];}];
-             ORLong endTime = [ORRuntimeMonitor cputime];
              printf("Solution \n");
              for(ORInt p = 1; p <= n/2; p++) {
                 for(ORInt w = 1; w < n; w++)

@@ -81,9 +81,7 @@ int main(int argc, const char * argv[])
                NSLog(@"Sol: %@",buf);
             }
             nbSol++;
-         }];
-         
-         ORLong endTime = [ORRuntimeMonitor wctime];
+         }];         
          NSLog(@"#sol: %d",nbSol);
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);

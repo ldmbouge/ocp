@@ -270,6 +270,20 @@
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
 }
+
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
+{
+   return [self intVar:tracker var:x shift:b annotation:Default];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a
+{
+   return [self intVar:tracker var:x scale:a annotation:Default];
+}
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
+{
+   return [self intVar:tracker var:x scale:a shift:b annotation:Default];
+}
+
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b annotation:(ORAnnotation)c
 {
 #if USEVIEWS==1
