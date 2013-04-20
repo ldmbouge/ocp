@@ -245,37 +245,46 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
-   if ([dom domsize]==1)
-      [s appendFormat:@"%d",[dom min]];
-   else {
-      [s appendFormat:@"(%d)[",[dom domsize]];
-      __block ORInt lastIn;
-      __block ORInt firstIn;
-      __block bool seq;
-      __block bool first = YES;
-      [dom enumerateWithBlock:^(ORInt k) {
-         if (first) {
-            [s appendFormat:@"%d",k];
-            first = NO;
-            seq   = NO;
-            lastIn  = firstIn = k;
-         } else {
-            if (lastIn + 1 == k) {
-               lastIn = k;
-               seq    = YES;
+   if ([dom isKindOfClass:[CPBoundsDom class]]) {
+      if ([dom domsize]==1)
+         [s appendFormat:@"%d",[dom min]];
+      else {
+         [s appendFormat:@"(%d)[",[dom domsize]];
+         [s appendFormat:@"%d .. %d]",[dom min],[dom max]];
+      };
+   } else {
+      if ([dom domsize]==1)
+         [s appendFormat:@"%d",[dom min]];
+      else {
+         [s appendFormat:@"(%d)[",[dom domsize]];
+         __block ORInt lastIn;
+         __block ORInt firstIn;
+         __block bool seq;
+         __block bool first = YES;
+         [dom enumerateWithBlock:^(ORInt k) {
+            if (first) {
+               [s appendFormat:@"%d",k];
+               first = NO;
+               seq   = NO;
+               lastIn  = firstIn = k;
             } else {
-               if (seq)
-                  [s appendFormat:@"..%d,%d",lastIn,k];
-               else
-                  [s appendFormat:@",%d",k];
-               firstIn = lastIn = k;
-               seq = NO;
+               if (lastIn + 1 == k) {
+                  lastIn = k;
+                  seq    = YES;
+               } else {
+                  if (seq)
+                     [s appendFormat:@"..%d,%d",lastIn,k];
+                  else
+                     [s appendFormat:@",%d",k];
+                  firstIn = lastIn = k;
+                  seq = NO;
+               }
             }
-         }
-      }];
-      if (seq)
-         [s appendFormat:@"..%d]",lastIn];
-      else [s appendFormat:@"]"];
+         }];
+         if (seq)
+            [s appendFormat:@"..%d]",lastIn];
+         else [s appendFormat:@"]"];
+      }
    }
    [dom release];
    return s;

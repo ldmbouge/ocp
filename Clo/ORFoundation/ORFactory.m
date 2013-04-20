@@ -270,7 +270,7 @@
 {
    return [[ORIntVarI alloc]  initORIntVarI: model domain: r];
 }
-+(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b annotation:(ORAnnotation)c
 {
 #if USEVIEWS==1
    return [[ORIntVarAffineI alloc] initORIntVarAffineI:tracker var:x scale:1 shift:b];
@@ -279,12 +279,12 @@
       return x;
    else {
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,[x min] + b,[x max] + b)];
-      [tracker addConstraint:[ORFactory equal:tracker var:nv to:x plus:b annotation:DomainConsistency]];
+      [tracker addConstraint:[ORFactory equal:tracker var:nv to:x plus:b annotation:c]];
       return nv;
    }
 #endif
 }
-+(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a annotation:(ORAnnotation)c
 {
 #if USEVIEWS==1
    if (a==1)
@@ -298,12 +298,12 @@
       ORInt l = a > 0 ? a * [x min] : a * [x max];
       ORInt u = a > 0 ? a * [x max] : a * [x min];
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
-      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:0 annotation:DomainConsistency]];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:0 annotation:c]];
       return nv;
    }
 #endif
 }
-+(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b annotation:(ORAnnotation)c
 {
 #if USEVIEWS==1
    if (a == 1 && b == 0)
@@ -317,7 +317,7 @@
       ORInt l = (a > 0 ? a * [x min] : a * [x max]) + b;
       ORInt u = (a > 0 ? a * [x max] : a * [x min]) + b;
       id<ORIntVar> nv = [ORFactory intVar:tracker domain:RANGE(tracker,l,u)];
-      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:DomainConsistency]];
+      [tracker addConstraint:[ORFactory model:tracker var:nv equal:a times:x plus:b annotation:c]];
       return nv;
    }
 #endif
@@ -841,7 +841,7 @@
 }
 +(id<ORConstraint>) less:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
-   id<ORIntVar> yp = [self intVar:[x tracker] var:y shift:-1];
+   id<ORIntVar> yp = [self intVar:[x tracker] var:y shift:-1 annotation:Default];
    id<ORConstraint> o = [self lEqual:model var:x to:yp plus:0];
    [model trackConstraint:o];
    return o;

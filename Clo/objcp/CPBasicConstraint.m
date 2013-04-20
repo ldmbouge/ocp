@@ -407,20 +407,29 @@
          [_x bind:ymb / _a];      
    } else {
       for(ORInt i=minDom(_x);i <= maxDom(_x);i++) {
-         if (!memberDom(_x, i)) continue;
          ORInt v = _a * i + _b;
-         if (!memberDom(_y, v))
-            [_x remove:i];
+         if (memberDom(_x, i)) {
+            if (!memberDom(_y, v))
+               [_x remove:i];
+         } else {
+            if (memberDom(_y,v))
+               [_y remove:v];
+         }
       }
       for(ORInt i=minDom(_y);i <= maxDom(_y);i++) {
-         if (!memberDom(_y,i)) continue;
-         ORInt v = i - _b;
-         if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
-            [_y remove:i];
-         else {
-            ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
-            if (!memberDom(_x, w))
+         if (memberDom(_y,i)) {
+            ORInt v = i - _b;
+            if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
                [_y remove:i];
+            else {
+               ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
+               if (!memberDom(_x, w))
+                  [_y remove:i];
+            }
+         } else {
+            ORInt v = i - _b;
+            if (v % _a == 0)
+               [_x remove:v / _a];
          }
       }
       if (!bound(_x))

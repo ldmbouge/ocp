@@ -248,7 +248,7 @@
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
-        NSLog(@"(%p) objective tightened: %i", self, [[[_program engine] objective] primalBound]);
+        NSLog(@"(%p) objective tightened: %@", self, [[[_program engine] objective] primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
             [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
         NSMutableArray* sp = _solutionStreamConsumers;

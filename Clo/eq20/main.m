@@ -49,15 +49,16 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:RANGE(model,1,7) domain:dom];
          for(ORInt i=0;i<nbC;i++) {
             ORInt* ri = eqs[i];
-            [model add:[Sum(model, j, RANGE(model,1,nbV), [x[j] mul:@(ri[j])]) eq: @(eqs[i][0])]];
+            [model add:[Sum(model, j, RANGE(model,1,nbV), [x[j] mul:@(ri[j])]) eq: @(eqs[i][0])]
+            annotation: ValueConsistency];
          }
          //NSLog(@"MODEL: %@",model);
          id<CPProgram> cp = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block BOOL found = NO;
          [cp solveAll:^{
+            NSLog(@"concrete: %@",[[cp engine] model]);
             [cp labelHeuristic:h];
-            //NSLog(@"concrete: %@",[[cp engine] model]);
             //[cp labelArray:x ];//  orderedBy:^ORFloat(ORInt i) { return [x[i] domsize];}];
             [cp labelArray:x orderedBy:^ORFloat(ORInt i) { return [x[i] domsize];}];
             id<ORIntArray> sx = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [x[i] value];}];
