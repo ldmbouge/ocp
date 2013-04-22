@@ -13,28 +13,19 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import "ORRunnable.h"
+#import "ORRunnablePiping.h"
 
-typedef id<ORProcess> (^ORSolution2Process)(id<ORSolution>);
-typedef id<ORConstraintSet> (^ORVoid2ConstraintSet)();
+typedef id<ORConstraintSet> (^Void2ConstraintSet)();
 
 
-@interface ORLogicBenders : NSObject<ORConstraintSetConsumer, ORRunnable>
--(id) initWithMaster: (id<ORRunnable>)master slave: (ORSolution2Process)slaveBlock;
+@interface ORLogicBenders : ORPipedRunnable
+-(id) initWithMaster: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
 -(void) onExit: (ORClosure)block;
 @end
 
-@interface ORCutGenerator : NSObject<ORConstraintSetProducer>
--(id) initWithBlock: (ORVoid2ConstraintSet)block;
--(id<ORSignature>) signature;
--(void) run;
--(void) addConstraintSetConsumer: (id<ORConstraintSetConsumer>)c;
-@end
-
 @interface ORFactory(ORLogicBenders)
-+(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (ORSolution2Process)slaveBlock;
-+(id<ORProcess>) generateCuts: (ORVoid2ConstraintSet)block;
++(id<ORRunnable>) logicBenders: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock;
 @end

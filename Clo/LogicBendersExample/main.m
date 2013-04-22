@@ -151,7 +151,7 @@ int main(int argc, const char * argv[])
    }   
    
    id<ORRunnable> ip = [ORFactory LPRunnable: master]; // This should be an IP.
-   id<ORRunnable> benders = [ORFactory logicBenders: ip slave: ^id<ORProcess>(id<ORSolution> solution) {
+   id<ORRunnable> benders = [ORFactory logicBenders: ip slave: ^id<ORRunnable>(id<ORSolution> solution) {
        return [ORFactory generateCuts: ^id<ORConstraintSet>() {
            id<ORConstraintSet> cuts = [ORFactory createConstraintSet];
            for (ORInt j = 0; j < n; j++) {

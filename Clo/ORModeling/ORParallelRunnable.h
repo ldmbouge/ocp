@@ -8,13 +8,17 @@
 
 #import <Foundation/Foundation.h>
 #import "ORRunnable.h"
+#import "ORRunnablePiping.h"
 
-@protocol ORParallelRunnable<ORUpperBoundedRunnable>
+@protocol ORCompleteParallelRunnable<ORUpperBoundStreamProducer, ORUpperBoundStreamConsumer,
+                                     ORSolutionStreamProducer, ORSolutionStreamConsumer,
+                                     ORLowerBoundStreamConsumer>
 -(id<ORRunnable>) primaryRunnable;
 -(id<ORRunnable>) secondaryRunnable;
 @end
 
-@interface ORParallelRunnableI : ORUpperBoundedRunnableI
+@interface ORCompleteParallelRunnableI : ORPipedRunnable<ORCompleteParallelRunnable>
+
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1;
 -(void) run;
 -(id<ORModel>) model;
@@ -22,10 +26,3 @@
 -(id<ORRunnable>) secondaryRunnable;
 @end
 
-@interface ORParallelRunnableTransform : NSObject<ORRunnableBinaryTransform>
--(id<ORRunnable>) apply:(id<ORRunnable>)r0 and:(id<ORRunnable>)r1;
-@end
-
-@interface ORFactory(ORParallelRunnable)
-+(id<ORParallelRunnable>) parallelRunnable: (id<ORRunnable>)r0 with: (id<ORRunnable>)r1;
-@end

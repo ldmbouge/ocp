@@ -17,7 +17,7 @@
 #import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPFactory.h>
 #import "ORRunnable.h"
-#import "ORParallelRunnable.h"
+#import "ORParallelCombinator.h"
 #import <ORModeling/ORLinearize.h>
 #import <ORModeling/ORFlatten.h>
 
@@ -42,7 +42,7 @@ int main (int argc, const char * argv[])
     id<ORModel> lm = [ORFactory linearizeModel: model];
     id<ORRunnable> r0 = [ORFactory CPRunnable: model];
     id<ORRunnable> r1 = [ORFactory CPRunnable: lm];
-    id<ORRunnable> pr = [ORFactory parallelRunnable: r0 with: r1];
+    id<ORRunnable> pr = [ORFactory composeCompleteParallel: r0 with: r1];
     [pr run];
     
     for(id<ORIntVar> v in [lm variables])

@@ -12,29 +12,21 @@
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
-#import "ORRunnable.h"
+#import "ORRunnablePiping.h"
 
 typedef id<ORRunnable> (^ORFloatArray2Runnable)(id<ORFloatArray>);
-typedef id<ORFloatArray> (^ORRunnable2FloatArray)(id<ORRunnable>);
+typedef id<ORFloatArray> (^Void2FloatArray)();
 
-@protocol ORColumnProvider<ORRunnable>
--(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
-@end
-
-@protocol ORColumnConsumer<ORRunnable>
--(id<ORFloatArrayInformer>) columnInformer;
-@end
-
-@interface ORColumnGeneration : NSObject<ORColumnConsumer, ORRunnable>
--(id) initWithMaster: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock;
+@interface ORColumnGeneration : ORPipedRunnable<ORColumnConsumer>
+-(id) initWithMaster: (id<LPRunnable>)master slave: (Void2FloatArray)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
 -(void) onExit: (ORClosure)block;
 @end
 
-@interface ORColumnGenerator : NSObject<ORColumnProvider>
--(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (ORRunnable2FloatArray)block;
+@interface ORColumnGenerator : ORPipedRunnable
+-(id) initWithRunnable: (id<ORRunnable>)r solutionTransform: (Void2FloatArray)block;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
@@ -43,6 +35,5 @@ typedef id<ORFloatArray> (^ORRunnable2FloatArray)(id<ORRunnable>);
 @end
 
 @interface ORFactory(ORColumnGeneration)
-+(id<ORRunnable>) columnGeneration: (id<LPRunnable>)master slave: (ORFloatArray2Runnable)slaveBlock;
-+(id<ORRunnable>) generateColumn: (id<ORRunnable>)r using: (ORRunnable2FloatArray)block;
++(id<ORRunnable>) columnGeneration: (id<ORRunnable>)master slave: (Void2FloatArray)slaveBlock;
 @end

@@ -46,17 +46,17 @@ int main (int argc, const char * argv[])
     }
     [master minimize: masterObj];
 
-    id<LPRunnable> lp = [ORFactory LPRunnable: master];
-    id<ORRunnable> cg = [ORFactory columnGeneration: lp slave: ^id<ORRunnable>(id<ORFloatArray> duals) {
+    id<ORRunnable> lp = [ORFactory LPRunnable: master];
+    id<ORRunnable> cg = [ORFactory columnGeneration: lp slave: ^id<ORFloatArray>() {
         id<ORModel> slave = [ORFactory createModel];
         id<ORIntVarArray> use = [ORFactory intVarArray: slave range: shelves domain: RANGE(slave, 0, boardWidth)];
-        id<ORFloatArray> cost = duals;
+        id<ORFloatArray> cost = nil;//duals;
         id<ORIntVar> objective = [ORFactory intVar: slave domain: RANGE(slave, shelfCount * [cost min] * boardWidth, shelfCount * [cost max] * boardWidth)];
         [slave minimize: objective];
         [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])])  eq: objective]];
         [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
         id<ORRunnable> slaveRunnable = [ORFactory CPRunnable: slave];
-        return [ORFactory generateColumn: slaveRunnable using: ^id<ORFloatArray>(id<ORRunnable> r) { return [ORFactory floatArray: [r model] intVarArray: use]; }];
+        return [ORFactory floatArray: master intVarArray: use];
     }];
     [cg run];
     
