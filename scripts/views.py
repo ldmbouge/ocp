@@ -51,23 +51,26 @@ class Runner:
 #for depth in range(0,21):
 #	p.run(50,depth,16,bench)
 
-ac3 = [('bibd',6,0,''),('queensAC',12,0,''),('knapsack',4,0,''),
-       ('eq20',0,0,''),('partition',20,0,''),('perfect',0,0,'')]
-ac5 = [('latinSquare',7,0,''),('fdmul',0,0,''),('ais',30,0,''),('sport',0,0,''),
-       ('langford',9,3,'')]
+#
+#       ('eq20',0,0,''),
+# ('partition',20,0,'')
+# ('latinSquare',7,0,''),('fdmul',0,0,'')
+
+ac3 = [('bibd',6,0,''),('queensAC',12,0,''),('knapsack',4,0,''),('perfect',0,0,'')]
+ac5 = [('ais',30,0,''),('sport',0,0,''),('langford',9,3,'')]
 wl  = [('debruijn',0,0,''),('slab',0,0,''),('magicserie',300,0,'')]
 nbr = 50
 for i,b in enumerate(ac3):
 	print "Bench" , i , b[0] , b[1] , b[2] , b[3]
-	p = Runner(b[0],b[0] + "-DOMVIEW.csv")
-	p.run(nbr,b[1],b[2],b[3])
+ 	p = Runner(b[0],b[0] + "-NOVIEW.csv")
+ 	p.run(nbr,b[1],b[2],b[3])
 
 for i,b in enumerate(ac5):
 	print "Bench" , i , b[0] , b[1] , b[2] , b[3]
-	p = Runner(b[0],b[0] + "-DOMVIEW.csv")
+	p = Runner(b[0],b[0] + "-NOVIEW.csv")
 	p.run(nbr,b[1],b[2],b[3])
 
 for i,b in enumerate(wl):
 	print "Bench" , i , b[0] , b[1] , b[2] , b[3]
-	p = Runner(b[0],b[0] + "-DOMVIEW.csv")
+	p = Runner(b[0],b[0] + "-NOVIEW.csv")
 	p.run(nbr,b[1],b[2],b[3])
