@@ -12580,7 +12580,7 @@
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
-					"-DUSEVIEWS=0",
+					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
 				SDKROOT = macosx;
@@ -12607,7 +12607,7 @@
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_CFLAGS = (
-					"-DUSEVIEWS=0",
+					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
 				);
 				SDKROOT = macosx;
