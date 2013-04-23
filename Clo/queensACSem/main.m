@@ -38,10 +38,10 @@ int main (int argc, const char * argv[])
          id<ORInteger> nbSol = [ORFactory integer:model value:0];
          
          NSLog(@"Model: %@",model);
-         id<CPProgram> cp = [args makeProgram:model];
+         //id<CPProgram> cp = [args makeProgram:model];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
-         //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
+         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:4 with:[ORSemDFSController class]];
          
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          

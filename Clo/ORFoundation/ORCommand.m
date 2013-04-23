@@ -31,7 +31,7 @@
    //NSLog(@"dealloc on CPCommandList %ld\n",_ndId);
    while (_head) {
       struct CNode* nxt = _head->_next;
-      [_head->_c release];
+      CFRelease(_head->_c);//[_head->_c release];
       free(_head);
       _head = nxt;
    }

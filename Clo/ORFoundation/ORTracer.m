@@ -101,6 +101,10 @@
    assert(_sz > 0);
    return _tab[--_sz];
 }
+
+inline static ORCommandList* peekAt(ORCmdStack* cmd,ORUInt d) { return cmd->_tab[d];}
+inline static ORUInt getStackSize(ORCmdStack* cmd) { return cmd->_sz;}
+
 -(ORCommandList*)peekAt:(ORUInt)d
 {
    return _tab[d];
@@ -618,23 +622,24 @@
    ORCmdStack* toRestore = [acp commands];
    int i=0;
    bool pfxEq = true;
-   while (pfxEq && i < [_cmds size] && i < [toRestore size]) {
-      pfxEq = [[_cmds peekAt:i] equalTo: [toRestore peekAt:i]];
+   while (pfxEq && i <  getStackSize(_cmds) && i < getStackSize(toRestore)) {
+      pfxEq = commandsEqual(peekAt(_cmds, i), peekAt(toRestore, i));
+      //pfxEq = [peekAt(_cmds, i) equalTo: peekAt(toRestore, i)];
       i += pfxEq;
    }
    if (i <= [_cmds size] && i <= [toRestore size]) {
       // the suffix in _cmds [i+1 .. cmd.top] should be backtracked.
       // the suffix in toRestore [i+1 toR.top] should be replayed
-      while (i != [_cmds size]) {
+      while (i != getStackSize(_cmds)) {
          [_trStack popNode];
          ORCommandList* lst = [_cmds popList];
-         [lst release];
+         CFRelease(lst);//[lst release];
       }
       //NSLog(@"SemTracer AFTER SUFFIXUNDO: %@ - in thread %p",[self description],[NSThread currentThread]);
       //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
       [_trail incMagic];
       for(ORInt j=i;j < [toRestore size];j++) {
-         ORCommandList* theList = [toRestore peekAt:j];
+         ORCommandList* theList = peekAt(toRestore,j);
          [_trStack pushNode:[theList getNodeId]];
          [_trail incMagic];
          @try {

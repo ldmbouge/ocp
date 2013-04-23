@@ -373,6 +373,10 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
       case CPVCBare:
          return getCPDom((CPBitDom*)x->_dom, value);
          break;
+      case CPVCShift: {
+         const ORInt b = ((CPIntShiftView*)x)->_b;
+         return memberBitDom(((CPIntShiftView*)x)->_x, value - b);
+      }
       default:
          return [x member:value];
          break;

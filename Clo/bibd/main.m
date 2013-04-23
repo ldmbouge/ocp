@@ -56,8 +56,8 @@ int main(int argc, const char * argv[])
             [mdl add: [Sum(mdl,x, Rows, [M at:x :i]) eq:@(k)]];
          for(ORInt i=Rows.low;i<=Rows.up;i++)
             for(ORInt j=i+1;j <= v;j++)
-//               [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] mul: [M at:j :x]]) eq:@(l)]];
-               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eq:@(l)]];
+               [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] mul: [M at:j :x]]) eq:@(l)]];
+//               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eq:@(l)]];
          for(ORInt i=1;i <= v-1;i++) {
             [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
                                  leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];

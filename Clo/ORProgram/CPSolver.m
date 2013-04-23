@@ -721,7 +721,7 @@
 
 -(void) dealloc
 {
-   NSLog(@"dealloc ORLPSolutionI");
+   //NSLog(@"dealloc ORLPSolutionI");
    [_varShots release];
    [_objValue release];
    [super dealloc];

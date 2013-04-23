@@ -841,7 +841,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     ORInt r = (v - _b) % _a;
     if (r != 0) return NO;
     ORInt dv = (v - _b) / _a;
-    return [_x member:dv];
+   return memberDom(_x, dv);
 }
 -(ORInt) domsize
 {

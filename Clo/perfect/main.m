@@ -50,8 +50,8 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp  = [args makeProgram:model];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          [cp solveAll:^{
-            id<ORBasicModel> bm = [[cp engine] model];
-            NSLog(@"start(x)  %ld %ld %ld",[[bm variables] count],[[bm objects] count],[[bm constraints] count]);
+            //id<ORBasicModel> bm = [[cp engine] model];
+            //NSLog(@"start(x)  %ld %ld %ld",[[bm variables] count],[[bm objects] count],[[bm constraints] count]);
             [sidel enumerateWithBlock:^(ORInt p) {
                [square enumerateWithBlock:^(ORInt i) {
                   [cp try:^{

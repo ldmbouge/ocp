@@ -28,6 +28,7 @@
       struct CNode*    _next;
    };
    struct CNode* _head;
+   @package
    ORInt _ndId;  // node id
 }
 -(ORCommandList*) initCPCommandList;
@@ -41,3 +42,8 @@
 -(void) setNodeId:(ORInt)nid;
 -(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;
 @end
+
+inline static ORBool commandsEqual(ORCommandList* c1,ORCommandList* c2)
+{
+   return c1->_ndId == c2->_ndId;
+}

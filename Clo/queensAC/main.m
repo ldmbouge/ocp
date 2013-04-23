@@ -41,11 +41,13 @@ int main(int argc, const char * argv[])
          [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
          [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
          
-         id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+         id<CPProgram> cp = [args makeProgram:mdl];
          [cp solveAll:
           ^() {
              [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
-             [nbSolutions incr];
+             @synchronized(nbSolutions) {
+                [nbSolutions incr];
+             }
           }
           ];
          printf("GOT %d solutions\n",[nbSolutions value]);
