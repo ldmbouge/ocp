@@ -72,7 +72,7 @@ int main(int argc, const char * argvri[])
 //      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
 //      id<CPHeuristic> h = [cp createFF:c];
 //      id<CPHeuristic> h = [cp createPortfolio:@[@"createIBS:",@"createABS:",@"createWDeg:",@"createFF:"] with:c];
-      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:4 with:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
       [cp solve: ^{
 //         [cp labelHeuristic:h];
          
