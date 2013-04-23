@@ -306,6 +306,7 @@
 
 @implementation ORLinearizeObjective {
     id<ORAddToModel> _model;
+    id _result;
 }
 -(id)init:(id<ORAddToModel>)m
 {
@@ -323,14 +324,15 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   assert(false);
-//   [_model minimize:[v var]];
+   [[v expr] visit: self];
+   [_model minimize:_result];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    assert(false);
 //   [_model maximize:[v var]];
 }
+-(void) visitIntVar: (id<ORIntVar>) v  { _result = v; }
 
 @end
 

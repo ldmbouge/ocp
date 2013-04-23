@@ -22,6 +22,7 @@
 #import "ORLogicBenders.h"
 #import "SSCPLPInstanceParser.h"
 #import "CPEngineI.h"
+#import "CPRunnable.h"
 
 /*
  Single Source Capacitated Plant Location Problem
@@ -72,31 +73,31 @@ int main(int argc, const char * argv[])
 {
    // Parse instance data
    NSString* instanceData =
-   @"20   10\
-   8.00       85.00        5.00       49.00       42.00        8.00       87.00       93.00       62.00       84.00\
-   9.00        0.00        4.00       65.00       59.00       77.00       26.00       68.00       91.00       25.00\
-   35.00       21.00       65.00       94.00       46.00       29.00       56.00       47.00       46.00       75.00\
-   60.00       80.00       82.00       46.00       16.00       18.00       78.00       31.00       45.00       88.00\
-   63.00       44.00       67.00       47.00       62.00       74.00       32.00        5.00       91.00       44.00\
-   96.00       72.00       38.00       51.00       26.00       25.00       34.00       12.00       97.00       71.00\
-   51.00       36.00       34.00       53.00       71.00        0.00        8.00       21.00       12.00       95.00\
-   81.00       66.00       17.00       78.00       70.00       98.00       28.00       37.00       59.00        6.00\
-   10.00       62.00        2.00       26.00        0.00       71.00       78.00       26.00       74.00       41.00\
-   95.00       61.00       92.00       44.00       54.00       72.00       39.00       83.00       25.00       26.00\
-   69.00       79.00       98.00       17.00       43.00       53.00       87.00       88.00       99.00        9.00\
-   38.00       29.00       95.00       10.00       41.00       75.00       28.00       99.00       51.00       93.00\
-   6.00        8.00       85.00       45.00       25.00       65.00       20.00       67.00       94.00       82.00\
-   42.00       89.00       91.00       87.00        2.00       92.00       54.00       37.00       69.00       84.00\
-   41.00       17.00       21.00       34.00       99.00       22.00       77.00       90.00       50.00       73.00\
-   80.00       82.00       63.00        4.00       82.00       84.00       75.00       38.00       87.00       79.00\
-   86.00       31.00       62.00       49.00       39.00       46.00        5.00        3.00       55.00       95.00\
-   46.00       94.00       87.00       61.00       15.00       92.00       18.00       82.00        5.00       29.00\
-   8.00       56.00        3.00       11.00       71.00       18.00       81.00       77.00       33.00       76.00\
-   65.00       57.00        8.00       13.00       19.00       32.00       89.00        4.00       25.00       22.00\
-   12.00       18.00       18.00       19.00       26.00       21.00       18.00       19.00       18.00       11.00\
-   22.00       21.00       13.00       19.00       13.00       14.00       22.00       17.00       27.00       28.00\
-   329.00      144.00      408.00      202.00      369.00      440.00      195.00      162.00      174.00      197.00\
-   59.00       48.00       65.00       43.00       64.00       65.00       57.00       49.00       58.00       30.00";
+    @"20   10\
+    51.00       47.00       94.00       76.00       60.00       24.00       18.00        6.00       96.00       20.00\
+    39.00        5.00        1.00        8.00       33.00       70.00        2.00       86.00       55.00       81.00\
+    65.00       62.00       12.00       10.00       16.00       50.00       27.00       38.00       84.00       97.00\
+    93.00        9.00       82.00       64.00       65.00        1.00       29.00       16.00       39.00       95.00\
+    90.00        5.00       12.00       72.00       65.00       48.00       25.00       65.00       77.00       25.00\
+    42.00       46.00       36.00       63.00        2.00       31.00       61.00       69.00       56.00       33.00\
+    8.00       42.00       70.00       83.00       25.00       59.00       67.00       12.00       41.00       28.00\
+    30.00       68.00       45.00       53.00       83.00       94.00       21.00       42.00       42.00       97.00\
+    56.00       67.00       81.00        4.00       17.00       58.00       69.00       56.00       70.00       68.00\
+    74.00       93.00        0.00       65.00       20.00       51.00       34.00       35.00       75.00       51.00\
+    94.00       83.00       80.00       60.00       26.00       90.00       53.00       55.00       74.00       51.00\
+    42.00       14.00        7.00       98.00       84.00       26.00        9.00       90.00       27.00       84.00\
+    3.00       31.00       92.00        7.00       47.00       28.00       99.00        2.00       44.00       11.00\
+    86.00       64.00       46.00       93.00       75.00       85.00       37.00        8.00       94.00       99.00\
+    43.00       83.00       29.00       94.00       85.00       19.00       87.00       84.00       78.00       95.00\
+    85.00       95.00       54.00       10.00       95.00       20.00       49.00       31.00       12.00       53.00\
+    79.00       24.00       22.00        3.00       17.00       64.00        3.00       37.00       15.00       67.00\
+    52.00       20.00       57.00       83.00       58.00       45.00       32.00       52.00       47.00       58.00\
+    49.00       98.00       55.00       47.00       56.00       21.00       41.00       29.00       13.00       17.00\
+    11.00       53.00       48.00       27.00       29.00       23.00       87.00       94.00       45.00       90.00\
+    17.00       24.00       23.00       37.00       12.00       29.00       21.00        2.00       18.00        9.00\
+    22.00       21.00       12.00       16.00       24.00       35.00       23.00        5.00       33.00       22.00\
+    206.00      132.00      335.00      219.00      340.00      206.00      340.00      298.00      233.00      322.00\
+    36.00       47.00       66.00       56.00       72.00       39.00       58.00       41.00       62.00       56.00";
    
    SSCPLPInstanceParser* parser = [[SSCPLPInstanceParser alloc] init];
    SSCPLPInstance* instance = [parser parseInstanceString: instanceData];
@@ -117,58 +118,67 @@ int main(int argc, const char * argv[])
    ORInt k = [ORFactory maxOver: I suchThat: nil of: ^ORInt(ORInt i) { return (ORInt)instance.demand[i]; }];
    
    // travel distances initialized at random in interval [10, 50] as in the uncorrelated condition in the paper.
-   id<ORUniformDistribution> distr = [CPFactory uniformDistribution: master range: RANGE(master, 10, 50)];
+   id<ORUniformDistribution> distr = [ORFactory uniformDistribution: master range: RANGE(master, 10, 50)];
    id<ORIntMatrix> t = [ORFactory intMatrix: master range: I : J using: ^ORInt(ORInt i, ORInt j) { return [distr next]; }];
    
    // Decision variables
    id<ORIntVarArray> p = [ORFactory intVarArray: master range: J  domain: binaryDomain];
    id<ORIntVarMatrix> x = [ORFactory intVarMatrix: master range: I : J domain: binaryDomain];
-   id<ORIntVarArray> numVeh = [ORFactory intVarArray: master range: J  domain: binaryDomain];
+   id<ORIntVarArray> numVeh = [ORFactory intVarArray: master range: J  domain: RANGE(master, 0, k)];
    id<ORIntVar> objective = [ORFactory intVar: master domain: RANGE(master, 0, 100000)]; // Not sure what upper bound of the objective should be
    
    // Objective
    [master minimize: objective];
-   [master add: [objective eq: [Sum(master, j, J, [[p at: j] muli: (ORInt)instance.openingCost[j]])
-                                plus: [Sum2(master, i, I, j, J, [[x at: i : j] muli: (ORInt)instance.cost[i][j]])
-                                       plus: Sum(master, j, J, [[numVeh at: j] muli: u])]]]];
+   [master add: [objective eq: [Sum(master, j, J, [[p at: j] mul: @((ORInt)instance.openingCost[j])])
+                                plus: [Sum2(master, i, I, j, J, [[x at: i : j] mul: @(instance.cost[i][j])])
+                                       plus: Sum(master, j, J, [[numVeh at: j] mul: @(u)])]]]];
    
    // Constraints
    for(ORInt i = 0; i < m; i++) {
-      [master add: [Sum(master, j, J, [x at: i : j]) eqi: 1]];                                  // [8]
+      [master add: [Sum(master, j, J, [x at: i : j]) eq: @1]];                                  // [8]
    }
    for(ORInt j = 0; j < n; j++) {
-      [master add: [Sum(master, i, I, [[x at: i : j] muli: [t at: i : j]]) leqi: l * k]];       // [9]
-      [master add: [Sum(master, i, I, [[x at: i : j] muli: (ORInt)instance.demand[i]])          // [11]
-                    leq: [[p at: j] muli: (ORInt)instance.capacity[j]]]];
+      [master add: [Sum(master, i, I, [[x at: i : j] mul: @([t at: i : j])]) leq: @(l * k)]];       // [9]
+      [master add: [Sum(master, i, I, [[x at: i : j] mul: @((ORInt)instance.demand[i])])          // [11]
+                    leq: [[p at: j] mul: @((ORInt)instance.capacity[j])]]];
       [master add: [[numVeh at: j]                                                              // [12] This needs to use mulf!
-                    geq: Sum(master, i, I, [[x at: i : j] muli: [t at: i : j] / (ORFloat)l])]];
+                    geq: Sum(master, i, I, [[x at: i : j] mul: @([t at: i : j] / (ORFloat)l)])]];
    }
    for(ORInt i = 0; i < m; i++) {
       for(ORInt j = 0; j < n; j++) {
-         [master add: [[[x at: i : j] muli: (ORInt)[t at: i : j]] leqi: l]];                    // [10]
+         [master add: [[[x at: i : j] mul: @([t at: i : j])] leq: @(l)]];                    // [10]
          [master add: [[x at: i : j] leq: [p at: j]]];                                          // [14]
       }
    }   
    
-   id<ORRunnable> ip = [ORFactory LPRunnable: master]; // This should be an IP.
-   id<ORRunnable> benders = [ORFactory logicBenders: ip slave: ^id<ORRunnable>(id<ORSolution> solution) {
-       return [ORFactory generateCuts: ^id<ORConstraintSet>() {
+   id<ORRunnable> ip = [ORFactory MIPRunnable: master];
+   id<ORRunnable> benders = [ORFactory logicBenders: ip slave: ^id<ORConstraintSet>() {
            id<ORConstraintSet> cuts = [ORFactory createConstraintSet];
            for (ORInt j = 0; j < n; j++) {
                id<ORIntSet> Ij = [ORFactory collect: master range: I suchThat: ^bool(ORInt i) { return [[x at: i : j] value] == 1; } of: ^ORInt(ORInt e) { return e; } ];
+               if([Ij size] == 0) continue; // Facility not being used
                id<IntEnumerator> enumIj = [Ij enumerator];
-               id<ORIntArray> dist = [ORFactory intArray: master range: RANGE(master, 1, [Ij size]) with: ^ORInt(ORInt e) { return [enumIj next]; }];
+               id<ORIntArray> dist = [ORFactory intArray: master range: RANGE(master, 0, [Ij size]-1) with: ^ORInt(ORInt e) { return [t at: [enumIj next] : j]; }];
+               printf("dist: ");
+               for(int i = 0; i < [Ij size]; i++) printf("%i ", [dist at: i]);
+               printf("\n");
+               
+               
                ORInt numVehFFD = FirstFitDecreasingHeuristic(l, dist);
+               NSLog(@"FFD vs numVehj : %i %i", numVehFFD, [[numVeh at: j] value]);
                if(numVehFFD > [[numVeh at: j] value]) {
                    // Run subproblems
-                   for(ORInt numVehBinPacking = [[numVeh at: j] value]; numVehBinPacking <= numVehFFD; numVehBinPacking++) {
+                   for(ORInt numVehBinPacking = [[numVeh at: j] value]; numVehBinPacking < numVehFFD; numVehBinPacking++) {
+                       NSLog(@"Running Subproblem...");
                        id<ORModel> subproblem = [ORFactory createModel];
-                       id<ORIntVarArray> load = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 1, numVehBinPacking) domain: RANGE(subproblem, 0, l)];
-                       id<ORIntVarArray> truck = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 1, (ORInt)[dist count]) domain: RANGE(subproblem, 1, [[numVeh at: j] value])];
+                       id<ORIntVarArray> load = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 0, numVehBinPacking-1) domain: RANGE(subproblem, 0, l)];
+                       id<ORIntVarArray> truck = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 0, (ORInt)[dist count]-1) domain: RANGE(subproblem, 1, [[numVeh at: j] value])];
+                       NSLog(@"truck: %@ dist: %@ load: %@", [[truck range] description], [[dist range] description], [[load range] description]);
+                       
                        [subproblem add: [ORFactory packing: truck itemSize: dist load: load]];
-                       id<CPRunnable> r = [ORFactory CPRunnable: subproblem];
+                       id<ORRunnable> r = [ORFactory CPRunnable: subproblem];
                        [r run];
-                       CPEngineI* engine = (CPEngineI*)[[r solver] engine];
+                       CPEngineI* engine = (CPEngineI*)[[((id<CPRunnable>)r) solver] engine];
                        if([engine status] == ORFailure) {
                            // Add Cut to pool
                            id<ORExpr> numVehValue = [ORFactory integer: master value: [[numVeh at: j] value]];
@@ -185,8 +195,7 @@ int main(int argc, const char * argv[])
                }
                [dist release];
            }
-           return cuts;
-       }];
+       return cuts;
    }];
    [benders run];
    

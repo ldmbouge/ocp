@@ -18,7 +18,7 @@
 
 -(id<ORRunnable>) apply: (NSArray*)runnables
 {
-    if([self isCompatible: runnables]) {
+    if(![self isCompatible: runnables]) {
         // Error
         return nil;
     }
@@ -34,7 +34,7 @@
     ORCompleteParallelCombinator* par = [[ORCompleteParallelCombinator alloc] init];
     NSArray* runnables = [NSArray arrayWithObjects: r0, r1, nil];
     id<ORRunnable> product = [par apply: runnables];
-    [runnables release];
+    //[runnables release];
     [par release];
     return product;
 }

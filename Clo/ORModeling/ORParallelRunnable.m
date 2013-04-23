@@ -19,10 +19,9 @@
 }
 
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1 {
-    if((self = [super initWithModel: [r0 model]]) != nil) {
+    if((self = [super initWithModel: [r0 model] children: [NSArray arrayWithObjects: r0, r1, nil]]) != nil) {
         _r0 = r0;
         _r1 = r1;
-        _child = [NSArray arrayWithObjects: _r0, _r1, nil];
         _t0 = nil;
         _t1 = nil;
         _solutionPool = [[ORSolutionPoolI alloc] init];
@@ -47,8 +46,8 @@
 
 -(void) connectPiping:(NSArray *)runnables {
     // Connect internal
-    [_r0 connectPiping: runnables];
-    [_r1 connectPiping: runnables];
+    [_r0 connectPiping: [self children]];
+    [_r1 connectPiping: [self children]];
 }
 
 -(void) run {

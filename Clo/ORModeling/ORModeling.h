@@ -40,7 +40,6 @@
 -(NSArray*) constraints;
 -(NSArray*) objects;
 // pvh: this should go
--(NSDictionary*) cMap;
 -(id<ORModel>) flatten;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;

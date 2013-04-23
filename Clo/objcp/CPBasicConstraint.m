@@ -407,20 +407,29 @@
          [_x bind:ymb / _a];      
    } else {
       for(ORInt i=minDom(_x);i <= maxDom(_x);i++) {
-         if (!memberDom(_x, i)) continue;
          ORInt v = _a * i + _b;
-         if (!memberDom(_y, v))
-            [_x remove:i];
+         if (memberDom(_x, i)) {
+            if (!memberDom(_y, v))
+               [_x remove:i];
+         } else {
+            if (memberDom(_y,v))
+               [_y remove:v];
+         }
       }
       for(ORInt i=minDom(_y);i <= maxDom(_y);i++) {
-         if (!memberDom(_y,i)) continue;
-         ORInt v = i - _b;
-         if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
-            [_y remove:i];
-         else {
-            ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
-            if (!memberDom(_x, w))
+         if (memberDom(_y,i)) {
+            ORInt v = i - _b;
+            if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
                [_y remove:i];
+            else {
+               ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
+               if (!memberDom(_x, w))
+                  [_y remove:i];
+            }
+         } else {
+            ORInt v = i - _b;
+            if (v % _a == 0)
+               [_x remove:v / _a];
          }
       }
       if (!bound(_x))
@@ -431,8 +440,8 @@
       if (!bound(_y))
          [_y whenLoseValue:self do:^(ORInt v) {
             ORInt w = v - _b;
-            assert(w % _a == 0);
-            [_x remove:w / _a];
+            if (w % _a == 0)
+               [_x remove:w / _a];
          }];
    }
    return ORSuspend;
@@ -2361,21 +2370,22 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       for(ORInt j=0;j<nbBoundVal;j++) {
          [_x[k] remove: vUse[j]];
       }
-      SEL minSEL = @selector(min);
-      IMP minIMP = [_x[k] methodForSelector:minSEL];
-      [_x[k] whenBindDo: ^ {
-         //int vk = [_x[k] min];
-         ORInt vk = (ORInt) minIMP(_x[k],minSEL);
-         for(ORLong i=up;i;--i) {
-            if (i == k) 
-               continue;
-            [_x[i] remove:vk];
-         }
-      } onBehalf:self];
+      [self listenTo:k];
    }
    return ORSuspend;
 }
-
+-(void)listenTo:(ORLong)k
+{
+   [_x[k] whenBindDo: ^ {
+      ORLong up = _nb - 1;
+      ORInt vk = minDom(_x[k]);
+      for(ORLong i=up;i;--i) {
+         if (i == k)
+            continue;
+         removeDom(_x[i], vk);
+      }
+   } onBehalf:self];   
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   

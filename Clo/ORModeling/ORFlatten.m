@@ -175,9 +175,9 @@
    [m applyOnVar:^(id<ORVar> x) {
       [self copyOnce:x];
    } onObjects:^(id<ORObject> x) {
-      id cx = [self copyOnce:x];
+      [self copyOnce:x];
    } onConstraints:^(id<ORConstraint> c) {
-      id cc = [self copyOnce:c];
+      [self copyOnce:c];
    } onObjective:^(id<ORObjectiveFunction> o) {
       [self copyOnce:o];
    }];

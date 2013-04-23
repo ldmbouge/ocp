@@ -15,7 +15,7 @@
 
 -(id) initWithModel: (id<ORModel>)m
 {
-    if((self = [super initWithModel: m]) != nil) {
+    if((self = [super initWithModel: m children: nil]) != nil) {
         _program = [ORFactory createCPProgram: m];
     }
     return self;

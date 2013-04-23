@@ -71,7 +71,6 @@
 		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
-		5B115527171B1CF5005371AA /* slabLNSModel.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B115526171B1CF5005371AA /* slabLNSModel.1 */; };
 		5B115537171B1D0F005371AA /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B115538171B1D0F005371AA /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B115539171B1D0F005371AA /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -317,6 +316,7 @@
 		5B6E89251379D3E9005DB4CA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89241379D3E9005DB4CA /* CoreData.framework */; };
 		5B6E89271379D3E9005DB4CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6E892A1379D3EA005DB4CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6E89291379D3EA005DB4CA /* main.m */; };
+		5B6FFF4F171D93BF00DEA5C6 /* slab.dat in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1935C7415B90FFB00107399 /* slab.dat */; };
 		5B729C41153F79A4001BE95A /* CPWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B729C3F153F79A4001BE95A /* CPWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B729C42153F79A4001BE95A /* CPWatch.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B729C40153F79A4001BE95A /* CPWatch.m */; };
 		5B729C43153F89E6001BE95A /* CPWatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B729C3F153F79A4001BE95A /* CPWatch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3371,13 +3371,13 @@
 		};
 		5B11551D171B1CF4005371AA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 6;
 			files = (
-				5B115527171B1CF5005371AA /* slabLNSModel.1 in CopyFiles */,
+				5B6FFF4F171D93BF00DEA5C6 /* slab.dat in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5B19098016DAACA7006D1D24 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -12623,7 +12623,10 @@
 				LINK_WITH_STANDARD_LIBRARIES = YES;
 				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
-				OTHER_CFLAGS = "-DUSEVIEWS=1";
+				OTHER_CFLAGS = (
+					"-DUSEVIEWS=1",
+					"-fno-stack-protector",
+				);
 				SDKROOT = macosx;
 			};
 			name = Debug;

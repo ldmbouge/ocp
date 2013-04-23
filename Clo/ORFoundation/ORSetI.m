@@ -165,7 +165,7 @@
    self = [super init];
    _low = low;
    _up = up;
-   assert(!(_low == 0 && _up == 0));
+   //assert(!(_low == 0 && _up == 0));
    return self;
 }
 -(void) dealloc

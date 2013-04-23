@@ -23,9 +23,9 @@
     id<ORFloatArray> _col;
 }
 
--(id) initWithModel:(id<ORModel>)m
+-(id) initWithModel: (id<ORModel>)m children: (NSArray*)child;
 {
-    if((self = [super initWithModel: m]) != nil) {
+    if((self = [super initWithModel: m children: child]) != nil) {
         _sig = nil;
         _upperBoundStreamInformer = nil;
         _lowerBoundStreamInformer = nil;

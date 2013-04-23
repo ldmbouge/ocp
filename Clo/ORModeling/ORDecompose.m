@@ -740,9 +740,9 @@ static inline ORLong maxSeq(ORLong v[4])  {
    ORLinear* lT = [ORLinearizer linearFrom:[e operand] model:_model annotation:_c];
    id<ORIntVar> oV = [ORSubst normSide:lT for:_model annotation:_c];
    if (_rv == nil)
-      _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+      _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1 annotation:_c];
    else {
-      id<ORIntVar> fV = [ORFactory intVar:_model var:oV scale:-1 shift:1];
+      id<ORIntVar> fV = [ORFactory intVar:_model var:oV scale:-1 shift:1 annotation:_c];
       [_model addConstraint:[ORFactory equal:_model var:_rv to:fV plus:0 annotation:_c]];
    }
 }

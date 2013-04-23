@@ -241,11 +241,25 @@
 
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+    [v makeImpl];
+//   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitIdMatrix: (id<ORIdMatrix>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+    if ([v dereference] == NULL) {
+        id<ORIntRange> R1 = [v range: 0];
+        id<ORIntRange> R2 = [v range: 1];
+        id<ORIntRange> R[] = {R1, R2};
+        id<ORIdMatrix> dx = [ORFactory idMatrix: _MIPsolver arity: 2 ranges: R];
+        [dx makeImpl];
+        for(ORInt i = [R1 low]; i <= [R1 up]; i++) {
+            for(ORInt j = [R2 low]; j <= [R2 up]; j++) {
+                [[v at:i:j] visit: self];
+                [dx set: [[v at:i:j] dereference] at: i : j];
+            }
+        }
+        [v setImpl: dx];
+    }
 }
 -(void) visitTable:(id<ORTable>) v
 {

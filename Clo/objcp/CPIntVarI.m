@@ -245,37 +245,46 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
-   if ([dom domsize]==1)
-      [s appendFormat:@"%d",[dom min]];
-   else {
-      [s appendFormat:@"(%d)[",[dom domsize]];
-      __block ORInt lastIn;
-      __block ORInt firstIn;
-      __block bool seq;
-      __block bool first = YES;
-      [dom enumerateWithBlock:^(ORInt k) {
-         if (first) {
-            [s appendFormat:@"%d",k];
-            first = NO;
-            seq   = NO;
-            lastIn  = firstIn = k;
-         } else {
-            if (lastIn + 1 == k) {
-               lastIn = k;
-               seq    = YES;
+   if ([dom isKindOfClass:[CPBoundsDom class]]) {
+      if ([dom domsize]==1)
+         [s appendFormat:@"%d",[dom min]];
+      else {
+         [s appendFormat:@"(%d)[",[dom domsize]];
+         [s appendFormat:@"%d .. %d]",[dom min],[dom max]];
+      };
+   } else {
+      if ([dom domsize]==1)
+         [s appendFormat:@"%d",[dom min]];
+      else {
+         [s appendFormat:@"(%d)[",[dom domsize]];
+         __block ORInt lastIn;
+         __block ORInt firstIn;
+         __block bool seq;
+         __block bool first = YES;
+         [dom enumerateWithBlock:^(ORInt k) {
+            if (first) {
+               [s appendFormat:@"%d",k];
+               first = NO;
+               seq   = NO;
+               lastIn  = firstIn = k;
             } else {
-               if (seq)
-                  [s appendFormat:@"..%d,%d",lastIn,k];
-               else
-                  [s appendFormat:@",%d",k];
-               firstIn = lastIn = k;
-               seq = NO;
+               if (lastIn + 1 == k) {
+                  lastIn = k;
+                  seq    = YES;
+               } else {
+                  if (seq)
+                     [s appendFormat:@"..%d,%d",lastIn,k];
+                  else
+                     [s appendFormat:@",%d",k];
+                  firstIn = lastIn = k;
+                  seq = NO;
+               }
             }
-         }
-      }];
-      if (seq)
-         [s appendFormat:@"..%d]",lastIn];
-      else [s appendFormat:@"]"];
+         }];
+         if (seq)
+            [s appendFormat:@"..%d]",lastIn];
+         else [s appendFormat:@"]"];
+      }
    }
    [dom release];
    return s;
@@ -484,18 +493,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
    if (!TRACKSINTVAR) return ORSuspend;
-   ORStatus s = _recv==nil ? ORSuspend : [_recv loseValEvt:val sender:sender];
-   if (s==ORFailure) return s;
-
-   id<CPEventNode> mList[6];
-   ORUInt k = 0;
-   mList[k] = _net._domEvt._val;
-   k += mList[k] != NULL;
-   mList[k] = NULL;
-   scheduleAC3(_fdm,mList);
-   if (_net._ac5._val) {
-      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
+   ORStatus s = ORSuspend;
+   if (_recv !=nil) {
+      s = [_recv loseValEvt:val sender:sender];
+      if (s==ORFailure) return s;
    }
+   if (_net._domEvt._val != NULL) {
+      id<CPEventNode> mList[2];
+      mList[0] = _net._domEvt._val;
+      mList[1] = NULL;
+      scheduleAC3(_fdm,mList);
+   }
+   if (_net._ac5._val)
+      [_fdm scheduleAC5:[CPValueLossEvent newValueLoss:val notify:_net._ac5._val]];
    if (_triggers)
       [_triggers loseValEvt:val solver:_fdm];
    return ORSuspend;
@@ -698,7 +708,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool)member: (ORInt) v
 {
-    return [_dom member:v-_b];
+    return [_x member:v-_b];
 }
 -(ORInt) domsize
 {
@@ -1064,7 +1074,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBool) bound
 {
-   return [self domsize]<= 1;
+   if (bound(_secondary)) {
+      return TRUE;
+   } else {
+      if (memberDom(_secondary, _v))
+         return FALSE;
+      else return TRUE;
+   }
 }
 -(ORInt) value
 {
@@ -1078,20 +1094,18 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORInt) min
 {
-   if (bound(_secondary))
-      return minDom(_secondary)==_v;
+   ORBounds sb = bounds(_secondary);
+   if (sb.min == sb.max)
+      return sb.min==_v;
    else return 0;
 }
 -(ORInt) max
 {
-   if (bound(_secondary))
-      return minDom(_secondary)==_v;
-   else {
-      ORBounds b = bounds(_secondary);
-      if (_v < b.min || _v > b.max || ! memberBitDom(_secondary, _v))
-         return 0;
-      else return 1;
-   }
+   ORBounds sb = bounds(_secondary);
+   if (sb.min == sb.max)
+      return sb.min==_v;
+   else
+      return memberDom(_secondary, _v);
 }
 -(ORBool)member:(ORInt)val
 {
@@ -1113,7 +1127,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORBounds)bounds
 {
-   return (ORBounds){[self min],[self max]};
+   ORBounds sb = bounds(_secondary);
+   ORBool b  = sb.min == sb.max;
+   if (b) {
+      ORBool bToV = sb.min == _v;
+      return (ORBounds){bToV,bToV};
+   } else
+      return (ORBounds){0,memberDom(_secondary, _v)};
 }
 -(ORInt) domsize
 {
@@ -1251,12 +1271,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _mx  = n;
    _tab = malloc(sizeof(CPIntVarI*)*_mx);
    _loseValIMP   = malloc(sizeof(IMP)*_mx);
+   _minIMP   = malloc(sizeof(IMP)*_mx);
+   _maxIMP   = malloc(sizeof(IMP)*_mx);
    _tracksLoseEvt = false;
    [root setDelegate:self];
-//   _tab[0] = root;
-//   _tracksLoseEvt |= [_tab[0] tracksLoseEvt:nil];
-//   _loseValIMP[0] = (UBType)[root methodForSelector:@selector(loseValEvt:sender:)];
-//   _nb  = 1;
    _nb = 0;
    return self;
 }
@@ -1269,7 +1287,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {}
 -(void) dealloc
 {
-   //NSLog(@"multicast object %p dealloc'd\n",self);
    free(_tab);
    [super dealloc];
 }
@@ -1282,17 +1299,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
+      _minIMP     = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
+      _maxIMP     = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
-   //[_tab[_nb] setDelegate:self];
    _tracksLoseEvt |= [_tab[_nb] tracksLoseEvt:nil];
    _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
+   _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
+   _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
    [theTrail trailClosure:^{
       _tab[toFix] = NULL;
       _loseValIMP[toFix] = NULL;
+      _minIMP[toFix] = NULL;
+      _maxIMP[toFix] = NULL;
       _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
@@ -1325,16 +1347,22 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
       _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
+      _minIMP = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
+      _maxIMP = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = newLits;
    _loseValIMP[_nb] = (UBType)[newLits methodForSelector:@selector(loseValEvt:sender:)];
+   _minIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMinEvt:sender:)];
+   _maxIMP[_nb] = (UBType)[newLits methodForSelector:@selector(changeMaxEvt:sender:)];
    _tracksLoseEvt = YES;
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
    [theTrail trailClosure:^{
       _tab[toFix] = NULL;
       _loseValIMP[toFix] = NULL;
+      _minIMP[toFix] = NULL;
+      _maxIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;
@@ -1385,18 +1413,25 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    return ORSuspend;
 }
+
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
+   SEL ms = @selector(changeMinEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
-      ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
+      //ORStatus ok = [_tab[i] changeMinEvt:dsz sender:sender];
+      assert(_minIMP[i]);
+      ORStatus ok = _minIMP[i](_tab[i],ms,dsz,sender);
       if (!ok) return ok;
    }
    return ORSuspend;
 }
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
+   SEL ms = @selector(changeMaxEvt:sender:);
    for(ORInt i=0;i<_nb;i++) {
-      ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
+      //ORStatus ok = [_tab[i] changeMaxEvt:dsz sender:sender];
+      assert(_maxIMP[i]);
+      ORStatus ok = _maxIMP[i](_tab[i],ms,dsz,sender);
       if (!ok) return ok;
    }
    return ORSuspend;

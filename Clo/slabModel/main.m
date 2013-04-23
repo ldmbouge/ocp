@@ -26,7 +26,7 @@ NSString* tab(int d)
    return buf;
 }
 
-int main1(int argc, const char * argv[])
+int main(int argc, const char * argv[])
 {
    const char* fName = argc >=2 ? argv[1] : "slab.dat";
    id<ORModel> model = [ORFactory createModel];
@@ -109,7 +109,9 @@ int main1(int argc, const char * argv[])
       printf(" Starting search \n");
       [cp perform: ^{
          [cp limitFailures: 200 in: ^{
-         [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];} orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);} do: ^(ORInt o){
+         [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];}
+          orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]]);}
+                 do: ^(ORInt o){
 #define TESTTA 1
 #if TESTTA==0
             ORInt ms = max(0,[CPUtilities maxBound: slab]);
@@ -127,13 +129,9 @@ int main1(int argc, const char * argv[])
             if (![cp bound: slab[o]])
                [cp fail];
 #else
-            //printf("%d ",o);
             ORInt ms = max(0,[CPUtilities maxBound: slab]);
-            //[cp add: [slab[o] leqi:ms+1]];
-            //[cp lthen:slab[o] with:ms+2];
             [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; } in: ^void(ORInt s)
              {
-               //NSLog(@"doing %d with %d",o,s);
                 [cp label: slab[o] with: s];
              }
              onFailure: ^void(ORInt s)
@@ -145,7 +143,6 @@ int main1(int argc, const char * argv[])
             depth++;
          }];
          NSLog(@"Objective value: %@",[obj value]);
-      //NSLog(@"Objective value: %d",[[obj value] value]);
          }];
       }
       onLimit: ^{ printf("limit reached\n"); }
@@ -164,7 +161,7 @@ int main1(int argc, const char * argv[])
    return 0;
 }
 
-int main(int argc, const char * argv[])
+int main2(int argc, const char * argv[])
 {
    const char* fName = argc >=2 ? argv[1] : "slab.dat";
    id<ORModel> model = [ORFactory createModel];
