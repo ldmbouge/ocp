@@ -18,7 +18,7 @@ typedef id<ORRunnable> (^ORFloatArray2Runnable)(id<ORFloatArray>);
 typedef id<ORFloatArray> (^Void2FloatArray)();
 
 @interface ORColumnGeneration : ORPipedRunnable<ORColumnConsumer>
--(id) initWithMaster: (id<LPRunnable>)master slave: (Void2FloatArray)slaveBlock;
+-(id) initWithMaster: (id<ORRunnable>)master slave: (Void2FloatArray)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;

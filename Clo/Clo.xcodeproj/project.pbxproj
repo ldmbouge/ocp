@@ -38,6 +38,10 @@
 		37095B4516DBF1B3001BCEEC /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		37095B4716DBF214001BCEEC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37095B4616DBF214001BCEEC /* main.m */; };
 		37095B4816DBF290001BCEEC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37095B4616DBF214001BCEEC /* main.m */; };
+		372D318D1726100D007E1B91 /* LPRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 372D318B1726100C007E1B91 /* LPRunnable.h */; };
+		372D318E1726100D007E1B91 /* LPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D318C1726100C007E1B91 /* LPRunnable.m */; };
+		372D3191172610D1007E1B91 /* MIPRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 372D318F172610D1007E1B91 /* MIPRunnable.h */; };
+		372D3192172610D1007E1B91 /* MIPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D3190172610D1007E1B91 /* MIPRunnable.m */; };
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		3792E18216DBEC7500FA2C85 /* ORCopy.h in Headers */ = {isa = PBXBuildFile; fileRef = 3792E18016DBEC7500FA2C85 /* ORCopy.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -3953,6 +3957,10 @@
 		37095B2A16DBF173001BCEEC /* CuttingStock */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CuttingStock; sourceTree = BUILT_PRODUCTS_DIR; };
 		37095B2F16DBF173001BCEEC /* CuttingStock.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CuttingStock.1; sourceTree = "<group>"; };
 		37095B4616DBF214001BCEEC /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		372D318B1726100C007E1B91 /* LPRunnable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPRunnable.h; sourceTree = "<group>"; };
+		372D318C1726100C007E1B91 /* LPRunnable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPRunnable.m; sourceTree = "<group>"; };
+		372D318F172610D1007E1B91 /* MIPRunnable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPRunnable.h; sourceTree = "<group>"; };
+		372D3190172610D1007E1B91 /* MIPRunnable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPRunnable.m; sourceTree = "<group>"; };
 		3783F12E1620C6E30085E8C2 /* ORLinearize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinearize.h; sourceTree = "<group>"; };
 		3783F12F1620C6E30085E8C2 /* ORLinearize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinearize.m; sourceTree = "<group>"; };
 		3792E18016DBEC7500FA2C85 /* ORCopy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCopy.h; sourceTree = "<group>"; };
@@ -5536,6 +5544,10 @@
 				37D729A81724E348004966DA /* ORSignature.m */,
 				37D729AB1724E4A3004966DA /* CPRunnable.h */,
 				37D729AC1724E4A3004966DA /* CPRunnable.m */,
+				372D318B1726100C007E1B91 /* LPRunnable.h */,
+				372D318C1726100C007E1B91 /* LPRunnable.m */,
+				372D318F172610D1007E1B91 /* MIPRunnable.h */,
+				372D3190172610D1007E1B91 /* MIPRunnable.m */,
 			);
 			name = ORRunnable;
 			sourceTree = "<group>";
@@ -7536,6 +7548,8 @@
 				37D729A51724D4CC004966DA /* ORRunnablePiping.h in Headers */,
 				37D729A91724E348004966DA /* ORSignature.h in Headers */,
 				37D729AD1724E4A3004966DA /* CPRunnable.h in Headers */,
+				372D318D1726100D007E1B91 /* LPRunnable.h in Headers */,
+				372D3191172610D1007E1B91 /* MIPRunnable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9841,6 +9855,8 @@
 				37D729A61724D4CC004966DA /* ORRunnablePiping.m in Sources */,
 				37D729AA1724E348004966DA /* ORSignature.m in Sources */,
 				37D729AE1724E4A3004966DA /* CPRunnable.m in Sources */,
+				372D318E1726100D007E1B91 /* LPRunnable.m in Sources */,
+				372D3192172610D1007E1B91 /* MIPRunnable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

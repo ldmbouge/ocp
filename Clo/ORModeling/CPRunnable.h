@@ -17,5 +17,6 @@
 @end
 
 @interface CPRunnableI : ORPipedRunnable<CPRunnable>
+-(id) initWithModel: (id<ORModel>)m;
 @end
 

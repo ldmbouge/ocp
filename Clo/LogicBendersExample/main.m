@@ -23,6 +23,8 @@
 #import "SSCPLPInstanceParser.h"
 #import "CPEngineI.h"
 #import "CPRunnable.h"
+#import "MIPSolverI.h"
+#import "MIPRunnable.h"
 
 /*
  Single Source Capacitated Plant Location Problem
@@ -74,31 +76,31 @@ int main(int argc, const char * argv[])
    // Parse instance data
    NSString* instanceData =
     @"20   10\
-    51.00       47.00       94.00       76.00       60.00       24.00       18.00        6.00       96.00       20.00\
-    39.00        5.00        1.00        8.00       33.00       70.00        2.00       86.00       55.00       81.00\
-    65.00       62.00       12.00       10.00       16.00       50.00       27.00       38.00       84.00       97.00\
-    93.00        9.00       82.00       64.00       65.00        1.00       29.00       16.00       39.00       95.00\
-    90.00        5.00       12.00       72.00       65.00       48.00       25.00       65.00       77.00       25.00\
-    42.00       46.00       36.00       63.00        2.00       31.00       61.00       69.00       56.00       33.00\
-    8.00       42.00       70.00       83.00       25.00       59.00       67.00       12.00       41.00       28.00\
-    30.00       68.00       45.00       53.00       83.00       94.00       21.00       42.00       42.00       97.00\
-    56.00       67.00       81.00        4.00       17.00       58.00       69.00       56.00       70.00       68.00\
-    74.00       93.00        0.00       65.00       20.00       51.00       34.00       35.00       75.00       51.00\
-    94.00       83.00       80.00       60.00       26.00       90.00       53.00       55.00       74.00       51.00\
-    42.00       14.00        7.00       98.00       84.00       26.00        9.00       90.00       27.00       84.00\
-    3.00       31.00       92.00        7.00       47.00       28.00       99.00        2.00       44.00       11.00\
-    86.00       64.00       46.00       93.00       75.00       85.00       37.00        8.00       94.00       99.00\
-    43.00       83.00       29.00       94.00       85.00       19.00       87.00       84.00       78.00       95.00\
-    85.00       95.00       54.00       10.00       95.00       20.00       49.00       31.00       12.00       53.00\
-    79.00       24.00       22.00        3.00       17.00       64.00        3.00       37.00       15.00       67.00\
-    52.00       20.00       57.00       83.00       58.00       45.00       32.00       52.00       47.00       58.00\
-    49.00       98.00       55.00       47.00       56.00       21.00       41.00       29.00       13.00       17.00\
-    11.00       53.00       48.00       27.00       29.00       23.00       87.00       94.00       45.00       90.00\
-    17.00       24.00       23.00       37.00       12.00       29.00       21.00        2.00       18.00        9.00\
-    22.00       21.00       12.00       16.00       24.00       35.00       23.00        5.00       33.00       22.00\
-    206.00      132.00      335.00      219.00      340.00      206.00      340.00      298.00      233.00      322.00\
-    36.00       47.00       66.00       56.00       72.00       39.00       58.00       41.00       62.00       56.00";
-   
+    8.00       85.00        5.00       49.00       42.00        8.00       87.00       93.00       62.00       84.00\
+    9.00        0.00        4.00       65.00       59.00       77.00       26.00       68.00       91.00       25.00\
+    35.00       21.00       65.00       94.00       46.00       29.00       56.00       47.00       46.00       75.00\
+    60.00       80.00       82.00       46.00       16.00       18.00       78.00       31.00       45.00       88.00\
+    63.00       44.00       67.00       47.00       62.00       74.00       32.00        5.00       91.00       44.00\
+    96.00       72.00       38.00       51.00       26.00       25.00       34.00       12.00       97.00       71.00\
+    51.00       36.00       34.00       53.00       71.00        0.00        8.00       21.00       12.00       95.00\
+    81.00       66.00       17.00       78.00       70.00       98.00       28.00       37.00       59.00        6.00\
+    10.00       62.00        2.00       26.00        0.00       71.00       78.00       26.00       74.00       41.00\
+    95.00       61.00       92.00       44.00       54.00       72.00       39.00       83.00       25.00       26.00\
+    69.00       79.00       98.00       17.00       43.00       53.00       87.00       88.00       99.00        9.00\
+    38.00       29.00       95.00       10.00       41.00       75.00       28.00       99.00       51.00       93.00\
+    6.00        8.00       85.00       45.00       25.00       65.00       20.00       67.00       94.00       82.00\
+    42.00       89.00       91.00       87.00        2.00       92.00       54.00       37.00       69.00       84.00\
+    41.00       17.00       21.00       34.00       99.00       22.00       77.00       90.00       50.00       73.00\
+    80.00       82.00       63.00        4.00       82.00       84.00       75.00       38.00       87.00       79.00\
+    86.00       31.00       62.00       49.00       39.00       46.00        5.00        3.00       55.00       95.00\
+    46.00       94.00       87.00       61.00       15.00       92.00       18.00       82.00        5.00       29.00\
+    8.00       56.00        3.00       11.00       71.00       18.00       81.00       77.00       33.00       76.00\
+    65.00       57.00        8.00       13.00       19.00       32.00       89.00        4.00       25.00       22.00\
+    12.00       18.00       18.00       19.00       26.00       21.00       18.00       19.00       18.00       11.00\
+    22.00       21.00       13.00       19.00       13.00       14.00       22.00       17.00       27.00       28.00\
+    329.00      144.00      408.00      202.00      369.00      440.00      195.00      162.00      174.00      197.00\
+    59.00       48.00       65.00       43.00       64.00       65.00       57.00       49.00       58.00       30.00";
+
    SSCPLPInstanceParser* parser = [[SSCPLPInstanceParser alloc] init];
    SSCPLPInstance* instance = [parser parseInstanceString: instanceData];
    [parser release];
@@ -172,7 +174,7 @@ int main(int argc, const char * argv[])
                        NSLog(@"Running Subproblem...");
                        id<ORModel> subproblem = [ORFactory createModel];
                        id<ORIntVarArray> load = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 0, numVehBinPacking-1) domain: RANGE(subproblem, 0, l)];
-                       id<ORIntVarArray> truck = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 0, (ORInt)[dist count]-1) domain: RANGE(subproblem, 1, [[numVeh at: j] value])];
+                       id<ORIntVarArray> truck = [ORFactory intVarArray: subproblem range: RANGE(subproblem, 0, (ORInt)[dist count]-1) domain: RANGE(subproblem, 0, [[numVeh at: j] value]-1)];
                        NSLog(@"truck: %@ dist: %@ load: %@", [[truck range] description], [[dist range] description], [[load range] description]);
                        
                        [subproblem add: [ORFactory packing: truck itemSize: dist load: load]];
@@ -181,11 +183,26 @@ int main(int argc, const char * argv[])
                        CPEngineI* engine = (CPEngineI*)[[((id<CPRunnable>)r) solver] engine];
                        if([engine status] == ORFailure) {
                            // Add Cut to pool
-                           id<ORExpr> numVehValue = [ORFactory integer: master value: [[numVeh at: j] value]];
-                           id<ORExpr> one = [ORFactory integer: master value: 1];
-                           [cuts addConstraint: [[numVeh at: j] geq:
-                                                 [numVehValue sub: [ORFactory sum: master over: Ij suchThat: nil of:
-                                                                    ^id<ORExpr>(ORInt i) { return [one sub: [x at: i : j]]; }]]]];
+                           id<ORConstraint> c = [[numVeh at: j] geq:
+                                                 [@([[numVeh at: j] value]) sub: [ORFactory sum: master over: Ij suchThat: nil of:
+                                                                    ^id<ORExpr>(ORInt i) { return [@1 sub: [x at: i : j]]; }]]];
+
+                           // Cheat and inject here
+                           MIPSolverI* mipSolver = [[((id<MIPRunnable>)ip) solver] solver];
+                           ORInt size = [Ij size] + 1;
+                           MIPVariableI* vars[size];
+                           id<IntEnumerator> e = [Ij enumerator];
+                           vars[0] = [[numVeh at: j] dereference];
+                           for(ORInt i = 1; i < size; i++) vars[i] = [[x at: [e next] : j] dereference];
+                           ORFloat coef[size];
+                           coef[0] = 1;
+                           for(ORInt i = 1; i < size; i++) coef[i] = -1;
+                           ORFloat rhs = [[numVeh at: j] value] - [Ij size];
+                           MIPConstraintI* mc = [mipSolver createGEQ: size var: vars coef: coef rhs: rhs];
+                           [mipSolver postConstraint: mc];
+                           
+                           NSLog(@"cut: %@", [c description]);
+                           [cuts addConstraint: c];
                            [r release];
                            [subproblem release];
                        }
