@@ -143,8 +143,8 @@ int main(int argc, const char * argv[])
       [master add: [Sum(master, i, I, [[x at: i : j] mul: @([t at: i : j])]) leq: @(l * k)]];       // [9]
       [master add: [Sum(master, i, I, [[x at: i : j] mul: @((ORInt)instance.demand[i])])          // [11]
                     leq: [[p at: j] mul: @((ORInt)instance.capacity[j])]]];
-      [master add: [[numVeh at: j]                                                              // [12] This needs to use mulf!
-                    geq: Sum(master, i, I, [[x at: i : j] mul: @([t at: i : j] / (ORFloat)l)])]];
+      [master add: [[[numVeh at: j] mul: @(l)]                                                             // [12] This needs to use mulf!
+                    geq: Sum(master, i, I, [[x at: i : j] mul: @([t at: i : j])])]];
    }
    for(ORInt i = 0; i < m; i++) {
       for(ORInt j = 0; j < n; j++) {
