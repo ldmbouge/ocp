@@ -197,10 +197,9 @@ int main(int argc, const char * argv[])
                            ORFloat coef[size];
                            coef[0] = 1;
                            for(ORInt i = 1; i < size; i++) coef[i] = -1;
-                           ORFloat rhs = [[numVeh at: j] value] - [Ij size];
+                           ORFloat rhs = [[numVeh at: j] value] - [Ij size] + 1;
                            MIPConstraintI* mc = [mipSolver createGEQ: size var: vars coef: coef rhs: rhs];
                            [mipSolver postConstraint: mc];
-                           
                            NSLog(@"cut: %@", [c description]);
                            [cuts addConstraint: c];
                            [r release];
