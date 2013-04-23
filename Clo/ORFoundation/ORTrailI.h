@@ -82,6 +82,7 @@
 @end
 
 @interface ORTrailIStack : NSObject {
+   @package
    ORTrailI*  _trail;
    struct TRNode {
       ORInt   _x;
@@ -101,6 +102,10 @@
 -(ORInt)size;
 @end
 
+inline static void trailPop(ORTrailIStack* s)
+{
+   [s->_trail backtrack: s->_tab[--s->_sz]._ofs];
+}
 
 @interface ORTrailableIntI : NSObject<ORTrailableInt>
 -(ORTrailableIntI*) initORTrailableIntI: (id<ORTrail>) trail value:(ORInt) value;

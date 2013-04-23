@@ -10,25 +10,96 @@
  ***********************************************************************/
 
 #import "ORCommand.h"
+#import <pthread.h>
+
+typedef struct {
+   Class  _poolClass;
+   ORUInt _low;
+   ORUInt  _high;
+   ORUInt  _mxs;
+   ORUInt  _sz;
+   id*     _pool;
+} ComListPool;
+
 
 @implementation ORCommandList
--(ORCommandList*)initCPCommandList
+
+static pthread_key_t clkey;
+static void init_clpthreads()
 {
-   self = [super init];
-   _head = NULL;
-   _ndId = -1; // undefined
+   pthread_key_create(&clkey,NULL);
+}
+
++(ComListPool*)instancePool
+{
+   static pthread_once_t block = PTHREAD_ONCE_INIT;
+   pthread_once(&block,init_clpthreads);
+   ComListPool* pool = pthread_getspecific(clkey);
+   if (!pool) {
+      pool = malloc(sizeof(ComListPool));
+      pthread_setspecific(clkey,pool);
+      pool->_low = pool->_high = pool->_sz = 0;
+      pool->_mxs = 8192;
+      pool->_poolClass = self;
+      pool->_pool = malloc(sizeof(id)*pool->_mxs);
+   }
+   return pool;
+}
+
++(id)newCommandList:(ORInt)node
+{
+   ComListPool* p = [self instancePool];
+   ORCommandList* rv = NULL;
+   if (p->_low == p->_high) {
+      rv = NSAllocateObject(self, 0, NULL);
+      [rv initCPCommandList:node];
+   } else {
+      rv = p->_pool[p->_low];
+      p->_low = (p->_low + 1) % p->_mxs;
+      p->_sz--;
+      rv->_cnt = 1;
+      rv->_ndId = node;
+   }
+   return rv;
+}
+-(id)grab
+{
+   ++_cnt;
    return self;
+}
+-(void)letgo
+{
+   assert(_cnt > 0);
+   if (--_cnt == 0) {
+      while (_head) {
+         struct CNode* nxt = _head->_next;
+         CFRelease(_head->_c);//[_head->_c release];
+         free(_head);
+         _head = nxt;
+      }
+      _ndId = -1;
+      ComListPool* p = [isa instancePool];
+      ORUInt next = (p->_high + 1) % p->_mxs;
+      if (next == p->_low) {
+         [self release];
+      } else {
+         p->_pool[p->_high] = self;
+         p->_sz++;
+         p->_high = next;
+      }
+   }
 }
 -(ORCommandList*) initCPCommandList: (ORInt) node
 {
    self = [super init];
    _head = NULL;
    _ndId = node;
+   _cnt  = 1;
    return self;
 }
 -(void)dealloc
 {
-   //NSLog(@"dealloc on CPCommandList %ld\n",_ndId);
+   NSLog(@"dealloc on CPCommandList %d\n",_ndId);
    while (_head) {
       struct CNode* nxt = _head->_next;
       CFRelease(_head->_c);//[_head->_c release];
@@ -39,7 +110,8 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORCommandList* nList = [[ORCommandList alloc] initCPCommandList:_ndId];
+   ORCommandList* nList = [ORCommandList newCommandList:_ndId];
+   //[[ORCommandList alloc] initCPCommandList:_ndId];
    struct CNode* cur = _head;
    struct CNode* first = NULL;
    struct CNode* last  = NULL;
@@ -133,6 +205,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
+   _cnt = 1;
    ORUInt cnt = 0;
    _head = 0;
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_ndId];
@@ -152,4 +225,6 @@
    }
    return self;
 }
+
+
 @end

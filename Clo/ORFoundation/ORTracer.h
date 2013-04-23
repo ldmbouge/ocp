@@ -45,7 +45,6 @@
 @end
 
 @protocol ORCheckpoint <NSObject>
--(void)pushCommandList:(ORCommandList*)aList;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
 -(NSData*)packFromSolver: (id<ORSearchEngine>) engine;

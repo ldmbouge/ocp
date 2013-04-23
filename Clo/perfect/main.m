@@ -47,7 +47,9 @@ int main(int argc, const char * argv[])
          }
          ];
          //NSLog(@"model: %@",model);
-         id<CPProgram> cp  = [args makeProgram:model];
+         //id<CPProgram> cp  = [args makeProgram:model];
+         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:1 with:[ORSemDFSController class]];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          [cp solveAll:^{
             //id<ORBasicModel> bm = [[cp engine] model];
