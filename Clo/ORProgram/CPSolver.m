@@ -1992,8 +1992,11 @@
    ORInt M = -MAXINT;
    for(ORInt i = low; i <= up; i++) {
       id<CPIntVar> xi = [x[i] dereference];
-      if ([xi bound] && [xi value] > M)
-         M = [xi value];
+      if ([xi bound]) {
+         ORInt v = [xi value];
+         if (v > M)
+            M = v;
+      }
    }
    return M;
 }

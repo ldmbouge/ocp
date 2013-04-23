@@ -100,18 +100,18 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {
-//         if (!used[i]) && (([_arraySuchThat count] == 0) || (((ORInt2Bool) [_arraySuchThat objectAtIndex: 0])(value[i])))) {
          if (!used[i]) {
             BOOL valid = true;
-            ORInt nbs = (ORInt) [_arraySuchThat count];
-            for(ORInt k = 0; k < nbs && valid; k++)
-               valid = ((ORInt2Bool) [_arraySuchThat objectAtIndex: k])(value[i]);
+            for(ORInt2Bool fun in _arraySuchThat) {
+               valid = fun(value[i]);
+               if (!valid) break;
+            }
             if (valid) {
                if (isSmaller(value[i],_arrayOrderedBy,best)) {
                   chosen = i;
-                  ORInt nbo = (ORInt) [_arrayOrderedBy count];
-                  for(ORInt k = 0; k < nbo; k++) 
-                     best[k] = ((ORInt2Int) [_arrayOrderedBy objectAtIndex: k])(value[i]);
+                  ORInt k = 0;
+                  for(ORInt2Int fun in _arrayOrderedBy)
+                     best[k++] = fun(value[i]);
                }
             }
          }
