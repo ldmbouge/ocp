@@ -97,16 +97,20 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:mdl];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
-         [cp solve: ^{
-            NSLog(@"Search");
+         id<ORInteger> nbSol = [ORFactory integer:mdl value:0];
+         [cp solveAll: ^{
             [cp labelHeuristic:h];
-            id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
-               return [cp intValue:costas[i]];
-            }];
-            NSLog(@"Solution: %@",s);
-            NSLog(@"Solver: %@",cp);
+            @autoreleasepool {
+               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+                  return [cp intValue:costas[i]];
+               }];
+               //NSLog(@"Solution: %@",s);
+               @synchronized(nbSol) {
+                  [nbSol incr];
+               }
+            }
          }];
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(nbSol.value, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;

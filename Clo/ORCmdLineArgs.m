@@ -37,7 +37,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
    heuristic = FF;
    restartRate = 1.0;
    timeOut = 60;
-   nbThreads = 1;
+   nbThreads = 0;
    randomized = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "-q", 2) == 0)
@@ -91,7 +91,8 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 -(id<CPProgram>)makeProgram:(id<ORModel>)model
 {
    switch(nbThreads) {
-      case 1: return [ORFactory createCPProgram:model];
+      case 0: return [ORFactory createCPProgram:model];
+      case 1: return [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads with:[ORSemDFSController class]];
    }
 }
