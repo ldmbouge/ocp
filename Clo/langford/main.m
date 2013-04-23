@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
          [model add: [x[1] leq: x[k*n]]];
          
          __block ORInt nbSol = 0;
-         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         id<CPProgram> cp = [args makeProgram:model];
          //NSLog(@"Model %@",model);
          //      id<CPHeuristic> h = [ORFactory createFF:cp];
          [cp solveAll:^{

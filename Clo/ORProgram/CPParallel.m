@@ -59,7 +59,7 @@
    [stolen release];
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine]];
    assert(ok != ORFailure);
-   [theCP release];
+   [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
    _publishing = NO;
 }
@@ -163,13 +163,14 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine]];
-         assert(ok != ORFailure);
-         [cp release];
+         //assert(ok != ORFailure);
+         [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
          if (k && ok)
             [k call];
+         else [k letgo];
       } else break;
    } while(true);
    [self finitelyFailed];

@@ -45,6 +45,8 @@
 @end
 
 @protocol ORCheckpoint <NSObject>
+-(void)letgo;
+-(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
 -(NSData*)packFromSolver: (id<ORSearchEngine>) engine;

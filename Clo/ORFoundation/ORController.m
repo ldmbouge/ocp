@@ -17,13 +17,13 @@
 {
    self = [super init];
    _cont = [c grab];
-   _theCP = [cp retain];
+   _theCP = [cp grab];
    return self;
 }
 -(void)dealloc
 {
    [_cont letgo];
-   [_theCP release];
+   [_theCP letgo];
    [super dealloc];
 }
 -(NSCont*)cont
@@ -35,8 +35,6 @@
    return _theCP;
 }
 @end
-
-
 
 @implementation ORDefaultController
 

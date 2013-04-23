@@ -32,6 +32,7 @@
    @package
    ORCmdStack* _path;
    ORInt     _nodeId;
+   ORInt        _cnt;
 }
 -(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds;
 -(void)dealloc;
@@ -39,6 +40,8 @@
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
 -(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
+-(void)letgo;
+-(id)grab;
 @end
 
 
@@ -374,7 +377,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 }
 -(void)dealloc
 {
-   //NSLog(@"dealloc checkpoint %p\n",self);
+   NSLog(@"dealloc checkpoint %p\n",self);
    [_path release];
    [super dealloc];
 }
@@ -441,30 +444,60 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 }
 
 
-static pthread_key_t pkey;
+static pthread_key_t cpkey;
 static void initPool()
 {
-   pthread_key_create(&pkey,NULL);
+   pthread_key_create(&cpkey,NULL);
 }
 
 +(id)newCheckpoint:(ORCmdStack*) cmds
 {
    static pthread_once_t block = PTHREAD_ONCE_INIT;
    pthread_once(&block,initPool);
-   id ptr = pthread_getspecific(pkey);
+   id ptr = pthread_getspecific(cpkey);
    if (ptr) {
-      pthread_setspecific(pkey,*(id*)ptr);
-   } else ptr = [super allocWithZone:NULL];
-   *(Class*)ptr = self;
-   id rv = [ptr initCheckpoint:cmds];
-   return rv;
+      pthread_setspecific(cpkey,*(id*)ptr);
+      *(Class*)ptr = self;
+      ORCheckpointI* theCP = (ORCheckpointI*)ptr;
+      theCP->_cnt = 1;      
+      ORInt i = 0;
+      BOOL pfxEq = YES;
+      while (pfxEq && i <  getStackSize(cmds) && i < getStackSize(theCP->_path)) {
+         pfxEq = commandsEqual(peekAt(cmds, i), peekAt(theCP->_path, i));
+         i += pfxEq;
+      }
+      while (i != getStackSize(theCP->_path)) {
+         ORCommandList* lst = popList(theCP->_path);
+         [lst letgo];
+      }
+      ORInt ub = getStackSize(cmds);
+      for(;i < ub;i++)
+         pushCommandList(theCP->_path, peekAt(cmds, i));
+   } else {
+      //NSLog(@"Fresh checkpoint...");
+      ptr = [super allocWithZone:NULL];
+      *(Class*)ptr = self;
+      ptr = [ptr initCheckpoint:cmds];
+      ((ORCheckpointI*)ptr)->_cnt = 1;
+   }
+   return ptr;
 }
 -(void) letgo
 {
-   id vLossCache = pthread_getspecific(pkey);
-   *(id*)self = vLossCache;
-   pthread_setspecific(pkey, self);
+   assert(_cnt > 0);
+   if (--_cnt == 0) {
+      id vLossCache = pthread_getspecific(cpkey);
+      *(id*)self = vLossCache;
+      pthread_setspecific(cpkey, self);
+   }
 }
+
+-(id)grab
+{
+   _cnt += 1;
+   return self;
+}
+
 @end
 
 // =======================================================================
@@ -623,7 +656,8 @@ static void initPool()
 }
 -(id<ORCheckpoint>)captureCheckpoint
 {
-   ORCheckpointI* ncp = [[ORCheckpointI alloc] initCheckpoint:_cmds];
+   //ORCheckpointI* ncp = [[ORCheckpointI alloc] initCheckpoint:_cmds];
+   ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds];
    ncp->_nodeId = [self pushNode];
    return ncp;
 }
