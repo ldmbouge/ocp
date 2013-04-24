@@ -1295,7 +1295,10 @@
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   id<ORIntVarArray> av = [h allIntVars];
+   [self labelHeuristic:h restricted:[h allIntVars]];
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }

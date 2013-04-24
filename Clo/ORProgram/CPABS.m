@@ -234,11 +234,13 @@
 -(void)addVar:(id<ORVar>)var
 {
    ORInt idx = [var getId];
-   NSNumber* vid = [[NSNumber alloc] initWithInt:idx];
-   [_inProbe addObject:vid];
-   [vid release];
-   assert(_low <= idx && idx <= _up);
-   _tab[idx] += 1;
+   if (_low <= idx && idx <= _up) {
+      NSNumber* vid = [[NSNumber alloc] initWithInt:idx];
+      [_inProbe addObject:vid];
+      [vid release];
+      assert(_low <= idx && idx <= _up);
+      _tab[idx] += 1;
+   }
 }
 -(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block
 {
@@ -540,7 +542,7 @@
       if (more)
          break;
    }
-   //NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
+   NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
    return more;
 }
 -(void)installActivities
@@ -583,19 +585,20 @@
 
 -(void)initActivities
 {
+   //id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
+   id<CPIntVarArray> vars = [self allIntVars];
    const ORInt nbInRound = 10;
-   const ORInt probeDepth = (ORInt) [_vars count];
+   const ORInt probeDepth = (ORInt) [vars count];
    float mxp = 0;
-   for(ORInt i = [_vars low];i <= [_vars up];i++) {
-      if ([_vars[i] bound]) continue;
-      mxp += log([(id)_vars[i] domsize]);
+   for(ORInt i = [vars low];i <= [vars up];i++) {
+      if ([vars[i] bound]) continue;
+      mxp += log([(id)vars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
    NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];

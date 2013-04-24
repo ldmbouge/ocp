@@ -232,6 +232,10 @@
 {
    [[self dereference] labelArray: x orderedBy: orderedBy];
 }
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
+   [[self dereference] labelHeuristic: h restricted:av];
+}
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
    [[self dereference] labelHeuristic: h];
