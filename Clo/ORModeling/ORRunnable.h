@@ -18,7 +18,8 @@
 -(id<ORSignature>) signature;
 -(void) start;
 -(void) run;
--(NSArray*) children;
+-(void) setSiblings: (NSArray*)siblings;
+-(NSArray*) siblings;
 -(void) connectPiping: (NSArray*)runnables;
 @end
 
@@ -26,9 +27,10 @@
 @protected
     id<ORModel> _model;
     ORClosure _exitBlock;
-    NSArray* _child;
+    NSArray* _siblings;
 }
--(id) initWithModel: (id<ORModel>)m children: (NSArray*)child;
+@property(readwrite, retain) NSArray* siblings;
+-(id) initWithModel: (id<ORModel>)m;
 @end
 
 @interface ORFactory(ORRunnable)

@@ -23,13 +23,16 @@
     id<ORFloatArray> _col;
 }
 
--(id) initWithModel: (id<ORModel>)m children: (NSArray*)child;
+-(id) initWithModel: (id<ORModel>)m;
 {
-    if((self = [super initWithModel: m children: child]) != nil) {
+    if((self = [super initWithModel: m]) != nil) {
         _sig = nil;
-        _upperBoundStreamInformer = nil;
+        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI]; //_upperBoundStreamInformer = nil;
+        [_upperBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
+            [self receivedUpperBound: b];
+        }];
         _lowerBoundStreamInformer = nil;
-        _solutionStreamInformer = nil;
+        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];//nil;
         _upperBoundStreamConsumers = nil;
         _lowerBoundStreamConsumers = nil;
         _solutionStreamConsumers = nil;
@@ -150,7 +153,7 @@
 -(void) notifyUpperBound: (ORInt)bound {
     if(_upperBoundStreamConsumers) {
         for(id<ORBoundStreamConsumer> c in _upperBoundStreamConsumers) {
-            [[c boundStreamInformer] notifyWith: bound];
+            [[c upperBoundStreamInformer] notifyWith: bound];
         }
     }
 }

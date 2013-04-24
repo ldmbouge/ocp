@@ -62,7 +62,7 @@
 @end
 
 @interface ORPipedRunnable : ORAbstractRunnableI<ORRunnable>
--(id) initWithModel: (id<ORModel>)m children: (NSArray*)child;
+-(id) initWithModel: (id<ORModel>)m;
 -(void) doExit;
 @end
 

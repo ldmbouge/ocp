@@ -19,7 +19,7 @@
 }
 
 -(id) initWithPrimary: (id<ORRunnable>)r0 secondary: (id<ORRunnable>)r1 {
-    if((self = [super initWithModel: [r0 model] children: [NSArray arrayWithObjects: r0, r1, nil]]) != nil) {
+    if((self = [super initWithModel: [r0 model]]) != nil) {
         _r0 = r0;
         _r1 = r1;
         _t0 = nil;
@@ -45,9 +45,9 @@
 }
 
 -(void) connectPiping:(NSArray *)runnables {
-    // Connect internal
-    [_r0 connectPiping: [self children]];
-    [_r1 connectPiping: [self children]];
+    // Set siblings for internal piping
+    [_r0 setSiblings: [NSArray arrayWithObject: _r1]];
+    [_r1 setSiblings: [NSArray arrayWithObject: _r0]];
 }
 
 -(void) run {
@@ -57,9 +57,11 @@
    
     _t0 = [[NSThread alloc] initWithTarget: _r0 selector: @selector(start) object: nil];
     _t1 = [[NSThread alloc] initWithTarget: _r1 selector: @selector(start) object: nil];
-    [_t0 start];
     [_t1 start];
+    [NSThread sleepForTimeInterval:2.0];
+    [_t0 start];
 
+    
     // Wait for the runnables to finish
     while([_t0 isExecuting] || [_t1 isExecuting]) {
         //[NSThread sleepForTimeInterval: 0.25];

@@ -11,12 +11,14 @@
 
 @implementation CPRunnableI {
     id<CPProgram> _program;
+    id<ORSignature> _sig;
 }
 
 -(id) initWithModel: (id<ORModel>)m
 {
-    if((self = [super initWithModel: m children: nil]) != nil) {
+    if((self = [super initWithModel: m]) != nil) {
         _program = [ORFactory createCPProgram: m];
+        _sig = nil;
     }
     return self;
 }
@@ -27,6 +29,14 @@
     [super dealloc];
 }
 
+-(id<ORSignature>) signature
+{
+    if(_sig == nil) {
+        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.solutionStreamIn.solutionStreamOut"];
+    }
+    return _sig;
+}
+
 -(id<CPProgram>) solver { return _program; }
 
 -(void) connectPiping:(NSArray *)runnables {
@@ -35,15 +45,14 @@
 
     // Connect inputs
     for(id<ORRunnable> r in runnables) {
-        if(r == self) continue;
-        if([[r signature] providesUpperBound]) {
+        if([[r signature] providesUpperBoundStream]) {
             id<ORUpperBoundStreamProducer> producer = (id<ORUpperBoundStreamProducer>)r;
-            [producer addBoundStreamConsumer: self];
+            [producer addUpperBoundStreamConsumer: self];
         }
     }
 }
 
--(void) receiveUpperBound:(ORInt)bound
+-(void) receivedUpperBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
     [[_program objective] tightenPrimalBound:

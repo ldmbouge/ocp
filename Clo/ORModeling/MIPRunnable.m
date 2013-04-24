@@ -7,6 +7,7 @@
 //
 
 #import "MIPRunnable.h"
+#import "MIPSolverI.h"
 #import "ORProgramFactory.h"
 
 @implementation MIPRunnableI {
@@ -17,7 +18,7 @@
 
 -(id) initWithModel: (id<ORModel>)m
 {
-    if((self = [super init]) != nil) {
+    if((self = [super initWithModel:m]) != nil) {
         _model = [m retain];
         _sig = nil;
         _program = [ORFactory createMIPProgram: _model];
@@ -37,12 +38,25 @@
 -(id<ORSignature>) signature
 {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete"];
+        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut"];
     }
     return _sig;
 }
 
 -(id<MIPProgram>) solver { return _program; }
+
+-(void) connectPiping:(NSArray *)runnables {
+    [self useUpperBoundStreamInformer];
+    [self useSolutionStreamInformer];
+    
+    // Connect inputs
+    for(id<ORRunnable> r in runnables) {
+        if([[r signature] providesUpperBoundStream]) {
+            id<ORUpperBoundStreamProducer> producer = (id<ORUpperBoundStreamProducer>)r;
+            [producer addUpperBoundStreamConsumer: self];
+        }
+    }
+}
 
 -(void) injectColumn: (id<ORFloatArray>) col
 {
@@ -56,6 +70,17 @@
 }
 
 -(void) onExit: (ORClosure)block {}
+
+-(void) receivedUpperBound:(ORInt)bound
+{
+    NSLog(@"(%p) recieved upper bound: %i", self, bound);
+    MIPSolverI* mipSolver = [[self solver] solver];
+    MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
+    MIPVariableI* varArr[] = {objVar};
+    ORFloat coefArr[] = {1.0};
+    MIPConstraintI* c = [mipSolver createLEQ: 1 var: varArr coef: coefArr rhs: bound];
+    [mipSolver postConstraint: c];
+}
 
 @end
 

@@ -24,7 +24,7 @@
 int main (int argc, const char * argv[])
 {
     id<ORModel> model = [ORFactory createModel];
-    ORInt n = 8;
+    ORInt n = 30;
     id<ORIntRange> R = RANGE(model,1,n);
     
     id<ORUniformDistribution> distr = [ORFactory uniformDistribution: model range: RANGE(model, 1, 20)];
@@ -41,12 +41,10 @@ int main (int argc, const char * argv[])
     
     id<ORModel> lm = [ORFactory linearizeModel: model];
     id<ORRunnable> r0 = [ORFactory CPRunnable: model];
-    id<ORRunnable> r1 = [ORFactory CPRunnable: lm];
+    id<ORRunnable> r1 = [ORFactory MIPRunnable: lm];
     id<ORRunnable> pr = [ORFactory composeCompleteParallel: r0 with: r1];
-    [pr run];
+    [pr start];
     
-    for(id<ORIntVar> v in [lm variables])
-        NSLog(@"var(%@): %i-%i", [v description], [v min], [v max]);
     NSLog(@"SOL: %@", assignCost);
     [ORFactory shutdown];
    

@@ -16,7 +16,7 @@
 -(void) injectColumn: (id<ORFloatArray>) col;
 @end
 
-@interface MIPRunnableI : NSObject<MIPRunnable>
+@interface MIPRunnableI : ORPipedRunnable<MIPRunnable>
 -(id) initWithModel: (id<ORModel>)m;
 -(id<ORSignature>) signature;
 -(id<MIPProgram>) solver;

@@ -16,12 +16,14 @@
 
 @implementation ORAbstractRunnableI
 
--(id) initWithModel: (id<ORModel>)m children:(NSArray *)child
+@synthesize siblings;
+
+-(id) initWithModel: (id<ORModel>)m
 {
     self = [super init];
     _model = m;
-    _child = child;
     _exitBlock = nil;
+    _siblings = nil;
     return self;
 }
 
@@ -41,18 +43,13 @@
 }
 -(void) start
 {
-    if(_child != nil) [self connectPiping: _child];
+    [self connectPiping: self.siblings];
     [self run];
 }
 
 -(void) run
 {
     if(_exitBlock) _exitBlock();
-}
-
--(NSArray*) children
-{
-    return _child;
 }
 
 -(void) onExit: (ORClosure)block
