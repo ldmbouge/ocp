@@ -542,7 +542,7 @@
       if (more)
          break;
    }
-   NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
+   //NSLog(@"|PROBEs| = %d more = %s  -- thread: %d",nbProbes,more ? "YES" : "NO",[NSThread threadID]);
    return more;
 }
 -(void)installActivities
@@ -586,20 +586,21 @@
 -(void)initActivities
 {
    //id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
-   id<CPIntVarArray> vars = [self allIntVars];
+   id<CPIntVarArray> vars = _vars;
+   id<CPIntVarArray> bvars = [self allIntVars];
    const ORInt nbInRound = 10;
-   const ORInt probeDepth = (ORInt) [vars count];
+   const ORInt probeDepth = (ORInt) [bvars count];
    float mxp = 0;
-   for(ORInt i = [vars low];i <= [vars up];i++) {
-      if ([vars[i] bound]) continue;
-      mxp += log([(id)vars[i] domsize]);
+   for(ORInt i = [bvars low];i <= [bvars up];i++) {
+      if ([bvars[i] bound]) continue;
+      mxp += log([(id)bvars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
    NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
-   _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
+   _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:bvars];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
    NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
@@ -610,14 +611,14 @@
       for(ORInt c=0;c <= nbInRound;c++) {
          [_solver clearStatus];
          cntProbes++;
-         ABSProbe* probe = [[ABSProbe alloc] initABSProbe:vars];
+         ABSProbe* probe = [[ABSProbe alloc] initABSProbe:bvars];
          ORInt depth = 0;
          BOOL allBound = NO;
          while (depth <= probeDepth && !allBound) {
             [tracer pushNode];
             nbVS = 0;
-            [[vars range] enumerateWithBlock:^(ORInt i) {
-               if (![vars[i] bound])
+            [[bvars range] enumerateWithBlock:^(ORInt i) {
+               if (![bvars[i] bound])
                   vs[nbVS++] = i;
             }];
 
@@ -635,7 +636,7 @@
             //NSLog(@"chose %i from VS = %@",i, buf);
 
             if (nbVS) { // we found someone
-               id<CPIntVar> xi = (id<CPIntVar>)[vars[i] dereference];
+               id<CPIntVar> xi = (id<CPIntVar>)[bvars[i] dereference];
                ORInt v = [self chooseValue:xi];
                ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
                [ORConcurrency pumpEvents];

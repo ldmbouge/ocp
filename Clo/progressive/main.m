@@ -85,7 +85,8 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [args makeProgram:mdl];
          id<CPHeuristic> hr = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:boat]];
          ORFloat rate = [args restartRate];
-         __block ORInt lim = rate==0.0 ? FDMAXINT : ([Guests size] * [Periods size] * 3);
+         __block ORInt lim = ((ORInt)rate==0) ? FDMAXINT : ([Guests size] * [Periods size] * 3);
+         NSLog(@"The limit starts at: %d  (%f)",lim,rate);
          [cp solve: ^{
             [cp limitTime:60 * 1000 in:^{
                [cp repeat:^{
