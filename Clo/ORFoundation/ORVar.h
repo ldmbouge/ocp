@@ -52,7 +52,7 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(ORULong)  domsize;
+-(ORInt) domsize;
 -(ORBool) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end

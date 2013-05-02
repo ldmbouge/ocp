@@ -84,7 +84,7 @@ int main(int argc, const char * argv[])
 //               NSLog(@"sol: %@ obj = %@  <-- %d",b,[obj dereference],[NSThread threadID]);
             }
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
+         //id<ORCPSolution> sol = [[cp solutionPool] best];
          ORInt tot = 0;
 //         for(int k=0;k<n;k++)
 //            tot += p[k] * [sol intValue: x[k]];

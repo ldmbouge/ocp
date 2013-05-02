@@ -109,7 +109,7 @@
    }
    return string;
 }
--(ORULong) domsize
+-(ORInt) domsize
 {
    [self updateFreeBitCount];
    return _freebits._val;

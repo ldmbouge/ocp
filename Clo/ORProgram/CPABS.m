@@ -586,7 +586,7 @@
 -(void)initActivities
 {
    //id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
-   id<CPIntVarArray> vars = _vars;
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;
    id<CPIntVarArray> bvars = [self allIntVars];
    const ORInt nbInRound = 10;
    const ORInt probeDepth = (ORInt) [bvars count];

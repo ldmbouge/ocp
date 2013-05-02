@@ -101,10 +101,10 @@ int main(int argc, const char * argv[])
          [cp solveAll: ^{
             [cp labelHeuristic:h];
             @autoreleasepool {
-               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+               /*id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
                   return [cp intValue:costas[i]];
                }];
-               //NSLog(@"Solution: %@",s);
+               NSLog(@"Solution: %@",s);*/
                @synchronized(nbSol) {
                   [nbSol incr];
                }

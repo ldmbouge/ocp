@@ -90,16 +90,16 @@
    return cpprogram;
 }
 
-+(id<CPSemanticProgramDFS>) createCPSemanticProgramDFS: (id<ORModel>) model
++(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
-   id<CPSemanticProgramDFS> cpprogram = [CPSolverFactory semanticSolverDFS];
+   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolverDFS];
    [ORFactory createCPProgram: model program: cpprogram];
    return cpprogram;
 }
 
-+(id<CPSemanticProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
-   id<CPSemanticProgram> cpprogram = [CPSolverFactory semanticSolver: ctrlClass];
+   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlClass];
    [ORFactory createCPProgram: model program: cpprogram];
    return cpprogram;
 }

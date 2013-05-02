@@ -296,6 +296,29 @@
 {
    [[self dereference] limitFailures: maxFailures in: cl];
 }
+
+
+-(ORBool) bound: (id<ORIntVar>) x
+{
+   return [[self dereference] bound:x];
+}
+-(ORInt)  min: (id<ORIntVar>) x
+{
+   return [[self dereference] min:x];
+}
+-(ORInt)  max: (id<ORIntVar>) x
+{
+   return [[self dereference] max:x];
+}
+-(ORInt)  domsize: (id<ORIntVar>) x
+{
+   return [[self dereference] domsize:x];
+}
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
+{
+   return [[self dereference] member:v in:x];
+}
+
 -(void)onSolution:(ORClosure)onSolution
 {
    _onSol = [onSolution copy];

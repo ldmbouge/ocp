@@ -68,7 +68,7 @@ int main(int argc, const char * argv[])
          }
 
          id<CPProgram> cp =  [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
          [cp solve:^{
             //NSLog(@"Start... %@",[[cp engine] model]);
             id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
