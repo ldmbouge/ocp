@@ -296,8 +296,9 @@
    _solver = solver;
    return self;
 }
--(id) snapshot
+-(id) snapshot:(id)obj
 {
+   [obj visit:self];
    return _snapshot;
 }
 -(void) dealloc
@@ -703,13 +704,12 @@
    ORULong sz = [av count];
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
    ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
-   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
-      [obj visit: visit];
-      id shot = [visit snapshot];
+   for(id obj in av) {
+      id shot = [visit snapshot:obj];
       if (shot)
          [snapshots addObject: shot];
       [shot release];
-   }];
+   }
    _varShots = snapshots;
    
    if ([model objective])
