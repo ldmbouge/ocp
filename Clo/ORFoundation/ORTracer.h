@@ -42,6 +42,7 @@
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
 -(ORBool) apply: (bool(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
+-(ORInt)sizeEstimate;
 @end
 
 @protocol ORCheckpoint <NSObject>
@@ -50,6 +51,7 @@
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
 -(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
+-(ORInt)sizeEstimate;
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 

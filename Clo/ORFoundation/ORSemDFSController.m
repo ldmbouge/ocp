@@ -120,7 +120,9 @@
 
 -(ORBool)willingToShare
 {
-   return _sz >= 1;
+   BOOL some = _sz >= 2;
+   some = some && [_cpTab[0] sizeEstimate] < 7;
+   return some;
 }
 @end
 

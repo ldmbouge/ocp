@@ -28,6 +28,7 @@
 -(ORHeist*)initORHeist:(NSCont*)c from:(id<ORCheckpoint>)cp;
 -(NSCont*)cont;
 -(id<ORCheckpoint>)theCP;
+-(ORInt)sizeEstimate;
 @end
 
 

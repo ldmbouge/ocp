@@ -26,6 +26,7 @@
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
 -(ORBool) apply: (BOOL(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
+-(ORInt)sizeEstimate;
 @end
 
 @interface ORCheckpointI : NSObject<NSCoding,ORCheckpoint> { // a semantic path description (for incremental jumping around).
@@ -42,6 +43,7 @@
 -(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 -(void)letgo;
 -(id)grab;
+-(ORInt)sizeEstimate;
 @end
 
 
@@ -262,6 +264,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    [_cstrs letgo];
    [super dealloc];
 }
+-(ORInt)sizeEstimate
+{
+   return [_cstrs length];
+}
 -(void)addCommand:(id<ORCommand>)c
 {
    [_cstrs insert:c];
@@ -386,6 +392,10 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"snap (%p) = %@",self,_path];
    return buf;
+}
+-(ORInt)sizeEstimate
+{
+   return [_path size];
 }
 -(void)setNode:(ORInt)nid
 {

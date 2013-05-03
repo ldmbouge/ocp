@@ -34,6 +34,10 @@
 {
    return _theCP;
 }
+-(ORInt)sizeEstimate
+{
+   return [_theCP sizeEstimate];
+}
 @end
 
 @implementation ORDefaultController

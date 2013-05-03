@@ -137,6 +137,16 @@ static void init_clpthreads()
    new->_next = _head;
    _head = new;
 }
+-(ORInt)length
+{
+   ORInt nb = 0;
+   struct CNode* cur = _head;
+   while (cur) {
+      nb++;
+      cur = cur->_next;
+   }
+   return nb;
+}
 -(id<ORCommand>)removeFirst
 {
    struct CNode* leave = _head;

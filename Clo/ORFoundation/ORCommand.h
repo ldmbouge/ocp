@@ -44,6 +44,7 @@
 -(ORInt) getNodeId;
 -(void) setNodeId:(ORInt)nid;
 -(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;
+-(ORInt)length;
 @end
 
 inline static ORCommandList* grab(ORCommandList* l)

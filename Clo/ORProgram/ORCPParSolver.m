@@ -344,7 +344,7 @@
 -(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
 {
    id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
-   //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
+   //NSLog(@"***** THREAD(%d) SETUP work size: %d",[NSThread threadID],[theSub sizeEstimate]);
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
    [theSub release];
    if (status == ORFailure)
@@ -353,6 +353,7 @@
 }
 -(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
+   //ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
@@ -399,6 +400,8 @@
                             control:parc];        
       }
    }
+   //ORLong t1 = [ORRuntimeMonitor cputime];
+   //NSLog(@"Back from sub: %lld   AT [%lld   --  %lld]",t1-t0,t0,t1);
 }
 
 -(void) workerSolve:(NSArray*)input
