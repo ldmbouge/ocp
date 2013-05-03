@@ -95,6 +95,7 @@
    _nbWWaiting = 0;
    _avail = [[NSCondition alloc] init];
    _slock = OS_SPINLOCK_INIT;
+   _pretend = NO;
    return self;
 }
 -(void) dealloc
@@ -103,6 +104,10 @@
    free(_tab);
    [_avail dealloc];
    [super dealloc];
+}
+-(void) pretendFull:(BOOL)isFull
+{
+   _pretend = _pretend || isFull;
 }
 -(void) reset
 {
@@ -115,7 +120,7 @@
    bool rv;
    OSSpinLockLock(&_slock);
 //   @synchronized(self) {
-      rv = (_nbUsed == 0);
+      rv = (_nbUsed == 0) && !_pretend;
 //   }
    OSSpinLockUnlock(&_slock);
    return rv;

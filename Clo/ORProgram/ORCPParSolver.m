@@ -38,6 +38,7 @@
    ORInt              _nbClosed;
    id<ORObjectiveValue> _primal;
    BOOL                _boundOk;
+   ORLong                _sowct;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
@@ -59,6 +60,7 @@
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
    _doneSearching = NO;
+   _sowct = [ORRuntimeMonitor wctime];
    return self;
 }
 -(void)dealloc
@@ -351,9 +353,9 @@
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
+-(ORLong)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
-   //ORLong t0 = [ORRuntimeMonitor cputime];
+   ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
@@ -400,8 +402,9 @@
                             control:parc];        
       }
    }
-   //ORLong t1 = [ORRuntimeMonitor cputime];
-   //NSLog(@"Back from sub: %lld   AT [%lld   --  %lld]",t1-t0,t0,t1);
+   ORLong t1 = [ORRuntimeMonitor cputime];
+   NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
+   return t1 - t0;
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -450,9 +453,12 @@
          [_queue enQueue:rootSerial];
       }
       NSData* cpRoot = nil;
+      ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
-         if (!_doneSearching)
-            [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+         if (!_doneSearching) {
+            took = [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+            [_queue pretendFull:took < 500];
+         }
          [cpRoot release];
       }
       NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));

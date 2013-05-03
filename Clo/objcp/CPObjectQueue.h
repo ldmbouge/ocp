@@ -41,6 +41,7 @@
    ORInt    _nbWWaiting;
    NSCondition*  _avail;
    OSSpinLock    _slock;
+   BOOL _pretend;
 }
 -(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;
 -(void)dealloc;
