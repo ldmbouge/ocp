@@ -457,7 +457,7 @@
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
             took = [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
-            [_queue pretendFull:took < 500];
+//            [_queue pretendFull:took < 500];
          }
          [cpRoot release];
       }
