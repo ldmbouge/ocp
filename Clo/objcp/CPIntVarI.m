@@ -161,20 +161,20 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORBool) bound
 {
    assert(_dom);
-//    return [_dom bound];
-   return sizeCPDom((CPBitDom*)_dom) == 1;
+    return [_dom bound];
+//   return sizeCPDom((CPBitDom*)_dom) == 1;
 }
 -(ORInt) min
 {
    assert(_dom);
-   //    return [_dom min];
-   return minCPDom((CPBitDom*)_dom);
+   return [_dom min];
+   //return minCPDom((CPBitDom*)_dom);
 }
 -(ORInt) max 
 {
    assert(_dom);
- //   return [_dom max];
-   return maxCPDom((CPBitDom*)_dom);
+   return [_dom max];
+   //return maxCPDom((CPBitDom*)_dom);
 }
 -(ORInt) value
 {
