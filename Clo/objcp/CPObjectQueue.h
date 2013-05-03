@@ -32,14 +32,15 @@
 // Producer-Consumer queue
 @interface PCObjectQueue  : NSObject {
    ORInt           _mxs;
-   id*                 _tab;
+   id*             _tab;
    ORInt         _enter;
    ORInt          _exit;
    ORInt          _mask;  
    ORInt        _nbUsed;
    ORInt     _nbWorkers;
    ORInt    _nbWWaiting;
-   NSCondition*      _avail;
+   NSCondition*  _avail;
+   OSSpinLock    _slock;
 }
 -(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;
 -(void)dealloc;
