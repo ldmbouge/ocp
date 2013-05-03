@@ -61,7 +61,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-q12"
+            argument = "-q14"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

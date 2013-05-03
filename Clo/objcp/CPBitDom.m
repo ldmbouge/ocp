@@ -401,7 +401,8 @@ inline static void resetBit(CPBitDom* dom,ORInt b)
    const ORUInt magic = trailMagic(dom->_trail);
    if (dom->_magic[bw] != magic) {
       dom->_magic[bw] = magic;
-      [dom->_trail trailUnsigned:(dom->_bits + bw)];
+      inline_trailUIntFun((ORTrailI*)dom->_trail, (dom->_bits + bw));
+      //[dom->_trail trailUnsigned:(dom->_bits + bw)];
    }     
    dom->_bits[bw] &= ~(0x1 << (b & 0x1f));
 }

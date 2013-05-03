@@ -314,6 +314,7 @@ static inline ORInt minDom(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_min._val;
+      case CPVCShift: return minDom(((CPIntShiftView*)x)->_x) + ((CPIntShiftView*)x)->_b;
       default: return [x min];
    }
 }
@@ -322,6 +323,7 @@ static inline ORInt maxDom(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_max._val;
+      case CPVCShift: return maxDom(((CPIntShiftView*)x)->_x) + ((CPIntShiftView*)x)->_b;
       default: return [x max];
    }
 }
@@ -331,11 +333,12 @@ static inline ORBounds bounds(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
-         /*
       case CPVCShift: {
          ORBounds b = bounds(((CPIntShiftView*)x)->_x);
-         return (ORBounds){b.min + ((CPIntShiftView*)x)->_b,b.max + ((CPIntShiftView*)x)->_b};
+         ORInt    c =((CPIntShiftView*)x)->_b;
+         return (ORBounds){b.min + c,b.max + c};
       }
+         /*
       case CPVCAffine: {
          ORBounds b = bounds(((CPIntView*)x)->_x);
          ORInt fmin = b.min * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
@@ -362,6 +365,10 @@ static inline ORInt memberDom(CPIntVarI* x,ORInt value)
       case CPVCBare:
          return domMember((CPBoundsDom*)x->_dom, value);
          break;
+      case CPVCShift: {
+         const ORInt b = ((CPIntShiftView*)x)->_b;
+         return memberDom(((CPIntShiftView*)x)->_x, value - b);
+      }break;
       default:
          return [x member:value];
    }
@@ -388,6 +395,10 @@ static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
    switch (x->_vc) {
       case CPVCBare:
          return [x->_dom remove:v for:x];
+      case CPVCShift: {
+         const ORInt b = ((CPIntShiftView*)x)->_b;
+         return removeDom(((CPIntShiftView*)x)->_x, v - b);
+      }
       default:
          return [x remove:v];
    }

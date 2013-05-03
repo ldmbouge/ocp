@@ -50,6 +50,8 @@
 {
    if (a==1 && b==0)
       return x;
+   else if (a==1)
+      return [CPIntVarI initCPIntView:x withShift:b];
    else if (a==-1 && b==0)
       return [CPIntVarI initCPFlipView: x];
    else
