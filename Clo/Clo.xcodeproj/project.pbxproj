@@ -706,7 +706,7 @@
 		5BD8BEBD16E123E200D9BF0B /* OREngine.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C010EF15CDBC3A00ED7027 /* OREngine.m */; };
 		5BD8BEBE16E123E200D9BF0B /* ORExplorerI.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862215CD8AE20019729B /* ORExplorerI.m */; };
 		5BD8BEBF16E123E200D9BF0B /* ORLimit.m in Sources */ = {isa = PBXBuildFile; fileRef = B11D862615CD8E310019729B /* ORLimit.m */; };
-		5BD8BEC016E123E200D9BF0B /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC82F615D27C66008DE335 /* ORModelI.m */; };
+		5BD8BEC016E123E200D9BF0B /* ORConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC82F615D27C66008DE335 /* ORConstraintI.m */; };
 		5BD8BEC116E123E200D9BF0B /* ORObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA339164AADAD00CE9AED /* ORObject.m */; };
 		5BD8BEC216E123E200D9BF0B /* ORSelectorI.m in Sources */ = {isa = PBXBuildFile; fileRef = B189511F15DE434900B77813 /* ORSelectorI.m */; };
 		5BD8BEC316E123E200D9BF0B /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
@@ -1002,9 +1002,9 @@
 		B1C9DF2F15A8046C00EE924C /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1C9DF3015A8047000EE924C /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1C9DF3315A8078400EE924C /* SportView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1C9DF3215A8078400EE924C /* SportView.m */; };
-		B1CC82F415D27A57008DE335 /* ORModel.h in Headers */ = {isa = PBXBuildFile; fileRef = B1CC82F315D27A57008DE335 /* ORModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B1CC82F715D27C66008DE335 /* ORModelI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1CC82F515D27C66008DE335 /* ORModelI.h */; };
-		B1CC82F815D27C66008DE335 /* ORModelI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC82F615D27C66008DE335 /* ORModelI.m */; };
+		B1CC82F415D27A57008DE335 /* ORConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = B1CC82F315D27A57008DE335 /* ORConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B1CC82F715D27C66008DE335 /* ORConstraintI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1CC82F515D27C66008DE335 /* ORConstraintI.h */; };
+		B1CC82F815D27C66008DE335 /* ORConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC82F615D27C66008DE335 /* ORConstraintI.m */; };
 		B1CC832215D3BEC4008DE335 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1CC832515D3BEC4008DE335 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CC832415D3BEC4008DE335 /* main.m */; };
 		B1CC833315D3BEEF008DE335 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
@@ -4523,9 +4523,9 @@
 		B1C9DF2615A8045C00EE924C /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		B1C9DF3115A8078400EE924C /* SportView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SportView.h; sourceTree = "<group>"; };
 		B1C9DF3215A8078400EE924C /* SportView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SportView.m; sourceTree = "<group>"; };
-		B1CC82F315D27A57008DE335 /* ORModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModel.h; sourceTree = "<group>"; };
-		B1CC82F515D27C66008DE335 /* ORModelI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORModelI.h; sourceTree = "<group>"; };
-		B1CC82F615D27C66008DE335 /* ORModelI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORModelI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		B1CC82F315D27A57008DE335 /* ORConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConstraint.h; sourceTree = "<group>"; };
+		B1CC82F515D27C66008DE335 /* ORConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConstraintI.h; sourceTree = "<group>"; };
+		B1CC82F615D27C66008DE335 /* ORConstraintI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORConstraintI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1CC832015D3BEC4008DE335 /* model */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = model; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1CC832415D3BEC4008DE335 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
@@ -6811,9 +6811,9 @@
 				5BFD594D15A3ACA500825BC3 /* ORFoundation.m */,
 				B11D862515CD8E310019729B /* ORLimit.h */,
 				B11D862615CD8E310019729B /* ORLimit.m */,
-				B1CC82F315D27A57008DE335 /* ORModel.h */,
-				B1CC82F515D27C66008DE335 /* ORModelI.h */,
-				B1CC82F615D27C66008DE335 /* ORModelI.m */,
+				B1CC82F315D27A57008DE335 /* ORConstraint.h */,
+				B1CC82F515D27C66008DE335 /* ORConstraintI.h */,
+				B1CC82F615D27C66008DE335 /* ORConstraintI.m */,
 				B1AAA338164AADAD00CE9AED /* ORObject.h */,
 				B1AAA339164AADAD00CE9AED /* ORObject.m */,
 				5BAEE08415AE9883006CEE1E /* ORParallel.h */,
@@ -7523,14 +7523,14 @@
 				B1C0E7CF15CD853700DA4F82 /* ORExplorer.h in Headers */,
 				B1C010F015CDBC3B00ED7027 /* OREngine.h in Headers */,
 				B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */,
-				B1CC82F415D27A57008DE335 /* ORModel.h in Headers */,
+				B1CC82F415D27A57008DE335 /* ORConstraint.h in Headers */,
 				5B920EBB15A3FDB800AD0820 /* ORDataI.h in Headers */,
 				B189511C15DE25D800B77813 /* ORSelector.h in Headers */,
 				5B920EBF15A402A600AD0820 /* ORArrayI.h in Headers */,
 				5BAEE08615AE9883006CEE1E /* ORParallel.h in Headers */,
 				B198E75A15D90768000BE64A /* ORTrailI.h in Headers */,
 				5BAEE08A15AE9B6E006CEE1E /* ORFoundation.h in Headers */,
-				B1CC82F715D27C66008DE335 /* ORModelI.h in Headers */,
+				B1CC82F715D27C66008DE335 /* ORConstraintI.h in Headers */,
 				5BEC256015DBF60F0084DEE8 /* ORSemDFSController.h in Headers */,
 				5BF903B315DC0ABC003E36BC /* ORSemBDSController.h in Headers */,
 				B189512015DE434A00B77813 /* ORSelectorI.h in Headers */,
@@ -9687,7 +9687,7 @@
 				5BD8BEBD16E123E200D9BF0B /* OREngine.m in Sources */,
 				5BD8BEBE16E123E200D9BF0B /* ORExplorerI.m in Sources */,
 				5BD8BEBF16E123E200D9BF0B /* ORLimit.m in Sources */,
-				5BD8BEC016E123E200D9BF0B /* ORModelI.m in Sources */,
+				5BD8BEC016E123E200D9BF0B /* ORConstraintI.m in Sources */,
 				5BD8BEC116E123E200D9BF0B /* ORObject.m in Sources */,
 				5BD8BEC216E123E200D9BF0B /* ORSelectorI.m in Sources */,
 				5BD8BEC316E123E200D9BF0B /* ORTracer.m in Sources */,
@@ -9990,7 +9990,7 @@
 				B11D862415CD8AE20019729B /* ORExplorerI.m in Sources */,
 				B11D862815CD8E310019729B /* ORLimit.m in Sources */,
 				B1C010F115CDBC3B00ED7027 /* OREngine.m in Sources */,
-				B1CC82F815D27C66008DE335 /* ORModelI.m in Sources */,
+				B1CC82F815D27C66008DE335 /* ORConstraintI.m in Sources */,
 				B198E75B15D90768000BE64A /* ORTrailI.m in Sources */,
 				5BEC256115DBF60F0084DEE8 /* ORSemDFSController.m in Sources */,
 				5BF903B415DC0ABC003E36BC /* ORSemBDSController.m in Sources */,

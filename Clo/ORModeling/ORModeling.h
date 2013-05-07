@@ -10,7 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORFactory.h>
 #import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
 

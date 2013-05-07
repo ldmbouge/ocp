@@ -11,7 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORError.h>
-#import "ORModelI.h"
+#import "ORConstraintI.h"
 
 @implementation ORConstraintI
 -(ORConstraintI*) initORConstraintI

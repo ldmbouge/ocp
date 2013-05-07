@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "ORArray.h"
 #import "ORSet.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"

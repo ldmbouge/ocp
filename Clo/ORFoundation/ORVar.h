@@ -12,7 +12,7 @@
 #import <ORFoundation/ORExpr.h>
 #import "ORTracker.h"
 #import "ORArray.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 
 @protocol ORSnapshot
 -(ORInt)  intValue;

@@ -18,7 +18,7 @@
 #import "ORDataI.h"
 #import "ORArrayI.h"
 #import "ORSetI.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORModelI.h"
 #import "ORTrailI.h" 
 #import "ORSelectorI.h" 

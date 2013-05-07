@@ -13,7 +13,7 @@
 #import "ORFoundation/ORData.h"
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORSet.h"
-#import "ORModelI.h"
+#import "ORConstraintI.h"
 #import "ORTrail.h"
 
 @protocol ORSearchEngine;

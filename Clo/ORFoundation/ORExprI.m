@@ -13,7 +13,7 @@
 #import "ORExprI.h"
 #import "ORFactory.h"
 #import "ORError.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 
 
 @implementation NSNumber (Expressions)
