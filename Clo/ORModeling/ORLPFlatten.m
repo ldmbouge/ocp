@@ -237,7 +237,11 @@
 {
    [m applyOnVar:^(id<ORVar> x) {
       [_into addVariable:x];
-   } onObjects:^(id<ORObject> x) {
+   } onMutables:^(id<ORObject> x) {
+      ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:_into];
+      [x visit:fo];
+      [fo release];
+   } onImmutables:^(id<ORObject> x) {
       ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:_into];
       [x visit:fo];
       [fo release];

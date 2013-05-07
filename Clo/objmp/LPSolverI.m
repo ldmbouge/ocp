@@ -1332,13 +1332,12 @@
    [_oStore addObject:obj];
    [obj release];
 }
--(void) trackConstraint:(id)obj
+-(void) trackImmutable: (id) obj
 {
+   // temporary
    [_oStore addObject:obj];
    [obj release];
-
 }
-
 @end
 
 @implementation LPFactory

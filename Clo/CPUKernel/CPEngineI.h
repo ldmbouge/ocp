@@ -51,6 +51,7 @@ enum CPEngineState {
 -(id<CPEngine>) solver;
 -(void)      trackVariable:(id)var;
 -(void)      trackObject:(id)obj;
+-(void)      trackImmutable:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
 -(void)      scheduleAC3:(id<CPEventNode>*)mlist;

@@ -18,12 +18,13 @@
 {
    [super init];
    _impl = NULL;
-   _name = 0;
+   _name = -1;
    memset(_ba,0,sizeof(_ba));
    return self;
 }
 -(void)setId:(ORUInt)name
 {
+   assert(_name == -1);
    _name = name;
 }
 -(ORUInt)getId

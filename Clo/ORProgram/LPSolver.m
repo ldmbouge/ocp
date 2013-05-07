@@ -444,9 +444,9 @@
 {
    [_lpsolver trackVariable:obj];
 }
--(void) trackConstraint:(id) obj
+-(void) trackImmutable:(id)obj
 {
-   [_lpsolver trackConstraint:obj];
+   [_lpsolver trackImmutable:obj];
 }
 -(id<ORLPSolutionPool>) solutionPool
 {

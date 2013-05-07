@@ -32,27 +32,28 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
-         onObjects:(void(^)(id<ORObject>))doObjs
+        onMutables:(void(^)(id<ORObject>))doMutables
+      onImmutables:(void(^)(id<ORObject>))doImmutables
      onConstraints:(void(^)(id<ORObject>))doCons
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
+-(NSArray*) immutables;
 // pvh: this should go
 -(id<ORModel>) flatten;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
 -(id<ORModel>) rootModel;
--(void) map: (id) key toObject: (id) object;
--(id) lookup: (id) key;
 @end
 
 @protocol ORAddToModel <ORTracker>
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addObject:(id) object;
+-(id) addImmutable:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORTracker>)tracker;
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;

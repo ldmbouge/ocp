@@ -28,7 +28,8 @@
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
+-(NSArray*) immutables;
 @end
 
 @protocol ORConstraint <ORObject>

@@ -46,8 +46,10 @@
 {
     [m applyOnVar:^(id<ORVar> x) {
         [_into addVariable: x];
-    } onObjects:^(id<ORObject> x) {
+    } onMutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
+    } onImmutables:^(id<ORObject> x) {
+       //NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
         ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
         [c visit: lc];

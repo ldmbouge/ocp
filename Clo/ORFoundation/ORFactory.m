@@ -70,13 +70,13 @@
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
-   [tracker trackObject: o];
+   [tracker trackImmutable: o];
    return o;
 }
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value
 {
    ORFloatI* o = [[ORFloatI alloc] initORFloatI: tracker value: value];
-   [tracker trackObject: o];
+   [tracker trackImmutable: o];
    return o;
 }
 
@@ -95,7 +95,7 @@
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up
 {
    ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
-   [tracker trackObject: o];
+   [tracker trackImmutable: o];
    return o;
 }
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
@@ -156,7 +156,7 @@
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
-   [tracker trackObject:o];
+   [tracker trackImmutable:o];
    return o;
 }
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
@@ -645,103 +645,103 @@
 +(id<ORConstraint>) fail:(id<ORTracker>)model
 {
    id<ORConstraint> o = [[ORFail alloc] init];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) restrict:(id<ORTracker>)model var:(id<ORIntVar>)x to:(id<ORIntSet>)d
 {
    id<ORConstraint> o = [[ORRestrict alloc] initRestrict:x to:d];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyEqualc alloc] initReify: b equiv:x eqi: i];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = [[ORReifyEqual alloc] initReify: b equiv: x eq: y annotation:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x neq: (id<ORIntVar>) y annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = [[ORReifyNEqual alloc] initReify: b equiv: x neq: y annotation:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x neqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyNEqualc alloc] initReify: b equiv: x neqi: i];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyLEqualc alloc] initReify: b equiv: x leqi: i];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x geqi: (ORInt) i
 {
    id<ORConstraint> o = [[ORReifyGEqualc alloc] initReify: b equiv: x geqi: i];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) reify:(id<ORTracker>)model boolean:(id<ORIntVar>) b with: (id<ORIntVar>) x leq: (id<ORIntVar>) y
 {
    id<ORConstraint> o = [[ORReifyLEqual alloc] initReify: b equiv: x leq: y annotation:Default];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumBoolGEqc alloc] initSumBool: x geqi: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x leqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumBoolLEqc alloc] initSumBool: x leqi: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sumbool:(id<ORTracker>)model array:(id<ORIntVarArray>) x eqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumBoolEqc alloc] initSumBool: x eqi: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x eqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumEqc alloc] initSum:x eqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x leqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumLEqc alloc] initSum:x leqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sum:(id<ORTracker>)model array:(id<ORIntVarArray>) x geqi: (ORInt) c
 {
    id<ORConstraint> o = [[ORSumGEqc alloc] initSum:x geqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  eq: (ORInt) c
 {
    id<ORConstraint> o = [[ORLinearEq alloc] initLinearEq: x coef: coef cst: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) sum: (id<ORTracker>) model array: (id<ORIntVarArray>) x coef: (id<ORIntArray>) coef  leq: (ORInt) c
 {
    id<ORConstraint> o = [[ORLinearLeq alloc] initLinearLeq: x coef: coef cst: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 
@@ -749,13 +749,13 @@
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
 {
    id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
 {
    id<ORConstraint> o = [[ORFloatLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 
@@ -763,200 +763,200 @@
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[ORAnd alloc] initORAnd:b eq:x and:y];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[ORImply alloc] initORImply:b eq:x imply:y];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c
 {
    id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c annotation: (ORAnnotation)n
 {
    id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c annotation:n];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) model:(id<ORTracker>)model var:(id<ORIntVar>)y equal:(ORInt)a times:(id<ORIntVar>)x plus:(ORInt)b
                annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORAffine alloc] initORAffine:y eq:a times:x plus:b annotation:n];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) equal3:(id<ORTracker>)model  var: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z
                 annotation: (ORAnnotation)n
 {
    id<ORConstraint> o = [[ORPlus alloc] initORPlus:x eq:y plus:z annotation:n];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(int) c
 {
    id<ORConstraint> o = [[OREqualc alloc] initOREqualc:x eqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) notEqual:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(id<ORIntVar>)y plus:(int)c
 {
    id<ORConstraint> o = [[ORNEqual alloc] initORNEqual:x neq:y plus:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) notEqual:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(id<ORIntVar>)y
 {
    id<ORConstraint> o = [[ORNEqual alloc] initORNEqual:x neq:y];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) notEqualc:(id<ORTracker>)model  var:(id<ORIntVar>)x to:(ORInt)c
 {
    id<ORConstraint> o = [[ORNEqualc alloc] initORNEqualc:x neqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) lEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
    id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:x leq:y plus:0];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) lEqual:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c
 {
    id<ORConstraint> o = [[ORLEqual alloc] initORLEqual:x leq:y plus:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) lEqualc:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (ORInt) c
 {
    id<ORConstraint> o = [[ORLEqualc alloc] initORLEqualc:x leqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) gEqualc:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (ORInt) c
 {
    id<ORConstraint> o = [[ORGEqualc alloc] initORGEqualc:x geqi:c];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) less:(id<ORTracker>)model  var: (id<ORIntVar>)x to: (id<ORIntVar>) y
 {
    id<ORIntVar> yp = [self intVar:[x tracker] var:y shift:-1 annotation:Default];
    id<ORConstraint> o = [self lEqual:model var:x to:yp plus:0];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    if ([x getId] == [y getId]) {
       id<ORConstraint> o = [[ORSquare alloc] initORSquare:z square:x annotation:n];
-      [model trackConstraint:o];
+      [model trackObject:o];
       return o;
    } else {
       id<ORConstraint> o = [[ORMult alloc] initORMult:z eq:x times:y];
-      [model trackConstraint:o];
+      [model trackObject:o];
       return o;
    }
 }
 +(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORIntVar>)x equal:(id<ORIntVar>)res annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORSquare alloc] initORSquare:res square:x annotation:n];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
    id<ORConstraint> o = [[ORMod alloc] initORMod:x mod:y equal:z];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x modi:(ORInt)c equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORModc alloc] initORModc:x mod:c equal:z annotation:n];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 
 +(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORAbs alloc] initORAbs:y eqAbs:x];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y
                  annotation:(ORAnnotation)note
 {
    id<ORConstraint> o = [[ORElementCst alloc]  initORElement:x array:c equal:y annotation:note];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y
                  annotation:(ORAnnotation)note
 {
    id<ORConstraint> o = [[ORElementVar alloc] initORElement:x array:c equal:y annotation:note];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y
 {
    id<ORConstraint> o = [[ORLexLeq alloc] initORLex:x leq:y];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORCircuitI alloc] initORCircuitI:x];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORNoCycleI alloc] initORNoCycleI:x];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
 {
    id<ORConstraint> o = [[ORPackingI alloc] initORPackingI:item itemSize:itemSize load:load];
-   [[item tracker] trackConstraint:o];
+   [[item tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
 {
    id<ORConstraint> o = [[ORPackOneI alloc] initORPackOneI:item itemSize:itemSize bin:b binSize:binSize];
-   [[item tracker] trackConstraint:o];
+   [[item tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c
 {
    id<ORConstraint> o = [[ORKnapsackI alloc] initORKnapsackI:x weight:w capacity:c];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI: x annotation:DomainConsistency];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = [[ORAlldifferentI alloc] initORAlldifferentI:x annotation:c];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
@@ -968,31 +968,31 @@
       load[k] = [ORFactory intVar:[item tracker] domain:RANGE([item tracker],0,bk)];
    }];
    id<ORConstraint> o =  [self packing:item itemSize:itemSize load:load];
-   [[item tracker] trackConstraint:o];
+   [[item tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORAlgebraicConstraintI alloc] initORAlgebraicConstraintI: exp annotation:n];
-   [model trackConstraint:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (ORTableI*) table
 {
    id<ORConstraint> o = [[ORTableConstraintI alloc] initORTableConstraintI: x table: table];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
    id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = [[ORCardinalityI alloc] initORCardinalityI: x low: low up: up annotation:c];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) tableConstraint: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z
@@ -1004,14 +1004,14 @@
    [a set:y at:1];
    [a set:z at:2];
    id<ORConstraint> o = [self tableConstraint: (id<ORIntVarArray>) a table: table];
-   [tracker trackConstraint:o];
+   [tracker trackObject:o];
    return o;
 }
 
 +(id<ORConstraint>) assignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost
 {
    id<ORConstraint> o = [[ORAssignmentI alloc] initORAssignment:x matrix:matrix cost:cost];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 @end
@@ -1032,55 +1032,55 @@
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitEqual alloc] initORBitEqual:x eq:y];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x or:(id<ORBitVar>)y eq:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitOr alloc] initORBitOr:x or:y eq:z];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x and:(id<ORBitVar>)y eq:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitAnd alloc] initORBitAnd:x and:y eq:z];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x not:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitNot alloc] initORBitNot:x not:y];
-   [[x tracker] trackConstraint:o];
+   [[x tracker] trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x xor:(id<ORBitVar>)y eq:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitXor alloc] initORBitXor:x xor:y eq:z];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x shiftLBy:(ORInt)p eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitShiftL alloc] initORBitShiftL:x by:p eq:y];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x rotateLBy:(ORInt)p eq:(id<ORBitVar>)y
 {
    id<ORConstraint> o = [[ORBitRotateL alloc] initORBitRotateL:x by:p eq:y];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)x plus:(id<ORBitVar>)y withCarryIn:(id<ORBitVar>)ci eq:(id<ORBitVar>)z withCarryOut:(id<ORBitVar>)co
 {
    id<ORConstraint> o = [[ORBitSum alloc] initORBitSum:x plus:y in:ci eq:z out:co];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 +(id<ORConstraint>) bit:(id<ORBitVar>)w trueIf:(id<ORBitVar>)x equals:(id<ORBitVar>)y zeroIfXEquals:(id<ORBitVar>)z
 {
    id<ORConstraint> o = [[ORBitIf alloc] initORBitIf:w trueIf:x equals:y zeroIfXEquals:z];
-   [[x tracker]trackConstraint:o];
+   [[x tracker]trackObject:o];
    return o;
 }
 @end

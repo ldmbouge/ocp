@@ -62,7 +62,7 @@
 
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
-   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model objects] count],[[model constraints] count]);
+   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
    //NSLog(@"FC: %@",[fm constraints]);
@@ -85,7 +85,7 @@
    [cpprogram setSource:model];
    [concretizer release];
    ORLong t1 = [ORRuntimeMonitor cputime];
-   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm objects] count],[[fm constraints] count],t1 - t0);
+   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm mutables] count],[[fm constraints] count],t1 - t0);
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
@@ -134,7 +134,7 @@
    [flat apply: model];
    [batch release];
    
-   NSArray* objects = [flatModel objects];
+   NSArray* objects = [flatModel mutables];
    for(id<ORObject> c in objects) {
       if ([c impl] == NULL) {
          id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
@@ -182,7 +182,7 @@
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
    [flat apply: model];
    [batch release];
-   for(id<ORObject> c in [flatModel objects]) {
+   for(id<ORObject> c in [flatModel mutables]) {
       if ([c impl] == NULL) {
          id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
          [c setImpl: ba];

@@ -79,7 +79,6 @@ int main2(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-      ORLong startTime = [ORRuntimeMonitor wctime];
 //      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
       id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:

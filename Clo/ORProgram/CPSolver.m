@@ -1156,22 +1156,14 @@
 {
    [_engine trackObject:object];   
 }
+-(void) trackImmutable: (id) object
+{
+   [_engine trackImmutable:object];
+}
 -(void) trackVariable: (id) object
 {
    [_engine trackObject:object];  
 }
--(void) trackConstraint: (id) obj
-{
-   [_engine trackConstraint:obj];
-}
-//-(void) add: (id<ORConstraint>) c
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];
-//}
-//-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];
-//}
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -1616,12 +1608,12 @@
 -(ORRTModel*) init:(CPSolver*) solver;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
 -(id) addObject: (id) object;
+-(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
 -(void) trackObject: (id) obj;
 -(void) trackVariable: (id) obj;
--(void) trackConstraint: (id) obj;
 @end
 
 @implementation ORRTModel
@@ -1648,9 +1640,15 @@
 }
 -(id) addObject: (id) object
 {
-   [_solver trackObject: object];
+   [[_solver engine] trackObject: object];
    return object;
 }
+-(id) addImmutable:(id)object
+{
+   [[_solver engine] trackImmutable:object];
+   return object;
+}
+
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
@@ -1690,20 +1688,13 @@
 {
    [_solver trackObject:obj];
 }
+-(void) trackImmutable:(id)obj
+{
+   [_solver trackImmutable:obj];
+}
 -(void) trackVariable: (id) obj
 {
    [_solver trackVariable:obj];
-}
--(void) trackConstraint:(id) obj
-{
-   [_solver trackConstraint:obj];
-}
--(void) compiling:(id<ORConstraint>)cstr
-{
-}
--(NSSet*)compiledMap
-{
-   return NULL;
 }
 @end
 
