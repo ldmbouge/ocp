@@ -32,7 +32,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram: model];
       
       [cp solve: ^{
-         NSLog(@"BASIC: %@",[[cp engine] model]);
+         //NSLog(@"BASIC: %@",[[cp engine] model]);
 
          [cp  labelArray: x];
          printf("Succeeds \n");
