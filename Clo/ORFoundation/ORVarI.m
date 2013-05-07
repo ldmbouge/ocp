@@ -107,15 +107,15 @@
 //   else
 //      return [_domain up];
 //}
-//-(ORInt) low
-//{
-//   return [_domain low];
-//}
-//-(ORInt) up
-//{
-//   return [_domain up];
-//}
-//
+-(ORInt) low
+{
+   return [_domain low];
+}
+-(ORInt) up
+{
+   return [_domain up];
+}
+
 //-(ORInt) domsize
 //{
 //   if (_impl) {
@@ -151,13 +151,10 @@
 //      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
 //   
 //}
-//-(ORBool) isBool
-//{
-//   if (_impl)
-//      return [(id<ORIntVar>)_impl isBool];
-//   else
-//      return _ba[1]; // isBool
-//}
+-(ORBool) isBool
+{
+      return _ba[1]; // isBool
+}
 //-(NSSet*)constraints
 //{
 //   if (_impl)

@@ -1306,7 +1306,7 @@
 {
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
+                                        suchThat: ^bool(ORInt i) { return ![self bound: [av at: i]]; }
                                        orderedBy: ^ORFloat(ORInt i) {
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
