@@ -100,7 +100,7 @@
       id<ORIntVar> mBase = [v base];
       [mBase visit:self];
       ORInt lit = [v literal];
-      _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>)[mBase dereference] eqi:lit];
+      _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>) _gamma[mBase.getId] eqi:lit];
    }
 }
 -(void) visitIdArray: (id<ORIdArray>) v
@@ -167,27 +167,27 @@
 
 -(void) visitRestrict: (id<ORRestrict>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> x = [self concreteVar: [cstr var]];
       id<CPConstraint> concrete = [CPFactory restrict: x to: [cstr restriction]];
-      [cstr setImpl:concrete];
       [_engine add: concrete];
+      _gamma[cstr.getId] = concrete;
    }
 }
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       ORAnnotation n = [cstr annotation];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[[ax getId]] annotation: n];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[ax.getId] annotation: n];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       id<ORIntArray> low = [cstr low];
       id<ORIntArray> up = [cstr up];
@@ -195,9 +195,9 @@
       [ax visit: self];
       [low visit: self];
       [up visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory cardinality: [ax dereference] low: [low dereference] up: [up dereference] annotation: n];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory cardinality: _gamma[ax.getId] low: _gamma[low.getId] up: _gamma[up.getId] annotation: n];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitPacking: (id<ORPacking>) cstr
@@ -210,49 +210,49 @@
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> array = [cstr array];
       id<ORTable> table = [cstr table];
       [array visit: self];
       [table visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory table: [table dereference] on: [array dereference]];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory table: _gamma[table.getId] on: _gamma[array.getId]];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitCircuit:(id<ORCircuit>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory circuit: [ax dereference]];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory circuit: _gamma[ax.getId]];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitNoCycle:(id<ORNoCycle>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> ax = [cstr array];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory nocycle: [ax dereference]];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory nocycle: _gamma[ax.getId]];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitLexLeq:(id<ORLexLeq>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray: [cstr x]];
       id<CPIntVarArray> y = [self concreteArray: [cstr y]];
       id<CPConstraint> concrete = [CPFactory lex: x leq: y];
-      [cstr setImpl:concrete];
       [_engine add: concrete];
+      _gamma[cstr.getId] = concrete;
    }
 }
 -(void) visitPackOne:(id<ORPackOne>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> item = [cstr item];
       id<ORIntArray> itemSize = [cstr itemSize];
       ORInt bin = [cstr bin];
@@ -260,58 +260,58 @@
       [item visit: self];
       [itemSize visit: self];
       [binSize visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory packOne: [item dereference] itemSize: [itemSize dereference] bin: bin binSize: [binSize dereference]];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory packOne: _gamma[item.getId] itemSize: _gamma[itemSize.getId] bin: bin binSize: _gamma[binSize.getId]];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitKnapsack:(id<ORKnapsack>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVarArray> item = [cstr item];
       id<ORIntArray> weight = [cstr weight];
       id<ORIntVar> capacity = [cstr capacity];
       [item visit: self];
       [weight visit: self];
       [capacity visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory knapsack: [item dereference] weight: [weight dereference] capacity: [capacity dereference]];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory knapsack: _gamma[item.getId] weight: _gamma[weight.getId] capacity: _gamma[capacity.getId]];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitAssignment:(id<ORAssignment>)cstr
 {
-   if ([cstr impl] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray: [cstr x]];
       id<ORIntMatrix> matrix = [cstr matrix];
       [matrix visit: self];
       id<CPIntVar> cost = [self concreteVar: [cstr cost]];
-      id<CPConstraint> concreteCstr = [CPFactory assignment: _engine array: x matrix: [matrix dereference] cost: cost];
-      [cstr setImpl:concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory assignment: _engine array: x matrix: _gamma[matrix.getId] cost: cost];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
+   if (_gamma[v.getId] == NULL) {
       id<ORIntVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory minimize: [o dereference]];
-      [v setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory minimize: _gamma[o.getId]];
+      _gamma[v.getId] = concreteCstr;
       [_engine add: concreteCstr];
-      [_engine setObjective: [v dereference]];
+      [_engine setObjective: _gamma[v.getId]];
    }
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
+   if (_gamma[v.getId] == NULL) {
       id<ORIntVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory maximize: [o dereference]];
-      [v setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory maximize: _gamma[o.getId]];
+      _gamma[v.getId] = concreteCstr;
       [_engine add: concreteCstr];
-      [_engine setObjective: [v dereference]];
+      [_engine setObjective: _gamma[v.getId]];
    }
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
@@ -334,102 +334,102 @@
 
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory equalc: (id<CPIntVar>) [left dereference]  to: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory equalc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitNEqualc: (id<ORNEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory notEqualc: (id<CPIntVar>) [left dereference]  to: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory notEqualc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+      
    }
 }
 -(void) visitLEqualc: (id<ORLEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory lEqualc: (id<CPIntVar>) [left dereference]  to: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory lEqualc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
       [_engine add: concreteCstr];
    }
 }
 -(void) visitGEqualc: (id<ORGEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> left = [cstr left];
       ORInt cst = [cstr cst];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory gEqualc: (id<CPIntVar>) [left dereference]  to: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory gEqualc: (id<CPIntVar>) _gamma[left.getId]   to: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitEqual: (id<OREqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> left  = [self concreteVar:[cstr left]];
       id<CPIntVar> right = [self concreteVar:[cstr right]];
       id<CPConstraint> concreteCstr = [CPFactory equal: left
                                                     to: right
                                                   plus: [cstr cst]
                                             annotation: [cstr annotation]];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitAffine: (id<ORAffine>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> y = [self concreteVar:[cstr left]];
       id<CPIntVar> x = [self concreteVar:[cstr right]];
       id<CPConstraint> concrete = [CPFactory affine:y equal:[cstr coef] times:x plus:[cstr cst] annotation:[cstr annotation]];
-      [cstr setImpl: concrete];
       [_engine add:concrete];
+      _gamma[cstr.getId] = concrete;
    }
 }
 
 -(void) visitNEqual: (id<ORNEqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       ORInt cst = [cstr cst];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory notEqual: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory notEqual: (id<CPIntVar>) _gamma[left.getId]  to: (id<CPIntVar>) _gamma[right.getId] plus: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitLEqual: (id<ORLEqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       ORInt cst = [cstr cst];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory lEqual: (id<CPIntVar>) [left dereference] to: (id<CPIntVar>) [right dereference] plus: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory lEqual: (id<CPIntVar>) _gamma[left.getId]  to: (id<CPIntVar>) _gamma[right.getId] plus: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitPlus: (id<ORPlus>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
@@ -437,158 +437,157 @@
       [res visit: self];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory equal3: (id<CPIntVar>) [res dereference]
-                                                     to: (id<CPIntVar>) [left dereference]
-                                                   plus: (id<CPIntVar>) [right dereference]
+      id<CPConstraint> concreteCstr = [CPFactory equal3: (id<CPIntVar>) _gamma[res.getId]
+                                                     to: (id<CPIntVar>) _gamma[left.getId] 
+                                                   plus: (id<CPIntVar>) _gamma[right.getId]
                                              annotation:annotation
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitMult: (id<ORMult>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       [res visit: self];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory mult: (id<CPIntVar>) [left dereference]
-                                                   by: (id<CPIntVar>) [right dereference]
-                                                equal: (id<CPIntVar>) [res dereference]
+      id<CPConstraint> concreteCstr = [CPFactory mult: (id<CPIntVar>) _gamma[left.getId] 
+                                                   by: (id<CPIntVar>) _gamma[right.getId]
+                                                equal: (id<CPIntVar>) _gamma[res.getId]
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitSquare: (id<ORSquare>)cstr
 {
-   if ([cstr dereference] ==NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> op  = [self concreteVar:[cstr op]];
       ORAnnotation annotation = [cstr annotation];
       id<CPConstraint> concrete = [CPFactory square:op equal:res annotation:annotation];
-      [cstr setImpl:concrete];
       [_engine add:concrete];
+      _gamma[cstr.getId] = concrete;
    }
 }
 
 
 -(void) visitMod: (id<ORMod>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> left = [self concreteVar:[cstr left]];
       id<CPIntVar> right = [self concreteVar:[cstr right]];
       id<CPConstraint> concreteCstr  = [CPFactory mod:left mod:right equal:res];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitModc: (id<ORModc>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> res = [self concreteVar:[cstr res]];
       id<CPIntVar> left = [self concreteVar:[cstr left]];
       ORAnnotation annotation = [cstr annotation];
       ORInt right = [cstr right];
       id<CPConstraint> concreteCstr  = [CPFactory mod:left modi:right equal:res annotation:annotation];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 
 -(void) visitAbs: (id<ORAbs>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       [res visit: self];
       [left visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) [left dereference]
-                                               equal: (id<CPIntVar>) [res dereference]
+      id<CPConstraint> concreteCstr = [CPFactory abs: (id<CPIntVar>) _gamma[left.getId] 
+                                               equal: (id<CPIntVar>) _gamma[res.getId]
                                           annotation: DomainConsistency
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitOr: (id<OROr>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       [res visit: self];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) [left dereference]
-                                                      or: (id<CPIntVar>) [right dereference]
-                                                   equal: (id<CPIntVar>) [res dereference]
+      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) _gamma[left.getId] 
+                                                      or: (id<CPIntVar>) _gamma[right.getId]
+                                                   equal: (id<CPIntVar>) _gamma[res.getId]
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitAnd:( id<ORAnd>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       [res visit: self];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) [left dereference]
-                                                     and: (id<CPIntVar>) [right dereference]
-                                                   equal: (id<CPIntVar>) [res dereference]
+      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) _gamma[left.getId] 
+                                                     and: (id<CPIntVar>) _gamma[right.getId]
+                                                   equal: (id<CPIntVar>) _gamma[res.getId]
                                        ];
-      
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitImply: (id<ORImply>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> res = [cstr res];
       id<ORIntVar> left = [cstr left];
       id<ORIntVar> right = [cstr right];
       [res visit: self];
       [left visit: self];
       [right visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) [left dereference]
-                                                   imply: (id<CPIntVar>) [right dereference]
-                                                   equal: (id<CPIntVar>) [res dereference]
+      id<CPConstraint> concreteCstr = [CPFactory boolean: (id<CPIntVar>) _gamma[left.getId] 
+                                                   imply: (id<CPIntVar>) _gamma[right.getId]
+                                                   equal: (id<CPIntVar>) _gamma[res.getId]
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitElementCst: (id<ORElementCst>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntArray> array = [cstr array];
       id<ORIntVar> idx = [cstr idx];
       id<ORIntVar> res = [cstr res];
       [array visit: self];
       [idx visit: self];
       [res visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) [idx dereference]
-                                             idxCstArray: [array dereference]
-                                                   equal: (id<CPIntVar>) [res dereference]
+      id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) _gamma[idx.getId]
+                                             idxCstArray: _gamma[array.getId]
+                                                   equal: (id<CPIntVar>) _gamma[res.getId]
                                               annotation: [cstr annotation]
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitElementVar: (id<ORElementVar>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> array = [self concreteArray:[cstr array]];
       id<CPIntVar> idx = [self concreteVar:[cstr idx]];
       id<CPIntVar> res = [self concreteVar:[cstr res]];
@@ -597,26 +596,26 @@
                                                    equal: res
                                               annotation: [cstr annotation]
                                        ];
-      [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       ORInt cst = [cstr cst];
       [b visit: self];
       [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] eqi: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[b.getId] with: _gamma[x.getId] eqi: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyEqual: (id<ORReifyEqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       id<ORIntVar> y = [cstr y];
@@ -624,28 +623,28 @@
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] eq: [y dereference] annotation: annotation];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[b.getId] with: _gamma[x.getId] eq: _gamma[y.getId] annotation: annotation];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
    
 }
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       ORInt cst = [cstr cst];
       [b visit: self];
       [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] neqi: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[b.getId] with: _gamma[x.getId] neqi: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyNEqual: (id<ORReifyNEqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       id<ORIntVar> y = [cstr y];
@@ -653,98 +652,98 @@
       [b visit: self];
       [x visit: self];
       [y visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] neq: [y dereference] annotation: annotation];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[b.getId] with: _gamma[x.getId] neq: _gamma[y.getId] annotation: annotation];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyLEqualc: (id<ORReifyLEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       ORInt cst = [cstr cst];
       [b visit: self];
       [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] leqi: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[b.getId] with: _gamma[x.getId] leqi: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyLEqual: (id<ORReifyLEqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPIntVar> x = [self concreteVar:[cstr x]];
       id<CPIntVar> y = [self concreteVar:[cstr y]];      
       id<CPConstraint> concreteCstr = [CPFactory reify: b with: x leq: y annotation: Default];
-      [cstr setImpl:concreteCstr];
       [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyGEqualc: (id<ORReifyGEqualc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<ORIntVar> b = [cstr b];
       id<ORIntVar> x = [cstr x];
       ORInt cst = [cstr cst];
       [b visit: self];
       [x visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory reify: [b dereference] with: [x dereference] geqi: cst];
-      [cstr setImpl: concreteCstr];
+      id<CPConstraint> concreteCstr = [CPFactory reify: _gamma[b.getId] with: _gamma[x.getId] geqi: cst];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitReifyGEqual: (id<ORReifyGEqual>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVar> b = [self concreteVar:[cstr b]];
       id<CPIntVar> x = [self concreteVar:[cstr x]];
       id<CPIntVar> y = [self concreteVar:[cstr y]];
       id<CPConstraint> concreteCstr = [CPFactory reify: b with: y leq: x annotation: Default];
-      [cstr setImpl:concreteCstr];
       [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
       id<CPConstraint> concreteCstr = [CPFactory sumbool:x eq:[cstr cst]];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>) cstr
 {
-   if ([cstr dereference] == NULL)
+   if (_gamma[cstr.getId] == NULL) 
       @throw [[ORExecutionError alloc] initORExecutionError: "SumBoolLEqualc not yet implemented"];
 }
 -(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
       id<CPConstraint> concreteCstr = [CPFactory sumbool:x geq:[cstr cst]];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitSumEqualc:(id<ORSumEqc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
       id<CPConstraint> concreteCstr = [CPFactory sum:x eq:[cstr cst]];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitSumLEqualc:(id<ORSumLEqc>) cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPIntVarArray> x = [self concreteArray:[cstr vars]];
       id<CPConstraint> concreteCstr = [CPFactory sum:x leq:[cstr cst]];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
@@ -754,128 +753,122 @@
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPConstraint> concreteCstr = [CPFactory bitEqual:x to:y];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitOr:(id<ORBitOr>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
       id<CPConstraint> concreteCstr = [CPFactory bitOR:x or:y equals:z];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitAnd:(id<ORBitAnd>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
       id<CPConstraint> concreteCstr = [CPFactory bitAND:x and:y equals:z];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 -(void) visitBitNot:(id<ORBitNot>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPConstraint> concreteCstr = [CPFactory bitNOT:x equals:y];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitXor:(id<ORBitXor>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
       id<CPConstraint> concreteCstr = [CPFactory bitXOR:x xor:y equals:z];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitShiftL:(id<ORBitShiftL>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       ORInt p = [cstr places];
       id<CPConstraint> concreteCstr = [CPFactory bitShiftL:x by:p equals:y];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitRotateL:(id<ORBitRotateL>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       ORInt p = [cstr places];
       id<CPConstraint> concreteCstr = [CPFactory bitRotateL:x by:p equals:y];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitSum:(id<ORBitSum>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> x = [self concreteVar:[cstr left]];
       id<CPBitVar> y = [self concreteVar:[cstr right]];
       id<CPBitVar> z = [self concreteVar:[cstr res]];
       id<CPBitVar> ci = [self concreteVar:[cstr in]];
       id<CPBitVar> co = [self concreteVar:[cstr out]];
       id<CPConstraint> concreteCstr = [CPFactory bitADD:x plus:y withCarryIn:ci equals:z withCarryOut:co];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 -(void) visitBitIf:(id<ORBitIf>)cstr
 {
-   if ([cstr dereference] == NULL) {
+   if (_gamma[cstr.getId] == NULL) {
       id<CPBitVar> w = [self concreteVar:[cstr res]];
       id<CPBitVar> x = [self concreteVar:[cstr trueIf]];
       id<CPBitVar> y = [self concreteVar:[cstr equals]];
       id<CPBitVar> z = [self concreteVar:[cstr zeroIfXEquals]];
       id<CPConstraint> concreteCstr = [CPFactory bitIF:w equalsOneIf:x equals:y andZeroIfXEquals:z];
-      [cstr setImpl:concreteCstr];
       [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
    }
 }
 
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   if ([e dereference] == NULL) {
-      id<ORInteger> n = [ORFactory integer: _engine value: [e value]];
-      [n makeImpl];
-      [e setImpl: n];
-   }
+   if (_gamma[e.getId] == NULL) 
+      _gamma[e.getId] = [ORFactory integer: _engine value: [e value]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
-   if ([e dereference] == NULL) {
-      id<ORFloatNumber> n = [ORFactory float: _engine value: [e value]];
-      [n makeImpl];
-      [e setImpl: n];
-   }
+   if (_gamma[e.getId] == NULL) 
+      _gamma[e.getId] = [ORFactory float: _engine value: [e value]];
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {}
