@@ -42,47 +42,35 @@
 -(id) concreteVar: (id<ORVar>) x
 {
    [x visit:self];
-   return [x dereference];
+   return _gamma[x.getId];
 }
 
 -(id) concreteArray: (id<ORIntVarArray>) x
 {
    [x visit: self];
-   return [x dereference];
+   return _gamma[x.getId];
 }
 
 // visit interface
 
 -(void) visitTrailableInt: (id<ORTrailableInt>) v
 {
-   if ([v dereference] == NULL) { 
+   if (_gamma[v.getId] == NULL) {
       id<ORTrailableInt> n = [ORFactory trailableInt:_engine value: [v value]];
-      [n makeImpl];
-      [v setImpl: n];
+      _gamma[v.getId] = n;
    }
 }
 -(void) visitIntSet: (id<ORIntSet>) v
 {
-   if ([v dereference] == NULL) {   
-      id<ORIntSet> i = [ORFactory intSet: _engine];
-      [i makeImpl];
-      [v copyInto: i];
-      [v setImpl: i];
-   }
 }
 -(void) visitIntRange:(id<ORIntRange>) v
 {
-   [v makeImpl];
 }
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if (!_gamma[[v getId]]) {
-      id<CPIntVar> cv = [CPFactory intVar: _engine domain: [v domain]];
-//      [v setImpl: cv];
-//      NSLog(@" var id: %d",[v getId]);
-      _gamma[[v getId]] = cv;
-   }
+   if (!_gamma[v.getId]) 
+      _gamma[[v getId]] = [CPFactory intVar: _engine domain: [v domain]];
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
@@ -92,10 +80,8 @@
 
 -(void) visitBitVar: (id<ORBitVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<CPBitVar> cv = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
-      [v setImpl:cv];
-   }
+   if (_gamma[v.getId] == NULL) 
+      _gamma[v.getId] = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
 }
 
 -(void) visitAffineVar:(id<ORIntVar>) v
@@ -105,28 +91,25 @@
       [mBase visit: self];
       ORInt a = [v scale];
       ORInt b = [v shift];
-      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>) _gamma[mBase.getId] scale:a shift:b];
-      _gamma[v.getId] = cv;
-      [v setImpl: cv];
+      _gamma[v.getId] = [CPFactory intVar:(id<CPIntVar>) _gamma[mBase.getId] scale:a shift:b];
    }
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
-   if ([v dereference] == NULL) {
+   if (_gamma[v.getId] == NULL) {
       id<ORIntVar> mBase = [v base];
       [mBase visit:self];
       ORInt lit = [v literal];
-      id<CPIntVar> cv = [CPFactory reifyView:(id<CPIntVar>)[mBase dereference] eqi:lit];
-      [v setImpl:cv];
+      _gamma[v.getId] = [CPFactory reifyView:(id<CPIntVar>)[mBase dereference] eqi:lit];
    }
 }
 
 -(void) visitIdArray: (id<ORIdArray>) v
 {
-   if ([v dereference] == NULL) {
+   if (_gamma[v.getId] == NULL) {
       id<ORIntRange> R = [v range];
       id<ORIdArray> dx = [ORFactory idArray: _engine range: R];
-      [dx makeImpl];
+//      [dx makeImpl];
       ORInt low = R.low;
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
@@ -134,7 +117,7 @@
          dx[i] = _gamma[[v[i] getId]];
 //         dx[i] = [v[i] dereference];
       }
-      [v setImpl: dx];
+//      [v setImpl: dx];
       _gamma[[v getId]] = dx;
    }
 }
