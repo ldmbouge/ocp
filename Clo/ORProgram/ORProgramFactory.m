@@ -80,12 +80,6 @@
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
    
-   // Here I do not need to visit everyone
-   [fm visit: concretizer];
-   for(ORInt i = 0; i < nbEntries; i++) {
-      NSLog(@" %d %@",i,gamma[i]);
-   }
-   NSLog(@"------");
    [cpprogram setSource:model];
    [concretizer release];
    ORLong t1 = [ORRuntimeMonitor cputime];

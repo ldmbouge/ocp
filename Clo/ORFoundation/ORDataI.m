@@ -20,20 +20,24 @@
 @implementation NSObject (Concretization)
 -(id) dereference
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
    return self;
 }
 -(void) setImpl: (id) impl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
    NSLog(@"%@",self); 
    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
 -(void) makeImpl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
    NSLog(@"%@",self);
    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
 }
 -(id) impl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
    return self;
 }
 -(void) visit: (id<ORVisitor>) visitor
@@ -582,6 +586,7 @@ static ORInt _deterministic;
 }
 -(id) dereference
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
    ORInt k = [NSThread threadID];
    if (_array[k] == NULL)
       return NULL;
