@@ -30,6 +30,7 @@
 -(id<ORIntRange>) domain;
 -(ORInt) low;
 -(ORInt) up;
+-(ORBool) isBool;
 //(ORInt) value;
 //-(ORInt) intValue;
 //-(ORFloat) floatValue;
@@ -38,7 +39,6 @@
 //-(ORInt) domsize;
 //-(ORBounds) bounds;
 //-(ORBool) member: (ORInt) v;
-//-(ORBool) isBool;
 -(ORInt) scale;
 -(ORInt) shift;
 -(ORInt) literal;
