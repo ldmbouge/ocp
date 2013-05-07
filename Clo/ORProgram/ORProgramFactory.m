@@ -66,9 +66,22 @@
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
    //NSLog(@"FC: %@",[fm constraints]);
+   NSLog(@"ORIG  %ld %ld %ld",[[fm variables] count],[[fm objects] count],[[fm constraints] count]);
+   
+   ORInt nbEntries = (ORInt) ([[fm variables] count] + [[fm objects] count] + [[fm constraints] count]);
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [cpprogram setGamma: gamma];
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   
+   // Here I do not need to visit everyone
    [fm visit: concretizer];
+   for(ORInt i = 0; i < nbEntries; i++) {
+      NSLog(@" %d %@",i,gamma[i]);
+   }
+   NSLog(@"------");
    [cpprogram setSource:model];
    [concretizer release];
    ORLong t1 = [ORRuntimeMonitor cputime];
@@ -244,3 +257,23 @@
 
 @end
 
+/*
+_map  = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                  valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                      capacity:32];
+return self;
+}
+-(void)dealloc
+{
+   [_map release];
+   [super dealloc];
+}
+-(id<ORAddToModel>)target
+{
+   return _into;
+}
+-(id)copyOnce:(id)obj
+{
+   id copy = [_map objectForKey:obj];
+
+*/

@@ -40,13 +40,17 @@ int main(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      for(ORInt i = 1; i <= n; i++)
+         NSLog(@" %d -> %d",i,[x[i] getId]);
       //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+//          [cp labelArray: x];
            @synchronized(nbSolutions) {
              [nbSolutions incr];
           }
+          NSLog(@"Solutions: %@",x);
        }
        ];
       printf("GOT %d solutions\n",[nbSolutions value]);

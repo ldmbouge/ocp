@@ -42,6 +42,8 @@
 
 @protocol CPCommonProgram <ORASolver>
 -(void) setSource:(id<ORModel>)src;
+-(void) setGamma: (id*) gamma;
+-(id*)  gamma;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;

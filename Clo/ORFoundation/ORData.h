@@ -28,6 +28,7 @@ typedef enum {
 @protocol ORVisitor;
 
 @protocol ORObject <NSObject>
+-(ORInt) getId;
 -(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;

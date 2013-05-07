@@ -910,6 +910,8 @@
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
+   
+   id*                   _gamma;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
@@ -936,6 +938,7 @@
    [_sPool release];
    [_doOnSolArray release];
    [_doOnExitArray release];
+   free(_gamma);
    [super dealloc];
 }
 -(void) setSource:(id<ORModel>)src
@@ -943,7 +946,14 @@
    [_model release];
    _model = [src retain];
 }
-
+-(void) setGamma: (id*) gamma
+{
+   _gamma = gamma;
+}
+-(id*) gamma
+{
+   return _gamma;
+}
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
@@ -1274,7 +1284,6 @@
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
-   x = [[_model rootModel] lookup:x];
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++)
@@ -1282,20 +1291,20 @@
 }
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
+   // pvh: the range here is leaked
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
-                                  suchThat: ^bool(ORInt i) { return ![[x at: i] bound]; }
+                                  suchThat: ^bool(ORInt i) { return ![self bound: [x at: i]]; }
                                  orderedBy: orderedBy];
  
    do {
-      [select retain];
       ORInt i = [select min];
       if (i == MAXINT) {
          return;
       }
       [self label: x[i]];
    } while (true);
-//   [select release];
+   [select release];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
@@ -1380,15 +1389,15 @@
 }
 -(void) label: (id<ORIntVar>) mx
 {
-   id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
+   // PVH to change
+   id<CPIntVar> x = _gamma[[mx getId]-1];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try: ^() {
-         [self labelImpl: x with: m];
-      }
-                or: ^() {
-                   [self diffImpl: x with: m];
-                }];
+      [_search try:
+         ^() { [self labelImpl: x with: m]; }
+                or:
+         ^() { [self diffImpl: x with: m]; }
+      ];
    }
 }
 
@@ -1574,27 +1583,27 @@
 }
 -(ORBool) bound: (id<ORIntVar>) x
 {
-   x = [x dereference];
+   x = _gamma[[x getId]-1];
    return [x bound];
 }
 -(ORInt)  min: (id<ORIntVar>) x
 {
-   x = [x dereference];
+   x = _gamma[[x getId]-1];
    return [x min];
 }
 -(ORInt)  max: (id<ORIntVar>) x
 {
-   x = [x dereference];
+   x = _gamma[[x getId]-1];
    return [x max];
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
-   x = [x dereference];
+   x = _gamma[[x getId]-1];
    return [x domsize];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
-   x = [x dereference];
+   x = _gamma[[x getId]-1];
    return [x member: v];
 }
 @end

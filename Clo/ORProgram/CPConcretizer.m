@@ -22,12 +22,14 @@
 {
    id<CPCommonProgram> _solver;
    id<CPEngine>        _engine;
+   id*                 _gamma;
 }
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver
 {
    self = [super init];
    _solver = [solver retain];
    _engine = [_solver engine];
+   _gamma = [solver gamma];
    return self;
 }
 -(void) dealloc
@@ -75,9 +77,11 @@
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if ([v dereference] == NULL) {
+   if (!_gamma[[v getId]]) {
       id<CPIntVar> cv = [CPFactory intVar: _engine domain: [v domain]];
-      [v setImpl: cv];
+//      [v setImpl: cv];
+//      NSLog(@" var id: %d",[v getId]);
+      _gamma[[v getId]] = cv;
    }
 }
 
@@ -126,9 +130,11 @@
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
          [v[i] visit: self];
-         dx[i] = [v[i] dereference];
+         dx[i] = _gamma[[v[i] getId] - 1];
+//         dx[i] = [v[i] dereference];
       }
       [v setImpl: dx];
+      _gamma[[v getId]] = dx;
    }
 }
 
@@ -217,7 +223,7 @@
       id<ORIntVarArray> ax = [cstr array];
       ORAnnotation n = [cstr annotation];
       [ax visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: [ax dereference] annotation: n];
+      id<CPConstraint> concreteCstr = [CPFactory alldifferent: _engine over: _gamma[[ax getId]] annotation: n];
       [cstr setImpl: concreteCstr];
       [_engine add: concreteCstr];
    }
