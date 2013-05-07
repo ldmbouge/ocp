@@ -24,7 +24,7 @@
 // First solution
 // 22 choices 20 fail 277 propagations
 
-int main1(int argc, const char * argv[])
+int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -37,15 +37,21 @@ int main1(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-      
-      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      ORLong startTime = [ORRuntimeMonitor wctime];
+      //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:
        ^() {
+          [cp try: ^()  { [cp label: x[1] with: 1]; } or: ^() { [cp label: x[1] with: 2];}];
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
-          [nbSolutions incr];
+           @synchronized(nbSolutions) {
+             [nbSolutions incr];
+          }
        }
        ];
       printf("GOT %d solutions\n",[nbSolutions value]);
+      ORLong endTime = [ORRuntimeMonitor wctime];
+      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];
@@ -54,7 +60,7 @@ int main1(int argc, const char * argv[])
    return 0;
 }
 
-int main (int argc, const char * argv[])
+int main2(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -67,8 +73,9 @@ int main (int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-      
-      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      ORLong startTime = [ORRuntimeMonitor wctime];
+//      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:
        ^() {
           [cp switchOnDepth:
