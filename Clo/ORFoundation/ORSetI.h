@@ -37,7 +37,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : ORDualUseObjectI<ORIntRange>
+@interface ORIntRangeI : ORDualUseObjectI<ORIntRange,NSCopying>
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;

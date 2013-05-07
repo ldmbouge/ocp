@@ -1129,10 +1129,11 @@
    [_oStore addObject:obj];
    [obj release];
 }
--(void) trackImmutable:(id)obj
+-(id) trackImmutable:(id)obj
 {
    [_oStore addObject:obj];
    [obj release];
+   return obj;
 }
 
 -(void) trackConstraint:(id)obj

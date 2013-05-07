@@ -48,6 +48,8 @@
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
 -(id<ORModel>) rootModel;
+-(id)inCache:(id)obj;
+-(id) addToCache:(id)obj;
 @end
 
 @protocol ORAddToModel <ORTracker>

@@ -1156,9 +1156,9 @@
 {
    [_engine trackObject:object];   
 }
--(void) trackImmutable: (id) object
+-(id) trackImmutable: (id) object
 {
-   [_engine trackImmutable:object];
+   return [_engine trackImmutable:object];
 }
 -(void) trackVariable: (id) object
 {
@@ -1645,8 +1645,7 @@
 }
 -(id) addImmutable:(id)object
 {
-   [[_solver engine] trackImmutable:object];
-   return object;
+   return [[_solver engine] trackImmutable:object];
 }
 
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
@@ -1688,9 +1687,9 @@
 {
    [_solver trackObject:obj];
 }
--(void) trackImmutable:(id)obj
+-(id) trackImmutable:(id)obj
 {
-   [_solver trackImmutable:obj];
+   return [_solver trackImmutable:obj];
 }
 -(void) trackVariable: (id) obj
 {

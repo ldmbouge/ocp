@@ -73,6 +73,11 @@
    }
    if (found) {
       _terms[mid]._coef += c;
+      if (_terms[mid]._coef == 0) {
+         for(ORInt k=mid+1;k<_nb;k++)
+            _terms[k-1] = _terms[k];
+         _nb--;
+      }
    } else {
       if (_nb >= _max) {
          _terms = realloc(_terms, sizeof(struct CPTerm)*_max*2);

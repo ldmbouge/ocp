@@ -349,7 +349,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    else
       [_trail trailRelease:obj];
 }
--(void) trackImmutable: (id) obj
+-(id) trackImmutable: (id) obj
 {
    // [ldm] tofix
    if (_state != CPClosed) {
@@ -358,6 +358,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    }
    else
       [_trail trailRelease:obj];
+   return obj;
 }
 
 -(void) trackConstraint:(id)obj

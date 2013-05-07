@@ -38,6 +38,8 @@
 -(id<ORModel>)source;
 -(id<ORModel>)flatten;
 -(id<ORModel>)rootModel;
+-(id)inCache:(id)obj;
+-(id)addToCache:(id)obj;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
@@ -54,7 +56,7 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
--(void) trackImmutable:(id)obj;
+-(id) trackImmutable:(id)obj;
 -(void) trackVariable: (id) obj;
 @end
 
