@@ -31,18 +31,19 @@ int main (int argc, const char * argv[])
          int n = 12;
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
          id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
-         id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i]; }];
-         id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i]; }];
+         id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i annotation:Default]; }];
+         id<ORIntVarArray> xn = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:-i annotation:Default]; }];
          [model add: [ORFactory alldifferent: x]];
          [model add: [ORFactory alldifferent: xp]];
          [model add: [ORFactory alldifferent: xn]];
          id<ORInteger> nbSol = [ORFactory integer:model value:0];
          
          NSLog(@"Model: %@",model);
-         //id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
-         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:1 with:[ORSemDFSController class]];
+
+//         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:1 with:[ORSemDFSController class]]
          
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          

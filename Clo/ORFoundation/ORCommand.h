@@ -28,11 +28,15 @@
       struct CNode*    _next;
    };
    struct CNode* _head;
+   @package
    ORInt _ndId;  // node id
+   ORInt _cnt;
 }
--(ORCommandList*) initCPCommandList;
++(id)newCommandList:(ORInt)node;
 -(ORCommandList*) initCPCommandList: (ORInt) node;
 -(void)dealloc;
+-(void)letgo;
+-(id)grab;
 -(void)insert: (id<ORCommand>) c;
 -(id<ORCommand>)removeFirst;
 -(ORBool)empty;
@@ -40,4 +44,15 @@
 -(ORInt) getNodeId;
 -(void) setNodeId:(ORInt)nid;
 -(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;
+-(ORInt)length;
 @end
+
+inline static ORCommandList* grab(ORCommandList* l)
+{
+   l->_cnt +=1;
+   return l;
+}
+inline static ORBool commandsEqual(ORCommandList* c1,ORCommandList* c2)
+{
+   return c1->_ndId == c2->_ndId;
+}

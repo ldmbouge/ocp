@@ -23,6 +23,7 @@
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 
+
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -295,8 +296,9 @@
    _solver = solver;
    return self;
 }
--(id) snapshot
+-(id) snapshot:(id)obj
 {
+   [obj visit:self];
    return _snapshot;
 }
 -(void) dealloc
@@ -702,13 +704,12 @@
    ORULong sz = [av count];
    NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
    ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
-   [av enumerateObjectsUsingBlock: ^void(id obj, NSUInteger idx, BOOL *stop) {
-      [obj visit: visit];
-      id shot = [visit snapshot];
+   for(id obj in av) {
+      id shot = [visit snapshot:obj];
       if (shot)
          [snapshots addObject: shot];
       [shot release];
-   }];
+   }
    _varShots = snapshots;
    
    if ([model objective])
@@ -1203,6 +1204,73 @@
    }
 }
 
+-(void) labelBitVarsFirstFail: (NSArray*)vars
+{
+   CPBitVarI* minDom;
+   ORULong minDomSize;
+   ORULong thisDomSize;
+   ORLong numVars;
+   bool freeVars = false;
+   
+   numVars = [vars count];
+   int j;
+   int numBound;
+
+   for(int i=0;i<numVars;i++){
+      if ([vars[i] bound])
+         continue;
+      if ([vars[i] domsize] <= 0)
+         continue;
+      minDom = (CPBitVarI*)[vars[i] dereference];
+      minDomSize = [minDom domsize];
+      freeVars = true;
+      break;
+   }
+
+//   NSLog(@"%lld unbound variables.",numVars);
+   while (freeVars) {
+      freeVars = false;
+      numBound = 0;
+      for(int i=0;i<numVars;i++){
+         if ([vars[i] bound]){
+            numBound++;
+            continue;
+         }
+         if ([vars[i] domsize] <= 0)
+            continue;
+         if (!freeVars) {
+            minDom = [vars[i] dereference];
+            minDomSize = [minDom domsize];
+            freeVars = true;
+            continue;
+         }
+         thisDomSize=[[vars[i] dereference] domsize];
+         if(thisDomSize==0)
+            continue;
+         if (thisDomSize < minDomSize) {
+            minDom = [vars[i] dereference];
+            minDomSize = thisDomSize;
+         }
+      }
+      if (!freeVars)
+         break;
+      NSLog(@"%d//%lld bound.",numBound, numVars);
+//      j=[minDom randomFreeBit];
+      
+      NSLog(@"Labeling %@ at %d.", minDom, j);
+//         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
+//                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      while ([minDom domsize] > 0) {
+         j= [minDom randomFreeBit];
+         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
+                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      }
+
+      NSLog(@"Labeled %@ at %d.", minDom, j);
+   }
+}
+
+
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
@@ -1231,7 +1299,10 @@
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   id<ORIntVarArray> av = [h allIntVars];
+   [self labelHeuristic:h restricted:[h allIntVars]];
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
@@ -1928,8 +1999,11 @@
    ORInt M = -MAXINT;
    for(ORInt i = low; i <= up; i++) {
       id<CPIntVar> xi = [x[i] dereference];
-      if ([xi bound] && [xi value] > M)
-         M = [xi value];
+      if ([xi bound]) {
+         ORInt v = [xi value];
+         if (v > M)
+            M = v;
+      }
    }
    return M;
 }

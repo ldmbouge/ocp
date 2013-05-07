@@ -186,7 +186,7 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-   id<CPProgram,CPBV> cp = [ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 
@@ -211,8 +211,9 @@
          clock_t searchStart = clock();
          for(int i=0; i<_numBlocks;i++){
             bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+            [cp labelBitVarsFirstFail:[engine variables]];
             for(int j=0;j<16;j++){
-               [cp labelUpFromLSB:bitVars[j]];
+               //[cp labelUpFromLSB:bitVars[j]];
                NSLog(@"%@\n",bitVars[j]);
             }
          }

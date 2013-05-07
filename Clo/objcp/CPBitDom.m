@@ -161,30 +161,37 @@
 
 -(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
-   if (newMin <= _min._val && newMax >= _max._val) return ORSuspend;
-   newMin = max(newMin,_min._val);
-   newMax = min(newMax,_max._val);
-   if (newMin > _max._val || newMin > newMax || newMax < _min._val)
+   ORStatus ok = ORSuspend;
+   if (newMin > _min._val) {
+      if (newMin > _max._val)
+         failNow();
+      ORInt oldMin = _min._val;
+      ORInt nbr = newMin - _min._val;
+      ORInt nsz = _sz._val - nbr;
+      assignTRInt(&_sz, nsz, _trail);
+      assignTRInt(&_min, newMin, _trail);
+      if ([x tracksLoseEvt:self]) {
+         for(ORInt k=oldMin;k< newMin && ok;k++)
+            ok = [x loseValEvt:k sender:self];
+         if (!ok) return ok;
+      }
+      ok = [x changeMinEvt:nsz sender:self];
+      if (!ok) return ok;
+   }
+   if (newMax >= _max._val) return ORSuspend;
+   if (newMax < _min._val)
       failNow();
-   ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
-   ORInt nbr = newMin - _min._val + _max._val - newMax;  // number of values removed.
+   ORInt nbr = _max._val - newMax;
    ORInt nsz = _sz._val - nbr;
-   assignTRInt(&_sz,nsz,_trail);
-   assignTRInt(&_min, newMin, _trail);
+   assignTRInt(&_sz, nsz, _trail);
    assignTRInt(&_max, newMax, _trail);
    if ([x tracksLoseEvt:self]) {
-      ORStatus ok = ORSuspend;
-      for(ORInt k=oldMin;k< newMin && ok;k++)
-         ok = [x loseValEvt:k sender:self];
       for(ORInt k=newMax+1;k<= oldMax && ok;k++)
          ok = [x loseValEvt:k sender:self];
       if (!ok) return ok;
    }
-   ORStatus ok = [x changeMinEvt:nsz sender:self];
-   if (!ok) return ok;
-   ok = [x changeMaxEvt:nsz sender:self];
-   return ok;
+   return [x changeMaxEvt:nsz sender:self];
 }
 
 -(ORStatus)  bind:(ORInt)  val for:(id<CPIntVarNotifier>) x
@@ -212,7 +219,8 @@
 {
    if (val <= _min._val) return [self updateMin:val+1 for:x];
    if (val >= _max._val) return [self updateMax:val-1 for:x];
-   @throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+   //@throw [[CPRemoveOnDenseDomainError alloc] initCPRemoveOnDenseDomainError];
+   return ORSuspend;
 }
 
 -(void) restoreDomain:(id<CPDom>) toRestore
@@ -393,7 +401,8 @@ inline static void resetBit(CPBitDom* dom,ORInt b)
    const ORUInt magic = trailMagic(dom->_trail);
    if (dom->_magic[bw] != magic) {
       dom->_magic[bw] = magic;
-      [dom->_trail trailUnsigned:(dom->_bits + bw)];
+      inline_trailUIntFun((ORTrailI*)dom->_trail, (dom->_bits + bw));
+      //[dom->_trail trailUnsigned:(dom->_bits + bw)];
    }     
    dom->_bits[bw] &= ~(0x1 << (b & 0x1f));
 }
@@ -636,7 +645,7 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
 -(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    ORStatus ok = ORSuspend;
-   if (newMin > _max._val || newMax < _min._val)
+   if (newMin > _max._val || newMax < _min._val || newMax < newMin)
       failNow();
    if (newMin > _min._val) {
       ORInt oldMin = _min._val;
@@ -655,6 +664,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       ok = [x changeMinEvt:nsz sender:self];
       if (!ok) return ok;
    }
+   if (newMax < _min._val)
+      failNow();
    if (newMax < _max._val)  {
       ORInt oldMax = _max._val;
       ORInt nbr = countFrom(self,newMax+1,_max._val);
@@ -886,6 +897,11 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
    return ORSuspend;
 }
 -(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+{
+   assert(FALSE);
+   return ORSuspend;
+}
+-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
    return ORSuspend;

@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
 #import "ORFoundation/ORTracker.h"
-#import "ORFoundation/ORModel.h"
+#import "ORFoundation/ORConstraint.h"
 
 @protocol ORRelation;
 @protocol ORExpr;

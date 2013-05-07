@@ -12,7 +12,7 @@
 #import <ORFoundation/ORExpr.h>
 #import "ORTracker.h"
 #import "ORArray.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 
 @protocol ORSnapshot
 -(ORInt)  intValue;
@@ -52,7 +52,7 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(unsigned int)  domsize;
+-(ORInt) domsize;
 -(ORBool) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end

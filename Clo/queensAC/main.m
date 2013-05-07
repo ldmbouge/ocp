@@ -18,6 +18,7 @@
 #import "ORFoundation/ORSemDFSController.h"
 #import <ORProgram/ORProgramFactory.h>
 
+#import "ORCmdLineArgs.h"
 //345 choices
 //254 fail
 //5027 propagations
@@ -38,11 +39,10 @@ int main(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       ORLong startTime = [ORRuntimeMonitor wctime];
-      //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
+      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:
        ^() {
-          [cp try: ^()  { [cp label: x[1] with: 1]; } or: ^() { [cp label: x[1] with: 2];}];
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
            @synchronized(nbSolutions) {
              [nbSolutions incr];
@@ -56,9 +56,11 @@ int main(int argc, const char * argv[])
       NSLog(@"Quitting");
       [cp release];
       [ORFactory shutdown];
+
    }
    return 0;
 }
+
 
 int main2(int argc, const char * argv[])
 {

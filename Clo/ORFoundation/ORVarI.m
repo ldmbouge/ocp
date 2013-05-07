@@ -496,10 +496,10 @@
       return (long long)_low[1]<<32 | _low[0];
    }
 }
--(unsigned int)  domsize
+-(ORInt)  domsize
 {
    if (_impl)
-      return [(id<ORBitVar>)[_impl dereference] domsize];
+      return (ORInt)[(id<ORBitVar>)[_impl dereference] domsize];
    else {
       @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
    }

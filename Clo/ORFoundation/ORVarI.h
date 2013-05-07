@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import "ORArray.h"
 #import "ORSet.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
@@ -84,7 +84,7 @@
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(unsigned int)  domsize;
+-(ORInt)  domsize;
 -(ORBool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
 -(NSSet*) constraints;

@@ -12,6 +12,8 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTracer.h>
 #import "ORTrailI.h"
+#include <pthread.h>
+
 
 @interface ORProblemI : NSObject<NSCoding,ORProblem> {    // a semantic sub-problem description (as a set of constraints aka commands)
    ORCommandList* _cstrs;
@@ -24,19 +26,24 @@
 -(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
 -(ORBool) apply: (BOOL(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
+-(ORInt)sizeEstimate;
 @end
 
 @interface ORCheckpointI : NSObject<NSCoding,ORCheckpoint> { // a semantic path description (for incremental jumping around).
+   @package
    ORCmdStack* _path;
    ORInt     _nodeId;
+   ORInt        _cnt;
 }
--(ORCheckpointI*)initCheckpoint: (ORUInt) sz;
+-(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds;
 -(void)dealloc;
 -(NSString*)description;
--(void)pushCommandList:(ORCommandList*)aList;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
 -(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
+-(void)letgo;
+-(id)grab;
+-(ORInt)sizeEstimate;
 @end
 
 
@@ -71,26 +78,36 @@
 {
    //NSLog(@"dealloc command stack %p [%lu]\n",self,_sz);
    for(ORInt i=(ORInt)_sz-1;i>=0;--i)
-      [_tab[i] release];
+      [_tab[i] letgo];
    free(_tab);
    [super dealloc];
 }
+
+inline static void pushCommandList(ORCmdStack* cmd,ORCommandList* list)
+{
+   if (cmd->_sz >= cmd->_mxs) {
+      cmd->_tab = realloc(cmd->_tab,sizeof(id<ORCommand>)*cmd->_mxs*2);
+      cmd->_mxs <<= 1;
+   }
+   cmd->_tab[cmd->_sz++] = grab(list);
+}
+inline static ORCommandList* peekAt(ORCmdStack* cmd,ORUInt d) { return cmd->_tab[d];}
+inline static ORUInt getStackSize(ORCmdStack* cmd) { return cmd->_sz;}
+inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->_sz];}
+
 -(void)pushList:(ORInt)node
 {
    if (_sz >= _mxs) {
       _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);
       _mxs <<= 1;
    }
-   ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
+   //ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
+   ORCommandList* list = [ORCommandList newCommandList:node];
    _tab[_sz++] = list;
 }
 -(void)pushCommandList:(ORCommandList*)list
 {
-   if (_sz >= _mxs) {
-      _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);
-      _mxs <<= 1;
-   }
-   _tab[_sz++] = [list retain];
+   pushCommandList(self, list);
 }
 -(void)addCommand:(id<ORCommand>)c
 {
@@ -134,6 +151,7 @@
    _tab = malloc(sizeof(ORCommandList*)*_mxs);
    for (ORUInt i =0; i<_sz; i++) {
       _tab[i] = [[aDecoder decodeObject] retain];
+      assert(_tab[i]->_cnt > 0);
    }
    return self;
 }
@@ -237,14 +255,18 @@
 {
    static ORInt _counter = 0;
    self = [super init];
-   _cstrs = [[ORCommandList alloc] initCPCommandList];
+   _cstrs = [ORCommandList newCommandList:-1];
    _id = _counter++;
    return self;
 }
 -(void)dealloc
 {
-   [_cstrs release];
+   [_cstrs letgo];
    [super dealloc];
+}
+-(ORInt)sizeEstimate
+{
+   return [_cstrs length];
 }
 -(void)addCommand:(id<ORCommand>)c
 {
@@ -349,16 +371,19 @@
 @end
 
 @implementation ORCheckpointI
--(ORCheckpointI*)initCheckpoint:(ORUInt)sz
+-(ORCheckpointI*)initCheckpoint:(ORCmdStack*) cmds
 {
    self = [super init];
-   _path = [[ORCmdStack alloc] initCPCmdStack:sz];
+   _path = [[ORCmdStack alloc] initCPCmdStack:64];
+   ORInt ub = getStackSize(cmds);
+   for(ORInt i=0;i< ub;i++)
+      pushCommandList(_path, peekAt(cmds, i));
    _nodeId = -1;
    return self;
 }
 -(void)dealloc
 {
-   //NSLog(@"dealloc checkpoint %p\n",self);
+   NSLog(@"dealloc checkpoint %p\n",self);
    [_path release];
    [super dealloc];
 }
@@ -368,9 +393,9 @@
    [buf appendFormat:@"snap (%p) = %@",self,_path];
    return buf;
 }
--(void)pushCommandList:(ORCommandList*)aList
+-(ORInt)sizeEstimate
 {
-   [_path pushCommandList:aList];
+   return [_path size];
 }
 -(void)setNode:(ORInt)nid
 {
@@ -427,6 +452,62 @@
       [proxies[k] release];
    return thePack;
 }
+
+
+static pthread_key_t cpkey;
+static void initPool()
+{
+   pthread_key_create(&cpkey,NULL);
+}
+
++(id)newCheckpoint:(ORCmdStack*) cmds
+{
+   static pthread_once_t block = PTHREAD_ONCE_INIT;
+   pthread_once(&block,initPool);
+   id ptr = pthread_getspecific(cpkey);
+   if (ptr) {
+      pthread_setspecific(cpkey,*(id*)ptr);
+      *(Class*)ptr = self;
+      ORCheckpointI* theCP = (ORCheckpointI*)ptr;
+      theCP->_cnt = 1;      
+      ORInt i = 0;
+      BOOL pfxEq = YES;
+      while (pfxEq && i <  getStackSize(cmds) && i < getStackSize(theCP->_path)) {
+         pfxEq = commandsEqual(peekAt(cmds, i), peekAt(theCP->_path, i));
+         i += pfxEq;
+      }
+      while (i != getStackSize(theCP->_path)) {
+         ORCommandList* lst = popList(theCP->_path);
+         [lst letgo];
+      }
+      ORInt ub = getStackSize(cmds);
+      for(;i < ub;i++)
+         pushCommandList(theCP->_path, peekAt(cmds, i));
+   } else {
+      //NSLog(@"Fresh checkpoint...");
+      ptr = [super allocWithZone:NULL];
+      *(Class*)ptr = self;
+      ptr = [ptr initCheckpoint:cmds];
+      ((ORCheckpointI*)ptr)->_cnt = 1;
+   }
+   return ptr;
+}
+-(void) letgo
+{
+   assert(_cnt > 0);
+   if (--_cnt == 0) {
+      id vLossCache = pthread_getspecific(cpkey);
+      *(id*)self = vLossCache;
+      pthread_setspecific(cpkey, self);
+   }
+}
+
+-(id)grab
+{
+   _cnt += 1;
+   return self;
+}
+
 @end
 
 // =======================================================================
@@ -570,7 +651,7 @@
    while (![_trStack empty]) {
       [_trStack popNode];
       ORCommandList* clist = [_cmds popList];
-      [clist release];
+      [clist letgo];
    }
    assert(_level._val == 0);
    [self pushNode];
@@ -585,12 +666,9 @@
 }
 -(id<ORCheckpoint>)captureCheckpoint
 {
-   ORUInt ub = [_cmds size];
-   //bool isEmpty = [[_cmds peekAt:ub-1] empty];
-   id<ORCheckpoint> ncp = [[ORCheckpointI alloc] initCheckpoint:[_cmds size]];
-   for(ORInt i=0;i< ub;i++)
-      [ncp pushCommandList: [_cmds peekAt:i]];
-   [ncp setNode: [self pushNode]];
+   //ORCheckpointI* ncp = [[ORCheckpointI alloc] initCheckpoint:_cmds];
+   ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds];
+   ncp->_nodeId = [self pushNode];
    return ncp;
 }
 -(id<ORProblem>)captureProblem
@@ -615,27 +693,27 @@
    NSLog(@"-----------------------------");
     */
    [fdm clearStatus];
-   ORCmdStack* toRestore = [acp commands];
+   ORCmdStack* toRestore =  acp->_path;
    int i=0;
    bool pfxEq = true;
-   while (pfxEq && i < [_cmds size] && i < [toRestore size]) {
-      pfxEq = [[_cmds peekAt:i] equalTo: [toRestore peekAt:i]];
+   while (pfxEq && i <  getStackSize(_cmds) && i < getStackSize(toRestore)) {
+      pfxEq = commandsEqual(peekAt(_cmds, i), peekAt(toRestore, i));
       i += pfxEq;
    }
-   if (i <= [_cmds size] && i <= [toRestore size]) {
+   if (i <= getStackSize(_cmds) && i <= getStackSize(toRestore)) {
       // the suffix in _cmds [i+1 .. cmd.top] should be backtracked.
       // the suffix in toRestore [i+1 toR.top] should be replayed
-      while (i != [_cmds size]) {
-         [_trStack popNode];
-         ORCommandList* lst = [_cmds popList];
-         [lst release];
+      while (i != getStackSize(_cmds)) {
+         trailPop(_trStack);
+         ORCommandList* lst = popList(_cmds);
+         [lst letgo];
       }
       //NSLog(@"SemTracer AFTER SUFFIXUNDO: %@ - in thread %p",[self description],[NSThread currentThread]);
       //NSLog(@"allVars: %p %@",[NSThread currentThread],[fdm allVars]);
       [_trail incMagic];
-      for(ORInt j=i;j < [toRestore size];j++) {
-         ORCommandList* theList = [toRestore peekAt:j];
-         [_trStack pushNode:[theList getNodeId]];
+      for(ORInt j=i;j < getStackSize(toRestore);j++) {
+         ORCommandList* theList = peekAt(toRestore,j);
+         [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          @try {
             BOOL pOk = [theList apply:^BOOL(id<ORCommand> c) {
@@ -688,6 +766,3 @@
    return buf;
 }
 @end
-
-
-

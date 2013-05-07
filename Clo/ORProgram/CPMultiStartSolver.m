@@ -230,6 +230,18 @@
 {
    [[self dereference] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
+{
+   [[[self dereference] explorer] perform:body onLimit:onRestart];
+}
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
+{
+   [[[self dereference] explorer] portfolio:s1 then:s2];
+}
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
+{
+   [[[self dereference] explorer] switchOnDepth:s1 to:s2 limit:depth];
+}
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
    [[self dereference] limitTime: maxTime in: cl];
@@ -270,6 +282,10 @@
 {
    [[self dereference] trackConstraint:object];
 }
+-(void) add: (id<ORConstraint>) c
+{
+   [(CPSolver*)[self dereference] add:c];
+}
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {
    [[self dereference] addConstraintDuringSearch: c annotation:n];
@@ -281,6 +297,10 @@
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
    [[self dereference] labelArray: x orderedBy: orderedBy];
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
+   [[self dereference] labelHeuristic: h restricted:av];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {

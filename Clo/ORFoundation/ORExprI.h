@@ -15,7 +15,7 @@
 #import "ORArray.h"
 #import "ORData.h"
 #import "ORSet.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORVisit.h"
 
 @interface ORExprI: ORDualUseObjectI<ORExpr,NSCoding>

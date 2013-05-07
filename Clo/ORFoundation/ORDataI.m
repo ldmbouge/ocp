@@ -56,6 +56,10 @@
    _tracker = tracker;
    return self;
 }
+-(ORFloat) floatValue
+{
+   return _value;
+}
 -(ORInt) value 
 {
    return _value;
@@ -124,6 +128,14 @@
    _value = value;
    _tracker = tracker;
    return self;
+}
+-(ORInt) min
+{
+   return (ORInt)floor(_value);
+}
+-(ORInt) max
+{
+   return (ORInt)ceil(_value);
 }
 -(ORFloat) value
 {

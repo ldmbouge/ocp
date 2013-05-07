@@ -88,7 +88,6 @@ int main(int argc, const char * argv[])
          [mdl minimize: obj];
          
          id<CPProgram> cp  = [args makeProgram:mdl];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          [cp solve: ^{
             NSLog(@"In the search ... ");
             [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
@@ -105,12 +104,7 @@ int main(int argc, const char * argv[])
                  ];
              }
              ];
-            printf("\n");
             printf("obj: %d \n",[obj min]);
-            printf("Slab: ");
-            for(ORInt i = 1; i <= nbSize; i++)
-               printf("%d ",[slab[i] value]);
-            printf("\n");
          }];
          
          NSLog(@"Solver status: %@\n",cp);

@@ -25,7 +25,7 @@
     TRUInt*         _up;
     unsigned int    _wordLength;
     unsigned int    _bitLength;
-    TRInt            _freebits;
+    TRUInt            _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
 }
@@ -35,7 +35,7 @@
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
 -(ORUInt)               getSize;
--(int)                  domsize;
+-(ORInt)                domsize;
 -(void)                 updateFreeBitCount;
 -(ORBool)                 bound;
 -(uint64)               min;
@@ -48,6 +48,7 @@
 -(ORStatus)             setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x;
 -(ORBool)                 isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
+-(unsigned int)         randomFreeBit;
 -(ORBool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;

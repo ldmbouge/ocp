@@ -57,7 +57,7 @@ int main(int argc, const char * argv[])
          for(ORInt i=Rows.low;i<=Rows.up;i++)
             for(ORInt j=i+1;j <= v;j++)
                [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] mul: [M at:j :x]]) eq:@(l)]];
-//               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eqi:l]];
+//               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eq:@(l)]];
          for(ORInt i=1;i <= v-1;i++) {
             [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
                                  leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
@@ -68,9 +68,9 @@ int main(int argc, const char * argv[])
          }
 
          id<CPProgram> cp =  [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
          [cp solve:^{
-            NSLog(@"Start...");
+            //NSLog(@"Start... %@",[[cp engine] model]);
             id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
             //[cp labelHeuristic:h];
             [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [flat[i] domsize];}];

@@ -20,8 +20,6 @@
 -(id)   initORLimitSolutions: (ORInt) maxSolutions;
 -(void) dealloc;
 -(ORInt) addChoice:(NSCont*)k;
--(void) fail;
--(void) fail: (ORBool) pruned;
 -(void) succeeds;
 @end
 

@@ -72,7 +72,7 @@ int main(int argc, const char * argv[])
                   } or:^{
                      [nbFailures setValue:(float)[nbFailures value] * rf];
                      [nbRestarts incr];
-                     NSLog(@"Hit failure limit. Failure limit now: %@ / %@",nbFailures,nbRestarts);
+                     NSLog(@"Hit failure limit. Failure limit now: %d / %d",nbFailures.value,nbRestarts.value);
                   }];
                //} onRepeat:^{
                };

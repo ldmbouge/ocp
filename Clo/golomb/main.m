@@ -55,7 +55,7 @@ int main(int argc, const char * argv[])
          [model add:[ORFactory alldifferent:ad annotation:DomainConsistency]];
          
          id<CPProgram> cp  = [args makeProgram:model];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          //id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {

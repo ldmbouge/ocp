@@ -9,8 +9,8 @@
  
  ***********************************************************************/
 
+#import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
 #import <ORProgram/CPHeuristic.h>
 #import <objcp/CPData.h>
 
@@ -50,7 +50,7 @@
 -(id<ORTracer>)      tracer;
 
 -(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
-//-(void)                 add: (id<ORConstraint>) c;
+-(void)                 add: (id<ORConstraint>) c;
 //-(void)                 add: (id<ORConstraint>) c annotation: (ORAnnotation) cons;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
@@ -62,6 +62,7 @@
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
+-(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
 
 -(void)               solve: (ORClosure) body;
@@ -150,8 +151,8 @@
 @protocol CPSemanticProgram <CPCommonProgram>
 @end
 
-
 @protocol CPBV
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
+-(void) labelBitVarsFirstFail: (NSArray*)vars;
 @end

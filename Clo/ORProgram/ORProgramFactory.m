@@ -63,14 +63,16 @@
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
    NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model objects] count],[[model constraints] count]);
+   ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
-   NSLog(@"FLAT  %ld %ld %ld",[[fm variables] count],[[fm objects] count],[[fm constraints] count]);
    //NSLog(@"FC: %@",[fm constraints]);
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    [fm visit: concretizer];
    [cpprogram setSource:model];
    [concretizer release];
+   ORLong t1 = [ORRuntimeMonitor cputime];
+   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm objects] count],[[fm constraints] count],t1 - t0);
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
@@ -81,23 +83,23 @@
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
-//      NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
       [sp addSolution: s];
       [s release];
    }];
    return cpprogram;
 }
 
-+(id<CPSemanticProgramDFS>) createCPSemanticProgramDFS: (id<ORModel>) model
++(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
-   id<CPSemanticProgramDFS> cpprogram = [CPSolverFactory semanticSolverDFS];
+   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolverDFS];
    [ORFactory createCPProgram: model program: cpprogram];
    return cpprogram;
 }
 
-+(id<CPSemanticProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
++(id<CPProgram>) createCPSemanticProgram: (id<ORModel>) model with: (Class) ctrlClass
 {
-   id<CPSemanticProgram> cpprogram = [CPSolverFactory semanticSolver: ctrlClass];
+   id<CPProgram> cpprogram = (id)[CPSolverFactory semanticSolver: ctrlClass];
    [ORFactory createCPProgram: model program: cpprogram];
    return cpprogram;
 }

@@ -38,6 +38,7 @@
    ORInt              _nbClosed;
    id<ORObjectiveValue> _primal;
    BOOL                _boundOk;
+   ORLong                _sowct;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
@@ -59,6 +60,7 @@
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
    _doneSearching = NO;
+   _sowct = [ORRuntimeMonitor wctime];
    return self;
 }
 -(void)dealloc
@@ -161,6 +163,18 @@
 {
    [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
+{
+   [[[self dereference] explorer] perform:body onLimit:onRestart];
+}
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
+{
+   [[[self dereference] explorer] portfolio:s1 then:s2];
+}
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
+{
+   [[[self dereference] explorer] switchOnDepth:s1 to:s2 limit:depth];
+}
 -(void) trackObject: (id) object
 {
    return [[self dereference] trackObject: object];
@@ -219,6 +233,10 @@
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
    [[self dereference] labelArray: x orderedBy: orderedBy];
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
+   [[self dereference] labelHeuristic: h restricted:av];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
@@ -280,6 +298,29 @@
 {
    [[self dereference] limitFailures: maxFailures in: cl];
 }
+
+
+-(ORBool) bound: (id<ORIntVar>) x
+{
+   return [[self dereference] bound:x];
+}
+-(ORInt)  min: (id<ORIntVar>) x
+{
+   return [[self dereference] min:x];
+}
+-(ORInt)  max: (id<ORIntVar>) x
+{
+   return [[self dereference] max:x];
+}
+-(ORInt)  domsize: (id<ORIntVar>) x
+{
+   return [[self dereference] domsize:x];
+}
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
+{
+   return [[self dereference] member:v in:x];
+}
+
 -(void)onSolution:(ORClosure)onSolution
 {
    _onSol = [onSolution copy];
@@ -305,15 +346,16 @@
 -(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
 {
    id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
-   //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
+   //NSLog(@"***** THREAD(%d) SETUP work size: %d",[NSThread threadID],[theSub sizeEstimate]);
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
    [theSub release];
    if (status == ORFailure)
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
+-(ORLong)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
+   ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
@@ -360,6 +402,9 @@
                             control:parc];        
       }
    }
+   ORLong t1 = [ORRuntimeMonitor cputime];
+   NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
+   return t1 - t0;
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -408,9 +453,12 @@
          [_queue enQueue:rootSerial];
       }
       NSData* cpRoot = nil;
+      ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
-         if (!_doneSearching)
-            [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+         if (!_doneSearching) {
+            took = [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+//            [_queue pretendFull:took < 500];
+         }
          [cpRoot release];
       }
       NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));

@@ -81,4 +81,5 @@ enum CPEngineState {
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 @end
 
+ORStatus propagateFDM(CPEngineI* fdm);
 void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);

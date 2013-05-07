@@ -22,6 +22,7 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 @synthesize randomized;
 @synthesize heuristic;
 @synthesize nbThreads;
+@synthesize nArg;
 +(ORCmdLineArgs*)newWith:(int)argc argv:(const char*[])argv
 {
    return [[[ORCmdLineArgs alloc] init:argc argv:argv] autorelease];
@@ -32,14 +33,17 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
    _argc = argc;
    _argv = argv;
    size = 4;
+   nArg = 0;
    heuristic = FF;
-   restartRate = 1.0;
+   restartRate = 0;
    timeOut = 60;
-   nbThreads = 1;
+   nbThreads = 0;
    randomized = NO;
    for(int k = 1;k< argc;k++) {
       if (strncmp(argv[k], "-q", 2) == 0)
          size = atoi(argv[k]+2);
+      else if (strncmp(argv[k], "-n", 2)==0)
+         nArg = atoi(argv[k]+2);
       else if (strncmp(argv[k], "-h", 2)==0)
          heuristic = atoi(argv[k]+2);
       else if (strncmp(argv[k],"-w",2)==0)
@@ -87,7 +91,8 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
 -(id<CPProgram>)makeProgram:(id<ORModel>)model
 {
    switch(nbThreads) {
-      case 1: return [ORFactory createCPProgram:model];
+      case 0: return [ORFactory createCPProgram:model];
+      case 1: return [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
       default: return [ORFactory createCPParProgram:model nb:nbThreads with:[ORSemDFSController class]];
    }
 }

@@ -234,11 +234,13 @@
 -(void)addVar:(id<ORVar>)var
 {
    ORInt idx = [var getId];
-   NSNumber* vid = [[NSNumber alloc] initWithInt:idx];
-   [_inProbe addObject:vid];
-   [vid release];
-   assert(_low <= idx && idx <= _up);
-   _tab[idx] += 1;
+   if (_low <= idx && idx <= _up) {
+      NSNumber* vid = [[NSNumber alloc] initWithInt:idx];
+      [_inProbe addObject:vid];
+      [vid release];
+      assert(_low <= idx && idx <= _up);
+      _tab[idx] += 1;
+   }
 }
 -(void)scanProbe:(void(^)(ORInt varID,ORFloat activity))block
 {
@@ -583,20 +585,22 @@
 
 -(void)initActivities
 {
+   //id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;
+   id<CPIntVarArray> bvars = [self allIntVars];
    const ORInt nbInRound = 10;
-   const ORInt probeDepth = (ORInt) [_vars count];
+   const ORInt probeDepth = (ORInt) [bvars count];
    float mxp = 0;
-   for(ORInt i = [_vars low];i <= [_vars up];i++) {
-      if ([_vars[i] bound]) continue;
-      mxp += log([(id)_vars[i] domsize]);
+   for(ORInt i = [bvars low];i <= [bvars up];i++) {
+      if ([bvars[i] bound]) continue;
+      mxp += log([(id)bvars[i] domsize]);
    }
    const ORInt maxProbes = (int)10 * mxp;
    NSLog(@"#vars:  %d --> maximum # probes: %d  (MXP=%f)",probeDepth,maxProbes,mxp);
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
-   _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:vars];
+   _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:bvars];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
    NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
@@ -607,14 +611,14 @@
       for(ORInt c=0;c <= nbInRound;c++) {
          [_solver clearStatus];
          cntProbes++;
-         ABSProbe* probe = [[ABSProbe alloc] initABSProbe:vars];
+         ABSProbe* probe = [[ABSProbe alloc] initABSProbe:bvars];
          ORInt depth = 0;
          BOOL allBound = NO;
          while (depth <= probeDepth && !allBound) {
             [tracer pushNode];
             nbVS = 0;
-            [[vars range] enumerateWithBlock:^(ORInt i) {
-               if (![vars[i] bound])
+            [[bvars range] enumerateWithBlock:^(ORInt i) {
+               if (![bvars[i] bound])
                   vs[nbVS++] = i;
             }];
 
@@ -632,7 +636,7 @@
             //NSLog(@"chose %i from VS = %@",i, buf);
 
             if (nbVS) { // we found someone
-               id<CPIntVar> xi = (id<CPIntVar>)[vars[i] dereference];
+               id<CPIntVar> xi = (id<CPIntVar>)[bvars[i] dereference];
                ORInt v = [self chooseValue:xi];
                ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
                [ORConcurrency pumpEvents];

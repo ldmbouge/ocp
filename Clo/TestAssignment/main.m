@@ -118,7 +118,7 @@ int main (int argc, const char * argv[])
         ];
     }
     ];
-   id<ORSolution> solution = [[mdl solutions] best];
+   id<ORSolution> solution = [[cp solutionPool] best];
    ORInt start = (int) [distr next];
    for(ORInt i = 0; i < 10; i++) {
       printf("%d->",start);

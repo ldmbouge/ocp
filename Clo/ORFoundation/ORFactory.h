@@ -13,7 +13,7 @@
 #import "ORFoundation/ORData.h"
 #import "ORFoundation/ORArray.h"
 #import "ORFoundation/ORSet.h"
-#import "ORModelI.h"
+#import "ORConstraintI.h"
 #import "ORTrail.h"
 
 @protocol ORSearchEngine;
@@ -74,6 +74,9 @@
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a;
 +(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b;
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x shift: (ORInt) b annotation:(ORAnnotation)c;
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a annotation:(ORAnnotation)c;
++(id<ORIntVar>) intVar: (id<ORTracker>) tracker var:(id<ORIntVar>) x scale: (ORInt) a shift:(ORInt) b annotation:(ORAnnotation)c;
 +(id<ORIntVar>) boolVar: (id<ORTracker>) solver;
 +(id<ORBitVar>) bitVar:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORUInt)bLen;
 +(id<ORFloatVar>) floatVar: (id<ORTracker>) tracker low:(ORFloat) low up: (ORFloat) up;
@@ -216,7 +219,7 @@
 +(id<ORObjectiveValue>) objectiveValueInt: (ORInt) v minimize: (ORBool) b;
 @end
 
-
+#define INTEGER(track,v)      [ORFactory integer:track value:(v)]
 #define RANGE(track,a,b)      [ORFactory intRange: track low: a up: b]
 #define Sum(track,P,R,E)      [ORFactory sum:  track over:(R) suchThat:nil of:^id<ORExpr>(ORInt P) { return (id<ORExpr>)(E);}]
 #define Sum2(track,I,R1,J,R2,E)      [ORFactory sum: track over:(R1) over:(R2) suchThat:nil of:^id<ORExpr>(ORInt I, ORInt J) { return (id<ORExpr>)(E);}]

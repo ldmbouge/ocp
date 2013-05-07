@@ -27,7 +27,7 @@
    self = [super init];
    _trail = tr;
    _bitLength = len;
-   _freebits = makeTRInt(tr, len);
+   _freebits = makeTRUInt(tr, len);
    _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
    _low = malloc(sizeof(TRUInt)*_wordLength);
    _up = malloc(sizeof(TRUInt)*_wordLength);
@@ -68,7 +68,7 @@
     }
    
    //Shouldn't
-    _freebits = makeTRInt(tr, freeBits);
+    _freebits = makeTRUInt(tr, freeBits);
     return self;
 }
 
@@ -109,12 +109,16 @@
    }
    return string;
 }
--(int) domsize
+-(ORInt) domsize
 {
-    return pow(2.0, _freebits._val);
+   [self updateFreeBitCount];
+   return _freebits._val;
+   //return pow(2.0, _freebits._val);
+   //return 1 << _freebits._val;
 }
 -(ORBool) bound
 {
+   [self updateFreeBitCount];
     return _freebits._val==0;
 }
 
@@ -228,6 +232,33 @@
    }
    return -1;
 }
+
+-(unsigned int) randomFreeBit
+{
+   [self updateFreeBitCount];
+   int r = arc4random() % _freebits._val;
+   unsigned int foundFreeBits =0;
+   unsigned int boundBits;
+   unsigned int bitMask;
+   
+   for(int i=_wordLength; i>=0;i--)
+   {
+      boundBits = (_low[i]._val ^ _up[i]._val);
+      bitMask = 1;
+      for(int j=31;j>=0;j--)
+      {
+         if (boundBits & bitMask)
+         {
+            foundFreeBits++;
+            if (foundFreeBits >= r)
+               return (i*32+(31-j));
+         }
+         bitMask <<= 1;
+      }
+   }
+   return -1;
+}
+
 -(void) updateFreeBitCount
 {
    unsigned int freeBits = 0;
@@ -237,7 +268,7 @@
    }
 //   NSLog(@"Bit pattern:%@",[self description]);
 //   NSLog(@"%d free bits\n", freeBits);
-   assignTRInt(&(_freebits), freeBits, _trail);
+   assignTRUInt(&(_freebits), freeBits, _trail);
 }
 -(ORBool) member:(unsigned int*) val
 {
@@ -421,13 +452,13 @@
             curMin = curMin | (0x1 << msbIndex);
             assignTRUInt(_low+0,curMin>>BITSPERWORD,_trail);
             assignTRUInt(_low+1,curMin & CP_BITMASK,_trail);
-            assignTRInt(&_freebits,_freebits._val - 1,_trail);
+            assignTRUInt(&_freebits,_freebits._val - 1,_trail);
             [x bitFixedEvt:oldDS sender:self];
          } else if (curMin + (0x1 << msbIndex) > curMax) {
             curMax = curMax & ~(0x1 << msbIndex);
             assignTRUInt(_up+0,curMax>>BITSPERWORD,_trail);
             assignTRUInt(_up+1,curMax & CP_BITMASK,_trail);
-            assignTRInt(&_freebits,_freebits._val - 1,_trail);
+            assignTRUInt(&_freebits,_freebits._val - 1,_trail);
             [x bitFixedEvt:oldDS sender:self];
          } else break;
       }
@@ -589,7 +620,8 @@
     assignTRUInt(&_max[0], val>>32, _trail);
     assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
     assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
-    assignTRInt(&_freebits, 0, _trail);
+    assignTRUInt(&_freebits, 0, _trail);
+   [self updateFreeBitCount];
     [x bindEvt];
     return ORSuspend;   
 }
@@ -610,8 +642,9 @@
    assignTRUInt(&_max[0], pat[0], _trail);
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
-   assignTRInt(&_freebits, 0, _trail);
+   assignTRUInt(&_freebits, 0, _trail);
    [x bindEvt];
+   [self updateFreeBitCount];
    return ORSuspend;   
 }
 

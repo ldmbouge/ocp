@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPWDeg.h"
 #import "CPEngineI.h"
-#import "ORFoundation/ORModel.h"
 
 @implementation CPWDeg
 

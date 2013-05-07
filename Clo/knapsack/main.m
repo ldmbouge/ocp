@@ -72,10 +72,10 @@ int main(int argc, const char * argv[])
          }
          
          id<CPProgram> cp  = [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
          
          [cp solve: ^{
-            [cp labelHeuristic:h];
+            [cp labelHeuristic:h restricted:x];
             NSLog(@"Solution: %@",x);
             NSLog(@"Solver: %@",cp);
             ORInt tot = 0;

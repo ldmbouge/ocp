@@ -23,7 +23,7 @@ enum Heuristic {
 };
 
 struct ORResult {
-   BOOL  found;
+   ORInt found;
    ORInt nbFailures;
    ORInt nbChoices;
    ORInt nbPropagations;
@@ -38,6 +38,7 @@ struct ORResult {
 @property (nonatomic,readonly) BOOL    randomized;
 @property (nonatomic,readonly) enum Heuristic heuristic;
 @property (nonatomic,readonly) ORInt    nbThreads;
+@property (nonatomic,readonly) ORInt    nArg;
 +(id)newWith:(int)argc argv:(const char**)argv;
 -(id)init:(int)argc argv:(const char**)argv;
 -(NSString*)heuristicName;
