@@ -1190,6 +1190,20 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
 
+-(ORInt) maxBound:(id<ORIdArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   ORInt M = -MAXINT;
+   for(ORInt i = low; i <= up; i++) {
+      if ([self bound:x[i]]) {
+         ORInt v = [self intValue:x[i]];
+         if (v > M)
+            M = v;
+      }
+   }
+   return M;
+}
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -1393,29 +1407,29 @@
    }
 }
 
--(void) label: (id<CPIntVar>) var with: (ORInt) val
+-(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
+   return [self labelImpl: _gamma[var.getId] with: val];
 }
 -(void) diff: (id<CPIntVar>) var with: (ORInt) val
 {
-   [self diffImpl: (id<CPIntVar>) [var dereference] with: val];
+   [self diffImpl: _gamma[var.getId] with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   [self lthenImpl: (id<CPIntVar>) [var dereference] with: val];
+   [self lthenImpl: _gamma[var.getId] with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   [self gthenImpl: (id<CPIntVar>) [var dereference] with: val];
+   [self gthenImpl: _gamma[var.getId] with: val];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
+   [self restrictImpl: _gamma[var.getId] to: S];
 }
 -(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
-   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:i with: val];
+   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
 
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
@@ -1975,25 +1989,6 @@
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
-}
-@end
-
-@implementation CPUtilities
-
-+(ORInt) maxBound: (id<ORIdArray>) x
-{
-   ORInt low = [x low];
-   ORInt up = [x up];
-   ORInt M = -MAXINT;
-   for(ORInt i = low; i <= up; i++) {
-      id<CPIntVar> xi = [x[i] dereference];
-      if ([xi bound]) {
-         ORInt v = [xi value];
-         if (v > M)
-            M = v;
-      }
-   }
-   return M;
 }
 @end
 

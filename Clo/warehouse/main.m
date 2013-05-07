@@ -61,9 +61,9 @@ int main(int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve: ^{
          NSLog(@"Start...");
-         [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cost[i] domsize];}];
-         [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [supp[i] domsize];}];
-         [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [open[i] domsize];}];
+         [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cp domsize:cost[i]];}];
+         [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [cp domsize:supp[i]];}];
+         [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [cp domsize:open[i]];}];
          [nbSolutions incr];
          NSLog(@"Solution: %@  -- cost: %@",open,obj);
       }];
