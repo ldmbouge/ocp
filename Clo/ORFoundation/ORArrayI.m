@@ -550,7 +550,7 @@
    _flat = malloc(sizeof(id)*_nb);
    return self;
 }
--(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) matrix
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) matrix
 {
    self = [super init];
    _tracker = tracker;
@@ -568,8 +568,8 @@
    }
    _nb = matrix->_nb;
    _flat = malloc(sizeof(id) * _nb);
-   for (ORInt i=0 ; i < _nb; i++)
-      _flat[i] = [matrix->_flat[i] dereference];
+//   for (ORInt i=0 ; i < _nb; i++)
+//      _flat[i] = [matrix->_flat[i] dereference];
    return self;
 }
 
