@@ -13,7 +13,7 @@
 
 @interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI:(ORULong)nb;
+-(ORModelI*)              initORModelI:(ORUInt)nb;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
@@ -31,6 +31,7 @@
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addObject:(id) object;
 -(id) addImmutable:(id) object;
+-(ORUInt)nbObjects;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;

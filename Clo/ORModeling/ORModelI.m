@@ -42,10 +42,15 @@
    _nbObjects = 0;
    return self;
 }
--(ORModelI*)initORModelI:(ORULong)nb
+-(ORModelI*)initORModelI:(ORUInt)nb
 {
    self = [self initORModelI];
+   _nbObjects = nb;
    return self;
+}
+-(ORUInt)nbObjects
+{
+   return _nbObjects;
 }
 -(id<ORTracker>)tracker
 {
@@ -292,7 +297,7 @@
 }
 -(id<ORModel>)flatten
 {
-   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
    [flat apply: self];

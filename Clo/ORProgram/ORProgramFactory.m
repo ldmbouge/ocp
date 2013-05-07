@@ -67,8 +67,8 @@
    id<ORModel> fm = [model flatten];
    //NSLog(@"FC: %@",[fm constraints]);
    
-   ORInt nbEntries = (ORInt) ([[fm mutables] count] + [[fm immutables] count]);
-   NSLog(@"nbEntries: %d",nbEntries);
+   ORUInt nbEntries =  [fm nbObjects];
+   NSLog(@"nbEntries: %u",nbEntries);
    
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)

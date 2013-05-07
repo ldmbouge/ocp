@@ -73,6 +73,7 @@
    }
    if (found) {
       _terms[mid]._coef += c;
+      assert(_terms[mid]._coef != 0);
       if (_terms[mid]._coef == 0) {
          for(ORInt k=mid+1;k<_nb;k++)
             _terms[k-1] = _terms[k];

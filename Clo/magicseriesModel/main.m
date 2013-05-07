@@ -37,7 +37,7 @@ int main (int argc, const char * argv[])
          [cp  labelArray: x];
          printf("Succeeds \n");
          for(ORInt i = 0; i < n; i++)
-            printf("%d ",[x[i] value]);
+            printf("%d ",[cp intValue:x[i]]);
          printf("\n");
       }
        ];

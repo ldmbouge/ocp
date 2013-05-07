@@ -20,7 +20,11 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
-   return [[[ORModelI alloc]  initORModelI] autorelease];
+   return [[[ORModelI alloc] initORModelI:0] autorelease];
+}
++(id<ORModel>) createModel:(ORUInt)nbo
+{
+   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
 }
 +(id<ORModel>) cloneModel: (id<ORModel>)m {
     ORCopy* copier = [[ORCopy alloc] initORCopy: nil];
