@@ -33,7 +33,6 @@ int main(int argc, const char * argv[])
          ORInt n = [args size];         
          id<ORModel> mdl = [ORFactory createModel];
          id<ORIntRange> R = RANGE(mdl,1,n);
-         id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
          id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i annotation:Default]);
          id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i annotation:Default]);
@@ -42,6 +41,7 @@ int main(int argc, const char * argv[])
          [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
          
          id<CPProgram> cp = [args makeProgram:mdl];
+         id<ORInteger> nbSolutions = [ORFactory integer: cp value: 0];
          [cp solveAll:
           ^() {
              [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
