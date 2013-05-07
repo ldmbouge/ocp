@@ -1382,7 +1382,7 @@
 -(void) label: (id<ORIntVar>) mx
 {
    // PVH to change
-   id<CPIntVar> x = _gamma[[mx getId]-1];
+   id<CPIntVar> x = _gamma[[mx getId]];
    while (![x bound]) {
       ORInt m = [x min];
       [_search try:
@@ -1575,27 +1575,27 @@
 }
 -(ORBool) bound: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]-1];
+   x = _gamma[[x getId]];
    return [x bound];
 }
 -(ORInt)  min: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]-1];
+   x = _gamma[[x getId]];
    return [x min];
 }
 -(ORInt)  max: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]-1];
+   x = _gamma[[x getId]];
    return [x max];
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]-1];
+   x = _gamma[[x getId]];
    return [x domsize];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]-1];
+   x = _gamma[[x getId]];
    return [x member: v];
 }
 @end

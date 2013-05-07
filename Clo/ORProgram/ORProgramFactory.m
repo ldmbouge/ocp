@@ -66,15 +66,19 @@
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
    //NSLog(@"FC: %@",[fm constraints]);
-   NSLog(@"ORIG  %ld %ld %ld",[[fm variables] count],[[fm objects] count],[[fm constraints] count]);
    
-   ORInt nbEntries = (ORInt) ([[fm variables] count] + [[fm objects] count] + [[fm constraints] count]);
+   ORInt nbEntries = (ORInt) ([[fm mutables] count] + [[fm immutables] count]);
+   NSLog(@"nbEntries: %d",nbEntries);
+   
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
    
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   
+   for(id<ORObject> c in [fm mutables])
+      [c visit: concretizer];
    
    // Here I do not need to visit everyone
    [fm visit: concretizer];

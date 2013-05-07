@@ -100,12 +100,13 @@
 
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
-   if ([v dereference] == NULL) {
+   if (_gamma[v.getId] == NULL) {
       id<ORIntVar> mBase = [v base];
       [mBase visit: self];
       ORInt a = [v scale];
       ORInt b = [v shift];
-      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>)[mBase dereference] scale:a shift:b];
+      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>) _gamma[mBase.getId] scale:a shift:b];
+      _gamma[v.getId] = cv;
       [v setImpl: cv];
    }
 }
@@ -130,7 +131,7 @@
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
          [v[i] visit: self];
-         dx[i] = _gamma[[v[i] getId] - 1];
+         dx[i] = _gamma[[v[i] getId]];
 //         dx[i] = [v[i] dereference];
       }
       [v setImpl: dx];
