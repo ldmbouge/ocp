@@ -165,7 +165,10 @@
    else {
       _result = NULL;
       [obj visit:self];
-      [_mapping setObject:_result forKey:obj];
+      if (_result == NULL)
+         [_mapping setObject:[NSNull null] forKey:obj];
+      else
+         [_mapping setObject:_result forKey:obj];
       return _result;
    }
 }
@@ -309,7 +312,7 @@
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   _result = [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
+   [ORFlatten flattenExpression:[cstr expr] into:_into annotation:[cstr annotation]];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

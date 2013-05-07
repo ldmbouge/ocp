@@ -60,6 +60,21 @@
    _tracker = tracker;
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]])
+      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
+   else return NO;
+}
+- (NSUInteger)hash
+{
+   return _value;
+}
+
 -(ORFloat) floatValue
 {
    return _value;

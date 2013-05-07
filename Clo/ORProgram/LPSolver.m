@@ -444,9 +444,9 @@
 {
    [_lpsolver trackVariable:obj];
 }
--(void) trackImmutable:(id)obj
+-(id) trackImmutable:(id)obj
 {
-   [_lpsolver trackImmutable:obj];
+   return [_lpsolver trackImmutable:obj];
 }
 -(id<ORLPSolutionPool>) solutionPool
 {

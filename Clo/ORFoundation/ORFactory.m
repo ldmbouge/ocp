@@ -70,14 +70,12 @@
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
-   [tracker trackImmutable: o];
-   return o;
+   return [tracker trackImmutable: o];
 }
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value
 {
    ORFloatI* o = [[ORFloatI alloc] initORFloatI: tracker value: value];
-   [tracker trackImmutable: o];
-   return o;
+   return [tracker trackImmutable: o];
 }
 
 +(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) engine value: (ORInt) value
@@ -95,8 +93,7 @@
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up
 {
    ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
-   [tracker trackImmutable: o];
-   return o;
+   return [tracker trackImmutable: o];
 }
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
@@ -156,8 +153,7 @@
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
-   [tracker trackImmutable:o];
-   return o;
+   return [tracker trackImmutable:o];
 }
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {

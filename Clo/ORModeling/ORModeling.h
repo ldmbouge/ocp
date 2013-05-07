@@ -38,6 +38,7 @@
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
+-(ORUInt) nbObjects;
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) mutables;
@@ -48,6 +49,8 @@
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
 -(id<ORModel>) rootModel;
+-(id)inCache:(id)obj;
+-(id) addToCache:(id)obj;
 @end
 
 @protocol ORAddToModel <ORTracker>
@@ -66,6 +69,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORModel>) createModel:(ORUInt)nbo;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;

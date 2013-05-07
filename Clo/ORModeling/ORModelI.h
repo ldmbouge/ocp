@@ -13,7 +13,7 @@
 
 @interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI:(ORULong)nb;
+-(ORModelI*)              initORModelI:(ORUInt)nb;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
@@ -31,6 +31,7 @@
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addObject:(id) object;
 -(id) addImmutable:(id) object;
+-(ORUInt)nbObjects;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
@@ -38,6 +39,8 @@
 -(id<ORModel>)source;
 -(id<ORModel>)flatten;
 -(id<ORModel>)rootModel;
+-(id)inCache:(id)obj;
+-(id)addToCache:(id)obj;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
@@ -54,7 +57,7 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
--(void) trackImmutable:(id)obj;
+-(id) trackImmutable:(id)obj;
 -(void) trackVariable: (id) obj;
 @end
 

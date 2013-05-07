@@ -27,7 +27,8 @@
    NSMutableArray*          _iStore;    // immutable store. Should _not_ be concretized.
    id<ORObjectiveFunction>  _objective;
    ORUInt                   _nbObjects; // number of objects registered with this model.
-   id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.   
+   id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
+   NSMutableDictionary*      _cache;
 }
 -(ORModelI*) initORModelI
 {
@@ -36,14 +37,20 @@
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _iStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _objective = nil;
    _nbObjects = 0;
    return self;
 }
--(ORModelI*)initORModelI:(ORULong)nb
+-(ORModelI*)initORModelI:(ORUInt)nb
 {
    self = [self initORModelI];
+   _nbObjects = nb;
    return self;
+}
+-(ORUInt)nbObjects
+{
+   return _nbObjects;
 }
 -(id<ORTracker>)tracker
 {
@@ -57,7 +64,17 @@
    [_mStore release];
    [_cStore release];
    [_iStore release];
+   [_cache release];
    [super dealloc];
+}
+-(id)inCache:(id)obj
+{
+   return [_cache objectForKey:obj];
+}
+-(id) addToCache:(id)obj
+{
+   [_cache setObject:obj forKey:obj];
+   return obj;
 }
 -(void) setSource:(id<ORModel>)src
 {
@@ -134,10 +151,17 @@
 {
    return [self add: cstr];
 }
--(void) trackImmutable: (id) obj
+-(id) trackImmutable: (id) obj
 {
-   [obj setId:_nbObjects++];
-   [_iStore addObject:obj];
+   id co = [self inCache:obj];
+   if (!co) {
+      [obj setId:_nbObjects++];
+      if ([obj conformsToProtocol:@protocol(NSCopying)]) {
+         co = [self addToCache:obj];
+      }
+      [_iStore addObject:obj];
+      return obj;
+   } else return co;
 }
 -(void) trackObject: (id) obj
 {
@@ -273,7 +297,7 @@
 }
 -(id<ORModel>)flatten
 {
-   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
    [flat apply: self];
@@ -322,7 +346,8 @@
 }
 -(id) addObject: (id) object
 {
-   [_target addObject: object];
+   if (object)
+      [_target addObject: object];
    return object;
 }
 -(id) addImmutable:(id)object
@@ -333,7 +358,8 @@
 
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
-   [_target add: cstr];
+   if (cstr && (id)cstr != [NSNull null])
+      [_target add: cstr];
    return cstr;
 }
 -(id<ORModel>) model
@@ -373,9 +399,9 @@
 {
    [_target trackObject:obj];
 }
--(void) trackImmutable:(id)obj
+-(id) trackImmutable:(id)obj
 {
-   [_target trackImmutable:obj];
+   return [_target trackImmutable:obj];
 }
 -(void) trackVariable: (id) obj
 {
@@ -456,9 +482,9 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    [_target trackVariable:obj];
 }
--(void) trackImmutable:(id)obj
+-(id) trackImmutable:(id)obj
 {
-   [_target trackImmutable:obj];
+   return [_target trackImmutable:obj];
 }
 @end
 
