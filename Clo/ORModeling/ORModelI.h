@@ -16,39 +16,35 @@
 -(ORModelI*)              initORModelI:(ORULong)nb;
 -(void)                   dealloc;
 -(NSString*)              description;
--(void)                   setId: (ORUInt) name;
--(void)                  captureVariable:(id<ORVar>)x;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
-                           onObjects:(void(^)(id<ORObject>))doObjs
+                          onMutables:(void(^)(id<ORObject>))doMutables
+                        onImmutables:(void(^)(id<ORObject>))doImmutables
                        onConstraints:(void(^)(id<ORObject>))doCons
                          onObjective:(void(^)(id<ORObject>))doObjective;
 -(id<ORObjectiveFunction>)objective;
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addObject:(id) object;
+-(id) addImmutable:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
--(void)encodeWithCoder:(NSCoder *)aCoder;
--(id)initWithCoder:(NSCoder *)aDecoder;
 -(void) setSource:(id<ORModel>)src;
--(id<ORModel>)original;
 -(id<ORModel>)source;
 -(id<ORModel>)flatten;
 -(id<ORModel>)rootModel;
--(void)map:(id)key toObject:(id)object;
--(id)lookup:(id)key;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
 -(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
 -(id) addObject:(id)object;
+-(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
@@ -58,6 +54,7 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
 -(void) trackObject: (id) obj;
+-(void) trackImmutable:(id)obj;
 -(void) trackVariable: (id) obj;
 @end
 

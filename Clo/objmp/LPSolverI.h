@@ -309,8 +309,6 @@
 
 -(void) trackVariable: (id) var;
 -(void) trackObject: (id) obj;
--(void) trackConstraint: (id) obj;
-
 @end
 
 @interface LPFactory : NSObject

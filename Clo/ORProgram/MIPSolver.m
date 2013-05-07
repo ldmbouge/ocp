@@ -839,6 +839,10 @@
 {
    [_MIPsolver trackObject:obj];
 }
+-(void) trackImmutable:(id)obj
+{
+   [_MIPsolver trackImmutable:obj];
+}
 -(void) trackVariable: (id) obj
 {
    [_MIPsolver trackVariable:obj];

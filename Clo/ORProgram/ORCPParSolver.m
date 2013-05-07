@@ -179,13 +179,13 @@
 {
    return [[self dereference] trackObject: object];
 }
+-(void) trackImmutable: (id) object
+{
+   return [[self dereference] trackImmutable: object];
+}
 -(void) trackVariable: (id) object
 {
    return [[self dereference] trackVariable: object];
-}
--(void) trackConstraint:(id)object
-{
-   return [[self dereference] trackConstraint:object];
 }
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {

@@ -40,7 +40,7 @@
 -(id<ORModel>) copyModel:(id<ORModel>)model
 {
    _origModel = [model retain];
-   ORULong nbThings = [[_origModel variables] count] + [[_origModel objects] count] + [[_origModel constraints] count];
+   ORULong nbThings = [[_origModel variables] count] + [[_origModel mutables] count] + [[_origModel constraints] count];
    _copyModel = [[ORModelI alloc] initORModelI:nbThings];
    
    _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
@@ -49,7 +49,9 @@
    
    [_origModel applyOnVar:^(id<ORVar> x) {
       [self copyObject: x];
-   } onObjects:^(id<ORObject> x) {
+   } onMutables:^(id<ORObject> x) {
+      [self copyObject: x];
+   } onImmutables:^(id<ORObject> x) {
       [self copyObject: x];
    } onConstraints:^(id<ORConstraint> c) {
       [self copyObject: c];
@@ -69,7 +71,6 @@
       [o visit: self];
       c = _result;
       [_mapping setObject: c forKey: o];
-      [_copyModel map:o toObject:c];
    }
    return c;
 }

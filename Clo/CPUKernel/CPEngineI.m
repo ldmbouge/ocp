@@ -218,10 +218,15 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return [_engine constraints];
 }
--(NSArray*) objects
+-(NSArray*) mutables
 {
    return [_engine objects];
 }
+-(NSArray*) immutables
+{
+   return nil; // [ldm] tofix
+}
+
 -(NSString*)description
 {
    if (_printing) {
@@ -344,6 +349,17 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    else
       [_trail trailRelease:obj];
 }
+-(void) trackImmutable: (id) obj
+{
+   // [ldm] tofix
+   if (_state != CPClosed) {
+      [_oStore addObject:obj];
+      [obj release];
+   }
+   else
+      [_trail trailRelease:obj];
+}
+
 -(void) trackConstraint:(id)obj
 {
    if (_state != CPClosed) {
