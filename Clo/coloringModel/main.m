@@ -79,12 +79,12 @@ int main(int argc, const char * argv[])
          [cp solve: ^{
             //         [cp labelHeuristic:h];
             [cp forall: V
-              suchThat:^bool(ORInt i) { return ![c[i] bound];}
-             orderedBy: ^ORInt(ORInt i) { return [c[i] domsize]; }
+              suchThat:^bool(ORInt i) { return ![cp bound: c[i]];}
+             orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
                    and: ^ORInt(ORInt i) { return - [deg at:i];}
                     do: ^(ORInt i) {
                        ORInt maxc = max(0,[CPUtilities maxBound: c]);
-                       [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [c[i] member: v];} in:^(ORInt v) {
+                       [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
                           [cp label: c[i] with: v];
                        }
                         onFailure:^(ORInt v) {
@@ -93,7 +93,7 @@ int main(int argc, const char * argv[])
                         ];
                     }
              ];
-            [cp label:m with:[m min]];
+            [cp label:m with:[cp min: m]];
             NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
          }];
          id<ORSolutionPool> pool = [cp solutionPool];
