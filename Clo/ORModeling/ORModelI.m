@@ -353,7 +353,7 @@
 
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
-   if (cstr)
+   if (cstr && (id)cstr != [NSNull null])
       [_target add: cstr];
    return cstr;
 }
