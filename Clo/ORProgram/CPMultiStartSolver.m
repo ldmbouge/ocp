@@ -72,7 +72,7 @@
    else
       return 0;
 }
--(CPSolver*)dereference
+-(CPSolver*) dereference
 {
    return _solver[[NSThread threadID]];
 }

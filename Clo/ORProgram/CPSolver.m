@@ -1198,7 +1198,7 @@
 -(void) labelUpFromLSB:(id<CPBitVar>) x
 {
    int i;
-   CPBitVarI* bv = (CPBitVarI*) [x dereference];
+   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
    while ((i=[bv lsFreeBit])>=0) {
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
       [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -1556,47 +1556,36 @@
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {
-   // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
-   x = [x dereference];
-   return [x intValue];
+   return [_gamma[x.getId] intValue];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
-   // pvh: This needs to be fixed. I am using what works now until ldm provides the mapping
-   x = [x dereference];
-   return [x intValue];
+   return [_gamma[x.getId] intValue];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
-//   id<CPFloatVar> y = [[_model rootModel] lookup: x];
-//   return y.value;
-   @throw [[ORExecutionError alloc] initORExecutionError: "No CP Float Variables yet"];
-   return 0.0;
+   @throw [[ORExecutionError alloc] initORExecutionError: "no method floatValue available yet"];
+   // return [_gamma[x.getId] floatValue];
 }
 -(ORBool) bound: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]];
-   return [x bound];
+   return [_gamma[x.getId] bound];
 }
 -(ORInt)  min: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]];
-   return [x min];
+   return [((id<CPIntVar>) _gamma[x.getId]) min];
 }
 -(ORInt)  max: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]];
-   return [x max];
+   return [((id<CPIntVar>) _gamma[x.getId]) max];
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]];
-   return [x domsize];
+  return [((id<CPIntVar>) _gamma[x.getId]) domsize];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
-   x = _gamma[[x getId]];
-   return [x member: v];
+   return [((id<CPIntVar>) _gamma[x.getId]) member: v];
 }
 @end
 

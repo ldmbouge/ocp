@@ -22,23 +22,23 @@
 
 @protocol ORVar <ORObject,ORExpr>
 -(ORInt) getId;
--(ORBool) bound;
--(NSSet*) constraints;
+//-(ORBool) bound;
+//-(NSSet*) constraints;
 @end
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
--(ORInt) value;
--(ORInt) intValue;
--(ORFloat) floatValue;
 -(ORInt) low;
 -(ORInt) up;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds) bounds;
--(ORBool) member: (ORInt) v;
--(ORBool) isBool;
+//(ORInt) value;
+//-(ORInt) intValue;
+//-(ORFloat) floatValue;
+//-(ORInt) min;
+//-(ORInt) max;
+//-(ORInt) domsize;
+//-(ORBounds) bounds;
+//-(ORBool) member: (ORInt) v;
+//-(ORBool) isBool;
 -(ORInt) scale;
 -(ORInt) shift;
 -(ORInt) literal;
@@ -46,14 +46,14 @@
 @end
 
 @protocol ORBitVar <ORVar>
--(ORBool) bound;
--(uint64)min;
--(uint64)max;
--(ORUInt*)low;
--(ORUInt*)up;
--(ORUInt)bitLength;
--(ORInt) domsize;
--(ORBool) member: (unsigned int*) v;
+//-(ORBool) bound;
+//-(uint64)min;
+//-(uint64)max;
+//-(ORUInt*)low;
+//-(ORUInt*)up;
+//-(ORUInt)bitLength;
+//-(ORInt) domsize;
+//-(ORBool) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end
 
@@ -61,10 +61,10 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) min;
--(ORFloat) max;
+//-(ORFloat) value;
+//-(ORFloat) floatValue;
+//-(ORFloat) min;
+//-(ORFloat) max;
 @end
 
 @protocol ORVarArray <ORIdArray>

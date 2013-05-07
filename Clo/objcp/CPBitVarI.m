@@ -219,6 +219,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(id<CPBitVar>) dereference
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
    return self;
 }
 

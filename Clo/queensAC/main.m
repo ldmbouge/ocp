@@ -40,8 +40,6 @@ int main(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       ORLong startTime = [ORRuntimeMonitor wctime];
       id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      for(ORInt i = 1; i <= n; i++)
-         NSLog(@" %d -> %d",i,[x[i] getId]);
       //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:
        ^() {
@@ -50,7 +48,7 @@ int main(int argc, const char * argv[])
            @synchronized(nbSolutions) {
              [nbSolutions incr];
           }
-          NSLog(@"Solutions: %@",x);
+//          NSLog(@"Solutions: %@",x);
        }
        ];
       printf("GOT %d solutions\n",[nbSolutions value]);
@@ -84,7 +82,7 @@ int main2(int argc, const char * argv[])
       [cp solveAll:
        ^() {
           [cp switchOnDepth:
-            ^() { [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}]; }
+           ^() { [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}]; }
                          to:
             ^() {
                   //NSLog(@"I switched %@\n",x);
@@ -92,10 +90,10 @@ int main2(int argc, const char * argv[])
                   for(ORInt i = 1; i <= 8; i++)
                      printf("%d-%d ",x[i].min,x[i].max);
                printf("\n");
-                  [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}]; } limit: 4
+               [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}]; } limit: 4
            ];
           for(ORInt i = 1; i <= 8; i++)
-             printf("%d ",x[i].value);
+             printf("%d ",[cp intValue: x[i]]);
           printf("\n");
           [nbSolutions incr];
        }
