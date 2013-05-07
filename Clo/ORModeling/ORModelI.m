@@ -480,7 +480,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 
 -(void) addSolution:(id<ORSolution>)s
 {
- //   [_all addObject:s];
+//    [_all addObject:s];
     [_solutionAddedInformer notifyWithSolution: s];
 }
 

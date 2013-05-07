@@ -28,42 +28,41 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args measure:^struct ORResult() {
-         ORInt n = [args size];         
-         id<ORModel> mdl = [ORFactory createModel];
-         id<ORIntRange> R = RANGE(mdl,1,n);
-         id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
-         id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i annotation:Default]);
-         id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i annotation:Default]);
-         [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
-         [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
-         [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-         
-         id<CPProgram> cp = [args makeProgram:mdl];
-         id<ORInteger> nbSolutions = [ORFactory integer: cp value: 0];
-         [cp solveAll:
-          ^() {
-             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
-             @synchronized(nbSolutions) {
-                [nbSolutions incr];
-             }
+      ORInt n = 8;
+      id<ORModel> mdl = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(mdl,1,n);
+      id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
+      id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
+      id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
+      [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
+      [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
+      ORLong startTime = [ORRuntimeMonitor wctime];
+      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
+      [cp solveAll:
+       ^() {
+          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+           @synchronized(nbSolutions) {
+             [nbSolutions incr];
           }
-          ];
-         printf("GOT %d solutions\n",[nbSolutions value]);
-         NSLog(@"Solver status: %@\n",cp);
-         NSLog(@"Quitting");
-         struct ORResult res = REPORT([nbSolutions value], [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
-         
-         [cp release];
-         [ORFactory shutdown];
-         return res;
-      }];
+       }
+       ];
+      printf("GOT %d solutions\n",[nbSolutions value]);
+      ORLong endTime = [ORRuntimeMonitor wctime];
+      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
+      NSLog(@"Solver status: %@\n",cp);
+      NSLog(@"Quitting");
+      [cp release];
+      [ORFactory shutdown];
+
    }
    return 0;
 }
 
-int main0(int argc, const char * argv[])
+
+int main2(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -76,8 +75,9 @@ int main0(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-      
-      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      ORLong startTime = [ORRuntimeMonitor wctime];
+//      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
       [cp solveAll:
        ^() {
           [cp switchOnDepth:

@@ -27,7 +27,8 @@ int main (int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         int n = [args size];
+//         int n = [args size];
+         int n = 12;
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
          id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
          id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i annotation:Default]; }];
@@ -38,10 +39,11 @@ int main (int argc, const char * argv[])
          id<ORInteger> nbSol = [ORFactory integer:model value:0];
          
          NSLog(@"Model: %@",model);
-         //id<CPProgram> cp = [args makeProgram:model];
+         id<CPProgram> cp = [args makeProgram:model];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
-         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:4 with:[ORSemDFSController class]];
+
+//         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:1 with:[ORSemDFSController class]]
          
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          

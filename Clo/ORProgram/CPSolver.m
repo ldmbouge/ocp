@@ -722,7 +722,7 @@
 
 -(void) dealloc
 {
-   //NSLog(@"dealloc ORLPSolutionI");
+//   NSLog(@"dealloc ORCPSolutionI");
    [_varShots release];
    [_objValue release];
    [super dealloc];
@@ -1277,13 +1277,16 @@
                                      range: RANGE(self,[x low],[x up])
                                   suchThat: ^bool(ORInt i) { return ![[x at: i] bound]; }
                                  orderedBy: orderedBy];
+ 
    do {
+      [select retain];
       ORInt i = [select min];
       if (i == MAXINT) {
          return;
       }
       [self label: x[i]];
    } while (true);
+//   [select release];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
