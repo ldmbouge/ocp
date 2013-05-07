@@ -46,11 +46,12 @@
 @end
 
 @protocol ORBitVar <ORVar>
+-(ORUInt*)low;
+-(ORUInt*)up;
 //-(ORBool) bound;
 //-(uint64)min;
 //-(uint64)max;
-//-(ORUInt*)low;
-//-(ORUInt*)up;
+
 //-(ORUInt)bitLength;
 //-(ORInt) domsize;
 //-(ORBool) member: (unsigned int*) v;
