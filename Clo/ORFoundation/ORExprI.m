@@ -1203,15 +1203,19 @@
 -(ORInt) min
 {
    ORInt minOf = MAXINT;
-   for(ORInt k=[_array low];k<=[_array up];k++)
-      minOf = minOf < [_array[k] min] ? minOf : [_array[k] min];
+   for(ORInt k=[_array low];k<=[_array up];k++) {
+      id<ORIntRange> d = [_array[k] domain];
+      minOf = minOf < [d low] ? minOf : [d low];
+   }
    return minOf;
 }
 -(ORInt) max
 {
    ORInt maxOf = MININT;
-   for(ORInt k=[_array low];k<=[_array up];k++)
-      maxOf = maxOf > [_array[k] max] ? maxOf : [_array[k] max];
+   for(ORInt k=[_array low];k<=[_array up];k++) {
+      id<ORIntRange> d = [_array[k] domain];
+      maxOf = maxOf > [d up] ? maxOf : [d up];
+   }
    return maxOf;
 }
 -(NSString *)description

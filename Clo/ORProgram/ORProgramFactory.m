@@ -65,6 +65,7 @@
    NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
+   fm = [fm flatten];
    //NSLog(@"FC: %@",[fm constraints]);
    
    ORUInt nbEntries =  [fm nbObjects];

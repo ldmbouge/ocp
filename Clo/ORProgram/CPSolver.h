@@ -53,6 +53,7 @@
 -(void) doOnExit;
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
+-(ORInt) maxBound:(id<ORIdArray>) x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
 

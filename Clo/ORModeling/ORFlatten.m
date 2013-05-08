@@ -512,11 +512,15 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   _result = [_into minimize:[e expr]];
+   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
+   id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
+   _result = [_into minimizeVar: alpha];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   _result = [_into maximize:[e expr]];
+   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
+   id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
+   _result = [_into maximizeVar: alpha];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {

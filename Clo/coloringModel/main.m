@@ -83,7 +83,7 @@ int main(int argc, const char * argv[])
              orderedBy: ^ORInt(ORInt i) { return [cp domsize: c[i]]; }
                    and: ^ORInt(ORInt i) { return - [deg at:i];}
                     do: ^(ORInt i) {
-                       ORInt maxc = max(0,[CPUtilities maxBound: c]);
+                       ORInt maxc = max(0,[cp maxBound: c]);
                        [cp tryall:V suchThat:^bool(ORInt v) { return v <= maxc+1 && [cp member: v in: c[i]];} in:^(ORInt v) {
                           [cp label: c[i] with: v];
                        }
@@ -94,7 +94,7 @@ int main(int argc, const char * argv[])
                     }
              ];
             [cp label:m with:[cp min: m]];
-            NSLog(@"coloring with: %d colors %d",[m value],[NSThread threadID]);
+            NSLog(@"coloring with: %d colors %d",[cp intValue:m],[NSThread threadID]);
          }];
          id<ORSolutionPool> pool = [cp solutionPool];
          [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];         

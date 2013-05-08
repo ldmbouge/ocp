@@ -116,7 +116,7 @@
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
 -(ORBool) boolValue: (id<ORIntVar>) x;
-
+-(ORInt) maxBound: (id<ORIntVarArray>) x;
 @end
 
 // CPSolver with syntactic DFS Search
