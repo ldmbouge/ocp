@@ -14,13 +14,14 @@
 #import "ORExprI.h"
 #import "ORError.h"
 
-@interface ORIntegerI : ORExprI<NSCoding,NSCopying,ORInteger>
--(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
--(ORInt)  value;
+@interface ORIntegerI : ORExprI<NSCoding,ORInteger>
+-(ORIntegerI*) initORIntegerI: (id<ORTracker>) tracker value: (ORInt) value;
+-(ORInt)  initialValue;
 -(ORInt) setValue: (ORInt) value;
--(void) incr;
--(void) decr;
--(ORInt)   min;
+-(ORInt)  value: (id<ORGamma>) solver;
+-(ORInt)  setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt)  incr: (id<ORGamma>) solver;
+-(ORInt)  decr: (id<ORGamma>) solver;
 -(id<ORTracker>) tracker;
 @end
 

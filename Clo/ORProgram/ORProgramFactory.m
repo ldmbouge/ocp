@@ -81,7 +81,9 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
-   
+   for(ORInt i = 0; i < nbEntries; i++)
+      NSLog(@"gamma[%d] = %@",i,gamma[i]);
+
    [cpprogram setSource:model];
    [concretizer release];
    ORLong t1 = [ORRuntimeMonitor cputime];
@@ -168,28 +170,30 @@
 {
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
    [model setImpl:cpprogram];
-   id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
-   [flat apply: model];
-   [batch release];
-   for(id<ORObject> c in [flatModel mutables]) {
-      if ([c impl] == NULL) {
-         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
-         [c setImpl: ba];
-      }
-   }
-   for(id<ORObject> c in [flatModel constraints]) {
-      if ([c impl] == NULL) {
-         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
-         [c setImpl: ba];
-      }
-   }
+   id<ORModel> flatModel = [model flatten];
+//   id<ORModel> flatModel = [ORFactory createModel];
+//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
+//   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+//   [flat apply: model];
+//   [batch release];
+//   for(id<ORObject> c in [flatModel mutables]) {
+//      if ([c impl] == NULL) {
+//         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+//         [c setImpl: ba];
+//      }
+//   }
+//   for(id<ORObject> c in [flatModel constraints]) {
+//      if ([c impl] == NULL) {
+//         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+//         [c setImpl: ba];
+//      }
+//   }
    
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
       id<CPProgram> pi = [cpprogram dereference];
+      [ORFactory concretizeCP:flatModel program:pi];
       [pi onSolution:^{
          id<ORCPSolution> sol = [pi captureSolution];
          [[pi solutionPool] addSolution: sol];
@@ -197,7 +201,6 @@
             [global addSolution:sol];
          }
       }];
-      [ORFactory concretizeCP:flatModel program:pi];
    }
    return cpprogram;
 }

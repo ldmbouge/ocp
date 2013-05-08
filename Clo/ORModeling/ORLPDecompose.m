@@ -130,7 +130,7 @@
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   [_terms addIndependent:[e value]];
+   [_terms addIndependent:[e initialValue]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {

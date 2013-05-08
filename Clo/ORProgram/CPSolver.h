@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
 
 /***************************************************************************/
@@ -29,7 +30,7 @@
 
 // This factorizes all the common stuff
 
-@interface CPCoreSolver : NSObject<CPCommonProgram>
+@interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;

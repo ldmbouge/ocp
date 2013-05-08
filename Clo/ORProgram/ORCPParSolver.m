@@ -590,6 +590,10 @@
 {
    return (id<ORCPSolution>) [[self dereference] captureSolution];
 }
+-(id<ORObject>) concretize: (id<ORObject>) o
+{
+   return [[self dereference] concretize: o];
+}
 @end
 
 

@@ -910,12 +910,10 @@
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
-   
-   id*                   _gamma;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
-   self = [super init];
+   self = [super initORGamma];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
@@ -938,21 +936,12 @@
    [_sPool release];
    [_doOnSolArray release];
    [_doOnExitArray release];
-   free(_gamma);
    [super dealloc];
 }
 -(void) setSource:(id<ORModel>)src
 {
    [_model release];
    _model = [src retain];
-}
--(void) setGamma: (id*) gamma
-{
-   _gamma = gamma;
-}
--(id*) gamma
-{
-   return _gamma;
 }
 -(NSString*) description
 {
@@ -1563,9 +1552,9 @@
    [self addHeuristic:h];
    return h;
 }
--(ORInt) intValue: (id<ORIntVar>) x
+-(ORInt) intValue: (id) x
 {
-   return [_gamma[x.getId] intValue];
+   return [_gamma[[x getId]] intValue];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
@@ -1598,7 +1587,7 @@
 }
 -(void) incr: (id<ORInteger>) i
 {
-   
+   [((id<ORInteger>) _gamma[i.getId]) incr];
 }
 @end
 

@@ -451,7 +451,7 @@
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {
-   return [[self dereference] intValue: x];
+   return [(id<CPProgram>)[self dereference] intValue: x];
 }
 -(ORBool) bound: (id<ORIntVar>) x
 {
@@ -475,14 +475,19 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
-   return [[self dereference] floatValue: x];
+   return [((id<CPProgram>)[self dereference]) floatValue: x];
 }
 -(ORBool) boolValue: (id<ORIntVar>)x
 {
    return [[self dereference] boolValue: x];
 }
+
 -(id<ORCPSolution>) captureSolution
 {
    return (id<ORCPSolution>) [[self dereference] captureSolution];
+}
+-(id<ORObject>) concretize: (id<ORObject>) o
+{
+   return [[self dereference] concretize: o];
 }
 @end

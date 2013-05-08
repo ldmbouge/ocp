@@ -70,12 +70,14 @@
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
-   return [tracker trackImmutable: o];
+   [tracker trackObject: o];
+   return o;
 }
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value
 {
    ORFloatI* o = [[ORFloatI alloc] initORFloatI: tracker value: value];
-   return [tracker trackImmutable: o];
+   [tracker trackObject: o];
+   return o;
 }
 
 +(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) engine value: (ORInt) value

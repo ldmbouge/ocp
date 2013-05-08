@@ -47,6 +47,32 @@
 }
 @end;
 
+@implementation ORGamma
+-(ORGamma*) initORGamma
+{
+   self = [super init];
+   _gamma = NULL;
+   return self;
+}
+-(void) dealloc
+{
+   free(gamma);
+   [super dealloc];
+}
+-(id*) gamma
+{
+   return _gamma;
+}
+-(void) setGamma: (id*) gamma
+{
+   _gamma = gamma;
+}
+-(id<ORObject>) concretize: (id<ORObject>) o
+{
+   return _gamma[o.getId];
+}
+@end
+
 @implementation ORIntegerI
 {
 	ORInt           _value;
@@ -60,48 +86,57 @@
    _tracker = tracker;
    return self;
 }
--(id)copyWithZone:(NSZone *)zone
-{
-   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
-}
-- (BOOL)isEqual:(id)anObject
-{
-   if ([anObject isKindOfClass:[self class]])
-      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
-   else return NO;
-}
-- (NSUInteger)hash
+-(ORInt) initialValue
 {
    return _value;
 }
-
+-(ORInt) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
 -(ORFloat) floatValue
 {
    return _value;
 }
--(ORInt) value 
+-(ORInt) incr
 {
-   return _value;
+   return ++_value;
 }
--(ORInt) setValue: (ORInt) value
+-(ORInt) decr
+{
+   return --_value;
+}
+-(ORInt) setValue: (ORInt) value 
 {
    return _value = value;
 }
--(void) incr
-{
-   _value++;
-}
--(void) decr;
-{
-   _value--;
-}
--(ORInt) min
+-(ORFloat) floatValue: (id<ORGamma>) solver
 {
    return _value;
 }
--(ORInt) max
+-(ORInt) intValue: (id<ORGamma>) solver
 {
    return _value;
+}
+-(ORInt) value: (id<ORGamma>) solver
+{
+   return [(ORIntegerI*)[solver concretize: self] initialValue];
+}
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
+{
+   return [((ORIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORInt) incr: (id<ORGamma>) solver
+{
+   return [(ORIntegerI*)[solver concretize: self] incr];
+}
+-(ORInt) decr: (id<ORASolver>) solver
+{
+   return [(ORIntegerI*)[solver concretize: self] decr];
 }
 -(ORBool) isConstant
 {
@@ -115,7 +150,7 @@
 {
    return _tracker;
 }
--(NSString*)description
+-(NSString*) description
 {
    return [NSString stringWithFormat:@"%d",_value];
 }
