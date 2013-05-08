@@ -28,6 +28,7 @@
 
 @implementation CPParSolverI {
    id<CPSemanticProgram>* _workers;
+   
    PCObjectQueue*       _queue;
    NSCondition*    _terminated;
    ORInt               _nbDone;
@@ -191,9 +192,26 @@
 {
    [[self worker] addConstraintDuringSearch: c annotation:n];
 }
+-(void)add: (id<ORConstraint>) c
+{
+   [[self worker] add:c];
+}
 -(void) addHeuristic:(id<CPHeuristic>)h
 {
    assert(FALSE);
+}
+-(void) setGamma: (id*) gamma
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setGamma never called on CPParProgram"];
+}
+-(void) setTau: (id<ORTau>) tau
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setTau never called on CPParProgram"];
+}
+-(id*) gamma
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "gamma never called on CPParProgram"];
+   return NULL;
 }
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl

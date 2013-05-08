@@ -228,7 +228,7 @@
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    if ([e dereference] == NULL) {
-      id<ORMutableInteger> n = [ORFactory integer: _MIPsolver value: [e initialValue]];
+      id<ORMutableInteger> n = [ORFactory mutable: _MIPsolver value: [e initialValue]];
       [n makeImpl];
       [e setImpl: n];
    }

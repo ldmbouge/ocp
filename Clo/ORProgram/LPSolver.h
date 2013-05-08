@@ -14,9 +14,6 @@
 
 // LPSolver
 @interface LPSolver : ORGamma<LPProgram>
--(void) setGamma: (id*) gamma;
--(id*)  gamma;
--(void) setTau: (id<ORTau>) tau;
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) x;

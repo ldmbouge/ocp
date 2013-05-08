@@ -71,10 +71,10 @@ int main(int argc, const char * argv[])
          [cp solve:^{
             //NSLog(@"BASIC: %@",[[cp engine] model]);
             __block ORInt d = 0;
-            [cp forall:[av range] suchThat:^bool(ORInt i) { return ![av[i] bound];} orderedBy:^ORInt(ORInt i) { return [av[i] domsize];} do:^(ORInt i) {
-               [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) {
-                  return [av[i] member:j];
-               } in:^(ORInt j) {
+            [cp forall:[av range] suchThat:^bool(ORInt i) { return ![cp bound:av[i]];}
+             orderedBy:^ORInt(ORInt i) { return [cp domsize:av[i]];}
+                    do:^(ORInt i) {
+                       [cp tryall:[av[i] domain] suchThat:^bool(ORInt j) { return [cp member:j in:av[i]];} in:^(ORInt j) {
                   [cp label:av[i] with:j];
                } onFailure:^(ORInt j) {
                   [cp diff:av[i] with:j];
@@ -89,7 +89,7 @@ int main(int argc, const char * argv[])
                   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                   [buf appendString:@"\t|"];
                   for(ORInt j=0;j<=n-1;j++) {
-                     [buf appendFormat:@"%2d ",[[x at:i :j] value]];
+                     [buf appendFormat:@"%2d ",[cp intValue:[x at:i :j]]];
                   }
                   [buf appendString:@"|"];
                   NSLog(@"%@",buf);
@@ -99,7 +99,7 @@ int main(int argc, const char * argv[])
                   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                   [buf appendString:@"\t|"];
                   for(ORInt j=0;j<=n-1;j++) {
-                     [buf appendFormat:@"%2d ",[[y at:i :j] value]];
+                     [buf appendFormat:@"%2d ",[cp intValue:[y at:i :j]]];
                   }
                   [buf appendString:@"|"];
                   NSLog(@"%@",buf);
@@ -110,7 +110,7 @@ int main(int argc, const char * argv[])
                   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                   [buf appendString:@"\t|"];
                   for(ORInt j=0;j<=n-1;j++) {
-                     [buf appendFormat:@"%2d ",[[z at:i :j] value]];
+                     [buf appendFormat:@"%2d ",[cp intValue:[z at:i :j]]];
                   }
                   [buf appendString:@"|"];
                   NSLog(@"%@",buf);

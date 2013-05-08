@@ -380,6 +380,19 @@
 {
    return _sPool;
 }
+-(void) setGamma: (id*) gamma
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setGamma never called on CPMultiStartProgram"];
+}
+-(void) setTau: (id<ORTau>) tau
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setTau never called on CPMultiStartProgram"];
+}
+-(id*) gamma
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "gamma never called on CPMultiStartProgram"];
+   return NULL;
+}
 
 -(id<CPHeuristic>)setupHeuristic:(SEL)selector with:(id<ORVarArray>)rvars
 {

@@ -70,7 +70,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORModel>) createModel:(ORUInt)nbo;
++(id<ORModel>) createModel:(ORUInt)nbo tau: (id<ORTau>) tau;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;

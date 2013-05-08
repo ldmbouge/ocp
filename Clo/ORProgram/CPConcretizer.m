@@ -577,7 +577,7 @@
       [idx visit: self];
       [res visit: self];
       id<CPConstraint> concreteCstr = [CPFactory element: (id<CPIntVar>) _gamma[idx.getId]
-                                             idxCstArray: _gamma[array.getId]
+                                             idxCstArray: array
                                                    equal: (id<CPIntVar>) _gamma[res.getId]
                                               annotation: [cstr annotation]
                                        ];
