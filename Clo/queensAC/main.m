@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);

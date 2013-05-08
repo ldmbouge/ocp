@@ -53,7 +53,8 @@
    NSMutableArray*          _mStore;    // mutable store  (VARS + CONSTRAINTS + Other mutables). To be concretized
    NSMutableArray*          _iStore;    // immutable store. Should _not_ be concretized.
    id<ORObjectiveFunction>  _objective;
-   ORUInt                   _nbObjects; // number of objects registered with this model.
+   ORUInt                   _nbObjects; // number of objects registered with this model. (vars+mutable+cstr)
+   ORUInt                   _nbImmutables; // Number of immutable objects registered with the model
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    NSMutableDictionary*     _cache;
    id<ORTau>                _tau;
@@ -68,7 +69,7 @@
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _tau = [[ORTau alloc] initORTau];
    _objective = nil;
-   _nbObjects = 0;
+   _nbObjects = _nbImmutables = 0;
    return self;
 }
 -(ORModelI*)initORModelI: (ORUInt) nb
@@ -91,6 +92,10 @@
 -(ORUInt)nbObjects
 {
    return _nbObjects;
+}
+-(ORUInt)nbImmutables
+{
+   return _nbImmutables;
 }
 -(id<ORTracker>)tracker
 {
@@ -196,7 +201,7 @@
 {
    id co = [self inCache:obj];
    if (!co) {
-      [obj setId:_nbObjects++];
+      [obj setId:_nbImmutables++];
       if ([obj conformsToProtocol:@protocol(NSCopying)]) {
          co = [self addToCache:obj];
       }
@@ -338,7 +343,7 @@
 }
 -(id<ORModel>)flatten
 {
-   id<ORModel> flatModel = [ORFactory createModel:_nbObjects];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau:nil];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
    [flat apply: self];

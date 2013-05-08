@@ -186,6 +186,8 @@
       return nil;
    else if ([obj conformsToProtocol:@protocol(ORVar)])
       return obj;
+   else if ([obj conformsToProtocol:@protocol(ORMutableInteger)])
+      return obj;
    else if ([obj conformsToProtocol:@protocol(ORExpr)])
       return nil;
    else return obj;
