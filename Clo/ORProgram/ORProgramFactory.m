@@ -133,19 +133,13 @@
    [flat apply: model];
    [batch release];
    
-//   NSArray* objects = [flatModel mutables];
-//   for(id<ORObject> c in objects) {
-//      if ([c impl] == NULL) {
-//         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
-//         [c setImpl: ba];
-//      }
-//   }
-   
    for(ORInt i = 0; i < k; i++) {
       // This "fakes" the thread number so that the main thread does add into the binding array at offset i
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
-      [ORFactory createCPProgram: flatModel program: cp];
+      // if you use this line, this is buggy
+      //[ORFactory createCPProgram: flatModel program: cp];
+      [ORFactory createCPProgram: model program: cp];
       id<ORSolutionPool> lp = [cp solutionPool];
       id<ORSolutionPool> gp = [cpprogram solutionPool];
       [cp onSolution: ^{
