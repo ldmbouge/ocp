@@ -37,9 +37,16 @@
 
 @interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
 -(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) setValue: (ORFloat) value;
+-(ORFloat) initialValue;
+-(id<ORTracker>) tracker;
+@end
+
+@interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
+-(ORFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORFloat) initialValue;
+-(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
 -(id<ORTracker>) tracker;
 @end
 

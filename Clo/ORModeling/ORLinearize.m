@@ -263,6 +263,10 @@
 {
     _exprResult = e;
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _exprResult = e;
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    _exprResult = e;

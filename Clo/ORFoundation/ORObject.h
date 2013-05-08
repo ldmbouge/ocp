@@ -26,10 +26,8 @@
 
 @interface ORModelingObjectI : ORObject<ORObject>
 -(id) init;
--(void) setImpl: (id) impl;
 @end;
 
 @interface ORDualUseObjectI : ORObject<ORObject>
 -(id) init;
--(void) setImpl: (id) impl;
 @end;

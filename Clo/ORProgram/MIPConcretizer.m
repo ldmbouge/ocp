@@ -200,6 +200,11 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory integer: _MIPsolver value: [e initialValue]];
 }
+-(void) visitMutableFloatI: (id<ORMutableInteger>) e
+{
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory mutableFloat: _MIPsolver value: [e initialValue]];
+}
 
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {

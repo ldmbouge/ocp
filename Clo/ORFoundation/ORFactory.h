@@ -35,6 +35,7 @@
 +(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
++(id<ORMutableFloat>) mutableFloat: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 

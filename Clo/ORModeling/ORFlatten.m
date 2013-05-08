@@ -116,6 +116,7 @@
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e {}
 -(void) visitFloatI: (id<ORFloatNumber>) e  {}
 -(void) visitExprPlusI: (id<ORExpr>) e  {}
 -(void) visitExprMinusI: (id<ORExpr>) e  {}
@@ -244,6 +245,11 @@
 {
    _result = e;
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _result = e;
+}
+
 -(void) visitIntArray:(id<ORIntArray>)v
 {
    _result = v;

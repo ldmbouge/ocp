@@ -867,10 +867,15 @@
    if (_gamma[e.getId] == NULL) 
       _gamma[e.getId] = [ORFactory mutable: _engine value: [e initialValue]];
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory mutableFloat: _engine value: [e initialValue]];
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    if (_gamma[e.getId] == NULL) 
-      _gamma[e.getId] = [ORFactory float: _engine value: [e value]];
+      _gamma[e.getId] = [ORFactory float: _engine value: [e initialValue]];
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {}

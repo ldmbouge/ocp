@@ -126,6 +126,11 @@
 {
    _result = e;
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _result = e;
+}
+
 -(void) visitIntArray:(id<ORIntArray>)v
 {
    _result = v;
