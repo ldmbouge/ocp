@@ -184,7 +184,7 @@
 {
    _nbDone = 0;
    for(ORInt i = 0; i < _nb; i++) {
-      [NSThread detachNewThreadSelector:@selector(solveOne:)
+      [NSThread detachNewThreadSelector:@selector(solveAllOne:)
                                toTarget:self
                              withObject:[NSArray arrayWithObjects: [search copy],[NSNumber numberWithInt:i],nil]];
    }
@@ -455,28 +455,23 @@
 }
 -(ORBool) bound: (id<ORIntVar>) x
 {
-   x = [x dereference];
-   return [x bound];
+   return [[self dereference] bound: x];
 }
 -(ORInt)  min: (id<ORIntVar>) x
 {
-   x = [x dereference];
-   return [x min];
+   return [[self dereference] min: x];
 }
 -(ORInt)  max: (id<ORIntVar>) x
 {
-   x = [x dereference];
-   return [x max];
+   return [[self dereference] max: x];
 }
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
-   x = [x dereference];
-   return [x domsize];
+   return [[self dereference] domsize: x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
-   x = [x dereference];
-   return [x member: v];
+   return [[self dereference] member: v in: x];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {

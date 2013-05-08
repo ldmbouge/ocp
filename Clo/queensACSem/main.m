@@ -28,7 +28,7 @@ int main (int argc, const char * argv[])
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
 //         int n = [args size];
-         int n = 12;
+         int n = 8;
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
          id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
          id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i annotation:Default]; }];
