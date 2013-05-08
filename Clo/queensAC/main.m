@@ -47,9 +47,11 @@ int main(int argc, const char * argv[])
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
 //          [cp labelArray: x];
+          [nbSolutions incr];
            @synchronized(cp) {
              nbSol++;
           }
+          NSLog(@"Nb Solutions %d",[nbSolutions value]);
 //          NSLog(@"Solutions: %@",x);
        }
        ];

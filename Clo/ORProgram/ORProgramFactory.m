@@ -51,7 +51,7 @@
    return mp;
 }
 
-+(id<CPCommonProgram>)concretizeCP:(id<ORModel>)m program: (id<CPCommonProgram>) cpprogram
++(id<CPCommonProgram>) concretizeCP: (id<ORModel>) m program: (id<CPCommonProgram>) cpprogram
 {
    ORUInt nbEntries =  [m nbObjects];
    id* gamma = malloc(sizeof(id) * nbEntries);
@@ -61,6 +61,7 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
+   [concretizer release];
    [cpprogram setSource:m];
    return cpprogram;
 }
@@ -135,7 +136,7 @@
       id<CPProgram> cp = [cpprogram at: i];
       // if you use this line, this is buggy
       //[ORFactory createCPProgram: flatModel program: cp];
-      [ORFactory createCPProgram: model program: cp];
+      [ORFactory concretizeCP: flatModel program: cp];
       id<ORSolutionPool> lp = [cp solutionPool];
       id<ORSolutionPool> gp = [cpprogram solutionPool];
       [cp onSolution: ^{
