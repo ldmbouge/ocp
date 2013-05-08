@@ -26,9 +26,9 @@ float coef[7][12] = {
 int main_lp(int argc, const char * argv[])
 {
    id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-2];
+   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns];
-   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
       ca[i] = [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
    [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
@@ -48,19 +48,19 @@ int main_lp(int argc, const char * argv[])
    [sol release];
    NSLog(@"we are done (Part I) \n\n");
    
-   id<LPColumn> column = [lp createColumn];
-   [column addObjCoef: c[nbColumns - 1]];
-   for(ORInt i = 0; i < nbRows; i++)
-      [column addConstraint: ca[i] coef: coef[i][nbColumns-1]];
-   [lp addColumn: column];
-   for(ORInt i = 0; i < nbRows; i++)
-      printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
-   for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
-   sol = [[lp solutionPool] best];
-   NSLog(@"Solution: %@",sol);
-   NSLog(@"Objective function: %@",[sol objectiveValue]);
-   NSLog(@"we are done (Part II)");
+//   id<LPColumn> column = [lp createColumn];
+//   [column addObjCoef: c[nbColumns - 1]];
+//   for(ORInt i = 0; i < nbRows; i++)
+//      [column addConstraint: ca[i] coef: coef[i][nbColumns-1]];
+//   [lp addColumn: column];
+//   for(ORInt i = 0; i < nbRows; i++)
+//      printf("dual c[%d] = %f \n",i,[lp dual: ca[i]]);
+//   for(ORInt i = 0; i < nbColumns-1; i++)
+//      printf("reduced cost x[%d] = %f \n",i,[lp reducedCost: x[i]]);
+//   sol = [[lp solutionPool] best];
+//   NSLog(@"Solution: %@",sol);
+//   NSLog(@"Objective function: %@",[sol objectiveValue]);
+//   NSLog(@"we are done (Part II)");
    [sol release];
    [lp release];
    return 0;
@@ -177,5 +177,5 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main_both(argc,argv);
+   return main_lp(argc,argv);
 }

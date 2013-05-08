@@ -153,8 +153,9 @@
 
 @interface ORLPFlattenConstraint : ORLPNOopVisit<ORVisitor> {
    id<ORAddToModel> _theModel;
+   id<ORTau> _tau;
 }
--(id)init:(id<ORAddToModel>)m;
+-(id)init:(id<ORAddToModel>)m tau: (id<ORTau>) tau;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
@@ -237,17 +238,21 @@
 {
    [m applyOnVar:^(id<ORVar> x) {
       [_into addVariable:x];
-   } onMutables:^(id<ORObject> x) {
+   }
+   onMutables:^(id<ORObject> x) {
       ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:_into];
       [x visit:fo];
       [fo release];
-   } onImmutables:^(id<ORObject> x) {
+   }
+   onImmutables:^(id<ORObject> x) {
       ORLPFlattenObjects* fo = [[ORLPFlattenObjects alloc] init:_into];
       [x visit:fo];
       [fo release];
-   } onConstraints:^(id<ORConstraint> c) {
-      [ORLPFlatten flatten:c into:_into];
-   } onObjective:^(id<ORObjectiveFunction> o) {
+   }
+   onConstraints:^(id<ORConstraint> c) {
+      [ORLPFlatten flatten:c into:_into tau: m.tau];
+   }
+   onObjective:^(id<ORObjectiveFunction> o) {
       if (o) {
          ORLPFlattenObjective* fo = [[ORLPFlattenObjective alloc] init:_into];
          [o visit:fo];
@@ -256,9 +261,9 @@
    }];
 }
 
-+(void) flatten: (id<ORConstraint>) c into: (id<ORAddToModel>)m
++(void) flatten: (id<ORConstraint>) c into: (id<ORAddToModel>)m tau: (id<ORTau>) tau
 {
-   ORLPFlattenConstraint* fc = [[ORLPFlattenConstraint alloc] init:m];
+   ORLPFlattenConstraint* fc = [[ORLPFlattenConstraint alloc] init:m tau: tau];
    [c visit:fc];
    [fc release];
 }
@@ -340,10 +345,11 @@
 @end
 
 @implementation ORLPFlattenConstraint
--(id)init:(id<ORAddToModel>)m
+-(id)init:(id<ORAddToModel>)m tau: (id<ORTau>) tau
 {
    self = [super init];
    _theModel = m;
+   _tau = tau;
    return self;
 }
 -(void) visitRestrict:(id<ORRestrict>)cstr
@@ -379,7 +385,7 @@
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
    id<ORConstraint> impl = [ORLPFlatten flattenExpression:[cstr expr] into:_theModel annotation:[cstr annotation]];
-   [cstr setImpl: impl];
+   [_tau set: impl forKey: cstr];
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {

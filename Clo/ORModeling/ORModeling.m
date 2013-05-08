@@ -26,6 +26,10 @@
 {
    return [[[ORModelI alloc] initORModelI:nbo] autorelease];
 }
++(id<ORModel>) createModel:(ORUInt)nbo tau: (id<ORTau>) tau
+{
+   return [[[ORModelI alloc] initORModelI: nbo tau: tau] autorelease];
+}
 +(id<ORModel>) cloneModel: (id<ORModel>)m {
     ORCopy* copier = [[ORCopy alloc] initORCopy: nil];
     id<ORModel> copyModel = [copier copyModel: m];

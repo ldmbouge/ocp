@@ -35,6 +35,9 @@
 
 @protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
+-(void) setGamma: (id*) gamma;
+-(void) setTau: (id<ORTau>) tau;
+-(id*)  gamma;
 -(void) solve;
 -(id<LPColumn>) createColumn;
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up;

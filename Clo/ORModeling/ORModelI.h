@@ -11,9 +11,18 @@
 
 #import <ORModeling/ORModeling.h>
 
+@interface ORTau : NSObject<ORTau>
+-(ORTau*) initORTau;
+-(void) dealloc;
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+@end
+
+
 @interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
 -(ORModelI*)              initORModelI:(ORUInt)nb;
+-(ORModelI*)              initORModelI:(ORUInt)nb tau: (id<ORTau>) tau;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
@@ -41,6 +50,7 @@
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
+-(id<ORTau>) tau;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>

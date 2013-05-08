@@ -404,15 +404,17 @@
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
-   return [_lpsolver dual: [c dereference]];
+   NSLog(@"Dual of c %d",c.getId);
+   NSLog(@"The Dual of c  is %@",_gamma[c.getId]);
+   return [_lpsolver dual: [self concretize: c]];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
-   return [_lpsolver floatValue: [v dereference]];
+   return [_lpsolver floatValue: _gamma[v.getId]];
 }
 -(ORFloat) reducedCost: (id<ORFloatVar>) v
 {
-   return [_lpsolver reducedCost: [v dereference]];
+   return [_lpsolver reducedCost: _gamma[v.getId]];
 }
 -(id<LPColumn>) createColumn
 {
