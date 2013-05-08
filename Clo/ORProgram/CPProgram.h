@@ -40,7 +40,7 @@
 -(id<ORCPSolution>) best;
 @end
 
-@protocol CPCommonProgram <ORASolver>
+@protocol CPCommonProgram  <ORASolver>
 -(void) setSource:(id<ORModel>)src;
 -(void) setGamma: (id*) gamma;
 -(id*)  gamma;
@@ -106,7 +106,7 @@
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
 
--(ORInt) intValue: (id<ORIntVar>) x;
+-(ORInt) intValue: (id) x;
 -(ORBool) bound: (id<ORIntVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
@@ -118,7 +118,6 @@
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
 
--(void) incr: (id<ORInteger>) i;
 @end
 
 // CPSolver with syntactic DFS Search

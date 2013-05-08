@@ -26,6 +26,7 @@ typedef enum {
 @protocol ORExpr;
 @protocol ORIntRange;
 @protocol ORVisitor;
+@protocol ORASolver;
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
@@ -36,6 +37,10 @@ typedef enum {
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
+@protocol ORGamma <NSObject>
+-(id<ORObject>) concretize: (id<ORObject>) o;
+@end
+
 @interface NSObject (Concretization)
 -(id) dereference;
 -(void) setImpl: (id) impl;
@@ -44,11 +49,20 @@ typedef enum {
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
+
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;
--(ORInt) setValue: (ORInt) value;
--(void) incr;
--(void) decr;
+@end
+
+
+@protocol ORMutableInteger <ORObject,ORExpr>
+-(ORInt) initialValue;
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt) incr: (id<ORGamma>) solver;
+-(ORInt) decr: (id<ORGamma>) solver;
+-(ORInt) value: (id<ORGamma>) solver;
+-(ORInt) intValue: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
 @end
 
 @protocol ORFloatNumber <ORObject,ORExpr>
@@ -91,7 +105,7 @@ typedef enum {
 @end;
 
 @interface ORCrFactory (OR)
-+(id<ORInteger>) integer:(ORInt) value;
++(id<ORMutableInteger>) integer:(ORInt) value;
 +(id<ORRandomStream>) randomStream;
 +(id<ORZeroOneStream>) zeroOneStream;
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
@@ -112,4 +126,18 @@ typedef enum {
 -(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) nb;
 -(id) dereference;
+@end
+
+
+
+@interface ORGamma : NSObject<ORGamma>
+{
+@protected
+   id* _gamma;
+}
+-(ORGamma*) initORGamma;
+-(void) dealloc;
+-(void) setGamma: (id*) gamma;
+-(id*) gamma;
+-(id) concretize: (id) o;
 @end

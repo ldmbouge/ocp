@@ -16,7 +16,7 @@
 +(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer
 {
    ORInt2Void clo = [closure copy];
-   id<ORInteger> done = [ORCrFactory integer:0];
+   id<ORMutableInteger> done = [ORCrFactory integer:0];
    [ORConcurrency parall: R
                       do: ^void(ORInt i) {
                          [informer whenNotifiedDo: ^(void) {

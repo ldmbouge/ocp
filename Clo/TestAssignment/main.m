@@ -59,8 +59,8 @@ int main (int argc, const char * argv[])
    [ORStreamManager setRandomized];
    id<ORUniformDistribution> distr = [ORFactory uniformDistribution: mdl range: Cities];
       
-   id<ORInteger> nbRestarts = [ORFactory integer: mdl value:0];
-   id<ORInteger> nbSolutions = [ORFactory integer: mdl value:1];
+   id<ORMutableInteger> nbRestarts = [ORFactory integer: mdl value:0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value:1];
    id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [ORFactory intVar:mdl domain: RANGE(mdl,0,10000)];
    

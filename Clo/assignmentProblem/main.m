@@ -30,7 +30,7 @@ int main (int argc, const char * argv[])
     id<ORUniformDistribution> distr = [ORFactory uniformDistribution: model range: RANGE(model, 1, 20)];
     id<ORIntArray> cost =[ORFactory intArray: model range: R range: R with: ^ORInt (ORInt i, ORInt j) { return [distr next]; }];
     
-    //id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
+    //id<ORMutableInteger> nbSolutions = [ORFactory integer: model value: 0];
     
     id<ORIntVarArray> tasks  = [ORFactory intVarArray: model range: R domain: R];
     id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * 20)];

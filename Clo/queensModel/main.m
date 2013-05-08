@@ -19,7 +19,7 @@ int main (int argc, const char * argv[])
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];      
       id<ORIntRange> R = RANGE(model,0,n-1);
-      id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory integer: model value: 0];
       
       id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) {

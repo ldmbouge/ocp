@@ -19,3 +19,5 @@
 @optional-(id) inCache:(id)obj;
 @optional-(id) addToCache:(id)obj;
 @end
+
+

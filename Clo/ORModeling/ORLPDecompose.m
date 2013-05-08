@@ -87,6 +87,7 @@
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitFloatVar:(id<ORFloatVar>)e    {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e   {}
 -(void) visitFloatI: (id<ORFloatNumber>) e {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -131,6 +132,10 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    [_terms addIndependent:[e value]];
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   [_terms addIndependent:[e initialValue]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {

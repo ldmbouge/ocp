@@ -393,11 +393,12 @@ enum ORGroupType {
 @end
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
-@protocol ORASolver <NSObject,ORTracker>
+@protocol ORASolver <NSObject,ORTracker,ORGamma>
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;          
+-(id<ORSolutionPool>) solutionPool;
+-(id) concretize: (id) o;
 @end
 
 // ====== Bit Constraints =====================================

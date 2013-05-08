@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value: 0];
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
@@ -39,19 +39,19 @@ int main(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       ORLong startTime = [ORRuntimeMonitor wctime];
-//      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
       id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
-      //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
+      //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
       __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
 //          [cp labelArray: x];
-          [nbSolutions incr];
+          [nbSolutions incr: cp];
            @synchronized(cp) {
              nbSol++;
           }
-          NSLog(@"Nb Solutions %d",[nbSolutions value]);
+          NSLog(@"Nb Solutions in thread %d is %d",[NSThread threadID],[nbSolutions value: cp]);
 //          NSLog(@"Solutions: %@",x);
        }
        ];
@@ -74,7 +74,7 @@ int main2(int argc, const char * argv[])
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value: 0];
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);

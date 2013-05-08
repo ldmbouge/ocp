@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
          id<ORIntRange> D = RANGE(mdl,0,n-1);
          id<ORIntRange> SD = RANGE(mdl,1,n-1);
 
-         id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
+         id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value:0];
          id<ORIntVarArray> sx = [ORFactory intVarArray: mdl range:R domain: D];
          id<ORIntVarArray> dx = [ORFactory intVarArray: mdl range:SD domain: SD];
 

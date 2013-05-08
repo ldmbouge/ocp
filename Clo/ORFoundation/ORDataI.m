@@ -47,6 +47,33 @@
 }
 @end;
 
+@implementation ORGamma
+-(ORGamma*) initORGamma
+{
+   self = [super init];
+   _gamma = NULL;
+   return self;
+}
+-(void) dealloc
+{
+   free(gamma);
+   [super dealloc];
+}
+-(id*) gamma
+{
+   return _gamma;
+}
+-(void) setGamma: (id*) gamma
+{
+   _gamma = gamma;
+}
+-(id<ORObject>) concretize: (id<ORObject>) o
+{
+   return _gamma[o.getId];
+}
+@end
+
+
 @implementation ORIntegerI
 {
 	ORInt           _value;
@@ -79,21 +106,9 @@
 {
    return _value;
 }
--(ORInt) value 
+-(ORInt) value
 {
    return _value;
-}
--(ORInt) setValue: (ORInt) value
-{
-   return _value = value;
-}
--(void) incr
-{
-   _value++;
-}
--(void) decr;
-{
-   _value--;
 }
 -(ORInt) min
 {
@@ -132,6 +147,103 @@
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitIntegerI: self];
+}
+@end
+
+@implementation ORMutableIntegerI
+{
+	ORInt           _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableIntegerI*) initORMutableIntegerI:(id<ORTracker>)tracker value:(ORInt) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORInt) initialValue
+{
+   return _value;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORInt) incr
+{
+   return ++_value;
+}
+-(ORInt) decr
+{
+   return --_value;
+}
+-(ORInt) setValue: (ORInt) value 
+{
+   return _value = value;
+}
+-(ORFloat) floatValue: (id<ORGamma>) solver
+{
+   return _value;
+}
+-(ORInt) intValue: (id<ORGamma>) solver
+{
+   return _value;
+}
+-(ORInt) value: (id<ORGamma>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] initialValue];
+}
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
+{
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORInt) incr: (id<ORGamma>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] incr];
+}
+-(ORInt) decr: (id<ORASolver>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] decr];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"%d",_value];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitMutableIntegerI: self];
 }
 @end
 

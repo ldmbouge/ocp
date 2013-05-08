@@ -1137,14 +1137,6 @@
    [obj release];
    return obj;
 }
-
--(void) trackConstraint:(id)obj
-{
-   [_oStore addObject:obj];
-   [obj release];
-   
-}
-
 @end
 
 @implementation MIPFactory

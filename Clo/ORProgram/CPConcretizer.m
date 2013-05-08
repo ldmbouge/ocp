@@ -859,11 +859,13 @@
    }
 }
 
-//
 -(void) visitIntegerI: (id<ORInteger>) e
+{}
+//
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    if (_gamma[e.getId] == NULL) 
-      _gamma[e.getId] = [ORFactory integer: _engine value: [e value]];
+      _gamma[e.getId] = [ORFactory integer: _engine value: [e initialValue]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {

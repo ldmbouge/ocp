@@ -17,11 +17,22 @@
 @interface ORIntegerI : ORExprI<NSCoding,NSCopying,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
 -(ORInt)  value;
--(ORInt) setValue: (ORInt) value;
--(void) incr;
--(void) decr;
--(ORInt)   min;
+-(ORInt)  min;
+-(ORInt)  max;
 -(id<ORTracker>) tracker;
+@end
+
+@interface ORMutableIntegerI : ORExprI<NSCoding,ORMutableInteger>
+-(ORMutableIntegerI*) initORMutableIntegerI: (id<ORTracker>) tracker value: (ORInt) value;
+-(ORInt)  initialValue;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  value: (id<ORGamma>) solver;
+-(ORInt)  setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt)  incr: (id<ORGamma>) solver;
+-(ORInt)  decr: (id<ORGamma>) solver;
+-(id<ORTracker>) tracker;
+-(ORInt) incr;
+-(ORInt) decr;
 @end
 
 @interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>

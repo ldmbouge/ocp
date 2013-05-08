@@ -172,7 +172,7 @@
                                        return [[var domain] inRange: b];
                                    } of:^id<ORExpr>(ORInt i) {
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [item at: i]];
-                                       id<ORInteger> size = [ORFactory integer: _model value: [itemSize at: i]];
+                                       id<ORMutableInteger> size = [ORFactory integer: _model value: [itemSize at: i]];
                                        return [[binArr at: b] mul: size];
                                    }];
         [_model addConstraint: [sumExpr leq: [binSize at: b]]];
@@ -255,10 +255,16 @@
 {
 }
 // Expressions
--(void) visitIntegerI: (id<ORInteger>) e  {
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _exprResult = e;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
     _exprResult = e;
 }
--(void) visitFloatI: (id<ORFloatNumber>) e  {
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
    _exprResult = e;
 }
 

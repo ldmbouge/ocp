@@ -264,6 +264,7 @@
 
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -602,6 +603,10 @@
 //
 -(void) visitIntegerI: (id<ORInteger>) e
 {
+   _snapshot = NULL;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
    _snapshot = NULL;   
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
@@ -910,12 +915,10 @@
    NSMutableArray*       _doOnSolArray;
    NSMutableArray*       _doOnExitArray;
    id<ORSolutionPool>    _sPool;
-   
-   id*                   _gamma;
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
-   self = [super init];
+   self = [super initORGamma];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
@@ -938,21 +941,12 @@
    [_sPool release];
    [_doOnSolArray release];
    [_doOnExitArray release];
-   free(_gamma);
    [super dealloc];
 }
 -(void) setSource:(id<ORModel>)src
 {
    [_model release];
    _model = [src retain];
-}
--(void) setGamma: (id*) gamma
-{
-   _gamma = gamma;
-}
--(id*) gamma
-{
-   return _gamma;
 }
 -(NSString*) description
 {
@@ -1340,10 +1334,10 @@
    }];
    
    *last = nil;
-   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
+   __block ORInt failStamp = -1;
    do {
       id<CPIntVar> x = *last;
-      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+      if (failStamp  == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -1353,7 +1347,7 @@
       }/* else {
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
-      [failStamp setValue:[_search nbFailures]];
+      failStamp = [_search nbFailures];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
@@ -1564,9 +1558,9 @@
    [self addHeuristic:h];
    return h;
 }
--(ORInt) intValue: (id<ORIntVar>) x
+-(ORInt) intValue: (id) x
 {
-   return [_gamma[x.getId] intValue];
+   return [_gamma[[x getId]] intValue];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
@@ -1601,10 +1595,9 @@
 {
    return [(id<CPVar>)_gamma[x.getId] constraints];
 }
-
--(void) incr: (id<ORInteger>) i
+-(void) incr: (id<ORMutableInteger>) i
 {
-   
+   [((ORMutableIntegerI*) _gamma[i.getId]) incr];
 }
 @end
 

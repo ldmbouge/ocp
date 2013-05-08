@@ -36,7 +36,7 @@ int main (int argc, const char * argv[])
          [model add: [ORFactory alldifferent: x]];
          [model add: [ORFactory alldifferent: xp]];
          [model add: [ORFactory alldifferent: xn]];
-         id<ORInteger> nbSol = [ORFactory integer:model value:0];
+         id<ORMutableInteger> nbSol = [ORFactory integer:model value:0];
          
          NSLog(@"Model: %@",model);
          id<CPProgram> cp = [args makeProgram:model];

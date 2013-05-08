@@ -25,7 +25,7 @@ int main (int argc, const char * argv[])
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl, 0, n-1);
       long startTime = [ORRuntimeMonitor cputime];
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
+      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value:0];
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:mdl range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:mdl var:[x at: i] shift:i]; }];
       id<ORIntVarArray> xn = [ORFactory intVarArray:mdl range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:mdl var:[x at: i] shift:-i]; }];

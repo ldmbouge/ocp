@@ -269,7 +269,6 @@
 
 -(id) trackVariable: (id) var;
 -(id) trackObject: (id) obj;
--(void) trackConstraint: (id) obj;
 
 @end
 

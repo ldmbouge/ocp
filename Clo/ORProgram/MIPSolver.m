@@ -240,6 +240,7 @@
 
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -577,6 +578,10 @@
 {
    _snapshot = NULL;
 }
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   _snapshot = NULL;
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    _snapshot = NULL;
@@ -846,10 +851,6 @@
 -(id) trackVariable: (id) obj
 {
    return [_MIPsolver trackVariable:obj];
-}
--(void) trackConstraint:(id) obj
-{
-   [_MIPsolver trackConstraint:obj];
 }
 -(id<ORMIPSolutionPool>) solutionPool
 {

@@ -544,7 +544,11 @@
 // Copy Expressions
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   id<ORInteger> o = [[ORIntegerI allocWithZone: _zone] initORIntegerI: _copyModel value: [e value]];
+   assert(NO);
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   id<ORMutableInteger> o = [[ORMutableIntegerI allocWithZone: _zone] initORMutableIntegerI: _copyModel value: [e initialValue]];
    _result = o;
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e

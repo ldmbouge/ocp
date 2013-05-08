@@ -113,6 +113,7 @@ struct CPVarPair {
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e   {}
 -(void) visitFloatI: (id<ORFloatNumber>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -180,6 +181,16 @@ struct CPVarPair {
       _eqto = nil;
    } else
       [_terms addIndependent:[e value]];
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   assert(NO);
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e initialValue]]];
+      [_terms addIndependent:[e initialValue]];
+      _eqto = nil;
+   } else
+      [_terms addIndependent:[e initialValue]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
@@ -403,6 +414,14 @@ struct CPVarPair {
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
+   if (!_rv)
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
+   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
+}
+
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   assert(NO);
    if (!_rv)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
    [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
