@@ -53,9 +53,14 @@
 
 +(id<CPCommonProgram>)concretizeCP:(id<ORModel>)m program: (id<CPCommonProgram>) cpprogram
 {
+   ORUInt nbEntries =  [m nbObjects];
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [cpprogram setGamma: gamma];
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   [m visit: concretizer];
-   [concretizer release];
+   for(id<ORObject> c in [m mutables])
+      [c visit: concretizer];
    [cpprogram setSource:m];
    return cpprogram;
 }
@@ -68,15 +73,11 @@
    //NSLog(@"FC: %@",[fm constraints]);
    
    ORUInt nbEntries =  [fm nbObjects];
-   NSLog(@"nbEntries: %u",nbEntries);
-   
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
-   
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
    
