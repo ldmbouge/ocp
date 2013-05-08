@@ -48,8 +48,8 @@ int main(int argc, const char * argv[])
       
       id<CPProgram> cp = [ORFactory createCPProgram:model];
       [cp solveAll:^{
-         [cp forall:[ad range] suchThat:^bool(ORInt i) { return ![ad[i] bound];} orderedBy:^ORInt(ORInt i) { return [ad[i] domsize];} do:^(ORInt i) {
-            [cp tryall:Digit suchThat:^bool(ORInt d) { return [ad[i] member:d];} in:^(ORInt d) {
+         [cp forall:[ad range] suchThat:^bool(ORInt i) { return ![cp bound:ad[i]];} orderedBy:^ORInt(ORInt i) { return [cp domsize:ad[i]];} do:^(ORInt i) {
+            [cp tryall:Digit suchThat:^bool(ORInt d) { return [cp member:d in:ad[i]];} in:^(ORInt d) {
                [cp label:ad[i] with:d];
             } onFailure:^(ORInt d) {
                [cp diff:ad[i] with:d];

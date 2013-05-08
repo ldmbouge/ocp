@@ -65,7 +65,7 @@ int main(int argc, const char * argv[])
                NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
                [buf appendString:@"x = ["];
                for(ORInt i=1;i<=m;i++)
-                  [buf appendFormat:@"%d%c",[x[i] value],i < m ? ',' : ']'];
+                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],i < m ? ',' : ']'];
                NSLog(@"solution: %@",buf);
             }
             nbSol++;

@@ -48,11 +48,11 @@ int main(int argc, const char * argv[])
          [cp solve: ^{
             [cp labelHeuristic:h];
             [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
-               return [[sx at:i] domsize];
+               return [cp domsize:sx[i]];
             }];
             [nbSolutions incr];
             id<ORIntArray> a = [ORFactory intArray:cp range: R  with:^ORInt(ORInt i) {
-               return [sx[i] value];
+               return [cp intValue:sx[i]];
             }];
             NSLog(@"Solution: %@",a);
          }];

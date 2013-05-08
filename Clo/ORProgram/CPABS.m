@@ -636,7 +636,7 @@
             //NSLog(@"chose %i from VS = %@",i, buf);
 
             if (nbVS) { // we found someone
-               id<CPIntVar> xi = (id<CPIntVar>)[bvars[i] dereference];
+               id<CPIntVar> xi = (id<CPIntVar>)bvars[i];
                ORInt v = [self chooseValue:xi];
                ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
                [ORConcurrency pumpEvents];

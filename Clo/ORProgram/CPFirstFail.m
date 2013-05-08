@@ -12,14 +12,11 @@
 #import "CPFirstFail.h"
 #import "CPEngine.h"
 
-@implementation CPFirstFail {
-   id<CPEngine>    _engine;
-}
+@implementation CPFirstFail
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    return self;
@@ -44,7 +41,7 @@
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   float rv = - [x domsize];
+   float rv = - [_cp domsize:x];
    return rv;
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
