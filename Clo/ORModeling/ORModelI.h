@@ -20,9 +20,7 @@
 
 
 @interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
--(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI:(ORUInt)nb;
--(ORModelI*)              initORModelI:(ORUInt)nb tau: (id<ORTau>) tau;
+-(ORModelI*)              initORModelI: (ORUInt) nb tau: (id<ORTau>) tau;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar

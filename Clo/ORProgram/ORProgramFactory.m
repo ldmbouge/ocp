@@ -94,7 +94,7 @@
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram];
-   [model setImpl: cpprogram];
+//   [model setImpl: cpprogram];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
@@ -129,7 +129,7 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
-   [model setImpl: cpprogram];
+//   [model setImpl: cpprogram];
    id<ORModel> flatModel = [model flatten];
    
    for(ORInt i = 0; i < k; i++) {
@@ -167,7 +167,7 @@
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
 {
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
-   [model setImpl:cpprogram];
+//   [model setImpl:cpprogram];
    id<ORModel> flatModel = [model flatten];   
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
@@ -214,7 +214,7 @@
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver: model];
-   [model setImpl: lpprogram];
+//   [model setImpl: lpprogram];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
@@ -248,7 +248,7 @@
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model
 {
    id<MIPProgram> mipprogram = [MIPSolverFactory solver: model];
-   [model setImpl: mipprogram];
+//   [model setImpl: mipprogram];
    [self createMIPProgram: model program: mipprogram];
    return mipprogram;
 }

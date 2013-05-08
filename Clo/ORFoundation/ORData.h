@@ -30,10 +30,10 @@ typedef enum {
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
--(id) dereference;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
+//-(id) dereference;
+//-(void) setImpl: (id) impl;
+//-(id) impl;
+//-(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
@@ -47,10 +47,10 @@ typedef enum {
 @end
 
 @interface NSObject (Concretization)
--(id) dereference;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
+//-(id) dereference;
+//-(void) setImpl: (id) impl;
+//-(id) impl;
+//-(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
@@ -130,7 +130,7 @@ typedef enum {
 -(id) objectAtIndexedSubscript:(NSUInteger)key;
 -(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) nb;
--(id) dereference;
+//-(id) dereference;
 @end
 
 

@@ -22,7 +22,7 @@
 -(uint64)max;
 -(ORInt)  domsize;
 -(ORBool) member: (unsigned int*) v;
--(id<CPBitVar>) dereference;
+//-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end
 

@@ -548,11 +548,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return ORSuspend;
 }
 
--(id<ORIntVar>) dereference
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-   return (id<ORIntVar>)self;
-}
+//-(id<ORIntVar>) dereference
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
+//   return (id<ORIntVar>)self;
+//}
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {
    self = [self initCPIntVarCore: engine low: [b low] up: [b up]];

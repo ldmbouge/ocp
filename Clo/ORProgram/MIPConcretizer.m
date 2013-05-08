@@ -70,14 +70,12 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if (_gamma[v.getId] == NULL) {
-      if ([v dereference] == NULL) {
-         MIPVariableI* cv;
-         if ([v hasBounds])
-            cv = [_MIPsolver createVariable: [v low] up: [v up]];
-         else
-            cv = [_MIPsolver createVariable];
-         _gamma[v.getId] = cv;
-      }
+      MIPVariableI* cv;
+      if ([v hasBounds])
+         cv = [_MIPsolver createVariable: [v low] up: [v up]];
+      else
+         cv = [_MIPsolver createVariable];
+      _gamma[v.getId] = cv;
    }
 }
 
