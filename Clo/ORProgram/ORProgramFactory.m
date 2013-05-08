@@ -65,7 +65,6 @@
    NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
-   fm = [fm flatten];
    //NSLog(@"FC: %@",[fm constraints]);
    
    ORUInt nbEntries =  [fm nbObjects];
@@ -127,11 +126,7 @@
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
    [model setImpl: cpprogram];
-   id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
-   [flat apply: model];
-   [batch release];
+   id<ORModel> flatModel = [model flatten];
    
 //   NSArray* objects = [flatModel mutables];
 //   for(id<ORObject> c in objects) {
