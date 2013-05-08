@@ -274,7 +274,7 @@
       [item visit: self];
       [weight visit: self];
       [capacity visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory knapsack: _gamma[item.getId] weight: _gamma[weight.getId] capacity: _gamma[capacity.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory knapsack: _gamma[item.getId] weight: weight capacity: _gamma[capacity.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
