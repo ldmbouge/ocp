@@ -56,7 +56,8 @@
    NSMutableArray*          _mStore;    // mutable store  (VARS + CONSTRAINTS + Other mutables). To be concretized
    NSMutableArray*          _iStore;    // immutable store. Should _not_ be concretized.
    id<ORObjectiveFunction>  _objective;
-   ORUInt                   _nbObjects; // number of objects registered with this model.
+   ORUInt                   _nbObjects; // number of objects registered with this model. (vars+mutable+cstr)
+   ORUInt                   _nbImmutables; // Number of immutable objects registered with the model
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    NSMutableDictionary*     _cache;
    id<ORTau>                _tau;
@@ -71,13 +72,7 @@
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _tau = [[ORTau alloc] initORTau];
    _objective = nil;
-   _nbObjects = 0;
-   return self;
-}
--(ORModelI*)initORModelI: (ORUInt) nb
-{
-   self = [self initORModelI];
-   _nbObjects = nb;
+   _nbObjects = _nbImmutables = 0;
    return self;
 }
 -(ORModelI*)initORModelI: (ORUInt) nb tau: (id<ORTau>) tau
@@ -94,6 +89,10 @@
 -(ORUInt)nbObjects
 {
    return _nbObjects;
+}
+-(ORUInt)nbImmutables
+{
+   return _nbImmutables;
 }
 -(id<ORTracker>)tracker
 {
@@ -199,7 +198,7 @@
 {
    id co = [self inCache:obj];
    if (!co) {
-      [obj setId:_nbObjects++];
+      [obj setId:_nbImmutables++];
       if ([obj conformsToProtocol:@protocol(NSCopying)]) {
          co = [self addToCache:obj];
       }

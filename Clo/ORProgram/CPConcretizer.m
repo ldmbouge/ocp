@@ -865,7 +865,7 @@
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    if (_gamma[e.getId] == NULL) 
-      _gamma[e.getId] = [ORFactory integer: _engine value: [e initialValue]];
+      _gamma[e.getId] = [ORFactory mutable: _engine value: [e initialValue]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {

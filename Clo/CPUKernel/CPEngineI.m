@@ -330,7 +330,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 {
    return (ORUInt)[_mStore count];
 }
--(void) trackVariable: (id) var
+-(id) trackVariable: (id) var
 {
    [var setId:(ORUInt)[_vars count]];
    if (_state != CPClosed) {
@@ -339,8 +339,9 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    }
    else
       [_trail trailRelease:var];
+   return var;
 }
--(void) trackObject:(id)obj
+-(id) trackObject:(id)obj
 {
    if (_state != CPClosed) {
       [_oStore addObject:obj];
@@ -348,6 +349,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    }
    else
       [_trail trailRelease:obj];
+   return obj;
 }
 -(id) trackImmutable: (id) obj
 {

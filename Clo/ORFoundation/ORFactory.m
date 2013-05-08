@@ -161,7 +161,7 @@
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
-   return [tracker trackImmutable:o];
+   return [tracker trackObject:o];
 }
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
@@ -525,7 +525,7 @@
 {
    if (cp == NULL) 
       @throw [[ORExecutionError alloc] initORExecutionError: str]; 
-   [cp trackObject: e];
+   [cp trackImmutable: e];
    return e;   
 }
 +(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t

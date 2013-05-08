@@ -49,8 +49,8 @@ enum CPEngineState {
 -(CPEngineI*) initEngine: (id<ORTrail>) trail;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
--(void)      trackVariable:(id)var;
--(void)      trackObject:(id)obj;
+-(id)        trackVariable:(id)var;
+-(id)        trackObject:(id)obj;
 -(id)        trackImmutable:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;

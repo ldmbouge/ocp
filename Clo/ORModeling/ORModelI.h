@@ -41,6 +41,7 @@
 -(id) addObject:(id) object;
 -(id) addImmutable:(id) object;
 -(ORUInt)nbObjects;
+-(ORUInt)nbImmutables;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;

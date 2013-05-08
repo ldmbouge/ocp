@@ -172,7 +172,7 @@
                                        return [[var domain] inRange: b];
                                    } of:^id<ORExpr>(ORInt i) {
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [item at: i]];
-                                       id<ORMutableInteger> size = [ORFactory integer: _model value: [itemSize at: i]];
+                                       id<ORMutableInteger> size = [ORFactory mutable: _model value: [itemSize at: i]];
                                        return [[binArr at: b] mul: size];
                                    }];
         [_model addConstraint: [sumExpr leq: [binSize at: b]]];

@@ -20,12 +20,12 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
-   return [[[ORModelI alloc] initORModelI:0] autorelease];
+   return [[[ORModelI alloc] initORModelI:0 tau: nil] autorelease];
 }
-+(id<ORModel>) createModel:(ORUInt)nbo
-{
-   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
-}
+//+(id<ORModel>) createModel:(ORUInt)nbo
+//{
+//   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
+//}
 +(id<ORModel>) createModel:(ORUInt)nbo tau: (id<ORTau>) tau
 {
    return [[[ORModelI alloc] initORModelI: nbo tau: tau] autorelease];
