@@ -41,7 +41,7 @@
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   float rv = - [_cp domsize:x];
+   float rv = - [x domsize];
    return rv;
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x

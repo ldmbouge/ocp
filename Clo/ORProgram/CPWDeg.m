@@ -64,7 +64,7 @@
 -(ORFloat) varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
-   NSSet* theConstraints = _cv[_map[[x getId]]];   
+   NSSet* theConstraints = _cv[_map[x.getId]];
    for(id obj in theConstraints) {
       ORInt cid = [obj getId];
       assert(cid >=0 && cid < _nbc);

@@ -80,23 +80,24 @@ int main(int argc, const char * argv[])
                NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                [b appendString:@"["];
                for(ORInt i=0;i<=n-1;i++)
-                  [b appendFormat:@"%d%c",[x[i] value],i < n-1 ? ',' : ']'];
-//               NSLog(@"sol: %@ obj = %@  <-- %d",b,[obj dereference],[NSThread threadID]);
+                  [b appendFormat:@"%d%c",[cp intValue:x[i]],i < n-1 ? ',' : ']'];
+               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
             }
          }];
-         //id<ORCPSolution> sol = [[cp solutionPool] best];
+         id<ORCPSolution> sol = [[cp solutionPool] best];
+         assert(sol);
          ORInt tot = 0;
-//         for(int k=0;k<n;k++)
-//            tot += p[k] * [sol intValue: x[k]];
-//         assert(tot == opt);
+         for(int k=0;k<n;k++)
+            tot += p[k] * [sol intValue: x[k]];
+         assert(tot == opt);
          NSLog(@"objective: %d == %d",tot,opt);
-/*         for(int i=0;i<m;i++) {
+         for(int i=0;i<m;i++) {
             ORInt lhs = 0;
             for(int j=0;j<n;j++)
                lhs += r[i][j] * [sol intValue: x[j]];
             assert(lhs <= b[i]);
             NSLog(@"C[%d] %d <= %d",i,lhs,b[i]);
-         }*/
+         }
          
          NSLog(@"Solver: %@",cp);      
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
