@@ -28,6 +28,7 @@
 
 @implementation CPParSolverI {
    id<CPSemanticProgram>* _workers;
+   
    PCObjectQueue*       _queue;
    NSCondition*    _terminated;
    ORInt               _nbDone;

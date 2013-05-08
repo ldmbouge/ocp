@@ -18,7 +18,7 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORLong startTime = [ORRuntimeMonitor cputime];
       id<ORModel> model = [ORFactory createModel];
-      ORInt n = argc > 2 ? atoi(argv[1]) : 5000;
+      ORInt n = argc > 2 ? atoi(argv[1]) : 10;
       id<ORIntRange> D = RANGE(model,0,n);
       id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
       id<ORGroup> g = [ORFactory bergeGroup:model];
@@ -34,7 +34,7 @@ int main(int argc, const char * argv[])
          NSLog(@"About to search...");
          @autoreleasepool {
             id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
-               return [x[i] value];
+               return [cp intValue:x[i]];
             }];
             NSLog(@"solution: %@",xv);
          }
