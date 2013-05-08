@@ -88,6 +88,83 @@
 }
 @end
 
+
+@implementation ORIntegerI
+{
+	ORInt           _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]])
+      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
+   else return NO;
+}
+- (NSUInteger)hash
+{
+   return _value;
+}
+
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(ORInt) min
+{
+   return _value;
+}
+-(ORInt) max
+{
+   return _value;
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%d",_value];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitIntegerI: self];
+}
+@end
+
 @implementation ORMutableIntegerI
 {
 	ORInt           _value;
@@ -181,7 +258,7 @@
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
-   [visitor visitIntegerI: self];
+   [visitor visitMutableIntegerI: self];
 }
 @end
 

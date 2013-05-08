@@ -68,7 +68,6 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if (_gamma[v.getId] == NULL) {
-       NSLog(@"Variable getId: %d",v.getId);
       LPVariableI* cv;
       if ([v hasBounds])
          cv = [_lpsolver createVariable: [v low] up: [v up]];
@@ -92,7 +91,6 @@
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    if (_gamma[v.getId] == NULL) {
-       NSLog(@"array getId: %d",v.getId);
       id<ORIntRange> R = [v range];
       id<ORIdArray> dx = [ORFactory idArray: _lpsolver range: R];
       ORInt low = R.low;
@@ -141,7 +139,6 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
    if (_gamma[obj.getId] == NULL) {
-      NSLog(@"Obj getId: %d",obj.getId);
       id<ORVarArray> x = [obj array];
       id<ORFloatArray> a = [obj coef];
       [x visit: self];
@@ -164,7 +161,6 @@
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
 {
    if (_gamma[c.getId] == NULL) {
-      NSLog(@"EQ Constraint getId: %d",c.getId);
       id<ORVarArray> x = [c vars];
       id<ORFloatArray> a = [c coefs];
       ORFloat cst = [c cst];
@@ -178,7 +174,6 @@
 -(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
 {
    if (_gamma[c.getId] == NULL) {
-      NSLog(@"Constraint getId: %d",c.getId);
       id<ORVarArray> x = [c vars];
       id<ORFloatArray> a = [c coefs];
       ORInt cst = [c cst];
@@ -190,7 +185,10 @@
    }
 }
 
--(void) visitIntegerI: (id<ORMutableInteger>) e
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory integer: _lpsolver value: [e initialValue]];

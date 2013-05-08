@@ -67,7 +67,13 @@
    return [self group:model type:BergeGroup];
 }
 
-+(id<ORMutableInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
++(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
+{
+   ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
+   return [tracker trackImmutable: o];
+   return o;
+}
++(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORMutableIntegerI* o = [[ORMutableIntegerI alloc] initORMutableIntegerI: tracker value:value];
    [tracker trackObject: o];
@@ -515,77 +521,76 @@
 @end
 
 @implementation ORFactory (Expressions)
-+(id<ORExpr>) validate:(id<ORExpr>)e onError:(const char*)str
++(id<ORExpr>) validate:(id<ORExpr>)e onError:(const char*)str track:(id<ORTracker>)cp
 {
-   id<ORTracker> cp = [e tracker];
-   if (cp == NULL)
+   if (cp == NULL) 
       @throw [[ORExecutionError alloc] initORExecutionError: str]; 
    [cp trackObject: e];
    return e;   
 }
-+(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right
++(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprPlusI alloc] initORExprPlusI: left and: right]; 
-   return [self validate:o onError:"No CP tracker in Add Expression"];
+   return [self validate:o onError:"No CP tracker in Add Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right
++(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprMinusI alloc] initORExprMinusI: left and: right]; 
-   return [self validate:o onError:"No CP tracker in Sub Expression"];
+   return [self validate:o onError:"No CP tracker in Sub Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right
++(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprMulI alloc] initORExprMulI: left and: right]; 
-   return [self validate:o onError:"No CP tracker in Mul Expression"];
+   return [self validate:o onError:"No CP tracker in Mul Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right
++(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprDivI alloc] initORExprDivI: left and: right];
-   return [self validate:o onError:"No CP tracker in Div Expression"];
+   return [self validate:o onError:"No CP tracker in Div Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right
++(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprModI alloc] initORExprModI: left mod: right];
-   return [self validate:o onError:"No CP tracker in Mod Expression"];
+   return [self validate:o onError:"No CP tracker in Mod Expression" track:t];
 }
-+(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right
++(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprEqualI alloc] initORExprEqualI: left and: right]; 
-   [self validate:o onError:"No CP tracker in == Expression"];
+   [self validate:o onError:"No CP tracker in == Expression" track:t];
    return o;
 }
-+(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right
++(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprNotEqualI alloc] initORExprNotEqualI: left and: right];
-   [self validate:o onError:"No CP tracker in != Expression"];
+   [self validate:o onError:"No CP tracker in != Expression" track:t];
    return o;
 }
-+(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right
++(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: left and: right];
-   [self validate:o onError:"No CP tracker in <= Expression"];
+   [self validate:o onError:"No CP tracker in <= Expression" track:t];
    return o;
 }
-+(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right
++(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprLEqualI alloc] initORExprLEqualI: right and: left];
-   [self validate:o onError:"No CP tracker in >= Expression"];
+   [self validate:o onError:"No CP tracker in >= Expression" track:t];
    return o;
 }
-+(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right
++(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORConjunctI alloc] initORConjunctI:left and:right];
-   return [self validate:o onError:"No CP tracker in && Expression"];
+   return [self validate:o onError:"No CP tracker in && Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right
++(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORDisjunctI alloc] initORDisjunctI:left or:right];
-   return [self validate:o onError:"No CP tracker in || Expression"];
+   return [self validate:o onError:"No CP tracker in || Expression" track:t];
 }
-+(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right
++(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right  track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORImplyI alloc] initORImplyI:left imply:right];
-   return [self validate:o onError:"No CP tracker in => Expression"];
+   return [self validate:o onError:"No CP tracker in => Expression" track:t];
 }
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarArray: (id<ORIntVarArray>) a index: (id<ORExpr>) index
 {
@@ -599,15 +604,15 @@
    [tracker trackObject: o];
    return o;
 }
-+(id<ORExpr>) exprAbs: (id<ORExpr>) op
++(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
-   return [self validate:o onError:"No CP tracker in Abs Expression"];
+   return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
 }
-+(id<ORExpr>) exprNegate: (id<ORExpr>) op
++(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprNegateI alloc] initORNegateI:op];
-   return [self validate:o onError:"No CP tracker in negate Expression"];
+   return [self validate:o onError:"No CP tracker in negate Expression" track:t];
 }
 
 +(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
@@ -928,16 +933,16 @@
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
++(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load
 {
    id<ORConstraint> o = [[ORPackingI alloc] initORPackingI:item itemSize:itemSize load:load];
-   [[item tracker] trackObject:o];
+   [t trackObject:o];
    return o;
 }
-+(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
++(id<ORConstraint>) packOne:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize
 {
    id<ORConstraint> o = [[ORPackOneI alloc] initORPackOneI:item itemSize:itemSize bin:b binSize:binSize];
-   [[item tracker] trackObject:o];
+   [t trackObject:o];
    return o;
 }
 +(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c
@@ -958,7 +963,7 @@
    [[x tracker] trackObject:o];
    return o;
 }
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
++(id<ORConstraint>) packing:(id<ORTracker>)t item: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
 {
    // Rewritten in terms of the variable-driven load form.
    id<ORIntRange> R = [binSize range];
@@ -966,8 +971,7 @@
    [binSize enumerateWith:^(ORInt bk, int k) {
       load[k] = [ORFactory intVar:[item tracker] domain:RANGE([item tracker],0,bk)];
    }];
-   id<ORConstraint> o =  [self packing:item itemSize:itemSize load:load];
-   [[item tracker] trackObject:o];
+   id<ORConstraint> o =  [self packing:t item:item itemSize:itemSize load:load];
    return o;
 }
 +(id<ORConstraint>) algebraicConstraint:(id<ORTracker>) model expr: (id<ORRelation>) exp annotation:(ORAnnotation)n
@@ -1003,7 +1007,6 @@
    [a set:y at:1];
    [a set:z at:2];
    id<ORConstraint> o = [self tableConstraint: (id<ORIntVarArray>) a table: table];
-   [tracker trackObject:o];
    return o;
 }
 

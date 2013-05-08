@@ -542,7 +542,11 @@
 -(void) visitBitIf:(id<ORBitIf>)c {}
 
 // Copy Expressions
--(void) visitIntegerI: (id<ORMutableInteger>) e
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   assert(NO);
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    id<ORMutableInteger> o = [[ORMutableIntegerI allocWithZone: _zone] initORMutableIntegerI: _copyModel value: [e initialValue]];
    _result = o;

@@ -20,6 +20,8 @@
 -(id<ORVar>) dereference;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
+-(ORBool) bound;
+-(NSSet*)constraints;
 @end
 
 enum CPVarClass {

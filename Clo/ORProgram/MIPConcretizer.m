@@ -221,10 +221,14 @@
    }
 }
 
--(void) visitIntegerI: (id<ORMutableInteger>) e
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+}
+
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    if ([e dereference] == NULL) {
-      id<ORMutableInteger> n = [ORFactory integer: _MIPsolver value: [e value]];
+      id<ORMutableInteger> n = [ORFactory integer: _MIPsolver value: [e initialValue]];
       [n makeImpl];
       [e setImpl: n];
    }

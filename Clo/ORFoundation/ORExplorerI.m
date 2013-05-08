@@ -307,15 +307,15 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
 {
-   id<ORMutableInteger> isPruned = [ORFactory integer: _engine value: 0];
+   __block ORBool isPruned = NO;
    NSCont* enter = [NSCont takeContinuation];
    if ([enter nbCalls]==0) {
       [_controller._val addChoice: enter];
-      [self perform: s1 onLimit: ^{ [isPruned setValue: 1]; }];
+      [self perform: s1 onLimit: ^{ isPruned = YES; }];
    }
    else {
       [enter letgo];
-      if ([isPruned value])
+      if (isPruned)
          s2();
       else
          [_controller._val fail];

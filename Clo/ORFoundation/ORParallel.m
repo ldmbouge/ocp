@@ -16,12 +16,15 @@
 +(void) parall: (ORRange) R do: (ORInt2Void) closure untilNotifiedBy: (id<ORInformer>) informer
 {
    ORInt2Void clo = [closure copy];
-   id<ORMutableInteger> done = [ORCrFactory integer:0];
+   __block ORBool done = NO;
    [ORConcurrency parall: R
                       do: ^void(ORInt i) {
                          [informer whenNotifiedDo: ^(void) {
-                            printf("Notification\n"); [done setValue: 1]; @throw [[ORInterruptI alloc] initORInterruptI]; }];
-                         if ([done value] == 0) {
+                            printf("Notification\n");
+                            done = YES;
+                            @throw [[ORInterruptI alloc] initORInterruptI];
+                         }];
+                         if (done  == NO) {
                             @try {
                                clo(i);
                             }
@@ -31,7 +34,6 @@
                          }
                       }
     ];
-   [done release];
    [clo release];
 }
 

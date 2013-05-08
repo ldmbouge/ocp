@@ -116,122 +116,187 @@
 }
 -(id<ORExpr>) abs
 {
-   return [ORFactory exprAbs:self];
+   return [ORFactory exprAbs:self track:[self tracker]];
 }
 -(id<ORExpr>) plus: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self plus:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self plus:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self plus:e track:[self tracker]];
 }
 -(id<ORExpr>) sub: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self sub:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self sub:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self sub:e track:[self tracker]];
 }
 -(id<ORExpr>) mul: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self mul:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self mul:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self mul:e track:[self tracker]];
 }
 -(id<ORExpr>) div: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self div:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self div:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self div:e track:[self tracker]];
 }
 -(id<ORExpr>) mod: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self mod:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self mod:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self mod:e track:[self tracker]];
 }
 -(id<ORRelation>) eq: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self equal:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self equal:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self eq:e track:[self tracker]];
 }
 -(id<ORRelation>) neq: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self neq:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self neq:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self neq:e track:[self tracker]];
 }
 -(id<ORRelation>) leq: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self leq:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self leq:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self leq:e track:[self tracker]];
 }
 -(id<ORRelation>) geq: (id) e
 {
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      return [ORFactory expr:self geq:e];
-   else if ([e isKindOfClass:[NSNumber class]])
-      return [ORFactory expr:self geq:[e asExpression:[self tracker]]];
-   else
-      return NULL;
+   return [self geq:e track:[self tracker]];
 }
 -(id<ORRelation>) lt: (id) e
 {
-   id re = NULL;
-   if ([e conformsToProtocol:@protocol(ORExpr)])
-      re = e;
-   else if ([e isKindOfClass:[NSNumber class]])
-      re = [e asExpression:[self tracker]];
-   return [ORFactory expr:self leq:[re sub:[ORFactory integer:[self tracker] value:1]]];
+   return [self lt:e track:[self tracker]];
 }
 -(id<ORRelation>) gt: (id) e
 {
+   return [self gt:e track:[self tracker]];
+}
+-(id<ORExpr>)neg
+{
+   return [ORFactory exprNegate:self track:[self tracker]];
+}
+-(id<ORExpr>)and:(id<ORRelation>)e
+{
+   return [ORFactory expr:(id<ORRelation>)self and:e track:[self tracker]];
+}
+-(id<ORExpr>) or: (id<ORRelation>)e
+{
+   return [ORFactory expr:(id<ORRelation>)self or:e track:[self tracker]];
+}
+-(id<ORExpr>) imply:(id<ORRelation>)e
+{
+   return [ORFactory expr:(id<ORRelation>)self imply:e track:[self tracker]];
+}
+
+-(id<ORExpr>) absTrack:(id<ORTracker>)t
+{
+   return [ORFactory exprAbs:self track:t];
+}
+-(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self plus:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self plus:[e asExpression:t] track:t];
+   else
+      return NULL;   
+}
+-(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self sub:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self sub:[e asExpression:t] track:t];
+   else
+      return NULL;
+}
+-(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self mul:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self mul:[e asExpression:t] track:t];
+   else
+      return NULL;   
+}
+-(id<ORExpr>) div: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self div:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self div:[e asExpression:t] track:t];
+   else
+      return NULL;   
+}
+-(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self mod:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self mod:[e asExpression:t] track:t];
+   else
+      return NULL;
+}
+-(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self equal:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self equal:[e asExpression:t] track:t];
+   else
+      return NULL;   
+}
+-(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self neq:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self neq:[e asExpression:t] track:t];
+   else
+      return NULL;   
+}
+-(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self leq:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self leq:[e asExpression:t] track:t];
+   else
+      return NULL;
+}
+-(id<ORRelation>) geq: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self geq:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self geq:[e asExpression:t] track:t];
+   else
+      return NULL;   
+}
+-(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t
+{
    id re = NULL;
    if ([e conformsToProtocol:@protocol(ORExpr)])
       re = e;
    else if ([e isKindOfClass:[NSNumber class]])
-      re = [e asExpression:[self tracker]];
-   return [ORFactory expr:self geq:[re plus:[ORFactory integer:[self tracker] value:1]]];
+      re = [e asExpression:t];
+   return [ORFactory expr:self leq:[re sub:[ORFactory integer:t value:1] track:t] track:t];
 }
--(id<ORExpr>)neg
+-(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t
 {
-   return [ORFactory exprNegate:self];
+   id re = NULL;
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      re = e;
+   else if ([e isKindOfClass:[NSNumber class]])
+      re = [e asExpression:t];
+   return [ORFactory expr:self geq:[re plus:[ORFactory integer:t value:1]] track:t];
 }
--(id<ORExpr>)and:(id<ORRelation>)e
+-(id<ORRelation>) negTrack:(id<ORTracker>)t
 {
-   return [ORFactory expr:(id<ORRelation>)self and:e];
+   return (id)[ORFactory exprNegate:self track:t];
 }
--(id<ORExpr>) or: (id<ORRelation>)e
+-(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t
 {
-   return [ORFactory expr:(id<ORRelation>)self or:e];
+   return (id)[ORFactory expr:(id)self and:(id)e track:t];
 }
--(id<ORExpr>) imply:(id<ORRelation>)e
+-(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t
 {
-   return [ORFactory expr:(id<ORRelation>)self imply:e];
+   return (id)[ORFactory expr:(id)self or:(id)e track:t];
+}
+-(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t
+{
+   return (id)[ORFactory expr:(id)self imply:(id)e track:t];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}

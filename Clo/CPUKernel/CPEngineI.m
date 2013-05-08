@@ -361,15 +361,6 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    return obj;
 }
 
--(void) trackConstraint:(id)obj
-{
-   if (_state != CPClosed) {
-      [_oStore addObject:obj];
-      [obj release];
-   }
-   else
-      [_trail trailRelease:obj];
-}
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %ld vars\n\t%ld constraints\n\t%d propagations\n",[_vars count],[_cStore count],_nbpropag];

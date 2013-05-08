@@ -21,6 +21,7 @@
 -(void) visitIntVar: (id<ORIntVar>) e;
 -(void) visitAffineVar:(id<ORIntVar>)e;
 -(void) visitIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;
@@ -49,7 +50,8 @@
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e;
 -(void) visitExprLEqualI:(ORExprLEqualI*)e;
 -(void) visitIntVar: (id<ORIntVar>) e;
--(void) visitIntegerI: (id<ORMutableInteger>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (ORExprPlusI*) e;
 -(void) visitExprMinusI: (ORExprMinusI*) e;

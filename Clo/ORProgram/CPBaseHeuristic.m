@@ -85,11 +85,11 @@
    [_binding release];
    [super dealloc];
 }
--(ORFloat) varOrdering: (id<ORIntVar>)x
+-(ORFloat) varOrdering: (id<CPIntVar>)x
 {
    return [_binding[[NSThread threadID]] varOrdering:x];
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+-(ORFloat) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }

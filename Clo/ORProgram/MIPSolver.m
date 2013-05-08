@@ -239,7 +239,8 @@
 -(void) visitBitIf:(id<ORBitIf>)c;
 
 //
--(void) visitIntegerI: (id<ORMutableInteger>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -573,7 +574,11 @@
 {
    _snapshot = NULL;
 }
--(void) visitIntegerI: (id<ORMutableInteger>) e
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _snapshot = NULL;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    _snapshot = NULL;
 }
@@ -655,7 +660,7 @@
 }
 @end
 
-@interface ORMIPSolutionI : NSObject<ORMIPSolution>
+@interface ORMIPSolutionI : ORObject<ORMIPSolution>
 -(ORMIPSolutionI*) initORMIPSolutionI: (id<ORModel>) model with: (id<MIPProgram>) solver;
 -(id<ORSnapshot>) value: (id) var;
 -(ORBool) isEqual: (id) object;
@@ -835,21 +840,17 @@
 {
    return [[ORMIPSolutionI alloc] initORMIPSolutionI: _model with: self];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_MIPsolver trackObject:obj];
+   return [_MIPsolver trackObject:obj];
 }
 -(id) trackImmutable:(id)obj
 {
    return [_MIPsolver trackImmutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_MIPsolver trackVariable:obj];
-}
--(void) trackConstraint:(id) obj
-{
-   [_MIPsolver trackConstraint:obj];
+   return [_MIPsolver trackVariable:obj];
 }
 -(id<ORMIPSolutionPool>) solutionPool
 {

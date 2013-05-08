@@ -96,7 +96,7 @@
    for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
       _map[[_vars[k] getId]] = k - low;
-      _cv[k - low] = [[_vars at:k] constraints];
+      _cv[k - low] = [_cp constraints:_vars[k]];
    }
    _nbv = len;
    NSArray* allC = [_solver constraints];

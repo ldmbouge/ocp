@@ -16,8 +16,8 @@
 -(id) trackObject: (id) obj;      // for mutable
 -(id) trackImmutable: (id) obj;   // for immutable
 -(id) trackVariable: (id) obj;    // for variable
--(id) inCache:(id)obj;
--(id) addToCache:(id)obj;
+@optional-(id) inCache:(id)obj;
+@optional-(id) addToCache:(id)obj;
 @end
 
 

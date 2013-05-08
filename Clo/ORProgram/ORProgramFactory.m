@@ -172,7 +172,7 @@
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
-      id<CPProgram> pi = [cpprogram worker];
+      id<CPCommonProgram> pi = [cpprogram worker];
       [ORFactory concretizeCP:flatModel program:pi];
       [pi onSolution:^{
          id<ORCPSolution> sol = [pi captureSolution];
@@ -206,10 +206,7 @@
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
 
    for(id<ORObject> c in [flatModel mutables])
-      [c visit: concretizer];
-   for(ORInt i = 0; i < nbEntries; i++)
-      NSLog(@" %d -> %@",i,gamma[i]);
-   
+      [c visit: concretizer];   
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }

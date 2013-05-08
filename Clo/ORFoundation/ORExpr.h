@@ -56,6 +56,23 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) and: (id<ORExpr>) e;
 -(id<ORRelation>) or: (id<ORExpr>) e;
 -(id<ORRelation>) imply:(id<ORExpr>)e;
+
+-(id<ORExpr>) absTrack:(id<ORTracker>)t;
+-(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) div: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) geq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) negTrack:(id<ORTracker>)t;
+-(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
 -(enum ORRelationType) type;
 @end
 

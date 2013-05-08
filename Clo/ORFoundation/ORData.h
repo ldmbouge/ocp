@@ -54,6 +54,12 @@ typedef enum {
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
+
+@protocol ORInteger <ORObject,ORExpr>
+-(ORInt) value;
+@end
+
+
 @protocol ORMutableInteger <ORObject,ORExpr>
 -(ORInt) initialValue;
 -(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;

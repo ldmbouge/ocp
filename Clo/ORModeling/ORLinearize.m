@@ -141,7 +141,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: u];
                                    }];
-        [_model addConstraint: [ORFactory expr: sumExpr leq: [ORFactory integer: _model value: [upArr at: u]]]];
+        [_model addConstraint: [sumExpr leq: [ORFactory integer: _model value: [upArr at: u]]]];
     }
     
     // Constrain lower bounds
@@ -156,7 +156,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: l];
                                    }];
-        [_model addConstraint: [ORFactory expr: sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
+        [_model addConstraint: [sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
     }
 }
 -(void) visitPacking: (id<ORPacking>) cstr
@@ -173,9 +173,9 @@
                                    } of:^id<ORExpr>(ORInt i) {
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [item at: i]];
                                        id<ORMutableInteger> size = [ORFactory integer: _model value: [itemSize at: i]];
-                                       return [ORFactory expr: [binArr at: b] mul: size];
+                                       return [[binArr at: b] mul: size];
                                    }];
-        [_model addConstraint: [ORFactory expr: sumExpr leq: [binSize at: b]]];
+        [_model addConstraint: [sumExpr leq: [binSize at: b]]];
     }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
@@ -255,10 +255,16 @@
 {
 }
 // Expressions
--(void) visitIntegerI: (id<ORMutableInteger>) e  {
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _exprResult = e;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
     _exprResult = e;
 }
--(void) visitFloatI: (id<ORFloatNumber>) e  {
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
    _exprResult = e;
 }
 

@@ -178,7 +178,7 @@
 }
 @end
 
-@interface ORLPSolutionI : NSObject<ORLPSolution>
+@interface ORLPSolutionI : ORObject<ORLPSolution>
 -(ORLPSolutionI*) initORLPSolutionI: (id<ORModel>) model with: (id<LPProgram>) solver;
 -(id<ORSnapshot>) value: (id<ORFloatVar>) var;
 -(ORFloat) reducedCost: (id<ORFloatVar>) var;
@@ -359,10 +359,9 @@
 {
    [(LPColumnI*)_impl addObjCoef: coef];
 }
-// pvh to fix: will need more interesting dereference once we have multiple clones
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef
 {
-   [(LPColumnI*) _impl addConstraint: [cstr dereference] coef: coef];
+   [(LPColumnI*) _impl addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
 @end
 
@@ -404,8 +403,6 @@
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
-   NSLog(@"Dual of c %d",c.getId);
-   NSLog(@"The Dual of c  is %@",_gamma[c.getId]);
    return [_lpsolver dual: [self concretize: c]];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
@@ -438,9 +435,9 @@
    [_sPool addSolution: sol];
    [sol release];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_lpsolver trackObject:obj];
+   return [_lpsolver trackObject:obj];
 }
 -(void) trackVariable: (id) obj
 {

@@ -263,7 +263,8 @@
 -(void) visitBitIf:(id<ORBitIf>)c;
 
 //
--(void) visitIntegerI: (id<ORMutableInteger>) e;
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -600,7 +601,11 @@
 }
 
 //
--(void) visitIntegerI: (id<ORMutableInteger>) e
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _snapshot = NULL;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    _snapshot = NULL;   
 }
@@ -682,7 +687,7 @@
 }
 @end
 
-@interface ORCPSolutionI : NSObject<ORCPSolution>
+@interface ORCPSolutionI : ORObject<ORCPSolution>
 -(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver;
 -(id<ORSnapshot>) value: (id) var;
 -(ORBool) isEqual: (id) object;
@@ -1141,17 +1146,17 @@
    [_search nestedSolveAll: body onSolution:nil onExit:nil
                    control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
--(void) trackObject: (id) object
+-(id) trackObject: (id) object
 {
-   [_engine trackObject:object];   
+   return [_engine trackObject:object];
 }
 -(id) trackImmutable: (id) object
 {
    return [_engine trackImmutable:object];
 }
--(void) trackVariable: (id) object
+-(id) trackVariable: (id) object
 {
-   [_engine trackObject:object];  
+   return [_engine trackObject:object];
 }
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -1178,7 +1183,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
-
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
    ORInt low = [x low];
@@ -1303,11 +1307,11 @@
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   [self labelHeuristic:h withConcrete:[h allIntVars]];
+   [self labelHeuristic:h withConcrete:(id)[h allIntVars]];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
 {
-   id<ORIntVarArray> cav = [ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
+   id<CPIntVarArray> cav = (id)[ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
       return _gamma[av[k].getId];
    }];
    [self labelHeuristic:h withConcrete:cav];
@@ -1330,10 +1334,10 @@
    }];
    
    *last = nil;
-   id<ORMutableInteger> failStamp = [ORFactory integer:self value:-1];
+   __block ORInt failStamp = -1;
    do {
       id<CPIntVar> x = *last;
-      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+      if (failStamp  == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -1343,7 +1347,7 @@
       }/* else {
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
-      [failStamp setValue:[_search nbFailures]];
+      failStamp = [_search nbFailures];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
@@ -1482,6 +1486,8 @@
    if (status == ORFailure)
       [_search fail];
 }
+-(void) add: (id<ORConstraint>) c
+{}
 
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
 {
@@ -1585,9 +1591,13 @@
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
 }
+-(NSSet*) constraints: (id<ORVar>)x
+{
+   return [(id<CPVar>)_gamma[x.getId] constraints];
+}
 -(void) incr: (id<ORMutableInteger>) i
 {
-   [((id<ORMutableInteger>) _gamma[i.getId]) incr];
+   [((ORMutableIntegerI*) _gamma[i.getId]) incr];
 }
 @end
 
@@ -1603,8 +1613,8 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
+-(id) trackObject: (id) obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @implementation ORRTModel
@@ -1674,17 +1684,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_solver trackObject:obj];
+   return [_solver trackObject:obj];
 }
 -(id) trackImmutable:(id)obj
 {
    return [_solver trackImmutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_solver trackVariable:obj];
+   return [_solver trackVariable:obj];
 }
 @end
 

@@ -32,7 +32,8 @@
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt;
 +(id<ORGroup>)group:(id<ORTracker>)model;
 +(id<ORGroup>)bergeGroup:(id<ORTracker>)model;
-+(id<ORMutableInteger>) integer: (id<ORTracker>) tracker value: (ORInt) value;
++(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value;
++(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value;
 +(id<ORFloatNumber>) float: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
@@ -114,20 +115,20 @@
 #define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]
 
 @interface ORFactory (Expressions)
-+(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right;
-+(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right;
-+(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right;
-+(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right;
-+(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right;
-+(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right;
-+(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right;
-+(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right;
-+(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right;
-+(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right;
-+(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right;
-+(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right;
-+(id<ORExpr>) exprAbs: (id<ORExpr>) op;
-+(id<ORExpr>) exprNegate: (id<ORExpr>) op;
++(id<ORExpr>) expr: (id<ORExpr>) left plus: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORExpr>) left sub: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORExpr>) left mul: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORExpr>) left div: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORExpr>) left mod: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) left neq: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) left leq: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORRelation>) expr: (id<ORExpr>) left geq: (id<ORExpr>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right track:(id<ORTracker>)t;
++(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
++(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
 +(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
@@ -188,9 +189,9 @@
 +(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x;
 +(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
-+(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
++(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
++(id<ORConstraint>) packing:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
++(id<ORConstraint>) packOne:(id<ORTracker>)t item:(id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
 +(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
 +(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x annotation:(ORAnnotation)c;

@@ -112,7 +112,7 @@
 -(ORInt)  max: (id<ORIntVar>) x;
 -(ORInt)  domsize: (id<ORIntVar>) x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
-
+-(NSSet*) constraints: (id<ORVar>)x;
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
 -(ORBool) boolValue: (id<ORIntVar>) x;
