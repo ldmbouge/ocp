@@ -221,14 +221,24 @@
 
 +(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
 {
-   id<ORModel> flatModel = [ORFactory createModel];
+   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
    id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
    [flattener apply: model];
    [batch release];
    
+   ORUInt nbEntries =  [flatModel nbObjects];
+   NSLog(@" NbEntries: %d",nbEntries);
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [mipprogram setGamma: gamma];
+   [mipprogram setTau: model.tau];
+   
    id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
-   [flatModel visit: concretizer];
+  
+   for(id<ORObject> c in [flatModel mutables])
+      [c visit: concretizer];
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }

@@ -17,8 +17,8 @@
 
 @implementation ORLPFlatten {
    id<ORAddToModel> _into;
-    NSMapTable*     _mapping;
-    id              _result;
+   NSMapTable*     _mapping;
+   id              _result;
    id<ORTau>        _tau;
 }
 
@@ -110,6 +110,10 @@
    return cstr;
 }
 
+-(void) visitIntVar: (ORIntVarI*) v
+{
+   _result = v;
+}
 -(void) visitFloatVar: (ORFloatVarI*) v
 {
    _result = v;
@@ -175,11 +179,13 @@
 {
    ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _into annotation: Default];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
+   [terms release];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
    ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _into annotation: Default];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
+   [terms release];
 }
 
 @end

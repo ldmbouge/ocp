@@ -826,11 +826,11 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
-   return [_MIPsolver floatValue: [v dereference]];
+   return [_MIPsolver floatValue: _gamma[v.getId]];
 }
 -(ORInt) intValue: (id<ORIntVar>) v
 {
-   return [_MIPsolver intValue: [v dereference]];
+   return [_MIPsolver intValue: _gamma[v.getId]];
 }
 -(id<ORObjectiveValue>) objectiveValue
 {

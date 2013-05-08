@@ -20,7 +20,7 @@
 @implementation NSObject (Concretization)
 -(id) dereference
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
+//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
    return self;
 }
 -(void) setImpl: (id) impl
