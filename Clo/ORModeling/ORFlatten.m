@@ -179,7 +179,7 @@
 -(void)apply:(id<ORModel>)m
 {
    [m applyOnVar:^(id<ORVar> x) {
-      [_into addVariable:[self flattenIt:x]];
+      [_into addVariable: [self flattenIt:x]];
    } onMutables:^(id<ORObject> x) {
       [_into addObject:[self flattenIt:x]];
    } onImmutables:^(id<ORObject> x) {
