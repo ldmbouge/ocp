@@ -86,7 +86,7 @@
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitFloatVar:(id<ORFloatVar>)e    {}
--(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitIntegerI: (id<ORMutableInteger>) e   {}
 -(void) visitFloatI: (id<ORFloatNumber>) e {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -128,7 +128,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
--(void) visitIntegerI: (id<ORInteger>) e
+-(void) visitIntegerI: (id<ORMutableInteger>) e
 {
    [_terms addIndependent:[e initialValue]];
 }

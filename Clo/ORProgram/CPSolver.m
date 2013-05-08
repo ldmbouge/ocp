@@ -263,7 +263,7 @@
 -(void) visitBitIf:(id<ORBitIf>)c;
 
 //
--(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -600,7 +600,7 @@
 }
 
 //
--(void) visitIntegerI: (id<ORInteger>) e
+-(void) visitIntegerI: (id<ORMutableInteger>) e
 {
    _snapshot = NULL;   
 }
@@ -1330,7 +1330,7 @@
    }];
    
    *last = nil;
-   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
+   id<ORMutableInteger> failStamp = [ORFactory integer:self value:-1];
    do {
       id<CPIntVar> x = *last;
       if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
@@ -1585,9 +1585,9 @@
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
 }
--(void) incr: (id<ORInteger>) i
+-(void) incr: (id<ORMutableInteger>) i
 {
-   [((id<ORInteger>) _gamma[i.getId]) incr];
+   [((id<ORMutableInteger>) _gamma[i.getId]) incr];
 }
 @end
 

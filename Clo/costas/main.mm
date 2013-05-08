@@ -97,7 +97,7 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:mdl];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
-         id<ORInteger> nbSol = [ORFactory integer:mdl value:0];
+         id<ORMutableInteger> nbSol = [ORFactory integer:mdl value:0];
          [cp solveAll: ^{
             [cp labelHeuristic:h];
             @autoreleasepool {

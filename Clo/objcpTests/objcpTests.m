@@ -40,7 +40,7 @@
    int n = 8;
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = RANGE(m,1,n);
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    id<ORIntVarArray> x  = [ORFactory intVarArray:m range:R domain: R];
    id<ORIntVarArray> xp = [ORFactory intVarArray:m range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:x[i] shift:i]; }];
    id<ORIntVarArray> xn = [ORFactory intVarArray:m range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:x[i] shift:-i]; }];
@@ -68,7 +68,7 @@
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange:m low:0 up:s-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: m range:R domain: [ORFactory intRange:m low:0 up:n-1]];
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [m add: [ORFactory sumbool:m array:x geqi:2]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -96,7 +96,7 @@
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange:m low:0 up:s-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: m range:R domain: [ORFactory intRange:m low:0 up:n-1]];
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [m add: [ORFactory sumbool:m array:x geqi:8]];
 
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -131,7 +131,7 @@
    [m add:[ORFactory sumbool:m array:nx geqi:8]];
    
    
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
@@ -163,7 +163,7 @@
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange:m low:0 up:s-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: m range:R domain: RANGE(m,0,1)];
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [m add: [ORFactory sumbool:m array:x eqi:4]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -194,7 +194,7 @@
    }];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [cp solveAll: ^() {
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
       for(ORInt k=0;k<s;k++) {
@@ -300,7 +300,7 @@
    id<ORIntVarArray> x  = [ORFactory intVarArray: m range:R domain: RANGE(m,0,10)];
    id<ORIntVar> zn = [ORFactory intVar:m domain:RANGE(m,-10,0)];
    id<ORIntVar> z = [ORFactory intVar:m var:zn scale:-1];
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [m add: [z leqi:5]];
    [m add: [x[0] eq:[x[1] plus:z]]];
   
@@ -322,7 +322,7 @@
    ORInt n = 8;
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = RANGE(m,1,n);
-   id<ORInteger> nbSolutions = [ORFactory integer:m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer:m value: 0];
    id<ORIntVarArray> x = [ORFactory intVarArray:m range: R domain: R];
    id<ORIntVarArray> xp = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:[x at: i] shift:i]; }];
    id<ORIntVarArray> xn = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:[x at: i] shift:-i]; }];

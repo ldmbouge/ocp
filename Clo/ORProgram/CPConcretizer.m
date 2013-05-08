@@ -860,7 +860,7 @@
 }
 
 //
--(void) visitIntegerI: (id<ORInteger>) e
+-(void) visitIntegerI: (id<ORMutableInteger>) e
 {
    if (_gamma[e.getId] == NULL) 
       _gamma[e.getId] = [ORFactory integer: _engine value: [e initialValue]];

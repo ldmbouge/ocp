@@ -112,7 +112,7 @@ struct CPVarPair {
    [_model addConstraint:[ORFactory model:_model boolean:vars.lV imply:vars.rV equal:vars.boolVar]];
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
--(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitIntegerI: (id<ORMutableInteger>) e   {}
 -(void) visitFloatI: (id<ORFloatNumber>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -172,7 +172,7 @@ struct CPVarPair {
    } else
       [_terms addTerm:e by:1];
 }
--(void) visitIntegerI: (id<ORInteger>) e
+-(void) visitIntegerI: (id<ORMutableInteger>) e
 {
    if (_eqto) {
       [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e value]]];
@@ -401,7 +401,7 @@ struct CPVarPair {
    else
       _rv = e;
 }
--(void) visitIntegerI: (id<ORInteger>) e
+-(void) visitIntegerI: (id<ORMutableInteger>) e
 {
    if (!_rv)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];

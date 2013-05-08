@@ -14,8 +14,8 @@
 #import "ORExprI.h"
 #import "ORError.h"
 
-@interface ORIntegerI : ORExprI<NSCoding,ORInteger>
--(ORIntegerI*) initORIntegerI: (id<ORTracker>) tracker value: (ORInt) value;
+@interface ORMutableIntegerI : ORExprI<NSCoding,ORMutableInteger>
+-(ORMutableIntegerI*) initORMutableIntegerI: (id<ORTracker>) tracker value: (ORInt) value;
 -(ORInt)  initialValue;
 -(ORInt) setValue: (ORInt) value;
 -(ORInt)  value: (id<ORGamma>) solver;

@@ -40,7 +40,7 @@ int main(int argc, const char * argv[])
       ORInt* conn = (ORInt*)connection;
 
     
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
+      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value:0];
       
       id<ORIntVarArray> cost = [ORFactory intVarArray: mdl range:Stores domain: RANGE(mdl,0,maxCost)];
       id<ORIntVarArray> supp = [ORFactory intVarArray: mdl range:Stores domain: Warehouses];

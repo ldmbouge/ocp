@@ -542,9 +542,9 @@
 -(void) visitBitIf:(id<ORBitIf>)c {}
 
 // Copy Expressions
--(void) visitIntegerI: (id<ORInteger>) e
+-(void) visitIntegerI: (id<ORMutableInteger>) e
 {
-   id<ORInteger> o = [[ORIntegerI allocWithZone: _zone] initORIntegerI: _copyModel value: [e initialValue]];
+   id<ORMutableInteger> o = [[ORMutableIntegerI allocWithZone: _zone] initORMutableIntegerI: _copyModel value: [e initialValue]];
    _result = o;
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e

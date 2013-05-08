@@ -73,13 +73,13 @@
 }
 @end
 
-@implementation ORIntegerI
+@implementation ORMutableIntegerI
 {
 	ORInt           _value;
    id<ORTracker> _tracker;
 }
 
--(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value
+-(ORMutableIntegerI*) initORMutableIntegerI:(id<ORTracker>)tracker value:(ORInt) value
 {
    self = [super init];
    _value = value;
@@ -124,19 +124,19 @@
 }
 -(ORInt) value: (id<ORGamma>) solver
 {
-   return [(ORIntegerI*)[solver concretize: self] initialValue];
+   return [(ORMutableIntegerI*)[solver concretize: self] initialValue];
 }
 -(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
 {
-   return [((ORIntegerI*)[solver concretize: self]) setValue: value];
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }
 -(ORInt) incr: (id<ORGamma>) solver
 {
-   return [(ORIntegerI*)[solver concretize: self] incr];
+   return [(ORMutableIntegerI*)[solver concretize: self] incr];
 }
 -(ORInt) decr: (id<ORASolver>) solver
 {
-   return [(ORIntegerI*)[solver concretize: self] decr];
+   return [(ORMutableIntegerI*)[solver concretize: self] decr];
 }
 -(ORBool) isConstant
 {

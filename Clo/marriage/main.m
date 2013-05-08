@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
       ORInt* rankWPtr = (ORInt*)rankW;
       
      
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
+      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value:0];
       
       
       id<ORIntVarArray> husband = [ORFactory intVarArray: mdl range:RWomen domain: RMen];

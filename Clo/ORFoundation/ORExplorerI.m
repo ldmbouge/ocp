@@ -252,7 +252,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 {
-   //   id<ORInteger> nbRestarts = [ORFactory integer: _solver value: -1];
+   //   id<ORMutableInteger> nbRestarts = [ORFactory integer: _solver value: -1];
    NSCont* enter = [NSCont takeContinuation];
    if (isDone)
       if (isDone()) {
@@ -307,7 +307,7 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
 
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
 {
-   id<ORInteger> isPruned = [ORFactory integer: _engine value: 0];
+   id<ORMutableInteger> isPruned = [ORFactory integer: _engine value: 0];
    NSCont* enter = [NSCont takeContinuation];
    if ([enter nbCalls]==0) {
       [_controller._val addChoice: enter];

@@ -43,7 +43,7 @@
    id<ORIntArray> ub = [ORFactory intArray:m range:RANGE(m,0,n-1) value:3];
     
    int* cnt = alloca(sizeof(NSInteger)*n);
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [m add:[ORFactory cardinality:x low:lb up:ub]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];

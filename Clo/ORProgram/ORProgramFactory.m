@@ -192,7 +192,7 @@
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
-      id<CPProgram> pi = [cpprogram dereference];
+      id<CPProgram> pi = [cpprogram worker];
       [ORFactory concretizeCP:flatModel program:pi];
       [pi onSolution:^{
          id<ORCPSolution> sol = [pi captureSolution];
