@@ -565,10 +565,7 @@
 }
 -(NSString*)stringValue
 {
-   if (_impl)
-      return [[_impl dereference] description];
-   else
-      return [self description];
+   return [self description];
 }
 
 @end

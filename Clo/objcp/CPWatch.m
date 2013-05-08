@@ -91,7 +91,7 @@
                    onValueUnbind:(ORInt2Void)unb
 {
    id<ORConstraint> c = nil;
-   c = [[CPWatch alloc] initCPWatch:[x dereference]
+   c = [[CPWatch alloc] initCPWatch:x
                         onValueLost:lost 
                         onValueBind:bind
                      onValueRecover:rec
