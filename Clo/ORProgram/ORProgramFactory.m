@@ -136,8 +136,6 @@
       // This "fakes" the thread number so that the main thread does add into the binding array at offset i
       [NSThread setThreadID: i];
       id<CPProgram> cp = [cpprogram at: i];
-      // if you use this line, this is buggy
-      //[ORFactory createCPProgram: flatModel program: cp];
       [ORFactory concretizeCP: flatModel program: cp];
       id<ORSolutionPool> lp = [cp solutionPool];
       id<ORSolutionPool> gp = [cpprogram solutionPool];
@@ -170,25 +168,7 @@
 {
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
    [model setImpl:cpprogram];
-   id<ORModel> flatModel = [model flatten];
-//   id<ORModel> flatModel = [ORFactory createModel];
-//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-//   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
-//   [flat apply: model];
-//   [batch release];
-//   for(id<ORObject> c in [flatModel mutables]) {
-//      if ([c impl] == NULL) {
-//         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
-//         [c setImpl: ba];
-//      }
-//   }
-//   for(id<ORObject> c in [flatModel constraints]) {
-//      if ([c impl] == NULL) {
-//         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
-//         [c setImpl: ba];
-//      }
-//   }
-   
+   id<ORModel> flatModel = [model flatten];   
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
       [NSThread setThreadID:i];
@@ -207,14 +187,26 @@
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
-   id<ORModel> flatModel = [ORFactory createModel];
+//   id<ORModel> flatModel = [model flatten];
+   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
    id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
    [flattener apply: model];
    [batch release];
+//   NSLog(@"model is %@",flatModel);
    
+   ORUInt nbEntries =  [flatModel nbObjects];
+   NSLog(@" NbEntries: %d",nbEntries);
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [lpprogram setGamma: gamma];
+   [lpprogram setTau: model.tau];
+ 
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
-   [flatModel visit: concretizer];
+
+   for(id<ORObject> c in [flatModel mutables])
+      [c visit: concretizer];   
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }

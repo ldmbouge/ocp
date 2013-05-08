@@ -359,10 +359,9 @@
 {
    [(LPColumnI*)_impl addObjCoef: coef];
 }
-// pvh to fix: will need more interesting dereference once we have multiple clones
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef
 {
-   [(LPColumnI*) _impl addConstraint: [cstr dereference] coef: coef];
+   [(LPColumnI*) _impl addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
 @end
 
@@ -404,15 +403,15 @@
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
-   return [_lpsolver dual: [c dereference]];
+   return [_lpsolver dual: [self concretize: c]];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
-   return [_lpsolver floatValue: [v dereference]];
+   return [_lpsolver floatValue: _gamma[v.getId]];
 }
 -(ORFloat) reducedCost: (id<ORFloatVar>) v
 {
-   return [_lpsolver reducedCost: [v dereference]];
+   return [_lpsolver reducedCost: _gamma[v.getId]];
 }
 -(id<LPColumn>) createColumn
 {

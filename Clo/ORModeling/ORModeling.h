@@ -51,6 +51,7 @@
 -(id<ORModel>) rootModel;
 -(id)inCache:(id)obj;
 -(id) addToCache:(id)obj;
+-(id<ORTau>) tau;
 @end
 
 @protocol ORAddToModel <ORTracker>

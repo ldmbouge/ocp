@@ -56,7 +56,7 @@
 }
 -(void) dealloc
 {
-   free(gamma);
+   free(_gamma);
    [super dealloc];
 }
 -(id*) gamma
@@ -67,9 +67,24 @@
 {
    _gamma = gamma;
 }
+-(void) setTau: (id<ORTau>) tau
+{
+   _tau = tau;
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
-   return _gamma[o.getId];
+   id<ORObject> ob =  _gamma[o.getId];
+   if (ob)
+      return ob;
+   else {
+      ob = o;
+      id<ORObject> nob = [_tau get: ob];
+      while (nob) {
+         ob = nob;
+         nob = [_tau get: ob];
+      }
+      return _gamma[ob.getId];
+   }
 }
 @end
 

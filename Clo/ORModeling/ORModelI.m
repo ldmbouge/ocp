@@ -19,6 +19,33 @@
 #import "ORCopy.h"
 #import "ORFlatten.h"
 
+@implementation ORTau
+{
+   NSMapTable* _mapping;
+}
+-(ORTau*) initORTau
+{
+   self = [super init];
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                            capacity:64];
+   return self;
+}
+-(void) dealloc
+{
+   [_mapping release];
+   [super dealloc];
+}
+-(void) set: (id) value forKey: (id) key
+{
+   [_mapping setObject: value forKey: key];
+}
+-(id) get: (id) key
+{
+   return [_mapping objectForKey: key];
+}
+@end
+
 @implementation ORModelI
 {
    NSMutableArray*          _vars;      // model variables.
@@ -28,7 +55,8 @@
    id<ORObjectiveFunction>  _objective;
    ORUInt                   _nbObjects; // number of objects registered with this model.
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
-   NSMutableDictionary*      _cache;
+   NSMutableDictionary*     _cache;
+   id<ORTau>                _tau;
 }
 -(ORModelI*) initORModelI
 {
@@ -38,15 +66,27 @@
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _iStore = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
+   _tau = [[ORTau alloc] initORTau];
    _objective = nil;
    _nbObjects = 0;
    return self;
 }
--(ORModelI*)initORModelI:(ORUInt)nb
+-(ORModelI*)initORModelI: (ORUInt) nb
 {
    self = [self initORModelI];
    _nbObjects = nb;
    return self;
+}
+-(ORModelI*)initORModelI: (ORUInt) nb tau: (id<ORTau>) tau
+{
+   self = [self initORModelI];
+   _nbObjects = nb;
+   _tau = [tau retain];
+   return self;
+}
+-(id<ORTau>) tau
+{
+   return _tau;
 }
 -(ORUInt)nbObjects
 {
@@ -65,6 +105,7 @@
    [_cStore release];
    [_iStore release];
    [_cache release];
+   [_tau release];
    [super dealloc];
 }
 -(id)inCache:(id)obj
@@ -500,7 +541,8 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(void) dealloc
 {
    NSLog(@"dealloc ORSolutionPoolI");
-   [_all release];
+   // pvh this is buggy
+//   [_all release];
    [super dealloc];
 }
 

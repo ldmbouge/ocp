@@ -37,6 +37,11 @@ typedef enum {
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
+@protocol ORTau <NSObject>
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+@end
+
 @protocol ORGamma <NSObject>
 -(id<ORObject>) concretize: (id<ORObject>) o;
 @end
@@ -134,10 +139,12 @@ typedef enum {
 {
 @protected
    id* _gamma;
+   id<ORTau> _tau;
 }
 -(ORGamma*) initORGamma;
 -(void) dealloc;
 -(void) setGamma: (id*) gamma;
+-(void) setTau: (id<ORTau>) tau;
 -(id*) gamma;
 -(id) concretize: (id) o;
 @end
