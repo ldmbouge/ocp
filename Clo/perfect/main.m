@@ -72,8 +72,8 @@ int main(int argc, const char * argv[])
                   }];
                }];
             }];
-            id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [x[i] value];}];
-            id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [y[i] value];}];
+            id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
+            id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"x = %@",xs);
             NSLog(@"y = %@",ys);
 

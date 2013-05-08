@@ -16,7 +16,6 @@
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORConcurrencyI.h"
-#import "ORCopy.h"
 #import "ORFlatten.h"
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
@@ -80,6 +79,21 @@
    self = [self initORModelI];
    _nbObjects = nb;
    _tau = [tau retain];
+   return self;
+}
+-(ORModelI*)initWithModel:(ORModelI*)src
+{
+   self = [super init];
+   _vars = [src->_vars copy];
+   _cStore = [src->_cStore copy];
+   _mStore = [src->_mStore copy];
+   _iStore = [src->_iStore copy];
+   _nbObjects = src->_nbObjects;
+   _nbImmutables = src->_nbImmutables;
+   _objective = src->_objective;
+   _source = src;
+   _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
+   _tau    = [[ORTau alloc] initORTau];   
    return self;
 }
 -(id<ORTau>) tau
@@ -333,10 +347,8 @@
 }
 -(id) copyWithZone:(NSZone*)zone
 {
-   ORCopy* copier = [[ORCopy alloc] initORCopy: zone];
-   ORModelI* m = (ORModelI*)[copier copyModel: self];
-   [copier release];
-   return m;
+   ORModelI* clone = [[ORModelI allocWithZone:zone] initWithModel:self];
+   return clone;
 }
 -(id<ORModel>) flatten
 {
