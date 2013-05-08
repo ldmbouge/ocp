@@ -14,11 +14,6 @@
 			<key>orderHint</key>
 			<integer>42</integer>
 		</dict>
-		<key>CPUKernel 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>15</integer>
-		</dict>
 		<key>CPUKernel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -28,16 +23,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>53</integer>
-		</dict>
-		<key>Clo.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>0</integer>
-		</dict>
-		<key>CuttingStock.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>64</integer>
 		</dict>
 		<key>CuttingStock.xcscheme_^#shared#^_</key>
 		<dict>
@@ -98,11 +83,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>40</integer>
-		</dict>
-		<key>SportDemo 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>63</integer>
 		</dict>
 		<key>SportDemo.xcscheme_^#shared#^_</key>
 		<dict>
@@ -228,11 +208,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>31</integer>
-		</dict>
-		<key>latinSquare 2.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>62</integer>
 		</dict>
 		<key>latinSquare.xcscheme_^#shared#^_</key>
 		<dict>
@@ -419,11 +394,6 @@
 			<key>orderHint</key>
 			<integer>34</integer>
 		</dict>
-		<key>testLPConcretization.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>65</integer>
-		</dict>
 		<key>testLPConcretization.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -434,15 +404,10 @@
 			<key>orderHint</key>
 			<integer>41</integer>
 		</dict>
-		<key>testMIP.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>67</integer>
-		</dict>
 		<key>testMIP.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>63</integer>
+			<integer>67</integer>
 		</dict>
 		<key>testPacking.xcscheme_^#shared#^_</key>
 		<dict>

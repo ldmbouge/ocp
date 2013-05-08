@@ -16,13 +16,13 @@
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgramFactory.h>
 
-void show(id<ORIntVarMatrix> m) 
+void show(id<CPProgram> cp,id<ORIntVarMatrix> m)
 {
     id<ORIntRange> R = [m range: 0];
     id<ORIntRange> C = [m range: 1];
     for(ORInt i = [R low] ; i <= [R up]; i++) {
         for(ORInt j = C.low ; j <= C.up; j++) 
-            printf("%d  ",[[m at: i : j] min]);
+            printf("%d  ",[cp intValue:[m at: i : j]]);
         printf("\n");   
     }
     printf("\n");
@@ -58,8 +58,8 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:
        ^() {
-          [cp labelArray: a orderedBy: ^ORFloat(ORInt i) { return [[a at:i] domsize];}];
-          show(x);
+          [cp labelArray: a orderedBy: ^ORFloat(ORInt i) { return [cp domsize:a[i]];}];
+          show(cp,x);
        }
        ];
       

@@ -15,14 +15,14 @@
 
 #import "ORCmdLineArgs.h"
 
-void show(id<ORIntVarMatrix> M)
+void show(id<CPProgram> cp,id<ORIntVarMatrix> M)
 {
    id<ORIntRange> r0 = [M range:0];
    id<ORIntRange> r1 = [M range:1];
    for(ORInt i = r0.low ; i <= r0.up;i++) {
       for(ORInt j = r1.low ; j <= r1.up;j++) {
-         if ([[M at:i :j] bound])
-            printf("%d ",[[M at:i :j] min]);
+         if ([cp bound:[M at:i :j]])
+            printf("%d ",[cp intValue:[M at:i :j]]);
          else printf("? ");
       }
       printf("\n");
@@ -73,10 +73,10 @@ int main(int argc, const char * argv[])
             //NSLog(@"Start... %@",[[cp engine] model]);
             id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
             //[cp labelHeuristic:h];
-            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [flat[i] domsize];}];
+            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [cp domsize:flat[i]];}];
             //[cp labelArray:[ORFactory flattenMatrix:M]];
             NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
-            show(M);
+            show(cp,M);
          }];
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);

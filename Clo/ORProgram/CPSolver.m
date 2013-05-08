@@ -1336,7 +1336,7 @@
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
       id<ORIntVar> x = *last;
-      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+      if ([failStamp value] == [_search nbFailures] || (x == nil || [self bound:x])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -1349,11 +1349,11 @@
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
-      ORInt low = [x min];
-      ORInt up  = [x max];
+      ORInt low = [self min:x];
+      ORInt up  = [self max:x];
       ORInt bestIndex = low - 1;
       for(ORInt v = low;v <= up;v++) {
-        if ([x member:v]) {
+        if ([self member:v in:x]) {
           ORFloat vValue = [h valOrdering:v forVar:x];
           if (vValue > bestValue) {
             bestValue = vValue;

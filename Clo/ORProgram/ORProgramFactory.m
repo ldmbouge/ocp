@@ -53,9 +53,14 @@
 
 +(id<CPCommonProgram>)concretizeCP:(id<ORModel>)m program: (id<CPCommonProgram>) cpprogram
 {
+   ORUInt nbEntries =  [m nbObjects];
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [cpprogram setGamma: gamma];
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   [m visit: concretizer];
-   [concretizer release];
+   for(id<ORObject> c in [m mutables])
+      [c visit: concretizer];
    [cpprogram setSource:m];
    return cpprogram;
 }
@@ -65,19 +70,14 @@
    NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
    ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
-   fm = [fm flatten];
    //NSLog(@"FC: %@",[fm constraints]);
    
    ORUInt nbEntries =  [fm nbObjects];
-   NSLog(@"nbEntries: %u",nbEntries);
-   
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
-   
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
-   
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
    
@@ -127,11 +127,7 @@
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
    [model setImpl: cpprogram];
-   id<ORModel> flatModel = [ORFactory createModel];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
-   [flat apply: model];
-   [batch release];
+   id<ORModel> flatModel = [model flatten];
    
    for(ORInt i = 0; i < k; i++) {
       // This "fakes" the thread number so that the main thread does add into the binding array at offset i
