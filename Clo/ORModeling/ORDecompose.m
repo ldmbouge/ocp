@@ -423,8 +423,8 @@ struct CPVarPair {
 {
    assert(NO);
    if (!_rv)
-      _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
-   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,[e initialValue],[e initialValue])];
+   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e initialValue]]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
