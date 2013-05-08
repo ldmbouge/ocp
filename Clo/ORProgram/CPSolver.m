@@ -265,6 +265,7 @@
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -608,6 +609,10 @@
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
    _snapshot = NULL;   
+}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _snapshot = NULL;
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {

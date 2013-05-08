@@ -30,10 +30,6 @@ typedef enum {
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
-//-(id) dereference;
-//-(void) setImpl: (id) impl;
-//-(id) impl;
-//-(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
@@ -47,10 +43,6 @@ typedef enum {
 @end
 
 @interface NSObject (Concretization)
-//-(id) dereference;
-//-(void) setImpl: (id) impl;
-//-(id) impl;
-//-(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
@@ -58,7 +50,6 @@ typedef enum {
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;
 @end
-
 
 @protocol ORMutableInteger <ORObject,ORExpr>
 -(ORInt) initialValue;
@@ -71,9 +62,14 @@ typedef enum {
 @end
 
 @protocol ORFloatNumber <ORObject,ORExpr>
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) setValue: (ORFloat) value;
+-(ORFloat) initialValue;
+@end
+
+@protocol ORMutableFloat <ORObject,ORExpr>
+-(ORFloat) initialValue;
+-(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>

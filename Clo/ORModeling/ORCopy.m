@@ -551,9 +551,14 @@
    id<ORMutableInteger> o = [[ORMutableIntegerI allocWithZone: _zone] initORMutableIntegerI: _copyModel value: [e initialValue]];
    _result = o;
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   id<ORMutableFloat> o = [[ORMutableFloatI allocWithZone: _zone] initORMutableFloatI: _copyModel value: [e initialValue]];
+   _result = o;
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
-   id<ORFloatNumber> o = [[ORFloatI allocWithZone: _zone] initORFloatI: _copyModel value: [e value]];
+   id<ORFloatNumber> o = [[ORFloatI allocWithZone: _zone] initORFloatI: _copyModel value: [e initialValue]];
    _result = o;
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e

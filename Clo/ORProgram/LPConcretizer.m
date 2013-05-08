@@ -193,6 +193,11 @@
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory integer: _lpsolver value: [e initialValue]];
 }
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory mutableFloat: _lpsolver value: [e initialValue]];
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    if (_gamma[e.getId] == NULL)

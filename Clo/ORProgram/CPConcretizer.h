@@ -91,6 +91,7 @@
 -(id) visitIntegerI: (id<ORInteger>) e engine: (id<CPEngine>) engine;
 -(id) visitMutableIntegerI: (id<ORMutableInteger>) e engine: (id<CPEngine>) engine;
 -(id) visitFloatI: (id<ORFloatNumber>) e engine: (id<CPEngine>) engine;
+-(id) visitMutableFloatI: (id<ORMutableFloat>) e engine: (id<CPEngine>) engine;
 -(id) visitExprPlusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMinusI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
 -(id) visitExprMulI: (id<ORExpr>) e engine: (id<CPEngine>) engine;
@@ -196,6 +197,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
 -(void) visitExprMulI: (id<ORExpr>) e;
@@ -299,6 +301,7 @@
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;

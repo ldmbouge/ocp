@@ -283,17 +283,9 @@
 {
    return (ORInt)ceil(_value);
 }
--(ORFloat) value
+-(ORFloat) initialValue
 {
    return _value;
-}
--(ORFloat) floatValue
-{
-   return _value;
-}
--(ORFloat) setValue: (ORFloat) value
-{
-   return _value = value;
 }
 -(ORBool) isConstant
 {
@@ -324,6 +316,79 @@
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitFloatI: self];
+}
+@end
+
+@implementation ORMutableFloatI
+{
+	ORFloat       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORFloat) initialValue
+{
+   return _value;
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORFloat) setValue: (ORFloat) value
+{
+   return _value = value;
+}
+-(ORFloat) value: (id<ORGamma>) solver;
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+}
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+}
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+{
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%f",_value];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitMutableFloatI: self];
 }
 @end
 

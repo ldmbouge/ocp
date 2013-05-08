@@ -85,7 +85,12 @@
    [tracker trackObject: o];
    return o;
 }
-
++(id<ORMutableFloat>) mutableFloat: (id<ORTracker>)tracker value: (ORFloat) value
+{
+   ORMutableFloatI* o = [[ORMutableFloatI alloc] initORMutableFloatI: tracker value:value];
+   [tracker trackObject: o];
+   return o;
+}
 +(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) engine value: (ORInt) value
 {
    ORTrailableIntI* o = [[ORTrailableIntI alloc] initORTrailableIntI: [engine trail] value:value];
