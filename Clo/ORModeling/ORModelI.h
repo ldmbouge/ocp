@@ -46,7 +46,11 @@
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
--(id<ORModel>)flatten;
+
+-(id<ORModel>) flatten;
+-(id<ORModel>) lpflatten;
+-(id<ORModel>) mipflatten;
+
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;

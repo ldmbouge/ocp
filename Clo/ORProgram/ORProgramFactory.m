@@ -187,12 +187,12 @@
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
-//   id<ORModel> flatModel = [model flatten];
-   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
-   [flattener apply: model];
-   [batch release];
+   id<ORModel> flatModel = [model lpflatten];
+//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
+//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
+//   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
+//   [flattener apply: model];
+//   [batch release];
 //   NSLog(@"model is %@",flatModel);
    
    ORUInt nbEntries =  [flatModel nbObjects];
@@ -221,11 +221,13 @@
 
 +(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
 {
-   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
-   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
-   [flattener apply: model];
-   [batch release];
+//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
+//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
+//   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
+//   [flattener apply: model];
+//   [batch release];
+   
+   id<ORModel> flatModel = [model mipflatten];
    
    ORUInt nbEntries =  [flatModel nbObjects];
    NSLog(@" NbEntries: %d",nbEntries);

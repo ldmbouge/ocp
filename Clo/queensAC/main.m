@@ -31,7 +31,7 @@ int main(int argc, const char * argv[])
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
@@ -39,8 +39,8 @@ int main(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       ORLong startTime = [ORRuntimeMonitor wctime];
-      //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
+      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
+      //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
       //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
       __block ORInt nbSol = 0;
       [cp solveAll:

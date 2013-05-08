@@ -18,6 +18,9 @@
 #import "ORConcurrencyI.h"
 #import "ORCopy.h"
 #import "ORFlatten.h"
+#import "ORLPFlatten.h"
+#import "ORMIPFlatten.h"
+
 
 @implementation ORTau
 {
@@ -336,11 +339,31 @@
    [copier release];
    return m;
 }
--(id<ORModel>)flatten
+-(id<ORModel>) flatten
 {
-   id<ORModel> flatModel = [ORFactory createModel:_nbObjects];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: self];
+   [batch release];
+   [flatModel setSource:self];
+   return flatModel;
+}
+-(id<ORModel>) lpflatten
+{
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch];
+   [flat apply: self];
+   [batch release];
+   [flatModel setSource:self];
+   return flatModel;
+}
+-(id<ORModel>) mipflatten
+{
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
+   id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch];
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
