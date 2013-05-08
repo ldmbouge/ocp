@@ -80,15 +80,15 @@ int main(int argc, const char * argv[])
             for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++)
                [mdl add: [Sum(mdl,p,Periods,[[boat at: g1 : p] eq: [boat at: g2 : p]]) leq: @1]];
          for(ORInt p = Periods.low; p <= Periods.up; p++)
-            [mdl add: [ORFactory packing: All(mdl,ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
+            [mdl add: [ORFactory packing:mdl item:All(mdl,ORIntVar, g, Guests, [boat at: g :p]) itemSize: crew binSize:cap]];
          
          id<CPProgram> cp = [args makeProgram:mdl];
-         id<CPHeuristic> hr = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:boat]];
+         //id<CPHeuristic> hr = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:boat]];
          ORFloat rate = [args restartRate];
          __block ORInt lim = ((ORInt)rate==0) ? FDMAXINT : ([Guests size] * [Periods size] * 3);
          NSLog(@"The limit starts at: %d  (%f)",lim,rate);
          [cp solve: ^{
-            [cp limitTime:60 * 1000 in:^{
+            /*[cp limitTime:60 * 1000 in:^{
                [cp repeat:^{
                   [cp limitFailures:lim in:^{
                      for(ORInt p = Periods.low; p <= Periods.up; p++) {
@@ -103,11 +103,12 @@ int main(int argc, const char * argv[])
                   NSLog(@"Restarting... %d",lim);
                }];
             }];
+            */
             for(ORInt p = Periods.low; p <= Periods.up; p++) {
-               [cp forall:Guests suchThat:^bool(ORInt g) { return ![[boat at:g :p] bound];}
+               [cp forall:Guests suchThat:^bool(ORInt g) { return ![cp bound:[boat at:g :p]];}
                 orderedBy:nil//^ORInt(ORInt g) { return - [[boat at:g :p] domsize];}
                        do:^(ORInt g) {
-                          [cp tryall:Hosts suchThat:^bool(ORInt h) { return [[boat at: g: p] member:h];}
+                          [cp tryall:Hosts suchThat:^bool(ORInt h) { return [cp member:h in:[boat at: g: p]];}
                                   in:^(ORInt h) {
                                      [cp label:[boat at:g :p] with:h];
                                   }
@@ -127,8 +128,8 @@ int main(int argc, const char * argv[])
                NSMutableString* line = [[NSMutableString alloc] initWithCapacity:64];
                [line appendFormat:@"p=%2d : ",p];
                for(ORInt g = Guests.low; g <= Guests.up; g++) {
-                  if ([[boat at: g : p] bound])
-                     [line appendFormat:@"%2d ",[[boat at: g :p] value]];
+                  if ([cp bound:[boat at: g : p]])
+                     [line appendFormat:@"%2d ",[cp intValue:[boat at: g :p]]];
                   else [line appendFormat:@"%@",[boat at: g :p] ];
                }
                NSLog(@"%@",line);
@@ -142,7 +143,7 @@ int main(int argc, const char * argv[])
                   use[h] = 0;
                
                for(ORInt g = Guests.low; g <= Guests.up; g++)
-                  use[[[boat at: g : p] value]] += [crew at: g];
+                  use[[cp intValue:[boat at: g : p]]] += [crew at: g];
                for(ORInt h = 1; h <= 13; h++)
                   if (use[h] > [cap at: h]) {
                      printf("Bad capacity at %d - %d: %d instead of %d \n",p,h,use[h],[cap at: h]);
@@ -153,7 +154,7 @@ int main(int argc, const char * argv[])
                for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
                   ORInt nbEq = 0;
                   for(ORInt p=Periods.low;p <= Periods.up;p++) {
-                     nbEq += [[boat at: g1 : p] value] == [[boat at: g2 :p] value];
+                     nbEq += [cp intValue:[boat at: g1 : p]] == [cp intValue:[boat at: g2 :p]];
                      if (nbEq >= 2) {
                         NSLog(@"Violation of social: g1=%d g2=%d p=%d  %@   -  %@",g1,g2,p,[boat at:g1:p],[boat at:g2 :p]);
                         abort();
@@ -166,8 +167,8 @@ int main(int argc, const char * argv[])
             for(ORInt g = Guests.low; g <= Guests.up; g++) {
                for(ORInt p1 = Periods.low; p1 <= Periods.up; p1++)
                   for(ORInt p2 = p1 + 1; p2 <= Periods.up; p2++) {
-                     if ([[boat at: g : p1] value] == [[boat at: g : p2] value]) {
-                        printf("boat[%d,%d] = %d and boat[%d,%d] = %d \n",g,p1,g,p2,[[boat at:g : p1] value],[[boat at: g : p2] value]);
+                     if ([cp intValue:[boat at: g : p1]] == [cp intValue:[boat at: g : p2]]) {
+                        printf("boat[%d,%d] = %d and boat[%d,%d] = %d \n",g,p1,g,p2,[cp intValue:[boat at:g : p1]],[cp intValue:[boat at: g : p2]]);
                         printf("all different is wrong \n");
                         abort();
                      }
@@ -178,7 +179,7 @@ int main(int argc, const char * argv[])
                for(ORInt g2 = g1 + 1; g2 <= Guests.up; g2++) {
                   ORInt s = 0;
                   for(ORInt p = Periods.low; p <= Periods.up; p++)
-                     s += [[boat at: g1 : p] value] == [[boat at:g2 : p] value];
+                     s += [cp intValue:[boat at: g1 : p]] == [cp intValue:[boat at:g2 : p]];
                   if (s > 1) {
                      printf("guest %d and guest %d \n",g1,g2);
                      printf("social constraint is wrong \n");

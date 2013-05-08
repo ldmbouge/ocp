@@ -682,7 +682,7 @@
 }
 @end
 
-@interface ORCPSolutionI : NSObject<ORCPSolution>
+@interface ORCPSolutionI : ORObject<ORCPSolution>
 -(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver;
 -(id<ORSnapshot>) value: (id) var;
 -(ORBool) isEqual: (id) object;
@@ -1314,11 +1314,11 @@
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   [self labelHeuristic:h withConcrete:[h allIntVars]];
+   [self labelHeuristic:h withConcrete:(id)[h allIntVars]];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
 {
-   id<ORIntVarArray> cav = [ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
+   id<CPIntVarArray> cav = (id)[ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
       return _gamma[av[k].getId];
    }];
    [self labelHeuristic:h withConcrete:cav];
@@ -1493,6 +1493,8 @@
    if (status == ORFailure)
       [_search fail];
 }
+-(void) add: (id<ORConstraint>) c
+{}
 
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
 {

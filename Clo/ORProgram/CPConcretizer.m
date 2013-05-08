@@ -215,7 +215,7 @@
       id<ORTable> table = [cstr table];
       [array visit: self];
       [table visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory table: _gamma[table.getId] on: _gamma[array.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory table: table on: _gamma[array.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
@@ -260,7 +260,7 @@
       [item visit: self];
       [itemSize visit: self];
       [binSize visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory packOne: _gamma[item.getId] itemSize: _gamma[itemSize.getId] bin: bin binSize: _gamma[binSize.getId]];
+      id<CPConstraint> concreteCstr = [CPFactory packOne: _gamma[item.getId] itemSize: itemSize bin: bin binSize: _gamma[binSize.getId]];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

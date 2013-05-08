@@ -23,15 +23,6 @@
 // [ldm] All the methods below were missing??????
 -(id<ORIntRange>) domain;
 -(ORInt) value;
--(ORInt) intValue;
--(ORFloat) floatValue;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds)bounds;
--(ORBool) member: (ORInt) v;
--(ORBool) isBool;
--(NSSet*)constraints;
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
@@ -66,11 +57,6 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) min;
--(ORFloat) max;
--(NSSet*) constraints;
 -(void) visit: (id<ORVisitor>)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;
@@ -78,16 +64,9 @@
 
 @interface ORBitVarI : ORExprI<ORBitVar>
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
--(ORBool) bound;
--(uint64)min;
--(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
--(ORUInt)bitLength;
--(ORInt)  domsize;
--(ORBool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
--(NSSet*) constraints;
 -(NSString*)stringValue;
 @end
 

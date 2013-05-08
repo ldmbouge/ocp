@@ -2259,7 +2259,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 }
 -(id<ORObjectiveValue>) value
 {
-   return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_var value] minimize: NO];
+   return [((id<ORSearchObjectiveFunction>) _impl) value];
 }
 @end
 

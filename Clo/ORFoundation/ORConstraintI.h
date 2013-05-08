@@ -385,7 +385,7 @@
 @end
 
 
-@interface ORObjectiveValueIntI : NSObject<ORObjectiveValueInt> {
+@interface ORObjectiveValueIntI : ORObject<ORObjectiveValueInt> {
    ORInt _value;
    ORInt _direction;
    ORInt _pBound;
@@ -397,7 +397,7 @@
 -(NSString*)description;
 @end
 
-@interface ORObjectiveValueFloatI : NSObject<ORObjectiveValueFloat> {
+@interface ORObjectiveValueFloatI : ORObject<ORObjectiveValueFloat> {
    ORFloat _value;
    ORInt _direction;
    ORInt _pBound;

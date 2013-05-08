@@ -107,7 +107,7 @@ inline static void trailPop(ORTrailIStack* s)
    [s->_trail backtrack: s->_tab[--s->_sz]._ofs];
 }
 
-@interface ORTrailableIntI : NSObject<ORTrailableInt>
+@interface ORTrailableIntI : ORObject<ORTrailableInt>
 -(ORTrailableIntI*) initORTrailableIntI: (id<ORTrail>) trail value:(ORInt) value;
 -(ORInt) value;
 -(ORInt) setValue: (ORInt) value;

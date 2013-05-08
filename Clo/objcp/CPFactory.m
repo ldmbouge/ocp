@@ -173,12 +173,6 @@
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
-
-+(id<ORExpr>) exprAbs: (id<ORExpr>) op
-{
-   return (id<ORExpr>)[ORFactory exprAbs:op];
-}
-
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs
 {
    id<ORTracker> cp = [vars[0] tracker];

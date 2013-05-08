@@ -163,13 +163,16 @@
    if (fo)
       return fo;
    else {
+      id pr = _result;  // flattenIt must work if reentrant.
       _result = NULL;
       [obj visit:self];
-      if (_result == NULL)
+      id rv = _result;
+      _result = pr;     // restore what used to be result.
+      if (rv == NULL)
          [_mapping setObject:[NSNull null] forKey:obj];
       else
-         [_mapping setObject:_result forKey:obj];
-      return _result;
+         [_mapping setObject:rv forKey:obj];
+      return rv;
    }
 }
 -(void)apply:(id<ORModel>)m
@@ -272,11 +275,11 @@
    id<ORIntArray>    itemSize = [self flattenIt:[cstr itemSize]];
    id<ORIntRange> BR = [binSize range];
    id<ORIntRange> IR = [item range];
-   id<ORTracker> tracker = [item tracker];
+   id<ORTracker> t = [_into tracker];
    ORInt brlow = [BR low];
    ORInt brup = [BR up];
    for(ORInt b = brlow; b <= brup; b++) /*note:RangeConsistency*/
-      [ORFlatten flattenExpression: [Sum(tracker,i,IR,mult(@([itemSize at:i]),[item[i] eq: @(b)])) eq: binSize[b]]
+      [ORFlatten flattenExpression: [Sum(t,i,IR,[[item[i] eq: @(b) track:t] mul:@([itemSize at:i]) track:t]) eq: binSize[b]]
                               into: _into
                         annotation: DomainConsistency];
    ORInt s = 0;
@@ -284,12 +287,12 @@
    ORInt irup = [IR up];
    for(ORInt i = irlow; i <= irup; i++)
       s += [itemSize at:i];
-   [ORFlatten flattenExpression: [Sum(tracker,b,BR,binSize[b]) eq: @(s)]
+   [ORFlatten flattenExpression: [Sum(t,b,BR,binSize[b]) eq: @(s)]
                            into: _into
                      annotation: DomainConsistency];
    
    for(ORInt b = brlow; b <= brup; b++)
-      [_into addConstraint: [ORFactory packOne: item itemSize: itemSize bin: b binSize: binSize[b]]];
+      [_into addConstraint: [ORFactory packOne:t item:item itemSize: itemSize bin: b binSize: binSize[b]]];
 }
 -(void) visitGroup:(id<ORGroup>)g
 {

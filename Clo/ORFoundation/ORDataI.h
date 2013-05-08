@@ -32,19 +32,19 @@
 -(id<ORTracker>) tracker;
 @end
 
-@interface ORRandomStreamI : NSObject<ORRandomStream>
+@interface ORRandomStreamI : ORObject<ORRandomStream>
 -(ORRandomStreamI*) init;
 -(void) dealloc;
 -(ORLong) next;
 @end
 
-@interface ORZeroOneStreamI : NSObject<ORZeroOneStream>
+@interface ORZeroOneStreamI : ORObject<ORZeroOneStream>
 -(ORZeroOneStreamI*) init;
 -(void) dealloc;
 -(double) next;
 @end
 
-@interface ORUniformDistributionI : NSObject<ORUniformDistribution>
+@interface ORUniformDistributionI : ORObject<ORUniformDistribution>
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;
