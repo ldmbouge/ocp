@@ -132,13 +132,13 @@
    [flat apply: model];
    [batch release];
    
-   NSArray* objects = [flatModel mutables];
-   for(id<ORObject> c in objects) {
-      if ([c impl] == NULL) {
-         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
-         [c setImpl: ba];
-      }
-   }
+//   NSArray* objects = [flatModel mutables];
+//   for(id<ORObject> c in objects) {
+//      if ([c impl] == NULL) {
+//         id<ORBindingArray> ba = [ORFactory bindingArray: flatModel nb: k];
+//         [c setImpl: ba];
+//      }
+//   }
    
    for(ORInt i = 0; i < k; i++) {
       // This "fakes" the thread number so that the main thread does add into the binding array at offset i
