@@ -70,7 +70,7 @@
       [_into addObject:[self flattenIt:x]];
    }
    onImmutables:^(id<ORObject> x) {
-      [_into addImmutable:[self flattenIt:x]];
+      [_into addImmutable: x];
    }
    onConstraints:^(id<ORConstraint> c) {
       [_into addConstraint:[self flattenIt:c]];

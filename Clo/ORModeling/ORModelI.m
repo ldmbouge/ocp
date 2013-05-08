@@ -17,6 +17,9 @@
 #import "ORError.h"
 #import "ORConcurrencyI.h"
 #import "ORFlatten.h"
+#import "ORLPFlatten.h"
+#import "ORMIPFlatten.h"
+
 
 @implementation ORTau
 {
@@ -69,12 +72,6 @@
    _tau = [[ORTau alloc] initORTau];
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
-   return self;
-}
--(ORModelI*)initORModelI: (ORUInt) nb
-{
-   self = [self initORModelI];
-   _nbObjects = nb;
    return self;
 }
 -(ORModelI*)initORModelI: (ORUInt) nb tau: (id<ORTau>) tau
@@ -353,11 +350,31 @@
    ORModelI* clone = [[ORModelI allocWithZone:zone] initWithModel:self];
    return clone;
 }
--(id<ORModel>)flatten
+-(id<ORModel>) flatten
 {
-   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau:nil];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
+   [flat apply: self];
+   [batch release];
+   [flatModel setSource:self];
+   return flatModel;
+}
+-(id<ORModel>) lpflatten
+{
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
+   id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch];
+   [flat apply: self];
+   [batch release];
+   [flatModel setSource:self];
+   return flatModel;
+}
+-(id<ORModel>) mipflatten
+{
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
+   id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch];
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];

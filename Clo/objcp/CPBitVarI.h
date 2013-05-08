@@ -41,7 +41,7 @@ typedef struct  {
 -(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
 -(NSString*) description;
--(id<CPBitVar>) dereference;
+//-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;

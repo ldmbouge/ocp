@@ -18,11 +18,11 @@
 #import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)
--(id) dereference
-{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-   return self;
-}
+//-(id) dereference
+//{
+////   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
+//   return self;
+//}
 -(void) setImpl: (id) impl
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];

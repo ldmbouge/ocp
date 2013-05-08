@@ -20,9 +20,7 @@
 
 
 @interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
--(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI:(ORUInt)nb;
--(ORModelI*)              initORModelI:(ORUInt)nb tau: (id<ORTau>) tau;
+-(ORModelI*)              initORModelI: (ORUInt) nb tau: (id<ORTau>) tau;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
@@ -47,7 +45,11 @@
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
 -(void) setSource:(id<ORModel>)src;
 -(id<ORModel>)source;
--(id<ORModel>)flatten;
+
+-(id<ORModel>) flatten;
+-(id<ORModel>) lpflatten;
+-(id<ORModel>) mipflatten;
+
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;

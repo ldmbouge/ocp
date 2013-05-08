@@ -40,8 +40,8 @@ int main(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
       ORLong startTime = [ORRuntimeMonitor wctime];
       //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
-      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
-      //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
+      //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
+      id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
       __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {

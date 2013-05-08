@@ -340,11 +340,11 @@
 }
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
-   return [[self dereference] maxBound:(id)x];
+   return [[self worker] maxBound:(id)x];
 }
 -(NSSet*)constraints:(id<ORVar>)x
 {
-   return [[self dereference] constraints:x];
+   return [[self worker] constraints:x];
 }
 -(void)onSolution:(ORClosure)onSolution
 {

@@ -94,7 +94,7 @@
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram];
-   [model setImpl: cpprogram];
+//   [model setImpl: cpprogram];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
@@ -129,7 +129,7 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
-   [model setImpl: cpprogram];
+//   [model setImpl: cpprogram];
    id<ORModel> flatModel = [model flatten];
    
    for(ORInt i = 0; i < k; i++) {
@@ -167,7 +167,7 @@
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
 {
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
-   [model setImpl:cpprogram];
+//   [model setImpl:cpprogram];
    id<ORModel> flatModel = [model flatten];   
    id<ORSolutionPool> global = [cpprogram solutionPool];
    for(ORInt i=0;i< k;i++) {
@@ -187,12 +187,12 @@
 
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
-//   id<ORModel> flatModel = [model flatten];
-   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
-   [flattener apply: model];
-   [batch release];
+   id<ORModel> flatModel = [model lpflatten];
+//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
+//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
+//   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
+//   [flattener apply: model];
+//   [batch release];
 //   NSLog(@"model is %@",flatModel);
    
    ORUInt nbEntries =  [flatModel nbObjects];
@@ -214,18 +214,20 @@
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver: model];
-   [model setImpl: lpprogram];
+//   [model setImpl: lpprogram];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
 
 +(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
 {
-   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
-   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
-   [flattener apply: model];
-   [batch release];
+//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
+//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
+//   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
+//   [flattener apply: model];
+//   [batch release];
+   
+   id<ORModel> flatModel = [model mipflatten];
    
    ORUInt nbEntries =  [flatModel nbObjects];
    NSLog(@" NbEntries: %d",nbEntries);
@@ -246,7 +248,7 @@
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model
 {
    id<MIPProgram> mipprogram = [MIPSolverFactory solver: model];
-   [model setImpl: mipprogram];
+//   [model setImpl: mipprogram];
    [self createMIPProgram: model program: mipprogram];
    return mipprogram;
 }

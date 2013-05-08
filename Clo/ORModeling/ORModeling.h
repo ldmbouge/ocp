@@ -45,6 +45,8 @@
 -(NSArray*) immutables;
 // pvh: this should go
 -(id<ORModel>) flatten;
+-(id<ORModel>) lpflatten;
+-(id<ORModel>) mipflatten;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;

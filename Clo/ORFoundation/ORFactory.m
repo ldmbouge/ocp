@@ -400,11 +400,11 @@
    return (id<ORVarArray>)o;
 }
 
-+(id<ORIntVarArray>) intVarArrayDereference: (id<ORTracker>) tracker array: (id<ORIntVarArray>) x
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "intVarArrayDereference is totally obsolete"];
-   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([[x at:i] dereference]); }];
-}
+//+(id<ORIntVarArray>) intVarArrayDereference: (id<ORTracker>) tracker array: (id<ORIntVarArray>) x
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "intVarArrayDereference is totally obsolete"];
+//   return [ORFactory intVarArray: tracker range: [x range] with: ^id<ORIntVar>(ORInt i) { return (id<ORIntVar>)([[x at:i] dereference]); }];
+//}
 
 +(id<ORIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) r1  : (id<ORIntRange>) r2 with: (id<ORIntVar>(^)(ORInt,ORInt)) clo
 {

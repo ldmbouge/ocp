@@ -500,15 +500,6 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
-/*
--(id<ORIdArray>) dereference
-{
-   if (_impl != nil)
-      return [_impl dereference];
-   else
-      return self;
-}
-*/
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitIdArray:self];

@@ -17,7 +17,7 @@
 
 @protocol CPVar <NSObject>
 -(ORInt) getId;
--(id<ORVar>) dereference;
+//-(id<ORVar>) dereference;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
 -(ORBool) bound;
@@ -42,7 +42,7 @@ enum CPVarClass {
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
--(id<ORIntVar>) dereference;
+//-(id<ORIntVar>) dereference;
 -(ORInt) scale;
 -(ORInt) shift;
 -(id<ORIntVar>) base;
