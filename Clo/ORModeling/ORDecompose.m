@@ -433,10 +433,10 @@ struct CPVarPair {
    ORLinear* rT = [ORLinearizer linearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORSubst normSide:lT for:_model annotation:_c];
    id<ORIntVar> rV = [ORSubst normSide:rT for:_model annotation:_c];
-   ORLong llb = [lV min];
-   ORLong lub = [lV max];
-   ORLong rlb = [rV min];
-   ORLong rub = [rV max];
+   ORLong llb = [[lV domain] low];
+   ORLong lub = [[lV domain] up];
+   ORLong rlb = [[rV domain] low];
+   ORLong rub = [[rV domain] up];
    ORLong a = minOf(llb * rlb,llb * rub);
    ORLong b = minOf(lub * rlb,lub * rub);
    ORLong lb = minOf(a,b);
