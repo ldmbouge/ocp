@@ -1314,18 +1314,26 @@
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   [self labelHeuristic:h restricted:[h allIntVars]];
+   [self labelHeuristic:h withConcrete:[h allIntVars]];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
 {
+   id<ORIntVarArray> cav = [ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
+      return _gamma[av[k].getId];
+   }];
+   [self labelHeuristic:h withConcrete:cav];
+}
+
+-(void) labelHeuristic: (id<CPHeuristic>) h withConcrete:(id<CPIntVarArray>)av
+{   
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i) { return ![self bound: [av at: i]]; }
+                                        suchThat: ^bool(ORInt i) { return ![av[i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) {
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
                                        }];
-   id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   id<CPIntVar>* last = malloc(sizeof(id<CPIntVar>));
    id<ORRandomStream> valStream = [ORCrFactory randomStream];
    [_trail trailClosure:^{
       free(last);
@@ -1335,8 +1343,8 @@
    *last = nil;
    id<ORInteger> failStamp = [ORFactory integer:self value:-1];
    do {
-      id<ORIntVar> x = *last;
-      if ([failStamp value] == [_search nbFailures] || (x == nil || [self bound:x])) {
+      id<CPIntVar> x = *last;
+      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -1349,11 +1357,11 @@
       [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
-      ORInt low = [self min:x];
-      ORInt up  = [self max:x];
+      ORInt low = x.min;
+      ORInt up  = x.max;
       ORInt bestIndex = low - 1;
       for(ORInt v = low;v <= up;v++) {
-        if ([self member:v in:x]) {
+        if ([x member:v]) {
           ORFloat vValue = [h valOrdering:v forVar:x];
           if (vValue > bestValue) {
             bestValue = vValue;
@@ -1370,33 +1378,17 @@
       }
       if (bestIndex != low - 1)  {
         [self try: ^{
-          [self label: x with: bestIndex];
+          [self labelImpl:x with: bestIndex];
         } or: ^{
-           [self diff:x with: bestIndex];
+           [self diffImpl:x with: bestIndex];
         }];
       }
-      /*
-      id<ORSelect> valSelect = [ORFactory select: _engine
-                                           range:RANGE(_engine,[x min],[x max])
-                                        suchThat:^bool(ORInt v)    { return [x member:v];}
-                                       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
-      do {
-         ORInt curVal = [valSelect max];
-         if (curVal == MAXINT)
-            break;
-         [self try:^{
-            [self label: x with: curVal];
-         } or:^{
-            [self diff: x with: curVal];
-         }];
-      } while(![x bound]);
-      */
    } while (true);
 }
 -(void) label: (id<ORIntVar>) mx
 {
    // PVH to change
-   id<CPIntVar> x = _gamma[[mx getId]];
+   id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
       [_search try:
@@ -1510,7 +1502,10 @@
 
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
 {
-   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:rvars];
+   id<ORIntVarArray> crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+      return _gamma[rvars[k].getId];
+   }];
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:crv];
    [self addHeuristic:h];
    return h;
 }

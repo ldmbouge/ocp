@@ -80,13 +80,13 @@ int main(int argc, const char * argv[])
             NSLog(@"Solver: %@",cp);
             ORInt tot = 0;
             for(int k=0;k<n;k++)
-               tot += p[k] * [[x at: k] min];
+               tot += p[k] * [cp min:x[k]];
             assert(tot == opt);
             NSLog(@"objective: %d == %d",tot,opt);
             for(int i=0;i<m;i++) {
                ORInt lhs = 0;
                for(int j=0;j<n;j++)
-                  lhs += r[i][j] * [[x at:j] min];
+                  lhs += r[i][j] * [cp min:x[j]];
                assert(lhs <= b[i]);
                NSLog(@"C[%d] %d <= %d",i,lhs,b[i]);
             }            

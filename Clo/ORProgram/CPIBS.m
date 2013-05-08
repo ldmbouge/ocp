@@ -199,14 +199,14 @@
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
    [key release];
    return rv;
