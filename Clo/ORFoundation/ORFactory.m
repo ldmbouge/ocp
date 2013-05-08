@@ -67,7 +67,13 @@
    return [self group:model type:BergeGroup];
 }
 
-+(id<ORMutableInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
++(id<ORInteger>) integer: (id<ORTracker>)tracker value: (ORInt) value
+{
+   ORIntegerI* o = [[ORIntegerI alloc] initORIntegerI: tracker value:value];
+   return [tracker trackImmutable: o];
+   return o;
+}
++(id<ORMutableInteger>) mutable: (id<ORTracker>)tracker value: (ORInt) value
 {
    ORMutableIntegerI* o = [[ORMutableIntegerI alloc] initORMutableIntegerI: tracker value:value];
    [tracker trackObject: o];
