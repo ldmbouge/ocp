@@ -12,8 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
-@interface ORNOopVisit : NSObject<ORVisitor>
-@end
+
 
 @interface ORFlatten : ORNOopVisit<ORModelTransformation,ORVisitor> {
    id<ORAddToModel>   _into;

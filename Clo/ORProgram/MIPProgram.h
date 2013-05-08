@@ -29,6 +29,9 @@
 
 @protocol MIPProgram <ORASolver>
 -(MIPSolverI*) solver;
+-(void) setGamma: (id*) gamma;
+-(void) setTau: (id<ORTau>) tau;
+-(id*)  gamma;
 -(void) solve;
 -(ORFloat) floatValue: (id<ORFloatVar>) v;
 -(ORInt) intValue: (id<ORIntVar>) v;

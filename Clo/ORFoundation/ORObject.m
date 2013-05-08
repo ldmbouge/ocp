@@ -49,7 +49,7 @@
 }
 -(id) dereference
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
+//   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
    if (_impl)
       return [_impl dereference];
    else
@@ -88,7 +88,7 @@
 }
 -(id) dereference
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
+//   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
    if (!_impl)
       return NULL;
    else if (_impl == self)
