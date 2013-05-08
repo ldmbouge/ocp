@@ -190,6 +190,8 @@
       return obj;
    else if ([obj conformsToProtocol:@protocol(ORExpr)])
       return nil;
+   else if ([obj conformsToProtocol:@protocol(ORObjectiveFunctionExpr)])
+      return nil;
    else return obj;
 }
 -(void)apply:(id<ORModel>)m
