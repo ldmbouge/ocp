@@ -655,7 +655,7 @@
 }
 @end
 
-@interface ORMIPSolutionI : NSObject<ORMIPSolution>
+@interface ORMIPSolutionI : ORObject<ORMIPSolution>
 -(ORMIPSolutionI*) initORMIPSolutionI: (id<ORModel>) model with: (id<MIPProgram>) solver;
 -(id<ORSnapshot>) value: (id) var;
 -(ORBool) isEqual: (id) object;
@@ -835,17 +835,17 @@
 {
    return [[ORMIPSolutionI alloc] initORMIPSolutionI: _model with: self];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_MIPsolver trackObject:obj];
+   return [_MIPsolver trackObject:obj];
 }
 -(id) trackImmutable:(id)obj
 {
    return [_MIPsolver trackImmutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_MIPsolver trackVariable:obj];
+   return [_MIPsolver trackVariable:obj];
 }
 -(void) trackConstraint:(id) obj
 {

@@ -320,7 +320,14 @@
 {
    return [[self dereference] member:v in:x];
 }
-
+-(ORInt) maxBound:(id<ORIdArray>) x
+{
+   return [[self dereference] maxBound:(id)x];
+}
+-(NSSet*)constraints:(id<ORVar>)x
+{
+   return [[self dereference] constraints:x];
+}
 -(void)onSolution:(ORClosure)onSolution
 {
    _onSol = [onSolution copy];

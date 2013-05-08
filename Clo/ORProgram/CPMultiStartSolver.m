@@ -270,13 +270,17 @@
 {
    [[self dereference] nestedSolveAll: body];
 }
--(void) trackObject: (id) object
+-(id) trackObject: (id) object
 {
-   [[self dereference] trackObject: object];
+   return [[self dereference] trackObject: object];
 }
--(void) trackVariable: (id) object
+-(id) trackImmutable: (id) object
 {
-   [[self dereference] trackVariable: object];
+   return [[self dereference] trackImmutable: object];
+}
+-(id) trackVariable: (id) object
+{
+   return [[self dereference] trackVariable: object];
 }
 -(void) trackConstraint:(id)object
 {
@@ -480,6 +484,14 @@
 -(ORBool) boolValue: (id<ORIntVar>)x
 {
    return [[self dereference] boolValue: x];
+}
+-(ORInt) maxBound:(id<ORIdArray>) x
+{
+   return [[self dereference] maxBound:(id)x];
+}
+-(NSSet*)constraints:(id<ORVar>)x
+{
+   return [[self dereference] constraints:x];
 }
 -(id<ORCPSolution>) captureSolution
 {

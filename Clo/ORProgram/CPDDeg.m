@@ -68,7 +68,7 @@
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
       _map[[_vars[k] getId]] = k - low;
-      _cv[k-low] = [_vars[k] constraints];
+      _cv[k-low] = [_cp constraints:_vars[k]];
    }
    _nbv = len;
 }

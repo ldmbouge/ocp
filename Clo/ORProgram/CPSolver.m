@@ -1152,17 +1152,17 @@
    [_search nestedSolveAll: body onSolution:nil onExit:nil
                    control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
--(void) trackObject: (id) object
+-(id) trackObject: (id) object
 {
-   [_engine trackObject:object];   
+   return [_engine trackObject:object];
 }
 -(id) trackImmutable: (id) object
 {
    return [_engine trackImmutable:object];
 }
--(void) trackVariable: (id) object
+-(id) trackVariable: (id) object
 {
-   [_engine trackObject:object];  
+   return [_engine trackObject:object];
 }
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -1189,7 +1189,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
-
 -(ORInt) maxBound:(id<ORIdArray>) x
 {
    ORInt low = [x low];
@@ -1598,6 +1597,11 @@
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
 }
+-(NSSet*) constraints: (id<ORVar>)x
+{
+   return [(id<CPVar>)_gamma[x.getId] constraints];
+}
+
 -(void) incr: (id<ORInteger>) i
 {
    
@@ -1616,8 +1620,8 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
+-(id) trackObject: (id) obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @implementation ORRTModel
@@ -1687,17 +1691,17 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_solver trackObject:obj];
+   return [_solver trackObject:obj];
 }
 -(id) trackImmutable:(id)obj
 {
    return [_solver trackImmutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_solver trackVariable:obj];
+   return [_solver trackVariable:obj];
 }
 @end
 

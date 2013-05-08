@@ -267,8 +267,8 @@
 //-(CotMIPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotMIPAbstractBasis* basis) ;
 
--(void) trackVariable: (id) var;
--(void) trackObject: (id) obj;
+-(id) trackVariable: (id) var;
+-(id) trackObject: (id) obj;
 -(void) trackConstraint: (id) obj;
 
 @end

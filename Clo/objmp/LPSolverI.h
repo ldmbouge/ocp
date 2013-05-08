@@ -307,8 +307,8 @@
 //-(CotLPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotLPAbstractBasis* basis) ;
 
--(void) trackVariable: (id) var;
--(void) trackObject: (id) obj;
+-(id) trackVariable: (id) var;
+-(id) trackObject: (id) obj;
 @end
 
 @interface LPFactory : NSObject

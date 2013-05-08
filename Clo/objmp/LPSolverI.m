@@ -1322,15 +1322,17 @@
 //-(CotLPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotLPAbstractBasis* basis) ;
 
--(void) trackVariable: (id) var
+-(id) trackVariable: (id) var
 {
    [_oStore addObject: var];
    [var release];
+   return var;
 }
--(void) trackObject:(id)obj
+-(id) trackObject:(id)obj
 {
    [_oStore addObject:obj];
    [obj release];
+   return obj;
 }
 -(id) trackImmutable: (id) obj
 {

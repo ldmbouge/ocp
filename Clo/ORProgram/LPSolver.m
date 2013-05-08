@@ -178,7 +178,7 @@
 }
 @end
 
-@interface ORLPSolutionI : NSObject<ORLPSolution>
+@interface ORLPSolutionI : ORObject<ORLPSolution>
 -(ORLPSolutionI*) initORLPSolutionI: (id<ORModel>) model with: (id<LPProgram>) solver;
 -(id<ORSnapshot>) value: (id<ORFloatVar>) var;
 -(ORFloat) reducedCost: (id<ORFloatVar>) var;
@@ -436,9 +436,9 @@
    [_sPool addSolution: sol];
    [sol release];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_lpsolver trackObject:obj];
+   return [_lpsolver trackObject:obj];
 }
 -(void) trackVariable: (id) obj
 {
