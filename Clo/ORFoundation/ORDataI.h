@@ -42,7 +42,7 @@
 @end
 
 @interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
--(ORFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
 -(ORFloat) initialValue;
 -(ORFloat) value: (id<ORGamma>) solver;
 -(ORFloat) floatValue: (id<ORGamma>) solver;
