@@ -1225,6 +1225,10 @@
    ORULong thisDomSize;
    ORLong numVars;
    bool freeVars = false;
+   NSMutableArray* cvars = [[[NSMutableArray alloc] initWithCapacity:[vars count]] autorelease];
+   for(id v in vars)
+      [cvars addObject:_gamma[[v getId]]];
+   vars = cvars;
    
    numVars = [vars count];
    int j;
@@ -1235,7 +1239,7 @@
          continue;
       if ([vars[i] domsize] <= 0)
          continue;
-      minDom = (CPBitVarI*)[vars[i] dereference];
+      minDom = vars[i];
       minDomSize = [minDom domsize];
       freeVars = true;
       break;
@@ -1253,34 +1257,32 @@
          if ([vars[i] domsize] <= 0)
             continue;
          if (!freeVars) {
-            minDom = [vars[i] dereference];
+            minDom = vars[i];
             minDomSize = [minDom domsize];
             freeVars = true;
             continue;
          }
-         thisDomSize=[[vars[i] dereference] domsize];
+         thisDomSize= [vars[i] domsize];
          if(thisDomSize==0)
             continue;
          if (thisDomSize < minDomSize) {
-            minDom = [vars[i] dereference];
+            minDom = vars[i];
             minDomSize = thisDomSize;
          }
       }
       if (!freeVars)
          break;
-      NSLog(@"%d//%lld bound.",numBound, numVars);
+      //NSLog(@"%d//%lld bound.",numBound, numVars);
 //      j=[minDom randomFreeBit];
       
-      NSLog(@"Labeling %@ at %d.", minDom, j);
-//         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
-//                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+      //NSLog(@"Labeling %@ at %d.", minDom, j);
       while ([minDom domsize] > 0) {
          j= [minDom randomFreeBit];
-         [_search try: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:false];}
-                   or: ^() { [self labelBV:(id<CPBitVar>)minDom at:j with:true];}];
+         [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
+                   or: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
       }
 
-      NSLog(@"Labeled %@ at %d.", minDom, j);
+      //NSLog(@"Labeled %@ at %d.", minDom, j);
    }
 }
 
@@ -1657,7 +1659,7 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
-   id<CPConstraint> c = [cstr dereference];
+   id<CPConstraint> c = [_solver gamma][[cstr getId]];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
    return cstr;
 }

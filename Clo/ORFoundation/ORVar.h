@@ -22,8 +22,6 @@
 
 @protocol ORVar <ORObject,ORExpr>
 -(ORInt) getId;
-//-(ORBool) bound;
-//-(NSSet*) constraints;
 @end
 
 @protocol ORIntVar <ORVar>
@@ -31,14 +29,6 @@
 -(ORInt) low;
 -(ORInt) up;
 -(ORBool) isBool;
-//(ORInt) value;
-//-(ORInt) intValue;
-//-(ORFloat) floatValue;
-//-(ORInt) min;
-//-(ORInt) max;
-//-(ORInt) domsize;
-//-(ORBounds) bounds;
-//-(ORBool) member: (ORInt) v;
 -(ORInt) scale;
 -(ORInt) shift;
 -(ORInt) literal;
@@ -48,13 +38,7 @@
 @protocol ORBitVar <ORVar>
 -(ORUInt*)low;
 -(ORUInt*)up;
-//-(ORBool) bound;
-//-(uint64)min;
-//-(uint64)max;
-
-//-(ORUInt)bitLength;
-//-(ORInt) domsize;
-//-(ORBool) member: (unsigned int*) v;
+-(ORUInt)bitLength;
 -(NSString*)stringValue;
 @end
 
@@ -62,10 +46,6 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
-//-(ORFloat) value;
-//-(ORFloat) floatValue;
-//-(ORFloat) min;
-//-(ORFloat) max;
 @end
 
 @protocol ORVarArray <ORIdArray>

@@ -17,7 +17,6 @@
 
 @protocol CPVar <NSObject>
 -(ORInt) getId;
-//-(id<ORVar>) dereference;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
 -(ORBool) bound;

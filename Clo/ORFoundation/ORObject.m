@@ -31,6 +31,11 @@
 {
    return _name;
 }
+- (void)doesNotRecognizeSelector:(SEL)aSelector
+{
+   NSLog(@"DID NOT RECOGNIZE a selector %@",NSStringFromSelector(aSelector));
+   return [super doesNotRecognizeSelector:aSelector];
+}
 @end
 
 @protocol ORVisitor;

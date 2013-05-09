@@ -211,7 +211,7 @@
          clock_t searchStart = clock();
          for(int i=0; i<_numBlocks;i++){
             bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-            [cp labelBitVarsFirstFail:[engine variables]];
+            [cp labelBitVarsFirstFail:[_m variables]];
             for(int j=0;j<16;j++){
                //[cp labelUpFromLSB:bitVars[j]];
                NSLog(@"%@\n",bitVars[j]);

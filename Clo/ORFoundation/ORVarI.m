@@ -471,57 +471,12 @@
 {
    return _bLen;
 }
-//-(ORBool) bound
-//{
-//   if (_impl)
-//      return [[_impl dereference] bound];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-//}
-//-(uint64)min
-//{
-//   if (_impl)
-//      return [(id<ORBitVar>)[_impl dereference] min];
-//   else {
-//      return (long long)_low[1]<<32 | _low[0];
-//   }
-//}
-//-(uint64)max
-//{
-//   if (_impl)
-//      return [(id<ORBitVar>)[_impl dereference] min];
-//   else {
-//      return (long long)_low[1]<<32 | _low[0];
-//   }
-//}
-//-(ORInt)  domsize
-//{
-//   if (_impl)
-//      return (ORInt)[(id<ORBitVar>)[_impl dereference] domsize];
-//   else {
-//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-//   }
-//}
-//-(ORBool) member: (unsigned int*) v
-//{
-//   if (_impl)
-//      return [(id<ORBitVar>)[_impl dereference] member:v];
-//   else {
-//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-//   }
-//}
+
 -(void) visit: (id<ORVisitor>)v
 {
    [v visitBitVar:self];
 }
-//-(NSSet*) constraints
-//{
-//   if (_impl)
-//      return [(id<ORBitVar>)[_impl dereference] constraints];
-//   else {
-//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-//   }   
-//}
+
 -(id<ORTracker>) tracker
 {
    return _tracker;

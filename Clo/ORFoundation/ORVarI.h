@@ -66,6 +66,7 @@
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
 -(ORUInt*)low;
 -(ORUInt*)up;
+-(ORUInt)bitLength;
 -(void) visit: (id<ORVisitor>)v;
 -(NSString*)stringValue;
 @end
