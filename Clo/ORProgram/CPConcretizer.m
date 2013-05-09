@@ -875,7 +875,7 @@
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    if (_gamma[e.getId] == NULL) 
-      _gamma[e.getId] = [ORFactory float: _engine value: [e initialValue]];
+      _gamma[e.getId] = [ORFactory float: _engine value: [e floatValue]];
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {}

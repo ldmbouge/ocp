@@ -144,7 +144,7 @@
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
-   [_terms addIndependent:[e initialValue]];
+   [_terms addIndependent:[e floatValue]];
 }
 
 -(void) visitExprPlusI: (ORExprPlusI*) e

@@ -62,7 +62,9 @@ typedef enum {
 @end
 
 @protocol ORFloatNumber <ORObject,ORExpr>
--(ORFloat) initialValue;
+-(ORFloat) floatValue;
+-(ORFloat) value;
+-(ORInt) intValue;
 @end
 
 @protocol ORMutableFloat <ORObject,ORExpr>

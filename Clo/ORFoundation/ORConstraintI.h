@@ -19,12 +19,12 @@
 #import "ORVisit.h"
 #import <ORUtilities/ORTypes.h>
 
-@interface ORConstraintI : ORModelingObjectI<ORConstraint>
+@interface ORConstraintI : ORObject<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
 @end
 
-@interface ORGroupI : ORModelingObjectI<ORGroup>
+@interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
@@ -410,7 +410,7 @@
 @end
 
 
-@interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction>
+@interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;
 -(id<ORObjectiveValue>) value;
 @end

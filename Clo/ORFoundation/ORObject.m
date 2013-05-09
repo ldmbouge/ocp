@@ -33,82 +33,82 @@
 }
 @end
 
-@protocol ORVisitor;
-@implementation ORModelingObjectI
--(id) init
-{
-   self = [super init];
-   return self;
-}
--(void) setImpl: (id) impl
-{
-   if (_impl)
-      [_impl setImpl: impl];
-   else
-      _impl = impl;
-}
-//-(id) dereference
+//@protocol ORVisitor;
+//@implementation ORModelingObjectI
+//-(id) init
 //{
-////   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
+//   self = [super init];
+//   return self;
+//}
+//-(void) setImpl: (id) impl
+//{
 //   if (_impl)
-//      return [_impl dereference];
+//      [_impl setImpl: impl];
 //   else
-//      return NULL;
+//      _impl = impl;
 //}
-//-(id) impl
-//{
-//   return _impl;
-//}
--(void) visit: (id<ORVisitor>) visitor
-{
-   NSLog(@"%@",self);
-   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
-}
-//-(void) makeImpl
+////-(id) dereference
+////{
+//////   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
+////   if (_impl)
+////      return [_impl dereference];
+////   else
+////      return NULL;
+////}
+////-(id) impl
+////{
+////   return _impl;
+////}
+//-(void) visit: (id<ORVisitor>) visitor
 //{
 //   NSLog(@"%@",self);
-//   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: a modeling object cannot be an implementation"];
+//   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
 //}
-@end
-
-@implementation ORDualUseObjectI
--(id) init
-{
-   self = [super init];
-   return self;
-}
--(void) setImpl: (id) impl
-{
-   if (!_impl)
-      _impl = impl;      
-   else if (_impl == self)     
-      @throw [[ORExecutionError alloc] initORExecutionError: "This object is already an implementation"];
-   else
-      [_impl setImpl: impl];
-}
-//-(id) dereference
+////-(void) makeImpl
+////{
+////   NSLog(@"%@",self);
+////   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: a modeling object cannot be an implementation"];
+////}
+//@end
+//
+//@implementation ORDualUseObjectI
+//-(id) init
 //{
-////   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
+//   self = [super init];
+//   return self;
+//}
+//-(void) setImpl: (id) impl
+//{
 //   if (!_impl)
-//      return NULL;
-//   else if (_impl == self)
-//      return self;
+//      _impl = impl;      
+//   else if (_impl == self)     
+//      @throw [[ORExecutionError alloc] initORExecutionError: "This object is already an implementation"];
 //   else
-//      return [_impl dereference];
+//      [_impl setImpl: impl];
 //}
-//-(id) impl
+////-(id) dereference
+////{
+//////   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
+////   if (!_impl)
+////      return NULL;
+////   else if (_impl == self)
+////      return self;
+////   else
+////      return [_impl dereference];
+////}
+////-(id) impl
+////{
+////   return _impl;
+////}
+////-(void) makeImpl
+////{
+////   _impl = self;
+////}
+//
+//-(void) visit: (id<ORVisitor>) visitor
 //{
-//   return _impl;
+//   NSLog(@"%@",self);
+//   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
 //}
-//-(void) makeImpl
-//{
-//   _impl = self;
-//}
-
--(void) visit: (id<ORVisitor>) visitor
-{
-   NSLog(@"%@",self);
-   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
-}
-@end
+//@end
 

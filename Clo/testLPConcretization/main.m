@@ -177,5 +177,5 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main_mip(argc,argv);
+   return main_lp(argc,argv);
 }

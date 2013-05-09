@@ -19,7 +19,7 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
-   return [[[ORModelI alloc] initORModelI:0 tau: nil] autorelease];
+   return [[[ORModelI alloc] initORModelI] autorelease];
 }
 //+(id<ORModel>) createModel:(ORUInt)nbo
 //{

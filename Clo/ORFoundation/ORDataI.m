@@ -283,7 +283,15 @@
 {
    return (ORInt)ceil(_value);
 }
--(ORFloat) initialValue
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return (ORInt) _value;
+}
+-(ORFloat) floatValue
 {
    return _value;
 }

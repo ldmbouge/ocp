@@ -18,7 +18,7 @@
 
 @protocol ORVisitor;
 
-@interface ORIntArrayI : ORDualUseObjectI<NSCoding,ORIntArray>
+@interface ORIntArrayI : ORObject<NSCoding,ORIntArray>
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORInt) v;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORInt(^)(ORInt)) clo;
 -(ORIntArrayI*) initORIntArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) v;
@@ -41,7 +41,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORFloatArrayI : ORDualUseObjectI<NSCoding,ORFloatArray>
+@interface ORFloatArrayI : ORObject<NSCoding,ORFloatArray>
 -(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORFloat) v;
 -(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb with: (ORFloat(^)(ORInt)) clo;
 -(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) v;
@@ -63,7 +63,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIdArrayI : ORDualUseObjectI<NSCoding,ORIdArray>
+@interface ORIdArrayI : ORObject<NSCoding,ORIdArray>
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;
@@ -83,7 +83,7 @@
 @end
 
 
-@interface ORIntMatrixI : ORDualUseObjectI<ORIntMatrix,NSCoding>
+@interface ORIntMatrixI : ORObject<ORIntMatrix,NSCoding>
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block;
 -(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
@@ -101,7 +101,7 @@
 @end
 
 
-@interface ORIdMatrixI : ORDualUseObjectI<NSCoding,ORIdMatrix>
+@interface ORIdMatrixI : ORObject<NSCoding,ORIdMatrix>
 {
    id<ORTracker>  _tracker;
 }

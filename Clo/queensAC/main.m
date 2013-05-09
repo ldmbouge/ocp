@@ -74,7 +74,7 @@ int main2(int argc, const char * argv[])
       ORInt n = 8;
       id<ORModel> mdl = [ORFactory createModel];
       id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value: 0];
       id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
       id<ORIntVarArray> xp = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:i]);
       id<ORIntVarArray> xn = All(mdl,ORIntVar,i,R,[ORFactory intVar:mdl var:x[i] shift:-i]);
@@ -83,6 +83,7 @@ int main2(int argc, const char * argv[])
       [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
 //      id<CPProgram> cp = [ORFactory createCPProgram: mdl];
       id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:1 with:[ORSemDFSController class]];
+      __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {
           [cp switchOnDepth:
@@ -99,10 +100,11 @@ int main2(int argc, const char * argv[])
           for(ORInt i = 1; i <= 8; i++)
              printf("%d ",[cp intValue: x[i]]);
           printf("\n");
-          [nbSolutions incr];
+          nbSol++;
+          [nbSolutions incr: cp];
        }
        ];
-      printf("GOT %d solutions\n",[nbSolutions value]);
+      printf("GOT %d solutions\n",nbSol);
       NSLog(@"Solver status: %@\n",cp);
       NSLog(@"Quitting");
       [cp release];

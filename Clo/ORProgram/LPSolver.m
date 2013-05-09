@@ -334,7 +334,7 @@
 @end
 
 
-@interface LPColumn : ORModelingObjectI<LPColumn>
+@interface LPColumn : ORObject<LPColumn>
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;
 -(void) addObjCoef: (ORFloat) coef;
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
@@ -343,11 +343,12 @@
 @implementation LPColumn
 {
    LPSolver* _lpsolver;
+   LPColumnI* _lpcolumn;
 }
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col
 {
    self = [super init];
-   _impl = col;
+   _lpcolumn = col;
    _lpsolver = lpsolver;
    return self;
 }
@@ -355,13 +356,17 @@
 {
    [super dealloc];
 }
+-(LPColumnI*) column
+{
+   return _lpcolumn;
+}
 -(void) addObjCoef: (ORFloat) coef
 {
-   [(LPColumnI*)_impl addObjCoef: coef];
+   [_lpcolumn addObjCoef: coef];
 }
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef
 {
-   [(LPColumnI*) _impl addConstraint: [_lpsolver concretize: cstr] coef: coef];
+   [_lpcolumn addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
 @end
 
@@ -430,7 +435,7 @@
 
 -(void) addColumn: (LPColumn*) column
 {
-   [_lpsolver postColumn: [column impl]];
+   [_lpsolver postColumn: [column column]];
    ORLPSolutionI* sol = [self captureSolution];
    [_sPool addSolution: sol];
    [sol release];

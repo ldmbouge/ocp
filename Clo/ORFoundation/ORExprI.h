@@ -18,7 +18,7 @@
 #import "ORConstraint.h"
 #import "ORVisit.h"
 
-@interface ORExprI: ORDualUseObjectI<ORExpr,NSCoding>
+@interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
