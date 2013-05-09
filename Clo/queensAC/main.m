@@ -100,10 +100,7 @@ int main(int argc, const char * argv[])
              printf("%d ",[cp intValue: x[i]]);
           printf("\n");
           nbSol++;
-<<<<<<< HEAD
           [nbSolutions incr: cp];
-=======
->>>>>>> 0f5c294bd2fc498e2d14935eb9e9dfe2a5286359
        }
        ];
       printf("GOT %d solutions\n",nbSol);

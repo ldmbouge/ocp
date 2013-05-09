@@ -24,4 +24,5 @@
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass;
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model;
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model;
 @end

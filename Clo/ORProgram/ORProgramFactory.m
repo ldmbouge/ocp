@@ -13,6 +13,7 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORModeling/ORFlatten.h>
+#import <ORModeling/ORMIPLinearize.h>
 #import "ORProgramFactory.h"
 
 // CP Solver
@@ -104,6 +105,7 @@
    }];
    return cpprogram;
 }
+
 
 +(id<CPProgram>) createCPSemanticProgramDFS: (id<ORModel>) model
 {
@@ -253,25 +255,42 @@
    return mipprogram;
 }
 
+
++(void) createCPLinearizedProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
+{
+   id<ORModel> fm = [model flatten];
+   id<ORModel> lfm = [[ORMIPLinearize linearize: fm] flatten];
+   
+   ORUInt nbEntries =  [lfm nbObjects];
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [cpprogram setGamma: gamma];
+   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   for(id<ORObject> c in [lfm mutables])
+      [c visit: concretizer];
+   for(ORInt i = 0; i < nbEntries; i++)
+      NSLog(@"gamma[%d] = %@",i,gamma[i]);
+   
+   [cpprogram setSource:model];
+   [concretizer release];
+}
+
+
+
++(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model
+{
+   id<CPProgram> cpprogram = [CPSolverFactory solver];
+   [ORFactory createCPLinearizedProgram: model program: cpprogram];
+   //   [model setImpl: cpprogram];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return cpprogram;
+}
+
 @end
-
-/*
-_map  = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-                                  valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
-                                      capacity:32];
-return self;
-}
--(void)dealloc
-{
-   [_map release];
-   [super dealloc];
-}
--(id<ORAddToModel>)target
-{
-   return _into;
-}
--(id)copyOnce:(id)obj
-{
-   id copy = [_map objectForKey:obj];
-
-*/

@@ -128,7 +128,6 @@ typedef enum {
 -(id) objectAtIndexedSubscript:(NSUInteger)key;
 -(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) nb;
-//-(id) dereference;
 @end
 
 

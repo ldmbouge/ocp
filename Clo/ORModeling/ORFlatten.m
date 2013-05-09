@@ -193,23 +193,28 @@
       return nil;
    else if ([obj conformsToProtocol:@protocol(ORObjectiveFunctionExpr)])
       return nil;
-   else return obj;
+   else
+      return obj;
 }
 -(void)apply:(id<ORModel>)m
 {
-   [m applyOnVar:^(id<ORVar> x) {
+   [m applyOnVar: ^(id<ORVar> x) {
       [_into addVariable: [self flattenIt:x]];
-   } onMutables:^(id<ORObject> x) {
+   }
+   onMutables: ^(id<ORObject> x) {
       id<ORObject> nx = [self keepIt:x];
       if (nx)
          [_into addObject:nx];
-   } onImmutables:^(id<ORObject> x) {
+   }
+   onImmutables: ^(id<ORObject> x) {
       id<ORObject> nx = [self keepIt:x];
       if (nx)
          [_into addImmutable:nx];
-   } onConstraints:^(id<ORConstraint> c) {
+   }
+   onConstraints: ^(id<ORConstraint> c) {
       [_into addConstraint:[self flattenIt:c]];
-   } onObjective:^(id<ORObjectiveFunction> o) {
+   }
+   onObjective: ^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
    }];
 }

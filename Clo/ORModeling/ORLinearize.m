@@ -33,7 +33,7 @@
    return self;
 }
 
-+(id<ORModel>)linearize:(id<ORModel>)model
++(id<ORModel>) linearize:(id<ORModel>)model
 {
    id<ORModel> lin = [ORFactory createModel];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
@@ -67,9 +67,9 @@
     NSMapTable*   _binMap;
     id<ORExpr> _exprResult;
 }
--(id)init:(id<ORAddToModel>)m;
+-(id)init:(id<ORAddToModel>) m;
 {
-    if((self = [super init]) != nil) {
+    if ((self = [super init]) != nil) {
         _model = m;
         _binMap = [[NSMapTable alloc] init];
         _exprResult = nil;
