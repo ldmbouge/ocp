@@ -52,7 +52,10 @@
    NSSet* av = [self allVars];
    ORUInt nbu = 0;
    for(id aVar in av) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-method-access"
       nbu += ![aVar bound];
+#pragma clang diagnostic pop
    }
    [av release];
    return nbu;

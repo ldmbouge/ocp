@@ -17,8 +17,6 @@
 /*                  This file should be private                            */
 /***************************************************************************/
 
-
-
 @interface CPHeuristicSet : NSObject
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;
@@ -26,7 +24,6 @@
 -(void) reset;
 -(void) applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
 @end
-
 
 // This factorizes all the common stuff
 

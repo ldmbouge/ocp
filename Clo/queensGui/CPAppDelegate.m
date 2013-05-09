@@ -38,25 +38,26 @@
 
 -(void)visualize:(id<ORIntVarArray>)x on:(id<CPProgram>)cp
 {
-   ORBounds dom =  [[x at: [x low]] bounds];
+   ORBounds dom =  { [cp min:x[x.low]], [cp max:x[x.low]] };
    id<ORIntRange> cols = RANGE(cp,[x low],[x up]);
    id<ORIntRange> rows = RANGE(cp,dom.min,dom.max);
    id grid = [_board makeGrid:rows by: cols];
    for(ORInt i = [x low];i <= [x up];i++) {
       id<ORIntVar> xi = x[i];
-      [cp addConstraintDuringSearch:[CPFactory watchVariable:xi
-                            onValueLost:^void(ORInt val) {
-                               [_board toggleGrid:grid row:val col:i to:Removed];
-                            } 
-                            onValueBind:^void(ORInt val) {
-                               [_board toggleGrid:grid row:val col:i to:Required];
-                            } 
-                         onValueRecover:^void(ORInt val) {
-                            [_board toggleGrid:grid row:val col:i to:Possible];
-                         }
-                          onValueUnbind:^void(ORInt val) {
-                             [_board toggleGrid:grid row:val col:i to:Possible];
-                          }
+      [cp addConstraintDuringSearch:[CPFactory solver:cp
+                                        watchVariable:xi
+                                          onValueLost:^void(ORInt val) {
+                                             [_board toggleGrid:grid row:val col:i to:Removed];
+                                          }
+                                          onValueBind:^void(ORInt val) {
+                                             [_board toggleGrid:grid row:val col:i to:Required];
+                                          }
+                                       onValueRecover:^void(ORInt val) {
+                                          [_board toggleGrid:grid row:val col:i to:Possible];
+                                       }
+                                        onValueUnbind:^void(ORInt val) {
+                                           [_board toggleGrid:grid row:val col:i to:Possible];
+                                        }
                 ]  annotation:Default];
    }
    [_board watchSearch:cp 
@@ -81,7 +82,7 @@
    [cp solveAll:
     ^() {
        [self visualize:x on:cp];       
-       [cp labelArray:x orderedBy: ^ORFloat(ORInt i) { return [[x at:i] domsize];}];
+       [cp labelArray:x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
        //[_board neverStop];
        [_board pause];
     }

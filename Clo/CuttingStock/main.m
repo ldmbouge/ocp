@@ -61,7 +61,7 @@ int main (int argc, const char * argv[])
     [cg run];
     
     for(id<ORFloatVar> v in [[lp model] variables])
-        NSLog(@"var(%@): %f", [v description], [v value]);
+        NSLog(@"var(%@): %f", [v description], [[lp solver] floatValue:v]);
     
     //NSLog(@"%@", [master description]);
     //NSLog(@"master objective: %i", [masterObj value]);

@@ -25,7 +25,7 @@
 // First solution
 // 22 choices 20 fail 277 propagations
 
-int main(int argc, const char * argv[])
+int main1(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -68,7 +68,7 @@ int main(int argc, const char * argv[])
 }
 
 
-int main2(int argc, const char * argv[])
+int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -86,22 +86,24 @@ int main2(int argc, const char * argv[])
       __block ORInt nbSol = 0;
       [cp solveAll:
        ^() {
-          [cp switchOnDepth:
-           ^() { [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}]; }
-                         to:
-            ^() {
-                  //NSLog(@"I switched %@\n",x);
-                   NSLog(@"I switched \n");
-                  for(ORInt i = 1; i <= 8; i++)
-                     printf("%d-%d ",x[i].min,x[i].max);
-               printf("\n");
-               [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}]; } limit: 4
+          [cp switchOnDepth: ^{ [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}]; }
+                         to: ^{
+                            NSLog(@"I switched \n");
+                            for(ORInt i = 1; i <= 8; i++)
+                               printf("%d-%d ",[cp min:x[i]],[cp max:x[i]]);
+                            printf("\n");
+                            [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+                         }
+                      limit: 4
            ];
           for(ORInt i = 1; i <= 8; i++)
              printf("%d ",[cp intValue: x[i]]);
           printf("\n");
           nbSol++;
+<<<<<<< HEAD
           [nbSolutions incr: cp];
+=======
+>>>>>>> 0f5c294bd2fc498e2d14935eb9e9dfe2a5286359
        }
        ];
       printf("GOT %d solutions\n",nbSol);

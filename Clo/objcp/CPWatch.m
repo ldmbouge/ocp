@@ -14,6 +14,7 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
+#import "CPProgram.h"
 
 @interface CPWatch : CPCoreConstraint {
    CPIntVarI* _theVar;
@@ -22,14 +23,14 @@
    ORInt2Void _rec;
    ORInt2Void _unb;
 }
--(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
 @implementation CPWatch
--(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost 
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost
            onValueBind:(ORInt2Void)bind 
         onValueRecover:(ORInt2Void)rec 
          onValueUnbind:(ORInt2Void)unb
@@ -84,19 +85,20 @@
 @end
 
 @implementation CPFactory(Visualize)
-+(id<ORConstraint>)watchVariable:(id<ORIntVar>)x 
-                     onValueLost:(ORInt2Void)lost 
-                     onValueBind:(ORInt2Void)bind 
-                  onValueRecover:(ORInt2Void)rec 
-                   onValueUnbind:(ORInt2Void)unb
++(id<ORConstraint>)solver:(id<CPProgram>)cp
+            watchVariable:(id<ORIntVar>)x
+              onValueLost:(ORInt2Void)lost
+              onValueBind:(ORInt2Void)bind
+           onValueRecover:(ORInt2Void)rec
+            onValueUnbind:(ORInt2Void)unb
 {
    id<ORConstraint> c = nil;
-   c = [[CPWatch alloc] initCPWatch:[x dereference]
+   id<CPIntVar> theVar = [cp gamma][x.getId];
+   c = [[CPWatch alloc] initCPWatch:theVar
                         onValueLost:lost 
                         onValueBind:bind
                      onValueRecover:rec
                       onValueUnbind:unb];
-   CPIntVarI* theVar = (CPIntVarI*)[x dereference];
    [[theVar engine] trackObject:c];
    return c;
 }
