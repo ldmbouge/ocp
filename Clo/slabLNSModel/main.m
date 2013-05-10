@@ -91,7 +91,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> slab = [ORFactory intVarArray: model range: SetOrders domain: Slabs];
          id<ORIntVarArray> load = [ORFactory intVarArray: model range: Slabs domain: Capacities];
          
-         [model add: [ORFactory packing: slab itemSize: weight load: load]];
+         [model add: [ORFactory packing:model item:slab itemSize: weight load: load]];
          for(ORInt s = Slabs.low; s <= Slabs.up; s++)
             [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
          id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
@@ -106,7 +106,7 @@ int main(int argc, const char * argv[])
                   [cp forall:SetOrders suchThat:^bool(ORInt o) { return ![cp bound: slab[o]];}
                    orderedBy:^ORInt(ORInt o) { return ([cp domsize: slab[o]] << 16) - [weight at:o];}
                           do: ^(ORInt o){
-                             ORInt ms = max(0,[CPUtilities maxBound: slab]);
+                             ORInt ms = max(0,[cp maxBound: slab]);
                              [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms+1 && [cp member: s in: slab[o]]; }
                                      in: ^void(ORInt s) {
                                         [cp label: slab[o] with: s];

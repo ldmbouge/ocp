@@ -25,7 +25,7 @@ int main (int argc, const char * argv[])
      
      id<ORIntRange> R = RANGE(model,1,n);
      
-     id<ORMutableInteger> nbSolutions = [ORFactory integer: model value:0];
+     id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
      id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
      id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
@@ -37,13 +37,13 @@ int main (int argc, const char * argv[])
      id<CPHeuristic> h = [cp createFF];
      [cp solveAll:
        ^() {
-         [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [x[i] domsize];}];
+          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
          [cp labelHeuristic:h];
        //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
-         [nbSolutions incr];
+          [nbSolutions incr:cp];
        }
        ];
-     printf("GOT %d solutions\n",[nbSolutions value]);
+     printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
      
      NSLog(@"Solver status: %@\n",cp);
      NSLog(@"Quitting");

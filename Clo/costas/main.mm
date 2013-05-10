@@ -94,23 +94,23 @@ int main(int argc, const char * argv[])
          //         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
          //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
          //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+         id<ORMutableInteger> nbSol = [ORFactory mutable:mdl value:0];
          
          id<CPProgram> cp = [args makeProgram:mdl];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
-         id<ORMutableInteger> nbSol = [ORFactory integer:mdl value:0];
          [cp solveAll: ^{
             [cp labelHeuristic:h];
             @autoreleasepool {
-               /*id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
                   return [cp intValue:costas[i]];
                }];
-               NSLog(@"Solution: %@",s);*/
+               NSLog(@"Solution: %@",s);
                @synchronized(nbSol) {
-                  [nbSol incr];
+                  [nbSol incr:cp];
                }
             }
          }];
-         struct ORResult r = REPORT(nbSol.value, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT([nbSol intValue:cp], [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;

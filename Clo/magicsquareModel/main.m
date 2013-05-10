@@ -44,8 +44,8 @@ int main(int argc, const char * argv[])
          [model add:[[s at:1 :1] lt: [s at: 1 :n]]];
          [model add:[[s at:1 :1] lt: [s at: n :1]]];
          
-         id<ORMutableInteger> nbRestarts = [ORFactory integer: model value:0];
-         id<ORMutableInteger> nbFailures = [ORFactory integer: model value:rf == 1.0 ? MAXINT : 3 * n];
+         id<ORMutableInteger> nbRestarts = [ORFactory mutable: model value:0];
+         id<ORMutableInteger> nbFailures = [ORFactory mutable: model value:rf == 1.0 ? MAXINT : 3 * n];
          ORLong maxTime =  t * 1000;
          
          id<CPProgram> cp = [args makeProgram:model];
@@ -56,13 +56,13 @@ int main(int argc, const char * argv[])
                ///[cp repeat:^{
                while(!found) {
                   [cp try:^{
-                     [cp limitFailures:[nbFailures value] in: ^ {
+                     [cp limitFailures:[nbFailures intValue:cp] in: ^ {
                         [cp labelHeuristic:h];
                         @autoreleasepool {
                            for(ORInt i =1;i <= n;i++) {
                               NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                               for (ORInt j=1; j<=n; j++) {
-                                 [buf appendFormat:@"%3d ",[[s at:i :j] value]];
+                                 [buf appendFormat:@"%3d ",[cp intValue:[s at:i :j]]];
                               }
                               NSLog(@"%@",buf);
                            }
@@ -70,9 +70,9 @@ int main(int argc, const char * argv[])
                         found = YES;
                      }];
                   } or:^{
-                     [nbFailures setValue:(float)[nbFailures value] * rf];
-                     [nbRestarts incr];
-                     NSLog(@"Hit failure limit. Failure limit now: %d / %d",nbFailures.value,nbRestarts.value);
+                     [nbFailures setValue:(float)[nbFailures intValue:cp] * rf in:cp];
+                     [nbRestarts incr:cp];
+                     NSLog(@"Hit failure limit. Failure limit now: %d / %d",[nbFailures intValue:cp],[nbRestarts intValue:cp]);
                   }];
                //} onRepeat:^{
                };

@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
          id<ORIntRange> D = RANGE(mdl,0,n-1);
          id<ORIntRange> SD = RANGE(mdl,1,n-1);
 
-         id<ORMutableInteger> nbSolutions = [ORFactory integer: mdl value:0];
+         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value:0];
          id<ORIntVarArray> sx = [ORFactory intVarArray: mdl range:R domain: D];
          id<ORIntVarArray> dx = [ORFactory intVarArray: mdl range:SD domain: SD];
 
@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
             [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
                return [cp domsize:sx[i]];
             }];
-            [nbSolutions incr];
+            [nbSolutions incr:cp];
             id<ORIntArray> a = [ORFactory intArray:cp range: R  with:^ORInt(ORInt i) {
                return [cp intValue:sx[i]];
             }];

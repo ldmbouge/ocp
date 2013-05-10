@@ -27,8 +27,7 @@ int main (int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-//         int n = [args size];
-         int n = 8;
+         int n = [args size];
          id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
          id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
          id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:[x at: i] shift:i annotation:Default]; }];
@@ -36,9 +35,7 @@ int main (int argc, const char * argv[])
          [model add: [ORFactory alldifferent: x]];
          [model add: [ORFactory alldifferent: xp]];
          [model add: [ORFactory alldifferent: xn]];
-         id<ORMutableInteger> nbSol = [ORFactory integer:model value:0];
-         
-         NSLog(@"Model: %@",model);
+         __block ORInt nbSol = 0;        
          id<CPProgram> cp = [args makeProgram:model];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPProgram> cp = [CPFactory createCPSemanticProgram:model with:[ORSemBDSController class]];
@@ -51,9 +48,9 @@ int main (int argc, const char * argv[])
             __block ORInt depth = 0;
             [cp labelHeuristic:h];
             //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
-            FORALL(i,R,![x[i] bound],[x[i] domsize], ^(ORInt i) {
+            FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
 #if TESTTA==1
-               [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
+               [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
                           [cp label: x[i] with:v];
                           //NSLog(@"AFTER LABEL: %@",x);
@@ -73,25 +70,13 @@ int main (int argc, const char * argv[])
                }
 #endif
             });
-            
-            /*
-             @autoreleasepool {
-             NSMutableString* buf = [NSMutableString stringWithCapacity:64];
-             [buf appendFormat:@"x = (%p)[",[NSThread currentThread]];
-             for(ORInt i = 0; i <= n; i++)
-             [buf appendFormat:@"%d%c",[x[i] value],i < n ? ',' : ']' ];
-             @synchronized(nbSol) {
-             NSLog(@"SOL[%d] = %@",[nbSol value],buf);
-             }
-             }
-             */
-            @synchronized(nbSol) {
-               [nbSol incr];
+            @synchronized(cp) {
+               ++nbSol;
             }
          }];
-         NSLog(@"Quitting #SOL=%d",[nbSol value]);
+         NSLog(@"Quitting #SOL=%d",nbSol);
          NSLog(@"Solver: %@",cp);
-         struct ORResult r = REPORT([nbSol value], [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;

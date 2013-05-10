@@ -62,13 +62,15 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [ORFactory createCPProgram:mdl];
          [cp solve:
           ^() {
-             [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [[allgames at:i] domsize];}];
+             [cp  labelArray: allgames orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allgames at:i]];}];
              NSLog(@"after");
-             [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [[allteams at:i] domsize];}];
+             [cp labelArray: allteams orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[allteams at:i]];}];
              printf("Solution \n");
              for(ORInt p = 1; p <= n/2; p++) {
                 for(ORInt w = 1; w < n; w++)
-                   printf("%2d-%2d [%3d]  ",[[team at: p : w : 0] min],[[team at: p : w : 1] min],[[game at: p : w] min]);
+                   printf("%2d-%2d [%3d]  ",[cp intValue:[team at: p : w : 0]],
+                          [cp intValue:[team at: p : w : 1]],
+                          [cp intValue:[game at: p : w]]);
                 printf("\n");
              }
           }
