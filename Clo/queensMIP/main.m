@@ -63,6 +63,15 @@ int main_alldiff(int argc, const char * argv[])
    return 0;
 }
 
+
+NSString* tab(int d)
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   for(int i=0;i<d;i++)
+      [buf appendString:@"   "];
+   return buf;
+}
+
 int main_neq(int argc, const char * argv[])
 {
    @autoreleasepool {
@@ -82,10 +91,37 @@ int main_neq(int argc, const char * argv[])
       
       ORLong startTime = [ORRuntimeMonitor wctime];
       __block ORInt nbSol = 0;
-      
+      id* gamma = [cp gamma];
       [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+/*          [cp forall:x.range orderedBy:^ORInt(ORInt i) {
+             return [cp domsize:x[i]];
+          } do:^(ORInt i) {
+             while (![cp bound:x[i]]) {
+                int min = [cp min:x[i]];
+                [cp try:^{
+                   NSLog(@"%@x[%d] == %d",tab(i),i,min);
+                   [cp label:x[i] with:min];
+                } or:^{
+                   NSLog(@"%@x[%d] != %d",tab(i),i,min);
+                   NSLog(@"***x3 = %@",gamma[x[3].getId]);
+                   [cp diff:x[i] with:min];
+                   NSLog(@"***x3 = %@",gamma[x[3].getId]);
+                }];
+                NSLog(@"x3 = %@",gamma[x[3].getId]);
+                NSLog(@"x4 = %@",gamma[x[4].getId]);
+                NSLog(@"x5 = %@",gamma[x[5].getId]);
+                NSLog(@"x6 = %@",gamma[x[6].getId]);
+             }
+          }];*/
+          //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+          id<ORIntArray> sa = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt k) {
+             return [cp intValue:x[k]];
+          }];
+          NSLog(@"Solution: %@",sa);
+          //id av = [[cp engine] variables];
+          //NSLog(@"AV = %@",av);
           @synchronized(cp) {
              nbSol++;
           }

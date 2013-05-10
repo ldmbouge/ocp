@@ -222,6 +222,7 @@
    NSLog(@"cst: %d",cst);
 //   [_into addConstraint: [x geq: [[y sub: [b mul: @(_M)]] plus: @(cst+1)]]];
 //   [_into addConstraint: [x leq: [y plus: [[[@(1) sub: b] mul: @(_M)] plus: @(cst-1)]]]];
+
 //   [_into addConstraint: [x gt: [[y sub: [b mul: @(_M)]] plus: @(cst)]]];
 //   [_into addConstraint: [x lt: [[y sub: [[b sub: @(1)] mul: @(_M)]] plus: @(cst)]]];
 //   [_into addConstraint: [[x gt: [y plus: @(cst)]] or: [x lt: [y plus: @(cst)]]]];
@@ -235,9 +236,15 @@
 //      [_into addConstraint: [x lt: [[y plus: @(cst)] sub: [[b sub: @(1)] mul: @(_M)]]]];
 //      [_into addConstraint: c];
    }
-//   
-    NSLog(@"NEqual");
-   [_into addConstraint: c];
+//
+   id<ORExpr> c1 = [x gt: [[y plus: @(cst)] sub: [b mul: @(_M)]]];
+   id<ORExpr> c2 = [x lt: [[y plus: @(cst)] sub: [[b sub: @(1)] mul: @(_M)]]];
+   [_into addObject:[_into addConstraint: c1]];
+   [_into addObject:[_into addConstraint: c2]];
+
+   NSLog(@"NEqual");
+   //[_into addObject:c];
+   //[_into addConstraint: c];
    _result = c;
 }
 -(void) visitLEqual: (id<ORLEqual>)c
