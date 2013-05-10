@@ -59,10 +59,8 @@ int main(int argc, const char * argv[])
          //id<ORIntVarArray> fd = [ORFactory flattenMatrix:d];
          [cp solve: ^{
             for(ORInt i=1;i<=n;i++) {
-               if ([m[i] bound]) continue;
-               [cp tryall:D suchThat:^bool(ORInt v) {
-                  return [m[i] member:v];
-               } in:^(ORInt v) {
+               if ([cp bound:m[i]]) continue;
+               [cp tryall:D suchThat:^bool(ORInt v) { return [cp member:v in:m[i]];} in:^(ORInt v) {
                   [cp label:m[i] with:v];
                } onFailure:^(ORInt v) {
                   [cp diff:m[i] with:v];
@@ -70,7 +68,7 @@ int main(int argc, const char * argv[])
             }
             //[cp labelHeuristic:h];
             //[cp once: ^{ [cp labelArray:fd];}];
-            NSLog(@"Optimum: %d",[m[n] value]);
+            NSLog(@"Optimum: %d",[cp intValue:m[n]]);
          }];         
          NSLog(@"Solver status: %@\n",cp);
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);

@@ -58,12 +58,7 @@ int main (int argc, const char * argv[])
       id<ORIntRange> R = RANGE(mdl,1,64);
       id<ORIntRange> D = RANGE(mdl,1,64);
       id<ORIntVarArray> jump = [ORFactory intVarArray:mdl range: R domain: D];
-      
-      NSLog(@"%@",jump[1]);
-      printf("min %d \n",[jump[1] min]);
-      printf("max %d \n",[jump[1] max]);
-      printf("size %d \n",[jump[1] domsize]);
-      
+           
       for(int i = 1; i <= 64; i++)
          [mdl add:[ORFactory restrict:mdl var:jump[i] to: knightMoves(mdl,i)]];
       [mdl add: [ORFactory alldifferent: jump annotation: DomainConsistency]];
@@ -72,7 +67,7 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:
        ^() {
-          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [[jump at:i] domsize];}];
+          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[jump at:i]];}];
           printCircuit(jump);
        }
        ];

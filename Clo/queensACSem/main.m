@@ -36,7 +36,7 @@ int main (int argc, const char * argv[])
          [model add: [ORFactory alldifferent: x]];
          [model add: [ORFactory alldifferent: xp]];
          [model add: [ORFactory alldifferent: xn]];
-         id<ORMutableInteger> nbSol = [ORFactory integer:model value:0];
+         id<ORMutableInteger> nbSol = [ORFactory mutable:model value:0];
          
          NSLog(@"Model: %@",model);
          id<CPProgram> cp = [args makeProgram:model];
@@ -51,9 +51,9 @@ int main (int argc, const char * argv[])
             __block ORInt depth = 0;
             [cp labelHeuristic:h];
             //[cp forall:R suchThat:^bool(ORInt i) { return ![x[i] bound];} orderedBy:^ORInt(ORInt i) { return [x[i] domsize];} do:^(ORInt i) {
-            FORALL(i,R,![x[i] bound],[x[i] domsize], ^(ORInt i) {
+            FORALL(i,R,![cp bound:x[i]],[cp domsize:x[i]], ^(ORInt i) {
 #if TESTTA==1
-               [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
+               [cp tryall:R suchThat:^bool(ORInt v) { return [cp member:v in:x[i]];}
                        in:^(ORInt v) {
                           [cp label: x[i] with:v];
                           //NSLog(@"AFTER LABEL: %@",x);
@@ -86,12 +86,12 @@ int main (int argc, const char * argv[])
              }
              */
             @synchronized(nbSol) {
-               [nbSol incr];
+               [nbSol incr:cp];
             }
          }];
-         NSLog(@"Quitting #SOL=%d",[nbSol value]);
+         NSLog(@"Quitting #SOL=%d",[nbSol intValue:cp]);
          NSLog(@"Solver: %@",cp);
-         struct ORResult r = REPORT([nbSol value], [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT([nbSol intValue:cp], [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;

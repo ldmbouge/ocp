@@ -32,8 +32,8 @@ int main (int argc, const char * argv[])
             //NSLog(@"x = %@",x);
             //NSLog(@"model: %@",[[cp engine] model]);
             for(ORInt i=0;i<n;i++) {
-               while (![x[i] bound]) {
-                  ORInt v = [x[i] min];
+               while (![cp bound:x[i]]) {
+                  ORInt v = [cp min:x[i]];
                   [cp try:^{
                      //NSLog(@"try    x[%d] == %d  -- %@ -- %@",i,v,x[i],x);
                      [cp label:x[i] with:v];
@@ -48,7 +48,7 @@ int main (int argc, const char * argv[])
             //[CPLabel array: x];
             printf("Succeeds \n");
             for(ORInt i = 0; i < n; i++)
-               printf("%d ",[x[i] value]);
+               printf("%d ",[cp intValue:x[i]]);
             printf("\n");
          }
           ];
