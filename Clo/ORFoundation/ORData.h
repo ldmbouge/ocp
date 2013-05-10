@@ -46,10 +46,13 @@ typedef enum {
 -(id) copy;
 @end
 
-@protocol ORModelMaps <NSObject,NSCopying>
+@protocol ORGamma <NSObject>
+-(id<ORObject>) concretize: (id<ORObject>) o;
+@end
+
+@protocol ORModelMappings <NSObject>
 -(id<ORTau>) tau;
 -(id<ORLambda>) lambda;
--(id<ORObject>) concretize: (id<ORObject>) o;
 -(id) copy;
 @end
 
@@ -57,19 +60,18 @@ typedef enum {
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
-
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;
 @end
 
 @protocol ORMutableInteger <ORObject,ORExpr>
 -(ORInt) initialValue;
--(ORInt) setValue: (ORInt) value in: (id<ORModelMaps>) solver;
--(ORInt) incr: (id<ORModelMaps>) solver;
--(ORInt) decr: (id<ORModelMaps>) solver;
--(ORInt) value: (id<ORModelMaps>) solver;
--(ORInt) intValue: (id<ORModelMaps>) solver;
--(ORFloat) floatValue: (id<ORModelMaps>) solver;
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt) incr: (id<ORGamma>) solver;
+-(ORInt) decr: (id<ORGamma>) solver;
+-(ORInt) value: (id<ORGamma>) solver;
+-(ORInt) intValue: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
 @end
 
 @protocol ORFloatNumber <ORObject,ORExpr>
@@ -80,9 +82,9 @@ typedef enum {
 
 @protocol ORMutableFloat <ORObject,ORExpr>
 -(ORFloat) initialValue;
--(ORFloat) value: (id<ORModelMaps>) solver;
--(ORFloat) floatValue: (id<ORModelMaps>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORModelMaps>) solver;
+-(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>
@@ -141,22 +143,23 @@ typedef enum {
 -(ORInt) nb;
 @end
 
-
-
-@interface ORModelMaps : NSObject<ORModelMaps>
+@interface ORGamma : NSObject<ORGamma>
 {
 @protected
    id* _gamma;
-   id<ORTau> _tau;
-   id<ORLambda> _lambda;
+   id<ORModelMappings> _mappings;
 }
--(ORModelMaps*) initORModelMaps;
+-(ORGamma*) initORGamma;
 -(void) dealloc;
--(void) setGamma: (id*) gamma;
+-(id*) gamma;
+-(id) concretize: (id) o;
+@end
+
+@interface ORModelMappings : NSObject<ORModelMappings>
+-(ORModelMappings*) initORModelMappings;
+-(void) dealloc;
 -(void) setTau: (id<ORTau>) tau;
 -(void) setLambda: (id<ORLambda>) lambda;
--(id*) gamma;
 -(id<ORTau>) tau;
 -(id<ORLambda>) lambda;
--(id) concretize: (id) o;
 @end

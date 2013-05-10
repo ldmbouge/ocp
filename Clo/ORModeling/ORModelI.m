@@ -99,7 +99,7 @@
    ORUInt                   _nbImmutables; // Number of immutable objects registered with the model
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    NSMutableDictionary*     _cache;
-   id<ORModelMaps>          _mappings;  // these are all the mappings for the models
+   id<ORModelMappings>      _mappings;  // these are all the mappings for the models
 }
 -(ORModelI*) initORModelI
 {
@@ -110,12 +110,12 @@
    _iStore = [[NSMutableArray alloc] initWithCapacity:32];
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
-   _mappings = [[ORModelMaps alloc] initORModelMaps];
+   _mappings = [[ORModelMappings alloc] initORModelMappings];
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
    return self;
 }
--(ORModelI*)initORModelI: (ORUInt) nb mappings: (id<ORModelMaps>) mappings
+-(ORModelI*) initORModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings
 {
    self = [self initORModelI];
    _nbObjects = nb;
@@ -146,7 +146,7 @@
 {
    return _mappings.lambda;
 }
--(id<ORModelMaps>) mappings
+-(id<ORModelMappings>) mappings
 {
    return _mappings;
 }

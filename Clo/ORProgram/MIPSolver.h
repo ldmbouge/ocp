@@ -13,7 +13,7 @@
 #import <ORProgram/MIPProgram.h>
 
 // MIPSolver
-@interface MIPSolver : ORModelMaps<MIPProgram>
+@interface MIPSolver : ORGamma<MIPProgram>
 -(id<MIPProgram>) initMIPSolver: (id<ORModel>) model;
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORMIPSolutionPool>) solutionPool;

@@ -29,7 +29,7 @@
 
 @interface ORModelI : ORObject<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI: (ORUInt) nb mappings: (id<ORModelMaps>) tau;
+-(ORModelI*)              initORModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
@@ -62,7 +62,7 @@
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
--(id<ORModelMaps>) mappings;
+-(id<ORGamma>) mappings;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
