@@ -75,6 +75,14 @@
 {
    _lambda = lambda;
 }
+-(id<ORTau>) tau
+{
+   return _tau;
+}
+-(id<ORLambda>) lambda
+{
+   return _lambda;
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    id<ORObject> ob =  _gamma[o.getId];

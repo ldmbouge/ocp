@@ -45,7 +45,7 @@
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(id<ORVar>) addVariable:(id<ORVar>) var;
--(id) addObject:(id) object;
+-(id) addMutable:(id) object;
 -(id) addImmutable:(id) object;
 -(ORUInt)nbObjects;
 -(ORUInt)nbImmutables;
@@ -68,7 +68,7 @@
 @interface ORBatchModel : NSObject<ORAddToModel>
 -(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addObject:(id)object;
+-(id) addMutable:(id)object;
 -(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
@@ -78,21 +78,25 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
--(void) trackObject: (id) obj;
+-(id) trackConstraintInGroup:(id)obj;
+-(id) trackObjective:(id) obj;
+-(id) trackMutable: (id) obj;
 -(id) trackImmutable:(id)obj;
--(void) trackVariable: (id) obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addObject:(id)object;
+-(id) addMutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
+-(id) trackConstraintInGroup:(id)obj;
+-(id) trackObjective:(id) obj;
+-(id) trackMutable: (id) obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {

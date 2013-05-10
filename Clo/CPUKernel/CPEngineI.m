@@ -349,11 +349,34 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
    }
    else
       [_trail trailRelease:obj];
+   return obj;   
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return obj;
+}
+-(id) trackObjective:(id)obj
+{
+   if (_state != CPClosed) {
+      [_oStore addObject:obj];
+      [obj release];
+   }
+   else
+      [_trail trailRelease:obj];
+   return obj;
+}
+-(id) trackMutable:(id)obj
+{
+   if (_state != CPClosed) {
+      [_oStore addObject:obj];
+      [obj release];
+   }
+   else
+      [_trail trailRelease:obj];
    return obj;
 }
 -(id) trackImmutable: (id) obj
 {
-   // [ldm] tofix
    if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];
@@ -684,7 +707,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(id<ORBasicModel>)model
 {
    id<ORBasicModel> bm = [[CPModelI alloc] initCPModel:self];
-   [self trackObject:bm];
+   [self trackMutable:bm];
    return bm;
 }
 

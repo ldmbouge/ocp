@@ -60,7 +60,7 @@
 
 @protocol ORAddToModel <ORTracker>
 -(id<ORVar>) addVariable:(id<ORVar>) var;
--(id) addObject:(id) object;
+-(id) addMutable:(id) object;
 -(id) addImmutable:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORTracker>)tracker;

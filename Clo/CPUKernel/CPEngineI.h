@@ -50,7 +50,7 @@ enum CPEngineState {
 -(void)      dealloc;
 -(id<CPEngine>) solver;
 -(id)        trackVariable:(id)var;
--(id)        trackObject:(id)obj;
+-(id)        trackMutable:(id)obj;
 -(id)        trackImmutable:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;

@@ -131,7 +131,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 +(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterable>) S
 {
    id<ORForall> forall = [[ORForallI alloc] initORForallI:tracker set:S];
-   [tracker trackObject: forall];
+   [tracker trackMutable: forall];
    return forall;
 }
 @end;

@@ -25,7 +25,7 @@
 // First solution
 // 22 choices 20 fail 277 propagations
 
-int main1(int argc, const char * argv[])
+int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;
@@ -68,7 +68,7 @@ int main1(int argc, const char * argv[])
 }
 
 
-int main(int argc, const char * argv[])
+int main0(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORInt n = 8;

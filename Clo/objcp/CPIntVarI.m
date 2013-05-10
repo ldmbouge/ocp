@@ -865,6 +865,35 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     return _a;
 }
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
+   else
+      hookupEvent(_fdm, &_net._minEvt, todo, c, p);
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._minEvt, todo, c, p);
+   else
+      hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
+   else
+      hookupEvent(_fdm, &_net._minEvt, nil, c, p);
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._minEvt, nil, c, p);
+   else
+      hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
+}
+
 -(ORStatus) updateMin: (ORInt) newMin
 {
    ORInt op = newMin - _b;
@@ -1019,6 +1048,23 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return -1;
 }
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent(_fdm, &_net._minEvt, todo, c, p);
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   hookupEvent(_fdm, &_net._minEvt, nil, c, p);
+}
+
 -(ORStatus)updateMin:(ORInt)newMin
 {
    return [_x updateMax:-newMin];

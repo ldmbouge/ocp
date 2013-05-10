@@ -30,17 +30,20 @@ typedef enum {
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
+-(void)setId:(ORUInt)name;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
 @protocol ORTau <NSObject,NSCopying>
 -(void) set: (id) value forKey: (id) key;
 -(id) get: (id) key;
+-(id) copy;
 @end
 
 @protocol ORLambda <NSObject,NSCopying>
 -(void) set: (id) value forKey: (id) key;
 -(id) get: (id) key;
+-(id) copy;
 @end
 
 @protocol ORModelMaps <NSObject,NSCopying>

@@ -1155,13 +1155,25 @@
 {
    return [_engine trackObject:object];
 }
+-(id) trackMutable: (id) object
+{
+   return [_engine trackMutable:object];
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_engine trackConstraintInGroup:obj];
+}
+-(id) trackObjective:(id) object
+{
+   return [_engine trackObjective: object];
+}
 -(id) trackImmutable: (id) object
 {
    return [_engine trackImmutable:object];
 }
 -(id) trackVariable: (id) object
 {
-   return [_engine trackObject:object];
+   return [_engine trackMutable:object];
 }
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -1615,12 +1627,14 @@
 @interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*) solver;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addObject: (id) object;
+-(id) addMutable: (id) object;
 -(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(id) trackObject: (id) obj;
+-(id) trackConstraintInGroup:(id)obj;
+-(id) trackObjective:(id)obj;
+-(id) trackMutable: (id) obj;
 -(id) trackVariable: (id) obj;
 @end
 
@@ -1646,9 +1660,9 @@
    [_solver trackVariable:var];
    return var;
 }
--(id) addObject: (id) object
+-(id) addMutable: (id) object
 {
-   [[_solver engine] trackObject: object];
+   [[_solver engine] trackMutable: object];
    return object;
 }
 -(id) addImmutable:(id)object
@@ -1694,6 +1708,18 @@
 -(id) trackObject: (id) obj
 {
    return [_solver trackObject:obj];
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_solver trackConstraintInGroup:obj];
+}
+-(id) trackObjective:(id) object
+{
+   return [_solver trackObjective: object];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_solver trackMutable:obj];
 }
 -(id) trackImmutable:(id)obj
 {

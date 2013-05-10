@@ -56,6 +56,7 @@
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint:_model expr: (id<ORRelation>)c annotation:Default];
    [_content addObject:c];
+   [_model trackConstraintInGroup:c];
    return c;
 }
 -(NSString*) description

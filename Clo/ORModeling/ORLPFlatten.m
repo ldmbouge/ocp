@@ -67,7 +67,7 @@
       [_into addVariable: [self flattenIt: x]];
    }
    onMutables:^(id<ORObject> x) {
-      [_into addObject:[self flattenIt:x]];
+      [_into addMutable:[self flattenIt:x]];
    }
    onImmutables:^(id<ORObject> x) {
       [_into addImmutable: x];
