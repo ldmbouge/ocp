@@ -84,3 +84,11 @@
 -(NSString*) description;
 -(id<ORASolver>) solver;
 @end
+
+@protocol ORVarLitterals <NSObject>
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntVar>) litteral: (ORInt) i;
+-(BOOL) exist: (ORInt) i;
+-(NSString*) description;
+@end

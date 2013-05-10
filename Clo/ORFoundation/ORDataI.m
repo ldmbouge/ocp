@@ -47,8 +47,8 @@
 }
 @end;
 
-@implementation ORGamma
--(ORGamma*) initORGamma
+@implementation ORModelMaps
+-(ORModelMaps*) initORModelMaps
 {
    self = [super init];
    _gamma = NULL;
@@ -71,6 +71,10 @@
 {
    _tau = tau;
 }
+-(void) setLambda: (id<ORLambda>) lambda
+{
+   _lambda = lambda;
+}
 -(id<ORObject>) concretize: (id<ORObject>) o
 {
    id<ORObject> ob =  _gamma[o.getId];
@@ -85,6 +89,13 @@
       }
       return _gamma[ob.getId];
    }
+}
+-(id) copyWithZone: (NSZone*) zone
+{
+   ORModelMaps* map = [[ORModelMaps alloc] initORModelMaps];
+   map->_tau = [_tau copy];
+   map->_lambda = [_lambda copy];
+   return map;
 }
 @end
 
@@ -206,23 +217,23 @@
 {
    return _value = value;
 }
--(ORFloat) floatValue: (id<ORGamma>) solver
+-(ORFloat) floatValue: (id<ORModelMaps>) solver
 {
    return _value;
 }
--(ORInt) intValue: (id<ORGamma>) solver
+-(ORInt) intValue: (id<ORModelMaps>) solver
 {
    return _value;
 }
--(ORInt) value: (id<ORGamma>) solver
+-(ORInt) value: (id<ORModelMaps>) solver
 {
    return [(ORMutableIntegerI*)[solver concretize: self] initialValue];
 }
--(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
+-(ORInt) setValue: (ORInt) value in: (id<ORModelMaps>) solver
 {
    return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }
--(ORInt) incr: (id<ORGamma>) solver
+-(ORInt) incr: (id<ORModelMaps>) solver
 {
    return [(ORMutableIntegerI*)[solver concretize: self] incr];
 }
@@ -356,15 +367,15 @@
 {
    return _value = value;
 }
--(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) value: (id<ORModelMaps>) solver;
 {
    return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
 }
--(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORModelMaps>) solver;
 {
    return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
 }
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORModelMaps>) solver;
 {
    return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }

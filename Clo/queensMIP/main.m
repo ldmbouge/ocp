@@ -78,6 +78,8 @@ int main_neq(int argc, const char * argv[])
             [mdl add: [[x[i] sub: @(i)] neq: [x[j] sub: @(j)]]];
          }
       
+      id<ORVarLitterals> l = [ORFactory varLitterals: mdl var: x[1]];
+      NSLog(@"literals: %@",l);
       id<CPProgram> cp = [ORFactory createCPLinearizedProgram: mdl];
       
       ORLong startTime = [ORRuntimeMonitor wctime];

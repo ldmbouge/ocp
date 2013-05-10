@@ -26,10 +26,10 @@
 -(ORMutableIntegerI*) initORMutableIntegerI: (id<ORTracker>) tracker value: (ORInt) value;
 -(ORInt)  initialValue;
 -(ORInt) setValue: (ORInt) value;
--(ORInt)  value: (id<ORGamma>) solver;
--(ORInt)  setValue: (ORInt) value in: (id<ORGamma>) solver;
--(ORInt)  incr: (id<ORGamma>) solver;
--(ORInt)  decr: (id<ORGamma>) solver;
+-(ORInt)  value: (id<ORModelMaps>) solver;
+-(ORInt)  setValue: (ORInt) value in: (id<ORModelMaps>) solver;
+-(ORInt)  incr: (id<ORModelMaps>) solver;
+-(ORInt)  decr: (id<ORModelMaps>) solver;
 -(id<ORTracker>) tracker;
 -(ORInt) incr;
 -(ORInt) decr;
@@ -46,9 +46,9 @@
 @interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
 -(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
 -(ORFloat) initialValue;
--(ORFloat) value: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORFloat) value: (id<ORModelMaps>) solver;
+-(ORFloat) floatValue: (id<ORModelMaps>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORModelMaps>) solver;
 -(id<ORTracker>) tracker;
 @end
 

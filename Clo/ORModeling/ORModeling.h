@@ -53,7 +53,9 @@
 -(id<ORModel>) rootModel;
 -(id)inCache:(id)obj;
 -(id) addToCache:(id)obj;
+-(id<ORModelMaps>) mappings;
 -(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
 @end
 
 @protocol ORAddToModel <ORTracker>
@@ -72,7 +74,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
-+(id<ORModel>) createModel:(ORUInt)nbo tau: (id<ORTau>) tau;
++(id<ORModel>) createModel:(ORUInt)nbo mappings: (id<ORModelMaps>) mappings;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;

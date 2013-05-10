@@ -16,12 +16,20 @@
 -(void) dealloc;
 -(void) set: (id) value forKey: (id) key;
 -(id) get: (id) key;
+-(id) copyWithZone: (NSZone*) zone;
 @end
 
+@interface ORLambda : NSObject<ORLambda>
+-(ORLambda*) initORLambda;
+-(void) dealloc;
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copyWithZone: (NSZone*) zone;
+@end
 
 @interface ORModelI : ORObject<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI: (ORUInt) nb tau: (id<ORTau>) tau;
+-(ORModelI*)              initORModelI: (ORUInt) nb mappings: (id<ORModelMaps>) tau;
 -(void)                   dealloc;
 -(NSString*)              description;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
@@ -54,7 +62,7 @@
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
--(id<ORTau>) tau;
+-(id<ORModelMaps>) mappings;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>

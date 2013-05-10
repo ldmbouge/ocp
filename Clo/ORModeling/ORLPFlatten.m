@@ -19,7 +19,7 @@
    id<ORAddToModel> _into;
    NSMapTable*     _mapping;
    id              _result;
-   id<ORTau>        _tau;
+   id<ORTau>       _tau;
 }
 
 -(id)initORLPFlatten: (id<ORAddToModel>) into

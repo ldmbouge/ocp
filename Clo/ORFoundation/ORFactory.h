@@ -111,6 +111,8 @@
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;
 +(id<ORTable>) table: (id<ORTracker>) cp with: (id<ORTable>) table;
+
++(id<ORVarLitterals>) varLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) v;
 @end
 
 #define COLLECT(m,P,R,E) [ORFactory collect: m range:(R) suchThat:nil of:^ORInt(ORInt P) { return (ORInt)(E);}]
