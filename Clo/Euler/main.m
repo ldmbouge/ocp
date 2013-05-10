@@ -41,13 +41,13 @@ id<ORIntSet> knightMoves(id<ORModel> mdl,int i)
     }
     return S;
 }
-void printCircuit(id<ORIntVarArray> jump)
+void printCircuit(id<CPProgram> cp,id<ORIntVarArray> jump)
 {
     int curr = 1;
     printf("1");
     do {
-        curr = [[jump at: curr] min];
-        printf("->%d",curr);
+       curr = [cp min:[jump at: curr]];
+       printf("->%d",curr);
     } while (curr != 1);
     printf("\n");
 }
@@ -68,7 +68,7 @@ int main (int argc, const char * argv[])
       [cp solve:
        ^() {
           [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[jump at:i]];}];
-          printCircuit(jump);
+          printCircuit(cp,jump);
        }
        ];
       
