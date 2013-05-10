@@ -849,6 +849,10 @@
 {
    return [_MIPsolver trackObject:obj];
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_MIPsolver trackConstraintInGroup:obj];
+}
 -(id) trackObjective: (id) obj
 {
    return [_MIPsolver trackObjective:obj];

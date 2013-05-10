@@ -229,6 +229,11 @@
       return obj;
    } else return co;
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   [obj setId:_nbObjects++];
+   return obj;
+}
 -(id) trackObjective:(id) obj
 {
    [obj setId:_nbObjects++];
@@ -489,6 +494,10 @@
 {
    return [_target trackObject:obj];
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_target trackConstraintInGroup:obj];
+}
 -(id) trackObjective: (id) obj
 {
    return [_target trackObjective:obj];
@@ -575,6 +584,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(id) trackObject: (id) obj
 {
    return [_target trackObject:obj];
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_target trackConstraintInGroup:obj];
 }
 -(id) trackObjective: (id) obj
 {

@@ -282,6 +282,10 @@
 {
    return [[self worker] trackObjective: object];
 }
+-(id) trackConstraintInGroup:(id)object
+{
+   return [[self worker] trackConstraintInGroup: object];
+}
 -(id) trackImmutable: (id) object
 {
    return [[self worker] trackImmutable: object];

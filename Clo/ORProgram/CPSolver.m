@@ -1159,6 +1159,10 @@
 {
    return [_engine trackMutable:object];
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_engine trackConstraintInGroup:obj];
+}
 -(id) trackObjective:(id) object
 {
    return [_engine trackObjective: object];
@@ -1628,6 +1632,7 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id) trackConstraintInGroup:(id)obj;
 -(id) trackObjective:(id)obj;
 -(id) trackMutable: (id) obj;
 -(id) trackVariable: (id) obj;
@@ -1703,6 +1708,10 @@
 -(id) trackObject: (id) obj
 {
    return [_solver trackObject:obj];
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_solver trackConstraintInGroup:obj];
 }
 -(id) trackObjective:(id) object
 {

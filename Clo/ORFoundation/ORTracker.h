@@ -18,6 +18,7 @@
 -(id) trackImmutable: (id) obj;   // for immutable
 -(id) trackVariable: (id) obj;    // for variable
 -(id) trackObjective:(id) obj;
+-(id) trackConstraintInGroup:(id) obj;
 @optional-(id) inCache:(id)obj;
 @optional-(id) addToCache:(id)obj;
 @end

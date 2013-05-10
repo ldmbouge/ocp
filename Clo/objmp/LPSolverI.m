@@ -1334,6 +1334,10 @@
    [obj release];
    return obj;
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   return obj;
+}
 -(id) trackObjective:(id)obj
 {
    [_oStore addObject:obj];

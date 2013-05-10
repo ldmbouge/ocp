@@ -351,6 +351,10 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_trail trailRelease:obj];
    return obj;   
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   return obj;
+}
 -(id) trackObjective:(id)obj
 {
    if (_state != CPClosed) {

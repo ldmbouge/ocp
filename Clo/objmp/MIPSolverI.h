@@ -270,6 +270,7 @@
 -(id) trackVariable: (id) var;
 -(id) trackMutable: (id) obj;
 -(id) trackObjective:(id)obj;
+-(id) trackConstraintInGroup:(id)obj;
 @end
 
 @interface MIPFactory : NSObject

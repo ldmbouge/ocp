@@ -55,7 +55,7 @@
 +(id<ORGroup>)group:(id<ORTracker>)model type:(enum ORGroupType)gt
 {
    id<ORGroup> o = [[ORGroupI alloc] initORGroupI:model type:gt];
-   [model trackMutable:o];
+   [model trackObject:o];
    return o;
 }
 +(id<ORGroup>)group:(id<ORTracker>)model

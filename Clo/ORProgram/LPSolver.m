@@ -444,6 +444,10 @@
 {
    return [_lpsolver trackObject:obj];
 }
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_lpsolver trackConstraintInGroup:obj];
+}
 -(id) trackObjective: (id) obj
 {
    return [_lpsolver trackObjective:obj];
