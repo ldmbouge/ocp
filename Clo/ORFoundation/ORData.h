@@ -30,6 +30,7 @@ typedef enum {
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
+-(void)setId:(ORUInt)name;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 

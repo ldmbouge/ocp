@@ -62,6 +62,10 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
+   for(id<ORObject> c in [m constraints])
+      [c visit: concretizer];
+   [[m objective] visit:concretizer];
+   
    [concretizer release];
    [cpprogram setSource:m];
    return cpprogram;
@@ -82,8 +86,12 @@
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
-   for(ORInt i = 0; i < nbEntries; i++)
-      NSLog(@"gamma[%d] = %@",i,gamma[i]);
+   for(id<ORObject> c in [fm constraints])
+      [c visit: concretizer];
+   [[fm objective] visit:concretizer];
+
+//   for(ORInt i = 0; i < nbEntries; i++)
+//      NSLog(@"gamma[%d] = %@",i,gamma[i]);
 
    [cpprogram setSource:model];
    [concretizer release];
@@ -268,6 +276,8 @@
    [cpprogram setGamma: gamma];
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [lfm mutables])
+      [c visit: concretizer];
+   for(id<ORObject> c in [lfm constraints])
       [c visit: concretizer];
    for(ORInt i = 0; i < nbEntries; i++)
       NSLog(@"gamma[%d] = %@",i,gamma[i]);

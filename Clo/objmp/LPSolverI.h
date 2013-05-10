@@ -309,6 +309,7 @@
 
 -(id) trackVariable: (id) var;
 -(id) trackMutable: (id) obj;
+-(id) trackObjective: (id) obj;
 @end
 
 @interface LPFactory : NSObject

@@ -341,6 +341,26 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_trail trailRelease:var];
    return var;
 }
+-(id) trackObject:(id)obj
+{
+   if (_state != CPClosed) {
+      [_oStore addObject:obj];
+      [obj release];
+   }
+   else
+      [_trail trailRelease:obj];
+   return obj;   
+}
+-(id) trackObjective:(id)obj
+{
+   if (_state != CPClosed) {
+      [_oStore addObject:obj];
+      [obj release];
+   }
+   else
+      [_trail trailRelease:obj];
+   return obj;
+}
 -(id) trackMutable:(id)obj
 {
    if (_state != CPClosed) {
@@ -353,7 +373,6 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 }
 -(id) trackImmutable: (id) obj
 {
-   // [ldm] tofix
    if (_state != CPClosed) {
       [_oStore addObject:obj];
       [obj release];

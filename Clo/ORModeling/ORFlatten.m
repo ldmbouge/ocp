@@ -177,39 +177,16 @@
       return rv;
    }
 }
--(id)keepIt:(id)obj
-{
-   if ([obj isKindOfClass:[ORAlgebraicConstraintI class]])
-      return nil;
-   else if ([obj isKindOfClass:[ORPackingI class]])
-      return nil;
-   else if ([obj isKindOfClass:[ORGroupI class]])
-      return nil;
-   else if ([obj conformsToProtocol:@protocol(ORVar)])
-      return obj;
-   else if ([obj conformsToProtocol:@protocol(ORMutableInteger)])
-      return obj;
-   else if ([obj conformsToProtocol:@protocol(ORExpr)])
-      return nil;
-   else if ([obj conformsToProtocol:@protocol(ORObjectiveFunctionExpr)])
-      return nil;
-   else
-      return obj;
-}
 -(void)apply:(id<ORModel>)m
 {
    [m applyOnVar: ^(id<ORVar> x) {
       [_into addVariable: [self flattenIt:x]];
    }
    onMutables: ^(id<ORObject> x) {
-      id<ORObject> nx = [self keepIt:x];
-      if (nx)
-         [_into addObject:nx];
+      [_into addMutable:x];
    }
    onImmutables: ^(id<ORObject> x) {
-      id<ORObject> nx = [self keepIt:x];
-      if (nx)
-         [_into addImmutable:nx];
+      [_into addImmutable:x];
    }
    onConstraints: ^(id<ORConstraint> c) {
       [_into addConstraint:[self flattenIt:c]];

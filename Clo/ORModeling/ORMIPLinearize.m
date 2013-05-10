@@ -64,7 +64,7 @@
    }
    onMutables: ^(id<ORObject> x) {
       if (![x isKindOfClass:[ORNEqual class]])
-          [_into addObject: x];
+          [_into addMutable: x];
    }
    onImmutables: ^(id<ORObject> x) {
       [_into addImmutable: x];
@@ -237,10 +237,10 @@
 //      [_into addConstraint: c];
    }
 //
-   id<ORExpr> c1 = [x gt: [[y plus: @(cst)] sub: [b mul: @(_M)]]];
-   id<ORExpr> c2 = [x lt: [[y plus: @(cst)] sub: [[b sub: @(1)] mul: @(_M)]]];
-   [_into addObject:[_into addConstraint: c1]];
-   [_into addObject:[_into addConstraint: c2]];
+   id<ORExpr> c1 = [x gt: [[y plus: @(cst) track:_into] sub: [b mul: @(_M) track:_into] track:_into] track:_into];
+   id<ORExpr> c2 = [x lt: [[y plus: @(cst) track:_into] sub: [[b sub: @(1) track:_into] mul: @(_M) track:_into] track:_into] track:_into];
+   [_into addConstraint: c1];
+   [_into addConstraint: c2];
 
    NSLog(@"NEqual");
    //[_into addObject:c];

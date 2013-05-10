@@ -1328,6 +1328,18 @@
    [var release];
    return var;
 }
+-(id) trackObject:(id)obj
+{
+   [_oStore addObject:obj];
+   [obj release];
+   return obj;
+}
+-(id) trackObjective:(id)obj
+{
+   [_oStore addObject:obj];
+   [obj release];
+   return obj;
+}
 -(id) trackMutable:(id)obj
 {
    [_oStore addObject:obj];

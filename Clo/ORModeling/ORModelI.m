@@ -54,6 +54,7 @@
    NSMutableArray*          _cStore;    // constraint store.
    NSMutableArray*          _mStore;    // mutable store  (VARS + CONSTRAINTS + Other mutables). To be concretized
    NSMutableArray*          _iStore;    // immutable store. Should _not_ be concretized.
+   NSMutableArray*          _memory;    // memory store.
    id<ORObjectiveFunction>  _objective;
    ORUInt                   _nbObjects; // number of objects registered with this model. (vars+mutable+cstr)
    ORUInt                   _nbImmutables; // Number of immutable objects registered with the model
@@ -68,6 +69,7 @@
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
    _mStore = [[NSMutableArray alloc] initWithCapacity:32];
    _iStore = [[NSMutableArray alloc] initWithCapacity:32];
+   _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _tau = [[ORTau alloc] initORTau];
    _objective = nil;
@@ -88,6 +90,7 @@
    _cStore = [src->_cStore copy];
    _mStore = [src->_mStore copy];
    _iStore = [src->_iStore copy];
+   _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
    _objective = src->_objective;
@@ -194,7 +197,7 @@
    [_vars addObject:var];
    return var;
 }
--(id) addObject:(id) object
+-(id) addMutable:(id) object
 {
    [_mStore addObject:object];
    return object;
@@ -208,6 +211,11 @@
 {
    return [self add: cstr];
 }
+-(id) trackObject:(id) obj
+{
+   [_memory addObject:obj];
+   return obj;
+}
 -(id) trackImmutable: (id) obj
 {
    id co = [self inCache:obj];
@@ -217,25 +225,38 @@
          co = [self addToCache:obj];
       }
       [_iStore addObject:obj];
+      [_memory addObject:obj];
       return obj;
    } else return co;
 }
--(void) trackMutable: (id) obj
+-(id) trackObjective:(id) obj
+{
+   [obj setId:_nbObjects++];
+   [_memory addObject:obj];
+   return obj;
+}
+-(id) trackMutable: (id) obj
 {
    [obj setId:_nbObjects++];
    [_mStore addObject:obj];
+   [_memory addObject:obj];
+   return obj;
 }
--(void) trackVariable: (id) var
+-(id) trackVariable: (id) var
 {
    [var setId:_nbObjects++];
    [_vars addObject:var];
    [_mStore addObject:var];
+   [_memory addObject:var];
+   return var;
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)]) {
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:Default];
    }
+   if (c.getId == -1)
+      [c setId:_nbObjects++];
    [_cStore addObject:c];
    return c;
 }
@@ -243,6 +264,7 @@
 {
    if ([[c class] conformsToProtocol:@protocol(ORRelation)])
       c = [ORFactory algebraicConstraint: self expr: (id<ORRelation>)c annotation:n];
+   [c setId:_nbObjects++];
    [_cStore addObject:c];
    return c;
 }
@@ -281,41 +303,35 @@
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
-   [self trackMutable: _objective];
-   return _objective;
+   return [self trackObjective: _objective];
 }
 
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
-   [self trackMutable: _objective];
-    return _objective;
+   return [self trackObjective: _objective];
 }
 
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e
 {
    _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
-   [self trackMutable: _objective];
-    return _objective;
+   return [self trackObjective: _objective];
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e
 {
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
-   [self trackMutable: _objective];
-    return _objective;
+   return [self trackObjective: _objective];
 }
 
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
-   [self trackMutable: _objective];
-    return _objective;
+   return [self trackObjective: _objective];
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
-   [self trackMutable: _objective];
-    return _objective;
+   return [self trackObjective: _objective];
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
          onMutables: (void(^)(id<ORObject>)) doMutable
@@ -419,10 +435,10 @@
    [_target addVariable: var];
    return var;
 }
--(id) addObject: (id) object
+-(id) addMutable: (id) object
 {
    if (object)
-      [_target addObject: object];
+      [_target addMutable: object];
    return object;
 }
 -(id) addImmutable:(id)object
@@ -469,18 +485,25 @@
 {
   return [_target maximize: array coef: coef];
 }
-
--(void) trackMutable: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_target trackMutable:obj];
+   return [_target trackObject:obj];
+}
+-(id) trackObjective: (id) obj
+{
+   return [_target trackObjective:obj];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_target trackMutable:obj];
 }
 -(id) trackImmutable:(id)obj
 {
    return [_target trackImmutable:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackVariable: (id) obj
 {
-   [_target trackVariable: obj];
+   return [_target trackVariable: obj];
 }
 @end
 
@@ -507,9 +530,9 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    [_target addVariable:var];
    return var;
 }
--(id) addObject:(id)object
+-(id) addMutable:(id)object
 {
-   return [_target addObject:object];
+   return [_target addMutable:object];
 }
 -(id) addImmutable:(id)object
 {
@@ -549,13 +572,21 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return _target;
 }
--(void) trackMutable: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_target trackMutable:obj];
+   return [_target trackObject:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackObjective: (id) obj
 {
-   [_target trackVariable:obj];
+   return [_target trackObjective:obj];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_target trackMutable:obj];
+}
+-(id) trackVariable: (id) obj
+{
+   return [_target trackVariable:obj];
 }
 -(id) trackImmutable:(id)obj
 {

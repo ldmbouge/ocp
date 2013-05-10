@@ -440,6 +440,14 @@
    [_sPool addSolution: sol];
    [sol release];
 }
+-(id) trackObject: (id) obj
+{
+   return [_lpsolver trackObject:obj];
+}
+-(id) trackObjective: (id) obj
+{
+   return [_lpsolver trackObjective:obj];
+}
 -(id) trackMutable: (id) obj
 {
    return [_lpsolver trackMutable:obj];

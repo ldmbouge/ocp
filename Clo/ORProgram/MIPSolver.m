@@ -845,6 +845,14 @@
 {
    return [[ORMIPSolutionI alloc] initORMIPSolutionI: _model with: self];
 }
+-(id) trackObject: (id) obj
+{
+   return [_MIPsolver trackObject:obj];
+}
+-(id) trackObjective: (id) obj
+{
+   return [_MIPsolver trackObjective:obj];
+}
 -(id) trackMutable: (id) obj
 {
    return [_MIPsolver trackMutable:obj];

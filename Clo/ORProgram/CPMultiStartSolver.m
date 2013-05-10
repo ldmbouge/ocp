@@ -270,9 +270,17 @@
 {
    [[self worker] nestedSolveAll: body];
 }
+-(id) trackObject: (id) object
+{
+   return [[self worker] trackObject: object];
+}
 -(id) trackMutable: (id) object
 {
    return [[self worker] trackMutable: object];
+}
+-(id) trackObjective:(id) object
+{
+   return [[self worker] trackObjective: object];
 }
 -(id) trackImmutable: (id) object
 {

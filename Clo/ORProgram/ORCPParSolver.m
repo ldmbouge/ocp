@@ -176,17 +176,25 @@
 {
    [[[self worker] explorer] switchOnDepth:s1 to:s2 limit:depth];
 }
--(void) trackMutable: (id) object
+-(id) trackObject: (id) object
 {
-   [[self worker] trackMutable: object];
+   return [[self worker] trackObject: object];
+}
+-(id) trackObjective: (id) object
+{
+   return [[self worker] trackObjective: object];
+}
+-(id) trackMutable: (id) object
+{
+   return [[self worker] trackMutable: object];
 }
 -(id) trackImmutable: (id) object
 {
    return [[self worker] trackImmutable: object];
 }
--(void) trackVariable: (id) object
+-(id) trackVariable: (id) object
 {
-   [[self worker] trackVariable: object];
+   return [[self worker] trackVariable: object];
 }
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {

@@ -26,7 +26,7 @@ NSString* tab(int d)
    return buf;
 }
 
-int main(int argc, const char * argv[])
+int main0(int argc, const char * argv[])
 {
    const char* fName = argc >=2 ? argv[1] : "slab.dat";
    id<ORModel> model = [ORFactory createModel];
@@ -162,7 +162,7 @@ int main(int argc, const char * argv[])
    return 0;
 }
 
-int main2(int argc, const char * argv[])
+int main(int argc, const char * argv[])
 {
    const char* fName = argc >=2 ? argv[1] : "slab.dat";
    id<ORModel> model = [ORFactory createModel];
@@ -225,13 +225,14 @@ int main2(int argc, const char * argv[])
    for(ORInt s = Slabs.low; s <= Slabs.up; s++)
       [model add: [Sum(model,c,Colors,Or(model,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
    //   [model add: [o eq: Sum(model,s,Slabs,[loss elt: [load at: s]])]];
-   id<ORObjectiveFunction> obj = [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
+   [model minimize: Sum(model,s,Slabs,[loss elt: [load at: s]])];
    //   id<ORObjectiveFunction> obj = [model minimize: o];
    id<CPProgram> cp = [ORFactory createCPProgram: model];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemDFSController class]];
    //id<CPSemSolver> cp = [CPFactory createSemSolver:[ORSemBDSController class]]; // [ldm] this one crashes. Memory bug in tryall
    //id<CPParSolver> cp = [CPFactory createParSolver:2 withController:[ORSemDFSController class]];
    [cp solve: ^{
+      id<ORObjectiveFunction> obj = [cp objective];
       printf(" Starting search \n");
       [cp portfolio: ^{
          [cp limitFailures: 200 in: ^{

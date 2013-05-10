@@ -1151,9 +1151,17 @@
    [_search nestedSolveAll: body onSolution:nil onExit:nil
                    control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
+-(id) trackObject: (id) object
+{
+   return [_engine trackObject:object];
+}
 -(id) trackMutable: (id) object
 {
    return [_engine trackMutable:object];
+}
+-(id) trackObjective:(id) object
+{
+   return [_engine trackObjective: object];
 }
 -(id) trackImmutable: (id) object
 {
@@ -1615,11 +1623,12 @@
 @interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*) solver;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addObject: (id) object;
+-(id) addMutable: (id) object;
 -(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
+-(id) trackObjective:(id)obj;
 -(id) trackMutable: (id) obj;
 -(id) trackVariable: (id) obj;
 @end
@@ -1646,7 +1655,7 @@
    [_solver trackVariable:var];
    return var;
 }
--(id) addObject: (id) object
+-(id) addMutable: (id) object
 {
    [[_solver engine] trackMutable: object];
    return object;
@@ -1690,6 +1699,14 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
+}
+-(id) trackObject: (id) obj
+{
+   return [_solver trackObject:obj];
+}
+-(id) trackObjective:(id) object
+{
+   return [_solver trackObjective: object];
 }
 -(id) trackMutable: (id) obj
 {
