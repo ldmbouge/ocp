@@ -1151,9 +1151,9 @@
    [_search nestedSolveAll: body onSolution:nil onExit:nil
                    control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
--(id) trackObject: (id) object
+-(id) trackMutable: (id) object
 {
-   return [_engine trackObject:object];
+   return [_engine trackMutable:object];
 }
 -(id) trackImmutable: (id) object
 {
@@ -1161,7 +1161,7 @@
 }
 -(id) trackVariable: (id) object
 {
-   return [_engine trackObject:object];
+   return [_engine trackMutable:object];
 }
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
@@ -1620,7 +1620,7 @@
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(id) trackObject: (id) obj;
+-(id) trackMutable: (id) obj;
 -(id) trackVariable: (id) obj;
 @end
 
@@ -1648,7 +1648,7 @@
 }
 -(id) addObject: (id) object
 {
-   [[_solver engine] trackObject: object];
+   [[_solver engine] trackMutable: object];
    return object;
 }
 -(id) addImmutable:(id)object
@@ -1691,9 +1691,9 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
--(id) trackObject: (id) obj
+-(id) trackMutable: (id) obj
 {
-   return [_solver trackObject:obj];
+   return [_solver trackMutable:obj];
 }
 -(id) trackImmutable:(id)obj
 {

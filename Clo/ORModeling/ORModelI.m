@@ -220,7 +220,7 @@
       return obj;
    } else return co;
 }
--(void) trackObject: (id) obj
+-(void) trackMutable: (id) obj
 {
    [obj setId:_nbObjects++];
    [_mStore addObject:obj];
@@ -281,40 +281,40 @@
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
-   [self trackObject: _objective];
+   [self trackMutable: _objective];
    return _objective;
 }
 
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
 {
    _objective = [[ORMaximizeVarI alloc] initORMaximizeVarI: x];
-   [self trackObject: _objective];
+   [self trackMutable: _objective];
     return _objective;
 }
 
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e
 {
    _objective = [[ORMaximizeExprI alloc] initORMaximizeExprI: e];
-   [self trackObject: _objective];
+   [self trackMutable: _objective];
     return _objective;
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e
 {
    _objective = [[ORMinimizeExprI alloc] initORMinimizeExprI: e];
-   [self trackObject: _objective];
+   [self trackMutable: _objective];
     return _objective;
 }
 
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    _objective = [[ORMaximizeLinearI alloc] initORMaximizeLinearI: array coef: coef];
-   [self trackObject: _objective];
+   [self trackMutable: _objective];
     return _objective;
 }
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef
 {
    _objective = [[ORMinimizeLinearI alloc] initORMinimizeLinearI: array coef: coef];
-   [self trackObject: _objective];
+   [self trackMutable: _objective];
     return _objective;
 }
 -(void)  applyOnVar: (void(^)(id<ORObject>)) doVar
@@ -470,9 +470,9 @@
   return [_target maximize: array coef: coef];
 }
 
--(void) trackObject: (id) obj
+-(void) trackMutable: (id) obj
 {
-   [_target trackObject:obj];
+   [_target trackMutable:obj];
 }
 -(id) trackImmutable:(id)obj
 {
@@ -549,9 +549,9 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return _target;
 }
--(void) trackObject: (id) obj
+-(void) trackMutable: (id) obj
 {
-   [_target trackObject:obj];
+   [_target trackMutable:obj];
 }
 -(void) trackVariable: (id) obj
 {

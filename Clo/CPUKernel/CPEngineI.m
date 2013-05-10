@@ -341,7 +341,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [_trail trailRelease:var];
    return var;
 }
--(id) trackObject:(id)obj
+-(id) trackMutable:(id)obj
 {
    if (_state != CPClosed) {
       [_oStore addObject:obj];
@@ -684,7 +684,7 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(id<ORBasicModel>)model
 {
    id<ORBasicModel> bm = [[CPModelI alloc] initCPModel:self];
-   [self trackObject:bm];
+   [self trackMutable:bm];
    return bm;
 }
 

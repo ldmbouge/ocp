@@ -779,7 +779,7 @@
 -(MIPLinearTermI*) createLinearTerm
 {
    MIPLinearTermI* o = [[MIPLinearTermI alloc] initMIPLinearTermI: self];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(MIPConstraintI*) addConstraint: (MIPConstraintI*) cstr
@@ -876,7 +876,7 @@
    [t close];
    MIPObjectiveI* o = [[MIPMaximize alloc] initMIPMaximize: self size: [t size] var: [t var] coef: [t coef]];
    [o setNb: _createdObjs++];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(MIPObjectiveI*) createMinimize: (MIPLinearTermI*) t
@@ -884,7 +884,7 @@
    [t close];
    MIPObjectiveI* o = [[MIPMinimize alloc] initMIPMinimize: self size: [t size] var: [t var] coef: [t coef]];
    [o setNb: _createdObjs++];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(MIPObjectiveI*)  createObjectiveMinimize: (id<MIPVariableArray>) var coef: (id<ORFloatArray>) coef
@@ -911,7 +911,7 @@
    [t close];
    MIPConstraintI* c = [[MIPConstraintLEQ alloc] initMIPConstraintLEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(MIPConstraintI*) createGEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -919,7 +919,7 @@
    [t close];
    MIPConstraintI* c = [[MIPConstraintGEQ alloc] initMIPConstraintGEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(MIPConstraintI*) createEQ: (MIPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -927,7 +927,7 @@
    [t close];
    MIPConstraintI* c = [[MIPConstraintEQ alloc] initMIPConstraintEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 
@@ -1125,7 +1125,7 @@
    [var release];
    return var;
 }
--(id) trackObject:(id)obj
+-(id) trackMutable:(id)obj
 {
    [_oStore addObject:obj];
    [obj release];

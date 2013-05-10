@@ -941,27 +941,27 @@
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up size: size obj: obj cstr: cstr coef: coef];
    [c setNb: _createdCols++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(LPColumnI*) createColumn: (ORFloat) low up: (ORFloat) up
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self low: low up: up];
    [c setNb: _createdCols++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(LPColumnI*) createColumn
 {
    LPColumnI* c = [[LPColumnI alloc] initLPColumnI: self];
    [c setNb: _createdCols++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(LPLinearTermI*) createLinearTerm
 {
    LPLinearTermI* o = [[LPLinearTermI alloc] initLPLinearTermI: self];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(LPConstraintI*) addConstraint: (LPConstraintI*) cstr
@@ -1059,7 +1059,7 @@
    [t close];
    LPObjectiveI* o = [[LPMaximize alloc] initLPMaximize: self size: [t size] var: [t var] coef: [t coef]];
    [o setNb: _createdObjs++];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(LPObjectiveI*) createMinimize: (LPLinearTermI*) t
@@ -1067,7 +1067,7 @@
    [t close];
    LPObjectiveI* o = [[LPMinimize alloc] initLPMinimize: self size: [t size] var: [t var] coef: [t coef]];
    [o setNb: _createdObjs++];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(LPObjectiveI*)  createObjectiveMinimize: (id<LPVariableArray>) var coef: (id<ORFloatArray>) coef
@@ -1094,7 +1094,7 @@
    [t close];
    LPConstraintI* c = [[LPConstraintLEQ alloc] initLPConstraintLEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(LPConstraintI*) createGEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -1102,7 +1102,7 @@
    [t close];
    LPConstraintI* c = [[LPConstraintGEQ alloc] initLPConstraintGEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 -(LPConstraintI*) createEQ: (LPLinearTermI*) t rhs: (ORFloat) rhs;
@@ -1110,7 +1110,7 @@
    [t close];
    LPConstraintI* c = [[LPConstraintEQ alloc] initLPConstraintEQ: self size: [t size] var: [t var] coef: [t coef] rhs: rhs-[t cst]];
    [c setNb: _createdCstrs++];
-   [self trackObject: c];
+   [self trackMutable: c];
    return c;
 }
 
@@ -1328,7 +1328,7 @@
    [var release];
    return var;
 }
--(id) trackObject:(id)obj
+-(id) trackMutable:(id)obj
 {
    [_oStore addObject:obj];
    [obj release];

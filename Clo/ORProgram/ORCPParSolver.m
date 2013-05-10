@@ -176,9 +176,9 @@
 {
    [[[self worker] explorer] switchOnDepth:s1 to:s2 limit:depth];
 }
--(void) trackObject: (id) object
+-(void) trackMutable: (id) object
 {
-   [[self worker] trackObject: object];
+   [[self worker] trackMutable: object];
 }
 -(id) trackImmutable: (id) object
 {

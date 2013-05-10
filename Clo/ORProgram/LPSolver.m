@@ -422,14 +422,14 @@
 {
    LPColumnI* col = [_lpsolver createColumn];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
 {
    LPColumnI* col = [_lpsolver createColumn: low up: up];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 
@@ -440,9 +440,9 @@
    [_sPool addSolution: sol];
    [sol release];
 }
--(id) trackObject: (id) obj
+-(id) trackMutable: (id) obj
 {
-   return [_lpsolver trackObject:obj];
+   return [_lpsolver trackMutable:obj];
 }
 -(void) trackVariable: (id) obj
 {

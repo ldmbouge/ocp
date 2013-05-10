@@ -99,7 +99,7 @@
                         onValueBind:bind
                      onValueRecover:rec
                       onValueUnbind:unb];
-   [[theVar engine] trackObject:c];
+   [[theVar engine] trackMutable:c];
    return c;
 }
 @end

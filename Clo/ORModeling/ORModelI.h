@@ -70,7 +70,7 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
--(void) trackObject: (id) obj;
+-(void) trackMutable: (id) obj;
 -(id) trackImmutable:(id)obj;
 -(void) trackVariable: (id) obj;
 @end
@@ -83,7 +83,7 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
--(void) trackObject: (id) obj;
+-(void) trackMutable: (id) obj;
 -(void) trackVariable: (id) obj;
 @end
 
