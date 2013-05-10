@@ -46,6 +46,45 @@
 {
    return [_mapping objectForKey: key];
 }
+-(id) copyWithZone: (NSZone*) zone
+{
+   ORTau* tau = [[ORTau alloc] initORTau];
+   tau->_mapping = [_mapping copy];
+   return tau;
+}
+@end
+
+@implementation ORLambda
+{
+   NSMapTable* _mapping;
+}
+-(ORLambda*) initORLambda
+{
+   self = [super init];
+   _mapping = [[NSMapTable alloc] initWithKeyOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                        valueOptions:NSMapTableWeakMemory|NSMapTableObjectPointerPersonality
+                                            capacity:64];
+   return self;
+}
+-(void) dealloc
+{
+   [_mapping release];
+   [super dealloc];
+}
+-(void) set: (id) value forKey: (id) key
+{
+   [_mapping setObject: value forKey: key];
+}
+-(id) get: (id) key
+{
+   return [_mapping objectForKey: key];
+}
+-(id) copyWithZone: (NSZone*) zone
+{
+   ORLambda* lambda = [[ORLambda alloc] initORLambda];
+   lambda->_mapping = [_mapping copy];
+   return lambda;
+}
 @end
 
 @implementation ORModelI
@@ -60,7 +99,7 @@
    ORUInt                   _nbImmutables; // Number of immutable objects registered with the model
    id<ORModel>              _source;    // that's the pointer up the chain of model refinements with model operators.
    NSMutableDictionary*     _cache;
-   id<ORTau>                _tau;
+   id<ORModelMaps>          _mappings;  // these are all the mappings for the models
 }
 -(ORModelI*) initORModelI
 {
@@ -71,19 +110,19 @@
    _iStore = [[NSMutableArray alloc] initWithCapacity:32];
    _memory = [[NSMutableArray alloc] initWithCapacity:32];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
-   _tau = [[ORTau alloc] initORTau];
+   _mappings = [[ORModelMaps alloc] initORModelMaps];
    _objective = nil;
    _nbObjects = _nbImmutables = 0;
    return self;
 }
--(ORModelI*)initORModelI: (ORUInt) nb tau: (id<ORTau>) tau
+-(ORModelI*)initORModelI: (ORUInt) nb mappings: (id<ORModelMaps>) mappings
 {
    self = [self initORModelI];
    _nbObjects = nb;
-   _tau = [tau retain];
+   _mappings = [mappings copy];
    return self;
 }
--(ORModelI*)initWithModel:(ORModelI*)src
+-(ORModelI*) initWithModel: (ORModelI*) src
 {
    self = [super init];
    _vars = [src->_vars copy];
@@ -96,13 +135,22 @@
    _objective = src->_objective;
    _source = src;
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
-   _tau    = [[ORTau alloc] initORTau];   
+   _mappings = [src->_mappings copy];
    return self;
 }
 -(id<ORTau>) tau
 {
-   return _tau;
+   return _mappings.tau;
 }
+-(id<ORLambda>) lambda
+{
+   return _mappings.lambda;
+}
+-(id<ORModelMaps>) mappings
+{
+   return _mappings;
+}
+
 -(ORUInt)nbObjects
 {
    return _nbObjects;
@@ -124,7 +172,7 @@
    [_cStore release];
    [_iStore release];
    [_cache release];
-   [_tau release];
+   [_mappings release];
    [super dealloc];
 }
 -(id)inCache:(id)obj
@@ -373,7 +421,7 @@
 }
 -(id<ORModel>) flatten
 {
-   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createFlattener:batch];
    [flat apply: self];
@@ -383,7 +431,7 @@
 }
 -(id<ORModel>) lpflatten
 {
-   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createLPFlattener:batch];
    [flat apply: self];
@@ -393,7 +441,7 @@
 }
 -(id<ORModel>) mipflatten
 {
-   id<ORModel> flatModel = [ORFactory createModel:_nbObjects tau: _tau];
+   id<ORModel> flatModel = [ORFactory createModel:_nbObjects mappings: _mappings];
    id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:self];
    id<ORModelTransformation> flat = [ORFactory createMIPFlattener:batch];
    [flat apply: self];

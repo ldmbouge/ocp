@@ -33,7 +33,7 @@
 }
 +(id<ORModel>) linearize: (id<ORModel>) model
 {
-   id<ORModel> lin = [ORFactory createModel: [model nbObjects] tau: model.tau];
+   id<ORModel> lin = [ORFactory createModel: [model nbObjects] mappings: model.mappings];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
    id<ORModelTransformation> linearizer = [[ORMIPLinearize alloc] initORMIPLinearize: lm];
    [linearizer apply: model];
@@ -219,32 +219,11 @@
    id<ORIntVar> x = [c left];
    id<ORIntVar> y = [c right];
    ORInt cst = [c cst];
-   NSLog(@"cst: %d",cst);
-//   [_into addConstraint: [x geq: [[y sub: [b mul: @(_M)]] plus: @(cst+1)]]];
-//   [_into addConstraint: [x leq: [y plus: [[[@(1) sub: b] mul: @(_M)] plus: @(cst-1)]]]];
-
-//   [_into addConstraint: [x gt: [[y sub: [b mul: @(_M)]] plus: @(cst)]]];
-//   [_into addConstraint: [x lt: [[y sub: [[b sub: @(1)] mul: @(_M)]] plus: @(cst)]]];
-//   [_into addConstraint: [[x gt: [y plus: @(cst)]] or: [x lt: [y plus: @(cst)]]]];
-   if (cst == 0) {
-//      [_into addConstraint: [x gt: [y sub: [b mul: @(_M)]]]];
-//      [_into addConstraint: [x lt: [y sub: [[b sub: @(1)] mul: @(_M)]]]];
-//      [_into addConstraint: c];
-   }
-   else {
-//      [_into addConstraint: [x gt: [[y plus: @(cst)] sub: [b mul: @(_M)]]]];
-//      [_into addConstraint: [x lt: [[y plus: @(cst)] sub: [[b sub: @(1)] mul: @(_M)]]]];
-//      [_into addConstraint: c];
-   }
-//
+   
    id<ORExpr> c1 = [x gt: [[y plus: @(cst) track:_into] sub: [b mul: @(_M) track:_into] track:_into] track:_into];
    id<ORExpr> c2 = [x lt: [[y plus: @(cst) track:_into] sub: [[b sub: @(1) track:_into] mul: @(_M) track:_into] track:_into] track:_into];
    [_into addConstraint: c1];
    [_into addConstraint: c2];
-
-   NSLog(@"NEqual");
-   //[_into addObject:c];
-   //[_into addConstraint: c];
    _result = c;
 }
 -(void) visitLEqual: (id<ORLEqual>)c

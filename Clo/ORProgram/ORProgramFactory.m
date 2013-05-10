@@ -73,8 +73,8 @@
 
 +(void) createCPProgram: (id<ORModel>) model program: (id<CPCommonProgram>) cpprogram
 {
-   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
-   ORLong t0 = [ORRuntimeMonitor cputime];
+//   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
+//   ORLong t0 = [ORRuntimeMonitor cputime];
    id<ORModel> fm = [model flatten];
    //NSLog(@"FC: %@",[fm constraints]);
    
@@ -83,6 +83,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
+
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
@@ -95,8 +96,8 @@
 
    [cpprogram setSource:model];
    [concretizer release];
-   ORLong t1 = [ORRuntimeMonitor cputime];
-   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm mutables] count],[[fm constraints] count],t1 - t0);
+//   ORLong t1 = [ORRuntimeMonitor cputime];
+//   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm mutables] count],[[fm constraints] count],t1 - t0);
 }
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
@@ -206,7 +207,7 @@
 //   NSLog(@"model is %@",flatModel);
    
    ORUInt nbEntries =  [flatModel nbObjects];
-   NSLog(@" NbEntries: %d",nbEntries);
+//   NSLog(@" NbEntries: %d",nbEntries);
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
@@ -240,7 +241,7 @@
    id<ORModel> flatModel = [model mipflatten];
    
    ORUInt nbEntries =  [flatModel nbObjects];
-   NSLog(@" NbEntries: %d",nbEntries);
+//   NSLog(@" NbEntries: %d",nbEntries);
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
@@ -275,12 +276,12 @@
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
    id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+
    for(id<ORObject> c in [lfm mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [lfm constraints])
       [c visit: concretizer];
-   for(ORInt i = 0; i < nbEntries; i++)
-      NSLog(@"gamma[%d] = %@",i,gamma[i]);
+   [[fm objective] visit:concretizer];
    
    [cpprogram setSource:model];
    [concretizer release];

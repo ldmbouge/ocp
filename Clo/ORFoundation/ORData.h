@@ -34,13 +34,23 @@ typedef enum {
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
-@protocol ORTau <NSObject>
+@protocol ORTau <NSObject,NSCopying>
 -(void) set: (id) value forKey: (id) key;
 -(id) get: (id) key;
+-(id) copy;
 @end
 
-@protocol ORGamma <NSObject>
+@protocol ORLambda <NSObject,NSCopying>
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copy;
+@end
+
+@protocol ORModelMaps <NSObject,NSCopying>
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
 -(id<ORObject>) concretize: (id<ORObject>) o;
+-(id) copy;
 @end
 
 @interface NSObject (Concretization)
@@ -54,12 +64,12 @@ typedef enum {
 
 @protocol ORMutableInteger <ORObject,ORExpr>
 -(ORInt) initialValue;
--(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
--(ORInt) incr: (id<ORGamma>) solver;
--(ORInt) decr: (id<ORGamma>) solver;
--(ORInt) value: (id<ORGamma>) solver;
--(ORInt) intValue: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORInt) setValue: (ORInt) value in: (id<ORModelMaps>) solver;
+-(ORInt) incr: (id<ORModelMaps>) solver;
+-(ORInt) decr: (id<ORModelMaps>) solver;
+-(ORInt) value: (id<ORModelMaps>) solver;
+-(ORInt) intValue: (id<ORModelMaps>) solver;
+-(ORFloat) floatValue: (id<ORModelMaps>) solver;
 @end
 
 @protocol ORFloatNumber <ORObject,ORExpr>
@@ -70,9 +80,9 @@ typedef enum {
 
 @protocol ORMutableFloat <ORObject,ORExpr>
 -(ORFloat) initialValue;
--(ORFloat) value: (id<ORGamma>) solver;
--(ORFloat) floatValue: (id<ORGamma>) solver;
--(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(ORFloat) value: (id<ORModelMaps>) solver;
+-(ORFloat) floatValue: (id<ORModelMaps>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORModelMaps>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>
@@ -133,16 +143,20 @@ typedef enum {
 
 
 
-@interface ORGamma : NSObject<ORGamma>
+@interface ORModelMaps : NSObject<ORModelMaps>
 {
 @protected
    id* _gamma;
    id<ORTau> _tau;
+   id<ORLambda> _lambda;
 }
--(ORGamma*) initORGamma;
+-(ORModelMaps*) initORModelMaps;
 -(void) dealloc;
 -(void) setGamma: (id*) gamma;
 -(void) setTau: (id<ORTau>) tau;
+-(void) setLambda: (id<ORLambda>) lambda;
 -(id*) gamma;
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
 -(id) concretize: (id) o;
 @end

@@ -523,6 +523,12 @@
       [flat set:[m flat:i] at:i];
    return (id<ORIntVarArray>)flat;
 }
++(id<ORVarLitterals>) varLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) v
+{
+   id<ORVarLitterals> l = [[ORVarLitterals alloc] initORVarLitterals: tracker var: v];
+   [tracker trackImmutable: l];
+   return l;
+}
 @end
 
 @implementation ORFactory (Expressions)

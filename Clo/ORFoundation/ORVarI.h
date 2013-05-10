@@ -71,4 +71,11 @@
 -(NSString*)stringValue;
 @end
 
-
+@interface ORVarLitterals : ORObject<ORVarLitterals>
+-(ORVarLitterals*) initORVarLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) var;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntVar>) litteral: (ORInt) i;
+-(BOOL) exist: (ORInt) i;
+-(NSString*) description;
+@end

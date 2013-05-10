@@ -25,9 +25,9 @@
 //{
 //   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
 //}
-+(id<ORModel>) createModel:(ORUInt)nbo tau: (id<ORTau>) tau
++(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMaps>) mappings
 {
-   return [[[ORModelI alloc] initORModelI: nbo tau: tau] autorelease];
+   return [[[ORModelI alloc] initORModelI: nbo mappings: mappings] autorelease];
 }
 +(id<ORModel>) cloneModel: (id<ORModel>)m
 {

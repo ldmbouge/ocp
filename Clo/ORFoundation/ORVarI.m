@@ -524,3 +524,59 @@
 }
 
 @end
+
+
+@implementation ORVarLitterals
+{
+   id<ORIntVar>* _array;
+   ORInt _low;
+   ORInt _up;
+   ORInt _nb;
+}
+-(ORVarLitterals*) initORVarLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) var
+{
+   self = [super init];
+   _low = [var low];
+   _up = [var up];
+   _nb = _up - _low + 1;
+   _array = malloc(_nb * sizeof(id));
+   _array -= _low;
+   id<ORIntRange> R01 = [ORFactory intRange: tracker low: 0 up: 1];
+   for(ORInt i = _low; i <= _up; i++)
+      _array[i] = [ORFactory intVar:tracker domain:R01];
+   return self;
+}
+-(void) dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+-(ORInt) low
+{
+   return _low;
+}
+-(ORInt) up
+{
+   return _up;
+}
+-(id<ORIntVar>) litteral: (ORInt) i
+{
+   if (i >= _low && i <= _up)
+      return _array[i];
+   return NULL;
+}
+-(BOOL) exist: (ORInt) i
+{
+   return (i >= _low && i <= _up);
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"VarLitterals(%d,%d) [\n",_low,_up];
+   for(ORInt i = _low; i <= _up; i++)
+      [rv appendFormat:@"\t%@\n",[_array[i] description]];
+   [rv appendFormat:@"] \n"];
+   return rv;
+}
+@end
