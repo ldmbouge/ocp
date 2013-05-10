@@ -30,7 +30,7 @@ int main(int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
-         ORInt n = 8;
+         ORInt n = [args size];
          id<ORModel> mdl = [ORFactory createModel];
          id<ORIntRange> R = RANGE(mdl,1,n);
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
