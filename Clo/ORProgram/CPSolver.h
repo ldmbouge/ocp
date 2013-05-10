@@ -27,7 +27,7 @@
 
 // This factorizes all the common stuff
 
-@interface CPCoreSolver : ORModelMaps<CPCommonProgram>
+@interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;

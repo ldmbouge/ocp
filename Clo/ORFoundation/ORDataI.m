@@ -47,67 +47,6 @@
 }
 @end;
 
-@implementation ORModelMaps
--(ORModelMaps*) initORModelMaps
-{
-   self = [super init];
-   _gamma = NULL;
-   return self;
-}
--(void) dealloc
-{
-   free(_gamma);
-   [super dealloc];
-}
--(id*) gamma
-{
-   return _gamma;
-}
--(void) setGamma: (id*) gamma
-{
-   _gamma = gamma;
-}
--(void) setTau: (id<ORTau>) tau
-{
-   _tau = tau;
-}
--(void) setLambda: (id<ORLambda>) lambda
-{
-   _lambda = lambda;
-}
--(id<ORTau>) tau
-{
-   return _tau;
-}
--(id<ORLambda>) lambda
-{
-   return _lambda;
-}
--(id<ORObject>) concretize: (id<ORObject>) o
-{
-   id<ORObject> ob =  _gamma[o.getId];
-   if (ob)
-      return ob;
-   else {
-      ob = o;
-      id<ORObject> nob = [_tau get: ob];
-      while (nob) {
-         ob = nob;
-         nob = [_tau get: ob];
-      }
-      return _gamma[ob.getId];
-   }
-}
--(id) copyWithZone: (NSZone*) zone
-{
-   ORModelMaps* map = [[ORModelMaps alloc] initORModelMaps];
-   map->_tau = [_tau copy];
-   map->_lambda = [_lambda copy];
-   return map;
-}
-@end
-
-
 @implementation ORIntegerI
 {
 	ORInt           _value;
@@ -225,23 +164,23 @@
 {
    return _value = value;
 }
--(ORFloat) floatValue: (id<ORModelMaps>) solver
+-(ORFloat) floatValue: (id<ORGamma>) solver
 {
    return _value;
 }
--(ORInt) intValue: (id<ORModelMaps>) solver
+-(ORInt) intValue: (id<ORGamma>) solver
 {
    return _value;
 }
--(ORInt) value: (id<ORModelMaps>) solver
+-(ORInt) value: (id<ORGamma>) solver
 {
    return [(ORMutableIntegerI*)[solver concretize: self] initialValue];
 }
--(ORInt) setValue: (ORInt) value in: (id<ORModelMaps>) solver
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
 {
    return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }
--(ORInt) incr: (id<ORModelMaps>) solver
+-(ORInt) incr: (id<ORGamma>) solver
 {
    return [(ORMutableIntegerI*)[solver concretize: self] incr];
 }
@@ -375,15 +314,15 @@
 {
    return _value = value;
 }
--(ORFloat) value: (id<ORModelMaps>) solver;
+-(ORFloat) value: (id<ORGamma>) solver;
 {
    return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
 }
--(ORFloat) floatValue: (id<ORModelMaps>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
 {
    return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
 }
--(ORFloat) setValue: (ORFloat) value in: (id<ORModelMaps>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
 {
    return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
 }
@@ -835,4 +774,83 @@ static ORInt _deterministic;
 }
 
 @end
+
+@implementation ORGamma
+-(ORGamma*) initORGamma
+{
+   [super init];
+   _gamma = NULL;
+   return self;
+}
+-(void) dealloc
+{
+   free(gamma);
+   [super dealloc];
+}
+-(void) setGamma: (id*) gamma
+{
+   _gamma = gamma;
+}
+-(id*) gamma
+{
+   return _gamma;
+}
+-(id) concretize: (id<ORObject>) o
+{
+   id<ORObject> ob =  _gamma[o.getId];
+   if (ob)
+      return ob;
+   else {
+      id<ORTau> tau = _mappings.tau;
+      ob = o;
+      id<ORObject> nob = [tau get: ob];
+      while (nob) {
+         ob = nob;
+         nob = [tau get: ob];
+      }
+      return _gamma[ob.getId];
+   }
+}
+@end
+
+@implementation ORModelMappings
+{
+@protected
+   id<ORTau> _tau;
+   id<ORLambda> _lambda;
+}
+-(ORModelMappings*) initORModelMappings
+{
+   self = [super init];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void) setTau: (id<ORTau>) tau
+{
+   _tau = tau;
+}
+-(void) setLambda: (id<ORLambda>) lambda
+{
+   _lambda = lambda;
+}
+-(id<ORTau>) tau
+{
+   return _tau;
+}
+-(id<ORLambda>) lambda
+{
+   return _lambda;
+}
+-(id) copyWithZone: (NSZone*) zone
+{
+   ORModelMappings* map = [[ORModelMappings alloc] initORModelMappings];
+   map->_tau = [_tau copy];
+   map->_lambda = [_lambda copy];
+   return map;
+}
+@end
+
 

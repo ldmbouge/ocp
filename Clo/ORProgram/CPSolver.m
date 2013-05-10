@@ -923,7 +923,7 @@
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
-   self = [super initORModelMaps];
+   self = [super initORGamma];
    _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;

@@ -17,6 +17,7 @@
 #import "ORProgramFactory.h"
 
 // CP Solver
+#import <ORProgram/ORProgram.h>
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/CPMultiStartSolver.h>
@@ -39,6 +40,14 @@
 #import "MIPConcretizer.h"
 
 // PVH to factorize this
+
+@implementation ORGamma (Model)
+-(void) initialize: (id<ORModel>) model
+{
+   _mappings = model.mappings;
+}
+@end
+
 
 @implementation ORFactory (Concretization)
 

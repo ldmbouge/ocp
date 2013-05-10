@@ -20,6 +20,7 @@
 #import <ORProgram/CPABS.h>
 #import <ORProgram/CPFirstFail.h>
 
-
-
+@interface ORGamma (Model)
+-(void) initialize: (id<ORModel>) model;
+@end
 
