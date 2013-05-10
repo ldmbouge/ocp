@@ -57,6 +57,7 @@
 -(id) initWithCoder:(NSCoder*) aDecoder;
 -(void) visit: (id<ORVisitor>)v;
 -(enum ORRelationType) type;
+-(NSSet*)allVars;
 @end
 
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding>

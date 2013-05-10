@@ -30,6 +30,10 @@
 {
    [visitor visitConstraint:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] init] autorelease];
+}
 @end
 
 @implementation ORGroupI {
@@ -135,6 +139,10 @@
 {
    [v visitRestrict:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
 @end
 
 @implementation OREqualc {
@@ -165,6 +173,10 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
 @end
 
@@ -197,6 +209,10 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
 @end
 
 @implementation ORLEqualc {
@@ -228,6 +244,10 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
 @end
 
 @implementation ORGEqualc {
@@ -258,6 +278,10 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
 @end
 
@@ -312,6 +336,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORAffine {   // y == a * x + b
@@ -361,6 +389,10 @@
 -(ORAnnotation)annotation
 {
    return _note;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -421,6 +453,10 @@
 {
    [v visitNEqual:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORLEqual {
@@ -457,6 +493,10 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -510,6 +550,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORMult { // x = y * z
@@ -546,6 +590,10 @@
 -(id<ORIntVar>) right
 {
    return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -584,6 +632,10 @@
 {
    [v visitSquare:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
+}
 @end
 
 @implementation ORMod { // z = x MOD y
@@ -620,6 +672,10 @@
 -(id<ORIntVar>) right
 {
    return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -664,6 +720,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
+}
 @end
 
 @implementation ORAbs { // x = |y|
@@ -700,6 +760,10 @@
 -(ORAnnotation) annotation
 {
    return _annotation;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -739,6 +803,10 @@
 {
    return _z;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORAnd { // x = y && z
@@ -776,6 +844,10 @@
 {
    return _z;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORImply { // x = y => z
@@ -812,6 +884,10 @@
 -(id<ORIntVar>) right
 {
    return _z;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -855,6 +931,10 @@
 -(ORAnnotation)annotation
 {
    return _note;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
 }
 @end
 
@@ -900,6 +980,16 @@
 {
    return _note;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2 + [_y count]] autorelease];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_idx];
+   [ms addObject:_z];
+   return ms;
+}
 @end
 
 
@@ -938,6 +1028,10 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
+}
 @end
 
 @implementation ORReifyNEqualc {
@@ -974,6 +1068,10 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
 @end
 
@@ -1018,6 +1116,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORReifyNEqual {
@@ -1061,6 +1163,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORReifyLEqualc {
@@ -1097,6 +1203,10 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
 @end
 
@@ -1141,6 +1251,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORReifyGEqualc {
@@ -1177,6 +1291,10 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x, nil] autorelease];
 }
 @end
 
@@ -1221,6 +1339,10 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
+}
 @end
 
 // ========================================================================================================
@@ -1255,6 +1377,14 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORSumBoolLEqc {
@@ -1285,6 +1415,14 @@
 -(ORInt)cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1317,6 +1455,14 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ba count]] autorelease];
+   [_ba enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORSumEqc {
@@ -1347,6 +1493,14 @@
 -(ORInt)cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1379,6 +1533,14 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORSumGEqc {
@@ -1410,6 +1572,14 @@
 -(ORInt)cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1449,6 +1619,14 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORLinearLeq {
@@ -1486,6 +1664,14 @@
 -(ORInt) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1525,6 +1711,14 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORFloatLinearEq {
@@ -1563,6 +1757,14 @@
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORFloatLinearLeq {
@@ -1600,6 +1802,14 @@
 -(ORFloat) cst
 {
    return _c;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_ia count]] autorelease];
+   [_ia enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1640,14 +1850,22 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORCardinalityI
 {
    id<ORIntVarArray> _x;
    id<ORIntArray>    _low;
-   id<ORIntArray>    _up;
-   ORAnnotation _n;
+   id<ORIntArray>     _up;
+   ORAnnotation        _n;
 }
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up
 {
@@ -1687,6 +1905,14 @@
 {
    return _n;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORAlgebraicConstraintI {
@@ -1718,6 +1944,12 @@
 {
    return _note;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:4] autorelease];
+   //TODO:ldm
+   return ms;
+}
 @end
 
 @implementation ORTableConstraintI
@@ -1743,6 +1975,14 @@
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitTableConstraint:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1775,6 +2015,17 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = lexleq(%@,%@)>",[self class],self,_impl,_x,_y];
    return buf;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]+[_y count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [_y enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORCircuitI {
@@ -1800,6 +2051,14 @@
    [buf appendFormat:@"<%@ : %p> -> %@ = circuit(%@)>",[self class],self,_impl,_x];
    return buf;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORNoCycleI {
@@ -1824,6 +2083,14 @@
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"<%@ : %p> -> %@ = nocycle(%@)>",[self class],self,_impl,_x];
    return buf;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
 }
 @end
 
@@ -1867,6 +2134,15 @@
 -(id<ORIntVar>) binSize
 {
    return _binSize;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_item count]+1] autorelease];
+   [_item enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_binSize];
+   return ms;
 }
 @end
 
@@ -1928,6 +2204,17 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    [buf appendFormat:@"<%@ : %p> -> %@ = packing(%@,%@,%@)>",[self class],self,_impl,_x,_itemSize,_load];
    return buf;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]+[_load count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [_load enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORKnapsackI {
@@ -1965,6 +2252,14 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return _c;
 }
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
 @end
 
 @implementation ORAssignmentI {
@@ -1995,6 +2290,15 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitAssignment:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]+1] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   [ms addObject:_cost];
+   return ms;
 }
 @end
 
@@ -2033,6 +2337,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitObjectiveFunctionVar:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
 }
 @end
 
@@ -2235,6 +2543,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    return [_impl primalBound];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
+}
 @end
 
 @implementation ORMaximizeVarI
@@ -2261,6 +2573,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORObjectiveValue>) value
 {
    return [((id<ORSearchObjectiveFunction>) _impl) value];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
 }
 @end
 
@@ -2401,6 +2717,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitBitEqual:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORBitOr {
@@ -2437,6 +2757,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitBitOr:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
 }
 @end
 
@@ -2475,6 +2799,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitBitAnd:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitNot {
@@ -2505,6 +2833,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitBitNot:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -2543,6 +2875,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitBitXor:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
 @end
 
 @implementation ORBitShiftL {
@@ -2580,6 +2916,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitBitShiftL:self];
 }
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
+}
 @end
 
 @implementation ORBitRotateL {
@@ -2616,6 +2956,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitBitRotateL:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 @end
 
@@ -2655,6 +2999,10 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORBitVar>) out
 {
    return _co;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_ci,_z,_co, nil] autorelease];
 }
 
 -(NSString*) description
@@ -2709,5 +3057,9 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitBitIf:self];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_w,_x,_y,_z, nil] autorelease];
 }
 @end

@@ -14,6 +14,7 @@
 #import "ORFactory.h"
 #import "ORError.h"
 #import "ORConstraint.h"
+#import "ORVisit.h"
 
 
 @implementation NSNumber (Expressions)
@@ -76,6 +77,227 @@
    return [[self asExpression:[e tracker]] gt:e];
 }
 @end
+
+@interface ORSweep : NSObject<ORVisitor> {
+   NSMutableSet* _ms;
+}
+-(id)init;
+-(NSSet*)doIt:(id<ORExpr>)e;
+// Variables
+-(void) visitIntVar: (id<ORIntVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
+-(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v;
+-(void) visitAffineVar:(id<ORIntVar>) v;
+// Expressions
+-(void) visitExprPlusI: (id<ORExpr>) e;
+-(void) visitExprMinusI: (id<ORExpr>) e;
+-(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprDivI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
+-(void) visitExprEqualI: (id<ORExpr>) e;
+-(void) visitExprNEqualI: (id<ORExpr>) e;
+-(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprSumI: (id<ORExpr>) e;
+-(void) visitExprProdI: (id<ORExpr>) e;
+-(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>)e;
+-(void) visitExprCstSubI: (id<ORExpr>) e;
+-(void) visitExprDisjunctI:(id<ORExpr>) e;
+-(void) visitExprConjunctI: (id<ORExpr>) e;
+-(void) visitExprImplyI: (id<ORExpr>) e;
+-(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprVarSubI: (id<ORExpr>) e;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)cstr;
+-(void) visitBitIf:(id<ORBitIf>)cstr;
+@end
+
+@implementation ORSweep
+-(id)init
+{
+   self = [super init];
+   _ms  = NULL;
+   return self;
+}
+-(NSSet*)doIt:(id<ORExpr>)e
+{
+   _ms = [[[NSMutableSet alloc] initWithCapacity:8] autorelease];
+   [e visit:self];
+   return _ms;
+}
+// Variables
+-(void) visitIntVar: (id<ORIntVar>) v
+{
+   [_ms addObject:v];
+}
+-(void) visitBitVar: (id<ORBitVar>) v
+{
+   [_ms addObject:v];
+}
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   [_ms addObject:v];
+}
+-(void) visitIntVarLitEQView:(id<ORIntVar>)v
+{
+   [_ms addObject:v];
+}
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   [_ms addObject:v];
+}
+// Expressions
+-(void) visitExprPlusI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMinusI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMulI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprDivI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprModI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprNEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprLEqualI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
+{
+   [[e expr] visit:self];   
+}
+-(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprNegateI:(ORExprNegateI*)e
+{
+   [[e operand] visit:self];
+}
+-(void) visitExprCstSubI: (ORExprCstSubI*) e
+{
+   [[e index] visit:self];
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprConjunctI: (ORConjunctI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprImplyI: (ORImplyI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprVarSubI: (ORExprVarSubI*) e
+{
+   [[e index] visit:self];
+   id<ORIntVarArray> a = [e array];
+   [a enumerateWith:^(id obj, int idx) {
+      [_ms addObject:obj];
+   }];
+}
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitOr:(id<ORBitOr>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitAnd:(id<ORBitAnd>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitNot:(id<ORBitNot>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitXor:(id<ORBitXor>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c res] visit:self];
+}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   [[c left] visit:self];
+   [[c right] visit:self];
+}
+-(void) visitBitSum:(id<ORBitSum>)c
+{
+   [[c res] visit:self];
+   [[c left] visit:self];
+   [[c right] visit:self];
+   [[c in] visit:self];
+   [[c out] visit:self];
+}
+-(void) visitBitIf:(id<ORBitIf>)c
+{
+   [[c trueIf] visit:self];
+   [[c res] visit:self];
+   [[c equals] visit:self];
+   [[c zeroIfXEquals] visit:self];
+}
+@end
+
 
 @implementation ORExprI
 -(id<ORTracker>) tracker
@@ -308,6 +530,13 @@
 - (void)visit:(id<ORVisitor>)visitor
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Visitor not found"];
+}
+-(NSSet*)allVars
+{
+   ORSweep* sweep = [[ORSweep alloc] init];
+   NSSet* rv = [sweep doIt:self];
+   [sweep release];
+   return rv;
 }
 @end
 

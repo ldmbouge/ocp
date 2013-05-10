@@ -34,6 +34,7 @@
 
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
+-(NSSet*)allVars;
 @end
 
 @protocol ORConstraintSet <NSObject>
