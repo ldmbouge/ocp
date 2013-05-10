@@ -91,7 +91,7 @@ int main_neq(int argc, const char * argv[])
       
       ORLong startTime = [ORRuntimeMonitor wctime];
       __block ORInt nbSol = 0;
-      id* gamma = [cp gamma];
+      //id* gamma = [cp gamma];
       [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
