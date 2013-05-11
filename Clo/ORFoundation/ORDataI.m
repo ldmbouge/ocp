@@ -784,7 +784,7 @@ static ORInt _deterministic;
 }
 -(void) dealloc
 {
-   free(gamma);
+   free(_gamma);
    [super dealloc];
 }
 -(void) setGamma: (id*) gamma

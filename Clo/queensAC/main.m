@@ -40,6 +40,13 @@ int main(int argc, const char * argv[])
          [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
          [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
          
+         @autoreleasepool {
+            for(id<ORConstraint> c in [mdl constraints]) {
+               NSSet* av = [c allVars];
+               NSLog(@"Constraint[%d] has: %@",c.getId,av);
+            }
+         }
+         
          id<CPProgram> cp = [args makeProgram:mdl];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
