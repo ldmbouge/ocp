@@ -14,35 +14,64 @@
 #import "ORExprI.h"
 #import "ORError.h"
 
-@interface ORIntegerI : ORExprI<NSCoding,ORInteger>
+@interface ORIntegerI : ORExprI<NSCoding,NSCopying,ORInteger>
 -(ORIntegerI*) initORIntegerI:(id<ORTracker>)tracker value:(ORInt) value;
 -(ORInt)  value;
--(ORInt) setValue: (ORInt) value;
--(void) incr;
--(void) decr;
--(ORInt)   min;
+-(ORInt)  min;
+-(ORInt)  max;
 -(id<ORTracker>) tracker;
 @end
 
-@interface ORRandomStreamI : NSObject<ORRandomStream>
+@interface ORMutableIntegerI : ORExprI<NSCoding,ORMutableInteger>
+-(ORMutableIntegerI*) initORMutableIntegerI: (id<ORTracker>) tracker value: (ORInt) value;
+-(ORInt)  initialValue;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  value: (id<ORGamma>) solver;
+-(ORInt)  setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt)  incr: (id<ORGamma>) solver;
+-(ORInt)  decr: (id<ORGamma>) solver;
+-(id<ORTracker>) tracker;
+-(ORInt) incr;
+-(ORInt) decr;
+@end
+
+@interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
+-(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORFloat) floatValue;
+-(ORFloat) value;
+-(ORInt) intValue;
+-(id<ORTracker>) tracker;
+@end
+
+@interface ORMutableFloatI : ORExprI<NSCoding,ORMutableFloat>
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
+-(ORFloat) initialValue;
+-(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+-(id<ORTracker>) tracker;
+@end
+
+@interface ORRandomStreamI : ORObject<ORRandomStream>
 -(ORRandomStreamI*) init;
 -(void) dealloc;
 -(ORLong) next;
 @end
 
-@interface ORZeroOneStreamI : NSObject<ORZeroOneStream>
+@interface ORZeroOneStreamI : ORObject<ORZeroOneStream>
 -(ORZeroOneStreamI*) init;
 -(void) dealloc;
 -(double) next;
 @end
 
-@interface ORUniformDistributionI : NSObject<ORUniformDistribution>
+@interface ORUniformDistributionI : ORObject<ORUniformDistribution>
 -(ORUniformDistributionI*) initORUniformDistribution: (id<ORIntRange>) r;
 -(void) dealloc;
 -(ORInt) next;
+-(void)setId:(ORUInt)name;
 @end
 
-@interface ORTableI : ORDualUseObjectI<ORTable,NSCoding> {
+@interface ORTableI : ORObject<ORTable,NSCoding> {
 @public
    ORInt   _arity;
    ORInt   _nb;
@@ -74,7 +103,7 @@
 -(ORInt) nb;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
--(id) dereference;
+//-(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;
 -(NSString*)description;

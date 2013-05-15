@@ -39,7 +39,7 @@
 {
    if ([var isInteger]) {
       if ([var hasBounds])
-         GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,NULL);
+        GRBaddvar(_model, 0,NULL, NULL, 0.0, [var low], [var up],GRB_INTEGER,NULL);
       else
          GRBaddvar(_model, 0,NULL, NULL, 0.0, 0.0, GRB_INFINITY,GRB_INTEGER,NULL);
    }
@@ -50,10 +50,11 @@
    GRBupdatemodel(_model);
 }
 
--(void) addConstraint: (MIPConstraintI*) cstr
+-(MIPConstraintI*) addConstraint: (MIPConstraintI*) cstr
 {
    [self postConstraint: cstr];
    GRBupdatemodel(_model);
+   return cstr;
 }
 -(void) delConstraint: (MIPConstraintI*) cstr
 {
@@ -88,7 +89,7 @@
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
    GRBoptimize(_model);
-   [self printModelToFile: "/Users/ldm/lookatgurobi.mip"];
+   [self printModelToFile: "/Users/pvh/lookatgurobi.mps"];
    int status;
    GRBgetintattr(_model,"Status",&status);
    switch (status) {

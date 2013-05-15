@@ -18,22 +18,26 @@
 #import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)
--(id) dereference
-{
-   return self;
-}
+//-(id) dereference
+//{
+////   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
+//   return self;
+//}
 -(void) setImpl: (id) impl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
    NSLog(@"%@",self); 
    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
 -(void) makeImpl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
    NSLog(@"%@",self);
    @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
 }
 -(id) impl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
    return self;
 }
 -(void) visit: (id<ORVisitor>) visitor
@@ -56,21 +60,28 @@
    _tracker = tracker;
    return self;
 }
--(ORInt) value 
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]])
+      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
+   else return NO;
+}
+- (NSUInteger)hash
 {
    return _value;
 }
--(ORInt) setValue: (ORInt) value
+
+-(ORFloat) floatValue
 {
-   return _value = value;
+   return _value;
 }
--(void) incr
+-(ORInt) value
 {
-   _value++;
-}
--(void) decr;
-{
-   _value--;
+   return _value;
 }
 -(ORInt) min
 {
@@ -80,11 +91,11 @@
 {
    return _value;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return YES;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return NO;
 }
@@ -109,6 +120,241 @@
 -(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitIntegerI: self];
+}
+@end
+
+@implementation ORMutableIntegerI
+{
+	ORInt           _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableIntegerI*) initORMutableIntegerI:(id<ORTracker>)tracker value:(ORInt) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORInt) initialValue
+{
+   return _value;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORInt) incr
+{
+   return ++_value;
+}
+-(ORInt) decr
+{
+   return --_value;
+}
+-(ORInt) setValue: (ORInt) value 
+{
+   return _value = value;
+}
+-(ORFloat) floatValue: (id<ORGamma>) solver
+{
+   return _value;
+}
+-(ORInt) intValue: (id<ORGamma>) solver
+{
+   return _value;
+}
+-(ORInt) value: (id<ORGamma>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] initialValue];
+}
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
+{
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORInt) incr: (id<ORGamma>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] incr];
+}
+-(ORInt) decr: (id<ORASolver>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] decr];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"%d",_value];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitMutableIntegerI: self];
+}
+@end
+
+@implementation ORFloatI
+{
+	ORFloat       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORInt) min
+{
+   return (ORInt)floor(_value);
+}
+-(ORInt) max
+{
+   return (ORInt)ceil(_value);
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return (ORInt) _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%f",_value];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitFloatI: self];
+}
+@end
+
+@implementation ORMutableFloatI
+{
+	ORFloat       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORFloat) initialValue
+{
+   return _value;
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORFloat) setValue: (ORFloat) value
+{
+   return _value = value;
+}
+-(ORFloat) value: (id<ORGamma>) solver;
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+}
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+}
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+{
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%f",_value];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitMutableFloatI: self];
 }
 @end
 
@@ -201,6 +447,7 @@ static ORInt _deterministic;
 
 @implementation ORUniformDistributionI
 {
+   ORUInt           _name;
    id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
@@ -221,6 +468,10 @@ static ORInt _deterministic;
 -(ORInt) next
 {
    return _range.low + [_stream next] % _size;
+}
+-(void)setId:(ORUInt)name
+{
+   _name = name;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
@@ -493,6 +744,7 @@ static ORInt _deterministic;
 }
 -(id) dereference
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
    ORInt k = [NSThread threadID];
    if (_array[k] == NULL)
       return NULL;
@@ -522,4 +774,83 @@ static ORInt _deterministic;
 }
 
 @end
+
+@implementation ORGamma
+-(ORGamma*) initORGamma
+{
+   [super init];
+   _gamma = NULL;
+   return self;
+}
+-(void) dealloc
+{
+   free(_gamma);
+   [super dealloc];
+}
+-(void) setGamma: (id*) gamma
+{
+   _gamma = gamma;
+}
+-(id*) gamma
+{
+   return _gamma;
+}
+-(id) concretize: (id<ORObject>) o
+{
+   id<ORObject> ob =  _gamma[o.getId];
+   if (ob)
+      return ob;
+   else {
+      id<ORTau> tau = _mappings.tau;
+      ob = o;
+      id<ORObject> nob = [tau get: ob];
+      while (nob) {
+         ob = nob;
+         nob = [tau get: ob];
+      }
+      return _gamma[ob.getId];
+   }
+}
+@end
+
+@implementation ORModelMappings
+{
+@protected
+   id<ORTau> _tau;
+   id<ORLambda> _lambda;
+}
+-(ORModelMappings*) initORModelMappings
+{
+   self = [super init];
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void) setTau: (id<ORTau>) tau
+{
+   _tau = tau;
+}
+-(void) setLambda: (id<ORLambda>) lambda
+{
+   _lambda = lambda;
+}
+-(id<ORTau>) tau
+{
+   return _tau;
+}
+-(id<ORLambda>) lambda
+{
+   return _lambda;
+}
+-(id) copyWithZone: (NSZone*) zone
+{
+   ORModelMappings* map = [[ORModelMappings alloc] initORModelMappings];
+   map->_tau = [_tau copy];
+   map->_lambda = [_lambda copy];
+   return map;
+}
+@end
+
 

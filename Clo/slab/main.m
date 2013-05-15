@@ -82,19 +82,18 @@ int main(int argc, const char * argv[])
          id<ORIntVar> obj = [ORFactory intVar: mdl domain: RANGE(mdl,0,nbSize*maxCapacities)];
          
          [mdl add: [obj eq: Sum(mdl,s,Slabs,[loss elt: [load at: s]])]];
-         [mdl add: [ORFactory packing: slab itemSize: weight load: load]];
+         [mdl add: [ORFactory packing:mdl item:slab itemSize: weight load: load]];
          for(ORInt s = Slabs.low; s <= Slabs.up; s++)
             [mdl add: [Sum(mdl,c,Colors,Or(mdl,o,coloredOrder[c],[slab[o] eq: @(s)])) leq: @2]];
          [mdl minimize: obj];
          
          id<CPProgram> cp  = [args makeProgram:mdl];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          [cp solve: ^{
             NSLog(@"In the search ... ");
-            [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [slab[o] domsize];} do: ^(ORInt o)
+            [cp forall: SetOrders suchThat: nil orderedBy: ^ORInt(ORInt o) { return [cp domsize:slab[o]];} do: ^(ORInt o)
              {
-                ORInt ms = max(0,[CPUtilities maxBound: slab]);
-                [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [slab[o] member:s]; } in: ^void(ORInt s)
+                ORInt ms = max(0,[cp maxBound: slab]);
+                [cp tryall: Slabs suchThat: ^bool(ORInt s) { return s <= ms + 1 && [cp member:s in:slab[o]]; } in: ^void(ORInt s)
                  {
                     [cp label: slab[o] with: s];
                  }
@@ -105,12 +104,7 @@ int main(int argc, const char * argv[])
                  ];
              }
              ];
-            printf("\n");
-            printf("obj: %d \n",[obj min]);
-            printf("Slab: ");
-            for(ORInt i = 1; i <= nbSize; i++)
-               printf("%d ",[slab[i] value]);
-            printf("\n");
+            printf("obj: %d \n",[cp intValue:obj]);
          }];
          
          NSLog(@"Solver status: %@\n",cp);

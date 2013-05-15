@@ -50,6 +50,8 @@
 {
    if (a==1 && b==0)
       return x;
+   else if (a==1)
+      return [CPIntVarI initCPIntView:x withShift:b];
    else if (a==-1 && b==0)
       return [CPIntVarI initCPFlipView: x];
    else
@@ -125,7 +127,7 @@
 +(id<ORIntSet>) intSet: (id<ORTracker>) cp 
 {
     ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI]; 
-    [cp trackObject: o];
+    [cp trackMutable: o];
     return o;
 }
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity
@@ -135,25 +137,25 @@
 +(id<ORInformer>) informer: (id<ORTracker>) cp
 {
     id<ORInformer> o = [ORConcurrency intInformer];
-    [cp trackObject: o];
+    [cp trackMutable: o];
     return o;    
 }
 +(id<ORVoidInformer>) voidInformer: (id<ORTracker>) cp
 {
    id<ORVoidInformer> o = [ORConcurrency voidInformer];
-   [cp trackObject: o];
+   [cp trackMutable: o];
    return o;       
 }
 +(id<ORIntInformer>) intInformer: (id<ORTracker>) cp
 {
    id<ORIntInformer> o = [ORConcurrency intInformer];
-   [cp trackObject: o];
+   [cp trackMutable: o];
    return o;          
 }
 +(id<ORBarrier>)  barrier: (id<ORTracker>) cp value: (ORInt) nb
 {
     id<ORBarrier> o = [ORConcurrency barrier: nb];
-    [cp trackObject: o];
+    [cp trackMutable: o];
     return o;    
 }
 
@@ -171,12 +173,6 @@
 
 // Not sure how an expression can be added to the solver
 @implementation CPFactory (expression)
-
-+(id<ORExpr>) exprAbs: (id<ORExpr>) op
-{
-   return (id<ORExpr>)[ORFactory exprAbs:op];
-}
-
 +(id<ORExpr>) dotProduct:(id<ORIntVar>[])vars by:(int[])coefs
 {
    id<ORTracker> cp = [vars[0] tracker];

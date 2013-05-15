@@ -23,10 +23,7 @@
 #import <ORProgram/CPFirstFail.h>
 #import <ORProgram/CPBitVarFirstFail.h>
 
-
-@interface CPUtilities : NSObject
-+(ORInt) maxBound: (id<ORIntVarArray>) x;
+@interface ORGamma (Model)
+-(void) initialize: (id<ORModel>) model;
 @end
-
-
 

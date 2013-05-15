@@ -13,7 +13,7 @@
 
 @implementation ORSemDFSController
 
-- (id) initTheController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -44,10 +44,10 @@
    while (_sz > 0) {
       _sz -= 1;
       [_tab[_sz] letgo];
-      [_cpTab[_sz] release];
+      [_cpTab[_sz] letgo];
    }
    [_tracer restoreCheckpoint:_atRoot inSolver:_engine];
-   [_atRoot release];
+   [_atRoot letgo];
 }
 
 -(ORInt) addChoice: (NSCont*)k 
@@ -74,7 +74,7 @@
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus status = [_tracer restoreCheckpoint:cp inSolver:_engine];
          //assert(status != ORFailure);
-         [cp release];
+         [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
@@ -113,14 +113,16 @@
        */
       --_sz;
       ORHeist* rv = [[ORHeist alloc] initORHeist:c from:cp];
-      [cp release];
+      [cp letgo];
       return rv;
    } else return nil;
 }
 
--(BOOL)willingToShare
+-(ORBool)willingToShare
 {
-   return _sz >= 1;
+   BOOL some = _sz >= 2;
+   //some = some && [_cpTab[0] sizeEstimate] < 10;
+   return some;
 }
 @end
 
@@ -132,7 +134,7 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          [_tracer restoreCheckpoint:cp inSolver:_engine];
-         [cp release];
+         [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;

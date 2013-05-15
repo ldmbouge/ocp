@@ -14,7 +14,7 @@
 
 @implementation ORSignatureI
 
--(bool) matches: (id<ORSignature>)sig {
+-(ORBool) matches: (id<ORSignature>)sig {
     return YES;
 }
 
@@ -247,8 +247,8 @@
     id<CPHeuristic> h = [_program createFF];
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
-        id<ORSolution> s = [_model captureSolution];
-        NSLog(@"(%p) objective tightened: %i", self, [[[_program engine] objective] primalBound]);
+        id<ORSolution> s = [_program captureSolution];
+        NSLog(@"(%p) objective tightened: %@", self, [[[_program engine] objective] primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
             [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
         NSMutableArray* sp = _solutionStreamConsumers;
@@ -260,7 +260,7 @@
         if(_exitBlock) _exitBlock();
         else {
             id<ORSolution> best = [[_program solutionPool] best];
-            [_model restore:best];
+//            [_model restore:best];
             [best release];
         }
     }];
@@ -273,13 +273,13 @@
     NSLog(@"Finishing CP runnable(%p)...", _program);
 }
 
--(void) restore: (id<ORSolution>)s {
-    [[_program engine] enforce: ^ORStatus() {
-        [_model restore: s];
-        return ORSuccess;
-    }];
-    
-}
+//-(void) restore: (id<ORSolution>)s {
+//    [[_program engine] enforce: ^ORStatus() {
+//        [_model restore: s];
+//        return ORSuccess;
+//    }];
+//    
+//}
 
 @end
 

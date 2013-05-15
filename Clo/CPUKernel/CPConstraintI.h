@@ -17,14 +17,14 @@
 @interface CPCoreConstraint : ORObject<NSCoding,ORCommand,CPConstraint> {
 @public
    CPTodo            _todo;
-   BOOL       _idempotent;
-   ORInt       _priority;
+   BOOL        _idempotent;
+   ORInt         _priority;
    IMP          _propagate;
    id<ORTrail>      _trail;
    TRInt           _active;
    id<CPGroup>      _group;
 }
--(CPCoreConstraint*) initCPCoreConstraint:(id<OREngine>)m;
+-(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
 -(ORStatus) doIt;
 -(ORStatus) post;
 -(void) propagate;

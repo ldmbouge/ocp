@@ -64,6 +64,18 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-h1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-w2.0"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-q12"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-h1"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

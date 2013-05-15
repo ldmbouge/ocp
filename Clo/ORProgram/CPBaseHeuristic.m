@@ -16,7 +16,7 @@
 @implementation CPBaseHeuristic {
    BOOL _oneSol;
 }
--(void) initHeuristic: (NSMutableArray*) array oneSol:(BOOL)oneSol
+-(void) initHeuristic: (NSMutableArray*) array oneSol:(ORBool)oneSol
 {
    self = [super init];
    _oneSol = oneSol;
@@ -60,7 +60,7 @@
 {
    return nil;
 }
--(BOOL)oneSol
+-(ORBool)oneSol
 {
    return _oneSol;
 }
@@ -85,11 +85,11 @@
    [_binding release];
    [super dealloc];
 }
--(ORFloat) varOrdering: (id<ORIntVar>)x
+-(ORFloat) varOrdering: (id<CPIntVar>)x
 {
    return [_binding[[NSThread threadID]] varOrdering:x];
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
+-(ORFloat) valOrdering: (ORInt) v forVar: (id<CPIntVar>) x
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }
@@ -97,7 +97,7 @@
 {
    [_binding[[NSThread threadID]] initInternal:t];
 }
--(void) initHeuristic: (NSMutableArray*) array oneSol:(BOOL)oneSol
+-(void) initHeuristic: (NSMutableArray*) array oneSol:(ORBool)oneSol
 {
    [_binding[[NSThread threadID]] initHeuristic:array oneSol:oneSol];
 }

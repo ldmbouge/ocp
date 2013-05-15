@@ -18,7 +18,7 @@
 -(void)dealloc;
 -(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
-//-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 -(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 
@@ -26,12 +26,12 @@
 -(ORInt) max;
 -(ORInt) imin;
 -(ORInt) imax;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
--(BOOL) get:(ORInt)b;
--(BOOL) member:(ORInt)v;
+-(ORBool) get:(ORInt)b;
+-(ORBool) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
 -(id) copy;

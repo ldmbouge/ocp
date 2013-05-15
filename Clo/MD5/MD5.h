@@ -46,7 +46,7 @@
 -(MD5*) initExplicitMD5;
 //-(void) dealloc;
 
--(bool) getMessage:(NSString*) fname;
+-(ORBool) getMessage:(NSString*) fname;
 -(NSMutableArray*) getMD5Digest:(NSString*)fname;
 -(void) createMD5Blocks:(uint32*)mask;
 //-(void) createMD4Block:(uint32*)data withCount:(uint64)count;

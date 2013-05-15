@@ -12,8 +12,8 @@
 #import <ORFoundation/ORArrayI.h>
 
 @interface ORLinearize : NSObject<ORModelTransformation>
--(id)initORLinearize;
--(void) apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
+-(id)initORLinearize:(id<ORAddToModel>)into;
+-(void) apply:(id<ORModel>)m;
 +(id<ORModel>)linearize:(id<ORModel>)model;
 @end
 

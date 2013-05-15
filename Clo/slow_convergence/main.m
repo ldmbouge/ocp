@@ -48,12 +48,12 @@ int main(int argc, const char * argv[])
             NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
             [buf appendString:@"["];
             for(ORInt k=0;k<=n;k++)
-               [buf appendFormat:@"%d%c",[x[k] value],k < n ? ',' : ']'];
+               [buf appendFormat:@"%d%c",[cp intValue:x[k]],k < n ? ',' : ']'];
             NSLog(@"x = %@",buf);
             buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
             [buf appendString:@"["];
             for(ORInt k=0;k<=n;k++)
-               [buf appendFormat:@"%d%c",[y[k] value],k < n ? ',' : ']'];
+               [buf appendFormat:@"%d%c",[cp intValue:y[k]],k < n ? ',' : ']'];
             NSLog(@"y = %@",buf);
          }
       }];

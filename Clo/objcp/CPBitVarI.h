@@ -45,7 +45,7 @@ typedef struct  {
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(NSString*) description;
--(id<CPBitVar>) dereference;
+//-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;
@@ -54,7 +54,7 @@ typedef struct  {
 -(void) whenChangePropagate:  (CPCoreConstraint*) c;
 
 // need for speeding the code when not using AC5
--(bool) tracksLoseEvt;
+-(ORBool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -72,7 +72,7 @@ typedef struct  {
 -(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
 -(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt) bitLength;
 -(uint64) min;
 -(uint64) max;
@@ -88,8 +88,9 @@ typedef struct  {
 -(unsigned int) msFreeBit;
 -(unsigned int) randomFreeBit;
 -(unsigned int) midFreeBit;
--(BOOL) member:(unsigned int*)v;
+-(ORBool) member:(unsigned int*)v;
 -(bool) isFree:(ORUInt)pos;
+
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;

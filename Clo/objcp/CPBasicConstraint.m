@@ -159,7 +159,7 @@
 
 @implementation CPEqualBC
 
--(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c
+-(id) initCPEqualBC: (CPIntVarI*) x and: (CPIntVarI*) y  and: (ORInt) c
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -224,7 +224,7 @@
 
 
 @implementation CPEqualDC
--(id) initCPEqualDC: (id) x and: (id) y  and: (ORInt) c
+-(id) initCPEqualDC: (CPIntVarI*) x and: (CPIntVarI*) y  and: (ORInt) c
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -312,7 +312,7 @@
 @end
 
 @implementation CPAffineBC
--(id)initCPAffineBC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b
+-(id)initCPAffineBC:(CPIntVarI*)y equal:(ORInt)a times:(CPIntVarI*)x plus:(ORInt)b
 {
    self = [super initCPCoreConstraint:[y engine]];
    _x = x;
@@ -384,7 +384,7 @@
 @end
 
 @implementation CPAffineAC
--(id)initCPAffineAC:(id)y equal:(ORInt)a times:(id)x plus:(ORInt)b
+-(id)initCPAffineAC:(CPIntVarI*)y equal:(ORInt)a times:(CPIntVarI*)x plus:(ORInt)b
 {
    self = [super initCPCoreConstraint:[y engine]];
    _x = x;
@@ -407,20 +407,29 @@
          [_x bind:ymb / _a];      
    } else {
       for(ORInt i=minDom(_x);i <= maxDom(_x);i++) {
-         if (!memberDom(_x, i)) continue;
          ORInt v = _a * i + _b;
-         if (!memberDom(_y, v))
-            [_x remove:i];
+         if (memberDom(_x, i)) {
+            if (!memberDom(_y, v))
+               [_x remove:i];
+         } else {
+            if (memberDom(_y,v))
+               [_y remove:v];
+         }
       }
       for(ORInt i=minDom(_y);i <= maxDom(_y);i++) {
-         if (!memberDom(_y,i)) continue;
-         ORInt v = i - _b;
-         if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
-            [_y remove:i];
-         else {
-            ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
-            if (!memberDom(_x, w))
+         if (memberDom(_y,i)) {
+            ORInt v = i - _b;
+            if (v % _a)          // i \in D(y) cannot reach anything _exactly_ in D(x) -> remove.
                [_y remove:i];
+            else {
+               ORInt w = v / _a; // in \in D(y) can reach w. if w \NOTIN D(x) remove i from D(y)
+               if (!memberDom(_x, w))
+                  [_y remove:i];
+            }
+         } else {
+            ORInt v = i - _b;
+            if (v % _a == 0)
+               [_x remove:v / _a];
          }
       }
       if (!bound(_x))
@@ -431,8 +440,8 @@
       if (!bound(_y))
          [_y whenLoseValue:self do:^(ORInt v) {
             ORInt w = v - _b;
-            assert(w % _a == 0);
-            [_x remove:w / _a];
+            if (w % _a == 0)
+               [_x remove:w / _a];
          }];
    }
    return ORSuspend;
@@ -452,7 +461,7 @@
 @end
 
 @implementation CPEqual3BC
--(id) initCPEqual3BC: (id) x plus: (id) y  equal: (id) z
+-(id) initCPEqual3BC: (CPIntVarI*) x plus: (CPIntVarI*) y  equal: (CPIntVarI*) z
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -474,37 +483,57 @@
 }
 -(void)propagate
 {
+   ORBounds xb = bounds(_x);
+   ORBounds yb = bounds(_y);
+   ORBounds zb = bounds(_z);
    do {
       _todo = CPChecked;
-      if (bound(_x)) {
-         if (bound(_y)) {
-            bindDom(_z, minDom(_x) + minDom(_y));
-         } else if (bound(_z)) {
-            bindDom(_y,minDom(_z) - minDom(_x));
+      if (xb.min == xb.max) {
+         if (yb.min == yb.max) {
+            assignTRInt(&_active, NO, _trail);
+            bindDom(_z,xb.min = xb.max = xb.min + yb.min);
+         } else if (zb.min == zb.max) {
+            assignTRInt(&_active, NO, _trail);
+            bindDom(_y,yb.min = yb.max = zb.min - xb.min);
          } else {
-            ORInt c = minDom(_x);
-            [_y updateMin:minDom(_z) - c andMax:maxDom(_z) - c];
-            [_z updateMin:minDom(_y) + c andMax:maxDom(_y) + c];
+            ORInt c = xb.min;
+            [_y updateMin:zb.min - c andMax:zb.max - c];
+            [_z updateMin:yb.min + c andMax:yb.max + c];
+            yb = bounds(_y);
+            zb = bounds(_z);
          }
-      } else if (bound(_y)) {  // we are here: bound(_x) is FALSE
-         if (bound(_z)) {
-            bindDom(_x,minDom(_z) - minDom(_y));
+      } else if (yb.min == yb.max) {  // we are here: bound(_x) is FALSE
+         if (zb.min == zb.max) {
+            assignTRInt(&_active, NO, _trail);
+            bindDom(_x,xb.min = xb.max = zb.min - yb.min);
          } else {
-            ORInt c = minDom(_y);
-            [_x updateMin:minDom(_z) - c andMax:maxDom(_z) - c];
-            [_z updateMin:minDom(_x) + c andMax:maxDom(_x) + c];
+            ORInt c = yb.min;
+            xb.min = max(xb.min,zb.min - c);
+            xb.max = min(xb.max,zb.max - c);
+            [_x updateMin:xb.min andMax:xb.max];
+            xb = bounds(_x);
+            zb.min = max(zb.min,xb.min + c);
+            zb.max = min(zb.max,xb.max + c);
+            [_z updateMin:zb.min andMax:zb.max];
+            zb = bounds(_z);
          }
-      } else if (bound(_z)) {  // bound(_x) is FALSE AND bound(_y) is FALSE
-         ORInt c = minDom(_z);
-         [_x updateMin:c - maxDom(_y) andMax:c - minDom(_y)];
-         [_y updateMin:c - maxDom(_x) andMax:c - minDom(_x)];
+      } else if (zb.min == zb.max) {  // bound(_x) is FALSE AND bound(_y) is FALSE
+         ORInt c = zb.min;
+         xb.min = max(xb.min,c - yb.max);
+         xb.max = min(xb.max,c - yb.min);
+         [_x updateMin:xb.min andMax:xb.max];
+         xb = bounds(_x);
+         yb.min = max(yb.min,c - xb.max);
+         yb.max = min(yb.max,c - xb.min);
+         [_y updateMin:yb.min andMax:yb.max];
+         yb = bounds(_y);
       } else {
-         ORBounds xb = bounds(_x);
-         ORBounds yb = bounds(_y);
-         ORBounds zb = bounds(_z);
          [_z updateMin:xb.min + yb.min andMax:xb.max + yb.max];
          [_x updateMin:zb.min - yb.max andMax:zb.max - yb.min];
          [_y updateMin:zb.min - xb.max andMax:zb.max - xb.min];
+         zb = bounds(_z);
+         xb = bounds(_x);
+         yb = bounds(_y);
       }
    } while (_todo == CPTocheck);
 }
@@ -523,7 +552,7 @@
 @end
 
 @implementation CPEqual3DC
--(id) initCPEqual3DC: (id) x plus: (id) y  equal: (id) z
+-(id) initCPEqual3DC: (CPIntVarI*) x plus: (CPIntVarI*) y  equal: (CPIntVarI*) z
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -757,7 +786,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 
 @implementation CPNotEqual
 
--(id)initCPNotEqual:(id) x and:(id) y  and: (ORInt) c
+-(id)initCPNotEqual:(CPIntVarI*) x and:(CPIntVarI*) y  and: (ORInt) c
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -885,7 +914,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @end
 
 @implementation CPLEqualBC
--(id) initCPLEqualBC:(id)x and:(id) y plus:(ORInt) c
+-(id) initCPLEqualBC:(CPIntVarI*)x and:(CPIntVarI*) y plus:(ORInt) c
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -909,8 +938,16 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(void) propagate
 {
-   [_x updateMax:[_y max] + _c];
-   [_y updateMin:[_x min] - _c];
+   if (bound(_x)) {
+      assignTRInt(&_active, NO, _trail);
+      [_y updateMin:_x.min - _c];
+   } else if (bound(_y)) {
+      assignTRInt(&_active, NO, _trail);
+      [_x updateMax:_y.max + _c];
+   } else {
+      [_x updateMax:[_y max] + _c];
+      [_y updateMin:[_x min] - _c];
+   }
 }
 -(NSSet*)allVars
 {
@@ -1125,17 +1162,27 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    if (bound(_b)) {
       BOOL bVal = minDom(_b);
       if (bVal) {
-         if (maxDom(_x)==0)      [_y bind:TRUE];
-         else if (maxDom(_y)==0) [_x bind:TRUE];
+         if (maxDom(_x)==0) {
+            assignTRInt(&_active, NO, _trail);
+            [_y bind:TRUE];
+         }
+         else if (maxDom(_y)==0) {
+            assignTRInt(&_active, NO, _trail);
+            [_x bind:TRUE];
+         }
       } else {
+         assignTRInt(&_active, NO, _trail);
          [_x bind:NO];
          [_y bind:NO];
       }
    } else {
-      if (bound(_x) && bound(_y))
+      if (bound(_x) && bound(_y)) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:minDom(_x) || minDom(_y)];
-      else if (minDom(_x)>0 || minDom(_y)>0)
+      } else if (minDom(_x)>0 || minDom(_y)>0) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:TRUE];
+      }
    }
 }
 -(NSSet*)allVars
@@ -1168,7 +1215,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 @end
 
 @implementation CPAndDC
--(id)initCPAndDC:(id)b equal:(id<CPIntVar>) x and: (id<CPIntVar>) y
+-(id)initCPAndDC:(CPIntVarI*)b equal:(id<CPIntVar>) x and: (id<CPIntVar>) y
 {
    self = [super initCPCoreConstraint:[b engine]];
    _b = (CPIntVarI*) b;
@@ -1190,18 +1237,28 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    ORBounds bb = bounds(_b);
    if (bb.min == bb.max) {
       if (bb.min) {
+         assignTRInt(&_active, NO, _trail);
          [_x bind:TRUE];
          [_y bind:TRUE];
       } else {
-         if (minDom(_x)==1)      [_y bind:FALSE];
-         else if (minDom(_y)==1) [_x bind:FALSE];
+         if (minDom(_x)==1) {
+            assignTRInt(&_active, NO, _trail);
+            [_y bind:FALSE];
+         }
+         else if (minDom(_y)==1) {
+            assignTRInt(&_active, NO, _trail);
+            [_x bind:FALSE];
+         }
       }
    } else {
       ORBounds bx = bounds(_x),by = bounds(_y);
-      if (bx.min==bx.max && by.min==by.max)
+      if (bx.min==bx.max && by.min==by.max) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:bx.min && by.min];
-      else if (bx.max==0 || by.max==0)
+      } else if (bx.max==0 || by.max==0) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:FALSE];
+      }
    }
 }
 -(NSSet*)allVars
@@ -1653,7 +1710,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 @end
 
 @implementation CPSquareBC
--(id)initCPSquareBC:(id)z equalSquare:(id)x
+-(id)initCPSquareBC:(CPIntVarI*)z equalSquare:(CPIntVarI*)x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -2313,21 +2370,22 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       for(ORInt j=0;j<nbBoundVal;j++) {
          [_x[k] remove: vUse[j]];
       }
-      SEL minSEL = @selector(min);
-      IMP minIMP = [_x[k] methodForSelector:minSEL];
-      [_x[k] whenBindDo: ^ {
-         //int vk = [_x[k] min];
-         ORInt vk = (ORInt) minIMP(_x[k],minSEL);
-         for(ORLong i=up;i;--i) {
-            if (i == k) 
-               continue;
-            [_x[i] remove:vk];
-         }
-      } onBehalf:self];
+      [self listenTo:k];
    }
    return ORSuspend;
 }
-
+-(void)listenTo:(ORLong)k
+{
+   [_x[k] whenBindDo: ^ {
+      ORLong up = _nb - 1;
+      ORInt vk = minDom(_x[k]);
+      for(ORLong i=up;i;--i) {
+         if (i == k)
+            continue;
+         removeDom(_x[i], vk);
+      }
+   } onBehalf:self];   
+}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [super encodeWithCoder:aCoder];   

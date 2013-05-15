@@ -19,12 +19,14 @@
 {
    id<MIPProgram> _program;
    MIPSolverI*    _MIPsolver;
+   id*           _gamma;
 }
 -(ORMIPConcretizer*) initORMIPConcretizer: (id<MIPProgram>) program
 {
    self = [super init];
    _program = [program retain];
    _MIPsolver = [program solver];
+   _gamma = [program gamma];
    return self;
 }
 -(void) dealloc
@@ -33,17 +35,17 @@
    [super dealloc];
 }
 
-// HeMIPer function
+// Helper function
 -(id) concreteVar: (id<ORVar>) x
 {
    [x visit:self];
-   return [x dereference];
+   return _gamma[x.getId];
 }
 
 -(id) concreteArray: (id<ORIntVarArray>) x
 {
    [x visit: self];
-   return [x dereference];
+   return _gamma[x.getId];
 }
 
 // visit interface
@@ -54,121 +56,71 @@
 }
 -(void) visitIntSet: (id<ORIntSet>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntSet> i = [ORFactory intSet: _MIPsolver];
-      [i makeImpl];
-      [v copyInto: i];
-      [v setImpl: i];
-   }
 }
 -(void) visitIntRange:(id<ORIntRange>) v
 {
-   [v makeImpl];
 }
 
-// pvh: this is bogus right now but this is easy for testing
 -(void) visitIntVar: (id<ORIntVar>) v
 {
-   if ([v dereference] == NULL) {
-      MIPIntVariableI* cv = [_MIPsolver createIntVariable];
-      [v setImpl: cv];
-   }
+   if (_gamma[v.getId] == NULL) 
+      _gamma[v.getId] = [_MIPsolver createIntVariable: [v low] up: [v up]];
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-   if ([v dereference] == NULL) {
-      MIPVariableI* cv = [_MIPsolver createVariable];
-      [v setImpl: cv];
+   if (_gamma[v.getId] == NULL) {
+      MIPVariableI* cv;
+      if ([v hasBounds])
+         cv = [_MIPsolver createVariable: [v low] up: [v up]];
+      else
+         cv = [_MIPsolver createVariable];
+      _gamma[v.getId] = cv;
    }
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-   //   if ([v dereference] == NULL) {
-   //      id<CPBitVar> cv = [CPFactory bitVar:_engine withLow:[v low] andUp:[v up] andLength:[v bitLength]];
-   //     [v setImpl:cv];
-   //   }
 }
 
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-   //   if ([v dereference] == NULL) {
-   //      id<ORIntVar> mBase = [v base];
-   //      [mBase visit: self];
-   //      ORInt a = [v scale];
-   //      ORInt b = [v shift];
-   //      id<CPIntVar> cv = [CPFactory intVar:(id<CPIntVar>)[mBase dereference] scale:a shift:b];
-   //      [v setImpl: cv];
-   //   }
 }
 -(void) visitIntVarLitEQView:(id<ORIntVar>)v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-   //   if ([v dereference] == NULL) {
-   //      id<ORIntVar> mBase = [v base];
-   //      [mBase visit:self];
-   //      ORInt lit = [v literal];
-   //      id<CPIntVar> cv = [CPFactory reifyView:(id<CPIntVar>)[mBase dereference] eqi:lit];
-   //      [v setImpl:cv];
-   //   }
 }
 
 -(void) visitIdArray: (id<ORIdArray>) v
 {
-   if ([v dereference] == NULL) {
+   if (_gamma[v.getId] == NULL) {
       id<ORIntRange> R = [v range];
       id<ORIdArray> dx = [ORFactory idArray: _MIPsolver range: R];
-      [dx makeImpl];
       ORInt low = R.low;
       ORInt up = R.up;
       for(ORInt i = low; i <= up; i++) {
          [v[i] visit: self];
-         dx[i] = [v[i] dereference];
+         dx[i] = _gamma[[v[i] getId]];
       }
-      [v setImpl: dx];
+      _gamma[[v getId]] = dx;
    }
 }
 -(void) visitIntArray:(id<ORIntArray>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntRange> R = [v range];
-      id<ORIntArray> dx = [ORFactory intArray: _MIPsolver range: R with: ^ORInt(ORInt i) { return [v at: i]; }];
-      [dx makeImpl];
-      [v setImpl: dx];
-   }
 }
 -(void) visitFloatArray:(id<ORFloatArray>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntRange> R = [v range];
-      id<ORFloatArray> dx = [ORFactory floatArray: _MIPsolver range: R with: ^ORFloat(ORInt i) { return [v at: i]; }];
-      [dx makeImpl];
-      [v setImpl: dx];
-   }
 }
 
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_MIPsolver solve];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
 }
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_MIPsolver postObjective: concreteObj];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
@@ -180,106 +132,84 @@
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
-   if ([obj dereference] == NULL) {
-      id<ORIntVarArray> x = [obj array];
-      id<ORIntArray> a = [obj coef];
+   if (_gamma[obj.getId] == NULL) {
+      id<ORVarArray> x = [obj array];
+      id<ORFloatArray> a = [obj coef];
       [x visit: self];
-      id<MIPVariableArray> dx = [x dereference];
-      [a visit: self];
-      id<ORIntArray> da = [a dereference];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: da];
-      [obj setImpl: concreteObj];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: dx coef: a];
+      _gamma[obj.getId] = concreteObj;
       [_MIPsolver postObjective: concreteObj];
    }
 }
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) obj
 {
-   if ([obj dereference] == NULL) {
-      id<ORIntVarArray> x = [obj array];
-      id<ORIntArray> a = [obj coef];
+   if (_gamma[obj.getId] == NULL) {
+      id<ORVarArray> x = [obj array];
+      id<ORFloatArray> a = [obj coef];
       [x visit: self];
-      id<MIPVariableArray> dx = [x dereference];
-      [a visit: self];
-      id<ORIntArray> da = [a dereference];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: da];
-      [obj setImpl: concreteObj];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: dx coef: a];
+      _gamma[obj.getId] = concreteObj;
       [_MIPsolver postObjective: concreteObj];
    }
-   
 }
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-//   if ([c dereference] == NULL) {
-//      id<ORIntVarArray> x = [c vars];
-//      id<ORIntArray> a = [c coefs];
-//      ORInt cst = [c cst];
-//      [x visit: self];
-//      id<MIPVariableArray> dx = [x dereference];
-//      [a visit: self];
-//      id<ORIntArray> da = [a dereference];
-//      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: da cst: -cst];
-//      [c setImpl:concreteCstr];
-//      [_MIPsolver postConstraint: concreteCstr];
-//   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"]; 
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-//   if ([c dereference] == NULL) {
-//      id<ORIntVarArray> x = [c vars];
-//      id<ORIntArray> a = [c coefs];
-//      ORInt cst = [c cst];
-//      [x visit: self];
-//      id<MIPVariableArray> dx = [x dereference];
-//      [a visit: self];
-//      id<ORIntArray> da = [a dereference];
-//      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: da cst: -cst];
-//      [c setImpl:concreteCstr];
-//      [_MIPsolver postConstraint: concreteCstr];
-//   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
 }
 
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
 {
-   if ([c dereference] == NULL) {
+   if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORFloatArray> a = [c coefs];
       ORFloat cst = [c cst];
       [x visit: self];
-      id<MIPVariableArray> dx = [x dereference];
-      [a visit: self];
-      id<ORFloatArray> da = [a dereference];
-      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: da cst: -cst];
-      [c setImpl:concreteCstr];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: a cst: -cst];
+      _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
 -(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c
 {
-   if ([c dereference] == NULL) {
+   if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORFloatArray> a = [c coefs];
-      ORFloat cst = [c cst];
+      ORInt cst = [c cst];
       [x visit: self];
-      id<MIPVariableArray> dx = [x dereference];
-      [a visit: self];
-      id<ORFloatArray> da = [a dereference];
-      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: da cst: -cst];
-      [c setImpl:concreteCstr];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: a cst: -cst];
+      _gamma[c.getId] = concreteCstr;
       [_MIPsolver postConstraint: concreteCstr];
    }
 }
 
-
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   if ([e dereference] == NULL) {
-      id<ORInteger> n = [ORFactory integer: _MIPsolver value: [e value]];
-      [n makeImpl];
-      [e setImpl: n];
-   }
+}
+
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory integer: _MIPsolver value: [e initialValue]];
+}
+-(void) visitMutableFloatI: (id<ORMutableInteger>) e
+{
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory mutableFloat: _MIPsolver value: [e initialValue]];
+}
+
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory float: _MIPsolver value: [e floatValue]];
 }
 
 -(void) visitIntMatrix: (id<ORIntMatrix>) v
@@ -312,11 +242,11 @@
 }
 -(void) visitPacking: (id<ORPacking>) cstr
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
-   //@throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Algebraic constraints"];
+   // This is called when the constraint is stored in a data structure
 }
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
@@ -348,23 +278,11 @@
 }
 -(void) visitMinimize: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMinimize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_MIPsolver postObjective: concreteObj];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
 }
 -(void) visitMaximize: (id<ORObjectiveFunctionVar>) v
 {
-   if ([v dereference] == NULL) {
-      id<ORIntVar> o = [v var];
-      [o visit: self];
-      MIPObjectiveI* concreteObj = [_MIPsolver createObjectiveMaximize: [o dereference]];
-      [v setImpl: concreteObj];
-      [_MIPsolver postObjective: concreteObj];
-   }
+   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"]; 
 }
 -(void) visitEqualc: (id<OREqualc>) cstr
 {

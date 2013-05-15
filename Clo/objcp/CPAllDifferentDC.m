@@ -448,11 +448,11 @@ static void prune(CPAllDifferentDC* ad)
    findSCC(ad);
    for(ORInt k = 0; k < ad->_varSize; k++) {
       CPIntVarI* x = ad->_var[k];
-      ORBounds bx = [x bounds];
+      ORBounds bx = bounds(x);
       for(ORInt w = bx.min; w <= bx.max; w++) {
          if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
             if (memberDom(x,w)) {
-               [x remove: w];
+               removeDom(x, w);
             }
          }
       }

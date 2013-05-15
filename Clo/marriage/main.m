@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
       ORInt* rankWPtr = (ORInt*)rankW;
       
      
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
+      id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value:0];
       
       
       id<ORIntVarArray> husband = [ORFactory intVarArray: mdl range:RWomen domain: RMen];
@@ -64,11 +64,11 @@ int main(int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solveAll:^{
          NSLog(@"Start...");
-         [cp labelArray:husband orderedBy:^ORFloat(ORInt i) { return [husband[i] domsize];}];
-         [cp labelArray:wife orderedBy:^ORFloat(ORInt i) { return [wife[i] domsize];}];
-         [nbSolutions incr];
-         NSLog(@"Solution: H:%@",husband);
-         NSLog(@"Solution: W:%@",wife);
+         [cp labelArray:husband orderedBy:^ORFloat(ORInt i) { return [cp domsize:husband[i]];}];
+         [cp labelArray:wife orderedBy:^ORFloat(ORInt i) { return [cp domsize:wife[i]];}];
+         [nbSolutions incr:cp];
+         NSLog(@"Solution: H:%@",[cp gamma][husband.getId]);
+         NSLog(@"Solution: W:%@",[cp gamma][wife.getId]);
       }];
       NSLog(@"#solutions: %@",nbSolutions);
       NSLog(@"Solver: %@",cp);

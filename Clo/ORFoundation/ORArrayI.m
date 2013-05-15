@@ -500,15 +500,6 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
-/*
--(id<ORIdArray>) dereference
-{
-   if (_impl != nil)
-      return [_impl dereference];
-   else
-      return self;
-}
-*/
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitIdArray:self];
@@ -519,8 +510,7 @@
 // Matrix ------------------------------------------------------------------
 
 
-@implementation ORIdMatrixI
-{
+@implementation ORIdMatrixI {
    id*              _flat;
    ORInt           _arity;
    id<ORIntRange>* _range;
@@ -530,7 +520,6 @@
    ORInt*              _i;
    ORInt              _nb;
 }
-
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 {
    self = [super init];
@@ -552,7 +541,7 @@
    _flat = malloc(sizeof(id)*_nb);
    return self;
 }
--(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) matrix
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) matrix
 {
    self = [super init];
    _tracker = tracker;
@@ -570,8 +559,8 @@
    }
    _nb = matrix->_nb;
    _flat = malloc(sizeof(id) * _nb);
-   for (ORInt i=0 ; i < _nb; i++)
-      _flat[i] = [matrix->_flat[i] dereference];
+//   for (ORInt i=0 ; i < _nb; i++)
+//      _flat[i] = [matrix->_flat[i] dereference];
    return self;
 }
 
@@ -619,6 +608,10 @@
 -(id) flat: (ORInt) i
 {
    return _flat[i];
+}
+-(void) setFlat:(id) x at:(ORInt)i
+{
+   _flat[i] = x;
 }
 -(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {

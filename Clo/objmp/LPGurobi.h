@@ -29,7 +29,7 @@
 -(void) dealloc;
 
 -(void) addVariable: (LPVariableI*) var;
--(void) addConstraint: (LPConstraintI*) cstr;
+-(LPConstraintI*) addConstraint: (LPConstraintI*) cstr;
 -(void) delVariable: (LPVariableI*) var;
 -(void) delConstraint: (LPConstraintI*) cstr;
 -(void) addObjective: (LPObjectiveI*) obj;

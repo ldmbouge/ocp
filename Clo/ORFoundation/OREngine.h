@@ -12,7 +12,7 @@
 #import "ORUtilities/ORUtilities.h"
 #import "ORFoundation/ORTracker.h"
 
-@protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORTrail;
 
 @interface ORFailException : NSObject
@@ -20,9 +20,12 @@
 @end
 
 @protocol OREngine <NSObject,ORTracker>
+@end;
+
+@protocol ORSearchEngine <OREngine>
 -(ORStatus)        close;
--(bool)            closed;
--(void)            trackObject:(id)obj;
+-(ORBool)            closed;
+-(id)            trackMutable:(id)obj;
 -(NSMutableArray*) variables;
 -(id<ORTrail>) trail;
 -(ORStatus)propagate;

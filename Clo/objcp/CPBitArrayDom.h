@@ -47,14 +47,14 @@
 -(unsigned int*)        maxArray;
 -(unsigned int*)        lowArray;
 -(unsigned int*)        upArray;
--(bool)                 getBit:(unsigned int) idx;
--(ORStatus)             setBit:(unsigned int) idx to:(bool) val for:(id<CPBitVarNotifier>)x;
--(bool)                 isFree:(unsigned int) idx;
+-(ORBool)                 getBit:(unsigned int) idx;
+-(ORStatus)             setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x;
+-(ORBool)                 isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
 -(unsigned int)         msFreeBit;
 -(unsigned int)         midFreeBit;
 -(unsigned int)         randomFreeBit;
--(bool)                 member:(unsigned int*) val;
+-(ORBool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;
 -(unsigned int)         getMaxRank;

@@ -41,9 +41,9 @@ int test1()
          [cp label:y];
          [cp label:z];
          @autoreleasepool {
-            NSLog(@"values: %@",@[@(x.value),@(y.value),@(z.value)]);
+            NSLog(@"values: %@",@[@([cp intValue:x]),@([cp intValue:y]),@([cp intValue:z])]);
          }
-         assert([x value] % [y value] == [z value]);
+         assert([cp intValue:x] % [cp intValue:y] == [cp intValue:z]);
          nbSol++;
       }];
       ORInt nbc = 0;
@@ -75,9 +75,9 @@ int test2()
          [cp label:x];
          //[cp label:z];
          @autoreleasepool {
-            NSLog(@"values: %@",@[@(x.value),@(y),@(z.value)]);
+            NSLog(@"values: %@",@[@([cp intValue:x]),@(y),@([cp intValue:z])]);
          }
-         assert([x value] % y == [z value]);
+         assert([cp intValue:x] % y == [cp intValue:z]);
          nbSol++;
       }];
       ORInt nbc = 0;

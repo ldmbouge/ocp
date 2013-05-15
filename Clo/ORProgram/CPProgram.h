@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
 #import <ORProgram/CPHeuristic.h>
 #import <objcp/CPData.h>
 
@@ -31,8 +30,20 @@
 -(id<ORInformer>) propagateDone;
 @end
 
-@protocol CPCommonProgram <ORASolver>
+@protocol ORCPSolution <ORSolution>
+@end
+
+@protocol ORCPSolutionPool <ORSolutionPool>
+-(void) addSolution: (id<ORCPSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORCPSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORCPSolution>) best;
+@end
+
+@protocol CPCommonProgram  <ORASolver>
 -(void) setSource:(id<ORModel>)src;
+-(void) setGamma: (id*) gamma;
+-(id*)  gamma;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
@@ -41,7 +52,7 @@
 -(id<ORTracer>)      tracer;
 
 -(void)         addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
-//-(void)                 add: (id<ORConstraint>) c;
+-(void)                 add: (id<ORConstraint>) c;
 //-(void)                 add: (id<ORConstraint>) c annotation: (ORAnnotation) cons;
 -(void)               label: (id<ORIntVar>) var with: (ORInt) val;
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
@@ -53,6 +64,7 @@
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
+-(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
 
 -(void)               solve: (ORClosure) body;
@@ -91,9 +103,21 @@
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars;
 -(void) doOnSolution;
 -(void) doOnExit;
--(id<ORSolutionPool>) solutionPool;
--(id<ORSolutionPool>) globalSolutionPool;
--(ORInt)intValue:(id<ORIntVar>)x;
+-(id<ORCPSolutionPool>) solutionPool;
+-(id<ORCPSolution>) captureSolution;
+
+-(ORInt) intValue: (id) x;
+-(ORBool) bound: (id<ORIntVar>) x;
+-(ORInt)  min: (id<ORIntVar>) x;
+-(ORInt)  max: (id<ORIntVar>) x;
+-(ORInt)  domsize: (id<ORIntVar>) x;
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
+-(NSSet*) constraints: (id<ORVar>)x;
+
+-(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORBool) boolValue: (id<ORIntVar>) x;
+-(ORInt) maxBound: (id<ORIntVarArray>) x;
+
 @end
 
 // CPSolver with syntactic DFS Search
@@ -107,6 +131,9 @@
 
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart;
 -(void)              repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
+-(void)             perform: (ORClosure) body onLimit: (ORClosure) onRestart;
+-(void)           portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void)       switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 @end
 
 

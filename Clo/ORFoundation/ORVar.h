@@ -12,52 +12,33 @@
 #import <ORFoundation/ORExpr.h>
 #import "ORTracker.h"
 #import "ORArray.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 
 @protocol ORSnapshot
--(void) restoreInto: (NSArray*) av;
 -(ORInt)  intValue;
--(BOOL) boolValue;
+-(ORBool) boolValue;
 -(ORFloat) floatValue;
 @end
 
-@protocol ORSavable<NSObject>
+@protocol ORVar <ORObject,ORExpr>
 -(ORInt) getId;
--(id) snapshot;
--(void)restore:(id<ORSnapshot>)s;
-@end
-
-@protocol ORVar <ORObject,ORSavable,ORExpr>
--(ORInt) getId;
--(BOOL) bound;
--(NSSet*) constraints;
 @end
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
--(ORInt) value;
--(ORInt) intValue;
--(ORFloat) floatValue;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds) bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
--(ORInt)scale;
--(ORInt)shift;
--(ORInt)literal;
+-(ORInt) low;
+-(ORInt) up;
+-(ORBool) isBool;
+-(ORInt) scale;
+-(ORInt) shift;
+-(ORInt) literal;
 -(id<ORIntVar>)base;
 @end
 
 @protocol ORBitVar <ORVar>
--(BOOL) bound;
--(uint64)min;
--(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORBounds) bounds;
--(ORUInt) bitLength;
 -(ORInt)  domsize;
 -(ORULong) numPatterns;
 -(ORULong) maxRank;
@@ -68,14 +49,16 @@
 -(bool) isFree:(ORUInt)pos;
 -(ORUInt) lsFreeBit;
 -(ORUInt) msFreeBit;
+
+-(ORUInt)bitLength;
+
 -(NSString*)stringValue;
 @end
 
 @protocol ORFloatVar <ORVar>
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) min;
--(ORFloat) max;
+-(ORBool) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
 @end
 
 @protocol ORVarArray <ORIdArray>
@@ -121,4 +104,12 @@
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORASolver>) solver;
+@end
+
+@protocol ORVarLitterals <NSObject>
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntVar>) litteral: (ORInt) i;
+-(BOOL) exist: (ORInt) i;
+-(NSString*) description;
 @end

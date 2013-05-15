@@ -61,7 +61,7 @@
    CPIntVarI*  _y;
    ORInt _c;
 }
--(id) initCPEqualBC: (id) x and: (id) y  and: (ORInt) c;
+-(id) initCPEqualBC: (id<CPIntVar>) x and: (id<CPIntVar>) y  and: (ORInt) c;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*)allVars;

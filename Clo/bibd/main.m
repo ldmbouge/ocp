@@ -15,14 +15,14 @@
 
 #import "ORCmdLineArgs.h"
 
-void show(id<ORIntVarMatrix> M)
+void show(id<CPProgram> cp,id<ORIntVarMatrix> M)
 {
    id<ORIntRange> r0 = [M range:0];
    id<ORIntRange> r1 = [M range:1];
    for(ORInt i = r0.low ; i <= r0.up;i++) {
       for(ORInt j = r1.low ; j <= r1.up;j++) {
-         if ([[M at:i :j] bound])
-            printf("%d ",[[M at:i :j] min]);
+         if ([cp bound:[M at:i :j]])
+            printf("%d ",[cp intValue:[M at:i :j]]);
          else printf("? ");
       }
       printf("\n");
@@ -57,7 +57,7 @@ int main(int argc, const char * argv[])
          for(ORInt i=Rows.low;i<=Rows.up;i++)
             for(ORInt j=i+1;j <= v;j++)
                [mdl add: [Sum(mdl,x,Cols,[[M at:i :x] mul: [M at:j :x]]) eq:@(l)]];
-//               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eqi:l]];
+//               [mdl add: [Sum(mdl,x,Cols,[[[[M at:i :x] neg] or: [[M at:j :x] neg]] neg]) eq:@(l)]];
          for(ORInt i=1;i <= v-1;i++) {
             [mdl add: [ORFactory lex:All(mdl,ORIntVar, j, Cols, [M at:i+1 :j])
                                  leq:All(mdl,ORIntVar, j, Cols, [M at:i   :j])]];
@@ -68,15 +68,15 @@ int main(int argc, const char * argv[])
          }
 
          id<CPProgram> cp =  [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
+         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:[ORFactory flattenMatrix:M]];
          [cp solve:^{
-            NSLog(@"Start...");
-            //id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
-            [cp labelHeuristic:h];
-            //[cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [flat[i] domsize];}];
+            //NSLog(@"Start... %@",[[cp engine] model]);
+            id<ORIntVarArray> flat =[ORFactory flattenMatrix:M];
+            //[cp labelHeuristic:h];
+            [cp labelArray:flat orderedBy:^ORFloat(ORInt i) { return [cp domsize:flat[i]];}];
             //[cp labelArray:[ORFactory flattenMatrix:M]];
             NSLog(@"V=%d K=%d L=%d B=%d R=%d",v,k,l,b,r);
-            show(M);
+            show(cp,M);
          }];
          NSLog(@"Solver: %@",cp);
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);

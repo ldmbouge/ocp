@@ -41,7 +41,7 @@
 {
    _publishing = YES;
    //NSLog(@"BEFORE PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
-   id<ORTracer> tracer = [_solver tracer];   
+   id<ORTracer> tracer = [_solver tracer];
    id<ORCheckpoint> theCP = [tracer captureCheckpoint];
    ORHeist* stolen = [_controller steal];
    ORStatus ok = [tracer restoreCheckpoint:[stolen theCP] inSolver:[_solver engine]];
@@ -56,11 +56,13 @@
                                                                   control:[[CPGenerator alloc] initCPGenerator:base explorer:_solver onPool:_pool]];
                                     }];
    
+   //NSLog(@"PUBLISHED: - thread %d  - pool (%d) - Heist size(%d)",[NSThread threadID],[_pool size],[stolen sizeEstimate]);
    [stolen release];
    ok = [tracer restoreCheckpoint:theCP inSolver:[_solver engine]];
    assert(ok != ORFailure);
-   [theCP release];
+   [theCP letgo];
    //NSLog(@"AFTER  PUBLISH: %@ - thread %p",[_solver tracer],[NSThread currentThread]);
+
    _publishing = NO;
 }
 -(void)trust
@@ -91,7 +93,7 @@
    [self finitelyFailed];  // [ldm] This is necessary since we *are* a nested controller after all (finitelyFailed is inherited)
    assert(FALSE);
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return NO;
 }
@@ -163,13 +165,14 @@
       if (ofs >= 0) {
          id<ORCheckpoint> cp = _cpTab[ofs];
          ORStatus ok = [_tracer restoreCheckpoint:cp inSolver:[_solver engine]];
-         assert(ok != ORFailure);
-         [cp release];
+         //assert(ok != ORFailure);
+         [cp letgo];
          NSCont* k = _tab[ofs];
          _tab[ofs] = 0;
          --_sz;
          if (k && ok)
             [k call];
+         else [k letgo];
       } else break;
    } while(true);
    [self finitelyFailed];
@@ -184,7 +187,7 @@
    [_controller fail];
    assert(FALSE);
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return NO;
 }

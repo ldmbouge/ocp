@@ -13,9 +13,15 @@
 #import <ORProgram/LPProgram.h>
 
 // LPSolver
-@interface LPSolver : NSObject<LPProgram>
+@interface LPSolver : ORGamma<LPProgram>
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
 -(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORFloatVar>) x;
+-(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(id<LPColumn>) createColumn;
+-(void) addColumn: (id<LPColumn>) column;
+-(id<ORObjectiveValue>) objectiveValue;
+-(id<ORLPSolution>) captureSolution;
 @end
 
 // LPSolverFactory

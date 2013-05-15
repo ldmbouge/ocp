@@ -24,16 +24,3 @@
 -(ORUInt)getId;
 @end
 
-@interface ORModelingObjectI : ORObject<ORObject>
--(id) init;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
-@end;
-
-@interface ORDualUseObjectI : ORObject<ORObject>
--(id) init;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
-@end;

@@ -22,13 +22,13 @@
 +(id<CPGroup>)group:(id<CPEngine>)engine
 {
    id<CPGroup> g = [[CPGroup alloc] init:engine];
-   [engine trackObject:g];
+   [engine trackMutable:g];
    return g;
 }
 +(id<CPGroup>)bergeGroup:(id<CPEngine>)engine
 {
    id<CPGroup> g = [[CPBergeGroup alloc] init:engine];
-   [engine trackObject:g];
+   [engine trackMutable:g];
    return g;
 }
 @end

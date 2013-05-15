@@ -12,14 +12,11 @@
 #import "CPFirstFail.h"
 #import "CPEngine.h"
 
-@implementation CPFirstFail {
-   id<CPEngine>    _engine;
-}
+@implementation CPFirstFail
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    return self;
