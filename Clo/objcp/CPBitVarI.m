@@ -246,6 +246,13 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    return [_dom msFreeBit];
 }
+-(unsigned int) midFreeBit
+{
+//   unsigned int freeBits = [_dom domsize];
+//   unsigned int midFreeBit = [_dom midFreeBit];
+//   NSLog(@"%@ mid free bit is %u",_dom, midFreeBit);
+   return [_dom midFreeBit];
+}
 -(ORStatus) bind:(ORUInt)bit to:(BOOL)value
 {
    return [_dom setBit:bit to:value for:self];

@@ -203,8 +203,8 @@
    for(ORInt k=0;k <= 15;k++)
       [o set:bitVars[k] at:k];
 
-   id<CPHeuristic> h = [cp createBitVarABS:(id<ORVarArray>)o];
-//   id<CPHeuristic> h = [cp createBitVarABS];
+//   id<CPHeuristic> h = [cp createBitVarABS:(id<ORVarArray>)o];
+   id<CPHeuristic> h = [cp createBitVarABS];
    [cp solve: ^{
       NSLog(@"Search");
       for(int i=0;i<4;i++)
@@ -213,13 +213,13 @@
          NSLog(@"%@\n\n",digestVars[i]);
       }
       NSLog(@"Message Blocks (With Data Recovered)");
-      __block ORUInt maxFail = 0x4000;
+//      __block ORUInt maxFail = 0x0000000000004000;
       clock_t searchStart = clock();
-      [cp repeat:^{
-         [cp limitFailures:maxFail
-                        in:^{[cp labelBitVarHeuristic:h];}];}
-                  onRepeat:^{maxFail<<=1;}];
-//      [cp labelBitVarHeuristic:h];
+//      [cp repeat:^{
+//         [cp limitFailures:maxFail
+//                        in:^{[cp labelBitVarHeuristic:h];}];}
+//        onRepeat:^{maxFail<<=1;NSLog(@"Restart");}];
+      [cp labelBitVarHeuristic:h];
       clock_t searchFinish = clock();
 
          for(int j=0;j<16;j++){

@@ -303,6 +303,34 @@
    }
    return -1;
 }
+-(unsigned int) midFreeBit
+{
+   uint32 midbit = _freebits._val/2;
+   uint32 freeBitsInWord;
+   uint32 numFreeBitsInWord;
+   for(int i=_wordLength-1; i>=0; i--){
+      //      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
+      freeBitsInWord = (_low[i]._val^_up[i]._val);
+      numFreeBitsInWord = __builtin_popcount(freeBitsInWord);
+//      NSLog(@"Mid bit of %@ is %u",self, midbit);
+      if (midbit <= numFreeBitsInWord) {
+         for (int j=0; j<32; j++) {
+            if (freeBitsInWord & 0x1){
+               midbit--;
+               numFreeBitsInWord--;
+            }
+            if (midbit <=0)
+               return (i*32)+j;
+            freeBitsInWord >>= 1;
+//            NSLog(@"Mid bit of %x is %u",freeBitsInWord, midbit);
+         }
+      }
+      else
+         midbit -= freeBitsInWord;
+   }
+   
+   return -1;
+}
 
 -(void) updateFreeBitCount
 {

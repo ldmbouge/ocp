@@ -52,6 +52,7 @@
 -(bool)                 isFree:(unsigned int) idx;
 -(unsigned int)         lsFreeBit;
 -(unsigned int)         msFreeBit;
+-(unsigned int)         midFreeBit;
 -(unsigned int)         randomFreeBit;
 -(bool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;

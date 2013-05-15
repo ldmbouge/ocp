@@ -54,7 +54,7 @@ void twoByteAllMD4(){
       }
       mask[i] = 0xFFFFFFFF;
    }
-   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD4DataFF-twobyte.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD4DataABS-twobyte-norestart-allvar-lsb.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
    
    [pool drain];
 
@@ -148,7 +148,7 @@ int main(int argc, const char * argv[])
 //   myMD5 = [MD5 initMD5];
 //   [str appendString:[myMD5 preimage:filename withMask:mask]];
 //   [myMD5 dealloc];
-   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5DataABS-twobyte-fixedMaxprobes-conf.1.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
+   [str writeToFile:@"/Users/gregjohnson/research/code/Comet/sandbox/bv/ObjCP-MD5Data-LMSSG-ABS-twobyte-norestart-unrestricted-midfree.csv" atomically:YES encoding:NSUTF8StringEncoding error:NULL];
 
    [pool drain];
    return 0;

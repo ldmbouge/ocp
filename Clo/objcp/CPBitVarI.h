@@ -87,6 +87,7 @@ typedef struct  {
 -(unsigned int) lsFreeBit;
 -(unsigned int) msFreeBit;
 -(unsigned int) randomFreeBit;
+-(unsigned int) midFreeBit;
 -(BOOL) member:(unsigned int*)v;
 -(bool) isFree:(ORUInt)pos;
 // update

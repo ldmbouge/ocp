@@ -409,8 +409,8 @@
    _vars = nil;
    _rvars = rvars;
    _varBackup = _valBackup = nil;
-   _agingRate = 0.5;
-   _conf      = 0.1;
+   _agingRate = 0.999;
+   _conf      = 0.2;
    return self;
 }
 - (id)copyWithZone:(NSZone *)zone
@@ -516,7 +516,14 @@
 //   ORULong r = [x maxRank]/2;
 //   ORUInt v =  *[x atRank:r];
 //   return v;
-   return [(CPBitVarI*)x randomFreeBit];
+   CPBitVarI* xVar = [x dereference];
+   if ([xVar lsFreeBit] == 0)
+      if ([xVar msFreeBit] == [xVar bitLength])
+         return [xVar lsFreeBit];
+      else
+         return [xVar lsFreeBit];
+   else
+      return [xVar lsFreeBit];
 }
 -(BOOL)moreProbes
 {
