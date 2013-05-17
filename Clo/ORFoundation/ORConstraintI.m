@@ -17,13 +17,12 @@
 -(ORConstraintI*) initORConstraintI
 {
    self = [super init];
-   _impl = nil;   
    return self;
 }
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@",[self class],self,_impl];
+   [buf appendFormat:@"<%@ : %p>",[self class],self];
    return buf;
 }
 -(void) visit: (id<ORVisitor>) visitor
@@ -66,7 +65,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@",[self class],self,_impl];
+   [buf appendFormat:@"<%@ : %p> -> ",[self class],self];
    [buf appendString:@"{"];
    [_content enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"%@,",[obj description]];
@@ -163,7 +162,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %d)",[self class],self,_impl,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %d)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -198,7 +197,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %d)",[self class],self,_impl,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ != %d)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -233,7 +232,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %d)",[self class],self,_impl,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <= %d)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -268,7 +267,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ >= %d)",[self class],self,_impl,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ >= %d)",[self class],self,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -317,7 +316,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ + %d)",[self class],self,_impl,_x,_y,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ + %d)",[self class],self,_x,_y,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -367,7 +366,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %d * %@ + %d)",[self class],self,_impl,_y,_a,_x,_b];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %d * %@ + %d)",[self class],self,_y,_a,_x,_b];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -450,7 +449,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ != %@ + %d)",[self class],self,_impl,_x,_y,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ != %@ + %d)",[self class],self,_x,_y,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -479,7 +478,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %d)",[self class],self,_impl,_x,_y,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <= %@ + %d)",[self class],self,_x,_y,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -531,7 +530,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ + %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ + %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -576,7 +575,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <= %@ + %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <= %@ + %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -629,7 +628,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ ^ 2)",[self class],self,_impl,_z,_x];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ ^ 2)",[self class],self,_z,_x];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -658,7 +657,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ MOD %@)",[self class],self,_impl,_z,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ MOD %@)",[self class],self,_z,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -701,7 +700,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ MOD %d)",[self class],self,_impl,_z,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ MOD %d)",[self class],self,_z,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -746,7 +745,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == abs(%@))",[self class],self,_impl,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == abs(%@))",[self class],self,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -788,7 +787,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ || %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ || %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -829,7 +828,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@ && %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@ && %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -870,7 +869,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == (%@ => %@))",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == (%@ => %@))",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -913,7 +912,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@[%@] == %@)",[self class],self,_impl,_y,_idx,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -961,7 +960,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@[%@] == %@)",[self class],self,_impl,_y,_idx,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1013,7 +1012,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ == %d)",[self class],self,_impl,_b,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %d)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1054,7 +1053,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ != %d)",[self class],self,_impl,_b,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %d)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1097,7 +1096,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ == %@)",[self class],self,_impl,_b,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ == %@)",[self class],self,_b,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1144,7 +1143,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ != %@)",[self class],self,_impl,_b,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ != %@)",[self class],self,_b,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1189,7 +1188,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ <= %d)",[self class],self,_impl,_b,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %d)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1232,7 +1231,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ <= %@)",[self class],self,_impl,_b,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ <= %@)",[self class],self,_b,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1277,7 +1276,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ >= %d)",[self class],self,_impl,_b,_x,_c];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %d)",[self class],self,_b,_x,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1320,7 +1319,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <=> (%@ >= %@)",[self class],self,_impl,_b,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <=> (%@ >= %@)",[self class],self,_b,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1366,7 +1365,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sumbool(%@) == %d)",[self class],self,_impl,_ba,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) == %d)",[self class],self,_ba,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1405,7 +1404,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sumbool(%@) <= %d)",[self class],self,_impl,_ba,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) <= %d)",[self class],self,_ba,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1444,7 +1443,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sumbool(%@) >= %d)",[self class],self,_impl,_ba,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sumbool(%@) >= %d)",[self class],self,_ba,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1483,7 +1482,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@) == %d)",[self class],self,_impl,_ia,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@) == %d)",[self class],self,_ia,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1522,7 +1521,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@) <= %d)",[self class],self,_impl,_ia,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@) <= %d)",[self class],self,_ia,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1562,7 +1561,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@) >= %d)",[self class],self,_impl,_ia,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@) >= %d)",[self class],self,_ia,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1604,7 +1603,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -1650,7 +1649,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) <= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 -(void) visit: (id<ORVisitor>) v
@@ -1696,7 +1695,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %d)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %d)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 -(void)visit: (id<ORVisitor>) v
@@ -1742,7 +1741,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) >= %f)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) >= %f)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 -(void) visit: (id<ORVisitor>) v
@@ -1788,7 +1787,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (sum(%@,%@) <= %f)",[self class],self,_impl,_ia,_coefs,_c];
+   [buf appendFormat:@"<%@ : %p> -> (sum(%@,%@) <= %f)",[self class],self,_ia,_coefs,_c];
    return buf;
 }
 -(void) visit: (id<ORVisitor>) v
@@ -2016,7 +2015,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = lexleq(%@,%@)>",[self class],self,_impl,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> lexleq(%@,%@)>",[self class],self,_x,_y];
    return buf;
 }
 -(NSSet*)allVars
@@ -2052,7 +2051,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = circuit(%@)>",[self class],self,_impl,_x];
+   [buf appendFormat:@"<%@ : %p> -> circuit(%@)>",[self class],self,_x];
    return buf;
 }
 -(NSSet*)allVars
@@ -2085,7 +2084,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = nocycle(%@)>",[self class],self,_impl,_x];
+   [buf appendFormat:@"<%@ : %p> -> nocycle(%@)>",[self class],self,_x];
    return buf;
 }
 -(NSSet*)allVars
@@ -2120,7 +2119,7 @@
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = packOne(%@,%@,%d,%@)>",[self class],self,_impl,_item,_itemSize,_bin,_binSize];
+   [buf appendFormat:@"<%@ : %p> -> packOne(%@,%@,%d,%@)>",[self class],self,_item,_itemSize,_bin,_binSize];
    return buf;
 }
 -(id<ORIntVarArray>) item
@@ -2205,7 +2204,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = packing(%@,%@,%@)>",[self class],self,_impl,_x,_itemSize,_load];
+   [buf appendFormat:@"<%@ : %p> -> packing(%@,%@,%@)>",[self class],self,_x,_itemSize,_load];
    return buf;
 }
 -(NSSet*)allVars
@@ -2241,7 +2240,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = knapsack(%@,%@,%@)>",[self class],self,_impl,_x,_w,_c];
+   [buf appendFormat:@"<%@ : %p> -> knapsack(%@,%@,%@)>",[self class],self,_x,_w,_c];
    return buf;
 }
 -(id<ORIntVarArray>) item
@@ -2323,7 +2322,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    self = [super init];
    _var = x;
-   _impl = nil;
    return self;
 }
 -(id<ORIntVar>) var
@@ -2333,10 +2331,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORObjectiveValue>)value
 {
   return NULL;
-}
--(ORBool) concretized
-{
-   return _impl != nil;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
@@ -2474,16 +2468,11 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    self = [super init];
    _expr = e;
-   _impl = nil;
    return self;
 }
 -(id<ORExpr>) expr
 {
    return _expr;
-}
--(ORBool) concretized
-{
-   return _impl != nil;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
@@ -2497,7 +2486,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
    self = [super init];
    _array = array;
    _coef = coef;
-   _impl = nil;
    return self;
 }
 -(id<ORVarArray>) array
@@ -2507,10 +2495,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(id<ORFloatArray>) coef
 {
    return _coef;
-}
--(ORBool) concretized
-{
-   return _impl != nil;
 }
 -(void) visit: (id<ORVisitor>) visitor
 {
@@ -2539,14 +2523,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitMinimizeVar:self];
 }
--(id<ORObjectiveValue>) value
-{
-   return [((id<ORSearchObjectiveFunction>) _impl) value];
-}
--(id<ORObjectiveValue>) primalBound
-{
-   return [_impl primalBound];
-}
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_var, nil] autorelease];
@@ -2573,10 +2549,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>) v
 {
    [v visitMaximizeVar:self];
-}
--(id<ORObjectiveValue>) value
-{
-   return [((id<ORSearchObjectiveFunction>) _impl) value];
 }
 -(NSSet*)allVars
 {
@@ -2605,10 +2577,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitMaximizeExpr:self];
 }
--(id<ORObjectiveValue>) value
-{
-   return [((ORObjectiveFunctionI*) _impl) value];
-}
 @end
 
 @implementation ORMinimizeExprI
@@ -2632,10 +2600,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 {
    [v visitMinimizeExpr:self];
 }
--(id<ORObjectiveValue>) value
-{
-   return [((ORObjectiveFunctionI*) _impl) value];
-}
 @end
 
 @implementation ORMaximizeLinearI
@@ -2658,10 +2622,6 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitMaximizeLinear:self];
-}
--(id<ORObjectiveValue>) value
-{
-   return [((ORObjectiveFunctionI*) _impl) value];
 }
 @end
 
@@ -2714,7 +2674,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ == %@)",[self class],self,_impl,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %@)",[self class],self,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2755,7 +2715,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ | %@ = %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ | %@ = %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2796,7 +2756,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ & %@ = %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ & %@ = %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2831,7 +2791,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ ~ %@)",[self class],self,_impl,_x,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ ~ %@)",[self class],self,_x,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2872,7 +2832,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ ^ %@ = %@)",[self class],self,_impl,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ ^ %@ = %@)",[self class],self,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2913,7 +2873,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <<%d = %@)",[self class],self,_impl,_x,_places,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <<%d = %@)",[self class],self,_x,_places,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -2954,7 +2914,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ <<<%d = %@)",[self class],self,_impl,_x,_places,_y];
+   [buf appendFormat:@"<%@ : %p> -> (%@ <<<%d = %@)",[self class],self,_x,_places,_y];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -3012,7 +2972,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ + %@ [cin %@] = %@ [cout %@])",[self class],self,_impl,_x,_y,_ci,_z,_co];
+   [buf appendFormat:@"<%@ : %p> -> (%@ + %@ [cin %@] = %@ [cout %@])",[self class],self,_x,_y,_ci,_z,_co];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v
@@ -3055,7 +3015,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 -(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"<%@ : %p> -> %@ = (%@ true if (x=%@)  equals %@ and false if x equals %@.])",[self class],self,_impl,_w,_x,_y,_z];
+   [buf appendFormat:@"<%@ : %p> -> (%@ true if (x=%@)  equals %@ and false if x equals %@.])",[self class],self,_w,_x,_y,_z];
    return buf;
 }
 -(void)visit:(id<ORVisitor>)v

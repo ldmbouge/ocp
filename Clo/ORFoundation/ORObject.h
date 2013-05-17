@@ -15,7 +15,7 @@
 // pvh: Do I need the implementation to be visible
 
 @interface ORObject : NSObject<ORObject> {
-   id      _impl;
+   //id      _impl;
    ORUInt  _name;
    BOOL    _ba[4];
 }

@@ -422,7 +422,6 @@
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>) value;
--(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -434,7 +433,6 @@
 -(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
--(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -444,38 +442,31 @@
 }
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) expr;
 -(id<ORExpr>) expr;
--(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
 -(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x;
--(id<ORObjectiveValue>)value;
 @end
 
 @interface ORMaximizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
 -(ORMaximizeVarI*) initORMaximizeVarI: (id<ORIntVar>) x;
--(id<ORObjectiveValue>)value;
 @end
 
 @interface ORMinimizeExprI : ORObjectiveFunctionExprI<ORObjectiveFunctionExpr>
 -(ORMinimizeExprI*) initORMinimizeExprI: (id<ORExpr>) e;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORMaximizeExprI : ORObjectiveFunctionExprI<ORObjectiveFunctionExpr>
 -(ORMaximizeExprI*) initORMaximizeExprI: (id<ORExpr>) e;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORMinimizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
 -(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORMaximizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveValue>) value;
 @end
 
 

@@ -15102,6 +15102,7 @@
 				5BE1217E173C75A3000C9AA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BE5A7F6158A8390006703CB /* Build configuration list for PBXNativeTarget "fdmul2" */ = {
 			isa = XCConfigurationList;

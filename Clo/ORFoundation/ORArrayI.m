@@ -403,7 +403,6 @@
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);
    _array -= _low;
-   _impl = nil;
    return self;
 }
 -(void) dealloc

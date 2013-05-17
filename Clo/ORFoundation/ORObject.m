@@ -17,7 +17,7 @@
 -(id)init
 {
    [super init];
-   _impl = NULL;
+   //_impl = NULL;
    _name = -1;
    memset(_ba,0,sizeof(_ba));
    return self;

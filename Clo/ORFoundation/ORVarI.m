@@ -23,7 +23,6 @@
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _domain = domain;
    _hasBounds = true;
@@ -40,7 +39,6 @@
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
@@ -50,7 +48,6 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
@@ -65,10 +62,7 @@
 }
 -(NSString*) description
 {
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
-   else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_ba[0] ? 'D':'S',_impl];
+   return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
 }
 -(ORInt) value
 {
@@ -233,10 +227,7 @@
 -(NSString*) description
 {
    char d = _ba[0] ? 'D':'S';
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : nil)",_name,[_domain description],d,_a,_x,_b];
-   else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : %@)",_name,[_domain description],d,_a,_x,_b,_impl];
+   return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d)",_name,[_domain description],d,_a,_x,_b];
 }
 -(ORInt)scale
 {
@@ -305,7 +296,6 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _low = low;
    _up = up;
@@ -316,7 +306,6 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track up: (ORFloat) up
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _low = 0;
    _up = up;
@@ -327,7 +316,6 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _hasBounds = false;
    [track trackVariable: self];
@@ -340,7 +328,6 @@
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
@@ -349,7 +336,6 @@
 -(id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
@@ -362,10 +348,7 @@
 }
 -(NSString*) description
 {
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
-   else
-      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
 }
 //-(ORFloat) value
 //{
@@ -442,7 +425,6 @@
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
    self = [super init];
-   _impl  = nil;
    _bLen = len;
    _nb = (_bLen / 32) + ((_bLen % 32) ? 1 : 0);
    _low = malloc(sizeof(ORUInt)*_nb);
@@ -484,7 +466,6 @@
 
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_bLen];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_nb];
@@ -495,7 +476,6 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_bLen];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_nb];
@@ -513,10 +493,7 @@
 }
 -(NSString*) description
 {
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(nil)",_name];
-   else
-      return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(%@)",_name,_impl];
+   return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d",_name];
 }
 -(NSString*)stringValue
 {

@@ -1338,8 +1338,8 @@
       id<CPIntVar> sx = NULL;
       ORLong bestRand = 0x7fffffffffffffff;
       for(ORInt i=0;i<sz;i++) {
-         if ([cx[i] bound]) continue;
          ORInt cds = [cx[i] domsize];
+         if (cds==1) continue;
          if (cds < sd) {
             sd = cds;
             sx = cx[i];
@@ -1353,13 +1353,14 @@
          }
       }
       if (sx == NULL) break;
-      while (![sx bound]) {
-         ORInt md = [sx min];
-         [self try:^{
-            [self labelImpl:sx with:md];
+      ORBounds xb = [sx bounds];
+      while (xb.min != xb.max) {
+         [_search try:^{
+            [self labelImpl:sx with:xb.min];
          } or:^{
-            [self diffImpl:sx with:md];
+            [self diffImpl:sx with:xb.min];
          }];
+         xb = [sx bounds];
       }
    } while(true);
 }
