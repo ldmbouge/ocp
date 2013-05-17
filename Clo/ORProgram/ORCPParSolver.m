@@ -264,6 +264,10 @@
 {
    [[self worker] labelArray: x orderedBy: orderedBy];
 }
+-(void) labelArrayFF: (id<ORIntVarArray>) x
+{
+   [[self worker] labelArrayFF:x];
+}
 -(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
 {
    [[self worker] labelHeuristic: h restricted:av];

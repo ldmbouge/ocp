@@ -31,3 +31,6 @@
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 
+
+ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
+void failNow();

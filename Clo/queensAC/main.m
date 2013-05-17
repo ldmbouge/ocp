@@ -39,14 +39,14 @@ int main(int argc, const char * argv[])
          [mdl add: [ORFactory alldifferent: x annotation: DomainConsistency]];
          [mdl add: [ORFactory alldifferent: xp annotation:DomainConsistency]];
          [mdl add: [ORFactory alldifferent: xn annotation:DomainConsistency]];
-         
+         /*
          @autoreleasepool {
             for(id<ORConstraint> c in [mdl constraints]) {
                NSSet* av = [c allVars];
                NSLog(@"Constraint[%d] has: %@",c.getId,av);
             }
          }
-         
+         */
          id<CPProgram> cp = [args makeProgram:mdl];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
@@ -55,10 +55,12 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             [cp labelArrayFF: x];
              @synchronized(cp) {
                 nbSol++;
              }
+             [[cp explorer] fail];
           }];
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);

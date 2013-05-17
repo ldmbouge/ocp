@@ -64,7 +64,7 @@ void splitUpFF(id<CPProgram> cp,id<ORIntVarArray> vars)
       ORInt si = [sel min];
       if (si != MAXINT) {
          found = YES;
-         ORInt mid = ([vars[si] min] + [vars[si] max]) / 2;
+         ORInt mid = ([cp min:vars[si]] + [cp max:vars[si]]) / 2;
          [cp try:^{
             [cp gthen:vars[si] with:mid];
          } or:^{

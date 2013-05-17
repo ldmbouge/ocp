@@ -1324,6 +1324,47 @@
    } while (true);
    [select release];
 }
+
+-(void) labelArrayFF:(id<ORIntVarArray>) x
+{
+   const ORInt sz = x.range.size;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=x.range.low;i <= x.range.up;i++)
+      cx[i - x.range.low]  = _gamma[x[i].getId];
+   id<ORRandomStream> tie = [ORCrFactory randomStream];
+   [_trail trailClosure:^{ [tie release];}];
+   do {
+      ORInt sd  = FDMAXINT;
+      id<CPIntVar> sx = NULL;
+      ORLong bestRand = 0x7fffffffffffffff;
+      for(ORInt i=0;i<sz;i++) {
+         if ([cx[i] bound]) continue;
+         ORInt cds = [cx[i] domsize];
+         if (cds < sd) {
+            sd = cds;
+            sx = cx[i];
+            bestRand = [tie next];
+         } else if (cds==sd) {
+            ORLong nr = [tie next];
+            if (nr < bestRand) {
+               sx = cx[i];
+               bestRand = nr;
+            }
+         }
+      }
+      if (sx == NULL) break;
+      while (![sx bound]) {
+         ORInt md = [sx min];
+         [self try:^{
+            [self labelImpl:sx with:md];
+         } or:^{
+            [self diffImpl:sx with:md];
+         }];
+      }
+   } while(true);
+}
+
+
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
    [self labelHeuristic:h withConcrete:(id)[h allIntVars]];
@@ -1516,9 +1557,11 @@
 
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
 {
-   id<ORIntVarArray> crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
-      return _gamma[rvars[k].getId];
-   }];
+   id<ORIntVarArray> crv = nil;
+   if (rvars)
+      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+         return _gamma[rvars[k].getId];
+      }];
    id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:crv];
    [self addHeuristic:h];
    return h;

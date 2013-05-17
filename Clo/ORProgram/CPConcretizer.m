@@ -195,7 +195,7 @@
       [ax visit: self];
       [low visit: self];
       [up visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory cardinality: _gamma[ax.getId] low: _gamma[low.getId] up: _gamma[up.getId] annotation: n];
+      id<CPConstraint> concreteCstr = [CPFactory cardinality: _gamma[ax.getId] low: low up: up annotation: n];
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }

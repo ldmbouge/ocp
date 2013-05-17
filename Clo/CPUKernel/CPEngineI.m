@@ -462,18 +462,18 @@ ORStatus propagateFDM(CPEngineI* fdm)
    if (fdm->_propagating > 0)
       return ORDelay;
    ++fdm->_propagating;
-   ORStatus status = fdm->_status = ORSuspend;
-   bool done = false;
+   fdm->_status = ORSuspend;
    CPAC5Queue* ac5 = fdm->_ac5;
    CPAC3Queue** ac3 = fdm->_ac3;
-   id<CPConstraint>* last = &fdm->_last;
-   *last = nil;
-   ORInt nbp = 0;
-   @try {
+   __block ORInt nbp = 0;
+   return tryfail(^ORStatus{
+      id<CPConstraint>* last = &fdm->_last;
+      *last = nil;
+      ORStatus status = ORSuspend;
+      BOOL done = NO;
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(ac5)) {
-                        
             id<CPAC5Event> evt = deQueueAC5(ac5);
             nbp += [evt execute];
          }
@@ -504,8 +504,8 @@ ORStatus propagateFDM(CPEngineI* fdm)
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
       return status;
-   }
-   @catch (ORFailException *exception) {
+   }, ^ORStatus{
+      id<CPConstraint>* last = &fdm->_last;
       while (ISLOADED(ac3[ALWAYS_PRIO])) {
          ORStatus as = executeAC3(AC3deQueue(ac3[ALWAYS_PRIO]), last);
          nbp += as != ORSkip;
@@ -516,62 +516,17 @@ ORStatus propagateFDM(CPEngineI* fdm)
       AC5reset(ac5);
       if (fdm->_propagFail)
          [fdm->_propagFail notifyWith:[*last getId]];
-      [exception release];
+      //[exception release];
       fdm->_status = ORFailure;
       fdm->_nbpropag += nbp;
       --fdm->_propagating;
       return ORFailure;
-   } 
+   });
 }
 
 -(ORStatus) propagate
 {
-   if (_propagating > 0)
-      return ORDelay;
-   _last = nil;
-   ++_propagating;
-   ORStatus status = _status = ORSuspend;
-   bool done = false;
-   @try {
-      while (!done) {
-         // AC5 manipulates the list
-         while (AC5LOADED(_ac5)) {
-            id<CPAC5Event> evt = deQueueAC5(_ac5);
-            _nbpropag += [evt execute];
-         }
-         // Processing AC3
-         int p = HIGHEST_PRIO;
-         while (p>=LOWEST_PRIO && !ISLOADED(_ac3[p]))
-            --p;
-         done = p < LOWEST_PRIO;
-         while (!done) {
-            status = executeAC3(AC3deQueue(_ac3[p]),&_last);
-            _nbpropag += status !=ORSkip;
-            if (AC5LOADED(_ac5))
-               break;
-            p = HIGHEST_PRIO;
-            while (p >= LOWEST_PRIO && !ISLOADED(_ac3[p]))
-               --p;
-            done = p < LOWEST_PRIO;
-         }
-      }
-      if (_propagDone)
-         [_propagDone notify];
-      _status = status;
-      --_propagating;
-      return _status;
-   }
-   @catch (ORFailException *exception) {
-      for(ORInt p=NBPRIORITIES-1;p>=0;--p)
-         AC3reset(_ac3[p]);
-      AC5reset(_ac5);
-      if (_propagFail)
-         [_propagFail notifyWith:[_last getId]];
-      [exception release];
-      _status = ORFailure;
-      --_propagating;
-      return _status;
-   }
+   return propagateFDM(self);
 }
 
 static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
@@ -588,22 +543,21 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 -(ORStatus) enforceObjective
 {
    if (_objective == nil) return ORSuspend;
-   @try {
+   _status = tryfail(^ORStatus{
       _status = ORSuspend;
       ORStatus ok = [_objective check];
       if (ok)
          ok = propagateFDM(self);// [self propagate];
       return ok;
-   } @catch (ORFailException *exception) {
-      [exception release];
-      _status = ORFailure;
-   }
+   }, ^ORStatus{
+      return ORFailure;
+   });
    return _status;
 }
 
 -(ORStatus) post: (id<ORConstraint>) c
 {
-   @try {
+   _status = tryfail(^ORStatus{
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
       ORStatus pstatus = internalPropagate(self,status);
@@ -615,14 +569,10 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
             [_cStore removeObjectAtIndex:ofs];
          }];
       }
-   } @catch (ORFailException* ex) {
-#if defined(__linux__)      
-      [ex release];
-#else
-      CFRelease(ex);
-#endif
-      _status = ORFailure;
-   }
+      return ORSuspend;
+   }, ^ORStatus{
+      return ORFailure;
+   });
    return _status;
 }
 
@@ -661,28 +611,26 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
 
 -(ORStatus) enforce: (Void2ORStatus) cl
 {
-   @try {
+   _status = tryfail(^ORStatus{
       ORStatus status = cl();
-      _status = internalPropagate(self,status);
-   } @catch (ORFailException *exception) {
-      [exception release];
-      _status = ORFailure;
-   }
+      return internalPropagate(self,status);
+   }, ^ORStatus{
+      return ORFailure;
+   });
    return _status;
 }
 -(ORStatus) atomic:(Void2ORStatus)cl
 {
    ORInt oldPropag = _propagating;
-   @try {
+   _status = tryfail(^ORStatus{
       _propagating++;
       ORStatus status = cl();
       _propagating--;
-      _status = internalPropagate(self,status);
-   } @catch (ORFailException* exception) {
-      [exception release];
+      return internalPropagate(self,status);
+   }, ^ORStatus{
       _propagating = oldPropag;
-      _status = ORFailure;
-   }
+      return ORFailure;
+   });
    return _status;
 }
 

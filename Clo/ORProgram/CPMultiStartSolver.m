@@ -306,6 +306,10 @@
 {
    [[self worker] labelArray: x];
 }
+-(void) labelArrayFF: (id<ORIntVarArray>) x
+{
+   [[self worker] labelArrayFF:x];
+}
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
    [[self worker] labelArray: x orderedBy: orderedBy];

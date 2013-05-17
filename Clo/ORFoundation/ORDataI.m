@@ -170,7 +170,7 @@
 }
 -(ORInt) intValue: (id<ORGamma>) solver
 {
-   return _value;
+   return [(id)[solver concretize:self] intValue];
 }
 -(ORInt) value: (id<ORGamma>) solver
 {

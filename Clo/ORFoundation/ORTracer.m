@@ -11,6 +11,7 @@
 
 #import <ORFoundation/ORFoundation.h>
 #import <ORFoundation/ORTracer.h>
+#import <CPUKernel/CPTypes.h>
 #import "ORTrailI.h"
 #include <pthread.h>
 
@@ -715,7 +716,7 @@ static void initPool()
          ORCommandList* theList = peekAt(toRestore,j);
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
-         @try {
+         ORStatus s = tryfail(^ORStatus{
             BOOL pOk = [theList apply:^BOOL(id<ORCommand> c) {
                return [c doIt] != ORFailure;
             }];
@@ -726,11 +727,14 @@ static void initPool()
             [fdm propagate];
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
-         } @catch(ORFailException* ex) {
+            return ORSuspend;
+         }, ^ORStatus{
             [_cmds pushCommandList:theList];
             assert([_cmds size] == [_trStack size]);
             return ORFailure;
-         } 
+         });
+         if (s==ORFailure)
+            return s;
       }
       return [fdm enforceObjective];
    }
@@ -741,7 +745,7 @@ static void initPool()
 {
    [_trStack pushNode: _lastNode++];
    [_trail incMagic];
-   @try {
+   return tryfail(^ORStatus{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-variable"
       bool ok = [p apply:^bool(id<ORCommand> c) {
@@ -753,10 +757,10 @@ static void initPool()
       [_cmds pushCommandList:[p theList]];
       assert([_cmds size] == [_trStack size]);
       return [fdm propagate];
-   } @catch(ORFailException* ex) {
+   }, ^ORStatus{
       [_cmds pushCommandList:[p theList]];
       return ORFailure;
-   }
+   });
 }
 
 -(NSString*)description

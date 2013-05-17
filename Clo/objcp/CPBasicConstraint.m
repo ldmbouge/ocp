@@ -2465,14 +2465,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(ORStatus) check 
 {
-   @try {
+   return tryfail(^ORStatus{
       [_x updateMax: _primalBound - 1];
-   }
-   @catch (ORFailException* e) {
-      [e release];
+      return ORSuspend;
+   }, ^ORStatus{
       return ORFailure;
-   }
-   return ORSuspend;
+   });
 }
 -(id<ORObjectiveValue>) primalBound
 {

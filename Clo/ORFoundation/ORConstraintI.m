@@ -80,6 +80,10 @@
       block(obj);
    }];
 }
+-(NSSet*)allVars
+{
+   return [[NSSet alloc] init];
+}
 
 -(void) visit: (id<ORVisitor>) visitor
 {

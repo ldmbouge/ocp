@@ -63,6 +63,7 @@
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
+-(void)        labelArrayFF: (id<ORIntVarArray>) x;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
 -(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;

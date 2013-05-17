@@ -30,21 +30,22 @@ static void initPool()
 
 -(ORInt) execute
 {
-   @try {
+   __block ORInt rv;
+   tryfail(^ORStatus{
       __block ORInt nbP = 0;
       scanListWithBlock(_theList,(void(^)(id)) ^(ConstraintIntCallBack trigger) {
          trigger(_theVal);
          ++nbP;
       });
-      //CFRelease(self);
       [self letgo];
-      return nbP;
-
-   } @catch(ORFailException* ex) {
-      //[self release];
+      rv = nbP;
+      return ORSuspend;
+   }, ^ORStatus{
       [self letgo];
-      @throw;
-   }
+      failNow();
+      return ORSuspend;
+   });
+   return rv;
 }
 
 +(id)newValueLoss:(ORInt)value notify:(id<CPEventNode>)list

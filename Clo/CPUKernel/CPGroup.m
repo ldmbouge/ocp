@@ -79,11 +79,11 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 
 -(ORStatus)propagate
 {
-   ORStatus status = ORSuspend;
-   bool done = false;
-   id<CPConstraint> last = nil;
-   ORInt nbp = 0;
-   @try {
+   __block ORStatus status = ORSuspend;
+   __block bool done = false;
+   __block id<CPConstraint> last = nil;
+   __block ORInt nbp = 0;
+   return tryfail(^ORStatus{
       while (!done) {
          // AC5 manipulates the list
          while (AC5LOADED(_ac5)) {
@@ -113,8 +113,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       }
       [_engine incNbPropagation:nbp];
       return status;
-   }
-   @catch (ORFailException *exception) {
+   }, ^ORStatus{
       while (ISLOADED(_ac3[ALWAYS_PRIO])) {
          ORStatus as = executeAC3([_ac3[ALWAYS_PRIO] deQueue],&last);
          nbp += as != ORSkip;
@@ -125,8 +124,9 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       [_ac5 reset];
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
-      @throw exception;
-   }
+      failNow();
+      return ORSuspend;
+   });
 }
 @end
 
@@ -190,9 +190,9 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 }
 -(ORStatus)propagate
 {
-   ORInt nbp = 0;
-   id<CPConstraint> last = nil;
-   @try {
+   __block ORInt nbp = 0;
+   __block id<CPConstraint> last = nil;
+   return tryfail(^ORStatus{
       for(ORInt k=0;k<_nbIn;k++) {
          CPEventNode* evt = _scanMap[k];
          if (evt) {
@@ -209,11 +209,13 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
       }
       memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn);
       [_engine incNbPropagation:nbp];
-   } @catch(ORFailException *exception) {
+      return ORSuspend;
+   }, ^ORStatus{
       memset(_scanMap,0,sizeof(CPEventNode*)*_nbIn); // clear the queue
       [_engine incNbPropagation:nbp];
       [_engine setLastFailure:last];
-      @throw exception;
-   }
+      failNow();
+      return ORSuspend;
+   });
 }
 @end
