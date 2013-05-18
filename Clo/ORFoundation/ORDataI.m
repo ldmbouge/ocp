@@ -679,6 +679,7 @@ static ORInt _deterministic;
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
+   self = [super init];
    ORInt arity;
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&arity];
    [self initORTableI: arity];
@@ -778,7 +779,7 @@ static ORInt _deterministic;
 @implementation ORGamma
 -(ORGamma*) initORGamma
 {
-   [super init];
+   self = [super init];
    _gamma = NULL;
    return self;
 }

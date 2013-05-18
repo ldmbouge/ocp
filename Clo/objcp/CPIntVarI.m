@@ -1319,10 +1319,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super init];
    _mx  = n;
-   _tab = malloc(sizeof(CPIntVarI*)*_mx);
-   _loseValIMP   = malloc(sizeof(IMP)*_mx);
-   _minIMP   = malloc(sizeof(IMP)*_mx);
-   _maxIMP   = malloc(sizeof(IMP)*_mx);
+   _tab = malloc(sizeof(id<CPIntVarNotifier>)*_mx);
+   _loseValIMP   = malloc(sizeof(UBType)*_mx);
+   _minIMP   = malloc(sizeof(UBType)*_mx);
+   _maxIMP   = malloc(sizeof(UBType)*_mx);
    _tracksLoseEvt = false;
    [root setDelegate:self];
    _nb = 0;
@@ -1347,10 +1347,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) addVar:(CPIntVarI*)v
 {
    if (_nb >= _mx) {
-      _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-      _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
-      _minIMP     = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
-      _maxIMP     = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
+      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+      _minIMP     = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+      _maxIMP     = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
@@ -1395,10 +1395,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
    if (_nb >= _mx) {
-      _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-      _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
-      _minIMP = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
-      _maxIMP = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
+      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+      _minIMP = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+      _maxIMP = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = newLits;
@@ -1489,12 +1489,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (!_tracksLoseEvt) return ORSuspend;
-   ORStatus ok;
+   ORStatus ok = ORSuspend;
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
       if (_loseValIMP[i])
          ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
-      if (!ok) return ok;
+      if (ok == ORFailure) return ok;
    }
    return ORSuspend;
 }

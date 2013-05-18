@@ -132,7 +132,7 @@ static void init_clpthreads()
 
 -(void)insert:(id<ORCommand>)c
 {
-   struct CNode* new = malloc(sizeof(struct CNode*));
+   struct CNode* new = malloc(sizeof(struct CNode));
    new->_c = c;
    new->_next = _head;
    _head = new;

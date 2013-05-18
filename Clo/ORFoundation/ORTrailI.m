@@ -685,7 +685,7 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    for(ORInt k = 0; k < m->_arity; k++)
       if (i[k] < m->_low[k] || i[k] > m->_up[k])
          @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in ORTRIntMatrix"];
-   int idx = i[0] - m->_low[0];
+   ORInt idx = i[0] - m->_low[0];
    for(ORInt k = 1; k < m->_arity; k++)
       idx = idx * m->_size[k] + (i[k] - m->_low[k]);
    return idx;

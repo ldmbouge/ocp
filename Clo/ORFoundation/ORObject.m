@@ -16,8 +16,7 @@
 @implementation ORObject
 -(id)init
 {
-   [super init];
-   //_impl = NULL;
+   self = [super init];
    _name = -1;
    memset(_ba,0,sizeof(_ba));
    return self;

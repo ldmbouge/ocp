@@ -81,7 +81,7 @@
 -(NSSet*) allVars
 {
    if (_posted)
-      return [[NSSet alloc] initWithObjects:_var count:_varSize];
+      return [[[NSSet alloc] initWithObjects:_var count:_varSize] autorelease];
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "Assignment Constraint: allVars called before the constraints is posted"];
    return NULL;
@@ -258,7 +258,7 @@
 
 -(ORInt) dualStep
 {
-   ORInt col;
+   ORInt col = _lowc - 1;  // [ldm] this was not initialized.
    ORInt m = MAXINT;
    for(ORInt c = _lowc; c <= _upc; c++)
       if (!_columnIsMarked[c] && _pi[c] < m) {

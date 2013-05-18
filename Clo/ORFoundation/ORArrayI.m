@@ -366,7 +366,7 @@
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-    _array =  malloc(sizeof(ORInt)*_nb);
+    _array =  malloc(sizeof(ORFloat)*_nb);
     _array -= _low;
     for(ORInt i=_low;i<=_up;i++)
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
@@ -528,7 +528,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _nb = 1;
    for(ORInt k=0;k < _arity;k++) {
       _range[k] = rs[k];
@@ -549,7 +549,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    for(ORInt k = 0; k < _arity; k++) {
       _range[k] = matrix->_range[k];
       _low[k] = matrix->_low[k];
@@ -694,11 +694,11 @@
    self = [super init];
    _tracker = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
-   _range = malloc(sizeof(ORRange) * _arity);
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _nb = 1;
    for(ORInt i = 0; i < _arity; i++) {
       _range[i] = [[aDecoder decodeObject] retain];
@@ -745,7 +745,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _range[0] = r0;
    _range[1] = r1;
    _range[2] = r2;
@@ -774,7 +774,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _range[0] = r0;
    _range[1] = r1;
    _low[0] = [r0 low];
@@ -807,7 +807,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    for(ORInt k = 0; k < _arity; k++) {
       _range[k] = matrix->_range[k];
       _low[k] = matrix->_low[k];

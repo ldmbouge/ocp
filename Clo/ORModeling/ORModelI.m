@@ -124,7 +124,7 @@
 }
 -(ORModelI*) initWithModel: (ORModelI*) src
 {
-   self = [super init];
+   self = [super init];   
    _vars = [src->_vars copy];
    _cStore = [src->_cStore copy];
    _mStore = [src->_mStore copy];
@@ -270,7 +270,7 @@
    if (!co) {
       [obj setId:_nbImmutables++];
       if ([obj conformsToProtocol:@protocol(NSCopying)]) {
-         co = [self addToCache:obj];
+         [self addToCache:obj];
       }
       [_iStore addObject:obj];
       [_memory addObject:obj];

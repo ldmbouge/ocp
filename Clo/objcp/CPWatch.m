@@ -54,7 +54,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_theVar,nil];
+   return [[[NSSet alloc] initWithObjects:_theVar,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {

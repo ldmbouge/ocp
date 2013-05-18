@@ -1329,8 +1329,8 @@
 {
    const ORInt sz = x.range.size;
    id<CPIntVar> cx[sz];
-   for(ORInt i=x.range.low;i <= x.range.up;i++)
-      cx[i - x.range.low]  = _gamma[x[i].getId];
+   for(ORInt i=0;i < sz;i++)
+      cx[i]  = _gamma[x[i + x.range.low].getId];
    id<ORRandomStream> tie = [ORCrFactory randomStream];
    [_trail trailClosure:^{ [tie release];}];
    do {

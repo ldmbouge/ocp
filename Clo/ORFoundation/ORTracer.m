@@ -87,7 +87,7 @@
 inline static void pushCommandList(ORCmdStack* cmd,ORCommandList* list)
 {
    if (cmd->_sz >= cmd->_mxs) {
-      cmd->_tab = realloc(cmd->_tab,sizeof(id<ORCommand>)*cmd->_mxs*2);
+      cmd->_tab = realloc(cmd->_tab,sizeof(ORCommandList*)*cmd->_mxs*2);
       cmd->_mxs <<= 1;
    }
    cmd->_tab[cmd->_sz++] = grab(list);
@@ -99,7 +99,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 -(void)pushList:(ORInt)node
 {
    if (_sz >= _mxs) {
-      _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);
+      _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
    //ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
@@ -310,7 +310,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    NSArray* dico = [fdm variables];
    //NSLog(@"DICO: %@",dico);
    ORULong nbProxies = [[fdm variables] count] + 1; // 1 extra for the trail proxy
-   id* proxies = malloc(sizeof(CPProxyVar*)*nbProxies);
+   id* proxies = malloc(sizeof(id)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy

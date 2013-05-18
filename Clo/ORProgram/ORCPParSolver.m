@@ -494,10 +494,10 @@
          [_queue enQueue:rootSerial];
       }
       NSData* cpRoot = nil;
-      ORLong took = 0;
+      //ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
-            took = [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+            [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
 //            [_queue pretendFull:took < 500];
          }
          [cpRoot release];

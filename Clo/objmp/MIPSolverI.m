@@ -23,7 +23,7 @@
       @throw [[NSException alloc] initWithName:@"MIPConstraint Error"
                                         reason:@"Constraint has negative size"
                                       userInfo:nil];
-   [super init];
+   self = [super init];
    _solver = solver;
    _idx = -1;
    _size = size;
@@ -195,8 +195,9 @@
 
 -(MIPConstraintI*) initMIPConstraintLEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
+   self = [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = MIPleq;
-   return [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
+   return self;
 }
 -(void) print
 {
@@ -208,8 +209,9 @@
 
 -(MIPConstraintI*) initMIPConstraintGEQ: (MIPSolverI*) solver size:  (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
+   self = [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = MIPgeq;
-   return [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
+   return self;
 }
 -(void) print
 {
@@ -222,8 +224,9 @@
 
 -(MIPConstraintI*) initMIPConstraintEQ: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
+   self = [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = MIPeq;
-   return [super initMIPConstraintI: solver size: size var: var coef: coef rhs: rhs];
+   return self;
 }
 -(void) print
 {
@@ -237,7 +240,7 @@
 
 -(MIPObjectiveI*) initMIPObjectiveI: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _size = size;
    _maxSize = 2*size;
@@ -380,8 +383,9 @@
 
 -(MIPObjectiveI*) initMIPMinimize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef
 {
+   self = [super initMIPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
    _type = MIPminimize;
-   return [super initMIPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
+   return self;
 }
 -(MIPObjectiveI*) initMIPMinimize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
 {
@@ -404,13 +408,15 @@
 
 -(MIPObjectiveI*) initMIPMaximize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef
 {
+   self =  [super initMIPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
    _type = MIPmaximize;
-   return [super initMIPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
+   return self;
 }
 -(MIPObjectiveI*) initMIPMaximize: (MIPSolverI*) solver size: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
 {
+   self = [super initMIPObjectiveI: solver size: size var: var coef: coef cst: cst];
    _type = MIPmaximize;
-   return [super initMIPObjectiveI: solver size: size var: var coef: coef cst: cst];
+   return self;
 }
 -(void) print
 {
@@ -426,7 +432,7 @@
 @implementation MIPVariableI
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
 {
-   [super init];
+   self = [super init];
    _hasBounds = true;
    _solver = solver;
    _idx = -1;
@@ -444,7 +450,7 @@
 }
 -(MIPVariableI*) initMIPVariableI: (MIPSolverI*) solver
 {
-   [super init];
+   self = [super init];
    _hasBounds = false;
    _solver = solver;
    _idx = -1;
@@ -575,12 +581,12 @@
 @implementation MIPIntVariableI
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
 {
-   [super initMIPVariableI: solver low: low up: up];
+   self = [super initMIPVariableI: solver low: low up: up];
    return self;
 }
 -(MIPIntVariableI*) initMIPIntVariableI: (MIPSolverI*) solver
 {
-   [super initMIPVariableI: solver];
+   self = [super initMIPVariableI: solver];
    return self;
 }
 -(ORBool) isInteger
@@ -599,7 +605,7 @@
 
 -(MIPLinearTermI*) initMIPLinearTermI: (MIPSolverI*) solver
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _size = 0;
    _maxSize = 8;
@@ -701,7 +707,7 @@
 }
 -(MIPSolverI*) initMIPSolverI
 {
-   [super init];
+   self = [super init];
 #if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
    _MIP = [[MIPGurobiSolver alloc] initMIPGurobiSolver];
 #else
@@ -799,6 +805,7 @@
    ORFloat* coef = [cstr coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addConstraint: cstr coef: coef[i]];
+   free(coef);
    return cstr;
 }
 -(MIPConstraintI*) createLEQ: (ORInt) size var: (MIPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
@@ -1009,6 +1016,7 @@
    ORFloat* coef = [obj coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addObjective: obj coef: coef[i]];
+   free(coef);
    return _obj;
 }
 

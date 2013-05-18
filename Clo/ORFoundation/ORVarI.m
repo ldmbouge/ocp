@@ -516,7 +516,7 @@
    _low = [var low];
    _up = [var up];
    _nb = _up - _low + 1;
-   _array = malloc(_nb * sizeof(id));
+   _array = malloc(_nb * sizeof(id<ORIntVar>));
    _array -= _low;
    id<ORIntRange> R01 = [ORFactory intRange: tracker low: 0 up: 1];
    for(ORInt i = _low; i <= _up; i++)

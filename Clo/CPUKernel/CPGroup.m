@@ -137,7 +137,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
    _engine = engine;
    _max = 2;
    _inGroup = malloc(sizeof(id<CPConstraint>)*_max);
-   _scanMap = malloc(sizeof(id<CPConstraint>)*_max);   
+   _scanMap = malloc(sizeof(id<CPEventNode>)*_max);
    _nbIn = 0;
    return self;
 }
@@ -160,7 +160,7 @@ static inline ORStatus executeAC3(AC3Entry cb,CPCoreConstraint** last)
 }
 -(ORStatus) post
 {
-   _scanMap = realloc(_scanMap,sizeof(CPEventNode*)*_nbIn);
+   _scanMap = realloc(_scanMap,sizeof(id<CPEventNode>)*_nbIn);
    ORInt low = MAXINT;
    ORInt up  = MININT;
    for(ORInt i=0;i<_nbIn;i++) {

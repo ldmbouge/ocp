@@ -639,7 +639,7 @@ static void findSCCsink(CPCardinalityDC* card)
 -(NSSet*) allVars
 {
     if (_posted)
-        return [[NSSet alloc] initWithObjects:_var count:_varSize];
+        return [[[NSSet alloc] initWithObjects:_var count:_varSize] autorelease];
     else
         @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: allVars called before the constraints is posted"];
     return NULL;

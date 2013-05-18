@@ -1501,7 +1501,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //         }
           
           //Check consistency of new domain for X variable
-          inconsistencyFound = ((prevCinLow[i] & ~prevCinUp[i]) |
+          inconsistencyFound |= ((prevCinLow[i] & ~prevCinUp[i]) |
                                 (prevCinLow[i] & prevYLow[i] & ~prevCoutUp[i]) |
                                 (prevCinLow[i] & ~prevZUp[i] & ~prevCoutUp[i]) |
                                 (~prevCinUp[i] & ~prevYUp[i] & prevCoutLow[i]) |

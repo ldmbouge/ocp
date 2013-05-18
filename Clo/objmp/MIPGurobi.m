@@ -17,7 +17,7 @@
 
 -(MIPGurobiSolver*) initMIPGurobiSolver
 {
-   [super init];
+   self = [super init];
    int error = GRBloadenv(&_env, "");
    if (error) {
       @throw [[NSException alloc] initWithName:@"Gurobi Solver Error"

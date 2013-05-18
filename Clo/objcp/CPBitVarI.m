@@ -431,7 +431,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(id)initVarMC:(int)n 
 {
-    [super init];
+    self = [super init];
     _mx  = n;
     _tab = malloc(sizeof(CPBitVarI*)*_mx);
     _tracksLoseEvt = false;

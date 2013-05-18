@@ -31,8 +31,8 @@
    _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
    _low = malloc(sizeof(TRUInt)*_wordLength);
    _up = malloc(sizeof(TRUInt)*_wordLength);
-   _min = malloc(sizeof(TRInt)*_wordLength);
-   _max = malloc(sizeof(TRInt)*_wordLength);
+   _min = malloc(sizeof(TRUInt)*_wordLength);
+   _max = malloc(sizeof(TRUInt)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
       _low[i] = makeTRUInt(tr, 0);
@@ -51,8 +51,8 @@
     _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
     _low = malloc(sizeof(TRUInt)*_wordLength);
     _up = malloc(sizeof(TRUInt)*_wordLength);
-    _min = malloc(sizeof(TRInt)*_wordLength);
-    _max = malloc(sizeof(TRInt)*_wordLength);
+    _min = malloc(sizeof(TRUInt)*_wordLength);
+    _max = malloc(sizeof(TRUInt)*_wordLength);
     
     for(int i=0;i<_wordLength;i++){
         _low[i] = makeTRUInt(tr, low[i]);

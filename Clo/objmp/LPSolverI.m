@@ -23,7 +23,7 @@
       @throw [[NSException alloc] initWithName:@"LPConstraint Error"
                                         reason:@"Constraint has negative size"
                                       userInfo:nil];
-   [super init];
+   self = [super init];
    _solver = solver;
    _idx = -1;
    _size = size;
@@ -199,8 +199,9 @@
 
 -(LPConstraintI*) initLPConstraintLEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
+   self = [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = LPleq;
-   return [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
+   return self;
 }
 -(void) print
 {
@@ -212,8 +213,9 @@
 
 -(LPConstraintI*) initLPConstraintGEQ: (LPSolverI*) solver size:  (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
+   self = [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = LPgeq;
-   return [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
+   return self;
 }
 -(void) print
 {
@@ -226,8 +228,9 @@
 
 -(LPConstraintI*) initLPConstraintEQ: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef rhs: (ORFloat) rhs
 {
+   self = [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
    _type = LPeq;
-   return [super initLPConstraintI: solver size: size var: var coef: coef rhs: rhs];
+   return self;
 }
 -(void) print
 {
@@ -241,7 +244,7 @@
 
 -(LPObjectiveI*) initLPObjectiveI: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _size = size;
    _maxSize = 2*size;
@@ -384,13 +387,15 @@
 
 -(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef
 {
+   self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
    _type = LPminimize;
-   return [super initLPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
+   return self;
 }
 -(LPObjectiveI*) initLPMinimize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
 {
+   self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: cst];
    _type = LPminimize;
-   return [super initLPObjectiveI: solver size: size var: var coef: coef cst: cst];
+   return self;
 }
 -(void) print
 {
@@ -408,13 +413,15 @@
 
 -(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef
 {
+   self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
    _type = LPmaximize;
-   return [super initLPObjectiveI: solver size: size var: var coef: coef cst: 0.0];
+   return self;
 }
 -(LPObjectiveI*) initLPMaximize: (LPSolverI*) solver size: (ORInt) size var: (LPVariableI**) var coef: (ORFloat*) coef cst: (ORFloat) cst
 {
+   self = [super initLPObjectiveI: solver size: size var: var coef: coef cst: cst];
    _type = LPmaximize;
-   return [super initLPObjectiveI: solver size: size var: var coef: coef cst: cst];
+   return self;
 }
 -(void) print
 {
@@ -430,7 +437,7 @@
 @implementation LPVariableI
 -(LPVariableI*) initLPVariableI: (LPSolverI*) solver low: (ORFloat) low up: (ORFloat) up
 {
-   [super init];
+   self = [super init];
    _hasBounds = true;
    _solver = solver;
    _idx = -1;
@@ -448,7 +455,7 @@
 }
 -(LPVariableI*) initLPVariableI: (LPSolverI*) solver
 {
-   [super init];
+   self = [super init];
    _hasBounds = false;
    _solver = solver;
    _idx = -1;
@@ -595,7 +602,7 @@
                        coef: (ORFloat*) coef
 
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _hasBounds = true;
    _low = low;
@@ -621,7 +628,7 @@
                         low: (ORFloat) low
                          up: (ORFloat) up
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _hasBounds = true;
    _low = low;
@@ -635,7 +642,7 @@
 }
 -(LPColumnI*) initLPColumnI: (LPSolverI*) solver
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _hasBounds = false;
    _size = 0;
@@ -776,7 +783,7 @@
 
 -(LPLinearTermI*) initLPLinearTermI: (LPSolverI*) solver
 {
-   [super init];
+   self = [super init];
    _solver = solver;
    _size = 0;
    _maxSize = 8;
@@ -878,7 +885,7 @@
 }
 -(LPSolverI*) initLPSolverI
 {
-   [super init];
+   self = [super init];
 #if defined(__x86_64__) || defined(__MAC_OS_X_VERSION_MIN_REQUIRED)
    _lp = [[LPGurobiSolver alloc] initLPGurobiSolver];
 #else
@@ -981,6 +988,7 @@
    ORFloat* coef = [cstr coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addConstraint: cstr coef: coef[i]];
+   free(coef);
    return cstr;
    
 }
@@ -1192,6 +1200,7 @@
    ORFloat* coef = [obj coef];
    for(ORInt i = 0; i < size; i++)
       [var[i] addObjective: obj coef: coef[i]];
+   free(coef);
    return _obj;
 }
 
