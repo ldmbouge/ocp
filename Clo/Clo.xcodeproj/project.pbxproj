@@ -832,7 +832,7 @@
 		5BFD595215A3AD4C00825BC3 /* cont.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642EE139D49320056F448 /* cont.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BFD595315A3ADB000825BC3 /* cont.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642EF139D49320056F448 /* cont.m */; };
 		5BFD595415A3ADB400825BC3 /* context.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642F0139D49320056F448 /* context.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5BFD595515A3ADBA00825BC3 /* context.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F1139D49320056F448 /* context.m */; };
+		5BFD595515A3ADBA00825BC3 /* context.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642F1139D49320056F448 /* context.m */; settings = {COMPILER_FLAGS = "-Os"; }; };
 		5BFD595815A3AEFB00825BC3 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		5BFD5A6915A3BC1D00825BC3 /* ORAVLTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BF3E1D613C3BC6400C3F1A5 /* ORAVLTree.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BFD5A6A15A3BC1D00825BC3 /* ORAVLTree.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BF3E1D713C3BC6400C3F1A5 /* ORAVLTree.m */; };
@@ -12946,6 +12946,7 @@
 				OTHER_CFLAGS = (
 					"-DUSEVIEWS=1",
 					"-fno-stack-protector",
+					"-O4",
 				);
 				SDKROOT = macosx;
 			};
