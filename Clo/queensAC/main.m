@@ -55,8 +55,8 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
-             [cp labelArrayFF: x];
+             [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
+             //[cp labelArrayFF: x];
              @synchronized(cp) {
                 nbSol++;
              }

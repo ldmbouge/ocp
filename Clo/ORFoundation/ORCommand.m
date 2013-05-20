@@ -24,20 +24,12 @@ typedef struct {
 
 @implementation ORCommandList
 
-static pthread_key_t clkey;
-static void init_clpthreads()
-{
-   pthread_key_create(&clkey,NULL);
-}
+static __thread ComListPool* pool = NULL;
 
 +(ComListPool*)instancePool
 {
-   static pthread_once_t block = PTHREAD_ONCE_INIT;
-   pthread_once(&block,init_clpthreads);
-   ComListPool* pool = pthread_getspecific(clkey);
    if (!pool) {
       pool = malloc(sizeof(ComListPool));
-      pthread_setspecific(clkey,pool);
       pool->_low = pool->_high = pool->_sz = 0;
       pool->_mxs = 8192;
       pool->_poolClass = self;

@@ -100,7 +100,7 @@
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-    NSMutableSet* _all;
+    NSMutableArray* _all;
     id<ORSolutionInformer> _solutionAddedInformer;
 }
 -(id)init;

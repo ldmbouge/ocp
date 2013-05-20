@@ -1307,20 +1307,28 @@
    for(ORInt i = low; i <= up; i++)
       [self label: x[i]];
 }
+
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
    // pvh: the range here is leaked
+   const ORInt sz = x.range.size;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=0;i < sz;i++)
+      cx[i]  = _gamma[x[i + x.range.low].getId];
+   id<CPIntVar>* cxp = cx;
+   ORInt low = [x low];
+
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
-                                  suchThat: ^bool(ORInt i) { return ![self bound: [x at: i]]; }
+                                  suchThat: ^bool(ORInt i) { return ![cxp[i - low] bound]; }
                                  orderedBy: orderedBy];
  
    do {
       ORInt i = [select min];
       if (i == MAXINT) {
-         return;
+         return; // it won't release when scanned all. That's a 'feature'
       }
-      [self label: x[i]];
+      [self labelImpl: cxp[i - low]];
    } while (true);
    [select release];
 }
@@ -1441,15 +1449,21 @@
 }
 -(void) label: (id<ORIntVar>) mx
 {
-   // PVH to change
    id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try:
-         ^() { [self labelImpl: x with: m]; }
-                or:
-         ^() { [self diffImpl: x with: m]; }
+      [_search try: ^{ [self labelImpl: x with: m]; }
+                or: ^{ [self diffImpl:  x with: m]; }
       ];
+   }
+}
+-(void) labelImpl: (id<CPIntVar>)x
+{
+   while (![x bound]) {
+      ORInt m = [x min];
+      [_search try: ^{ [self labelImpl: x with: m]; }
+                or: ^{ [self diffImpl:  x with: m]; }
+       ];
    }
 }
 

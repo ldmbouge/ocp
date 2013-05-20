@@ -455,19 +455,13 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 }
 
 
-static pthread_key_t cpkey;
-static void initPool()
-{
-   pthread_key_create(&cpkey,NULL);
-}
+static __thread id checkPointCache = NULL;
 
 +(id)newCheckpoint:(ORCmdStack*) cmds
 {
-   static pthread_once_t block = PTHREAD_ONCE_INIT;
-   pthread_once(&block,initPool);
-   id ptr = pthread_getspecific(cpkey);
+   id ptr = checkPointCache;
    if (ptr) {
-      pthread_setspecific(cpkey,*(id*)ptr);
+      checkPointCache = *(id*)ptr;
       *(Class*)ptr = self;
       ORCheckpointI* theCP = (ORCheckpointI*)ptr;
       theCP->_cnt = 1;      
@@ -497,9 +491,9 @@ static void initPool()
 {
    assert(_cnt > 0);
    if (--_cnt == 0) {
-      id vLossCache = pthread_getspecific(cpkey);
+      id vLossCache = checkPointCache;
       *(id*)self = vLossCache;
-      pthread_setspecific(cpkey, self);
+      checkPointCache = self;
    }
 }
 

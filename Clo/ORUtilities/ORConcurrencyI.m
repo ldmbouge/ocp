@@ -416,12 +416,6 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 }
 @end
 
-static pthread_key_t eventlist;
-static void init_eventlist() 
-{
-    pthread_key_create(&eventlist,NULL);  
-}
-
 @implementation ORConcurrency
 +(void) parall: (ORRange) R do: (ORInt2Void) closure
 {
@@ -516,34 +510,23 @@ static void init_eventlist()
 
 +(OREventList*) eventList  // Returns *the* event list in TLS (for the invoking thread)
 {
-    static pthread_once_t block = PTHREAD_ONCE_INIT;
-    pthread_once(&block,init_eventlist);
-    OREventList* a = pthread_getspecific(eventlist);
-    if (!a) {
-        a = [[OREventList alloc] initOREventList];
-        pthread_setspecific(eventlist,a);
-    }
-    return a;
+   static __thread OREventList* eventlist = NULL;
+   if (!eventlist)
+      eventlist = [[OREventList alloc] initOREventList];
+   return eventlist;
 }
 @end
 
 @implementation NSThread (ORData)
 
-static pthread_key_t threadIDKey;
-static pthread_once_t block = PTHREAD_ONCE_INIT;
+static ORInt __thread tidTLS = 0;
 
-static void init_pthreads_key()
-{
-   pthread_key_create(&threadIDKey,NULL);
-}
 +(void)setThreadID:(ORInt)tid
 {
-   pthread_once(&block,init_pthreads_key);
-   pthread_setspecific(threadIDKey,(void*)tid);
+   tidTLS = tid;
 }
 +(ORInt)threadID
 {
-   ORInt tid = (ORInt)pthread_getspecific(threadIDKey);
-   return tid;
+   return tidTLS;
 }
 @end

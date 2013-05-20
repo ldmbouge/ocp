@@ -226,19 +226,20 @@
 }
 -(NSArray*) variables
 {
-    return [NSArray arrayWithArray: _vars];
+   // [ldm] Why copy them out. NSArray is immutable anyhow.
+   return _vars;//[NSArray arrayWithArray: _vars];
 }
 -(NSArray*) constraints
 {
-    return [NSArray arrayWithArray: _cStore];
+   return _cStore;//[NSArray arrayWithArray: _cStore];
 }
 -(NSArray*) mutables
 {
-   return [NSArray arrayWithArray: _mStore];
+   return _mStore;//[NSArray arrayWithArray: _mStore];
 }
 -(NSArray*) immutables
 {
-   return [NSArray arrayWithArray: _iStore];
+   return _iStore;//[NSArray arrayWithArray: _iStore];
 }
 -(id<ORVar>) addVariable:(id<ORVar>) var
 {
@@ -659,7 +660,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(id) init
 {
     self = [super init];
-    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    _all = [[NSMutableArray alloc] initWithCapacity:64];
     _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
     return self;
 }
@@ -668,19 +669,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    NSLog(@"dealloc ORSolutionPoolI");
    // pvh this is buggy
-//   [_all release];
+   [_all release];
    [super dealloc];
 }
 
 -(void) addSolution:(id<ORSolution>)s
 {
-    //[_all addObject:s];
+    [_all addObject:s];
     [_solutionAddedInformer notifyWithSolution: s];
 }
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
-   [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
       block(obj);
    }];
 }
@@ -694,7 +695,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
-   [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"\t%@\n",obj];
    }];
    [buf appendFormat:@"]"];
@@ -705,7 +706,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;
-   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj, BOOL *stop) {
+   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
       if (bestSoFar == nil) {
          bestSoFar = [obj objectiveValue];
          sel = obj;
