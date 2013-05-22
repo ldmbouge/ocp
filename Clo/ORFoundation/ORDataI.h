@@ -35,6 +35,16 @@
 -(ORInt) decr;
 @end
 
+@interface ORMutableId : ORObject<ORMutableId> {
+   id _value;
+}
+-(id) initWith:(id)v;
+-(id) idValue;
+-(id) idValue:(id<ORGamma>)solver;
+-(void) setId:(id)v in:(id<ORGamma>)solver;
+-(void)setId:(id)v;
+@end
+
 @interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
 -(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
 -(ORFloat) floatValue;

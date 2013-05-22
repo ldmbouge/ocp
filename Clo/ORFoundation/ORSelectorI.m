@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "ORFoundation.h"
+#import "ORDataI.h"
 #import "ORSelectorI.h"
 #import <math.h>
 #if defined(__linux__)
@@ -31,7 +32,7 @@
    _range = range;
    _filter = [filter copy];
    _order = [order copy];
-   _stream = [ORCrFactory randomStream];
+   _stream = [[ORRandomStreamI alloc] init];
    _direction = 1;
    _randomized = randomized;
    return self;
@@ -98,6 +99,7 @@
 }
 -(void) dealloc
 {
+   NSLog(@"Deallocating ORSelectI");
    [_select release];
    [super dealloc];
 }
@@ -115,6 +117,3 @@
    return [_select any];
 }
 @end
-
-
-

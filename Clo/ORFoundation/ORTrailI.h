@@ -81,14 +81,15 @@
 -(void) backtrack:(ORInt) to;
 @end
 
-@interface ORMemoryTrailI : NSObject<ORMemoryTrail> {
+@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> {
    id*   _tab;
    ORInt _mxs;
    ORInt _csz;
 }
 -(id)init;
+-(id)copyWithZone:(NSZone *)zone;
 -(void)dealloc;
--(void)push:(id)obj;
+-(id)track:(id)obj;
 -(void)pop;
 -(ORInt)trailSize;
 @end
@@ -118,7 +119,10 @@
 
 inline static void trailPop(ORTrailIStack* s)
 {
-   [s->_trail backtrack: s->_tab[--s->_sz]._ofs];
+   const ORInt ofs = s->_tab[--s->_sz]._ofs;
+   const ORInt mof = s->_tab[s->_sz]._mOfs;
+   [s->_trail backtrack: ofs];
+   [s->_mt backtrack:mof];
 }
 
 @interface ORTrailableIntI : ORObject<ORTrailableInt>

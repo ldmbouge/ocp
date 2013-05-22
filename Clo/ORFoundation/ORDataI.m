@@ -220,6 +220,35 @@
 }
 @end
 
+@implementation ORMutableId
+-(id) initWith:(id)v
+{
+   self = [super init];
+   _value = v;
+   return self;
+}
+-(id) idValue
+{
+   return _value;
+}
+-(id) idValue:(id<ORGamma>)solver
+{
+   return [(ORMutableId*)[solver concretize:self] idValue];
+}
+-(void) setId:(id)v in:(id<ORGamma>)solver
+{
+   [(ORMutableId*)[solver concretize:self] setId:v];
+}
+-(void)setId:(id)v
+{
+   _value = v;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<MutableId>(%@)",_value];
+}
+@end
+
 @implementation ORFloatI
 {
 	ORFloat       _value;

@@ -29,7 +29,7 @@
 @end
 
 @protocol ORMemoryTrail<NSObject>
--(void)push:(id)obj;
+-(id)track:(id)obj;
 -(void)pop;
 -(void)backtrack:(ORInt)ofs;
 @end

@@ -666,7 +666,6 @@ static __thread id checkPointCache = NULL;
 }
 -(id<ORCheckpoint>)captureCheckpoint
 {
-   //ORCheckpointI* ncp = [[ORCheckpointI alloc] initCheckpoint:_cmds];
    ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds];
    ncp->_nodeId = [self pushNode];
    return ncp;

@@ -417,6 +417,16 @@ ORInt trailMagic(ORTrailI* trail)
    _tab = malloc(sizeof(id)*_mxs);
    return self;
 }
+-(id)initWith:(ORMemoryTrailI*)mt
+{
+   self = [super init];
+   _mxs = mt->_mxs;
+   _csz = mt->_csz;
+   _tab = malloc(sizeof(id)*_mxs);
+   for(ORInt i=0;i<_csz;i++)
+      _tab[i] = [mt->_tab[i] retain];
+   return self;
+}
 -(void)dealloc
 {
    while (_csz)
@@ -424,16 +434,21 @@ ORInt trailMagic(ORTrailI* trail)
    free(_tab);
    [super dealloc];
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORMemoryTrailI alloc] initWith:self];
+}
 -(void)resize
 {
    _tab = realloc(_tab, _mxs * 2);
    _mxs = _mxs * 2;
 }
--(void)push:(id)obj
+-(id)track:(id)obj
 {
    if (_csz >= _mxs)
       [self resize];
    _tab[_csz++] = [obj retain];
+   return obj;
 }
 -(void)pop
 {
@@ -445,7 +460,7 @@ ORInt trailMagic(ORTrailI* trail)
 }
 -(void)backtrack:(ORInt)to
 {
-   while (_csz >= to)
+   while (_csz > to)
       [_tab[--_csz] release];
 }
 @end

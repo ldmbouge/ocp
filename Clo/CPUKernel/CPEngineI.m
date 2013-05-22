@@ -257,10 +257,11 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
 @end
 
 @implementation CPEngineI
--(CPEngineI*) initEngine: (id<ORTrail>) trail
+-(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
 {
    self = [super init];
    _trail = trail;
+   _mt    = mt;
    _state = CPOpen;
    _vars  = [[NSMutableArray alloc] init];
    _cStore = [[NSMutableArray alloc] initWithCapacity:32];
@@ -338,7 +339,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [var release];
    }
    else
-      [_trail trailRelease:var];
+      [[_mt track:var] release];
    return var;
 }
 -(id) trackObject:(id)obj
@@ -348,8 +349,8 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [obj release];
    }
    else
-      [_trail trailRelease:obj];
-   return obj;   
+      [[_mt track:obj] release];
+   return obj;
 }
 -(id) trackConstraintInGroup:(id)obj
 {
@@ -362,7 +363,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [obj release];
    }
    else
-      [_trail trailRelease:obj];
+      [[_mt track:obj] release];
    return obj;
 }
 -(id) trackMutable:(id)obj
@@ -372,7 +373,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [obj release];
    }
    else
-      [_trail trailRelease:obj];
+      [[_mt track:obj] release];
    return obj;
 }
 -(id) trackImmutable: (id) obj
@@ -382,7 +383,7 @@ inline static id<CPAC5Event> deQueueAC5(CPAC5Queue* q)
       [obj release];
    }
    else
-      [_trail trailRelease:obj];
+      [[_mt track:obj] release];
    return obj;
 }
 

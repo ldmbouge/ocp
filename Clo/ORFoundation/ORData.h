@@ -64,6 +64,11 @@ typedef enum {
 -(ORInt) value;
 @end
 
+@protocol ORMutableId <ORObject>
+-(id) idValue:(id<ORGamma>)solver;
+-(void) setId:(id)v in:(id<ORGamma>)solver;
+@end
+
 @protocol ORMutableInteger <ORObject,ORExpr>
 -(ORInt) initialValue;
 -(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
@@ -122,9 +127,6 @@ typedef enum {
 
 @interface ORCrFactory (OR)
 +(id<ORMutableInteger>) integer:(ORInt) value;
-+(id<ORRandomStream>) randomStream;
-+(id<ORZeroOneStream>) zeroOneStream;
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
 @end
 
 @protocol ORTable <ORObject>

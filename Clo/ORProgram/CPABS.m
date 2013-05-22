@@ -11,6 +11,7 @@
 
 #import "CPABS.h"
 #import "CPEngineI.h"
+#import <ORFoundation/ORDataI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <ORFoundation/ORTracer.h>
 
@@ -601,12 +602,12 @@
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:bvars];
-   _valPr = [ORCrFactory zeroOneStream];
+   _valPr = [[ORZeroOneStreamI alloc] init];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
    NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
    __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
    __block ORInt nbVS = 0;
-   id<ORZeroOneStream> varPr = [ORCrFactory zeroOneStream];
+   id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
    do {
       for(ORInt c=0;c <= nbInRound;c++) {
          [_solver clearStatus];

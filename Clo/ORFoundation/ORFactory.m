@@ -39,19 +39,19 @@
 }
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) cp
 {
-   id<ORRandomStream> o = [ORCrFactory randomStream];
+   id<ORRandomStream> o = [[ORRandomStreamI alloc] init];
    [cp trackMutable: o];
    return o;
 }
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) cp
 {
-   id<ORZeroOneStream> o = (id<ORZeroOneStream>) [ORCrFactory zeroOneStream];
+   id<ORZeroOneStream> o = [[ORZeroOneStreamI alloc] init];
    [cp trackMutable: o];
    return o;
 }
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) cp range: (id<ORIntRange>) r
 {
-   id<ORUniformDistribution> o = (id<ORUniformDistribution>) [ORCrFactory uniformDistribution:r];
+   id<ORUniformDistribution> o = [[ORUniformDistributionI alloc] initORUniformDistribution: r];
    [cp trackMutable: o];
    return o;
 }
@@ -93,6 +93,11 @@
    ORMutableFloatI* o = [[ORMutableFloatI alloc] initORMutableFloatI: tracker value:value];
    [tracker trackMutable: o];
    return o;
+}
++(id<ORMutableId>) mutableId:(id<ORTracker>) tracker value:(id) value
+{
+   ORMutableId* o = [[ORMutableId alloc] initWith:value];
+   return [tracker trackMutable:o];
 }
 +(id<ORTrailableInt>) trailableInt: (id<ORSearchEngine>) engine value: (ORInt) value
 {

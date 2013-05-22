@@ -22,16 +22,4 @@
 {
    return [[ORFloatI alloc] initORFloatI:nil value:value];
 }
-+(id<ORRandomStream>) randomStream
-{
-   return [[ORRandomStreamI alloc] init];
-}
-+(id<ORZeroOneStream>) zeroOneStream
-{
-   return [[ORZeroOneStreamI alloc] init];
-}
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r
-{
-   return [[ORUniformDistributionI alloc] initORUniformDistribution: r];
-}
 @end

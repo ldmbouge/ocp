@@ -1218,7 +1218,7 @@
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
-             or: ^() {[self labelBV:x at:i with:true];}];
+             or: ^() { [self labelBV:x at:i with:true];}];
 }
 -(void) labelUpFromLSB:(id<CPBitVar>) x
 {
@@ -1311,27 +1311,28 @@
 
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
-   // pvh: the range here is leaked
+   // [ldm] there is no leak whatsoever. the range and the selector both get added
+   // to the memory trail. When backtracking the objects on the memory trail are released.
+   // If, instead, the code uses a non-chronological controller, the checkpoint captures the
+   // memory stack and therefore the object won't be released either until the checkpoint itself
+   // disappears.
    const ORInt sz = x.range.size;
    id<CPIntVar> cx[sz];
    for(ORInt i=0;i < sz;i++)
       cx[i]  = _gamma[x[i + x.range.low].getId];
    id<CPIntVar>* cxp = cx;
    ORInt low = [x low];
-
    id<ORSelect> select = [ORFactory select: _engine
-                                     range: RANGE(self,[x low],[x up])
+                                     range: RANGE(self,low,[x up])
                                   suchThat: ^bool(ORInt i) { return ![cxp[i - low] bound]; }
                                  orderedBy: orderedBy];
- 
    do {
       ORInt i = [select min];
       if (i == MAXINT) {
-         return; // it won't release when scanned all. That's a 'feature'
+         break;
       }
       [self labelImpl: cxp[i - low]];
    } while (true);
-   [select release];
 }
 
 -(void) labelArrayFF:(id<ORIntVarArray>) x
@@ -1340,8 +1341,7 @@
    id<CPIntVar> cx[sz];
    for(ORInt i=0;i < sz;i++)
       cx[i]  = _gamma[x[i + x.range.low].getId];
-   id<ORRandomStream> tie = [ORCrFactory randomStream];
-   [_trail trailClosure:^{ [tie release];}];
+   id<ORRandomStream> tie = [ORFactory randomStream:_engine];
    do {
       ORInt sd  = FDMAXINT;
       id<CPIntVar> sx = NULL;
@@ -1388,7 +1388,9 @@
 }
 
 -(void) labelHeuristic: (id<CPHeuristic>) h withConcrete:(id<CPIntVarArray>)av
-{   
+{
+   // [ldm] All four objects below are on the memory trail (+range of selector)
+   // Note, the two mutables are created during the search, hence never concretized. 
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
                                         suchThat: ^bool(ORInt i) { return ![av[i] bound]; }
@@ -1396,28 +1398,23 @@
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
                                        }];
-   id<CPIntVar>* last = malloc(sizeof(id<CPIntVar>));
-   id<ORRandomStream> valStream = [ORCrFactory randomStream];
-   [_trail trailClosure:^{
-      free(last);
-      [valStream release];
-   }];
-   
-   *last = nil;
-   __block ORInt failStamp = -1;
+   id<ORRandomStream>   valStream = [ORFactory randomStream:_engine];
+   ORMutableIntegerI*   failStamp = [ORFactory mutable:_engine value:-1];
+   ORMutableId*              last = [ORFactory mutableId:_engine value:nil];
    do {
-      id<CPIntVar> x = *last;
-      if (failStamp  == [_search nbFailures] || (x == nil || [x bound])) {
+      id<CPIntVar> x = [last idValue];
+      //NSLog(@"at top: last = %p",x);
+      if ([failStamp intValue]  == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
-         //NSLog(@"Chose variable: %d",i);
          x = av[i];
-         *last = x;
+         //NSLog(@"-->Chose variable: %p",x);
+         [last setId:x];
       }/* else {
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
-      failStamp = [_search nbFailures];
+      [failStamp setValue:[_search nbFailures]];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
       ORInt low = x.min;
@@ -1440,8 +1437,8 @@
         }
       }
       if (bestIndex != low - 1)  {
-        [self try: ^{
-          [self labelImpl:x with: bestIndex];
+        [_search try: ^{
+           [self labelImpl:x with: bestIndex];
         } or: ^{
            [self diffImpl:x with: bestIndex];
         }];
@@ -1538,23 +1535,6 @@
    [_search limitFailures: maxFailures in: cl];
    
 }
-
-//- (void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//   // The idea is that we only encode the solver and an empty _shell_ (no content) of the trail
-//   // The decoding recreates the pool.
-//   [aCoder encodeObject:_engine];
-//   [aCoder encodeObject:_trail];
-//}
-//- (id) initWithCoder:(NSCoder *)aDecoder;
-//{
-//   self = [super init];
-//   _engine = [[aDecoder decodeObject] retain];
-//   _trail  = [[aDecoder decodeObject] retain];
-//   _pool = [[NSAutoreleasePool alloc] init];
-//   return self;
-//}
-
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation: (ORAnnotation) n
 {
    // LDM: This is the true addition of the constraint into the solver during the search.
@@ -1796,7 +1776,7 @@
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
-   _engine = [CPFactory engine: _trail];
+   _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
@@ -1895,7 +1875,7 @@
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
    _mt   = [ORFactory memoryTrail];
-   _engine = [CPFactory engine: _trail];
+   _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
@@ -1910,7 +1890,7 @@
    self = [super init];
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
-   _engine = [CPFactory engine: _trail];
+   _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
@@ -1924,7 +1904,7 @@
    self = [super initCPCoreSolver]; 
    _trail = [ORFactory trail];
    _mt    = [ORFactory memoryTrail];
-   _engine = [CPFactory engine: _trail];
+   _engine = [CPFactory engine: _trail memory:_mt];
    _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
