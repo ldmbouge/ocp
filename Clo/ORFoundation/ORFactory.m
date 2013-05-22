@@ -33,7 +33,10 @@
 {
    return [[ORTrailI alloc] init];
 }
-
++(id<ORMemoryTrail>) memoryTrail
+{
+   return [[ORMemoryTrailI alloc] init];
+}
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) cp
 {
    id<ORRandomStream> o = [ORCrFactory randomStream];

@@ -509,16 +509,18 @@ static __thread id checkPointCache = NULL;
 @implementation DFSTracer
 {
 @private
-   ORTrailI*        _trail;
+   ORTrailI*          _trail;
+   ORMemoryTrailI*       _mt;
    ORTrailIStack*   _trStack;
-   ORInt          _lastNode;
-   TRInt             _level;
+   ORInt           _lastNode;
+   TRInt              _level;
 }
--(DFSTracer*) initDFSTracer: (ORTrailI*) trail
+-(DFSTracer*) initDFSTracer: (ORTrailI*) trail memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = [trail retain];
-   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
+   _mt    = [mt retain];
+   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail memory:_mt];
    _lastNode = 0;
    _level = makeTRInt(_trail, 0);
    return self;
@@ -527,6 +529,7 @@ static __thread id checkPointCache = NULL;
 {
    NSLog(@"Releasing DFSTracer %p\n",self);
    [_trail release];
+   [_mt release];
    [_trStack release];
    [super dealloc];
 }
@@ -579,16 +582,18 @@ static __thread id checkPointCache = NULL;
 
 @implementation SemTracer {
    ORTrailI*          _trail;
+   ORMemoryTrailI*       _mt;
    ORTrailIStack*   _trStack;
    ORInt           _lastNode;
    ORCmdStack*         _cmds;
    TRInt              _level;
 }
--(SemTracer*) initSemTracer: (ORTrailI*) trail
+-(SemTracer*) initSemTracer: (ORTrailI*) trail memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = trail;
-   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
+   _mt    = mt;
+   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail memory:mt];
    _lastNode = 0;
    _cmds = [[ORCmdStack alloc] initCPCmdStack:32];
    _level = makeTRInt(_trail, 0);

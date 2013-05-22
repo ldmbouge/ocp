@@ -173,7 +173,7 @@
    ++_seg[_cSeg]->top;
 }
 
--(ORUInt)trailSize
+-(ORInt)trailSize
 {
    return _cSeg * NBSLOT + _seg[_cSeg]->top;
 }
@@ -408,11 +408,54 @@ ORInt trailMagic(ORTrailI* trail)
 }
 @end
 
+@implementation ORMemoryTrailI
+-(id)init
+{
+   self = [super init];
+   _mxs = 128;
+   _csz = 0;
+   _tab = malloc(sizeof(id)*_mxs);
+   return self;
+}
+-(void)dealloc
+{
+   while (_csz)
+      [_tab[_csz-1] release];
+   free(_tab);
+   [super dealloc];
+}
+-(void)resize
+{
+   _tab = realloc(_tab, _mxs * 2);
+   _mxs = _mxs * 2;
+}
+-(void)push:(id)obj
+{
+   if (_csz >= _mxs)
+      [self resize];
+   _tab[_csz++] = [obj retain];
+}
+-(void)pop
+{
+   [_tab[--_csz] release];
+}
+-(ORInt) trailSize
+{
+   return _csz;
+}
+-(void)backtrack:(ORInt)to
+{
+   while (_csz >= to)
+      [_tab[--_csz] release];
+}
+@end
+
 @implementation ORTrailIStack
--(ORTrailIStack*) initTrailStack: (ORTrailI*)tr
+-(ORTrailIStack*) initTrailStack: (ORTrailI*)tr memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = [tr retain];
+   _mt    = [mt retain];
    _sz  = 0;
    _mxs = 1024;
    _tab = malloc(sizeof(struct TRNode)*_mxs);
@@ -423,6 +466,7 @@ ORInt trailMagic(ORTrailI* trail)
 {
    free(_tab);
    [_trail release];
+   [_mt    release];
    [super dealloc];
 }
 -(void)pushNode:(ORInt)x
@@ -431,25 +475,26 @@ ORInt trailMagic(ORTrailI* trail)
       _tab = realloc(_tab,sizeof(struct TRNode)*_mxs*2);
       _mxs <<= 1;
    }
-   _tab[_sz++] = (struct TRNode){x,[_trail trailSize]};
+   _tab[_sz++] = (struct TRNode){x,[_trail trailSize],[_mt trailSize]};
 }
--(ORInt)popOffset:(ORInt)x
+-(void)popNode:(ORInt) x
 {
    do {
       --_sz;
    } while(_sz>0 && (_tab[_sz]._x != x));
-   return _tab[_sz]._ofs;
-}
--(void)popNode:(ORInt) x
-{
-   [_trail backtrack:[self popOffset:x]];
+   const ORInt ofs  = _tab[_sz]._ofs;
+   const ORInt mOfs = _tab[_sz]._mOfs;
+   [_trail backtrack:ofs];
+   [_mt    backtrack:mOfs];
 }
 -(void)popNode
 {
    assert(_sz > 0);
-   [_trail backtrack: _tab[--_sz]._ofs];
+   const ORInt mto = _tab[--_sz]._mOfs;
+   const ORInt to  = _tab[_sz]._ofs;
+   [_trail backtrack: to];
+   [_mt    backtrack: mto];
 }
-
 -(void)reset
 {
    _sz = 0;

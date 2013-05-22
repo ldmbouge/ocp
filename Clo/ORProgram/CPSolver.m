@@ -909,6 +909,7 @@
    id<ORExplorer>        _search;
    id<ORSearchObjectiveFunction>  _objective;
    id<ORTrail>           _trail;
+   id<ORMemoryTrail>     _mt;
    id<ORTracer>          _tracer;
    CPHeuristicSet*       _hSet;
    id<CPPortal>          _portal;
@@ -1794,8 +1795,9 @@
 {
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
    _engine = [CPFactory engine: _trail];
-   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
@@ -1892,8 +1894,9 @@
 {
    self = [super initCPCoreSolver];
    _trail = [ORFactory trail];
+   _mt   = [ORFactory memoryTrail];
    _engine = [CPFactory engine: _trail];
-   _tracer = [[DFSTracer alloc] initDFSTracer: _trail];
+   _tracer = [[DFSTracer alloc] initDFSTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORDFSController class]
                                                                   nestedControllerClass: [ORDFSController class]];
@@ -1906,8 +1909,9 @@
 {
    self = [super init];
    _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
    _engine = [CPFactory engine: _trail];
-   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: [ORSemDFSControllerCSP class]];
@@ -1919,8 +1923,9 @@
 {
    self = [super initCPCoreSolver]; 
    _trail = [ORFactory trail];
+   _mt    = [ORFactory memoryTrail];
    _engine = [CPFactory engine: _trail];
-   _tracer = [[SemTracer alloc] initSemTracer: _trail];
+   _tracer = [[SemTracer alloc] initSemTracer: _trail memory:_mt];
    ORControllerFactoryI* cFact = [[ORControllerFactoryI alloc] initORControllerFactoryI: self
                                                                     rootControllerClass: [ORSemDFSControllerCSP class]
                                                                   nestedControllerClass: ctrlClass];

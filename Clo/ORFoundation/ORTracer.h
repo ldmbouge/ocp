@@ -19,6 +19,7 @@
 @protocol ORTrail;
 @class ORCommandList;
 @class ORTrailI;
+@class ORMemoryTrailI;
 @class SemTracer;
 @class ORCmdStack;
 
@@ -55,7 +56,7 @@
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
--(DFSTracer*) initDFSTracer: (id<ORTrail>) trail;
+-(DFSTracer*) initDFSTracer: (id<ORTrail>) trail memory:(ORMemoryTrailI*)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
@@ -67,7 +68,7 @@
 @end
 
 @interface SemTracer : NSObject<ORTracer>
--(SemTracer*) initSemTracer: (id<ORTrail>) trail;
+-(SemTracer*) initSemTracer: (id<ORTrail>) trail memory:(ORMemoryTrailI*)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;

@@ -26,6 +26,7 @@
 @interface ORFactory : NSObject
 +(void) shutdown;
 +(id<ORTrail>) trail;
++(id<ORMemoryTrail>) memoryTrail;
 +(id<ORRandomStream>) randomStream: (id<ORTracker>) tracker;
 +(id<ORZeroOneStream>) zeroOneStream: (id<ORTracker>) tracker;
 +(id<ORUniformDistribution>) uniformDistribution: (id<ORTracker>) tracker range: (id<ORIntRange>) r;

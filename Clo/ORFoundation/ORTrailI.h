@@ -63,7 +63,7 @@
 -(ORTrailI*) init;
 -(void) dealloc;
 -(ORUInt) magic;
--(ORUInt) trailSize;
+-(ORInt) trailSize;
 -(void) resize;
 -(void) incMagic;
 -(void) trailInt:(ORInt*) ptr;
@@ -81,18 +81,32 @@
 -(void) backtrack:(ORInt) to;
 @end
 
+@interface ORMemoryTrailI : NSObject<ORMemoryTrail> {
+   id*   _tab;
+   ORInt _mxs;
+   ORInt _csz;
+}
+-(id)init;
+-(void)dealloc;
+-(void)push:(id)obj;
+-(void)pop;
+-(ORInt)trailSize;
+@end
+
 @interface ORTrailIStack : NSObject {
    @package
-   ORTrailI*  _trail;
+   ORTrailI*        _trail;
+   ORMemoryTrailI*     _mt;
    struct TRNode {
-      ORInt   _x;
-      ORInt _ofs;
+      ORInt    _x;
+      ORInt  _ofs;
+      ORInt _mOfs;
    };
-   struct TRNode*  _tab;
-   ORInt        _sz;
-   ORInt       _mxs;
+   struct TRNode*     _tab;
+   ORInt               _sz;
+   ORInt              _mxs;
 }
--(ORTrailIStack*) initTrailStack: (ORTrailI*) tr;
+-(ORTrailIStack*) initTrailStack: (ORTrailI*) tr memory:(ORMemoryTrailI*)mt;
 -(void) dealloc;
 -(void) pushNode:(ORInt) x;
 -(void) popNode:(ORInt) x;

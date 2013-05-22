@@ -28,6 +28,11 @@
 -(void) incMagic;
 @end
 
+@protocol ORMemoryTrail<NSObject>
+-(void)push:(id)obj;
+-(void)pop;
+-(void)backtrack:(ORInt)ofs;
+@end
 
 typedef struct {
    int    _val;   // TRInt should be a 32-bit wide trailable signed integer
