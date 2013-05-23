@@ -331,6 +331,10 @@
 {
    _snapshot = [[ORCPFloatVarSnapshot alloc] initCPFloatVarSnapshot: v with: _solver];
 }
+-(void) visitIntVarLitEQView:(id) v
+{
+   _snapshot = NULL;
+}
 -(void) visitAffineVar:(id<ORIntVar>) v
 {
    _snapshot = NULL;   

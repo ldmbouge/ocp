@@ -99,7 +99,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"Deallocating ORSelectI");
+   //NSLog(@"Deallocating ORSelectI");
    [_select release];
    [super dealloc];
 }

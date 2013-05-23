@@ -47,8 +47,8 @@ int main(int argc, const char * argv[])
             }
          }
          */
-         //id<CPProgram> cp = [args makeProgram:mdl];
-         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
+         id<CPProgram> cp = [args makeProgram:mdl];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
          //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController class]];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
          //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
