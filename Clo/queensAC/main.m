@@ -47,11 +47,13 @@ int main(int argc, const char * argv[])
             }
          }
          */
-         id<CPProgram> cp = [args makeProgram:mdl];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //id<CPProgram> cp = [args makeProgram:mdl];
+         id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController class]];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
          //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
          //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
@@ -60,6 +62,9 @@ int main(int argc, const char * argv[])
              //[cp labelArrayFF: x];
              @synchronized(cp) {
                 nbSol++;
+                for(ORInt i = 1; i <= 8; i++)
+                   printf("%d ",[cp intValue: x[i]]);
+                printf("\n");
              }
              [[cp explorer] fail];
           }];

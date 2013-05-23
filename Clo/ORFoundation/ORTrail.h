@@ -28,10 +28,13 @@
 -(void) incMagic;
 @end
 
-@protocol ORMemoryTrail<NSObject>
+@protocol ORMemoryTrail<NSObject,NSCopying>
 -(id)track:(id)obj;
 -(void)pop;
 -(void)backtrack:(ORInt)ofs;
+-(id)copy;
+-(void)clear;
+-(ORInt)trailSize;
 @end
 
 typedef struct {

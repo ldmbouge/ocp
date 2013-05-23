@@ -430,7 +430,7 @@ ORInt trailMagic(ORTrailI* trail)
 -(void)dealloc
 {
    while (_csz)
-      [_tab[_csz-1] release];
+      [_tab[--_csz] release];
    free(_tab);
    [super dealloc];
 }
@@ -462,6 +462,30 @@ ORInt trailMagic(ORTrailI* trail)
 {
    while (_csz > to)
       [_tab[--_csz] release];
+}
+-(void)clear
+{
+   while (_csz)
+      [_tab[--_csz] release];
+}
+-(void)comply:(ORMemoryTrailI*)mt upTo:(ORInt)mh
+{
+//   while (_csz > mt->_csz)
+//      [_tab[--_csz] release];
+   assert(_csz <= mt->_csz);
+   ORInt k = _csz;
+   while (_csz < mh)
+      _tab[_csz++] = [mt->_tab[k++] retain];
+}
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"ORMemoryTrail(%d / %d)[",_csz,_mxs];
+   for(ORInt i =0;i<_csz-1;i++)
+      [buf appendFormat:@"%p,",_tab[i]];
+   [buf appendFormat:@"%p]",_tab[_csz-1]];
+   return buf;
 }
 @end
 

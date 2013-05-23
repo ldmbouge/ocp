@@ -157,8 +157,6 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
       if ([k nbCalls] == 0) {
          [_controller._val startTryallBody];
          _nbc++;
-         // We must retain the iterator here so that the failure block can have an unconditional release.
-         [ite retain];
          [_controller._val addChoice: k];
          body(nv.value);
          [_controller._val exitTryallBody];
@@ -174,7 +172,6 @@ struct TAOutput nextTAValue(id<IntEnumerator> ite,ORInt2Bool filter)
          [_controller._val trust];
          [_controller._val startTryallOnFailure];
          // The continuation is used only twice, so we are guaranteed that it is safe and correct to letgo now. 
-         [_trail trailRelease:ite];
          if (onFailure)
             onFailure(nv.value);
          // There is a caveat here. We can call "startTryallOnFailure" but *never* call its matching "exitTRyallOnFailure"

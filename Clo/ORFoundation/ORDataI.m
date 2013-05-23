@@ -227,6 +227,11 @@
    _value = v;
    return self;
 }
+-(void)dealloc
+{
+   NSLog(@"ORMutableId dealloc'd : %p",self);
+   [super dealloc];
+}
 -(id) idValue
 {
    return _value;

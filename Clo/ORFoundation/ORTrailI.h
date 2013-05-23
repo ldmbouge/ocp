@@ -92,6 +92,8 @@
 -(id)track:(id)obj;
 -(void)pop;
 -(ORInt)trailSize;
+-(void)clear;
+-(void)comply:(id<ORMemoryTrail>)mt upTo:(ORInt)mh;
 @end
 
 @interface ORTrailIStack : NSObject {

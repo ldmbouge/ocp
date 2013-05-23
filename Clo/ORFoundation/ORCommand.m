@@ -38,19 +38,20 @@ static __thread ComListPool* pool = NULL;
    return pool;
 }
 
-+(id)newCommandList:(ORInt)node
++(id)newCommandList:(ORInt)node memory:(ORInt)mh
 {
    ComListPool* p = [self instancePool];
    ORCommandList* rv = NULL;
    if (p->_low == p->_high) {
       rv = NSAllocateObject(self, 0, NULL);
-      [rv initCPCommandList:node];
+      [rv initCPCommandList:node memory:mh];
    } else {
       rv = p->_pool[p->_low];
       p->_low = (p->_low + 1) % p->_mxs;
       p->_sz--;
       rv->_cnt = 1;
       rv->_ndId = node;
+      rv->_mh   = mh;
    }
    return rv;
 }
@@ -81,11 +82,12 @@ static __thread ComListPool* pool = NULL;
       }
    }
 }
--(ORCommandList*) initCPCommandList: (ORInt) node
+-(ORCommandList*) initCPCommandList: (ORInt) node memory:(ORInt)mh
 {
    self = [super init];
    _head = NULL;
    _ndId = node;
+   _mh   = mh;
    _cnt  = 1;
    return self;
 }
@@ -102,7 +104,7 @@ static __thread ComListPool* pool = NULL;
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORCommandList* nList = [ORCommandList newCommandList:_ndId];
+   ORCommandList* nList = [ORCommandList newCommandList:_ndId memory:_mh];
    //[[ORCommandList alloc] initCPCommandList:_ndId];
    struct CNode* cur = _head;
    struct CNode* first = NULL;
@@ -150,7 +152,7 @@ static __thread ComListPool* pool = NULL;
 -(NSString*)description
 {
    NSMutableString* str = [NSMutableString stringWithCapacity:512];
-   [str appendFormat:@" [%d]:{",_ndId];
+   [str appendFormat:@" [%d | %d]:{",_ndId,_mh];
    struct CNode* cur = _head;
    while (cur) {
       [str appendString:[cur->_c description]];
@@ -164,6 +166,10 @@ static __thread ComListPool* pool = NULL;
 -(ORBool)equalTo:(ORCommandList*)cList
 {
    return _ndId == cList->_ndId;
+}
+-(ORInt) memory
+{
+   return _mh;
 }
 -(void) setNodeId:(ORInt)nid
 {
@@ -227,6 +233,4 @@ static __thread ComListPool* pool = NULL;
    }
    return self;
 }
-
-
 @end

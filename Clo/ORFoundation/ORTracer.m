@@ -35,8 +35,9 @@
    ORCmdStack* _path;
    ORInt     _nodeId;
    ORInt        _cnt;
+   id<ORMemoryTrail> _mt;
 }
--(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds;
+-(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt;
 -(void)dealloc;
 -(NSString*)description;
 -(void)setNode:(ORInt)nid;
@@ -56,7 +57,7 @@
 }
 -(ORCmdStack*) initCPCmdStack: (ORUInt) mx;
 -(void) dealloc;
--(void) pushList: (ORInt) node;
+-(void) pushList: (ORInt) node memory:(ORInt)mh;
 -(void) pushCommandList: (ORCommandList*) list;
 -(void) addCommand:(id<ORCommand>)c;
 -(ORCommandList*) popList;
@@ -96,14 +97,14 @@ inline static ORCommandList* peekAt(ORCmdStack* cmd,ORUInt d) { return cmd->_tab
 inline static ORUInt getStackSize(ORCmdStack* cmd) { return cmd->_sz;}
 inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->_sz];}
 
--(void)pushList:(ORInt)node
+-(void)pushList:(ORInt)node memory:(ORInt)mh
 {
    if (_sz >= _mxs) {
       _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
    //ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
-   ORCommandList* list = [ORCommandList newCommandList:node];
+   ORCommandList* list = [ORCommandList newCommandList:node memory:mh];
    _tab[_sz++] = list;
 }
 -(void)pushCommandList:(ORCommandList*)list
@@ -256,7 +257,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    static ORInt _counter = 0;
    self = [super init];
-   _cstrs = [ORCommandList newCommandList:-1];
+   _cstrs = [ORCommandList newCommandList:-1 memory:0];
    _id = _counter++;
    return self;
 }
@@ -372,7 +373,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 @end
 
 @implementation ORCheckpointI
--(ORCheckpointI*)initCheckpoint:(ORCmdStack*) cmds
+-(ORCheckpointI*)initCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
 {
    self = [super init];
    _path = [[ORCmdStack alloc] initCPCmdStack:64];
@@ -380,12 +381,14 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    for(ORInt i=0;i< ub;i++)
       pushCommandList(_path, peekAt(cmds, i));
    _nodeId = -1;
+   _mt = [mt copy];
    return self;
 }
 -(void)dealloc
 {
    NSLog(@"dealloc checkpoint %p\n",self);
    [_path release];
+   [_mt release];
    [super dealloc];
 }
 -(NSString*)description
@@ -457,7 +460,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 
 static __thread id checkPointCache = NULL;
 
-+(id)newCheckpoint:(ORCmdStack*) cmds
++(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
 {
    id ptr = checkPointCache;
    if (ptr) {
@@ -478,11 +481,13 @@ static __thread id checkPointCache = NULL;
       ORInt ub = getStackSize(cmds);
       for(;i < ub;i++)
          pushCommandList(theCP->_path, peekAt(cmds, i));
+      [theCP->_mt release];
+      theCP->_mt = [mt copy];
    } else {
       //NSLog(@"Fresh checkpoint...");
       ptr = [super allocWithZone:NULL];
       *(Class*)ptr = self;
-      ptr = [ptr initCheckpoint:cmds];
+      ptr = [ptr initCheckpoint:cmds memory:mt];
       ((ORCheckpointI*)ptr)->_cnt = 1;
    }
    return ptr;
@@ -491,6 +496,7 @@ static __thread id checkPointCache = NULL;
 {
    assert(_cnt > 0);
    if (--_cnt == 0) {
+      [_mt clear];
       id vLossCache = checkPointCache;
       *(id*)self = vLossCache;
       checkPointCache = self;
@@ -610,7 +616,7 @@ static __thread id checkPointCache = NULL;
 -(ORInt) pushNode
 {
    [_trStack pushNode: _lastNode];
-   [_cmds pushList: _lastNode];     // add a list of constraint
+   [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
    _lastNode++;
    assert([_cmds size] == [_trStack size]);
@@ -666,7 +672,7 @@ static __thread id checkPointCache = NULL;
 }
 -(id<ORCheckpoint>)captureCheckpoint
 {
-   ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds];
+   ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds memory:_mt];
    ncp->_nodeId = [self pushNode];
    return ncp;
 }
@@ -712,6 +718,7 @@ static __thread id checkPointCache = NULL;
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
          ORCommandList* theList = peekAt(toRestore,j);
+         [_mt comply:acp->_mt upTo:[theList memory]];
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
@@ -734,6 +741,7 @@ static __thread id checkPointCache = NULL;
          if (s==ORFailure)
             return s;
       }
+      [_mt comply:acp->_mt upTo:[acp->_mt trailSize]];
       return [fdm enforceObjective];
    }
    return ORSuspend;
