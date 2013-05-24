@@ -10,19 +10,20 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORVar.h>
 
 @protocol ORSolution <ORObject>
--(id<ORSnapshot>) value:(id)var;
--(ORInt) intValue: (id) var;
--(BOOL) boolValue: (id) var;
--(NSUInteger) count;
--(id<ORObjectiveValue>)objectiveValue;
+-(id<ORSnapshot>) value: (id) var;
+-(ORInt) intValue: (id<ORIntVar>) var;
+-(ORBool) boolValue: (id<ORIntVar>) var;
+-(ORFloat) floatValue: (id<ORFloatVar>) var;
+-(id<ORObjectiveValue>) objectiveValue;
 @end
 
 @protocol ORSolutionPool <NSObject>
--(void)addSolution:(id<ORSolution>)s;
--(void)enumerateWith:(void(^)(id<ORSolution>))block;
--(id<ORInformer>)solutionAdded;
--(id<ORSolution>)best;
+-(void) addSolution: (id<ORSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORSolution>) best;
 @end

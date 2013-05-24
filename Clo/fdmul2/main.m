@@ -54,19 +54,19 @@ int main(int argc, const char * argv[])
       [cp solve: ^{
          @try {
             [cp labelHeuristic:h];
+            NSLog(@"Solution: %@",x);
+            NSLog(@"        %d %d %d",[cp intValue:x[2]],[cp intValue:x[1]],[cp intValue:x[0]]);
+            NSLog(@"        %d %d %d",[cp intValue:x[5]],[cp intValue:x[4]],[cp intValue:x[3]]);
+            NSLog(@"* --------------");
+            NSLog(@"        %d %d %d",[cp intValue:x[8]],[cp intValue:x[7]],[cp intValue:x[6]]);
+            NSLog(@"      %d %d %d",[cp intValue:x[11]],[cp intValue:x[10]],[cp intValue:x[9]]);
+            NSLog(@"    %d %d %d",[cp intValue:x[14]],[cp intValue:x[13]],[cp intValue:x[12]]);
+            NSLog(@"    %d %d %d %d %d",[cp intValue:x[19]],[cp intValue:x[18]],[cp intValue:x[17]],[cp intValue:x[16]],[cp intValue:x[15]]);
+            NSLog(@"Solver: %@",cp);
          } @catch(CPRemoveOnDenseDomainError* nsex) {
             NSLog(@"GOT AN REMOVE: %@",nsex);
             [nsex release];
          }
-         NSLog(@"Solution: %@",x);
-         NSLog(@"        %d %d %d",[x[2] min],[x[1] min],[x[0] min]);
-         NSLog(@"        %d %d %d",[x[5] min],[x[4] min],[x[3] min]);
-         NSLog(@"* --------------");
-         NSLog(@"        %d %d %d",[x[8] min],[x[7] min],[x[6] min]);
-         NSLog(@"      %d %d %d",[x[11] min],[x[10] min],[x[9] min]);
-         NSLog(@"    %d %d %d",[x[14] min],[x[13] min],[x[12] min]);
-         NSLog(@"    %d %d %d %d %d",[x[19] min],[x[18] min],[x[17] min],[x[16] min],[x[15] min]);
-         NSLog(@"Solver: %@",cp);
        }];
       [cp release];
       [ORFactory shutdown];

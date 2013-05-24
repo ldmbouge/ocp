@@ -16,5 +16,8 @@
 @protocol ORAddToModel;
 
 @protocol ORModelTransformation <NSObject>
--(void)apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
+-(void)apply:(id<ORModel>)m;
+@end
+
+@interface ORNOopVisit : NSObject<ORVisitor>
 @end

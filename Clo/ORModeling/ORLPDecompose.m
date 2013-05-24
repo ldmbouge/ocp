@@ -41,12 +41,12 @@
    bool lc = [[e left] isConstant];
    bool rc = [[e right] isConstant];
    if (lc && rc) {
-      bool isOk = [[e left] min] == [[e right] min];
+      bool isOk = [[e left] floatValue] == [[e right] floatValue];
       if (!isOk)
          [_model addConstraint: [ORFactory fail:_model]];
    }
    else if (lc || rc) {
-      ORInt c = lc ? [[e left] min] : [[e right] min];
+      ORFloat c = lc ? [[e left] floatValue] : [[e right] floatValue];
       ORExprI* other = lc ? [e right] : [e left];
       ORFloatLinear* lin  = [ORLPLinearizer linearFrom:other model:_model annotation:_n];
       [lin addIndependent: - c];
@@ -87,6 +87,9 @@
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitFloatVar:(id<ORFloatVar>)e    {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e   {}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e   {}
+-(void) visitFloatI: (id<ORFloatNumber>) e {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
 -(void) visitExprMulI: (ORExprMulI*) e     {}
@@ -125,11 +128,23 @@
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   [_terms addTerm: e by: 1];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    [_terms addIndependent:[e value]];
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   [_terms addIndependent:[e initialValue]];
+}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   [_terms addIndependent:[e initialValue]];
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   [_terms addIndependent:[e floatValue]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
@@ -150,22 +165,21 @@
    BOOL cv = [[e left] isConstant] && [[e right] isVariable];
    BOOL vc = [[e left] isVariable] && [[e right] isConstant];
    if (cv || vc) {
-      ORInt coef = cv ? [[e left] min] : [[e right] min];
+      ORFloat coef = cv ? [[e left] floatValue] : [[e right] floatValue];
       id       x = cv ? [e right] : [e left];
-      [_terms addTerm:x by:coef];
+      [_terms addTerm: x by: coef];
    }
    else {
-      assert(false);
+      @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
    }
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
-   // TODO:ldm
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for div"];  
 }
-
 -(void) visitExprModI: (ORExprModI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for mod"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {

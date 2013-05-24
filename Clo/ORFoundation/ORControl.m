@@ -82,8 +82,8 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 {
    ORInt sz = [_S size];
    ORInt* value = alloca(sizeof(ORInt)*sz);
-   bool* used = alloca(sizeof(bool)*sz);
-   memset(used,0,sizeof(bool)*sz);
+   bool* used = alloca(sizeof(ORBool)*sz);
+   memset(used,0,sizeof(ORBool)*sz);
    ORInt nbo = (ORInt) [_arrayOrderedBy count];
    float* best = alloca(sizeof(float)*nbo);
    id<IntEnumerator> ite = [_S enumerator];
@@ -100,18 +100,18 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
       ORInt chosen = -1;
       ORInt i = 0;
       while (i < nb) {
-//         if (!used[i]) && (([_arraySuchThat count] == 0) || (((ORInt2Bool) [_arraySuchThat objectAtIndex: 0])(value[i])))) {
          if (!used[i]) {
             BOOL valid = true;
-            ORInt nbs = (ORInt) [_arraySuchThat count];
-            for(ORInt k = 0; k < nbs && valid; k++)
-               valid = ((ORInt2Bool) [_arraySuchThat objectAtIndex: k])(value[i]);
+            for(ORInt2Bool fun in _arraySuchThat) {
+               valid = fun(value[i]);
+               if (!valid) break;
+            }
             if (valid) {
                if (isSmaller(value[i],_arrayOrderedBy,best)) {
                   chosen = i;
-                  ORInt nbo = (ORInt) [_arrayOrderedBy count];
-                  for(ORInt k = 0; k < nbo; k++) 
-                     best[k] = ((ORInt2Int) [_arrayOrderedBy objectAtIndex: k])(value[i]);
+                  ORInt k = 0;
+                  for(ORInt2Int fun in _arrayOrderedBy)
+                     best[k++] = fun(value[i]);
                }
             }
          }
@@ -131,7 +131,7 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 +(id<ORForall>) forall: (id<ORTracker>) tracker set: (id<ORIntIterable>) S
 {
    id<ORForall> forall = [[ORForallI alloc] initORForallI:tracker set:S];
-   [tracker trackObject: forall];
+   [tracker trackMutable: forall];
    return forall;
 }
 @end;
@@ -145,8 +145,8 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
 {
    ORInt sz = [S size];
    ORInt* value = alloca(sizeof(ORInt)*sz);
-   bool* used = alloca(sizeof(bool)*sz);
-   memset(used,0,sizeof(bool)*sz);
+   bool* used = alloca(sizeof(ORBool)*sz);
+   memset(used,0,sizeof(ORBool)*sz);
    id<IntEnumerator> ite = [S enumerator];
    ORInt nb = 0;
    while ([ite more]) {

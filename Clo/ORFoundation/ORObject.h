@@ -15,7 +15,7 @@
 // pvh: Do I need the implementation to be visible
 
 @interface ORObject : NSObject<ORObject> {
-   id      _impl;
+   //id      _impl;
    ORUInt  _name;
    BOOL    _ba[4];
 }
@@ -24,16 +24,3 @@
 -(ORUInt)getId;
 @end
 
-@interface ORModelingObjectI : ORObject<ORObject>
--(id) init;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
-@end;
-
-@interface ORDualUseObjectI : ORObject<ORObject>
--(id) init;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
-@end;

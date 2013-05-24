@@ -41,13 +41,13 @@ id<ORIntSet> knightMoves(id<ORModel> mdl,int i)
     }
     return S;
 }
-void printCircuit(id<ORIntVarArray> jump)
+void printCircuit(id<CPProgram> cp,id<ORIntVarArray> jump)
 {
     int curr = 1;
     printf("1");
     do {
-        curr = [[jump at: curr] min];
-        printf("->%d",curr);
+       curr = [cp min:[jump at: curr]];
+       printf("->%d",curr);
     } while (curr != 1);
     printf("\n");
 }
@@ -58,12 +58,7 @@ int main (int argc, const char * argv[])
       id<ORIntRange> R = RANGE(mdl,1,64);
       id<ORIntRange> D = RANGE(mdl,1,64);
       id<ORIntVarArray> jump = [ORFactory intVarArray:mdl range: R domain: D];
-      
-      NSLog(@"%@",jump[1]);
-      printf("min %d \n",[jump[1] min]);
-      printf("max %d \n",[jump[1] max]);
-      printf("size %d \n",[jump[1] domsize]);
-      
+           
       for(int i = 1; i <= 64; i++)
          [mdl add:[ORFactory restrict:mdl var:jump[i] to: knightMoves(mdl,i)]];
       [mdl add: [ORFactory alldifferent: jump annotation: DomainConsistency]];
@@ -72,8 +67,8 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
       [cp solve:
        ^() {
-          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [[jump at:i] domsize];}];
-          printCircuit(jump);
+          [cp labelArray: jump orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[jump at:i]];}];
+          printCircuit(cp,jump);
        }
        ];
       

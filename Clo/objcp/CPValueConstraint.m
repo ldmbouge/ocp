@@ -672,10 +672,13 @@
          [_y updateMax:maxDom(_x) - 1];
       }
    } else {
-      if (maxDom(_x) <= minDom(_y))
+      if (maxDom(_x) <= minDom(_y)) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:YES];
-      else if (minDom(_x) > maxDom(_y))
+      } else if (minDom(_x) > maxDom(_y)) {
+         assignTRInt(&_active, NO, _trail);
          [_b bind:NO];
+      }
    }
 }
 -(NSSet*)allVars
@@ -712,21 +715,26 @@
    else if ([_x min] > _c)
       return [_b bind:NO];
    else {
-      [_b setBindTrigger: ^ {
-         if ([_b min])
-            [_x updateMax:_c];
-         else
-            [_x updateMin:_c+1];
-      } onBehalf:self];
-      [_x whenChangeMinDo:^{
-         if ([_x min] > _c)
-            [_b bind:NO];
-      } onBehalf:self];
-      [_x whenChangeMaxDo:^{
-         if ([_x max] <= _c)
-            [_b bind:YES];
-      } onBehalf:self];
+      [_b whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
       return ORSuspend;
+   }
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (_b.min)
+         [_x updateMax:_c];
+      else [_x updateMin:_c+1];
+   } else {
+      if (_x.min > _c) {
+         assignTRInt(&_active, NO, _trail);
+         [_b bind:NO];
+      } else if (_x.max <= _c) {
+         assignTRInt(&_active, NO, _trail);
+         [_b bind:YES];
+      }
    }
 }
 -(NSSet*)allVars
@@ -783,21 +791,26 @@
    else if ([_x max] < _c)
       return [_b bind:NO];
    else {
-      [_b setBindTrigger: ^ {
-         if ([_b min])
-            [_x updateMin:_c];
-         else
-            [_x updateMax:_c-1];
-      } onBehalf:self];
-      [_x whenChangeMinDo:^{
-         if ([_x min] >= _c)
-            [_b bind:YES];
-      } onBehalf:self];
-      [_x whenChangeMaxDo:^{
-         if ([_x max] < _c)
-            [_b bind:NO];
-      } onBehalf:self];
+      [_b whenBindPropagate:self];
+      [_x whenChangeBoundsPropagate:self];
       return ORSuspend;
+   }
+}
+-(void)propagate
+{
+   if (bound(_b)) {
+      assignTRInt(&_active, NO, _trail);
+      if (_b.min)
+         [_x updateMin:_c];
+      else [_x updateMax:_c-1];
+   } else {
+      if (_x.min >= _c) {
+         assignTRInt(&_active, NO, _trail);
+         [_b bind:YES];
+      } else if (_x.max < _c) {
+         assignTRInt(&_active, NO, _trail);
+         [_b bind:NO];
+      }
    }
 }
 -(NSSet*)allVars
@@ -893,10 +906,12 @@
                                // Look for another support among the non-tracked variables.
                                ORLong j = _last;
                                bool jOk = false;
-                               do {
-                                   j=(j+1) % (_nb - _c - 1);
-                                   jOk = [_x[_notTriggered[j]] member:true];
-                               } while (j != _last && !jOk);
+                               if (_last >= 0) {
+                                  do {
+                                     j=(j+1) % (_nb - _c - 1);
+                                     jOk = [_x[_notTriggered[j]] member:true];
+                                  } while (j != _last && !jOk);
+                               }
                                if (jOk) {
                                    ORInt nextVar = _notTriggered[j];
                                    id<CPTrigger> toMove = _at[listen];

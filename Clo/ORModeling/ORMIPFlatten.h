@@ -12,9 +12,10 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
-@interface ORMIPFlatten : NSObject<ORModelTransformation>
--(id) initORMIPFlatten;
--(void) apply:(id<ORModel>)m into:(id<ORAddToModel>)target;
-+(void) flatten:(id<ORConstraint>)c into:(id<ORAddToModel>)m;
-+(void) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
+@interface ORMIPFlatten : ORNOopVisit<ORModelTransformation,ORVisitor>
+-(id) initORMIPFlatten: (id<ORAddToModel>) target;
+-(void) apply:(id<ORModel>) m;
+-(id<ORAddToModel>) target;
++(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
 @end
+

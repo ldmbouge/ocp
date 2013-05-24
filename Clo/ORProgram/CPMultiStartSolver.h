@@ -20,7 +20,6 @@
 -(void) setSource:(id<ORModel>)src;
 -(id<CPProgram>) at: (ORInt) i;
 -(ORInt) nb;
--(id<ORSolutionPool>) globalSolutionPool;
 -(id<CPHeuristic>) createFF:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars;

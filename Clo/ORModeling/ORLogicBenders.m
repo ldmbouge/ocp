@@ -52,7 +52,7 @@
     __block BOOL isFeasible = NO;
     do {
         [_master run];
-        id<ORSolution> solution = [[_master model] bestSolution];
+        id<ORSolution> solution = [[[_master solver] solutionPool] best];  // Solution pools are on Solvers.
         id<ORProcess> slave = _slaveBlock(solution);
         if(![[slave signature] providesConstraint]) {
             [NSException raise: NSGenericException

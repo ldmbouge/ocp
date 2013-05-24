@@ -91,7 +91,7 @@ BOOL refresh(CPVarInfo* vi)
    id<ORTrail> trail = [_engine trail];
    ORUInt nbW = 0;
    for(ORInt k = [_monVar low];k <= [_monVar up];k++) {
-      id obj = [[_monVar at:k] dereference];
+      id obj = [_monVar at:k];
       CPVarInfo* vInfo = [[CPVarInfo alloc] initCPVarInfo:obj trail:trail];
       _varInfo[nbW++] = vInfo; // [ldm] vInfo is in the _varInfo dico with refcnt = 1 from here on.
       [obj whenChangeDo: ^ { makeVarActive(vInfo);}

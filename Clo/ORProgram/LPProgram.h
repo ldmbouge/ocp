@@ -15,9 +15,38 @@
 @class LPSolverI;
 @protocol ORModel;
 
-@protocol LPProgram <NSObject>
+@protocol LPColumn <NSObject>
+-(void) addObjCoef: (ORFloat) coef;
+-(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
+@end
+
+@protocol ORLPSolution <ORSolution>
+-(ORFloat) reducedCost: (id<ORFloatVar>) var;
+-(ORFloat) dual: (id<ORConstraint>) var;
+-(id<ORObjectiveValue>) objectiveValue;
+@end
+
+@protocol ORLPSolutionPool <ORSolutionPool>
+-(void) addSolution: (id<ORLPSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORLPSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORLPSolution>) best;
+@end
+
+@protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
+-(void) setGamma: (id*) gamma;
+-(void) setTau: (id<ORTau>) tau;
+-(id*)  gamma;
 -(void) solve;
--(ORFloat)dual:(id<ORConstraint>)c;
+-(id<LPColumn>) createColumn;
+-(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up;
+-(void) addColumn: (id<LPColumn>) column;
+-(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORFloatVar>) v;
+-(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(id<ORObjectiveValue>) objectiveValue;
+-(id<ORLPSolutionPool>) solutionPool;
+-(id<ORLPSolution>) captureSolution;
 @end
 

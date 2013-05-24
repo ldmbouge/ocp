@@ -26,7 +26,7 @@ typedef struct CPEltRecordTag {
    TRInt        _to;
 }
 
--(id) initCPElementBC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y
+-(id) initCPElementBC: (CPIntVarI*) x indexCstArray:(id<ORIntArray>) c equal:(CPIntVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -177,7 +177,7 @@ struct EltACPair {
    ORInt             _xUp;
    ORInt             _nbValues;
 }
--(id) initCPElementAC: (id) x indexCstArray:(id<ORIntArray>) c equal:(id)y
+-(id) initCPElementAC: (CPIntVarI*) x indexCstArray:(id<ORIntArray>) c equal:(CPIntVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -316,7 +316,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 @end
 
 @implementation CPElementVarBC
--(id) initCPElementBC: (id) x indexVarArray:(id<CPIntVarArray>)z equal:(id)y   // y == z[x]
+-(id) initCPElementBC: (CPIntVarI*) x indexVarArray:(id<CPIntVarArray>)z equal:(CPIntVarI*)y   // y == z[x]
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;
@@ -413,7 +413,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 @end
 
 @implementation CPElementVarAC
--(id)initCPElementAC: (id) x indexVarArray:(id<CPIntVarArray>)y equal:(id)z   // z AC== y[x]
+-(id)initCPElementAC: (CPIntVarI*) x indexVarArray:(id<CPIntVarArray>)y equal:(CPIntVarI*)z   // z AC== y[x]
 {
    self = [super initCPCoreConstraint: [x engine]];
    _x = x;

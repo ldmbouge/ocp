@@ -24,6 +24,7 @@
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 
+
 #if defined(__linux__)
 #import <values.h>
 #endif
@@ -33,6 +34,794 @@
 // 1. Look at IncModel to implement the incremental addition of constraints
 // 2. Need to check how variables/constraints/objects are created during the search
 // 3. Need to concretize them directly
+
+
+@interface ORCPIntVarSnapshot : NSObject<ORSnapshot,NSCoding> {
+   ORUInt    _name;
+   ORInt     _value;
+}
+-(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
+-(int) intValue;
+-(ORBool) boolValue;
+-(NSString*) description;
+-(ORBool)isEqual: (id) object;
+-(NSUInteger) hash;
+-(ORUInt)getId;
+@end
+
+@implementation ORCPIntVarSnapshot
+-(ORCPIntVarSnapshot*) initCPIntVarSnapshot: (id<ORIntVar>) v with: (id<CPCommonProgram>) solver;
+{
+   self = [super init];
+   _name = [v getId];
+   _value = [solver intValue: v];
+   return self;
+}
+-(ORUInt)getId
+{
+   return _name;
+}
+
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) boolValue
+{
+   return _value;
+}
+-(ORBool)isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORCPIntVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value;
+      }
+      else
+         return NO;
+   } else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return (_name << 16) + _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"int(%d) : %d",_name,_value];
+   return buf;
+}
+- (void)encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   return self;
+}
+@end
+
+@interface ORCPFloatVarSnapshot : NSObject <ORSnapshot,NSCoding>
+{
+   ORUInt    _name;
+   ORFloat   _value;
+}
+-(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
+-(ORFloat) floatValue;
+-(ORInt) intValue;
+-(NSString*) description;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+@end
+
+@implementation ORCPFloatVarSnapshot
+-(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
+{
+   self = [super init];
+   _name = [v getId];
+   _value = [solver floatValue: v];
+   return self;
+}
+-(ORInt) intValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "intValue called on a snapshot for float variables"];
+   return 0;
+}
+-(ORBool) boolValue
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "boolValue called on a snapshot for float variables"];
+   return 0;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass:[self class]]) {
+      ORCPFloatVarSnapshot* other = object;
+      if (_name == other->_name) {
+         return _value == other->_value;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger)hash
+{
+   return (_name << 16) + (ORInt) _value;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"float(%d) : %f",_name,_value];
+   return buf;
+}
+
+- (void) encodeWithCoder: (NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder: (NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+@end
+
+@interface ORCPTakeSnapshot  : NSObject<ORVisitor>
+-(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
+-(void) dealloc;
+
+-(void) visitTrailableInt:(id<ORTrailableInt>)v;
+-(void) visitIntSet:(id<ORIntSet>)v;
+-(void) visitIntRange:(id<ORIntRange>)v;
+-(void) visitTable:(id<ORTable>) v;
+
+-(void) visitIntVar: (id<ORIntVar>) v;
+-(void) visitFloatVar: (id<ORFloatVar>) v;
+-(void) visitAffineVar:(id<ORIntVar>) v;
+-(void) visitBitVar: (id<ORBitVar>) v;
+-(void) visitIdArray: (id<ORIdArray>) v;
+-(void) visitIdMatrix: (id<ORIdMatrix>) v;
+-(void) visitIntArray:(id<ORIntArray>) v;
+-(void) visitFloatArray:(id<ORIntArray>) v;
+-(void) visitIntMatrix:(id<ORIntMatrix>) v;
+-(void) visitRestrict:(id<ORRestrict>)cstr;
+-(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitCardinality: (id<ORCardinality>) cstr;
+-(void) visitPacking: (id<ORPacking>) cstr;
+-(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
+-(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
+-(void) visitCircuit:(id<ORCircuit>) cstr;
+-(void) visitNoCycle:(id<ORNoCycle>) cstr;
+-(void) visitLexLeq:(id<ORLexLeq>) cstr;
+-(void) visitPackOne:(id<ORPackOne>) cstr;
+-(void) visitKnapsack:(id<ORKnapsack>) cstr;
+-(void) visitAssignment:(id<ORAssignment>)cstr;
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v;
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e;
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
+-(void) visitEqualc: (id<OREqualc>)c;
+-(void) visitNEqualc: (id<ORNEqualc>)c;
+-(void) visitLEqualc: (id<ORLEqualc>)c;
+-(void) visitGEqualc: (id<ORGEqualc>)c;
+-(void) visitEqual: (id<OREqual>)c;
+-(void) visitAffine: (id<ORAffine>)c;
+-(void) visitNEqual: (id<ORNEqual>)c;
+-(void) visitLEqual: (id<ORLEqual>)c;
+-(void) visitPlus: (id<ORPlus>)c;
+-(void) visitMult: (id<ORMult>)c;
+-(void) visitSquare: (id<ORSquare>)c;
+-(void) visitMod: (id<ORMod>)c;
+-(void) visitModc: (id<ORModc>)c;
+-(void) visitAbs: (id<ORAbs>)c;
+-(void) visitOr: (id<OROr>)c;
+-(void) visitAnd:( id<ORAnd>)c;
+-(void) visitImply: (id<ORImply>)c;
+-(void) visitElementCst: (id<ORElementCst>)c;
+-(void) visitElementVar: (id<ORElementVar>)c;
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
+-(void) visitReifyEqual: (id<ORReifyEqual>)c;
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c;
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c;
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c;
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c;
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c;
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c;
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c;
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c;
+-(void) visitSumEqualc:(id<ORSumEqc>)c;
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c;
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c;
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c;
+-(void) visitBitOr:(id<ORBitOr>)c;
+-(void) visitBitAnd:(id<ORBitAnd>)c;
+-(void) visitBitNot:(id<ORBitNot>)c;
+-(void) visitBitXor:(id<ORBitXor>)c;
+-(void) visitBitShiftL:(id<ORBitShiftL>)c;
+-(void) visitBitRotateL:(id<ORBitRotateL>)c;
+-(void) visitBitSum:(id<ORBitSum>)c;
+-(void) visitBitIf:(id<ORBitIf>)c;
+
+//
+-(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
+-(void) visitFloatI: (id<ORFloatNumber>) e;
+-(void) visitExprPlusI: (id<ORExpr>) e;
+-(void) visitExprMinusI: (id<ORExpr>) e;
+-(void) visitExprMulI: (id<ORExpr>) e;
+-(void) visitExprDivI: (id<ORExpr>) e;
+-(void) visitExprModI: (id<ORExpr>) e;
+-(void) visitExprEqualI: (id<ORExpr>) e;
+-(void) visitExprNEqualI: (id<ORExpr>) e;
+-(void) visitExprLEqualI: (id<ORExpr>) e;
+-(void) visitExprSumI: (id<ORExpr>) e;
+-(void) visitExprProdI: (id<ORExpr>) e;
+-(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprNegateI:(id<ORExpr>) e;
+-(void) visitExprCstSubI: (id<ORExpr>) e;
+-(void) visitExprDisjunctI:(id<ORExpr>) e;
+-(void) visitExprConjunctI: (id<ORExpr>) e;
+-(void) visitExprImplyI: (id<ORExpr>) e;
+-(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprVarSubI: (id<ORExpr>) e;
+@end
+
+@implementation ORCPTakeSnapshot
+{
+   id<CPCommonProgram> _solver;
+   id            _snapshot;
+}
+-(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver
+{
+   self = [super init];
+   _solver = solver;
+   return self;
+}
+-(id) snapshot:(id)obj
+{
+   [obj visit:self];
+   return _snapshot;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(void) visitTrailableInt: (id<ORTrailableInt>) v
+{
+   _snapshot = NULL;
+}
+-(void) visitIntSet:(id<ORIntSet>)v
+{
+   _snapshot = NULL;   
+}
+-(void) visitIntRange: (id<ORIntRange>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitTable:(id<ORTable>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitIntVar: (id<ORIntVar>) v
+{
+   _snapshot = [[ORCPIntVarSnapshot alloc] initCPIntVarSnapshot: v with: _solver];
+}
+-(void) visitFloatVar: (id<ORFloatVar>) v
+{
+   _snapshot = [[ORCPFloatVarSnapshot alloc] initCPFloatVarSnapshot: v with: _solver];
+}
+-(void) visitAffineVar:(id<ORIntVar>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitVar: (id<ORBitVar>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitIdArray: (id<ORIdArray>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitIdMatrix: (id<ORIdMatrix>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitIntArray:(id<ORIntArray>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitFloatArray:(id<ORIntArray>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitIntMatrix:(id<ORIntMatrix>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitRestrict:(id<ORRestrict>)cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitAlldifferent: (id<ORAlldifferent>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitCardinality: (id<ORCardinality>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitPacking: (id<ORPacking>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitTableConstraint: (id<ORTableConstraint>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitCircuit:(id<ORCircuit>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitNoCycle:(id<ORNoCycle>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitLexLeq:(id<ORLexLeq>) cstr
+{
+   _snapshot = NULL;  
+}
+-(void) visitPackOne:(id<ORPackOne>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitKnapsack:(id<ORKnapsack>) cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitAssignment:(id<ORAssignment>)cstr
+{
+   _snapshot = NULL;   
+}
+-(void) visitMinimizeVar: (id<ORObjectiveFunction>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitMaximizeVar: (id<ORObjectiveFunction>) v
+{
+   _snapshot = NULL;   
+}
+-(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o
+{
+   _snapshot = NULL;   
+}
+-(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o
+{
+   _snapshot = NULL;   
+}
+-(void) visitEqualc: (id<OREqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitNEqualc: (id<ORNEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitLEqualc: (id<ORLEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitGEqualc: (id<ORGEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitEqual: (id<OREqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitAffine: (id<ORAffine>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitNEqual: (id<ORNEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitLEqual: (id<ORLEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitPlus: (id<ORPlus>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitMult: (id<ORMult>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSquare: (id<ORSquare>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitMod: (id<ORMod>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitModc: (id<ORModc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitAbs: (id<ORAbs>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitOr: (id<OROr>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitAnd:( id<ORAnd>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitImply: (id<ORImply>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitElementCst: (id<ORElementCst>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitElementVar: (id<ORElementVar>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyEqualc: (id<ORReifyEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyEqual: (id<ORReifyEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyNEqual: (id<ORReifyNEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyLEqualc: (id<ORReifyLEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyLEqual: (id<ORReifyLEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyGEqualc: (id<ORReifyGEqualc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitReifyGEqual: (id<ORReifyGEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSumBoolEqualc: (id<ORSumBoolEqc>) c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSumBoolLEqualc:(id<ORSumBoolLEqc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSumBoolGEqualc:(id<ORSumBoolGEqc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSumEqualc:(id<ORSumEqc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSumLEqualc:(id<ORSumLEqc>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitSumGEqualc:(id<ORSumGEqc>)c
+{
+   _snapshot = NULL;   
+}
+// Bit
+-(void) visitBitEqual:(id<ORBitEqual>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitOr:(id<ORBitOr>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitAnd:(id<ORBitAnd>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitNot:(id<ORBitNot>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitXor:(id<ORBitXor>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitShiftL:(id<ORBitShiftL>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitRotateL:(id<ORBitRotateL>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitSum:(id<ORBitSum>)c
+{
+   _snapshot = NULL;   
+}
+-(void) visitBitIf:(id<ORBitIf>)c
+{
+   _snapshot = NULL;   
+}
+
+//
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _snapshot = NULL;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _snapshot = NULL;
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprPlusI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprMinusI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprMulI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprDivI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprModI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprEqualI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprNEqualI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprLEqualI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprSumI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprProdI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprAbsI:(id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprNegateI:(id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprCstSubI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprDisjunctI:(id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprConjunctI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprImplyI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprAggOrI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+-(void) visitExprVarSubI: (id<ORExpr>) e
+{
+   _snapshot = NULL;   
+}
+@end
+
+@interface ORCPSolutionI : ORObject<ORCPSolution>
+-(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver;
+-(id<ORSnapshot>) value: (id) var;
+-(ORBool) isEqual: (id) object;
+-(NSUInteger) hash;
+-(id<ORObjectiveValue>) objectiveValue;
+@end
+
+
+// PVH: need to be generalized when the global numbering will be available
+@implementation ORCPSolutionI {
+   NSArray*             _varShots;
+   id<ORObjectiveValue> _objValue;
+}
+
+-(ORCPSolutionI*) initORCPSolutionI: (id<ORModel>) model with: (id<CPCommonProgram>) solver
+{
+   self = [super init];
+   NSArray* av = [model variables];
+   ORULong sz = [av count];
+   NSMutableArray* snapshots = [[NSMutableArray alloc] initWithCapacity:sz];
+   ORCPTakeSnapshot* visit = [[ORCPTakeSnapshot alloc] initORCPTakeSnapshot: solver];
+   for(id obj in av) {
+      id shot = [visit snapshot:obj];
+      if (shot)
+         [snapshots addObject: shot];
+      [shot release];
+   }
+   _varShots = snapshots;
+   
+   if ([model objective])
+      _objValue = [[solver objective] value];
+   else
+      _objValue = nil;
+   [visit release];
+   return self;
+}
+
+-(void) dealloc
+{
+//   NSLog(@"dealloc ORCPSolutionI");
+   [_varShots release];
+   [_objValue release];
+   [super dealloc];
+}
+
+-(ORBool) isEqual: (id) object
+{
+   if ([object isKindOfClass: [self class]]) {
+      ORCPSolutionI* other = object;
+      if (_objValue && other->_objValue) {
+         if ([_objValue isEqual:other->_objValue]) {
+            return [_varShots isEqual:other->_varShots];
+         }
+         else
+            return NO;
+      }
+      else
+         return NO;
+   }
+   else
+      return NO;
+}
+-(NSUInteger) hash
+{
+   return [_varShots hash];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return _objValue;
+}
+-(id<ORSnapshot>) value: (id) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   if (idx < [_varShots count])
+      return [_varShots objectAtIndex:idx];
+   else
+      return nil;
+}
+-(ORInt) intValue: (id) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] intValue];
+}
+-(ORBool) boolValue: (id) var
+{
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] boolValue];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) var
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No float variable in LP solutions"];
+}
+-(NSUInteger) count
+{
+   return [_varShots count];
+}
+- (void) encodeWithCoder: (NSCoder *)aCoder
+{
+   [aCoder encodeObject:_varShots];
+   [aCoder encodeObject:_objValue];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   _varShots = [[aDecoder decodeObject] retain];
+   _objValue = [aDecoder decodeObject];
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   if (_objValue)
+      [buf appendFormat:@"SOL[%@](",_objValue];
+   else
+      [buf appendString:@"SOL("];
+   NSUInteger last = [_varShots count] - 1;
+   [_varShots enumerateObjectsUsingBlock:^(id<ORSnapshot> obj, NSUInteger idx, BOOL *stop) {
+      [buf appendFormat:@"%@%c",obj,idx < last ? ',' : ')'];
+   }];
+   return buf;
+}
+@end
 
 @implementation CPHeuristicSet
 {
@@ -116,7 +905,7 @@
 
 @implementation CPCoreSolver {
 @protected
-   id<ORModel>           _source;
+   id<ORModel>           _model;
    id<CPEngine>          _engine;
    id<ORExplorer>        _search;
    id<ORSearchObjectiveFunction>  _objective;
@@ -135,8 +924,8 @@
 }
 -(CPCoreSolver*) initCPCoreSolver
 {
-   self = [super init];
-   _source = NULL;
+   self = [super initORGamma];
+   _model = NULL;
    _hSet = [[CPHeuristicSet alloc] initCPHeuristicSet];
    _returnLabel = _failLabel = nil;
    _portal = [[CPInformerPortal alloc] initCPInformerPortal: self];
@@ -150,7 +939,7 @@
 }
 -(void) dealloc
 {
-   [_source release];
+   [_model release];
    [_hSet release];
    [_portal release];
    [_returnLabel release];
@@ -162,10 +951,9 @@
 }
 -(void) setSource:(id<ORModel>)src
 {
-   [_source release];
-   _source = [src retain];
+   [_model release];
+   _model = [src retain];
 }
-
 -(NSString*) description
 {
    return [NSString stringWithFormat:@"Solver: %d vars\n\t%d constraints\n\t%d choices\n\t%d fail\n\t%d propagations",
@@ -239,9 +1027,9 @@
 {
    return _sPool;
 }
--(id<ORSolutionPool>) globalSolutionPool
+-(id<ORSolution>) captureSolution
 {
-   return _sPool;
+   return [[ORCPSolutionI alloc] initORCPSolutionI: _model with: self];
 }
 -(void) doOnSolution
 {
@@ -364,26 +1152,30 @@
    [_search nestedSolveAll: body onSolution:nil onExit:nil
                    control:[[ORNestedController alloc] init:[_search controller] parent:[_search controller]]];
 }
--(void) trackObject: (id) object
+-(id) trackObject: (id) object
 {
-   [_engine trackObject:object];   
+   return [_engine trackObject:object];
 }
--(void) trackVariable: (id) object
+-(id) trackMutable: (id) object
 {
-   [_engine trackObject:object];  
+   return [_engine trackMutable:object];
 }
--(void) trackConstraint: (id) obj
+-(id) trackConstraintInGroup:(id)obj
 {
-   [_engine trackConstraint:obj];
+   return [_engine trackConstraintInGroup:obj];
 }
-//-(void) add: (id<ORConstraint>) c
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "add: not implemented"];
-//}
-//-(void) add: (id<ORConstraint>) c annotation: (ORAnnotation) cons
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "add:consistency: not implemented"];
-//}
+-(id) trackObjective:(id) object
+{
+   return [_engine trackObjective: object];
+}
+-(id) trackImmutable: (id) object
+{
+   return [_engine trackImmutable:object];
+}
+-(id) trackVariable: (id) object
+{
+   return [_engine trackMutable:object];
+}
 
 -(void) labelImpl: (id<CPIntVar>) var with: (ORInt) val
 {
@@ -405,7 +1197,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
 }
--(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method labelBVImpl not implemented"];
 }
@@ -421,7 +1213,20 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method diffBVImpl not implemented"];
 }
-
+-(ORInt) maxBound:(id<ORIdArray>) x
+{
+   ORInt low = [x low];
+   ORInt up = [x up];
+   ORInt M = -MAXINT;
+   for(ORInt i = low; i <= up; i++) {
+      if ([self bound:x[i]]) {
+         ORInt v = [self intValue:x[i]];
+         if (v > M)
+            M = v;
+      }
+   }
+   return M;
+}
 -(void) labelBit:(int)i ofVar:(id<CPBitVar>)x
 {
    [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -430,7 +1235,7 @@
 -(void) labelUpFromLSB:(id<CPBitVar>) x
 {
    int i;
-   CPBitVarI* bv = (CPBitVarI*) [x dereference];
+   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
    while ((i=[bv lsFreeBit])>=0) {
       NSAssert(i>=0,@"ERROR in [labelUpFromLSB] bitVar is not bound, but no free bits found when using lsFreeBit.");
       [_search try: ^() { [self labelBV:x at:i with:false];}
@@ -454,10 +1259,25 @@
 
 -(void) labelBitVarsFirstFail: (NSArray*)vars
 {
+//<<<<<<< HEAD
    NSMutableArray* unboundVars = [[NSMutableArray alloc]init];
    NSMutableSet* alreadyTried = [[NSMutableSet alloc] init];
+//=======
+//   CPBitVarI* minDom;
+//   ORULong minDomSize;
+//   ORULong thisDomSize;
+//   ORLong numVars;
+//   bool freeVars = false;
+//   NSMutableArray* cvars = [[[NSMutableArray alloc] initWithCapacity:[vars count]] autorelease];
+//   for(id v in vars)
+//      [cvars addObject:_gamma[[v getId]]];
+//   vars = cvars;
+//   
+//   numVars = [vars count];
+//>>>>>>> modeling
    int j;
 
+//<<<<<<< HEAD
    [unboundVars addObjectsFromArray:vars];
 
    NSArray *sortedArray;
@@ -471,10 +1291,59 @@
       }
       if ((ORULong)[(CPBitVarI*)obj1 domsize] < (ORULong)[(CPBitVarI*)obj2 domsize]) {
          return (NSComparisonResult)NSOrderedAscending;
+//=======
+//   for(int i=0;i<numVars;i++){
+//      if ([vars[i] bound])
+//         continue;
+//      if ([vars[i] domsize] <= 0)
+//         continue;
+//      minDom = vars[i];
+//      minDomSize = [minDom domsize];
+//      freeVars = true;
+//      break;
+//   }
+//
+////   NSLog(@"%lld unbound variables.",numVars);
+//   while (freeVars) {
+//      freeVars = false;
+//      numBound = 0;
+//      for(int i=0;i<numVars;i++){
+//         if ([vars[i] bound]){
+//            numBound++;
+//            continue;
+//         }
+//         if ([vars[i] domsize] <= 0)
+//            continue;
+//         if (!freeVars) {
+//            minDom = vars[i];
+//            minDomSize = [minDom domsize];
+//            freeVars = true;
+//            continue;
+//         }
+//         thisDomSize= [vars[i] domsize];
+//         if(thisDomSize==0)
+//            continue;
+//         if (thisDomSize < minDomSize) {
+//            minDom = vars[i];
+//            minDomSize = thisDomSize;
+//         }
+//      }
+//      if (!freeVars)
+//         break;
+//      //NSLog(@"%d//%lld bound.",numBound, numVars);
+////      j=[minDom randomFreeBit];
+//      
+//      //NSLog(@"Labeling %@ at %d.", minDom, j);
+//      while ([minDom domsize] > 0) {
+//         j= [minDom randomFreeBit];
+//         [_search try: ^() { [self labelBVImpl:(id)minDom at:j with:false];}
+//                   or: ^() { [self labelBVImpl:(id)minDom at:j with:true];}];
+//>>>>>>> modeling
       }
       return (NSComparisonResult)NSOrderedSame;
       }];
 
+//<<<<<<< HEAD
 //      for (int i=0;i<[sortedArray count]; i++) {
 //         ORULong dSize =[(CPBitVarI*)(sortedArray[i]) domsize];
 //         NSLog(@"%llu",dSize);
@@ -509,12 +1378,14 @@
             //break;
          }
       }
+//=======
+//      //NSLog(@"Labeled %@ at %d.", minDom, j);
+//>>>>>>> modeling
    }
 }
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
-   x = [[_source rootModel] lookup:x];
    ORInt low = [x low];
    ORInt up = [x up];
    for(ORInt i = low; i <= up; i++)
@@ -522,10 +1393,12 @@
 }
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
+   // pvh: the range here is leaked
    id<ORSelect> select = [ORFactory select: _engine
                                      range: RANGE(self,[x low],[x up])
-                                  suchThat: ^bool(ORInt i) { return ![[x at: i] bound]; }
+                                  suchThat: ^bool(ORInt i) { return ![self bound: [x at: i]]; }
                                  orderedBy: orderedBy];
+ 
    do {
       ORInt i = [select min];
       if (i == MAXINT) {
@@ -533,18 +1406,72 @@
       }
       [self label: x[i]];
    } while (true);
+   [select release];
 }
+
+-(void) labelArrayFF:(id<ORIntVarArray>) x
+{
+   const ORInt sz = x.range.size;
+   id<CPIntVar> cx[sz];
+   for(ORInt i=x.range.low;i <= x.range.up;i++)
+      cx[i - x.range.low]  = _gamma[x[i].getId];
+   id<ORRandomStream> tie = [ORCrFactory randomStream];
+   [_trail trailClosure:^{ [tie release];}];
+   do {
+      ORInt sd  = FDMAXINT;
+      id<CPIntVar> sx = NULL;
+      ORLong bestRand = 0x7fffffffffffffff;
+      for(ORInt i=0;i<sz;i++) {
+         ORInt cds = [cx[i] domsize];
+         if (cds==1) continue;
+         if (cds < sd) {
+            sd = cds;
+            sx = cx[i];
+            bestRand = [tie next];
+         } else if (cds==sd) {
+            ORLong nr = [tie next];
+            if (nr < bestRand) {
+               sx = cx[i];
+               bestRand = nr;
+            }
+         }
+      }
+      if (sx == NULL) break;
+      ORBounds xb = [sx bounds];
+      while (xb.min != xb.max) {
+         [_search try:^{
+            [self labelImpl:sx with:xb.min];
+         } or:^{
+            [self diffImpl:sx with:xb.min];
+         }];
+         xb = [sx bounds];
+      }
+   } while(true);
+}
+
+
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   id<ORIntVarArray> av = [h allIntVars];
+   [self labelHeuristic:h withConcrete:(id)[h allIntVars]];
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
+   id<CPIntVarArray> cav = (id)[ORFactory intVarArray:self range:av.range with:^id<ORIntVar>(ORInt k) {
+      return _gamma[av[k].getId];
+   }];
+   [self labelHeuristic:h withConcrete:cav];
+}
+
+-(void) labelHeuristic: (id<CPHeuristic>) h withConcrete:(id<CPIntVarArray>)av
+{   
    id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
+                                        suchThat: ^bool(ORInt i) { return ![av[i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) {
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
                                        }];
-   id<ORIntVar>* last = malloc(sizeof(id<ORIntVar>));
+   id<CPIntVar>* last = malloc(sizeof(id<CPIntVar>));
    id<ORRandomStream> valStream = [ORCrFactory randomStream];
    [_trail trailClosure:^{
       free(last);
@@ -552,10 +1479,10 @@
    }];
    
    *last = nil;
-   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
+   __block ORInt failStamp = -1;
    do {
-      id<ORIntVar> x = *last;
-      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+      id<CPIntVar> x = *last;
+      if (failStamp  == [_search nbFailures] || (x == nil || [x bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
@@ -565,11 +1492,11 @@
       }/* else {
          NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
       }*/
-      [failStamp setValue:[_search nbFailures]];
+      failStamp = [_search nbFailures];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
-      ORInt low = [x min];
-      ORInt up  = [x max];
+      ORInt low = x.min;
+      ORInt up  = x.max;
       ORInt bestIndex = low - 1;
       for(ORInt v = low;v <= up;v++) {
         if ([x member:v]) {
@@ -589,27 +1516,11 @@
       }
       if (bestIndex != low - 1)  {
         [self try: ^{
-          [self label: x with: bestIndex];
+          [self labelImpl:x with: bestIndex];
         } or: ^{
-           [self diff:x with: bestIndex];
+           [self diffImpl:x with: bestIndex];
         }];
       }
-      /*
-      id<ORSelect> valSelect = [ORFactory select: _engine
-                                           range:RANGE(_engine,[x min],[x max])
-                                        suchThat:^bool(ORInt v)    { return [x member:v];}
-                                       orderedBy:^ORFloat(ORInt v) { return [h valOrdering:v forVar:x];}];
-      do {
-         ORInt curVal = [valSelect max];
-         if (curVal == MAXINT)
-            break;
-         [self try:^{
-            [self label: x with: curVal];
-         } or:^{
-            [self diff: x with: curVal];
-         }];
-      } while(![x bound]);
-      */
    } while (true);
 }
 
@@ -709,41 +1620,41 @@
 
 -(void) label: (id<ORIntVar>) mx
 {
-   id<CPIntVar> x = (id<CPIntVar>) [mx dereference];
+   // PVH to change
+   id<CPIntVar> x = _gamma[mx.getId];
    while (![x bound]) {
       ORInt m = [x min];
-      [_search try: ^() {
-         [self labelImpl: x with: m];
-      }
-                or: ^() {
-                   [self diffImpl: x with: m];
-                }];
+      [_search try:
+         ^() { [self labelImpl: x with: m]; }
+                or:
+         ^() { [self diffImpl: x with: m]; }
+      ];
    }
 }
 
--(void) label: (id<CPIntVar>) var with: (ORInt) val
+-(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   return [self labelImpl: (id<CPIntVar>) [var dereference] with: val];
+   return [self labelImpl: _gamma[var.getId] with: val];
 }
 -(void) diff: (id<CPIntVar>) var with: (ORInt) val
 {
-   [self diffImpl: (id<CPIntVar>) [var dereference] with: val];
+   [self diffImpl: _gamma[var.getId] with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   [self lthenImpl: (id<CPIntVar>) [var dereference] with: val];
+   [self lthenImpl: _gamma[var.getId] with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   [self gthenImpl: (id<CPIntVar>) [var dereference] with: val];
+   [self gthenImpl: _gamma[var.getId] with: val];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   [self restrictImpl: (id<CPIntVar>) [var dereference] to: S];
+   [self restrictImpl: _gamma[var.getId] to: S];
 }
--(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(bool)val
+-(void) labelBV: (id<CPBitVar>) var at:(ORUInt) i with:(ORBool)val
 {
-   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:i with: val];
+   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
 
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
@@ -753,6 +1664,18 @@
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
    [_search repeat: body onRepeat: onRepeat until: isDone];
+}
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onLimit;
+{
+   [_search perform: body onLimit: onLimit];
+}
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
+{
+   [_search portfolio: s1 then: s2];
+}
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
+{
+   [_search switchOnDepth: s1 to: s2 limit: depth];
 }
 -(void) once: (ORClosure) cl
 {
@@ -803,6 +1726,8 @@
    if (status == ORFailure)
       [_search fail];
 }
+-(void) add: (id<ORConstraint>) c
+{}
 
 -(id<CPHeuristic>) createPortfolio:(NSArray*)hs with:(id<ORVarArray>)vars
 {
@@ -812,7 +1737,12 @@
 
 -(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars
 {
-   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:rvars];
+   id<ORIntVarArray> crv = nil;
+   if (rvars)
+      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+         return _gamma[rvars[k].getId];
+      }];
+   id<CPHeuristic> h = [[CPFirstFail alloc] initCPFirstFail:self restricted:crv];
    [self addHeuristic:h];
    return h;
 }
@@ -888,6 +1818,7 @@
    [self addHeuristic:h];
    return h;
 }
+//<<<<<<< HEAD
 -(id<CPHeuristic>) createBitVarABS
 {
    id<CPHeuristic> h = [[CPBitVarABS alloc] initCPBitVarABS:self restricted:nil];
@@ -895,9 +1826,47 @@
    return h;
 }
 -(ORInt)intValue:(id<ORIntVar>)x
+//-(ORInt) intValue: (id) x
 {
-   id<CPIntVar> y = [[_source rootModel] lookup:x];
-   return y.value;
+   return [_gamma[[x getId]] intValue];
+}
+-(ORBool) boolValue: (id<ORIntVar>) x
+{
+   return [_gamma[x.getId] intValue];
+}
+-(ORFloat) floatValue: (id<ORFloatVar>) x
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "no method floatValue available yet"];
+   // return [_gamma[x.getId] floatValue];
+}
+-(ORBool) bound: (id<ORIntVar>) x
+{
+   return [_gamma[x.getId] bound];
+}
+-(ORInt)  min: (id<ORIntVar>) x
+{
+   return [((id<CPIntVar>) _gamma[x.getId]) min];
+}
+-(ORInt)  max: (id<ORIntVar>) x
+{
+   return [((id<CPIntVar>) _gamma[x.getId]) max];
+}
+-(ORInt)  domsize: (id<ORIntVar>) x
+{
+  return [((id<CPIntVar>) _gamma[x.getId]) domsize];
+}
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
+{
+   return [((id<CPIntVar>) _gamma[x.getId]) member: v];
+}
+-(NSSet*) constraints: (id<ORVar>)x
+{
+   return [(id<CPVar>)_gamma[x.getId] constraints];
+}
+-(void) incr: (id<ORMutableInteger>) i
+
+{
+   [((ORMutableIntegerI*) _gamma[i.getId]) incr];
 }
 @end
 
@@ -907,16 +1876,16 @@
 
 @interface ORRTModel : NSObject<ORAddToModel>
 -(ORRTModel*) init:(CPSolver*) solver;
--(void) addVariable: (id<ORVar>) var;
--(void) addObject: (id) object;
--(void) addConstraint: (id<ORConstraint>) cstr;
+-(id<ORVar>) addVariable: (id<ORVar>) var;
+-(id) addMutable: (id) object;
+-(id) addImmutable:(id)object;
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximize: (id<ORIntVar>) x;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
--(void) trackConstraint: (id) obj;
--(void) compiling: (id<ORConstraint>) cstr;
--(NSSet*) compiledMap;
+-(id) trackConstraintInGroup:(id)obj;
+-(id) trackObjective:(id)obj;
+-(id) trackMutable: (id) obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @implementation ORRTModel
@@ -936,19 +1905,31 @@
    [_concretizer release];
    [super dealloc];
 }
--(void) addVariable: (id<ORVar>) var
+-(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_solver trackVariable:var];
+   return var;
 }
--(void) addObject: (id) object
+-(id) addMutable: (id) object
 {
-   [_solver trackObject: object];
+   [[_solver engine] trackMutable: object];
+   return object;
 }
--(void) addConstraint: (id<ORConstraint>) cstr
+-(id) addImmutable:(id)object
+{
+   return [[_solver engine] trackImmutable:object];
+}
+
+-(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    [cstr visit: _concretizer];
-   id<CPConstraint> c = [cstr dereference];
+   id<CPConstraint> c = [_solver gamma][[cstr getId]];
    [_solver addConstraintDuringSearch: c annotation: DomainConsistency];
+   return cstr;
+}
+-(id<ORTracker>)tracker
+{
+   return _solver;
 }
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
 {
@@ -974,24 +1955,29 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximize:coef: not allowed during search"];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_solver trackObject:obj];
+   return [_solver trackObject:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackConstraintInGroup:(id)obj
 {
-   [_solver trackVariable:obj];
+   return [_solver trackConstraintInGroup:obj];
 }
--(void) trackConstraint:(id) obj
+-(id) trackObjective:(id) object
 {
-   [_solver trackConstraint:obj];
+   return [_solver trackObjective: object];
 }
--(void) compiling:(id<ORConstraint>)cstr
+-(id) trackMutable: (id) obj
 {
+   return [_solver trackMutable:obj];
 }
--(NSSet*)compiledMap
+-(id) trackImmutable:(id)obj
 {
-   return NULL;
+   return [_solver trackImmutable:obj];
+}
+-(id) trackVariable: (id) obj
+{
+   return [_solver trackVariable:obj];
 }
 @end
 
@@ -1080,7 +2066,7 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    ORStatus status = [_engine enforce:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
@@ -1198,7 +2184,7 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
--(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(bool)val
+-(void) labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)var at:(ORUInt)i with:(ORBool)val
 {
    ORStatus status = [_engine enforce:^ORStatus { return [[var domain] setBit:i to:val for:var];}];
    if (status == ORFailure)
@@ -1284,22 +2270,6 @@
 +(id<CPSemanticProgram>) semanticSolver: (Class) ctrlClass
 {
    return [[CPSemanticSolver alloc] initCPSemanticSolver: ctrlClass];
-}
-@end
-
-@implementation CPUtilities
-
-+(ORInt) maxBound: (id<ORIdArray>) x
-{
-   ORInt low = [x low];
-   ORInt up = [x up];
-   ORInt M = -MAXINT;
-   for(ORInt i = low; i <= up; i++) {
-      id<CPIntVar> xi = [x[i] dereference];
-      if ([xi bound] && [xi value] > M)
-         M = [xi value];
-   }
-   return M;
 }
 @end
 

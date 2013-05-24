@@ -10,7 +10,6 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
 #import <objcp/CPData.h>
 
 @protocol CPEngine;
@@ -19,9 +18,10 @@
 
 @protocol CPVar <NSObject>
 -(ORInt) getId;
--(id<ORVar>) dereference;
 -(id<ORTracker>)tracker;
 -(id<CPEngine>)engine;
+-(ORBool) bound;
+-(NSSet*)constraints;
 @end
 
 enum CPVarClass {
@@ -40,13 +40,13 @@ enum CPVarClass {
 -(ORInt) max;
 -(ORInt) domsize;
 -(ORBounds) bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
--(id<ORIntVar>) dereference;
+-(ORBool) member: (ORInt) v;
+-(ORBool) isBool;
+//-(id<ORIntVar>) dereference;
 -(ORInt) scale;
 -(ORInt) shift;
 -(id<ORIntVar>) base;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(ORStatus) bind:(ORInt) val;
 -(ORStatus) remove:(ORInt) val;

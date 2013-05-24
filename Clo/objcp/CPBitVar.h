@@ -14,8 +14,8 @@
 #import <objcp/CPBitArrayDom.h>
 #import <objcp/CPVar.h>
 
+
 @protocol CPBitVar <CPVar>
--(BOOL) bound;
 -(ORInt) bitLength;
 -(ORStatus) bind:(ORUInt)bit to:(BOOL)value;
 -(ORStatus) bind:(ORUInt*)pat;
@@ -25,10 +25,15 @@
 -(ORBounds) bounds;
 -(ORInt)  domsize;
 -(ORULong)  numPatterns;
--(BOOL) member: (unsigned int*) v;
--(bool) isFree:(ORUInt)pos;
+-(ORBool) isFree:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;
 -(id<CPBitVar>) dereference;
+
+-(ORInt) getId;
+-(ORBool) bound;
+-(CPBitArrayDom*) domain;
+-(ORBool) member: (unsigned int*) v;
+//-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end
 

@@ -46,34 +46,34 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 +(id<CPConstraint>) bitEqual:(CPBitVarI*)x to:(CPBitVarI*)y
 {
     id<CPConstraint> o = [[CPBitEqual alloc] initCPBitEqual:x and:y];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
 }
 
 +(id<CPConstraint>) bitAND:(CPBitVarI*)x and:(CPBitVarI*)y equals:(CPBitVarI*)z
 {
     id<CPConstraint> o = [[CPBitAND alloc] initCPBitAND:x and:y equals:z];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
 }
 
 +(id<CPConstraint>) bitOR:(CPBitVarI*)x or:(CPBitVarI*) y equals:(CPBitVarI*)z
 {
     id<CPConstraint> o = [[CPBitOR alloc] initCPBitOR:x or:y equals:z];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
 }
 +(id<CPConstraint>) bitXOR:(CPBitVarI*)x xor:(CPBitVarI*)y equals:(CPBitVarI*) z
 {
     id<CPConstraint> o = [[CPBitXOR alloc] initCPBitXOR:x xor:y equals:z];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
     
 }
 +(id<CPConstraint>) bitNOT:(CPBitVarI*)x equals:(CPBitVarI*) y
 {
     id<CPConstraint> o = [[CPBitNOT alloc] initCPBitNOT:x equals:y];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
     
 }
@@ -81,14 +81,14 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 +(id<CPConstraint>) bitShiftL:(CPBitVarI*)x by:(int) p equals:(CPBitVarI*) y
 {
     id<CPConstraint> o = [[CPBitShiftL alloc] initCPBitShiftL:x shiftLBy:p equals:y];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;    
 }
 
 +(id<CPConstraint>) bitRotateL:(CPBitVarI*)x by:(int) p equals:(CPBitVarI*) y
 {
    id<CPConstraint> o = [[CPBitRotateL alloc] initCPBitRotateL:x rotateLBy:p equals:y];
-   [[x engine] trackObject:o];
+   [[x engine] trackMutable:o];
    return o;
    
 }
@@ -100,7 +100,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                                 equals:(CPBitVarI*)z
                                            withCarryIn:(CPBitVarI*)cin
                                            andCarryOut:(CPBitVarI*)cout];
-   [[x engine] trackObject:o];
+   [[x engine] trackMutable:o];
    return o;
 }
 
@@ -110,7 +110,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                          equalsOneIf:(CPBitVarI*)x
                                               equals:(CPBitVarI*)y
                                     andZeroIfXEquals:(CPBitVarI*)z];
-   [[x engine] trackObject:o];
+   [[x engine] trackMutable:o];
    return o;
 }
 
@@ -200,7 +200,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 
 @implementation CPBitNOT
 
--(id) initCPBitNOT:(id) x equals:(id) y 
+-(id) initCPBitNOT: (CPBitVarI*) x equals:(CPBitVarI*) y
 {
     self = [super initCPCoreConstraint:[x engine]];
     _x = x;
@@ -311,7 +311,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 @end
 
 @implementation CPBitAND
--(id) initCPBitAND:(id)x and:(id)y equals:(id)z{
+-(id) initCPBitAND:(CPBitVarI*)x and:(CPBitVarI*)y equals:(CPBitVarI*)z{
     self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
@@ -442,7 +442,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 @end
 
 @implementation CPBitOR
--(id) initCPBitOR:(id)x or:(id)y equals:(id)z{
+-(id) initCPBitOR:(CPBitVarI*)x or:(CPBitVarI*)y equals:(CPBitVarI*)z{
     self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
@@ -570,7 +570,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 @end
 
 @implementation CPBitXOR
--(id) initCPBitXOR:(id)x xor:(id)y equals:(id)z{
+-(id) initCPBitXOR:(CPBitVarI*)x xor:(CPBitVarI*)y equals:(CPBitVarI*)z{
     self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
@@ -708,7 +708,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 @end
 
 @implementation CPBitIF
--(id) initCPBitIF: (id) w equalsOneIf:(id) x equals: (id) y andZeroIfXEquals: (id) z{
+-(id) initCPBitIF: (CPBitVarI*) w equalsOneIf:(CPBitVarI*) x equals: (CPBitVarI*) y andZeroIfXEquals: (CPBitVarI*) z {
     self = [super initCPCoreConstraint:[x engine]];
     _w = w;
     _x = x;
@@ -833,7 +833,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 @end
  
 @implementation CPBitShiftL
--(id) initCPBitShiftL:(id)x shiftLBy:(int)places equals:(id)y{
+-(id) initCPBitShiftL:(CPBitVarI*)x shiftLBy:(int)places equals:(CPBitVarI*)y{
     self = [super initCPCoreConstraint:[x engine]];
     _x = x;
     _y = y;
@@ -964,7 +964,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 @end
 
 @implementation CPBitRotateL
--(id) initCPBitRotateL:(id)x rotateLBy:(int)places equals:(id)y{
+-(id) initCPBitRotateL:(CPBitVarI*)x rotateLBy:(int)places equals:(CPBitVarI*)y{
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _y = y;

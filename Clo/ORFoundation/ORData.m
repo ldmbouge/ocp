@@ -14,9 +14,13 @@
 #import "ORUtilities/ORUtilities.h"
 
 @implementation ORCrFactory (OR)
-+(id<ORInteger>) integer:(ORInt) value
++(id<ORMutableInteger>) integer:(ORInt) value
 {
-   return [[ORIntegerI alloc] initORIntegerI:nil value:value];
+   return [[ORMutableIntegerI alloc] initORMutableIntegerI:nil value:value];
+}
++(id<ORFloatNumber>) float: (ORFloat) value
+{
+   return [[ORFloatI alloc] initORFloatI:nil value:value];
 }
 +(id<ORRandomStream>) randomStream
 {

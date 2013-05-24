@@ -30,7 +30,7 @@
 -(id)initCPGenerator:(id<ORSearchController>)chain explorer:(id<CPSemanticProgram>)solver onPool:(PCObjectQueue*)pcq;
 -(ORInt)  addChoice: (NSCont*) k;
 -(void)       fail;
--(BOOL) isFinitelyFailed;
+-(ORBool) isFinitelyFailed;
 -(void)       exitTry;
 -(void)       exitTryall;
 @end
@@ -48,5 +48,5 @@
 -(void)       startTry;
 -(void)       startTryall;
 -(void) publishWork;
--(BOOL) isFinitelyFailed;
+-(ORBool) isFinitelyFailed;
 @end

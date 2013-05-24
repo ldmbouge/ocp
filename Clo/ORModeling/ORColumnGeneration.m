@@ -62,7 +62,7 @@
         }
         [[self columnInformer] whenNotifiedDo: ^(id<ORFloatArray> column) { [_master injectColumn: column]; }];
         [slave run];
-       id<ORObjectiveValueInt> ov = [[[slave model] objective] value];
+        id<ORObjectiveValueInt> ov = (id)[[[slave model] objective] value];
         reducedCost = [ov value];
         [slave release];
     } while(reducedCost >= -0.00001);
@@ -126,7 +126,7 @@
     else [super forwardInvocation:anInvocation];
 }
 
-- (BOOL)respondsToSelector:(SEL)aSelector {
+- (ORBool)respondsToSelector:(SEL)aSelector {
     if([super respondsToSelector:aSelector]) return YES;
     else if([_runnable respondsToSelector: aSelector]) return YES;
     return NO;

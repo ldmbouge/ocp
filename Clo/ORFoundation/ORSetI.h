@@ -17,11 +17,11 @@
 #import "ORAVLTree.h"
 @protocol ORVisitor;
 
-@interface ORIntSetI : ORDualUseObjectI<ORIntSet>
+@interface ORIntSetI : ORObject<ORIntSet>
 
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
--(bool) member: (ORInt) v;
+-(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
 -(ORInt) min;
@@ -32,16 +32,17 @@
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
 -(void)visit:(id<ORVisitor>)v;
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : ORDualUseObjectI<ORIntRange>
+@interface ORIntRangeI : ORObject<ORIntRange,NSCopying>
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
--(bool) isDefined;
--(bool) inRange: (ORInt)e;
+-(ORBool) isDefined;
+-(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
 -(NSString*) description;
 -(void)visit:(id<ORVisitor>)v;

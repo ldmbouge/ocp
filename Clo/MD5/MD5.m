@@ -22,7 +22,7 @@
    return self;
 }
 
--(bool) getMessage:(NSString *)fname
+-(ORBool) getMessage:(NSString *)fname
 {
    NSFileManager *fm;
    NSData *message;
@@ -186,10 +186,11 @@
    [_m add:[ORFactory bit:digest[3] eq:digestVars[3]]];
    
    
-   id<CPProgram,CPBV> cp = [ORFactory createCPProgram: _m];
+   id<CPProgram,CPBV> cp = (id)[ORFactory createCPProgram: _m];
    id<CPEngine> engine = [cp engine];
    id<ORExplorer> explorer = [cp explorer];
 
+//<<<<<<< HEAD
    //CPBitVarFF
    NSLog(@"Message Blocks (Original)");
    id<ORBitVar>* bitVars;
@@ -224,6 +225,54 @@
 
          for(int j=0;j<16;j++){
             NSLog(@"%@\n",bitVars[j]);
+//=======
+//   [cp solve: ^() {
+//      @try {
+////         fflush(stderr);
+//         NSLog(@"Digest Variables:\n");
+//         for(int i=0;i<4;i++)
+//         {
+//            NSLog(@"%@",digest[i]);
+//            NSLog(@"%@\n\n",digestVars[i]);
+//         }
+//         NSLog(@"Message Blocks (Original)");
+//         id<ORBitVar>* bitVars;
+//         for(int i=0; i<_numBlocks;i++){
+//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+//            for(int j=0;j<16;j++)
+//               NSLog(@"%@\n",bitVars[j]);
+//         }
+//         NSLog(@"Message Blocks (With Data Recovered)");
+//         //         id<ORBitVar>* bitVars;
+//         clock_t searchStart = clock();
+//         for(int i=0; i<_numBlocks;i++){
+//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
+//            [cp labelBitVarsFirstFail:[_m variables]];
+//            for(int j=0;j<16;j++){
+//               //[cp labelUpFromLSB:bitVars[j]];
+//               NSLog(@"%@\n",bitVars[j]);
+//            }
+//         }
+//         clock_t searchFinish = clock();
+//
+//         //         NSLog(@"Temporary Variables:\n");
+//         //         for(int i=0;i<[_temps count];i++)
+//         //         {
+//         ////            [cp labelUpFromLSB:[_temps objectAtIndex:i]];
+//         //            NSLog(@"%@",[_temps objectAtIndex:i]);
+//         //            if((i%3)==2)
+//         //               NSLog(@"\n\n");
+//         //         }
+//         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
+//         for(int i=0;i<4;i++)
+//         {
+//            [cp labelUpFromLSB:digest[i]];
+//         }
+//         for(int i=0;i<4;i++)
+//         {
+//            NSLog(@"%@",digest[i]);
+//            NSLog(@"%@\n\n",digestVars[i]);
+//>>>>>>> modeling
          }
 
          double totalTime, searchTime;

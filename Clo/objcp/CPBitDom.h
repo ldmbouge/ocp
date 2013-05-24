@@ -35,7 +35,7 @@ enum CPDomClass {
 -(CPBoundsDom*)initBoundsDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
-//-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORInt)min;
@@ -43,9 +43,9 @@ enum CPDomClass {
 -(ORInt)imin;
 -(ORInt)imax;
 -(ORBounds)bounds;
--(BOOL)bound;
+-(ORBool)bound;
 -(ORInt)domsize;
--(BOOL)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt)findMax:(ORInt)from;
 -(int(^)())getMin;
@@ -71,9 +71,9 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 }
 -(CPBitDom*)initBitDomFor:(id<ORTrail>)trail low:(ORInt)low up:(ORInt)up;
 -(void)dealloc;
--(BOOL)get:(ORInt)b;
--(BOOL)member:(ORInt)b;
--(void)set:(ORInt)b at:(bool)v;
+-(ORBool)get:(ORInt)b;
+-(ORBool)member:(ORInt)b;
+-(void)set:(ORInt)b at:(ORBool)v;
 -(ORInt)setAllZeroFrom:(ORInt)from to:(ORInt)to;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 -(ORInt)findMin:(ORInt)from;
@@ -82,7 +82,7 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(NSString*)description;
 -(ORStatus)updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus)updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
-//-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus)updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus)bind:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(ORStatus)remove:(ORInt)val for:(id<CPIntVarNotifier>)x;
 -(id)copyWithZone:(NSZone *)zone;
@@ -107,12 +107,12 @@ static inline ORBounds domBounds(CPBoundsDom* dom)
 -(ORInt) max;
 -(ORInt) imin;
 -(ORInt) imax;
--(BOOL) bound;
+-(ORBool) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
--(BOOL) get:(ORInt)b;
--(BOOL) member:(ORInt)v;
+-(ORBool) get:(ORInt)b;
+-(ORBool) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
 -(id) copyWithZone:(NSZone *)zone;

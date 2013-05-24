@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPWDeg.h"
 #import "CPEngineI.h"
-#import "ORFoundation/ORModel.h"
 
 @implementation CPWDeg
 
@@ -64,7 +64,7 @@
 -(ORFloat) varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
-   NSSet* theConstraints = _cv[_map[[x getId]]];   
+   NSSet* theConstraints = _cv[_map[x.getId]];
    for(id obj in theConstraints) {
       ORInt cid = [obj getId];
       assert(cid >=0 && cid < _nbc);
@@ -96,7 +96,7 @@
    for(int k=low;k <= up;k++) {
       //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
       _map[[_vars[k] getId]] = k - low;
-      _cv[k - low] = [[_vars at:k] constraints];
+      _cv[k - low] = [_cp constraints:_vars[k]];
    }
    _nbv = len;
    NSArray* allC = [_solver constraints];

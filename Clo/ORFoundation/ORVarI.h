@@ -12,32 +12,23 @@
 #import <Foundation/Foundation.h>
 #import "ORArray.h"
 #import "ORSet.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
+
 
 @interface ORIntVarI : ORExprI<ORIntVar,NSCoding>
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) tracker domain: (id<ORIntRange>) domain;
 // [ldm] All the methods below were missing??????
 -(id<ORIntRange>) domain;
 -(ORInt) value;
--(ORInt) intValue;
--(ORFloat) floatValue;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds)bounds;
--(BOOL) member: (ORInt) v;
--(BOOL) isBool;
--(NSSet*)constraints;
 -(ORInt)scale;
 -(ORInt)shift;
 -(id<ORIntVar>)base;
 -(void) visit: (id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
--(id) snapshot;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI
@@ -63,21 +54,16 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker;
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker up: (ORFloat) up;
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) tracker low: (ORFloat) low up: (ORFloat) up;
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) min;
--(ORFloat) max;
--(NSSet*) constraints;
+-(ORBool) hasBounds;
+-(ORFloat) low;
+-(ORFloat) up;
 -(void) visit: (id<ORVisitor>)v;
--(void)encodeWithCoder:(NSCoder *)aCoder;
--(id)initWithCoder:(NSCoder *)aDecoder;
+-(void) encodeWithCoder:(NSCoder *)aCoder;
+-(id) initWithCoder:(NSCoder *)aDecoder;
 @end
 
 @interface ORBitVarI : ORExprI<ORBitVar>
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len;
--(BOOL) bound;
--(uint64)min;
--(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
@@ -89,6 +75,14 @@
 -(ORStatus) bind:(unsigned int *)val;
 -(bool) member: (unsigned int*) v;
 -(void) visit: (id<ORVisitor>)v;
--(NSSet*) constraints;
 -(NSString*)stringValue;
+@end
+
+@interface ORVarLitterals : ORObject<ORVarLitterals>
+-(ORVarLitterals*) initORVarLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) var;
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntVar>) litteral: (ORInt) i;
+-(BOOL) exist: (ORInt) i;
+-(NSString*) description;
 @end

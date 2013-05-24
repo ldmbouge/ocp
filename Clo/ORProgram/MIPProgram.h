@@ -15,8 +15,28 @@
 @class MIPSolverI;
 @protocol ORModel;
 
-@protocol MIPProgram <NSObject>
+@protocol ORMIPSolution <ORSolution>
+-(id<ORObjectiveValue>) objectiveValue;
+@end
+
+@protocol ORMIPSolutionPool <ORSolutionPool>
+-(void) addSolution: (id<ORMIPSolution>) s;
+-(void) enumerateWith: (void(^)(id<ORMIPSolution>)) block;
+-(id<ORInformer>) solutionAdded;
+-(id<ORMIPSolution>) best;
+@end
+
+
+@protocol MIPProgram <ORASolver>
 -(MIPSolverI*) solver;
+-(void) setGamma: (id*) gamma;
+-(void) setTau: (id<ORTau>) tau;
+-(id*)  gamma;
 -(void) solve;
+-(ORFloat) floatValue: (id<ORFloatVar>) v;
+-(ORInt) intValue: (id<ORIntVar>) v;
+-(id<ORObjectiveValue>) objectiveValue;
+-(id<ORMIPSolutionPool>) solutionPool;
+-(id<ORMIPSolution>) captureSolution;
 @end
 

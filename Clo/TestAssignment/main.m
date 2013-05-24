@@ -56,10 +56,11 @@ int main (int argc, const char * argv[])
          printf("%2d ",[cost at: i : j ]);
       printf("\n");
    }
+   [ORStreamManager setRandomized];
    id<ORUniformDistribution> distr = [ORFactory uniformDistribution: mdl range: Cities];
       
-   id<ORInteger> nbRestarts = [ORFactory integer: mdl value:0];
-   id<ORInteger> nbSolutions = [ORFactory integer: mdl value:1];
+   id<ORMutableInteger> nbRestarts = [ORFactory mutable: mdl value:0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value:1];
    id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [ORFactory intVar:mdl domain: RANGE(mdl,0,10000)];
    
@@ -72,10 +73,10 @@ int main (int argc, const char * argv[])
    [mdl minimize: assignmentCost ];
    
    id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-   id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
+   //id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
 
    [cp solve: ^{
-       [cp limitCondition: ^bool() { return [nbRestarts value] >= 30; } in:
+       [cp limitCondition: ^bool() { return [nbRestarts intValue:cp] >= 100; } in:
         ^{
            [cp repeat:
             ^{
@@ -89,28 +90,35 @@ int main (int argc, const char * argv[])
             }
             onRepeat:
                ^{
-                  printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
-                  [nbSolutions incr];
+                  printf("I am restarting ... %d \n",[nbRestarts intValue:cp]); [nbRestarts incr:cp];
+                  [nbSolutions incr:cp];
                   id<ORSolution> solution = [[cp solutionPool] best];
-                  for(ORInt i = 0; i < nbCities; i++)
-                     [mark set: 0 at: i];
+                  //for(ORInt i = 0; i < nbCities; i++)
+                     //[mark set: 0 at: i];
+                  NSMutableSet* all = [[NSMutableSet alloc] initWithCapacity:nbCities];
+                  for(ORInt i = 0; i < nbCities; i++) [all addObject:@(i)];
                   
                   ORInt start = (int) [distr next];
                   for(ORInt i = 0; i < 19; i++) {
-                     [mark set: 1 at: start];
+                     //[mark set: 1 at: start];
+                     [all removeObject:@(start)];
                      start = [solution intValue: [x at: start]];
                   }
-                  for(ORInt i = 0; i < nbCities; i++) {
+                  [all enumerateObjectsUsingBlock:^(NSNumber* i, BOOL *stop) {
+                     [cp label: x[i.intValue] with: [solution intValue: x[i.intValue]]];
+                  }];
+/*                  for(ORInt i = 0; i < nbCities; i++) {
                      if ([mark at: i] == 0)
                         [cp label: [x at: i] with: [solution intValue: [x at: i]]];
                   }
+ */
                }
             ];
         }
         ];
     }
     ];
-   id<ORSolution> solution = [[mdl solutions] best];
+   id<ORSolution> solution = [[cp solutionPool] best];
    ORInt start = (int) [distr next];
    for(ORInt i = 0; i < 10; i++) {
       printf("%d->",start);

@@ -26,8 +26,11 @@
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORExplorer.h>
 #import <ORFoundation/OREngine.h>
-#import <ORFoundation/ORModel.h>
+#import <ORFoundation/ORConstraint.h>
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
 
+
+ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());
+void failNow();

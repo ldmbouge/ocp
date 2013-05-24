@@ -11,19 +11,3 @@
 
 #import <CPUKernel/CPUKernel.h>
 #import <CPUKernel/CPEngine.h>
-
-#if defined(__linux__)
-void failNow()
-{
-   static ORFailException* fex = nil;
-   if (fex==nil) fex = [ORFailException new];
-   @throw  [fex retain];
-}
-#else
-void failNow()
-{
-   static ORFailException* fex = nil;
-   if (fex==nil) fex = [ORFailException new];
-   @throw  CFRetain(fex);
-}
-#endif

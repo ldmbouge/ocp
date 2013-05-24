@@ -71,7 +71,7 @@ int main(int argc, const char * argv[])
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          
          [cp solve: ^{
-            [cp forall: V suchThat:^bool(ORInt i) { return ![x[i] bound];}  orderedBy:^ORInt(ORInt i) { return -tw[i];} do:^(ORInt i) {
+            [cp forall: V suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}  orderedBy:^ORInt(ORInt i) { return -tw[i];} do:^(ORInt i) {
                [cp try:^{
                   [cp label:x[i] with:0];
                } or:^{
@@ -80,11 +80,11 @@ int main(int argc, const char * argv[])
             }];
             NSLog(@"Solution: %@",x);
          }];
-         [model restore:[[cp solutionPool] best]];
+         id<ORSolution> best = [[cp solutionPool] best];
          for(int k=0;k < m;k++) {
             ORInt sum = 0;
             for(ORInt i=V.low;i <= V.up;++i)
-               sum += w[k][i] * [x[i] value];
+               sum += w[k][i] * [best intValue:x[i]];
             NSLog(@"got: %d == %d",sum,rhs[k]);
             assert(sum == rhs[k]);
          }

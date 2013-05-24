@@ -28,7 +28,7 @@
 }
 -(id)initCPKillRange:(ORInt)f to:(ORInt)to size:(ORUInt)sz;
 -(void)dealloc;
--(BOOL)isEqual:(CPKillRange*)kr;
+-(ORBool)isEqual:(CPKillRange*)kr;
 -(ORInt) low;
 -(ORInt) up;
 -(ORInt) killed;
@@ -47,7 +47,7 @@
 {
    [super dealloc];
 }
--(BOOL)isEqual:(CPKillRange*)kr
+-(ORBool)isEqual:(CPKillRange*)kr
 {
    return (_low == kr->_low && _up == kr->_up);
 }
@@ -66,13 +66,13 @@
 @end
 
 @interface CPAssignImpact : NSObject {
-   id<ORIntVar>  _var;
-   double*      _imps;
-   ORUInt _nbVals;
+   id<CPIntVar>  _var;
+   double*       _imps;
+   ORUInt        _nbVals;
    ORBounds      _dom;
-   double*        _mu;
-   double*      _vari;
-   ORUInt*   _cnts;
+   double*       _mu;
+   double*       _vari;
+   ORUInt*       _cnts;
 }
 -(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar;
 -(void)dealloc;
@@ -83,7 +83,7 @@
 @end
 
 @implementation CPAssignImpact
--(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar
+-(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar
 {
    self = [super init];
    _var = theVar;
@@ -199,14 +199,14 @@
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
    [key release];
    return rv;

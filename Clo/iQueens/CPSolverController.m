@@ -79,7 +79,7 @@
    [model add: [ORFactory alldifferent: xp]];
    [model add: [ORFactory alldifferent: xn]];
    id<CPProgram> cp = [ORFactory createCPProgram:model];
-   id<ORInteger> nbSolutions = [ORFactory integer:model value:0];
+   id<ORMutableInteger> nbSolutions = [ORFactory integer:model value:0];
    [cp solveAll: ^{
       [self visualize:x on:cp];
       [cp labelArray: x orderedBy: ^ORFloat(int i) { return [[x at:i] domsize];}];

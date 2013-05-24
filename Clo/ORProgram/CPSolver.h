@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
 
 /***************************************************************************/
@@ -24,14 +25,17 @@
 -(void) applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
 @end
 
-
 // This factorizes all the common stuff
 
-@interface CPCoreSolver : NSObject<CPCommonProgram>
+@interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
+-(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat;
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
+-(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart;
+-(void) portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 -(void) once: (ORClosure) cl;
 -(void) limitSolutions: (ORInt) maxSolutions  in: (ORClosure) cl;
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl;
@@ -43,6 +47,7 @@
 -(void) restartHeuristics;
 -(void) doOnSolution;
 -(void) doOnExit;
+//<<<<<<< HEAD
 -(id<ORSolutionPool>) solutionPool;
 -(id<ORSolutionPool>) globalSolutionPool;
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n;
@@ -52,6 +57,20 @@
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars;
 -(id<CPHeuristic>) createBitVarABS:(id<ORVarArray>)rvars;
+//=======
+//-(id<ORCPSolutionPool>) solutionPool;
+//-(id<ORCPSolution>) captureSolution;
+//-(ORInt) maxBound:(id<ORIdArray>) x;
+//
+//-(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
+//
+//// pvh: do we have to put these here. Any way to externalize them.
+//-(id<CPHeuristic>) createFF: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createWDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createDDeg: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createIBS: (id<ORVarArray>) rvars;
+//-(id<CPHeuristic>) createABS: (id<ORVarArray>) rvars;
+//>>>>>>> modeling
 -(id<CPHeuristic>) createFF;
 -(id<CPHeuristic>) createWDeg;
 -(id<CPHeuristic>) createDDeg;

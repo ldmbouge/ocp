@@ -20,20 +20,21 @@
 @end
 
 @protocol ORIntSet <ORIntIterable>
--(bool) member: (ORInt) v;
+-(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
 -(ORInt) min;
 -(ORInt) max;
 -(NSString*) description;
 -(void) copyInto: (id<ORIntSet>) S;
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 @end
 
 @protocol ORIntRange <ORIntIterable>
 -(ORInt) low;
 -(ORInt) up;
--(bool) isDefined;
--(bool) inRange: (ORInt)e;
+-(ORBool) isDefined;
+-(ORBool) inRange: (ORInt)e;
 -(NSString*) description;
 -(void)enumerateWithBlock:(ORInt2Void)block;
 @end

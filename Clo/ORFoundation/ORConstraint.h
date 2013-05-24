@@ -18,6 +18,7 @@
 @protocol ORIntVar;
 @protocol ORBitVar;
 @protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
 @protocol ORSolution;
 @protocol ORSolutionPool;
@@ -27,11 +28,13 @@
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
+-(NSArray*) immutables;
 @end
 
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
+-(NSSet*)allVars;
 @end
 
 @protocol ORConstraintSet <NSObject>
@@ -141,6 +144,7 @@ enum ORGroupType {
 @protocol ORAbs <ORConstraint>
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;
+-(ORAnnotation) annotation;
 @end
 
 @protocol OROr <ORConstraint>
@@ -353,6 +357,8 @@ enum ORGroupType {
 @protocol ORObjectiveValue <ORObject>
 -(id<ORObjectiveValue>) best: (id<ORObjectiveValue>) other;
 -(ORInt) compare: (id<ORObjectiveValue>) other;
+//-(ORInt) intValue;
+//-(ORFloat) floatValue;
 @end
 
 @protocol ORObjectiveValueInt <ORObjectiveValue>
@@ -387,13 +393,13 @@ enum ORGroupType {
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
 @end
 
-
-@protocol ORASolver <NSObject,ORTracker>
+// pvh: to reconsider the solution pool in this interface; not sure I like them here
+@protocol ORASolver <NSObject,ORTracker,ORGamma>
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;          // Solution pool of a specific solver (to use in search)
--(id<ORSolutionPool>) globalSolutionPool;    // Solution pool for parallel computing (to use internally)
+-(id<ORSolutionPool>) solutionPool;
+-(id) concretize: (id) o;
 @end
 
 // ====== Bit Constraints =====================================
