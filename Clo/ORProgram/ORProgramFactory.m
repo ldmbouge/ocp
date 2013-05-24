@@ -187,21 +187,27 @@
 +(id<CPProgram>) createCPParProgram:(id<ORModel>) model nb:(ORInt) k with: (Class) ctrlClass
 {
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
-//   [model setImpl:cpprogram];
    id<ORModel> flatModel = [model flatten];   
    id<ORSolutionPool> global = [cpprogram solutionPool];
+   dispatch_queue_t q = dispatch_queue_create("ocp.par", DISPATCH_QUEUE_CONCURRENT);
+   dispatch_group_t group = dispatch_group_create();
    for(ORInt i=0;i< k;i++) {
-      [NSThread setThreadID:i];
-      id<CPCommonProgram> pi = [cpprogram worker];
-      [ORFactory concretizeCP:flatModel program:pi];
-      [pi onSolution:^{
-         id<ORCPSolution> sol = [[cpprogram worker] captureSolution];
-         [[[cpprogram worker] solutionPool] addSolution: sol];
-         @synchronized(global) {
-            [global addSolution:sol];
-         }
-      }];
+      dispatch_group_async(group,q, ^{
+         [NSThread setThreadID:i];
+         id<CPCommonProgram> pi = [cpprogram worker];
+         [ORFactory concretizeCP:flatModel program:pi];
+         [pi onSolution:^{
+            id<ORCPSolution> sol = [[cpprogram worker] captureSolution];
+            [[[cpprogram worker] solutionPool] addSolution: sol];
+            @synchronized(global) {
+               [global addSolution:sol];
+            }
+         }];
+      });
    }
+   dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+   dispatch_release(q);
+   dispatch_release(group);
    return cpprogram;
 }
 
