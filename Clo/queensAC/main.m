@@ -57,23 +57,23 @@ int main(int argc, const char * argv[])
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
-             [cp labelHeuristic:h];
+             //[cp labelHeuristic:h];
              //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
-             //[cp labelArrayFF: x];
+             [cp labelArrayFF: x];
              @synchronized(cp) {
                 nbSol++;
-                for(ORInt i = 1; i <= 8; i++)
+/*                for(ORInt i = 1; i <= 8; i++)
                    printf("%d ",[cp intValue: x[i]]);
-                printf("\n");
+                printf("\n");*/
              }
              [[cp explorer] fail];
           }];
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);
-         NSLog(@"Quitting");
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
+         
          return r;
       }];
    }

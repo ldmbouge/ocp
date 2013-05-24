@@ -35,6 +35,7 @@
 -(id)copy;
 -(void)clear;
 -(ORInt)trailSize;
+-(void)reload:(id<ORMemoryTrail>)t;
 @end
 
 typedef struct {

@@ -195,8 +195,8 @@
       id<CPCommonProgram> pi = [cpprogram worker];
       [ORFactory concretizeCP:flatModel program:pi];
       [pi onSolution:^{
-         id<ORCPSolution> sol = [pi captureSolution];
-         [[pi solutionPool] addSolution: sol];
+         id<ORCPSolution> sol = [[cpprogram worker] captureSolution];
+         [[[cpprogram worker] solutionPool] addSolution: sol];
          @synchronized(global) {
             [global addSolution:sol];
          }

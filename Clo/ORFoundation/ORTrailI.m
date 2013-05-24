@@ -477,6 +477,17 @@ ORInt trailMagic(ORTrailI* trail)
    while (_csz < mh)
       _tab[_csz++] = [mt->_tab[k++] retain];
 }
+-(void)reload:(ORMemoryTrailI*)t
+{
+   const ORInt h = min(t->_csz,_csz);
+   ORInt i;
+   for(i = 0;i < h && _tab[i] == t->_tab[i];i++);
+   while(_csz != i)
+      [_tab[--_csz] release];
+   while(_csz < t->_csz)
+      _tab[_csz++] = [t->_tab[i++] retain];
+}
+
 
 -(NSString*)description
 {

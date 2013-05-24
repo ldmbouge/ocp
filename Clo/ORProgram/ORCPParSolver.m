@@ -410,7 +410,6 @@
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
                             [self doOnSolution];
-                            [me doOnSolution];
                             id<ORObjectiveValue> myBound = [objective primalBound];
                             for(ORInt w=0;w < _nbWorkers;w++) {
                                if (w == myID) continue;

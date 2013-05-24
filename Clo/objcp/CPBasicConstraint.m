@@ -88,7 +88,8 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<CPEqualc: %02d %@ == %d>",_name,_x,_c];
+   return [NSString stringWithFormat:@"<x[%d] == %d>",[_x getId],_c];
+//   return [NSString stringWithFormat:@"<CPEqualc: %02d %@ == %d>",_name,_x,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder

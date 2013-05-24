@@ -94,6 +94,7 @@
 -(ORInt)trailSize;
 -(void)clear;
 -(void)comply:(id<ORMemoryTrail>)mt upTo:(ORInt)mh;
+-(void)reload:(id<ORMemoryTrail>)t;
 @end
 
 @interface ORTrailIStack : NSObject {

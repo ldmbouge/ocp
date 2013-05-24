@@ -50,7 +50,8 @@
 
 
 @interface ORCmdStack : NSObject<NSCoding> {
-@private
+//@private
+@package
    ORCommandList** _tab;
    ORUInt _mxs;
    ORUInt _sz;
@@ -394,7 +395,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"snap (%p) = %@",self,_path];
+   [buf appendFormat:@"checkpoint = %@",_path];
    return buf;
 }
 -(ORInt)sizeEstimate
@@ -470,7 +471,9 @@ static __thread id checkPointCache = NULL;
       theCP->_cnt = 1;      
       ORInt i = 0;
       BOOL pfxEq = YES;
-      while (pfxEq && i <  getStackSize(cmds) && i < getStackSize(theCP->_path)) {
+      const ORInt csz = getStackSize(cmds);
+      const ORInt cpsz = getStackSize(theCP->_path);
+      while (pfxEq && i < csz  && i < cpsz) {
          pfxEq = commandsEqual(peekAt(cmds, i), peekAt(theCP->_path, i));
          i += pfxEq;
       }
@@ -481,8 +484,7 @@ static __thread id checkPointCache = NULL;
       ORInt ub = getStackSize(cmds);
       for(;i < ub;i++)
          pushCommandList(theCP->_path, peekAt(cmds, i));
-      [theCP->_mt release];
-      theCP->_mt = [mt copy];
+      [theCP->_mt reload:mt];
    } else {
       //NSLog(@"Fresh checkpoint...");
       ptr = [super allocWithZone:NULL];
