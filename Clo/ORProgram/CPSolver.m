@@ -1574,25 +1574,45 @@
 }
 -(id<CPHeuristic>) createWDeg:(id<ORVarArray>)rvars
 {
-   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:rvars];
+   id<ORIntVarArray> crv = nil;
+   if (rvars)
+      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+         return _gamma[rvars[k].getId];
+      }];
+   id<CPHeuristic> h = [[CPWDeg alloc] initCPWDeg:self restricted:crv];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createDDeg:(id<ORVarArray>)rvars
 {
-   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:rvars];
+   id<ORIntVarArray> crv = nil;
+   if (rvars)
+      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+         return _gamma[rvars[k].getId];
+      }];
+   id<CPHeuristic> h = [[CPDDeg alloc] initCPDDeg:self restricted:crv];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createIBS:(id<ORVarArray>)rvars
 {
-   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:rvars];
+   id<ORIntVarArray> crv = nil;
+   if (rvars)
+      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+         return _gamma[rvars[k].getId];
+      }];
+   id<CPHeuristic> h = [[CPIBS alloc] initCPIBS:self restricted:crv];
    [self addHeuristic:h];
    return h;
 }
 -(id<CPHeuristic>) createABS:(id<ORVarArray>)rvars
 {
-   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:rvars];
+   id<ORIntVarArray> crv = nil;
+   if (rvars)
+      crv = [ORFactory intVarArray:self range:rvars.range with:^id<ORIntVar>(ORInt k) {
+         return _gamma[rvars[k].getId];
+      }];
+   id<CPHeuristic> h = [[CPABS alloc] initCPABS:self restricted:crv];
    [self addHeuristic:h];
    return h;
 }
