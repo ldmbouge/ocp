@@ -20,14 +20,15 @@
 #define ALPHA 8.0L
 
 @interface CPABS : CPBaseHeuristic<CPHeuristic> {
-   id<ORVarArray>   _vars;
+   id<ORVarArray>   _vars;  // Model variables
+   id<CPVarArray>    _cvs;  // concrete variables
    id<ORVarArray>  _rvars;
    id<CPCommonProgram>      _cp;
 }
 -(id)initCPABS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPIntVar>)x;
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x;
--(void)initInternal:(id<ORVarArray>)t;
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs;
 -(void) restart;
 -(id<CPIntVarArray>)allIntVars;
 -(id<CPCommonProgram>)solver;

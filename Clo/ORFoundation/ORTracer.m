@@ -42,7 +42,6 @@
 -(NSString*)description;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 -(void)letgo;
 -(id)grab;
 -(ORInt)sizeEstimate;
@@ -424,40 +423,6 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    _path = [[aDecoder decodeObject] retain];
    return self;
 }
--(NSData*)packFromSolver:(id<ORSearchEngine>) solver
-{
-   NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-   NSArchiver* archiver = [[NSArchiver alloc] initForWritingWithMutableData:thePack];
-#else
-   NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
-#endif
-   NSArray* dico = [solver variables];
-   ORULong nbProxies = [[solver variables] count] + 1; // 1 extra for the trail proxy
-   __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
-   [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
-      [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
-   }];
-   proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];
-   [archiver encodeObject:proxies[nbProxies-1]];
-   
-   [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      [archiver replaceObject:obj withObject:proxies[idx]];  // setup proxying between real and fake
-   }];
-   [archiver replaceObject:[solver trail] withObject:proxies[nbProxies-1]];
-   [archiver encodeRootObject:self];                         // encode the path.
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-#else
-   [archiver finishEncoding];
-#endif
-   [archiver release];
-   for(ORInt k=0;k<nbProxies;k++)
-      [proxies[k] release];
-   return thePack;
-}
-
 
 static __thread id checkPointCache = NULL;
 

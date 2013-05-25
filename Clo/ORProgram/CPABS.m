@@ -480,11 +480,12 @@
    [key release];
    _freshBackup = NO;
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
 {
    _vars = t;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_vars];
-   _nbv = [_vars count];
+   _cvs  = cvs;
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_cvs];
+   _nbv = [_cvs count];
    [_solver post:_monitor];
    _varActivity = [[NSMutableDictionary alloc] initWithCapacity:32];
    _valActivity = [[NSMutableDictionary alloc] initWithCapacity:32];
@@ -508,7 +509,7 @@
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(ORInt)chooseValue:(id<CPIntVar>)x
@@ -549,7 +550,7 @@
 -(void)installActivities
 {
    NSSet* varIDs = [_aggregator variableIDs];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
    ORInt nbProbes = [_aggregator nbProbes];
    for(NSNumber* key in varIDs) {
       __block id<CPIntVar> x = nil;
@@ -586,8 +587,7 @@
 
 -(void)initActivities
 {
-   //id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
    id<CPIntVarArray> bvars = [self allIntVars];
    const ORInt nbInRound = 10;
    const ORInt probeDepth = (ORInt) [bvars count];

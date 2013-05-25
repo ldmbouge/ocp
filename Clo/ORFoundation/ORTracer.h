@@ -51,7 +51,6 @@
 -(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 -(ORInt)sizeEstimate;
 @end
 

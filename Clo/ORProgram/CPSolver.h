@@ -22,7 +22,7 @@
 -(void) push: (id<CPHeuristic>) h;
 -(id<CPHeuristic>) pop;
 -(void) reset;
--(void) applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
+-(void) applyToAll: (void(^)(id<CPHeuristic> h)) closure;
 @end
 
 // This factorizes all the common stuff

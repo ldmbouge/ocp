@@ -864,10 +864,10 @@
    free(_tab);
    [super dealloc];
 }
--(void)applyToAll: (void(^)(id<CPHeuristic>,NSMutableArray*))closure with: (NSMutableArray*)av;
+-(void)applyToAll: (void(^)(id<CPHeuristic>))closure;
 {
    for(ORUInt k=0;k<_sz;k++)
-      closure(_tab[k],av);
+      closure(_tab[k]);
 }
 @end
 
@@ -1005,8 +1005,14 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h initHeuristic:av oneSol:_oneSol];}
-                   with: [_engine variables]];
+      NSArray* mvar = [_model variables];
+      NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+      for(id<ORVar> v in mvar)
+         [cvar addObject:_gamma[v.getId]];
+      [_hSet applyToAll:^(id<CPHeuristic> h) {
+         [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+      }];
+      [cvar release];
       [ORConcurrency pumpEvents];
    }
 }
@@ -1016,7 +1022,7 @@
 }
 -(void) restartHeuristics
 {
-  [_hSet applyToAll:^(id<CPHeuristic> h,NSMutableArray* av) { [h restart];} with:[_engine variables]];
+  [_hSet applyToAll:^(id<CPHeuristic> h) { [h restart];}];
 }
 
 -(void) onSolution: (ORClosure) onSolution
@@ -1988,41 +1994,6 @@
       [_search fail];
    [ORConcurrency pumpEvents];
 }
-
-//- (void) encodeWithCoder:(NSCoder *)aCoder
-//{
-//   [super encodeWithCoder:aCoder];
-//}
-//- (id) initWithCoder:(NSCoder *)aDecoder;
-//{
-//   self = [super initWithCoder:aDecoder];
-//   _tracer = [[SemTracer alloc] initSemTracer: _trail];
-//   id<ORControllerFactory> cFact = [[ORControllerFactory alloc] initFactory:self
-//                                                        rootControllerClass:[ORSemDFSControllerCSP class]
-//                                                      nestedControllerClass:[ORSemDFSController class]];
-//   _search = [[ORSemExplorerI alloc] initORExplorer: _engine withTracer: _tracer ctrlFactory:cFact];
-//   [cFact release];
-//   return self;
-//}
-//-(ORStatus)installCheckpoint:(id<ORCheckpoint>)cp
-//{
-//   return [_tracer restoreCheckpoint:cp inSolver:_engine];
-//}
-//-(ORStatus)installProblem:(id<ORProblem>)problem
-//{
-//   return [_tracer restoreProblem:problem inSolver:_engine];
-//}
-//-(id<ORCheckpoint>)captureCheckpoint
-//{
-//   return [_tracer captureCheckpoint];
-//}
-//-(NSData*)packCheckpoint:(id<ORCheckpoint>)cp
-//{
-//   id<ORCheckpoint> theCP = [_tracer captureCheckpoint];
-//   NSData* thePack = [theCP packFromSolver:_engine];
-//   [theCP release];
-//   return thePack;
-//}
 @end
 
 
