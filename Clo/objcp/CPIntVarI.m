@@ -1337,7 +1337,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {}
 -(void) dealloc
 {
+   /*
+    for(ORInt i=0;i<_nb;i++) {
+      if ([_tab[i] isKindOfClass:[CPLiterals class]])
+         [_tab[i] release];
+   }
+    */
    free(_tab);
+   free(_minIMP);
+   free(_maxIMP);
+   free(_loseValIMP);
    [super dealloc];
 }
 -(enum CPVarClass)varClass
@@ -1360,12 +1369,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
+   __block CPIntVarMultiCast* me = self;
    [theTrail trailClosure:^{
-      _tab[toFix] = NULL;
-      _loseValIMP[toFix] = NULL;
-      _minIMP[toFix] = NULL;
-      _maxIMP[toFix] = NULL;
-      _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
+      me->_tab[toFix] = NULL;
+      me->_loseValIMP[toFix] = NULL;
+      me->_minIMP[toFix] = NULL;
+      me->_maxIMP[toFix] = NULL;
+      me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
    ORInt nbBare = 0;
@@ -1408,11 +1418,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _tracksLoseEvt = YES;
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
+   __block CPIntVarMultiCast* me = self;
    [theTrail trailClosure:^{
-      _tab[toFix] = NULL;
-      _loseValIMP[toFix] = NULL;
-      _minIMP[toFix] = NULL;
-      _maxIMP[toFix] = NULL;
+      me->_tab[toFix] = NULL;
+      me->_loseValIMP[toFix] = NULL;
+      me->_minIMP[toFix] = NULL;
+      me->_maxIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;
@@ -1504,8 +1515,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(id)initCPLiterals:(CPIntVarI*)ref
 {
    self = [super init];
-   _nb  = [[ref domain] imax] - [[ref domain] imin] + 1;
-   _ofs = [[ref domain] imin];
+   id<CPDom> rd = [ref domain];
+   _nb  = [rd imax] - [rd imin] + 1;
+   _ofs = [rd imin];
+   [rd release];
    _ref = ref;
    _pos = malloc(sizeof(CPIntVarI*)*_nb);
    for(ORInt i=0;i<_nb;i++)

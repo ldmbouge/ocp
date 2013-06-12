@@ -447,6 +447,7 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model annotation:_c];
+   [terms release];
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
@@ -455,6 +456,7 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model annotation:_c];
+   [terms release];
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
@@ -601,6 +603,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORSubst normSide:linOther for:_model annotation:_c];
+   [linOther release];
 #if OLDREIFY==1
    if (_rv==nil) {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];

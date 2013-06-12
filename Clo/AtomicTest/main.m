@@ -198,31 +198,3 @@ int main (int argc, const char * argv[])
     return 0;
 }
 */
-    
-//   foo();   
-   
-    /*
-    id<CPSolver> cp = [CPFactory createSolver];
-    ORRange R = (ORRange){1,10};
-    id<ORIntVar> x = [CPFactory intVar: cp domain: R];
-    id<CPIntSet> S = [CPFactory intSet: cp];
-    for(ORInt i = 2; i <= 10; i += 2)
-        [S insert: i];
-    [cp restrict: x to: S];
-    [CPFactory print: x];
-    id<IntEnumerator> it = [S enumerator];
-    while ([it more]) {
-        int v = [it next];
-        printf("%d ",v);
-    }
-    printf("\n");
-    NSData* archive = [NSArchiver archivedDataWithRootObject:S];
-    id<CPIntSet> S1 = [[NSUnarchiver unarchiveObjectWithData: archive] retain];
-    [CPFactory print: S1];
-    return 0;
-     */
-    
-    
-
-
-

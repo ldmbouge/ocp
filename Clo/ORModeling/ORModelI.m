@@ -173,6 +173,7 @@
    [_iStore release];
    [_cache release];
    [_mappings release];
+   [_memory release];
    [super dealloc];
 }
 -(id)inCache:(id)obj
@@ -263,6 +264,7 @@
 -(id) trackObject:(id) obj
 {
    [_memory addObject:obj];
+   [obj release];
    return obj;
 }
 -(id) trackImmutable: (id) obj
@@ -275,8 +277,13 @@
       }
       [_iStore addObject:obj];
       [_memory addObject:obj];
+      [obj release];
       return obj;
-   } else return co;
+   } else {
+      if (co != obj)
+         [obj release];
+      return co;
+   }
 }
 -(id) trackConstraintInGroup:(id)obj
 {
@@ -294,6 +301,7 @@
    [obj setId:_nbObjects++];
    [_mStore addObject:obj];
    [_memory addObject:obj];
+   [obj release];
    return obj;
 }
 -(id) trackVariable: (id) var
@@ -302,6 +310,7 @@
    [_vars addObject:var];
    [_mStore addObject:var];
    [_memory addObject:var];
+   [var release];
    return var;
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c

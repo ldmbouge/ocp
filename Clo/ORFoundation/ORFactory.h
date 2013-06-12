@@ -39,8 +39,10 @@
 +(id<ORMutableFloat>) mutableFloat: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORMutableId>) mutableId:(id<ORTracker>) tracker value:(id) value;
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
++(id<ORIntSet>) intSet:(id<ORTracker>) tracker set:(NSSet*)theSet;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt[]) values;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;

@@ -111,11 +111,30 @@
    [tracker trackMutable: o];
    return o;
 }
++(id<ORIntSet>) intSet:(id<ORTracker>) tracker set:(NSSet*)theSet
+{
+   ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
+   [tracker trackMutable:o];
+   for (NSNumber* k in theSet)
+      [o insert:k.intValue];
+   return o;
+}
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up
 {
    ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
    return [tracker trackImmutable: o];
 }
+
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array
+{
+   ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray:tracker size:(ORInt)[array count] value:0];
+   [tracker trackMutable:o];
+   ORInt i = 0;
+   for(NSNumber* k in array)
+      [o set:k.intValue at:i++];
+   return o;
+}
+
 +(ORIntArrayI*) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value
 {
    ORIntArrayI* o = [[ORIntArrayI alloc] initORIntArray: tracker range:range value: (ORInt) value];

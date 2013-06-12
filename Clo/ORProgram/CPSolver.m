@@ -869,6 +869,10 @@
    for(ORUInt k=0;k<_sz;k++)
       closure(_tab[k]);
 }
+-(BOOL)empty
+{
+   return _sz == 0;
+}
 @end
 
 
@@ -1005,14 +1009,16 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      NSArray* mvar = [_model variables];
-      NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
-      for(id<ORVar> v in mvar)
-         [cvar addObject:_gamma[v.getId]];
-      [_hSet applyToAll:^(id<CPHeuristic> h) {
-         [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
-      }];
-      [cvar release];
+      if (![_hSet empty]) {
+         NSArray* mvar = [_model variables];
+         NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+         for(id<ORVar> v in mvar)
+            [cvar addObject:_gamma[v.getId]];
+         [_hSet applyToAll:^(id<CPHeuristic> h) {
+            [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+         }];
+         [cvar release];
+      }
       [ORConcurrency pumpEvents];
    }
 }
@@ -1027,11 +1033,15 @@
 
 -(void) onSolution: (ORClosure) onSolution
 {
-   [_doOnSolArray addObject: [onSolution copy]];
+   id block = [onSolution copy];
+   [_doOnSolArray addObject: block];
+   [block release];
 }
 -(void) onExit: (ORClosure) onExit
 {
-   [_doOnExitArray addObject: [onExit copy]];
+   id block = [onExit copy];
+   [_doOnExitArray addObject: block];
+   [block release];
 }
 -(id<ORSolutionPool>) solutionPool
 {
@@ -1818,6 +1828,7 @@
 -(void) dealloc
 {
    [_trail release];
+   [_mt release];
    [_engine release];
    [_search release];
    [_tracer release];

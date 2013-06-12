@@ -23,6 +23,7 @@
 -(id<CPHeuristic>) pop;
 -(void) reset;
 -(void) applyToAll: (void(^)(id<CPHeuristic> h)) closure;
+-(BOOL)empty;
 @end
 
 // This factorizes all the common stuff

@@ -39,7 +39,6 @@
 -(void) dealloc
 {
    free(_x);
-   free(_updateBounds);
    free(_allTerms);
    free(_inUse);
    [super dealloc];
@@ -91,15 +90,12 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(ORStatus) post
 {
-   _updateBounds = malloc(sizeof(UBType)*_nb);
-   for(ORInt k=0;k<_nb;k++)
-      _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
-   
    _allTerms = malloc(sizeof(CPEQTerm)*_nb);
    _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
    for(ORInt i=0;i<_nb;i++) {
       ORBounds b = bounds(_x[i]);
-      _allTerms[i] = (CPEQTerm){_updateBounds[i],_x[i],b.min,b.max,NO};
+      UBType mth = (UBType)[_x[i] methodForSelector:@selector(updateMin:andMax:)];
+      _allTerms[i] = (CPEQTerm){mth,_x[i],b.min,b.max,NO};
       _inUse[i] = inline_makeTRCPEQTerm(_trail, _allTerms+i);
    }
    ORInt lastUsed = (ORInt)_nb-1;

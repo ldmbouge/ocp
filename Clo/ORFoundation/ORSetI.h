@@ -47,7 +47,6 @@
 -(NSString*) description;
 -(void)visit:(id<ORVisitor>)v;
 -(id<IntEnumerator>) enumerator;
-//-(id<IntEnumerator>) tailableEnumerator;
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
