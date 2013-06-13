@@ -16,7 +16,7 @@ class Runner:
 
 	def findFolder(self,name):
 		home = os.environ['HOME']
-		return './build'
+		return 'build'
 		# rootdir = home + '/Library/Developer/Xcode/DerivedData'
 		# for root, subFolders, files in os.walk(rootdir):
 		# 	for folder in subFolders:
@@ -28,7 +28,7 @@ class Runner:
 
 	def run(self,qp,np):
 		full = self.path + '/' + self.bin;
-		print 'Running [{0} -q{1} -n{2}]\n'.format(full,qp,np)
+		print 'Running in {3} [{0} -q{1} -n{2}]\n'.format(full,qp,np,os.getcwd())
 		h = subprocess.Popen((full,'-q{0}'.format(qp),'-n{0}'.format(np)),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		rc = h.wait()
 		print 'Return code {0}\n'.format(rc)
