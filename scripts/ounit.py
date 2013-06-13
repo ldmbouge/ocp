@@ -27,7 +27,7 @@ class Runner:
 		# return '/tmp'
 
 	def run(self,qp,np):
-		full = self.bin;
+		full = './' + self.bin;
 		print 'Running in {3} [{0} -q{1} -n{2}]\n'.format(full,qp,np,os.getcwd())
 		h = subprocess.Popen((full,'-q{0}'.format(qp),'-n{0}'.format(np)),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		rc = h.wait()
