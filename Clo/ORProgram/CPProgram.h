@@ -159,4 +159,5 @@
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
+-(NSString*)stringValue:(id<ORBitVar>)x;
 @end

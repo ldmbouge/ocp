@@ -425,9 +425,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) createTriggers
 {
     if (_triggers == nil) {
-        ORInt low = [_dom imin];
-        ORInt up = [_dom imax];
-        _triggers = [CPTriggerMap triggerMapFrom:low to:up dense:(up-low+1)<256];    
+       id<CPDom> d = [self domain];
+       ORInt low = [d imin];
+       ORInt up = [d imax];
+       [d release];
+       _triggers = [CPTriggerMap triggerMapFrom:low to:up dense:(up-low+1)<256];
     }
 }
 

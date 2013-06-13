@@ -1656,6 +1656,10 @@
    [self addHeuristic:h];
    return h;
 }
+-(NSString*)stringValue:(id<ORBitVar>)x
+{
+   return [_gamma[x.getId] stringValue];
+}
 -(ORInt) intValue: (id) x
 {
    return [_gamma[[x getId]] intValue];
