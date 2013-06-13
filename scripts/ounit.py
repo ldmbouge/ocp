@@ -28,9 +28,8 @@ class Runner:
 
 	def run(self,qp,np):
 		full = self.path + '/' + self.bin;
-		print 'Running [{0}]\n'.format(full)
-		h = subprocess.Popen((full,'-q{0}'.format(qp),'-n{0}'.format(np)),
-				stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+		print 'Running [{0} -q{1} -n{2}]\n'.format(full,qp,np)
+		h = subprocess.Popen((full,'-q{0}'.format(qp),'-n{0}'.format(np)),stdout=subprocess.PIPE,stderr=subprocess.PIPE)
 		rc = h.wait()
 		print 'Return code {0}\n'.format(rc)
 		err = h.stderr.read()
