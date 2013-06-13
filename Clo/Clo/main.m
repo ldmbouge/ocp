@@ -58,7 +58,7 @@ int test1(int argc, const char * argv[])
          }
          NSLog(@"#sol: %d - %d",nbSol,nbc);
          assert(nbSol == nbc);
-         struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult res = REPORT(nbSol == nbc, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [ORFactory shutdown];
          return res;
       }];
@@ -97,7 +97,7 @@ int test2(int argc, const char * argv[])
          NSLog(@"#sol: %d - %d",nbSol,nbc);
          assert(nbSol == nbc);
          NSLog(@"Solver: %@",cp);
-         struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult res = REPORT(nbSol == nbc, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [ORFactory shutdown];
          return res;
       }];
