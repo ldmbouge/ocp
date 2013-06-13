@@ -12,7 +12,7 @@ class Runner:
 		self.pwd = os.getcwd()
 		self.of = open('{0}.xml'.format(bin),'w')
 		os.chdir(self.path)
-		os.environ['DYLD_FRAMEWORK_PATH'] = self.path
+		os.environ['DYLD_FRAMEWORK_PATH'] = '.'
 
 	def findFolder(self,name):
 		home = os.environ['HOME']
