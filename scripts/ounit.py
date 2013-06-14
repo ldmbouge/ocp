@@ -3,21 +3,28 @@
 import subprocess
 import os
 import sys
+import json
 
 class Runner:
 	def __init__(self,bin):
-		home = os.environ['HOME']
+		self.home = os.environ['HOME']
 		self.path = self.findFolder('ObjecticeCP')
 		self.bin = bin
 		self.pwd = os.getcwd()
-		self.of = open('{0}.xml'.format(bin),'w')
+		self.of = open('bench-{0}.xml'.format(bin),'w')
+		if os.path.exists('results.json'):
+			self.all = open('results.json','r')
+			self.ab  = json.loads(self.all.read())
+			self.all.close()
+		else:
+			self.ab = {}
 		os.chdir(self.path)
 		os.environ['DYLD_FRAMEWORK_PATH'] = '.'
 
 	def findFolder(self,name):
 		home = os.environ['HOME']
 		return 'build'
-		# rootdir = home + '/Library/Developer/Xcode/DerivedData'
+		# rootdir = self.home + '/Library/Developer/Xcode/DerivedData'
 		# for root, subFolders, files in os.walk(rootdir):
 		# 	for folder in subFolders:
 		# 		if folder[:11] == name:
@@ -39,22 +46,24 @@ class Runner:
 				if line[:4] == 'OUT:':
 					parts = line[4:].rstrip().split(',')
 					res = {'method' : parts[0],
-					'randomized' : parts[1],
-					'threads' : parts[2],
+					'randomized' : int(parts[1]),
+					'threads' : int(parts[2]),
 					'size' : parts[3],
 					'found' : parts[4],
 					'rrate' : parts[5],
-					'nfail' : parts[6],
-					'nchoice' : parts[7],
-					'nprop' : parts[8],
+					'nfail' : int(parts[6]),
+					'nchoice' : int(parts[7]),
+					'nprop' : int(parts[8]),
 					'cpu' : float(parts[9]) / 1000.0,
 					'wc'  : float(parts[10]) / 1000.0,
-					'mused' : parts[11],
-					'mpeak' : parts[12]}
+					'mused' : float(parts[11]) / 1024,
+					'mpeak' : float(parts[12]) / 1024,
+					'rc'    : rc}
 					out = out + line
 		else:
 			out = h.stdout.read()
-			res = {'cpu' : 0, 'found' : 0}
+			res = {'cpu' : 0, 'found' : 0, 'rc' : rc}
+		self.ab[self.bin] = res
 
 		if res['found'] == 0:
 			error = 1
@@ -72,6 +81,10 @@ class Runner:
 		self.of.write('</testcase>\n')
 		self.of.write('</testsuite>\n')
 		os.chdir(self.pwd)
+		self.all = open('results.json','w')
+		self.all.write(json.dumps(self.ab,indent=4))
+		self.all.close()
+
 
 ab = [('queensAC',12,0),('ais',20,0),('fdmul',0,0),('costas',6,0),('golomb',8,0)]
 for (b,qa,na) in ab:
