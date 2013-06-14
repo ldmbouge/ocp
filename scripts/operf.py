@@ -82,8 +82,10 @@ class Collect:
 			p = 'no'
 		s = bench['rc']
 		cpu = bench['cpu']
+		wc  = bench['wc']
 		mem = bench['mused']
 		of.write('\t\t<success passed="{0}" state="{1}" hasTimedOut="false"/>\n'.format(p,s))
+		of.write('\t\t<compiletime unit="s" mesure="{0}" isRelevant="true"/>\n'.format(wc))
 		of.write('\t\t<executiontime unit="s" mesure="{0}" isRelevant="true"/>\n'.format(cpu))
 		of.write('\t\t<performance unit="KB" mesure="{0}" isRelevant="true"/>\n'.format(mem))
 		of.write('\t</result>\n')
