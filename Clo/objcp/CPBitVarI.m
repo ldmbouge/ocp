@@ -203,7 +203,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom member:v];
 }
-
+-(NSString*)stringValue
+{
+   return [_dom description];
+}
 -(NSString*)description
 {
     return [_dom description];

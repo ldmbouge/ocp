@@ -74,7 +74,7 @@
 
 -(NSString*)    description
 {
-   NSMutableString* string = [[NSMutableString alloc] init];
+   NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
    for(int i=0; i< _wordLength;i++){
       unsigned int boundLow = (~ _up[i]._val) & (~_low[i]._val);
       unsigned int boundUp = _up[i]._val & _low[i]._val;

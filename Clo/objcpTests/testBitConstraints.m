@@ -94,12 +94,12 @@ char *int2bin(int a, char *buffer, int buf_size) {
     [cp solve: ^() {
        @try {
           NSLog(@"After Posting:");
-          NSLog(@"a = %@\n", a);
-          NSLog(@"b = %@\n", b);
-          NSLog(@"c = %@\n", c);
-          NSLog(@"x = %@\n", x);
-          NSLog(@"y = %@\n", y);
-          NSLog(@"z = %@\n", z);
+          NSLog(@"a = %@\n", [cp stringValue:a]);
+          NSLog(@"b = %@\n", [cp stringValue:b]);
+          NSLog(@"c = %@\n", [cp stringValue:c]);
+          NSLog(@"x = %@\n", [cp stringValue:x]);
+          NSLog(@"y = %@\n", [cp stringValue:y]);
+          NSLog(@"z = %@\n", [cp stringValue:z]);
           [cp labelUpFromLSB:x];
           [cp labelUpFromLSB:y];
           [cp labelUpFromLSB:z];
@@ -107,12 +107,12 @@ char *int2bin(int a, char *buffer, int buf_size) {
           [cp labelUpFromLSB:b];
           [cp labelUpFromLSB:c];
           NSLog(@"Solution Found:");
-          NSLog(@"a = %@\n", a);
-          NSLog(@"b = %@\n", b);
-          NSLog(@"c = %@\n", c);
-          NSLog(@"x = %@\n", x);
-          NSLog(@"y = %@\n", y);
-          NSLog(@"z = %@\n", z);
+          NSLog(@"a = %@\n", [cp stringValue:a]);
+          NSLog(@"b = %@\n", [cp stringValue:b]);
+          NSLog(@"c = %@\n", [cp stringValue:c]);
+          NSLog(@"x = %@\n", [cp stringValue:x]);
+          NSLog(@"y = %@\n", [cp stringValue:y]);
+          NSLog(@"z = %@\n", [cp stringValue:z]);
           STAssertTrue([[cp stringValue:x] isEqualToString:[cp stringValue:y]], @"testBitEqualityConstraint: Bit Patterns for x and y should be equal.");
           STAssertTrue([[cp stringValue:x] isEqualToString:[cp stringValue:z]], @"testBitEqualityConstraint: Bit Patterns for x and z should be equal.");
           STAssertTrue([[cp stringValue:a] isEqualToString:[cp stringValue:b]], @"testBitEqualityConstraint: Bit Patterns for a and b should be equal.");
@@ -162,16 +162,16 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [cp solve: ^() {
       @try {
          NSLog(@"After Posting:");
-         NSLog(@"a = %@\n", a);
-         NSLog(@"b = %@\n", b);
-         NSLog(@"c = %@\n", c);
+         NSLog(@"a = %@\n", [cp stringValue:a]);
+         NSLog(@"b = %@\n", [cp stringValue:b]);
+         NSLog(@"c = %@\n", [cp stringValue:c]);
          [cp labelUpFromLSB:a];
          [cp labelUpFromLSB:b];
          [cp labelUpFromLSB:c];
          NSLog(@"Solution Found:");
-         NSLog(@"a = %@\n", a);
-         NSLog(@"b = %@\n", b);
-         NSLog(@"c = %@\n", c);
+         NSLog(@"a = %@\n", [cp stringValue:a]);
+         NSLog(@"b = %@\n", [cp stringValue:b]);
+         NSLog(@"c = %@\n", [cp stringValue:c]);
          
          STAssertTrue([[cp stringValue:a] isEqualToString:@"1110111011101000100010001000100010001000100010001000100010001000"],
                       @"testBitANDConstraint: Bit Pattern for a is incorrect.");
@@ -223,16 +223,16 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [cp solve: ^() {
       @try {
          NSLog(@"After Posting:");
-         NSLog(@"d = %@\n", d);
-         NSLog(@"e = %@\n", e);
-         NSLog(@"f = %@\n", f);
+         NSLog(@"d = %@\n", [cp stringValue:d]);
+         NSLog(@"e = %@\n", [cp stringValue:e]);
+         NSLog(@"f = %@\n", [cp stringValue:f]);
          [cp labelUpFromLSB:d];
          [cp labelUpFromLSB:e];
          [cp labelUpFromLSB:f];
          NSLog(@"Found Solution:");
-         NSLog(@"d = %@\n", d);
-         NSLog(@"e = %@\n", e);
-         NSLog(@"f = %@\n", f);
+         NSLog(@"d = %@\n", [cp stringValue:d]);
+         NSLog(@"e = %@\n", [cp stringValue:e]);
+         NSLog(@"f = %@\n", [cp stringValue:f]);
          STAssertTrue([[cp stringValue:d] isEqualToString:@"1000100010001110100010001000100010001000100010001000100010001000"],
                       @"testBitORConstraint: Bit Pattern for d is incorrect.");
          STAssertTrue([[cp stringValue:e] isEqualToString:@"1111011101110000111100000000000011110000000000001111000000000000"],
@@ -284,13 +284,13 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [cp solve: ^() {
       @try {
          NSLog(@"After Posting:");
-         NSLog(@"g = %@\n", g);
-         NSLog(@"h = %@\n", h);
+         NSLog(@"g = %@\n", [cp stringValue:g]);
+         NSLog(@"h = %@\n", [cp stringValue:h]);
          [cp labelUpFromLSB:g];
          [cp labelUpFromLSB:h];
          NSLog(@"Solution Found:");
-         NSLog(@"g = %@\n", g);
-         NSLog(@"h = %@\n", h);
+         NSLog(@"g = %@\n", [cp stringValue:g]);
+         NSLog(@"h = %@\n", [cp stringValue:h]);
       }
       @catch (NSException *exception) {
          NSLog(@"main: Caught %@: %@", [exception name], [exception reason]);
@@ -335,16 +335,16 @@ char *int2bin(int a, char *buffer, int buf_size) {
    [cp solve: ^() {
       @try {
          NSLog(@"After Posting:");
-         NSLog(@"i = %@\n", i);
-         NSLog(@"j = %@\n", j);
-         NSLog(@"k = %@\n", k);
+         NSLog(@"i = %@\n", [cp stringValue:i]);
+         NSLog(@"j = %@\n", [cp stringValue:j]);
+         NSLog(@"k = %@\n", [cp stringValue:k]);
          [cp labelUpFromLSB:i];
          [cp labelUpFromLSB:j];
          [cp labelUpFromLSB:k];
          NSLog(@"Solution Found:");
-         NSLog(@"i = %@\n", i);
-         NSLog(@"j = %@\n", j);
-         NSLog(@"k = %@\n", k);
+         NSLog(@"i = %@\n", [cp stringValue:i]);
+         NSLog(@"j = %@\n", [cp stringValue:j]);
+         NSLog(@"k = %@\n", [cp stringValue:k]);
          STAssertTrue([[cp stringValue:i] isEqualToString:@"1000100010001110100010001000100010001000100010001110100010001000"],
                       @"testBitORConstraint: Bit Pattern for i is incorrect.");
          STAssertTrue([[cp stringValue:j] isEqualToString:@"1111011101110000111100000000000011110000000000001111100010000000"],
@@ -397,13 +397,13 @@ char *int2bin(int a, char *buffer, int buf_size) {
       @try {
 
          NSLog(@"After Posting:");
-         NSLog(@"p = %@\n", p);
-         NSLog(@"q = %@\n", q);
+         NSLog(@"p = %@\n", [cp stringValue:p]);
+         NSLog(@"q = %@\n", [cp stringValue:q]);
          [cp labelUpFromLSB:p];
          [cp labelUpFromLSB:q];
          NSLog(@"Solution Found:");
-         NSLog(@"p = %@\n", p);
-         NSLog(@"q = %@\n", q);
+         NSLog(@"p = %@\n", [cp stringValue:p]);
+         NSLog(@"q = %@\n", [cp stringValue:q]);
          STAssertTrue([[cp stringValue:p] isEqualToString:@"1011011101111011111011111101111111011111111011111111101111111111"],
                       @"testBitORConstraint: Bit Pattern for p is incorrect.");
          STAssertTrue([[cp stringValue:q] isEqualToString:@"1011101111011111011111101111111011111111011111111101111111111000"],
