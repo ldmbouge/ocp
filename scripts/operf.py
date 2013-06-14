@@ -15,7 +15,6 @@ def get_processor_name():
 		return platform.processor()
 	elif p == 'darwin':
 		command ="/usr/sbin/sysctl -n machdep.cpu.brand_string"
-		print command
 		cc =  subprocess.Popen(('/usr/sbin/sysctl','-n','machdep.cpu.brand_string'),stdout=subprocess.PIPE)
 		cc.wait()
 		return cc.stdout.read().strip()
@@ -58,9 +57,9 @@ class Collect:
 		pn = get_processor_name()
 		parts = pn.split('@')
 		of.write('\t\t<type><![CDATA[{0}]]></type>\n'.format(osd[0]))
-		of.write('\t\t<name><![CDATA[{0}]]</name>\n'.format(os.name))
-		of.write('\t\t<version>![CDATA[{0}]]</version>\n'.format(osd[2]))
-		of.write('\t\t<distribution>![CDATA[{0}]]</distribution>\n'.format(osd[3]))
+		of.write('\t\t<name><![CDATA[{0}]]></name>\n'.format(os.name))
+		of.write('\t\t<version><![CDATA[{0}]]></version>\n'.format(osd[2]))
+		of.write('\t\t<distribution><![CDATA[{0}]]></distribution>\n'.format(osd[3]))
 		of.write('\t</os>\n')
 		of.write('\t<processor arch="{0}">\n'.format(pn))
 		of.write('\t\t<frequency unit="Mhz" cpufreq="{0}"/>\n'.format(float(parts[1][:-3])*1000.0))
