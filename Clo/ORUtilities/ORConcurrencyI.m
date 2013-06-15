@@ -211,6 +211,14 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    };
    [_eventList addEvent:[wrap copy]];
 }
+-(void) dispatchWithObject:(id)obj
+{
+   ORId2Void tClo = (ORId2Void)_closure;
+   ORClosure wrap = ^{
+      tClo(obj);
+   };
+   [_eventList addEvent:[wrap copy]];
+}
 -(void) dispatchWithSolution:(id<ORSolution>)s
 {
     ORSolution2Void tClo = (ORSolution2Void)_closure;
@@ -332,6 +340,20 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    }
 }
 
+-(void) notifyWithObject:(id)a0
+{
+   @synchronized(self) {
+      for(id event in _whenList)
+         [event dispatchWithObject:a0];
+      [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+      for(id event in _wheneverList)
+         [event dispatchWithObject:a0];
+      for(ORBarrier* barrier in _sleeperList)
+         [barrier join];
+      [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+   }
+}
+
 -(void) notifyWith:(id)a0 andInt:(ORInt)a1
 {
    @synchronized(self) {
@@ -435,6 +457,10 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 +(id<ORIntInformer>) intInformer
 {
     return [[ORInformerI alloc] initORInformerI];
+}
++(id<ORInformer>) idInformer
+{
+   return [[ORInformerI alloc] initORInformerI];
 }
 +(id<ORVoidInformer>) voidInformer
 {

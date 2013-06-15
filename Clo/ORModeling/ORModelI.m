@@ -119,7 +119,10 @@
 {
    self = [self initORModelI];
    _nbObjects = nb;
-   _mappings = [mappings copy];
+   if (mappings) {
+      [_mappings release];
+      _mappings = [mappings copy];
+   }
    return self;
 }
 -(ORModelI*) initWithModel: (ORModelI*) src

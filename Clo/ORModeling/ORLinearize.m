@@ -350,7 +350,7 @@
 @implementation ORFactory(Linearize)
 +(id<ORModel>) linearizeModel:(id<ORModel>)m
 {
-   id<ORModel> lm = [ORFactory createModel];
+   id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
    [linearizer apply: m];

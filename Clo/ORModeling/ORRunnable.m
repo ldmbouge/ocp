@@ -196,7 +196,7 @@
     [_solutionStreamConsumers addObject: c];
 }
 
--(id<ORIntInformer>) upperBoundStreamInformer
+-(id<ORIdInformer>) upperBoundStreamInformer
 {
     return _upperBoundStreamInformer;
 }
@@ -234,8 +234,8 @@
 
 -(void) setupRun
 {
-    [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(ORInt b) {
-        NSLog(@"(%p) recieved upper bound: %i", self, b);
+    [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(id<ORObjectiveValue> b) {
+        NSLog(@"(%p) recieved upper bound: %@", self, b);
         [[[_program engine] objective] tightenPrimalBound: b];
     }];
 }
@@ -248,9 +248,10 @@
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
-        NSLog(@"(%p) objective tightened: %@", self, [[[_program engine] objective] primalBound]);
+       id<ORSearchObjectiveFunction> of = [[_program engine] objective];
+        NSLog(@"(%p) objective tightened: %@", self, [of primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
-            [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
+            [[c upperBoundStreamInformer] notifyWithObject: [of value]];
         NSMutableArray* sp = _solutionStreamConsumers;
         for(id<ORSolutionStreamConsumer> c in sp)
             [[c solutionStreamInformer] notifyWithSolution: s];
