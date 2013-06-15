@@ -6673,8 +6673,8 @@
 		5BB898F71697564D00FED099 /* eq20 */ = {
 			isa = PBXGroup;
 			children = (
-				5B19097A16DAAB45006D1D24 /* eq20.1 */,
 				5B19097B16DAAB45006D1D24 /* main.m */,
+				5B19097A16DAAB45006D1D24 /* eq20.1 */,
 				5BB898FA1697564D00FED099 /* Supporting Files */,
 			);
 			path = eq20;

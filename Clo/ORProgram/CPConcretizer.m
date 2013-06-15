@@ -61,11 +61,11 @@
    }
 }
 -(void) visitIntSet: (id<ORIntSet>) v
-{
-}
+{}
 -(void) visitIntRange:(id<ORIntRange>) v
-{
-}
+{}
+-(void) visitUniformDistribution:(id) v
+{}
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
