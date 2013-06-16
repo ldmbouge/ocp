@@ -47,6 +47,8 @@ typedef enum {
 @end
 
 @protocol ORGamma <NSObject>
+-(void) setGamma: (id*) gamma;
+-(id*)gamma;
 -(id<ORObject>) concretize: (id<ORObject>) o;
 @end
 

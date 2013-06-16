@@ -143,15 +143,15 @@
 
 -(id) initWithModel:(id<ORModel>)m
 {
-    if((self = [super init]) != nil) {
-        _model = [m retain];
-        _sig = nil;
-        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
-        _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
-        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
-        _solutionStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
-    }
-    return self;
+   if((self = [super init]) != nil) {
+      _model = [m retain];
+      _sig = nil;
+      _upperBoundStreamInformer =  [ORConcurrency idInformer];
+      _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+      _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
+      _solutionStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+   }
+   return self;
 }
 
 -(id<ORModel>) model { return _model; }
@@ -342,7 +342,7 @@
 @implementation ORFactory(ORRunnable)
 +(id<CPRunnable>) CPRunnable: (id<ORModel>)m
 {
-    id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;
 }
 +(id<LPRunnable>) LPRunnable: (id<ORModel>)m

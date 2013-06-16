@@ -54,8 +54,8 @@ int main (int argc, const char * argv[])
          for(id<ORIntVar> v in [lm variables])
             NSLog(@"var(%@): %i-%i", [v description], [v min], [v max]);
          NSLog(@"SOL: %@", assignCost);
-
-         struct ORResult r = REPORT(1, [[[r0 solver] explorer] nbFailures],[[[r0 solver] explorer] nbChoices], [[[r0 solver] engine] nbPropagation]);
+         id<CPProgram> solver = [(id<CPRunnable>)r0 solver];
+         struct ORResult r = REPORT(1, [[solver explorer] nbFailures],[[solver explorer] nbChoices], [[solver engine] nbPropagation]);
          [ORFactory shutdown];
          return r;
       }];

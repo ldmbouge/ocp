@@ -40,10 +40,8 @@
 -(id<ORCPSolution>) best;
 @end
 
-@protocol CPCommonProgram  <ORASolver>
+@protocol CPCommonProgram  <ORASolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
--(void) setGamma: (id*) gamma;
--(id*)  gamma;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
 -(id<ORExplorer>)  explorer;
