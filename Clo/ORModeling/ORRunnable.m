@@ -235,7 +235,7 @@
 -(void) setupRun
 {
     [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(id<ORObjectiveValue> b) {
-        NSLog(@"(%p) recieved upper bound: %@", self, b);
+        NSLog(@"(%p - %d) received upper bound: %@", self,[NSThread threadID],b);
         [[[_program engine] objective] tightenPrimalBound: b];
     }];
 }
@@ -249,7 +249,7 @@
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
        id<ORSearchObjectiveFunction> of = [[_program engine] objective];
-        NSLog(@"(%p) objective tightened: %@", self, [of primalBound]);
+        NSLog(@"(%p - %d) objective tightened: %@", self, [NSThread threadID],[of primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
             [[c upperBoundStreamInformer] notifyWithObject: [of value]];
         NSMutableArray* sp = _solutionStreamConsumers;
