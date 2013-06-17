@@ -405,6 +405,36 @@
    _array -= _low;
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   ORIdArrayI* rv =  [[ORIdArrayI allocWithZone:zone] initORIdArray:_tracker range:_range];
+   for(ORInt i=_low;i<=_up;i++)
+       [rv set:[self at:i] at:i];
+   return rv;
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORIdArrayI class]]) {
+      ORIdArrayI* o = object;
+      if (_low == o->_low && _up == o->_up) {
+         for(ORInt i=_low;i<=_up;i++) {
+            BOOL ok = [[self at:i] getId] == [[o at:i] getId];
+            if (!ok)
+               return NO;
+         }
+         return YES;
+      } else return NO;
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   ORInt sz =  _up - _low + 1;
+   NSUInteger h = 0;
+   for(ORInt k=_low;k <= _up;k++)
+      h = h * 7 + [_array[k] getId];
+   return (h << (int)(log(sz)/log(2))) + sz;
+}
+
 -(void) dealloc
 {
    _array += _low;
@@ -649,20 +679,18 @@
 
 -(id<ORExpr>) elt: (id<ORExpr>) idx i1:(ORInt)i1
 {
-   id<ORIntVarArray> slice = (id)[ORFactory idArray:[idx tracker] range:_range[0]];
-   [_range[0] enumerateWithBlock:^(ORInt i) {
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[idx tracker] range:_range[0] with:^id(ORInt i) {
       ORInt flatOfs = ((i - _low[0]) * _size[1]) + i1 -  _low[1];
-      slice[i] = _flat[flatOfs];
+      return _flat[flatOfs];
    }];
    id<ORExpr> fe = [slice elt:idx];
    return fe;
 }
 -(id<ORExpr>) at: (ORInt) i0       elt:(id<ORExpr>)e1
 {
-   id<ORIntVarArray> slice = (id)[ORFactory idArray:[e1 tracker] range:_range[1]];
-   [_range[1] enumerateWithBlock:^(ORInt j) {
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[e1 tracker] range:_range[1] with:^id(ORInt j) {
       ORInt flatOfs = ((i0 - _low[0]) * _size[1]) + j -  _low[1];
-      slice[j] = _flat[flatOfs];
+      return _flat[flatOfs];
    }];
    id<ORExpr> fe = [slice elt:e1];
    return fe;

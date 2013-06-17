@@ -432,16 +432,15 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
    NSUInteger cnt = [m count];
    id<ORTracker> t = [_into tracker];
    id<ORIntRange> fr = [ORFactory intRange:t low:0 up:(ORInt)cnt-1];
-   id<ORIntVarArray> f = (id)[ORFactory idArray:t range:fr];
-   for (ORInt i=0; i<cnt; i++)
-      f[i]  = [m flat:i];
+   id<ORIntVarArray> f = (id)[ORFactory idArray:t range:fr with:^id(ORInt i) {
+      return [m flat:i];
+   }];
    id<ORTable> table = [ORFactory table:t arity:[m arity]+1];
    ORInt k = [m arity]+1;
    ORInt idx[k];
    idx[k-1] = 0;
    loopOverMatrix(m,0,[m arity],table,idx);
    table = [t memoize:table];
-   f = [t memoize:f];
    id<ORIntVar> alpha = [ORFactory intVar:t domain:fr];
    [ORFactory tableConstraint:table on:idx0 :idx1 :alpha];
    _result = [ORFactory element:t var:alpha idxVarArray:f equal:res annotation:DomainConsistency];

@@ -39,7 +39,7 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         ORInt n = argc > 2 ? atoi(argv[1]) : 9;
+         ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n-1);
          id<ORIntVarMatrix> q = [ORFactory intVarMatrix:model range:D :D domain:D];
          [D enumerateWithBlock:^(ORInt r) {

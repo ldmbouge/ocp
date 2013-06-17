@@ -190,6 +190,23 @@
         return (ORFloat)[[arr at: i] literal];
     }];
 }
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo
+{
+   ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];
+   [range enumerateWithBlock:^(ORInt k) {
+      [o set:clo(k) at:k];
+   }];
+   ORIdArrayI* co = [tracker inCache:o];
+   if (co == NULL) {
+      [tracker trackMutable:o];
+      [tracker addToCache:o];
+      return o;
+   } else {
+      [o release];
+      return co;
+   }
+   //return [tracker trackMutable:o];
+}
 +(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
 {
    ORIdArrayI* o = [[ORIdArrayI alloc] initORIdArray:tracker range:range];

@@ -63,7 +63,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIdArrayI : ORObject<NSCoding,ORIdArray>
+@interface ORIdArrayI : ORObject<NSCoding,NSCopying,ORIdArray>
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>)tracker range: (id<ORIntRange>) range;
 -(id) at: (ORInt) value;
 -(void) set: (id) x at: (ORInt) value;

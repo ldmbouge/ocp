@@ -597,7 +597,10 @@ static ORInt _deterministic;
       } else return NO;
    } else return NO;
 }
-
+-(NSUInteger)hash
+{
+   return _arity * _nb;
+}
 -(void) dealloc
 {
    NSLog(@"ORTableI dealloc called ...");

@@ -195,7 +195,11 @@
       [_cache setObject:obj forKey:obj];
       mo = obj;
    } else {
-      [obj release];
+      BOOL inMutable = [_mStore containsObject:obj];
+      BOOL inImm     = [_iStore containsObject:obj];
+      [_memory removeObject:obj];
+      if (inMutable) [_mStore removeObject:obj];
+      if (inImm)     [_iStore removeObject:obj];
    }
    return mo;
 }
