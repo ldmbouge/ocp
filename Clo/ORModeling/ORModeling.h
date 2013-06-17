@@ -53,6 +53,7 @@
 -(id<ORModel>) rootModel;
 -(id)inCache:(id)obj;
 -(id) addToCache:(id)obj;
+-(id)memoize:(id) obj;
 -(id<ORModelMappings>) mappings;
 -(id<ORTau>) tau;
 -(id<ORLambda>) lambda;

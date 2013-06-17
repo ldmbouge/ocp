@@ -117,6 +117,9 @@
 -(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1;
 -(void) set: (id) x at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
+-(id<ORExpr>) elt: (id<ORExpr>) idx i1:(ORInt)i1;
+-(id<ORExpr>) at: (ORInt) i0       elt:(id<ORExpr>)e1;
+-(id<ORExpr>) elt: (id<ORExpr>)e0  elt:(id<ORExpr>)e1;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
 -(void)encodeWithCoder: (NSCoder*) aCoder;

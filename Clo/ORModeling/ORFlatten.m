@@ -411,6 +411,41 @@
 {
    _result = c;
 }
+void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
+{
+   if (d == arity) {
+      idx[arity]++;
+      [t insertTuple:idx];
+   } else {
+      [[m range:d] enumerateWithBlock:^(ORInt k) {
+         idx[d] = k;
+         loopOverMatrix(m, d+1, arity, t, idx);
+      }];
+   }
+}
+-(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c
+{
+   id<ORIntVarMatrix> m = [self flattenIt:[c matrix]];
+   id<ORIntVar> idx0    = [self flattenIt:[c index0]];
+   id<ORIntVar> idx1    = [self flattenIt:[c index1]];
+   id<ORIntVar> res     = [self flattenIt:[c res]];
+   NSUInteger cnt = [m count];
+   id<ORTracker> t = [_into tracker];
+   id<ORIntRange> fr = [ORFactory intRange:t low:0 up:(ORInt)cnt-1];
+   id<ORIntVarArray> f = (id)[ORFactory idArray:t range:fr];
+   for (ORInt i=0; i<cnt; i++)
+      f[i]  = [m flat:i];
+   id<ORTable> table = [ORFactory table:t arity:[m arity]+1];
+   ORInt k = [m arity]+1;
+   ORInt idx[k];
+   idx[k-1] = 0;
+   loopOverMatrix(m,0,[m arity],table,idx);
+   table = [t memoize:table];
+   f = [t memoize:f];
+   id<ORIntVar> alpha = [ORFactory intVar:t domain:fr];
+   [ORFactory tableConstraint:table on:idx0 :idx1 :alpha];
+   _result = [ORFactory element:t var:alpha idxVarArray:f equal:res annotation:DomainConsistency];
+}
 -(void) visitCircuit:(id<ORCircuit>) c
 {
    _result = c;

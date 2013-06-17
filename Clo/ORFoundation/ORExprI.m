@@ -1533,6 +1533,85 @@
 }
 @end
 
+@implementation ORExprMatrixVarSubI
+-(id<ORExpr>)initORExprMatrixVarSubI:(id<ORIntVarMatrix>)m elt:(id<ORExpr>)i0 elt:(id<ORExpr>)i1
+{
+   self = [super init];
+   _m = m;
+   _i0 = i0;
+   _i1 = i1;
+   return self;
+}
+-(id<ORTracker>)tracker
+{
+   return [_i0 tracker];
+}
+-(ORInt) min
+{
+   assert([_m arity] == 2);
+   __block ORInt minOf = FDMAXINT;
+   [[_m range:0] enumerateWithBlock:^(ORInt i) {
+      [[_m range:1] enumerateWithBlock:^(ORInt j) {
+         id<ORIntRange> d = [[_m at:i :j] domain];
+         minOf = minOf < [d low] ? minOf : [d low];
+      }];
+   }];
+   return minOf;
+}
+-(ORInt) max
+{
+   assert([_m arity] == 2);
+   __block ORInt maxOf = FDMININT;
+   [[_m range:0] enumerateWithBlock:^(ORInt i) {
+      [[_m range:1] enumerateWithBlock:^(ORInt j) {
+         id<ORIntRange> d = [[_m at:i :j] domain];
+         maxOf = maxOf > [d low] ? maxOf : [d low];
+      }];
+   }];
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@,%@]",_m,_i0,_i1];
+   return rv;   
+}
+-(ORExprI*) index0
+{
+   return _i0;
+}
+-(ORExprI*) index1
+{
+   return _i1;
+}
+-(id<ORIntVarMatrix>)matrix
+{
+   return _m;
+}
+-(ORBool) isConstant
+{
+   return NO;
+}
+-(void) visit:(id<ORVisitor>) v
+{
+   [v visitExprMatrixVarSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_m];
+   [aCoder encodeObject:_i0];
+   [aCoder encodeObject:_i1];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _m = [aDecoder decodeObject];
+   _i0 = [aDecoder decodeObject];
+   _i1 = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 
 id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r)
 {

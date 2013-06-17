@@ -51,6 +51,11 @@
    return _gamma[x.getId];
 }
 
+-(id)concreteMatrix: (id<ORIntVarMatrix>) m
+{
+   [m visit:self];
+   return _gamma[m.getId];
+}
 // visit interface
 
 -(void) visitTrailableInt: (id<ORTrailableInt>) v
@@ -599,6 +604,10 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+-(void) visitElementMatrixVar:(id<ORElementMatrixVar>)cstr
+{
+   assert(FALSE);
 }
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {

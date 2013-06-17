@@ -80,6 +80,7 @@
 -(void) visitImply: (id<ORImply>)c;
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
+-(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c;
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
 -(void) visitReifyEqual: (id<ORReifyEqual>)c;
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
@@ -125,6 +126,7 @@
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c;
 -(void) visitBitOr:(id<ORBitOr>)c;

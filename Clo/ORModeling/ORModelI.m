@@ -188,6 +188,17 @@
    [_cache setObject:obj forKey:obj];
    return obj;
 }
+-(id)memoize:(id) obj
+{
+   id mo = [_cache objectForKey:obj];
+   if (mo == NULL) {
+      [_cache setObject:obj forKey:obj];
+      mo = obj;
+   } else {
+      [obj release];
+   }
+   return mo;
+}
 -(void) setSource:(id<ORModel>)src
 {
    [_source release];

@@ -101,6 +101,23 @@
 -(void) visit:(id<ORVisitor>) v;
 @end
 
+@interface ORExprMatrixVarSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORIntVarMatrix> _m;
+   ORExprI*  _i0;
+   ORExprI*  _i1;
+}
+-(id<ORExpr>)initORExprMatrixVarSubI:(id<ORIntVarMatrix>)m elt:(id<ORExpr>)i0 elt:(id<ORExpr>)i1;
+-(id<ORTracker>)tracker;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORExprI*) index0;
+-(ORExprI*) index1;
+-(id<ORIntVarMatrix>)matrix;
+-(ORBool) isConstant;
+-(void) visit:(id<ORVisitor>) v;
+@end
+
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;

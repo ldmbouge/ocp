@@ -647,6 +647,31 @@
    _flat[[self index]] = x;
 }
 
+-(id<ORExpr>) elt: (id<ORExpr>) idx i1:(ORInt)i1
+{
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[idx tracker] range:_range[0]];
+   [_range[0] enumerateWithBlock:^(ORInt i) {
+      ORInt flatOfs = ((i - _low[0]) * _size[1]) + i1 -  _low[1];
+      slice[i] = _flat[flatOfs];
+   }];
+   id<ORExpr> fe = [slice elt:idx];
+   return fe;
+}
+-(id<ORExpr>) at: (ORInt) i0       elt:(id<ORExpr>)e1
+{
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[e1 tracker] range:_range[1]];
+   [_range[1] enumerateWithBlock:^(ORInt j) {
+      ORInt flatOfs = ((i0 - _low[0]) * _size[1]) + j -  _low[1];
+      slice[j] = _flat[flatOfs];
+   }];
+   id<ORExpr> fe = [slice elt:e1];
+   return fe;
+}
+-(id<ORExpr>) elt: (id<ORExpr>)e0  elt:(id<ORExpr>)e1
+{
+   return [ORFactory elt:[e0 tracker] intVarMatrix:(id)self elt:e0 elt:e1];
+}
+
 -(NSUInteger) count
 {
    return _nb;

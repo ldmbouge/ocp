@@ -81,7 +81,7 @@
 -(void)setId:(ORUInt)name;
 @end
 
-@interface ORTableI : ORObject<ORTable,NSCoding> {
+@interface ORTableI : ORObject<ORTable,NSCoding,NSCopying> {
 @public
    ORInt   _arity;
    ORInt   _nb;
@@ -95,8 +95,10 @@
 }
 -(ORTableI*) initORTableI: (ORInt) arity;
 -(ORTableI*) initORTableWithTableI: (ORTableI*) table;
+-(id)copyWithZone:(NSZone *)zone;
 -(void) dealloc;
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
+-(void)insertTuple:(ORInt*)t;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
 -(void) close;

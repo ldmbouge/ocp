@@ -135,6 +135,7 @@ typedef enum {
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
+-(void)insertTuple:(ORInt*)t;
 -(void) print;
 -(void) close;
 @end

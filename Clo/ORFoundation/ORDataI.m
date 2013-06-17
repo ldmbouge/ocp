@@ -576,6 +576,27 @@ static ORInt _deterministic;
    _closed = false;
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   ORTableI* t = [[ORTableI allocWithZone:zone] initORTableWithTableI:self];
+   return t;
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]]) {
+      ORTableI* o = anObject;
+      if (_arity == o->_arity && _nb == o->_nb) {
+         for(ORInt j = 0; j < _arity; j++) {
+            for(ORInt i = 0; i < _nb; i++) {
+               BOOL eq = _column[j][i] == o->_column[j][i];
+               if (!eq)
+                  return NO;
+            }
+         }
+         return YES;
+      } else return NO;
+   } else return NO;
+}
 
 -(void) dealloc
 {
@@ -638,6 +659,17 @@ static ORInt _deterministic;
    _column[0][_nb] = i;
    _column[1][_nb] = j;
    _column[2][_nb] = k;
+   _nb++;
+}
+
+-(void)insertTuple:(ORInt*)t
+{
+   if (_closed)
+      @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
+   if (_nb == _size)
+      [self resize];
+   for (ORInt k=0; k<_arity; k++)
+      _column[k][_nb] = t[k];
    _nb++;
 }
 

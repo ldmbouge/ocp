@@ -11,9 +11,11 @@
 
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORVar.h>
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
+@protocol ORIntVarMatrix;
 @protocol ORExpr;
 @protocol ORIntVar;
 @protocol ORBitVar;
@@ -176,6 +178,14 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
+@end
+
+@protocol ORElementMatrixVar <ORConstraint>
+-(id<ORIntVarMatrix>) matrix;
+-(id<ORIntVar>) index0;
+-(id<ORIntVar>) index1;
+-(id<ORIntVar>) res;
 -(ORAnnotation)annotation;
 @end
 

@@ -21,6 +21,7 @@
 -(id) trackConstraintInGroup:(id) obj;
 @optional-(id) inCache:(id)obj;
 @optional-(id) addToCache:(id)obj;
+@optional-(id)memoize:(id) obj;
 @end
 
 

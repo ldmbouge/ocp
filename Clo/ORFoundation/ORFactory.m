@@ -642,6 +642,13 @@
    [tracker trackObject: o];
    return o;
 }
++(id<ORExpr>) elt: (id<ORTracker>) tracker intVarMatrix: (id<ORIntVarMatrix>) m elt:(id<ORExpr>) e0 elt:(id<ORExpr>)e1
+{
+   id<ORExpr> o = [[ORExprMatrixVarSubI alloc] initORExprMatrixVarSubI:m elt:e0 elt:e1];
+   [tracker trackObject:o];
+   return o;
+}
+
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
@@ -946,6 +953,14 @@
                  annotation:(ORAnnotation)note
 {
    id<ORConstraint> o = [[ORElementVar alloc] initORElement:x array:c equal:y annotation:note];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>)element:(id<ORTracker>)model matrix:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1
+                     equal:(id<ORIntVar>)y
+                annotation:(ORAnnotation)note
+{
+   id<ORConstraint> o = [[ORElementMatrixVar alloc] initORElement:m elt:v0 elt:v1 equal:y annotation:note];
    [model trackObject:o];
    return o;
 }

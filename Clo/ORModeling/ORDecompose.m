@@ -802,6 +802,21 @@ static inline ORLong maxSeq(ORLong v[4])  {
    [lT release];
 }
 
+-(void)visitExprMatrixVarSubI:(ORExprMatrixVarSubI*) e
+{
+   ORLinear* i0 = [ORLinearizer linearFrom:[e index0] model:_model annotation:_c];
+   ORLinear* i1 = [ORLinearizer linearFrom:[e index1] model:_model annotation:_c];
+   id<ORIntVarMatrix> m = [e matrix];
+   id<ORIntVar> v0 = [ORSubst normSide:i0 for:_model annotation:_c];
+   id<ORIntVar> v1 = [ORSubst normSide:i1 for:_model annotation:_c];
+   [i0 release];
+   [i1 release];
+   ORInt lb = [e min];
+   ORInt ub = [e max];
+   if (_rv == nil)
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
+   [_model addConstraint:[ORFactory element:_model matrix:m elt:v0 elt:v1 equal:_rv annotation:_c]];
+}
 -(void) visitExprSumI: (ORExprSumI*) e
 {
    [[e expr] visit:self];
