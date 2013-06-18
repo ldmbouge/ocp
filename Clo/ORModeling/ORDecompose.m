@@ -124,6 +124,7 @@ struct CPVarPair {
 -(void) visitExprSumI: (ORExprSumI*) e     {}
 -(void) visitExprProdI: (ORExprProdI*) e   {}
 -(void) visitExprAggOrI: (ORExprAggOrI*) e {}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
 -(void) visitExprNegateI:(ORExprNegateI*)e {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
@@ -321,7 +322,11 @@ struct CPVarPair {
 {
    [[e expr] visit:self];
 }
--(void) visitExprAggOrI: (ORExprSumI*) e
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e
 {
    [[e expr] visit:self];
 }
@@ -826,6 +831,10 @@ static inline ORLong maxSeq(ORLong v[4])  {
    [[e expr] visit:self];
 }
 -(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e
 {
    [[e expr] visit:self];
 }

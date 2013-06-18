@@ -284,6 +284,7 @@
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 @end
 
@@ -689,6 +690,10 @@
 -(void) visitExprAggOrI: (id<ORExpr>) e
 {
    _snapshot = NULL;   
+}
+-(void) visitExprAggAndI: (id<ORExpr>) e
+{
+   _snapshot = NULL;
 }
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {

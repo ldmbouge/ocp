@@ -18,11 +18,6 @@
 #import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)
-//-(id) dereference
-//{
-////   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-//   return self;
-//}
 -(void) setImpl: (id) impl
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
@@ -811,14 +806,6 @@ static ORInt _deterministic;
    if (key >= _nb)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
    _array[key] = newValue;
-}
--(id) dereference
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
-   ORInt k = [NSThread threadID];
-   if (_array[k] == NULL)
-      return NULL;
-   return [_array[k] dereference];
 }
 -(void) setImpl: (id) impl
 {

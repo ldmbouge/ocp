@@ -269,6 +269,11 @@
 			<key>orderHint</key>
 			<integer>27</integer>
 		</dict>
+		<key>minesweeper.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>79</integer>
+		</dict>
 		<key>model.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -323,6 +328,11 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>57</integer>
+		</dict>
+		<key>paq.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>80</integer>
 		</dict>
 		<key>partition.xcscheme_^#shared#^_</key>
 		<dict>
@@ -573,6 +583,16 @@
 			<true/>
 		</dict>
 		<key>5B66238B176FA5BA00A1ACCD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B6623AE1770A13200A1ACCD</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B6623D11770B1AD00A1ACCD</key>
 		<dict>
 			<key>primary</key>
 			<true/>

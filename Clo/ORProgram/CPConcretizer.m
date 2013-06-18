@@ -920,6 +920,8 @@
 {}
 -(void) visitExprAggOrI: (id<ORExpr>) e
 {}
+-(void) visitExprAggAndI: (id<ORExpr>) e
+{}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}
 @end

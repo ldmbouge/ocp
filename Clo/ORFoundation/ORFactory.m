@@ -268,6 +268,19 @@
    return o;
 }
 
++(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (id<ORIntRange>)r1 range:(id<ORIntRange>)r2
+               suchThat: (ORIntxInt2Bool) f
+                     of: (ORIntxInt2Int) e
+{
+   ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
+   for(ORInt i = [r1 low]; i <= [r1 up]; i++)
+      for(ORInt j = [r2 low]; i <= [r2 up]; j++)
+      if (f == NULL || f(i,j))
+         [o insert: e(i,j)];
+   [tracker trackMutable: o];
+   return o;
+}
+
 +(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
 {
     ORInt m = MAXINT;
@@ -694,7 +707,12 @@
 
 +(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
-   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker over: S suchThat: f of: e];
+   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAgg: tracker over: S suchThat: f of: e];
+   return [tracker trackObject: o];
+}
++(id<ORRelation>) and: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   ORExprAggAndI* o = [[ORExprAggAndI alloc] initORExprAgg: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
 }
 @end

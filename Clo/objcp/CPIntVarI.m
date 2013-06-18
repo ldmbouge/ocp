@@ -297,7 +297,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return [_dom retain];
 }
 
-#define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil)
+#define TRACKSINTVAR (_net._ac5._val != nil || _triggers != nil || _recv)
 
 -(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
@@ -497,7 +497,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-   if (!TRACKSINTVAR) return ORSuspend;
+   //if (!TRACKSINTVAR) return ORSuspend;
    ORStatus s = ORSuspend;
    if (_recv !=nil) {
       s = [_recv loseValEvt:val sender:sender];
@@ -550,11 +550,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return ORSuspend;
 }
 
-//-(id<ORIntVar>) dereference
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-//   return (id<ORIntVar>)self;
-//}
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {
    self = [self initCPIntVarCore: engine low: [b low] up: [b up]];
@@ -1582,34 +1577,49 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(ORStatus) bindEvt:(id<CPDom>)sender
 {
-   return [_pos[[sender min] - _ofs] bindEvt:sender];
+   CPIntVarI* lv = _pos[sender.min - _ofs];
+   if (lv != NULL)
+      return [lv bindEvt:sender];
+   else return ORSuspend;
 }
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt min = [_ref min];
    for(ORInt i=_ofs;i <min;i++) {
-      ORStatus ok = [_pos[i - _ofs] changeMinEvt:dsz sender:sender];
-      if (!ok) return ok;
+      CPIntVarI* lv = _pos[i - _ofs];
+      ORStatus ok = (lv) ? [lv changeMinEvt:dsz sender:sender] : ORSuspend;
+      if (!ok)
+         return ok;
    }
-   if (dsz==1)
-      return [_pos[[sender min] - _ofs] bindEvt:sender];
-   else
+   if (dsz==1) {
+      CPIntVarI* lv = _pos[[sender min] - _ofs];
+      if (lv)
+         return [lv bindEvt:sender];
+      else return ORSuspend;
+   } else
       return ORSuspend;
 }
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender
 {
    ORInt max = [_ref max];
    for(ORInt i = max+1;i<_ofs+_nb;i++) {
-      ORStatus ok = [_pos[i - _ofs] changeMaxEvt:dsz sender:sender];
-      if (!ok) return ok;
+      CPIntVarI* lv = _pos[i - _ofs];
+      ORStatus ok = lv ? [lv changeMaxEvt:dsz sender:sender] : ORSuspend;
+      if (!ok)
+         return ok;
    }
-   if (dsz==1)
-      return [_pos[[sender min] - _ofs] bindEvt:sender];
-   else
+   if (dsz==1) {
+      CPIntVarI* lv = _pos[[sender min] - _ofs];
+      if (lv)
+         return [lv bindEvt:sender];
+      else return ORSuspend;
+   } else
       return ORSuspend;
 }
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
-   return [_pos[val - _ofs] loseValEvt:val sender:sender];
+   if (_pos[val - _ofs])
+      return [_pos[val - _ofs] loseValEvt:val sender:sender];
+   else return ORSuspend;
 }
 @end

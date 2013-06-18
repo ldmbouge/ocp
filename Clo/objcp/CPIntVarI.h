@@ -194,7 +194,6 @@ typedef struct  {
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
 +(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
 +(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
-//-(id<ORIntVar>) dereference;
 @end
 
 // ---------------------------------------------------------------------

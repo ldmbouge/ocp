@@ -34,6 +34,7 @@
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
+-(void) visitExprAggAndI: (ORExprAggAndI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;
@@ -63,6 +64,7 @@
 -(void) visitExprSumI: (ORExprSumI*) e;
 -(void) visitExprProdI: (ORExprProdI*) e;
 -(void) visitExprAggOrI: (ORExprAggOrI*) e;
+-(void) visitExprAggAndI: (ORExprAggAndI*) e;
 -(void) visitExprAbsI:(ORExprAbsI*) e;
 -(void) visitExprNegateI:(ORExprNegateI*)e;
 -(void) visitExprCstSubI:(ORExprCstSubI*)e;

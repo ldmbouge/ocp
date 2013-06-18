@@ -115,7 +115,6 @@
 -(ORInt) nb;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
-//-(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;
 -(NSString*)description;

@@ -219,8 +219,23 @@
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
--(id<ORExpr>) initORExprAggOrI: (id<ORExpr>) e;
+-(id<ORExpr>) initORExprAgg: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAgg: (id<ORExpr>) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(ORBool) isConstant;
+-(NSString *) description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
+@interface ORExprAggAndI : ORExprI<ORRelation,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) initORExprAgg: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAgg: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;
