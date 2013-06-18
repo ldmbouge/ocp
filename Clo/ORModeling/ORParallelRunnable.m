@@ -58,13 +58,14 @@
     _t0 = [[NSThread alloc] initWithTarget: _r0 selector: @selector(start) object: nil];
     _t1 = [[NSThread alloc] initWithTarget: _r1 selector: @selector(start) object: nil];
     [_t1 start];
-    [NSThread sleepForTimeInterval:2.0];
+    [NSThread sleepForTimeInterval:0.5]; //so MIP doesn't receive bounds before it starts
     [_t0 start];
 
     
     // Wait for the runnables to finish
     while([_t0 isExecuting] || [_t1 isExecuting]) {
         //[NSThread sleepForTimeInterval: 0.25];
+        //NSLog(@"r2 bound: %@", [[[_r1 model] objective] description]);
         [ORConcurrency pumpEvents];
     }
 }

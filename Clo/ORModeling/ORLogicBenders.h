@@ -18,12 +18,25 @@
 typedef id<ORConstraintSet> (^Void2ConstraintSet)();
 
 
-@interface ORLogicBenders : ORPipedRunnable
+@interface ORLogicBenders : ORPipedRunnable {
+@protected
+    id<ORRunnable> _master;
+    Void2ConstraintSet _slaveBlock;
+    id<ORSignature> _sig;
+
+    NSTimeInterval timeInMaster;
+    NSTimeInterval timeInSlave;
+}
+
 -(id) initWithMaster: (id<ORRunnable>)master slave: (Void2ConstraintSet)slaveBlock;
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
 -(void) onExit: (ORClosure)block;
+
+@property(readwrite) NSTimeInterval timeInMaster;
+@property(readwrite) NSTimeInterval timeInSlave;
+
 @end
 
 @interface ORFactory(ORLogicBenders)

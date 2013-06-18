@@ -31,7 +31,10 @@
         [_upperBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
             [self receivedUpperBound: b];
         }];
-        _lowerBoundStreamInformer = nil;
+        _lowerBoundStreamInformer = [[ORInformerI alloc] initORInformerI]; //_upperBoundStreamInformer = nil;
+        [_lowerBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
+            [self receivedLowerBound: b];
+        }];
         _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];//nil;
         _upperBoundStreamConsumers = nil;
         _lowerBoundStreamConsumers = nil;
@@ -161,7 +164,7 @@
 -(void) notifyLowerBound: (ORInt)bound {
     if(_lowerBoundStreamConsumers) {
         for(id<ORBoundStreamConsumer> c in _lowerBoundStreamConsumers) {
-            [[c boundStreamInformer] notifyWith: bound];
+            [[c lowerBoundStreamInformer] notifyWith: bound];
         }
     }
 }

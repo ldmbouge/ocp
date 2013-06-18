@@ -32,7 +32,7 @@
 -(id<ORSignature>) signature
 {
     if(_sig == nil) {
-        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.solutionStreamIn.solutionStreamOut"];
+        _sig = [ORFactory createSignature: @"complete.upperStreamIn.upperStreamOut.lowerStreamIn.lowerStreamOut.solutionStreamIn.solutionStreamOut"];
     }
     return _sig;
 }
@@ -41,6 +41,7 @@
 
 -(void) connectPiping:(NSArray *)runnables {
     [self useUpperBoundStreamInformer];
+    [self useLowerBoundStreamInformer];
     [self useSolutionStreamInformer];
 
     // Connect inputs
@@ -48,6 +49,10 @@
         if([[r signature] providesUpperBoundStream]) {
             id<ORUpperBoundStreamProducer> producer = (id<ORUpperBoundStreamProducer>)r;
             [producer addUpperBoundStreamConsumer: self];
+        }
+        if([[r signature] providesLowerBoundStream]) {
+            id<ORLowerBoundStreamProducer> producer = (id<ORLowerBoundStreamProducer>)r;
+            [producer addLowerBoundStreamConsumer: self];
         }
     }
 }
@@ -57,6 +62,14 @@
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
     [[_program objective] tightenPrimalBound:
         [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: bound minimize: YES]];
+}
+
+-(void) receivedLowerBound:(ORInt)bound
+{
+    NSLog(@"(%p) recieved lower bound: %i", self, bound);
+    [[_program objective] tightenPrimalBound:
+     [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: bound minimize: NO]];
+    NSLog(@"obj: %@", [[[self model] objective] description]);
 }
 
 -(void) run
@@ -72,6 +85,8 @@
     }];
     
     [_program onExit: ^ {
+        //id<ORObjectiveValueInt> objectiveValue = [[(id<ORObjectiveValueInt>)[[self solver] solutionPool] best] objectiveValue];
+        //[self notifyLowerBound: [objectiveValue value]];
         [self doExit];
         //else {
         //    id<ORSolution> best = [[_program solutionPool] best];
