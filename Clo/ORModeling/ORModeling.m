@@ -12,7 +12,6 @@
 #import <ORModeling/ORModeling.h>
 #import "ORModelI.h"
 #import "ORFlatten.h"
-#import "ORCopy.h"
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"
 #import "ORLinearize.h"
@@ -20,13 +19,19 @@
 @implementation ORFactory (ORModeling)
 +(id<ORModel>) createModel
 {
-   return [[[ORModelI alloc]  initORModelI] autorelease];
+   return [[[ORModelI alloc] initORModelI] autorelease];
 }
-+(id<ORModel>) cloneModel: (id<ORModel>)m {
-    ORCopy* copier = [[ORCopy alloc] initORCopy: nil];
-    id<ORModel> copyModel = [copier copyModel: m];
-    [copier release];
-    return copyModel;
+//+(id<ORModel>) createModel:(ORUInt)nbo
+//{
+//   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
+//}
++(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMappings>) mappings
+{
+   return [[[ORModelI alloc] initORModelI: nbo mappings: mappings] autorelease];
+}
++(id<ORModel>) cloneModel: (id<ORModel>)m
+{
+   return [m copy];
 }
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)srcModel
 {

@@ -73,6 +73,12 @@
    }
    if (found) {
       _terms[mid]._coef += c;
+      assert(_terms[mid]._coef != 0);
+      if (_terms[mid]._coef == 0) {
+         for(ORInt k=mid+1;k<_nb;k++)
+            _terms[k-1] = _terms[k];
+         _nb--;
+      }
    } else {
       if (_nb >= _max) {
          _terms = realloc(_terms, sizeof(struct CPTerm)*_max*2);
@@ -191,8 +197,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    ORLong lb = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
-      ORLong vlb = [_terms[k]._var min];
-      ORLong vub = [_terms[k]._var max];
+      id<ORIntRange> d = [_terms[k]._var domain];
+      ORLong vlb = d.low;
+      ORLong vub = d.up;
       ORLong svlb = c > 0 ? vlb * c : vub * c;
       lb += svlb;
    }
@@ -203,8 +210,9 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
    ORLong ub = _indep;
    for(ORInt k=0;k < _nb;k++) {
       ORInt c = _terms[k]._coef;
-      ORLong vlb = [_terms[k]._var min];
-      ORLong vub = [_terms[k]._var max];
+      id<ORIntRange> d = [_terms[k]._var domain];
+      ORLong vlb = d.low;
+      ORLong vub = d.up;
       ORLong svub = c > 0 ? vub * c : vlb * c;
       ub += svub;
    }

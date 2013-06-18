@@ -65,7 +65,7 @@
 @implementation ORFactory(ORRunnable)
 +(id<ORRunnable>) CPRunnable: (id<ORModel>)m
 {
-    id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;
 }
 +(id<ORRunnable>) LPRunnable: (id<ORModel>)m

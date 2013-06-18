@@ -93,6 +93,8 @@
 -(void) visitFloatLinearLeq: (id<ORLinearLeq>) c;
 
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;

@@ -40,8 +40,6 @@ int main(int argc, const char * argv[])
       ORInt* conn = (ORInt*)connection;
 
     
-      id<ORInteger> nbSolutions = [ORFactory integer: mdl value:0];
-      
       id<ORIntVarArray> cost = [ORFactory intVarArray: mdl range:Stores domain: RANGE(mdl,0,maxCost)];
       id<ORIntVarArray> supp = [ORFactory intVarArray: mdl range:Stores domain: Warehouses];
       id<ORIntVarArray> open = [ORFactory intVarArray: mdl range:Warehouses domain: RANGE(mdl,0,1)];
@@ -56,18 +54,26 @@ int main(int argc, const char * argv[])
          [mdl add: [[open elt:supp[i]] eq:@1]];
          [mdl add: [cost[i] eq:[row elt:supp[i]]]];
       }
-      [mdl minimize: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] mul:@(fixed)])]];
+      //[mdl minimize: [Sum(mdl,s, Stores, cost[s]) plus: Sum(mdl,w, Warehouses, [open[w] mul:@(fixed)])]];
+      [mdl minimizeVar:obj];
       
       id<CPProgram> cp = [ORFactory createCPProgram:mdl];
+      __block ORInt nbSolutions = 0;
+      
       [cp solve: ^{
          NSLog(@"Start...");
-         [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cost[i] domsize];}];
-         [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [supp[i] domsize];}];
-         [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [open[i] domsize];}];
-         [nbSolutions incr];
-         NSLog(@"Solution: %@  -- cost: %@",open,obj);
+         [cp labelArray:cost orderedBy:^ORFloat(ORInt i) { return [cp domsize:cost[i]];}];
+         [cp labelArray:supp orderedBy:^ORFloat(ORInt i) { return [cp domsize:supp[i]];}];
+         [cp labelArray:open orderedBy:^ORFloat(ORInt i) { return [cp domsize:open[i]];}];
+         nbSolutions++;
+         @autoreleasepool {
+            id<ORIntArray> ops = [ORFactory intArray:cp range:open.range with:^ORInt(ORInt k) {
+               return [cp intValue:open[k]];
+            }];
+            NSLog(@"Solution: %@  -- cost: %d",ops,[cp intValue:obj]);
+         }
       }];
-      NSLog(@"#solutions: %@",nbSolutions);
+      NSLog(@"#solutions: %d",nbSolutions);
       NSLog(@"Solver: %@",cp);
       [cp release];
       [ORFactory shutdown];

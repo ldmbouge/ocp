@@ -12,7 +12,7 @@
 #import <ORFoundation/ORExpr.h>
 #import "ORTracker.h"
 #import "ORArray.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 
 @protocol ORSnapshot
 -(ORInt)  intValue;
@@ -22,22 +22,12 @@
 
 @protocol ORVar <ORObject,ORExpr>
 -(ORInt) getId;
--(ORBool) bound;
--(NSSet*) constraints;
 @end
 
 @protocol ORIntVar <ORVar>
 -(id<ORIntRange>) domain;
--(ORInt) value;
--(ORInt) intValue;
--(ORFloat) floatValue;
 -(ORInt) low;
 -(ORInt) up;
--(ORInt) min;
--(ORInt) max;
--(ORInt) domsize;
--(ORBounds) bounds;
--(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
 -(ORInt) scale;
 -(ORInt) shift;
@@ -46,14 +36,9 @@
 @end
 
 @protocol ORBitVar <ORVar>
--(ORBool) bound;
--(uint64)min;
--(uint64)max;
 -(ORUInt*)low;
 -(ORUInt*)up;
 -(ORUInt)bitLength;
--(ORULong)  domsize;
--(ORBool) member: (unsigned int*) v;
 -(NSString*)stringValue;
 @end
 
@@ -61,10 +46,6 @@
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;
--(ORFloat) value;
--(ORFloat) floatValue;
--(ORFloat) min;
--(ORFloat) max;
 @end
 
 @protocol ORVarArray <ORIdArray>
@@ -98,8 +79,19 @@
 -(id<ORIntVar>) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(id<ORExpr>) elt: (id<ORExpr>) idx i1:(ORInt)i1;
+-(id<ORExpr>) at: (ORInt) i0       elt:(id<ORExpr>)e1;
+-(id<ORExpr>) elt: (id<ORExpr>)e0  elt:(id<ORExpr>)e1;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORASolver>) solver;
+@end
+
+@protocol ORVarLitterals <NSObject>
+-(ORInt) low;
+-(ORInt) up;
+-(id<ORIntVar>) litteral: (ORInt) i;
+-(BOOL) exist: (ORInt) i;
+-(NSString*) description;
 @end

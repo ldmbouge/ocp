@@ -11,9 +11,11 @@
 
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORVar.h>
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
+@protocol ORIntVarMatrix;
 @protocol ORExpr;
 @protocol ORIntVar;
 @protocol ORBitVar;
@@ -28,11 +30,13 @@
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
+-(NSArray*) immutables;
 @end
 
 @protocol ORConstraint <ORObject>
 -(ORUInt)getId;
+-(NSSet*)allVars;
 @end
 
 @protocol ORConstraintSet <NSObject>
@@ -174,6 +178,14 @@ enum ORGroupType {
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
+@end
+
+@protocol ORElementMatrixVar <ORConstraint>
+-(id<ORIntVarMatrix>) matrix;
+-(id<ORIntVar>) index0;
+-(id<ORIntVar>) index1;
+-(id<ORIntVar>) res;
 -(ORAnnotation)annotation;
 @end
 
@@ -392,11 +404,12 @@ enum ORGroupType {
 @end
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here
-@protocol ORASolver <NSObject,ORTracker>
+@protocol ORASolver <NSObject,ORTracker,ORGamma>
 -(id<ORSearchObjectiveFunction>) objective;
 -(void)               close;
 -(id<OREngine>)       engine;
--(id<ORSolutionPool>) solutionPool;          
+-(id<ORSolutionPool>) solutionPool;
+-(id) concretize: (id) o;
 @end
 
 // ====== Bit Constraints =====================================

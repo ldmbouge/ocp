@@ -13,18 +13,18 @@
 #import "ORObject.h"
 #import "ORArray.h"
 #import "ORSet.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
 #import <ORUtilities/ORTypes.h>
 
-@interface ORConstraintI : ORModelingObjectI<ORConstraint>
+@interface ORConstraintI : ORObject<ORConstraint>
 -(ORConstraintI*) initORConstraintI;
 -(NSString*) description;
 @end
 
-@interface ORGroupI : ORModelingObjectI<ORGroup>
+@interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;
 -(id<ORConstraint>)add:(id<ORConstraint>)c;
 -(NSString*) description;
@@ -178,6 +178,15 @@
 -(id<ORIntVarArray>) array;
 -(id<ORIntVar>)   idx;
 -(id<ORIntVar>)   res;
+-(ORAnnotation)annotation;
+@end
+
+@interface ORElementMatrixVar : ORConstraintI<ORElementMatrixVar>
+-(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(id<ORIntVarMatrix>)matrix;
+-(id<ORIntVar>)index0;
+-(id<ORIntVar>)index1;
+-(id<ORIntVar>) res;
 -(ORAnnotation)annotation;
 @end
 
@@ -385,7 +394,7 @@
 @end
 
 
-@interface ORObjectiveValueIntI : NSObject<ORObjectiveValueInt> {
+@interface ORObjectiveValueIntI : ORObject<ORObjectiveValueInt> {
    ORInt _value;
    ORInt _direction;
    ORInt _pBound;
@@ -397,7 +406,7 @@
 -(NSString*)description;
 @end
 
-@interface ORObjectiveValueFloatI : NSObject<ORObjectiveValueFloat> {
+@interface ORObjectiveValueFloatI : ORObject<ORObjectiveValueFloat> {
    ORFloat _value;
    ORInt _direction;
    ORInt _pBound;
@@ -410,7 +419,7 @@
 @end
 
 
-@interface ORObjectiveFunctionI : ORModelingObjectI<ORObjectiveFunction>
+@interface ORObjectiveFunctionI : ORObject<ORObjectiveFunction>
 -(ORObjectiveFunctionI*) initORObjectiveFunctionI;
 -(id<ORObjectiveValue>) value;
 @end
@@ -422,7 +431,6 @@
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>) value;
--(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -434,7 +442,6 @@
 -(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
--(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
@@ -444,38 +451,31 @@
 }
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) expr;
 -(id<ORExpr>) expr;
--(ORBool) concretized;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
 -(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x;
--(id<ORObjectiveValue>)value;
 @end
 
 @interface ORMaximizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
 -(ORMaximizeVarI*) initORMaximizeVarI: (id<ORIntVar>) x;
--(id<ORObjectiveValue>)value;
 @end
 
 @interface ORMinimizeExprI : ORObjectiveFunctionExprI<ORObjectiveFunctionExpr>
 -(ORMinimizeExprI*) initORMinimizeExprI: (id<ORExpr>) e;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORMaximizeExprI : ORObjectiveFunctionExprI<ORObjectiveFunctionExpr>
 -(ORMaximizeExprI*) initORMaximizeExprI: (id<ORExpr>) e;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORMinimizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
 -(ORMinimizeLinearI*) initORMinimizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveValue>) value;
 @end
 
 @interface ORMaximizeLinearI : ORObjectiveFunctionLinearI<ORObjectiveFunctionLinear>
 -(ORMaximizeLinearI*) initORMaximizeLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
--(id<ORObjectiveValue>) value;
 @end
 
 

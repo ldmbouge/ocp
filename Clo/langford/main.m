@@ -50,7 +50,7 @@ int main(int argc, const char * argv[])
          [model add: [x[1] leq: x[k*n]]];
          
          __block ORInt nbSol = 0;
-         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         id<CPProgram> cp = [args makeProgram:model];
          //NSLog(@"Model %@",model);
          //      id<CPHeuristic> h = [ORFactory createFF:cp];
          [cp solveAll:^{
@@ -58,11 +58,11 @@ int main(int argc, const char * argv[])
             id<ORIntVarArray> tb = All2(model, ORIntVar, i, K, j, N, [p at:i :j]);
             //[cp labelHeuristic:h];
             //[cp labelArray:tb];
-            [cp forall:[tb range] suchThat:^bool(ORInt i) { return ![tb[i] bound];} orderedBy:^ORInt(ORInt i) {
-               return [tb[i] domsize];
+            [cp forall:[tb range] suchThat:^bool(ORInt i) { return ![cp bound:tb[i]];} orderedBy:^ORInt(ORInt i) {
+               return [cp domsize:tb[i]];
             } do:^(ORInt i) {
                [cp tryall:[tb[i] domain] suchThat:^bool(ORInt j) {
-                  return [tb[i] member:j];
+                  return [cp member:j in:tb[i]];
                } in:^(ORInt j) {
                   //NSLog(@" ? tb[%d] == %d",i,j);
                   [cp label:tb[i] with:j];
@@ -77,7 +77,7 @@ int main(int argc, const char * argv[])
                NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
                [buf appendString:@"["];
                for(ORInt i=1;i<=k*n;i++)
-                  [buf appendFormat:@"%d%c",[x[i] value],(i < k *n) ? ',' : ']'];
+                  [buf appendFormat:@"%d%c",[cp intValue:x[i]],(i < k *n) ? ',' : ']'];
                NSLog(@"Sol: %@",buf);
             }
             nbSol++;

@@ -58,7 +58,7 @@ void freeList(id<CPEventNode> list);
 void hookupEvent(id<CPEngine> engine,TRId* evtList,id todo,id<CPConstraint> c,ORInt priority);
 
 @interface CPFactory : NSObject
-+(id<CPEngine>) engine: (id<ORTrail>) trail;
++(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 +(id<CPGroup>)group:(id<CPEngine>)engine;
 +(id<CPGroup>)bergeGroup:(id<CPEngine>)engine;
 @end;

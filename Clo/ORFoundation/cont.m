@@ -77,35 +77,20 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #endif
 }
 
-static pthread_key_t pkey;
-static void init_pthreads() 
+inline static ContPool* instancePool()
 {
-   pthread_key_create(&pkey,NULL);   
-}
-
-+(ContPool*)instancePool
-{
-   if ([NSThread isMainThread]) {
-      static ContPool myPool = {0,0,0,0,0};
-      return &myPool;
-   } else {
-      static pthread_once_t block = PTHREAD_ONCE_INIT;
-      pthread_once(&block,init_pthreads);
-      ContPool* pool = pthread_getspecific(pkey);
-      if (!pool) {
-         pool = malloc(sizeof(ContPool));
-         pthread_setspecific(pkey,pool);
-         pool->low = pool->high = pool->nbCont = 0;
-         pool->poolClass = nil;
-      }
-      return pool;
-      
+   static __thread ContPool* pool = 0;
+   if (!pool) {
+      pool = malloc(sizeof(ContPool));
+      pool->low = pool->high = pool->nbCont = 0;
+      pool->poolClass = nil;
    }
+   return pool;
 }
 
 +(void)shutdown
 {
-   ContPool* pool = [self instancePool];
+   ContPool* pool = instancePool();
    if (pool) {
       ORInt nb=0;
       for(ORInt k=pool->low;k != pool->high;) {
@@ -119,7 +104,7 @@ static void init_pthreads()
 }
 
 +(id)new {
-   ContPool* pool = [self instancePool];
+   ContPool* pool = instancePool();
    if (!pool->poolClass) {
       pool->poolClass = self;
       pool->sz = 1000;
@@ -159,7 +144,7 @@ static void init_pthreads()
 {
    assert(_cnt > 0);
    if (--_cnt == 0) {
-      ContPool* pool = [isa instancePool];
+      ContPool* pool = instancePool();
       ORUInt next = (pool->high + 1) % pool->sz;
       if (next == pool->low) {
          free(_data);

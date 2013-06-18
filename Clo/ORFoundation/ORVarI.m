@@ -18,15 +18,14 @@
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
-   BOOL           _hasBounds;
+   //BOOL           _hasBounds;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _domain = domain;
-   _hasBounds = true;
+   //_hasBounds = true;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
@@ -40,7 +39,6 @@
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeObject:_domain];
    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
@@ -50,7 +48,6 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    _domain  = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_ba[0]];
@@ -65,46 +62,19 @@
 }
 -(NSString*) description
 {
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
-   else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,%@)",_name,[_domain description],_ba[0] ? 'D':'S',_impl];
+   return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c)",_name,[_domain description],_ba[0] ? 'D':'S'];
 }
 -(ORInt) value
 {
    return [self intValue];
 }
--(ORInt) intValue
-{
-   if (_impl) {
-      return [(id<ORIntVar>)[_impl dereference] intValue];
-   }
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-}
--(ORFloat) floatValue
-{
-   if (_impl) {
-      return [(id<ORIntVar>)[_impl dereference] floatValue];
-   }
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-}
 -(ORInt) min
 {
-   id<ORIntVar> end = [_impl dereference];
-   if (end)
-      return [end min];
-   else
-      return [_domain low];
+   return [_domain low];
 }
 -(ORInt) max
 {
-   id<ORIntVar> end = [_impl dereference];
-   if (end)
-      return [end max];
-   else
-      return [_domain up];
+   return [_domain up];
 }
 -(ORInt) low
 {
@@ -114,55 +84,9 @@
 {
    return [_domain up];
 }
-
--(ORInt) domsize
-{
-   if (_impl) {
-      id<ORIntVar> end = [_impl dereference];
-      if (end)
-         return [end domsize];
-      else return [_domain size];
-   } else
-      return [_domain size];
-}
--(ORBounds)bounds
-{
-   id<ORIntVar> end = [_impl dereference];
-   if (end)
-      return [end bounds];
-   else {
-      ORBounds b = {[_domain low],[_domain up]};
-      return b;
-   }
-}
--(ORBool) member: (ORInt) v
-{
-   if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] member: v];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-}
--(ORBool) bound
-{
-   if (_impl)
-      return [(id<ORIntVar>)[_impl dereference] bound];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
-}
 -(ORBool) isBool
 {
-   if (_impl)
-      return [(id<ORIntVar>)_impl isBool];
-   else
       return _ba[1]; // isBool
-}
--(NSSet*)constraints
-{
-   if (_impl)
-      return [(id<ORIntVar>)_impl constraints];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
 }
 -(id<ORTracker>) tracker
 {
@@ -235,10 +159,7 @@
 -(NSString*) description
 {
    char d = _ba[0] ? 'D':'S';
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : nil)",_name,[_domain description],d,_a,_x,_b];
-   else
-      return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d : %@)",_name,[_domain description],d,_a,_x,_b,_impl];
+   return [NSString stringWithFormat:@"var<OR>{int}:%03d(%@,%c,(%d * %@ + %d)",_name,[_domain description],d,_a,_x,_b];
 }
 -(ORInt)scale
 {
@@ -307,7 +228,6 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track low: (ORFloat) low up: (ORFloat) up
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _low = low;
    _up = up;
@@ -318,7 +238,6 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track up: (ORFloat) up
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _low = 0;
    _up = up;
@@ -329,7 +248,6 @@
 -(ORFloatVarI*) initORFloatVarI: (id<ORTracker>) track
 {
    self = [super init];
-   _impl = nil;
    _tracker = track;
    _hasBounds = false;
    [track trackVariable: self];
@@ -342,7 +260,6 @@
 }
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
    [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
@@ -351,7 +268,6 @@
 -(id) initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
@@ -364,54 +280,51 @@
 }
 -(NSString*) description
 {
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
-   else
-      return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f) - %@",_name,_low,_up,_impl];
+   return [NSString stringWithFormat:@"var<OR>{float}:%03d(%f,%f)",_name,_low,_up];
 }
--(ORFloat) value
-{
-   return [self floatValue];
-}
--(ORFloat) floatValue
-{
-   if (_impl)
-      return [(id<ORFloatVar>)_impl floatValue];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
-}
--(ORBool) bound
-{
-   if (_impl)
-      return [_impl bound];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
-}
-
--(ORFloat) min
-{
-   if (_impl)
-      return [(id<ORFloatVar>)_impl min];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-}
--(ORFloat) max
-{
-   if (_impl)
-      return [(id<ORFloatVar>)_impl max];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-   
-}
--(NSSet*) constraints
-{
-   if (_impl)
-      return [(id<ORFloatVar>)_impl constraints];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
+//-(ORFloat) value
+//{
+//   return [self floatValue];
+//}
+//-(ORFloat) floatValue
+//{
+//   if (_impl)
+//      return [(id<ORFloatVar>)_impl floatValue];
+//   else
+//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+//   
+//}
+//-(ORBool) bound
+//{
+//   if (_impl)
+//      return [_impl bound];
+//   else
+//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+//   
+//}
+//
+//-(ORFloat) min
+//{
+//   if (_impl)
+//      return [(id<ORFloatVar>)_impl min];
+//   else
+//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+//}
+//-(ORFloat) max
+//{
+//   if (_impl)
+//      return [(id<ORFloatVar>)_impl max];
+//   else
+//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
+//   
+//}
+//-(NSSet*) constraints
+//{
+//   if (_impl)
+//      return [(id<ORFloatVar>)_impl constraints];
+//   else
+//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
+//}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -444,7 +357,6 @@
 -(ORBitVarI*)initORBitVarI:(id<ORTracker>)tracker low:(ORUInt*)low up:(ORUInt*)up bitLength:(ORInt)len
 {
    self = [super init];
-   _impl  = nil;
    _bLen = len;
    _nb = (_bLen / 32) + ((_bLen % 32) ? 1 : 0);
    _low = malloc(sizeof(ORUInt)*_nb);
@@ -473,57 +385,12 @@
 {
    return _bLen;
 }
--(ORBool) bound
-{
-   if (_impl)
-      return [[_impl dereference] bound];
-   else
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-}
--(uint64)min
-{
-   if (_impl)
-      return [(id<ORBitVar>)[_impl dereference] min];
-   else {
-      return (long long)_low[1]<<32 | _low[0];
-   }
-}
--(uint64)max
-{
-   if (_impl)
-      return [(id<ORBitVar>)[_impl dereference] min];
-   else {
-      return (long long)_low[1]<<32 | _low[0];
-   }
-}
--(ORInt)  domsize
-{
-   if (_impl)
-      return (ORInt)[(id<ORBitVar>)[_impl dereference] domsize];
-   else {
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-   }
-}
--(ORBool) member: (unsigned int*) v
-{
-   if (_impl)
-      return [(id<ORBitVar>)[_impl dereference] member:v];
-   else {
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-   }
-}
+
 -(void) visit: (id<ORVisitor>)v
 {
    [v visitBitVar:self];
 }
--(NSSet*) constraints
-{
-   if (_impl)
-      return [(id<ORBitVar>)[_impl dereference] constraints];
-   else {
-      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-   }   
-}
+
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -531,7 +398,6 @@
 
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_impl];
    [aCoder encodeObject:_tracker];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_bLen];
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_nb];
@@ -542,7 +408,6 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _impl = [aDecoder decodeObject];
    _tracker = [aDecoder decodeObject];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_bLen];
    [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_nb];
@@ -560,17 +425,67 @@
 }
 -(NSString*) description
 {
-   if (_impl == nil)
-      return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(nil)",_name];
-   else
-      return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d(%@)",_name,_impl];
+   return [NSString stringWithFormat:@"bitvar<OR>{int}:%03d",_name];
 }
 -(NSString*)stringValue
 {
-   if (_impl)
-      return [[_impl dereference] description];
-   else
-      return [self description];
+   return [self description];
 }
 
+@end
+
+
+@implementation ORVarLitterals
+{
+   id<ORIntVar>* _array;
+   ORInt _low;
+   ORInt _up;
+   ORInt _nb;
+}
+-(ORVarLitterals*) initORVarLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) var
+{
+   self = [super init];
+   _low = [var low];
+   _up = [var up];
+   _nb = _up - _low + 1;
+   _array = malloc(_nb * sizeof(id<ORIntVar>));
+   _array -= _low;
+   id<ORIntRange> R01 = [ORFactory intRange: tracker low: 0 up: 1];
+   for(ORInt i = _low; i <= _up; i++)
+      _array[i] = [ORFactory intVar:tracker domain:R01];
+   return self;
+}
+-(void) dealloc
+{
+   _array += _low;
+   free(_array);
+   [super dealloc];
+}
+-(ORInt) low
+{
+   return _low;
+}
+-(ORInt) up
+{
+   return _up;
+}
+-(id<ORIntVar>) litteral: (ORInt) i
+{
+   if (i >= _low && i <= _up)
+      return _array[i];
+   return NULL;
+}
+-(BOOL) exist: (ORInt) i
+{
+   return (i >= _low && i <= _up);
+}
+-(NSString*) description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"VarLitterals(%d,%d) [\n",_low,_up];
+   for(ORInt i = _low; i <= _up; i++)
+      [rv appendFormat:@"\t%@\n",[_array[i] description]];
+   [rv appendFormat:@"] \n"];
+   return rv;
+}
 @end

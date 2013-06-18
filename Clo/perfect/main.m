@@ -48,10 +48,12 @@ int main(int argc, const char * argv[])
          ];
          //NSLog(@"model: %@",model);
          id<CPProgram> cp  = [args makeProgram:model];
+         //id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:model with:[ORSemDFSController class]];
          //id<CPHeuristic> h = [args makeHeuristic:cp restricted:m];
          [cp solveAll:^{
-            id<ORBasicModel> bm = [[cp engine] model];
-            NSLog(@"start(x)  %ld %ld %ld",[[bm variables] count],[[bm objects] count],[[bm constraints] count]);
+            //id<ORBasicModel> bm = [[cp engine] model];
+            //NSLog(@"start(x)  %ld %ld %ld",[[bm variables] count],[[bm objects] count],[[bm constraints] count]);
             [sidel enumerateWithBlock:^(ORInt p) {
                [square enumerateWithBlock:^(ORInt i) {
                   [cp try:^{
@@ -70,8 +72,8 @@ int main(int argc, const char * argv[])
                   }];
                }];
             }];
-            id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [x[i] value];}];
-            id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [y[i] value];}];
+            id<ORIntArray> xs = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
+            id<ORIntArray> ys = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"x = %@",xs);
             NSLog(@"y = %@",ys);
 

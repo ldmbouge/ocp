@@ -13,7 +13,15 @@
 #import <ORFoundation/ORData.h>
 
 @protocol ORTracker <NSObject>
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
--(void) trackConstraint: (id) obj;
+-(id) trackObject: (id) obj;
+-(id) trackMutable: (id) obj;      // for mutable
+-(id) trackImmutable: (id) obj;   // for immutable
+-(id) trackVariable: (id) obj;    // for variable
+-(id) trackObjective:(id) obj;
+-(id) trackConstraintInGroup:(id) obj;
+@optional-(id) inCache:(id)obj;
+@optional-(id) addToCache:(id)obj;
+@optional-(id)memoize:(id) obj;
 @end
+
+

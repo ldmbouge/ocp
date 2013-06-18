@@ -366,7 +366,7 @@
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
     [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
-    _array =  malloc(sizeof(ORInt)*_nb);
+    _array =  malloc(sizeof(ORFloat)*_nb);
     _array -= _low;
     for(ORInt i=_low;i<=_up;i++)
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
@@ -403,9 +403,38 @@
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);
    _array -= _low;
-   _impl = nil;
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   ORIdArrayI* rv =  [[ORIdArrayI allocWithZone:zone] initORIdArray:_tracker range:_range];
+   for(ORInt i=_low;i<=_up;i++)
+       [rv set:[self at:i] at:i];
+   return rv;
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORIdArrayI class]]) {
+      ORIdArrayI* o = object;
+      if (_low == o->_low && _up == o->_up) {
+         for(ORInt i=_low;i<=_up;i++) {
+            BOOL ok = [[self at:i] getId] == [[o at:i] getId];
+            if (!ok)
+               return NO;
+         }
+         return YES;
+      } else return NO;
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   ORInt sz =  _up - _low + 1;
+   NSUInteger h = 0;
+   for(ORInt k=_low;k <= _up;k++)
+      h = h * 7 + [_array[k] getId];
+   return (h << (int)(log(sz)/log(2))) + sz;
+}
+
 -(void) dealloc
 {
    _array += _low;
@@ -500,15 +529,6 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
-/*
--(id<ORIdArray>) dereference
-{
-   if (_impl != nil)
-      return [_impl dereference];
-   else
-      return self;
-}
-*/
 -(void)visit:(id<ORVisitor>)v
 {
    [v visitIdArray:self];
@@ -538,7 +558,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _nb = 1;
    for(ORInt k=0;k < _arity;k++) {
       _range[k] = rs[k];
@@ -550,7 +570,7 @@
    _flat = malloc(sizeof(id)*_nb);
    return self;
 }
--(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker withDereferenced: (ORIdMatrixI*) matrix
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) matrix
 {
    self = [super init];
    _tracker = tracker;
@@ -559,7 +579,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    for(ORInt k = 0; k < _arity; k++) {
       _range[k] = matrix->_range[k];
       _low[k] = matrix->_low[k];
@@ -568,8 +588,8 @@
    }
    _nb = matrix->_nb;
    _flat = malloc(sizeof(id) * _nb);
-   for (ORInt i=0 ; i < _nb; i++)
-      _flat[i] = [matrix->_flat[i] dereference];
+//   for (ORInt i=0 ; i < _nb; i++)
+//      _flat[i] = [matrix->_flat[i] dereference];
    return self;
 }
 
@@ -657,6 +677,29 @@
    _flat[[self index]] = x;
 }
 
+-(id<ORExpr>) elt: (id<ORExpr>) idx i1:(ORInt)i1
+{
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[idx tracker] range:_range[0] with:^id(ORInt i) {
+      ORInt flatOfs = ((i - _low[0]) * _size[1]) + i1 -  _low[1];
+      return _flat[flatOfs];
+   }];
+   id<ORExpr> fe = [slice elt:idx];
+   return fe;
+}
+-(id<ORExpr>) at: (ORInt) i0       elt:(id<ORExpr>)e1
+{
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[e1 tracker] range:_range[1] with:^id(ORInt j) {
+      ORInt flatOfs = ((i0 - _low[0]) * _size[1]) + j -  _low[1];
+      return _flat[flatOfs];
+   }];
+   id<ORExpr> fe = [slice elt:e1];
+   return fe;
+}
+-(id<ORExpr>) elt: (id<ORExpr>)e0  elt:(id<ORExpr>)e1
+{
+   return [ORFactory elt:[e0 tracker] intVarMatrix:(id)self elt:e0 elt:e1];
+}
+
 -(NSUInteger) count
 {
    return _nb;
@@ -704,11 +747,11 @@
    self = [super init];
    _tracker = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
-   _range = malloc(sizeof(ORRange) * _arity);
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _nb = 1;
    for(ORInt i = 0; i < _arity; i++) {
       _range[i] = [[aDecoder decodeObject] retain];
@@ -755,7 +798,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _range[0] = r0;
    _range[1] = r1;
    _range[2] = r2;
@@ -784,7 +827,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _range[0] = r0;
    _range[1] = r1;
    _low[0] = [r0 low];
@@ -817,7 +860,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    for(ORInt k = 0; k < _arity; k++) {
       _range[k] = matrix->_range[k];
       _low[k] = matrix->_low[k];

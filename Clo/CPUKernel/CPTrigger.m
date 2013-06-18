@@ -144,6 +144,11 @@ static void freeTriggers(CPTrigger* list)
         return tMap;
     }
 }
+-(id<CPTrigger>) linkTrigger:(id<CPTrigger>)trig forValue:(ORInt)value
+{
+   assert(NO);
+   return 0;
+}
 -(CPTrigger*) linkBindTrigger: (CPTrigger*) t
 {
    if (_bind==NULL) {

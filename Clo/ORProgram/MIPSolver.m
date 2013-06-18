@@ -240,6 +240,8 @@
 
 //
 -(void) visitIntegerI: (id<ORInteger>) e;
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e;
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e;
 -(void) visitFloatI: (id<ORFloatNumber>) e;
 -(void) visitExprPlusI: (id<ORExpr>) e;
 -(void) visitExprMinusI: (id<ORExpr>) e;
@@ -577,6 +579,14 @@
 {
    _snapshot = NULL;
 }
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   _snapshot = NULL;
+}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _snapshot = NULL;
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    _snapshot = NULL;
@@ -655,7 +665,7 @@
 }
 @end
 
-@interface ORMIPSolutionI : NSObject<ORMIPSolution>
+@interface ORMIPSolutionI : ORObject<ORMIPSolution>
 -(ORMIPSolutionI*) initORMIPSolutionI: (id<ORModel>) model with: (id<MIPProgram>) solver;
 -(id<ORSnapshot>) value: (id) var;
 -(ORBool) isEqual: (id) object;
@@ -821,11 +831,11 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
-   return [_MIPsolver floatValue: [v dereference]];
+   return [_MIPsolver floatValue: _gamma[v.getId]];
 }
 -(ORInt) intValue: (id<ORIntVar>) v
 {
-   return [_MIPsolver intValue: [v dereference]];
+   return [_MIPsolver intValue: _gamma[v.getId]];
 }
 -(id<ORObjectiveValue>) objectiveValue
 {
@@ -835,17 +845,29 @@
 {
    return [[ORMIPSolutionI alloc] initORMIPSolutionI: _model with: self];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_MIPsolver trackObject:obj];
+   return [_MIPsolver trackObject:obj];
 }
--(void) trackVariable: (id) obj
+-(id) trackConstraintInGroup:(id)obj
 {
-   [_MIPsolver trackVariable:obj];
+   return [_MIPsolver trackConstraintInGroup:obj];
 }
--(void) trackConstraint:(id) obj
+-(id) trackObjective: (id) obj
 {
-   [_MIPsolver trackConstraint:obj];
+   return [_MIPsolver trackObjective:obj];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_MIPsolver trackMutable:obj];
+}
+-(id) trackImmutable:(id)obj
+{
+   return [_MIPsolver trackImmutable:obj];
+}
+-(id) trackVariable: (id) obj
+{
+   return [_MIPsolver trackVariable:obj];
 }
 -(id<ORMIPSolutionPool>) solutionPool
 {

@@ -9,9 +9,9 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFoundation.h>
 #import "CPWDeg.h"
 #import "CPEngineI.h"
-#import "ORFoundation/ORModel.h"
 
 @implementation CPWDeg
 
@@ -56,7 +56,7 @@
 // pvh: why do we need vars and t and so on.
 -(id<ORIntVarArray>)allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 // pvh: see question below for the importance of _cv
@@ -64,7 +64,7 @@
 -(ORFloat) varOrdering:(id<CPIntVar>)x
 {
    __block float h = 0.0;
-   NSSet* theConstraints = _cv[_map[[x getId]]];   
+   NSSet* theConstraints = _cv[_map[x.getId]];
    for(id obj in theConstraints) {
       ORInt cid = [obj getId];
       assert(cid >=0 && cid < _nbc);
@@ -81,22 +81,22 @@
 // pvh: we should really use our arrays for consistency in the interfaces [ldm:done]
 // pvh: why do we need _cv[k]: it seems that we should be able to get these directly from the variable [ldm:caching]
 
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
 {
    ORUInt len = (ORUInt) [t count];
    _vars = t;
-   _nbVars = (ORUInt)[_vars count];
+   _cvs  = cvs;
+   _nbVars = (ORUInt)[_cvs count];
    _cv = malloc(sizeof(NSSet*)*len);
    memset(_cv,sizeof(NSSet*)*len,0);
    ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
-      maxID = max(maxID,[[t at:k] getId]);   
+      maxID = max(maxID,[[_cvs at:k] getId]);
    _map = malloc(sizeof(ORUInt)*(maxID+1));
-   ORInt low = [t low],up = [t up];
+   ORInt low = [_cvs low],up = [_cvs up];
    for(int k=low;k <= up;k++) {
-      //NSLog(@"Adding var with id: %d to dico of size: %ld",[t[k] getId],[_vars count]);
-      _map[[_vars[k] getId]] = k - low;
-      _cv[k - low] = [[_vars at:k] constraints];
+      _map[_cvs[k].getId] = k - low;
+      _cv[k - low] = [_cvs[k] constraints];
    }
    _nbv = len;
    NSArray* allC = [_solver constraints];
@@ -105,7 +105,7 @@
    _vOfC = malloc(sizeof(id)*_nbc);
    for(ORUInt k=0;k < _nbc;k++) {
       _w[k] = 1;
-      _vOfC[k] = [[allC objectAtIndex:k] allVars];
+      _vOfC[k] = [[allC[k] allVars] retain];
    }
    [[_solver propagateFail] wheneverNotifiedDo:^(int cID) {
       _w[cID]++;

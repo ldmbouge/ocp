@@ -65,9 +65,12 @@ int main(int argc, const char * argv[])
 //         id<ORIntVar> obj = [ORFactory intVar:mdl domain:RANGE(mdl,0,sp)];
 //         [mdl add: [Sum(mdl,i, N, [x[i] muli:p[i]]) eq: obj]];
          for(int i=0;i<m;i++) {
+            //[mdl add:[Sum(mdl,j,N,[x[j] mul:@(r[i][j])]) leq:@(b[i])]];
+
             id<ORIntArray> w = [ORFactory intArray:mdl range:N with:^ORInt(ORInt j) {return r[i][j];}];
             id<ORIntVar>   c = [ORFactory intVar:mdl domain:RANGE(mdl,0,b[i])];
             [mdl add:[ORFactory knapsack:x weight:w capacity:c]];
+
          }
          [mdl maximize: Sum(mdl,i, N, [x[i] mul: @(p[i])])];
          id<CPProgram> cp  = [args makeProgram:mdl];
@@ -80,11 +83,12 @@ int main(int argc, const char * argv[])
                NSMutableString* b = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
                [b appendString:@"["];
                for(ORInt i=0;i<=n-1;i++)
-                  [b appendFormat:@"%d%c",[x[i] value],i < n-1 ? ',' : ']'];
-//               NSLog(@"sol: %@ obj = %@  <-- %d",b,[obj dereference],[NSThread threadID]);
+                  [b appendFormat:@"%d%c",[cp intValue:x[i]],i < n-1 ? ',' : ']'];
+               NSLog(@"sol: %@ obj = %@  <-- %d",b,[[cp objective] value],[NSThread threadID]);
             }
          }];
          id<ORCPSolution> sol = [[cp solutionPool] best];
+         assert(sol);
          ORInt tot = 0;
          for(int k=0;k<n;k++)
             tot += p[k] * [sol intValue: x[k]];

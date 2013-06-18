@@ -22,7 +22,7 @@
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass;
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)nbWorkers;
--(id<CPProgram>)dereference;
+-(id<CPProgram>) worker;
 -(void)onSolution:(ORClosure)onSolution;
 -(void) doOnSolution;
 -(void) doOnExit;

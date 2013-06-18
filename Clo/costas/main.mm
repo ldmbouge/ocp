@@ -16,6 +16,8 @@
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgramFactory.h>
 
+#import "ORCmdLineArgs.h"
+
 class H {
    id<ORExpr> _h;
 public:
@@ -55,53 +57,64 @@ H operator==(id<ORIntVar> x,H y)
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      int n = 15;
-      id<ORModel> mdl = [ORFactory createModel];
-      id<ORIntRange> R = RANGE(mdl,1,n);
-      id<ORIntRange> D = RANGE(mdl,-n+1,n-1);
-          
-      id<ORIntVarArray> costas = [ORFactory intVarArray: mdl range:R domain: R];
-      id<ORIntVarMatrix>  diff = [ORFactory intVarMatrix:mdl range:R : R domain:D];
-      [mdl add:[ORFactory alldifferent:costas]];
-      for(ORUInt i=R.low;i<=R.up;i++) {
-         for(ORUInt j=R.low;j<=R.up;j++) {
-            if (i < j)
-               [mdl add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
-            else [mdl add:[[diff at:i :j] eq: @0]];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         int n = [args size];
+         id<ORModel> mdl = [ORFactory createModel];
+         id<ORIntRange> R = RANGE(mdl,1,n);
+         id<ORIntRange> D = RANGE(mdl,-n+1,n-1);
+         
+         id<ORIntVarArray> costas = [ORFactory intVarArray: mdl range:R domain: R];
+         id<ORIntVarMatrix>  diff = [ORFactory intVarMatrix:mdl range:R : R domain:D];
+         [mdl add:[ORFactory alldifferent:costas]];
+         for(ORUInt i=R.low;i<=R.up;i++) {
+            for(ORUInt j=R.low;j<=R.up;j++) {
+               if (i < j)
+                  [mdl add:([diff at:i :j]) == H([costas at:j]) - H([costas at:j-i])];
+               else [mdl add:[[diff at:i :j] eq: @0]];
+            }
          }
-      }
-      for(ORInt i=1;i<=n-1;i++) {
-         id<ORIntVarArray> slice = All(mdl,ORIntVar, j, RANGE(mdl,i+1,n), [diff at:i :j]);
-         [mdl add:[ORFactory alldifferent:slice]];
-      }
-      [mdl add:[[costas at:1] leq:[costas at:n]]];
-      for(ORUInt i=R.low;i<=R.up;i++) {
-         for(ORUInt j=i+1;j<=R.up;j++) {
-            [mdl add:[[diff at:i :j] neq:@0]];
+         for(ORInt i=1;i<=n-1;i++) {
+            id<ORIntVarArray> slice = All(mdl,ORIntVar, j, RANGE(mdl,i+1,n), [diff at:i :j]);
+            [mdl add:[ORFactory alldifferent:slice]];
          }
-      }
-      for (ORInt k=3; k<=n; k++) {
-         for (ORInt l=k+1; l<=n; l++) {
-            [mdl add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
-             H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
+         [mdl add:[[costas at:1] leq:[costas at:n]]];
+         for(ORUInt i=R.low;i<=R.up;i++) {
+            for(ORUInt j=i+1;j<=R.up;j++) {
+               [mdl add:[[diff at:i :j] neq:@0]];
+            }
          }
-      }
-      
-      //         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
-      //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
-      //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
-
-      id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-      id<CPHeuristic> h = [cp createABS];      
-      [cp solve: ^{
-          NSLog(@"Search");
-         [cp labelHeuristic:h];
-         //[cp labelArray:costas];
-         NSLog(@"Solution: %@",costas);
-         NSLog(@"Solver: %@",cp);
+         for (ORInt k=3; k<=n; k++) {
+            for (ORInt l=k+1; l<=n; l++) {
+               [mdl add:H([diff at:k-2 :l-1]) + H([diff at:k :l]) ==
+                H([diff at:k-1 :l-1]) + H([diff at:k-1 :l])];
+            }
+         }
+         
+         //         NSData* archive = [NSKeyedArchiver archivedDataWithRootObject:cp];
+         //         BOOL ok = [archive writeToFile:@"fdmul.CParchive" atomically:NO];
+         //         NSLog(@"Writing ? %s",ok ? "OK" : "KO");
+         id<ORMutableInteger> nbSol = [ORFactory mutable:mdl value:0];
+         
+         id<CPProgram> cp = [args makeProgram:mdl];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:costas];
+         [cp solveAll: ^{
+            [cp labelHeuristic:h];
+            @autoreleasepool {
+               id<ORIntArray> s = [ORFactory intArray:cp range:[costas range] with:^ORInt(ORInt i) {
+                  return [cp intValue:costas[i]];
+               }];
+               NSLog(@"Solution: %@",s);
+               @synchronized(nbSol) {
+                  [nbSol incr:cp];
+               }
+            }
+         }];
+         struct ORResult r = REPORT([nbSol intValue:cp], [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         [ORFactory shutdown];
+         return r;
       }];
-      [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

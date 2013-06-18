@@ -203,7 +203,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom member:v];
 }
-
+-(NSString*)stringValue
+{
+   return [_dom description];
+}
 -(NSString*)description
 {
     return [_dom description];
@@ -217,10 +220,11 @@ static void deallocNetwork(CPBitEventNetwork* net)
    [_dom restoreValue:toRestore];
 }
 
--(id<CPBitVar>) dereference
-{
-   return self;
-}
+//-(id<CPBitVar>) dereference
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
+//   return self;
+//}
 
 -(ORBool) tracksLoseEvt
 {
@@ -430,7 +434,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(id)initVarMC:(int)n 
 {
-    [super init];
+    self = [super init];
     _mx  = n;
     _tab = malloc(sizeof(CPBitVarI*)*_mx);
     _tracksLoseEvt = false;

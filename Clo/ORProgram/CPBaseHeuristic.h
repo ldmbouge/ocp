@@ -13,10 +13,10 @@
 #import <ORProgram/CPHeuristic.h>
 
 @interface CPBaseHeuristic : NSObject<CPHeuristic>
--(ORFloat) varOrdering: (id<ORIntVar>)x;
+-(ORFloat) varOrdering: (id<CPIntVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
--(void)initHeuristic:(NSMutableArray*)array oneSol:(ORBool)oneSol;
--(void)initInternal:(id<ORVarArray>)t;
+-(void)initHeuristic:(NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
+-(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cv;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;
@@ -25,10 +25,10 @@
 
 @interface CPVirtualHeuristic: NSObject<CPHeuristic> 
 -(CPVirtualHeuristic*)initWithBindings:(id<ORBindingArray>)bindings;
--(ORFloat) varOrdering: (id<ORIntVar>)x;
+-(ORFloat) varOrdering: (id<CPIntVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x;
--(void) initInternal: (id<CPIntVarArray>) t;
--(void) initHeuristic: (NSMutableArray*) array oneSol:(ORBool)oneSol;
+-(void) initInternal: (id<CPIntVarArray>) t and:(id<ORVarArray>)cv;
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void) restart;
 -(id<ORIntVarArray>) allIntVars;
 -(id<CPProgram>)solver;

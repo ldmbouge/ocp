@@ -15,10 +15,10 @@
 #import "ORArray.h"
 #import "ORData.h"
 #import "ORSet.h"
-#import "ORModel.h"
+#import "ORConstraint.h"
 #import "ORVisit.h"
 
-@interface ORExprI: ORDualUseObjectI<ORExpr,NSCoding>
+@interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
@@ -35,10 +35,29 @@
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
+
+-(id<ORExpr>) absTrack:(id<ORTracker>)t;
+-(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) div: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) geq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) negTrack:(id<ORTracker>)t;
+-(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
+
 -(void) encodeWithCoder:(NSCoder*) aCoder;
 -(id) initWithCoder:(NSCoder*) aDecoder;
 -(void) visit: (id<ORVisitor>)v;
 -(enum ORRelationType) type;
+-(NSSet*)allVars;
 @end
 
 @interface ORExprBinaryI : ORExprI<ORExpr,NSCoding>
@@ -78,6 +97,23 @@
 -(NSString *)description;
 -(ORExprI*) index;
 -(id<ORIntArray>)array;
+-(ORBool) isConstant;
+-(void) visit:(id<ORVisitor>) v;
+@end
+
+@interface ORExprMatrixVarSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORIntVarMatrix> _m;
+   ORExprI*  _i0;
+   ORExprI*  _i1;
+}
+-(id<ORExpr>)initORExprMatrixVarSubI:(id<ORIntVarMatrix>)m elt:(id<ORExpr>)i0 elt:(id<ORExpr>)i1;
+-(id<ORTracker>)tracker;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORExprI*) index0;
+-(ORExprI*) index1;
+-(id<ORIntVarMatrix>)matrix;
 -(ORBool) isConstant;
 -(void) visit:(id<ORVisitor>) v;
 @end

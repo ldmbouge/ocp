@@ -33,7 +33,7 @@
    return self;
 }
 
-+(id<ORModel>)linearize:(id<ORModel>)model
++(id<ORModel>) linearize:(id<ORModel>)model
 {
    id<ORModel> lin = [ORFactory createModel];
    ORBatchModel* lm = [[ORBatchModel alloc] init: lin source:model];
@@ -46,8 +46,10 @@
 {
     [m applyOnVar:^(id<ORVar> x) {
         [_into addVariable: x];
-    } onObjects:^(id<ORObject> x) {
+    } onMutables:^(id<ORObject> x) {
         //NSLog(@"Got an object: %@",x);
+    } onImmutables:^(id<ORObject> x) {
+       //NSLog(@"Got an object: %@",x);
     } onConstraints:^(id<ORConstraint> c) {
         ORLinearizeConstraint* lc = [[ORLinearizeConstraint alloc] init: _into];
         [c visit: lc];
@@ -65,9 +67,9 @@
     NSMapTable*   _binMap;
     id<ORExpr> _exprResult;
 }
--(id)init:(id<ORAddToModel>)m;
+-(id)init:(id<ORAddToModel>) m;
 {
-    if((self = [super init]) != nil) {
+    if ((self = [super init]) != nil) {
         _model = m;
         _binMap = [[NSMapTable alloc] init];
         _exprResult = nil;
@@ -105,7 +107,8 @@
     }
     return binArr;
 }
--(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr {
+-(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr
+{
     [expr visit: self];
     return _exprResult;
 }
@@ -139,7 +142,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: u];
                                    }];
-        [_model addConstraint: [ORFactory expr: sumExpr leq: [ORFactory integer: _model value: [upArr at: u]]]];
+        [_model addConstraint: [sumExpr leq: [ORFactory integer: _model value: [upArr at: u]]]];
     }
     
     // Constrain lower bounds
@@ -154,7 +157,7 @@
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [[cstr array] at: i]];
                                        return [binArr at: l];
                                    }];
-        [_model addConstraint: [ORFactory expr: sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
+        [_model addConstraint: [sumExpr geq: [ORFactory integer: _model value: [lowArr at: l]]]];
     }
 }
 -(void) visitPacking: (id<ORPacking>) cstr
@@ -170,10 +173,10 @@
                                        return [[var domain] inRange: b];
                                    } of:^id<ORExpr>(ORInt i) {
                                        id<ORIntVarArray> binArr = [self binarizationForVar: [item at: i]];
-                                       id<ORInteger> size = [ORFactory integer: _model value: [itemSize at: i]];
-                                       return [ORFactory expr: [binArr at: b] mul: size];
+                                       id<ORMutableInteger> size = [ORFactory mutable: _model value: [itemSize at: i]];
+                                       return [[binArr at: b] mul: size];
                                    }];
-        [_model addConstraint: [ORFactory expr: sumExpr leq: [binSize at: b]]];
+        [_model addConstraint: [sumExpr leq: [binSize at: b]]];
     }
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
@@ -253,10 +256,20 @@
 {
 }
 // Expressions
--(void) visitIntegerI: (id<ORInteger>) e  {
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   _exprResult = e;
+}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
     _exprResult = e;
 }
--(void) visitFloatI: (id<ORFloatNumber>) e  {
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   _exprResult = e;
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
    _exprResult = e;
 }
 
@@ -324,13 +337,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   [[v expr] visit: self];
-   [_model minimize:_result];
+   assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+   [_model minimize:[v expr]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   assert(false);
-//   [_model maximize:[v var]];
+   assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+   [_model maximize:[v expr]];
 }
 -(void) visitIntVar: (id<ORIntVar>) v  { _result = v; }
 
@@ -339,7 +352,7 @@
 @implementation ORFactory(Linearize)
 +(id<ORModel>) linearizeModel:(id<ORModel>)m
 {
-   id<ORModel> lm = [ORFactory createModel];
+   id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
    [linearizer apply: m];

@@ -173,7 +173,7 @@
    ++_seg[_cSeg]->top;
 }
 
--(ORUInt)trailSize
+-(ORInt)trailSize
 {
    return _cSeg * NBSLOT + _seg[_cSeg]->top;
 }
@@ -408,11 +408,104 @@ ORInt trailMagic(ORTrailI* trail)
 }
 @end
 
+@implementation ORMemoryTrailI
+-(id)init
+{
+   self = [super init];
+   _mxs = 128;
+   _csz = 0;
+   _tab = malloc(sizeof(id)*_mxs);
+   return self;
+}
+-(id)initWith:(ORMemoryTrailI*)mt
+{
+   self = [super init];
+   _mxs = mt->_mxs;
+   _csz = mt->_csz;
+   _tab = malloc(sizeof(id)*_mxs);
+   for(ORInt i=0;i<_csz;i++)
+      _tab[i] = [mt->_tab[i] retain];
+   return self;
+}
+-(void)dealloc
+{
+   while (_csz)
+      [_tab[--_csz] release];
+   free(_tab);
+   [super dealloc];
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORMemoryTrailI alloc] initWith:self];
+}
+-(void)resize
+{
+   _tab = realloc(_tab, _mxs * 2);
+   _mxs = _mxs * 2;
+}
+-(id)track:(id)obj
+{
+   if (_csz >= _mxs)
+      [self resize];
+   _tab[_csz++] = [obj retain];
+   return obj;
+}
+-(void)pop
+{
+   [_tab[--_csz] release];
+}
+-(ORInt) trailSize
+{
+   return _csz;
+}
+-(void)backtrack:(ORInt)to
+{
+   while (_csz > to)
+      [_tab[--_csz] release];
+}
+-(void)clear
+{
+   while (_csz)
+      [_tab[--_csz] release];
+}
+-(void)comply:(ORMemoryTrailI*)mt upTo:(ORInt)mh
+{
+//   while (_csz > mt->_csz)
+//      [_tab[--_csz] release];
+   assert(_csz <= mt->_csz);
+   ORInt k = _csz;
+   while (_csz < mh)
+      _tab[_csz++] = [mt->_tab[k++] retain];
+}
+-(void)reload:(ORMemoryTrailI*)t
+{
+   const ORInt h = min(t->_csz,_csz);
+   ORInt i;
+   for(i = 0;i < h && _tab[i] == t->_tab[i];i++);
+   while(_csz != i)
+      [_tab[--_csz] release];
+   while(_csz < t->_csz)
+      _tab[_csz++] = [t->_tab[i++] retain];
+}
+
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"ORMemoryTrail(%d / %d)[",_csz,_mxs];
+   for(ORInt i =0;i<_csz-1;i++)
+      [buf appendFormat:@"%p,",_tab[i]];
+   [buf appendFormat:@"%p]",_tab[_csz-1]];
+   return buf;
+}
+@end
+
 @implementation ORTrailIStack
--(ORTrailIStack*) initTrailStack: (ORTrailI*)tr
+-(ORTrailIStack*) initTrailStack: (ORTrailI*)tr memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = [tr retain];
+   _mt    = [mt retain];
    _sz  = 0;
    _mxs = 1024;
    _tab = malloc(sizeof(struct TRNode)*_mxs);
@@ -423,6 +516,7 @@ ORInt trailMagic(ORTrailI* trail)
 {
    free(_tab);
    [_trail release];
+   [_mt    release];
    [super dealloc];
 }
 -(void)pushNode:(ORInt)x
@@ -431,25 +525,26 @@ ORInt trailMagic(ORTrailI* trail)
       _tab = realloc(_tab,sizeof(struct TRNode)*_mxs*2);
       _mxs <<= 1;
    }
-   _tab[_sz++] = (struct TRNode){x,[_trail trailSize]};
+   _tab[_sz++] = (struct TRNode){x,[_trail trailSize],[_mt trailSize]};
 }
--(ORInt)popOffset:(ORInt)x
+-(void)popNode:(ORInt) x
 {
    do {
       --_sz;
    } while(_sz>0 && (_tab[_sz]._x != x));
-   return _tab[_sz]._ofs;
-}
--(void)popNode:(ORInt) x
-{
-   [_trail backtrack:[self popOffset:x]];
+   const ORInt ofs  = _tab[_sz]._ofs;
+   const ORInt mOfs = _tab[_sz]._mOfs;
+   [_trail backtrack:ofs];
+   [_mt    backtrack:mOfs];
 }
 -(void)popNode
 {
    assert(_sz > 0);
-   [_trail backtrack: _tab[--_sz]._ofs];
+   const ORInt mto = _tab[--_sz]._mOfs;
+   const ORInt to  = _tab[_sz]._ofs;
+   [_trail backtrack: to];
+   [_mt    backtrack: mto];
 }
-
 -(void)reset
 {
    _sz = 0;
@@ -685,7 +780,7 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    for(ORInt k = 0; k < m->_arity; k++)
       if (i[k] < m->_low[k] || i[k] > m->_up[k])
          @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in ORTRIntMatrix"];
-   int idx = i[0] - m->_low[0];
+   ORInt idx = i[0] - m->_low[0];
    for(ORInt k = 1; k < m->_arity; k++)
       idx = idx * m->_size[k] + (i[k] - m->_low[k]);
    return idx;

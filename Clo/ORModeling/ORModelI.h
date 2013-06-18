@@ -11,44 +11,65 @@
 
 #import <ORModeling/ORModeling.h>
 
-@interface ORModelI : ORModelingObjectI<ORModel,ORAddToModel,NSCopying>
+@interface ORTau : NSObject<ORTau>
+-(ORTau*) initORTau;
+-(void) dealloc;
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copyWithZone: (NSZone*) zone;
+@end
+
+@interface ORLambda : NSObject<ORLambda>
+-(ORLambda*) initORLambda;
+-(void) dealloc;
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copyWithZone: (NSZone*) zone;
+@end
+
+@interface ORModelI : ORObject<ORModel,ORAddToModel,NSCopying>
 -(ORModelI*)              initORModelI;
--(ORModelI*)              initORModelI:(ORULong)nb;
+-(ORModelI*)              initORModelI: (ORUInt) nb mappings: (id<ORModelMappings>) mappings;
 -(void)                   dealloc;
 -(NSString*)              description;
--(void)                   setId: (ORUInt) name;
--(void)                  captureVariable:(id<ORVar>)x;
 -(void)                   applyOnVar:(void(^)(id<ORObject>))doVar
-                           onObjects:(void(^)(id<ORObject>))doObjs
+                          onMutables:(void(^)(id<ORObject>))doMutables
+                        onImmutables:(void(^)(id<ORObject>))doImmutables
                        onConstraints:(void(^)(id<ORObject>))doCons
                          onObjective:(void(^)(id<ORObject>))doObjective;
 -(id<ORObjectiveFunction>)objective;
 -(id<ORIntVarArray>)intVars;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
 -(void) visit: (id<ORVisitor>) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(id<ORVar>) addVariable:(id<ORVar>) var;
--(id) addObject:(id) object;
+-(id) addMutable:(id) object;
+-(id) addImmutable:(id) object;
+-(ORUInt)nbObjects;
+-(ORUInt)nbImmutables;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize:(id<ORExpr>) x;
 -(id<ORObjectiveFunction>) maximize:(id<ORExpr>) x;
--(void)encodeWithCoder:(NSCoder *)aCoder;
--(id)initWithCoder:(NSCoder *)aDecoder;
 -(void) setSource:(id<ORModel>)src;
--(id<ORModel>)original;
 -(id<ORModel>)source;
--(id<ORModel>)flatten;
+
+-(id<ORModel>) flatten;
+-(id<ORModel>) lpflatten;
+-(id<ORModel>) mipflatten;
+
 -(id<ORModel>)rootModel;
--(void)map:(id)key toObject:(id)object;
--(id)lookup:(id)key;
+-(id)inCache:(id)obj;
+-(id)addToCache:(id)obj;
+-(id<ORGamma>) mappings;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
 -(ORBatchModel*)init: (id<ORModel>) model source:(id<ORModel>)src;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addObject:(id)object;
+-(id) addMutable:(id)object;
+-(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
 -(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
@@ -57,24 +78,29 @@
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORModel>) model;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
+-(id) trackConstraintInGroup:(id)obj;
+-(id) trackObjective:(id) obj;
+-(id) trackMutable: (id) obj;
+-(id) trackImmutable:(id)obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>
 -(ORBatchGroup*)init: (id<ORAddToModel>) model group:(id<ORGroup>)group;
 -(id<ORVar>) addVariable: (id<ORVar>) var;
--(id) addObject:(id)object;
+-(id) addMutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORAddToModel>) model;
--(void) trackObject: (id) obj;
--(void) trackVariable: (id) obj;
+-(id) trackConstraintInGroup:(id)obj;
+-(id) trackObjective:(id) obj;
+-(id) trackMutable: (id) obj;
+-(id) trackVariable: (id) obj;
 @end
 
 @interface ORSolutionPoolI : NSObject<ORSolutionPool> {
-    NSMutableSet* _all;
+    NSMutableArray* _all;
     id<ORSolutionInformer> _solutionAddedInformer;
 }
 -(id)init;

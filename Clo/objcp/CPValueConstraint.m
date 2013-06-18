@@ -50,7 +50,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_b, nil];   
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -118,7 +118,7 @@
 } 
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_b, nil];   
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -221,7 +221,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -359,7 +359,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -459,7 +459,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -596,7 +596,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_b, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -683,7 +683,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -739,7 +739,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_b, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -815,7 +815,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_b, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_b, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -944,7 +944,7 @@
 
 -(NSSet*)allVars
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb];
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb] autorelease];
    for(ORInt k = 0;k < _nb;k++)
       [rv addObject:_x[k]];
    return rv;
@@ -1071,7 +1071,7 @@
 }
 -(NSSet*)allVars
 {
-   NSMutableSet* rv = [[NSMutableSet alloc] initWithCapacity:_nb];
+   NSMutableSet* rv = [[[NSMutableSet alloc] initWithCapacity:_nb] autorelease];
    for(ORInt k = 0;k < _nb;k++)
       [rv addObject:_x[k]];
    return rv;

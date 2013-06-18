@@ -11,7 +11,6 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
 #import <ORProgram/CPHeuristic.h>
 #import <objcp/CPData.h>
 
@@ -41,7 +40,7 @@
 -(id<ORCPSolution>) best;
 @end
 
-@protocol CPCommonProgram <ORASolver>
+@protocol CPCommonProgram  <ORASolver,ORGamma>
 -(void) setSource:(id<ORModel>)src;
 -(ORInt)         nbFailures;
 -(id<CPEngine>)      engine;
@@ -62,7 +61,9 @@
 -(void)        addHeuristic: (id<CPHeuristic>) h;
 -(void)          labelArray: (id<ORIntVarArray>) x;
 -(void)          labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy;
+-(void)        labelArrayFF: (id<ORIntVarArray>) x;
 -(void)      labelHeuristic: (id<CPHeuristic>) h;
+-(void)      labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av;
 -(void)               label: (id<ORIntVar>) mx;
 
 -(void)               solve: (ORClosure) body;
@@ -104,16 +105,17 @@
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
 
--(ORInt) intValue: (id<ORIntVar>) x;
+-(ORInt) intValue: (id) x;
 -(ORBool) bound: (id<ORIntVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
 -(ORInt)  domsize: (id<ORIntVar>) x;
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x;
-
+-(NSSet*) constraints: (id<ORVar>)x;
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
 -(ORBool) boolValue: (id<ORIntVar>) x;
+-(ORInt) maxBound: (id<ORIntVarArray>) x;
 
 @end
 
@@ -155,4 +157,5 @@
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
+-(NSString*)stringValue:(id<ORBitVar>)x;
 @end

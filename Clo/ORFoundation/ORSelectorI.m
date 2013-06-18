@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "ORFoundation.h"
+#import "ORDataI.h"
 #import "ORSelectorI.h"
 #import <math.h>
 #if defined(__linux__)
@@ -31,7 +32,7 @@
    _range = range;
    _filter = [filter copy];
    _order = [order copy];
-   _stream = [ORCrFactory randomStream];
+   _stream = [[ORRandomStreamI alloc] init];
    _direction = 1;
    _randomized = randomized;
    return self;
@@ -62,12 +63,10 @@
 }
 -(ORInt) choose
 {
-   float bestFound = MAXFLOAT;
-   ORLong bestRand = 0x7fffffffffffffff;
-   ORInt indexFound = MAXINT;
-   id<IntEnumerator> ite = [_range enumerator];
-   while ([ite more]) {
-      ORInt i = [ite next];
+   __block float bestFound = MAXFLOAT;
+   __block ORLong bestRand = 0x7fffffffffffffff;
+   __block ORInt indexFound = MAXINT;
+   [_range enumerateWithBlock:^(ORInt i) {
       if (_filter(i)) {
          ORFloat val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound) {
@@ -83,11 +82,9 @@
             }
          }
       }
-   }
-   [ite release];  // [ldm] missing. Memory leak.
+   }];
    return indexFound;
 }
-
 @end
 
 @implementation ORSelectI
@@ -102,6 +99,7 @@
 }
 -(void) dealloc
 {
+   //NSLog(@"Deallocating ORSelectI");
    [_select release];
    [super dealloc];
 }
@@ -119,6 +117,3 @@
    return [_select any];
 }
 @end
-
-
-

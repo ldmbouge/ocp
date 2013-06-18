@@ -46,34 +46,34 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 +(id<CPConstraint>) bitEqual:(CPBitVarI*)x to:(CPBitVarI*)y
 {
     id<CPConstraint> o = [[CPBitEqual alloc] initCPBitEqual:x and:y];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
 }
 
 +(id<CPConstraint>) bitAND:(CPBitVarI*)x and:(CPBitVarI*)y equals:(CPBitVarI*)z
 {
     id<CPConstraint> o = [[CPBitAND alloc] initCPBitAND:x and:y equals:z];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
 }
 
 +(id<CPConstraint>) bitOR:(CPBitVarI*)x or:(CPBitVarI*) y equals:(CPBitVarI*)z
 {
     id<CPConstraint> o = [[CPBitOR alloc] initCPBitOR:x or:y equals:z];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
 }
 +(id<CPConstraint>) bitXOR:(CPBitVarI*)x xor:(CPBitVarI*)y equals:(CPBitVarI*) z
 {
     id<CPConstraint> o = [[CPBitXOR alloc] initCPBitXOR:x xor:y equals:z];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
     
 }
 +(id<CPConstraint>) bitNOT:(CPBitVarI*)x equals:(CPBitVarI*) y
 {
     id<CPConstraint> o = [[CPBitNOT alloc] initCPBitNOT:x equals:y];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;
     
 }
@@ -81,14 +81,14 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 +(id<CPConstraint>) bitShiftL:(CPBitVarI*)x by:(int) p equals:(CPBitVarI*) y
 {
     id<CPConstraint> o = [[CPBitShiftL alloc] initCPBitShiftL:x shiftLBy:p equals:y];
-    [[x engine] trackObject:o];
+    [[x engine] trackMutable:o];
     return o;    
 }
 
 +(id<CPConstraint>) bitRotateL:(CPBitVarI*)x by:(int) p equals:(CPBitVarI*) y
 {
    id<CPConstraint> o = [[CPBitRotateL alloc] initCPBitRotateL:x rotateLBy:p equals:y];
-   [[x engine] trackObject:o];
+   [[x engine] trackMutable:o];
    return o;
    
 }
@@ -100,7 +100,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                                 equals:(CPBitVarI*)z
                                            withCarryIn:(CPBitVarI*)cin
                                            andCarryOut:(CPBitVarI*)cout];
-   [[x engine] trackObject:o];
+   [[x engine] trackMutable:o];
    return o;
 }
 
@@ -110,7 +110,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
                                          equalsOneIf:(CPBitVarI*)x
                                               equals:(CPBitVarI*)y
                                     andZeroIfXEquals:(CPBitVarI*)z];
-   [[x engine] trackObject:o];
+   [[x engine] trackMutable:o];
    return o;
 }
 
@@ -1501,7 +1501,7 @@ NSString* bitvar2NSString(unsigned int* low, unsigned int* up, int wordLength)
 //         }
           
           //Check consistency of new domain for X variable
-          inconsistencyFound = ((prevCinLow[i] & ~prevCinUp[i]) |
+          inconsistencyFound |= ((prevCinLow[i] & ~prevCinUp[i]) |
                                 (prevCinLow[i] & prevYLow[i] & ~prevCoutUp[i]) |
                                 (prevCinLow[i] & ~prevZUp[i] & ~prevCoutUp[i]) |
                                 (~prevCinUp[i] & ~prevYUp[i] & prevCoutLow[i]) |

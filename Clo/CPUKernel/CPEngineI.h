@@ -29,6 +29,7 @@ enum CPEngineState {
 @interface CPEngineI : NSObject <CPEngine,NSCoding> {
    enum CPEngineState       _state;
    id<ORTrail>              _trail;
+   id<ORMemoryTrail>        _mt;
    NSMutableArray*          _vars;
    NSMutableArray*          _cStore;
    NSMutableArray*          _mStore;
@@ -46,11 +47,12 @@ enum CPEngineState {
    id<ORVoidInformer>       _propagDone;
    ORFailException*         _fex;
 }
--(CPEngineI*) initEngine: (id<ORTrail>) trail;
+-(CPEngineI*) initEngine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)      dealloc;
 -(id<CPEngine>) solver;
--(void)      trackVariable:(id)var;
--(void)      trackObject:(id)obj;
+-(id)        trackVariable:(id)var;
+-(id)        trackMutable:(id)obj;
+-(id)        trackImmutable:(id)obj;
 -(id)        trail;
 -(void)      scheduleTrigger:(ConstraintCallback)cb onBehalf: (id<CPConstraint>)c;
 -(void)      scheduleAC3:(id<CPEventNode>*)mlist;
@@ -81,4 +83,5 @@ enum CPEngineState {
 -(void)setLastFailure:(id<CPConstraint>)lastToFail;
 @end
 
+ORStatus propagateFDM(CPEngineI* fdm);
 void scheduleAC3(CPEngineI* fdm,id<CPEventNode>* mlist);

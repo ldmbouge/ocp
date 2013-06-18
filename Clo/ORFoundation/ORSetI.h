@@ -17,7 +17,7 @@
 #import "ORAVLTree.h"
 @protocol ORVisitor;
 
-@interface ORIntSetI : ORDualUseObjectI<ORIntSet>
+@interface ORIntSetI : ORObject<ORIntSet>
 
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
@@ -37,7 +37,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : ORDualUseObjectI<ORIntRange>
+@interface ORIntRangeI : ORObject<ORIntRange,NSCopying>
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
@@ -47,7 +47,6 @@
 -(NSString*) description;
 -(void)visit:(id<ORVisitor>)v;
 -(id<IntEnumerator>) enumerator;
-//-(id<IntEnumerator>) tailableEnumerator;
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;

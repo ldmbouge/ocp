@@ -31,8 +31,8 @@
    _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
    _low = malloc(sizeof(TRUInt)*_wordLength);
    _up = malloc(sizeof(TRUInt)*_wordLength);
-   _min = malloc(sizeof(TRInt)*_wordLength);
-   _max = malloc(sizeof(TRInt)*_wordLength);
+   _min = malloc(sizeof(TRUInt)*_wordLength);
+   _max = malloc(sizeof(TRUInt)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
       _low[i] = makeTRUInt(tr, 0);
@@ -51,8 +51,8 @@
     _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
     _low = malloc(sizeof(TRUInt)*_wordLength);
     _up = malloc(sizeof(TRUInt)*_wordLength);
-    _min = malloc(sizeof(TRInt)*_wordLength);
-    _max = malloc(sizeof(TRInt)*_wordLength);
+    _min = malloc(sizeof(TRUInt)*_wordLength);
+    _max = malloc(sizeof(TRUInt)*_wordLength);
     
     for(int i=0;i<_wordLength;i++){
         _low[i] = makeTRUInt(tr, low[i]);
@@ -74,7 +74,7 @@
 
 -(NSString*)    description
 {
-   NSMutableString* string = [[NSMutableString alloc] init];
+   NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
    for(int i=0; i< _wordLength;i++){
       unsigned int boundLow = (~ _up[i]._val) & (~_low[i]._val);
       unsigned int boundUp = _up[i]._val & _low[i]._val;
@@ -109,7 +109,7 @@
    }
    return string;
 }
--(ORULong) domsize
+-(ORInt) domsize
 {
    [self updateFreeBitCount];
    return _freebits._val;

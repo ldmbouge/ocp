@@ -113,6 +113,8 @@ struct CPVarPair {
 }
 -(void) visitIntVar: (id<ORIntVar>) e      {}
 -(void) visitIntegerI: (id<ORInteger>) e   {}
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e   {}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e {}
 -(void) visitFloatI: (id<ORFloatNumber>) e   {}
 -(void) visitExprPlusI: (ORExprPlusI*) e   {}
 -(void) visitExprMinusI: (ORExprMinusI*) e {}
@@ -181,6 +183,21 @@ struct CPVarPair {
    } else
       [_terms addIndependent:[e value]];
 }
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   assert(NO);
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e initialValue]]];
+      [_terms addIndependent:[e initialValue]];
+      _eqto = nil;
+   } else
+      [_terms addIndependent:[e initialValue]];
+}
+-(void) visitMutableFloatI: (id<ORMutableInteger>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableFloat"];
+}
+
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a FloatNumber"];
@@ -407,9 +424,21 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,[e value],[e value])];
    [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
 }
+
+-(void) visitMutableIntegerI: (id<ORMutableInteger>) e
+{
+   assert(NO);
+   if (!_rv)
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,[e initialValue],[e initialValue])];
+   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e initialValue]]];
+}
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a FloatNumber"];   
+}
+-(void) visitMutableFloatI: (id<ORMutableFloat>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Linearizing an integer expression and encountering a MutableFloat"];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
@@ -418,6 +447,7 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model annotation:_c];
+   [terms release];
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
@@ -426,6 +456,7 @@ struct CPVarPair {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
    [terms postEQZ:_model annotation:_c];
+   [terms release];
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
@@ -433,10 +464,10 @@ struct CPVarPair {
    ORLinear* rT = [ORLinearizer linearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORSubst normSide:lT for:_model annotation:_c];
    id<ORIntVar> rV = [ORSubst normSide:rT for:_model annotation:_c];
-   ORLong llb = [lV min];
-   ORLong lub = [lV max];
-   ORLong rlb = [rV min];
-   ORLong rub = [rV max];
+   ORLong llb = [[lV domain] low];
+   ORLong lub = [[lV domain] up];
+   ORLong rlb = [[rV domain] low];
+   ORLong rub = [[rV domain] up];
    ORLong a = minOf(llb * rlb,llb * rub);
    ORLong b = minOf(lub * rlb,lub * rub);
    ORLong lb = minOf(a,b);
@@ -572,6 +603,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 {
    ORLinear* linOther  = [ORLinearizer linearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORSubst normSide:linOther for:_model annotation:_c];
+   [linOther release];
 #if OLDREIFY==1
    if (_rv==nil) {
       _rv = [ORFactory intVar:_model domain: RANGE(_model,0,1)];
@@ -770,6 +802,21 @@ static inline ORLong maxSeq(ORLong v[4])  {
    [lT release];
 }
 
+-(void)visitExprMatrixVarSubI:(ORExprMatrixVarSubI*) e
+{
+   ORLinear* i0 = [ORLinearizer linearFrom:[e index0] model:_model annotation:_c];
+   ORLinear* i1 = [ORLinearizer linearFrom:[e index1] model:_model annotation:_c];
+   id<ORIntVarMatrix> m = [e matrix];
+   id<ORIntVar> v0 = [ORSubst normSide:i0 for:_model annotation:_c];
+   id<ORIntVar> v1 = [ORSubst normSide:i1 for:_model annotation:_c];
+   [i0 release];
+   [i1 release];
+   ORInt lb = [e min];
+   ORInt ub = [e max];
+   if (_rv == nil)
+      _rv = [ORFactory intVar:_model domain: RANGE(_model,lb,ub)];
+   [_model addConstraint:[ORFactory element:_model matrix:m elt:v0 elt:v1 equal:_rv annotation:_c]];
+}
 -(void) visitExprSumI: (ORExprSumI*) e
 {
    [[e expr] visit:self];

@@ -38,11 +38,11 @@
 }
 -(id<ORIntVarArray>) allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
--(ORFloat)varOrdering: (id<ORIntVar>) ox
+-(ORFloat)varOrdering: (id<CPIntVar>) ox
 {
-   id<CPIntVar> x = (id<CPIntVar>) [ox dereference];
+   id<CPIntVar> x = (id<CPIntVar>)ox;
    __block float h = 0.0;
    NSSet* theConstraints = _cv[_map[[x getId]]];   
    for(id obj in theConstraints) {
@@ -50,13 +50,14 @@
    }
    return h / [x domsize];
 }
--(ORFloat)valOrdering:(int)v forVar:(id<ORIntVar>)x
+-(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
    return -v;   
 }
--(void)initInternal:(id<CPVarArray>) t
+-(void)initInternal:(id<ORVarArray>) t and:(id<CPVarArray>)cvs
 {
    _vars = t;
+   _cvs  = cvs;
    ORLong len = [_vars count];
    ORUInt maxID = 0;
    for(int k=0;k<len;k++) 
@@ -67,9 +68,10 @@
    memset(_map,sizeof(ORUInt)*(maxID+1),0);   
    ORInt low = [t low],up = [t up];
    for(ORInt k=low;k <= up;k++) {
-      _map[[_vars[k] getId]] = k - low;
-      _cv[k-low] = [_vars[k] constraints];
+      _map[_cvs[k].getId] = k - low;
+      _cv[k-low] = [_cvs[k] constraints]; 
    }
    _nbv = len;
+   NSLog(@"DDeg ready...");
 }
 @end

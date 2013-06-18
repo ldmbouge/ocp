@@ -59,7 +59,10 @@ int main(int argc, const char * argv[])
          
          [cp solve: ^{
             [cp labelHeuristic:h];
-            NSLog(@"Solution: %@",x);
+            id<ORIntArray> sx = [ORFactory intArray:cp range:x.range with:^ORInt(ORInt i) {
+               return [cp intValue:x[i]];
+            }];
+            NSLog(@"Solution: %@",sx);
             NSLog(@"Solver: %@",cp);
          }];
          struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);

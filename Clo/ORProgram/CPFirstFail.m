@@ -12,14 +12,11 @@
 #import "CPFirstFail.h"
 #import "CPEngine.h"
 
-@implementation CPFirstFail {
-   id<CPEngine>    _engine;
-}
+@implementation CPFirstFail
 -(CPFirstFail*)initCPFirstFail:(id<CPProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
-   _engine  = [cp engine];
    _vars = nil;
    _rvars = rvars;
    return self;
@@ -39,7 +36,7 @@
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
@@ -51,9 +48,10 @@
 {
    return -v;   
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv
 {
    _vars = t;
+   _cvs  = cv;
    NSLog(@"FirstFail ready...");
 }
 @end

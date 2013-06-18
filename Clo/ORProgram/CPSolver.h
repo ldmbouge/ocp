@@ -10,26 +10,25 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORDataI.h>
 #import <ORProgram/CPProgram.h>
 
 /***************************************************************************/
 /*                  This file should be private                            */
 /***************************************************************************/
 
-
-
 @interface CPHeuristicSet : NSObject
 -(CPHeuristicSet*) initCPHeuristicSet;
 -(void) push: (id<CPHeuristic>) h;
 -(id<CPHeuristic>) pop;
 -(void) reset;
--(void) applyToAll: (void(^)(id<CPHeuristic> h,NSMutableArray*)) closure with: (NSMutableArray*) tab;
+-(void) applyToAll: (void(^)(id<CPHeuristic> h)) closure;
+-(BOOL)empty;
 @end
-
 
 // This factorizes all the common stuff
 
-@interface CPCoreSolver : NSObject<CPCommonProgram>
+@interface CPCoreSolver : ORGamma<CPCommonProgram>
 -(CPCoreSolver*) initCPCoreSolver;
 -(void) add: (id<ORConstraint>) c;
 -(void) setSource:(id<ORModel>)src;
@@ -51,6 +50,7 @@
 -(void) doOnExit;
 -(id<ORCPSolutionPool>) solutionPool;
 -(id<ORCPSolution>) captureSolution;
+-(ORInt) maxBound:(id<ORIdArray>) x;
 
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation) n;
 

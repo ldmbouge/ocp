@@ -162,16 +162,19 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    assert(_dom);
     return [_dom bound];
+//   return sizeCPDom((CPBitDom*)_dom) == 1;
 }
 -(ORInt) min
 {
    assert(_dom);
-    return [_dom min];
+   return [_dom min];
+   //return minCPDom((CPBitDom*)_dom);
 }
 -(ORInt) max 
 {
    assert(_dom);
-    return [_dom max];
+   return [_dom max];
+   //return maxCPDom((CPBitDom*)_dom);
 }
 -(ORInt) value
 {
@@ -422,9 +425,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) createTriggers
 {
     if (_triggers == nil) {
-        ORInt low = [_dom imin];
-        ORInt up = [_dom imax];
-        _triggers = [CPTriggerMap triggerMapFrom:low to:up dense:(up-low+1)<256];    
+       id<CPDom> d = [self domain];
+       ORInt low = [d imin];
+       ORInt up = [d imax];
+       [d release];
+       _triggers = [CPTriggerMap triggerMapFrom:low to:up dense:(up-low+1)<256];
     }
 }
 
@@ -545,10 +550,11 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     return ORSuspend;
 }
 
--(id<ORIntVar>) dereference
-{
-   return (id<ORIntVar>)self;
-}
+//-(id<ORIntVar>) dereference
+//{
+//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
+//   return (id<ORIntVar>)self;
+//}
 -(CPIntVarI*) initCPExplicitIntVar: (id<CPEngine>)engine bounds:(id<ORIntRange>)b
 {
    self = [self initCPIntVarCore: engine low: [b low] up: [b up]];
@@ -841,7 +847,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     ORInt r = (v - _b) % _a;
     if (r != 0) return NO;
     ORInt dv = (v - _b) / _a;
-    return [_x member:dv];
+   return memberDom(_x, dv);
 }
 -(ORInt) domsize
 {
@@ -861,6 +867,35 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
     return _a;
 }
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
+   else
+      hookupEvent(_fdm, &_net._minEvt, todo, c, p);
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._minEvt, todo, c, p);
+   else
+      hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
+   else
+      hookupEvent(_fdm, &_net._minEvt, nil, c, p);
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   if (_a<0)
+      hookupEvent(_fdm, &_net._minEvt, nil, c, p);
+   else
+      hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
+}
+
 -(ORStatus) updateMin: (ORInt) newMin
 {
    ORInt op = newMin - _b;
@@ -1015,6 +1050,23 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return -1;
 }
+-(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent(_fdm, &_net._maxEvt, todo, c, p);
+}
+-(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent(_fdm, &_net._minEvt, todo, c, p);
+}
+-(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   hookupEvent(_fdm, &_net._maxEvt, nil, c, p);
+}
+-(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   hookupEvent(_fdm, &_net._minEvt, nil, c, p);
+}
+
 -(ORStatus)updateMin:(ORInt)newMin
 {
    return [_x updateMax:-newMin];
@@ -1269,10 +1321,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super init];
    _mx  = n;
-   _tab = malloc(sizeof(CPIntVarI*)*_mx);
-   _loseValIMP   = malloc(sizeof(IMP)*_mx);
-   _minIMP   = malloc(sizeof(IMP)*_mx);
-   _maxIMP   = malloc(sizeof(IMP)*_mx);
+   _tab = malloc(sizeof(id<CPIntVarNotifier>)*_mx);
+   _loseValIMP   = malloc(sizeof(UBType)*_mx);
+   _minIMP   = malloc(sizeof(UBType)*_mx);
+   _maxIMP   = malloc(sizeof(UBType)*_mx);
    _tracksLoseEvt = false;
    [root setDelegate:self];
    _nb = 0;
@@ -1287,7 +1339,16 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {}
 -(void) dealloc
 {
+   /*
+    for(ORInt i=0;i<_nb;i++) {
+      if ([_tab[i] isKindOfClass:[CPLiterals class]])
+         [_tab[i] release];
+   }
+    */
    free(_tab);
+   free(_minIMP);
+   free(_maxIMP);
+   free(_loseValIMP);
    [super dealloc];
 }
 -(enum CPVarClass)varClass
@@ -1297,10 +1358,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(void) addVar:(CPIntVarI*)v
 {
    if (_nb >= _mx) {
-      _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-      _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
-      _minIMP     = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
-      _maxIMP     = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
+      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+      _minIMP     = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+      _maxIMP     = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = v;  // DO NOT RETAIN. v will point to us because of the delegate
@@ -1310,12 +1371,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
    id<ORTrail> theTrail = [[v engine] trail];
    ORInt toFix = _nb;
+   __block CPIntVarMultiCast* me = self;
    [theTrail trailClosure:^{
-      _tab[toFix] = NULL;
-      _loseValIMP[toFix] = NULL;
-      _minIMP[toFix] = NULL;
-      _maxIMP[toFix] = NULL;
-      _nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
+      me->_tab[toFix] = NULL;
+      me->_loseValIMP[toFix] = NULL;
+      me->_minIMP[toFix] = NULL;
+      me->_maxIMP[toFix] = NULL;
+      me->_nb = toFix;  // [ldm] This is critical (see comment below in bindEvt)
    }];
    _nb++;
    ORInt nbBare = 0;
@@ -1345,10 +1407,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
    CPLiterals* newLits = [[CPLiterals alloc] initCPLiterals:ref];
    if (_nb >= _mx) {
-      _tab = realloc(_tab,sizeof(CPIntVarI*)*(_mx<<1));
-      _loseValIMP = realloc(_loseValIMP,sizeof(IMP)*(_mx << 1));
-      _minIMP = realloc(_minIMP,sizeof(IMP)*(_mx << 1));
-      _maxIMP = realloc(_maxIMP,sizeof(IMP)*(_mx << 1));
+      _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
+      _loseValIMP = realloc(_loseValIMP,sizeof(UBType)*(_mx << 1));
+      _minIMP = realloc(_minIMP,sizeof(UBType)*(_mx << 1));
+      _maxIMP = realloc(_maxIMP,sizeof(UBType)*(_mx << 1));
       _mx <<= 1;
    }
    _tab[_nb] = newLits;
@@ -1358,11 +1420,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _tracksLoseEvt = YES;
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
+   __block CPIntVarMultiCast* me = self;
    [theTrail trailClosure:^{
-      _tab[toFix] = NULL;
-      _loseValIMP[toFix] = NULL;
-      _minIMP[toFix] = NULL;
-      _maxIMP[toFix] = NULL;
+      me->_tab[toFix] = NULL;
+      me->_loseValIMP[toFix] = NULL;
+      me->_minIMP[toFix] = NULL;
+      me->_maxIMP[toFix] = NULL;
    }];
    _nb++;
    return newLits;
@@ -1439,12 +1502,12 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender
 {
    if (!_tracksLoseEvt) return ORSuspend;
-   ORStatus ok;
+   ORStatus ok = ORSuspend;
    for(ORInt i=0;i<_nb;i++) {
       //ORStatus ok = [_tab[i] loseValEvt:val sender:sender];
       if (_loseValIMP[i])
          ok = _loseValIMP[i](_tab[i],@selector(loseValEvt:sender:),val,sender);
-      if (!ok) return ok;
+      if (ok == ORFailure) return ok;
    }
    return ORSuspend;
 }
@@ -1454,8 +1517,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 -(id)initCPLiterals:(CPIntVarI*)ref
 {
    self = [super init];
-   _nb  = [[ref domain] imax] - [[ref domain] imin] + 1;
-   _ofs = [[ref domain] imin];
+   id<CPDom> rd = [ref domain];
+   _nb  = [rd imax] - [rd imin] + 1;
+   _ofs = [rd imin];
+   [rd release];
    _ref = ref;
    _pos = malloc(sizeof(CPIntVarI*)*_nb);
    for(ORInt i=0;i<_nb;i++)

@@ -178,7 +178,7 @@
 }
 @end
 
-@interface ORLPSolutionI : NSObject<ORLPSolution>
+@interface ORLPSolutionI : ORObject<ORLPSolution>
 -(ORLPSolutionI*) initORLPSolutionI: (id<ORModel>) model with: (id<LPProgram>) solver;
 -(id<ORSnapshot>) value: (id<ORFloatVar>) var;
 -(ORFloat) reducedCost: (id<ORFloatVar>) var;
@@ -334,7 +334,7 @@
 @end
 
 
-@interface LPColumn : ORModelingObjectI<LPColumn>
+@interface LPColumn : ORObject<LPColumn>
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col;
 -(void) addObjCoef: (ORFloat) coef;
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef;
@@ -343,11 +343,12 @@
 @implementation LPColumn
 {
    LPSolver* _lpsolver;
+   LPColumnI* _lpcolumn;
 }
 -(id<LPColumn>) initLPColumn: (LPSolver*) lpsolver with: (LPColumnI*) col
 {
    self = [super init];
-   _impl = col;
+   _lpcolumn = col;
    _lpsolver = lpsolver;
    return self;
 }
@@ -355,14 +356,17 @@
 {
    [super dealloc];
 }
+-(LPColumnI*) column
+{
+   return _lpcolumn;
+}
 -(void) addObjCoef: (ORFloat) coef
 {
-   [(LPColumnI*)_impl addObjCoef: coef];
+   [_lpcolumn addObjCoef: coef];
 }
-// pvh to fix: will need more interesting dereference once we have multiple clones
 -(void) addConstraint: (id<ORConstraint>) cstr coef: (ORFloat) coef
 {
-   [(LPColumnI*) _impl addConstraint: [cstr dereference] coef: coef];
+   [_lpcolumn addConstraint: [_lpsolver concretize: cstr] coef: coef];
 }
 @end
 
@@ -404,49 +408,61 @@
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
-   return [_lpsolver dual: [c dereference]];
+   return [_lpsolver dual: [self concretize: c]];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v
 {
-   return [_lpsolver floatValue: [v dereference]];
+   return [_lpsolver floatValue: _gamma[v.getId]];
 }
 -(ORFloat) reducedCost: (id<ORFloatVar>) v
 {
-   return [_lpsolver reducedCost: [v dereference]];
+   return [_lpsolver reducedCost: _gamma[v.getId]];
 }
 -(id<LPColumn>) createColumn
 {
    LPColumnI* col = [_lpsolver createColumn];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 -(id<LPColumn>) createColumn: (ORFloat) low up: (ORFloat) up
 {
    LPColumnI* col = [_lpsolver createColumn: low up: up];
    id<LPColumn> o = [[LPColumn alloc] initLPColumn: self with: col];
-   [self trackObject: o];
+   [self trackMutable: o];
    return o;
 }
 
 -(void) addColumn: (LPColumn*) column
 {
-   [_lpsolver postColumn: [column impl]];
+   [_lpsolver postColumn: [column column]];
    ORLPSolutionI* sol = [self captureSolution];
    [_sPool addSolution: sol];
    [sol release];
 }
--(void) trackObject: (id) obj
+-(id) trackObject: (id) obj
 {
-   [_lpsolver trackObject:obj];
+   return [_lpsolver trackObject:obj];
+}
+-(id) trackConstraintInGroup:(id)obj
+{
+   return [_lpsolver trackConstraintInGroup:obj];
+}
+-(id) trackObjective: (id) obj
+{
+   return [_lpsolver trackObjective:obj];
+}
+-(id) trackMutable: (id) obj
+{
+   return [_lpsolver trackMutable:obj];
 }
 -(void) trackVariable: (id) obj
 {
    [_lpsolver trackVariable:obj];
 }
--(void) trackConstraint:(id) obj
+-(id) trackImmutable:(id)obj
 {
-   [_lpsolver trackConstraint:obj];
+   return [_lpsolver trackImmutable:obj];
 }
 -(id<ORLPSolutionPool>) solutionPool
 {

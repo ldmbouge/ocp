@@ -19,7 +19,7 @@ int main (int argc, const char * argv[])
    @autoreleasepool {
       id<ORModel> model = [ORFactory createModel];      
       id<ORIntRange> R = RANGE(model,0,n-1);
-      id<ORInteger> nbSolutions = [ORFactory integer: model value: 0];
+      id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value: 0];
       
       id<ORIntVarArray> x  = [ORFactory intVarArray:model range:R domain: R];
       id<ORIntVarArray> xp = [ORFactory intVarArray:model range:R with: ^id<ORIntVar>(ORInt i) {
@@ -36,14 +36,14 @@ int main (int argc, const char * argv[])
       id<CPProgram> cp = [ORFactory createCPProgram: model];
       [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return x[i].domsize; }];
+          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]]; }];
           for(int i = 0; i < n; i++)
-             printf("%d ",x[i].value);
+             printf("%d ",[cp intValue:x[i]]);
           printf("\n");
-          [nbSolutions incr];
+          [nbSolutions incr:cp];
        }
        ];
-      NSLog(@"GOT %d solutions\n",nbSolutions.value);
+      NSLog(@"GOT %d solutions\n",[nbSolutions intValue:cp]);
       NSLog(@"Solver status: %@\n",cp);
       [ORFactory shutdown];
    }

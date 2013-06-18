@@ -43,7 +43,7 @@
    id<ORIntArray> ub = [ORFactory intArray:m range:RANGE(m,0,n-1) value:3];
     
    int* cnt = alloca(sizeof(NSInteger)*n);
-   id<ORInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    [m add:[ORFactory cardinality:x low:lb up:ub]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -54,14 +54,14 @@
       }];
       for(NSInteger k=0;k<n;k++)cnt[k]=0;
       for(ORInt k=0;k<s;k++)
-         cnt[[[x at:k] min]]++;
+         cnt[[cp min:x[k]]]++;
       for(NSInteger k=0;k<n;k++)
          STAssertTrue(cnt[k]>=2 && cnt[k] <=3, @"cnt should always be in 2..3");
-      [nbSolutions incr];
+      [nbSolutions incr:cp];
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);   
-   NSInteger rv =  [nbSolutions value];
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
+   NSInteger rv =  [cp intValue:nbSolutions];
    [m release];
    [ORFactory shutdown];
    return rv;

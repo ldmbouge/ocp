@@ -28,6 +28,7 @@
 
 @implementation CPParSolverI {
    id<CPSemanticProgram>* _workers;
+   
    PCObjectQueue*       _queue;
    NSCondition*    _terminated;
    ORInt               _nbDone;
@@ -38,6 +39,7 @@
    ORInt              _nbClosed;
    id<ORObjectiveValue> _primal;
    BOOL                _boundOk;
+   ORLong                _sowct;
 }
 -(id<CPProgram>) initParSolver:(ORInt)nbt withController:(Class)ctrlClass
 {
@@ -59,6 +61,7 @@
    _globalPool = [ORFactory createSolutionPool];
    _onSol = nil;
    _doneSearching = NO;
+   _sowct = [ORRuntimeMonitor wctime];
    return self;
 }
 -(void)dealloc
@@ -89,7 +92,7 @@
       [_terminated wait];
    [_terminated unlock];
 }
--(id<CPCommonProgram>)dereference
+-(id<CPCommonProgram>) worker
 {
    return _workers[[NSThread threadID]];
 }
@@ -99,198 +102,265 @@
 }
 -(NSMutableArray*) variables
 {
-   return [[[self dereference] engine] variables];
+   return [[[self worker] engine] variables];
 }
 -(id<CPPortal>) portal
 {
-   return [[self dereference] portal];
+   return [[self worker] portal];
 }
 -(ORInt) nbFailures
 {
-  return [[self dereference] nbFailures];
+  return [[self worker] nbFailures];
 }
 -(id<CPEngine>) engine
 {
-  return [[self dereference] engine];
+  return [[self worker] engine];
 }
 -(id<ORExplorer>) explorer
 {
-  return [[self dereference] explorer];
+  return [[self worker] explorer];
 }
 -(id<ORObjectiveFunction>) objective
 {
-  return [[self dereference] objective];
+  return [[self worker] objective];
 }
 -(id<ORTracer>) tracer
 {
-  return [[self dereference] tracer];
+  return [[self worker] tracer];
 }
 -(void) close
 {
-  return [[self dereference] close];
+  return [[self worker] close];
 }
 -(id<ORForall>) forall: (id<ORIntIterable>) S
 {
-  return [[self dereference] forall:S];
+  return [[self worker] forall:S];
 }
 -(void) forall: (id<ORIntIterable>) S orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-  [[self dereference] forall:S orderedBy:order do:body];
+  [[self worker] forall:S orderedBy:order do:body];
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Int) order do: (ORInt2Void) body
 {
-  [[self dereference] forall:S suchThat:filter orderedBy:order do:body];
+  [[self worker] forall:S suchThat:filter orderedBy:order do:body];
 }
 -(void) forall: (id<ORIntIterable>) S  orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-  [[self dereference] forall:S orderedBy:o1 and:o2 do:b];
+  [[self worker] forall:S orderedBy:o1 and:o2 do:b];
 }
 -(void) forall: (id<ORIntIterable>) S suchThat: (ORInt2Bool) suchThat orderedBy: (ORInt2Int) o1 and: (ORInt2Int) o2  do: (ORInt2Void) b
 {
-  [[self dereference] forall:S suchThat:suchThat orderedBy:o1 and:o2  do:b];
+  [[self worker] forall:S suchThat:suchThat orderedBy:o1 and:o2  do:b];
 }
 -(void) try: (ORClosure) left or: (ORClosure) right
 {
-   [[[self dereference] explorer] try: left or: right];
+   [[[self worker] explorer] try: left or: right];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body
 {
-   [[[self dereference] explorer] tryall: range suchThat: filter in: body];
+   [[[self worker] explorer] tryall: range suchThat: filter in: body];
 }
 -(void) tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure
 {
-   [[[self dereference] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
+   [[[self worker] explorer] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
 {
-   [[[self dereference] explorer] perform:body onLimit:onRestart];
+   [[[self worker] explorer] perform:body onLimit:onRestart];
 }
 -(void) portfolio: (ORClosure) s1 then: (ORClosure) s2
 {
-   [[[self dereference] explorer] portfolio:s1 then:s2];
+   [[[self worker] explorer] portfolio:s1 then:s2];
 }
 -(void) switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth
 {
-   [[[self dereference] explorer] switchOnDepth:s1 to:s2 limit:depth];
+   [[[self worker] explorer] switchOnDepth:s1 to:s2 limit:depth];
 }
--(void) trackObject: (id) object
+-(id) trackObject: (id) object
 {
-   return [[self dereference] trackObject: object];
+   return [[self worker] trackObject: object];
 }
--(void) trackVariable: (id) object
+-(id) trackObjective: (id) object
 {
-   return [[self dereference] trackVariable: object];
+   return [[self worker] trackObjective: object];
 }
--(void) trackConstraint:(id)object
+-(id) trackConstraintInGroup:(id)object
 {
-   return [[self dereference] trackConstraint:object];
+   return [[self worker] trackConstraintInGroup: object];
+}
+-(id) trackMutable: (id) object
+{
+   return [[self worker] trackMutable: object];
+}
+-(id) trackImmutable: (id) object
+{
+   return [[self worker] trackImmutable: object];
+}
+-(id) trackVariable: (id) object
+{
+   return [[self worker] trackVariable: object];
 }
 -(void) addConstraintDuringSearch: (id<ORConstraint>) c annotation:(ORAnnotation)n
 {
-   [[self dereference] addConstraintDuringSearch: c annotation:n];
+   [[self worker] addConstraintDuringSearch: c annotation:n];
+}
+-(void)add: (id<ORConstraint>) c
+{
+   [[self worker] add:c];
 }
 -(void) addHeuristic:(id<CPHeuristic>)h
 {
    assert(FALSE);
 }
+-(void) setGamma: (id*) gamma
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setGamma never called on CPParProgram"];
+}
+-(void) setTau: (id<ORTau>) tau
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "setTau never called on CPParProgram"];
+}
+-(id*) gamma
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "gamma never called on CPParProgram"];
+   return NULL;
+}
 // Nested
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
-   [[self dereference] limitTime: maxTime in: cl];
+   [[self worker] limitTime: maxTime in: cl];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   [[self dereference] nestedSolve: body onSolution: onSolution onExit: onExit];
+   [[self worker] nestedSolve: body onSolution: onSolution onExit: onExit];
 }
 -(void) nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution
 {
-   [[self dereference] nestedSolve: body onSolution: onSolution];
+   [[self worker] nestedSolve: body onSolution: onSolution];
 }
 -(void) nestedSolve: (ORClosure) body
 {
-   [[self dereference] nestedSolve: body];
+   [[self worker] nestedSolve: body];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit
 {
-   [[self dereference] nestedSolveAll: body onSolution: onSolution onExit: onExit];
+   [[self worker] nestedSolveAll: body onSolution: onSolution onExit: onExit];
 }
 -(void) nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution
 {
-   [[self dereference] nestedSolve: body onSolution: onSolution];
+   [[self worker] nestedSolve: body onSolution: onSolution];
 }
 -(void) nestedSolveAll: (ORClosure) body
 {
-   [[self dereference] nestedSolveAll: body];
+   [[self worker] nestedSolveAll: body];
 }
 // ********
 
 -(void) labelArray: (id<ORIntVarArray>) x
 {
-   [[self dereference] labelArray: x];
+   [[self worker] labelArray: x];
 }
 -(void) labelArray: (id<ORIntVarArray>) x orderedBy: (ORInt2Float) orderedBy
 {
-   [[self dereference] labelArray: x orderedBy: orderedBy];
+   [[self worker] labelArray: x orderedBy: orderedBy];
+}
+-(void) labelArrayFF: (id<ORIntVarArray>) x
+{
+   [[self worker] labelArrayFF:x];
+}
+-(void) labelHeuristic: (id<CPHeuristic>) h restricted:(id<ORIntVarArray>)av
+{
+   [[self worker] labelHeuristic: h restricted:av];
 }
 -(void) labelHeuristic: (id<CPHeuristic>) h
 {
-   [[self dereference] labelHeuristic: h];
+   [[self worker] labelHeuristic: h];
 }
 -(void) label: (id<ORIntVar>) mx
 {
-   [[self dereference] label: mx];
+   [[self worker] label: mx];
 }
 -(void) label: (id<ORIntVar>) var with: (ORInt) val
 {
-   [[self dereference] label: var with: val];
+   [[self worker] label: var with: val];
 }
 -(void) diff: (id<ORIntVar>) var with: (ORInt) val
 {
-   [[self dereference] diff: var with: val];
+   [[self worker] diff: var with: val];
 }
 -(void) lthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   [[self dereference] lthen: var with: val];
+   [[self worker] lthen: var with: val];
 }
 -(void) gthen: (id<ORIntVar>) var with: (ORInt) val
 {
-   [[self dereference] gthen: var with: val];
+   [[self worker] gthen: var with: val];
 }
 -(void) restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S
 {
-   [[self dereference] restrict: var to: S];
+   [[self worker] restrict: var to: S];
 }
 -(void) fail
 {
-   [[[self dereference] explorer] fail];
+   [[[self worker] explorer] fail];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
-   [[self dereference] repeat: body onRepeat: onRepeat];
+   [[self worker] repeat: body onRepeat: onRepeat];
 }
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone
 {
-   [[self dereference] repeat: body onRepeat: onRepeat until: isDone];
+   [[self worker] repeat: body onRepeat: onRepeat until: isDone];
 }
 -(void) once: (ORClosure) cl
 {
-   [[self dereference] once: cl];
+   [[self worker] once: cl];
 }
 -(void) limitSolutions: (ORInt) maxSolutions in: (ORClosure) cl
 {
-   [[self dereference] limitSolutions: maxSolutions in: cl];
+   [[self worker] limitSolutions: maxSolutions in: cl];
 }
 -(void) limitCondition: (ORVoid2Bool) condition in: (ORClosure) cl
 {
-   [[self dereference] limitCondition: condition in: cl];
+   [[self worker] limitCondition: condition in: cl];
 }
 -(void) limitDiscrepancies: (ORInt) maxDiscrepancies in: (ORClosure) cl
 {
-   [[self dereference] limitDiscrepancies: maxDiscrepancies in: cl];
+   [[self worker] limitDiscrepancies: maxDiscrepancies in: cl];
 }
 -(void) limitFailures: (ORInt) maxFailures in: (ORClosure) cl
 {
-   [[self dereference] limitFailures: maxFailures in: cl];
+   [[self worker] limitFailures: maxFailures in: cl];
+}
+
+
+-(ORBool) bound: (id<ORIntVar>) x
+{
+   return [[self worker] bound:x];
+}
+-(ORInt)  min: (id<ORIntVar>) x
+{
+   return [[self worker] min:x];
+}
+-(ORInt)  max: (id<ORIntVar>) x
+{
+   return [[self worker] max:x];
+}
+-(ORInt)  domsize: (id<ORIntVar>) x
+{
+   return [[self worker] domsize:x];
+}
+-(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
+{
+   return [[self worker] member:v in:x];
+}
+-(ORInt) maxBound:(id<ORIdArray>) x
+{
+   return [[self worker] maxBound:(id)x];
+}
+-(NSSet*)constraints:(id<ORVar>)x
+{
+   return [[self worker] constraints:x];
 }
 -(void)onSolution:(ORClosure)onSolution
 {
@@ -303,7 +373,7 @@
 }
 -(void) doOnSolution
 {
-   [[self dereference] doOnSolution];
+   [[self worker] doOnSolution];
 }
 -(void) doOnExit
 {
@@ -317,15 +387,16 @@
 -(void)setupWork:(NSData*)root forCP:(id<CPSemanticProgram>)cp
 {
    id<ORProblem> theSub = [SemTracer unpackProblem:root fORSearchEngine:[cp engine]];
-   //NSLog(@"***** THREAD(%p) SETUP work: %@",[NSThread currentThread],theSub);
+   //NSLog(@"***** THREAD(%d) SETUP work size: %d",[NSThread threadID],[theSub sizeEstimate]);
    ORStatus status = [[cp tracer] restoreProblem:theSub inSolver:[cp engine]];
    [theSub release];
    if (status == ORFailure)
       [[cp explorer] fail];
     [cp restartHeuristics];
 }
--(void)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
+-(ORLong)setupAndGo:(NSData*)root forCP:(ORInt)myID searchWith:(ORClosure)body all:(ORBool)allSols
 {
+   ORLong t0 = [ORRuntimeMonitor cputime];
    id<CPSemanticProgram> me  = _workers[myID];
    id<ORExplorer> ex = [me explorer];
    id<ORSearchController> nested = [[ex controllerFactory] makeNestedController];
@@ -333,13 +404,12 @@
                                                                          explorer:me
                                                                            onPool:_queue];
    [nested release];
-   id<ORSearchObjectiveFunction> objective = [[me objective] dereference];
+   id<ORSearchObjectiveFunction> objective = [me objective];
    if (objective != nil) {
       [[me explorer] nestedOptimize: me
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
                             [self doOnSolution];
-                            [me doOnSolution];
                             id<ORObjectiveValue> myBound = [objective primalBound];
                             for(ORInt w=0;w < _nbWorkers;w++) {
                                if (w == myID) continue;
@@ -372,6 +442,9 @@
                             control:parc];        
       }
    }
+   ORLong t1 = [ORRuntimeMonitor cputime];
+   NSLog(@"Thread %d back from sub: %lld  AT [%lld]",[NSThread threadID],t1-t0,([ORRuntimeMonitor wctime]-_sowct)/1000);
+   return t1 - t0;
 }
 
 -(void) workerSolve:(NSArray*)input
@@ -420,9 +493,12 @@
          [_queue enQueue:rootSerial];
       }
       NSData* cpRoot = nil;
+      //ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
-         if (!_doneSearching)
+         if (!_doneSearching) {
             [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+//            [_queue pretendFull:took < 500];
+         }
          [cpRoot release];
       }
       NSLog(@"IN Queue after leaving: %d (%s)",[_queue size],(_doneSearching ? "YES" : "NO"));
@@ -540,19 +616,23 @@
 }
 -(ORInt) intValue: (id<ORIntVar>) x
 {
-   return [[self dereference] intValue: x];
+   return [[self worker] intValue: x];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
-   return [[self dereference] floatValue: x];
+   return [[self worker] floatValue: x];
 }
 -(ORBool) boolValue: (id<ORIntVar>) x
 {
-   return [((id<CPCommonProgram>) [self dereference]) boolValue: x];
+   return [((id<CPCommonProgram>) [self worker]) boolValue: x];
 }
 -(id<ORCPSolution>) captureSolution
 {
-   return (id<ORCPSolution>) [[self dereference] captureSolution];
+   return (id<ORCPSolution>) [[self worker] captureSolution];
+}
+-(id<ORObject>) concretize: (id<ORObject>) o
+{
+   return [[self worker] concretize: o];
 }
 @end
 

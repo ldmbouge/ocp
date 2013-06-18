@@ -59,8 +59,8 @@ int main (int argc, const char * argv[])
    [ORStreamManager setRandomized];
    id<ORUniformDistribution> distr = [ORFactory uniformDistribution: mdl range: Cities];
       
-   id<ORInteger> nbRestarts = [ORFactory integer: mdl value:0];
-   id<ORInteger> nbSolutions = [ORFactory integer: mdl value:1];
+   id<ORMutableInteger> nbRestarts = [ORFactory mutable: mdl value:0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value:1];
    id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: Cities domain: Cities];
    id<ORIntVar> assignmentCost = [ORFactory intVar:mdl domain: RANGE(mdl,0,10000)];
    
@@ -76,7 +76,7 @@ int main (int argc, const char * argv[])
    //id<ORTRIntArray> mark = [ORFactory TRIntArray:[cp engine] range: Cities];
 
    [cp solve: ^{
-       [cp limitCondition: ^bool() { return [nbRestarts value] >= 100; } in:
+       [cp limitCondition: ^bool() { return [nbRestarts intValue:cp] >= 100; } in:
         ^{
            [cp repeat:
             ^{
@@ -90,8 +90,8 @@ int main (int argc, const char * argv[])
             }
             onRepeat:
                ^{
-                  printf("I am restarting ... %d \n",[nbRestarts value]); [nbRestarts incr];
-                  [nbSolutions incr];
+                  printf("I am restarting ... %d \n",[nbRestarts intValue:cp]); [nbRestarts incr:cp];
+                  [nbSolutions incr:cp];
                   id<ORSolution> solution = [[cp solutionPool] best];
                   //for(ORInt i = 0; i < nbCities; i++)
                      //[mark set: 0 at: i];
@@ -118,7 +118,7 @@ int main (int argc, const char * argv[])
         ];
     }
     ];
-   id<ORSolution> solution = [[mdl solutions] best];
+   id<ORSolution> solution = [[cp solutionPool] best];
    ORInt start = (int) [distr next];
    for(ORInt i = 0; i < 10; i++) {
       printf("%d->",start);

@@ -13,7 +13,7 @@
 #import <ORProgram/LPProgram.h>
 
 // LPSolver
-@interface LPSolver : NSObject<LPProgram>
+@interface LPSolver : ORGamma<LPProgram>
 -(id<LPProgram>) initLPSolver: (id<ORModel>) model;
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORFloatVar>) x;

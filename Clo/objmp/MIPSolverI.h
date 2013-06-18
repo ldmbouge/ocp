@@ -267,10 +267,10 @@
 //-(CotMIPAbstractBasis)* getBasis() ;
 //-(void) setBasis(CotMIPAbstractBasis* basis) ;
 
--(void) trackVariable: (id) var;
--(void) trackObject: (id) obj;
--(void) trackConstraint: (id) obj;
-
+-(id) trackVariable: (id) var;
+-(id) trackMutable: (id) obj;
+-(id) trackObjective:(id)obj;
+-(id) trackConstraintInGroup:(id)obj;
 @end
 
 @interface MIPFactory : NSObject

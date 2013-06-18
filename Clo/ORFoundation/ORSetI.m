@@ -168,6 +168,20 @@
    //assert(!(_low == 0 && _up == 0));
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORIntRangeI allocWithZone:zone] initORIntRangeI:_low up:_up];
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]])
+      return _low == ((ORIntRangeI*)object)->_low && _up == ((ORIntRangeI*)object)->_up;
+   else return NO;
+}
+-(NSUInteger)hash
+{
+   return _low ^ _up;
+}
 -(void) dealloc
 {
    [super dealloc];

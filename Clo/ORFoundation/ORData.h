@@ -26,34 +26,72 @@ typedef enum {
 @protocol ORExpr;
 @protocol ORIntRange;
 @protocol ORVisitor;
+@protocol ORASolver;
 
 @protocol ORObject <NSObject>
--(id) dereference;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
+-(ORInt) getId;
+-(void)setId:(ORUInt)name;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
+@protocol ORTau <NSObject,NSCopying>
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copy;
+@end
+
+@protocol ORLambda <NSObject,NSCopying>
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copy;
+@end
+
+@protocol ORGamma <NSObject>
+-(void) setGamma: (id*) gamma;
+-(id*)gamma;
+-(id<ORObject>) concretize: (id<ORObject>) o;
+@end
+
+@protocol ORModelMappings <NSObject>
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
+-(id) copy;
+@end
+
 @interface NSObject (Concretization)
--(id) dereference;
--(void) setImpl: (id) impl;
--(id) impl;
--(void) makeImpl;
 -(void) visit: (id<ORVisitor>) visitor;
 @end;
 
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;
--(ORInt) setValue: (ORInt) value;
--(void) incr;
--(void) decr;
+@end
+
+@protocol ORMutableId <ORObject>
+-(id) idValue:(id<ORGamma>)solver;
+-(void) setId:(id)v in:(id<ORGamma>)solver;
+@end
+
+@protocol ORMutableInteger <ORObject,ORExpr>
+-(ORInt) initialValue;
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt) incr: (id<ORGamma>) solver;
+-(ORInt) decr: (id<ORGamma>) solver;
+-(ORInt) value: (id<ORGamma>) solver;
+-(ORInt) intValue: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
 @end
 
 @protocol ORFloatNumber <ORObject,ORExpr>
--(ORFloat) value;
 -(ORFloat) floatValue;
--(ORFloat) setValue: (ORFloat) value;
+-(ORFloat) value;
+-(ORInt) intValue;
+@end
+
+@protocol ORMutableFloat <ORObject,ORExpr>
+-(ORFloat) initialValue;
+-(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>
@@ -90,16 +128,14 @@ typedef enum {
 @end;
 
 @interface ORCrFactory (OR)
-+(id<ORInteger>) integer:(ORInt) value;
-+(id<ORRandomStream>) randomStream;
-+(id<ORZeroOneStream>) zeroOneStream;
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
++(id<ORMutableInteger>) integer:(ORInt) value;
 @end
 
 @protocol ORTable <ORObject>
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
+-(void)insertTuple:(ORInt*)t;
 -(void) print;
 -(void) close;
 @end
@@ -110,5 +146,25 @@ typedef enum {
 -(id) objectAtIndexedSubscript:(NSUInteger)key;
 -(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) nb;
--(id) dereference;
+@end
+
+@interface ORGamma : NSObject<ORGamma>
+{
+@protected
+   id* _gamma;
+   id<ORModelMappings> _mappings;
+}
+-(ORGamma*) initORGamma;
+-(void) dealloc;
+-(id*) gamma;
+-(id) concretize: (id) o;
+@end
+
+@interface ORModelMappings : NSObject<ORModelMappings>
+-(ORModelMappings*) initORModelMappings;
+-(void) dealloc;
+-(void) setTau: (id<ORTau>) tau;
+-(void) setLambda: (id<ORLambda>) lambda;
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
 @end

@@ -66,13 +66,13 @@
 @end
 
 @interface CPAssignImpact : NSObject {
-   id<ORIntVar>  _var;
-   double*      _imps;
-   ORUInt _nbVals;
+   id<CPIntVar>  _var;
+   double*       _imps;
+   ORUInt        _nbVals;
    ORBounds      _dom;
-   double*        _mu;
-   double*      _vari;
-   ORUInt*   _cnts;
+   double*       _mu;
+   double*       _vari;
+   ORUInt*       _cnts;
 }
 -(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar;
 -(void)dealloc;
@@ -83,7 +83,7 @@
 @end
 
 @implementation CPAssignImpact
--(CPAssignImpact*)initCPAssignImpact:(id<ORIntVar>)theVar
+-(CPAssignImpact*)initCPAssignImpact:(id<CPIntVar>)theVar
 {
    self = [super init];
    _var = theVar;
@@ -199,30 +199,30 @@
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForVariable];
    [key release];
    return rv;
 }
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInteger:[x getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInteger:x.getId];
    double rv = [[_impacts objectForKey:key] impactForValue:v];
    [key release];
    return rv;
 }
 // pvh: this dictionary business seems pretty heavy; lots of memory allocation
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
 {
-   _vars = t;   
+   _vars = t;
+   _cvs  = cvs;
    _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:[self allIntVars]];
-   _nbv = [_vars count];
+   _nbv = [_cvs count];
    _impacts = [[NSMutableDictionary alloc] initWithCapacity:_nbv];
-   ORInt low = [_vars low],up = [_vars up];
+   ORInt low = [_cvs low],up = [_cvs up];
    for(ORUInt i=low;i<=up;i++) {
-      //NSLog(@"impacting: %@",[_vars at:i]);
-      CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<ORIntVar>)[_vars at:i]];
-      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_vars at:i] getId]]];
+      CPAssignImpact* assigns = [[CPAssignImpact alloc] initCPAssignImpact:(id<ORIntVar>)[_cvs at:i]];
+      [_impacts setObject:assigns forKey:[NSNumber numberWithInteger:[[_cvs at:i] getId]]];
       [assigns release];  // [ldm] the assignment impacts for t[i] is now in the dico with a refcnt==1
    }
    [_engine post:_monitor];
@@ -247,7 +247,7 @@
 
 -(id<ORIntVarArray>)allIntVars
 {
-   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<ORIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(void)addKillSetFrom:(ORInt)from to:(ORInt)to size:(ORUInt)sz into:(NSMutableSet*)set
@@ -320,7 +320,7 @@
    ORInt low = [av low],up = [av up];
    for(ORInt k=low; k <= up;k++) {
       NSMutableSet* sacs = [[NSMutableSet alloc] initWithCapacity:2];
-      id<CPIntVar> v = (id<CPIntVar>)_vars[k];
+      id<CPIntVar> v = av[k];
       ORBounds vb = [v bounds];
       [_monitor rootRefresh];
       [self dichotomize:v from:vb.min to:vb.max block:blockWidth sac:sacs];

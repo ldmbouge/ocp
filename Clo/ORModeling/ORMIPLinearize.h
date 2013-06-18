@@ -1,7 +1,7 @@
 /************************************************************************
  Mozilla Public License
  
- Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ Copyright (c) 2012,2013 NICTA, Laurent Michel and Pascal Van Hentenryck
  
  This Source Code Form is subject to the terms of the Mozilla Public
  License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -11,8 +11,15 @@
 
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
+#import <ORModeling/ORModeling.h>
+#import <ORFoundation/ORArrayI.h>
 
-@interface ORCopy : NSObject<ORVisitor>
--(id)initORCopy: (NSZone*)zone;
--(id<ORModel>) copyModel: (id<ORModel>)model;
+@interface ORMIPLinearize : ORNOopVisit<ORModelTransformation,ORVisitor>
+-(id) initORMIPLinearize: (id<ORAddToModel>) into;
+-(void) apply: (id<ORModel>) m;
++(id<ORModel>) linearize: (id<ORModel>) model;
+@end
+
+@interface ORFactory (MIPLinearize)
++(id<ORModel>) linearizeModelForMIP: (id<ORModel>) m;
 @end

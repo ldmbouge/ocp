@@ -10,7 +10,8 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORModel.h>
+#import <ORFoundation/ORConstraint.h>
+#import <ORFoundation/ORFactory.h>
 #import <ORModeling/ORSolution.h>
 #import <ORModeling/ORModelTransformation.h>
 
@@ -31,27 +32,37 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 
 -(void) applyOnVar:(void(^)(id<ORObject>))doVar
-         onObjects:(void(^)(id<ORObject>))doObjs
+        onMutables:(void(^)(id<ORObject>))doMutables
+      onImmutables:(void(^)(id<ORObject>))doImmutables
      onConstraints:(void(^)(id<ORObject>))doCons
        onObjective:(void(^)(id<ORObject>))ofun;
 -(id<ORObjectiveFunction>) objective;
 -(id<ORIntVarArray>)intVars;
+-(ORUInt) nbObjects;
 -(NSArray*) variables;
 -(NSArray*) constraints;
--(NSArray*) objects;
+-(NSArray*) mutables;
+-(NSArray*) immutables;
 // pvh: this should go
 -(id<ORModel>) flatten;
+-(id<ORModel>) lpflatten;
+-(id<ORModel>) mipflatten;
 -(id<ORModel>) copy;
 -(void) setSource: (id<ORModel>) src;
 -(id<ORModel>) source;
 -(id<ORModel>) rootModel;
--(void) map: (id) key toObject: (id) object;
--(id) lookup: (id) key;
+-(id)inCache:(id)obj;
+-(id) addToCache:(id)obj;
+-(id)memoize:(id) obj;
+-(id<ORModelMappings>) mappings;
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
 @end
 
 @protocol ORAddToModel <ORTracker>
 -(id<ORVar>) addVariable:(id<ORVar>) var;
--(id) addObject:(id) object;
+-(id) addMutable:(id) object;
+-(id) addImmutable:(id) object;
 -(id<ORConstraint>) addConstraint:(id<ORConstraint>) cstr;
 -(id<ORTracker>)tracker;
 -(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x;
@@ -64,6 +75,7 @@
 
 @interface ORFactory (ORModeling)
 +(id<ORModel>) createModel;
++(id<ORModel>) createModel:(ORUInt)nbo mappings: (id<ORModelMappings>) mappings;
 +(id<ORModel>) cloneModel: (id<ORModel>)m;
 +(id<ORAddToModel>) createBatchModel: (id<ORModel>) flatModel source:(id<ORModel>)src;
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into;

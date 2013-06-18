@@ -103,7 +103,7 @@ static void prune(CPAllDifferentDC* ad);
 -(NSSet*) allVars
 {
     if (_posted)
-        return [[NSSet alloc] initWithObjects:_var count:_varSize];
+        return [[[NSSet alloc] initWithObjects:_var count:_varSize] autorelease];
     else
         @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: allVars called before the constraints is posted"];
     return NULL;
@@ -448,7 +448,7 @@ static void prune(CPAllDifferentDC* ad)
    findSCC(ad);
    for(ORInt k = 0; k < ad->_varSize; k++) {
       CPIntVarI* x = ad->_var[k];
-      ORBounds bx = [x bounds];
+      ORBounds bx = bounds(x);
       for(ORInt w = bx.min; w <= bx.max; w++) {
          if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
             if (memberDom(x,w)) {

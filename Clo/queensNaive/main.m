@@ -27,7 +27,7 @@ int main (int argc, const char * argv[])
       int n = 8;
       id<ORModel> model = [ORFactory createModel];
       id<ORIntRange> R = RANGE(model,0,n-1);
-      id<ORInteger> nbSol = INTEGER(model,0);
+      id<ORMutableInteger> nbSol = INTEGER(model,0);
       id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
       for(ORUInt i =0;i < n; i++) {
          for(ORUInt j=i+1;j< n;j++) {
@@ -43,13 +43,13 @@ int main (int argc, const char * argv[])
           @autoreleasepool {
              NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
              for(int i = 0; i < n; i++)
-                [buf appendFormat:@"%d ",[x[i] value]];
-             NSLog(@"sol [%d]: %@\n",nbSol.value,buf);
+                [buf appendFormat:@"%d ",[cp intValue:x[i]]];
+             NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
           }
-          [nbSol incr];
+          [nbSol incr:cp];
        }
        ];
-      printf("GOT %d solutions\n",nbSol.value);
+      printf("GOT %d solutions\n",[nbSol intValue:cp]);
       [cp release];
       [ORFactory shutdown];
       return 0;

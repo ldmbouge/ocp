@@ -28,7 +28,7 @@ int main_lp(int argc, const char * argv[])
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-2];
    id<ORFloatVarArray> x = [ORFactory floatVarArray: model range: Columns];
-   id<ORIdArray>      ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+    id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
    for(ORInt i = 0; i < nbRows; i++)
       ca[i] = [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
    [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
@@ -177,5 +177,5 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main_both(argc,argv);
+   return main_lp(argc,argv);
 }

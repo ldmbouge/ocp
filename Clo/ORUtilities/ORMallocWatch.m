@@ -92,6 +92,7 @@ void mallocWatch()
 {
    size_t  protect_size = sizeof(malloc_zone_t);
    malloc_zone_t *zone = malloc_default_zone();
+   if (zone->malloc == my_malloc) return ;
    system_malloc = zone->malloc;
    system_valloc = zone->valloc;
    system_calloc = zone->calloc;
