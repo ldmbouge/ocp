@@ -35,6 +35,7 @@
 -(id<ORExpr>) and:(id<ORRelation>) e;
 -(id<ORExpr>) or:(id<ORRelation>) e;
 -(id<ORExpr>) imply:(id<ORRelation>) e;
+-(id<ORExpr>) guard:(ORClosure) block;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
@@ -52,6 +53,7 @@
 -(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
+-(id<ORRelation>) guard:(ORClosure) block track:(id<ORTracker>)t;
 
 -(void) encodeWithCoder:(NSCoder*) aCoder;
 -(id) initWithCoder:(NSCoder*) aDecoder;
@@ -266,6 +268,18 @@
 
 @interface ORImplyI : ORExprBinaryI<ORRelation,NSCoding>
 -(id<ORExpr>) initORImplyI: (id<ORExpr>) left imply: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(enum ORRelationType)type;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
+@interface ORGuardI: ORExprI<ORRelation> {
+   id<ORExpr>    _g;
+   ORClosure _block;
+}
+-(ORGuardI*)init:(id<ORExpr>)g guard:(ORClosure)block;
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;

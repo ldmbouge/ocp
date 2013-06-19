@@ -660,6 +660,11 @@
    id<ORExpr> o = [[ORImplyI alloc] initORImplyI:left imply:right];
    return [self validate:o onError:"No CP tracker in => Expression" track:t];
 }
++(id<ORExpr>) expr:(id<ORRelation>) g guard:(ORClosure) block track:(id<ORTracker>) t
+{
+   id<ORExpr> o = [[ORGuardI alloc] init:g guard:block];
+   return [self validate:o onError:"No CP tracker in ~> Expression" track:t];
+}
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarArray: (id<ORIntVarArray>) a index: (id<ORExpr>) index
 {
    id<ORExpr> o = [[ORExprVarSubI alloc] initORExprVarSubI: a elt: index];

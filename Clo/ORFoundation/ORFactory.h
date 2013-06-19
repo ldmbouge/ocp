@@ -138,6 +138,7 @@
 +(id<ORExpr>) expr: (id<ORRelation>) left and: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORRelation>) left or: (id<ORRelation>) right track:(id<ORTracker>)t;
 +(id<ORExpr>) expr: (id<ORRelation>) left imply: (id<ORRelation>) right track:(id<ORTracker>)t;
++(id<ORExpr>) expr:(id<ORRelation>) g guard:(ORClosure) block track:(id<ORTracker>) t;
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;

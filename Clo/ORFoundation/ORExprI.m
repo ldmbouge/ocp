@@ -411,6 +411,10 @@
 {
    return [ORFactory expr:(id<ORRelation>)self imply:e track:[self tracker]];
 }
+-(id<ORExpr>) guard:(ORClosure)block
+{
+   return [ORFactory expr:(id)self guard:block track:[self tracker]];
+}
 -(id<ORExpr>) absTrack:(id<ORTracker>)t
 {
    return [ORFactory exprAbs:self track:t];
@@ -529,6 +533,10 @@
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t
 {
    return (id)[ORFactory expr:(id)self imply:(id)e track:t];
+}
+-(id<ORRelation>) guard:(ORClosure) block track:(id<ORTracker>)t
+{
+   return (id)[ORFactory expr:(id)self guard:block track:t];
 }
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {}
@@ -1208,10 +1216,6 @@
    self = [super initORExprBinaryI:left and:right];
    return self;
 }
--(void) dealloc
-{
-   [super dealloc];
-}
 -(ORInt) min
 {
    return ![_left min] || [_right min];
@@ -1245,6 +1249,38 @@
 }
 @end
 
+@implementation ORGuardI
+-(ORGuardI*)init:(id<ORExpr>)g guard:(ORClosure)block
+{
+   self = [super init];
+   _g = g;
+   _block = [block copy];
+   return self;
+}
+-(ORInt) min
+{
+   return [_g min];
+}
+-(ORInt) max
+{
+   return [_g max];
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ ~> BLOCK)",[_g description]];
+   return rv;
+
+}
+-(enum ORRelationType)type
+{
+   return ORGuard;
+}
+-(void) visit: (id<ORVisitor>)v
+{
+   [v visitExprGuardI:self];
+}
+@end
 
 @implementation ORExprSumI
 -(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e

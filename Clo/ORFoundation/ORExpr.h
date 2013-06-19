@@ -26,7 +26,8 @@ enum ORRelationType {
    ORRLEq = 3,
    ORRDisj = 4,
    ORRConj = 5,
-   ORRImply = 6
+   ORRImply = 6,
+   ORGuard = 7
 };
 
 id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r);
@@ -56,6 +57,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) and: (id<ORExpr>) e;
 -(id<ORRelation>) or: (id<ORExpr>) e;
 -(id<ORRelation>) imply:(id<ORExpr>)e;
+-(id<ORRelation>) guard:(ORClosure) block;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
@@ -81,6 +83,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) and: (id<ORRelation>) e;
 -(id<ORRelation>) or: (id<ORRelation>) e;
 -(id<ORRelation>) imply: (id<ORRelation>) e;
+-(id<ORRelation>) guard:(ORClosure) block;
 @end
 
 @interface NSNumber (Expressions)
