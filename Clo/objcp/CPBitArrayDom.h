@@ -40,10 +40,7 @@
 -(ORULong)              numPatterns;
 -(void)                 updateFreeBitCount;
 -(ORBounds)             bounds;
--(BOOL)                 bound;
--(ORInt)                domsize;
--(void)                 updateFreeBitCount;
--(ORBool)                 bound;
+-(ORBool)               bound;
 -(uint64)               min;
 -(uint64)               max;
 -(unsigned int*)        minArray;

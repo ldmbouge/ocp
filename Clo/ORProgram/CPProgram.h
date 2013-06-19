@@ -155,11 +155,12 @@
 @protocol CPSemanticProgram <CPCommonProgram>
 @end
 
-@protocol CPBV
+@protocol CPBV <CPCommonProgram>
 -(void) labelBit:(int)i ofVar:(id<ORBitVar>)x;
 -(void) labelUpFromLSB:(id<ORBitVar>) x;
 -(void) labelDownFromMSB:(id<CPBitVar>) x;
 -(void) labelBitVarsFirstFail: (NSArray*)vars;
+-(void) labelBitVarHeuristic:(id<CPHeuristic>) h;
 
 -(id<CPHeuristic>) createBitVarFF;
 -(id<CPHeuristic>) createBitVarFF:(id<ORVarArray>)rvars;

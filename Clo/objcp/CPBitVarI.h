@@ -84,11 +84,11 @@ typedef struct  {
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORULong)  numPatterns;
--(unsigned int) lsFreeBit;
--(unsigned int) msFreeBit;
--(unsigned int) randomFreeBit;
--(unsigned int) midFreeBit;
--(bool) isFree:(ORUInt)pos;
+-(ORUInt) lsFreeBit;
+-(ORUInt) msFreeBit;
+-(ORUInt) randomFreeBit;
+-(ORUInt) midFreeBit;
+-(ORBool) isFree:(ORUInt)pos;
 -(ORBool) member:(unsigned int*)v;
 
 // update

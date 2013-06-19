@@ -38,19 +38,18 @@
 @protocol ORBitVar <ORVar>
 -(ORUInt*)low;
 -(ORUInt*)up;
--(ORBounds) bounds;
+//-(ORBounds) bounds;
 -(ORUInt) bitLength;
--(ORInt)  domsize;
--(ORULong) numPatterns;
--(ORULong) maxRank;
--(ORULong) getRank:(ORUInt*)r;
--(ORUInt*) atRank:(ORULong) r;
--(ORStatus) bind:(unsigned int*)val;
--(BOOL) member: (unsigned int*) v;
--(bool) isFree:(ORUInt)pos;
--(ORUInt) lsFreeBit;
--(ORUInt) msFreeBit;
--(ORUInt)bitLength;
+//-(ORInt)  domsize;
+//-(ORULong) numPatterns;
+//-(ORULong) maxRank;
+//-(ORULong) getRank:(ORUInt*)r;
+//-(ORUInt*) atRank:(ORULong) r;
+//-(ORStatus) bind:(unsigned int*)val;
+//-(BOOL) member: (unsigned int*) v;
+//-(bool) isFree:(ORUInt)pos;
+//-(ORUInt) lsFreeBit;
+//-(ORUInt) msFreeBit;
 -(NSString*)stringValue;
 @end
 

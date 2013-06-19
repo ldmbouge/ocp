@@ -14,7 +14,7 @@
 #import <ORProgram/CPProgram.h>
 #import <objcp/CPVar.h>
 
-@interface CPBitVarFirstFail : CPBaseHeuristic<CPHeuristic> {
+@interface CPBitVarFirstFail : CPBaseHeuristic<CPBitVarHeuristic> {
    id<ORVarArray>  _vars;
    id<ORVarArray> _rvars;
    id<CPProgram>     _cp;

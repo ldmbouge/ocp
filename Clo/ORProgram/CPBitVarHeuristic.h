@@ -17,7 +17,7 @@
 @protocol CPProgram;
 
 @protocol CPBitVarHeuristic <NSObject>
--(ORFloat) varOrdering: (id<ORBitVar>)x;
+-(ORFloat) varOrdering: (id<CPBitVar>)x;
 -(ORFloat) valOrdering: (ORInt) v forVar: (id<ORBitVar>) x;
 -(void) initInternal: (id<CPBitVarArray>) t;
 -(void) initHeuristic: (NSMutableArray*) array oneSol:(BOOL)oneSol;

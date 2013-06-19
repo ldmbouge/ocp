@@ -259,7 +259,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom member:v];
 }
--(bool) isFree:(ORUInt)pos{
+-(ORBool) isFree:(ORUInt)pos{
    return [_dom isFree:pos];
 }
 -(NSString*)description

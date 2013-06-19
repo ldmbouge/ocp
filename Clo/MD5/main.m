@@ -113,7 +113,7 @@ int main(int argc, const char * argv[])
    [ORStreamManager setRandomized];
 
 //   MD4 *myMD4;
-   MD5 *myMD5 = [MD5 initMD5];
+   MD5 *myMD5;// = [MD5 initMD5];
    NSString *filename = @"lorem-mssg.txt";
 //   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    

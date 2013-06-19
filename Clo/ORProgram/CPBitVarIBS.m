@@ -66,7 +66,7 @@
 @end
 
 @interface CPBitVarAssignImpact : NSObject {
-   id<ORBitVar>  _var;
+   id<CPBitVar>  _var;
    double*      _imps;
    ORUInt _nbVals;
    ORBounds      _dom;
@@ -74,7 +74,7 @@
    double*      _vari;
    ORUInt*   _cnts;
 }
--(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<ORBitVar>)theVar;
+-(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<CPBitVar>)theVar;
 -(void)dealloc;
 -(void)addImpact:(double)i forValue:(ORInt)val;
 -(void)setImpact:(double)i forValue:(ORInt)val;
@@ -83,7 +83,7 @@
 @end
 
 @implementation CPBitVarAssignImpact
--(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<ORBitVar>)theVar
+-(CPBitVarAssignImpact*)initCPBitVarAssignImpact:(id<CPBitVar>)theVar
 {
    self = [super init];
    _var = theVar;

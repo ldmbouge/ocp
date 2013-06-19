@@ -205,7 +205,8 @@
       [o set:bitVars[k] at:k];
 
 //   id<CPHeuristic> h = [cp createBitVarABS:(id<ORVarArray>)o];
-   id<CPHeuristic> h = [cp createBitVarABS];
+//   id<CPHeuristic> h = [cp createBitVarABS];
+   id<CPHeuristic> h = [cp createBitVarFF];
    [cp solve: ^{
       NSLog(@"Search");
       for(int i=0;i<4;i++)

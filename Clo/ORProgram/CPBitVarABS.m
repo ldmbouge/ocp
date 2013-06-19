@@ -16,11 +16,11 @@
 #import <objcp/CPBitMacros.h>
 
 @interface ABSBitVarNogood : NSObject {
-   id<CPBitVar> _var;
+   id<ORBitVar> _var;
    ORUInt        _val;
 }
--(id)initABSBitVarNogood:(id<CPBitVar>)var value:(ORUInt)val;
--(id<CPBitVar>)variable;
+-(id)initABSBitVarNogood:(id<ORBitVar>)var value:(ORUInt)val;
+-(id<ORBitVar>)variable;
 -(ORUInt)value;
 @end
 
@@ -51,7 +51,7 @@
 -(ABSBitVarProbeAggregator*)initABSBitVarProbeAggregator:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addProbe:(ABSBitVarProbe*)p;
--(void)addAssignment:(id<CPBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act;
+-(void)addAssignment:(id<ORBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act;
 -(ORInt)nbProbes;
 -(ORFloat)avgActivity:(ORInt)x;
 -(ORFloat)avgSQActivity:(ORInt)x;
@@ -145,7 +145,7 @@
    }];
    _nbProbes++;
 }
--(void)addAssignment:(id<CPBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act
+-(void)addAssignment:(id<ORBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSBitVarValueActivity* valueActivity = [_values objectForKey:key];
@@ -185,14 +185,14 @@
 @end
 
 @implementation ABSBitVarNogood
--(id)initABSBitVarNogood:(id<CPBitVar>)var value:(ORUInt)val
+-(id)initABSBitVarNogood:(id<ORBitVar>)var value:(ORUInt)val
 {
    self = [super init];
    _var = var;
    _val = val;
    return self;
 }
--(id<CPBitVar>)variable
+-(id<ORBitVar>)variable
 {
    return _var;
 }
@@ -433,15 +433,15 @@
 }
 -(ORFloat)varOrdering:(id<CPIntVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:[[x dereference] getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInt:[[_cp gamma][x.getId] getId]];
    ABSBitVarActivity* varAct  = [_varActivity objectForKey:key];
    ORFloat rv = [varAct activity];
    [key release];
    return rv / [x domsize];
 }
--(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPIntVar>)x
+-(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x
 {
-   NSNumber* key = [[NSNumber alloc] initWithInt:[[x dereference] getId]];
+   NSNumber* key = [[NSNumber alloc] initWithInt:[[_cp gamma][x.getId] getId]];
    ABSBitVarValueActivity* vAct = [_valActivity objectForKey:key];
    ORFloat rv = [vAct activityForValue:v];
    [key release];
@@ -516,7 +516,7 @@
 //   ORULong r = [x maxRank]/2;
 //   ORUInt v =  *[x atRank:r];
 //   return v;
-   CPBitVarI* xVar = [x dereference];
+   CPBitVarI* xVar = [_cp gamma][x.getId];
    if ([xVar lsFreeBit] == 0)
       if ([xVar msFreeBit] == [xVar bitLength])
          return [xVar lsFreeBit];
@@ -553,7 +553,7 @@
 -(void)installActivities
 {
    NSSet* varIDs = [_aggregator variableIDs];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
+   id<CPBitVarArray> vars = (id<CPBitVarArray>)_vars;//[self allIntVars];
    ORInt nbProbes = [_aggregator nbProbes];
    for(NSNumber* key in varIDs) {
       __block id<CPIntVar> x = nil;
@@ -602,7 +602,7 @@
    int   cntProbes = 0;
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
+   id<CPBitVarArray> vars = (id<CPBitVarArray>)_vars;//[self allIntVars];
    _aggregator = [[ABSBitVarProbeAggregator alloc] initABSBitVarProbeAggregator:vars];
    _valPr = [ORCrFactory zeroOneStream];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
@@ -639,7 +639,7 @@
             //NSLog(@"chose %i from VS = %@",i, buf);
             
             if (nbVS) { // we found someone
-               id<ORBitVar> xi = (id<ORBitVar>)[vars[i] dereference];
+               id<ORBitVar> xi = (id<ORBitVar>)vars[i];
                ORUInt v = [self chooseValue:xi];
                ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:v to:false];}];
                [ORConcurrency pumpEvents];
@@ -648,10 +648,10 @@
                   nbActive++;
                   [probe addVar:(id<ORBitVar>)[vInfo getVar]];
                }];
-               [_aggregator addAssignment:(id<CPBitVar>)[xi dereference] toValue:v withActivity:nbActive];
+               [_aggregator addAssignment:(id<ORBitVar>)xi toValue:v withActivity:nbActive];
                if (s == ORFailure) {
                   if (depth == 0) {
-                     ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:(id<CPBitVar>)[xi dereference] value:v];
+                     ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:xi value:v];
                      //NSLog(@"Adding SAC %@",nogood);
                      [killSet addObject:nogood];
                      [localKill addObject:nogood];

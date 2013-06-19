@@ -25,13 +25,14 @@
 -(ORBounds) bounds;
 -(ORInt)  domsize;
 -(ORULong)  numPatterns;
+-(ORUInt) msFreeBit;
+-(ORUInt) lsFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;
--(id<CPBitVar>) dereference;
+//-(id<CPBitVar>) dereference;
 
 -(ORInt) getId;
 -(ORBool) bound;
--(CPBitArrayDom*) domain;
 -(ORBool) member: (unsigned int*) v;
 //-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;

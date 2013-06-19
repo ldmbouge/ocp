@@ -1246,7 +1246,7 @@
 -(void) labelDownFromMSB:(id<CPBitVar>) x
 {
    int i;
-   CPBitVarI* bv = (CPBitVarI*) [x dereference];
+   CPBitVarI* bv = (CPBitVarI*) _gamma[x.getId];
    while ((i=[bv msFreeBit])>=0) {
 //      i=[bv msFreeBit];
 //      NSLog(@"%@ shows MSB as %d",bv,i);
@@ -1524,12 +1524,18 @@
    } while (true);
 }
 
--(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h 
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h
 {
-   id<ORBitVarArray> av= [h allBitVars];
-   id<ORSelect> select = [ORFactory select: _engine
+   [self labelBitVarHeuristic:h withConcrete:(id)[h allBitVars]];
+}
+
+-(void) labelBitVarHeuristic: (id<CPBitVarHeuristic>) h withConcrete:(id<CPBitVarArray>)av
+{
+//   id<ORBitVarArray> av= [h allBitVars];
+   id<ORSelect> select = [ORFactory selectRandom: _engine
                                            range: RANGE(_engine,[av low],[av up])
-                                        suchThat: ^bool(ORInt i)    { return ![[av at: i] bound]; }
+//                                        suchThat: ^bool(ORInt i)    { return ![_gamma[[av at: i].getId] bound]; }
+                                  suchThat: ^bool(ORInt i) { return ![av[i] bound]; }
                                        orderedBy: ^ORFloat(ORInt i) {
                                           ORFloat rv = [h varOrdering:av[i]];
                                           return rv;
@@ -1542,27 +1548,29 @@
    }];
    
    *last = nil;
-   id<ORInteger> failStamp = [ORFactory integer:self value:-1];
+   //id<ORMutableInteger> failStamp = [ORFactory mutable:self value:-1];
+   __block ORInt failStamp = -1;
    do {
       id<ORBitVar> x = *last;
-      if ([failStamp value] == [_search nbFailures] || (x == nil || [x bound])) {
+      if (failStamp == [_search nbFailures] || (x == nil || [_gamma[x.getId ] bound])) {
          ORInt i = [select max];
          if (i == MAXINT)
             return;
 //         NSLog(@"Chose variable: %d",i);
-         x = (id<ORBitVar>)av[i];
+         x = (id<ORBitVar>)_gamma[av[i].getId];
          *last = x;
       }/* else {
         NSLog(@"STAMP: %d  - %d",[failStamp value],[_search nbFailures]);
         }*/
-      [failStamp setValue:[_search nbFailures]];
+//      [failStamp setValue:[_search nbFailures] in:(id<ORGamma>)_gamma];
+      failStamp = [_search nbFailures];
       ORFloat bestValue = - MAXFLOAT;
       ORLong bestRand = 0x7fffffffffffffff;
-      ORUInt up  = [x msFreeBit];
-      ORUInt low = [x lsFreeBit];
+      ORUInt up  = [_gamma[x.getId] msFreeBit];
+      ORUInt low = [_gamma[x.getId] lsFreeBit];
       ORInt bestIndex = -1;
       for(ORInt v = low;v <= up;v++) {
-      if ([x isFree:v]) {
+      if ([_gamma[x.getId] isFree:v]) {
             ORFloat vValue = [h valOrdering:v forVar:x];
             if (vValue > bestValue) {
                bestValue = vValue;
@@ -1582,9 +1590,9 @@
       if (bestIndex != - 1)  {
 //         NSLog(@"Trying %x at index %u",x,bestIndex);
          [self try: ^{
-            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)[x dereference] at:bestIndex with:false];
+            [self labelBVImpl:_gamma[x.getId] at:bestIndex with:false];
          } or: ^{
-            [self labelBVImpl:(id<CPBitVar,CPBitVarNotifier>)[x dereference] at:bestIndex with:true];
+            [self labelBVImpl:_gamma[x.getId] at:bestIndex with:true];
          }];
       }
       /*
@@ -1605,13 +1613,13 @@
        */
    } while (true);
 }
--(void) labelBitVar: (id<CPBitVar>) var at:(ORUInt)idx with: (ORUInt) val
+-(void) labelBitVar: (id<ORBitVar>) var at:(ORUInt)idx with: (ORUInt) val
 {
-   return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)[var dereference] at:idx with: val];
+   return [self labelBVImpl: _gamma[var.getId] at:idx with: val];
 }
--(void) bitVarDiff: (id<CPBitVar>) var with: (ORUInt) val
+-(void) bitVarDiff: (id<ORBitVar>) var with: (ORUInt) val
 {
-   [self diffBVImpl: (id<CPBitVar,CPBitVarNotifier>) [var dereference] with: val];
+   [self diffBVImpl:_gamma[var.getId] with: val];
 }
 
 

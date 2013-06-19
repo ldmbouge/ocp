@@ -20,7 +20,7 @@
 
 #define ALPHA 8.0L
 
-@interface CPBitVarIBS : CPBaseHeuristic<CPHeuristic> {
+@interface CPBitVarIBS : CPBaseHeuristic<CPBitVarHeuristic> {
    id<ORVarArray>   _vars;
    id<ORVarArray>  _rvars;
    id<CPCommonProgram>   _cp;
