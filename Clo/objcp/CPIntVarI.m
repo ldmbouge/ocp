@@ -497,7 +497,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-   //if (!TRACKSINTVAR) return ORSuspend;
    ORStatus s = ORSuspend;
    if (_recv !=nil) {
       s = [_recv loseValEvt:val sender:sender];
@@ -525,12 +524,8 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 }
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
-   //ORStatus s = [_dom updateMin:newMin for:self];
-   //if (s)   s = [_dom updateMax:newMax for:self];
-   //return s;
    return [_dom updateMin:newMin andMax:newMax for:self];
 }
-
 -(ORStatus) bind: (ORInt) val
 {
     return [_dom bind:val for:self];
@@ -920,21 +915,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    ORStatus s = [self updateMin:newMin];
    if (s == ORFailure) return s;
    return [self updateMax:newMax];
-/*
-   ORStatus s;
-   ORInt tMin = (newMin - _b) / _a;
-   ORInt tMax = (newMax - _b) / _a;
-   if (_a > 0) {      
-      ORInt rMin = (newMin - _b) % _a;
-      s = [_dom updateMin:tMin + (rMin != 0) for:self];
-      if (s) s = [_dom updateMax:tMax for:self];
-   } else {
-      ORInt rMax = (newMax - _b) % _a;
-      s = [_dom updateMax:tMin for:self];
-      if (s) s = [_dom updateMin:tMax + (rMax!=0) for:self];
-   }
-   return s;
- */
 }
 
 -(ORStatus)bind: (ORInt) val
