@@ -334,6 +334,11 @@
 			<key>orderHint</key>
 			<integer>80</integer>
 		</dict>
+		<key>paq2.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>81</integer>
+		</dict>
 		<key>partition.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -558,6 +563,11 @@
 			<true/>
 		</dict>
 		<key>5B5096DF1619B6CB00171F9D</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B51088117736A3300A85309</key>
 		<dict>
 			<key>primary</key>
 			<true/>

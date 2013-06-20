@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'paq2' target in the 'paq2' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif
