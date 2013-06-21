@@ -108,6 +108,22 @@
 -(void) visit:(id<ORVisitor>)visitor;
 @end
 
+@interface ORAutomatonI : ORObject<ORAutomaton,NSCoding> {
+   id<ORIntRange> _alpha;
+   id<ORIntRange> _states;
+   id<ORIntSet>   _final;
+   ORInt          _nbt;
+   ORTableI*      _transition;
+}
+-(id) init:(id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs table:(id<ORTable>)table;
+-(id<ORIntSet>)final;
+-(id<ORIntRange>)alphabet;
+-(id<ORIntRange>)states;
+-(ORInt)nbTransitions;
+-(id<ORTable>)transition;
+@end
+
+
 @interface ORBindingArrayI : NSObject<ORBindingArray>
 -(ORBindingArrayI*) initORBindingArray: (ORInt) nb;
 -(id) at: (ORInt) value;

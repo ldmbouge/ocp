@@ -33,6 +33,7 @@
 -(id) visitIntMatrix:(id<ORIntMatrix>) v engine: (id<CPEngine>) engine;
 -(id) visitRestrict:(id<ORRestrict>)cstr engine: (id<CPEngine>) engine;
 -(id) visitAlldifferent: (id<ORAlldifferent>) cstr engine: (id<CPEngine>) engine;
+-(void) visitRegular:(id<ORRegular>) cstr engine:(id<CPEngine>)engine;
 -(id) visitCardinality: (id<ORCardinality>) cstr engine: (id<CPEngine>) engine;
 -(id) visitPacking: (id<ORPacking>) cstr engine: (id<CPEngine>) engine;
 -(id) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr engine: (id<CPEngine>) engine;
@@ -133,6 +134,7 @@
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
@@ -239,6 +241,7 @@
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;

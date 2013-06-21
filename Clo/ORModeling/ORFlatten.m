@@ -43,6 +43,7 @@
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr  {}
+-(void) visitRegular:(id<ORRegular>) cstr {}
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
@@ -279,6 +280,24 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    _result = cstr;
+}
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   id<ORIntRange> A = [[cstr automaton] alphabet];
+   id<ORIntRange> S = [[cstr automaton] states];
+   id<ORIntRange> R = [[cstr array] range];
+   id<ORIntRange> E = [ORFactory intRange:_into low:R.low up:R.up+1];
+   id<ORTable>    T = [[cstr automaton] transition];
+   id<ORIntSet>   F = [[cstr automaton] final];
+   id<ORIntVarArray> x = [cstr array];
+   id<ORIntVarArray> q = [ORFactory intVarArray:_into range:E domain:S];
+   [_into addConstraint:[ORFactory equalc:_into var:q[R.low] to:S.low]];
+   for(ORInt k=R.low;k <= R.up;k++)
+      [_into addConstraint:[ORFactory tableConstraint:T on:q[k] :x[k] :q[k+1]]];
+   [A enumerateWithBlock:^(ORInt s) {
+      if (![F member:s])
+         [_into addConstraint:[ORFactory notEqualc:_into var:q[R.up+1] to:s]];
+   }];
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {

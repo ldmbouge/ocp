@@ -536,7 +536,13 @@
    [tracker trackMutable: o];
    return o;
 }
-
++(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs
+{
+   id<ORTable> tt = [self table:tracker arity:3];
+   ORAutomatonI* o = [[ORAutomatonI alloc] init:a states:s transition:tf size:stf final:fs table:tt];
+   [tracker trackImmutable:o];
+   return o;
+}
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
@@ -1047,6 +1053,13 @@
    [[x tracker] trackObject:o];
    return o;
 }
++(id<ORConstraint>) regular:(id<ORIntVarArray>) x for:(id<ORAutomaton>)a
+{
+   id<ORConstraint> o = [[ORRegularI alloc] init:x for:a];
+   [[x tracker] trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>) packing:(id<ORTracker>)t item: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
 {
    // Rewritten in terms of the variable-driven load form.

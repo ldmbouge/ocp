@@ -236,6 +236,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];

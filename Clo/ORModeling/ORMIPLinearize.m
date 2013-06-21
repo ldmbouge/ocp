@@ -160,6 +160,10 @@
 {
    _result = cstr;
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   _result = cstr;
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
    _result = cstr;

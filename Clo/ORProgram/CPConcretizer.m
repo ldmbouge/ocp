@@ -190,6 +190,10 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"No concretization for regular (it is decomposed)"];
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

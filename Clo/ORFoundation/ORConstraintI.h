@@ -326,6 +326,12 @@
 -(ORAnnotation) annotation;
 @end
 
+@interface ORRegularI : ORConstraintI<ORRegular>
+-(id)init:(id<ORIntVarArray>)x  for:(id<ORAutomaton>)a;
+-(id<ORIntVarArray>) array;
+-(id<ORAutomaton>)automaton;
+@end
+
 @interface ORCardinalityI : ORConstraintI<ORCardinality>
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
 -(ORCardinalityI*) initORCardinalityI: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation:(ORAnnotation)c;

@@ -309,6 +309,11 @@ enum ORGroupType {
 -(ORAnnotation) annotation;
 @end
 
+@protocol ORRegular<ORConstraint>
+-(id<ORIntVarArray>) array;
+-(id<ORAutomaton>)automaton;
+@end
+
 @protocol ORAlgebraicConstraint <ORConstraint>
 -(id<ORExpr>) expr;
 -(ORAnnotation)annotation;

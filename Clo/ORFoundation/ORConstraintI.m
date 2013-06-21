@@ -1924,6 +1924,49 @@
 }
 @end
 
+@implementation ORRegularI {
+   id<ORIntVarArray>    _x;
+   id<ORAutomaton>   _auto;
+}
+-(id)init:(id<ORIntVarArray>)x  for:(id<ORAutomaton>)a
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _auto = a;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(id<ORAutomaton>)automaton
+{
+   return _auto;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORRegularI: %p IS [ ",self];
+   for(ORInt i = [_x low];i <= [_x up];i++) {
+      [buf appendFormat:@"%@%c",_x[i],i < [_x up] ? ',' : ' '];
+   }
+   [buf appendString:@"]>"];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitRegular:self];
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
 @implementation ORCardinalityI
 {
    id<ORIntVarArray> _x;

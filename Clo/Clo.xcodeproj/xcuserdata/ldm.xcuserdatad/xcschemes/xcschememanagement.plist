@@ -399,6 +399,11 @@
 			<key>orderHint</key>
 			<integer>8</integer>
 		</dict>
+		<key>regular.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>81</integer>
+		</dict>
 		<key>slab.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -738,6 +743,11 @@
 			<true/>
 		</dict>
 		<key>5BC1169F1595067900E0F5C8</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BC97A29177384C1005C48A8</key>
 		<dict>
 			<key>primary</key>
 			<true/>
