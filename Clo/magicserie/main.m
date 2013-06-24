@@ -19,7 +19,8 @@ int main (int argc, const char * argv[])
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
-         const ORInt n = [args size];
+         ORInt n = [args size];
+         n = 7;
          id<ORModel> mdl = [ORFactory createModel];
          id<ORIntRange> R = RANGE(mdl,0,n-1);
          id<ORIntVarArray> x = [ORFactory intVarArray:mdl range: R domain: R];
@@ -28,7 +29,7 @@ int main (int argc, const char * argv[])
          [mdl add: [Sum(mdl,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
          
          id<CPProgram> cp = [ORFactory createCPProgram:mdl];
-         [cp solve: ^{
+         [cp solveAll: ^{
             //NSLog(@"x = %@",x);
             //NSLog(@"model: %@",[[cp engine] model]);
             for(ORInt i=0;i<n;i++) {

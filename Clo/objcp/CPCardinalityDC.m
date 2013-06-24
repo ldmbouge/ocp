@@ -18,29 +18,29 @@
 @implementation CPCardinalityDC
 {
    id<CPIntVarArray> _x;
-   id<ORIntArray>  _lb;
-   id<ORIntArray>  _ub;
+   id<ORIntArray>    _lb;
+   id<ORIntArray>    _ub;
    
    CPIntVarI**     _var;
    ORInt           _varSize;
    
-   ORInt           _valMin;           // smallest value
-   ORInt           _valMax;           // largest value
-   ORInt           _valSize;          // number of values
-   ORInt*          _low;              // _low[i] = lower bound on value i
-   ORInt*          _up;               // _up[i]  = upper bound on value i
+   ORInt           _valMin;        // smallest value
+   ORInt           _valMax;        // largest value
+   ORInt           _valSize;       // number of values
+   ORInt*          _low;           // _low[i] = lower bound on value i
+   ORInt*          _up;            // _up[i]  = upper bound on value i
    
    ORInt*          _flow;           // the flow for a value
    ORInt           _nbAssigned;     // number of variable assigned
    
    ORInt*          _varMatch;       // the value of a variable
    ORInt*          _valFirstMatch;  // The first variable matched to a value
-   ORInt*          _nextMatch;      // The next variable matched to a value; indexed by variable id
-   ORInt*          _prevMatch;      // The previous variable matched to a value; indexed by variable id
+   ORInt*          _valNextMatch;   // The next variable matched to a value; indexed by variable id
+   ORInt*          _valPrevMatch;   // The previous variable matched to a value; indexed by variable id
    
    ORULong         _magic;
    ORULong*        _varMagic;
-   ORULong*        _valueMagic;
+   ORULong*        _valMagic;
    
    ORInt           _dfs;
    ORInt           _component;
@@ -58,17 +58,16 @@
    ORInt           _sinkHigh;
    
    ORInt*          _stack;
-   ORInt*          _type;
+   ORInt*          _nodeType;
    ORInt           _top;
    
-   bool            _posted;
+   BOOL            _posted;
 }
 
-static void initSCC(CPCardinalityDC* card);
-static void findSCC(CPCardinalityDC* card);
-static void findSCCvar(CPCardinalityDC* card,ORInt k);
-static void findSCCval(CPCardinalityDC* card,ORInt k);
-static void findSCCsink(CPCardinalityDC* card);
+static void SCC(CPCardinalityDC* card);
+static void SCCvar(CPCardinalityDC* card,ORInt k);
+static void SCCval(CPCardinalityDC* card,ORInt k);
+static void SCCsink(CPCardinalityDC* card);
 
 -(void) initInstanceVariables 
 {
@@ -80,220 +79,227 @@ static void findSCCsink(CPCardinalityDC* card);
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub
 {
    self = [super initCPCoreConstraint: [[x at:[x low]] engine]];
-    _x = x;
-    _lb = lb;
-    _ub = ub;
-    [self initInstanceVariables];
-    return self;
+   _x = x;
+   _lb = lb;
+   _ub = ub;
+   [self initInstanceVariables];
+   return self;
 }
 
 -(void) dealloc
 {
 //    NSLog(@"CPCardinalityDC dealloc called ...");
     if (_posted) {
-        free(_var);
-        _low += _valMin;
-        _up += _valMin;
-        free(_low);
-        free(_up);
-        _flow += _valMin;
-        free(_flow);
-        free(_varMatch);
-        _valFirstMatch += _valMin;
-        free(_valFirstMatch);
-        free(_nextMatch);
-        free(_prevMatch);
-        
-        _valComponent += _valMin;
-        free(_valComponent);
-        _valDfs += _valMin;
-        free(_valDfs);
-        _valHigh += _valMin;
-        free(_valHigh);
-        free(_varComponent);
-        free(_varDfs);
-        free(_varHigh);
-        free(_stack);
-        free(_type);
+       
+       free(_var);
+       free(_varMatch);
+       free(_valNextMatch);
+       free(_valPrevMatch);
+       free(_varComponent);
+       free(_varDfs);
+       free(_varHigh);
+       
+       _low += _valMin;
+       _up += _valMin;
+       _flow += _valMin;
+       _valFirstMatch += _valMin;
+       _valComponent += _valMin;
+       _valDfs += _valMin;
+       _valHigh += _valMin;
+       
+       free(_low);
+       free(_up);
+       free(_flow);
+       free(_valFirstMatch);
+       free(_valComponent);
+       free(_valDfs);
+       free(_valHigh);
+       free(_stack);
+       free(_nodeType);
+       
     }
-    [super dealloc]; 
+    [super dealloc];
 }
 
--(void) createVariableArray
+-(void) allocate
 {
-    ORInt low = [_x low];
-    ORInt up = [_x up];
-    _varSize = (up - low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(ORInt i = 0; i < _varSize; i++)
-        _var[i] = (CPIntVarI*) [_x at: low + i];    
+   ORInt low, up;
+   
+   low = [_x low];
+   _varSize = ([_x up] - low + 1);
+   _var = malloc(_varSize * sizeof(CPIntVarI*));
+   for(ORInt i = 0; i < _varSize; i++)
+      _var[i] = (CPIntVarI*) [_x at: low + i];
+   
+   _valMin = min([_lb low],[_ub low]);
+   _valMax = max([_lb up],[_ub up]);
+   
+   ORInt l = [_x low];
+   ORInt u = [_x up];
+   for(ORInt i = l; i <= u; i++) {
+      id<CPIntVar> v = [_x at: i];
+      ORInt lb = [v min];
+      if (lb < _valMin)
+         _valMin = lb;
+      ORInt ub = [v max];
+      if (ub > _valMax)
+         _valMax = ub;
+   }
+   _valSize = _valMax - _valMin + 1;
+   
+   _low = malloc(_valSize * sizeof(ORInt));
+   _up = malloc(_valSize * sizeof(ORInt));
+   _low -= _valMin;
+   _up -= _valMin;
+   
+   for(ORInt i = _valMin; i <= _valMax; i++) {
+      _low[i] = 0;
+      _up[i] = _varSize;
+   }
+   
+   low = [_lb low];
+   up = [_lb up];
+   for(ORInt i = low; i <= up; i++)
+      _low[i] = [_lb at: i];
+   
+   low = [_ub low];
+   up = [_ub up];
+   for(ORInt i = low; i <= up; i++)
+      _up[i] = [_ub at: i];
+   
+   _varComponent = malloc(sizeof(ORInt)*_varSize);
+   _varDfs = malloc(sizeof(ORInt)*_varSize);
+   _varHigh = malloc(sizeof(ORInt)*_varSize);
+   
+   _valComponent = malloc(sizeof(ORInt)*_valSize);
+   _valDfs = malloc(sizeof(ORInt)*_valSize);
+   _valHigh = malloc(sizeof(ORInt)*_valSize);
+   
+   _valComponent -= _valMin;
+   _valDfs -= _valMin;
+   _valHigh -= _valMin;
+   
+   _stack = malloc(sizeof(ORInt)*(_varSize + _valSize + 1));
+   _nodeType = malloc(sizeof(ORInt)*(_varSize + _valSize + 1));
 }
 
-static void findValueRange(id<CPIntVarArray> x,ORInt* low,ORInt* up)
+
+static void unmatchVar(CPCardinalityDC* card,ORInt v)
 {
-    ORInt l = [x low];
-    ORInt u = [x up];
-    for(ORInt i = l; i <= u; i++) {
-        id<CPIntVar> v = [x at: i];
-        ORInt lb = [v min]; 
-        if (lb < *low)
-            *low = lb;
-        ORInt ub = [v max];
-        if (ub > *up)
-            *up = ub;
-    }
+   if (card->_varMatch[v] == MAXINT)
+      return;
+   ORInt w = card->_varMatch[v];
+   card->_nbAssigned--;
+   card->_flow[w]--;
+   ORInt p = card->_valPrevMatch[v];
+   ORInt n = card->_valNextMatch[v];
+   card->_varMatch[v] = MAXINT;
+   card->_valNextMatch[v] = MAXINT;
+   card->_valPrevMatch[v] = MAXINT;
+   if (p != MAXINT)
+      card->_valNextMatch[p] = n;
+   else
+      card->_valFirstMatch[w] = n;
+   if (n != MAXINT)
+      card->_valPrevMatch[n] = p;
 }
 
--(void) initializeCardinalityArrays
+static void matchVar(CPCardinalityDC* card,ORInt v,ORInt w)
 {
-    _valMin = min([_lb low],[_ub low]);
-    _valMax = max([_lb up],[_ub up]);
-    findValueRange(_x,&_valMin,&_valMax);
-    _valSize = _valMax - _valMin + 1;
-//    printf("_valSize: %d \n",_valSize);
-    _low = malloc(_valSize * sizeof(ORInt));
-    _up = malloc(_valSize * sizeof(ORInt));
-    _low -= _valMin;
-    _up -= _valMin;
-    for(ORInt i = _valMin; i <= _valMax; i++) {
-        _low[i] = 0;
-        _up[i] = _varSize;
-    }
-    ORInt low = [_lb low];
-    ORInt up = [_lb up];
-    for(ORInt i = low; i <= up; i++) 
-        _low[i] = [_lb at: i];
-    low = [_ub low];
-    up = [_ub up];
-    for(ORInt i = low; i <= up; i++) 
-        _up[i] = [_ub at: i];
-//    for(ORInt i = _valMin; i <= _valMax; i++) 
-//        printf(" %d -> [%d,%d] \n",i,_low[i],_up[i]);
+    card->_nbAssigned++;
+    card->_flow[w]++;
+    card->_varMatch[v] = w;
+    ORInt cv = card->_valFirstMatch[w];
+    card->_valFirstMatch[w] = v;
+    card->_valNextMatch[v] = cv;
+    card->_valPrevMatch[v] = MAXINT;
+    if (cv != MAXINT)
+        card->_valPrevMatch[cv] = v;
+}
+
+static void assign(CPCardinalityDC* card,ORInt v,ORInt w)
+{
+   unmatchVar(card,v);
+   matchVar(card,v,w);
 }
 
 -(void) initializeFlow
 {
-    _magic = 0;
-    
-    _flow = malloc(_valSize * sizeof(ORInt));
-    _flow -= _valMin;
-    for(ORInt v = _valMin; v <= _valMax; v++)
-        _flow[v] = 0;
-    
-    _valFirstMatch = malloc(_valSize * sizeof(ORInt));
-    _valFirstMatch -= _valMin;
-    for(ORInt v = _valMin; v <= _valMax; v++)
-        _valFirstMatch[v] = MAXINT;
-
-    _varMatch = malloc(_varSize * sizeof(ORInt));
-    for(ORInt i = 0; i < _varSize; i++)
-        _varMatch[i] = MAXINT;
-    
-    _nextMatch = malloc(_varSize * sizeof(ORInt));
-    for(ORInt i = 0; i < _varSize; i++)
-        _nextMatch[i] = MAXINT;
-    
-    _prevMatch = malloc(_varSize * sizeof(ORInt));
-    for(ORInt i = 0; i < _varSize; i++)
-        _prevMatch[i] = MAXINT;
-    
-    _varMagic = malloc(_varSize * sizeof(ORULong));
-    for(ORInt i = 0; i < _varSize; i++)
-        _varMagic[i] = 0;
-    
-    _valueMagic = malloc(_valSize * sizeof(ORULong));
-    _valueMagic -= _valMin;
-    for(ORInt v = _valMin; v <= _valMax; v++)
-        _valueMagic[v] = 0;
+   _magic = 0;
+   
+   _varMatch = malloc(_varSize * sizeof(ORInt));
+   for(ORInt v = 0; v < _varSize; v++)
+      _varMatch[v] = MAXINT;
+   
+   _valNextMatch = malloc(_varSize * sizeof(ORInt));
+   for(ORInt v = 0; v < _varSize; v++)
+      _valNextMatch[v] = MAXINT;
+   
+   _valPrevMatch = malloc(_varSize * sizeof(ORInt));
+   for(ORInt v = 0; v < _varSize; v++)
+      _valPrevMatch[v] = MAXINT;
+   
+   _varMagic = malloc(_varSize * sizeof(ORULong));
+   for(ORInt v = 0; v < _varSize; v++)
+      _varMagic[v] = 0;
+   
+   _flow = malloc(_valSize * sizeof(ORInt));
+   _flow -= _valMin;
+   for(ORInt w = _valMin; w <= _valMax; w++)
+      _flow[w] = 0;
+   
+   _valFirstMatch = malloc(_valSize * sizeof(ORInt));
+   _valFirstMatch -= _valMin;
+   for(ORInt w = _valMin; w <= _valMax; w++)
+      _valFirstMatch[w] = MAXINT;
+   
+   _valMagic = malloc(_valSize * sizeof(ORULong));
+   _valMagic -= _valMin;
+   for(ORInt w = _valMin; w <= _valMax; w++)
+      _valMagic[w] = 0;
+   
+   _nbAssigned = 0;
+   for(ORInt i = 0; i < _varSize; i++) {
+      ORInt m = minDom(_var[i]);
+      ORInt M = maxDom(_var[i]);
+      for(ORInt v = m; v <= M; v++)
+         if (_flow[v] < _up[v] && [_var[i] member: v]) {
+            matchVar(self,i,v);
+            break;
+         }
+   }
 }
 
-// assumes that the variable is matched
-static void unmatchVariable(CPCardinalityDC* card,ORInt i)
-{
-    ORInt v = card->_varMatch[i];
-    card->_nbAssigned--;
-    card->_flow[v]--;
-    ORInt p = card->_prevMatch[i];
-    ORInt n = card->_nextMatch[i];
-    card->_varMatch[i] = MAXINT;
-    card->_nextMatch[i] = MAXINT;
-    card->_prevMatch[i] = MAXINT;
-    if (p != MAXINT)
-        card->_nextMatch[p] = n;
-    else 
-        card->_valFirstMatch[v] = n;
-    if (n != MAXINT)
-        card->_prevMatch[n] = p;
-}
-    
-static void matchVariable(CPCardinalityDC* card,ORInt i,ORInt v)
-{
-    card->_nbAssigned++;
-    card->_flow[v]++;
-    card->_varMatch[i] = v;
-    ORInt j = card->_valFirstMatch[v];
-    card->_valFirstMatch[v] = i;
-    card->_nextMatch[i] = j;
-    card->_prevMatch[i] = MAXINT;
-    if (j != MAXINT)
-        card->_prevMatch[j] = i;
-}
+static BOOL augmentValPath(CPCardinalityDC* card,ORInt v);
 
-static void assign(CPCardinalityDC* card,ORInt i,ORInt v)
-{
-    if (card->_varMatch[i] != MAXINT)
-        unmatchVariable(card,i);
-    matchVariable(card,i,v);
-}
-
--(void) greedyFlow
-{
-    _nbAssigned = 0;
-    for(ORInt i = 0; i < _varSize; i++) {
-        ORInt m = minDom(_var[i]);
-        ORInt M = maxDom(_var[i]);
- //       ORInt m = [_var[i] min];
- //       ORInt M = [_var[i] max];
-        for(ORInt v = m; v <= M; v++)
-            if (_flow[v] < _up[v] && [_var[i] member: v]) {
-                matchVariable(self,i,v);
-                break;
-            }
-    }
-}
-static BOOL augmentValuePath(CPCardinalityDC* card,ORInt v);
-
-static BOOL augmentPath(CPCardinalityDC* card,ORInt i)
+static BOOL augmentVarPath(CPCardinalityDC* card,ORInt i)
 {
     if (card->_varMagic[i] != card->_magic) {
         card->_varMagic[i] = card->_magic;
-        ORInt m = minDom(card->_var[i]);
-        ORInt M = maxDom(card->_var[i]);
-//        ORInt m = [card->_var[i] min];
-//       ORInt M = [card->_var[i] max];
-        for(ORInt v = m; v <= M; v++)
-            if (card->_varMatch[i] != v && [card->_var[i] member: v]) 
-                if (augmentValuePath(card,v)) {
-                    assign(card,i,v);
+        ORBounds b = bounds(card->_var[i]);
+        for(ORInt w = b.min; w <= b.max; w++)
+            if (card->_varMatch[i] != w && memberDom(card->_var[i],w))
+                if (augmentValPath(card,w)) {
+                    assign(card,i,w);
                     return TRUE;
                 }
     }
     return FALSE;
 }
 
-static BOOL augmentValuePath(CPCardinalityDC* card,ORInt v)
+static BOOL augmentValPath(CPCardinalityDC* card,ORInt i)
 {
-    if (card->_valueMagic[v] != card->_magic) {  
-        card->_valueMagic[v] = card->_magic;
-        if (card->_flow[v] < card->_up[v])  // forward
+    if (card->_valMagic[i] != card->_magic) {
+        card->_valMagic[i] = card->_magic;
+        if (card->_flow[i] < card->_up[i])  // forward
             return TRUE;
-        if (card->_flow[v] == 0)            // cannot borrow
+        if (card->_flow[i] == 0)            // cannot borrow
             return FALSE;
-        ORInt i = card->_valFirstMatch[v];
-        while (i != MAXINT) {
-            if (augmentPath(card,i))
+        ORInt v = card->_valFirstMatch[i];
+        while (v != MAXINT) {
+            if (augmentVarPath(card,v))
                 return TRUE;
-            i = card->_nextMatch[i];    
+            v = card->_valNextMatch[v];
         }
     }
     return FALSE;
@@ -301,280 +307,269 @@ static BOOL augmentValuePath(CPCardinalityDC* card,ORInt v)
 
 static BOOL findMaxFlow(CPCardinalityDC* card)
 {
-    if (card->_nbAssigned < card->_varSize) {
-        for(ORInt i = 0; i < card->_varSize; i++)
-            if (card->_varMatch[i] == MAXINT) {
-                card->_magic++;
-                if (!augmentPath(card,i))
-                    return FALSE;
+   if (card->_nbAssigned < card->_varSize) {
+      for(ORInt v = 0; v < card->_varSize; v++)
+         if (card->_varMatch[v] == MAXINT) {
+            card->_magic++;
+            if (!augmentVarPath(card,v))
+               return FALSE;
+         }
+   }
+   return TRUE;
+}
+
+static BOOL findFeasibleFlowToValueFromValue(CPCardinalityDC* card,ORInt val,ORInt w);
+
+static BOOL findFeasibleFlowToValueFromVariable(CPCardinalityDC* card,ORInt val,ORInt i)
+{
+   if (card->_varMagic[i] != card->_magic) { // forward
+      card->_varMagic[i] = card->_magic;
+      if (card->_varMatch[i] != val && memberDom(card->_var[i],val)) {
+         assign(card,i,val);
+         return TRUE;
+      }
+      ORBounds b = bounds(card->_var[i]);
+      for(ORInt w = b.min; w <= b.max; w++)
+         if (w != val && card->_varMatch[i] != w && memberDom(card->_var[i],w))
+            if (findFeasibleFlowToValueFromValue(card,val,w)) {
+               assign(card,i,w);
+               return TRUE;
             }
-    }
-    return TRUE;
+   }
+   return FALSE;
 }
 
-static BOOL findFeasibleFlowFromValue(CPCardinalityDC* card,ORInt v,ORInt w);
 
-static BOOL findFeasibleFlowFromVariable(CPCardinalityDC* card,ORInt v,ORInt i)
+static BOOL findFeasibleFlowToValueFromValue(CPCardinalityDC* card,ORInt val,ORInt w)
 {
-    if (card->_varMagic[i] != card->_magic) { // forward
-        card->_varMagic[i] = card->_magic;
-        if (card->_varMatch[i] != v && [card->_var[i] member: v]) { 
-            assign(card,i,v);
+   if (card->_valMagic[w] != card->_magic) {
+      card->_valMagic[w] = card->_magic;
+      ORInt v = card->_valFirstMatch[w];
+      while (v != MAXINT) {
+         if (findFeasibleFlowToValueFromVariable(card,val,v))
             return TRUE;
-        }
- //     ORInt m = [card->_var[i] min];
- //      ORInt M = [card->_var[i] max];
-        ORInt m = minDom(card->_var[i]);
-        ORInt M = maxDom(card->_var[i]);
-        for(ORInt w = m; w <= M; w++)
-            if (w != v && card->_varMatch[i] != w && [card->_var[i] member: w]) 
-                if (findFeasibleFlowFromValue(card,v,w)) {
-                    assign(card,i,w);
-                    return TRUE;
-                }
-    }
-    return FALSE;
+         v = card->_valNextMatch[v];
+      }
+   }
+   return FALSE;
 }
-       
-    
-static BOOL findFeasibleFlowFromValue(CPCardinalityDC* card,ORInt v,ORInt w)
+
+static BOOL findFeasibleFlowToValue(CPCardinalityDC* card,ORInt val)
 {
-    if (card->_valueMagic[w] != card->_magic) {
-        card->_valueMagic[w] = card->_magic;
-        ORInt i = card->_valFirstMatch[w];
-        while (i != MAXINT) {
-            if (findFeasibleFlowFromVariable(card,v,i))
-                return TRUE;
-            i = card->_nextMatch[i];
-        }
-    }
+   for(ORInt w = card->_valMin; w <= card->_valMax; w++) // borrowing
+      if (card->_flow[w] > card->_low[w])
+         if (findFeasibleFlowToValueFromValue(card,val,w))
+         return TRUE;
     return FALSE;
 }
 
-static BOOL findFeasibleFlowTo(CPCardinalityDC* card,ORInt v)
-{
-    for(ORInt w = card->_valMin; w <= card->_valMax; w++) // borrowing
-        if (card->_flow[w] > card->_low[w] && findFeasibleFlowFromValue(card,v,w))
-            return TRUE;
-    return FALSE;
-}
 static BOOL findFeasibleFlow(CPCardinalityDC* card)
 {
-    for(ORInt v = card->_valMin; v <= card->_valMax; v++)
-        while (card->_flow[v] < card->_low[v]) {
+    for(ORInt w = card->_valMin; w <= card->_valMax; w++)
+        while (card->_flow[w] < card->_low[w]) {
             card->_magic++;
-            if (!findFeasibleFlowTo(card,v))
+            if (!findFeasibleFlowToValue(card,w))
                 return FALSE; 
         }
     return TRUE;
 }
 
--(void) initializeSCCArrays
+static void SCC(CPCardinalityDC* card)
 {
-    _varComponent = malloc(sizeof(ORInt)*_varSize*2);
-    _varDfs = malloc(sizeof(ORInt)*_varSize*2);
-    _varHigh = malloc(sizeof(ORInt)*_varSize*2);    
-    _valComponent = malloc(sizeof(ORInt)*_valSize*2);
-    _valComponent -= _valMin;
-    _valDfs = malloc(sizeof(ORInt)*_valSize*2);
-    _valDfs -= _valMin;
-    _valHigh = malloc(sizeof(ORInt)*_valSize*2);
-    _valHigh -= _valMin;
-        
-    _stack = malloc(sizeof(ORInt)*(_varSize + _valSize + 1)*2);
-    _type = malloc(sizeof(ORInt)*(_varSize + _valSize + 1)*2);   
-}
-    
-static void initSCC(CPCardinalityDC* card)
-{
-    for(ORInt i = 0 ; i < card->_varSize; i++) {
-        card->_varComponent[i] = 0;
-        card->_varDfs[i] = 0;
-        card->_varHigh[i] = 0;
-    }
-    
-    for(ORInt v = card->_valMin; v <= card->_valMax; v++) {
-        card->_valComponent[v] = 0;
-        card->_valDfs[v] = 0;
-        card->_valHigh[v] = 0;
-    }
-    
-    card->_sinkComponent = 0;
-    card->_sinkDfs = 0;
-    card->_sinkHigh = 0;
-    
-    card->_top = 0;
-    card->_dfs = card->_varSize + card->_valSize + 1;
-    card->_component = 0; 
-    
-}
-static void findSCC(CPCardinalityDC* card)
-{
-    initSCC(card);
-    for(ORInt i = 0; i < card->_varSize; i++) 
-        if (!card->_varDfs[i])
-            findSCCvar(card,i);
-}
-static void findSCCvar(CPCardinalityDC* card,ORInt k)
-{
-    ORInt* _varDfs = card->_varDfs;
-    ORInt* _varHigh = card->_varHigh;
-    ORInt* _stack = card->_stack;
-    ORInt* _type = card->_type;
-    ORInt* _varMatch = card->_varMatch;
-    ORInt* _valDfs = card->_valDfs;
-    ORInt* _valHigh = card->_valHigh;
-    ORInt* _valComponent = card->_valComponent;
-    ORInt* _varComponent = card->_varComponent;
-    
-    _varDfs[k] = card->_dfs--;
-    _varHigh[k] = _varDfs[k];
-    _stack[card->_top] = k;
-    _type[card->_top] = 0;
-    card->_top++;
-    
-    CPIntVarI* x = card->_var[k];
-    ORBounds bx = [x bounds];
-    for(ORInt w = bx.min; w <= bx.max; w++) {
-        if (_varMatch[k] != w) {
-            if (memberBitDom(x,w)) {
-                ORInt valDfs = _valDfs[w];
-                if (!valDfs) {
-                    findSCCval(card,w);
-                    if (_valHigh[w] > _varHigh[k])
-                        _varHigh[k] = _valHigh[w];
-                }
-                else if (valDfs > _varDfs[k] && !_valComponent[w]) {
-                    if (valDfs > _varHigh[k])
-                        _varHigh[k] = valDfs;
-                }
-            }
-        }
-    }
-    
-    if (_varHigh[k] == _varDfs[k]) {
-        card->_component++;
-        do {
-            card->_top--;
-            ORInt v = _stack[card->_top];
-            ORInt t = _type[card->_top];
-            if (t == 0)
-                _varComponent[v] = card->_component;
-            else if (t == 1)
-                _valComponent[v] = card->_component;
-            else 
-                card->_sinkComponent = card->_component;
-            if (t == 0 && v == k)
-                break;
-        } while (true);
-    }    
+   for(ORInt v = 0 ; v < card->_varSize; v++) {
+      card->_varComponent[v] = 0;
+      card->_varDfs[v] = 0;
+   }
+   for(ORInt w = card->_valMin; w <= card->_valMax; w++) {
+      card->_valComponent[w] = 0;
+      card->_valDfs[w] = 0;
+   }
+   card->_sinkComponent = 0;
+   card->_sinkDfs = 0;
+   
+   card->_top = 0;
+   card->_dfs = card->_varSize + card->_valSize + 1;
+   card->_component = 0;
+   
+   for(ORInt v = 0; v < card->_varSize; v++)
+      if (!card->_varDfs[v])
+         SCCFromVariable(card,v);
 }
 
-static void findSCCval(CPCardinalityDC* card,ORInt v)
+static void SCCFromVariable(CPCardinalityDC* card,ORInt k)
 {
-    ORInt* _varDfs = card->_varDfs;
-    ORInt* _varHigh = card->_varHigh;
-    ORInt* _stack = card->_stack;
-    ORInt* _type = card->_type;
-    ORInt* _valDfs = card->_valDfs;
-    ORInt* _valHigh = card->_valHigh;
-    ORInt* _valComponent = card->_valComponent;
-    ORInt* _varComponent = card->_varComponent;
-    ORInt* _valFirstMatch = card->_valFirstMatch;
-    
-    _valDfs[v] = card->_dfs--;
-    _valHigh[v] = _valDfs[v];
-    _stack[card->_top] = v;
-    _type[card->_top] = 1;
-    card->_top++;
-    
-    // borrowing
-    ORInt w = _valFirstMatch[v];
-    while (w != MAXINT) {
-        if (!_varDfs[w]) {
-            findSCCvar(card,w);
-            if (_varHigh[w] > _valHigh[v])
-                _valHigh[v] = _varHigh[w];
-        }
-        else if ((_varDfs[w] > _valDfs[v]) && (!_varComponent[w])) {
-            if (_varDfs[w] > _valHigh[v])
-                _valHigh[v] = _varDfs[w];
-        }
-        w = card->_nextMatch[w];
-    }
-    // forward 
-    if (card->_flow[v] < card->_up[v]) {
-        if (!card->_sinkDfs) {
-            findSCCsink(card);
-            if (card->_sinkHigh > _valHigh[v])
-                _valHigh[v] = card->_sinkHigh;
-        }
-        else if ((card->_sinkDfs > _valDfs[v]) && (!card->_sinkComponent)) {
-            if (card->_sinkDfs > _valHigh[v])
-                _valHigh[v] = card->_sinkDfs;
-        }
-    }
-    
-    if (_valHigh[v] == _valDfs[v]) {
-        card->_component++;
-        do {
-            card->_top--;
-            ORInt i = _stack[card->_top];
-            ORInt t = _type[card->_top];
-            if (t == 0)
-                _varComponent[i] = card->_component;
-            else if (t == 1)
-                _valComponent[i] = card->_component;
-            else 
-               card->_sinkComponent = card->_component; 
-            if (t == 1 && v == i)
-                break;
-        } while (true);
-    }    
+   ORInt* varMatch = card->_varMatch;
+   ORInt* varComponent = card->_varComponent;
+   ORInt* varDfs = card->_varDfs;
+   ORInt* varHigh = card->_varHigh;
+ 
+   ORInt* valComponent = card->_valComponent;
+   ORInt* valDfs = card->_valDfs;
+   ORInt* valHigh = card->_valHigh;
+   
+   ORInt* stack = card->_stack;
+   ORInt* nodeType = card->_nodeType;
+   
+   varDfs[k] = card->_dfs--;
+   varHigh[k] = varDfs[k];
+   stack[card->_top] = k;
+   nodeType[card->_top] = 0;
+   card->_top++;
+   
+   CPIntVarI* x = card->_var[k];
+   ORBounds bx = bounds(x);
+   for(ORInt w = bx.min; w <= bx.max; w++) {
+      if (varMatch[k] != w) {
+         if (memberBitDom(x,w)) {
+            ORInt wDfs = valDfs[w];
+            if (!wDfs) {
+               SCCFromValue(card,w);
+               if (valHigh[w] > varHigh[k])
+                  varHigh[k] = valHigh[w];
+            }
+            else if (wDfs > varDfs[k] && !valComponent[w]) {
+               if (wDfs > varHigh[k])
+                  varHigh[k] = wDfs;
+            }
+         }
+      }
+   }
+   
+   if (varHigh[k] == varDfs[k]) {
+      card->_component++;
+      do {
+         card->_top--;
+         ORInt x = stack[card->_top];
+         ORInt t = nodeType[card->_top];
+         if (t == 0) {
+            varComponent[x] = card->_component;
+            if (x == k)
+               break;
+         }
+         else if (t == 1)
+            valComponent[x] = card->_component;
+         else
+            card->_sinkComponent = card->_component;
+         
+      }
+      while (true);
+   }
 }
-static void findSCCsink(CPCardinalityDC* card)
+
+static void SCCFromValue(CPCardinalityDC* card,ORInt w)
 {
-   ORInt* _stack = card->_stack;
-   ORInt* _type = card->_type;
-   ORInt* _valDfs = card->_valDfs;
-   ORInt* _valHigh = card->_valHigh;
-   ORInt* _valComponent = card->_valComponent;
-   ORInt* _low = card->_low;
-   ORInt* _flow = card->_flow;
+   ORInt* varComponent = card->_varComponent;
+   ORInt* varDfs = card->_varDfs;
+   ORInt* varHigh = card->_varHigh;
+   
+   ORInt* valComponent = card->_valComponent;
+   ORInt* valDfs = card->_valDfs;
+   ORInt* valHigh = card->_valHigh;
+   ORInt* valFirstMatch = card->_valFirstMatch;
+   
+   ORInt* stack = card->_stack;
+   ORInt* nodeType = card->_nodeType;
+   
+   valDfs[w] = card->_dfs--;
+   valHigh[w] = valDfs[w];
+   stack[card->_top] = w;
+   nodeType[card->_top] = 1;
+   card->_top++;
+   
+   ORInt v = valFirstMatch[w];
+   while (v != MAXINT) {
+      ORInt vDfs = varDfs[v];
+      if (!vDfs) {
+         SCCFromVariable(card,v);
+         if (varHigh[v] > valHigh[w])
+            valHigh[w] = varHigh[v];
+      }
+      else if ((vDfs > valDfs[w]) && !varComponent[v]) {
+         if (vDfs > valHigh[w])
+            valHigh[w] = varDfs[v];
+      }
+      v = card->_valNextMatch[v];
+   }
+
+   if (card->_flow[w] < card->_up[w]) {
+      if (!card->_sinkDfs) {
+         SCCFromSink(card);
+         if (card->_sinkHigh > valHigh[w])
+            valHigh[w] = card->_sinkHigh;
+      }
+      else if ((card->_sinkDfs > valDfs[w]) && !card->_sinkComponent) {
+         if (card->_sinkDfs > valHigh[w])
+            valHigh[w] = card->_sinkDfs;
+      }
+   }
+   
+   if (valHigh[w] == valDfs[w]) {
+      card->_component++;
+      do {
+         card->_top--;
+         ORInt x = stack[card->_top];
+         ORInt t = nodeType[card->_top];
+         if (t == 0)
+            varComponent[x] = card->_component;
+         else if (t == 1) {
+            valComponent[x] = card->_component;
+            if (w == x)
+               break;
+         }
+         else
+            card->_sinkComponent = card->_component;
+         
+      }
+      while (true);
+   }
+}
+
+static void SCCFromSink(CPCardinalityDC* card)
+{
+   ORInt* stack = card->_stack;
+   ORInt* nodeType = card->_nodeType;
+   ORInt* valDfs = card->_valDfs;
+   ORInt* valHigh = card->_valHigh;
+   ORInt* valComponent = card->_valComponent;
+   ORInt* low = card->_low;
+   ORInt* flow = card->_flow;
    
    card->_sinkDfs  = card->_dfs--;
    card->_sinkHigh = card->_sinkDfs;
-   _stack[card->_top] = MAXINT;
-   _type[card->_top] = 2;
+   stack[card->_top] = MAXINT;
+   nodeType[card->_top] = 2;
    card->_top++;
    
-   for(ORInt v = card->_valMin; v <= card->_valMax; v++) 
-      if (_flow[v] > _low[v]) {
-         if (!_valDfs[v]) {
-            findSCCval(card,v);
-            if (_valHigh[v] > card->_sinkHigh)
-               card->_sinkHigh = _valHigh[v];
+   for(ORInt w = card->_valMin; w <= card->_valMax; w++)
+      if (flow[w] > low[w]) {
+         ORInt wDfs = valDfs[w];
+         if (!wDfs) {
+            SCCFromValue(card,w);
+            if (valHigh[w] > card->_sinkHigh)
+               card->_sinkHigh = valHigh[w];
          }
-         else if ((_valDfs[v] > card->_sinkDfs) && !_valComponent[v]) {
-            if (_valDfs[v] > card->_sinkHigh)
-               card->_sinkHigh = _valDfs[v];
+         else if ((wDfs > card->_sinkDfs) && !valComponent[w]) {
+            if (wDfs > card->_sinkHigh)
+               card->_sinkHigh = wDfs;
          }
       }
    
    if (card->_sinkHigh == card->_sinkDfs) {
       card->_component++;
       do {
-         ORInt i = _stack[--(card->_top)];
-         int t = _type[card->_top];
+         --card->_top;
+         ORInt x = stack[card->_top];
+         int t = nodeType[card->_top];
          if (t == 0)
-            card->_varComponent[i] = card->_component;
+            card->_varComponent[x] = card->_component;
          else if (t == 1)
-            card->_valComponent[i] = card->_component;
-         else
+            card->_valComponent[x] = card->_component;
+         else {
             card->_sinkComponent = card->_component;
-         if (t == 2)
             break;
-      } while (true);
+         }
+      }
+      while (true);
    }
 }
 
@@ -582,12 +577,12 @@ static void findSCCsink(CPCardinalityDC* card)
 {
     if (!_posted) {
        _posted = true;
-       [self createVariableArray];
-       [self initializeCardinalityArrays];
+       
+       [self allocate];
        [self initializeFlow];
-       [self initializeSCCArrays];
-       [self greedyFlow];
+       
        [self propagate];
+       
        for(ORInt i = 0; i < _varSize; i++)
           if (![_var[i] bound])
              [_var[i] whenChangePropagate: self];
@@ -595,47 +590,50 @@ static void findSCCsink(CPCardinalityDC* card)
     return ORSuspend;
 }
 
--(void) printFlows
+
+static BOOL isFeasible(CPCardinalityDC* card)
 {
-    for(ORInt v = _valMin; v <= _valMax; v++)
-        printf("Flow[%d] = %d \n",v,_flow[v]);
-    for(ORInt v = _valMin; v <= _valMax; v++)
-        printf("valFirstMatch[%d] = %d \n",v,_valFirstMatch[v]);
-    for(ORInt i = 0; i < _varSize; i++)
-        printf("varMatch[%d] = %d \n",i,_varMatch[i]);    
-    for(ORInt i = 0; i < _varSize; i++)
-        printf("nextMatch[%d] = %d \n",i,_nextMatch[i]); 
-    for(ORInt i = 0; i < _varSize; i++)
-        printf("prevMatch[%d] = %d \n",i,_prevMatch[i]);
-    printf("\n"); 
+   ORInt* _varMatch = card->_varMatch;
+   BOOL needFlow = FALSE;
+   for(ORInt i = 0; i < card->_varSize; i++)
+      if (_varMatch[i] != MAXINT) {
+         if (!memberDom(card->_var[i],_varMatch[i])) {
+            unmatchVar(card,i);
+            needFlow = TRUE;
+         }
+      }
+      else
+         needFlow = TRUE;
+   
+   if (!findMaxFlow(card))
+      return FALSE;
+   if (!findFeasibleFlow(card))
+      return FALSE;
+   return TRUE;
 }
 
--(void) prune
+static void prune(CPCardinalityDC* card)
 {
-   findSCC(self);
-   for(int i = 0; i < _varSize; i++) {
-      CPIntVarI* x = _var[i];
-      ORInt m = minDom(x);
-      ORInt M = maxDom(x);
-      for(ORInt v = m; v <= M; v++) 
-         if (_varMatch[i] != v) 
-            if (_varComponent[i] != _valComponent[v]) 
-               if (memberDom(x,v))
-                  removeDom(x,v);
+   SCC(card);
+   for(int v = 0; v < card->_varSize; v++) {
+      CPIntVarI* x = card->_var[v];
+      ORBounds b = bounds(x);
+      for(ORInt w = b.min; w <= b.max; w++)
+         if (card->_varMatch[v] != w)
+            if (card->_varComponent[v] != card->_valComponent[w])
+               if (memberDom(x,w))
+                  removeDom(x,w);
    }
 }
-    
+
+
 -(void) propagate
 {
-    for(ORInt i = 0; i < _varSize; i++)
-       if (_varMatch[i] != MAXINT && !memberDom(_var[i],_varMatch[i]))
-          unmatchVariable(self,i);
-    if (!findMaxFlow(self))
-       failNow();
-    if (!findFeasibleFlow(self))
-       failNow();
-    [self prune];
+   if (!isFeasible(self))
+      failNow();
+   prune(self);
 }
+
 -(NSSet*) allVars
 {
     if (_posted)
@@ -644,6 +642,7 @@ static void findSCCsink(CPCardinalityDC* card)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: allVars called before the constraints is posted"];
     return NULL;
 }
+
 -(ORUInt) nbUVars
 {
     if (_posted) {
@@ -656,6 +655,7 @@ static void findSCCsink(CPCardinalityDC* card)
         @throw [[ORExecutionError alloc] initORExecutionError: "Cardinality: nbUVars called before the constraints is posted"];
     return 0;
 }
+
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
     [super encodeWithCoder:aCoder];
@@ -663,6 +663,7 @@ static void findSCCsink(CPCardinalityDC* card)
     [aCoder encodeObject:_lb];
     [aCoder encodeObject:_ub];
 }
+
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
     self = [super initWithCoder:aDecoder];
