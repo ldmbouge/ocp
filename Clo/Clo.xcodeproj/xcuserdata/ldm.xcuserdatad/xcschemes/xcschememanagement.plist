@@ -304,6 +304,11 @@
 			<key>orderHint</key>
 			<integer>30</integer>
 		</dict>
+		<key>nonogram.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>59</integer>
+		</dict>
 		<key>objcp.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -663,6 +668,11 @@
 			<true/>
 		</dict>
 		<key>5B9ABD011391329D000997E5</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B9B2447177873D3001AB944</key>
 		<dict>
 			<key>primary</key>
 			<true/>
