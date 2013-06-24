@@ -134,6 +134,7 @@
 {
    return [ORFactory table: cp arity: arity];
 }
+
 +(id<ORInformer>) informer: (id<ORTracker>) cp
 {
     id<ORInformer> o = [ORConcurrency intInformer];

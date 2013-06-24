@@ -203,7 +203,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
     return [_dom member:v];
 }
-
+-(NSString*)stringValue
+{
+   return [_dom description];
+}
 -(NSString*)description
 {
     return [_dom description];
@@ -216,12 +219,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    [_dom restoreValue:toRestore];
 }
-
-//-(id<CPBitVar>) dereference
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-//   return self;
-//}
 
 -(ORBool) tracksLoseEvt
 {

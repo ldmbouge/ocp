@@ -22,6 +22,7 @@
 @protocol ORTrail;
 @protocol ORTRIntArray;
 @protocol ORTRIntMatrix;
+@protocol ORAutomaton;
 
 @interface ORFactory : NSObject
 +(void) shutdown;
@@ -39,8 +40,10 @@
 +(id<ORMutableFloat>) mutableFloat: (id<ORTracker>) tracker value: (ORFloat) value;
 +(id<ORMutableId>) mutableId:(id<ORTracker>) tracker value:(id) value;
 +(id<ORIntSet>)  intSet: (id<ORTracker>) tracker;
++(id<ORIntSet>) intSet:(id<ORTracker>) tracker set:(NSSet*)theSet;
 +(id<ORIntRange>)  intRange: (id<ORTracker>) tracker low: (ORInt) low up: (ORInt) up;
 
++(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORInt) value;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range values: (ORInt[]) values;
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORInt(^)(ORInt)) clo;
@@ -52,7 +55,8 @@
 +(id<ORFloatArray>) floatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with: (ORFloat(^)(ORInt,ORInt)) clo;
 +(id<ORFloatArray>) floatArray:(id<ORTracker>)tracker intVarArray: (id<ORIntVarArray>)arr;
 
-+(id<ORIdArray>)   idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(id(^)(ORInt))clo;
++(id<ORIdArray>) idArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
 +(id<ORIdMatrix>) idMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
@@ -65,6 +69,9 @@
 +(id<ORIntSetArray>) intSetArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range;
 
 +(id<ORIntSet>) collect: (id<ORTracker>) cp range: (id<ORIntRange>) r suchThat: (ORInt2Bool) f of: (ORInt2Int) e;
++(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (id<ORIntRange>)r1 range:(id<ORIntRange>)r2
+               suchThat: (ORIntxInt2Bool) f
+                     of: (ORIntxInt2Int) e;
 
 +(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e;
 +(ORInt) maxOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e;
@@ -113,7 +120,7 @@
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;
 +(id<ORTable>) table: (id<ORTracker>) cp with: (id<ORTable>) table;
-
++(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs;
 +(id<ORVarLitterals>) varLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) v;
 @end
 
@@ -137,10 +144,12 @@
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
 +(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
 +(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
-+(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterable>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORRelation>) or:  (id<ORTracker>) tracker over: (id<ORIntIterable>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
++(id<ORRelation>) and: (id<ORTracker>) tracker over: (id<ORIntIterable>) r suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
 
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intVarArray: (id<ORIntVarArray>) a index: (id<ORExpr>) index;
 +(id<ORExpr>) elt: (id<ORTracker>) tracker intArray: (id<ORIntArray>) a index: (id<ORExpr>) index;
++(id<ORExpr>) elt: (id<ORTracker>) tracker intVarMatrix: (id<ORIntVarMatrix>) m elt:(id<ORExpr>) e0 elt:(id<ORExpr>)e1;
 @end
 
 @interface ORFactory (Constraints)
@@ -190,7 +199,9 @@
                  annotation:(ORAnnotation)note;
 +(id<ORConstraint>) element:(id<ORTracker>)model  var:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y
                  annotation:(ORAnnotation)note;
-
++(id<ORConstraint>)element:(id<ORTracker>)model matrix:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1
+                     equal:(id<ORIntVar>)y
+                annotation:(ORAnnotation)note;
 +(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
 +(id<ORConstraint>) circuit: (id<ORIntVarArray>) x;
 +(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x;
@@ -206,6 +217,7 @@
 +(id<ORConstraint>) tableConstraint: (id<ORIntVarArray>) x table: (id<ORTable>) table;
 +(id<ORConstraint>) tableConstraint: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
 +(id<ORConstraint>) assignment:(id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
++(id<ORConstraint>) regular:(id<ORIntVarArray>) x for:(id<ORAutomaton>)a;
 @end
 
 @interface ORFactory (BV)
@@ -233,4 +245,5 @@
 #define All(track,RT,P,RANGE,E)               [ORFactory array##RT: track range:(RANGE) with:^id<RT>(ORInt P) { return (E);}]
 #define All2(track,RT,P1,RANGE1,P2,RANGE2,E)  [ORFactory array##RT: track range:(RANGE1) range:(RANGE2) with:^id<RT>(ORInt P1,ORInt P2) { return (E);}]
 #define Or(track,P,R,E)       [ORFactory or: track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
+#define And(track,P,R,E)      [ORFactory and:track over:(R) suchThat:nil of:^id<ORRelation>(ORInt P) { return (id<ORRelation>)(E);}]
 

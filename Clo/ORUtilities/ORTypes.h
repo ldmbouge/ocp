@@ -84,6 +84,7 @@ typedef bool (^ORInt2Bool)(ORInt);
 typedef bool (^ORVoid2Bool)(void);
 typedef ORInt (^ORInt2Int)(ORInt);
 typedef void (^ORInt2Void)(ORInt);
+typedef void (^ORId2Void)(id);
 typedef void (^ORSolution2Void)(id<ORSolution>);
 typedef void (^ORConstraint2Void)(id<ORConstraint>);
 typedef void (^ORIntArray2Void)(id<ORIntArray>);

@@ -202,6 +202,7 @@
 -(void) visitIntMatrix:(id<ORIntMatrix>) v;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitPacking: (id<ORPacking>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
@@ -284,6 +285,7 @@
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 @end
 
@@ -370,6 +372,10 @@
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    _snapshot = NULL;   
+}
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   _snapshot = NULL;
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
@@ -690,6 +696,10 @@
 {
    _snapshot = NULL;   
 }
+-(void) visitExprAggAndI: (id<ORExpr>) e
+{
+   _snapshot = NULL;
+}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {
    _snapshot = NULL;   
@@ -869,6 +879,10 @@
    for(ORUInt k=0;k<_sz;k++)
       closure(_tab[k]);
 }
+-(BOOL)empty
+{
+   return _sz == 0;
+}
 @end
 
 
@@ -1005,14 +1019,16 @@
       _closed = true;
       if ([_engine close] == ORFailure)
          [_search fail];
-      NSArray* mvar = [_model variables];
-      NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
-      for(id<ORVar> v in mvar)
-         [cvar addObject:_gamma[v.getId]];
-      [_hSet applyToAll:^(id<CPHeuristic> h) {
-         [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
-      }];
-      [cvar release];
+      if (![_hSet empty]) {
+         NSArray* mvar = [_model variables];
+         NSMutableArray* cvar = [[NSMutableArray alloc] initWithCapacity:[mvar count]];
+         for(id<ORVar> v in mvar)
+            [cvar addObject:_gamma[v.getId]];
+         [_hSet applyToAll:^(id<CPHeuristic> h) {
+            [h initHeuristic:mvar concrete:cvar oneSol:_oneSol];
+         }];
+         [cvar release];
+      }
       [ORConcurrency pumpEvents];
    }
 }
@@ -1027,11 +1043,15 @@
 
 -(void) onSolution: (ORClosure) onSolution
 {
-   [_doOnSolArray addObject: [onSolution copy]];
+   id block = [onSolution copy];
+   [_doOnSolArray addObject: block];
+   [block release];
 }
 -(void) onExit: (ORClosure) onExit
 {
-   [_doOnExitArray addObject: [onExit copy]];
+   id block = [onExit copy];
+   [_doOnExitArray addObject: block];
+   [block release];
 }
 -(id<ORSolutionPool>) solutionPool
 {
@@ -1646,6 +1666,10 @@
    [self addHeuristic:h];
    return h;
 }
+-(NSString*)stringValue:(id<ORBitVar>)x
+{
+   return [_gamma[x.getId] stringValue];
+}
 -(ORInt) intValue: (id) x
 {
    return [_gamma[[x getId]] intValue];
@@ -1818,6 +1842,7 @@
 -(void) dealloc
 {
    [_trail release];
+   [_mt release];
    [_engine release];
    [_search release];
    [_tracer release];

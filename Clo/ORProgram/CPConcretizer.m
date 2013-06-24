@@ -51,6 +51,11 @@
    return _gamma[x.getId];
 }
 
+-(id)concreteMatrix: (id<ORIntVarMatrix>) m
+{
+   [m visit:self];
+   return _gamma[m.getId];
+}
 // visit interface
 
 -(void) visitTrailableInt: (id<ORTrailableInt>) v
@@ -61,11 +66,11 @@
    }
 }
 -(void) visitIntSet: (id<ORIntSet>) v
-{
-}
+{}
 -(void) visitIntRange:(id<ORIntRange>) v
-{
-}
+{}
+-(void) visitUniformDistribution:(id) v
+{}
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
@@ -184,6 +189,10 @@
       [_engine add: concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
+}
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"No concretization for regular (it is decomposed)"];
 }
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
@@ -600,6 +609,10 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitElementMatrixVar:(id<ORElementMatrixVar>)cstr
+{
+   assert(FALSE);
+}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -910,6 +923,8 @@
 -(void) visitExprImplyI: (id<ORExpr>) e
 {}
 -(void) visitExprAggOrI: (id<ORExpr>) e
+{}
+-(void) visitExprAggAndI: (id<ORExpr>) e
 {}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}

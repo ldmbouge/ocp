@@ -119,7 +119,10 @@
 {
    self = [self initORModelI];
    _nbObjects = nb;
-   _mappings = [mappings copy];
+   if (mappings) {
+      [_mappings release];
+      _mappings = [mappings copy];
+   }
    return self;
 }
 -(ORModelI*) initWithModel: (ORModelI*) src
@@ -133,7 +136,7 @@
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
    _objective = src->_objective;
-   _source = src;
+   _source = [src retain];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [src->_mappings copy];
    return self;
@@ -173,6 +176,7 @@
    [_iStore release];
    [_cache release];
    [_mappings release];
+   [_memory release];
    [super dealloc];
 }
 -(id)inCache:(id)obj
@@ -183,6 +187,21 @@
 {
    [_cache setObject:obj forKey:obj];
    return obj;
+}
+-(id)memoize:(id) obj
+{
+   id mo = [_cache objectForKey:obj];
+   if (mo == NULL) {
+      [_cache setObject:obj forKey:obj];
+      mo = obj;
+   } else {
+      BOOL inMutable = [_mStore containsObject:obj];
+      BOOL inImm     = [_iStore containsObject:obj];
+      [_memory removeObject:obj];
+      if (inMutable) [_mStore removeObject:obj];
+      if (inImm)     [_iStore removeObject:obj];
+   }
+   return mo;
 }
 -(void) setSource:(id<ORModel>)src
 {
@@ -263,6 +282,7 @@
 -(id) trackObject:(id) obj
 {
    [_memory addObject:obj];
+   [obj release];
    return obj;
 }
 -(id) trackImmutable: (id) obj
@@ -275,8 +295,13 @@
       }
       [_iStore addObject:obj];
       [_memory addObject:obj];
+      [obj release];
       return obj;
-   } else return co;
+   } else {
+      if (co != obj)
+         [obj release];
+      return co;
+   }
 }
 -(id) trackConstraintInGroup:(id)obj
 {
@@ -294,6 +319,7 @@
    [obj setId:_nbObjects++];
    [_mStore addObject:obj];
    [_memory addObject:obj];
+   [obj release];
    return obj;
 }
 -(id) trackVariable: (id) var
@@ -302,6 +328,7 @@
    [_vars addObject:var];
    [_mStore addObject:var];
    [_memory addObject:var];
+   [var release];
    return var;
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c

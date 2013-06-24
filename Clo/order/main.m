@@ -12,39 +12,47 @@
 #import <ORFoundation/ORFoundation.h>
 #import <ORModeling/ORModeling.h>
 #import <ORProgram/ORProgram.h>
+#import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      ORLong startTime = [ORRuntimeMonitor cputime];
-      id<ORModel> model = [ORFactory createModel];
-      ORInt n = argc > 2 ? atoi(argv[1]) : 10;
-      id<ORIntRange> D = RANGE(model,0,n);
-      id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
-      id<ORGroup> g = [ORFactory bergeGroup:model];
-      [D enumerateWithBlock:^(ORInt k) {
-         if (k < n)
-            [g add:[x[k] lt:x[k+1]]];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult(){
+         ORLong startTime = [ORRuntimeMonitor cputime];
+         id<ORModel> model = [ORFactory createModel];
+         ORInt n = argc > 2 ? atoi(argv[1]) : 10;
+         id<ORIntRange> D = RANGE(model,0,n);
+         id<ORIntVarArray> x = [ORFactory intVarArray:model range:D domain:D];
+         id<ORGroup> g = [ORFactory bergeGroup:model];
+         [D enumerateWithBlock:^(ORInt k) {
+            if (k < n)
+               [g add:[x[k] lt:x[k+1]]];
+         }];
+         [model add:g];
+         //NSLog(@"Group: %@",g);
+         //NSLog(@"MODEL %@",model);
+         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         __block ORInt nbSol = 0;
+         [cp solve:^{
+            NSLog(@"About to search...");
+            @autoreleasepool {
+               id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
+                  return [cp intValue:x[i]];
+               }];
+               NSLog(@"solution: %@",xv);
+               nbSol++;
+            }
+         }];
+         ORLong endTime = [ORRuntimeMonitor cputime];
+         NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"Quitting");
+         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         [ORFactory shutdown];
+         return r;
       }];
-      [model add:g];
-      //NSLog(@"Group: %@",g);
-      //NSLog(@"MODEL %@",model);
-      id<CPProgram> cp = [ORFactory createCPProgram:model];
-      [cp solve:^{
-         NSLog(@"About to search...");
-         @autoreleasepool {
-            id<ORIntArray> xv = [ORFactory intArray:cp range:[x range] with:^ORInt(ORInt i) {
-               return [cp intValue:x[i]];
-            }];
-            NSLog(@"solution: %@",xv);
-         }
-      }];
-      ORLong endTime = [ORRuntimeMonitor cputime];
-      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
-      NSLog(@"Solver status: %@\n",cp);
-      NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

@@ -18,36 +18,44 @@
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>
+#import "ORCmdLineArgs.h"
 
 void splitUpFF(id<CPProgram> cp,id<ORIntVarArray> vars);
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      ORLong startTime = [ORRuntimeMonitor wctime];
-      id<ORModel> model = [ORFactory createModel];
-      id<ORIntRange> R = RANGE(model,1,4);
-      ORInt t = 711;
-      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain:RANGE(model,0,t)];
-      [model add:[Sum(model, i, R, x[i]) eq:@(t)]];
-      [model add:[Prod(model,i, R, x[i]) eq:@(t * 100 * 100 * 100)]];
-      [model add:[x[1] lt:x[2]]];
-      [model add:[x[2] lt:x[3]]];
-      [model add:[x[3] lt:x[4]]];
-
-      id<CPProgram> cp = [ORFactory createCPProgram:model];
-      [cp solveAll:^{
-         splitUpFF(cp, x);
-         @autoreleasepool {
-            NSLog(@"Sol: %@",x);
-         }
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult() {
+         ORLong startTime = [ORRuntimeMonitor wctime];
+         id<ORModel> model = [ORFactory createModel];
+         id<ORIntRange> R = RANGE(model,1,4);
+         ORInt t = 711;
+         id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain:RANGE(model,0,t)];
+         [model add:[Sum(model, i, R, x[i]) eq:@(t)]];
+         [model add:[Prod(model,i, R, x[i]) eq:@(t * 100 * 100 * 100)]];
+         [model add:[x[1] lt:x[2]]];
+         [model add:[x[2] lt:x[3]]];
+         [model add:[x[3] lt:x[4]]];
+         
+         id<CPProgram> cp = [ORFactory createCPProgram:model];
+         __block ORInt nbSol = 0;
+         [cp solveAll:^{
+            splitUpFF(cp, x);
+            @autoreleasepool {
+               NSLog(@"Sol: %@",x);
+               nbSol++;
+            }
+         }];
+         ORLong endTime = [ORRuntimeMonitor wctime];
+         NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
+         NSLog(@"Solver status: %@\n",cp);
+         NSLog(@"Quitting");
+         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         [ORFactory shutdown];
+         return r;
       }];
-      ORLong endTime = [ORRuntimeMonitor wctime];
-      NSLog(@"Execution Time(WC): %lld \n",endTime - startTime);
-      NSLog(@"Solver status: %@\n",cp);
-      NSLog(@"Quitting");
-      [cp release];
-      [ORFactory shutdown];
    }
    return 0;
 }

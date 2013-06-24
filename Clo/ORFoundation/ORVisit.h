@@ -44,6 +44,7 @@
 -(void) visitFail:(id<ORFail>)cstr;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
@@ -80,6 +81,7 @@
 -(void) visitImply: (id<ORImply>)c;
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
+-(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c;
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
 -(void) visitReifyEqual: (id<ORReifyEqual>)c;
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
@@ -124,7 +126,9 @@
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c;
 -(void) visitBitOr:(id<ORBitOr>)c;

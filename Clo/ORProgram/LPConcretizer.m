@@ -227,6 +227,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"No concretization yet"];
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
@@ -508,6 +512,10 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
+}
+-(void) visitExprAggAndI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }

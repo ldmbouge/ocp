@@ -18,11 +18,6 @@
 #import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)
-//-(id) dereference
-//{
-////   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-//   return self;
-//}
 -(void) setImpl: (id) impl
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
@@ -576,7 +571,31 @@ static ORInt _deterministic;
    _closed = false;
    return self;
 }
-
+-(id)copyWithZone:(NSZone *)zone
+{
+   ORTableI* t = [[ORTableI allocWithZone:zone] initORTableWithTableI:self];
+   return t;
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]]) {
+      ORTableI* o = anObject;
+      if (_arity == o->_arity && _nb == o->_nb) {
+         for(ORInt j = 0; j < _arity; j++) {
+            for(ORInt i = 0; i < _nb; i++) {
+               BOOL eq = _column[j][i] == o->_column[j][i];
+               if (!eq)
+                  return NO;
+            }
+         }
+         return YES;
+      } else return NO;
+   } else return NO;
+}
+-(NSUInteger)hash
+{
+   return _arity * _nb;
+}
 -(void) dealloc
 {
    NSLog(@"ORTableI dealloc called ...");
@@ -638,6 +657,17 @@ static ORInt _deterministic;
    _column[0][_nb] = i;
    _column[1][_nb] = j;
    _column[2][_nb] = k;
+   _nb++;
+}
+
+-(void)insertTuple:(ORInt*)t
+{
+   if (_closed)
+      @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
+   if (_nb == _size)
+      [self resize];
+   for (ORInt k=0; k<_arity; k++)
+      _column[k][_nb] = t[k];
    _nb++;
 }
 
@@ -729,6 +759,63 @@ static ORInt _deterministic;
 @end
 
 
+@implementation ORAutomatonI
+-(id) init:(id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs table:(ORTableI*)table
+{
+   self = [super init];
+   _alpha = alphabet;
+   _states = states;
+   _nbt   = stf;
+   _final = fs;
+   _transition = table;
+   for(ORInt i = 0;i<_nbt;i++)
+      [_transition insertTuple:tf[i]];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(id<ORIntSet>)final
+{
+   return _final;
+}
+-(id<ORIntRange>)alphabet
+{
+   return _alpha;
+}
+-(id<ORIntRange>)states
+{
+   return _states;
+}
+-(ORInt)nbTransitions
+{
+   return _nbt;
+}
+-(ORTableI*)transition
+{
+   return _transition;
+}
+-(void) encodeWithCoder: (NSCoder*) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nbt];
+   [aCoder encodeObject:_alpha];
+   [aCoder encodeObject:_states];
+   [aCoder encodeObject:_final];
+   [aCoder encodeObject:_transition];
+}
+-(id) initWithCoder: (NSCoder*) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nbt];
+   _alpha  = [aDecoder decodeObject];
+   _states = [aDecoder decodeObject];
+   _final  = [aDecoder decodeObject];
+   _transition = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 // ------------------------------------------------------------------------------------------
 
 @implementation ORBindingArrayI
@@ -776,14 +863,6 @@ static ORInt _deterministic;
    if (key >= _nb)
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
    _array[key] = newValue;
-}
--(id) dereference
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "dereference is totally obsolete"];
-   ORInt k = [NSThread threadID];
-   if (_array[k] == NULL)
-      return NULL;
-   return [_array[k] dereference];
 }
 -(void) setImpl: (id) impl
 {

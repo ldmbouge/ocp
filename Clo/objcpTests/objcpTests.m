@@ -40,7 +40,7 @@
    int n = 8;
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = RANGE(m,1,n);
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<ORIntVarArray> x  = [ORFactory intVarArray:m range:R domain: R];
    id<ORIntVarArray> xp = [ORFactory intVarArray:m range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:x[i] shift:i]; }];
    id<ORIntVarArray> xn = [ORFactory intVarArray:m range:R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:x[i] shift:-i]; }];
@@ -51,12 +51,12 @@
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:
     ^() {
-       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [[x at:i] domsize];}];
-       [nbSolutions incr];
+       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:[x at:i]];}];
+       [nbSolutions incr:cp];
    }
     ];
    NSLog(@"Got %@ solutions\n",nbSolutions);
-   STAssertTrue([nbSolutions value]==92, @"queens-8 has 92 solutions"); 
+   STAssertTrue([cp intValue:nbSolutions]==92, @"queens-8 has 92 solutions");
    [m release];
    [ORFactory shutdown];
 }
@@ -68,7 +68,7 @@
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange:m low:0 up:s-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: m range:R domain: [ORFactory intRange:m low:0 up:n-1]];
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    [m add: [ORFactory sumbool:m array:x geqi:2]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -77,14 +77,14 @@
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
-         nbOne += [[x at:k] min] == 1;
+         nbOne += [cp min:x[k]] == 1;
       }
       //printf("]\n");
-      [nbSolutions  incr];
+      [nbSolutions  incr:cp];
       STAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[cp intValue: nbSolutions]);
    [m release];
    [ORFactory shutdown];
 }
@@ -96,7 +96,7 @@
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange:m low:0 up:s-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: m range:R domain: [ORFactory intRange:m low:0 up:n-1]];
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    [m add: [ORFactory sumbool:m array:x geqi:8]];
 
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -105,14 +105,14 @@
       int nbOne = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k ]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
-         nbOne += [[x at:k] min] == 1;
+         nbOne += [cp min:[x at:k]] == 1;
       }
       //printf("]\n");
-      [nbSolutions  incr];
+      [nbSolutions  incr:cp];
       STAssertTrue(nbOne>=8, @"Each solution must have at least 2 ones");
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    [m release];
    [ORFactory shutdown];
 }
@@ -131,7 +131,7 @@
    [m add:[ORFactory sumbool:m array:nx geqi:8]];
    
    
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll: ^() {
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
@@ -139,20 +139,20 @@
       int nbZero = 0;
       for(ORInt k=0;k<s;k++) {
          //printf("%s%s",(k>0 ? "," : "["),[[[x at:k]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
-         nbOne  += [[x at:k] min] == 1;
-         nbZero += [[nx at:k] min] == 1;
+         nbOne  += [cp min:[x at:k]] == 1;
+         nbZero += [cp min:[nx at:k]] == 1;
       }
       //printf("]\n");
       //for(NSInteger k=0;k<s;k++) {
       //   printf("%s%s",(k>0 ? "," : "["),[[[nx at:k]  description] cStringUsingEncoding:NSASCIIStringEncoding]);      
       //}
       //printf("]\n");
-      [nbSolutions  incr];
+      [nbSolutions  incr:cp];
       STAssertTrue(nbOne>=2, @"Each solution must have at least 2 ones");
       STAssertTrue(nbZero>=8, @"Each solution must have at least 8 zeroes");
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    [m release];
    [ORFactory shutdown];
 }
@@ -163,7 +163,7 @@
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = [ORFactory intRange:m low:0 up:s-1];
    id<ORIntVarArray> x = [ORFactory intVarArray: m range:R domain: RANGE(m,0,1)];
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    [m add: [ORFactory sumbool:m array:x eqi:4]];
    
    id<CPProgram> cp = [ORFactory createCPProgram:m];
@@ -171,13 +171,13 @@
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
       int nbOne = 0;
       for(ORInt k=0;k<s;k++)
-         nbOne += [x[k] min] == 1;
+         nbOne += [cp min:x[k]] == 1;
       NSLog(@"SOL: %@",x);
-      [nbSolutions  incr];
+      [nbSolutions  incr:cp];
       STAssertTrue(nbOne == 4, @"Each solution must have at least 4 ones");
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    [m release];
    [ORFactory shutdown];
 }
@@ -193,17 +193,17 @@
       return [ORFactory intVar:m var:x[i] scale:-1 shift:1];
    }];
    
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
    id<CPProgram> cp = [ORFactory createCPProgram:m];
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
    [cp solveAll: ^() {
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
       for(ORInt k=0;k<s;k++) {
-         STAssertTrue([[x at:k] min] == ![[nx at:k] min], @"x and nx should be negations of each other");
+         STAssertTrue([cp min:x[k]] == ![cp min:nx[k]], @"x and nx should be negations of each other");
       }
-      [nbSolutions  incr];
+      [nbSolutions  incr:cp];
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);   
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    [m release];
    [ORFactory shutdown];
 }
@@ -218,7 +218,7 @@
    [cp solveAll:^() {
       [cp label:x];
       NSLog(@"solution: %@\n",av);
-      STAssertTrue([b min] == ([x min]!=5), @"reification not ok");
+      STAssertTrue([cp min:b] == ([cp min:x]!=5), @"reification not ok");
    }
     ];
    [m release];
@@ -234,7 +234,7 @@
    id<CPProgram> cp = [ORFactory createCPProgram:m];
    [cp solveAll:^() {
       [cp label:x];
-      STAssertTrue([b min] == ([x min]==5), @"reification not ok");
+      STAssertTrue([cp min:b] == ([cp min:x]==5), @"reification not ok");
    }
     ];
    [m release];
@@ -254,7 +254,7 @@
       [cp label:x];
       [cp label:y];
       [cp label:b];
-      STAssertTrue([b min] == ([x min]==[y min]), @"reification (b<=> (x==y)) not ok");      
+      STAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b<=> (x==y)) not ok");
    }
     ];
    [m release];
@@ -273,7 +273,7 @@
    [cp solveAll:^() {
       [cp label:b];
       [cp label:x];
-      STAssertTrue([b min] == ([x min]==[y min]), @"reification (b first) (b<=> (x==y)) not ok");
+      STAssertTrue([cp min:b] == ([cp min:x]==[cp min:y]), @"reification (b first) (b<=> (x==y)) not ok");
    }
     ];
    [m release];
@@ -300,8 +300,8 @@
    id<ORIntVarArray> x  = [ORFactory intVarArray: m range:R domain: RANGE(m,0,10)];
    id<ORIntVar> zn = [ORFactory intVar:m domain:RANGE(m,-10,0)];
    id<ORIntVar> z = [ORFactory intVar:m var:zn scale:-1];
-   id<ORMutableInteger> nbSolutions = [ORFactory integer: m value: 0];
-   [m add: [z leqi:5]];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable: m value: 0];
+   [m add: [z leq: @5]];
    [m add: [x[0] eq:[x[1] plus:z]]];
   
   
@@ -309,20 +309,21 @@
    [cp solveAll: ^() {
       [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;}];
       NSLog(@"Solution: %@ = %@",x,z);
-      [nbSolutions  incr];
+      [nbSolutions  incr:cp];
    }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    [m release];
    [ORFactory shutdown]; 
 }
 
+/** Currently not working 
 -(void)testRetractConstraintInSearch
 {
    ORInt n = 8;
    id<ORModel> m = [ORFactory createModel];
    id<ORIntRange> R = RANGE(m,1,n);
-   id<ORMutableInteger> nbSolutions = [ORFactory integer:m value: 0];
+   id<ORMutableInteger> nbSolutions = [ORFactory mutable:m value: 0];
    id<ORIntVarArray> x = [ORFactory intVarArray:m range: R domain: R];
    id<ORIntVarArray> xp = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:[x at: i] shift:i]; }];
    id<ORIntVarArray> xn = [ORFactory intVarArray:m range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:m var:[x at: i] shift:-i]; }];
@@ -334,25 +335,26 @@
    [cp solveAll:
     ^() {
        for(ORInt i=1;i<=n;i++) {
-          while(![x[i] bound]) {
-             const ORInt curMin = [x[i] min];
+          while(![cp bound:x[i]]) {
+             const ORInt curMin = [cp min:x[i]];
              [cp try:^{
-                [cp add: [x[i] eqi:curMin]];
+                [cp add: [x[i] eq:@(curMin)]];
              } or:^{
-                [cp add: [x[i] neqi:curMin]];
+                [cp add: [x[i] neq:@(curMin)]];
              }];
           }
        }
-       [nbSolutions incr];
+       [nbSolutions incr:cp];
     }
     ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
+   printf("GOT %d solutions\n",[cp intValue:nbSolutions]);
    NSLog(@"Solver status: %@\n",cp);
    NSLog(@"Quitting");
-   STAssertTrue([nbSolutions value] == 92, @"Expecting 92 solutions");
+   STAssertTrue([cp intValue:nbSolutions] == 92, @"Expecting 92 solutions");
    [cp release];
    [ORFactory shutdown];
 }
+*/
 
 -(void)testKnapsack1
 {

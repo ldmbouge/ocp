@@ -211,6 +211,14 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    };
    [_eventList addEvent:[wrap copy]];
 }
+-(void) dispatchWithObject:(id)obj
+{
+   ORId2Void tClo = (ORId2Void)_closure;
+   ORClosure wrap = ^{
+      tClo(obj);
+   };
+   [_eventList addEvent:[wrap copy]];
+}
 -(void) dispatchWithSolution:(id<ORSolution>)s
 {
     ORSolution2Void tClo = (ORSolution2Void)_closure;
@@ -263,6 +271,21 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
    _sleeperList = [[NSMutableArray alloc] init];
    return self;
 }
+-(void) dealloc
+{
+   NSLog(@"informer release %p",self);
+   @synchronized(self) {
+      for(ORBarrier* barrier in _sleeperList)
+         [barrier join];
+      [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+   }
+   [_whenList release];     // [ldm] this deallocates the whenList and sends release messages to all objects embedded in it. No need to deallocate
+   [_wheneverList release]; // [ldm] this deallocates the wheneverList ands sends release messages to all objects embedded inside.
+   [_sleeperList release];
+   [_lock release];
+   [super dealloc];
+}
+
 -(void) whenNotifiedDo: (id) closure
 {
    ORInformerEventI* event = [[ORInformerEventI alloc] initORInformerEventI: [ORConcurrency eventList] closure: closure];
@@ -313,6 +336,20 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
          [event dispatchWith:a0];    
       for(ORBarrier* barrier in _sleeperList)
          [barrier join]; 
+      [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
+   }
+}
+
+-(void) notifyWithObject:(id)a0
+{
+   @synchronized(self) {
+      for(id event in _whenList)
+         [event dispatchWithObject:a0];
+      [_whenList removeAllObjects];  // [ldm] this *automatically* sends a release to all the objects. No need to release before!
+      for(id event in _wheneverList)
+         [event dispatchWithObject:a0];
+      for(ORBarrier* barrier in _sleeperList)
+         [barrier join];
       [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.
    }
 }
@@ -401,19 +438,6 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
     }
 }
 
--(void) dealloc 
-{
-   NSLog(@"informer release %p",self);
-   @synchronized(self) {
-      for(ORBarrier* barrier in _sleeperList)
-         [barrier join]; 
-      [_sleeperList removeAllObjects]; // [ldm] this *automatically* sends a release to all the objects in the sleeperList.   
-   }
-   [_whenList release];     // [ldm] this deallocates the whenList and sends release messages to all objects embedded in it. No need to deallocate
-   [_wheneverList release]; // [ldm] this deallocates the wheneverList ands sends release messages to all objects embedded inside. 
-   [_sleeperList release];
-   [super dealloc];
-}
 @end
 
 @implementation ORConcurrency
@@ -433,6 +457,10 @@ typedef void (^ORIdxInt2Void)(id,ORInt);
 +(id<ORIntInformer>) intInformer
 {
     return [[ORInformerI alloc] initORInformerI];
+}
++(id<ORInformer>) idInformer
+{
+   return [[ORInformerI alloc] initORInformerI];
 }
 +(id<ORVoidInformer>) voidInformer
 {

@@ -130,7 +130,7 @@
 @end
 
 @protocol ORUpperBoundStreamConsumer<ORProcess>
--(id<ORIntInformer>) upperBoundStreamInformer;
+-(id<ORIdInformer>) upperBoundStreamInformer;
 @end
 
 @protocol ORUpperBoundStreamProvider<ORProcess>
@@ -170,7 +170,7 @@
     id<ORModel> _model;
     id<ORSignature> _sig;
     ORClosure _exitBlock;
-    id<ORIntInformer> _upperBoundStreamInformer;
+    id<ORIdInformer> _upperBoundStreamInformer;
     id<ORSolutionInformer> _solutionStreamInformer;
     NSMutableArray* _upperBoundStreamConsumers;
     NSMutableArray* _solutionStreamConsumers;

@@ -84,9 +84,7 @@
 {
 //   NSLog(@"ORIG  %ld %ld %ld",[[model variables] count],[[model mutables] count],[[model constraints] count]);
 //   ORLong t0 = [ORRuntimeMonitor cputime];
-   id<ORModel> fm = [model flatten];
-   //NSLog(@"FC: %@",[fm constraints]);
-   
+   id<ORModel> fm = [model flatten];   // models are AUTORELEASE
    ORUInt nbEntries =  [fm nbObjects];
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
@@ -99,11 +97,7 @@
    for(id<ORObject> c in [fm constraints])
       [c visit: concretizer];
    [[fm objective] visit:concretizer];
-
-//   for(ORInt i = 0; i < nbEntries; i++)
-//      NSLog(@"gamma[%d] = %@",i,gamma[i]);
-
-   [cpprogram setSource:model];
+   [cpprogram setSource:fm];
    [concretizer release];
 //   ORLong t1 = [ORRuntimeMonitor cputime];
 //   NSLog(@"FLAT  %ld %ld %ld %lld",[[fm variables] count],[[fm mutables] count],[[fm constraints] count],t1 - t0);
@@ -111,9 +105,8 @@
 
 +(id<CPProgram>) createCPProgram: (id<ORModel>) model
 {
-   id<CPProgram> cpprogram = [CPSolverFactory solver];
+   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPProgram: model program: cpprogram];
-//   [model setImpl: cpprogram];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];
@@ -149,7 +142,6 @@
 +(id<CPProgram>) createCPMultiStartProgram: (id<ORModel>) model nb: (ORInt) k
 {
    CPMultiStartSolver* cpprogram = [[CPMultiStartSolver alloc] initCPMultiStartSolver: k];
-//   [model setImpl: cpprogram];
    id<ORModel> flatModel = [model flatten];
    
    for(ORInt i = 0; i < k; i++) {
@@ -240,7 +232,6 @@
 +(id<LPProgram>) createLPProgram: (id<ORModel>) model
 {
    id<LPProgram> lpprogram = [LPSolverFactory solver: model];
-//   [model setImpl: lpprogram];
    [self createLPProgram: model program: lpprogram];
    return lpprogram;
 }
@@ -274,7 +265,6 @@
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model
 {
    id<MIPProgram> mipprogram = [MIPSolverFactory solver: model];
-//   [model setImpl: mipprogram];
    [self createMIPProgram: model program: mipprogram];
    return mipprogram;
 }
@@ -308,7 +298,6 @@
 {
    id<CPProgram> cpprogram = [CPSolverFactory solver];
    [ORFactory createCPLinearizedProgram: model program: cpprogram];
-   //   [model setImpl: cpprogram];
    id<ORSolutionPool> sp = [cpprogram solutionPool];
    [cpprogram onSolution:^{
       id<ORSolution> s = [cpprogram captureSolution];

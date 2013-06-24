@@ -36,6 +36,10 @@
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
 @end
 
+@protocol ORIdInformer<ORInformer>
+-(void) notifyWithObject: (id)obj;
+@end
+
 @protocol ORSolutionInformer<ORInformer>
 -(void) notifyWithSolution: (id<ORSolution>)s;
 @end
@@ -68,6 +72,7 @@
 @interface ORConcurrency : NSObject 
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
 +(id<ORIntInformer>) intInformer;
++(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;
 +(id<ORIdxIntInformer>) idxIntInformer;
 +(id<ORBarrier>)  barrier: (ORInt) nb;

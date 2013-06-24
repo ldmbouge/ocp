@@ -181,6 +181,15 @@
 -(ORAnnotation)annotation;
 @end
 
+@interface ORElementMatrixVar : ORConstraintI<ORElementMatrixVar>
+-(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y annotation:(ORAnnotation)n;
+-(id<ORIntVarMatrix>)matrix;
+-(id<ORIntVar>)index0;
+-(id<ORIntVar>)index1;
+-(id<ORIntVar>) res;
+-(ORAnnotation)annotation;
+@end
+
 @interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>
 -(ORReifyEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
 @end
@@ -315,6 +324,12 @@
 -(ORAlldifferentI*) initORAlldifferentI: (id<ORIntVarArray>) x annotation:(ORAnnotation)n;
 -(id<ORIntVarArray>) array;
 -(ORAnnotation) annotation;
+@end
+
+@interface ORRegularI : ORConstraintI<ORRegular>
+-(id)init:(id<ORIntVarArray>)x  for:(id<ORAutomaton>)a;
+-(id<ORIntVarArray>) array;
+-(id<ORAutomaton>)automaton;
 @end
 
 @interface ORCardinalityI : ORConstraintI<ORCardinality>
