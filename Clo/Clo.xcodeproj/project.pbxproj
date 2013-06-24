@@ -4749,7 +4749,7 @@
 		B103534713BBD7B200627058 /* queensAC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = queensAC.1; sourceTree = "<group>"; };
 		B103614516D969CD00E95A39 /* ORLPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPFlatten.h; sourceTree = "<group>"; };
 		B103614616D969CD00E95A39 /* ORLPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORLPFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Users/ldm/work/platform/Clo/../../../../../Library/gurobi500/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
+		B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi500/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
 		B103614B16D9AAA500E95A39 /* ORLPDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPDecompose.h; sourceTree = "<group>"; };
 		B103614C16D9AAA500E95A39 /* ORLPDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLPDecompose.m; sourceTree = "<group>"; };
 		B103614F16D9AB9A00E95A39 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
@@ -4786,7 +4786,7 @@
 		B15441EF16D17713001BD7B3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B15441F216D17713001BD7B3 /* testMIP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testMIP-Prefix.pch"; sourceTree = "<group>"; };
 		B15441F316D17713001BD7B3 /* testMIP.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testMIP.1; sourceTree = "<group>"; };
-		B15441FC16D17A75001BD7B3 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Users/ldm/work/platform/Clo/../../../../../../Library/gurobi500/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
+		B15441FC16D17A75001BD7B3 /* gurobi_c.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = gurobi_c.h; path = /Library/gurobi500/mac64/include/gurobi_c.h; sourceTree = "<absolute>"; };
 		B15441FE16D17AF0001BD7B3 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi502/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
 		B154420016D189F1001BD7B3 /* LPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LPSolverI.h; sourceTree = "<group>"; };
 		B154420116D189F1001BD7B3 /* LPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LPSolverI.m; sourceTree = "<group>"; };

@@ -340,15 +340,14 @@ static void SCCFromVariable(CPAllDifferentDC* ad,ORInt k)
    ORBounds b = bounds(x);
    for(ORInt w = b.min; w <= b.max; w++) 
       if (varMatch[k] != w && memberBitDom(x, w)) {
-         ORInt wDfs = valDfs[w];
-         if (!wDfs) {
+         if (!valDfs[w]) {
             SCCFromValue(ad,w);
             if (valHigh[w] > varHigh[k])
                varHigh[k] = valHigh[w];
          }
-         else if (wDfs > varDfs[k] && !valComponent[w]) {
-            if (wDfs > varHigh[k])
-               varHigh[k] = wDfs;
+         else if (valDfs[w] > varDfs[k] && !valComponent[w]) {
+            if (valDfs[w] > varHigh[k])
+               varHigh[k] = valDfs[w];
          }
       }
 
@@ -392,29 +391,27 @@ static void SCCFromValue(CPAllDifferentDC* ad,ORInt k)
    
    if (valMatch[k] != MAXINT) {
       ORInt v = valMatch[k];
-      ORInt vDfs = varDfs[v];
-      if (!vDfs) {
+      if (!varDfs[v]) {
          SCCFromVariable(ad,v);
          if (varHigh[v] > valHigh[k])
             valHigh[k] = varHigh[v];
       }
-      else if ((vDfs > valDfs[k]) && !varComponent[v]) {
-         if (vDfs > valHigh[k])
-            valHigh[k] = vDfs;
+      else if ((varDfs[v] > valDfs[k]) && !varComponent[v]) {
+         if (varDfs[v] > valHigh[k])
+            valHigh[k] = varDfs[v];
       }
    }
    else {
       for(ORInt i = 0; i < ad->_varSize; i++) {
          ORInt w = varMatch[i];
-         ORInt wDfs = valDfs[w];
-         if (wDfs==0) {
+         if (valDfs[w]==0) {
             SCCFromValue(ad,w);
             if (valHigh[w] > valHigh[k])
                valHigh[k] = valHigh[w];
          }
-         else if ((wDfs > valDfs[k]) && !valComponent[w]) {
-            if (wDfs > valHigh[k])
-               valHigh[k] = wDfs;
+         else if ((valDfs[w] > valDfs[k]) && !valComponent[w]) {
+            if (valDfs[w] > valHigh[k])
+               valHigh[k] = valDfs[w];
          }
       }
    }

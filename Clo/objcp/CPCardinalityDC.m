@@ -422,14 +422,14 @@ static void SCCFromVariable(CPCardinalityDC* card,ORInt k)
       if (varMatch[k] != w) {
          if (memberBitDom(x,w)) {
             ORInt wDfs = valDfs[w];
-            if (!wDfs) {
+            if (!valDfs[w]) {
                SCCFromValue(card,w);
                if (valHigh[w] > varHigh[k])
                   varHigh[k] = valHigh[w];
             }
-            else if (wDfs > varDfs[k] && !valComponent[w]) {
-               if (wDfs > varHigh[k])
-                  varHigh[k] = wDfs;
+            else if (valDfs[w] > varDfs[k] && !valComponent[w]) {
+               if (valDfs[w] > varHigh[k])
+                  varHigh[k] = valDfs[w];
             }
          }
       }
@@ -479,13 +479,13 @@ static void SCCFromValue(CPCardinalityDC* card,ORInt w)
    ORInt v = valFirstMatch[w];
    while (v != MAXINT) {
       ORInt vDfs = varDfs[v];
-      if (!vDfs) {
+      if (!varDfs[v]) {
          SCCFromVariable(card,v);
          if (varHigh[v] > valHigh[w])
             valHigh[w] = varHigh[v];
       }
-      else if ((vDfs > valDfs[w]) && !varComponent[v]) {
-         if (vDfs > valHigh[w])
+      else if ((varDfs[v] > valDfs[w]) && !varComponent[v]) {
+         if (varDfs[v] > valHigh[w])
             valHigh[w] = varDfs[v];
       }
       v = card->_valNextMatch[v];
@@ -542,15 +542,14 @@ static void SCCFromSink(CPCardinalityDC* card)
    
    for(ORInt w = card->_valMin; w <= card->_valMax; w++)
       if (flow[w] > low[w]) {
-         ORInt wDfs = valDfs[w];
-         if (!wDfs) {
+         if (!valDfs[w]) {
             SCCFromValue(card,w);
             if (valHigh[w] > card->_sinkHigh)
                card->_sinkHigh = valHigh[w];
          }
-         else if ((wDfs > card->_sinkDfs) && !valComponent[w]) {
-            if (wDfs > card->_sinkHigh)
-               card->_sinkHigh = wDfs;
+         else if ((valDfs[w] > card->_sinkDfs) && !valComponent[w]) {
+            if (valDfs[w] > card->_sinkHigh)
+               card->_sinkHigh = valDfs[w];
          }
       }
    
