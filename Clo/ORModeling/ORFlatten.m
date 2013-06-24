@@ -294,7 +294,7 @@
    [_into addConstraint:[ORFactory equalc:_into var:q[R.low] to:S.low]];
    for(ORInt k=R.low;k <= R.up;k++)
       [_into addConstraint:[ORFactory tableConstraint:T on:q[k] :x[k] :q[k+1]]];
-   [A enumerateWithBlock:^(ORInt s) {
+   [S enumerateWithBlock:^(ORInt s) {
       if (![F member:s])
          [_into addConstraint:[ORFactory notEqualc:_into var:q[R.up+1] to:s]];
    }];

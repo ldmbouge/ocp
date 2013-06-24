@@ -598,7 +598,7 @@ static ORInt _deterministic;
 }
 -(void) dealloc
 {
-   NSLog(@"ORTableI dealloc called ...");
+   //NSLog(@"ORTableI dealloc called ...");
    for(ORInt i = 0; i < _arity; i++)
       free(_column[i]);
    free(_column);

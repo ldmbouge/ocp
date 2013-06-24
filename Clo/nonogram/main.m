@@ -15,10 +15,17 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
+struct ORTF {
+   ORTransition* tf;
+   ORInt         sz;
+   ORInt         st;
+};
+
+
 //
 // Build the transition matrix for a nonogram pattern.
 //
-id<ORIntMatrix> make_transition_matrix(id<ORModel> m,ORInt pattern[],ORInt size)
+struct ORTF make_transition_matrix(id<ORModel> m,ORInt pattern[],ORInt size)
 {
    const ORInt pLen = size;
    ORInt num_states = pLen;
@@ -28,41 +35,39 @@ id<ORIntMatrix> make_transition_matrix(id<ORModel> m,ORInt pattern[],ORInt size)
    if (num_states == 0) {
       num_states = 1;
    }
-   id<ORIntMatrix> t = [ORFactory intMatrix:m range:RANGE(m,0,num_states) :RANGE(m,1,2)];
+   ORInt bs = num_states - pLen;
+   ORInt ws = pLen + 1;
+   num_states += 1;
+   const ORInt w = 0;
+   const ORInt b = 1;
+   ORTransition* t = malloc(sizeof(ORTransition) * (bs + ws * 2));
 
    // convert pattern to a 0/1 pattern for easy handling of
    // the states
    ORInt tmp[num_states];
    ORInt c = 0;
-   tmp[c] = 0;
+   tmp[c] = w;
    for(ORInt i=0; i < pLen;i++) {
-      for(ORInt j=1;j < pattern[i];j++) {
-         tmp[++c] = 1;
-         if (c < num_states)
-            tmp[++c] = 0;
-      }
+      for(ORInt j=0;j < pattern[i];j++)
+         tmp[++c] = b;
+      tmp[++c] = w;
    }
-
-   // create the transition matrix
-   [t set:num_states at:num_states :1];
-   [t set:0 at:num_states :2];
-   for(ORInt i=0;i<num_states;i++) {
-      if (tmp[i] == 0) {
-         [t set:i at:i :1];
-         [t set:i+1 at:i :2];
-      } else {
-         if (i < num_states) {
-            if (tmp[i+1] == 1) {
-               [t set:0   at:i :1];
-               [t set:i+1 at:i :2];
-            } else {
-               [t set:i+1 at:i :1];
-               [t set:0   at:i :2];
+   ORInt nbt = 0;
+   for (ORInt k=0; k<num_states; k++) {
+      switch(tmp[k]) {
+         case 0: {
+            t[nbt][0] = k,t[nbt][1] = w, t[nbt][2] = k;nbt++;
+            if (k < num_states - 1) {
+               t[nbt][0] = k,t[nbt][1] = b, t[nbt][2] = k+1;nbt++;
             }
-         }
+         }break;
+         case 1: {
+            t[nbt][0] = k,t[nbt][1] = 1==tmp[k+1] ? b : w,t[nbt][2] = k+1;nbt++;
+         }break;
       }
    }
-   return t;   
+   assert(nbt == (bs+ws*2) - 1);
+   return (struct ORTF) {t,nbt,bs+ws};
 }
 
 void checkRule(id<ORModel> m,ORInt* rules,ORInt mx,id<ORIntVarArray>  y)
@@ -70,25 +75,24 @@ void checkRule(id<ORModel> m,ORInt* rules,ORInt mx,id<ORIntVarArray>  y)
    ORInt rLen  = 0;
    for(ORInt k=0;k<mx;k++) rLen += rules[k] > 0;
    ORInt* rules_tmp = alloca(sizeof(ORInt)*rLen);
-   __block ORInt c = 0;
-   for(ORInt k=0;k<mx;k++) {
+   ORInt c = 0;
+   for(ORInt k=0;k<mx;k++)
       if (rules[k] > 0)
          rules_tmp[c++] = rules[k];
-   };
    
-   id<ORIntMatrix> tfn = make_transition_matrix(m,rules_tmp,rLen);
-   ORInt n_states = [[tfn range:0] size];
-   ORInt input_max = 2;
-   ORInt initial_state = 1;
-   // Note: we cannot use 0 since it's the failing state
+   struct ORTF tfn = make_transition_matrix(m,rules_tmp,rLen);
    id<ORIntSet> F = [ORFactory intSet:m];
-   [F insert:n_states];
-   
-   regular(y, n_states, input_max, transition_fn,initial_state, accepting_states);
-   
-   
-} // end check_rule
-
+   [F insert:tfn.st - 1];
+   [F insert:tfn.st - 2];
+   id<ORAutomaton> A = [ORFactory automaton:m
+                                   alphabet:RANGE(m,0,1)
+                                     states:RANGE(m,0,tfn.st-1)
+                                 transition:tfn.tf
+                                       size:tfn.sz
+                                    initial:0
+                                      final:F];
+   [m add:[ORFactory regular:y for:A]];
+}
 
 int main(int argc, const char * argv[])
 {
@@ -100,7 +104,8 @@ int main(int argc, const char * argv[])
          
          const ORInt rows = 12;
          const ORInt row_rule_len = 3;
-         ORInt row_rules[rows][3] = {{0,0,2},
+         ORInt row_rules[rows][3] = {
+            {0,0,2},
             {0,1,2},
             {0,1,1},
             {0,0,2},
@@ -115,6 +120,7 @@ int main(int argc, const char * argv[])
          };
          
          const ORInt cols = 10;
+         const ORInt col_rule_len = 2;
          ORInt col_rules[cols][2] = {
             {2,1},
             {1,3},
@@ -128,12 +134,51 @@ int main(int argc, const char * argv[])
             {0,2}
          };
          
+         id<ORIntVarMatrix> x = [ORFactory intVarMatrix:model
+                                                  range:RANGE(model,0,rows-1)
+                                                       :RANGE(model,0,cols-1)
+                                                 domain:RANGE(model,0,1)];
+         
+         for(ORInt i=0;i<rows;i++)
+            checkRule(model, row_rules[i], row_rule_len, All(model, ORIntVar, k, RANGE(model,0,cols-1), [x at:i :k]));
+         for(ORInt i=0;i<cols;i++)
+            checkRule(model, col_rules[i], col_rule_len, All(model, ORIntVar, k, RANGE(model,0,rows-1), [x at:k :i]));
+         
          id<CPProgram> cp = [args makeProgram:model];
-         id<CPHeuristic> h = [args makeHeuristic:cp restricted:nil];
-         id<ORIntVarArray> x = All2(cp, ORIntVar, i, N, j, N, [board at:i :j]);
          __block ORInt nbSol = 0;
-         [cp solve:^{
-
+         [cp solveAll:^{
+            if (rows * row_rule_len < cols * col_rule_len) {
+               for(ORInt r=0;r<rows;r++) {
+                  for(ORInt c=0;c<cols;c++) {
+                     if ([cp bound:[x at:r :c]]) continue;
+                     [cp try:^{
+                        [cp label:[x at:r :c] with:1];
+                     } or:^{
+                        [cp label:[x at:r :c] with:0];
+                     }];
+                  }
+               }
+            } else {
+               for(ORInt c=0;c<cols;c++) {
+                  for(ORInt r=0;r<rows;r++) {
+                     if ([cp bound:[x at:r :c]]) continue;
+                     [cp try:^{
+                        [cp label:[x at:r :c] with:1];
+                     } or:^{
+                        [cp label:[x at:r :c] with:0];
+                     }];
+                  }
+               }
+            }
+            @autoreleasepool {
+               [[x range:0] enumerateWithBlock:^(ORInt i) {
+                  printf("|");
+                  [[x range:1] enumerateWithBlock:^(ORInt j) {
+                     printf("%c",[cp intValue:[x at:i :j]] == 0 ? ' ' : '#');
+                  }];
+                  printf("|\n");
+               }];
+            }
          }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
