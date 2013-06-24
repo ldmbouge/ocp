@@ -28,7 +28,7 @@ int main(int argc, const char * argv[])
 
          ORTransition tf[] = {{1,1,2},{2,2,3},{3,2,4},{3,3,3},{4,1,5}};
          id<ORIntSet> final = [ORFactory intSet:model set:[NSSet setWithObjects:@5, nil]];
-         id<ORAutomaton> a = [ORFactory automaton:model alphabet:A states:RANGE(model,1,5) transition:tf size:SIZETF(tf) final:final];
+         id<ORAutomaton> a = [ORFactory automaton:model alphabet:A states:RANGE(model,1,5) transition:tf size:SIZETF(tf) initial:1 final:final];
          [model add:[ORFactory regular:x for:a]];
          
          id<CPProgram> cp = [args makeProgram:model];

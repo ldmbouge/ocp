@@ -147,6 +147,7 @@ typedef ORInt ORTransition[3];
 
 @protocol ORAutomaton <ORObject>
 -(id<ORTable>)transition;
+-(ORInt) initial;
 -(id<ORIntSet>)final;
 -(id<ORIntRange>)alphabet;
 -(id<ORIntRange>)states;

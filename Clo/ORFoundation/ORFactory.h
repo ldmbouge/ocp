@@ -120,7 +120,9 @@
 +(id<ORTRIntMatrix>) TRIntMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) R1 : (id<ORIntRange>) R2;
 +(id<ORTable>) table: (id<ORTracker>) cp arity: (int) arity;
 +(id<ORTable>) table: (id<ORTracker>) cp with: (id<ORTable>) table;
-+(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs;
++(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf
+                    initial:(ORInt)is
+                      final:(id<ORIntSet>)fs;
 +(id<ORVarLitterals>) varLitterals: (id<ORTracker>) tracker var: (id<ORIntVar>) v;
 @end
 

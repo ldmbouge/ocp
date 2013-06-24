@@ -536,10 +536,12 @@
    [tracker trackMutable: o];
    return o;
 }
-+(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs
++(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf
+                    initial:(ORInt)is
+                      final:(id<ORIntSet>)fs
 {
    id<ORTable> tt = [self table:tracker arity:3];
-   ORAutomatonI* o = [[ORAutomatonI alloc] init:a states:s transition:tf size:stf final:fs table:tt];
+   ORAutomatonI* o = [[ORAutomatonI alloc] init:a states:s transition:tf size:stf initial:is final:fs table:tt];
    [tracker trackImmutable:o];
    return o;
 }
