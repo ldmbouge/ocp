@@ -421,7 +421,6 @@ static void SCCFromVariable(CPCardinalityDC* card,ORInt k)
    for(ORInt w = bx.min; w <= bx.max; w++) {
       if (varMatch[k] != w) {
          if (memberBitDom(x,w)) {
-            ORInt wDfs = valDfs[w];
             if (!valDfs[w]) {
                SCCFromValue(card,w);
                if (valHigh[w] > varHigh[k])
@@ -478,7 +477,6 @@ static void SCCFromValue(CPCardinalityDC* card,ORInt w)
    
    ORInt v = valFirstMatch[w];
    while (v != MAXINT) {
-      ORInt vDfs = varDfs[v];
       if (!varDfs[v]) {
          SCCFromVariable(card,v);
          if (varHigh[v] > valHigh[w])
