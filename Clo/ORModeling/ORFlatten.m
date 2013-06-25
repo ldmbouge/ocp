@@ -101,8 +101,6 @@
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
 -(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
-
-
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
 -(void) visitBitOr:(id<ORBitOr>)c {}
@@ -113,7 +111,6 @@
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
-
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
@@ -283,7 +280,6 @@
 }
 -(void) visitRegular:(id<ORRegular>) cstr
 {
-   id<ORIntRange> A = [[cstr automaton] alphabet];
    id<ORIntRange> S = [[cstr automaton] states];
    id<ORIntRange> R = [[cstr array] range];
    id<ORIntRange> E = [ORFactory intRange:_into low:R.low up:R.up+1];

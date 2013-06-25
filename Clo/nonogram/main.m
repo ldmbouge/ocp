@@ -100,8 +100,8 @@ int main(int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
-         ORInt n = [args size];
          
+         /*
          const ORInt rows = 12;
          const ORInt row_rule_len = 3;
          ORInt row_rules[rows][3] = {
@@ -133,6 +133,70 @@ int main(int argc, const char * argv[])
             {0,2},
             {0,2}
          };
+         */
+         // Nonogram problem from Gecode: P200
+         // http://www.gecode.org/gecode-doc-latest/classNonogram.html
+         //
+         const ORInt rows = 25;
+         const ORInt row_rule_len = 7;
+         ORInt row_rules[rows][row_rule_len] = {
+          {0,0,0,0,2,2,3},
+          {0,0,4,1,1,1,4},
+          {0,0,4,1,2,1,1},
+          {4,1,1,1,1,1,1},
+          {0,2,1,1,2,3,5},
+          {0,1,1,1,1,2,1},
+          {0,0,3,1,5,1,2},
+          {0,3,2,2,1,2,2},
+          {2,1,4,1,1,1,1},
+          {0,2,2,1,2,1,2},
+          {0,1,1,1,3,2,3},
+          {0,0,1,1,2,7,3},
+          {0,0,1,2,2,1,5},
+          {0,0,3,2,2,1,2},
+          {0,0,0,3,2,1,2},
+          {0,0,0,0,5,1,2},
+          {0,0,0,2,2,1,2},
+          {0,0,0,4,2,1,2},
+          {0,0,0,6,2,3,2},
+          {0,0,0,7,4,3,2},
+          {0,0,0,0,7,4,4},
+          {0,0,0,0,7,1,4},
+          {0,0,0,0,6,1,4},
+          {0,0,0,0,4,2,2},
+          {0,0,0,0,0,2,1}
+          };
+         
+         
+         const ORInt cols = 25;
+         const ORInt col_rule_len = 6;
+         ORInt col_rules[cols][col_rule_len] = {
+          {0,0,1,1,2,2},
+          {0,0,0,5,5,7},
+          {0,0,5,2,2,9},
+          {0,0,3,2,3,9},
+          {0,1,1,3,2,7},
+          {0,0,0,3,1,5},
+          {0,7,1,1,1,3},
+          {1,2,1,1,2,1},
+          {0,0,0,4,2,4},
+          {0,0,1,2,2,2},
+          {0,0,0,4,6,2},
+          {0,0,1,2,2,1},
+          {0,0,3,3,2,1},
+          {0,0,0,4,1,15},
+          {1,1,1,3,1,1},
+          {2,1,1,2,2,3},
+          {0,0,1,4,4,1},
+          {0,0,1,4,3,2},
+          {0,0,1,1,2,2},
+          {0,7,2,3,1,1},
+          {0,2,1,1,1,5},
+          {0,0,0,1,2,5},
+          {0,0,1,1,1,3},
+          {0,0,0,4,2,1},
+          {0,0,0,0,0,3}
+          };
          
          id<ORIntVarMatrix> x = [ORFactory intVarMatrix:model
                                                   range:RANGE(model,0,rows-1)
