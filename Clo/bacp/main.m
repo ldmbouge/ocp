@@ -44,6 +44,7 @@ int main(int argc, const char * argv[])
          id<ORIntVarArray> x = [ORFactory intVarArray:model range:Courses domain:Periods];
          id<ORIntVarArray> l = [ORFactory intVarArray:model range:Periods domain:RANGE(model,0,totCredit)];
          [model minimize:[ORFactory max:model over:Periods suchThat:nil of:^id<ORExpr>(ORInt i) {return l[i];}]];
+         //[model add:[[ORFactory max:model over:Periods suchThat:nil of:^id<ORExpr>(ORInt i) {return l[i];}] eq:@17]];
          [model add:[ORFactory packing:model item:x itemSize:credits load:l]];
          for(ORInt i=0;i<nbPre;i++)
             [model add:[x[prerequisites[i*2]] lt:x[prerequisites[i*2+1]]]];
@@ -54,16 +55,22 @@ int main(int argc, const char * argv[])
         
          id<CPProgram> cp = [args makeProgram:model];
          __block ORInt nbSol = 0;
-         [cp solveAll:^{
+         [cp solve:^{
             [cp labelArrayFF:x];
-            @autoreleasepool {
-               printf("x = ");
-               [[x range] enumerateWithBlock:^(ORInt i) {
-                  printf("%d",[cp intValue:x[i]]);
-               }];
-               printf("\n");
-            }
+            [cp labelArrayFF:l];
+            printf("x = [");
+            for(ORInt i = x.low; i <= x.up; i++)
+               printf("%d%c",[cp intValue: x[i]],((i < x.up) ? ',' : ']'));
+            printf("\nl = [");
+            for(ORInt i = l.low; i <= l.up; i++)
+               printf("%d%c",[cp intValue: l[i]],((i < l.up) ? ',' : ']'));
+            printf("\tObjective: %d\n",[[[[cp engine] objective] value] value]);
          }];
+         id<ORCPSolution> sol = [[cp solutionPool] best];
+         printf("x = [");
+         for(ORInt i = x.low; i <= x.up; i++)
+            printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
+         printf("\tObjective: %d\n",[[sol objectiveValue] value]);
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
