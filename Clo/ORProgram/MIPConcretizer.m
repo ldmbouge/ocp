@@ -340,6 +340,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
+-(void) visitMin:(id<ORMin>)cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
+-(void) visitMax:(id<ORMax>)cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
 -(void) visitAbs: (id<ORAbs>) cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];

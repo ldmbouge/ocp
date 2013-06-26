@@ -2276,7 +2276,94 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
+@implementation CPMinBC
+-(id)initCPMin:(CPIntVarI*)x and:(CPIntVarI*)y equal:(CPIntVarI*)z
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x)) [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y)) [_y whenChangeBoundsPropagate:self];
+   if (!bound(_z)) [_z whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void) propagate
+{
+   ORInt zmin = min(_x.min,_y.min);
+   ORInt zmax = min(_x.max,_y.max);
+   [_z updateMin:zmin andMax:zmax];
+   [_x updateMin:_z.min];
+   [_y updateMin:_z.min];
+   zmax = _z.max;
+   if (zmax < _x.min)
+      [_y updateMax:zmax];
+   else if (zmax < _y.min)
+      [_x updateMax:zmax];   
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];   
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound] + ![_z bound];   
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPMinBC:%02d %@ == MIN(%@,%@)>",_name,_z,_x,_y];
+}
+@end
 
+
+@implementation CPMaxBC
+-(id)initCPMax:(CPIntVarI*)x and:(CPIntVarI*)y equal:(CPIntVarI*)z
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(ORStatus) post
+{
+   [self propagate];
+   if (!bound(_x)) [_x whenChangeBoundsPropagate:self];
+   if (!bound(_y)) [_y whenChangeBoundsPropagate:self];
+   if (!bound(_z)) [_z whenChangeBoundsPropagate:self];
+   return ORSuspend;
+}
+-(void) propagate
+{
+   ORInt zmin = max(_x.min,_y.min);
+   ORInt zmax = max(_x.max,_y.max);
+   [_z updateMin:zmin andMax:zmax];
+   [_x updateMax:_z.max];
+   [_y updateMax:_z.max];
+   zmin = _z.min;
+   if (zmin > _x.max)
+      [_y updateMin:zmin];
+   else if (zmin > _y.max)
+      [_x updateMin:zmin];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return ![_y bound] + ![_x bound] + ![_z bound];
+}
+-(NSString*)description
+{
+   return [NSMutableString stringWithFormat:@"<CPMinBC:%02d %@ == MAX(%@,%@)>",_name,_z,_x,_y];
+}
+@end
 
 
 @implementation CPAllDifferenceVC

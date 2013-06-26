@@ -75,6 +75,8 @@
 -(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
+-(void) visitMin: (id<ORMin>)c;
+-(void) visitMax: (id<ORMax>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;

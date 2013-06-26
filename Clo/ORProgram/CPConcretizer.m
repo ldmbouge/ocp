@@ -509,6 +509,29 @@
    }
 }
 
+-(void) visitMin:(id<ORMin>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> left = [self concreteVar:[cstr left]];
+      id<CPIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr  = [CPFactory min:left and:right equal:res];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }   
+}
+
+-(void) visitMax:(id<ORMin>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPIntVar> res = [self concreteVar:[cstr res]];
+      id<CPIntVar> left = [self concreteVar:[cstr left]];
+      id<CPIntVar> right = [self concreteVar:[cstr right]];
+      id<CPConstraint> concreteCstr  = [CPFactory max:left and:right equal:res];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }   
+}
 
 -(void) visitAbs: (id<ORAbs>) cstr
 {

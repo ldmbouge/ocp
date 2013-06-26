@@ -1001,13 +1001,13 @@
    return o;
 }
 
-+(id<ORConstraint>) min:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z
++(id<ORConstraint>) min:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORMin alloc] init:x and:y equal:z];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) max:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z
++(id<ORConstraint>) max:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORMax alloc] init:x and:y equal:z];
    [model trackObject:o];
