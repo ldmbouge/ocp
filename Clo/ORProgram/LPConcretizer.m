@@ -519,6 +519,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
+-(void) visitExprAggMinI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
+}
+-(void) visitExprAggMaxI: (id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
+}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];

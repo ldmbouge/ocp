@@ -143,6 +143,19 @@ enum ORGroupType {
 -(ORAnnotation) annotation;
 @end
 
+@protocol ORMin <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@protocol ORMax <ORConstraint>
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+
 @protocol ORAbs <ORConstraint>
 -(id<ORIntVar>) res;
 -(id<ORIntVar>) left;

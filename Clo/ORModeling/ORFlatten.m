@@ -127,6 +127,8 @@
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}
 -(void) visitExprModI:(id<ORExpr>)e   {}
+-(void) visitExprMinI: (id<ORExpr>) e {}
+-(void) visitExprMaxI: (id<ORExpr>) e {}
 -(void) visitExprNegateI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}
@@ -134,6 +136,8 @@
 -(void) visitExprImplyI: (id<ORExpr>) e  {}
 -(void) visitExprAggOrI: (id<ORExpr>) e  {}
 -(void) visitExprAggAndI: (id<ORExpr>) e  {}
+-(void) visitExprAggMinI: (id<ORExpr>) e  {}
+-(void) visitExprAggMaxI: (id<ORExpr>) e  {}
 -(void) visitExprVarSubI: (id<ORExpr>) e  {}
 @end
 

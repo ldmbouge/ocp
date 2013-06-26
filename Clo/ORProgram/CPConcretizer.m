@@ -926,6 +926,10 @@
 {}
 -(void) visitExprAggAndI: (id<ORExpr>) e
 {}
+-(void) visitExprAggMinI: (id<ORExpr>) e
+{}
+-(void) visitExprAggMaxI: (id<ORExpr>) e
+{}
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {}
 @end

@@ -135,6 +135,20 @@
 -(ORAnnotation) annotation;
 @end
 
+@interface ORMin : ORConstraintI<ORMin>
+-(ORMod*)init:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
+@interface ORMax : ORConstraintI<ORMax>
+-(ORMod*)init:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
+-(id<ORIntVar>) res;
+-(id<ORIntVar>) left;
+-(id<ORIntVar>) right;
+@end
+
 // PVH: should add annotation
 @interface ORAbs : ORConstraintI<ORAbs>
 -(ORAbs*)initORAbs:(id<ORIntVar>)x eqAbs:(id<ORIntVar>)y;
