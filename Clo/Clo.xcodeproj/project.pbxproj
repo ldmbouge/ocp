@@ -557,6 +557,16 @@
 		5B9ABD0F1391329D000997E5 /* objcpTests.h in Resources */ = {isa = PBXBuildFile; fileRef = 5B9ABD0E1391329D000997E5 /* objcpTests.h */; };
 		5B9ABD111391329D000997E5 /* objcpTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9ABD101391329D000997E5 /* objcpTests.m */; };
 		5B9ABD2C13913495000997E5 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B9B2449177873D3001AB944 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B9B244C177873D3001AB944 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9B244B177873D3001AB944 /* main.m */; };
+		5B9B2450177873D3001AB944 /* nonogram.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B9B244F177873D3001AB944 /* nonogram.1 */; };
+		5B9B2460177873EA001AB944 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B9B2461177873EA001AB944 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B9B2462177873EA001AB944 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B9B2463177873EA001AB944 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B9B2464177873EA001AB944 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B9B2465177873EA001AB944 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5B9B2466177873F2001AB944 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5B9C2CDF166CF08C00D91D40 /* CPAC3Event.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */; };
 		5B9EE50815175CCC00619B47 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9EE50715175CCC00619B47 /* UIKit.framework */; };
 		5B9EE50915175CCC00619B47 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -707,6 +717,16 @@
 		5BC091EC167F9D6E009A7712 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BC091ED167F9D6E009A7712 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BC091EE167F9D6E009A7712 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BC0C753177A191400B12173 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5BC0C756177A191400B12173 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC0C755177A191400B12173 /* main.m */; };
+		5BC0C75A177A191400B12173 /* bacp.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC0C759177A191400B12173 /* bacp.1 */; };
+		5BC0C76A177A192D00B12173 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5BC0C76B177A192D00B12173 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BC0C76C177A192D00B12173 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5BC0C76D177A192D00B12173 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5BC0C76E177A192D00B12173 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5BC0C76F177A192D00B12173 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BC0C770177A193800B12173 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5BC116A21595067900E0F5C8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC116A51595067900E0F5C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC116A41595067900E0F5C8 /* main.m */; };
 		5BC116A91595067900E0F5C8 /* ais.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC116A81595067900E0F5C8 /* ais.1 */; };
@@ -2352,6 +2372,48 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5B9B2454177873DF001AB944 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B9B2456177873DF001AB944 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B9B2458177873DF001AB944 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B9B245A177873DF001AB944 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B9B245C177873DF001AB944 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B9B245E177873DF001AB944 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
 		5B9EE5881517BE4B00619B47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -2745,6 +2807,48 @@
 			remoteInfo = CPUKernel;
 		};
 		5BC091E7167F9D65009A7712 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5BC0C75E177A192100B12173 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BC0C760177A192100B12173 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BC0C762177A192100B12173 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BC0C764177A192100B12173 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5BC0C766177A192100B12173 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5BC0C768177A192100B12173 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -3907,6 +4011,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5B9B2446177873D3001AB944 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5B9B2450177873D3001AB944 /* nonogram.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5BA3457A1680B7BD00485366 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -3982,6 +4096,16 @@
 			dstSubfolderSpec = 0;
 			files = (
 				5BC091D9167F9D5B009A7712 /* slow_convergence.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		5BC0C750177A191400B12173 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5BC0C75A177A191400B12173 /* bacp.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -4604,6 +4728,10 @@
 		5B9ABD0D1391329D000997E5 /* objcpTests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "objcpTests-Prefix.pch"; sourceTree = "<group>"; };
 		5B9ABD0E1391329D000997E5 /* objcpTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = objcpTests.h; sourceTree = "<group>"; };
 		5B9ABD101391329D000997E5 /* objcpTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = objcpTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		5B9B2448177873D3001AB944 /* nonogram */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = nonogram; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B9B244B177873D3001AB944 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B9B244E177873D3001AB944 /* nonogram-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "nonogram-Prefix.pch"; sourceTree = "<group>"; };
+		5B9B244F177873D3001AB944 /* nonogram.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = nonogram.1; sourceTree = "<group>"; };
 		5B9C2CDE166CF08C00D91D40 /* CPAC3Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPAC3Event.h; sourceTree = "<group>"; };
 		5B9EE50515175CCB00619B47 /* iCP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iCP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B9EE50715175CCC00619B47 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
@@ -4655,6 +4783,10 @@
 		5BC091D4167F9D5B009A7712 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BC091D7167F9D5B009A7712 /* slow_convergence-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "slow_convergence-Prefix.pch"; sourceTree = "<group>"; };
 		5BC091D8167F9D5B009A7712 /* slow_convergence.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = slow_convergence.1; sourceTree = "<group>"; };
+		5BC0C752177A191400B12173 /* bacp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bacp; sourceTree = BUILT_PRODUCTS_DIR; };
+		5BC0C755177A191400B12173 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5BC0C758177A191400B12173 /* bacp-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "bacp-Prefix.pch"; sourceTree = "<group>"; };
+		5BC0C759177A191400B12173 /* bacp.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = bacp.1; sourceTree = "<group>"; };
 		5BC116A01595067900E0F5C8 /* ais */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ais; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC116A41595067900E0F5C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = main.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5BC116A71595067900E0F5C8 /* ais-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ais-Prefix.pch"; sourceTree = "<group>"; };
@@ -5353,6 +5485,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5B9B2445177873D3001AB944 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B9B2460177873EA001AB944 /* CPUKernel.framework in Frameworks */,
+				5B9B2461177873EA001AB944 /* objcp.framework in Frameworks */,
+				5B9B2462177873EA001AB944 /* ORFoundation.framework in Frameworks */,
+				5B9B2463177873EA001AB944 /* ORModeling.framework in Frameworks */,
+				5B9B2464177873EA001AB944 /* ORProgram.framework in Frameworks */,
+				5B9B2465177873EA001AB944 /* ORUtilities.framework in Frameworks */,
+				5B9B2449177873D3001AB944 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B9EE50215175CCB00619B47 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -5509,6 +5655,20 @@
 				5BC091ED167F9D6E009A7712 /* ORProgram.framework in Frameworks */,
 				5BC091EE167F9D6E009A7712 /* ORUtilities.framework in Frameworks */,
 				5BC091D2167F9D5B009A7712 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BC0C74F177A191400B12173 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BC0C76A177A192D00B12173 /* CPUKernel.framework in Frameworks */,
+				5BC0C76B177A192D00B12173 /* objcp.framework in Frameworks */,
+				5BC0C76C177A192D00B12173 /* ORFoundation.framework in Frameworks */,
+				5BC0C76D177A192D00B12173 /* ORModeling.framework in Frameworks */,
+				5BC0C76E177A192D00B12173 /* ORProgram.framework in Frameworks */,
+				5BC0C76F177A192D00B12173 /* ORUtilities.framework in Frameworks */,
+				5BC0C753177A191400B12173 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6491,6 +6651,8 @@
 				5B6623AF1770A13200A1ACCD /* minesweeper */,
 				5B6623D21770B1AD00A1ACCD /* paq */,
 				5BC97A2A177384C1005C48A8 /* regular */,
+				5B9B2448177873D3001AB944 /* nonogram */,
+				5BC0C752177A191400B12173 /* bacp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6542,6 +6704,8 @@
 		5B7408AC1562828000C05277 /* Objective-CP Examples */ = {
 			isa = PBXGroup;
 			children = (
+				5BC0C754177A191400B12173 /* bacp */,
+				5B9B244A177873D3001AB944 /* nonogram */,
 				5B6623D41770B1AE00A1ACCD /* paq */,
 				5B6623B11770A13200A1ACCD /* minesweeper */,
 				5B66238E176FA5BA00A1ACCD /* qg7 */,
@@ -6952,6 +7116,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5B9B244A177873D3001AB944 /* nonogram */ = {
+			isa = PBXGroup;
+			children = (
+				5B9B244B177873D3001AB944 /* main.m */,
+				5B9B244F177873D3001AB944 /* nonogram.1 */,
+				5B9B244D177873D3001AB944 /* Supporting Files */,
+			);
+			path = nonogram;
+			sourceTree = "<group>";
+		};
+		5B9B244D177873D3001AB944 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B9B244E177873D3001AB944 /* nonogram-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5BA3457F1680B7BD00485366 /* latinSquare */ = {
 			isa = PBXGroup;
 			children = (
@@ -7137,6 +7319,24 @@
 			isa = PBXGroup;
 			children = (
 				5BC091D7167F9D5B009A7712 /* slow_convergence-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5BC0C754177A191400B12173 /* bacp */ = {
+			isa = PBXGroup;
+			children = (
+				5BC0C755177A191400B12173 /* main.m */,
+				5BC0C759177A191400B12173 /* bacp.1 */,
+				5BC0C757177A191400B12173 /* Supporting Files */,
+			);
+			path = bacp;
+			sourceTree = "<group>";
+		};
+		5BC0C757177A191400B12173 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5BC0C758177A191400B12173 /* bacp-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -8818,6 +9018,29 @@
 			productReference = 5B9ABD021391329D000997E5 /* objcpTests.octest */;
 			productType = "com.apple.product-type.bundle";
 		};
+		5B9B2447177873D3001AB944 /* nonogram */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B9B2453177873D3001AB944 /* Build configuration list for PBXNativeTarget "nonogram" */;
+			buildPhases = (
+				5B9B2444177873D3001AB944 /* Sources */,
+				5B9B2445177873D3001AB944 /* Frameworks */,
+				5B9B2446177873D3001AB944 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B9B2455177873DF001AB944 /* PBXTargetDependency */,
+				5B9B2457177873DF001AB944 /* PBXTargetDependency */,
+				5B9B2459177873DF001AB944 /* PBXTargetDependency */,
+				5B9B245B177873DF001AB944 /* PBXTargetDependency */,
+				5B9B245D177873DF001AB944 /* PBXTargetDependency */,
+				5B9B245F177873DF001AB944 /* PBXTargetDependency */,
+			);
+			name = nonogram;
+			productName = nonogram;
+			productReference = 5B9B2448177873D3001AB944 /* nonogram */;
+			productType = "com.apple.product-type.tool";
+		};
 		5B9EE50415175CCB00619B47 /* iCP */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B9EE52315175CCC00619B47 /* Build configuration list for PBXNativeTarget "iCP" */;
@@ -9089,6 +9312,29 @@
 			name = slow_convergence;
 			productName = slow_convergence;
 			productReference = 5BC091D0167F9D5B009A7712 /* slow_convergence */;
+			productType = "com.apple.product-type.tool";
+		};
+		5BC0C751177A191400B12173 /* bacp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5BC0C75D177A191400B12173 /* Build configuration list for PBXNativeTarget "bacp" */;
+			buildPhases = (
+				5BC0C74E177A191400B12173 /* Sources */,
+				5BC0C74F177A191400B12173 /* Frameworks */,
+				5BC0C750177A191400B12173 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5BC0C75F177A192100B12173 /* PBXTargetDependency */,
+				5BC0C761177A192100B12173 /* PBXTargetDependency */,
+				5BC0C763177A192100B12173 /* PBXTargetDependency */,
+				5BC0C765177A192100B12173 /* PBXTargetDependency */,
+				5BC0C767177A192100B12173 /* PBXTargetDependency */,
+				5BC0C769177A192100B12173 /* PBXTargetDependency */,
+			);
+			name = bacp;
+			productName = bacp;
+			productReference = 5BC0C752177A191400B12173 /* bacp */;
 			productType = "com.apple.product-type.tool";
 		};
 		5BC1169F1595067900E0F5C8 /* ais */ = {
@@ -9985,6 +10231,8 @@
 				5B6623AE1770A13200A1ACCD /* minesweeper */,
 				5B6623D11770B1AD00A1ACCD /* paq */,
 				5BC97A29177384C1005C48A8 /* regular */,
+				5B9B2447177873D3001AB944 /* nonogram */,
+				5BC0C751177A191400B12173 /* bacp */,
 			);
 		};
 /* End PBXProject section */
@@ -10438,6 +10686,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5B9B2444177873D3001AB944 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B9B2466177873F2001AB944 /* ORCmdLineArgs.m in Sources */,
+				5B9B244C177873D3001AB944 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		5B9EE50115175CCB00619B47 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -10660,6 +10917,15 @@
 			files = (
 				5BC091D5167F9D5B009A7712 /* main.m in Sources */,
 				5B6CFDB716D93A8100BCB95F /* ORCmdLineArgs.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5BC0C74E177A191400B12173 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5BC0C770177A193800B12173 /* ORCmdLineArgs.m in Sources */,
+				5BC0C756177A191400B12173 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11916,6 +12182,36 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B9ABD2D13913499000997E5 /* PBXContainerItemProxy */;
 		};
+		5B9B2455177873DF001AB944 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B9B2454177873DF001AB944 /* PBXContainerItemProxy */;
+		};
+		5B9B2457177873DF001AB944 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B9B2456177873DF001AB944 /* PBXContainerItemProxy */;
+		};
+		5B9B2459177873DF001AB944 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B9B2458177873DF001AB944 /* PBXContainerItemProxy */;
+		};
+		5B9B245B177873DF001AB944 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B9B245A177873DF001AB944 /* PBXContainerItemProxy */;
+		};
+		5B9B245D177873DF001AB944 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B9B245C177873DF001AB944 /* PBXContainerItemProxy */;
+		};
+		5B9B245F177873DF001AB944 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B9B245E177873DF001AB944 /* PBXContainerItemProxy */;
+		};
 		5B9EE5891517BE4B00619B47 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9EE52715175CF900619B47 /* CPLib */;
@@ -12200,6 +12496,36 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BC091E7167F9D65009A7712 /* PBXContainerItemProxy */;
+		};
+		5BC0C75F177A192100B12173 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BC0C75E177A192100B12173 /* PBXContainerItemProxy */;
+		};
+		5BC0C761177A192100B12173 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BC0C760177A192100B12173 /* PBXContainerItemProxy */;
+		};
+		5BC0C763177A192100B12173 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BC0C762177A192100B12173 /* PBXContainerItemProxy */;
+		};
+		5BC0C765177A192100B12173 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BC0C764177A192100B12173 /* PBXContainerItemProxy */;
+		};
+		5BC0C767177A192100B12173 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5BC0C766177A192100B12173 /* PBXContainerItemProxy */;
+		};
+		5BC0C769177A192100B12173 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5BC0C768177A192100B12173 /* PBXContainerItemProxy */;
 		};
 		5BC116AE1595067F00E0F5C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14013,6 +14339,46 @@
 			};
 			name = Release;
 		};
+		5B9B2451177873D3001AB944 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "nonogram/nonogram-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B9B2452177873D3001AB944 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "nonogram/nonogram-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		5B9EE52115175CCC00619B47 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -14436,6 +14802,46 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5BC0C75B177A191400B12173 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bacp/bacp-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5BC0C75C177A191400B12173 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "bacp/bacp-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -15804,6 +16210,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		5B9B2453177873D3001AB944 /* Build configuration list for PBXNativeTarget "nonogram" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B9B2451177873D3001AB944 /* Debug */,
+				5B9B2452177873D3001AB944 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		5B9EE52315175CCC00619B47 /* Build configuration list for PBXNativeTarget "iCP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -15920,6 +16335,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5BC0C75D177A191400B12173 /* Build configuration list for PBXNativeTarget "bacp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5BC0C75B177A191400B12173 /* Debug */,
+				5BC0C75C177A191400B12173 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5BC116AC1595067900E0F5C8 /* Build configuration list for PBXNativeTarget "ais" */ = {
 			isa = XCConfigurationList;

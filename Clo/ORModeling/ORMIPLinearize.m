@@ -254,6 +254,14 @@
 {
    _result = c;
 }
+-(void) visitMin:(id<ORMin>)c
+{
+   _result = c;
+}
+-(void) visitMax:(id<ORMax>)c
+{
+   _result = c;
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
    _result = c;

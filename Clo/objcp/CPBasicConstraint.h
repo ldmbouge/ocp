@@ -235,6 +235,27 @@ typedef int (^intgetter) (void) ;
 -(ORStatus) post;
 @end
 
+@interface CPMinBC : CPCoreConstraint {
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   CPIntVarI* _z;   
+}
+-(id)initCPMin:(id)x and:(id)y equal:(id)z;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
+
+@interface CPMaxBC : CPCoreConstraint {
+   CPIntVarI* _x;
+   CPIntVarI* _y;
+   CPIntVarI* _z;
+}
+-(id)initCPMax:(id)x and:(id)y equal:(id)z;
+-(ORStatus) post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end
 
 @interface CPModBC : CPCoreConstraint { // z == x MOD y
    CPIntVarI* _x;

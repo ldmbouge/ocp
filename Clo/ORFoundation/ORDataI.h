@@ -111,11 +111,16 @@
 @interface ORAutomatonI : ORObject<ORAutomaton,NSCoding> {
    id<ORIntRange> _alpha;
    id<ORIntRange> _states;
+   ORInt          _initial;
    id<ORIntSet>   _final;
    ORInt          _nbt;
    ORTableI*      _transition;
 }
--(id) init:(id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs table:(id<ORTable>)table;
+-(id) init:(id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf
+   initial:(ORInt)is
+     final:(id<ORIntSet>)fs
+     table:(id<ORTable>)table;
+-(ORInt) initial;
 -(id<ORIntSet>)final;
 -(id<ORIntRange>)alphabet;
 -(id<ORIntRange>)states;

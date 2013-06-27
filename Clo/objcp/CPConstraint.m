@@ -444,6 +444,19 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) min: (id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+   id<CPConstraint> o = [[CPMinBC alloc] initCPMin:x and:y equal:z];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) max: (id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)z
+{
+   id<CPConstraint> o = [[CPMaxBC alloc] initCPMax:x and:y equal:z];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+
 +(id<ORConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y annotation:(ORAnnotation)c
 {
    id<ORConstraint> o = nil;

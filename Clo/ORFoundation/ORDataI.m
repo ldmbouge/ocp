@@ -598,7 +598,7 @@ static ORInt _deterministic;
 }
 -(void) dealloc
 {
-   NSLog(@"ORTableI dealloc called ...");
+   //NSLog(@"ORTableI dealloc called ...");
    for(ORInt i = 0; i < _arity; i++)
       free(_column[i]);
    free(_column);
@@ -758,14 +758,16 @@ static ORInt _deterministic;
 }
 @end
 
-
 @implementation ORAutomatonI
--(id) init:(id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf final:(id<ORIntSet>)fs table:(ORTableI*)table
+-(id) init: (id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf
+   initial: (ORInt) is
+     final: (id<ORIntSet>)fs table:(ORTableI*)table
 {
    self = [super init];
    _alpha = alphabet;
    _states = states;
    _nbt   = stf;
+   _initial = is;
    _final = fs;
    _transition = table;
    for(ORInt i = 0;i<_nbt;i++)
@@ -775,6 +777,10 @@ static ORInt _deterministic;
 -(void)dealloc
 {
    [super dealloc];
+}
+-(ORInt) initial
+{
+   return _initial;
 }
 -(id<ORIntSet>)final
 {
@@ -801,6 +807,7 @@ static ORInt _deterministic;
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nbt];
    [aCoder encodeObject:_alpha];
    [aCoder encodeObject:_states];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_initial];
    [aCoder encodeObject:_final];
    [aCoder encodeObject:_transition];
 }
@@ -810,6 +817,7 @@ static ORInt _deterministic;
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nbt];
    _alpha  = [aDecoder decodeObject];
    _states = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_initial];
    _final  = [aDecoder decodeObject];
    _transition = [aDecoder decodeObject];
    return self;
