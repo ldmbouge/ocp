@@ -219,12 +219,15 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
-   [lpprogram setTau: model.tau];
+//   [lpprogram setTau: model.tau];
  
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
 
    for(id<ORObject> c in [flatModel mutables])
-      [c visit: concretizer];   
+      [c visit: concretizer];
+   for(id<ORObject> c in [flatModel constraints])
+      [c visit: concretizer];
+   [[flatModel objective] visit:concretizer];
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }
