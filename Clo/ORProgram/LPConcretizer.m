@@ -180,6 +180,7 @@
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];     
       LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: a cst: -cst];
+      NSLog(@"about to insert in gamma c.getId: %d",c.getId);
       _gamma[c.getId] = concreteCstr;
       [_lpsolver postConstraint: concreteCstr];
    }

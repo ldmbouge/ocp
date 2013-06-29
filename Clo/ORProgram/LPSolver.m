@@ -408,6 +408,7 @@
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
+   NSLog(@"dual c.getId: %d",c.getId);
    return [_lpsolver dual: [self concretize: c]];
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) v

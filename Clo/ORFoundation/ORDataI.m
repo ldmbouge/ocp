@@ -902,6 +902,7 @@ static ORInt _deterministic;
 {
    self = [super init];
    _gamma = NULL;
+   _mappings = NULL;
    return self;
 }
 -(void) dealloc
@@ -913,13 +914,18 @@ static ORInt _deterministic;
 {
    _gamma = gamma;
 }
+-(void) setMappings: (id<ORModelMappings>) mappings
+{
+   _mappings = mappings;
+}
 -(id*) gamma
 {
    return _gamma;
 }
 -(id) concretize: (id<ORObject>) o
 {
-   id<ORObject> ob =  _gamma[o.getId];
+   ORInt i = o.getId;
+   id<ORObject> ob =  _gamma[i];
    if (ob)
       return ob;
    else {

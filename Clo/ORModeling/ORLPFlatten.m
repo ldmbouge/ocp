@@ -78,6 +78,7 @@
    onObjective:^(id<ORObjectiveFunction> o) {
       [self flattenIt:o];
    }];
+   NSLog(@"tau: %@",_tau);
 }
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
