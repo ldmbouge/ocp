@@ -44,7 +44,7 @@
 @implementation ORGamma (Model)
 -(void) initialize: (id<ORModel>) model
 {
-   _mappings = model.mappings;
+   _mappings = model.modelMappings;
 }
 @end
 
@@ -219,7 +219,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
-   [lpprogram setMappings: flatModel.mappings];
+   [lpprogram setMappings: flatModel.modelMappings];
  
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
 

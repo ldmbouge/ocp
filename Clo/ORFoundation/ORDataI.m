@@ -941,44 +941,4 @@ static ORInt _deterministic;
 }
 @end
 
-@implementation ORModelMappings
-{
-@protected
-   id<ORTau> _tau;
-   id<ORLambda> _lambda;
-}
--(ORModelMappings*) initORModelMappings
-{
-   self = [super init];
-   return self;
-}
--(void) dealloc
-{
-   [super dealloc];
-}
--(void) setTau: (id<ORTau>) tau
-{
-   _tau = tau;
-}
--(void) setLambda: (id<ORLambda>) lambda
-{
-   _lambda = lambda;
-}
--(id<ORTau>) tau
-{
-   return _tau;
-}
--(id<ORLambda>) lambda
-{
-   return _lambda;
-}
--(id) copyWithZone: (NSZone*) zone
-{
-   ORModelMappings* map = [[ORModelMappings alloc] initORModelMappings];
-   map->_tau = [_tau copy];
-   map->_lambda = [_lambda copy];
-   return map;
-}
-@end
-
 

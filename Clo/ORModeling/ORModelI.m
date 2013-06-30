@@ -87,6 +87,61 @@
 }
 @end
 
+@implementation ORModelMappings
+{
+@protected
+   id<ORTau> _tau;
+   id<ORLambda> _lambda;
+}
+
+-(ORModelMappings*) initORModelMappings
+{
+   self = [super init];
+   _tau = [[ORTau alloc] initORTau];
+   _lambda = [[ORLambda alloc] initORLambda];
+   return self;
+}
+
+-(ORModelMappings*) initORModelMappings: (id<ORModelMappings>) mappings
+{
+   self = [super init];
+   _tau = [mappings.tau copy];
+   _lambda = [mappings.lambda copy];
+   return self;
+}
+
+-(void) dealloc
+{
+   [super dealloc];
+}
+
+-(void) setTau: (id<ORTau>) tau
+{
+   _tau = tau;
+}
+-(void) setLambda: (id<ORLambda>) lambda
+{
+   _lambda = lambda;
+}
+-(id<ORTau>) tau
+{
+   return _tau;
+}
+-(id<ORLambda>) lambda
+{
+   return _lambda;
+}
+-(id) copyWithZone: (NSZone*) zone
+{
+   ORModelMappings* map = [[ORModelMappings alloc] initORModelMappings];
+   map->_tau = [_tau copy];
+   map->_lambda = [_lambda copy];
+   return map;
+}
+@end
+
+
+
 @implementation ORModelI
 {
    NSMutableArray*          _vars;      // model variables.
@@ -149,7 +204,7 @@
 {
    return _mappings.lambda;
 }
--(id<ORModelMappings>) mappings
+-(id<ORModelMappings>) modelMappings
 {
    return _mappings;
 }
@@ -527,7 +582,10 @@
    [_target addImmutable:object];
    return object;
 }
-
+-(id<ORModelMappings>) modelMappings
+{
+   return [_target modelMappings];
+}
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr
 {
    if (cstr && (id)cstr != [NSNull null])

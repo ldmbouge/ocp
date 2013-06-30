@@ -54,7 +54,7 @@
 -(id)inCache:(id)obj;
 -(id) addToCache:(id)obj;
 -(id)memoize:(id) obj;
--(id<ORModelMappings>) mappings;
+-(id<ORModelMappings>) modelMappings;
 -(id<ORTau>) tau;
 -(id<ORLambda>) lambda;
 @end
@@ -71,6 +71,7 @@
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
 -(id<ORObjectiveFunction>) maximize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @interface ORFactory (ORModeling)

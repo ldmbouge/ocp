@@ -173,11 +173,3 @@ typedef ORInt ORTransition[3];
 -(id) concretize: (id) o;
 @end
 
-@interface ORModelMappings : NSObject<ORModelMappings>
--(ORModelMappings*) initORModelMappings;
--(void) dealloc;
--(void) setTau: (id<ORTau>) tau;
--(void) setLambda: (id<ORLambda>) lambda;
--(id<ORTau>) tau;
--(id<ORLambda>) lambda;
-@end
