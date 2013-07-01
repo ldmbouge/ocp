@@ -76,6 +76,10 @@
 {
    return _solver[[NSThread threadID]];
 }
+-(id<ORModelMappings>) modelMappings
+{
+   return [[self worker] modelMappings];
+}
 -(void)  restartHeuristics
 {
    [[self worker] restartHeuristics];

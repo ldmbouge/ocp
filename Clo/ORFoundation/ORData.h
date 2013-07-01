@@ -47,10 +47,13 @@ typedef enum {
 -(id) copy;
 @end
 
+@protocol ORModelMappings;
+
 @protocol ORGamma <NSObject>
 -(void) setGamma: (id*) gamma;
 -(id*)gamma;
 -(id<ORObject>) concretize: (id<ORObject>) o;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @protocol ORModelMappings <NSObject>
@@ -58,6 +61,21 @@ typedef enum {
 -(id<ORLambda>) lambda;
 -(id) copy;
 @end
+
+@interface ORGamma : NSObject<ORGamma>
+{
+@protected
+   id* _gamma;
+   id<ORModelMappings> _mappings;
+}
+-(ORGamma*) initORGamma;
+-(void) dealloc;
+-(id*) gamma;
+-(id) concretize: (id) o;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
+-(id<ORModelMappings>) modelMappings;
+@end
+
 
 @interface NSObject (Concretization)
 -(void) visit: (id<ORVisitor>) visitor;
@@ -159,17 +177,5 @@ typedef ORInt ORTransition[3];
 -(id) objectAtIndexedSubscript:(NSUInteger)key;
 -(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
 -(ORInt) nb;
-@end
-
-@interface ORGamma : NSObject<ORGamma>
-{
-@protected
-   id* _gamma;
-   id<ORModelMappings> _mappings;
-}
--(ORGamma*) initORGamma;
--(void) dealloc;
--(id*) gamma;
--(id) concretize: (id) o;
 @end
 

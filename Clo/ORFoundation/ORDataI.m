@@ -914,9 +914,13 @@ static ORInt _deterministic;
 {
    _gamma = gamma;
 }
--(void) setMappings: (id<ORModelMappings>) mappings
+-(void) setModelMappings: (id<ORModelMappings>) mappings
 {
    _mappings = mappings;
+}
+-(id<ORModelMappings>) modelMappings
+{
+   return _mappings;
 }
 -(id*) gamma
 {

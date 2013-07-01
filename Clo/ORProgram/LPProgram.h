@@ -36,7 +36,7 @@
 @protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
 -(void) setGamma: (id*) gamma;
--(void) setMappings: (id<ORModelMappings>) mappings;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
 -(id<LPColumn>) createColumn;

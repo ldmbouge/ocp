@@ -219,7 +219,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [lpprogram setGamma: gamma];
-   [lpprogram setMappings: flatModel.modelMappings];
+   [lpprogram setModelMappings: flatModel.modelMappings];
  
    id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
 
@@ -255,7 +255,8 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [mipprogram setGamma: gamma];
-   [mipprogram setTau: model.tau];
+   [mipprogram setModelMappings: flatModel.modelMappings];
+  
    
    id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
   

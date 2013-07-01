@@ -71,7 +71,6 @@
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
--(id<ORGamma>) mappings;
 -(id<ORModelMappings>) modelMappings;
 @end
 

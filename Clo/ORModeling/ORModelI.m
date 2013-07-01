@@ -668,6 +668,10 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    return [_target tracker];
 }
+-(id<ORModelMappings>) modelMappings
+{
+   return [_target modelMappings];
+}
 -(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_target addVariable:var];
