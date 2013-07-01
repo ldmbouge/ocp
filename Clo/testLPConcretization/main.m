@@ -172,7 +172,7 @@ int main_both(int argc, const char * argv[])
    }];
    id<ORSolution> cpSol = [[cp solutionPool] best];
    NSLog(@"Solution: %@",cpSol);
-   printf("Objective value: %d \n",[[cpSol objectiveValue] value]);
+   printf("Objective value: %d \n",(ORInt) [(id<ORObjectiveValueInt>) [cpSol objectiveValue] value]);
    for(ORInt i = 0; i < nbColumns; i++)
       printf("x[%d] = %d \n",i,[cpSol intValue: x[i]]);
    NSLog(@"we are done");
