@@ -50,3 +50,14 @@
 -(id<ORLPSolution>) captureSolution;
 @end
 
+@protocol LPRelaxation <ORASolver>
+-(LPSolverI*) solver;
+-(void) setGamma: (id*) gamma;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
+-(id*)  gamma;
+-(void) solve;
+-(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORVar>) v;
+-(ORFloat) floatValue: (id<ORVar>) v;
+@end
+

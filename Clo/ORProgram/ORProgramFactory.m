@@ -206,15 +206,8 @@
 +(void) createLPProgram: (id<ORModel>) model program: (id<LPProgram>) lpprogram
 {
    id<ORModel> flatModel = [model lpflatten];
-//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source:model];
-//   id<ORModelTransformation> flattener = [ORFactory createLPFlattener:batch];
-//   [flattener apply: model];
-//   [batch release];
-//   NSLog(@"model is %@",flatModel);
    
    ORUInt nbEntries =  [flatModel nbObjects];
-//   NSLog(@" NbEntries: %d",nbEntries);
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
@@ -239,18 +232,39 @@
    return lpprogram;
 }
 
++(void) createLPRelaxation: (id<ORModel>) model program: (id<LPRelaxation>) lpprogram
+{
+   id<ORModel> flatModel = [model lpflatten];
+   
+   ORUInt nbEntries =  [flatModel nbObjects];
+   id* gamma = malloc(sizeof(id) * nbEntries);
+   for(ORInt i = 0; i < nbEntries; i++)
+      gamma[i] = NULL;
+   [lpprogram setGamma: gamma];
+   [lpprogram setModelMappings: flatModel.modelMappings];
+   
+   id<ORVisitor> concretizer = [[ORLPRelaxationConcretizer alloc] initORLPRelaxationConcretizer: lpprogram];
+   
+   for(id<ORObject> c in [flatModel mutables])
+      [c visit: concretizer];
+   for(id<ORObject> c in [flatModel constraints])
+      [c visit: concretizer];
+   [[flatModel objective] visit:concretizer];
+   [concretizer release];
+}
+
++(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model
+{
+   id<LPRelaxation> lpprogram = [LPSolverFactory relaxation: model];
+   [self createLPRelaxation: model program: lpprogram];
+   return lpprogram;
+}
+
 +(void) createMIPProgram: (id<ORModel>) model program: (id<MIPProgram>) mipprogram
 {
-//   id<ORModel> flatModel = [ORFactory createModel: [model nbObjects] tau: model.tau];
-//   id<ORAddToModel> batch  = [ORFactory createBatchModel: flatModel source: model];
-//   id<ORModelTransformation> flattener = [ORFactory createMIPFlattener:batch];
-//   [flattener apply: model];
-//   [batch release];
-   
    id<ORModel> flatModel = [model mipflatten];
    
    ORUInt nbEntries =  [flatModel nbObjects];
-//   NSLog(@" NbEntries: %d",nbEntries);
    id* gamma = malloc(sizeof(id) * nbEntries);
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
