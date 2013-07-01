@@ -25,6 +25,8 @@
 -(id<ORExpr>) mul: (id) e;
 -(id<ORExpr>) div: (id) e;
 -(id<ORExpr>) mod: (id) e;
+-(id<ORExpr>) min: (id) e;
+-(id<ORExpr>) max: (id) e;
 -(id<ORRelation>) eq: (id) e;
 -(id<ORRelation>) neq: (id) e;
 -(id<ORRelation>) leq: (id) e;
@@ -42,6 +44,8 @@
 -(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) div: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) min: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) max: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t;
@@ -150,6 +154,22 @@
 -(void) visit: (id<ORVisitor>)v;
 @end
 
+@interface ORExprMinI: ORExprBinaryI<ORExpr,NSCoding>
+-(id<ORExpr>) initORExprMinI: (id<ORExpr>) left min: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
+@interface ORExprMaxI: ORExprBinaryI<ORExpr,NSCoding>
+-(id<ORExpr>) initORExprMaxI: (id<ORExpr>) left max: (id<ORExpr>) right;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
 @interface ORExprMinusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprMinusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
@@ -188,9 +208,39 @@
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
--(id<ORExpr>) initORExprSumI: (id<ORExpr>) e;
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e;
+-(id<ORExpr>) init: (id<ORExpr>) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(ORBool) isConstant;
+-(NSString *) description;
+-(void) visit:(id<ORVisitor>)v;
+@end
+
+@interface ORExprAggMinI : ORExprI<ORExpr,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) init: (id<ORExpr>) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(ORBool) isConstant;
+-(NSString *) description;
+-(void) visit:(id<ORVisitor>)v;
+@end
+
+@interface ORExprAggMaxI : ORExprI<ORExpr,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) init: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;
@@ -204,8 +254,8 @@
 @interface ORExprProdI : ORExprI<ORExpr,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
--(id<ORExpr>) initORExprProdI: (id<ORExpr>) e;
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e;
+-(id<ORExpr>) init: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;
@@ -219,8 +269,23 @@
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
--(id<ORExpr>) initORExprAggOrI: (id<ORExpr>) e;
+-(id<ORExpr>) init: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) init: (id<ORExpr>) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(ORBool) isConstant;
+-(NSString *) description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
+@interface ORExprAggAndI : ORExprI<ORRelation,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) init: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) init: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;

@@ -128,6 +128,10 @@
         [_model addConstraint: [sumExpr eq: @(1)]];
     }
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   assert(NO);
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
     // Constrain upper bounds

@@ -16,7 +16,6 @@
 @interface CPCardinalityDC : CPCoreConstraint<CPConstraint,NSCoding> 
 -(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
 -(void) dealloc;
-
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*) allVars;

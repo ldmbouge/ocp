@@ -44,6 +44,7 @@
 -(void) visitFail:(id<ORFail>)cstr;
 -(void) visitRestrict:(id<ORRestrict>)cstr;
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr;
+-(void) visitRegular:(id<ORRegular>) cstr;
 -(void) visitCardinality: (id<ORCardinality>) cstr;
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr;
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr;
@@ -74,6 +75,8 @@
 -(void) visitSquare: (id<ORSquare>)c;
 -(void) visitMod: (id<ORMod>)c;
 -(void) visitModc: (id<ORModc>)c;
+-(void) visitMin: (id<ORMin>)c;
+-(void) visitMax: (id<ORMax>)c;
 -(void) visitAbs: (id<ORAbs>)c;
 -(void) visitOr: (id<OROr>)c;
 -(void) visitAnd:( id<ORAnd>)c;
@@ -113,11 +116,15 @@
 -(void) visitExprMulI: (id<ORExpr>) e;
 -(void) visitExprDivI: (id<ORExpr>) e;
 -(void) visitExprModI: (id<ORExpr>) e;
+-(void) visitExprMinI: (id<ORExpr>) e;
+-(void) visitExprMaxI: (id<ORExpr>) e;
 -(void) visitExprEqualI: (id<ORExpr>) e;
 -(void) visitExprNEqualI: (id<ORExpr>) e;
 -(void) visitExprLEqualI: (id<ORExpr>) e;
 -(void) visitExprSumI: (id<ORExpr>) e;
 -(void) visitExprProdI: (id<ORExpr>) e;
+-(void) visitExprAggMinI: (id<ORExpr>) e;
+-(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
@@ -125,6 +132,7 @@
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprAggAndI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 -(void) visitExprMatrixVarSubI:(id<ORExpr>)e;
 // Bit

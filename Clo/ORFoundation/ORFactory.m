@@ -268,6 +268,19 @@
    return o;
 }
 
++(id<ORIntSet>) collect: (id<ORTracker>) tracker range: (id<ORIntRange>)r1 range:(id<ORIntRange>)r2
+               suchThat: (ORIntxInt2Bool) f
+                     of: (ORIntxInt2Int) e
+{
+   ORIntSetI* o = [[ORIntSetI alloc] initORIntSetI];
+   for(ORInt i = [r1 low]; i <= [r1 up]; i++)
+      for(ORInt j = [r2 low]; i <= [r2 up]; j++)
+      if (f == NULL || f(i,j))
+         [o insert: e(i,j)];
+   [tracker trackMutable: o];
+   return o;
+}
+
 +(ORInt) minOver: (id<ORIntRange>) r suchThat: (ORInt2Bool) filter of: (ORInt2Int)e
 {
     ORInt m = MAXINT;
@@ -523,7 +536,15 @@
    [tracker trackMutable: o];
    return o;
 }
-
++(id<ORAutomaton>)automaton:(id<ORTracker>)tracker alphabet:(id<ORIntRange>)a states:(id<ORIntRange>)s transition:(ORTransition*)tf size:(ORInt)stf
+                    initial:(ORInt)is
+                      final:(id<ORIntSet>)fs
+{
+   id<ORTable> tt = [self table:tracker arity:3];
+   ORAutomatonI* o = [[ORAutomatonI alloc] init:a states:s transition:tf size:stf initial:is final:fs table:tt];
+   [tracker trackImmutable:o];
+   return o;
+}
 +(id<ORIntVarMatrix>) intVarMatrix: (id<ORTracker>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];
@@ -608,6 +629,16 @@
    id<ORExpr> o = [[ORExprModI alloc] initORExprModI: left mod: right];
    return [self validate:o onError:"No CP tracker in Mod Expression" track:t];
 }
++(id<ORExpr>) expr: (id<ORExpr>) left min: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprMinI alloc] initORExprMinI: left min: right];
+   return [self validate:o onError:"No CP tracker in min Expression" track:t];
+}
++(id<ORExpr>) expr: (id<ORExpr>) left max: (id<ORExpr>) right track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprMaxI alloc] initORExprMaxI: left max: right];
+   return [self validate:o onError:"No CP tracker in max Expression" track:t];
+}
 +(id<ORRelation>) expr: (id<ORExpr>) left equal: (id<ORExpr>) right track:(id<ORTracker>)t
 {
    id<ORRelation> o = [[ORExprEqualI alloc] initORExprEqualI: left and: right]; 
@@ -679,22 +710,39 @@
 
 +(id<ORExpr>) sum: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker over: S suchThat: f of: e];
+   ORExprSumI* o = [[ORExprSumI alloc] init: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
 }
-+(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2 suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e {
-    ORExprSumI* o = [[ORExprSumI alloc] initORExprSumI: tracker over: S1 over: S2 suchThat: f of: e];
++(id<ORExpr>) sum:  (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2
+         suchThat: (ORIntxInt2Bool) f
+               of: (ORIntxInt2Expr) e
+{
+    ORExprSumI* o = [[ORExprSumI alloc] init: tracker over: S1 over: S2 suchThat: f of: e];
     return [tracker trackObject: o];
 }
 +(id<ORExpr>) prod: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
-   ORExprProdI* o = [[ORExprProdI alloc] initORExprProdI: tracker over: S suchThat: f of: e];
+   ORExprProdI* o = [[ORExprProdI alloc] init: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
 }
-
 +(id<ORRelation>) or: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
-   ORExprAggOrI* o = [[ORExprAggOrI alloc] initORExprAggOrI: tracker over: S suchThat: f of: e];
+   ORExprAggOrI* o = [[ORExprAggOrI alloc] init: tracker over: S suchThat: f of: e];
+   return [tracker trackObject: o];
+}
++(id<ORRelation>) and: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   ORExprAggAndI* o = [[ORExprAggAndI alloc] init: tracker over: S suchThat: f of: e];
+   return [tracker trackObject: o];
+}
++(id<ORExpr>) min: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   ORExprAggMinI* o = [[ORExprAggMinI alloc] init: tracker over: S suchThat: f of: e];
+   return [tracker trackObject: o];
+}
++(id<ORExpr>) max: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   ORExprAggMaxI* o = [[ORExprAggMaxI alloc] init: tracker over: S suchThat: f of: e];
    return [tracker trackObject: o];
 }
 @end
@@ -953,6 +1001,19 @@
    return o;
 }
 
++(id<ORConstraint>) min:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORMin alloc] init:x and:y equal:z];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) max:(id<ORTracker>)model var:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORMax alloc] init:x and:y equal:z];
+   [model trackObject:o];
+   return o;   
+}
+
 +(id<ORConstraint>) abs:(id<ORTracker>)model  var: (id<ORIntVar>)x equal:(id<ORIntVar>)y annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORAbs alloc] initORAbs:y eqAbs:x];
@@ -1029,6 +1090,13 @@
    [[x tracker] trackObject:o];
    return o;
 }
++(id<ORConstraint>) regular:(id<ORIntVarArray>) x for:(id<ORAutomaton>)a
+{
+   id<ORConstraint> o = [[ORRegularI alloc] init:x for:a];
+   [[x tracker] trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>) packing:(id<ORTracker>)t item: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize
 {
    // Rewritten in terms of the variable-driven load form.

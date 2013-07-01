@@ -41,7 +41,6 @@ enum CPVarClass {
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
-//-(id<ORIntVar>) dereference;
 -(ORInt) scale;
 -(ORInt) shift;
 -(id<ORIntVar>) base;

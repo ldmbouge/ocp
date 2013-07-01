@@ -588,8 +588,8 @@
    }
    _nb = matrix->_nb;
    _flat = malloc(sizeof(id) * _nb);
-//   for (ORInt i=0 ; i < _nb; i++)
-//      _flat[i] = [matrix->_flat[i] dereference];
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = matrix->_flat[i];
    return self;
 }
 

@@ -52,6 +52,14 @@
 {
    return [[self asExpression:[e tracker]] mod:e];
 }
+-(id<ORExpr>) min: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] min:e];
+}
+-(id<ORExpr>) max: (id<ORExpr>) e
+{
+   return [[self asExpression:[e tracker]] max:e];
+}
 -(id<ORRelation>)   eq: (id<ORExpr>)   e
 {
    return [[self asExpression:[e tracker]] eq:e];
@@ -107,6 +115,9 @@
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;
 -(void) visitExprAggOrI: (id<ORExpr>) e;
+-(void) visitExprAggAndI: (id<ORExpr>) e;
+-(void) visitExprAggMinI: (id<ORExpr>) e;
+-(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprVarSubI: (id<ORExpr>) e;
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c;
@@ -180,6 +191,16 @@
    [[e left] visit:self];
    [[e right] visit:self];
 }
+-(void) visitExprMinI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
+-(void) visitExprMaxI: (ORExprBinaryI*) e
+{
+   [[e left] visit:self];
+   [[e right] visit:self];
+}
 -(void) visitExprEqualI: (ORExprBinaryI*) e
 {
    [[e left] visit:self];
@@ -231,6 +252,18 @@
    [[e right] visit:self];
 }
 -(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggMinI: (ORExprAggMinI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggMaxI: (ORExprAggMaxI*) e
 {
    [[e expr] visit:self];
 }
@@ -360,6 +393,14 @@
 {
    return [self mod:e track:[self tracker]];
 }
+-(id<ORExpr>) min: (id) e
+{
+   return [self min:e track:[self tracker]];
+}
+-(id<ORExpr>) max: (id) e
+{
+   return [self max:e track:[self tracker]];
+}
 -(id<ORRelation>) eq: (id) e
 {
    return [self eq:e track:[self tracker]];
@@ -390,17 +431,22 @@
 }
 -(id<ORExpr>)and:(id<ORRelation>)e
 {
-   return [ORFactory expr:(id<ORRelation>)self and:e track:[self tracker]];
+   if (e == NULL)
+      return self;
+   else
+      return [ORFactory expr:(id<ORRelation>)self and:e track:[self tracker]];
 }
 -(id<ORExpr>) or: (id<ORRelation>)e
 {
-   return [ORFactory expr:(id<ORRelation>)self or:e track:[self tracker]];
+   if (e == NULL)
+      return self;
+   else
+      return [ORFactory expr:(id<ORRelation>)self or:e track:[self tracker]];
 }
 -(id<ORExpr>) imply:(id<ORRelation>)e
 {
    return [ORFactory expr:(id<ORRelation>)self imply:e track:[self tracker]];
 }
-
 -(id<ORExpr>) absTrack:(id<ORTracker>)t
 {
    return [ORFactory exprAbs:self track:t];
@@ -447,6 +493,24 @@
       return [ORFactory expr:self mod:e track:t];
    else if ([e isKindOfClass:[NSNumber class]])
       return [ORFactory expr:self mod:[e asExpression:t] track:t];
+   else
+      return NULL;
+}
+-(id<ORExpr>) min: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self min:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self min:[e asExpression:t] track:t];
+   else
+      return NULL;
+}
+-(id<ORExpr>) max: (id) e  track:(id<ORTracker>)t
+{
+   if ([e conformsToProtocol:@protocol(ORExpr)])
+      return [ORFactory expr:self max:e track:t];
+   else if ([e isKindOfClass:[NSNumber class]])
+      return [ORFactory expr:self max:[e asExpression:t] track:t];
    else
       return NULL;
 }
@@ -970,6 +1034,78 @@
 }
 @end
 
+
+@implementation ORExprMinI
+-(id<ORExpr>) initORExprMinI: (id<ORExpr>) left min: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(ORInt) min
+{
+   return min([_right min],[_left min]);
+}
+-(ORInt) max
+{
+   return min([_right max],[_left max]);
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ min %@)",[_left description],[_right description]];
+   return rv;
+}
+-(void) visit: (id<ORVisitor>)visitor
+{
+   [visitor visitExprMinI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+@implementation ORExprMaxI
+-(id<ORExpr>) initORExprMaxI: (id<ORExpr>) left max: (id<ORExpr>) right
+{
+   self = [super initORExprBinaryI:left and:right];
+   return self;
+}
+-(ORInt) min
+{
+   return max([_right min],[_left min]);
+}
+-(ORInt) max
+{
+   return max([_right max],[_left max]);
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"(%@ max %@)",[_left description],[_right description]];
+   return rv;
+}
+-(void) visit: (id<ORVisitor>)visitor
+{
+   [visitor visitExprMaxI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [super encodeWithCoder:aCoder];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super initWithCoder:aDecoder];
+   return self;
+}
+@end
+
+
 @implementation ORExprEqualI 
 -(id<ORExpr>) initORExprEqualI: (id<ORExpr>) left and: (id<ORExpr>) right
 {
@@ -1235,9 +1371,8 @@
 }
 @end
 
-
 @implementation ORExprSumI
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    _e = [ORFactory integer: tracker value: 0];
@@ -1255,8 +1390,10 @@
    }
    return self;
 }
--(id<ORExpr>) initORExprSumI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2
-                    suchThat: (ORIntxInt2Bool) f of: (ORIntxInt2Expr) e {
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S1 over: (id<ORIntIterable>) S2
+          suchThat: (ORIntxInt2Bool) f
+                of: (ORIntxInt2Expr) e
+{
     self = [super init];
     _e = [ORFactory integer: tracker value: 0];
    @autoreleasepool {
@@ -1278,7 +1415,7 @@
    }
    return self;
 }
--(id<ORExpr>) initORExprSumI: (id<ORExpr>) e
+-(id<ORExpr>) init: (id<ORExpr>) e
 {
    self = [super init];
    _e = e;
@@ -1330,7 +1467,7 @@
 @end
 
 @implementation ORExprProdI
--(id<ORExpr>) initORExprProdI: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
 {
    self = [super init];
    _e = [ORFactory integer: tracker value: 1];
@@ -1347,7 +1484,7 @@
    }
    return self;
 }
--(id<ORExpr>) initORExprProdI: (id<ORExpr>) e
+-(id<ORExpr>) init: (id<ORExpr>) e
 {
    self = [super init];
    _e = e;
@@ -1398,8 +1535,145 @@
 }
 @end
 
+@implementation ORExprAggMinI
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   self = [super init];
+   _e = [ORFactory integer: tracker value: FDMAXINT];
+   if (f!=NULL) {
+      [S enumerateWithBlock:^(ORInt i) {
+         if (f(i))
+            _e = [_e min: e(i)];
+      }];
+   }
+   else {
+      [S enumerateWithBlock:^(ORInt i) {
+         _e = [_e min: e(i)];
+      }];
+   }
+   return self;
+}
+-(id<ORExpr>) init: (id<ORExpr>) e
+{
+   self = [super init];
+   _e = e;
+   return self;
+}
+
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORExpr>) expr
+{
+   return _e;
+}
+-(ORInt) min
+{
+   return [_e min];
+}
+-(ORInt) max
+{
+   return [_e max];
+}
+-(ORBool) isConstant
+{
+   return [_e isConstant];
+}
+-(id<ORTracker>) tracker
+{
+   return [_e tracker];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitExprAggMinI: self];
+}
+-(NSString *) description
+{
+   return [_e description];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_e];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _e = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+@implementation ORExprAggMaxI
+-(id<ORExpr>) init: (id<ORTracker>) tracker over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Expr) e
+{
+   self = [super init];
+   _e = [ORFactory integer: tracker value: FDMININT];
+   if (f!=NULL) {
+      [S enumerateWithBlock:^(ORInt i) {
+         if (f(i))
+            _e = [_e max: e(i)];
+      }];
+   }
+   else {
+      [S enumerateWithBlock:^(ORInt i) {
+         _e = [_e max: e(i)];
+      }];
+   }
+   return self;
+}
+-(id<ORExpr>) init: (id<ORExpr>) e
+{
+   self = [super init];
+   _e = e;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORExpr>) expr
+{
+   return _e;
+}
+-(ORInt) min
+{
+   return [_e min];
+}
+-(ORInt) max
+{
+   return [_e max];
+}
+-(ORBool) isConstant
+{
+   return [_e isConstant];
+}
+-(id<ORTracker>) tracker
+{
+   return [_e tracker];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitExprAggMaxI: self];
+}
+-(NSString *) description
+{
+   return [_e description];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_e];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _e = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 @implementation ORExprAggOrI
--(id<ORRelation>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+-(id<ORRelation>) init: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
 {
    self = [super init];
    _e = [ORFactory integer: cp value: 0];
@@ -1416,7 +1690,7 @@
    }
    return self;
 }
--(id<ORRelation>) initORExprAggOrI: (id<ORExpr>) e
+-(id<ORRelation>) init: (id<ORExpr>) e
 {
    self = [super init];
    _e = e;
@@ -1466,6 +1740,76 @@
    return self;
 }
 @end
+
+@implementation ORExprAggAndI
+-(id<ORRelation>) init: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e
+{
+   self = [super init];
+   _e = [ORFactory integer: cp value: 1];
+   if (f!=NULL) {
+      [S enumerateWithBlock:^(ORInt i) {
+         if (!f(i))
+            _e = [_e and: e(i)];
+      }];
+   }
+   else {
+      [S enumerateWithBlock:^(ORInt i) {
+         _e = [_e and: e(i)];
+      }];
+   }
+   return self;
+}
+-(id<ORRelation>) init: (id<ORExpr>) e
+{
+   self = [super init];
+   _e = e;
+   return self;
+}
+
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(id<ORExpr>) expr
+{
+   return _e;
+}
+-(ORInt) min
+{
+   return [_e min];
+}
+-(ORInt) max
+{
+   return [_e max];
+}
+-(ORBool) isConstant
+{
+   return [_e isConstant];
+}
+-(id<ORTracker>) tracker
+{
+   return [_e tracker];
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitExprAggAndI: self];
+}
+-(NSString *) description
+{
+   return [_e description];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_e];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _e = [aDecoder decodeObject];
+   return self;
+}
+@end
+
 
 @implementation ORExprVarSubI
 -(id<ORExpr>) initORExprVarSubI: (id<ORIntVarArray>) array elt:(id<ORExpr>) op

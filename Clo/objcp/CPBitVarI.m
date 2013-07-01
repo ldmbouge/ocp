@@ -220,12 +220,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
    [_dom restoreValue:toRestore];
 }
 
-//-(id<CPBitVar>) dereference
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-//   return self;
-//}
-
 -(ORBool) tracksLoseEvt
 {
     return _triggers != nil;

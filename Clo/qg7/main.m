@@ -1,8 +1,14 @@
-//
-//  main.m
-//  qg7
-//
-//  Created by Laurent Michel on 6/17/13.
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
 //
 // * This model is a translation of the ESSENCE' model quasiGroup7.eprime
 //* from the Minion Translator examples.
@@ -55,9 +61,11 @@ int main(int argc, const char * argv[])
          }];
 
          id<CPProgram> cp = [args makeProgram:model];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:All2(cp, ORIntVar, i, D, j, D, [q at:i :j])];
          __block ORInt nbSol = 0;
          [cp solve:^{
-            [cp labelArrayFF:All2(cp, ORIntVar, i, D, j, D, [q at:i :j])];
+            //[cp labelArrayFF:All2(cp, ORIntVar, i, D, j, D, [q at:i :j])];
+            [cp labelHeuristic:h];
             nbSol++;
             @autoreleasepool {
                for(ORInt i=0;i <n;i++) {
