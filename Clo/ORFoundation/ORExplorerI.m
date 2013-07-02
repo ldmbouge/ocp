@@ -52,7 +52,7 @@
 }
 -(void)dealloc
 {
-   NSLog(@"OROrderedSweep (%p) dealloc'd",self);
+   //NSLog(@"OROrderedSweep (%p) dealloc'd",self);
    _used += _low;
    free(_used);
    free(_best);
@@ -71,7 +71,7 @@
 -(void)addFilter:(ORInt2Bool)f
 {
    [_filter release];
-   _filter = [f retain];
+   _filter = [f copy];
 }
 
 -(void)addOrdered:(ORInt2Float)f
