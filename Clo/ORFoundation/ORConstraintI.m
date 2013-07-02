@@ -995,6 +995,67 @@
 }
 @end
 
+@implementation ORElementMatrixVar {
+   id<ORIntVarMatrix> _m;
+   id<ORIntVar> _v0;
+   id<ORIntVar> _v1;
+   id<ORIntVar> _y;
+   ORAnnotation _note;
+}
+-(id)initORElement:(id<ORIntVarMatrix>)m elt:(id<ORIntVar>)v0 elt:(id<ORIntVar>)v1 equal:(id<ORIntVar>)y annotation:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _m = m;
+   _v0 = v0;
+   _v1 = v1;
+   _y  = y;
+   _note = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%@,%@] == %@)",[self class],self,_m,_v0,_v1,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitElementMatrixVar:self];
+}
+-(id<ORIntVarMatrix>)matrix
+{
+   return _m;
+}
+-(id<ORIntVar>)index0
+{
+   return _v0;
+}
+-(id<ORIntVar>)index1
+{
+   return _v1;
+}
+-(id<ORIntVar>) res
+{
+   return _y;
+}
+-(ORAnnotation)annotation
+{
+   return _note;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:2 + [_m count]] autorelease];
+   [[_m range:0] enumerateWithBlock:^(ORInt i) {
+      [[_m range:1] enumerateWithBlock:^(ORInt j) {
+         [ms addObject:[_m at:i :j]];
+      }];
+   }];
+   [ms addObject:_v0];
+   [ms addObject:_v1];
+   [ms addObject:_y];
+   return ms;
+}
+@end
 
 @implementation ORReifyEqualc {
    id<ORIntVar> _b;

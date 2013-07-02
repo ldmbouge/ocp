@@ -86,13 +86,12 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    memset(used,0,sizeof(ORBool)*sz);
    ORInt nbo = (ORInt) [_arrayOrderedBy count];
    float* best = alloca(sizeof(float)*nbo);
-   id<IntEnumerator> ite = [_S enumerator];
-   ORInt nb = 0;
-   while ([ite more]) {
-      value[nb] = [ite next];
+   __block ORInt nb = 0;
+   [_S enumerateWithBlock:^(ORInt k) {
+      value[nb] = k;
       if (testSuchThat(value[nb],_arraySuchThat))
          nb++;
-   }
+   }];
    bool done = false;
    while (!done) {
       for(int k = 0; k < nbo; k++)
@@ -147,13 +146,12 @@ static inline BOOL isSmaller(ORInt val,NSArray* arrayOrderedBy,float* best)
    ORInt* value = alloca(sizeof(ORInt)*sz);
    bool* used = alloca(sizeof(ORBool)*sz);
    memset(used,0,sizeof(ORBool)*sz);
-   id<IntEnumerator> ite = [S enumerator];
-   ORInt nb = 0;
-   while ([ite more]) {
-      value[nb] = [ite next];
+   __block ORInt nb = 0;
+   [S enumerateWithBlock:^(ORInt k) {
+      value[nb] = k;
       if (!suchThat || suchThat(value[nb]))
          nb++;
-   }
+   }];
    bool done = false;
    while (!done) {
       float best = MAXFLOAT;

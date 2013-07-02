@@ -28,8 +28,8 @@ void twoByteAllMD4(){
    
    MD4 *myMD4 = [MD4 initMD4];;
    //MD5 *myMD5 = [MD5 initMD5];
-   NSString *filename = @"lorem-mssg.txt";
-   //   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
+   //NSString *filename = @"lorem-mssg.txt";
+      NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    
    NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
    
@@ -114,8 +114,8 @@ int main(int argc, const char * argv[])
 
 //   MD4 *myMD4;
    MD5 *myMD5;// = [MD5 initMD5];
-   NSString *filename = @"lorem-mssg.txt";
-//   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
+//   NSString *filename = @"lorem-mssg.txt";
+   NSString *filename = @"/Users/gregjohnson/research/code/bvArchive/bv/empty.txt";
    
    NSMutableString *str = [NSMutableString stringWithString:@"bit,choices,failures,propagations,search time (s),total time (s)\n"];
    

@@ -47,6 +47,8 @@ typedef enum {
 @end
 
 @protocol ORGamma <NSObject>
+-(void) setGamma: (id*) gamma;
+-(id*)gamma;
 -(id<ORObject>) concretize: (id<ORObject>) o;
 @end
 
@@ -62,6 +64,11 @@ typedef enum {
 
 @protocol ORInteger <ORObject,ORExpr>
 -(ORInt) value;
+@end
+
+@protocol ORMutableId <ORObject>
+-(id) idValue:(id<ORGamma>)solver;
+-(void) setId:(id)v in:(id<ORGamma>)solver;
 @end
 
 @protocol ORMutableInteger <ORObject,ORExpr>
@@ -122,15 +129,13 @@ typedef enum {
 
 @interface ORCrFactory (OR)
 +(id<ORMutableInteger>) integer:(ORInt) value;
-+(id<ORRandomStream>) randomStream;
-+(id<ORZeroOneStream>) zeroOneStream;
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
 @end
 
 @protocol ORTable <ORObject>
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
+-(void)insertTuple:(ORInt*)t;
 -(void) print;
 -(void) close;
 @end

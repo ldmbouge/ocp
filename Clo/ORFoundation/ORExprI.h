@@ -101,6 +101,23 @@
 -(void) visit:(id<ORVisitor>) v;
 @end
 
+@interface ORExprMatrixVarSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORIntVarMatrix> _m;
+   ORExprI*  _i0;
+   ORExprI*  _i1;
+}
+-(id<ORExpr>)initORExprMatrixVarSubI:(id<ORIntVarMatrix>)m elt:(id<ORExpr>)i0 elt:(id<ORExpr>)i1;
+-(id<ORTracker>)tracker;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString *)description;
+-(ORExprI*) index0;
+-(ORExprI*) index1;
+-(id<ORIntVarMatrix>)matrix;
+-(ORBool) isConstant;
+-(void) visit:(id<ORVisitor>) v;
+@end
+
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;
@@ -202,8 +219,23 @@
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
    id<ORExpr> _e;
 }
--(id<ORExpr>) initORExprAggOrI: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
--(id<ORExpr>) initORExprAggOrI: (id<ORExpr>) e;
+-(id<ORExpr>) initORExprAgg: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAgg: (id<ORExpr>) e;
+-(void) dealloc;
+-(ORInt) min;
+-(ORInt) max;
+-(id<ORTracker>) tracker;
+-(ORExprI*) expr;
+-(ORBool) isConstant;
+-(NSString *) description;
+-(void) visit: (id<ORVisitor>)v;
+@end
+
+@interface ORExprAggAndI : ORExprI<ORRelation,NSCoding> {
+   id<ORExpr> _e;
+}
+-(id<ORExpr>) initORExprAgg: (id<ORTracker>) cp over: (id<ORIntIterable>) S suchThat: (ORInt2Bool) f of: (ORInt2Relation) e;
+-(id<ORExpr>) initORExprAgg: (id<ORExpr>) e;
 -(void) dealloc;
 -(ORInt) min;
 -(ORInt) max;

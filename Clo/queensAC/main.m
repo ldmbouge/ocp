@@ -48,26 +48,32 @@ int main(int argc, const char * argv[])
          }
          */
          id<CPProgram> cp = [args makeProgram:mdl];
-         //id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemBDSController class]];
+         //id<CPProgram> cp = [ORFactory createCPSemanticProgram:mdl with:[ORSemDFSController class]];
          //id<CPProgram> cp = [ORFactory createCPProgram: mdl];
          //id<CPProgram> cp = [ORFactory createCPMultiStartProgram: mdl nb: 2];
          //id<CPProgram> cp = [ORFactory createCPParProgram:mdl nb:2 with:[ORSemDFSController class]];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:x];
          __block ORInt nbSol = 0;
          [cp solveAll:
           ^() {
+             //[cp labelHeuristic:h];
              //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize: x[i]];}];
              [cp labelArrayFF: x];
              @synchronized(cp) {
                 nbSol++;
+/*                for(ORInt i = 1; i <= 8; i++)
+                   printf("%d ",[cp intValue: x[i]]);
+                printf("\n");*/
              }
              [[cp explorer] fail];
           }];
          printf("GOT %d solutions\n",nbSol);
          NSLog(@"Solver status: %@\n",cp);
-         NSLog(@"Quitting");
          struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
+         
          return r;
       }];
    }

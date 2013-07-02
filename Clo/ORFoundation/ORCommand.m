@@ -24,20 +24,12 @@ typedef struct {
 
 @implementation ORCommandList
 
-static pthread_key_t clkey;
-static void init_clpthreads()
-{
-   pthread_key_create(&clkey,NULL);
-}
+static __thread ComListPool* pool = NULL;
 
 +(ComListPool*)instancePool
 {
-   static pthread_once_t block = PTHREAD_ONCE_INIT;
-   pthread_once(&block,init_clpthreads);
-   ComListPool* pool = pthread_getspecific(clkey);
    if (!pool) {
       pool = malloc(sizeof(ComListPool));
-      pthread_setspecific(clkey,pool);
       pool->_low = pool->_high = pool->_sz = 0;
       pool->_mxs = 8192;
       pool->_poolClass = self;
@@ -46,19 +38,20 @@ static void init_clpthreads()
    return pool;
 }
 
-+(id)newCommandList:(ORInt)node
++(id)newCommandList:(ORInt)node memory:(ORInt)mh
 {
    ComListPool* p = [self instancePool];
    ORCommandList* rv = NULL;
    if (p->_low == p->_high) {
       rv = NSAllocateObject(self, 0, NULL);
-      [rv initCPCommandList:node];
+      [rv initCPCommandList:node memory:mh];
    } else {
       rv = p->_pool[p->_low];
       p->_low = (p->_low + 1) % p->_mxs;
       p->_sz--;
       rv->_cnt = 1;
       rv->_ndId = node;
+      rv->_mh   = mh;
    }
    return rv;
 }
@@ -89,11 +82,12 @@ static void init_clpthreads()
       }
    }
 }
--(ORCommandList*) initCPCommandList: (ORInt) node
+-(ORCommandList*) initCPCommandList: (ORInt) node memory:(ORInt)mh
 {
    self = [super init];
    _head = NULL;
    _ndId = node;
+   _mh   = mh;
    _cnt  = 1;
    return self;
 }
@@ -110,7 +104,7 @@ static void init_clpthreads()
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORCommandList* nList = [ORCommandList newCommandList:_ndId];
+   ORCommandList* nList = [ORCommandList newCommandList:_ndId memory:_mh];
    //[[ORCommandList alloc] initCPCommandList:_ndId];
    struct CNode* cur = _head;
    struct CNode* first = NULL;
@@ -132,7 +126,7 @@ static void init_clpthreads()
 
 -(void)insert:(id<ORCommand>)c
 {
-   struct CNode* new = malloc(sizeof(struct CNode*));
+   struct CNode* new = malloc(sizeof(struct CNode));
    new->_c = c;
    new->_next = _head;
    _head = new;
@@ -158,7 +152,7 @@ static void init_clpthreads()
 -(NSString*)description
 {
    NSMutableString* str = [NSMutableString stringWithCapacity:512];
-   [str appendFormat:@" [%d]:{",_ndId];
+   [str appendFormat:@" [%d | %d]:{",_ndId,_mh];
    struct CNode* cur = _head;
    while (cur) {
       [str appendString:[cur->_c description]];
@@ -172,6 +166,10 @@ static void init_clpthreads()
 -(ORBool)equalTo:(ORCommandList*)cList
 {
    return _ndId == cList->_ndId;
+}
+-(ORInt) memory
+{
+   return _mh;
 }
 -(void) setNodeId:(ORInt)nid
 {
@@ -235,6 +233,4 @@ static void init_clpthreads()
    }
    return self;
 }
-
-
 @end

@@ -10,24 +10,26 @@
  ***********************************************************************/
 
 #import <ORProgram/CPProgram.h>
-#import <ORProgram/CPHeuristic.h>
-#import <ORProgram/CPBaseHeuristic.h>
-#import <objcp/CPBitVar.h>
+#import <ORProgram/CPBitVarHeuristic.h>
+#import <ORProgram/CPBitVarBaseHeuristic.h>
+#import <objcp/CPVar.h>
 
 @class CPStatisticsMonitor;
+@protocol CPBitVarArray;
 
 #define ALPHA 8.0L
 
-@interface CPBitVarABS : CPBaseHeuristic<CPBitVarHeuristic> {
-   id<ORVarArray>   _vars;
+@interface CPBitVarABS : CPBitVarBaseHeuristic<CPBitVarHeuristic> {
+   id<ORVarArray>   _vars;  // Model variables
+   id<CPVarArray>    _cvs;  // concrete variables
    id<ORVarArray>  _rvars;
    id<CPCommonProgram>      _cp;
 }
--(id)initCPBitVarABS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
--(ORFloat)varOrdering:(id<ORBitVar>)x;
--(ORFloat)valOrdering:(ORUInt)v forVar:(id<ORBitVar>)x;
--(void)initInternal:(id<ORVarArray>)t;
+-(id)initCPBitVarABS:(id<CPCommonProgram>)cp restricted:(id<ORBitVarArray>)rvars;
+-(ORFloat)varOrdering:(id<CPBitVar>)x;
+-(ORFloat)valOrdering:(ORUInt)v forVar:(id<CPBitVar>)x;
+-(void)initInternal:(id<ORBitVarArray>)t and:(id<CPBitVarArray>)cvs;
 -(void) restart;
--(id<ORVarArray>)allBitVars;
+-(id<CPBitVarArray>)allBitVars;
 -(id<CPCommonProgram>)solver;
 @end

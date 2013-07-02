@@ -45,19 +45,20 @@
 {}
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] init];
+   return [[[NSSet alloc] init] autorelease];
 }
 -(ORUInt)nbUVars
 {
-   NSSet* av = [self allVars];
    ORUInt nbu = 0;
-   for(id aVar in av) {
+   @autoreleasepool {
+      NSSet* av = [self allVars];
+      for(id aVar in av) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wobjc-method-access"
-      nbu += ![aVar bound];
+         nbu += ![aVar bound];
 #pragma clang diagnostic pop
+      }
    }
-   [av release];
    return nbu;
 }
 -(void)setGroup:(id<CPGroup>)g

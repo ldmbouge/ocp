@@ -72,10 +72,9 @@ int main(int argc, const char * argv[])
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemDFSController class]];
 //      id<CPProgram> cp = [ORFactory createCPSemanticProgram: model with: [ORSemBDSController class]];
 //      id<CPProgram> cp = [ORFactory createCPMultiStartProgram: model nb: 4];
-//      id<CPHeuristic> h = [cp createFF:c];
 //      id<CPHeuristic> h = [cp createPortfolio:@[@"createIBS:",@"createABS:",@"createWDeg:",@"createFF:"] with:c];
-         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
-         //id<CPProgram> cp = [args makeProgram:model];
+//         id<CPProgram> cp = [ORFactory createCPParProgram:model nb:2 with:[ORSemDFSController class]];
+         id<CPProgram> cp = [args makeProgram:model];
          [cp solve: ^{
             //         [cp labelHeuristic:h];
             [cp forall: V
@@ -97,7 +96,7 @@ int main(int argc, const char * argv[])
             NSLog(@"coloring with: %d colors %d",[cp intValue:m],[NSThread threadID]);
          }];
          id<ORSolutionPool> pool = [cp solutionPool];
-         [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution found with value %@",[s objectiveValue]); } ];         
+         [pool enumerateWith: ^void(id<ORSolution> s) { NSLog(@"Solution %p found with value %@",s,[s objectiveValue]); } ];
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
          struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);

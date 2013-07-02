@@ -410,7 +410,6 @@
                               using: ^ { [self setupWork:root forCP:me]; body(); }
                          onSolution: ^ {
                             [self doOnSolution];
-                            [me doOnSolution];
                             id<ORObjectiveValue> myBound = [objective primalBound];
                             for(ORInt w=0;w < _nbWorkers;w++) {
                                if (w == myID) continue;
@@ -494,10 +493,10 @@
          [_queue enQueue:rootSerial];
       }
       NSData* cpRoot = nil;
-      ORLong took = 0;
+      //ORLong took = 0;
       while ((cpRoot = [_queue deQueue]) !=nil) {
          if (!_doneSearching) {
-            took = [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
+            [self setupAndGo:cpRoot forCP:myID searchWith:mySearch all:allSols.boolValue];
 //            [_queue pretendFull:took < 500];
          }
          [cpRoot release];

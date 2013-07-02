@@ -108,10 +108,10 @@
    _up = [_item range].up;
    _nbVar = _up - _low + 1;
    _var = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
-   _size = (ORInt*) malloc(sizeof(ORInt*) * _nbVar);
-   _s = (ORInt*) malloc(sizeof(ORInt*) * _nbVar);
-   _candidate = (CPIntVarI**) malloc(sizeof(CPIntVarI*) * _nbVar);
-   _candidateSize = (ORInt*) malloc(sizeof(ORInt*) * _nbVar);
+   _size = malloc(sizeof(ORInt) * _nbVar);
+   _s    = malloc(sizeof(ORInt) * _nbVar);
+   _candidate = malloc(sizeof(CPIntVarI*) * _nbVar);
+   _candidateSize = malloc(sizeof(ORInt) * _nbVar);
    for(ORInt i = _low; i <= _up; i++) {
       _var[i-_low] = (CPIntVarI*) _item[i];
       _size[i-_low] = [_itemSize at: i];

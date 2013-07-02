@@ -31,7 +31,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,nil];   
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -79,7 +79,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,nil];
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -88,7 +88,8 @@
 
 -(NSString*)description
 {
-   return [NSString stringWithFormat:@"<CPEqualc: %02d %@ == %d>",_name,_x,_c];
+   return [NSString stringWithFormat:@"<x[%d] == %d>",[_x getId],_c];
+//   return [NSString stringWithFormat:@"<CPEqualc: %02d %@ == %d>",_name,_x,_c];
 }
 
 - (void)encodeWithCoder:(NSCoder *)aCoder
@@ -129,7 +130,7 @@
 
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,nil];
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -169,7 +170,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -371,7 +372,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -448,7 +449,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -539,7 +540,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];   
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -573,7 +574,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -802,7 +803,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -887,7 +888,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -951,7 +952,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1047,7 +1048,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1113,7 +1114,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y, nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1187,7 +1188,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1263,7 +1264,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1328,7 +1329,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_b,_x,_y, nil];
+   return [[[NSSet alloc] initWithObjects:_b,_x,_y, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1370,7 +1371,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,nil];   
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1410,7 +1411,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,nil];
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1681,7 +1682,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];      
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1778,7 +1779,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_z,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_z,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -1916,7 +1917,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];   
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2025,7 +2026,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2263,7 +2264,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,_z,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2328,7 +2329,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(NSSet*)allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
+   NSSet* theSet = [[[NSSet alloc] initWithObjects:_x count:_nb] autorelease];
    return theSet;
 }
 -(ORUInt)nbUVars
@@ -2437,7 +2438,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x, nil];
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -2517,7 +2518,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x, nil];
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
 }
 -(id<ORObjectiveValue>) value
 {

@@ -45,7 +45,6 @@ typedef struct  {
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(NSString*) description;
-//-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 -(void)restoreDomain:(id<CPDom>)toRestore;
 -(void)restoreValue:(ORInt)toRestore;

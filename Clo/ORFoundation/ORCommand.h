@@ -30,10 +30,11 @@
    struct CNode* _head;
    @package
    ORInt _ndId;  // node id
+   ORInt _mh;
    ORInt _cnt;
 }
-+(id)newCommandList:(ORInt)node;
--(ORCommandList*) initCPCommandList: (ORInt) node;
++(id)newCommandList:(ORInt)node memory:(ORInt)mh;
+-(ORCommandList*) initCPCommandList: (ORInt) node memory:(ORInt)mh;
 -(void)dealloc;
 -(void)letgo;
 -(id)grab;
@@ -41,6 +42,7 @@
 -(id<ORCommand>)removeFirst;
 -(ORBool)empty;
 -(ORBool)equalTo:(ORCommandList*)cList;
+-(ORInt) memory;
 -(ORInt) getNodeId;
 -(void) setNodeId:(ORInt)nid;
 -(ORBool)apply:(BOOL(^)(id<ORCommand>))clo;

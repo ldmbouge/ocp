@@ -11,6 +11,7 @@
 
 #import "CPBitVarFirstFail.h"
 #import "CPEngine.h"
+#import "CPBitVar.h"
 
 @implementation CPBitVarFirstFail {
    id<CPEngine>    _engine;
@@ -54,6 +55,6 @@
 -(void)initInternal:(id<ORVarArray>)t
 {
    _vars = t;
-   NSLog(@"FirstFail ready...");
+   NSLog(@"Bit Var FirstFail ready...");
 }
 @end

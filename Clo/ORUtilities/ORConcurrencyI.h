@@ -13,7 +13,7 @@
 #import <ORUtilities/ORConcurrency.h>
 #import <ORUtilities/ORTypes.h>
 
-@interface ORBarrierI : NSObject<ORBarrier> {
+@interface ORBarrier : NSObject<ORBarrier> {
     ORInt _nb;
     ORInt _count;
     NSCondition* _condition; 
@@ -36,10 +36,10 @@
 
 @interface ORThread : NSThread {
     ORInt _value;
-    ORBarrierI* _barrier;
+    ORBarrier* _barrier;
     ORInt2Void _closure;
 }
--(ORThread*) initORThread: (ORInt) v barrier: (ORBarrierI*) barrier closure: (ORInt2Void) closure;
+-(ORThread*) initORThread: (ORInt) v barrier: (ORBarrier*) barrier closure: (ORInt2Void) closure;
 -(void) main;
 @end
 

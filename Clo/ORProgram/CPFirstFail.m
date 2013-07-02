@@ -36,7 +36,7 @@
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(ORFloat)varOrdering:(id<CPIntVar>)x
@@ -48,9 +48,10 @@
 {
    return -v;   
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv
 {
    _vars = t;
+   _cvs  = cv;
    NSLog(@"FirstFail ready...");
 }
 @end

@@ -18,14 +18,14 @@
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
-   BOOL           _hasBounds;
+   //BOOL           _hasBounds;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
    _tracker = track;
    _domain = domain;
-   _hasBounds = true;
+   //_hasBounds = true;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
@@ -68,39 +68,14 @@
 {
    return [self intValue];
 }
-//-(ORInt) intValue
-//{
-//   
-//   if (_impl) {
-//      return [(id<ORIntVar>)[_impl dereference] intValue];
-//   }
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//}
-//-(ORFloat) floatValue
-//{
-//   if (_impl) {
-//      return [(id<ORIntVar>)[_impl dereference] floatValue];
-//   }
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//}
-//-(ORInt) min
-//{
-//   id<ORIntVar> end = [_impl dereference];
-//   if (end)
-//      return [end min];
-//   else
-//      return [_domain low];
-//}
-//-(ORInt) max
-//{
-//   id<ORIntVar> end = [_impl dereference];
-//   if (end)
-//      return [end max];
-//   else
-//      return [_domain up];
-//}
+-(ORInt) min
+{
+   return [_domain low];
+}
+-(ORInt) max
+{
+   return [_domain up];
+}
 -(ORInt) low
 {
    return [_domain low];
@@ -109,53 +84,10 @@
 {
    return [_domain up];
 }
-
-//-(ORInt) domsize
-//{
-//   if (_impl) {
-//      id<ORIntVar> end = [_impl dereference];
-//      if (end)
-//         return [end domsize];
-//      else return [_domain size];
-//   } else
-//      return [_domain size];
-//}
-//-(ORBounds)bounds
-//{
-//   id<ORIntVar> end = [_impl dereference];
-//   if (end)
-//      return [end bounds];
-//   else {
-//      ORBounds b = {[_domain low],[_domain up]};
-//      return b;
-//   }
-//}
-//-(ORBool) member: (ORInt) v
-//{
-//   if (_impl)
-//      return [(id<ORIntVar>)[_impl dereference] member: v];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//}
-//-(ORBool) bound
-//{
-//   if (_impl)
-//      return [(id<ORIntVar>)[_impl dereference] bound];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError: "The variable has no concretization"];
-//   
-//}
 -(ORBool) isBool
 {
       return _ba[1]; // isBool
 }
-//-(NSSet*)constraints
-//{
-//   if (_impl)
-//      return [(id<ORIntVar>)_impl constraints];
-//   else
-//      @throw [[ORExecutionError alloc] initORExecutionError:"The variable has no concretization"];
-//}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -620,7 +552,7 @@
    _low = [var low];
    _up = [var up];
    _nb = _up - _low + 1;
-   _array = malloc(_nb * sizeof(id));
+   _array = malloc(_nb * sizeof(id<ORIntVar>));
    _array -= _low;
    id<ORIntRange> R01 = [ORFactory intRange: tracker low: 0 up: 1];
    for(ORInt i = _low; i <= _up; i++)

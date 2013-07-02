@@ -35,6 +35,16 @@
 -(ORInt) decr;
 @end
 
+@interface ORMutableId : ORObject<ORMutableId> {
+   id _value;
+}
+-(id) initWith:(id)v;
+-(id) idValue;
+-(id) idValue:(id<ORGamma>)solver;
+-(void) setId:(id)v in:(id<ORGamma>)solver;
+-(void)setId:(id)v;
+@end
+
 @interface ORFloatI : ORExprI<NSCoding,ORFloatNumber>
 -(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value;
 -(ORFloat) floatValue;
@@ -71,7 +81,7 @@
 -(void)setId:(ORUInt)name;
 @end
 
-@interface ORTableI : ORObject<ORTable,NSCoding> {
+@interface ORTableI : ORObject<ORTable,NSCoding,NSCopying> {
 @public
    ORInt   _arity;
    ORInt   _nb;
@@ -85,8 +95,10 @@
 }
 -(ORTableI*) initORTableI: (ORInt) arity;
 -(ORTableI*) initORTableWithTableI: (ORTableI*) table;
+-(id)copyWithZone:(NSZone *)zone;
 -(void) dealloc;
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
+-(void)insertTuple:(ORInt*)t;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
 -(void) close;
@@ -103,7 +115,6 @@
 -(ORInt) nb;
 -(id)objectAtIndexedSubscript: (NSUInteger) key;
 -(void)setObject: (id) newValue atIndexedSubscript: (NSUInteger) idx;
-//-(id) dereference;
 -(void) setImpl: (id) impl;
 -(id) impl;
 -(NSString*)description;

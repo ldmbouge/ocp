@@ -63,7 +63,7 @@
 -(ORTrailI*) init;
 -(void) dealloc;
 -(ORUInt) magic;
--(ORUInt) trailSize;
+-(ORInt) trailSize;
 -(void) resize;
 -(void) incMagic;
 -(void) trailInt:(ORInt*) ptr;
@@ -81,18 +81,36 @@
 -(void) backtrack:(ORInt) to;
 @end
 
+@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> {
+   id*   _tab;
+   ORInt _mxs;
+   ORInt _csz;
+}
+-(id)init;
+-(id)copyWithZone:(NSZone *)zone;
+-(void)dealloc;
+-(id)track:(id)obj;
+-(void)pop;
+-(ORInt)trailSize;
+-(void)clear;
+-(void)comply:(id<ORMemoryTrail>)mt upTo:(ORInt)mh;
+-(void)reload:(id<ORMemoryTrail>)t;
+@end
+
 @interface ORTrailIStack : NSObject {
    @package
-   ORTrailI*  _trail;
+   ORTrailI*        _trail;
+   ORMemoryTrailI*     _mt;
    struct TRNode {
-      ORInt   _x;
-      ORInt _ofs;
+      ORInt    _x;
+      ORInt  _ofs;
+      ORInt _mOfs;
    };
-   struct TRNode*  _tab;
-   ORInt        _sz;
-   ORInt       _mxs;
+   struct TRNode*     _tab;
+   ORInt               _sz;
+   ORInt              _mxs;
 }
--(ORTrailIStack*) initTrailStack: (ORTrailI*) tr;
+-(ORTrailIStack*) initTrailStack: (ORTrailI*) tr memory:(ORMemoryTrailI*)mt;
 -(void) dealloc;
 -(void) pushNode:(ORInt) x;
 -(void) popNode:(ORInt) x;
@@ -104,7 +122,10 @@
 
 inline static void trailPop(ORTrailIStack* s)
 {
-   [s->_trail backtrack: s->_tab[--s->_sz]._ofs];
+   const ORInt ofs = s->_tab[--s->_sz]._ofs;
+   const ORInt mof = s->_tab[s->_sz]._mOfs;
+   [s->_trail backtrack: ofs];
+   [s->_mt backtrack:mof];
 }
 
 @interface ORTrailableIntI : ORObject<ORTrailableInt>

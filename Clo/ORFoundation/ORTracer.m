@@ -35,13 +35,13 @@
    ORCmdStack* _path;
    ORInt     _nodeId;
    ORInt        _cnt;
+   id<ORMemoryTrail> _mt;
 }
--(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds;
+-(ORCheckpointI*)initCheckpoint: (ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt;
 -(void)dealloc;
 -(NSString*)description;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 -(void)letgo;
 -(id)grab;
 -(ORInt)sizeEstimate;
@@ -49,14 +49,15 @@
 
 
 @interface ORCmdStack : NSObject<NSCoding> {
-@private
+//@private
+@package
    ORCommandList** _tab;
    ORUInt _mxs;
    ORUInt _sz;
 }
 -(ORCmdStack*) initCPCmdStack: (ORUInt) mx;
 -(void) dealloc;
--(void) pushList: (ORInt) node;
+-(void) pushList: (ORInt) node memory:(ORInt)mh;
 -(void) pushCommandList: (ORCommandList*) list;
 -(void) addCommand:(id<ORCommand>)c;
 -(ORCommandList*) popList;
@@ -87,7 +88,7 @@
 inline static void pushCommandList(ORCmdStack* cmd,ORCommandList* list)
 {
    if (cmd->_sz >= cmd->_mxs) {
-      cmd->_tab = realloc(cmd->_tab,sizeof(id<ORCommand>)*cmd->_mxs*2);
+      cmd->_tab = realloc(cmd->_tab,sizeof(ORCommandList*)*cmd->_mxs*2);
       cmd->_mxs <<= 1;
    }
    cmd->_tab[cmd->_sz++] = grab(list);
@@ -96,14 +97,14 @@ inline static ORCommandList* peekAt(ORCmdStack* cmd,ORUInt d) { return cmd->_tab
 inline static ORUInt getStackSize(ORCmdStack* cmd) { return cmd->_sz;}
 inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->_sz];}
 
--(void)pushList:(ORInt)node
+-(void)pushList:(ORInt)node memory:(ORInt)mh
 {
    if (_sz >= _mxs) {
-      _tab = realloc(_tab,sizeof(id<ORCommand>)*_mxs*2);
+      _tab = realloc(_tab,sizeof(ORCommandList*)*_mxs*2);
       _mxs <<= 1;
    }
    //ORCommandList* list = [[ORCommandList alloc] initCPCommandList:node];
-   ORCommandList* list = [ORCommandList newCommandList:node];
+   ORCommandList* list = [ORCommandList newCommandList:node memory:mh];
    _tab[_sz++] = list;
 }
 -(void)pushCommandList:(ORCommandList*)list
@@ -256,7 +257,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 {
    static ORInt _counter = 0;
    self = [super init];
-   _cstrs = [ORCommandList newCommandList:-1];
+   _cstrs = [ORCommandList newCommandList:-1 memory:0];
    _id = _counter++;
    return self;
 }
@@ -310,7 +311,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    NSArray* dico = [fdm variables];
    //NSLog(@"DICO: %@",dico);
    ORULong nbProxies = [[fdm variables] count] + 1; // 1 extra for the trail proxy
-   id* proxies = malloc(sizeof(CPProxyVar*)*nbProxies);
+   id* proxies = malloc(sizeof(id)*nbProxies);
    [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
    [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
       proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
@@ -372,7 +373,7 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
 @end
 
 @implementation ORCheckpointI
--(ORCheckpointI*)initCheckpoint:(ORCmdStack*) cmds
+-(ORCheckpointI*)initCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
 {
    self = [super init];
    _path = [[ORCmdStack alloc] initCPCmdStack:64];
@@ -380,18 +381,20 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    for(ORInt i=0;i< ub;i++)
       pushCommandList(_path, peekAt(cmds, i));
    _nodeId = -1;
+   _mt = [mt copy];
    return self;
 }
 -(void)dealloc
 {
    NSLog(@"dealloc checkpoint %p\n",self);
    [_path release];
+   [_mt release];
    [super dealloc];
 }
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"snap (%p) = %@",self,_path];
+   [buf appendFormat:@"checkpoint = %@",_path];
    return buf;
 }
 -(ORInt)sizeEstimate
@@ -420,60 +423,22 @@ inline static ORCommandList* popList(ORCmdStack* cmd) { return cmd->_tab[--cmd->
    _path = [[aDecoder decodeObject] retain];
    return self;
 }
--(NSData*)packFromSolver:(id<ORSearchEngine>) solver
-{
-   NSMutableData* thePack = [[NSMutableData alloc] initWithCapacity:32];
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-   NSArchiver* archiver = [[NSArchiver alloc] initForWritingWithMutableData:thePack];
-#else
-   NSKeyedArchiver* archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:thePack];
-#endif
-   NSArray* dico = [solver variables];
-   ORULong nbProxies = [[solver variables] count] + 1; // 1 extra for the trail proxy
-   __block id* proxies = alloca(sizeof(CPProxyVar*)*nbProxies);
-   [archiver encodeValueOfObjCType:@encode(ORUInt) at:&nbProxies];
-   [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      proxies[idx] = [[CPProxyVar alloc] initProxyVar:(ORUInt)idx];  // create a proxy
-      [archiver encodeObject:proxies[idx]];                  // encode proxy in archive
-   }];
-   proxies[nbProxies-1]  = [[CPProxyTrail alloc] initProxyTrail];
-   [archiver encodeObject:proxies[nbProxies-1]];
-   
-   [dico enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-      [archiver replaceObject:obj withObject:proxies[idx]];  // setup proxying between real and fake
-   }];
-   [archiver replaceObject:[solver trail] withObject:proxies[nbProxies-1]];
-   [archiver encodeRootObject:self];                         // encode the path.
-#if defined(__MAC_OS_X_VERSION_MIN_REQUIRED) || defined(__linux__)
-#else
-   [archiver finishEncoding];
-#endif
-   [archiver release];
-   for(ORInt k=0;k<nbProxies;k++)
-      [proxies[k] release];
-   return thePack;
-}
 
+static __thread id checkPointCache = NULL;
 
-static pthread_key_t cpkey;
-static void initPool()
++(id)newCheckpoint:(ORCmdStack*) cmds memory:(id<ORMemoryTrail>)mt
 {
-   pthread_key_create(&cpkey,NULL);
-}
-
-+(id)newCheckpoint:(ORCmdStack*) cmds
-{
-   static pthread_once_t block = PTHREAD_ONCE_INIT;
-   pthread_once(&block,initPool);
-   id ptr = pthread_getspecific(cpkey);
+   id ptr = checkPointCache;
    if (ptr) {
-      pthread_setspecific(cpkey,*(id*)ptr);
+      checkPointCache = *(id*)ptr;
       *(Class*)ptr = self;
       ORCheckpointI* theCP = (ORCheckpointI*)ptr;
       theCP->_cnt = 1;      
       ORInt i = 0;
       BOOL pfxEq = YES;
-      while (pfxEq && i <  getStackSize(cmds) && i < getStackSize(theCP->_path)) {
+      const ORInt csz = getStackSize(cmds);
+      const ORInt cpsz = getStackSize(theCP->_path);
+      while (pfxEq && i < csz  && i < cpsz) {
          pfxEq = commandsEqual(peekAt(cmds, i), peekAt(theCP->_path, i));
          i += pfxEq;
       }
@@ -484,11 +449,12 @@ static void initPool()
       ORInt ub = getStackSize(cmds);
       for(;i < ub;i++)
          pushCommandList(theCP->_path, peekAt(cmds, i));
+      [theCP->_mt reload:mt];
    } else {
       //NSLog(@"Fresh checkpoint...");
       ptr = [super allocWithZone:NULL];
       *(Class*)ptr = self;
-      ptr = [ptr initCheckpoint:cmds];
+      ptr = [ptr initCheckpoint:cmds memory:mt];
       ((ORCheckpointI*)ptr)->_cnt = 1;
    }
    return ptr;
@@ -497,9 +463,10 @@ static void initPool()
 {
    assert(_cnt > 0);
    if (--_cnt == 0) {
-      id vLossCache = pthread_getspecific(cpkey);
+      [_mt clear];
+      id vLossCache = checkPointCache;
       *(id*)self = vLossCache;
-      pthread_setspecific(cpkey, self);
+      checkPointCache = self;
    }
 }
 
@@ -515,16 +482,18 @@ static void initPool()
 @implementation DFSTracer
 {
 @private
-   ORTrailI*        _trail;
+   ORTrailI*          _trail;
+   ORMemoryTrailI*       _mt;
    ORTrailIStack*   _trStack;
-   ORInt          _lastNode;
-   TRInt             _level;
+   ORInt           _lastNode;
+   TRInt              _level;
 }
--(DFSTracer*) initDFSTracer: (ORTrailI*) trail
+-(DFSTracer*) initDFSTracer: (ORTrailI*) trail memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = [trail retain];
-   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
+   _mt    = [mt retain];
+   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail memory:_mt];
    _lastNode = 0;
    _level = makeTRInt(_trail, 0);
    return self;
@@ -533,6 +502,7 @@ static void initPool()
 {
    NSLog(@"Releasing DFSTracer %p\n",self);
    [_trail release];
+   [_mt release];
    [_trStack release];
    [super dealloc];
 }
@@ -585,16 +555,18 @@ static void initPool()
 
 @implementation SemTracer {
    ORTrailI*          _trail;
+   ORMemoryTrailI*       _mt;
    ORTrailIStack*   _trStack;
    ORInt           _lastNode;
    ORCmdStack*         _cmds;
    TRInt              _level;
 }
--(SemTracer*) initSemTracer: (ORTrailI*) trail
+-(SemTracer*) initSemTracer: (ORTrailI*) trail memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = trail;
-   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail];
+   _mt    = mt;
+   _trStack = [[ORTrailIStack alloc] initTrailStack: _trail memory:mt];
    _lastNode = 0;
    _cmds = [[ORCmdStack alloc] initCPCmdStack:32];
    _level = makeTRInt(_trail, 0);
@@ -611,7 +583,7 @@ static void initPool()
 -(ORInt) pushNode
 {
    [_trStack pushNode: _lastNode];
-   [_cmds pushList: _lastNode];     // add a list of constraint
+   [_cmds pushList: _lastNode memory:[_mt trailSize]];     // add a list of constraint
    [_trail incMagic];
    _lastNode++;
    assert([_cmds size] == [_trStack size]);
@@ -667,8 +639,7 @@ static void initPool()
 }
 -(id<ORCheckpoint>)captureCheckpoint
 {
-   //ORCheckpointI* ncp = [[ORCheckpointI alloc] initCheckpoint:_cmds];
-   ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds];
+   ORCheckpointI* ncp = [ORCheckpointI  newCheckpoint:_cmds memory:_mt];
    ncp->_nodeId = [self pushNode];
    return ncp;
 }
@@ -714,6 +685,7 @@ static void initPool()
       [_trail incMagic];
       for(ORInt j=i;j < getStackSize(toRestore);j++) {
          ORCommandList* theList = peekAt(toRestore,j);
+         [_mt comply:acp->_mt upTo:[theList memory]];
          [_trStack pushNode:theList->_ndId];
          [_trail incMagic];
          ORStatus s = tryfail(^ORStatus{
@@ -736,6 +708,7 @@ static void initPool()
          if (s==ORFailure)
             return s;
       }
+      [_mt comply:acp->_mt upTo:[acp->_mt trailSize]];
       return [fdm enforceObjective];
    }
    return ORSuspend;

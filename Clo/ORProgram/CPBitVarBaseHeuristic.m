@@ -16,35 +16,48 @@
 @implementation CPBitVarBaseHeuristic {
    BOOL _oneSol;
 }
--(void) initHeuristic: (NSMutableArray*) array oneSol:(ORBool)oneSol
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
 {
    self = [super init];
    _oneSol = oneSol;
-   __block ORUInt nbViews = 0;
-   [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
-      enum CPVarClass vc = [obj varClass];
-      nbViews += (vc == CPVCShift || vc == CPVCAffine || vc == CPVCFlip);
-   }];
-   ORULong l = [array count] - nbViews;
-   id<ORTracker> cp = [[array objectAtIndex:0] tracker];
-   id<ORVarArray> direct = (id<ORVarArray>)[ORFactory idArray:cp range:RANGE(cp,0,(ORInt)l-1) ];
-   __block ORUInt k = 0;
-   [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
-      enum CPVarClass vc = [obj varClass];
-      if (!(vc == CPVCShift || vc == CPVCAffine || vc == CPVCFlip))
-         [direct set:obj at:k++];
-   }];
-   [self initInternal: direct];
+   id<ORTracker>  cp = [[mvar objectAtIndex:0] tracker];
+   id<ORIntRange>  r = RANGE(cp,0,(ORInt)[mvar count]-1);
+   id<ORVarArray> mv = (id)[ORFactory idArray:cp range:r];
+   ORInt k = 0;
+   for(id<ORVar> v in mvar)
+      mv[k++] = v;
+   id<ORVarArray> cv = (id)[ORFactory idArray:cp range:r];
+   k = 0;
+   for(id<ORVar> v in cvar)
+      cv[k++] = v;
+   [self initInternal:mv and:cv];
+   /*
+    __block ORUInt nbViews = 0;
+    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
+    enum CPVarClass vc = [obj varClass];
+    nbViews += (vc == CPVCShift || vc == CPVCAffine || vc == CPVCFlip);
+    }];
+    ORULong l = [array count] - nbViews;
+    id<ORTracker> cp = [[array objectAtIndex:0] tracker];
+    id<ORVarArray> direct = (id<ORVarArray>)[ORFactory idArray:cp range:RANGE(cp,0,(ORInt)l-1) ];
+    __block ORUInt k = 0;
+    [array enumerateObjectsUsingBlock:^void(id obj, NSUInteger idx, BOOL *stop) {
+    enum CPVarClass vc = [obj varClass];
+    if (!(vc == CPVCShift || vc == CPVCAffine || vc == CPVCFlip))
+    [direct set:obj at:k++];
+    }];
+    [self initInternal: direct];
+    */
 }
--(void) initInternal: (id<ORVarArray>) t
+-(void) initInternal: (id<ORVarArray>) t and:(id<ORVarArray>)cv
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
 }
--(ORFloat) varOrdering: (id<ORBitVar>)x
+-(ORFloat) varOrdering: (id<ORIntVar>)x
 {
    return 0.0;
 }
--(ORFloat) valOrdering: (ORInt) v forVar: (id<ORBitVar>) x
+-(ORFloat) valOrdering: (ORInt) v forVar: (id<ORIntVar>) x
 {
    return 0.0;
 }
@@ -52,7 +65,7 @@
 {
    //NSLog(@"Restart of based heuristic called... Nothing to do.");
 }
--(id<ORBitVarArray>) allBitVars
+-(id<ORIntVarArray>) allIntVars
 {
    return nil;
 }
@@ -93,15 +106,15 @@
 {
    return [_binding[[NSThread threadID]] valOrdering:v forVar:x];
 }
--(void) initInternal: (id<CPIntVarArray>) t
+-(void) initInternal: (id<CPBitVarArray>) t and:(id<ORVarArray>)cvs
 {
-   [_binding[[NSThread threadID]] initInternal:t];
+   [_binding[[NSThread threadID]] initInternal:t and:cvs];
 }
--(void) initHeuristic: (NSMutableArray*) array oneSol:(ORBool)oneSol
+-(void) initHeuristic: (NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol
 {
-   [_binding[[NSThread threadID]] initHeuristic:array oneSol:oneSol];
+   [_binding[[NSThread threadID]] initHeuristic:mvar concrete:cvar oneSol:oneSol];
 }
--(id<ORBitVarArray>) allBitVars
+-(id<ORBitVarArray>) allIntVars
 {
    return [_binding[[NSThread threadID]] allBitVars];
 }

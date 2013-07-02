@@ -143,15 +143,15 @@
 
 -(id) initWithModel:(id<ORModel>)m
 {
-    if((self = [super init]) != nil) {
-        _model = [m retain];
-        _sig = nil;
-        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
-        _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
-        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
-        _solutionStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
-    }
-    return self;
+   if((self = [super init]) != nil) {
+      _model = [m retain];
+      _sig = nil;
+      _upperBoundStreamInformer =  [ORConcurrency idInformer];
+      _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+      _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
+      _solutionStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 8];
+   }
+   return self;
 }
 
 -(id<ORModel>) model { return _model; }
@@ -196,7 +196,7 @@
     [_solutionStreamConsumers addObject: c];
 }
 
--(id<ORIntInformer>) upperBoundStreamInformer
+-(id<ORIdInformer>) upperBoundStreamInformer
 {
     return _upperBoundStreamInformer;
 }
@@ -234,8 +234,8 @@
 
 -(void) setupRun
 {
-    [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(ORInt b) {
-        NSLog(@"(%p) recieved upper bound: %i", self, b);
+    [[self upperBoundStreamInformer] wheneverNotifiedDo: ^void(id<ORObjectiveValue> b) {
+        NSLog(@"(%p - %d) received upper bound: %@", self,[NSThread threadID],b);
         [[[_program engine] objective] tightenPrimalBound: b];
     }];
 }
@@ -248,9 +248,10 @@
     // When a solution is found, pass the objective value to consumers.
     [_program onSolution:^{
         id<ORSolution> s = [_program captureSolution];
-        NSLog(@"(%p) objective tightened: %@", self, [[[_program engine] objective] primalBound]);
+       id<ORSearchObjectiveFunction> of = [[_program engine] objective];
+        NSLog(@"(%p - %d) objective tightened: %@", self, [NSThread threadID],[of primalBound]);
         for(id<ORUpperBoundStreamConsumer> c in _upperBoundStreamConsumers)
-            [[c upperBoundStreamInformer] notifyWith: (ORInt)[[[_model objective] value] key]];
+            [[c upperBoundStreamInformer] notifyWithObject: [of value]];
         NSMutableArray* sp = _solutionStreamConsumers;
         for(id<ORSolutionStreamConsumer> c in sp)
             [[c solutionStreamInformer] notifyWithSolution: s];
@@ -341,7 +342,7 @@
 @implementation ORFactory(ORRunnable)
 +(id<CPRunnable>) CPRunnable: (id<ORModel>)m
 {
-    id<ORRunnable> r = [[CPRunnableI alloc] initWithModel: m];
+    id<CPRunnable> r = [[CPRunnableI alloc] initWithModel: m];
     return r;
 }
 +(id<LPRunnable>) LPRunnable: (id<ORModel>)m

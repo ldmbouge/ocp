@@ -39,7 +39,6 @@
 -(void) dealloc
 {
    free(_x);
-   free(_updateBounds);
    free(_allTerms);
    free(_inUse);
    [super dealloc];
@@ -47,7 +46,7 @@
 
 -(NSSet*)allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
+   NSSet* theSet = [[[NSSet alloc] initWithObjects:_x count:_nb] autorelease];
    return theSet;
 }
 -(ORUInt)nbUVars
@@ -91,15 +90,12 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(ORStatus) post
 {
-   _updateBounds = malloc(sizeof(UBType)*_nb);
-   for(ORInt k=0;k<_nb;k++)
-      _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
-   
    _allTerms = malloc(sizeof(CPEQTerm)*_nb);
    _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
    for(ORInt i=0;i<_nb;i++) {
       ORBounds b = bounds(_x[i]);
-      _allTerms[i] = (CPEQTerm){_updateBounds[i],_x[i],b.min,b.max,NO};
+      UBType mth = (UBType)[_x[i] methodForSelector:@selector(updateMin:andMax:)];
+      _allTerms[i] = (CPEQTerm){mth,_x[i],b.min,b.max,NO};
       _inUse[i] = inline_makeTRCPEQTerm(_trail, _allTerms+i);
    }
    ORInt lastUsed = (ORInt)_nb-1;
@@ -148,7 +144,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    }
    assignTRInt(&_used, lastUsed+1, _trail);
    assignTRLong(&_ec, ec, _trail);
-   ORInt toSet = _used._val;
    bool changed;
    bool feasible = true;
    do {
@@ -190,56 +185,11 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
             inline_assignTRCPEQTerm(&_inUse[_used._val - 1],cur,_trail);
             inline_assignTRCPEQTerm(&_inUse[i],last,_trail);
             assignTRInt(&_used,_used._val - 1,_trail);
-            toSet = _used._val;
          } else ++i;
       }
    } while(changed && feasible);
    if (!feasible)
       failNow();
-   /*
-   for(ORUInt i=0;i < toSet;i++) {
-      CPEQTerm* cur = _inUse[i]._val;
-      if (cur->updated)
-         cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
-   }*/
-/*
-    struct CPEQTerm* terms = alloca(sizeof(struct CPEQTerm)*_nb);
-    for(ORInt k=0;k<_nb;k++) {
-       ORBounds b = bounds(_x[k]);
-       terms[k] = (struct CPEQTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
-    }
-    struct Bounds b;
-    b._bndLow = b._bndUp = - _c;
-    b._nb = _nb;
-    bool changed;
-    bool feasible = true;
-    do {        
-        sumBounds(terms, b._nb, &b);
-        if (b._sumLow > 0 || b._sumUp < 0) 
-           failNow();        
-        changed=false;
-        for (int i=0; i < b._nb && feasible; i++) {            
-            long long supi  = b._sumUp - terms[i].up;
-            long long slowi = b._sumLow - terms[i].low;
-            long long nLowi = - supi;
-            long long nSupi = - slowi;
-            bool updateNow = nLowi > terms[i].low || nSupi < terms[i].up;
-            changed |= updateNow;
-            terms[i].updated |= updateNow;
-            terms[i].low = maxOf(terms[i].low,nLowi);
-            terms[i].up  = minOf(terms[i].up,nSupi);
-            feasible = terms[i].low <= terms[i].up;            
-        }        
-    } while (changed && feasible);
-    if (!feasible)
-       failNow();    
-    for(ORUInt i=0;i<_nb;i++) {
-       if (terms[i].updated)
-          terms[i].update(terms[i].var,@selector(updateMin:andMax:),
-                          (ORInt)terms[i].low,
-                          (ORInt)terms[i].up);
-    }
- */
 }
 -(NSString*) description
 {
@@ -300,7 +250,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(NSSet*)allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
+   NSSet* theSet = [[[NSSet alloc] initWithObjects:_x count:_nb] autorelease];
    return theSet;
 }
 -(ORUInt)nbUVars

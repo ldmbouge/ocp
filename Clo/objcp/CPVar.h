@@ -42,7 +42,6 @@ enum CPVarClass {
 -(ORBounds) bounds;
 -(ORBool) member: (ORInt) v;
 -(ORBool) isBool;
-//-(id<ORIntVar>) dereference;
 -(ORInt) scale;
 -(ORInt) shift;
 -(id<ORIntVar>) base;
@@ -73,7 +72,7 @@ enum CPVarClass {
 @end
 
 @protocol CPBitVarArray <CPVarArray>
--(id<CPIntVar>) at: (ORInt) value;
+-(id<CPBitVar>) at: (ORInt) value;
 -(void) set: (id<CPBitVar>) x at: (ORInt) value;
 -(id<CPBitVar>) objectAtIndexedSubscript: (NSUInteger) key;
 -(void) setObject: (id<CPBitVar>) newValue atIndexedSubscript: (NSUInteger) idx;

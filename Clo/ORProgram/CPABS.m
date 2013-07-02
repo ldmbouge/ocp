@@ -11,6 +11,7 @@
 
 #import "CPABS.h"
 #import "CPEngineI.h"
+#import <ORFoundation/ORDataI.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <ORFoundation/ORTracer.h>
 
@@ -479,11 +480,12 @@
    [key release];
    _freshBackup = NO;
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cvs
 {
    _vars = t;
-   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_vars];
-   _nbv = [_vars count];
+   _cvs  = cvs;
+   _monitor = [[CPStatisticsMonitor alloc] initCPMonitor:[_cp engine] vars:_cvs];
+   _nbv = [_cvs count];
    [_solver post:_monitor];
    _varActivity = [[NSMutableDictionary alloc] initWithCapacity:32];
    _valActivity = [[NSMutableDictionary alloc] initWithCapacity:32];
@@ -507,7 +509,7 @@
 }
 -(id<CPIntVarArray>)allIntVars
 {
-   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<CPIntVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(ORInt)chooseValue:(id<CPIntVar>)x
@@ -548,7 +550,7 @@
 -(void)installActivities
 {
    NSSet* varIDs = [_aggregator variableIDs];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
    ORInt nbProbes = [_aggregator nbProbes];
    for(NSNumber* key in varIDs) {
       __block id<CPIntVar> x = nil;
@@ -585,8 +587,7 @@
 
 -(void)initActivities
 {
-   //id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;//[self allIntVars];
-   id<CPIntVarArray> vars = (id<CPIntVarArray>)_vars;
+   id<CPIntVarArray> vars = (id<CPIntVarArray>)_cvs;
    id<CPIntVarArray> bvars = [self allIntVars];
    const ORInt nbInRound = 10;
    const ORInt probeDepth = (ORInt) [bvars count];
@@ -601,12 +602,12 @@
    BOOL  carryOn = YES;
    id<ORTracer> tracer = [_cp tracer];
    _aggregator = [[ABSProbeAggregator alloc] initABSProbeAggregator:bvars];
-   _valPr = [ORCrFactory zeroOneStream];
+   _valPr = [[ORZeroOneStreamI alloc] init];
    NSMutableSet* killSet = [[NSMutableSet alloc] initWithCapacity:32];
    NSMutableSet* localKill = [[NSMutableSet alloc] initWithCapacity:32];
    __block ORInt* vs = alloca(sizeof(ORInt)*[[vars range] size]);
    __block ORInt nbVS = 0;
-   id<ORZeroOneStream> varPr = [ORCrFactory zeroOneStream];
+   id<ORZeroOneStream> varPr = [[ORZeroOneStreamI alloc] init];
    do {
       for(ORInt c=0;c <= nbInRound;c++) {
          [_solver clearStatus];
@@ -668,7 +669,7 @@
             } else {
                NSLog(@"ABS found a local optimum = %@",[_solver objective]);
                [[_solver objective] updatePrimalBound];
-               NSLog(@"after updatePrimalBound = %@",[_solver objective]);
+               //NSLog(@"after updatePrimalBound = %@",[_solver objective]);
             }
          }
          while (depth-- != 0)

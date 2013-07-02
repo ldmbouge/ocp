@@ -15,14 +15,15 @@
 #import <objcp/CPVar.h>
 
 @interface CPFirstFail : CPBaseHeuristic<CPHeuristic> {
-   id<ORVarArray>  _vars;
+   id<ORVarArray>  _vars;  // Model variables
+   id<ORVarArray>   _cvs;  // concrete variables
    id<ORVarArray> _rvars;
    id<CPProgram>     _cp;
 }
 -(CPFirstFail*)initCPFirstFail:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars;
 -(ORFloat)varOrdering:(id<CPIntVar>)x;
 -(ORFloat)valOrdering:(int)v forVar:(id<CPIntVar>)x ;
--(void)initInternal:(id<ORVarArray>)t;
+-(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cvs;
 -(id<CPIntVarArray>)allIntVars;
 -(id<CPProgram>)solver;
 @end

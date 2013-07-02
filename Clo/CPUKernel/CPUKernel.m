@@ -15,9 +15,9 @@
 #import "CPGroup.h"
 
 @implementation CPFactory
-+(id<CPEngine>) engine: (id<ORTrail>) trail
++(id<CPEngine>) engine: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt
 {
-   return [[CPEngineI alloc] initEngine: trail];
+   return [[CPEngineI alloc] initEngine: trail memory:mt];
 }
 +(id<CPGroup>)group:(id<CPEngine>)engine
 {

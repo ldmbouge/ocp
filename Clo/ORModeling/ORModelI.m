@@ -119,12 +119,15 @@
 {
    self = [self initORModelI];
    _nbObjects = nb;
-   _mappings = [mappings copy];
+   if (mappings) {
+      [_mappings release];
+      _mappings = [mappings copy];
+   }
    return self;
 }
 -(ORModelI*) initWithModel: (ORModelI*) src
 {
-   self = [super init];
+   self = [super init];   
    _vars = [src->_vars copy];
    _cStore = [src->_cStore copy];
    _mStore = [src->_mStore copy];
@@ -133,7 +136,7 @@
    _nbObjects = src->_nbObjects;
    _nbImmutables = src->_nbImmutables;
    _objective = src->_objective;
-   _source = src;
+   _source = [src retain];
    _cache  = [[NSMutableDictionary alloc] initWithCapacity:101];
    _mappings = [src->_mappings copy];
    return self;
@@ -173,6 +176,7 @@
    [_iStore release];
    [_cache release];
    [_mappings release];
+   [_memory release];
    [super dealloc];
 }
 -(id)inCache:(id)obj
@@ -183,6 +187,21 @@
 {
    [_cache setObject:obj forKey:obj];
    return obj;
+}
+-(id)memoize:(id) obj
+{
+   id mo = [_cache objectForKey:obj];
+   if (mo == NULL) {
+      [_cache setObject:obj forKey:obj];
+      mo = obj;
+   } else {
+      BOOL inMutable = [_mStore containsObject:obj];
+      BOOL inImm     = [_iStore containsObject:obj];
+      [_memory removeObject:obj];
+      if (inMutable) [_mStore removeObject:obj];
+      if (inImm)     [_iStore removeObject:obj];
+   }
+   return mo;
 }
 -(void) setSource:(id<ORModel>)src
 {
@@ -226,19 +245,20 @@
 }
 -(NSArray*) variables
 {
-    return [NSArray arrayWithArray: _vars];
+   // [ldm] Why copy them out. NSArray is immutable anyhow.
+   return _vars;//[NSArray arrayWithArray: _vars];
 }
 -(NSArray*) constraints
 {
-    return [NSArray arrayWithArray: _cStore];
+   return _cStore;//[NSArray arrayWithArray: _cStore];
 }
 -(NSArray*) mutables
 {
-   return [NSArray arrayWithArray: _mStore];
+   return _mStore;//[NSArray arrayWithArray: _mStore];
 }
 -(NSArray*) immutables
 {
-   return [NSArray arrayWithArray: _iStore];
+   return _iStore;//[NSArray arrayWithArray: _iStore];
 }
 -(id<ORVar>) addVariable:(id<ORVar>) var
 {
@@ -262,6 +282,7 @@
 -(id) trackObject:(id) obj
 {
    [_memory addObject:obj];
+   [obj release];
    return obj;
 }
 -(id) trackImmutable: (id) obj
@@ -270,12 +291,17 @@
    if (!co) {
       [obj setId:_nbImmutables++];
       if ([obj conformsToProtocol:@protocol(NSCopying)]) {
-         co = [self addToCache:obj];
+         [self addToCache:obj];
       }
       [_iStore addObject:obj];
       [_memory addObject:obj];
+      [obj release];
       return obj;
-   } else return co;
+   } else {
+      if (co != obj)
+         [obj release];
+      return co;
+   }
 }
 -(id) trackConstraintInGroup:(id)obj
 {
@@ -293,6 +319,7 @@
    [obj setId:_nbObjects++];
    [_mStore addObject:obj];
    [_memory addObject:obj];
+   [obj release];
    return obj;
 }
 -(id) trackVariable: (id) var
@@ -301,6 +328,7 @@
    [_vars addObject:var];
    [_mStore addObject:var];
    [_memory addObject:var];
+   [var release];
    return var;
 }
 -(id<ORConstraint>) add: (id<ORConstraint>) c
@@ -659,7 +687,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 -(id) init
 {
     self = [super init];
-    _all = [[NSMutableSet alloc] initWithCapacity:64];
+    _all = [[NSMutableArray alloc] initWithCapacity:64];
     _solutionAddedInformer = (id<ORSolutionInformer>)[[ORInformerI alloc] initORInformerI];
     return self;
 }
@@ -668,19 +696,19 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    NSLog(@"dealloc ORSolutionPoolI");
    // pvh this is buggy
-//   [_all release];
+   [_all release];
    [super dealloc];
 }
 
 -(void) addSolution:(id<ORSolution>)s
 {
-    //[_all addObject:s];
+    [_all addObject:s];
     [_solutionAddedInformer notifyWithSolution: s];
 }
 
 -(void) enumerateWith:(void(^)(id<ORSolution>))block
 {
-   [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
       block(obj);
    }];
 }
@@ -694,7 +722,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"pool["];
-   [_all enumerateObjectsUsingBlock:^(id obj, BOOL *stop) {
+   [_all enumerateObjectsUsingBlock:^(id obj,NSUInteger idx, BOOL *stop) {
       [buf appendFormat:@"\t%@\n",obj];
    }];
    [buf appendFormat:@"]"];
@@ -705,7 +733,7 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
 {
    __block id<ORSolution> sel = nil;
    __block id<ORObjectiveValue> bestSoFar = nil;
-   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj, BOOL *stop) {
+   [_all enumerateObjectsUsingBlock:^(id<ORSolution> obj,NSUInteger idx, BOOL *stop) {
       if (bestSoFar == nil) {
          bestSoFar = [obj objectiveValue];
          sel = obj;

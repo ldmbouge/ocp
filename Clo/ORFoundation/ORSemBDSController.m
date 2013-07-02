@@ -119,7 +119,7 @@
       [nd._cp release];
    }
    [_tracer restoreCheckpoint:_atRoot inSolver:_solver];
-   [_atRoot release];
+   [_atRoot letgo];
 }
 
 -(ORInt) addChoice: (NSCont*)k 
@@ -153,7 +153,7 @@
          _nbDisc = node._disc;
          //NSLog(@"********** RESTORING: %@",node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
-         [node._cp release];
+         [node._cp letgo];
          //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
          if (status != ORFailure)
             [node._cont call];

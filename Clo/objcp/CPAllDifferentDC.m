@@ -103,7 +103,7 @@ static void prune(CPAllDifferentDC* ad);
 -(NSSet*) allVars
 {
     if (_posted)
-        return [[NSSet alloc] initWithObjects:_var count:_varSize];
+        return [[[NSSet alloc] initWithObjects:_var count:_varSize] autorelease];
     else
         @throw [[ORExecutionError alloc] initORExecutionError: "Alldifferent: allVars called before the constraints is posted"];
     return NULL;

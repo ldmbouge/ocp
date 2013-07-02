@@ -18,26 +18,38 @@
 /*                        Constraint Network Handling                                    */
 /*****************************************************************************************/
 
-static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t) 
+static void setUpNetwork(CPBitEventNetwork* net,id<ORTrail> t,ORUInt low,ORUInt up)
 {
-    net->_boundsEvt = makeTRId(t,nil);
-    net->_bitFixedEvt = makeTRId(t, nil);
-    net->_minEvt    = makeTRId(t,nil);
-    net->_maxEvt    = makeTRId(t,nil);
-    net->_bindEvt = makeTRId(t,nil);
-    net->_domEvt = makeTRId(t,nil);
-    net->_ac5 = makeTRId(t,nil);
+   net->_boundsEvt = makeTRId(t,nil);
+   net->_bindEvt   = makeTRId(t,nil);
+   net->_domEvt    = makeTRId(t,nil);
+   net->_minEvt    = makeTRId(t,nil);
+   net->_maxEvt    = makeTRId(t,nil);
+   net->_ac5       = makeTRId(t, nil);
 }
 
-static void deallocNetwork(CPBitEventNetwork* net) 
+static void deallocNetwork(CPBitEventNetwork* net)
 {
-    freeList(net->_boundsEvt._val);
-    freeList(net->_bitFixedEvt._val);
-    freeList(net->_minEvt._val);
-    freeList(net->_bindEvt._val);
+   freeList(net->_boundsEvt._val);
+   freeList(net->_bindEvt._val);
    freeList(net->_domEvt._val);
+   freeList(net->_minEvt._val);
+   freeList(net->_maxEvt._val);
    freeList(net->_ac5._val);
 }
+
+static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
+{
+   collectList(net->_boundsEvt._val,rv);
+   collectList(net->_bindEvt._val,rv);
+   collectList(net->_domEvt._val,rv);
+   collectList(net->_minEvt._val,rv);
+   collectList(net->_maxEvt._val,rv);
+   collectList(net->_ac5._val,rv);
+   return rv;
+}
+
+/*****************************************************************************************/
 
 @interface CPBitVarSnapshot : NSObject<ORSnapshot,NSCoding> {
    ORUInt    _name;
@@ -114,7 +126,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     self = [super init];
     _engine = engine;
     [_engine trackVariable: self];
-    setUpNetwork(&_net, [_engine trail]);
+    setUpNetwork(&_net, [_engine trail], *low, *up);
     _triggers = nil;
     _dom = [[CPBitArrayDom alloc] initWithLength: len withTrail:[_engine trail]];
     _recv = self;
@@ -154,6 +166,16 @@ static void deallocNetwork(CPBitEventNetwork* net)
         }
         _recv = [d retain];
     }
+}
+-(NSMutableSet*)constraints
+{
+   NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
+   if (_recv) {
+      NSMutableSet* rc = [_recv constraints];
+      [rv unionSet:rc];
+      [rc release];
+   }
+   return rv;
 }
 
 //<<<<<<< HEAD
@@ -262,6 +284,10 @@ static void deallocNetwork(CPBitEventNetwork* net)
 -(ORBool) isFree:(ORUInt)pos{
    return [_dom isFree:pos];
 }
+-(NSString*)stringValue
+{
+   return [_dom description];
+}
 -(NSString*)description
 {
     return [_dom description];
@@ -274,12 +300,6 @@ static void deallocNetwork(CPBitEventNetwork* net)
 {
    [_dom restoreValue:toRestore];
 }
-
-//-(id<CPBitVar>) dereference
-//{
-//   @throw [[ORExecutionError alloc] initORExecutionError: "Dereferencing is totally obsolete"];
-//   return self;
-//}
 
 -(ORBool) tracksLoseEvt
 {
@@ -445,7 +465,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     self = [super init];
     _engine  = engine;
     [_engine trackVariable: self];
-    setUpNetwork(&_net, [_engine trail]);
+    setUpNetwork(&_net, [_engine trail], *low, *up);
     _triggers = nil;
     _dom = [[CPBitArrayDom alloc] initWithBitPat:len withLow:low andUp:up andTrail:[_engine trail]];
     _recv = self;
@@ -488,7 +508,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
     [aDecoder decodeValueOfObjCType:@encode(ORUInt) at:&_name];
     _dom = [[aDecoder decodeObject] retain];
     _engine = [aDecoder decodeObject];
-    setUpNetwork(&_net, [_engine trail]);
+    setUpNetwork(&_net, [_engine trail], [_dom getLow]->_val, [_dom getUp]->_val);
     _triggers = nil;
     _recv = [[aDecoder decodeObject] retain];
     return self;
@@ -499,7 +519,7 @@ static void deallocNetwork(CPBitEventNetwork* net)
 
 -(id)initVarMC:(int)n 
 {
-    [super init];
+    self = [super init];
     _mx  = n;
     _tab = malloc(sizeof(CPBitVarI*)*_mx);
     _tracksLoseEvt = false;

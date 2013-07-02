@@ -131,7 +131,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];   
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -301,7 +301,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
 
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_x,_y,nil];
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -377,7 +377,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       t[i++] = [_z at: k];
    t[i++] = _x;
    t[i++] = _y;
-   return [[NSSet alloc] initWithObjects:t count:sz];
+   return [[[NSSet alloc] initWithObjects:t count:sz] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -587,7 +587,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
       t[i++] = [_array at: k];
    t[i++] = _x;
    t[i++] = _z;
-   return [[NSSet alloc] initWithObjects:t count:sz];   
+   return [[[NSSet alloc] initWithObjects:t count:sz] autorelease];
 }
 -(ORUInt)nbUVars
 {

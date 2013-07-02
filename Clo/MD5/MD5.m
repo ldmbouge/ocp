@@ -199,14 +199,16 @@
       for(int j=0;j<16;j++)
          NSLog(@"%@\n",bitVars[j]);
    }
+   
+   id* gamma = [cp gamma];
 
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
-      [o set:bitVars[k] at:k];
+      [o set:gamma[bitVars[k].getId] at:k];
 
-//   id<CPHeuristic> h = [cp createBitVarABS:(id<ORVarArray>)o];
-//   id<CPHeuristic> h = [cp createBitVarABS];
-   id<CPHeuristic> h = [cp createBitVarFF];
+//   id<CPHeuristic> h = [cp createBitVarABS:(id<CPBitVarArray>)o];
+   id<CPHeuristic> h = [cp createBitVarABS];
+//   id<CPHeuristic> h = [cp createBitVarFF];
    [cp solve: ^{
       NSLog(@"Search");
       for(int i=0;i<4;i++)
@@ -214,7 +216,7 @@
          NSLog(@"%@",digest[i]);
          NSLog(@"%@\n\n",digestVars[i]);
       }
-      NSLog(@"Message Blocks (With Data Recovered)");
+//      NSLog(@"Message Blocks (With Data Recovered)");
 //      __block ORUInt maxFail = 0x0000000000004000;
       clock_t searchStart = clock();
 //      [cp repeat:^{
@@ -226,54 +228,7 @@
 
          for(int j=0;j<16;j++){
             NSLog(@"%@\n",bitVars[j]);
-//=======
-//   [cp solve: ^() {
-//      @try {
-////         fflush(stderr);
-//         NSLog(@"Digest Variables:\n");
-//         for(int i=0;i<4;i++)
-//         {
-//            NSLog(@"%@",digest[i]);
-//            NSLog(@"%@\n\n",digestVars[i]);
-//         }
-//         NSLog(@"Message Blocks (Original)");
-//         id<ORBitVar>* bitVars;
-//         for(int i=0; i<_numBlocks;i++){
-//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-//            for(int j=0;j<16;j++)
-//               NSLog(@"%@\n",bitVars[j]);
-//         }
-//         NSLog(@"Message Blocks (With Data Recovered)");
-//         //         id<ORBitVar>* bitVars;
-//         clock_t searchStart = clock();
-//         for(int i=0; i<_numBlocks;i++){
-//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-//            [cp labelBitVarsFirstFail:[_m variables]];
-//            for(int j=0;j<16;j++){
-//               //[cp labelUpFromLSB:bitVars[j]];
-//               NSLog(@"%@\n",bitVars[j]);
-//            }
-//         }
-//         clock_t searchFinish = clock();
-//
-//         //         NSLog(@"Temporary Variables:\n");
-//         //         for(int i=0;i<[_temps count];i++)
-//         //         {
-//         ////            [cp labelUpFromLSB:[_temps objectAtIndex:i]];
-//         //            NSLog(@"%@",[_temps objectAtIndex:i]);
-//         //            if((i%3)==2)
-//         //               NSLog(@"\n\n");
-//         //         }
-//         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
-//         for(int i=0;i<4;i++)
-//         {
-//            [cp labelUpFromLSB:digest[i]];
-//         }
-//         for(int i=0;i<4;i++)
-//         {
-//            NSLog(@"%@",digest[i]);
-//            NSLog(@"%@\n\n",digestVars[i]);
-//>>>>>>> modeling
+
          }
 
          double totalTime, searchTime;
@@ -289,82 +244,6 @@
          NSLog(@"     Total Time (s): %f\n\n",totalTime);
 
    }];
-
-   
-//   [cp solve: ^() {
-//      @try {
-////         fflush(stderr);
-//         NSLog(@"Digest Variables:\n");
-//         for(int i=0;i<4;i++)
-//         {
-//            NSLog(@"%@",digest[i]);
-//            NSLog(@"%@\n\n",digestVars[i]);
-//         }
-//         NSLog(@"Message Blocks (Original)");
-//         id<ORBitVar>* bitVars;
-//         for(int i=0; i<_numBlocks;i++){
-//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-//            for(int j=0;j<16;j++)
-//               NSLog(@"%@\n",bitVars[j]);
-//         }
-//         NSLog(@"Message Blocks (With Data Recovered)");
-//         //         id<ORBitVar>* bitVars;
-//         clock_t searchStart = clock();
-//         id<CPHeuristic> h = [cp createBitVarFF];
-//         [cp solve: ^{
-//         NSLog(@"Search");
-//         [cp labelBitVarHeuristic:h];
-//         }];
-////         NSMutableArray* messageVarArray = [[NSMutableArray alloc] init];
-////         [cp labelBitVarsFirstFail:[engine variables]];
-//         for(int i=0; i<_numBlocks;i++){
-//            bitVars = [[_messageBlocks objectAtIndex:i] getORVars];
-////            for(int j=0;j<16;j++){
-////               [cp labelDownFromMSB:bitVars[j]];
-////               [messageVarArray addObject:bitVars[j]];
-////               NSLog(@"%@\n",bitVars[j]);
-////            }
-//         }
-////         [cp labelBitVarsFirstFail:messageVarArray];
-//         
-//         for(int j=0;j<16;j++){
-//            NSLog(@"%@\n",bitVars[j]);
-//         }
-//         clock_t searchFinish = clock();
-//
-//         //         NSLog(@"Temporary Variables:\n");
-//         //         for(int i=0;i<[_temps count];i++)
-//         //         {
-//         ////            [cp labelUpFromLSB:[_temps objectAtIndex:i]];
-//         //            NSLog(@"%@",[_temps objectAtIndex:i]);
-//         //            if((i%3)==2)
-//         //               NSLog(@"\n\n");
-//         //         }
-//         NSLog(@"\n\n\n\n\n\n\n\n\n\nDigest Variables:\n");
-//         for(int i=0;i<4;i++)
-//         {
-//            NSLog(@"%@",digest[i]);
-//            NSLog(@"%@\n\n",digestVars[i]);
-//         }
-//         double totalTime, searchTime;
-//         totalTime =((double)(searchFinish - start))/CLOCKS_PER_SEC;
-//         searchTime = ((double)(searchFinish - searchStart))/CLOCKS_PER_SEC;
-//         
-//         NSString *str = [NSString stringWithFormat:@",%d,%d,%d,%f,%f\n",[explorer nbChoices],[explorer nbFailures],[engine nbPropagation],searchTime,totalTime];
-//         [results appendString:str];
-//         
-//         NSLog(@"Number propagations: %d",[engine nbPropagation]);
-//         NSLog(@"     Number choices: %d",[explorer nbChoices]);
-//         NSLog(@"    Number Failures: %d", [explorer nbFailures]);
-//         NSLog(@"    Search Time (s): %f",searchTime);
-//         NSLog(@"     Total Time (s): %f\n\n",totalTime);
-//      }
-//      @catch (NSException *exception) {
-//         
-//         NSLog(@"[MD5 preimage] Caught %@: %@", [exception name], [exception reason]);
-//         
-//      }
-//   }];
    [cp release];
    return results;
 }

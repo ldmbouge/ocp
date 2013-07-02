@@ -107,7 +107,8 @@
     }
     return binArr;
 }
--(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr {
+-(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr
+{
     [expr visit: self];
     return _exprResult;
 }
@@ -335,13 +336,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   assert(false);
-//   [_model minimize:[v var]];
+   assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+   [_model minimize:[v expr]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   assert(false);
-//   [_model maximize:[v var]];
+   assert([[v expr] conformsToProtocol:@protocol(ORVar)]);
+   [_model maximize:[v expr]];
 }
 
 @end
@@ -349,7 +350,7 @@
 @implementation ORFactory(Linearize)
 +(id<ORModel>) linearizeModel:(id<ORModel>)m
 {
-   id<ORModel> lm = [ORFactory createModel];
+   id<ORModel> lm = [ORFactory createModel: [m nbObjects] mappings:nil];
    ORBatchModel* batch = [[ORBatchModel alloc] init: lm source: m];
    id<ORModelTransformation> linearizer = [[ORLinearize alloc] initORLinearize:batch];
    [linearizer apply: m];

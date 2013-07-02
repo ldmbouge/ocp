@@ -14,6 +14,7 @@
 #import <CPUKernel/CPUKernel.h>
 #import <objcp/CPStatisticsMonitor.h>
 #import <objcp/CPVar.h>
+#import "CPBitVar.h"
 #import "CPConcretizer.h"
 
 #if defined(__linux__)

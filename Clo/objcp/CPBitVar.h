@@ -34,7 +34,6 @@
 -(ORInt) getId;
 -(ORBool) bound;
 -(ORBool) member: (unsigned int*) v;
-//-(id<CPBitVar>) dereference;
 -(id<CPEngine>) engine;
 @end
 

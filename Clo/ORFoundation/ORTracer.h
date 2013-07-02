@@ -19,6 +19,7 @@
 @protocol ORTrail;
 @class ORCommandList;
 @class ORTrailI;
+@class ORMemoryTrailI;
 @class SemTracer;
 @class ORCmdStack;
 
@@ -50,12 +51,11 @@
 -(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<ORSearchEngine>) engine;
 -(ORInt)sizeEstimate;
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
--(DFSTracer*) initDFSTracer: (id<ORTrail>) trail;
+-(DFSTracer*) initDFSTracer: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
@@ -67,7 +67,7 @@
 @end
 
 @interface SemTracer : NSObject<ORTracer>
--(SemTracer*) initSemTracer: (id<ORTrail>) trail;
+-(SemTracer*) initSemTracer: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
@@ -87,3 +87,6 @@
 +(id<ORProblem>)      unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
 +(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
 @end
+
+
+void logCheckpoint();

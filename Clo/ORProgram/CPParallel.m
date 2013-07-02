@@ -67,7 +67,8 @@
 }
 -(void)trust
 {
-   [[_solver tracer] pushNode];
+   //[[_solver tracer] pushNode];
+   [_controller trust];
 }
 -(void)startTry
 {
