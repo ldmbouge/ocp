@@ -36,7 +36,7 @@
 @protocol LPProgram <ORASolver>
 -(LPSolverI*) solver;
 -(void) setGamma: (id*) gamma;
--(void) setTau: (id<ORTau>) tau;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
 -(id*)  gamma;
 -(void) solve;
 -(id<LPColumn>) createColumn;
@@ -48,5 +48,16 @@
 -(id<ORObjectiveValue>) objectiveValue;
 -(id<ORLPSolutionPool>) solutionPool;
 -(id<ORLPSolution>) captureSolution;
+@end
+
+@protocol LPRelaxation <ORASolver>
+-(LPSolverI*) solver;
+-(void) setGamma: (id*) gamma;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
+-(id*)  gamma;
+-(void) solve;
+-(ORFloat) dual: (id<ORConstraint>) c;
+-(ORFloat) reducedCost: (id<ORVar>) v;
+-(ORFloat) floatValue: (id<ORVar>) v;
 @end
 

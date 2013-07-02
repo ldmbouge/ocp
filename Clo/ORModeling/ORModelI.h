@@ -11,6 +11,15 @@
 
 #import <ORModeling/ORModeling.h>
 
+@interface ORModelMappings : NSObject<ORModelMappings>
+-(ORModelMappings*) initORModelMappings;
+-(void) dealloc;
+-(void) setTau: (id<ORTau>) tau;
+-(void) setLambda: (id<ORLambda>) lambda;
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
+@end
+
 @interface ORTau : NSObject<ORTau>
 -(ORTau*) initORTau;
 -(void) dealloc;
@@ -62,7 +71,7 @@
 -(id<ORModel>)rootModel;
 -(id)inCache:(id)obj;
 -(id)addToCache:(id)obj;
--(id<ORGamma>) mappings;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @interface ORBatchModel : NSObject<ORAddToModel>
@@ -83,6 +92,7 @@
 -(id) trackMutable: (id) obj;
 -(id) trackImmutable:(id)obj;
 -(id) trackVariable: (id) obj;
+-(id<ORModelMappings>) modelMappings;
 @end
 
 @interface ORBatchGroup : NSObject<ORAddToModel>

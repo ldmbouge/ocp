@@ -20,7 +20,7 @@
    id<ORIntRange>    D = RANGE(m,1,d);
    id<ORIntVarArray> x = [ORFactory intVarArray:m range:RANGE(m,1,n) domain:D];
    int* coef = (int[]){3,4,10,30,5,1,0,9,12,-1};
-   id<ORIntArray> w = [ORFactory intArray:m range:RANGE(m,1,d) with:^ORInt(ORInt i) {return coef[i-1];}];
+   //id<ORIntArray> w = [ORFactory intArray:m range:RANGE(m,1,d) with:^ORInt(ORInt i) {return coef[i-1];}];
    id<ORIntMatrix> z = [ORFactory intMatrix:m range:RANGE(m,1,2) :RANGE(m,1,d) using:^int(ORInt i , ORInt j) {
       if (i==1) return coef[j-1];
       else return coef[(j + 5) % 10];

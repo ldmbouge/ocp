@@ -100,6 +100,10 @@
 {
    assert(NO);
 }
+-(id<ORModelMappings>) modelMappings
+{
+   return [[self worker] modelMappings];
+}
 -(NSMutableArray*) variables
 {
    return [[[self worker] engine] variables];

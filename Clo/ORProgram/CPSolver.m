@@ -1270,6 +1270,10 @@
    [_concretizer release];
    [super dealloc];
 }
+-(id<ORModelMappings>) modelMappings
+{
+   return [_solver modelMappings];
+}
 -(id<ORVar>) addVariable: (id<ORVar>) var
 {
    [_solver trackVariable:var];

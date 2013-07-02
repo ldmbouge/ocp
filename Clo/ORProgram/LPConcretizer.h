@@ -19,4 +19,8 @@
 -(void) dealloc;
 @end
 
+@interface ORLPRelaxationConcretizer  : NSObject<ORVisitor>
+-(ORLPRelaxationConcretizer*) initORLPRelaxationConcretizer: (id<LPRelaxation>) solver;
+-(void) dealloc;
+@end
 

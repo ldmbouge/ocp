@@ -44,6 +44,11 @@
 			<key>orderHint</key>
 			<integer>53</integer>
 		</dict>
+		<key>LPRelaxation.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>85</integer>
+		</dict>
 		<key>LPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -938,6 +943,11 @@
 			<true/>
 		</dict>
 		<key>B189513C15E0FA5E00B77813</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>B18DF14917810C67004E1880</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -62,7 +62,7 @@
 }
 -(void) apply: (id<ORModel>) m
 {
-   _tau = m.tau;
+   _tau = [_into modelMappings].tau;
    [m applyOnVar:^(id<ORVar> x) {
       [_into addVariable: [self flattenIt: x]];
    }
