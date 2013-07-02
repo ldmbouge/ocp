@@ -230,6 +230,14 @@
 {
    [[self worker] tryall: range suchThat: filter in: body onFailure: onFailure];
 }
+-(void)              tryall: (id<ORIntIterable>) range
+                   suchThat: (ORInt2Bool) filter
+                  orderedBy: (ORInt2Float)o1
+                         in: (ORInt2Void) body
+                  onFailure: (ORInt2Void) onFailure
+{
+   [[self worker] tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
 -(void) perform: (ORClosure) body onLimit: (ORClosure) onRestart
 {
    [[[self worker] explorer] perform:body onLimit:onRestart];

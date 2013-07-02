@@ -58,6 +58,17 @@ int main(int argc, const char * argv[])
          [cp solve:^{
             [cp labelArrayFF:x];
             [cp labelArrayFF:l];
+            /*
+            [cp forall:Courses suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
+             orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];}
+                   and:^ORInt(ORInt i) { return - [credits at:i];}
+                    do:^(ORInt i) {
+                       [cp tryall:Periods suchThat:^bool(ORInt p) { return [cp member:p in:x[i]];}
+                               in:^(ORInt i) {
+                                  <#code#>
+                               } onFailure:<#^(ORInt)onFailure#>]
+                    }];
+            */
             printf("x = [");
             for(ORInt i = x.low; i <= x.up; i++)
                printf("%d%c",[cp intValue: x[i]],((i < x.up) ? ',' : ']'));

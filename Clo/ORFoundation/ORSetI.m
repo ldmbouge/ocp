@@ -42,6 +42,11 @@
 {
     [_avl removeObjectForKey: v];
 }
+-(ORInt) low
+{
+   return [self min];
+}
+
 -(ORInt) min
 {
     __block ORInt value = MAXINT;
