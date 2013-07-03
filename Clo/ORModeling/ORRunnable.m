@@ -7,8 +7,8 @@
 //
 
 #import "ORRunnable.h"
-#import "ORFactory.h"
-#import "ORProgramFactory.h"
+#import <ORFoundation/ORFactory.h>
+#import <ORProgram/ORProgramFactory.h>
 #import "ORConcurrencyI.h"
 #import <objmp/LPSolverI.h>
 

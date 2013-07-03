@@ -12,8 +12,8 @@
 #import "ORFlatten.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
-#import "ORVarI.h"
 #import "ORSetI.h"
+#import "ORVarI.h"
 #import <ORFoundation/ORArrayI.h>
 
 @implementation ORNOopVisit

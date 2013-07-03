@@ -11,15 +11,6 @@
 
 #import "ORFoundation.h"
 
-#if defined(__linux__)
-void failNow()
-{
-   static ORFailException* fex = nil;
-   if (fex==nil) fex = [ORFailException new];
-   @throw  [fex retain];
-}
-#else
-
 static __thread jmp_buf* ptr = 0;
 
 static inline void failTo(jmp_buf* jb)
@@ -57,5 +48,5 @@ void failNow()
     */
    _longjmp(*ptr, 1);
 }
-#endif
+
 

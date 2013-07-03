@@ -7,9 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CPProgram.h"
-#import "LPProgram.h"
-#import "ORTypes.h"
+#import <ORProgram/CPProgram.h>
+#import <ORProgram/LPProgram.h>
+#import <ORUtilities/ORTypes.h>
 
 //Forward Declarations
 @protocol  ORModel;

@@ -1,9 +1,9 @@
-#GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
+GNUSTEP_MAKEFILES=/opt/kitkit-1.0-rc1/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
-CFLAGS = -I$(GNUstep)/include -I. -I.. \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -fPIC \
 	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
 LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES)
 
@@ -23,7 +23,7 @@ all: $(LIBNAME)
 	fi
 
 $(LIBNAME): $(OFILES)
-	@$(OC) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
+	$(OC) $(OFILES) $(LFLAGS) --shared  -o $(LIBNAME)
 #	ar  -cvq $(LIBNAME) $(OFILES)
 
 %.$(OBJEXT): %.m

@@ -181,10 +181,14 @@
    CPParSolverI* cpprogram = [[CPParSolverI alloc] initParSolver:k withController:ctrlClass];
    id<ORModel> flatModel = [model flatten];   
    id<ORSolutionPool> global = [cpprogram solutionPool];
+#if defined(__APPLE__)
    dispatch_queue_t q = dispatch_queue_create("ocp.par", DISPATCH_QUEUE_CONCURRENT);
    dispatch_group_t group = dispatch_group_create();
+#endif
    for(ORInt i=0;i< k;i++) {
+#if defined(__APPLE__)
       dispatch_group_async(group,q, ^{
+#endif
          [NSThread setThreadID:i];
          id<CPCommonProgram> pi = [cpprogram worker];
          [ORFactory concretizeCP:flatModel program:pi];
@@ -195,11 +199,15 @@
                [global addSolution:sol];
             }
          }];
+#if defined(__APPLE__)
       });
+#endif
    }
+#if defined(__APPLE__)
    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
    dispatch_release(q);
    dispatch_release(group);
+#endif
    return cpprogram;
 }
 

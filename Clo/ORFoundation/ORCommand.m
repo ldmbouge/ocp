@@ -66,7 +66,7 @@ static __thread ComListPool* pool = NULL;
    if (--_cnt == 0) {
       while (_head) {
          struct CNode* nxt = _head->_next;
-         CFRelease(_head->_c);//[_head->_c release];
+         [_head->_c release];
          free(_head);
          _head = nxt;
       }
@@ -96,7 +96,7 @@ static __thread ComListPool* pool = NULL;
    NSLog(@"dealloc on CPCommandList %d\n",_ndId);
    while (_head) {
       struct CNode* nxt = _head->_next;
-      CFRelease(_head->_c);//[_head->_c release];
+      [_head->_c release];
       free(_head);
       _head = nxt;
    }
