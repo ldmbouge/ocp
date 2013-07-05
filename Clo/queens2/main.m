@@ -19,7 +19,7 @@
 
 int main (int argc, const char * argv[])
 {
-   int n = 7;
+   int n = 8;
    @autoreleasepool {
      id<ORModel> model = [ORFactory createModel];
      
@@ -37,23 +37,10 @@ int main (int argc, const char * argv[])
      id<CPHeuristic> h = [cp createFF];
      [cp solveAll:
        ^() {
-          id<CPIntVarArray> cx = [cp gamma][[x getId]];
-          [cp label:x[0] with:1];
-          id<CPIntVar> sx = [cp gamma][4];
-          NSLog(@"cx= %@ -- %@",cx,sx);
-          [cp label:x[1] with:5];
-          [cp label:x[2] with:2];
-          [cp label:x[3] with:4];
-          [cp forall:R suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
-           orderedBy: ^ORInt(ORInt i) { return [cp domsize:x[i]];}
-                  do: ^void(ORInt i) {
-                     [cp label:x[i]];
-                  }];
-          //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;/*[cp domsize:x[i]]*/;}];
-          //[cp labelArrayFF: x];
+	 [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
           printf("S[%d] = [",[nbSolutions intValue:cp]);
           for(ORInt k=0;k < n;k++) {
-             printf("%d%c",[cp intValue:x[k]],k<n ? ',' : ']');
+             printf("%d%c",[cp intValue:x[k]],k<n-1 ? ',' : ']');
           }
           printf("\n");
           //[cp labelHeuristic:h];
