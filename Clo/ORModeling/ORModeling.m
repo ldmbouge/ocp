@@ -44,15 +44,15 @@
 }
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORLPFlatten alloc] initORLPFlatten:into] autorelease];
+   return [[ORLPFlatten alloc] initORLPFlatten:into];
 }
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORMIPFlatten alloc] initORMIPFlatten:into] autorelease];
+   return [[ORMIPFlatten alloc] initORMIPFlatten:into];
 }
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {
-   return [[[ORLinearize alloc] initORLinearize:into] autorelease];
+   return [[ORLinearize alloc] initORLinearize:into];
 }
 +(id<ORSolutionPool>) createSolutionPool
 {
