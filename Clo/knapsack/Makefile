@@ -5,7 +5,7 @@ OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
 
-CFLAGS = -I$(GNUstep)/include -I. -I.. \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -g \
 	-fblocks -fobjc-nonfragile-abi $(USER_DEFINES)
 
 #### `$(GNUstep)/bin/gnustep-config --base-libs` 

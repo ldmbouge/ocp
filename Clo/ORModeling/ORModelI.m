@@ -510,6 +510,7 @@
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
+   [flat release];
    return flatModel;
 }
 -(id<ORModel>) lpflatten

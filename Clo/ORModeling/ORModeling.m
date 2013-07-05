@@ -40,7 +40,7 @@
 
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORFlatten alloc] initORFlatten:into] autorelease];
+  return [[ORFlatten alloc] initORFlatten:into];
 }
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
