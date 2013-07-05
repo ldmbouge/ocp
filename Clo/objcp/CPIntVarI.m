@@ -301,13 +301,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
+  //return TRACKSINTVAR;
    if (_net._ac5._val != nil || _triggers != nil)
       return YES;
    else if (_recv && [_recv tracksLoseEvt:sender])
       return YES;
    else
       return NO;
-   //return TRACKSINTVAR;
 }
 // nothing to do here
 -(void) setTracksLoseEvt

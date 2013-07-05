@@ -37,7 +37,17 @@ int main (int argc, const char * argv[])
      id<CPHeuristic> h = [cp createFF];
      [cp solveAll:
        ^() {
-          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
+	 id<CPIntVarArray> cx = [cp gamma][[x getId]];
+	 [cp label:x[1] with:2];
+	 NSLog(@"cx= %@",cx);
+	 [cp label:x[2] with:6];
+	 [cp forall:R suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
+  	 orderedBy: ^ORInt(ORInt i) { return [cp domsize:x[i]];}
+		 do: ^void(ORInt i) {
+		 [cp label:x[i]];
+	       }];
+	 //[cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return i;/*[cp domsize:x[i]]*/;}];
+	 //[cp labelArrayFF: x];
 	  printf("S[%d] = [",[nbSolutions intValue:cp]);
 	  for(ORInt k=1;k <= n;k++) {
 	    printf("%d%c",[cp intValue:x[k]],k<n ? ',' : ']');
