@@ -19,7 +19,7 @@
 
 int main (int argc, const char * argv[])
 {
-   int n = 8;
+   int n = 5;
    @autoreleasepool {
      id<ORModel> model = [ORFactory createModel];
      
