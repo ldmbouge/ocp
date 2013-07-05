@@ -43,6 +43,7 @@
 }
 -(void) dealloc
 {
+   NSLog(@"Dealloc  ORForallI (%p)",self);
    [_S release];
    [_arraySuchThat release];
    [_arrayOrderedBy release];
@@ -50,12 +51,12 @@
 }
 -(id<ORForall>) suchThat: (ORInt2Bool) suchThat
 {
-   [_arraySuchThat addObject: suchThat];
+   [_arraySuchThat addObject: [suchThat copy]];
    return self;
 }
 -(id<ORForall>) orderedBy: (ORInt2Int) orderedBy
 {
-   [_arrayOrderedBy addObject: orderedBy];
+   [_arrayOrderedBy addObject: [orderedBy copy]];
    return self;
 }
 static inline BOOL testSuchThat(ORInt val,NSArray* arraySuchThat)

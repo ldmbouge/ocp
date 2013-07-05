@@ -631,12 +631,22 @@
       buildConfiguration = "Debug">
       <Testables>
          <TestableReference
-            skipped = "NO">
+            skipped = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5B9ABD011391329D000997E5"
                BuildableName = "objcpTests.octest"
                BlueprintName = "objcpTests"
+               ReferencedContainer = "container:Clo.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5BEA4E67178365FA00614A82"
+               BuildableName = "searchTest.octest"
+               BlueprintName = "searchTest"
                ReferencedContainer = "container:Clo.xcodeproj">
             </BuildableReference>
          </TestableReference>

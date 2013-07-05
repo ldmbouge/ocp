@@ -56,8 +56,30 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [args makeProgram:model];
          __block ORInt nbSol = 0;
          [cp solve:^{
-            [cp labelArrayFF:x];
-            [cp labelArrayFF:l];
+            //[cp labelArrayFF:x];
+            //[cp labelArrayFF:l];
+            
+            [cp forall:Courses suchThat:^bool(ORInt i) { return ![cp bound:x[i]];}
+             orderedBy:^ORInt(ORInt i) { return [cp domsize:x[i]];}
+                   and:^ORInt(ORInt i) { return - [credits at:i];}
+                    do:^(ORInt i) {
+                       id<ORIntArray> cc = [ORFactory intArray:cp range:Periods with:^ORInt(ORInt p) {
+                          ORInt ttl = 0;
+                          for(ORInt c=0;c < nbCourses;c++) {
+                             if ([cp bound:x[c]]) continue;
+                             ttl += [cp intValue:x[c]] == p;
+                          }
+                          return ttl;
+                       }];
+                       [cp tryall:Periods suchThat:^bool(ORInt p) { return [cp member:p in:x[i]];}
+                        orderedBy:^ORFloat(ORInt p) { return ([cp min:l[p]] << 16) - [cc at:p];}
+                               in:^(ORInt p) {
+                                  [cp label:x[i] with:p];
+                               } onFailure:^(ORInt p) {
+                                  [cp diff:x[i] with:p];
+                               }];
+                    }];
+            
             printf("x = [");
             for(ORInt i = x.low; i <= x.up; i++)
                printf("%d%c",[cp intValue: x[i]],((i < x.up) ? ',' : ']'));

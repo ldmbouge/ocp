@@ -659,6 +659,16 @@
 {
    [_search tryall: range suchThat: filter in: body onFailure: onFailure];  
 }
+
+-(void) tryall: (id<ORIntIterable>) range
+      suchThat: (ORInt2Bool) filter
+     orderedBy: (ORInt2Float)o1
+            in: (ORInt2Void) body
+     onFailure: (ORInt2Void) onFailure
+{
+   [_search tryall:range suchThat:filter orderedBy:o1 in:body onFailure:onFailure];
+}
+
 -(void) limitTime: (ORLong) maxTime in: (ORClosure) cl
 {
    [_engine clearStatus];

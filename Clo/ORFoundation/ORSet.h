@@ -16,6 +16,7 @@
 @protocol ORIntIterable <ORObject>
 -(void)enumerateWithBlock:(ORInt2Void)block;
 -(ORInt) size;
+-(ORInt) low;
 -(id<IntEnumerator>) enumerator;
 @end
 

@@ -3,7 +3,7 @@
 
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
-CFLAGS = -I$(GNUstep)/include -I. -I.. \
+CFLAGS = -I$(GNUstep)/include -I. -I.. -fPIC \
 	-fblocks -fobjc-nonfragile-abi  $(USER_DEFINES)
 LFLAGS = -dynamic -g -L$(GNUstep)/lib -lgnustep-base -lobjc $(USER_DEFINES) \
 	-L../ORUtilities \
@@ -14,7 +14,7 @@ SRCS = context.m   ORAVLTree.m     ORControl.m  OREngine.m     ORExprI.m     \
 	cont.m      ORCommand.m     ORDataI.m    ORError.m      ORFactoryI.m  \
 	ORLimit.m       ORParallel.m   ORSemDFSController.m  ORTrailI.m \
 	ORArrayI.m  ORController.m  ORData.m     ORExplorerI.m  ORFactory.m  \
-	ORModelI.m      ORSelectorI.m  ORSetI.m              ORVarI.m
+	ORSelectorI.m  ORSetI.m              ORVarI.m ORConstraintI.m
 
 
 OBJEXT=o

@@ -14,7 +14,7 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPProgram.h"
+#import <ORProgram/CPProgram.h>
 
 @interface CPWatch : CPCoreConstraint {
    CPIntVarI* _theVar;

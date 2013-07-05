@@ -24,6 +24,7 @@
 -(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) low;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) size;
