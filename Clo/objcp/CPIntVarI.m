@@ -248,7 +248,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
-   if ([dom isKindOfClass:[CPBoundsDom class]]) {
+   if ([dom isMemberOfClass:[CPBoundsDom class]]) {
       if ([dom domsize]==1)
          [s appendFormat:@"%d",[dom min]];
       else {
