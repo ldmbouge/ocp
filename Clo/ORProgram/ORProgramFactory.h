@@ -26,4 +26,5 @@
 +(id<LPRelaxation>) createLPRelaxation: (id<ORModel>) model;
 +(id<MIPProgram>) createMIPProgram: (id<ORModel>) model;
 +(id<CPProgram>) createCPLinearizedProgram: (id<ORModel>) model;
++(id<CPProgram>) createCPProgramWithLP: (id<ORModel>) model;
 @end

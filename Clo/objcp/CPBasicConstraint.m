@@ -2622,6 +2622,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
   ORInt bound = [_x max];
   if (bound > _primalBound) 
     _primalBound = bound;
+   NSLog(@"primal bound: %d",_primalBound);
 }
 
 -(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound

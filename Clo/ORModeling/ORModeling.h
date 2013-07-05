@@ -20,6 +20,7 @@
 
 @protocol ORModel <ORTracker,ORObject,ORBasicModel,NSCoding,NSCopying>
 -(NSString*)description;
+-(void) addVariable: (id<ORVar>) x;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr;
 -(id<ORConstraint>) add: (id<ORConstraint>) cstr annotation:(ORAnnotation)n;
 -(void) optimize: (id<ORObjectiveFunction>) o;

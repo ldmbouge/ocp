@@ -27,8 +27,10 @@
 @interface LPRelaxation : ORGamma<LPRelaxation>
 -(id<LPRelaxation>) initLPRelaxation: (id<ORModel>) model;
 -(ORFloat) dual: (id<ORConstraint>) c;
--(ORFloat) reducedCost: (id<ORFloatVar>) x;
--(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORFloat) reducedCost: (id<ORVar>) x;
+-(ORFloat) floatValue: (id<ORVar>) x;
+-(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb;
+-(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
 @end
 
 

@@ -521,6 +521,14 @@
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
 }
+-(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb
+{
+   [_lpsolver updateLowerBound: _gamma[v.getId] lb: lb];
+}
+-(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub
+{
+   [_lpsolver updateUpperBound: _gamma[v.getId] ub: ub];
+}
 -(id) trackObject: (id) obj
 {
    return [_lpsolver trackObject:obj];

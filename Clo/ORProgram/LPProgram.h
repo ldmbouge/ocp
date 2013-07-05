@@ -59,5 +59,7 @@
 -(ORFloat) dual: (id<ORConstraint>) c;
 -(ORFloat) reducedCost: (id<ORVar>) v;
 -(ORFloat) floatValue: (id<ORVar>) v;
+-(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb;
+-(void) updateUpperBound: (id<ORVar>) v with: (ORFloat) ub;
 @end
 
