@@ -88,14 +88,14 @@ int main_hybrid(int argc, const char * argv[])
           NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
        }
        for(ORInt i = 0; i < nbColumns; i++) {
-          NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
+//          NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
           while (![cp bound: x[i]]) {
-             ORInt m = ([cp max: x[i]] - [cp min: x[i]]) / 2;
-             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
+             ORInt m = ([cp max: x[i]] + [cp min: x[i]]) / 2;
+//             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
              [cp try:
-               ^()  { [cp gthen: x[i] with: m]; NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); }
+               ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
                   or:
-              ^()  { [cp lthen: x[i] with: m+1]; NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); }
+              ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
              
               ];
           }
@@ -112,5 +112,6 @@ int main_hybrid(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
+   main_lp(argc,argv);
    return main_hybrid(argc,argv);
 }
