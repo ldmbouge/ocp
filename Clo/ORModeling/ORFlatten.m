@@ -166,6 +166,7 @@
 }
 -(id)flattenIt:(id)obj
 {
+   if (obj==nil) return obj;
    id fo = [_mapping objectForKey:obj];
    if (fo)
       return fo;
