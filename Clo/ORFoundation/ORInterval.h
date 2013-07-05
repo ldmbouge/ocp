@@ -20,31 +20,23 @@ void ORIInit();
 
 static inline bool ORINegative(ORInterval x)
 {
-   ORInterval zero = _mm_setzero_pd();
-   ORInterval sx   = _mm_shuffle_pd(x, x, 1);
-   return _mm_comile_sd(sx,zero);
+   return _mm_comile_sd(_mm_shuffle_pd(x, x, 1),_mm_setzero_pd());
 }
 static inline bool ORIPositive(ORInterval x)
 {
-   ORInterval zero = _mm_setzero_pd();
-   ORInterval nh   = _mm_xor_pd(x, FLIP);
-   return _mm_comige_sd(nh, zero);
+   return _mm_comige_sd(_mm_xor_pd(x, FLIP), _mm_setzero_pd());
 }
 static inline bool ORISureNegative(ORInterval x)
 {
-   ORInterval zero = _mm_setzero_pd();
-   return _mm_comigt_sd(x,zero);
+   return _mm_comigt_sd(x,_mm_setzero_pd());
 }
 static inline bool ORISurePositive(ORInterval x)
 {
-   ORInterval zero = _mm_setzero_pd();
-   ORInterval sx   = _mm_shuffle_pd(x, x, 1);
-   return _mm_comigt_sd(sx,zero);
+   return _mm_comigt_sd(_mm_shuffle_pd(x, x, 1),_mm_setzero_pd());
 }
 static inline bool ORIContainsZero(ORInterval x)
 {
-   __m128d zero   = _mm_setzero_pd();
-   __m128d result = _mm_cmple_pd(x,zero);
+   __m128d result = _mm_cmple_pd(x,_mm_setzero_pd());
    double b[2];
    _mm_storeu_pd(b,result);
    return b[0]!=0 && b[1]!=0;
