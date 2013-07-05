@@ -21,10 +21,6 @@
 {
    return [[[ORModelI alloc] initORModelI] autorelease];
 }
-//+(id<ORModel>) createModel:(ORUInt)nbo
-//{
-//   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
-//}
 +(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMappings>) mappings
 {
    return [[[ORModelI alloc] initORModelI: nbo mappings: mappings] autorelease];
