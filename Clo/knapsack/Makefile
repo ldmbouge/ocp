@@ -25,13 +25,15 @@ OFILES=$(addsuffix .$(OBJEXT),$(basename $(SRCS)))
 LIBNAME = libobjcp.so.1 
 EXE = knapsack
 
-all: $(EXE)
+all: $(EXE) data
 	@echo "Done..." $(OFILES)
 
 $(EXE):  $(OFILES)
 	@echo "Linking $(EXE)"
 	@$(OC) $(CFLAGS) $(notdir $(OFILES)) $(LFLAGS) -o $(EXE)
 
+data:
+	@cp -r ../../data/MKNAP .
 %.$(OBJEXT): %.m
 	@echo "Compiling m"  $<
 	@$(OC) $(CFLAGS) -c $< 
