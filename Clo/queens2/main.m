@@ -38,11 +38,14 @@ int main (int argc, const char * argv[])
      [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
-         [cp labelHeuristic:h];
-       //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
+	  printf("S[%d] = [",[nbSolutions intValue:cp]);
+	  for(ORInt k=1;k <= n;k++) {
+	    printf("%d%c",[cp intValue:x[k]],k<n ? ',' : ']');
+	  }
+	  printf("\n");
+	  //[cp labelHeuristic:h];
           [nbSolutions incr:cp];
-       }
-       ];
+       }];
      printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
      
      NSLog(@"Solver status: %@\n",cp);
