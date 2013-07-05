@@ -1,7 +1,6 @@
 #GNUSTEP_MAKEFILES=/usr/share/GNUstep/Makefiles
 #include $(GNUSTEP_MAKEFILES)/common.make
 
-OC = ~/clang32/bin/clang
 OC = clang
 GNUstep = /opt/kitkit-1.0-rc1
 
@@ -26,7 +25,7 @@ LIBNAME = libobjcp.so.1
 EXE = knapsack
 
 all: $(EXE) data
-	@echo "Done..." $(OFILES)
+	@echo "Done..." $(EXE)
 
 $(EXE):  $(OFILES)
 	@echo "Linking $(EXE)"
@@ -34,6 +33,7 @@ $(EXE):  $(OFILES)
 
 data:
 	@cp -r ../../data/MKNAP .
+
 %.$(OBJEXT): %.m
 	@echo "Compiling m"  $<
 	@$(OC) $(CFLAGS) -c $< 
