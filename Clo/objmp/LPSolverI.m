@@ -1221,6 +1221,7 @@
 {
    if (!_isClosed)
       [self close];
+ 
    return [_lp solve];
 }
 

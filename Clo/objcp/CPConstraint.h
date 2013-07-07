@@ -77,6 +77,8 @@
 +(id<CPConstraint>) assignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost;
 +(id<CPConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y;
 +(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
+
++(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 @end
 
 @interface CPSearchFactory : NSObject

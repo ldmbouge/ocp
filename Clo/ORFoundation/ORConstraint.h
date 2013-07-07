@@ -419,6 +419,7 @@ enum ORGroupType {
 -(id<ORObjectiveValue>) primalBound;
 -(void)     updatePrimalBound;
 -(void)     tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(void)     tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 @end
 
 // pvh: to reconsider the solution pool in this interface; not sure I like them here

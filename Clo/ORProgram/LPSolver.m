@@ -505,9 +505,9 @@
 {
    return _lpsolver;
 }
--(void) solve
+-(OROutcome) solve
 {
-   [_lpsolver solve];
+   return [_lpsolver solve];
 }
 -(ORFloat) dual: (id<ORConstraint>) c
 {
@@ -520,6 +520,22 @@
 -(ORFloat) reducedCost: (id<ORFloatVar>) v
 {
    return [_lpsolver reducedCost: _gamma[v.getId]];
+}
+-(ORFloat) objective
+{
+   return [_lpsolver lpValue];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [_lpsolver objectiveValue];
+}
+-(ORFloat) lowerBound: (id<ORVar>) v
+{
+   return [_lpsolver lowerBound: _gamma[v.getId]];
+}
+-(ORFloat) upperBound: (id<ORVar>) v
+{
+   return [_lpsolver upperBound: _gamma[v.getId]];
 }
 -(void) updateLowerBound: (id<ORVar>) v with: (ORFloat) lb
 {
@@ -552,10 +568,6 @@
 -(id) trackImmutable:(id) obj
 {
    return [_lpsolver trackImmutable:obj];
-}
--(id<ORObjectiveValue>) objectiveValue
-{
-   return [_lpsolver objectiveValue];
 }
 @end
 

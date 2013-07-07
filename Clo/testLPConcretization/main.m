@@ -81,6 +81,9 @@ int main_mip(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[x[j] mul: @((ORInt)coef[i][j])]) leq: @((ORInt)b[i])]];
    [model maximize: Sum(model,j,Columns,[x[j] mul: @((ORInt)c[j])])];
+   
+
+   
    id<MIPProgram> mip = [ORFactory createMIPProgram: model];
    
    [mip solve];

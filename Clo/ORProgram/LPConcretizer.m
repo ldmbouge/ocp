@@ -718,12 +718,12 @@
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      NSLog(@"x: %@",x);
+//      NSLog(@"x: %@",x);
       id<ORFloatArray> a = [c coefs];
       ORInt cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
-      NSLog(@"dx: %@",dx);
+//      NSLog(@"dx: %@",dx);
       LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: a cst: -cst];
       _gamma[c.getId] = concreteCstr;
       [_lpsolver postConstraint: concreteCstr];

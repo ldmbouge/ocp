@@ -506,6 +506,13 @@
    [[x tracker] trackMutable:o];
    return o;
 }
+
++(id<ORConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation
+{
+   id<ORConstraint> o = [[CPRelaxation alloc] initCPRelaxation: mv var: cv relaxation: relaxation];
+   [[cv[0] tracker] trackMutable:o];
+   return o;
+}
 @end
 
 
