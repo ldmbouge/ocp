@@ -13,18 +13,30 @@
 static double pinf = 0;
 static double ninf = 0;
 
+@interface ORILib : NSObject
++(void)load;
+@end
+
+@implementation ORILib
++(void)load
+{
+   NSLog(@"ORILib::load called...");
+   ORIInit();
+}
+@end
+
 void ORIInit()
 {
    double MZ   = 0;
 #ifndef BYTE_ORDER
    sintx testInt = 0x12345678;
    char* ptestInt = (char*) &testInt;
-   int bigendian = ptestInt[0]==0x78 ? 0 : 1;
+   const int bigendian = ptestInt[0]==0x78 ? 0 : 1;
 #else
 #if BYTE_ORDER == BIG_ENDIAN
-   int bigendian = 1;
+   const int bigendian = 1;
 #else
-   int bigendian = 0;
+   const int bigendian = 0;
 #endif
 #endif
    unsigned char *pinfPtr = (unsigned char*)&pinf;
