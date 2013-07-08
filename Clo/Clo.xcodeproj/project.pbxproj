@@ -275,7 +275,7 @@
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
 		5B6A960D15879F2900019903 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B6B0EF81787533000104246 /* ORInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B6B0EF61787533000104246 /* ORInterval.h */; };
-		5B6B0EF91787533000104246 /* ORInterval.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.m */; };
+		5B6B0EF91787533000104246 /* ORInterval.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.mm */; };
 		5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */; };
 		5B6CFD7616D91CD600BCB95F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B6CFD7716D91CD600BCB95F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
@@ -4684,7 +4684,7 @@
 		5B6A960715879F1600019903 /* knapsack-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "knapsack-Prefix.pch"; sourceTree = "<group>"; };
 		5B6A960815879F1600019903 /* knapsack.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = knapsack.1; sourceTree = "<group>"; };
 		5B6B0EF61787533000104246 /* ORInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORInterval.h; sourceTree = "<group>"; };
-		5B6B0EF71787533000104246 /* ORInterval.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORInterval.m; sourceTree = "<group>"; };
+		5B6B0EF71787533000104246 /* ORInterval.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ORInterval.mm; sourceTree = "<group>"; };
 		5B6CFD7316D90F2200BCB95F /* rbg049a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg049a.tw; sourceTree = "<group>"; };
 		5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
 		5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -7779,7 +7779,7 @@
 				5BDF5FA5161F4F9900E5E1FA /* ORVarI.m */,
 				5B57E5E4161F294F00DB249A /* ORVisit.h */,
 				5B6B0EF61787533000104246 /* ORInterval.h */,
-				5B6B0EF71787533000104246 /* ORInterval.m */,
+				5B6B0EF71787533000104246 /* ORInterval.mm */,
 			);
 			path = ORFoundation;
 			sourceTree = "<group>";
@@ -11311,7 +11311,7 @@
 				5BDF5FA7161F4F9900E5E1FA /* ORVarI.m in Sources */,
 				B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */,
 				37A715EA16FBA00100E02DC6 /* SSCPLPInstanceParser.m in Sources */,
-				5B6B0EF91787533000104246 /* ORInterval.m in Sources */,
+				5B6B0EF91787533000104246 /* ORInterval.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

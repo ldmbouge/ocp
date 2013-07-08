@@ -15,8 +15,12 @@ static ORInterval INF;
 static ORInterval FLIP;
 static ORInterval EPSILON;
 static ORInterval ZERO;
+static double pinf = 0;
+static double ninf = 0;
 
 void ORIInit();
+
+NSString* ORIFormat(ORInterval a);
 
 static inline bool ORINegative(ORInterval x)
 {
@@ -157,4 +161,53 @@ static inline ORInterval ORIAbs(ORInterval a)
    ORInterval mx = _mm_max_sd(a,sa);
    ORInterval mx0= _mm_max_sd(mx,_mm_setzero_pd());
    return _mm_unpacklo_pd(mn,mx0);
+}
+static inline ORInterval ORISqrt(ORInterval a)
+{
+   if (ORISureNegative(a))
+      return INF;
+   else {
+      ORInterval na = _mm_xor_pd(a, FLIP);
+      ORInterval ra = _mm_sqrt_pd(na);
+      ORInterval sq = _mm_mul_pd(ra, ra);
+      ra = _mm_max_pd(ra,_mm_set_pd(0.0,ninf));
+      ORInterval rv;
+      if (_mm_comieq_sd(sq, na))
+         rv = _mm_xor_pd(sq, FLIP);
+      else {
+         ORInterval ne = _mm_set_sd(-DBL_MIN);
+         ORInterval su = _mm_sub_sd(ne,sq);
+         rv = _mm_shuffle_pd(su, sq, _MM_SHUFFLE2(1, 0));
+      }
+      ORInterval orv = _mm_shuffle_pd(rv,rv,1);
+      ORInterval u   = _mm_min_pd(rv,orv);
+      return u;
+   }
+}
+static inline ORInterval ORIPSqrt(ORInterval a)
+{
+   if (ORISureNegative(a))
+      return INF;
+   else {
+      ORInterval na = _mm_xor_pd(a, FLIP);
+      ORInterval ra = _mm_sqrt_pd(na);
+      ORInterval sq = _mm_mul_pd(ra, ra);
+      ra = _mm_max_pd(ra,_mm_set_pd(0.0,ninf));
+      ORInterval rv;
+      if (_mm_comieq_sd(sq, na))
+         rv = _mm_xor_pd(sq, FLIP);
+      else {
+         ORInterval ne = _mm_set_sd(-DBL_MIN);
+         ORInterval su = _mm_sub_sd(ne,sq);
+         rv = _mm_shuffle_pd(su, sq, _MM_SHUFFLE2(1, 0));
+      }
+      return rv;
+   }
+}
+static inline BOOL ORIReady()
+{
+   BOOL ready =  _MM_GET_ROUNDING_MODE() == _MM_ROUND_DOWN;
+   if (!ready)
+      _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
+   return ready;
 }
