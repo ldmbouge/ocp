@@ -167,7 +167,6 @@
    [buf appendFormat:@"float(%d) : %f",_name,_value];
    return buf;
 }
-
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeValueOfObjCType:@encode(ORUInt) at:&_name];

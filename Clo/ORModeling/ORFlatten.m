@@ -21,7 +21,8 @@
 -(void) visitZeroOneStream:(id) v {}
 -(void) visitUniformDistribution:(id) v{}
 -(void) visitIntSet:(id<ORIntSet>)v{}
--(void) visitIntRange:(id<ORIntRange>)v{}
+-(void) visitIntRange:(id<ORIntRange>)v     {}
+-(void) visitFloatRange:(id<ORFloatRange>)v {}
 -(void) visitIntArray:(id<ORIntArray>)v  {}
 -(void) visitFloatArray:(id<ORFloatArray>)v  {}
 -(void) visitIntMatrix:(id<ORIntMatrix>)v  {}
@@ -128,6 +129,7 @@
 -(void) visitExprSumI: (id<ORExpr>) e  {}
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}
+-(void) visitExprSquareI:(id<ORExpr>) e  {}
 -(void) visitExprModI:(id<ORExpr>)e   {}
 -(void) visitExprMinI: (id<ORExpr>) e {}
 -(void) visitExprMaxI: (id<ORExpr>) e {}
@@ -259,6 +261,10 @@
    _result = v;
 }
 -(void) visitIntRange:(id<ORIntRange>)v
+{
+   _result = v;
+}
+-(void) visitFloatRange:(id<ORFloatRange>)v
 {
    _result = v;
 }

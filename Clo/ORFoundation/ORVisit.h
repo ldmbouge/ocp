@@ -23,6 +23,7 @@
 -(void) visitUniformDistribution:(id) v;
 -(void) visitIntSet:(id<ORIntSet>)v;
 -(void) visitIntRange:(id<ORIntRange>)v;
+-(void) visitFloatRange:(id<ORFloatRange>)v;
 -(void) visitIntArray:(id<ORIntArray>)v;
 -(void) visitFloatArray:(id<ORFloatArray>)v;
 -(void) visitIntMatrix:(id<ORIntMatrix>)v;
@@ -126,6 +127,7 @@
 -(void) visitExprAggMinI: (id<ORExpr>) e;
 -(void) visitExprAggMaxI: (id<ORExpr>) e;
 -(void) visitExprAbsI:(id<ORExpr>) e;
+-(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;

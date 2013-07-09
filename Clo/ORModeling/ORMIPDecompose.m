@@ -13,7 +13,6 @@
 #import "ORMIPDecompose.h"
 #import "ORFloatLinear.h"
 
-
 @implementation ORMIPNormalizer
 {
    id<ORFloatLinear>  _terms;
@@ -102,6 +101,7 @@
 -(void) visitExprAggMinI: (ORExprAggMinI*) e {}
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
+-(void) visitExprSquareI:(ORExprSquareI*)e {}
 -(void) visitExprNegateI:(ORExprNegateI*)e {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
 -(void) visitExprVarSubI:(ORExprVarSubI*)e {}
@@ -186,6 +186,10 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
+}
+-(void) visitExprSquareI:(ORExprSquareI*) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
 }

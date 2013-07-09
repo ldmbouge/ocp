@@ -20,6 +20,7 @@
 
 @interface ORExprI: ORObject<ORExpr,NSCoding>
 -(id<ORExpr>) abs;
+-(id<ORExpr>) square;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
 -(id<ORExpr>) mul: (id) e;
@@ -39,6 +40,7 @@
 -(id<ORExpr>) imply:(id<ORRelation>) e;
 
 -(id<ORExpr>) absTrack:(id<ORTracker>)t;
+-(id<ORExpr>) squareTrack:(id<ORTracker>)t;
 -(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t;
 -(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;
@@ -88,6 +90,19 @@
 -(ORExprI*) operand;
 -(ORBool) isConstant;
 -(void) visit:(id<ORVisitor>)v;
+@end
+
+@interface ORExprSquareI : ORExprI<ORExpr,NSCoding> {
+   ORExprI* _op;
+}
+-(id<ORExpr>)initORExprSquareI:(id<ORExpr>) op;
+-(id<ORTracker>) tracker;
+-(ORInt) min;
+-(ORInt) max;
+-(NSString*) description;
+-(ORExprI*)operand;
+-(ORBool)isConstant;
+-(void)visit:(id<ORVisitor>)v;
 @end
 
 @interface ORExprCstSubI : ORExprI<ORExpr,NSCoding> {

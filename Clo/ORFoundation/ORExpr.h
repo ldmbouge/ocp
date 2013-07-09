@@ -41,6 +41,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(ORBool) isConstant;
 -(ORBool) isVariable;
 -(id<ORExpr>) abs;
+-(id<ORExpr>) square;
 -(id<ORExpr>) plus: (id) e;
 -(id<ORExpr>) sub: (id) e;
 -(id<ORExpr>) mul: (id) e;

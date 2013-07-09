@@ -131,6 +131,7 @@ struct CPVarPair {
 -(void) visitExprAggMinI: (ORExprAggMinI*) e {}
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
+-(void) visitExprSquareI:(ORExprSquareI*) e {}
 -(void) visitExprNegateI:(ORExprNegateI*)e {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
 -(void) visitExprVarSubI:(ORExprVarSubI*)e {}
@@ -290,6 +291,11 @@ struct CPVarPair {
    [_terms addTerm:alpha by:1];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprSquareI:(ORExprSquareI*) e
 {
    id<ORIntVar> alpha = [ORSubst substituteIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
@@ -830,6 +836,17 @@ static inline ORLong maxSeq(ORLong v[4])  {
    if (_rv == nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,lb,ub)];
    [_model addConstraint:[ORFactory abs:_model var:oV equal:_rv annotation:_c]];
+   [lT release];
+}
+-(void) visitExprSquareI:(ORExprSquareI *)e
+{
+   ORLinear* lT = [ORLinearizer linearFrom:[e operand] model:_model annotation:_c];
+   id<ORIntVar> oV = [ORSubst normSide:lT for:_model annotation:_c];
+   ORInt lb = [lT min];
+   ORInt ub = [lT max];
+   if (_rv == nil)
+      _rv = [ORFactory intVar:_model domain:RANGE(_model,lb,ub)];
+   [_model addConstraint:[ORFactory square:_model var:oV equal:_rv annotation:_c]];
    [lT release];
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e

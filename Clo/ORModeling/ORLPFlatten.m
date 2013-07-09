@@ -155,6 +155,10 @@
 {
    _result = v;
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+   _result = v;
+}
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    _result = v;

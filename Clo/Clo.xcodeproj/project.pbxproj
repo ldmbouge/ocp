@@ -276,6 +276,16 @@
 		5B6A960D15879F2900019903 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		5B6B0EF81787533000104246 /* ORInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B6B0EF61787533000104246 /* ORInterval.h */; };
 		5B6B0EF91787533000104246 /* ORInterval.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.mm */; };
+		5B6B0EFF178B558000104246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
+		5B6B0F02178B558000104246 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0F01178B558000104246 /* main.m */; };
+		5B6B0F06178B558000104246 /* circle.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B6B0F05178B558000104246 /* circle.1 */; };
+		5B6B0F0A178B558D00104246 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B6B0F17178B55A200104246 /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
+		5B6B0F18178B55A200104246 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5B6B0F19178B55A200104246 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
+		5B6B0F1A178B55A200104246 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
+		5B6B0F1B178B55A200104246 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
+		5B6B0F1C178B55A200104246 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B6CFD7516D90F8100BCB95F /* lorem-mssg.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */; };
 		5B6CFD7616D91CD600BCB95F /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		5B6CFD7716D91CD600BCB95F /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
@@ -2136,6 +2146,48 @@
 			remoteInfo = ORFoundation;
 		};
 		5B681193161F991100F4480F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5B6B0F0B178B559600104246 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5B6B0F0D178B559600104246 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5B6B0F0F178B559600104246 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5B6B0F11178B559600104246 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5B6B0F13178B559600104246 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5B6B0F15178B559600104246 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
 			proxyType = 1;
@@ -4034,6 +4086,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5B6B0EFC178B557F00104246 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				5B6B0F06178B558000104246 /* circle.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		5B6E891E1379D3E9005DB4CA /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4685,6 +4747,10 @@
 		5B6A960815879F1600019903 /* knapsack.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = knapsack.1; sourceTree = "<group>"; };
 		5B6B0EF61787533000104246 /* ORInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORInterval.h; sourceTree = "<group>"; };
 		5B6B0EF71787533000104246 /* ORInterval.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ORInterval.mm; sourceTree = "<group>"; };
+		5B6B0EFE178B557F00104246 /* circle */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = circle; sourceTree = BUILT_PRODUCTS_DIR; };
+		5B6B0F01178B558000104246 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		5B6B0F04178B558000104246 /* circle-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "circle-Prefix.pch"; sourceTree = "<group>"; };
+		5B6B0F05178B558000104246 /* circle.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = circle.1; sourceTree = "<group>"; };
 		5B6CFD7316D90F2200BCB95F /* rbg049a.tw */ = {isa = PBXFileReference; lastKnownFileType = text; path = rbg049a.tw; sourceTree = "<group>"; };
 		5B6CFD7416D90F2200BCB95F /* lorem-mssg.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "lorem-mssg.txt"; sourceTree = "<group>"; };
 		5B6CFD8616D9200800BCB95F /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
@@ -5474,6 +5540,20 @@
 				5B920EC615A432BA00AD0820 /* ORFoundation.framework in Frameworks */,
 				5B6A960D15879F2900019903 /* objcp.framework in Frameworks */,
 				5B6A960215879F1600019903 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B6B0EFB178B557F00104246 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B6B0F17178B55A200104246 /* CPUKernel.framework in Frameworks */,
+				5B6B0F18178B55A200104246 /* objcp.framework in Frameworks */,
+				5B6B0F19178B55A200104246 /* ORFoundation.framework in Frameworks */,
+				5B6B0F1A178B55A200104246 /* ORModeling.framework in Frameworks */,
+				5B6B0F1B178B55A200104246 /* ORProgram.framework in Frameworks */,
+				5B6B0F1C178B55A200104246 /* ORUtilities.framework in Frameworks */,
+				5B6B0EFF178B558000104246 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6677,6 +6757,24 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		5B6B0F00178B558000104246 /* circle */ = {
+			isa = PBXGroup;
+			children = (
+				5B6B0F01178B558000104246 /* main.m */,
+				5B6B0F05178B558000104246 /* circle.1 */,
+				5B6B0F03178B558000104246 /* Supporting Files */,
+			);
+			path = circle;
+			sourceTree = "<group>";
+		};
+		5B6B0F03178B558000104246 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B6B0F04178B558000104246 /* circle-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		5B6E89151379D3E9005DB4CA = {
 			isa = PBXGroup;
 			children = (
@@ -6801,6 +6899,7 @@
 				5BC0C752177A191400B12173 /* bacp */,
 				5BEA4E89178365FA00614A82 /* searchTest.octest */,
 				B18DF14A17810C67004E1880 /* LPRelaxation */,
+				5B6B0EFE178B557F00104246 /* circle */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -6852,6 +6951,7 @@
 		5B7408AC1562828000C05277 /* Objective-CP Examples */ = {
 			isa = PBXGroup;
 			children = (
+				5B6B0F00178B558000104246 /* circle */,
 				5BC0C754177A191400B12173 /* bacp */,
 				5B9B244A177873D3001AB944 /* nonogram */,
 				5B6623D41770B1AE00A1ACCD /* paq */,
@@ -8975,6 +9075,29 @@
 			productReference = 5B6A960015879F1600019903 /* knapsack */;
 			productType = "com.apple.product-type.tool";
 		};
+		5B6B0EFD178B557F00104246 /* circle */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5B6B0F09178B558000104246 /* Build configuration list for PBXNativeTarget "circle" */;
+			buildPhases = (
+				5B6B0EFA178B557F00104246 /* Sources */,
+				5B6B0EFB178B557F00104246 /* Frameworks */,
+				5B6B0EFC178B557F00104246 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5B6B0F0C178B559600104246 /* PBXTargetDependency */,
+				5B6B0F0E178B559600104246 /* PBXTargetDependency */,
+				5B6B0F10178B559600104246 /* PBXTargetDependency */,
+				5B6B0F12178B559600104246 /* PBXTargetDependency */,
+				5B6B0F14178B559600104246 /* PBXTargetDependency */,
+				5B6B0F16178B559600104246 /* PBXTargetDependency */,
+			);
+			name = circle;
+			productName = circle;
+			productReference = 5B6B0EFE178B557F00104246 /* circle */;
+			productType = "com.apple.product-type.tool";
+		};
 		5B6E891F1379D3E9005DB4CA /* Clo */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B6E89331379D3EA005DB4CA /* Build configuration list for PBXNativeTarget "Clo" */;
@@ -10454,6 +10577,7 @@
 				5BEA4E67178365FA00614A82 /* searchTest */,
 				B15442C416D1AAD0001BD7B3 /* testLPConcretization */,
 				B18DF14917810C67004E1880 /* LPRelaxation */,
+				5B6B0EFD178B557F00104246 /* circle */,
 			);
 		};
 /* End PBXProject section */
@@ -10804,6 +10928,15 @@
 			files = (
 				5B6A960515879F1600019903 /* main.m in Sources */,
 				5B6CFD9E16D93A0900BCB95F /* ORCmdLineArgs.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5B6B0EFA178B557F00104246 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5B6B0F0A178B558D00104246 /* ORCmdLineArgs.m in Sources */,
+				5B6B0F02178B558000104246 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12263,6 +12396,36 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B681193161F991100F4480F /* PBXContainerItemProxy */;
+		};
+		5B6B0F0C178B559600104246 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5B6B0F0B178B559600104246 /* PBXContainerItemProxy */;
+		};
+		5B6B0F0E178B559600104246 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5B6B0F0D178B559600104246 /* PBXContainerItemProxy */;
+		};
+		5B6B0F10178B559600104246 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5B6B0F0F178B559600104246 /* PBXContainerItemProxy */;
+		};
+		5B6B0F12178B559600104246 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5B6B0F11178B559600104246 /* PBXContainerItemProxy */;
+		};
+		5B6B0F14178B559600104246 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5B6B0F13178B559600104246 /* PBXContainerItemProxy */;
+		};
+		5B6B0F16178B559600104246 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5B6B0F15178B559600104246 /* PBXContainerItemProxy */;
 		};
 		5B6CFD7B16D91CE100BCB95F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14312,6 +14475,46 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		5B6B0F07178B558000104246 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "circle/circle-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5B6B0F08178B558000104246 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "circle/circle-Prefix.pch";
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -16511,6 +16714,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		5B6B0F09178B558000104246 /* Build configuration list for PBXNativeTarget "circle" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5B6B0F07178B558000104246 /* Debug */,
+				5B6B0F08178B558000104246 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		5B6E891A1379D3E9005DB4CA /* Build configuration list for PBXProject "Clo" */ = {
 			isa = XCConfigurationList;

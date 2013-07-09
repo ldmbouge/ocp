@@ -159,6 +159,11 @@
 			<key>orderHint</key>
 			<integer>65</integer>
 		</dict>
+		<key>circle.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>86</integer>
+		</dict>
 		<key>coloringModel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
@@ -628,6 +633,11 @@
 			<true/>
 		</dict>
 		<key>5B6A95FF15879F1500019903</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5B6B0EFD178B557F00104246</key>
 		<dict>
 			<key>primary</key>
 			<true/>

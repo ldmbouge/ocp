@@ -102,6 +102,7 @@
 -(void) visitExprAggMinI: (ORExprAggMinI*) e {}
 -(void) visitExprAggMaxI: (ORExprAggMaxI*) e {}
 -(void) visitExprAbsI:(ORExprAbsI*) e      {}
+-(void) visitExprSquareI:(ORExprSquareI*)e {}
 -(void) visitExprNegateI:(ORExprNegateI*)e {}
 -(void) visitExprCstSubI:(ORExprCstSubI*)e {}
 -(void) visitExprVarSubI:(ORExprVarSubI*)e {}
@@ -185,6 +186,10 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for mod"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+}
+-(void) visitExprSquareI:(ORExprSquareI*)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
