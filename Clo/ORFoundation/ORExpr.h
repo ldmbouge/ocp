@@ -37,7 +37,7 @@ typedef NS_ENUM(NSUInteger,ORVType) {
    ORTNA = 4
 };
 
-static inline enum ORVType lubVType(enum ORVType t1,enum ORVType t2)
+static inline ORVType lubVType(ORVType t1,ORVType t2)
 {
    if (t1 == t2)
       return t1;
@@ -96,12 +96,12 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
 -(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
--(enum ORRelationType) type;
--(enum ORVType)vtype;
+-(ORRelationType) type;
+-(ORVType)vtype;
 @end
 
 @protocol ORRelation <ORExpr>
--(enum ORRelationType) type;
+-(ORRelationType) type;
 -(id<ORRelation>) and: (id<ORRelation>) e;
 -(id<ORRelation>) or: (id<ORRelation>) e;
 -(id<ORRelation>) imply: (id<ORRelation>) e;

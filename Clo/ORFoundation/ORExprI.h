@@ -62,8 +62,8 @@
 -(void) encodeWithCoder:(NSCoder*) aCoder;
 -(id) initWithCoder:(NSCoder*) aDecoder;
 -(void) visit: (id<ORVisitor>)v;
--(enum ORRelationType) type;
--(enum ORVType) vtype;
+-(ORRelationType) type;
+-(ORVType) vtype;
 -(NSSet*)allVars;
 @end
 
@@ -78,7 +78,7 @@
 -(ORExprI*) left;
 -(ORExprI*) right;
 -(ORBool) isConstant;
--(enum ORVType) vtype;
+-(ORVType) vtype;
 @end
 
 @interface ORExprAbsI : ORExprI<ORExpr,NSCoding> {
@@ -200,7 +200,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(enum ORRelationType)type;
+-(ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
 
@@ -209,7 +209,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(enum ORRelationType)type;
+-(ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
 
@@ -218,7 +218,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(enum ORRelationType)type;
+-(ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
 
@@ -318,7 +318,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(enum ORRelationType)type;
+-(ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
 
@@ -327,7 +327,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(enum ORRelationType)type;
+-(ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
 
@@ -336,7 +336,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(enum ORRelationType)type;
+-(ORRelationType)type;
 -(void) visit: (id<ORVisitor>)v;
 @end
 
