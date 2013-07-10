@@ -174,7 +174,7 @@
       [_terms addTerm: x by: coef];
    }
    else {
-      @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
    }
 }
 -(void) visitExprDivI: (ORExprDivI*) e

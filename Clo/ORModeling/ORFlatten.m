@@ -600,14 +600,14 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORIntLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
+   ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
+   id<ORIntVar> alpha = [ORIntSubst normSide:terms for:_into annotation:Default];
    _result = [_into minimizeVar: alpha];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORIntLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
+   ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
+   id<ORIntVar> alpha = [ORIntSubst normSide:terms for:_into annotation:Default];
    _result = [_into maximizeVar: alpha];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
@@ -636,23 +636,13 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    id<ORConstraint> rv = NULL;
-   ORIntLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
+   id<ORLinear> terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad: assert(NO);
-      case ORREq: {
-         if ([terms size] != 0) {
-            rv = [terms postEQZ:model annotation:note];
-         }
-      }break;
-      case ORRNEq: {
-         rv = [terms postNEQZ:model annotation:note];
-      }break;
-      case ORRLEq: {
-         rv = [terms postLEQZ:model annotation:note];
-      }break;
-      case ORRDisj: {
-         rv = [terms postDISJ:model annotation:note];
-      }break;
+      case ORREq: rv = [terms postEQZ:model annotation:note];break;
+      case ORRNEq:rv = [terms postNEQZ:model annotation:note];break;
+      case ORRLEq:rv = [terms postLEQZ:model annotation:note];break;
+      case ORRDisj:rv = [terms postDISJ:model annotation:note];break;
       default:
          assert(terms == nil);
          break;

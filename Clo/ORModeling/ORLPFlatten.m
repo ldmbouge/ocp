@@ -89,7 +89,7 @@
          assert(NO);
       case ORREq:
          {
-            cstr = [terms postLinearEq: model annotation: note];
+            cstr = [terms postEQZ: model annotation: note];
          }
          break;
       case ORRNEq:
@@ -99,7 +99,7 @@
          break;
       case ORRLEq:
          {
-           cstr = [terms postLinearLeq: model annotation: note];
+           cstr = [terms postLEQZ: model annotation: note];
          }
          break;
       default:

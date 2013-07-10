@@ -18,24 +18,14 @@
 @protocol ORModel;
 @protocol ORAddToModel;
 
-@interface ORLinearizer : NSObject<ORVisitor> 
--(id)initORLinearizer:(id<ORIntLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-+(ORIntLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-+(ORIntLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
-+(ORIntLinear*)addToLinear:(id<ORIntLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
+@interface ORNormalizer : NSObject
++(id<ORLinear>)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(id<ORIntLinear>)intLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(id<ORIntLinear>)intLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
++(id<ORIntLinear>)addToIntLinear:(id<ORIntLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 @end
 
-@interface ORNormalizer : NSObject<ORVisitor> {
-   id<ORIntLinear>     _terms;
-   id<ORAddToModel>   _model;
-   ORAnnotation         _n;
-}
-+(ORIntLinear*)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
--(id)initORNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
-@end
-
-
-@interface ORSubst   : NSObject<ORVisitor> {
+@interface ORIntSubst   : NSObject<ORVisitor> {
    id<ORIntVar>      _rv;
    id<ORAddToModel> _model;
    ORAnnotation       _c;

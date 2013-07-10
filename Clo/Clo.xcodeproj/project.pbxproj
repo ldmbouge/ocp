@@ -257,6 +257,7 @@
 		5B6623EE1770B1D000A1ACCD /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5B6623EF1770B1D000A1ACCD /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5B6623F01770B1D800A1ACCD /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
+		5B673A2B178DC5AA00886A28 /* ORLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B673A2A178DC5AA00886A28 /* ORLinear.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B681181161F98FB00F4480F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		5B681187161F98FB00F4480F /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5B681185161F98FB00F4480F /* InfoPlist.strings */; };
 		5B681195161F991D00F4480F /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
@@ -4740,6 +4741,7 @@
 		5B6623D51770B1AE00A1ACCD /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B6623D81770B1AE00A1ACCD /* paq-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "paq-Prefix.pch"; sourceTree = "<group>"; };
 		5B6623D91770B1AE00A1ACCD /* paq.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = paq.1; sourceTree = "<group>"; };
+		5B673A2A178DC5AA00886A28 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
 		5B681180161F98FB00F4480F /* ORProgram.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORProgram.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B681184161F98FB00F4480F /* ORProgram-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORProgram-Info.plist"; sourceTree = "<group>"; };
 		5B681186161F98FB00F4480F /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -7448,6 +7450,7 @@
 				B1E1C7A917038784006AACFC /* ORFloatLinear.m */,
 				B182C60A173C3DC9002954F6 /* ORMIPLinearize.h */,
 				B182C60B173C3DC9002954F6 /* ORMIPLinearize.m */,
+				5B673A2A178DC5AA00886A28 /* ORLinear.h */,
 			);
 			path = ORModeling;
 			sourceTree = "<group>";
@@ -8587,6 +8590,7 @@
 				B1E1C7A217037586006AACFC /* ORMIPDecompose.h in Headers */,
 				B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */,
 				B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */,
+				5B673A2B178DC5AA00886A28 /* ORLinear.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

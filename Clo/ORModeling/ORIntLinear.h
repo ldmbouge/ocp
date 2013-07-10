@@ -13,8 +13,9 @@
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <ORModeling/ORModeling.h>
+#import <ORModeling/ORLinear.h>
 
-@protocol ORIntLinear<NSObject>
+@protocol ORIntLinear<NSObject,ORLinear>
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
@@ -57,15 +58,6 @@
 -(ORInt)max;
 -(BOOL)isZero;
 -(BOOL)isOne;
--(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
--(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons;
-
-//-(void) postLinearLeq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
-//-(void) postLinearEq: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
-//-(void) postMinimize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
-//-(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 @end
 
 @interface ORLinearFlip : NSObject<ORIntLinear> {
