@@ -13,84 +13,12 @@
 #import "ORLPDecompose.h"
 #import "ORFloatLinear.h"
 
-
-@implementation ORLPNormalizer
-{
-   id<ORFloatLinear>  _terms;
-   id<ORAddToModel>   _model;
-   ORAnnotation       _n;
-}
-+(id<ORLinear>) normalize: (ORExprI*) rel into: (id<ORAddToModel>) model annotation: (ORAnnotation) n
-{
-   ORLPNormalizer* v = [[ORLPNormalizer alloc] initORLPNormalizer: model annotation:n];
-   [rel visit: v];
-   ORFloatLinear* rv = v->_terms;
-   [v release];
-   return rv;
-}
--(id) initORLPNormalizer: (id<ORAddToModel>) model annotation: (ORAnnotation) n
-{
-   self = [super init];
-   _terms = nil;
-   _model = model;
-   _n = n;
-   return self;
-}
--(void) visitExprEqualI: (ORExprEqualI*) e
-{
-   bool lc = [[e left] isConstant];
-   bool rc = [[e right] isConstant];
-   if (lc && rc) {
-      bool isOk = [[e left] floatValue] == [[e right] floatValue];
-      if (!isOk)
-         [_model addConstraint: [ORFactory fail:_model]];
-   }
-   else if (lc || rc) {
-      ORFloat c = lc ? [[e left] floatValue] : [[e right] floatValue];
-      ORExprI* other = lc ? [e right] : [e left];
-      id<ORFloatLinear> lin  = [ORLPLinearizer floatLinearFrom:other model:_model annotation:_n];
-      [lin addIndependent: - c];
-      _terms = lin;
-   }
-   else {
-      id<ORFloatLinear> linLeft = [ORLPLinearizer floatLinearFrom:[e left] model:_model annotation:_n];
-      ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-      [ORLPLinearizer addToFloatLinear: linRight from: [e right] model: _model annotation: _n];
-      [linRight release];
-      _terms = linLeft;
-   }
-}
--(void) visitExprLEqualI:(ORExprLEqualI*)e
-{
-   ORFloatLinear* linLeft = [ORLPLinearizer floatLinearFrom:[e left] model:_model annotation:_n];
-   ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-   [ORLPLinearizer addToFloatLinear:linRight from:[e right] model:_model annotation:_n];
-   [linRight release];
-   _terms = linLeft;
-}
--(void) visitExprNEqualI:(ORExprNotEqualI*)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
-}
--(void) visitExprDisjunctI:(ORDisjunctI*)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
-}
--(void) visitExprConjunctI:(ORConjunctI*)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
-}
--(void) visitExprImplyI:(ORImplyI*)e
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
-}
-@end
-
 @implementation ORLPLinearizer
 {
    id<ORFloatLinear>   _terms;
    id<ORAddToModel>    _model;
    ORAnnotation        _n;
+   id<ORFloatVar>      _x;
 }
 -(id) initORLPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
@@ -100,6 +28,16 @@
    _n     = n;
    return self;
 }
+-(id) initORLPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORAnnotation) n
+{
+   self = [super init];
+   _terms = t;
+   _model = model;
+   _x     = x;
+   _n     = n;
+   return self;
+}
+
 -(void) visitIntVar: (id<ORIntVar>) e
 {
    [_terms addTerm:e by:1];

@@ -12,6 +12,8 @@
 #import "ORModeling/ORModeling.h"
 #import <ORModeling/ORLinear.h>
 #import "ORFloatLinear.h"
+//-- temp
+#import "ORLPDecompose.h"
 
 @interface ORIntNormalizer : ORNOopVisit<ORVisitor> {
    id<ORIntLinear>     _terms;
@@ -31,7 +33,12 @@
 -(id<ORFloatLinear>)terms;
 @end
 
-@interface ORLinearizer : NSObject<ORVisitor>
+@interface ORLinearizer : NSObject<ORVisitor> {
+   id<ORIntLinear>   _terms;
+   id<ORAddToModel>    _model;
+   ORAnnotation       _n;
+   id<ORIntVar>       _eqto;
+}
 -(id)initORLinearizer:(id<ORIntLinear>)t model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
 -(id)initORLinearizer:(id<ORIntLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 @end
@@ -95,6 +102,30 @@
    return terms;
 }
 
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: rv model: model annotation:cons];
+   [e visit:v];
+   [v release];
+   return rv;
+}
++(id<ORFloatLinear>)floatLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORFloatVar>)x annotation:(ORAnnotation)cons
+{
+   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
+   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: rv model: model equalTo:x annotation:cons];
+   [e visit:v];
+   [v release];
+   return rv;   
+}
++(id<ORFloatLinear>)addToFloatLinear:(id<ORFloatLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: terms model: model annotation:cons];
+   [e visit:v];
+   [v release];
+   return terms;
+}
+
 +(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c
 {
    ORIntSubst* subst = [[ORIntSubst alloc] initORSubst: model annotation:c];
@@ -109,6 +140,7 @@
    [expr visit:subst];
    id<ORIntVar> theVar = [subst result];
    [subst release];
+   //assert(theVar == x);
    return theVar;
 }
 +(id<ORIntVar>)normSide:(ORIntLinear*)e for:(id<ORAddToModel>)model annotation:(ORAnnotation)c
@@ -248,7 +280,7 @@ struct CPVarPair {
    } else if (lc || rc) {
       ORFloat c = lc ? [[e left] floatValue] : [[e right] floatValue];
       ORExprI* other = lc ? [e right] : [e left];
-      ORFloatLinear* lin  = [ORNormalizer intLinearFrom:other model:_model annotation:_n];
+      ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model annotation:_n];
       [lin addIndependent: - c];
       _terms = lin;
    } else {
@@ -257,18 +289,42 @@ struct CPVarPair {
       if (lv || rv) {
          ORExprI* other = lv ? [e right] : [e left];
          ORExprI* var   = lv ? [e left] : [e right];
-         id<ORIntVar> theVar = [ORNormalizer substituteIn:_model expr:var annotation:_n];
-         ORFloatLinear* lin  = [ORNormalizer intLinearFrom:other model:_model equalTo:theVar annotation:_n];
+         id<ORFloatVar> theVar = [ORNormalizer substituteIn:_model expr:var annotation:_n];
+         ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model equalTo:theVar annotation:_n];
          [lin release];
          _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
       } else {
-         ORFloatLinear* linLeft = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_n];
+         ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model annotation:_n];
          ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-         [ORNormalizer addToIntLinear:linRight from:[e right] model:_model annotation:_n];
+         [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model annotation:_n];
          [linRight release];
          _terms = linLeft;
       }
    }
+}
+-(void) visitExprLEqualI:(ORExprLEqualI*)e
+{
+   ORFloatLinear* linLeft = [ORNormalizer floatLinearFrom:[e left] model:_model annotation:_n];
+   id<ORFloatLinear> linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
+   [ORNormalizer addToFloatLinear:linRight from:[e right] model:_model annotation:_n];
+   [linRight release];
+   _terms = linLeft;
+}
+-(void) visitExprNEqualI:(ORExprNotEqualI*)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for !="];
+}
+-(void) visitExprDisjunctI:(ORDisjunctI*)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for ||"];
+}
+-(void) visitExprConjunctI:(ORConjunctI*)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for &&"];
+}
+-(void) visitExprImplyI:(ORImplyI*)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float normalization for =>"];
 }
 @end
 
@@ -276,13 +332,6 @@ struct CPVarPair {
 // Int Linearizer
 // ========================================================================================================================
 @implementation ORLinearizer
-{
-   id<ORIntLinear>   _terms;
-   id<ORAddToModel>    _model;
-   ORAnnotation       _n;
-   id<ORIntVar>       _eqto;
-}
-
 -(id)initORLinearizer:(id<ORIntLinear>)t model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n
 {
    self = [super init];
