@@ -13,24 +13,24 @@
 #import <CPUKernel/CPTypes.h>
 #import <CPUKernel/CPConstraintI.h>
 #import <objcp/CPData.h>
-#import "ORLinear.h"
+#import "ORIntLinear.h"
 
 @protocol ORModel;
 @protocol ORAddToModel;
 
 @interface ORLinearizer : NSObject<ORVisitor> 
--(id)initORLinearizer:(id<ORLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-+(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-+(ORLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
-+(ORLinear*)addToLinear:(id<ORLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
+-(id)initORLinearizer:(id<ORIntLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORIntLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORIntLinear*)linearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
++(ORIntLinear*)addToLinear:(id<ORIntLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 @end
 
 @interface ORNormalizer : NSObject<ORVisitor> {
-   id<ORLinear>     _terms;
+   id<ORIntLinear>     _terms;
    id<ORAddToModel>   _model;
    ORAnnotation         _n;
 }
-+(ORLinear*)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
++(ORIntLinear*)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
 -(id)initORNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
 @end
 
@@ -45,7 +45,7 @@
 -(id<ORIntVar>)result;
 +(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c;
 +(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c;
-+(id<ORIntVar>)normSide:(ORLinear*)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
++(id<ORIntVar>)normSide:(ORIntLinear*)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
 @end
 
 

@@ -12,8 +12,8 @@
 #import "ORModeling/ORModeling.h"
 
 
-@implementation ORLinear
--(ORLinear*)initORLinear:(ORInt)mxs
+@implementation ORIntLinear
+-(ORIntLinear*)initORLinear:(ORInt)mxs
 {
    self = [super init];
    _max   = mxs;
@@ -97,7 +97,7 @@
    }
 }
 
--(void)addLinear:(ORLinear*)lts
+-(void)addLinear:(ORIntLinear*)lts
 {
    for(ORInt k=0;k < lts->_nb;k++) {
       [self addTerm:lts->_terms[k]._var by:lts->_terms[k]._coef];
@@ -385,7 +385,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 
 
 @implementation ORLinearFlip
--(ORLinearFlip*) initORLinearFlip: (id<ORLinear>)r
+-(ORLinearFlip*) initORLinearFlip: (id<ORIntLinear>)r
 {
    self = [super init];
    _real = r;
@@ -412,7 +412,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    [_real addTerm: x by: -c];
 }
--(void) addLinear: (id<ORLinear>) lts
+-(void) addLinear: (id<ORIntLinear>) lts
 {
    for(ORInt k=0;k < [lts size];k++) {
       [_real addTerm:[lts var:k] by: - [lts coef:k]];

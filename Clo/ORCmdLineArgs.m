@@ -70,7 +70,12 @@ static NSString* hName[] = {@"FF",@"ABS",@"IBS",@"WDeg",@"DDeg"};
    ORLong startCPU = [ORRuntimeMonitor cputime];
    struct ORResult run;
    @autoreleasepool {
-      run = block();
+      @try {
+         run = block();
+      }@catch(ORExecutionError* execError) {
+         NSLog(@"Execution ERROR: %@",execError);
+         [execError release];
+      }
    }
    ORLong endWC  = [ORRuntimeMonitor wctime];
    ORLong endCPU = [ORRuntimeMonitor cputime];

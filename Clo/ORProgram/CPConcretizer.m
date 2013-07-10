@@ -81,7 +81,7 @@
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
    if (!_gamma[v.getId])
-      _gamma[v.getId] = [CPFactory floatVar: _engine domain: [v domain]];
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v

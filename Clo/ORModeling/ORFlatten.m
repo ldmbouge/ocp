@@ -600,13 +600,13 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
+   ORIntLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
    id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
    _result = [_into minimizeVar: alpha];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
+   ORIntLinear* terms = [ORLinearizer linearFrom: [e expr] model: _into annotation: Default];
    id<ORIntVar> alpha = [ORSubst normSide:terms for:_into annotation:Default];
    _result = [_into maximizeVar: alpha];
 }
@@ -636,7 +636,7 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
    id<ORConstraint> rv = NULL;
-   ORLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
+   ORIntLinear* terms = [ORNormalizer normalize:expr into: model annotation:note];
    switch ([expr type]) {
       case ORRBad: assert(NO);
       case ORREq: {

@@ -14,11 +14,11 @@
 #import <CPUKernel/CPConstraintI.h>
 #import <ORModeling/ORModeling.h>
 
-@protocol ORLinear<NSObject>
+@protocol ORIntLinear<NSObject>
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
--(void)addLinear:(id<ORLinear>)lts;
+-(void)addLinear:(id<ORIntLinear>)lts;
 -(void)scaleBy:(ORInt)s;
 -(ORInt)size;
 -(id<ORIntVar>)var:(ORInt)k;
@@ -28,7 +28,7 @@
 -(BOOL)isOne;
 @end
 
-@interface ORLinear : NSObject<ORLinear> {
+@interface ORIntLinear : NSObject<ORIntLinear> {
    struct CPTerm {
       id<ORIntVar>  _var;
       ORInt        _coef;
@@ -38,12 +38,12 @@
    ORInt            _max;
    ORInt          _indep;
 }
--(ORLinear*)initORLinear:(ORInt)mxs;
+-(ORIntLinear*)initORLinear:(ORInt)mxs;
 -(void)dealloc;
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;
--(void)addLinear:(ORLinear*)lts;
+-(void)addLinear:(ORIntLinear*)lts;
 -(void)scaleBy:(ORInt)s;
 -(ORInt)independent;
 -(NSString*)description;
@@ -68,10 +68,10 @@
 //-(void) postMaximize: (id<ORAddToModel>) model annotation: (ORAnnotation) cons;
 @end
 
-@interface ORLinearFlip : NSObject<ORLinear> {
-   id<ORLinear> _real;
+@interface ORLinearFlip : NSObject<ORIntLinear> {
+   id<ORIntLinear> _real;
 }
--(ORLinearFlip*)initORLinearFlip:(id<ORLinear>)r;
+-(ORLinearFlip*)initORLinearFlip:(id<ORIntLinear>)r;
 -(void)setIndependent:(ORInt)idp;
 -(void)addIndependent:(ORInt)idp;
 -(void)addTerm:(id<ORIntVar>)x by:(ORInt)c;

@@ -11,6 +11,8 @@
 
 #import "CPFloatVarI.h"
 #import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPEngineI.h>
+#import "CPFloatDom.h"
 
 static void setUpNetwork(CPFloatEventNetwork* net,id<ORTrail> t)
 {
@@ -34,19 +36,16 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    return rv;
 }
 
-@implementation CPFloatVarI {
-   ORFloat _ilow;
-   ORFloat _iup;
-}
+@implementation CPFloatVarI
+
 -(id)initCPFloatVar:(CPEngineI*)engine low:(ORFloat)low up:(ORFloat)up
 {
    self = [super init];
    _engine = engine;
-   _ilow = low;
-   _iup = up;
-   _dom = nil;
+   _dom = [[CPFloatDom alloc] initCPFloatDom:[engine trail] low:low up:up];
    _recv = nil;
    setUpNetwork(&_net, [engine trail]);
+   [_engine trackVariable: self];
    return self;
 }
 -(CPEngineI*) engine
@@ -128,32 +127,51 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 -(ORStatus) bindEvt:(id<CPFDom>)sender
 {
+   id<CPEventNode> mList[6];
+   ORUInt k = 0;
+   mList[k] = _net._bindEvt._val;
+   k += mList[k] != NULL;
+   scheduleAC3(_engine,mList);
    return ORSuspend;
 }
 -(ORStatus) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender
 {
+   id<CPEventNode> mList[6];
+   ORUInt k = 0;
+   mList[k] = _net._minEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = bound ? _net._bindEvt._val : NULL;
+   k += mList[k] != NULL;
+   scheduleAC3(_engine,mList);
    return ORSuspend;
 }
 -(ORStatus) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender
 {
+   id<CPEventNode> mList[6];
+   ORUInt k = 0;
+   mList[k] = _net._maxEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = bound ? _net._bindEvt._val : NULL;
+   k += mList[k] != NULL;
+   scheduleAC3(_engine,mList);
    return ORSuspend;
 }
 
 -(ORStatus) bind:(ORFloat) val
 {
-   return ORSuspend;
+   return [_dom bind:val for:self];
 }
 -(ORStatus) updateMin: (ORFloat) newMin
 {
-   return ORSuspend;
+   return [_dom updateMin:newMin for:self];
 }
 -(ORStatus) updateMax: (ORFloat) newMax
 {
-   return ORSuspend;
+   return [_dom updateMax:newMax for:self];
 }
 -(ORStatus) updateInterval: (ORInterval)nb
 {
-   return ORSuspend;
+   return [_dom updateInterval:nb for:self];
 }
 -(ORFloat) min
 {

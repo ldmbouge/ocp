@@ -704,7 +704,7 @@
 		5BBFBFE41661211300FB7505 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */; };
 		5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */; };
-		5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */; };
+		5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */; settings = {ATTRIBUTES = (); }; };
 		5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */; };
 		5BC0918C167F7F9A009A7712 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC0918F167F7F9A009A7712 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC0918E167F7F9A009A7712 /* main.m */; };
@@ -799,7 +799,7 @@
 		5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B1391851629A99D0029FD29 /* ORDecompose.m */; };
 		5BD8BED416E123E200D9BF0B /* ORLPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORLPDecompose.m */; };
-		5BD8BED516E123E200D9BF0B /* ORLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORLinear.m */; };
+		5BD8BED516E123E200D9BF0B /* ORIntLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORIntLinear.m */; };
 		5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B9348741655451D00757F89 /* CPUKernel.m */; };
 		5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */; };
 		5BD8BED816E123E200D9BF0B /* CPTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B93486316553E6E00757F89 /* CPTypes.m */; };
@@ -932,8 +932,8 @@
 		B103614A16D96B0100E95A39 /* libgurobi.so.5.0.0 in Frameworks */ = {isa = PBXBuildFile; fileRef = B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */; };
 		B103614D16D9AAA500E95A39 /* ORLPDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614B16D9AAA500E95A39 /* ORLPDecompose.h */; };
 		B103614E16D9AAA500E95A39 /* ORLPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORLPDecompose.m */; };
-		B103615116D9AB9A00E95A39 /* ORLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORLinear.h */; };
-		B103615216D9AB9A00E95A39 /* ORLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORLinear.m */; };
+		B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORIntLinear.h */; };
+		B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORIntLinear.m */; };
 		B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B111FC0413CF3D10003C5119 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B111FC0313CF3D10003C5119 /* main.m */; };
 		B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */ = {isa = PBXBuildFile; fileRef = B11D862115CD8AE20019729B /* ORExplorerI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -5073,8 +5073,8 @@
 		B103614916D96B0100E95A39 /* libgurobi.so.5.0.0 */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgurobi.so.5.0.0; path = /Library/gurobi500/mac64/lib/libgurobi.so.5.0.0; sourceTree = "<absolute>"; };
 		B103614B16D9AAA500E95A39 /* ORLPDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLPDecompose.h; sourceTree = "<group>"; };
 		B103614C16D9AAA500E95A39 /* ORLPDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLPDecompose.m; sourceTree = "<group>"; };
-		B103614F16D9AB9A00E95A39 /* ORLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORLinear.h; sourceTree = "<group>"; };
-		B103615016D9AB9A00E95A39 /* ORLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORLinear.m; sourceTree = "<group>"; };
+		B103614F16D9AB9A00E95A39 /* ORIntLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORIntLinear.h; sourceTree = "<group>"; };
+		B103615016D9AB9A00E95A39 /* ORIntLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORIntLinear.m; sourceTree = "<group>"; };
 		B10ECF0E150C34DE00B82836 /* ORFactoryI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFactoryI.h; sourceTree = "<group>"; };
 		B10ECF0F150C34DE00B82836 /* ORFactoryI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFactoryI.m; sourceTree = "<group>"; };
 		B10ECF12150C382000B82836 /* ORSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSet.h; sourceTree = "<group>"; };
@@ -7442,8 +7442,8 @@
 				B103614C16D9AAA500E95A39 /* ORLPDecompose.m */,
 				B1E1C7A017037586006AACFC /* ORMIPDecompose.h */,
 				B1E1C7A117037586006AACFC /* ORMIPDecompose.m */,
-				B103614F16D9AB9A00E95A39 /* ORLinear.h */,
-				B103615016D9AB9A00E95A39 /* ORLinear.m */,
+				B103614F16D9AB9A00E95A39 /* ORIntLinear.h */,
+				B103615016D9AB9A00E95A39 /* ORIntLinear.m */,
 				B1E1C7A817038783006AACFC /* ORFloatLinear.h */,
 				B1E1C7A917038784006AACFC /* ORFloatLinear.m */,
 				B182C60A173C3DC9002954F6 /* ORMIPLinearize.h */,
@@ -8578,7 +8578,7 @@
 				5BAD1166161E5F2B0014EBCB /* ORModelI.h in Headers */,
 				B103614716D969CD00E95A39 /* ORLPFlatten.h in Headers */,
 				B103614D16D9AAA500E95A39 /* ORLPDecompose.h in Headers */,
-				B103615116D9AB9A00E95A39 /* ORLinear.h in Headers */,
+				B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */,
 				37095B2216DBEEEC001BCEEC /* ORParallelRunnable.h in Headers */,
 				37095B2416DBEEEC001BCEEC /* ORRunnable.h in Headers */,
 				379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */,
@@ -11133,7 +11133,7 @@
 				5BD8BED216E123E200D9BF0B /* ORLinearize.m in Sources */,
 				5BD8BED316E123E200D9BF0B /* ORDecompose.m in Sources */,
 				5BD8BED416E123E200D9BF0B /* ORLPDecompose.m in Sources */,
-				5BD8BED516E123E200D9BF0B /* ORLinear.m in Sources */,
+				5BD8BED516E123E200D9BF0B /* ORIntLinear.m in Sources */,
 				5BD8BED616E123E200D9BF0B /* CPUKernel.m in Sources */,
 				5BD8BED716E123E200D9BF0B /* CPEngineI.m in Sources */,
 				5BD8BED816E123E200D9BF0B /* CPTypes.m in Sources */,
@@ -11214,7 +11214,7 @@
 				5B1391871629A99D0029FD29 /* ORDecompose.m in Sources */,
 				B103614816D969CD00E95A39 /* ORLPFlatten.m in Sources */,
 				B103614E16D9AAA500E95A39 /* ORLPDecompose.m in Sources */,
-				B103615216D9AB9A00E95A39 /* ORLinear.m in Sources */,
+				B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */,
 				37095B2316DBEEEC001BCEEC /* ORParallelRunnable.m in Sources */,
 				37095B2516DBEEEC001BCEEC /* ORRunnable.m in Sources */,
 				37095B4716DBF214001BCEEC /* main.m in Sources */,

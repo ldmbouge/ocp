@@ -23,7 +23,11 @@
 {
 	return _message;
 }
-@end  
+-(NSString *)description
+{
+   return [NSString stringWithCString:_message encoding:NSASCIIStringEncoding];
+}
+@end
 
 @implementation ORSearchError
 -(ORSearchError*) initORSearchError: (const char*) msg

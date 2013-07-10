@@ -13,19 +13,16 @@
 #import "ORError.h"
 #import "ORFactory.h"
 
-@implementation ORIntVarI
-{
+@implementation ORIntVarI {
 @protected
    id<ORTracker>  _tracker;
    id<ORIntRange> _domain;
-   //BOOL           _hasBounds;
 }
 -(ORIntVarI*) initORIntVarI: (id<ORTracker>) track domain: (id<ORIntRange>) domain
 {
    self = [super init];
    _tracker = track;
    _domain = domain;
-   //_hasBounds = true;
    _ba[0] = YES; // dense
    _ba[1] = ([domain low] == 0 && [domain up] == 1); // isBool
    [track trackVariable: self];
@@ -59,6 +56,10 @@
 -(ORBool) isVariable
 {
    return YES;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(NSString*) description
 {
@@ -259,6 +260,10 @@
 {
    [super dealloc];
 }
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
 -(void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -341,12 +346,14 @@
 {
    return _bLen;
 }
-
+-(enum ORVType) vtype
+{
+   return ORTBit;
+}
 -(void) visit: (id<ORVisitor>)v
 {
    [v visitBitVar:self];
 }
-
 -(id<ORTracker>) tracker
 {
    return _tracker;

@@ -374,6 +374,10 @@
 {
    return ORRBad;
 }
+-(enum ORVType) vtype
+{
+   return ORTNA;
+}
 -(id<ORExpr>) abs
 {
    return [ORFactory exprAbs:self track:[self tracker]];
@@ -652,6 +656,11 @@
 {
    return [_left isConstant] && [_right isConstant];
 }
+-(enum ORVType) vtype
+{
+   return lubVType(_left.vtype, _right.vtype);
+}
+
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_left];
@@ -700,7 +709,10 @@
 {
    return [_op isConstant];
 }
-
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
 -(NSString *)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -757,7 +769,10 @@
 {
    return [_op isConstant];
 }
-
+-(enum ORVType) vtype
+{
+   return _op.vtype;
+}
 -(NSString *)description
 {
    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
@@ -807,6 +822,10 @@
 -(ORBool) isConstant
 {
    return [_op isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _op.vtype;
 }
 -(NSString *)description
 {
@@ -875,6 +894,10 @@
 -(ORBool) isConstant
 {
    return [_index isConstant];
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(void) visit:(id<ORVisitor>)visitor
 {
@@ -1511,6 +1534,10 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
@@ -1579,6 +1606,10 @@
 -(ORBool) isConstant
 {
    return [_e isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _e.vtype;
 }
 -(id<ORTracker>) tracker
 {
@@ -1649,6 +1680,10 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
@@ -1716,6 +1751,10 @@
 -(ORBool) isConstant
 {
    return [_e isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _e.vtype;
 }
 -(id<ORTracker>) tracker
 {
@@ -1786,6 +1825,10 @@
 {
    return [_e isConstant];
 }
+-(enum ORVType) vtype
+{
+   return _e.vtype;
+}
 -(id<ORTracker>) tracker
 {
    return [_e tracker];
@@ -1854,6 +1897,10 @@
 -(ORBool) isConstant
 {
    return [_e isConstant];
+}
+-(enum ORVType) vtype
+{
+   return _e.vtype;
 }
 -(id<ORTracker>) tracker
 {
@@ -1927,6 +1974,10 @@
 -(ORBool) isConstant
 {
    return [_index isConstant];
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(void) visit:(id<ORVisitor>)visitor
 {
@@ -2004,6 +2055,10 @@
 -(ORBool) isConstant
 {
    return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(void) visit:(id<ORVisitor>) v
 {

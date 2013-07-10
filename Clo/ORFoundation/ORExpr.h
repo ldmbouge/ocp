@@ -19,7 +19,7 @@
 @protocol ORIntArray;
 @protocol ORIntVarArray;
 
-enum ORRelationType {
+typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRBad = 0,
    ORREq  = 1,
    ORRNEq = 2,
@@ -28,6 +28,24 @@ enum ORRelationType {
    ORRConj = 5,
    ORRImply = 6
 };
+
+typedef NS_ENUM(NSUInteger,ORVType) {
+   ORTInt = 0,
+   ORTFloat = 1,
+   ORTBit  = 2,
+   ORTSet  = 3,
+   ORTNA = 4
+};
+
+static inline enum ORVType lubVType(enum ORVType t1,enum ORVType t2)
+{
+   if (t1 == t2)
+      return t1;
+   else if (t1+t2 <= 1)
+      return ORTFloat;
+   else
+      return ORTNA;
+}
 
 id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r);
 id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
@@ -79,6 +97,7 @@ id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
 -(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
 -(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
 -(enum ORRelationType) type;
+-(enum ORVType)vtype;
 @end
 
 @protocol ORRelation <ORExpr>
