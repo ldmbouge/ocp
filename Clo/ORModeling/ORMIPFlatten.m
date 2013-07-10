@@ -84,7 +84,7 @@
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORFloatLinear* terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
+   id<ORLinear> terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
    id<ORConstraint> cstr = NULL;
    switch ([expr type]) {
       case ORRBad:

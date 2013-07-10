@@ -15,13 +15,11 @@
 #import "ORFloatLinear.h"
 
 @interface ORMIPLinearizer : NSObject<ORVisitor>
--(id) initORMIPLinearizer: (id<ORFloatLinear>)t model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
-+(ORFloatLinear*) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
-+(ORFloatLinear*) addToLinear: (id<ORFloatLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
++(id<ORFloatLinear>) linearFrom: (id<ORExpr>)e  model: (id<ORAddToModel>)model annotation: (ORAnnotation)n;
++(id<ORFloatLinear>) addToLinear: (id<ORFloatLinear>) terms from: (id<ORExpr>)e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
 @end
 
-@interface ORMIPNormalizer : NSObject<ORVisitor>
-+(ORFloatLinear*) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
--(id) initORMIPNormalizer:(id<ORAddToModel>) model annotation:(ORAnnotation)n;
+@interface ORMIPNormalizer : ORNOopVisit<ORVisitor>
++(id<ORLinear>) normalize:(id<ORExpr>) expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;
 @end
 
