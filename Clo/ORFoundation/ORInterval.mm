@@ -68,7 +68,7 @@ static void printLow(double v,char* buf,int ndigs);
 static void printUp(double v,char* buf,int ndigs);
 static void sprint(double v,char* buf,int ndigs);
 
-NSString* ORIFormat(ORInterval a)
+extern "C" NSString* ORIFormat(ORInterval a)
 {
    double low,up;
    ORIBounds(a, &low, &up);

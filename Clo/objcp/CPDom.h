@@ -40,3 +40,22 @@
 -(void) enumerateWithBlock:(void(^)(ORInt))block;
 -(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
 @end
+
+@protocol CPFloatVarNotifier;
+@protocol CPFDom
+-(ORStatus) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
+-(ORStatus) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
+-(ORStatus) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(ORStatus) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
+-(ORFloat) min;
+-(ORFloat) max;
+-(ORFloat) imin;
+-(ORFloat) imax;
+-(ORBool) bound;
+-(ORInterval) bounds;
+-(ORFloat) domwidth;
+-(ORBool) member:(ORFloat)v;
+-(id) copy;
+-(void) restoreDomain:(id<CPFDom>)toRestore;
+-(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
+@end

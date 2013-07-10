@@ -10,6 +10,9 @@
 
 #include "emmintrin.h"
 
+#pragma clang diagnostic push 
+#pragma clang diagnostic ignored "-Wunused-variable"
+
 typedef __m128d ORInterval;
 static ORInterval INF;
 static ORInterval FLIP;
@@ -18,9 +21,17 @@ static ORInterval ZERO;
 static double pinf = 0;
 static double ninf = 0;
 
+#pragma clang diagnostic pop
+
 void ORIInit();
 
+#if __cplusplus
+extern "C" {
+#endif
 NSString* ORIFormat(ORInterval a);
+#if __cplusplus
+}
+#endif
 
 static inline bool ORINegative(ORInterval x)
 {
@@ -54,9 +65,17 @@ static inline bool ORIEmpty(ORInterval x)
 static inline bool ORIBound(ORInterval a,double epsilon)
 {
    ORInterval ne = _mm_xor_pd(_mm_set1_pd(epsilon),_mm_set_pd(-1.0 * 0.0,-1.0 * 0.0));
-   ORInterval s  = _mm_shuffle_pd(a, a, 1);
-   ORInterval d  = _mm_add_pd(a,s);
+   ORInterval s  = _mm_shuffle_pd(a, a, 1); // [l , -u ] --> [ -u , l ]
+   ORInterval d  = _mm_add_pd(a,s);         // [l , -u ] + [-u , l] = [l - u , -u + l ] ~>  (l - u , u - l)
    return _mm_comigt_sd(d,ne);
+}
+static inline double ORIWidth(ORInterval a)
+{
+   ORInterval s  = _mm_shuffle_pd(a, a, 1); // [l , -u ] --> [ -u , l ]
+   ORInterval d  = _mm_add_pd(a,s);         // [l , -u ] + [-u , l] = [l - u , -u + l ] ~>  (l - u , u - l)
+   double b[2];
+   _mm_storeu_pd(b, _mm_xor_pd(d,FLIP));    // fetch the bounds
+   return b[0];                             // return up
 }
 static inline bool ORIEqual(ORInterval a,ORInterval b)
 {
@@ -210,4 +229,24 @@ static inline BOOL ORIReady()
    if (!ready)
       _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
    return ready;
+}
+enum ORNarrowing {
+   ORNone = 0,
+   ORLow = 1,
+   ORUp  = 2,
+   ORBoth = 3
+};
+static inline enum ORNarrowing ORINarrow(ORInterval src,ORInterval by)
+{
+   ORInterval i = ORIInter(src, by);
+   ORInterval t = _mm_cmpneq_pd(src,i);
+   double f[2];
+   _mm_storeu_pd(f,t);
+   if (f[0] && f[1])
+      return ORBoth;
+   else if (f[0])
+      return ORUp;
+   else if (f[1])
+      return ORLow;
+   else return ORNone;
 }

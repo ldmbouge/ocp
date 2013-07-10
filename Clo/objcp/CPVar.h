@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORInterval.h>
 #import <objcp/CPData.h>
 
 @protocol CPEngine;
@@ -81,4 +82,17 @@ enum CPVarClass {
 -(NSUInteger)count;
 -(NSString*) description;
 -(id<ORASolver>) solver;
+@end
+
+@protocol CPFloatVar<CPVar>
+-(ORFloat) min;
+-(ORFloat) max;
+-(ORFloat) value;
+-(ORInterval) bounds;
+-(ORBool) member:(ORFloat)v;
+-(ORBool) bound;
+-(ORStatus) bind:(ORFloat) val;
+-(ORStatus) updateMin:(ORFloat) newMin;
+-(ORStatus) updateMax:(ORFloat) newMax;
+-(ORStatus) updateInterval:(ORInterval)v;
 @end

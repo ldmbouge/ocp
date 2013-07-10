@@ -274,7 +274,7 @@
 		5B6A960215879F1600019903 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6A960515879F1600019903 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6A960415879F1600019903 /* main.m */; };
 		5B6A960D15879F2900019903 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		5B6B0EF81787533000104246 /* ORInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B6B0EF61787533000104246 /* ORInterval.h */; };
+		5B6B0EF81787533000104246 /* ORInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B6B0EF61787533000104246 /* ORInterval.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B6B0EF91787533000104246 /* ORInterval.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0EF71787533000104246 /* ORInterval.mm */; };
 		5B6B0EFF178B558000104246 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B6B0F02178B558000104246 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6B0F01178B558000104246 /* main.m */; };
@@ -702,6 +702,10 @@
 		5BBFBFE21661211300FB7505 /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		5BBFBFE31661211300FB7505 /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
 		5BBFBFE41661211300FB7505 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
+		5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */; };
+		5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */; };
+		5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */; };
+		5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */; };
 		5BC0918C167F7F9A009A7712 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5BC0918F167F7F9A009A7712 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BC0918E167F7F9A009A7712 /* main.m */; };
 		5BC09193167F7F9A009A7712 /* grocery.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BC09192167F7F9A009A7712 /* grocery.1 */; };
@@ -4948,6 +4952,10 @@
 		5BBB08CB16C551960087ACF0 /* order.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = order.1; sourceTree = "<group>"; };
 		5BBB08E216C562520087ACF0 /* CPGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPGroup.h; sourceTree = "<group>"; };
 		5BBB08E316C562520087ACF0 /* CPGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPGroup.m; sourceTree = "<group>"; };
+		5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatVarI.h; sourceTree = "<group>"; };
+		5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatVarI.m; sourceTree = "<group>"; };
+		5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatDom.h; sourceTree = "<group>"; };
+		5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatDom.m; sourceTree = "<group>"; };
 		5BC0918A167F7F9A009A7712 /* grocery */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = grocery; sourceTree = BUILT_PRODUCTS_DIR; };
 		5BC0918E167F7F9A009A7712 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5BC09191167F7F9A009A7712 /* grocery-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "grocery-Prefix.pch"; sourceTree = "<group>"; };
@@ -7283,8 +7291,10 @@
 				5B778BA0154EF7DA0078EB07 /* CPBitVar.h */,
 				5B778B96154EF67C0078EB07 /* CPBitVarI.h */,
 				5B778B97154EF67C0078EB07 /* CPBitVarI.m */,
-				5B3606941392A9C5008B0EE8 /* CPBitDom.m */,
 				5B3606931392A9C5008B0EE8 /* CPBitDom.h */,
+				5B3606941392A9C5008B0EE8 /* CPBitDom.m */,
+				5BBFE0A7178C981B00BEAD83 /* CPFloatDom.h */,
+				5BBFE0A8178C981B00BEAD83 /* CPFloatDom.m */,
 				5B7408B015628C1400C05277 /* CPBitMacros.h */,
 				B19ABA24146DC7FA004EB77E /* CPCardinality.h */,
 				B19ABA25146DC7FA004EB77E /* CPCardinality.m */,
@@ -7325,6 +7335,8 @@
 				5B73E55B151F45F60043192D /* NSBoardController.h */,
 				5B73E55C151F45F60043192D /* NSBoardController.m */,
 				5B9ABCF71391329D000997E5 /* Supporting Files */,
+				5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */,
+				5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */,
 			);
 			path = objcp;
 			sourceTree = "<group>";
@@ -8481,6 +8493,8 @@
 				B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */,
 				5B94406E1631AEBA006528DE /* CPVar.h in Headers */,
 				5B93488D16554E6C00757F89 /* CPEvent.h in Headers */,
+				5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */,
+				5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11048,6 +11062,8 @@
 				5B65615F15AD58F6002F344B /* CPKnapsack.m in Sources */,
 				B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */,
 				5B93488C16554E6700757F89 /* CPEvent.m in Sources */,
+				5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */,
+				5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16722,6 +16738,7 @@
 				5B6B0F08178B558000104246 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B6E891A1379D3E9005DB4CA /* Build configuration list for PBXProject "Clo" */ = {
 			isa = XCConfigurationList;
