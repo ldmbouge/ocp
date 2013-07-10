@@ -23,19 +23,9 @@
 +(id<ORIntLinear>)intLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 +(id<ORIntLinear>)intLinearFrom:(id<ORExpr>)e  model:(id<ORAddToModel>)model equalTo:(id<ORIntVar>)x annotation:(ORAnnotation)n;
 +(id<ORIntLinear>)addToIntLinear:(id<ORIntLinear>)terms from:(id<ORExpr>)e  model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
-@end
-
-@interface ORIntSubst   : NSObject<ORVisitor> {
-   id<ORIntVar>      _rv;
-   id<ORAddToModel> _model;
-   ORAnnotation       _c;
-}
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
--(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORIntVar>)x;
--(id<ORIntVar>)result;
 +(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c;
 +(id<ORIntVar>) substituteIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORIntVar>)x annotation:(ORAnnotation)c;
-+(id<ORIntVar>)normSide:(ORIntLinear*)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
++(id<ORIntVar>)normSide:(id<ORIntLinear>)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
 @end
 
 

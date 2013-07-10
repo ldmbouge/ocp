@@ -601,13 +601,13 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
    ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORIntSubst normSide:terms for:_into annotation:Default];
+   id<ORIntVar> alpha = [ORNormalizer normSide:terms for:_into annotation:Default];
    _result = [_into minimizeVar: alpha];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
    ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORIntSubst normSide:terms for:_into annotation:Default];
+   id<ORIntVar> alpha = [ORNormalizer normSide:terms for:_into annotation:Default];
    _result = [_into maximizeVar: alpha];
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
