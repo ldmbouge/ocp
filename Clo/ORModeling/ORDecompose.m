@@ -13,7 +13,7 @@
 #import <ORModeling/ORLinear.h>
 #import "ORFloatLinear.h"
 //-- temp
-#import "ORLPDecompose.h"
+#import "ORFloatDecompose.h"
 
 @interface ORIntNormalizer : ORNOopVisit<ORVisitor> {
    id<ORIntLinear>     _terms;

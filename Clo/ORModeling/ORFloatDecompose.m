@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "ORModeling.h"
-#import "ORLPDecompose.h"
+#import "ORFloatDecompose.h"
 #import "ORFloatLinear.h"
 
 @implementation ORFloatLinearizer

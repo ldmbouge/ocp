@@ -13,7 +13,7 @@
 #import "ORModelI.h"
 #import "ORVarI.h"
 #import "ORDecompose.h"
-#import "ORLPDecompose.h"
+#import "ORFloatDecompose.h"
 
 @implementation ORLPFlatten {
    id<ORAddToModel> _into;
