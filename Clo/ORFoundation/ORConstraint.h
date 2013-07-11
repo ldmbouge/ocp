@@ -17,6 +17,7 @@
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;
 @protocol ORExpr;
+@protocol ORVar;
 @protocol ORIntVar;
 @protocol ORBitVar;
 @protocol OREngine;
@@ -85,8 +86,8 @@ enum ORGroupType {
 @end
 
 @protocol  OREqual <ORConstraint>
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 -(ORInt) cst;
 -(ORAnnotation) annotation;
 @end
@@ -125,8 +126,8 @@ enum ORGroupType {
 @end
 
 @protocol ORSquare<ORConstraint>
--(id<ORIntVar>)res;
--(id<ORIntVar>)op;
+-(id<ORVar>)res;
+-(id<ORVar>)op;
 -(ORAnnotation) annotation;
 @end
 

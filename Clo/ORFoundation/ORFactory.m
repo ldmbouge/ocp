@@ -899,13 +899,13 @@
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORVar>) x to: (id<ORVar>) y plus:(int) c
 {
    id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c];
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORIntVar>) x to: (id<ORIntVar>) y plus:(int) c annotation: (ORAnnotation)n
++(id<ORConstraint>) equal:(id<ORTracker>)model  var:(id<ORVar>) x to: (id<ORVar>) y plus:(int) c annotation: (ORAnnotation)n
 {
    id<ORConstraint> o = [[OREqual alloc] initOREqual:x eq:y plus:c annotation:n];
    [model trackObject:o];
@@ -992,7 +992,7 @@
       return o;
    }
 }
-+(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORIntVar>)x equal:(id<ORIntVar>)res annotation:(ORAnnotation)n
++(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORVar>)x equal:(id<ORVar>)res annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORSquare alloc] initORSquare:res square:x annotation:n];
    [model trackObject:o];

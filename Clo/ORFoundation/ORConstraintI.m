@@ -290,12 +290,12 @@
 
 
 @implementation OREqual {
-   id<ORIntVar> _x;
-   id<ORIntVar> _y;
+   id<ORVar> _x;
+   id<ORVar> _y;
    ORInt        _c;
    ORAnnotation _n;
 }
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c
+-(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c
 {
    self = [super initORConstraintI];
    _x = x;
@@ -304,7 +304,7 @@
    _n = DomainConsistency;
    return self;
 }
--(OREqual*)initOREqual:(id<ORIntVar>)x eq:(id<ORIntVar>)y plus:(ORInt)c annotation:(ORAnnotation)n
+-(id)initOREqual:(id<ORVar>)x eq:(id<ORVar>)y plus:(ORInt)c annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -323,11 +323,11 @@
 {
    [v visitEqual:self];
 }
--(id<ORIntVar>) left
+-(id<ORVar>) left
 {
    return _x;
 }
--(id<ORIntVar>) right
+-(id<ORVar>) right
 {
    return _y;
 }
@@ -601,11 +601,11 @@
 @end
 
 @implementation ORSquare { // z == x^2
-   id<ORIntVar> _z;
-   id<ORIntVar> _x;
+   id<ORVar> _z;
+   id<ORVar> _x;
    ORAnnotation _n;
 }
--(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n
+-(id)initORSquare:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -613,11 +613,11 @@
    _n = n;
    return self;
 }
--(id<ORIntVar>)res
+-(id<ORVar>)res
 {
    return _z;
 }
--(id<ORIntVar>)op
+-(id<ORVar>)op
 {
    return _x;
 }

@@ -154,6 +154,29 @@
       return xv;
    }
 }
++(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr annotation:(ORAnnotation)c
+{
+   ORFloatSubst* subst = [[ORFloatSubst alloc] initORSubst: model annotation:c];
+   [expr visit:subst];
+   id<ORFloatVar> theVar = [subst result];
+   [subst release];
+   return theVar;   
+}
++(id<ORFloatVar>) floatVarIn:(id<ORAddToModel>) model expr:(ORExprI*)expr by:(id<ORFloatVar>)x annotation:(ORAnnotation)c
+{
+   ORFloatSubst* subst = [[ORFloatSubst alloc] initORSubst: model annotation:c by:x];
+   [expr visit:subst];
+   id<ORFloatVar> theVar = [subst result];
+   [subst release];
+   return theVar;
+}
++(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c
+{
+   id<ORFloatVar> xv = [ORFactory floatVar: model low:[e fmin] up:[e fmax]];
+   [e addTerm:xv by:-1];
+   [e postEQZ: model annotation:c];
+   return xv;   
+}
 @end
 
 @implementation ORIntNormalizer
@@ -289,7 +312,7 @@ struct CPVarPair {
       if (lv || rv) {
          ORExprI* other = lv ? [e right] : [e left];
          ORExprI* var   = lv ? [e left] : [e right];
-         id<ORFloatVar> theVar = [ORNormalizer intVarIn:_model expr:var annotation:_n];
+         id<ORFloatVar> theVar = [ORNormalizer floatVarIn:_model expr:var annotation:_n];
          ORFloatLinear* lin  = [ORNormalizer floatLinearFrom:other model:_model equalTo:theVar annotation:_n];
          [lin release];
          _terms = nil; // we already did the full rewrite. Nothing left todo  @ top-level.
@@ -613,7 +636,7 @@ struct CPVarPair {
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
-   ORIntLinear* terms = [ORNormalizer intLinearFrom:e model:_model annotation:_c];
+   id<ORIntLinear> terms = [ORNormalizer intLinearFrom:e model:_model annotation:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
@@ -622,7 +645,7 @@ struct CPVarPair {
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-   ORIntLinear* terms = [ORNormalizer intLinearFrom:e model:_model annotation:_c];
+   id<ORIntLinear> terms = [ORNormalizer intLinearFrom:e model:_model annotation:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain: RANGE(_model,max([terms min],MININT),min([terms max],MAXINT))];
    [terms addTerm:_rv by:-1];
@@ -631,8 +654,8 @@ struct CPVarPair {
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    id<ORIntVar> rV = [ORNormalizer intVarIn:rT for:_model annotation:_c];
    ORLong llb = [[lV domain] low];
@@ -745,8 +768,8 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void) visitExprModI:(ORExprModI *)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    if ([rT size] == 0) {
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain: RANGE(_model,[e min],[e max])];
@@ -765,8 +788,8 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void) visitExprMinI:(ORExprMinI*)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    id<ORIntVar> rV = [ORNormalizer intVarIn:rT for:_model annotation:_c];
    ORLong llb = [[lV domain] low];
@@ -784,8 +807,8 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void) visitExprMaxI:(ORExprMaxI*)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> rT = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    id<ORIntVar> rV = [ORNormalizer intVarIn:rT for:_model annotation:_c];
    ORLong llb = [[lV domain] low];
@@ -809,7 +832,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void) reifyEQc:(ORExprI*)theOther constant:(ORInt)c
 {
-   ORIntLinear* linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model annotation:_c];
    [linOther release];
 #if OLDREIFY==1
@@ -824,18 +847,20 @@ static inline ORLong maxSeq(ORLong v[4])  {
       _rv = [ORFactory reifyView:_model var:theVar eqi:c];
    }
 #endif
+   [linOther release];
 }
 -(void) reifyNEQc:(ORExprI*)theOther constant:(ORInt)c
 {
-   ORIntLinear* linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model annotation:_c];   
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
    [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar neqi:c]];
+   [linOther release];
 }
 -(void) reifyLEQc:(ORExprI*)theOther constant:(ORInt)c
 {
-   ORIntLinear* linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model annotation:_c];
    if ([[theVar domain] up] <= c) {
       if (_rv==nil)
@@ -847,10 +872,11 @@ static inline ORLong maxSeq(ORLong v[4])  {
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
       [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar leqi:c]];
    }
+   [linOther release];
 }
 -(void) reifyGEQc:(ORExprI*)theOther constant:(ORInt)c
 {
-   ORIntLinear* linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
+   id<ORIntLinear> linOther  = [ORNormalizer intLinearFrom:theOther model:_model annotation:_c];
    id<ORIntVar> theVar = [ORNormalizer intVarIn:linOther for:_model annotation:_c];
    if ([[theVar domain] low] >= c) {
       if (_rv==nil)
@@ -862,16 +888,19 @@ static inline ORLong maxSeq(ORLong v[4])  {
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
       [_model addConstraint: [ORFactory reify:_model boolean:_rv with:theVar geqi:c]];
    }
+   [linOther release];
 }
 -(void) reifyLEQ:(ORExprI*)left right:(ORExprI*)right
 {
-   ORIntLinear* linLeft   = [ORNormalizer intLinearFrom:left model:_model annotation:_c];
-   ORIntLinear* linRight  = [ORNormalizer intLinearFrom:right model:_model annotation:_c];
+   id<ORIntLinear> linLeft   = [ORNormalizer intLinearFrom:left model:_model annotation:_c];
+   id<ORIntLinear> linRight  = [ORNormalizer intLinearFrom:right model:_model annotation:_c];
    id<ORIntVar> varLeft  = [ORNormalizer intVarIn:linLeft for:_model annotation:_c];
    id<ORIntVar> varRight = [ORNormalizer intVarIn:linRight for:_model annotation:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
    [_model addConstraint: [ORFactory reify:_model boolean:_rv with:varLeft leq:varRight]];
+   [linLeft release];
+   [linRight release];
 }
 
 -(void) visitExprEqualI:(ORExprEqualI*)e
@@ -881,13 +910,15 @@ static inline ORLong maxSeq(ORLong v[4])  {
    } else if ([[e right] isConstant] && [[e left] isVariable]) {
       [self reifyEQc:[e left] constant:[[e right] min]];
    } else {
-      ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-      ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+      id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+      id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
       id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model annotation:_c];
       id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model annotation:_c];
       if (_rv==nil)
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
       [_model addConstraint:[ORFactory reify:_model boolean:_rv with:lV eq:rV annotation:_c]];
+      [linLeft release];
+      [linRight release];
    }
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
@@ -909,8 +940,8 @@ static inline ORLong maxSeq(ORLong v[4])  {
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    if ([linLeft isZero] && [linRight isZero]) {
       assert(FALSE);
    } else if ([linLeft isZero]) {
@@ -930,11 +961,13 @@ static inline ORLong maxSeq(ORLong v[4])  {
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
       [_model addConstraint:[ORFactory model:_model boolean:lV or:rV equal:_rv]];
    }
+   [linLeft release];
+   [linRight release];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model annotation:_c];
    id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model annotation:_c];
    if ([[lV domain] low] >= 1) {
@@ -952,21 +985,25 @@ static inline ORLong maxSeq(ORLong v[4])  {
          _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
       [_model addConstraint:[ORFactory model:_model boolean:lV and:rV equal:_rv]];
    }
+   [linLeft release];
+   [linRight release];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   ORIntLinear* linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
-   ORIntLinear* linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
+   id<ORIntLinear> linLeft  = [ORNormalizer intLinearFrom:[e left] model:_model annotation:_c];
+   id<ORIntLinear> linRight = [ORNormalizer intLinearFrom:[e right] model:_model annotation:_c];
    id<ORIntVar> lV = [ORNormalizer intVarIn:linLeft  for:_model annotation:_c];
    id<ORIntVar> rV = [ORNormalizer intVarIn:linRight for:_model annotation:_c];
    if (_rv==nil)
       _rv = [ORFactory intVar:_model domain:RANGE(_model,0,1)];
    [_model addConstraint:[ORFactory model:_model boolean:lV imply:rV equal:_rv]];
+   [linLeft release];
+   [linRight release];
 }
 
 -(void) visitExprAbsI:(ORExprAbsI *)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e operand] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e operand] model:_model annotation:_c];
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    ORInt lb = [lT min];
    ORInt ub = [lT max];
@@ -977,7 +1014,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 }
 -(void) visitExprSquareI:(ORExprSquareI *)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e operand] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e operand] model:_model annotation:_c];
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    ORInt lb = [lT min];
    ORInt ub = [lT max];
@@ -988,7 +1025,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 }
 -(void) visitExprNegateI:(ORExprNegateI*)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e operand] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e operand] model:_model annotation:_c];
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    if (_rv == nil)
       _rv = [ORFactory intVar:_model var:oV scale:-1 shift:1 annotation:_c];
@@ -996,10 +1033,11 @@ static inline ORLong maxSeq(ORLong v[4])  {
       id<ORIntVar> fV = [ORFactory intVar:_model var:oV scale:-1 shift:1 annotation:_c];
       [_model addConstraint:[ORFactory equal:_model var:_rv to:fV plus:0 annotation:_c]];
    }
+   [lT release];
 }
 -(void) visitExprCstSubI:(ORExprCstSubI*)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e index] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model annotation:_c];
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    ORInt lb = [e min];
    ORInt ub = [e max];
@@ -1011,7 +1049,7 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
-   ORIntLinear* lT = [ORNormalizer intLinearFrom:[e index] model:_model annotation:_c];
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model annotation:_c];
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    ORInt lb = [e min];
    ORInt ub = [e max];
@@ -1023,13 +1061,13 @@ static inline ORLong maxSeq(ORLong v[4])  {
 
 -(void)visitExprMatrixVarSubI:(ORExprMatrixVarSubI*) e
 {
-   ORIntLinear* i0 = [ORNormalizer intLinearFrom:[e index0] model:_model annotation:_c];
-   ORIntLinear* i1 = [ORNormalizer intLinearFrom:[e index1] model:_model annotation:_c];
-   id<ORIntVarMatrix> m = [e matrix];
+   id<ORIntLinear> i0 = [ORNormalizer intLinearFrom:[e index0] model:_model annotation:_c];
+   id<ORIntLinear> i1 = [ORNormalizer intLinearFrom:[e index1] model:_model annotation:_c];
    id<ORIntVar> v0 = [ORNormalizer intVarIn:i0 for:_model annotation:_c];
    id<ORIntVar> v1 = [ORNormalizer intVarIn:i1 for:_model annotation:_c];
    [i0 release];
    [i1 release];
+   id<ORIntVarMatrix> m = [e matrix];
    ORInt lb = [e min];
    ORInt ub = [e max];
    if (_rv == nil)

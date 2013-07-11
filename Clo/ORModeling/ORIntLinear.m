@@ -443,6 +443,14 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    return [_real coef:k];
 }
+-(ORInt)min
+{
+   return [_real min];
+}
+-(ORInt)max
+{
+   return [_real max];
+}
 -(ORInt) independent
 {
    return [_real independent];

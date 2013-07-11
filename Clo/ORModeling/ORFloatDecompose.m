@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import "ORModeling.h"
+#import "ORDecompose.h"
 #import "ORFloatDecompose.h"
 #import "ORFloatLinear.h"
 
@@ -18,7 +19,7 @@
    id<ORFloatLinear>   _terms;
    id<ORAddToModel>    _model;
    ORAnnotation        _n;
-   id<ORFloatVar>      _x;
+   id<ORFloatVar>      _eqto;
 }
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
@@ -33,26 +34,41 @@
    self = [super init];
    _terms = t;
    _model = model;
-   _x     = x;
+   _eqto  = x;
    _n     = n;
    return self;
 }
 
 -(void) visitIntVar: (id<ORIntVar>) e
 {
-   [_terms addTerm:e by:1];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm:e by:1];
 }
 -(void) visitFloatVar:(id<ORFloatVar>) e
 {
-   [_terms addTerm: e by: 1];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equal:_model var:e to:_eqto plus:0]];
+      [_terms addTerm:_eqto by:1];
+      _eqto = nil;
+   } else
+      [_terms addTerm: e by: 1];
 }
 -(void) visitAffineVar:(id<ORIntVar>)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float Linearization supported"];
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   [_terms addIndependent:[e value]];
+   if (_eqto) {
+      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e value]]];
+      [_terms addIndependent:[e value]];
+      _eqto = nil;
+   } else
+      [_terms addIndependent:[e value]];
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
@@ -68,74 +84,118 @@
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {
-   [[e left] visit:self];
-   [[e right] visit:self];
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      [[e left] visit:self];
+      [[e right] visit:self];
+   }
 }
 -(void) visitExprMinusI: (ORExprMinusI*) e
 {
-   [[e left] visit:self];
-   id<ORFloatLinear> old = _terms;
-   _terms = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: _terms];
-   [[e right] visit:self];
-   [_terms release];
-   _terms = old;
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      [[e left] visit:self];
+      id<ORFloatLinear> old = _terms;
+      _terms = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: _terms];
+      [[e right] visit:self];
+      [_terms release];
+      _terms = old;
+   }
 }
 -(void) visitExprMulI: (ORExprMulI*) e
 {
-   BOOL cv = [[e left] isConstant] && [[e right] isVariable];
-   BOOL vc = [[e left] isVariable] && [[e right] isConstant];
-   if (cv || vc) {
-      ORFloat coef = cv ? [[e left] floatValue] : [[e right] floatValue];
-      id       x = cv ? [e right] : [e left];
-      [_terms addTerm: x by: coef];
-   }
-   else {
-      @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   if (_eqto) {
+      id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+      [_terms addTerm:alpha by:1];
+      _eqto = nil;
+   } else {
+      BOOL cv = [[e left] isConstant] && [[e right] isVariable];
+      BOOL vc = [[e left] isVariable] && [[e right] isConstant];
+      if (cv || vc) {
+         ORFloat coef = cv ? [[e left] floatValue] : [[e right] floatValue];
+         id       x = cv ? [e right] : [e left];
+         [_terms addTerm: x by: coef];
+      } else if ([[e left] isConstant]) {
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:[e right] annotation:_n];
+         [_terms addTerm:alpha by:[[e left] min]];
+      } else if ([[e right] isConstant]) {
+         id<ORFloatLinear> left = [ORNormalizer floatLinearFrom:[e left] model:_model annotation:_n];
+         [left scaleBy:[[e right] min]];
+         [_terms addLinear:left];
+      } else {
+         id<ORIntVar> alpha =  [ORNormalizer intVarIn:_model expr:e annotation:_n];
+         [_terms addTerm:alpha by:1];
+      }
    }
 }
 -(void) visitExprDivI: (ORExprDivI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for div"];  
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float Linearization supported for div"];
 }
 -(void) visitExprModI: (ORExprModI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for mod"];
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO Float Linearization supported for mod"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSquareI:(ORExprSquareI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNegateI:(ORExprNegateI*) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprEqualI:(ORExprEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprNEqualI:(ORExprNotEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprDisjunctI:(ORDisjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprConjunctI:(ORConjunctI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprImplyI:(ORImplyI*)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprCstSubI:(ORExprCstSubI*)e
+{
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+-(void) visitExprVarSubI:(ORExprVarSubI*)e
+{
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
+   [_terms addTerm:alpha by:1];
 }
 -(void) visitExprSumI: (ORExprSumI*) e
 {
@@ -161,12 +221,106 @@
 {
    [[e expr] visit:self];
 }
--(void) visitExprCstSubI:(ORExprCstSubI*)e
+@end
+
+@implementation ORFloatSubst
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   self = [super init];
+   _rv = nil;
+   _model = model;
+   _c = c;
+   return self;   
 }
--(void) visitExprVarSubI:(ORExprVarSubI*)e
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORFloatVar>)x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+   self = [super init];
+   _rv  = x;
+   _model = model;
+   _c = c;
+   return self;   
+}
+-(id<ORFloatVar>)result
+{
+   return _rv;
+}
+-(void) visitIntVar: (id<ORIntVar>) e
+{
+   if (_rv)
+      [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+   else
+      _rv = (id)e;
+}
+-(void) visitFloatVar: (id<ORFloatVar>) e
+{
+   if (_rv)
+      [_model addConstraint:[ORFactory equal:_model var:_rv to:e plus:0]];
+   else
+      _rv = e;
+}
+-(void) visitIntegerI: (id<ORInteger>) e
+{
+   if (!_rv)
+      _rv = [ORFactory floatVar:_model low:[e value] up:[e value]];
+   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
+}
+-(void) visitFloatI: (id<ORFloatNumber>) e
+{
+   if (!_rv)
+      _rv = [ORFactory floatVar:_model low:[e floatValue] up:[e floatValue]];
+   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e floatValue]]];
+}
+-(void) visitExprPlusI: (ORExprPlusI*) e
+{
+   id<ORFloatLinear> terms = [ORNormalizer floatLinearFrom:e model:_model annotation:_c];
+   if (_rv==nil)
+      _rv = [ORFactory floatVar:_model low:[terms fmin] up:[terms fmax]];
+   [terms addTerm:_rv by:-1];
+   [terms postEQZ:_model annotation:_c];
+   [terms release];
+}
+-(void) visitExprMinusI: (ORExprMinusI*) e
+{
+   id<ORFloatLinear> terms = [ORNormalizer floatLinearFrom:e model:_model annotation:_c];
+   if (_rv==nil)
+      _rv = [ORFactory floatVar:_model low:[terms fmin] up:[terms fmax]];
+   [terms addTerm:_rv by:-1];
+   [terms postEQZ:_model annotation:_c];
+   [terms release];
+}
+-(void) visitExprSquareI:(ORExprSquareI *)e
+{
+   id<ORFloatLinear> lT = [ORNormalizer floatLinearFrom:[e operand] model:_model annotation:_c];
+   id<ORFloatVar> oV = [ORNormalizer floatVarIn:lT for:_model annotation:_c];
+   ORFloat lb = [lT fmin];
+   ORFloat ub = [lT fmax];
+   if (_rv == nil)
+      _rv = [ORFactory floatVar:_model low:lb up:ub];
+   [_model addConstraint:[ORFactory square:_model var:oV equal:_rv annotation:_c]];
+   [lT release];
+}
+-(void) visitExprSumI: (ORExprSumI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprProdI: (ORExprProdI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggOrI: (ORExprAggOrI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggAndI: (ORExprAggAndI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggMinI: (ORExprAggMinI*) e
+{
+   [[e expr] visit:self];
+}
+-(void) visitExprAggMaxI: (ORExprAggMaxI*) e
+{
+   [[e expr] visit:self];
 }
 @end

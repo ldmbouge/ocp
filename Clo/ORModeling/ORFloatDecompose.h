@@ -18,3 +18,14 @@
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORAnnotation) n;
 @end
+
+@interface ORFloatSubst   : NSObject<ORVisitor> {
+   id<ORFloatVar>      _rv;
+   id<ORAddToModel> _model;
+   ORAnnotation         _c;
+}
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c;
+-(id)initORSubst:(id<ORAddToModel>) model annotation:(ORAnnotation)c by:(id<ORFloatVar>)x;
+-(id<ORFloatVar>)result;
+@end
+

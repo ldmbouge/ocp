@@ -67,10 +67,10 @@
 @end
 
 @interface OREqual : ORConstraintI<OREqual>
--(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c;
--(OREqual*)initOREqual: (id<ORIntVar>) x eq: (id<ORIntVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y plus: (ORInt) c;
+-(id)initOREqual: (id<ORVar>) x eq: (id<ORVar>) y plus: (ORInt) c annotation: (ORAnnotation) n;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 -(ORInt) cst;
 @end
 
@@ -114,9 +114,9 @@
 @end
 
 @interface ORSquare : ORConstraintI<ORSquare>
--(ORSquare*)initORSquare:(id<ORIntVar>)z square:(id<ORIntVar>)x annotation:(ORAnnotation)n;
--(id<ORIntVar>)res;
--(id<ORIntVar>)op;
+-(ORSquare*)initORSquare:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n;
+-(id<ORVar>)res;
+-(id<ORVar>)op;
 -(ORAnnotation) annotation;
 @end
 
