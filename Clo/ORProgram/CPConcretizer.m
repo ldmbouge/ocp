@@ -186,7 +186,17 @@
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) cstr
 {
-   assert(NO); // to finish
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ex = [cstr vars];
+      id<ORIntArray>    ec = [cstr coefs];
+      ORInt c = [cstr cst];
+      id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+         return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
+      }];
+      id<CPConstraint> concreteCstr = [CPFactory sum:vx leq: c];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 -(void) visitLinearEq: (id<ORLinearEq>) cstr
 {

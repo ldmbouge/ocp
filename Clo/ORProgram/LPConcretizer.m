@@ -695,7 +695,7 @@
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
       id<ORIntArray> a = [c coefs];
-      id<ORFloatArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORFloat(ORInt i) { return [a at: i]; }  ];
+      id<ORFloatArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORFloat(ORInt i) { return [a at: i]; }];
       ORFloat cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
@@ -707,7 +707,17 @@
 
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORIntArray> a = [c coefs];
+      id<ORFloatArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORFloat(ORInt i) { return [a at: i]; }];
+      ORFloat cst = [c cst];
+      [x visit: self];
+      id<LPVariableArray> dx = _gamma[x.getId];
+      LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: af cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_lpsolver postConstraint: concreteCstr];
+   }
 }
 
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
