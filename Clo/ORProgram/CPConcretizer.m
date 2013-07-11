@@ -197,7 +197,7 @@
       id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
          return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
       }];
-      id<CPConstraint> concreteCstr = [CPFactory sum:vx eq: - c];
+      id<CPConstraint> concreteCstr = [CPFactory sum:vx eq: c];
       [_engine add:concreteCstr];
       _gamma[cstr.getId] = concreteCstr;
    }
