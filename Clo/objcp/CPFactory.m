@@ -86,6 +86,15 @@
    id<ORIdArray> o = [ORFactory idArray:cp range:range];
    return (id<CPIntVarArray>) o;
 }
++(id<CPIntVarArray>) intVarArray: (id<ORTracker>)cp range: (id<ORIntRange>) range with: (id<CPIntVar>(^)(ORInt)) clo
+{
+   id<ORIdArray> o = [ORFactory idArray:cp range:range];
+   for(ORInt k=range.low;k <= range.up;k++) {
+      [o  set:clo(k) at:k];
+   }
+   return (id<CPIntVarArray>)o;
+}
+
 +(id<CPIntVarMatrix>) intVarMatrix: (id<CPEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 domain: (id<ORIntRange>) domain
 {
    id<ORIdMatrix> o = [ORFactory idMatrix:cp range: r0 : r1];

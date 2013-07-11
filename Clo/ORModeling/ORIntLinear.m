@@ -313,10 +313,15 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
             id<ORIntVarArray> boolVars = All(model,ORIntVar, i, RANGE(model,0,_nb-1), _terms[i]._var);
             rv = [model addConstraint:[ORFactory sumbool:model array:boolVars eqi: - _indep]];
          }
-         else
+         else /*
             rv = [model addConstraint:[ORFactory sum:model
                                                array:[self scaledViews:model annotation:cons]
                                                  eqi: - _indep]];
+               */
+            rv = [model addConstraint:[ORFactory sum:model
+                                               array:[self variables:model]
+                                                coef:[self coefficients:model]
+                                                  eq: - _indep]];
       }
    }
    return rv;
@@ -353,7 +358,11 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
          }
       }break;
       default:
-         rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model annotation:cons] leqi:- _indep]];
+         //rv = [model addConstraint:[ORFactory sum:model array:[self scaledViews:model annotation:cons] leqi:- _indep]];
+         rv = [model addConstraint:[ORFactory sum:model
+                                            array:[self variables:model]
+                                             coef:[self coefficients:model]
+                                              leq:- _indep]];
    }
    return rv;
 }

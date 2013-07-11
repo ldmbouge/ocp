@@ -159,11 +159,35 @@
 
 -(void) visitLinearEq: (id<ORLinearEq>) c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"]; 
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORIntArray> a = [c coefs];
+      id<ORFloatArray> fa = [ORFactory floatArray:[a tracker] range:[a range] with:^ORFloat(ORInt k) {
+         return [a at:k];
+      }];
+      ORFloat cst = [c cst];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createEQ: dx coef: fa cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
 }
 -(void) visitLinearLeq: (id<ORLinearLeq>) c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "This concretization should never be called"];
+   if (_gamma[c.getId] == NULL) {
+      id<ORVarArray> x = [c vars];
+      id<ORIntArray> a = [c coefs];
+      id<ORFloatArray> fa = [ORFactory floatArray:_program range:[a range] with:^ORFloat(ORInt k) {
+         return [a at:k];
+      }];
+      ORInt cst = [c cst];
+      [x visit: self];
+      id<MIPVariableArray> dx = _gamma[x.getId];
+      MIPConstraintI* concreteCstr = [_MIPsolver createLEQ: dx coef: fa cst: -cst];
+      _gamma[c.getId] = concreteCstr;
+      [_MIPsolver postConstraint: concreteCstr];
+   }
 }
 
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c
@@ -195,6 +219,8 @@
 
 -(void) visitIntegerI: (id<ORInteger>) e
 {
+   if (_gamma[e.getId] == NULL)
+      _gamma[e.getId] = [ORFactory float: _MIPsolver value: [e intValue]];
 }
 
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e

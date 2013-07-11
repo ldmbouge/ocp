@@ -180,6 +180,29 @@
       _gamma[cstr.getId] = concrete;
    }
 }
+-(void) visitLinearGeq: (id<ORLinearGeq>) cstr
+{
+   assert(NO); // to finish
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) cstr
+{
+   assert(NO); // to finish
+}
+-(void) visitLinearEq: (id<ORLinearEq>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ex = [cstr vars];
+      id<ORIntArray>    ec = [cstr coefs];
+      ORInt c = [cstr cst];
+      id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+         return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
+      }];
+      id<CPConstraint> concreteCstr = [CPFactory sum:vx eq: - c];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

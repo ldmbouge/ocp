@@ -110,7 +110,10 @@
    [terms release];
    return cstr;
 }
-
+-(void) visitIntVar:(ORIntVarI*)v
+{
+   _result = v;
+}
 -(void) visitFloatVar: (ORFloatVarI*) v
 {
    _result = v;

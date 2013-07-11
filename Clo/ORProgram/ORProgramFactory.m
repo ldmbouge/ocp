@@ -284,6 +284,11 @@
   
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
+   for(id<ORObject> c in [flatModel constraints])
+      [c visit: concretizer];
+   [[flatModel objective] visit:concretizer];
+
+   //[mipprogram setSource:model];  // [ldm] missing API
    [concretizer release];
    //NSLog(@"flat: %@",flatModel);
 }
