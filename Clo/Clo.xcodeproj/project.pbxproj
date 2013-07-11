@@ -1135,8 +1135,6 @@
 		B1E1C79B170372FB006AACFC /* MIPProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C79A170372FB006AACFC /* MIPProgram.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C79E1703741E006AACFC /* MIPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C79C1703741E006AACFC /* MIPConcretizer.h */; };
 		B1E1C79F1703741E006AACFC /* MIPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C79D1703741E006AACFC /* MIPConcretizer.m */; };
-		B1E1C7A217037586006AACFC /* ORMIPDecompose.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A017037586006AACFC /* ORMIPDecompose.h */; };
-		B1E1C7A317037586006AACFC /* ORMIPDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A117037586006AACFC /* ORMIPDecompose.m */; };
 		B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */; };
 		B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */; };
 		B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A817038783006AACFC /* ORFloatLinear.h */; };
@@ -5268,8 +5266,6 @@
 		B1E1C79A170372FB006AACFC /* MIPProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPProgram.h; sourceTree = "<group>"; };
 		B1E1C79C1703741E006AACFC /* MIPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPConcretizer.h; sourceTree = "<group>"; };
 		B1E1C79D1703741E006AACFC /* MIPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPConcretizer.m; sourceTree = "<group>"; };
-		B1E1C7A017037586006AACFC /* ORMIPDecompose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMIPDecompose.h; sourceTree = "<group>"; };
-		B1E1C7A117037586006AACFC /* ORMIPDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORMIPDecompose.m; sourceTree = "<group>"; };
 		B1E1C7A4170375AF006AACFC /* ORMIPFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORMIPFlatten.h; sourceTree = "<group>"; };
 		B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ORMIPFlatten.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1E1C7A817038783006AACFC /* ORFloatLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFloatLinear.h; sourceTree = "<group>"; };
@@ -7442,8 +7438,6 @@
 				5B1391851629A99D0029FD29 /* ORDecompose.m */,
 				B103614B16D9AAA500E95A39 /* ORLPDecompose.h */,
 				B103614C16D9AAA500E95A39 /* ORLPDecompose.m */,
-				B1E1C7A017037586006AACFC /* ORMIPDecompose.h */,
-				B1E1C7A117037586006AACFC /* ORMIPDecompose.m */,
 				B103614F16D9AB9A00E95A39 /* ORIntLinear.h */,
 				B103615016D9AB9A00E95A39 /* ORIntLinear.m */,
 				B1E1C7A817038783006AACFC /* ORFloatLinear.h */,
@@ -8587,7 +8581,6 @@
 				379CDEEC16F17D71000E7338 /* ORModelTransformation.h in Headers */,
 				37AD9F3E16F2C04400B0F6F9 /* ORColumnGeneration.h in Headers */,
 				3795ADF216FABEAB00308567 /* ORLogicBenders.h in Headers */,
-				B1E1C7A217037586006AACFC /* ORMIPDecompose.h in Headers */,
 				B1E1C7A6170375AF006AACFC /* ORMIPFlatten.h in Headers */,
 				B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */,
 				5B673A2B178DC5AA00886A28 /* ORLinear.h in Headers */,
@@ -11224,7 +11217,6 @@
 				37095B4716DBF214001BCEEC /* main.m in Sources */,
 				37AD9F3F16F2C04400B0F6F9 /* ORColumnGeneration.m in Sources */,
 				3795ADF316FABEAB00308567 /* ORLogicBenders.m in Sources */,
-				B1E1C7A317037586006AACFC /* ORMIPDecompose.m in Sources */,
 				B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */,
 				B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */,
 				B182C60D173C3DC9002954F6 /* ORMIPLinearize.m in Sources */,

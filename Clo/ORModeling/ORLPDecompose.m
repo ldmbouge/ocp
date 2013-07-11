@@ -13,14 +13,14 @@
 #import "ORLPDecompose.h"
 #import "ORFloatLinear.h"
 
-@implementation ORLPLinearizer
+@implementation ORFloatLinearizer
 {
    id<ORFloatLinear>   _terms;
    id<ORAddToModel>    _model;
    ORAnnotation        _n;
    id<ORFloatVar>      _x;
 }
--(id) initORLPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    self = [super init];
    _terms = t;
@@ -28,7 +28,7 @@
    _n     = n;
    return self;
 }
--(id) initORLPLinearizer: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORAnnotation) n
+-(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORAnnotation) n
 {
    self = [super init];
    _terms = t;
@@ -172,14 +172,14 @@
 +(id<ORFloatLinear>) floatLinearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
    ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
-   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: rv model: model annotation:cons];
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model annotation:cons];
    [e visit:v];
    [v release];
    return rv;
 }
 +(id<ORFloatLinear>) addToFloatLinear: (id<ORFloatLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
-   ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: terms model: model annotation:cons];
+   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model annotation:cons];
    [e visit:v];
    [v release];
    return terms;
