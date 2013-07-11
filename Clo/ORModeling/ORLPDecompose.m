@@ -169,19 +169,4 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
-+(id<ORFloatLinear>) floatLinearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
-   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: rv model: model annotation:cons];
-   [e visit:v];
-   [v release];
-   return rv;
-}
-+(id<ORFloatLinear>) addToFloatLinear: (id<ORFloatLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
-{
-   ORFloatLinearizer* v = [[ORFloatLinearizer alloc] init: terms model: model annotation:cons];
-   [e visit:v];
-   [v release];
-   return terms;
-}
 @end

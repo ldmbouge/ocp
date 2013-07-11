@@ -186,13 +186,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORFloatLinearizer floatLinearFrom: [v expr] model: _into annotation: Default];
+   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
    [terms release];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORFloatLinearizer floatLinearFrom: [v expr] model: _into annotation: Default];
+   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
    [terms release];
 }
