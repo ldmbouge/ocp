@@ -172,10 +172,14 @@
 }
 +(id<ORFloatVar>) floatVarIn:(id<ORFloatLinear>)e for:(id<ORAddToModel>) model annotation:(ORAnnotation)c
 {
-   id<ORFloatVar> xv = [ORFactory floatVar: model low:[e fmin] up:[e fmax]];
-   [e addTerm:xv by:-1];
-   [e postEQZ: model annotation:c];
-   return xv;   
+   if ([e size] == 1 && [e coef:0]==1) {
+      return (id)[e var:0];
+   } else {
+      id<ORFloatVar> xv = [ORFactory floatVar: model low:[e fmin] up:[e fmax]];
+      [e addTerm:xv by:-1];
+      [e postEQZ: model annotation:c];
+      return xv;
+   }
 }
 @end
 
@@ -1018,8 +1022,10 @@ static inline ORLong maxSeq(ORLong v[4])  {
    id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
    ORInt lb = [lT min];
    ORInt ub = [lT max];
+   ORInt nlb = lb < 0 ? 0 : lb*lb;
+   ORInt nub = max(lb*lb, ub*ub);
    if (_rv == nil)
-      _rv = [ORFactory intVar:_model domain:RANGE(_model,lb,ub)];
+      _rv = [ORFactory intVar:_model domain:RANGE(_model,nlb,nub)];
    [_model addConstraint:[ORFactory square:_model var:oV equal:_rv annotation:_c]];
    [lT release];
 }

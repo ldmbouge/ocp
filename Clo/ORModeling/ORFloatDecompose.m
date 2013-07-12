@@ -294,8 +294,10 @@
    id<ORFloatVar> oV = [ORNormalizer floatVarIn:lT for:_model annotation:_c];
    ORFloat lb = [lT fmin];
    ORFloat ub = [lT fmax];
+   ORFloat nlb = lb < 0 ? 0 : lb*lb;
+   ORFloat nub = max(lb*lb, ub*ub);
    if (_rv == nil)
-      _rv = [ORFactory floatVar:_model low:lb up:ub];
+      _rv = [ORFactory floatVar:_model low:nlb up:nub];
    [_model addConstraint:[ORFactory square:_model var:oV equal:_rv annotation:_c]];
    [lT release];
 }
