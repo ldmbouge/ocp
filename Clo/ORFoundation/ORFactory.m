@@ -983,7 +983,7 @@
 +(id<ORConstraint>) mult:(id<ORTracker>)model  var: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z annotation:(ORAnnotation)n
 {
    if ([x getId] == [y getId]) {
-      id<ORConstraint> o = [[ORSquare alloc] initORSquare:z square:x annotation:n];
+      id<ORConstraint> o = [[ORSquare alloc] init:z square:x annotation:n];
       [model trackObject:o];
       return o;
    } else {
@@ -994,10 +994,17 @@
 }
 +(id<ORConstraint>) square:(id<ORTracker>)model var:(id<ORVar>)x equal:(id<ORVar>)res annotation:(ORAnnotation)n
 {
-   id<ORConstraint> o = [[ORSquare alloc] initORSquare:res square:x annotation:n];
+   id<ORConstraint> o = [[ORSquare alloc] init:res square:x annotation:n];
    [model trackObject:o];
    return o;
 }
++(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORFloatVar>)x equal:(id<ORFloatVar>)res annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORFloatSquare alloc] init:res square:x annotation:n];
+   [model trackObject:o];
+   return o;
+}
+
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
    id<ORConstraint> o = [[ORMod alloc] initORMod:x mod:y equal:z];

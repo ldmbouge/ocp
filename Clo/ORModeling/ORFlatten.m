@@ -74,6 +74,7 @@
 -(void) visitPlus: (id<ORPlus>)c  {}
 -(void) visitMult: (id<ORMult>)c  {}
 -(void) visitSquare:(id<ORSquare>)c {}
+-(void) visitFloatSquare:(id<ORSquare>)c {}
 -(void) visitMod: (id<ORMod>)c {}
 -(void) visitModc: (id<ORModc>)c {}
 -(void) visitMin:(id<ORMin>)c  {}
@@ -405,6 +406,10 @@
    _result = c;
 }
 -(void) visitSquare:(id<ORSquare>)c
+{
+   _result = c;
+}
+-(void) visitFloatSquare:(id<ORSquare>)c
 {
    _result = c;
 }

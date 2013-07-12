@@ -35,6 +35,13 @@
    [_solver release];
    [super dealloc];
 }
+- (void)doesNotRecognizeSelector:(SEL)aSelector
+{
+   NSLog(@"DID NOT RECOGNIZE a selector %@",NSStringFromSelector(aSelector));
+   @throw [[ORExecutionError alloc] initORExecutionError:"ORCPConcretizer missing a selector"];
+   //return [super doesNotRecognizeSelector:aSelector];
+}
+
 
 // Helper function
 -(id) concreteVar: (id<ORVar>) x
@@ -43,7 +50,7 @@
    return _gamma[x.getId];
 }
 
--(id) concreteArray: (id<ORIntVarArray>) x
+-(id) concreteArray: (id<ORVarArray>) x
 {
    [x visit: self];
    return _gamma[x.getId];
@@ -517,8 +524,17 @@
       _gamma[cstr.getId] = concrete;
    }
 }
-
-
+-(void) visitFloatSquare: (id<ORSquare>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPFloatVar> res = [self concreteVar:[cstr res]];
+      id<CPFloatVar> op  = [self concreteVar:[cstr op]];
+      ORAnnotation annotation = [cstr annotation];
+      id<CPConstraint> concrete = [CPFactory floatSquare:op equal:res annotation:annotation];
+      [_engine add:concrete];
+      _gamma[cstr.getId] = concrete;
+   }
+}
 -(void) visitMod: (id<ORMod>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -818,6 +834,16 @@
 }
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
+}
+-(void) visitFloatLinearEq:(id<ORFloatLinearEq>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
+      id<ORFloatArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
 }
 
 // Bit

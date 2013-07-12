@@ -114,10 +114,13 @@
 @end
 
 @interface ORSquare : ORConstraintI<ORSquare>
--(ORSquare*)initORSquare:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n;
+-(ORSquare*)init:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n;
 -(id<ORVar>)res;
 -(id<ORVar>)op;
 -(ORAnnotation) annotation;
+@end
+
+@interface ORFloatSquare : ORSquare
 @end
 
 @interface ORMod : ORConstraintI<ORMod>

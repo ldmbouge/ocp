@@ -250,6 +250,10 @@
 {
    _result = c;
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = c;
+}
 -(void) visitMod: (id<ORMod>)c
 {
    _result = c;

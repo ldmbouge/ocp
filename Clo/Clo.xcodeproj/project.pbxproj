@@ -203,6 +203,8 @@
 		5B57E5E1161F276800DB249A /* ORExprI.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B920EAE15A3F5B000AD0820 /* ORExprI.m */; };
 		5B57E5E3161F280D00DB249A /* ORVar.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E2161F280D00DB249A /* ORVar.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5B57E5E5161F295000DB249A /* ORVisit.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B57E5E4161F294F00DB249A /* ORVisit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5B5AAA8017905AAC0076C729 /* CPFloatConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */; };
+		5B5AAA8117905AAC0076C729 /* CPFloatConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */; };
 		5B5F547D165D6EB300E674DA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B5F5480165D6EB300E674DA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F547F165D6EB300E674DA /* main.m */; };
 		5B5F5484165D6EB300E674DA /* assignmentProblem.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5B5F5483165D6EB300E674DA /* assignmentProblem.1 */; };
@@ -4712,6 +4714,8 @@
 		5B57E5E9161F2DB100DB249A /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPConcretizer.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		5B57E5EC161F3D8500DB249A /* ORCPParSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORCPParSolver.h; sourceTree = "<group>"; };
 		5B57E5ED161F3D8500DB249A /* ORCPParSolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORCPParSolver.m; sourceTree = "<group>"; };
+		5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFloatConstraint.h; sourceTree = "<group>"; };
+		5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFloatConstraint.m; sourceTree = "<group>"; };
 		5B5F547B165D6EB200E674DA /* assignmentProblem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = assignmentProblem; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B5F547F165D6EB300E674DA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5B5F5482165D6EB300E674DA /* assignmentProblem-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "assignmentProblem-Prefix.pch"; sourceTree = "<group>"; };
@@ -7335,6 +7339,8 @@
 				5B9ABCF71391329D000997E5 /* Supporting Files */,
 				5BBFE0A3178C63DA00BEAD83 /* CPFloatVarI.h */,
 				5BBFE0A4178C63DA00BEAD83 /* CPFloatVarI.m */,
+				5B5AAA7E17905AAC0076C729 /* CPFloatConstraint.h */,
+				5B5AAA7F17905AAC0076C729 /* CPFloatConstraint.m */,
 			);
 			path = objcp;
 			sourceTree = "<group>";
@@ -8492,6 +8498,7 @@
 				5B93488D16554E6C00757F89 /* CPEvent.h in Headers */,
 				5BBFE0A5178C63DA00BEAD83 /* CPFloatVarI.h in Headers */,
 				5BBFE0A9178C981B00BEAD83 /* CPFloatDom.h in Headers */,
+				5B5AAA8017905AAC0076C729 /* CPFloatConstraint.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -11061,6 +11068,7 @@
 				5B93488C16554E6700757F89 /* CPEvent.m in Sources */,
 				5BBFE0A6178C63DA00BEAD83 /* CPFloatVarI.m in Sources */,
 				5BBFE0AA178C981B00BEAD83 /* CPFloatDom.m in Sources */,
+				5B5AAA8117905AAC0076C729 /* CPFloatConstraint.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

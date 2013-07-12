@@ -96,3 +96,12 @@ enum CPVarClass {
 -(ORStatus) updateMax:(ORFloat) newMax;
 -(ORStatus) updateInterval:(ORInterval)v;
 @end
+
+@protocol CPFloatVarArray <CPVarArray>
+-(id<CPFloatVar>) at: (ORInt) value;
+-(void) set: (id<CPFloatVar>) x at: (ORInt) value;
+-(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+

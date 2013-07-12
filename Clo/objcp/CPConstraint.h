@@ -79,6 +79,11 @@
 +(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
 @end
 
+@interface CPFactory (ORFloat)
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
++(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c;
+@end
+
 @interface CPSearchFactory : NSObject
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
 +(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;

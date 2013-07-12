@@ -26,6 +26,7 @@
 #import "CPLexConstraint.h"
 #import "CPBinPacking.h"
 #import "CPKnapsack.h"
+#import "CPFloatConstraint.h"
 
 @implementation CPFactory (Constraint)
 
@@ -289,7 +290,6 @@
    [[x tracker] trackMutable: o];
    return o;
 }
-
 +(id<ORConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b
 {
    id<ORConstraint> o = [[CPOrDC alloc] initCPOrDC:b equal:x or:y];
@@ -503,6 +503,21 @@
 +(id<ORConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r
 {
    id<ORConstraint> o = [[CPRestrictI alloc] initRestrict:x to:r];
+   [[x tracker] trackMutable:o];
+   return o;
+}
+@end
+
+@implementation CPFactory (ORFloat)
++(id<ORConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c
+{
+   id<ORConstraint> o = [[CPFloatSquareBC alloc] initCPFloatSquareBC:z equalSquare:x];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<ORConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
+{
+   id<ORConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }

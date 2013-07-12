@@ -605,7 +605,7 @@
    id<ORVar> _x;
    ORAnnotation _n;
 }
--(id)initORSquare:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n
+-(id)init:(id<ORVar>)z square:(id<ORVar>)x annotation:(ORAnnotation)n
 {
    self = [super initORConstraintI];
    _x = x;
@@ -638,6 +638,13 @@
 -(NSSet*)allVars
 {
    return [[[NSSet alloc] initWithObjects:_x,_z, nil] autorelease];
+}
+@end
+
+@implementation ORFloatSquare
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitFloatSquare:self];
 }
 @end
 

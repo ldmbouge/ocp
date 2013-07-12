@@ -360,6 +360,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
 }
+-(void) visitFloatSquare: (id<ORSquare>)cstr
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
+}
 -(void) visitMod: (id<ORMod>)cstr
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];

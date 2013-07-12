@@ -86,6 +86,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    hookupEvent((id)_engine, &_net._maxEvt, todo, c, p);
 }
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c
+{
+   hookupEvent((id)_engine, &_net._boundsEvt, todo, c, p);
+}
 -(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenBindDo:todo priority:HIGHEST_PRIO onBehalf:c];
@@ -97,6 +101,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
 {
    [self whenChangeMaxDo:todo priority:HIGHEST_PRIO onBehalf:c];
+}
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c
+{
+   [self whenChangeBoundsDo:todo priority:HIGHEST_PRIO onBehalf:c];
 }
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p
@@ -111,6 +119,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    hookupEvent((id)_engine, &_net._maxEvt, nil, c, p);
 }
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p
+{
+   hookupEvent((id)_engine, &_net._boundsEvt, nil, c, p);
+}
 -(void) whenBindPropagate: (CPCoreConstraint*) c
 {
    [self whenBindPropagate:c priority:HIGHEST_PRIO];
@@ -123,7 +135,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    [self whenChangeMaxPropagate:c priority:HIGHEST_PRIO];
 }
-
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c
+{
+   [self whenChangeBoundsPropagate:c priority:HIGHEST_PRIO];
+}
 
 -(ORStatus) bindEvt:(id<CPFDom>)sender
 {
@@ -140,6 +155,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    ORUInt k = 0;
    mList[k] = _net._minEvt._val;
    k += mList[k] != NULL;
+   mList[k] = _net._boundsEvt._val;
+   k += mList[k] != NULL;
    mList[k] = bound ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
    scheduleAC3(_engine,mList);
@@ -150,6 +167,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._maxEvt._val;
+   k += mList[k] != NULL;
+   mList[k] = _net._boundsEvt._val;
    k += mList[k] != NULL;
    mList[k] = bound ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;

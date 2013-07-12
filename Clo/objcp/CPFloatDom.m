@@ -103,7 +103,7 @@
          return ORSuspend;
       }break;
       case ORNone:
-         return ORSuspend;
+         return ORNoop;
    }
 }
 -(ORStatus) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x

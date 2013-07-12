@@ -242,6 +242,9 @@
 -(void) visitSquare:(id<ORSquare>)c
 {
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+}
 -(void) visitAbs: (id<ORAbs>)c
 {
 }
