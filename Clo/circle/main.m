@@ -29,7 +29,9 @@ int main(int argc, const char * argv[])
          id<CPProgram> cp = [args makeProgram:model];
          __block ORInt nbSol = 0;
          [cp solve:^{
-
+            NSLog(@"Starting...");
+            NSLog(@"X = %@",[cp gamma][x.getId]);
+            NSLog(@"Y = %@",[cp gamma][x.getId]);
             //[cp labelArrayFF:x];
             //[cp labelArrayFF:l];
             
@@ -37,7 +39,7 @@ int main(int argc, const char * argv[])
          id<ORCPSolution> sol = [[cp solutionPool] best];
          printf("x = [");
          for(ORInt i = x.low; i <= x.up; i++)
-            printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
+            printf("%f%c",[sol floatValue: x[i]],((i < x.up) ? ',' : ']'));
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];

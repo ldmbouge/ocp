@@ -86,4 +86,5 @@ typedef struct  {
 -(CPEngineI*) engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*)constraints;
+-(ORFloat)floatValue;
 @end

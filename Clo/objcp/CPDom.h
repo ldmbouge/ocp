@@ -55,6 +55,7 @@
 -(ORInterval) bounds;
 -(ORFloat) domwidth;
 -(ORBool) member:(ORFloat)v;
+-(NSString*)description;
 -(id) copy;
 -(void) restoreDomain:(id<CPFDom>)toRestore;
 -(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;

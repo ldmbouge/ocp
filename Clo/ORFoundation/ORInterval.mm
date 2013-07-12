@@ -29,6 +29,13 @@
 
 static int bigendian;
 
+ORInterval INF;
+ORInterval FLIP;
+ORInterval EPSILON;
+ORInterval ZERO;
+double pinf = 0;
+double ninf = 0;
+
 void ORIInit()
 {
    double MZ   = 0;

@@ -1201,8 +1201,7 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "no method floatValue available yet"];
-   // return [_gamma[x.getId] floatValue];
+   return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
 }
 -(ORBool) bound: (id<ORIntVar>) x
 {

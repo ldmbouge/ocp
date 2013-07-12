@@ -298,7 +298,7 @@
    ORFloat nub = max(lb*lb, ub*ub);
    if (_rv == nil)
       _rv = [ORFactory floatVar:_model low:nlb up:nub];
-   [_model addConstraint:[ORFactory square:_model var:oV equal:_rv annotation:_c]];
+   [_model addConstraint:[ORFactory floatSquare:_model var:oV equal:_rv annotation:_c]];
    [lT release];
 }
 -(void) visitExprSumI: (ORExprSumI*) e

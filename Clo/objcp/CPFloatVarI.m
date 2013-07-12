@@ -61,6 +61,16 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    NSMutableSet* rv = collectConstraints(&_net,[[NSMutableSet alloc] initWithCapacity:2]);
    return rv;
 }
+-(NSString*)description
+{
+   ORIReady();
+   double a,b;
+   ORIBounds([_dom bounds], &a, &b);
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"var<%d>=",_name];
+   [buf appendString:[_dom description]];
+   return buf;
+}
 -(void)setDelegate:(id<CPFloatVarNotifier>)delegate
 {}
 -(void) addVar:(CPFloatVarI*)var
@@ -203,6 +213,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 -(ORFloat) value
 {
    assert([_dom bound]);
+   return [_dom min];
+}
+-(ORFloat)floatValue
+{
    return [_dom min];
 }
 -(ORInterval) bounds

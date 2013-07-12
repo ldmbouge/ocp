@@ -14,12 +14,12 @@
 #pragma clang diagnostic ignored "-Wunused-variable"
 
 typedef __m128d ORInterval;
-static ORInterval INF;
-static ORInterval FLIP;
-static ORInterval EPSILON;
-static ORInterval ZERO;
-static double pinf = 0;
-static double ninf = 0;
+extern ORInterval INF;
+extern ORInterval FLIP;
+extern ORInterval EPSILON;
+extern ORInterval ZERO;
+extern double pinf;
+extern double ninf;
 
 #pragma clang diagnostic pop
 
