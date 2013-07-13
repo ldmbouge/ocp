@@ -257,7 +257,8 @@
 -(void) visitImply: (id<ORImply>)c
 {
 }
--(void) visitElementCst: (id<ORElementCst>)c {
+-(void) visitElementCst: (id<ORElementCst>)c
+{
 }
 -(void) visitElementVar: (id<ORElementVar>)c
 {

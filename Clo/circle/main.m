@@ -14,15 +14,6 @@
 #import <ORProgram/ORProgram.h>
 #import "ORCmdLineArgs.h"
 
-BOOL boundArray(id<CPProgram> cp,id<ORVarArray> ax)
-{
-   __block BOOL ab = YES;
-   [ax enumerateWith:^(id<ORFloatVar> ak, int k) {
-      ab = ab && [cp bound:ak];
-   }];
-   return ab;
-}
-
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
