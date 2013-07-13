@@ -39,3 +39,14 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPFloatINEquationBC : CPCoreConstraint {
+   id<CPFloatVarArray> _x;
+   id<ORFloatArray>    _coefs;
+   ORFloat             _c;
+}
+-(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
+-(ORStatus)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

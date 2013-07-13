@@ -123,6 +123,10 @@ static inline ORInterval ORISub(ORInterval a,ORInterval b)
 {
    return _mm_add_pd(a,ORIOpposite(b));
 }
+static inline ORInterval ORISubPointwise(ORInterval a,ORInterval b)
+{
+   return _mm_sub_pd(a,b);
+}
 static inline ORInterval ORIMul(ORInterval a,ORInterval b)
 {
    __m128d ma = _mm_shuffle_pd(a,a,1);
@@ -192,11 +196,11 @@ static inline ORInterval ORISqrt(ORInterval a)
       ra = _mm_max_pd(ra,_mm_set_pd(0.0,ninf));
       ORInterval rv;
       if (_mm_comieq_sd(sq, na))
-         rv = _mm_xor_pd(sq, FLIP);
+         rv = _mm_xor_pd(ra, FLIP);
       else {
          ORInterval ne = _mm_set_sd(-DBL_MIN);
-         ORInterval su = _mm_sub_sd(ne,sq);
-         rv = _mm_shuffle_pd(su, sq, _MM_SHUFFLE2(1, 0));
+         ORInterval su = _mm_sub_sd(ne,ra);
+         rv = _mm_shuffle_pd(su, ra, _MM_SHUFFLE2(1, 0));
       }
       ORInterval orv = _mm_shuffle_pd(rv,rv,1);
       ORInterval u   = _mm_min_pd(rv,orv);
@@ -214,11 +218,11 @@ static inline ORInterval ORIPSqrt(ORInterval a)
       ra = _mm_max_pd(ra,_mm_set_pd(0.0,ninf));
       ORInterval rv;
       if (_mm_comieq_sd(sq, na))
-         rv = _mm_xor_pd(sq, FLIP);
+         rv = _mm_xor_pd(ra, FLIP);
       else {
          ORInterval ne = _mm_set_sd(-DBL_MIN);
-         ORInterval su = _mm_sub_sd(ne,sq);
-         rv = _mm_shuffle_pd(su, sq, _MM_SHUFFLE2(1, 0));
+         ORInterval su = _mm_sub_sd(ne,ra);
+         rv = _mm_shuffle_pd(su, ra, _MM_SHUFFLE2(1, 0));
       }
       return rv;
    }

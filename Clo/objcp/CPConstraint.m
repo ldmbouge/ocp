@@ -521,8 +521,13 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<ORConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
+{
+   id<ORConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:coefs leqi:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 @end
-
 
 @implementation CPSearchFactory 
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(int) c

@@ -358,6 +358,14 @@
 {
    [[self worker] restrict: var to: S];
 }
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatLthen: var with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatGthen: var with: val];
+}
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [[self worker] repeat: body onRepeat: onRepeat];
@@ -494,7 +502,7 @@
 {
    return [(id<CPProgram>)[self worker] intValue: x];
 }
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound: x];
 }
@@ -517,6 +525,18 @@
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
    return [((id<CPProgram>)[self worker]) floatValue: x];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>)x
+{
+   return [[self worker] domwidth: x];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [[self worker] fmin:x];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [[self worker] fmax:x];
 }
 -(ORBool) boolValue: (id<ORIntVar>)x
 {

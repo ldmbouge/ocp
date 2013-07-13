@@ -41,9 +41,12 @@
 }
 -(ORStatus) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
-   if (newMin <= _min._val + TOLERANCE)
+   ORIReady();
+   ORInterval me = createORI2(_min._val, _max._val);
+   BOOL isb = ORIBound(me, TOLERANCE);
+   if (isb)
       return ORSuspend;
-   if (newMin > _max._val)
+   if (ORIEmpty(ORIInter(me, createORI1(newMin))))
       failNow();
    assignTRDouble(&_min, newMin, _trail);
    ORIReady();
@@ -55,9 +58,12 @@
 }
 -(ORStatus) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
-   if (newMax >= _max._val - TOLERANCE)
+   ORIReady();
+   ORInterval me = createORI2(_min._val, _max._val);
+   BOOL isb = ORIBound(me, TOLERANCE);
+   if (isb)
       return ORSuspend;
-   if (newMax < _min._val)
+   if (ORIEmpty(ORIInter(me, createORI1(newMax))))
       failNow();
    assignTRDouble(&_max, newMax, _trail);
    ORIReady();

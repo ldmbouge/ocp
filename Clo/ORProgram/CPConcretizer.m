@@ -845,6 +845,16 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void)visitFloatLinearLeq:(id<ORFloatLinearLeq>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
+      id<ORFloatArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leqi:[cstr cst]];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr

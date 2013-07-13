@@ -91,6 +91,7 @@ enum CPVarClass {
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
+-(ORFloat) domwidth;
 -(ORStatus) bind:(ORFloat) val;
 -(ORStatus) updateMin:(ORFloat) newMin;
 -(ORStatus) updateMax:(ORFloat) newMax;

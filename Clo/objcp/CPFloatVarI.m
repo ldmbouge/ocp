@@ -231,4 +231,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return [_dom bound];
 }
+-(ORFloat) domwidth
+{
+   return [_dom domwidth];
+}
+
 @end
