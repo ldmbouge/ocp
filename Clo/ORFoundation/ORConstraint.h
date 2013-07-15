@@ -20,6 +20,7 @@
 @protocol ORVar;
 @protocol ORIntVar;
 @protocol ORBitVar;
+@protocol ORFloatVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
@@ -68,6 +69,11 @@ enum ORGroupType {
 @protocol  OREqualc <ORConstraint>
 -(id<ORIntVar>) left;
 -(ORInt) cst;
+@end
+
+@protocol  ORFloatEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
 @end
 
 @protocol  ORNEqualc <ORConstraint>

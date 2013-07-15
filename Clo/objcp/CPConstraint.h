@@ -81,8 +81,9 @@
 
 @interface CPFactory (ORFloat)
 +(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
-+(id<ORConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
 +(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c;
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c;
 @end
 
 @interface CPSearchFactory : NSObject

@@ -183,6 +183,41 @@
 }
 @end
 
+@implementation ORFloatEqualc {
+   id<ORFloatVar> _x;
+   ORFloat        _c;
+}
+-(ORFloatEqualc*)init:(id<ORFloatVar>)x eqi:(ORFloat)c
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _c = c;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == %f)",[self class],self,_x,_c];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitFloatEqualc:self];
+}
+-(id<ORFloatVar>) left
+{
+   return _x;
+}
+-(ORFloat) cst
+{
+   return _c;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+@end
+
 @implementation ORNEqualc {
    id<ORIntVar> _x;
    ORInt        _c;

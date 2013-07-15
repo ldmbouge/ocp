@@ -48,6 +48,12 @@
 -(ORInt) cst;
 @end
 
+@interface ORFloatEqualc : ORConstraintI<ORFloatEqualc>
+-(OREqualc*)init:(id<ORFloatVar>)x eqi:(ORFloat)c;
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @interface ORNEqualc : ORConstraintI<ORNEqualc>
 -(ORNEqualc*)initORNEqualc:(id<ORIntVar>)x neqi:(ORInt)c;
 -(id<ORIntVar>) left;

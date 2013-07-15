@@ -50,3 +50,13 @@
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
+
+@interface CPFloatEqualc : CPCoreConstraint {
+   CPFloatVarI* _x;
+   ORFloat      _c;
+}
+-(id) init:(id)x and:(ORFloat)c;
+-(ORStatus)post;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+@end

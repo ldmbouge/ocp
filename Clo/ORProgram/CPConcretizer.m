@@ -381,7 +381,17 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
 }
 
-
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORInt cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatEqualc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {

@@ -64,7 +64,7 @@
 -(void) visitIntegerI: (id<ORInteger>) e
 {
    if (_eqto) {
-      [_model addConstraint:[ORFactory equalc:_model var:_eqto to:[e value]]];
+      [_model addConstraint:[ORFactory floatEqualc:_model var:_eqto to:[e value]]];
       [_terms addIndependent:[e value]];
       _eqto = nil;
    } else
@@ -262,13 +262,13 @@
 {
    if (!_rv)
       _rv = [ORFactory floatVar:_model low:[e value] up:[e value]];
-   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e value]]];
+   [_model addConstraint:[ORFactory floatEqualc:_model var:_rv to:[e value]]];
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
    if (!_rv)
       _rv = [ORFactory floatVar:_model low:[e floatValue] up:[e floatValue]];
-   [_model addConstraint:[ORFactory equalc:_model var:_rv to:[e floatValue]]];
+   [_model addConstraint:[ORFactory floatEqualc:_model var:_rv to:[e floatValue]]];
 }
 -(void) visitExprPlusI: (ORExprPlusI*) e
 {

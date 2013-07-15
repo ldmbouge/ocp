@@ -211,3 +211,30 @@
 }
 @end
 
+@implementation CPFloatEqualc
+-(id) init:(CPFloatVarI*)x and:(ORFloat)c
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _c = c;
+   return self;
+   
+}
+-(ORStatus)post
+{
+   return [_x bind:_c];
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,nil] autorelease];   
+}
+-(ORUInt)nbUVars
+{
+   return ![_x bound];   
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<x[%d] == %f>",[_x getId],_c];
+}
+@end
+

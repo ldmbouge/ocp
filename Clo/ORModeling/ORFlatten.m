@@ -365,6 +365,10 @@
 {
    _result = cstr;
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = c;
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
    _result = c;

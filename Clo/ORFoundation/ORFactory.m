@@ -864,22 +864,6 @@
    [model trackObject:o];
    return o;
 }
-
-
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
-{
-   id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
-   [model trackObject:o];
-   return o;
-}
-+(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
-{
-   id<ORConstraint> o = [[ORFloatLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
-   [model trackObject:o];
-   return o;
-}
-
-
 +(id<ORConstraint>) model:(id<ORTracker>)model boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b
 {
    id<ORConstraint> o = [[OROr alloc] initOROr:b eq:x or:y];
@@ -925,7 +909,7 @@
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(int) c
++(id<ORConstraint>) equalc:(id<ORTracker>)model  var: (id<ORIntVar>) x to:(ORInt) c
 {
    id<ORConstraint> o = [[OREqualc alloc] initOREqualc:x eqi:c];
    [model trackObject:o];
@@ -998,13 +982,6 @@
    [model trackObject:o];
    return o;
 }
-+(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORFloatVar>)x equal:(id<ORFloatVar>)res annotation:(ORAnnotation)n
-{
-   id<ORConstraint> o = [[ORFloatSquare alloc] init:res square:x annotation:n];
-   [model trackObject:o];
-   return o;
-}
-
 +(id<ORConstraint>) mod:(id<ORTracker>)model var:(id<ORIntVar>)x mod:(id<ORIntVar>)y equal:(id<ORIntVar>)z
 {
    id<ORConstraint> o = [[ORMod alloc] initORMod:x mod:y equal:z];
@@ -1180,6 +1157,33 @@
 }
 @end
 
+@implementation ORFactory (ORFloat)
+
++(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORFloatVar>)x equal:(id<ORFloatVar>)res annotation:(ORAnnotation)n
+{
+   id<ORConstraint> o = [[ORFloatSquare alloc] init:res square:x annotation:n];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  eq: (ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatLinearEq alloc] initFloatLinearEq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatSum: (id<ORTracker>) model array: (id<ORVarArray>) x coef: (id<ORFloatArray>) coef  leq: (ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatLinearLeq alloc] initFloatLinearLeq: x coef: coef cst: c];
+   [model trackObject:o];
+   return o;
+}
++(id<ORConstraint>) floatEqualc:(id<ORTracker>)model  var: (id<ORFloatVar>) x to:(ORFloat) c
+{
+   id<ORConstraint> o = [[ORFloatEqualc alloc] init:x eqi:c];
+   [model trackObject:o];
+   return o;
+}
+@end
 
 @implementation ORFactory (BV)
 +(id<ORConstraint>) bit:(id<ORBitVar>)x eq:(id<ORBitVar>)y

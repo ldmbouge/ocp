@@ -63,6 +63,7 @@
 -(void) visitMaximizeLinear: (id<ORObjectiveFunctionLinear>) o;
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) o;
 
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c;
 -(void) visitEqualc: (id<OREqualc>)c;
 -(void) visitNEqualc: (id<ORNEqualc>)c;
 -(void) visitLEqualc: (id<ORLEqualc>)c;

@@ -354,8 +354,8 @@
 +(id<ORConstraint>) equalc: (id<CPIntVar>) x to:(int) c
 {
    id<ORConstraint> o = [[CPEqualc alloc] initCPEqualc:x and:c];
-  [[x tracker] trackMutable:o];
-   return o;      
+   [[x tracker] trackMutable:o];
+   return o;
 }
 +(id<ORConstraint>) notEqual:(id<CPIntVar>)x to:(id<CPIntVar>)y plus:(int)c
 {
@@ -509,21 +509,27 @@
 @end
 
 @implementation CPFactory (ORFloat)
-+(id<ORConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c
++(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c
 {
-   id<ORConstraint> o = [[CPFloatSquareBC alloc] initCPFloatSquareBC:z equalSquare:x];
+   id<CPConstraint> o = [[CPFloatSquareBC alloc] initCPFloatSquareBC:z equalSquare:x];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<ORConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c
 {
-   id<ORConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];
+   id<CPConstraint> o = [[CPFloatEquationBC alloc] init:x coef:coefs eqi:c];
    [[x tracker] trackMutable:o];
    return o;
 }
-+(id<ORConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c
 {
-   id<ORConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:coefs leqi:c];
+   id<CPConstraint> o = [[CPFloatINEquationBC alloc] init:x coef:coefs leqi:c];
+   [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c
+{
+   id<CPConstraint> o = [[CPFloatEqualc alloc] init:x and:c];
    [[x tracker] trackMutable:o];
    return o;
 }

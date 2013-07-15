@@ -209,6 +209,9 @@
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr
 {
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
 }
