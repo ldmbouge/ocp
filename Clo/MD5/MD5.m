@@ -37,7 +37,7 @@
    _messageLength = [message length]*8;
    _buffer = malloc(((([message length]/4)+1)*4) *sizeof(uint)); //ensure buffer is on 32bit boundary
    [message getBytes:_buffer length:[message length]];
-   NSLog(@"%s\n",(char*)_buffer);
+   NSLog(@"Message:[%s]\n",(char*)_buffer);
    [fm dealloc];
    return true;
 }
@@ -200,14 +200,15 @@
          NSLog(@"%@\n",bitVars[j]);
    }
    
-   id* gamma = [cp gamma];
+   __block id* gamma = [cp gamma];
 
    id<ORIdArray> o = [ORFactory idArray:[cp engine] range:[[ORIntRangeI alloc] initORIntRangeI:0 up:15]];
    for(ORInt k=0;k <= 15;k++)
       [o set:gamma[bitVars[k].getId] at:k];
 
-//   id<CPHeuristic> h = [cp createBitVarABS:(id<CPBitVarArray>)o];
-   id<CPHeuristic> h = [cp createBitVarABS];
+   id<CPHeuristic> h = [cp createBitVarABS:(id<CPBitVarArray>)o];
+//   id<CPHeuristic> h = [cp createBitVarABS];
+//   id<CPHeuristic> h = [cp createBitVarFF:(id<CPBitVarArray>)o];
 //   id<CPHeuristic> h = [cp createBitVarFF];
    [cp solve: ^{
       NSLog(@"Search");
@@ -227,7 +228,7 @@
       clock_t searchFinish = clock();
 
          for(int j=0;j<16;j++){
-            NSLog(@"%@\n",bitVars[j]);
+            NSLog(@"%@\n",gamma[bitVars[j].getId]);
 
          }
 

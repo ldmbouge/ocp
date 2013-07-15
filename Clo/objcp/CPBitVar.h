@@ -27,6 +27,7 @@
 -(ORULong)  numPatterns;
 -(ORUInt) msFreeBit;
 -(ORUInt) lsFreeBit;
+-(ORUInt) randFreeBit;
 -(ORBool) isFree:(ORUInt)pos;
 -(ORStatus) remove:(ORUInt)val;
 //-(id<CPBitVar>) dereference;

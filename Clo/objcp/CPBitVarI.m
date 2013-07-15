@@ -282,7 +282,9 @@ static NSMutableSet* collectConstraints(CPBitEventNetwork* net,NSMutableSet* rv)
     return [_dom member:v];
 }
 -(ORBool) isFree:(ORUInt)pos{
-   return [_dom isFree:pos];
+   ORBool temp = [_dom isFree:pos];
+   return temp;
+//   return [_dom isFree:pos];
 }
 -(NSString*)stringValue
 {

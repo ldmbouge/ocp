@@ -18,7 +18,7 @@
 -(void)initHeuristic:(NSArray*)mvar concrete:(NSArray*)cvar oneSol:(ORBool)oneSol;
 -(void)initInternal:(id<ORVarArray>)t and:(id<ORVarArray>)cv;
 -(void) restart;
--(id<ORBitVarArray>) allIntVars;
+-(id<ORBitVarArray>) allBitVars;
 -(id<CPProgram>)solver;
 -(ORBool)oneSol;
 @end

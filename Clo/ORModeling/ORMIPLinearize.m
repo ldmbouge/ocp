@@ -160,6 +160,10 @@
 {
    _result = cstr;
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   _result = cstr;
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
    _result = cstr;
@@ -247,6 +251,14 @@
    _result = c;
 }
 -(void) visitModc: (id<ORModc>)c
+{
+   _result = c;
+}
+-(void) visitMin:(id<ORMin>)c
+{
+   _result = c;
+}
+-(void) visitMax:(id<ORMax>)c
 {
    _result = c;
 }

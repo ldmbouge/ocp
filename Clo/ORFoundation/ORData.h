@@ -27,6 +27,7 @@ typedef enum {
 @protocol ORIntRange;
 @protocol ORVisitor;
 @protocol ORASolver;
+@protocol ORIntSet;
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
@@ -138,6 +139,18 @@ typedef enum {
 -(void)insertTuple:(ORInt*)t;
 -(void) print;
 -(void) close;
+@end
+
+typedef ORInt ORTransition[3];
+
+#define SIZETF(t) (sizeof((t)) / sizeof(ORTransition))
+
+@protocol ORAutomaton <ORObject>
+-(id<ORTable>)transition;
+-(ORInt) initial;
+-(id<ORIntSet>)final;
+-(id<ORIntRange>)alphabet;
+-(id<ORIntRange>)states;
 @end
 
 @protocol ORBindingArray <NSObject>

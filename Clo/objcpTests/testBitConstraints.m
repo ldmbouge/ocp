@@ -1049,11 +1049,16 @@ char *int2bin(int a, char *buffer, int buf_size) {
          NSLog(@"y    = %@\n", y);
          NSLog(@"z    = %@\n", z);
          NSLog(@"cout = %@\n", co);
-         [cp3 labelUpFromLSB:x];
-         [cp3 labelUpFromLSB:y];
-         [cp3 labelUpFromLSB:z];
-         [cp3 labelUpFromLSB:cin];
-         [cp3 labelUpFromLSB:co];
+//         [cp3 labelUpFromLSB:x];
+//         [cp3 labelUpFromLSB:y];
+//         [cp3 labelUpFromLSB:z];
+//         [cp3 labelUpFromLSB:cin];
+//         [cp3 labelUpFromLSB:co];
+         [cp3 solve: ^{
+            id<CPHeuristic> h = [cp3 createBitVarABS];
+            [cp3 labelBitVarHeuristic:h];
+         }];
+         [cp3 release];
          NSLog(@"Solution Found:");
          NSLog(@"cin  = %@\n", cin);
          NSLog(@"x    = %@\n", x);

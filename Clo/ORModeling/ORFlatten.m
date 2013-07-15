@@ -43,6 +43,7 @@
 -(void) visitFail:(id<ORFail>)cstr  {}
 -(void) visitRestrict:(id<ORRestrict>)cstr  {}
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr  {}
+-(void) visitRegular:(id<ORRegular>) cstr {}
 -(void) visitCardinality: (id<ORCardinality>) cstr  {}
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr  {}
 -(void) visitTableConstraint: (id<ORTableConstraint>) cstr  {}
@@ -74,6 +75,8 @@
 -(void) visitSquare:(id<ORSquare>)c {}
 -(void) visitMod: (id<ORMod>)c {}
 -(void) visitModc: (id<ORModc>)c {}
+-(void) visitMin:(id<ORMin>)c  {}
+-(void) visitMax:(id<ORMax>)c  {}
 -(void) visitAbs: (id<ORAbs>)c  {}
 -(void) visitOr: (id<OROr>)c  {}
 -(void) visitAnd:( id<ORAnd>)c  {}
@@ -100,8 +103,6 @@
 -(void) visitLinearEq: (id<ORLinearEq>) c {}
 -(void) visitFloatLinearLeq: (id<ORFloatLinearLeq>) c {}
 -(void) visitFloatLinearEq: (id<ORFloatLinearEq>) c {}
-
-
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)c {}
 -(void) visitBitOr:(id<ORBitOr>)c {}
@@ -112,7 +113,6 @@
 -(void) visitBitRotateL:(id<ORBitRotateL>)c {}
 -(void) visitBitSum:(id<ORBitSum>)c {}
 -(void) visitBitIf:(id<ORBitIf>)c {}
-
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e  {}
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e  {}
@@ -129,6 +129,8 @@
 -(void) visitExprProdI: (id<ORExpr>) e  {}
 -(void) visitExprAbsI:(id<ORExpr>) e  {}
 -(void) visitExprModI:(id<ORExpr>)e   {}
+-(void) visitExprMinI: (id<ORExpr>) e {}
+-(void) visitExprMaxI: (id<ORExpr>) e {}
 -(void) visitExprNegateI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}
@@ -136,6 +138,8 @@
 -(void) visitExprImplyI: (id<ORExpr>) e  {}
 -(void) visitExprAggOrI: (id<ORExpr>) e  {}
 -(void) visitExprAggAndI: (id<ORExpr>) e  {}
+-(void) visitExprAggMinI: (id<ORExpr>) e  {}
+-(void) visitExprAggMaxI: (id<ORExpr>) e  {}
 -(void) visitExprVarSubI: (id<ORExpr>) e  {}
 @end
 
@@ -280,6 +284,23 @@
 {
    _result = cstr;
 }
+-(void) visitRegular:(id<ORRegular>) cstr
+{
+   id<ORIntRange> S = [[cstr automaton] states];
+   id<ORIntRange> R = [[cstr array] range];
+   id<ORIntRange> E = [ORFactory intRange:_into low:R.low up:R.up+1];
+   id<ORTable>    T = [[cstr automaton] transition];
+   id<ORIntSet>   F = [[cstr automaton] final];
+   id<ORIntVarArray> x = [cstr array];
+   id<ORIntVarArray> q = [ORFactory intVarArray:_into range:E domain:S];
+   [_into addConstraint:[ORFactory equalc:_into var:q[R.low] to:S.low]];
+   for(ORInt k=R.low;k <= R.up;k++)
+      [_into addConstraint:[ORFactory tableConstraint:T on:q[k] :x[k] :q[k+1]]];
+   [S enumerateWithBlock:^(ORInt s) {
+      if (![F member:s])
+         [_into addConstraint:[ORFactory notEqualc:_into var:q[R.up+1] to:s]];
+   }];
+}
 -(void) visitCardinality: (id<ORCardinality>) cstr
 {
    _result = cstr;
@@ -385,6 +406,14 @@
    _result = c;
 }
 -(void) visitModc: (id<ORModc>)c
+{
+   _result = c;
+}
+-(void) visitMin:(id<ORMin>)c
+{
+   _result = c;
+}
+-(void) visitMax:(id<ORMax>)c
 {
    _result = c;
 }

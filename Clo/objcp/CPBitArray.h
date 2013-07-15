@@ -55,8 +55,8 @@
 -(int*)            getPtr;
 -(unsigned int*)   getUSPtr;
 -(unsigned int)    getLength;
--(ORBool)            isSigned;
--(ORBool)            getOverflow;
+-(bool)            isSigned;
+-(bool)            getOverflow;
 
 -(NSString*) description;
 -(NSString*) intToBinString:(int) integer;

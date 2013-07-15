@@ -19,44 +19,37 @@
 @implementation CPAllDifferentDC
 {
    id<CPIntVarArray> _x;
-   CPIntVarI**     _var;
-   UBType*         _member;
-   ORInt           _varSize;
-   ORInt*          _match;
-   ORInt*          _varSeen;
+   CPIntVarI**       _var;
+   ORInt             _varSize;
+   ORInt*            _varMatch;
+   ORInt*            _varMagic;
    
-   ORInt           _min;
-   ORInt           _max;
-   ORInt           _valSize;
-   ORInt*          _valMatch;
-   ORInt           _sizeMatching;
-   ORInt*          _valSeen;
-   ORInt           _magic;
+   ORInt             _min;
+   ORInt             _max;
+   ORInt             _valSize;
+   ORInt*            _valMatch;
+   ORInt*            _valMagic;
+   ORInt             _magic;
    
-   ORInt          _dfs;
-   ORInt          _component;
+   ORInt             _dfs;
+   ORInt             _component;
+     
+   ORInt*            _varComponent;
+   ORInt*            _varDfs;
+   ORInt*            _varHigh;
    
-   ORInt*         _varComponent;
-   ORInt*         _varDfs;
-   ORInt*         _varHigh;
+   ORInt*            _valComponent;
+   ORInt*            _valDfs;
+   ORInt*            _valHigh;
    
-   ORInt*         _valComponent;
-   ORInt*         _valDfs;
-   ORInt*         _valHigh;
+   ORInt*            _stack;
+   ORInt*            _isVal;
+   ORInt             _top;
    
-   ORInt*         _stack;
-   ORInt*         _type;
-   ORInt          _top;
-   
-   bool           _posted;
+   bool              _posted;
 }
-static bool findMaximalMatching(CPAllDifferentDC* ad);
-static bool findAlternatingPath(CPAllDifferentDC* ad,ORInt i);
-static bool findAlternatingPathValue(CPAllDifferentDC* ad,ORInt v);
-static void initSCC(CPAllDifferentDC* ad);
-static void findSCC(CPAllDifferentDC* ad);
-static void findSCCvar(CPAllDifferentDC* ad,ORInt k);
-static void findSCCval(CPAllDifferentDC* ad,ORInt k);
+
+static bool maximalMatching(CPAllDifferentDC* ad);
 static void prune(CPAllDifferentDC* ad);
 
 -(void) initInstanceVariables 
@@ -77,27 +70,30 @@ static void prune(CPAllDifferentDC* ad);
 -(void) dealloc
 {
 //   NSLog(@"AllDifferent dealloc called ...");
-    if (_posted) {
-        free(_var);
-        _valMatch += _min;
-        free(_match);
-        free(_valMatch);
-        free(_varSeen);
-        _valSeen += _min;
-        free(_valSeen);
-        _valComponent += _min;
-        _valDfs += _min;
-        _valHigh += _min;
-        free(_valComponent);
-        free(_valDfs);
-        free(_valHigh);
-        free(_varComponent);
-        free(_varDfs);
-        free(_varHigh);
-        free(_stack);
-        free(_type);
-        [super dealloc];
-    }
+   if (_posted) {
+      free(_var);
+      free(_varMatch);
+      free(_varMagic);
+      free(_varComponent);
+      free(_varDfs);
+      free(_varHigh);
+
+      _valMatch += _min;
+      _valMagic += _min;
+      _valComponent += _min;
+      _valDfs += _min;
+      _valHigh += _min;
+ 
+      free(_valMatch);
+      free(_valMagic);
+      free(_valComponent);
+      free(_valDfs);
+      free(_valHigh);
+      
+      free(_stack);
+      free(_isVal);
+   }
+   [super dealloc];
 }
 
 -(NSSet*) allVars
@@ -147,331 +143,316 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
    return ORSuspend;
 }
 
-// post
 -(ORStatus) post
 {
-    if (_posted)
-        return ORSuspend;
-    _posted = true;
-    
-    ORInt low = [_x low];
-    ORInt up = [_x up];
-    _varSize = (up - low + 1);
-    _var = malloc(_varSize * sizeof(CPIntVarI*));
-    for(ORInt i = 0; i < _varSize; i++) 
-        _var[i] = (CPIntVarI*) [_x at: low + i];
+   if (_posted)
+      return ORSuspend;
+   _posted = true;
+   
+   [self allocate];
+   
+   for(ORInt k = 0; k < _varSize; k++)
+      if ([_var[k] bound])
+         removeOnBind(self,k);
+   [self initMatching];
 
-    for(ORInt i = 0; i < _varSize; i++) 
-        if ([_var[i] domsize] == 1) {
-           removeOnBind(self,i);
-        }
-        else 
-           [_var[i] whenBindDo: ^{ removeOnBind(self,i);} onBehalf:self];
-    
-    [self findValueRange];
-    [self initMatching];
-    [self findInitialMatching];
-    if (!findMaximalMatching(self))
-       failNow();
-    [self allocateSCC];
-    prune(self);
-    for(ORInt k = 0 ; k < _varSize; k++)
-        if (![_var[k] bound])
-            [_var[k] whenChangePropagate: self];
-    return ORSuspend;
+   [self propagate];
+
+   for(ORInt k = 0 ; k < _varSize; k++)
+      if (![_var[k] bound]) {
+         [_var[k] whenBindDo: ^{ removeOnBind(self,k);} onBehalf:self];
+         [_var[k] whenChangePropagate: self];
+      }
+   
+   return ORSuspend;
 }
--(void) findValueRange
+
+-(void) allocate
 {
-    _min = MAXINT;
-    _max = -MAXINT;
-    for(ORInt i = 0; i < _varSize; i++) {
-        ORInt m = [_var[i] min];
-        ORInt M = [_var[i] max];
-        if (m < _min)
-            _min = m;
-        if (M > _max)
-            _max = M;
-    }
-    if (_max == MAXINT)
-        @throw [[ORExecutionError alloc] initORExecutionError: "AllDifferent constraint posted on variable with no or very large domain"]; 
-    _valMatch = (ORInt*) malloc((_max-_min + 1)*sizeof(ORInt));
-    _valMatch -= _min;
-    for(ORInt k = _min; k <= _max; k++)
-        _valMatch[k] = MAXINT;
-    _valSize = _max - _min + 1; 
+   ORInt low = [_x low];
+   _varSize = ([_x up] - low + 1);
+   _var = malloc(_varSize * sizeof(CPIntVarI*));
+   for(ORInt k = 0; k < _varSize; k++)
+      _var[k] = (CPIntVarI*) [_x at: low + k];
+   
+   _min = MAXINT;
+   _max = -MAXINT;
+   for(ORInt k = 0; k < _varSize; k++) {
+      ORBounds b = bounds(_var[k]);
+      if (b.min < _min)
+         _min = b.min;
+      if (b.max > _max)
+         _max = b.max;
+   }
+   _valSize = _max - _min + 1;
+   if (_max == MAXINT)
+      @throw [[ORExecutionError alloc] initORExecutionError: "AllDifferent constraint posted on variable with no or very large domain"];
+
+   _varMatch = (ORInt*) malloc(sizeof(ORInt) * _varSize);
+   _varMagic = (ORInt*) malloc(sizeof(ORInt) * _varSize);
+   _varComponent = malloc(sizeof(ORInt)*_varSize);
+   _varDfs = malloc(sizeof(ORInt)*_varSize);
+   _varHigh = malloc(sizeof(ORInt)*_varSize);
+   
+   _valMatch = (ORInt*) malloc(sizeof(ORInt)*_valSize);
+   _valMagic = (ORInt*) malloc(sizeof(ORInt) * _valSize);
+   _valComponent = malloc(sizeof(ORInt)*_valSize);
+   _valDfs = malloc(sizeof(ORInt)*_valSize);
+   _valHigh = malloc(sizeof(ORInt)*_valSize);
+   
+   _valMatch -= _min;
+   _valMagic -= _min;
+   _valComponent -= _min;
+   _valDfs -= _min;
+   _valHigh -= _min;
+   
+   _stack = malloc(sizeof(ORInt)*(_varSize + _valSize));
+   _isVal = malloc(sizeof(ORInt)*(_varSize + _valSize));
 }
+
 -(void) initMatching
 {
-    _magic = 0;
-    _match = (ORInt*) malloc(sizeof(ORInt) * _varSize);
-    for(ORInt k = 0 ; k < _varSize; k++)
-        _match[k] = MAXINT; 
-    
-    _varSeen = (ORInt*) malloc(sizeof(ORInt) * _varSize);
-    for(ORInt k = 0 ; k < _varSize; k++)
-        _varSeen[k] = 0;
-    
-    _valSeen = (ORInt*) malloc(sizeof(ORInt) * _valSize);
-    _valSeen -= _min;
-    for(ORInt k = _min ; k <= _max; k++)
-        _valSeen[k] = 0;
-}
--(void) findInitialMatching
-{
-    _sizeMatching = 0;
-    for(ORInt k = 0; k < _varSize; k++) {
-        ORInt mx = [_var[k] min];
-        ORInt Mx = [_var[k] max];
-        for(ORInt i = mx; i <= Mx; i++)
-            if (_valMatch[i] == MAXINT)
-                if ([_var[k] member: i]) {
-                    _match[k] = i;
-                    _valMatch[i] = k;
-                    _sizeMatching++;
-                    break;
-                }
-    }
-}
-static bool findAlternatingPath(CPAllDifferentDC* ad,ORInt i)
-{
-    ORInt* _varSeen = ad->_varSeen;
-    ORInt* _valMatch = ad->_valMatch;
-    ORInt* _match = ad->_match;
-    CPIntVarI** _var = ad->_var;
-    if (_varSeen[i] != ad->_magic) {
-        _varSeen[i] = ad->_magic;
-        CPIntVarI* x = _var[i];
-       ORInt mx = minDom(x);
-       ORInt Mx = maxDom(x);
-        for(ORInt v = mx; v <= Mx; v++) {
-            if (_match[i] != v) {
-               if (memberBitDom(x, v)) {
-                    if (findAlternatingPathValue(ad,v)) {
-                        _match[i] = v;
-                        _valMatch[v] = i;
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-    return false;
-}
-
-static bool findAlternatingPathValue(CPAllDifferentDC* ad,ORInt v)
-{
-    if (ad->_valSeen[v] != ad->_magic) {
-        ad->_valSeen[v] = ad->_magic;
-        if (ad->_valMatch[v] == MAXINT)
-            return true;
-        if (findAlternatingPath(ad,ad->_valMatch[v]))
-            return true;
-    }
-    return false;
-}
-static bool findMaximalMatching(CPAllDifferentDC* ad)
-{
-    ORInt* _match = ad->_match;
-    ORInt _varSize = ad->_varSize;
-    if (ad->_sizeMatching < _varSize) {
-        for(ORInt k = 0; k < _varSize; k++) {
-            if (_match[k] == MAXINT) {
-                ad->_magic++;
-                if (!findAlternatingPath(ad,k))
-                    return false;
-                ad->_sizeMatching++;
-            }
-        }
-    }
-    return true;
-}
--(void) allocateSCC
-{
-    _varComponent = malloc(sizeof(ORInt)*_varSize*2);
-    _varDfs = malloc(sizeof(ORInt)*_varSize*2);
-    _varHigh = malloc(sizeof(ORInt)*_varSize*2);    
-
-    _valComponent = malloc(sizeof(ORInt)*_valSize);
-    _valDfs = malloc(sizeof(ORInt)*_valSize*2);
-    _valHigh = malloc(sizeof(ORInt)*_valSize*2);
-    _valComponent -= _min;
-    _valDfs -= _min;
-    _valHigh -= _min;
-    
-    _stack = malloc(sizeof(ORInt)*(_varSize + _valSize)*2);
-    _type = malloc(sizeof(ORInt)*(_varSize + _valSize)*2);   
-}
-
-static void initSCC(CPAllDifferentDC* ad)
-{
-    for(ORInt k = 0 ; k < ad->_varSize; k++) {
-        ad->_varComponent[k] = 0;
-        ad->_varDfs[k] = 0;
-        ad->_varHigh[k] = 0;
-    }
-    for(ORInt k = ad->_min; k <= ad->_max; k++) {
-        ad->_valComponent[k] = 0;
-        ad->_valDfs[k] = 0;
-        ad->_valHigh[k] = 0;
-    }
-    ad->_top = 0;
-    ad->_dfs = ad->_varSize + ad->_valSize;
-    ad->_component = 0; 
-}
-
-static void findSCC(CPAllDifferentDC* ad)
-{
-    initSCC(ad);
-    for(ORInt k = 0; k < ad->_varSize; k++) 
-        if (!ad->_varDfs[k])
-            findSCCvar(ad,k);
-}
-
-static void findSCCvar(CPAllDifferentDC* ad,ORInt k)
-{
-   ORInt* _varDfs = ad->_varDfs;
-   ORInt* _varHigh = ad->_varHigh;
-   ORInt* _stack = ad->_stack;
-   ORInt* _type = ad->_type;
-   ORInt* _valHigh = ad->_valHigh;
+   _magic = 0;
+   for(ORInt k = 0 ; k < _varSize; k++) {
+      _varMatch[k] = MAXINT;
+      _varMagic[k] = 0;
+   }
+   for(ORInt k = _min; k <= _max; k++) {
+      _valMatch[k] = MAXINT;
+      _valMagic[k] = 0;
+   }
    
-   _varDfs[k] = ad->_dfs--;
-   _varHigh[k] = _varDfs[k];
-   _stack[ad->_top] = k;
-   _type[ad->_top] = 0;
-   ad->_top++;
+   for(ORInt k = 0; k < _varSize; k++) {
+      ORBounds b = bounds(_var[k]);
+      for(ORInt i = b.min; i <= b.max; i++)
+         if (_valMatch[i] == MAXINT)
+            if ([_var[k] member: i]) {
+               _varMatch[k] = i;
+               _valMatch[i] = k;
+               break;
+            }
+   }
+}
+
+static bool alternatingPath(CPAllDifferentDC* ad,ORInt i)
+{
+   ORInt* _varMagic = ad->_varMagic;
+   ORInt* _valMagic = ad->_valMagic;
+   ORInt* _valMatch = ad->_valMatch;
+   ORInt* _varMatch = ad->_varMatch;
+   CPIntVarI** _var = ad->_var;
+   
+   if (_varMagic[i] != ad->_magic) {
+      _varMagic[i] = ad->_magic;
+      CPIntVarI* x = _var[i];
+      ORBounds b = bounds(x);
+      ORInt _magic = ad->_magic;
+      for(ORInt w = b.min; w <= b.max; w++)
+         if (_varMatch[i] != w && _valMagic[w] != _magic && memberBitDom(x,w)) {
+            _valMagic[w] = _magic;
+            if (_valMatch[w] == MAXINT || alternatingPath(ad,_valMatch[w])) {
+               _varMatch[i] = w;
+               _valMatch[w] = i;
+               return true;
+            }
+         }
+   }
+   return false;
+}
+
+static bool maximalMatching(CPAllDifferentDC* ad)
+{
+   ORInt* _varMatch = ad->_varMatch;
+   ORInt _varSize = ad->_varSize;
+   for(ORInt k = 0; k < _varSize; k++) {
+      if (_varMatch[k] == MAXINT) {
+         ad->_magic++;
+         if (!alternatingPath(ad,k))
+            return false;
+      }
+   }
+   return true;
+}
+
+static BOOL isFeasible(CPAllDifferentDC* ad)
+{
+   // I may not have a matching due to earlier failures; the data structures are not trailed
+   ORInt* varMatch = ad->_varMatch;
+   ORInt* valMatch = ad->_valMatch;
+   BOOL needMatching = false;
+   for(ORInt k = 0; k < ad->_varSize; k++) {
+      if (varMatch[k] != MAXINT) {
+         if (!memberDom(ad->_var[k], varMatch[k])) {
+            valMatch[varMatch[k]] = MAXINT;
+            varMatch[k] = MAXINT;
+            needMatching = true;
+         }
+      }
+      else
+         needMatching = true;
+   }
+   if (needMatching)
+      return maximalMatching(ad);
+   else
+      return TRUE;
+}
+
+static void SCC(CPAllDifferentDC* ad)
+{
+   for(ORInt v = 0 ; v < ad->_varSize; v++) {
+      ad->_varComponent[v] = 0;
+      ad->_varDfs[v] = 0;
+   }
+   for(ORInt w = ad->_min; w <= ad->_max; w++) {
+      ad->_valComponent[w] = 0;
+      ad->_valDfs[w] = 0;
+   }
+   ad->_top = 0;
+   ad->_dfs = ad->_varSize + ad->_valSize;
+   ad->_component = 0;
+   
+   for(ORInt v = 0; v < ad->_varSize; v++)
+      if (!ad->_varDfs[v])
+         SCCFromVariable(ad,v);
+}
+
+static void SCCFromVariable(CPAllDifferentDC* ad,ORInt k)
+{
+   ORInt* varDfs = ad->_varDfs;
+   ORInt* varHigh = ad->_varHigh;
+   ORInt* varComponent = ad->_varComponent;
+   ORInt* varMatch = ad->_varMatch;
+   
+   ORInt* valHigh = ad->_valHigh;
+   ORInt* valDfs = ad->_valDfs;
+   ORInt* valComponent = ad->_valComponent;
+   
+   ORInt* stack = ad->_stack;
+   ORInt* isVal = ad->_isVal;
+
+   varDfs[k] = ad->_dfs--;
+   varHigh[k] = varDfs[k];
+   stack[ad->_top] = k;
+   isVal[ad->_top] = 0;
+   ++ad->_top;
    
    CPIntVarI* x = ad->_var[k];
-   ORInt m = minDom(x);
-   ORInt M = maxDom(x);
-   for(ORInt w = m; w <= M; w++) {
-      if (ad->_match[k] != w) {
-         if (memberBitDom(x, w)) {
-            ORInt valDfs = ad->_valDfs[w];
-            if (!valDfs) {
-               findSCCval(ad,w);
-               if (ad->_valHigh[w] > ad->_varHigh[k])
-                  _varHigh[k] = _valHigh[w];
-            }
-            else if (valDfs > ad->_varDfs[k] && !ad->_valComponent[w]) {
-               if (valDfs > _varHigh[k])
-                  _varHigh[k] = valDfs;
-            }
+   ORBounds b = bounds(x);
+   for(ORInt w = b.min; w <= b.max; w++) 
+      if (varMatch[k] != w && memberBitDom(x, w)) {
+         if (!valDfs[w]) {
+            SCCFromValue(ad,w);
+            if (valHigh[w] > varHigh[k])
+               varHigh[k] = valHigh[w];
+         }
+         else if (valDfs[w] > varDfs[k] && !valComponent[w]) {
+            if (valDfs[w] > varHigh[k])
+               varHigh[k] = valDfs[w];
+         }
+      }
+
+   if (varHigh[k] == varDfs[k]) {
+      ad->_component++;
+      do {
+         --ad->_top;
+         ORInt x = stack[ad->_top];
+         ORInt isTopVal = isVal[ad->_top];
+         if (isTopVal == 0) {
+            varComponent[x] = ad->_component;
+            if (x == k)
+               break;
+         }
+         else
+            valComponent[x] = ad->_component;
+      }
+      while (true);
+   }
+}
+
+
+static void SCCFromValue(CPAllDifferentDC* ad,ORInt k)
+{
+   ORInt* varDfs = ad->_varDfs;
+   ORInt* varHigh = ad->_varHigh;
+   ORInt* stack = ad->_stack;
+   ORInt* isVal = ad->_isVal;
+   ORInt* varMatch = ad->_varMatch;
+   ORInt* valDfs = ad->_valDfs;
+   ORInt* valHigh = ad->_valHigh;
+   ORInt* valComponent = ad->_valComponent;
+   ORInt* varComponent = ad->_varComponent;
+   ORInt* valMatch = ad->_valMatch;
+   
+   valDfs[k] = ad->_dfs--;
+   valHigh[k] = valDfs[k];
+   stack[ad->_top] = k;
+   isVal[ad->_top] = 1;
+   ad->_top++;
+   
+   if (valMatch[k] != MAXINT) {
+      ORInt v = valMatch[k];
+      if (!varDfs[v]) {
+         SCCFromVariable(ad,v);
+         if (varHigh[v] > valHigh[k])
+            valHigh[k] = varHigh[v];
+      }
+      else if ((varDfs[v] > valDfs[k]) && !varComponent[v]) {
+         if (varDfs[v] > valHigh[k])
+            valHigh[k] = varDfs[v];
+      }
+   }
+   else {
+      for(ORInt i = 0; i < ad->_varSize; i++) {
+         ORInt w = varMatch[i];
+         if (valDfs[w]==0) {
+            SCCFromValue(ad,w);
+            if (valHigh[w] > valHigh[k])
+               valHigh[k] = valHigh[w];
+         }
+         else if ((valDfs[w] > valDfs[k]) && !valComponent[w]) {
+            if (valDfs[w] > valHigh[k])
+               valHigh[k] = valDfs[w];
          }
       }
    }
    
-   if (ad->_varHigh[k] == ad->_varDfs[k]) {
+   if (valHigh[k] == valDfs[k]) {
       ad->_component++;
       do {
-         ORInt v = _stack[--ad->_top];
-         ORInt t = _type[ad->_top];
-         if (t == 0)
-            ad->_varComponent[v] = ad->_component;
-         else
-            ad->_valComponent[v] = ad->_component;
-         if (t == 0 && v == k)
-            break;
-      } while (true);
-   }    
+         --ad->_top;
+         ORInt x = stack[ad->_top];
+         ORInt isTopVal = isVal[ad->_top];
+         if (isTopVal == 0)
+            varComponent[x] = ad->_component;
+         else {
+            valComponent[x] = ad->_component;
+            if (x == k)
+               break;
+         }
+      }
+      while (true);
+   }
 }
 
-static void findSCCval(CPAllDifferentDC* ad,ORInt k)
-{
-    int i;
-    
-    ORInt* _varDfs = ad->_varDfs;
-    ORInt* _varHigh = ad->_varHigh;
-    ORInt* _stack = ad->_stack;
-    ORInt* _type = ad->_type;
-    ORInt* _match = ad->_match;
-    ORInt* _valDfs = ad->_valDfs;
-    ORInt* _valHigh = ad->_valHigh;
-    ORInt* _valComponent = ad->_valComponent;
-    ORInt* _varComponent = ad->_varComponent;
-    ORInt* _valMatch = ad->_valMatch;
-    
-    _valDfs[k] = ad->_dfs--;
-    _valHigh[k] = _valDfs[k];
-    _stack[ad->_top] = k;
-    _type[ad->_top] = 1;
-    ad->_top++;
-    
-    if (_valMatch[k] != MAXINT) {
-        ORInt w = _valMatch[k];
-        if (!_varDfs[w]) {
-            findSCCvar(ad,w);
-            if (_varHigh[w] > _valHigh[k])
-                _valHigh[k] = _varHigh[w];
-        }
-        else if ( (_varDfs[w] > _valDfs[k]) && (!_varComponent[w])) {
-            if (_varDfs[w] > _valHigh[k])
-                _valHigh[k] = _varDfs[w];
-        }
-    }
-    else {
-        for(i = 0; i < ad->_varSize; i++) {
-            ORInt w = _match[i];
-            if (_valDfs[w]==0) {
-                findSCCval(ad,w);
-                
-                if (_valHigh[w] > _valHigh[k])
-                    _valHigh[k] = _valHigh[w];
-            }
-            else if ( (_valDfs[w] > _valDfs[k]) && (!_valComponent[w])) {
-                if (_valDfs[w] > _valHigh[k])
-                    _valHigh[k] = _valDfs[w];
-            }
-        }
-    }
-    
-    if (_valHigh[k] == _valDfs[k]) {
-        ad->_component++;
-        do {
-            ORInt v = _stack[--ad->_top];
-            ORInt t = _type[ad->_top];
-            if (t == 0)
-                _varComponent[v] = ad->_component;
-            else
-                _valComponent[v] = ad->_component;
-            if (t == 1 && v == k)
-                break;
-        } while (true);
-    }    
-}
-// prune
 static void prune(CPAllDifferentDC* ad)
 {
-   ORInt* _match = ad->_match;
-   ORInt* _valComponent = ad->_valComponent;
-   ORInt* _varComponent = ad->_varComponent;
-   findSCC(ad);
+   ORInt* varMatch = ad->_varMatch;
+   ORInt* valComponent = ad->_valComponent;
+   ORInt* varComponent = ad->_varComponent;
+   SCC(ad);
    for(ORInt k = 0; k < ad->_varSize; k++) {
       CPIntVarI* x = ad->_var[k];
       ORBounds bx = bounds(x);
-      for(ORInt w = bx.min; w <= bx.max; w++) {
-         if (_match[k] != w && _varComponent[k] != _valComponent[w]) {
-            if (memberDom(x,w)) {
-               removeDom(x, w);
-            }
-         }
-      }
+      for(ORInt w = bx.min; w <= bx.max; w++) 
+         if (varMatch[k] != w && varComponent[k] != valComponent[w]) 
+            if (memberDom(x,w)) 
+               removeDom(x,w);
    }   
 }
-// propagate
 
 -(void) propagate
-{   
-   for(ORInt k = 0; k < _varSize; k++) {
-      if (_match[k] != MAXINT) {
-         if (!memberDom(_var[k], _match[k])) {
-            _valMatch[_match[k]] = MAXINT;
-            _match[k] = MAXINT;
-            _sizeMatching--;
-         }
-      }
-   }
-   if (!findMaximalMatching(self)) 
+{
+   if (!isFeasible(self))
       failNow();
    prune(self);
 }

@@ -15,7 +15,8 @@
 #import <objcp/CPVar.h>
 
 @interface CPBitVarFirstFail : CPBitVarBaseHeuristic<CPHeuristic> {
-   id<ORVarArray>  _vars;
+   id<ORVarArray>  _vars;  // Model variables
+   id<ORVarArray>   _cvs;  // concrete variables
    id<ORVarArray> _rvars;
    id<CPProgram>     _cp;
 }

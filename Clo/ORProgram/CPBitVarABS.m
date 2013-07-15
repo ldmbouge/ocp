@@ -53,7 +53,7 @@
 -(ABSBitVarProbeAggregator*)initABSBitVarProbeAggregator:(id<ORVarArray>)vars;
 -(void)dealloc;
 -(void)addProbe:(ABSBitVarProbe*)p;
--(void)addAssignment:(id<CPBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act;
+-(void)addAssignment:(id<CPBitVar>)x atIndex:(ORUInt)idx toValue:(bool)v withActivity:(ORFloat)act;
 -(ORInt)nbProbes;
 -(ORFloat)avgActivity:(ORInt)x;
 -(ORFloat)avgSQActivity:(ORInt)x;
@@ -82,7 +82,7 @@
 -(id)initABSBitActivity:(id)var;
 -(id)copyWithZone:(NSZone*)zone;
 -(void)dealloc;
--(void)setActivity:(ORFloat)a forValue:(ORUInt)v;
+-(void)setActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(bool)v;
 -(void)addActivity:(ORFloat)a forValue:(ORUInt)v;
 -(void)addProbeActivity:(ORFloat)a forValue:(ORUInt)v;
 -(ORFloat)activityForValue:(ORUInt)v;
@@ -147,7 +147,7 @@
    }];
    _nbProbes++;
 }
--(void)addAssignment:(id<CPBitVar>)x toValue:(ORUInt)v withActivity:(ORFloat)act
+-(void)addAssignment:(id<CPBitVar>)x atIndex:(ORUInt)idx toValue:(bool)v withActivity:(ORFloat)act
 {
    NSNumber* key = [[NSNumber alloc] initWithInt:[x getId]];
    ABSBitValueActivity* valueActivity = [_values objectForKey:key];
@@ -156,7 +156,7 @@
       [_values setObject:valueActivity forKey:key];
    }
    [key release];
-   [valueActivity addProbeActivity:act forValue:v];
+   [valueActivity addProbeActivity:act atIndex:idx forValue:v];
 }
 
 -(void)enumerateForVariable:(ORInt)x using:(void(^)(id value,id activity,BOOL* stop))block
@@ -326,9 +326,9 @@
    [_values release];
    [super dealloc];
 }
--(void)setActivity:(ORFloat)a forValue:(ORUInt)v
+-(void)setActivity:(ORFloat)a atIndex:(ORUInt)idx forValue:(bool)v
 {
-   NSNumber* key = [[NSNumber alloc] initWithLong:v];
+   NSNumber* key = [[NSNumber alloc] initWithLong:idx];
    [_values setObject:[[NSNumber alloc] initWithFloat:a] forKey:key];
    [key release];
 }
@@ -403,7 +403,7 @@
    id<ORZeroOneStream>          _valPr;
    ABSBitVarProbeAggregator*          _aggregator;
 }
--(id)initCPBitVarABS:(id<CPCommonProgram>)cp restricted:(id<ORBitVarArray>)rvars
+-(id)initCPBitVarABS:(id<CPCommonProgram>)cp restricted:(id<ORVarArray>)rvars
 {
    self = [super init];
    _cp = cp;
@@ -597,7 +597,7 @@
    const ORInt probeDepth = (ORInt) [bvars count];
    float mxp = 0;
    for(ORInt i = [bvars low];i <= [bvars up];i++) {
-      NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
+      //NSAssert([bvars[i] isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", bvars[i], [[CPBitVarI class] description]);
       if ([bvars[i] bound]) continue;
       mxp += log([(id)bvars[i] domsize]);
    }
@@ -643,18 +643,20 @@
             
             if (nbVS) { // we found someone
                id<CPBitVar> xi = (id<CPBitVar>)bvars[i];
-               ORUInt v = [xi lsFreeBit];
-               ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:v to:false];}];
+               NSAssert([xi isKindOfClass:[CPBitVarI class]], @"%@ should be kind of class %@", xi, [[CPBitVarI class] description]);
+               ORUInt idx = [xi randFreeBit]; //randomize
+               ORBool v = arc4random_uniform(2)==0;
+               ORStatus s = [_solver enforce: ^ORStatus { return [(id<CPBitVar>)xi bind:idx to:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {
                   nbActive++;
                   [probe addVar:[vInfo getVar]];
                }];
-               [_aggregator addAssignment:xi toValue:v withActivity:nbActive];
+               [_aggregator addAssignment:xi atIndex:idx toValue:v withActivity:nbActive];//atIndex: toValue:
                if (s == ORFailure) {
                   if (depth == 0) {
-                     ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:xi value:v];
+                     ABSBitVarNogood* nogood = [[ABSBitVarNogood alloc] initABSBitVarNogood:xi atIndex:idx value:v];
                      //NSLog(@"Adding SAC %@",nogood);
                      [killSet addObject:nogood];
                      [localKill addObject:nogood];

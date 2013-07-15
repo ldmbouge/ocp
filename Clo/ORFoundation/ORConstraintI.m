@@ -729,6 +729,88 @@
 }
 @end
 
+@implementation ORMin { // z = min(x,y)
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(ORMin*)init:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == MIN(%@,%@))",[self class],self,_z,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMin:self];
+}
+-(id<ORIntVar>) res
+{
+   return _z;
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+@end
+
+@implementation ORMax { // z = max(x,y)
+   id<ORIntVar> _x;
+   id<ORIntVar> _y;
+   id<ORIntVar> _z;
+}
+-(ORMax*)init:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)z
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _y = y;
+   _z = z;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@ == MAX(%@,%@))",[self class],self,_z,_x,_y];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitMax:self];
+}
+-(id<ORIntVar>) res
+{
+   return _z;
+}
+-(id<ORIntVar>) left
+{
+   return _x;
+}
+-(id<ORIntVar>) right
+{
+   return _y;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,_z, nil] autorelease];
+}
+@end
+
 @implementation ORAbs { // x = |y|
    id<ORIntVar> _x;
    id<ORIntVar> _y;
@@ -1913,6 +1995,49 @@
 -(ORAnnotation) annotation
 {
    return _n;
+}
+-(NSSet*)allVars
+{
+   NSMutableSet* ms = [[[NSMutableSet alloc] initWithCapacity:[_x count]] autorelease];
+   [_x enumerateWith:^(id obj, int idx) {
+      [ms addObject:obj];
+   }];
+   return ms;
+}
+@end
+
+@implementation ORRegularI {
+   id<ORIntVarArray>    _x;
+   id<ORAutomaton>   _auto;
+}
+-(id)init:(id<ORIntVarArray>)x  for:(id<ORAutomaton>)a
+{
+   self = [super initORConstraintI];
+   _x = x;
+   _auto = a;
+   return self;
+}
+-(id<ORIntVarArray>) array
+{
+   return _x;
+}
+-(id<ORAutomaton>)automaton
+{
+   return _auto;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<ORRegularI: %p IS [ ",self];
+   for(ORInt i = [_x low];i <= [_x up];i++) {
+      [buf appendFormat:@"%@%c",_x[i],i < [_x up] ? ',' : ' '];
+   }
+   [buf appendString:@"]>"];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitRegular:self];
 }
 -(NSSet*)allVars
 {

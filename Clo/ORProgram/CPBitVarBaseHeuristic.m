@@ -51,7 +51,7 @@
 }
 -(void) initInternal: (id<ORVarArray>) t and:(id<ORVarArray>)cv
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
+   //@throw [[ORExecutionError alloc] initORExecutionError: "initInternal not implemented"];
 }
 -(ORFloat) varOrdering: (id<ORIntVar>)x
 {
@@ -65,7 +65,7 @@
 {
    //NSLog(@"Restart of based heuristic called... Nothing to do.");
 }
--(id<ORIntVarArray>) allIntVars
+-(id<ORBitVarArray>) allBitVars
 {
    return nil;
 }

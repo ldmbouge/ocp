@@ -231,7 +231,9 @@
 }
 -(ORBool) isFree:(unsigned int)idx
 {
-   return BITFREE(idx);
+   //NSLog(@"ONEAT for index %d is %x",idx, ONEAT(idx));
+   //NSLog(@"BITFREE for index %d is %x",idx, BITFREE(idx));
+   return (BITFREE(idx) != 0);
 }
 -(unsigned int) lsFreeBit
 {

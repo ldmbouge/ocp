@@ -40,7 +40,7 @@
 }
 -(id<CPVarArray>)allBitVars
 {
-   return (id<CPVarArray>) (_rvars!=nil ? _rvars : _vars);
+   return (id<CPVarArray>) (_rvars!=nil ? _rvars : _cvs);
 }
 
 -(ORFloat)varOrdering:(id<CPBitVar>)x
@@ -52,9 +52,11 @@
 {
    return -v;
 }
--(void)initInternal:(id<ORVarArray>)t
+-(void)initInternal:(id<ORVarArray>)t and:(id<CPVarArray>)cv
 {
    _vars = t;
-   NSLog(@"Bit Var FirstFail ready...");
+   _cvs  = cv;
+   NSLog(@"FirstFail ready...");
 }
+
 @end
