@@ -192,6 +192,13 @@
    id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*) e
+{
+   assert(_eqto == nil);
+   id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e annotation:_n];
+   [_terms addTerm:alpha by:1];
+}
+
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
    id<ORFloatVar> alpha = [ORNormalizer floatVarIn:_model expr:e by:_eqto annotation:_n];
@@ -301,6 +308,19 @@
    [_model addConstraint:[ORFactory floatSquare:_model var:oV equal:_rv annotation:_c]];
    [lT release];
 }
+-(void) visitExprCstFloatSubI:(ORExprCstFloatSubI*)e
+{
+   id<ORIntLinear> lT = [ORNormalizer intLinearFrom:[e index] model:_model annotation:_c];
+   id<ORIntVar> oV = [ORNormalizer intVarIn:lT for:_model annotation:_c];
+   id<ORFloatArray> a = [e array];
+   ORFloat lb = [a min];
+   ORFloat ub = [a max];
+   if (_rv == nil)
+      _rv = [ORFactory floatVar:_model low:lb up:ub];
+   [_model addConstraint:[ORFactory floatElement:_model var:oV idxCstArray:a equal:_rv annotation:_c]];
+   [lT release];
+}
+
 -(void) visitExprSumI: (ORExprSumI*) e
 {
    [[e expr] visit:self];

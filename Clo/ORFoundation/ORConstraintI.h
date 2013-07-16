@@ -213,6 +213,14 @@
 -(ORAnnotation)annotation;
 @end
 
+@interface ORFloatElementCst : ORConstraintI<ORFloatElementCst>
+-(ORElementCst*)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z annotation:(ORAnnotation)n; // y[idx] == z
+-(id<ORFloatArray>) array;
+-(id<ORIntVar>)       idx;
+-(id<ORFloatVar>)     res;
+-(ORAnnotation)annotation;
+@end
+
 @interface ORReifyEqualc : ORConstraintI<ORReifyEqualc>
 -(ORReifyEqualc*)initReify:(id<ORIntVar>)b equiv:(id<ORIntVar>)x eqi:(ORInt)c;
 @end

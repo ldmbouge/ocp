@@ -139,6 +139,22 @@
 -(void) visit:(id<ORVisitor>) v;
 @end
 
+@interface ORExprCstFloatSubI : ORExprI<ORExpr,NSCoding> {
+   id<ORFloatArray> _array;
+   ORExprI*         _index;
+}
+-(id<ORExpr>) initORExprCstFloatSubI: (id<ORFloatArray>) array index:(id<ORExpr>) op;
+-(id<ORTracker>) tracker;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
+-(NSString *)description;
+-(ORExprI*) index;
+-(id<ORFloatArray>)array;
+-(ORBool) isConstant;
+-(void) visit:(id<ORVisitor>) v;
+@end
+
+
 @interface ORExprPlusI : ORExprBinaryI<ORExpr,NSCoding> 
 -(id<ORExpr>) initORExprPlusI: (id<ORExpr>) left and: (id<ORExpr>) right;
 -(ORInt) min;

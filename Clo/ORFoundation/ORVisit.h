@@ -87,6 +87,7 @@
 -(void) visitElementCst: (id<ORElementCst>)c;
 -(void) visitElementVar: (id<ORElementVar>)c;
 -(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c;
+-(void) visitFloatElementCst: (id<ORFloatElementCst>)c;
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c;
 -(void) visitReifyEqual: (id<ORReifyEqual>)c;
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c;
@@ -132,6 +133,7 @@
 -(void) visitExprSquareI:(id<ORExpr>)e;
 -(void) visitExprNegateI:(id<ORExpr>)e;
 -(void) visitExprCstSubI: (id<ORExpr>) e;
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e;
 -(void) visitExprDisjunctI:(id<ORExpr>) e;
 -(void) visitExprConjunctI: (id<ORExpr>) e;
 -(void) visitExprImplyI: (id<ORExpr>) e;

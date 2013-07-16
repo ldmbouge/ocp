@@ -209,6 +209,13 @@ enum ORGroupType {
 -(ORAnnotation)annotation;
 @end
 
+@protocol ORFloatElementCst <ORConstraint>
+-(id<ORFloatArray>) array;
+-(id<ORIntVar>)   idx;
+-(id<ORFloatVar>)   res;
+-(ORAnnotation)annotation;
+@end
+
 @protocol ORReify <ORConstraint>
 @end
 

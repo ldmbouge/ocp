@@ -43,6 +43,7 @@
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
 -(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
 @end
 

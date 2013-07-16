@@ -11,6 +11,7 @@
 
 #import "ORFoundation/ORFoundation.h"
 #import "CPFloatConstraint.h"
+#import "CPIntVarI.h"
 #import "CPFloatVarI.h"
 #import "CPEngineI.h"
 
@@ -235,6 +236,140 @@
 -(NSString*)description
 {
    return [NSString stringWithFormat:@"<x[%d] == %f>",[_x getId],_c];
+}
+@end
+
+
+
+typedef struct CPlFoatEltRecordTag {
+   ORInt   _idx;
+   ORFloat _val;
+} CPFloatEltRecord;
+
+@implementation CPFloatElementCstBC {
+   CPFloatEltRecord* _tab;
+   ORInt              _sz;
+   TRInt            _from;
+   TRInt              _to;
+}
+
+-(id) init: (CPIntVarI*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
+{
+   self = [super initCPCoreConstraint: [x engine]];
+   _x = x;
+   _y = y;
+   _c = c;
+   _tab = NULL;
+   _sz  = 0;
+   return self;
+}
+-(void) dealloc
+{
+   free(_tab);
+   [super dealloc];
+}
+int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* r2)
+{
+   ORInt d1 = r1->_val - r2->_val;
+   if (d1==0)
+      return r1->_idx - r2->_idx;
+   else
+      return d1;
+}
+-(ORStatus) post
+{
+   if (bound(_x)) {
+      return [_y bind:[_c at:[_x min]]];
+   } else if ([_y bound]) {
+      ORInt cLow = [_c low];
+      ORInt cUp  = [_c up];
+      ORBounds xb = bounds(_x);
+      ORStatus ok = ORSuspend;
+      for(ORInt k=xb.min;k <= xb.max && ok;k++)
+         if (k < cLow || k > cUp || ![_y member:[_c at:k]])
+            ok = removeDom(_x, k);
+      return ok;
+   } else {
+      ORInt cLow = [_c low];
+      ORInt cUp  = [_c up];
+      _sz = cUp - cLow + 1;
+      _tab = malloc(sizeof(CPFloatEltRecord)*_sz);
+      for(ORInt k=cLow;k <= cUp;k++)
+         _tab[k - cLow] = (CPFloatEltRecord){k,[_c at:k]};
+      qsort(_tab, _sz,sizeof(CPFloatEltRecord),(int(*)(const void*,const void*)) &compareCPFloatEltRecords);
+      ORFloat ybmin = [_y min];
+      ORFloat ybmax = [_y max];
+      ORStatus ok = ORSuspend;
+      _from = makeTRInt(_trail, -1);
+      _to   = makeTRInt(_trail, -1);
+      for(ORInt k=0;k < _sz && ok;k++) {
+         if (_tab[k]._val < ybmin || _tab[k]._val > ybmax)
+            ok = removeDom(_x, _tab[k]._idx);
+         else {
+            if (_from._val == -1)
+               assignTRInt(&_from, k, _trail);
+            assignTRInt(&_to, k, _trail);
+         }
+      }
+      if (ok) {
+         if (bound(_x))
+            return [_y bind:[_x min]];
+         else {
+            [_y whenChangeBoundsPropagate:self];
+            [_x whenChangePropagate:self];
+         }
+      }
+      return ok;
+   }
+}
+-(void) propagate
+{
+   if (bound(_x)) {
+      [_y bind:[_c at:[_x min]]];
+   } else {
+      ORInt k = _from._val;
+      while (k < _sz && !memberDom(_x, _tab[k]._idx))
+         ++k;
+      if (k < _sz) {
+         [_y updateMin:_tab[k]._val];
+         assignTRInt(&_from, k, _trail);
+      }
+      else
+         failNow();
+      k = _to._val;
+      while(k >= 0 && !memberDom(_x,_tab[k]._idx))
+         --k;
+      if (k >= 0) {
+         [_y updateMax:_tab[k]._val];
+         assignTRInt(&_to, k, _trail);
+      }
+      else
+         failNow();
+      ORFloat ybmin = [_y min];
+      ORFloat ybmax = [_y max];
+      k = _from._val;
+      while (k < _sz && _tab[k]._val < ybmin)
+         removeDom(_x, _tab[k++]._idx);
+      assignTRInt(&_from, k, _trail);
+      k = _to._val;
+      while (k >= 0 && _tab[k]._val > ybmax)
+         removeDom(_x,_tab[k--]._idx);
+      assignTRInt(&_to,k,_trail);
+   }
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x,_y,nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return !bound(_x) && ![_y bound];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"CPFloatElementCstBC: <%02d %@ [ %@ ] == %@ >",_name,_c,_x,_y];
+   return buf;
 }
 @end
 

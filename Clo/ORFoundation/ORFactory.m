@@ -701,6 +701,13 @@
    [tracker trackObject:o];
    return o;
 }
++(id<ORExpr>) elt: (id<ORTracker>) tracker floatArray: (id<ORFloatArray>) a index: (id<ORExpr>) index
+{
+   id<ORExpr> o = [[ORExprCstFloatSubI alloc] initORExprCstFloatSubI: a index: index];
+   [tracker trackObject: o];
+   return o;
+}
+
 
 +(id<ORExpr>) exprAbs: (id<ORExpr>) op track:(id<ORTracker>)t
 {
@@ -1158,7 +1165,6 @@
 @end
 
 @implementation ORFactory (ORFloat)
-
 +(id<ORConstraint>) floatSquare:(id<ORTracker>)model var:(id<ORFloatVar>)x equal:(id<ORFloatVar>)res annotation:(ORAnnotation)n
 {
    id<ORConstraint> o = [[ORFloatSquare alloc] init:res square:x annotation:n];
@@ -1182,6 +1188,12 @@
    id<ORConstraint> o = [[ORFloatEqualc alloc] init:x eqi:c];
    [model trackObject:o];
    return o;
+}
++(id<ORConstraint>) floatElement:(id<ORTracker>)model  var:(id<ORIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<ORFloatVar>)y annotation:(ORAnnotation)note
+{
+   id<ORConstraint> o = [[ORFloatElementCst alloc]  initORElement:x array:c equal:y annotation:note];
+   [model trackObject:o];
+   return o;   
 }
 @end
 

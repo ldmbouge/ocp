@@ -266,6 +266,9 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
 }
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+{
+}
 // Expressions
 -(void) visitIntegerI: (id<ORInteger>) e
 {
@@ -325,6 +328,26 @@
     id<ORIntVar> sumVar = [ORFactory intVar: _model domain: dom];
     [_model addConstraint: [sumVar eq: linearSumExpr]];
     _exprResult = sumVar;
+}
+-(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*)cstSubExpr
+{
+   id<ORIntVar> indexVar;
+   // Create the index variable if needed.
+   if([[cstSubExpr index] conformsToProtocol: @protocol(ORIntVar)])
+      indexVar = (id<ORIntVar>)[cstSubExpr index];
+   else {
+      id<ORExpr> linearIndexExpr = [self linearizeExpr: [cstSubExpr index]];
+      id<ORIntRange> dom = [ORFactory intRange:_model low:[linearIndexExpr min] up:[linearIndexExpr max]];
+      indexVar = [ORFactory intVar: _model domain: dom];
+      [_model addConstraint: [indexVar eq: linearIndexExpr]];
+   }
+   id<ORIntVarArray> binIndexVar = [self binarizationForVar: indexVar];
+   id<ORExpr> linearSumExpr = [ORFactory sum: _model over: [binIndexVar range] suchThat: nil of:^id<ORExpr>(ORInt i) {
+      return [[binIndexVar at: i] mul: @([[cstSubExpr array] at: i ])];
+   }];
+   id<ORFloatVar> sumVar = [ORFactory floatVar: _model low:[linearSumExpr min] up:[linearSumExpr max]];
+   [_model addConstraint: [sumVar eq: linearSumExpr]];
+   _exprResult = sumVar;
 }
 @end
 

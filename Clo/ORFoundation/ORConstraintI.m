@@ -1181,6 +1181,55 @@
 }
 @end
 
+
+@implementation ORFloatElementCst {  // y[idx] == z
+   id<ORIntVar>   _idx;
+   id<ORFloatArray> _y;
+   id<ORFloatVar>   _z;
+   ORAnnotation  _note;
+}
+-(id)initORElement:(id<ORIntVar>)idx array:(id<ORFloatArray>)y equal:(id<ORFloatVar>)z annotation:(ORAnnotation)n
+{
+   self = [super initORConstraintI];
+   _idx = idx;
+   _y = y;
+   _z = z;
+   _note = n;
+   return self;
+}
+-(NSString*) description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"<%@ : %p> -> (%@[%@] == %@)",[self class],self,_y,_idx,_z];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitFloatElementCst:self];
+}
+-(id<ORFloatArray>) array
+{
+   return _y;
+}
+-(id<ORIntVar>) idx
+{
+   return _idx;
+}
+-(id<ORFloatVar>) res
+{
+   return _z;
+}
+-(ORAnnotation)annotation
+{
+   return _note;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_idx,_z, nil] autorelease];
+}
+@end
+
+
 @implementation ORReifyEqualc {
    id<ORIntVar> _b;
    id<ORIntVar> _x;

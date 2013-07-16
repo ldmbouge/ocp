@@ -533,6 +533,13 @@
    [[x tracker] trackMutable:o];
    return o;
 }
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORAnnotation)n
+{
+   id<CPConstraint> o = nil;
+   o = [[CPFloatElementCstBC alloc] init:x indexCstArray:c equal:y];
+   [[x tracker] trackMutable:o];
+   return o;
+}
 @end
 
 @implementation CPSearchFactory 

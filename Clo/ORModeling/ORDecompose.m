@@ -576,6 +576,11 @@ struct CPVarPair {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto annotation:_n];
    [_terms addTerm:alpha by:1];
 }
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError:"Cannot take a float-var within an integer context without a cast"];
+}
+
 -(void) visitExprVarSubI:(ORExprVarSubI*)e
 {
    id<ORIntVar> alpha = [ORNormalizer intVarIn:_model expr:e by:_eqto annotation:_n];

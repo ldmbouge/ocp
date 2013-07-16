@@ -677,6 +677,25 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatArray> array = [cstr array];
+      id<ORIntVar> idx = [cstr idx];
+      id<ORFloatVar> res = [cstr res];
+      [array visit: self];
+      [idx visit: self];
+      [res visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatElement: (id<CPIntVar>) _gamma[idx.getId]
+                                                  idxCstArray: array
+                                                        equal: (id<CPFloatVar>) _gamma[res.getId]
+                                                   annotation: [cstr annotation]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitElementVar: (id<ORElementVar>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -1020,6 +1039,8 @@
 -(void) visitExprNegateI:(id<ORExpr>) e
 {}
 -(void) visitExprCstSubI: (id<ORExpr>) e
+{}
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e
 {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e
 {}

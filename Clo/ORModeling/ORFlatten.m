@@ -85,6 +85,7 @@
 -(void) visitImply: (id<ORImply>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
 -(void) visitReifyEqual: (id<ORReifyEqual>)c  {}
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c  {}
@@ -136,6 +137,7 @@
 -(void) visitExprMaxI: (id<ORExpr>) e {}
 -(void) visitExprNegateI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}
 -(void) visitExprConjunctI: (id<ORExpr>) e  {}
 -(void) visitExprImplyI: (id<ORExpr>) e  {}
@@ -457,6 +459,11 @@
 {
    _result = c;
 }
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+{
+   _result = c;
+}
+
 void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
 {
    if (d == arity) {

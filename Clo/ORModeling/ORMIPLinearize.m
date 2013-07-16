@@ -298,6 +298,10 @@
 {
    _result = c;
 }
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+{
+   _result = c;
+}
 -(void) visitCircuit:(id<ORCircuit>) c
 {
    _result = c;
