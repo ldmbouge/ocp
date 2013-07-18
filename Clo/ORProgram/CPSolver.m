@@ -1333,11 +1333,11 @@
 {
    return _solver;
 }
--(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimizeVar: not allowed during search"];
 }
--(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximizeVar: not allowed during search"];
 }

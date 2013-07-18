@@ -107,14 +107,14 @@
 
 +(id<ORConstraint>) minimize: (id<CPIntVar>) x
 {
-    id<ORConstraint> o = [[CPIntVarMinimize alloc] initCPIntVarMinimize: x];
+    id<ORConstraint> o = [[CPIntVarMinimize alloc] init: x];
     [[x engine] trackMutable: o];
     return o;
 }
 
 +(id<ORConstraint>) maximize: (id<CPIntVar>) x
 {
-    id<ORConstraint> o = [[CPIntVarMaximize alloc] initCPIntVarMaximize: x];
+    id<ORConstraint> o = [[CPIntVarMaximize alloc] init: x];
     [[x engine] trackMutable: o];
     return o;
 }
@@ -174,7 +174,7 @@
 {
    id<CPIntVarNotifier> mc = [x delegate];
    if (mc == nil) {
-      mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
+      mc = [[CPMultiCast alloc] initVarMC:2 root:x];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
    CPLiterals* literals = [mc findLiterals:x];
@@ -538,6 +538,18 @@
    id<CPConstraint> o = nil;
    o = [[CPFloatElementCstBC alloc] init:x indexCstArray:c equal:y];
    [[x tracker] trackMutable:o];
+   return o;
+}
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x
+{
+   id<CPConstraint> o = [[CPFloatVarMinimize alloc] init: x];
+   [[x engine] trackMutable: o];
+   return o;
+}
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x
+{
+   id<CPConstraint> o = [[CPFloatVarMaximize alloc] init: x];
+   [[x engine] trackMutable: o];
    return o;
 }
 @end

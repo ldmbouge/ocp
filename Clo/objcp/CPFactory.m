@@ -71,7 +71,10 @@
 {
    return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
 }
-
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp castFrom:(CPIntVarI*)x
+{
+   return [[CPFloatViewOnIntVarI alloc] initCPFloatViewIntVar:cp intVar:x];
+}
 
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {

@@ -46,6 +46,7 @@
    BOOL isb = ORIBound(me, TOLERANCE);
    if (isb)
       return ORSuspend;
+   if (newMin <= _min._val) return ORSuspend;
    if (ORIEmpty(ORIInter(me, createORI1(newMin))))
       failNow();
    assignTRDouble(&_min, newMin, _trail);
@@ -63,6 +64,7 @@
    BOOL isb = ORIBound(me, TOLERANCE);
    if (isb)
       return ORSuspend;
+   if (newMax >= _max._val) return ORSuspend;
    if (ORIEmpty(ORIInter(me, createORI1(newMax))))
       failNow();
    assignTRDouble(&_max, newMax, _trail);
@@ -114,7 +116,10 @@
 }
 -(ORStatus) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
 {
+   ORIReady();
    if (_min._val <= val && val <= _max._val) {
+      if (ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON))
+         return ORSuccess;
       [x changeMinEvt:YES sender:self];
       [x changeMaxEvt:YES sender:self];
       [x bindEvt:self];

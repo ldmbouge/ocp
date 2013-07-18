@@ -345,9 +345,13 @@
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> o = [v var];
+      id<ORVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory minimize: _gamma[o.getId]];
+      id<CPConstraint> concreteCstr = NULL;
+      if ([o conformsToProtocol:@protocol(CPIntVar)])
+         concreteCstr = [CPFactory minimize: _gamma[o.getId]];
+      else
+         concreteCstr = [CPFactory floatMinimize: _gamma[o.getId]];
       _gamma[v.getId] = concreteCstr;
       [_engine add: concreteCstr];
       [_engine setObjective: _gamma[v.getId]];
@@ -356,9 +360,13 @@
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> o = [v var];
+      id<ORVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory maximize: _gamma[o.getId]];
+      id<CPConstraint> concreteCstr = NULL;
+      if ([o conformsToProtocol:@protocol(CPIntVar)])
+         concreteCstr = [CPFactory maximize: _gamma[o.getId]];
+      else
+         concreteCstr = [CPFactory floatMaximize: _gamma[o.getId]];
       _gamma[v.getId] = concreteCstr;
       [_engine add: concreteCstr];
       [_engine setObjective: _gamma[v.getId]];
@@ -867,7 +875,15 @@
 -(void) visitFloatLinearEq:(id<ORFloatLinearEq>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
-      id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
+      id<ORVarArray> av = [cstr vars];
+      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+         id<CPVar> theCPVar = [self concreteVar:[av at:k]];
+         if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
+            return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
+         else
+            return theCPVar;
+      }];
+      //id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
       id<ORFloatArray> c = [cstr coefs];
       id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
       [_engine add:concreteCstr];

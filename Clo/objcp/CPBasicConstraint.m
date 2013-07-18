@@ -2493,13 +2493,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 @end
 
-
 @implementation CPIntVarMinimize
 {
    CPIntVarI*  _x;
    ORInt        _primalBound;
 }
--(CPIntVarMinimize*) initCPIntVarMinimize: (CPIntVarI*) x
+-(CPIntVarMinimize*) init: (CPIntVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
@@ -2510,11 +2509,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    return _x;
 }
-- (void) dealloc
-{
-    [super dealloc];
-}
-
 -(ORStatus) post
 {
   if (![_x bound]) 
@@ -2531,7 +2525,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    return [_x bound] ? 0 : 1;
 }
-
 -(void) updatePrimalBound
 {
    ORInt bound = [_x min];
@@ -2578,17 +2571,12 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    ORInt        _primalBound;
 }
 
--(CPIntVarMaximize*) initCPIntVarMaximize: (CPIntVarI*) x
+-(CPIntVarMaximize*) init: (CPIntVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _primalBound = -MAXINT;
    return self;
-}
-
-- (void) dealloc
-{
-    [super dealloc];
 }
 -(id<CPIntVar>)var
 {

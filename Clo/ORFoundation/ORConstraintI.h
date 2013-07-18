@@ -463,10 +463,10 @@
 
 @interface ORObjectiveFunctionVarI : ORObjectiveFunctionI<ORObjectiveFunctionVar>
 {
-   id<ORIntVar>             _var;
+   id<ORVar>             _var;
 }
--(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x;
--(id<ORIntVar>) var;
+-(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORVar>) x;
+-(id<ORVar>) var;
 -(id<ORObjectiveValue>) value;
 -(void) visit: (id<ORVisitor>) visitor;
 @end
@@ -492,11 +492,11 @@
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
--(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x;
+-(ORMinimizeVarI*) initORMinimizeVarI: (id<ORVar>) x;
 @end
 
 @interface ORMaximizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
--(ORMaximizeVarI*) initORMaximizeVarI: (id<ORIntVar>) x;
+-(ORMaximizeVarI*) initORMaximizeVarI: (id<ORVar>) x;
 @end
 
 @interface ORMinimizeExprI : ORObjectiveFunctionExprI<ORObjectiveFunctionExpr>

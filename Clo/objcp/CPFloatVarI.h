@@ -17,6 +17,7 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
+#import "CPIntVarI.h"
 
 @protocol CPFloatVarNotifier;
 
@@ -61,7 +62,6 @@ typedef struct  {
    TRId         _boundsEvt;
 } CPFloatEventNetwork;
 
-@class CPFloatVarMultiCast;
 @class CPFloatVarI;
 
 @protocol CPFloatVarNotifier <NSObject>
@@ -80,7 +80,7 @@ typedef struct  {
    CPEngineI*            _engine;
    id<CPFDom>               _dom;
    CPFloatEventNetwork      _net;
-   CPFloatVarMultiCast*    _recv;
+   CPMultiCast*            _recv;
 }
 -(id)initCPFloatVar:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(CPEngineI*) engine;
@@ -88,4 +88,15 @@ typedef struct  {
 -(NSMutableSet*)constraints;
 -(ORFloat)floatValue;
 -(ORFloat) domwidth;
+@end
+
+@interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
+   CPEngineI*       _engine;
+   CPIntVarI*       _theVar;
+   CPFloatEventNetwork _net;
+}
+-(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVarI*)iv;
+-(CPEngineI*)engine;
+-(id<ORTracker>) tracker;
+-(NSMutableSet*)constraints;
 @end

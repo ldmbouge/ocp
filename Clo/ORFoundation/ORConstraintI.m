@@ -2595,13 +2595,13 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORObjectiveFunctionVarI
--(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORIntVar>) x
+-(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORVar>) x
 {
    self = [super init];
    _var = x;
    return self;
 }
--(id<ORIntVar>) var
+-(id<ORVar>) var
 {
    return _var;
 }
@@ -2780,7 +2780,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMinimizeVarI
--(ORMinimizeVarI*) initORMinimizeVarI: (id<ORIntVar>) x
+-(ORMinimizeVarI*) initORMinimizeVarI: (id<ORVar>) x
 {
    self = [super initORObjectiveFunctionVarI: x];
    return self;
@@ -2807,7 +2807,7 @@ void sortIntVarInt(id<ORIntVarArray> x,id<ORIntArray> size,id<ORIntVarArray>* sx
 @end
 
 @implementation ORMaximizeVarI
--(ORMaximizeVarI*) initORMaximizeVarI:(id<ORIntVar>) x
+-(ORMaximizeVarI*) initORMaximizeVarI:(id<ORVar>) x
 {
    self = [super initORObjectiveFunctionVarI:x];
    return self;

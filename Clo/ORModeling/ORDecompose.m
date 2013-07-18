@@ -856,7 +856,6 @@ static inline ORLong maxSeq(ORLong v[4])  {
       _rv = [ORFactory reifyView:_model var:theVar eqi:c];
    }
 #endif
-   [linOther release];
 }
 -(void) reifyNEQc:(ORExprI*)theOther constant:(ORInt)c
 {

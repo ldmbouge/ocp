@@ -85,6 +85,8 @@
 +(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c;
 +(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c;
 +(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORAnnotation)n;
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
 @end
 
 @interface CPSearchFactory : NSObject

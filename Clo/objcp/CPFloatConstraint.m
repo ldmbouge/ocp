@@ -111,7 +111,8 @@
          ORInterval NEW = ORIDiv(ORIOpposite(TMP), createORI1(ci));
          BOOL update = ORINarrow(xii, NEW) >= ORLow;
          changed |= update;
-         if (update) [xi updateInterval:NEW];
+         if (update)
+            [xi updateInterval:NEW];
       }
    } while (changed || _todo == CPTocheck);
 }
@@ -372,4 +373,147 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
    return buf;
 }
 @end
+
+@implementation CPFloatVarMinimize
+{
+   CPFloatVarI*  _x;
+   ORFloat        _primalBound;
+}
+-(id) init: (CPFloatVarI*) x
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _primalBound = MAXINT;
+   return self;
+}
+-(id<CPFloatVar>)var
+{
+   return _x;
+}
+-(ORStatus) post
+{
+   if (![_x bound])
+      [_x whenChangeMinDo: ^ {
+         [_x updateMax: _primalBound];
+      } onBehalf:self];
+   return ORSuspend;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(ORUInt)nbUVars
+{
+   return [_x bound] ? 0 : 1;
+}
+-(void) updatePrimalBound
+{
+   ORFloat bound = [_x min];
+   @synchronized(self) {
+      if (bound < _primalBound)
+         _primalBound = bound;
+   }
+}
+-(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound
+{
+   @synchronized(self) {
+      if ([newBound value] < _primalBound)
+         _primalBound = [newBound value];
+   }
+}
+-(id<ORObjectiveValue>) value
+{
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize:YES];
+}
+-(ORStatus) check
+{
+   return tryfail(^ORStatus{
+      [_x updateMax: _primalBound];
+      return ORSuspend;
+   }, ^ORStatus{
+      return ORFailure;
+   });
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize:YES];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
+   return buf;
+}
+@end
+
+@implementation CPFloatVarMaximize {
+   CPFloatVarI*  _x;
+   ORFloat       _primalBound;
+}
+-(id) init: (CPFloatVarI*) x
+{
+   self = [super initCPCoreConstraint:[x engine]];
+   _x = x;
+   _primalBound = -MAXINT;
+   return self;
+}
+-(id<CPFloatVar>)var
+{
+   return _x;
+}
+-(ORStatus) post
+{
+   if (![_x bound])
+      [_x whenChangeMaxDo: ^ {
+         [_x updateMin: _primalBound];
+      } onBehalf:self];
+   return ORSuspend;
+}
+-(NSSet*)allVars
+{
+   return [[[NSSet alloc] initWithObjects:_x, nil] autorelease];
+}
+-(id<ORObjectiveValue>) value
+{
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: [_x value] minimize: NO];
+}
+-(ORUInt)nbUVars
+{
+   return [_x bound] ? 0 : 1;
+}
+-(void) updatePrimalBound
+{
+   ORFloat bound = [_x max];
+   if (bound > _primalBound)
+      _primalBound = bound;
+   NSLog(@"primal bound: %f",_primalBound);
+}
+-(void) tightenPrimalBound: (ORObjectiveValueFloatI*) newBound
+{
+   if ([newBound value] > _primalBound)
+      _primalBound = [newBound value];
+}
+-(ORStatus) check
+{
+   @try {
+      [_x updateMin: _primalBound];
+   }
+   @catch (ORFailException* e) {
+      [e release];
+      return ORFailure;
+   }
+   return ORSuspend;
+}
+-(id<ORObjectiveValue>) primalBound
+{
+   return [[ORObjectiveValueFloatI alloc] initObjectiveValueFloatI: _primalBound minimize: NO];
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"MAXIMIZE(%@) with f* = %f  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
+   return buf;
+}
+@end
+
 

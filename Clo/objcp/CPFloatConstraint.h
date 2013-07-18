@@ -74,3 +74,29 @@
 -(ORUInt)nbUVars;
 @end
 
+@interface CPFloatVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id)        init: (id<CPFloatVar>) x;
+-(ORStatus)  post;
+-(ORStatus)  check;
+-(void)      updatePrimalBound;
+-(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(id<ORObjectiveValue>) primalBound;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+-(id<ORFloatVar>) var;
+-(id<ORObjectiveValue>)value;
+@end
+
+@interface CPFloatVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
+-(id)        init: (id<CPFloatVar>) x;
+-(ORStatus)  post;
+-(ORStatus)  check;
+-(void)      updatePrimalBound;
+-(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(id<ORObjectiveValue>) primalBound;
+-(NSSet*)allVars;
+-(ORUInt)nbUVars;
+-(id<ORFloatVar>) var;
+-(id<ORObjectiveValue>)value;
+@end
+

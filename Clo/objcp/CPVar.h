@@ -22,6 +22,7 @@
 -(id<CPEngine>)engine;
 -(ORBool) bound;
 -(NSSet*)constraints;
+-(enum CPVarClass)varClass;
 @end
 
 enum CPVarClass {
@@ -30,7 +31,8 @@ enum CPVarClass {
    CPVCAffine = 2,
    CPVCEQLiteral = 3,
    CPVCLiterals = 4,
-   CPVCFlip = 5
+   CPVCFlip = 5,
+   CPVCCast = 6
 };
 
 @protocol CPIntVar <CPVar>
