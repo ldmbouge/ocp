@@ -441,7 +441,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
+   [buf appendFormat:@"Float-MINIMIZE(%@) with f* = %f",[_x description],_primalBound];
    return buf;
 }
 @end
@@ -511,7 +511,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(NSString*)description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
-   [buf appendFormat:@"MAXIMIZE(%@) with f* = %f  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
+   [buf appendFormat:@"Float-MAXIMIZE(%@) with f* = %f  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
    return buf;
 }
 @end

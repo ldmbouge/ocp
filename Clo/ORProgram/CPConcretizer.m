@@ -348,7 +348,7 @@
       id<ORVar> o = [v var];
       [o visit: self];
       id<CPConstraint> concreteCstr = NULL;
-      if ([o conformsToProtocol:@protocol(CPIntVar)])
+      if ([o conformsToProtocol:@protocol(ORIntVar)])
          concreteCstr = [CPFactory minimize: _gamma[o.getId]];
       else
          concreteCstr = [CPFactory floatMinimize: _gamma[o.getId]];
