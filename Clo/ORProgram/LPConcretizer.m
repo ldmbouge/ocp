@@ -35,7 +35,7 @@
    [_program release];
    [super dealloc];
 }
-- (void)doesNotRecognizeSelector:(SEL)aSelector
+- (void) doesNotRecognizeSelector: (SEL) aSelector
 {
    NSLog(@"DID NOT RECOGNIZE a selector %@",NSStringFromSelector(aSelector));
    @throw [[ORExecutionError alloc] initORExecutionError: "No LP concretization yet"];
@@ -419,42 +419,6 @@
 {
    if (_gamma[e.getId] == NULL)
       _gamma[e.getId] = [ORFactory float: _lpsolver value: [e floatValue]];
-}
--(void) visitIntMatrix: (id<ORIntMatrix>) v
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitIdMatrix: (id<ORIdMatrix>) v
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitTable:(id<ORTable>) v
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitGroup:(id<ORGroup>)g
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitRestrict: (id<ORRestrict>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitAlldifferent: (id<ORAlldifferent>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitRegular:(id<ORRegular>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError:"No concretization yet"];
-}
--(void) visitCardinality: (id<ORCardinality>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet"];
-}
--(void) visitPacking: (id<ORPacking>) cstr
-{
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization for Packing constraints"];
 }
 -(void) visitAlgebraicConstraint: (id<ORAlgebraicConstraint>) cstr
 {
