@@ -25,6 +25,8 @@
 -(id<ORVar>) var: (ORInt) k;
 -(ORFloat) coef: (ORInt) k;
 -(ORFloat) independent;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 @end
 
 @interface ORFloatLinear :  NSObject<ORFloatLinear> {
@@ -46,6 +48,8 @@
 -(void) scaleBy: (ORFloat) s;
 -(ORFloat) independent;
 -(NSString*) description;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 
 -(id<ORVarArray>)  variables:  (id<ORAddToModel>)  model;
 -(id<ORFloatArray>)  coefficients: (id<ORAddToModel>) model;
@@ -65,5 +69,7 @@
 -(void) setIndependent: (ORFloat) idp;
 -(void) addIndependent: (ORFloat) idp;
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c;
+-(ORFloat) fmin;
+-(ORFloat) fmax;
 @end
 

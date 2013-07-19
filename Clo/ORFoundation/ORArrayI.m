@@ -128,7 +128,6 @@
 }
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-//   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
    return [ORFactory elt: _tracker intArray: self index: idx];
 }
 -(ORInt) low
@@ -317,6 +316,10 @@
 -(ORInt) up
 {
     return _up;
+}
+-(id<ORExpr>)elt:(id<ORExpr>)idx
+{
+   return [ORFactory elt: _tracker floatArray: self index: idx];
 }
 -(ORFloat) max {
     ORFloat v = _array[0];

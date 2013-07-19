@@ -115,6 +115,7 @@
    ORFloat   _value;
 }
 -(ORCPFloatVarSnapshot*) initCPFloatVarSnapshot: (id<ORFloatVar>) v with: (id<CPCommonProgram>) solver;
+-(ORInt) getId;
 -(ORFloat) floatValue;
 -(ORInt) intValue;
 -(NSString*) description;
@@ -143,6 +144,10 @@
 -(ORFloat) floatValue
 {
    return _value;
+}
+-(ORInt) getId
+{
+   return _name;
 }
 -(ORBool) isEqual: (id) object
 {
@@ -314,7 +319,10 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) var
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No float variable in LP solutions"];
+   NSUInteger idx = [_varShots indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+      return [obj getId] == [var getId];
+   }];
+   return [(id<ORSnapshot>) [_varShots objectAtIndex:idx] floatValue];
 }
 -(NSUInteger) count
 {
@@ -744,6 +752,14 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method gthenImpl not implemented"];
 }
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatLthenImpl not implemented"];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "Method floatGthenImpl not implemented"];
+}
 -(void) restrictImpl: (id<CPIntVar>) var to: (id<ORIntSet>) S
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Method restrictImpl not implemented"];
@@ -1040,7 +1056,14 @@
 {
    return [self labelBVImpl: (id<CPBitVar,CPBitVarNotifier>)_gamma[var.getId] at:i with: val];
 }
-
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatLthenImpl: _gamma[var.getId] with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [self floatGthenImpl: _gamma[var.getId] with: val];
+}
 -(void) repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat
 {
    [_search repeat: body onRepeat: onRepeat until: nil];
@@ -1201,10 +1224,9 @@
 }
 -(ORFloat) floatValue: (id<ORFloatVar>) x
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "no method floatValue available yet"];
-   // return [_gamma[x.getId] floatValue];
+   return [(id<ORFloatVar>)_gamma[x.getId] floatValue];
 }
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [_gamma[x.getId] bound];
 }
@@ -1223,6 +1245,18 @@
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {
    return [((id<CPIntVar>) _gamma[x.getId]) member: v];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>) x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) domwidth];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) min];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [((id<CPFloatVar>)_gamma[x.getId]) max];
 }
 -(NSSet*) constraints: (id<ORVar>)x
 {
@@ -1299,11 +1333,11 @@
 {
    return _solver;
 }
--(id<ORObjectiveFunction>) minimizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar:(id<ORVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to minimizeVar: not allowed during search"];
 }
--(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "calls to maximizeVar: not allowed during search"];
 }
@@ -1442,6 +1476,20 @@
    if (status == ORFailure)
       [_search fail];
    [ORConcurrency pumpEvents];   
+}
+-(void) floatLthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^ORStatus { return  [var updateMax:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
+}
+-(void) floatGthenImpl: (id<CPFloatVar>) var with: (ORFloat) val
+{
+   ORStatus status = [_engine enforce:^ORStatus { return [var updateMin:val];}];
+   if (status == ORFailure)
+      [_search fail];
+   [ORConcurrency pumpEvents];
 }
 @end
 

@@ -80,8 +80,8 @@
 -(id) addMutable:(id)object;
 -(id) addImmutable:(id)object;
 -(id<ORConstraint>) addConstraint: (id<ORConstraint>) cstr;
--(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x;
--(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x;
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x;
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x;
 -(id<ORObjectiveFunction>) minimize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) maximize: (id<ORExpr>) e;
 -(id<ORObjectiveFunction>) minimize: (id<ORVarArray>) var coef: (id<ORFloatArray>) coef;

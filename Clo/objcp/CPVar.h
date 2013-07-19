@@ -22,6 +22,7 @@
 -(id<CPEngine>)engine;
 -(ORBool) bound;
 -(NSSet*)constraints;
+-(enum CPVarClass)varClass;
 @end
 
 @protocol CPNumVar <CPVar>
@@ -36,7 +37,8 @@ enum CPVarClass {
    CPVCAffine = 2,
    CPVCEQLiteral = 3,
    CPVCLiterals = 4,
-   CPVCFlip = 5
+   CPVCFlip = 5,
+   CPVCCast = 6
 };
 
 @protocol CPIntVar <CPNumVar>
@@ -97,8 +99,18 @@ enum CPVarClass {
 -(ORInterval) bounds;
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
+-(ORFloat) domwidth;
 -(ORStatus) bind:(ORFloat) val;
 -(ORStatus) updateMin:(ORFloat) newMin;
 -(ORStatus) updateMax:(ORFloat) newMax;
 -(ORStatus) updateInterval:(ORInterval)v;
 @end
+
+@protocol CPFloatVarArray <CPVarArray>
+-(id<CPFloatVar>) at: (ORInt) value;
+-(void) set: (id<CPFloatVar>) x at: (ORInt) value;
+-(id<CPFloatVar>) objectAtIndexedSubscript: (NSUInteger) key;
+-(void) setObject: (id<CPFloatVar>) newValue atIndexedSubscript: (NSUInteger) idx;
+-(id<ORASolver>) solver;
+@end
+

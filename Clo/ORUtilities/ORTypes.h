@@ -76,7 +76,8 @@ typedef enum  {
    ORSuccess,
    ORSuspend,
    ORDelay,
-   ORSkip
+   ORSkip,
+   ORNoop
 } ORStatus;
 
 typedef void (^ORClosure)(void);

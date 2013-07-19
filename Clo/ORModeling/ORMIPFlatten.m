@@ -13,7 +13,6 @@
 #import "ORModelI.h"
 #import "ORVarI.h"
 #import "ORDecompose.h"
-#import "ORMIPDecompose.h"
 #import "ORFloatLinear.h"
 #import "ORFlatten.h"
 
@@ -84,7 +83,7 @@
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   id<ORLinear> terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
+   id<ORLinear> terms = [ORNormalizer normalize: expr into: model annotation:note];
    id<ORConstraint> cstr = NULL;
    switch ([expr type]) {
       case ORRBad:
@@ -111,7 +110,10 @@
    [terms release];
    return cstr;
 }
-
+-(void) visitIntVar:(ORIntVarI*)v
+{
+   _result = v;
+}
 -(void) visitFloatVar: (ORFloatVarI*) v
 {
    _result = v;
@@ -183,12 +185,12 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORMIPLinearizer linearFrom: [v expr] model: _into annotation: Default];
+   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORMIPLinearizer linearFrom: [v expr] model: _into annotation: Default];
+   ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [v expr] model: _into annotation: Default];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
 }
 

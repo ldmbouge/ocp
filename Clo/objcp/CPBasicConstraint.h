@@ -335,8 +335,7 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMinimize : CPCoreConstraint<ORSearchObjectiveFunction>
--(id)        initCPIntVarMinimize: (id<CPIntVar>) x;
--(void)      dealloc;
+-(id)        init: (id<CPIntVar>) x;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
@@ -350,8 +349,7 @@ typedef int (^intgetter) (void) ;
 @end
 
 @interface CPIntVarMaximize : CPCoreConstraint<ORSearchObjectiveFunction>
--(id)        initCPIntVarMaximize: (id<CPIntVar>) x;
--(void)      dealloc;
+-(id)        init: (id<CPIntVar>) x;
 -(ORStatus)  post;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;

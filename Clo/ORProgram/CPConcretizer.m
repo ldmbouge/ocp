@@ -35,6 +35,13 @@
    [_solver release];
    [super dealloc];
 }
+- (void)doesNotRecognizeSelector:(SEL)aSelector
+{
+   NSLog(@"DID NOT RECOGNIZE a selector %@",NSStringFromSelector(aSelector));
+   @throw [[ORExecutionError alloc] initORExecutionError:"ORCPConcretizer missing a selector"];
+   //return [super doesNotRecognizeSelector:aSelector];
+}
+
 
 // Helper function
 -(id) concreteVar: (id<ORVar>) x
@@ -43,7 +50,7 @@
    return _gamma[x.getId];
 }
 
--(id) concreteArray: (id<ORIntVarArray>) x
+-(id) concreteArray: (id<ORVarArray>) x
 {
    [x visit: self];
    return _gamma[x.getId];
@@ -180,6 +187,39 @@
       _gamma[cstr.getId] = concrete;
    }
 }
+-(void) visitLinearGeq: (id<ORLinearGeq>) cstr
+{
+   assert(NO); // to finish
+}
+-(void) visitLinearLeq: (id<ORLinearLeq>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ex = [cstr vars];
+      id<ORIntArray>    ec = [cstr coefs];
+      ORInt c = [cstr cst];
+      id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+         return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
+      }];
+      id<CPConstraint> concreteCstr = [CPFactory sum:vx leq: c];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void) visitLinearEq: (id<ORLinearEq>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORIntVarArray> ex = [cstr vars];
+      id<ORIntArray>    ec = [cstr coefs];
+      ORInt c = [cstr cst];
+      id<CPIntVarArray> vx = [CPFactory intVarArray:_engine range:ex.range with:^id<CPIntVar>(ORInt k) {
+         return [CPFactory intVar:_gamma[ex[k].getId] scale:[ec at:k] shift:0];
+      }];
+      id<CPConstraint> concreteCstr = [CPFactory sum:vx eq: c];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitAlldifferent: (id<ORAlldifferent>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -305,9 +345,13 @@
 -(void) visitMinimizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> o = [v var];
+      id<ORVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory minimize: _gamma[o.getId]];
+      id<CPConstraint> concreteCstr = NULL;
+      if ([o conformsToProtocol:@protocol(ORIntVar)])
+         concreteCstr = [CPFactory minimize: _gamma[o.getId]];
+      else
+         concreteCstr = [CPFactory floatMinimize: _gamma[o.getId]];
       _gamma[v.getId] = concreteCstr;
       [_engine add: concreteCstr];
       [_engine setObjective: _gamma[v.getId]];
@@ -316,9 +360,13 @@
 -(void) visitMaximizeVar: (id<ORObjectiveFunctionVar>) v
 {
    if (_gamma[v.getId] == NULL) {
-      id<ORIntVar> o = [v var];
+      id<ORVar> o = [v var];
       [o visit: self];
-      id<CPConstraint> concreteCstr = [CPFactory maximize: _gamma[o.getId]];
+      id<CPConstraint> concreteCstr = NULL;
+      if ([o conformsToProtocol:@protocol(CPIntVar)])
+         concreteCstr = [CPFactory maximize: _gamma[o.getId]];
+      else
+         concreteCstr = [CPFactory floatMaximize: _gamma[o.getId]];
       _gamma[v.getId] = concreteCstr;
       [_engine add: concreteCstr];
       [_engine setObjective: _gamma[v.getId]];
@@ -341,7 +389,17 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of minimizeLinear not yet implemented"]; 
 }
 
-
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatVar> left = [cstr left];
+      ORInt cst = [cstr cst];
+      [left visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatEqualc: (id<CPIntVar>) _gamma[left.getId]  to: cst];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 -(void) visitEqualc: (id<OREqualc>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -484,8 +542,17 @@
       _gamma[cstr.getId] = concrete;
    }
 }
-
-
+-(void) visitFloatSquare: (id<ORSquare>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPFloatVar> res = [self concreteVar:[cstr res]];
+      id<CPFloatVar> op  = [self concreteVar:[cstr op]];
+      ORAnnotation annotation = [cstr annotation];
+      id<CPConstraint> concrete = [CPFactory floatSquare:op equal:res annotation:annotation];
+      [_engine add:concrete];
+      _gamma[cstr.getId] = concrete;
+   }
+}
 -(void) visitMod: (id<ORMod>)cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -618,6 +685,25 @@
       _gamma[cstr.getId] = concreteCstr;
    }
 }
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORFloatArray> array = [cstr array];
+      id<ORIntVar> idx = [cstr idx];
+      id<ORFloatVar> res = [cstr res];
+      [array visit: self];
+      [idx visit: self];
+      [res visit: self];
+      id<CPConstraint> concreteCstr = [CPFactory floatElement: (id<CPIntVar>) _gamma[idx.getId]
+                                                  idxCstArray: array
+                                                        equal: (id<CPFloatVar>) _gamma[res.getId]
+                                                   annotation: [cstr annotation]
+                                       ];
+      [_engine add: concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+
 -(void) visitElementVar: (id<ORElementVar>) cstr
 {
    if (_gamma[cstr.getId] == NULL) {
@@ -786,6 +872,34 @@
 -(void) visitSumGEqualc:(id<ORSumGEqc>) cstr
 {
 }
+-(void) visitFloatLinearEq:(id<ORFloatLinearEq>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<ORVarArray> av = [cstr vars];
+      id<CPFloatVarArray> x = (id)[ORFactory idArray:_engine range:av.range with:^id(ORInt k) {
+         id<CPVar> theCPVar = [self concreteVar:[av at:k]];
+         if ([theCPVar conformsToProtocol:@protocol(CPIntVar)])
+            return [CPFactory floatVar:_engine castFrom:(id)theCPVar];
+         else
+            return theCPVar;
+      }];
+      //id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
+      id<ORFloatArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c eqi:[cstr cst]];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
+-(void)visitFloatLinearLeq:(id<ORFloatLinearLeq>)cstr
+{
+   if (_gamma[cstr.getId] == NULL) {
+      id<CPFloatVarArray> x = [self concreteArray:[cstr vars]];
+      id<ORFloatArray> c = [cstr coefs];
+      id<CPConstraint> concreteCstr = [CPFactory floatSum:x coef:c leqi:[cstr cst]];
+      [_engine add:concreteCstr];
+      _gamma[cstr.getId] = concreteCstr;
+   }
+}
 
 // Bit
 -(void) visitBitEqual:(id<ORBitEqual>)cstr
@@ -941,6 +1055,8 @@
 -(void) visitExprNegateI:(id<ORExpr>) e
 {}
 -(void) visitExprCstSubI: (id<ORExpr>) e
+{}
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e
 {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e
 {}

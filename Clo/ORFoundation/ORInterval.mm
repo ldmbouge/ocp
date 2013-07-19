@@ -17,17 +17,24 @@
 +(void)load
 {
    ORIInit();
-   NSLog(@"ORILib::load called...");
+   //NSLog(@"ORILib::load called...");
    @autoreleasepool {
       NSLog(@"Infinity: %@",ORIFormat(INF));
-      NSLog(@"Epsilon : %@",ORIFormat(EPSILON));
+      //NSLog(@"Epsilon : %@",ORIFormat(EPSILON));
       NSLog(@"Zero    : %@",ORIFormat(ZERO));
-      NSLog(@"Flip    : %@",ORIFormat(FLIP));
+      //NSLog(@"Flip    : %@",ORIFormat(FLIP));
    }
 }
 @end
 
 static int bigendian;
+
+ORInterval INF;
+ORInterval FLIP;
+ORInterval EPSILON;
+ORInterval ZERO;
+double pinf = 0;
+double ninf = 0;
 
 void ORIInit()
 {
