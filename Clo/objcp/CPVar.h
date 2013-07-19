@@ -23,6 +23,12 @@
 -(NSSet*)constraints;
 @end
 
+@protocol CPNumVar <CPVar>
+-(ORFloat) floatMin;
+-(ORFloat) floatMax;
+-(ORFloat) floatValue;
+@end
+
 enum CPVarClass {
    CPVCBare = 0,
    CPVCShift = 1,
@@ -32,7 +38,7 @@ enum CPVarClass {
    CPVCFlip = 5
 };
 
-@protocol CPIntVar <CPVar>
+@protocol CPIntVar <CPNumVar>
 -(enum CPVarClass)varClass;
 -(ORInt) value;
 -(ORInt) min;

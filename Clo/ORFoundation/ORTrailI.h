@@ -176,6 +176,16 @@ static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
    return ei->_val = val;
 }
 
+static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val)
+{
+   TRDouble* ei = a._entries + i;
+   if (ei->_mgc != [a._trail magic]) {
+      trailFloatFun(a._trail, & ei->_val);
+      ei->_mgc = [a._trail magic];
+   }
+   return ei->_val = val;
+}
+
 static inline void inline_trailIntFun(ORTrailI* t,int* ptr)
 {
    struct Segment* seg = t->_seg[t->_cSeg];

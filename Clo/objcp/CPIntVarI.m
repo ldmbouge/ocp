@@ -187,6 +187,24 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    }
 }
 
+-(ORFloat) floatMin
+{
+   return [_dom min];
+}
+-(ORFloat) floatMax
+{
+   return [_dom max];
+}
+-(ORFloat) floatValue
+{
+   if ([_dom bound])
+      return [_dom min];
+   else {
+      @throw [[ORExecutionError alloc] initORExecutionError: "The Integer Variable is not Bound"];
+      return 0;
+   }
+}
+
 -(ORInt) intValue
 {
    assert(_dom);

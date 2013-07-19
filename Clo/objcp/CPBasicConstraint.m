@@ -2716,7 +2716,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    if ([_cv[0] isKindOfClass:[CPIntVarI class]]) {
       for(NSUInteger i = 0; i < nb; i++) {
          CPIntVarI* x = (CPIntVarI*) _cv[i];
-         NSLog(@"x: %@",x);
+         // NSLog(@"x: %@",x);
          [x whenChangeMinPropagate: self];
          [x whenChangeMaxPropagate: self];
       }
@@ -2726,16 +2726,14 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 }
 -(void) propagate
 {
-   id<CPVar> v = _cv[0];
+   id<CPNumVar> v = (id<CPNumVar>) _cv[0];
    NSUInteger nb = [_cv count];
-   if ([_cv[0] isKindOfClass:[CPIntVarI class]]) {
-      for(NSUInteger i = 0; i < nb; i++) {
-         ORInt lb = [((CPIntVarI*) _cv[i]) min];
-         ORInt ub = [((CPIntVarI*) _cv[i]) max];
+   for(NSUInteger i = 0; i < nb; i++) {
+      ORFloat lb = [_cv[i] floatMin];
+      ORFloat ub = [_cv[i] floatMax];
 //         NSLog(@" variable %d: %@ has bounds [%d,%d]",(ORInt) i,_cv[i],lb,ub);
-         [_relaxation updateLowerBound: _mv[i] with: lb];
-         [_relaxation updateUpperBound: _mv[i] with: ub];
-      }
+      [_relaxation updateLowerBound: _mv[i] with: lb];
+      [_relaxation updateUpperBound: _mv[i] with: ub];
    }
    OROutcome outcome = [_relaxation solve];
    if (outcome == ORinfeasible)
