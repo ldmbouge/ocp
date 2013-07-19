@@ -2497,7 +2497,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 @implementation CPIntVarMinimize
 {
    CPIntVarI*  _x;
-   ORInt        _primalBound;
+   ORInt       _primalBound;
 }
 -(CPIntVarMinimize*) initCPIntVarMinimize: (CPIntVarI*) x
 {
@@ -2663,7 +2663,6 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    }
 }
 
-
 -(ORStatus) check 
 {
    @try {
@@ -2681,7 +2680,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: _primalBound minimize: NO];
 }
 
--(NSString*)description
+-(NSString*) description
 {
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"MAXIMIZE(%@) with f* = %d  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
