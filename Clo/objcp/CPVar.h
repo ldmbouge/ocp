@@ -16,6 +16,16 @@
 @protocol CPEngine;
 @protocol ORTracer;
 
+enum CPVarClass {
+   CPVCBare = 0,
+   CPVCShift = 1,
+   CPVCAffine = 2,
+   CPVCEQLiteral = 3,
+   CPVCLiterals = 4,
+   CPVCFlip = 5,
+   CPVCCast = 6
+};
+
 @protocol CPVar <NSObject>
 -(ORInt) getId;
 -(id<ORTracker>)tracker;
@@ -30,16 +40,6 @@
 -(ORFloat) floatMax;
 -(ORFloat) floatValue;
 @end
-
-enum CPVarClass {
-   CPVCBare = 0,
-   CPVCShift = 1,
-   CPVCAffine = 2,
-   CPVCEQLiteral = 3,
-   CPVCLiterals = 4,
-   CPVCFlip = 5,
-   CPVCCast = 6
-};
 
 @protocol CPIntVar <CPNumVar>
 -(enum CPVarClass)varClass;
