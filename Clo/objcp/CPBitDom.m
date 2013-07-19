@@ -692,6 +692,8 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
       failNow();
    if (_sz._val == 1 && val == _min._val)
       return ORSuccess;
+   if (!GETBIT(val))
+      failNow();
    ORInt oldMin = _min._val;
    ORInt oldMax = _max._val;
    assignTRInt(&_min, val, _trail);

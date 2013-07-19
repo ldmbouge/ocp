@@ -160,8 +160,7 @@
 @end
 
 
-@implementation ORIntRangeI
-{
+@implementation ORIntRangeI {
    ORInt _low;
    ORInt _up;
 }
@@ -186,10 +185,6 @@
 -(NSUInteger)hash
 {
    return _low ^ _up;
-}
--(void) dealloc
-{
-   [super dealloc];
 }
 -(ORInt) low
 {
@@ -242,4 +237,67 @@
 }
 @end
 
-
+@implementation ORFloatRangeI {
+   ORFloat _low;
+   ORFloat _up;
+}
+-(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up
+{
+   self = [super init];
+   _low = low;
+   _up  = up;
+   return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORFloatRangeI allocWithZone:zone] initORFloatRangeI:_low up:_up];
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[self class]])
+      return _low == ((ORFloatRangeI*)object)->_low && _up == ((ORFloatRangeI*)object)->_up;
+   else return NO;
+}
+-(NSUInteger)hash
+{
+   return (NSUInteger)_low ^ (NSUInteger)_up;
+}
+-(ORFloat)low
+{
+   return _low;
+}
+-(ORFloat)up
+{
+   return _up;
+}
+-(ORBool) isDefined
+{
+   return _low <= _up;
+}
+-(ORBool)inRange:(ORFloat)e
+{
+   return _low <= e && e <= _up;
+}
+-(NSString*)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"[%lf,%lf]",_low,_up];
+   return rv;
+}
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitFloatRange:self];
+}
+- (void) encodeWithCoder:(NSCoder*) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_low];
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_up];
+}
+- (id) initWithCoder:(NSCoder*) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_low];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_up];
+   return self;
+}
+@end

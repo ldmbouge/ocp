@@ -69,7 +69,6 @@
 {
    return _value;
 }
-
 -(ORFloat) floatValue
 {
    return _value;
@@ -93,6 +92,10 @@
 -(ORBool) isVariable
 {
    return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(id<ORTracker>) tracker
 {
@@ -190,6 +193,10 @@
 -(ORBool) isVariable
 {
    return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(id<ORTracker>) tracker
 {
@@ -290,6 +297,10 @@
 {
    return NO;
 }
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
 -(id<ORTracker>) tracker
 {
    return _tracker;
@@ -362,6 +373,10 @@
 -(ORBool) isVariable
 {
    return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTFloat;
 }
 -(id<ORTracker>) tracker
 {

@@ -23,7 +23,7 @@ int main (int argc, const char * argv[])
    @autoreleasepool {
      id<ORModel> model = [ORFactory createModel];
      
-     id<ORIntRange> R = RANGE(model,1,n);
+     id<ORIntRange> R = RANGE(model,0,n-1);
      
      id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
@@ -34,15 +34,18 @@ int main (int argc, const char * argv[])
      [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
 
      id<CPProgram> cp = [ORFactory createCPProgram: model];
-     id<CPHeuristic> h = [cp createFF];
+     //id<CPHeuristic> h = [cp createFF];
      [cp solveAll:
        ^() {
           [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
-         [cp labelHeuristic:h];
-       //printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
+          printf("S[%d] = [",[nbSolutions intValue:cp]);
+          for(ORInt k=0;k < n;k++) {
+             printf("%d%c",[cp intValue:x[k]],k<n-1 ? ',' : ']');
+          }
+          printf("\n");
+          //[cp labelHeuristic:h];
           [nbSolutions incr:cp];
-       }
-       ];
+       }];
      printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
      
      NSLog(@"Solver status: %@\n",cp);

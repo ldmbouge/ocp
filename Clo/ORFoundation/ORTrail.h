@@ -9,8 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORUtilities/ORUtilities.h"
-#import "ORFoundation/ORTracker.h"
+#import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORTracker.h>
+#import <ORFoundation/ORInterval.h>
 
 @protocol ORTrail <NSObject>
 -(void) trailInt:(ORInt*) ptr;
@@ -50,12 +51,12 @@ typedef struct {
 
 typedef struct {
    long long _val;   // TRLong should be a 64-bit wide trailable signed integer
-   ORUInt _mgc;
+   ORUInt    _mgc;
 } TRLong;
 
 typedef struct {
    double    _val;
-   ORUInt _mgc;
+   ORUInt    _mgc;
 } TRDouble;
 
 typedef struct {

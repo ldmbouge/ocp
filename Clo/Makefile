@@ -1,5 +1,5 @@
 LIBS    = ORUtilities ORFoundation CPUKernel objcp ORModeling ORProgram 
-TARGETS = $(LIBS) queens2 knapsack
+TARGETS = $(LIBS) queens2 knapsack Sudoku magicserie
 
 # queensAC Sudoku magicserie queensACSem
 
@@ -25,20 +25,15 @@ ORProgram:
 	@make -C ORProgram USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 queens2: 
 	@make -C queens2 USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-
 knapsack: 
-	make -C knapsack USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-
-queensAC:  $(LIBS)
+	@make -C knapsack USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
+queensAC: 
 	@make -C queensAC all USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-
-queensACSem:  $(LIBS)
+queensACSem:
 	@make -C queensACSem USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-
-Sudoku: $(LIBS)
+Sudoku:
 	@make -C Sudoku USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
-
-magicserie: $(LIBS)
+magicserie: 
 	@make -C magicserie USER_DEFINES='-DUSEVIEWS=$(VIEWS) $(CFL)'
 
 clean:

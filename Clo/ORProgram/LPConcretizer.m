@@ -61,6 +61,9 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{}
+
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "no concretization of integer variables in linear program"];
@@ -499,6 +502,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
+-(void) visitExprSquareI:(id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
+}
 -(void) visitExprNegateI:(id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
@@ -589,6 +596,8 @@
 -(void) visitIntRange:(id<ORIntRange>) v
 {
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{}
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (_gamma[v.getId] == NULL) {
@@ -1041,6 +1050,10 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }
 -(void) visitExprAbsI:(id<ORExpr>) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
+}
+-(void) visitExprSquareI:(id<ORExpr>) e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "concretization of expression not yet implemented"];
 }

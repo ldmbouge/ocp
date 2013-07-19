@@ -52,3 +52,12 @@
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
+
+@interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
+-(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up;
+-(ORFloat)low;
+-(ORFloat)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
+@end

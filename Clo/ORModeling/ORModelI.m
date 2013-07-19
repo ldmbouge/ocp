@@ -510,6 +510,7 @@
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
+   [flat release];
    return flatModel;
 }
 -(id<ORModel>) lpflatten
@@ -520,6 +521,7 @@
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
+   [flat release];
    return flatModel;
 }
 -(id<ORModel>) mipflatten
@@ -530,6 +532,7 @@
    [flat apply: self];
    [batch release];
    [flatModel setSource:self];
+   [flat release];
    return flatModel;
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder

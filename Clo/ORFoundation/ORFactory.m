@@ -124,6 +124,11 @@
    ORIntRangeI* o = [[ORIntRangeI alloc] initORIntRangeI: low up: up];
    return [tracker trackImmutable: o];
 }
++(id<ORFloatRange>) floatRange: (id<ORTracker>) tracker low:(ORFloat)low up:(ORFloat) up
+{
+   ORFloatRangeI* o = [[ORFloatRangeI alloc] initORFloatRangeI:low up:up];
+   return [tracker trackImmutable:o];
+}
 
 +(id<ORIntArray>) intArray: (id<ORTracker>) tracker array: (NSArray*)array
 {
@@ -701,6 +706,11 @@
 {
    id<ORExpr> o = [[ORExprAbsI alloc] initORExprAbsI:op];
    return [self validate:o onError:"No CP tracker in Abs Expression" track:t];
+}
++(id<ORExpr>) exprSquare: (id<ORExpr>) op track:(id<ORTracker>)t
+{
+   id<ORExpr> o = [[ORExprSquareI alloc] initORExprSquareI:op];
+   return [self validate:o onError:"No CP tracker in Square Expression" track:t];
 }
 +(id<ORExpr>) exprNegate: (id<ORExpr>) op track:(id<ORTracker>)t
 {

@@ -20,6 +20,7 @@
 #import "CPData.h"
 #import "CPTableI.h"
 #import "CPBitVarI.h"
+#import "CPFloatVarI.h"
 
 @implementation CPFactory (DataStructure)
 +(void) print:(id)x 
@@ -66,6 +67,11 @@
 {
    return [CPIntVarI initCPNegateBoolView:(CPIntVarI*)x];
 }
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range
+{
+   return [[CPFloatVarI alloc] initCPFloatVar:cp low:range.low up:range.up];
+}
+
 
 +(id<ORIntMatrix>) intMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {

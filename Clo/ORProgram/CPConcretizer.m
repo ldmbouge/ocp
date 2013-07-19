@@ -12,11 +12,9 @@
 #import <ORFoundation/ORSet.h>
 #import "CPProgram.h"
 #import "CPConcretizer.h"
-#import "CPConcretizer.h"
 #import <objcp/CPFactory.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitConstraint.h>
-
 
 @implementation ORCPConcretizer
 {
@@ -69,18 +67,21 @@
 {}
 -(void) visitIntRange:(id<ORIntRange>) v
 {}
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{}
 -(void) visitUniformDistribution:(id) v
 {}
 
 -(void) visitIntVar: (id<ORIntVar>) v
 {
    if (!_gamma[v.getId]) 
-      _gamma[[v getId]] = [CPFactory intVar: _engine domain: [v domain]];
+      _gamma[v.getId] = [CPFactory intVar: _engine domain: [v domain]];
 }
 
 -(void) visitFloatVar: (id<ORFloatVar>) v
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: "No concretization yet for Float Variables"];
+   if (!_gamma[v.getId])
+      _gamma[v.getId] = [CPFactory floatVar: _engine bounds: [v domain]];
 }
 
 -(void) visitBitVar: (id<ORBitVar>) v
@@ -119,7 +120,7 @@
          [v[i] visit: self];
          dx[i] = _gamma[[v[i] getId]];
       }
-      _gamma[[v getId]] = dx;
+      _gamma[v.getId] = dx;
    }
 }
 -(void) visitIntArray:(id<ORIntArray>) v
@@ -141,7 +142,7 @@
       id<ORIdMatrix> n = [ORFactory idMatrix: _engine with: v];
       for(ORInt k = 0; k < nb; k++)
          [n setFlat: _gamma[[[v flat: k] getId]] at: k];
-      _gamma[[v getId]] = n;
+      _gamma[v.getId] = n;
    }
 }
 
@@ -934,6 +935,8 @@
 -(void) visitExprProdI: (id<ORExpr>) e
 {}
 -(void) visitExprAbsI:(id<ORExpr>) e
+{}
+-(void) visitExprSquareI:(id<ORExpr>)e
 {}
 -(void) visitExprNegateI:(id<ORExpr>) e
 {}

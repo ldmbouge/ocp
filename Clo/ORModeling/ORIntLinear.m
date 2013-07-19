@@ -12,8 +12,8 @@
 #import "ORModeling/ORModeling.h"
 
 
-@implementation ORLinear
--(ORLinear*)initORLinear:(ORInt)mxs
+@implementation ORIntLinear
+-(ORIntLinear*)initORLinear:(ORInt)mxs
 {
    self = [super init];
    _max   = mxs;
@@ -97,7 +97,7 @@
    }
 }
 
--(void)addLinear:(ORLinear*)lts
+-(void)addLinear:(ORIntLinear*)lts
 {
    for(ORInt k=0;k < lts->_nb;k++) {
       [self addTerm:lts->_terms[k]._var by:lts->_terms[k]._coef];
@@ -262,11 +262,10 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 }
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
-   // [ldm] This should *never* raise an exception, but return a ORFailure.
+   // [ldm] This should *never* raise an exception, but return a ORFailure.   
    id<ORConstraint> rv = NULL;
    switch (_nb) {
       case 0:
-         assert(NO);
          return NULL;
       case 1: {
          if (_terms[0]._coef == 1) {
@@ -385,7 +384,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 
 
 @implementation ORLinearFlip
--(ORLinearFlip*) initORLinearFlip: (id<ORLinear>)r
+-(ORLinearFlip*) initORLinearFlip: (id<ORIntLinear>)r
 {
    self = [super init];
    _real = r;
@@ -412,7 +411,7 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 {
    [_real addTerm: x by: -c];
 }
--(void) addLinear: (id<ORLinear>) lts
+-(void) addLinear: (id<ORIntLinear>) lts
 {
    for(ORInt k=0;k < [lts size];k++) {
       [_real addTerm:[lts var:k] by: - [lts coef:k]];
@@ -442,6 +441,22 @@ static int decCoef(const struct CPTerm* t1,const struct CPTerm* t2)
 -(NSString*) description
 {
    return [_real description];
+}
+-(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postNEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postNEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postLEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postLEQZ:model annotation:cons];
+}
+-(id<ORConstraint>)postDISJ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
+{
+   return [_real postDISJ:model annotation:cons];
 }
 @end
 

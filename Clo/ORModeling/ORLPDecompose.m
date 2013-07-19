@@ -20,7 +20,7 @@
    id<ORAddToModel>   _model;
    ORAnnotation       _n;
 }
-+(ORFloatLinear*) normalize: (ORExprI*) rel into: (id<ORAddToModel>) model annotation: (ORAnnotation) n
++(id<ORLinear>) normalize: (ORExprI*) rel into: (id<ORAddToModel>) model annotation: (ORAnnotation) n
 {
    ORLPNormalizer* v = [[ORLPNormalizer alloc] initORLPNormalizer: model annotation:n];
    [rel visit: v];
@@ -48,23 +48,23 @@
    else if (lc || rc) {
       ORFloat c = lc ? [[e left] floatValue] : [[e right] floatValue];
       ORExprI* other = lc ? [e right] : [e left];
-      ORFloatLinear* lin  = [ORLPLinearizer linearFrom:other model:_model annotation:_n];
+      id<ORFloatLinear> lin  = [ORLPLinearizer floatLinearFrom:other model:_model annotation:_n];
       [lin addIndependent: - c];
       _terms = lin;
    }
    else {
-      ORFloatLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
+      id<ORFloatLinear> linLeft = [ORLPLinearizer floatLinearFrom:[e left] model:_model annotation:_n];
       ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-      [ORLPLinearizer addToLinear: linRight from: [e right] model: _model annotation: _n];
+      [ORLPLinearizer addToFloatLinear: linRight from: [e right] model: _model annotation: _n];
       [linRight release];
       _terms = linLeft;
    }
 }
 -(void) visitExprLEqualI:(ORExprLEqualI*)e
 {
-   ORFloatLinear* linLeft = [ORLPLinearizer linearFrom:[e left] model:_model annotation:_n];
+   ORFloatLinear* linLeft = [ORLPLinearizer floatLinearFrom:[e left] model:_model annotation:_n];
    ORFloatLinearFlip* linRight = [[ORFloatLinearFlip alloc] initORFloatLinearFlip: linLeft];
-   [ORLPLinearizer addToLinear:linRight from:[e right] model:_model annotation:_n];
+   [ORLPLinearizer addToFloatLinear:linRight from:[e right] model:_model annotation:_n];
    [linRight release];
    _terms = linLeft;
 }
@@ -84,27 +84,6 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
--(void) visitIntVar: (id<ORIntVar>) e      {}
--(void) visitFloatVar:(id<ORFloatVar>)e    {}
--(void) visitIntegerI: (id<ORInteger>) e   {}
--(void) visitMutableIntegerI: (id<ORMutableInteger>) e   {}
--(void) visitMutableFloatI: (id<ORMutableFloat>) e   {}
--(void) visitFloatI: (id<ORFloatNumber>) e {}
--(void) visitExprPlusI: (ORExprPlusI*) e   {}
--(void) visitExprMinusI: (ORExprMinusI*) e {}
--(void) visitExprMulI: (ORExprMulI*) e     {}
--(void) visitExprDivI: (ORExprDivI*) e     {}
--(void) visitExprModI: (ORExprModI*) e     {}
--(void) visitExprSumI: (ORExprSumI*) e     {}
--(void) visitExprProdI: (ORExprProdI*) e   {}
--(void) visitExprAggOrI: (ORExprAggOrI*) e {}
--(void) visitExprAggAndI: (ORExprAggAndI*) e {}
--(void) visitExprAggMinI: (ORExprAggMinI*) e {}
--(void) visitExprAggMaxI: (ORExprAggMaxI*) e {}
--(void) visitExprAbsI:(ORExprAbsI*) e      {}
--(void) visitExprNegateI:(ORExprNegateI*)e {}
--(void) visitExprCstSubI:(ORExprCstSubI*)e {}
--(void) visitExprVarSubI:(ORExprVarSubI*)e {}
 @end
 
 @implementation ORLPLinearizer
@@ -173,7 +152,7 @@
       [_terms addTerm: x by: coef];
    }
    else {
-      @throw [[ORExecutionError alloc] initORExecutionError: "NO MIP Linearization supported"];
+      @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
    }
 }
 -(void) visitExprDivI: (ORExprDivI*) e
@@ -185,6 +164,10 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported for mod"];
 }
 -(void) visitExprAbsI:(ORExprAbsI*) e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
+}
+-(void) visitExprSquareI:(ORExprSquareI*)e
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
@@ -248,7 +231,7 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NO LP Linearization supported"];
 }
-+(ORFloatLinear*) linearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
++(id<ORFloatLinear>) floatLinearFrom: (ORExprI*) e model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
    ORFloatLinear* rv = [[ORFloatLinear alloc] initORFloatLinear:4];
    ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: rv model: model annotation:cons];
@@ -256,7 +239,7 @@
    [v release];
    return rv;
 }
-+(ORFloatLinear*) addToLinear: (id<ORFloatLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
++(id<ORFloatLinear>) addToFloatLinear: (id<ORFloatLinear>) terms from: (ORExprI*) e  model: (id<ORAddToModel>) model annotation: (ORAnnotation) cons
 {
    ORLPLinearizer* v = [[ORLPLinearizer alloc] initORLPLinearizer: terms model: model annotation:cons];
    [e visit:v];
@@ -264,4 +247,3 @@
    return terms;
 }
 @end
-

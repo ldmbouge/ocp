@@ -21,10 +21,6 @@
 {
    return [[[ORModelI alloc] initORModelI] autorelease];
 }
-//+(id<ORModel>) createModel:(ORUInt)nbo
-//{
-//   return [[[ORModelI alloc] initORModelI:nbo] autorelease];
-//}
 +(id<ORModel>) createModel: (ORUInt) nbo mappings: (id<ORModelMappings>) mappings
 {
    return [[[ORModelI alloc] initORModelI: nbo mappings: mappings] autorelease];
@@ -40,19 +36,19 @@
 
 +(id<ORModelTransformation>) createFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORFlatten alloc] initORFlatten:into] autorelease];
+  return [[ORFlatten alloc] initORFlatten:into];
 }
 +(id<ORModelTransformation>) createLPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORLPFlatten alloc] initORLPFlatten:into] autorelease];
+   return [[ORLPFlatten alloc] initORLPFlatten:into];
 }
 +(id<ORModelTransformation>) createMIPFlattener:(id<ORAddToModel>)into
 {
-   return [[[ORMIPFlatten alloc] initORMIPFlatten:into] autorelease];
+   return [[ORMIPFlatten alloc] initORMIPFlatten:into];
 }
 +(id<ORModelTransformation>) createLinearizer:(id<ORAddToModel>)into
 {
-   return [[[ORLinearize alloc] initORLinearize:into] autorelease];
+   return [[ORLinearize alloc] initORLinearize:into];
 }
 +(id<ORSolutionPool>) createSolutionPool
 {

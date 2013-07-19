@@ -12,6 +12,7 @@
 #import <ORFoundation/ORExpr.h>
 #import "ORTracker.h"
 #import "ORArray.h"
+#import "ORSet.h"
 #import "ORConstraint.h"
 
 @protocol ORSnapshot
@@ -43,6 +44,7 @@
 @end
 
 @protocol ORFloatVar <ORVar>
+-(id<ORFloatRange>) domain;
 -(ORBool) hasBounds;
 -(ORFloat) low;
 -(ORFloat) up;

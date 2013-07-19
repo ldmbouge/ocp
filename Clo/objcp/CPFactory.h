@@ -27,6 +27,8 @@
 +(id<CPIntVar>) boolVar: (id<CPEngine>)cp;
 +(id<CPIntVar>) negate:(id<CPIntVar>)x;
 
++(id<CPFloatVar>) floatVar:(id<CPEngine>)cp bounds:(id<ORFloatRange>) range;
+
 +(id<CPVarArray>) varArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 +(id<CPIntVarArray>) intVarArray: (id<ORTracker>) cp range: (id<ORIntRange>) range;
 

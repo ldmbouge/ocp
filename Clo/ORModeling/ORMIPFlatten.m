@@ -84,14 +84,14 @@
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORFloatLinear* terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
+   id<ORLinear> terms = [ORMIPNormalizer normalize: expr into: model annotation:note];
    id<ORConstraint> cstr = NULL;
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
       case ORREq:
       {
-         cstr = [terms postLinearEq: model annotation: note];
+         cstr = [terms postEQZ: model annotation: note];
       }
          break;
       case ORRNEq:
@@ -101,7 +101,7 @@
          break;
       case ORRLEq:
       {
-         cstr = [terms postLinearLeq: model annotation: note];
+         cstr = [terms postLEQZ: model annotation: note];
       }
          break;
       default:
@@ -149,6 +149,10 @@
    _result = v;
 }
 -(void) visitIntRange:(id<ORIntRange>)v
+{
+   _result = v;
+}
+-(void) visitFloatRange:(id<ORFloatRange>)v
 {
    _result = v;
 }

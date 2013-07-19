@@ -266,7 +266,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 #if !defined(_NDEBUG)
    [s appendFormat:@"var<%d>=",_name];
 #endif
-   if ([dom isKindOfClass:[CPBoundsDom class]]) {
+   if ([dom isMemberOfClass:[CPBoundsDom class]]) {
       if ([dom domsize]==1)
          [s appendFormat:@"%d",[dom min]];
       else {
@@ -319,7 +319,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 
 -(ORBool) tracksLoseEvt:(id<CPDom>)sender
 {
-    return TRACKSINTVAR;
+  //return TRACKSINTVAR;
+   if (_net._ac5._val != nil || _triggers != nil)
+      return YES;
+   else if (_recv && [_recv tracksLoseEvt:sender])
+      return YES;
+   else
+      return NO;
 }
 // nothing to do here
 -(void) setTracksLoseEvt

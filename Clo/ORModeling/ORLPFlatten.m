@@ -82,14 +82,14 @@
 
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)expr into:(id<ORAddToModel>)model annotation:(ORAnnotation)note
 {
-   ORFloatLinear* terms = [ORLPNormalizer normalize: expr into: model annotation:note];
+   id<ORLinear> terms = [ORLPNormalizer normalize: expr into: model annotation:note];
    id<ORConstraint> cstr = NULL;
    switch ([expr type]) {
       case ORRBad:
          assert(NO);
       case ORREq:
          {
-            cstr = [terms postLinearEq: model annotation: note];
+            cstr = [terms postEQZ: model annotation: note];
          }
          break;
       case ORRNEq:
@@ -99,7 +99,7 @@
          break;
       case ORRLEq:
          {
-           cstr = [terms postLinearLeq: model annotation: note];
+           cstr = [terms postLEQZ: model annotation: note];
          }
          break;
       default:
@@ -155,6 +155,10 @@
 {
    _result = v;
 }
+-(void) visitFloatRange:(id<ORFloatRange>)v
+{
+   _result = v;
+}
 -(void) visitIdArray: (id<ORIdArray>) v
 {
    _result = v;
@@ -182,13 +186,13 @@
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _into annotation: Default];
+   ORFloatLinear* terms = [ORLPLinearizer floatLinearFrom: [v expr] model: _into annotation: Default];
    _result = [_into minimize: [terms variables: _into] coef: [terms coefficients: _into]];
    [terms release];
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) v
 {
-   ORFloatLinear* terms = [ORLPLinearizer linearFrom: [v expr] model: _into annotation: Default];
+   ORFloatLinear* terms = [ORLPLinearizer floatLinearFrom: [v expr] model: _into annotation: Default];
    _result = [_into maximize: [terms variables: _into] coef: [terms coefficients: _into]];
    [terms release];
 }

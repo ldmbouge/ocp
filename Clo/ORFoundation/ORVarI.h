@@ -29,6 +29,7 @@
 -(void) visit: (id<ORVisitor>)v;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
 @end
 
 @interface ORIntVarAffineI : ORIntVarI
@@ -60,6 +61,7 @@
 -(void) visit: (id<ORVisitor>)v;
 -(void) encodeWithCoder:(NSCoder *)aCoder;
 -(id) initWithCoder:(NSCoder *)aDecoder;
+-(enum ORVType) vtype;
 @end
 
 @interface ORBitVarI : ORExprI<ORBitVar>
@@ -69,6 +71,7 @@
 -(ORUInt)bitLength;
 -(void) visit: (id<ORVisitor>)v;
 -(NSString*)stringValue;
+-(enum ORVType) vtype;
 @end
 
 @interface ORVarLitterals : ORObject<ORVarLitterals>
