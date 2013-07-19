@@ -362,11 +362,12 @@
 {
    if (_gamma[c.getId] == NULL) {
       id<ORVarArray> x = [c vars];
-      id<ORFloatArray> a = [c coefs];
+      id<ORIntArray> a = [c coefs];
+      id<ORFloatArray> af = [ORFactory floatArray: _lpsolver range: [a range] with: ^ORFloat(ORInt i) { return [a at: i]; }];
       ORFloat cst = [c cst];
       [x visit: self];
       id<LPVariableArray> dx = _gamma[x.getId];
-      LPConstraintI* concreteCstr = [_lpsolver createEQ: dx coef: a cst: -cst];
+      LPConstraintI* concreteCstr = [_lpsolver createLEQ: dx coef: af cst: -cst];
       _gamma[c.getId] = concreteCstr;
       [_lpsolver postConstraint: concreteCstr];
    }

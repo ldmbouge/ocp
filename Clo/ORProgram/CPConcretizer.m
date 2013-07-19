@@ -363,7 +363,7 @@
       id<ORVar> o = [v var];
       [o visit: self];
       id<CPConstraint> concreteCstr = NULL;
-      if ([o conformsToProtocol:@protocol(CPIntVar)])
+      if ([o conformsToProtocol:@protocol(ORIntVar)])
          concreteCstr = [CPFactory maximize: _gamma[o.getId]];
       else
          concreteCstr = [CPFactory floatMaximize: _gamma[o.getId]];
