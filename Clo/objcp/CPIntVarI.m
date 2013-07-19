@@ -589,7 +589,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _vc = CPVCAffine;
    id<CPIntVarNotifier> xDeg = [x delegate];
    if (xDeg == nil) {
-      CPIntVarMultiCast* mc = [[CPIntVarMultiCast alloc] initVarMC:2 root:x];
+      CPMultiCast* mc = [[CPMultiCast alloc] initVarMC:2 root:x];
       [mc addVar: self];
       [mc release]; // we no longer need the local ref. The addVar call has increased the retain count.
    }
@@ -984,7 +984,6 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    self = [super initCPIntVarView: [x engine] low:-[x max] up:-[x min] for:x];
    _vc = CPVCFlip;
-   //_dom = (CPBoundsDom*)[[x domain] retain];
    _dom = nil;
    _x = x;
    return self;
@@ -1314,7 +1313,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@implementation CPIntVarMultiCast
+@implementation CPMultiCast
 
 -(id)initVarMC:(ORInt)n root:(CPIntVarI*)root
 {
@@ -1354,7 +1353,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return CPVCLiterals;
 }
--(void) addVar:(CPIntVarI*)v
+-(void) addVar:(id)v
 {
    if (_nb >= _mx) {
       _tab = realloc(_tab,sizeof(id<CPIntVarNotifier>)*(_mx<<1));
@@ -1368,9 +1367,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _loseValIMP[_nb] = (UBType)[v methodForSelector:@selector(loseValEvt:sender:)];
    _minIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMinEvt:sender:)];
    _maxIMP[_nb] = (UBType)[v methodForSelector:@selector(changeMaxEvt:sender:)];
-   id<ORTrail> theTrail = [[v engine] trail];
+   CPEngineI* engine = (id)[v engine];
+   id<ORTrail> theTrail = [engine trail];
    ORInt toFix = _nb;
-   __block CPIntVarMultiCast* me = self;
+   __block CPMultiCast* me = self;
    [theTrail trailClosure:^{
       me->_tab[toFix] = NULL;
       me->_loseValIMP[toFix] = NULL;
@@ -1419,7 +1419,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    _tracksLoseEvt = YES;
    ORInt toFix = _nb;
    id<ORTrail> theTrail = [[ref engine] trail];
-   __block CPIntVarMultiCast* me = self;
+   __block CPMultiCast* me = self;
    [theTrail trailClosure:^{
       me->_tab[toFix] = NULL;
       me->_loseValIMP[toFix] = NULL;

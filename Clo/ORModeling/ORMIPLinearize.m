@@ -196,6 +196,10 @@
 {
    _result = cstr;
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = c;
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
    _result = c;
@@ -250,6 +254,10 @@
 {
    _result = c;
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = c;
+}
 -(void) visitMod: (id<ORMod>)c
 {
    _result = c;
@@ -287,6 +295,10 @@
    _result = c;
 }
 -(void) visitElementVar: (id<ORElementVar>)c
+{
+   _result = c;
+}
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
 {
    _result = c;
 }

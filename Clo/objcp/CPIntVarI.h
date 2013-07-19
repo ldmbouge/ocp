@@ -82,16 +82,17 @@ typedef struct  {
 
 @class CPIntVarI;
 @class CPLiterals;
-@class CPIntVarMultiCast;
+@class CPMultiCast;
 // This is really an implementation protocol
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
 // PVH: my recommendation is to have an interface and this becomes the implementation class
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
+
 -(ORInt)getId;
 -(NSMutableSet*)constraints;
 -(void)setDelegate:(id<CPIntVarNotifier>)delegate;
--(void) addVar:(CPIntVarI*)var;
+-(void) addVar:(id<CPIntVarNotifier>)var;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)findLiterals:(CPIntVarI*)ref;
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
@@ -104,7 +105,7 @@ typedef struct  {
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
 @end
 
-@interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf> {
+@interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier,CPIntVarExtendedItf> {
 @package
    enum CPVarClass                      _vc;
    BOOL                             _isBool;
@@ -112,7 +113,7 @@ typedef struct  {
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
-   CPIntVarMultiCast*                 _recv;
+   CPMultiCast*                 _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
@@ -420,7 +421,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPIntVarMultiCast : NSObject<CPIntVarNotifier> {
+@interface CPMultiCast : NSObject<CPIntVarNotifier> {
    id<CPIntVarNotifier>* _tab;
    BOOL        _tracksLoseEvt;
    ORInt                  _nb;
@@ -433,7 +434,7 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
--(void) addVar:(CPIntVarI*) v;
+-(void) addVar:(id<CPIntVarNotifier>) v;
 -(NSMutableSet*)constraints;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;

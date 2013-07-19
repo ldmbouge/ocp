@@ -27,6 +27,8 @@
 -(ORInt)independent;
 -(BOOL)isZero;
 -(BOOL)isOne;
+-(ORInt)min;
+-(ORInt)max;
 @end
 
 @interface ORIntLinear : NSObject<ORIntLinear> {

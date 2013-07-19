@@ -74,6 +74,7 @@
 -(void) visitPlus: (id<ORPlus>)c  {}
 -(void) visitMult: (id<ORMult>)c  {}
 -(void) visitSquare:(id<ORSquare>)c {}
+-(void) visitFloatSquare:(id<ORSquare>)c {}
 -(void) visitMod: (id<ORMod>)c {}
 -(void) visitModc: (id<ORModc>)c {}
 -(void) visitMin:(id<ORMin>)c  {}
@@ -84,6 +85,7 @@
 -(void) visitImply: (id<ORImply>)c  {}
 -(void) visitElementCst: (id<ORElementCst>)c  {}
 -(void) visitElementVar: (id<ORElementVar>)c  {}
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr {}
 -(void) visitReifyEqualc: (id<ORReifyEqualc>)c  {}
 -(void) visitReifyEqual: (id<ORReifyEqual>)c  {}
 -(void) visitReifyNEqualc: (id<ORReifyNEqualc>)c  {}
@@ -135,6 +137,7 @@
 -(void) visitExprMaxI: (id<ORExpr>) e {}
 -(void) visitExprNegateI:(id<ORExpr>) e  {}
 -(void) visitExprCstSubI: (id<ORExpr>) e  {}
+-(void) visitExprCstFloatSubI:(id<ORExpr>)e {}
 -(void) visitExprDisjunctI:(id<ORExpr>) e  {}
 -(void) visitExprConjunctI: (id<ORExpr>) e  {}
 -(void) visitExprImplyI: (id<ORExpr>) e  {}
@@ -364,6 +367,10 @@
 {
    _result = cstr;
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   _result = c;
+}
 -(void) visitEqualc: (id<OREqualc>)c
 {
    _result = c;
@@ -408,6 +415,10 @@
 {
    _result = c;
 }
+-(void) visitFloatSquare:(id<ORSquare>)c
+{
+   _result = c;
+}
 -(void) visitMod: (id<ORMod>)c
 {
    _result = c;
@@ -448,6 +459,11 @@
 {
    _result = c;
 }
+-(void) visitFloatElementCst: (id<ORFloatElementCst>) c
+{
+   _result = c;
+}
+
 void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt* idx)
 {
    if (d == arity) {
@@ -600,15 +616,36 @@ void loopOverMatrix(id<ORIntVarMatrix> m,ORInt d,ORInt arity,id<ORTable> t,ORInt
 }
 -(void) visitMinimizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORNormalizer normSide:terms for:_into annotation:Default];
-   _result = [_into minimizeVar: alpha];
+   switch ([e expr].vtype) {
+      case ORTInt: {
+         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into annotation:Default];
+         _result = [_into minimizeVar: alpha];
+      }break;
+      case ORTFloat: {
+         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into annotation: Default];
+         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into annotation:Default];
+         _result = [_into minimizeVar:alpha];
+      }break;
+      default:
+         break;
+   }
 }
 -(void) visitMaximizeExpr: (id<ORObjectiveFunctionExpr>) e
 {
-   ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
-   id<ORIntVar> alpha = [ORNormalizer normSide:terms for:_into annotation:Default];
-   _result = [_into maximizeVar: alpha];
+   switch ([e expr].vtype) {
+      case ORTInt: {
+         ORIntLinear* terms = [ORNormalizer intLinearFrom: [e expr] model: _into annotation: Default];
+         id<ORIntVar> alpha = [ORNormalizer intVarIn:terms for:_into annotation:Default];
+         _result = [_into maximizeVar: alpha];
+      }break;
+      case ORTFloat:{
+         ORFloatLinear* terms = [ORNormalizer floatLinearFrom: [e expr] model: _into annotation: Default];
+         id<ORFloatVar> alpha = [ORNormalizer floatVarIn:terms for:_into annotation:Default];
+         _result = [_into maximizeVar:alpha];
+      }break;
+      default: break;
+   }
 }
 -(void) visitMinimizeLinear: (id<ORObjectiveFunctionLinear>) v
 {

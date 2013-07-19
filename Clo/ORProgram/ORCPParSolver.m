@@ -313,6 +313,14 @@
 {
    [[self worker] restrict: var to: S];
 }
+-(void) floatLthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatLthen: var with: val];
+}
+-(void) floatGthen: (id<ORFloatVar>) var with: (ORFloat) val
+{
+   [[self worker] floatGthen: var with: val];
+}
 -(void) fail
 {
    [[[self worker] explorer] fail];
@@ -346,8 +354,7 @@
    [[self worker] limitFailures: maxFailures in: cl];
 }
 
-
--(ORBool) bound: (id<ORIntVar>) x
+-(ORBool) bound: (id<ORVar>) x
 {
    return [[self worker] bound:x];
 }
@@ -362,6 +369,18 @@
 -(ORInt)  domsize: (id<ORIntVar>) x
 {
    return [[self worker] domsize:x];
+}
+-(ORFloat) domwidth:(id<ORFloatVar>)x
+{
+   return [[self worker] domwidth:x];
+}
+-(ORFloat) fmin:(id<ORFloatVar>)x
+{
+   return [[self worker] fmin:x];
+}
+-(ORFloat) fmax:(id<ORFloatVar>)x
+{
+   return [[self worker] fmax:x];
 }
 -(ORInt)  member: (ORInt) v in: (id<ORIntVar>) x
 {

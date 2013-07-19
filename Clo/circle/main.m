@@ -28,16 +28,33 @@ int main(int argc, const char * argv[])
          
          id<CPProgram> cp = [args makeProgram:model];
          __block ORInt nbSol = 0;
-         [cp solve:^{
-
-            //[cp labelArrayFF:x];
-            //[cp labelArrayFF:l];
-            
+         [cp solveAll:^{
+            NSLog(@"Starting...");
+            NSLog(@"X = %@",[cp gamma][x.getId]);
+            NSLog(@"Y = %@",[cp gamma][y.getId]);
+            NSLog(@"MODEL is: %@",[[cp engine] model]);
+            id<ORSelect> select = [ORFactory select: cp
+                                              range: a.range
+                                           suchThat: ^bool(ORInt i)   { return ![cp bound:a[i]]; }
+                                          orderedBy:^ORFloat(ORInt i) { return [cp domwidth:a[i]];} ];
+            do {
+               ORInt i = [select min];
+               if (i == MAXINT)
+                  break;               
+               ORFloat mid = [cp fmin:a[i]] + ([cp fmax:a[i]] - [cp fmin:a[i]])/2.0;
+               [cp try:^{
+                  [cp floatLthen:a[i] with:mid];
+               } or:^{
+                  [cp floatGthen:a[i] with:mid];
+               }];
+            } while (true);
          }];
-         id<ORCPSolution> sol = [[cp solutionPool] best];
-         printf("x = [");
-         for(ORInt i = x.low; i <= x.up; i++)
-            printf("%d%c",[sol intValue: x[i]],((i < x.up) ? ',' : ']'));
+         [[cp solutionPool] enumerateWith:^(id<ORCPSolution> sol) {
+            printf("[x,y] = [");
+            for(ORInt i = a.low; i <= a.up; i++)
+               printf("%f%c",[sol floatValue: a[i]],((i < a.up) ? ',' : ']'));
+            printf("\n");
+         }];
          struct ORResult res = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];

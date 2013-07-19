@@ -17,6 +17,7 @@
 #import <objcp/CPDom.h>
 #import <objcp/CPData.h>
 #import <objcp/CPConstraint.h>
+#import "CPIntVarI.h"
 
 @protocol CPFloatVarNotifier;
 
@@ -24,19 +25,23 @@
 @protocol CPFloatVarSubscriber <NSObject>
 // AC3 Closure Event
 -(void) whenBindDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMinDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMaxDo: (ConstraintCallback) todo priority: (ORInt) p onBehalf:(CPCoreConstraint*)c;
 
 -(void) whenBindDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) whenChangeBoundsDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMinDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 -(void) whenChangeMaxDo: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 
 // AC3 Constraint Event
 -(void) whenBindPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c priority: (ORInt) p;
 
 -(void) whenBindPropagate: (CPCoreConstraint*) c;
+-(void) whenChangeBoundsPropagate: (CPCoreConstraint*) c;
 -(void) whenChangeMinPropagate: (CPCoreConstraint*) c;
 -(void) whenChangeMaxPropagate: (CPCoreConstraint*) c;
 @end
@@ -54,9 +59,9 @@ typedef struct  {
    TRId           _bindEvt;
    TRId            _minEvt;
    TRId            _maxEvt;
+   TRId         _boundsEvt;
 } CPFloatEventNetwork;
 
-@class CPFloatVarMultiCast;
 @class CPFloatVarI;
 
 @protocol CPFloatVarNotifier <NSObject>
@@ -75,10 +80,23 @@ typedef struct  {
    CPEngineI*            _engine;
    id<CPFDom>               _dom;
    CPFloatEventNetwork      _net;
-   CPFloatVarMultiCast*    _recv;
+   CPMultiCast*            _recv;
 }
 -(id)initCPFloatVar:(id<CPEngine>)engine low:(ORFloat)low up:(ORFloat)up;
 -(CPEngineI*) engine;
+-(id<ORTracker>) tracker;
+-(NSMutableSet*)constraints;
+-(ORFloat)floatValue;
+-(ORFloat) domwidth;
+@end
+
+@interface CPFloatViewOnIntVarI : ORObject<CPFloatVar,CPFloatVarExtendedItf,CPIntVarNotifier> {
+   CPEngineI*       _engine;
+   CPIntVarI*       _theVar;
+   CPFloatEventNetwork _net;
+}
+-(id)initCPFloatViewIntVar:(id<CPEngine>)engine intVar:(CPIntVarI*)iv;
+-(CPEngineI*)engine;
 -(id<ORTracker>) tracker;
 -(NSMutableSet*)constraints;
 @end

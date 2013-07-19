@@ -81,6 +81,16 @@
 +(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 @end
 
+@interface CPFactory (ORFloat)
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
++(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c;
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORAnnotation)n;
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
+@end
+
 @interface CPSearchFactory : NSObject
 +(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
 +(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;

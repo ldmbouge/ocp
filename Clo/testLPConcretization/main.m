@@ -186,5 +186,7 @@ int main_both(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   return main_lp(argc,argv);
+   int st0 =  main_lp(argc,argv);
+   int st1 = main_mip(argc,argv);
+   return st0+st1;
 }

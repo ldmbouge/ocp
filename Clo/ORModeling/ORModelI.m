@@ -436,7 +436,7 @@
    _objective = o;
 }
 
--(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x
 {
    _objective = [[ORMinimizeVarI alloc] initORMinimizeVarI: x];
    return [self trackObjective: _objective];
@@ -603,11 +603,11 @@
 {
    return _target;
 }
--(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x
 {
    return [_target minimizeVar:x];
 }
--(id<ORObjectiveFunction>) maximizeVar:(id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar:(id<ORVar>) x
 {
    return [_target maximizeVar: x];
 }
@@ -693,11 +693,11 @@ typedef void(^ArrayEnumBlock)(id,NSUInteger,BOOL*);
    [_theGroup add:cstr];
    return cstr;
 }
--(id<ORObjectiveFunction>) minimizeVar: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) minimizeVar: (id<ORVar>) x
 {
    return [_target minimizeVar:x];
 }
--(id<ORObjectiveFunction>) maximizeVar: (id<ORIntVar>) x
+-(id<ORObjectiveFunction>) maximizeVar: (id<ORVar>) x
 {
    return [_target maximizeVar:x];
 }

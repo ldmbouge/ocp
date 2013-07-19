@@ -17,8 +17,10 @@
 @protocol ORVarArray;
 @protocol ORIntVarMatrix;
 @protocol ORExpr;
+@protocol ORVar;
 @protocol ORIntVar;
 @protocol ORBitVar;
+@protocol ORFloatVar;
 @protocol OREngine;
 @protocol ORSearchEngine;
 @protocol ORObjectiveFunction;
@@ -69,6 +71,11 @@ enum ORGroupType {
 -(ORInt) cst;
 @end
 
+@protocol  ORFloatEqualc <ORConstraint>
+-(id<ORFloatVar>) left;
+-(ORFloat) cst;
+@end
+
 @protocol  ORNEqualc <ORConstraint>
 -(id<ORIntVar>) left;
 -(ORInt) cst;
@@ -85,8 +92,8 @@ enum ORGroupType {
 @end
 
 @protocol  OREqual <ORConstraint>
--(id<ORIntVar>) left;
--(id<ORIntVar>) right;
+-(id<ORVar>) left;
+-(id<ORVar>) right;
 -(ORInt) cst;
 -(ORAnnotation) annotation;
 @end
@@ -125,8 +132,8 @@ enum ORGroupType {
 @end
 
 @protocol ORSquare<ORConstraint>
--(id<ORIntVar>)res;
--(id<ORIntVar>)op;
+-(id<ORVar>)res;
+-(id<ORVar>)op;
 -(ORAnnotation) annotation;
 @end
 
@@ -199,6 +206,13 @@ enum ORGroupType {
 -(id<ORIntVar>) index0;
 -(id<ORIntVar>) index1;
 -(id<ORIntVar>) res;
+-(ORAnnotation)annotation;
+@end
+
+@protocol ORFloatElementCst <ORConstraint>
+-(id<ORFloatArray>) array;
+-(id<ORIntVar>)   idx;
+-(id<ORFloatVar>)   res;
 -(ORAnnotation)annotation;
 @end
 

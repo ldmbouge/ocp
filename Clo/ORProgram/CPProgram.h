@@ -56,6 +56,9 @@
 -(void)                diff: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               lthen: (id<ORIntVar>) var with: (ORInt) val;
 -(void)               gthen: (id<ORIntVar>) var with: (ORInt) val;
+-(void)          floatLthen: (id<ORFloatVar>) var with: (ORFloat) val;
+-(void)          floatGthen: (id<ORFloatVar>) var with: (ORFloat) val;
+
 -(void)            restrict: (id<ORIntVar>) var to: (id<ORIntSet>) S;
 -(void)  restartHeuristics;
 -(void)        addHeuristic: (id<CPHeuristic>) h;
@@ -111,7 +114,7 @@
 -(id<ORCPSolution>) captureSolution;
 
 -(ORInt) intValue: (id) x;
--(ORBool) bound: (id<ORIntVar>) x;
+-(ORBool) bound: (id<ORVar>) x;
 -(ORInt)  min: (id<ORIntVar>) x;
 -(ORInt)  max: (id<ORIntVar>) x;
 -(ORInt)  domsize: (id<ORIntVar>) x;
@@ -119,6 +122,10 @@
 -(NSSet*) constraints: (id<ORVar>)x;
 
 -(ORFloat) floatValue: (id<ORFloatVar>) x;
+-(ORFloat) domwidth:(id<ORFloatVar>)x;
+-(ORFloat) fmin:(id<ORFloatVar>)x;
+-(ORFloat) fmax:(id<ORFloatVar>)x;
+
 -(ORBool) boolValue: (id<ORIntVar>) x;
 -(ORInt) maxBound: (id<ORIntVarArray>) x;
 

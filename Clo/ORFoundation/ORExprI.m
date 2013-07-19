@@ -241,6 +241,10 @@
 {
    [[e index] visit:self];
 }
+-(void) visitExprCstFloatSubI: (ORExprCstFloatSubI*) e
+{
+   [[e index] visit:self];
+}
 -(void) visitExprDisjunctI:(ORDisjunctI*) e
 {
    [[e left] visit:self];
@@ -850,7 +854,6 @@
 }
 @end
 
-
 @implementation ORExprCstSubI
 -(id<ORExpr>) initORExprCstSubI: (id<ORIntArray>) array index:(id<ORExpr>) op
 {
@@ -902,6 +905,73 @@
 -(void) visit:(id<ORVisitor>)visitor
 {
    [visitor visitExprCstSubI:self];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeObject:_array];
+   [aCoder encodeObject:_index];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   _array = [aDecoder decodeObject];
+   _index = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+
+@implementation ORExprCstFloatSubI
+-(id<ORExpr>) initORExprCstFloatSubI: (id<ORFloatArray>) array index:(id<ORExpr>) op
+{
+   self = [super init];
+   _array = array;
+   _index = op;
+   return self;
+}
+-(id<ORTracker>) tracker
+{
+   return [_index tracker];
+}
+-(ORFloat) fmin
+{
+   ORFloat minOf = MAXINT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      minOf = minOf <[_array at:k] ? minOf : [_array at:k];
+   return minOf;
+}
+-(ORFloat) fmax
+{
+   ORFloat maxOf = MININT;
+   for(ORInt k=[_array low];k<=[_array up];k++)
+      maxOf = maxOf > [_array at:k] ? maxOf : [_array at:k];
+   return maxOf;
+}
+-(NSString *)description
+{
+   NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [rv appendFormat:@"%@[%@]",_array,_index];
+   return rv;
+}
+-(ORExprI*) index
+{
+   return  _index;
+}
+-(id<ORFloatArray>)array
+{
+   return _array;
+}
+-(ORBool) isConstant
+{
+   return [_index isConstant];
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
+-(void) visit:(id<ORVisitor>)visitor
+{
+   [visitor visitExprCstFloatSubI:self];
 }
 - (void) encodeWithCoder:(NSCoder *)aCoder
 {

@@ -48,6 +48,34 @@
 {
    return _terms[k]._coef;
 }
+-(ORFloat) fmin
+{
+   ORFloat lb = _indep;
+   for(ORInt k=0;k < _nb;k++) {
+      ORFloat c = _terms[k]._coef;
+      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
+      ORFloat vlb = d.low;
+      ORFloat vub = d.up;
+      ORFloat svlb = c > 0 ? vlb * c : vub * c;
+      lb += svlb;
+   }
+   return max(MININT,lb);
+}
+
+-(ORFloat) fmax
+{
+   ORFloat ub = _indep;
+   for(ORInt k=0;k < _nb;k++) {
+      ORFloat c = _terms[k]._coef;
+      id<ORFloatRange> d = [(id<ORFloatVar>)_terms[k]._var domain];
+      ORFloat vlb = d.low;
+      ORFloat vub = d.up;
+      ORFloat svub = c > 0 ? vub * c : vlb * c;
+      ub += svub;
+   }
+   return min(MAXINT,ub);
+}
+
 -(void) addTerm: (id<ORVar>) x by: (ORFloat) c
 {
    if (c==0) return;
@@ -244,6 +272,15 @@ static int decCoef(const struct CPFloatTerm* t1,const struct CPFloatTerm* t2)
 {
    return [_real description];
 }
+-(ORFloat) fmin
+{
+   return [_real fmin];
+}
+-(ORFloat) fmax
+{
+   return [_real fmax];
+}
+
 -(id<ORConstraint>)postEQZ:(id<ORAddToModel>)model annotation:(ORAnnotation)cons
 {
    return [_real postEQZ:model annotation:cons];
