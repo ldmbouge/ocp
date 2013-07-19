@@ -2543,10 +2543,27 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 -(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
 {
    @synchronized(self) {
-      if ([newBound value] < _primalBound)
-         _primalBound = [newBound value];
+      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+         ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+         if (b < _primalBound)
+         _primalBound = b;
+      }
    }
 }
+-(void) tightenWithDualBound: (id) newBound
+{
+   @synchronized(self) {
+      if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+         ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+         [_x updateMin: b];
+      }
+      else if ([newBound isKindOfClass:[ORObjectiveValueFloatI class]]) {
+         ORInt b = (ORInt) ceil([((ORObjectiveValueFloatI*) newBound) value]);
+         [_x updateMin: b];
+      }
+   }
+}
+
 -(id<ORObjectiveValue>) value
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
@@ -2625,11 +2642,27 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    NSLog(@"primal bound: %d",_primalBound);
 }
 
--(void) tightenPrimalBound: (ORObjectiveValueIntI*) newBound
+-(void) tightenPrimalBound: (id) newBound
 {
-   if ([newBound value] > _primalBound)
-      _primalBound = [newBound value];
+   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+      ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+      if (b > _primalBound)
+         _primalBound = b;
+   }
 }
+
+-(void) tightenWithDualBound: (id) newBound
+{
+   if ([newBound isKindOfClass:[ORObjectiveValueIntI class]]) {
+      ORInt b = [((ORObjectiveValueIntI*) newBound) value];
+      [_x updateMax: b];
+   }
+   else if ([newBound isKindOfClass:[ORObjectiveValueFloatI class]]) {
+      ORInt b = (ORInt) floor([((ORObjectiveValueFloatI*) newBound) value]);
+      [_x updateMax: b];
+   }
+}
+
 
 -(ORStatus) check 
 {
@@ -2653,5 +2686,71 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
    [buf appendFormat:@"MAXIMIZE(%@) with f* = %d  [thread: %d]",[_x description],_primalBound,[NSThread threadID]];
    return buf;
+}
+@end
+
+
+@implementation CPRelaxation
+{
+   NSArray* _mv;
+   NSArray* _cv;
+   id<ORRelaxation> _relaxation;
+}
+-(CPRelaxation*) initCPRelaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation
+{
+   id<CPVar> v = cv[0];
+   self = [super initCPCoreConstraint:[v engine]];
+   _priority = HIGHEST_PRIO-4;
+   _mv = mv;
+   _cv = cv;
+   _relaxation = relaxation;
+   return self;
+}
+-(void) dealloc
+{
+   [super dealloc];
+}
+-(ORStatus) post
+{
+   NSUInteger nb = [_cv count];
+   if ([_cv[0] isKindOfClass:[CPIntVarI class]]) {
+      for(NSUInteger i = 0; i < nb; i++) {
+         CPIntVarI* x = (CPIntVarI*) _cv[i];
+         // NSLog(@"x: %@",x);
+         [x whenChangeMinPropagate: self];
+         [x whenChangeMaxPropagate: self];
+      }
+   }
+   [self propagate];
+   return ORSuspend;
+}
+-(void) propagate
+{
+   id<CPNumVar> v = (id<CPNumVar>) _cv[0];
+   NSUInteger nb = [_cv count];
+   for(NSUInteger i = 0; i < nb; i++) {
+      ORFloat lb = [_cv[i] floatMin];
+      ORFloat ub = [_cv[i] floatMax];
+//         NSLog(@" variable %d: %@ has bounds [%d,%d]",(ORInt) i,_cv[i],lb,ub);
+      [_relaxation updateLowerBound: _mv[i] with: lb];
+      [_relaxation updateUpperBound: _mv[i] with: ub];
+   }
+   OROutcome outcome = [_relaxation solve];
+   if (outcome == ORinfeasible)
+      failNow();
+   else if (outcome == ORoptimal) {
+      id<ORSearchObjectiveFunction> o = [[v engine] objective];
+      [o tightenWithDualBound: [_relaxation objectiveValue]];
+//      NSLog(@"Objective after: %@",o);
+   }
+}
+
+-(NSSet*) allVars
+{
+   return [[NSSet alloc] initWithArray: _cv];
+}
+-(ORUInt) nbUVars
+{
+   return (ORUInt) [_cv count];
 }
 @end

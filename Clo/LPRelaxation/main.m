@@ -70,7 +70,7 @@ int main_lp(int argc, const char * argv[])
 
 int main_hybrid(int argc, const char * argv[])
 {
-   
+   ORLong startTime = [ORRuntimeMonitor cputime];
    id<ORModel> model = [ORFactory createModel];
    id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
    id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
@@ -80,7 +80,15 @@ int main_hybrid(int argc, const char * argv[])
    for(ORInt i = 0; i < nbRows; i++)
       [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
    [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
-   id<CPProgram> cp = [ORFactory createCPProgram: model];
+   
+   id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
+//   OROutcome b = [lp solve];
+//   printf("outcome: %d \n",b);
+   printf("Objective: %f \n",[lp objective]);
+   for(ORInt i = 0; i < nbColumns-1; i++)
+      printf("x[%d] = %10.5f in [%10.5f,%10.5f] \n",i,[lp value: x[i]],[lp lowerBound: x[i]],[lp upperBound: x[i]]);
+
+   id<CPProgram> cp = [ORFactory createCPProgram: model withRelaxation: lp];
    
    [cp solve:
     ^() {
@@ -104,6 +112,8 @@ int main_hybrid(int argc, const char * argv[])
 //         NSLog(@"Value of x[%d] = %d",i,[cp intValue: x[i]]);
     }
     ];
+   ORLong endTime = [ORRuntimeMonitor cputime];
+   printf("Execution Time: %lld \n",endTime - startTime);
    NSLog(@"we are done \n\n");
    [cp release];
    return 0;
@@ -112,6 +122,6 @@ int main_hybrid(int argc, const char * argv[])
 
 int main(int argc, const char * argv[])
 {
-   main_lp(argc,argv);
+//   main_lp(argc,argv);
    return main_hybrid(argc,argv);
 }

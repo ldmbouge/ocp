@@ -341,6 +341,7 @@ typedef int (^intgetter) (void) ;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
@@ -355,9 +356,19 @@ typedef int (^intgetter) (void) ;
 -(ORStatus)  check;
 -(void)      updatePrimalBound;
 -(void)      tightenPrimalBound: (id<ORObjectiveValue>) newBound;
+-(void)      tightenWithDualBound: (id<ORObjectiveValue>) newBound;
 -(id<ORObjectiveValue>) primalBound;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 -(id<ORIntVar>) var;
 -(id<ORObjectiveValue>)value;
 @end
+
+@interface CPRelaxation : CPCoreConstraint
+-(CPRelaxation*) initCPRelaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
+-(void)      dealloc;
+-(ORStatus)  post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
+@end
+

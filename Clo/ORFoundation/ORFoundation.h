@@ -30,6 +30,7 @@
 #import <ORFoundation/ORVisit.h>
 #import <ORFoundation/ORSemBDSController.h>
 #import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORVar.h>
 
 
 ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)());

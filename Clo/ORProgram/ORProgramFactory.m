@@ -22,6 +22,7 @@
 #import <ORProgram/ORCPParSolver.h>
 #import <ORProgram/CPMultiStartSolver.h>
 #import <objcp/CPFactory.h>
+#import <objcp/CPConstraint.h>
 #import "CPSolver.h"
 #import "CPConcretizer.h"
 #import "CPDDeg.h"
@@ -333,5 +334,82 @@
    }];
    return cpprogram;
 }
++(id<ORRelaxation>) createLinearRelaxation: (id<ORModel>) model
+{
+   return [[ORLinearRelaxation alloc] initLinearRelaxation:model];
+}
+
++(id<CPProgram>) createCPProgram: (id<ORModel>) model withRelaxation: (id<ORRelaxation>) relaxation
+{
+   __block id<CPProgram> cpprogram = [CPSolverFactory solver];
+   [ORFactory createCPProgram: model program: cpprogram];
+   id<ORSolutionPool> sp = [cpprogram solutionPool];
+
+   NSArray* mv = [model variables];
+   NSMutableArray* cv = [[NSMutableArray alloc] init];
+   id* gamma = [cpprogram gamma];
+   for(id<ORVar> v in mv)
+      [cv addObject: gamma[v.getId]];
+   
+   NSLog(@"Model variables %@",mv);
+   NSLog(@"Concrete variables %@",cv);
+   id<CPEngine> engine = [(CPSolver*) cpprogram engine];
+   
+   [engine add: [CPFactory relaxation: mv var: cv relaxation: relaxation]];
+   [cpprogram onSolution:^{
+      id<ORSolution> s = [cpprogram captureSolution];
+      //NSLog(@"Found solution with value: %@",[s objectiveValue]);
+      [sp addSolution: s];
+      [s release];
+   }];
+   return cpprogram;
+}
 
 @end
+
+@implementation ORLinearRelaxation
+{
+   id<ORModel> _model;
+   id<LPRelaxation> _lprelaxation;
+}
+-(ORLinearRelaxation*) initLinearRelaxation: (id<ORModel>) m
+{
+   self = [super init];
+   _model = m;
+   _lprelaxation = [ORFactory createLPRelaxation: _model];
+   return self;
+}
+-(ORFloat) objective
+{
+   return [_lprelaxation objective];
+}
+-(ORFloat) value: (id<ORVar>) x
+{
+   return [_lprelaxation floatValue: x];
+}
+-(ORFloat) lowerBound: (id<ORVar>) x
+{
+   return [_lprelaxation lowerBound: x];
+}
+-(ORFloat) upperBound: (id<ORVar>) x
+{
+   return [_lprelaxation upperBound: x];
+}
+-(void) updateLowerBound: (id<ORVar>) x with: (ORFloat) f
+{
+   [_lprelaxation updateLowerBound: x with:f];
+}
+-(void) updateUpperBound: (id<ORVar>) x with: (ORFloat) f
+{
+   [_lprelaxation updateUpperBound: x with:f];
+}
+-(OROutcome) solve
+{
+   return [_lprelaxation solve];
+}
+-(id<ORObjectiveValue>) objectiveValue
+{
+   return [_lprelaxation objectiveValue];
+}
+@end
+
