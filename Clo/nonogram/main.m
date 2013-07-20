@@ -233,6 +233,7 @@ int main(int argc, const char * argv[])
                   }
                }
             }
+            nbSol++;
             @autoreleasepool {
                [[x range:0] enumerateWithBlock:^(ORInt i) {
                   printf("|");

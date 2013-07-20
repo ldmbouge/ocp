@@ -48,6 +48,7 @@ int main(int argc, const char * argv[])
                   [cp floatGthen:a[i] with:mid];
                }];
             } while (true);
+            nbSol++;
          }];
          [[cp solutionPool] enumerateWith:^(id<ORCPSolution> sol) {
             printf("[x,y] = [");

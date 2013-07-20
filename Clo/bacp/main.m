@@ -79,7 +79,7 @@ int main(int argc, const char * argv[])
                                   [cp diff:x[i] with:p];
                                }];
                     }];
-            
+            nbSol++;
             printf("x = [");
             for(ORInt i = x.low; i <= x.up; i++)
                printf("%d%c",[cp intValue: x[i]],((i < x.up) ? ',' : ']'));
