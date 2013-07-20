@@ -11,9 +11,12 @@
 
 #import "ORTrail.h"
 #import "ORTrailI.h"
+#import <ORFoundation/OREngine.h>
 #import "ORError.h"
 #import "ORData.h"
 #import <assert.h>
+#import "ORVisit.h"
+
 
 @implementation ORTrailI
 -(ORTrailI*) init
@@ -170,7 +173,7 @@
    ++_seg[_cSeg]->top;
 }
 
--(ORUInt)trailSize
+-(ORInt)trailSize
 {
    return _cSeg * NBSLOT + _seg[_cSeg]->top;
 }
@@ -294,7 +297,7 @@ ORInt assignTRIntArray(TRIntArray a,int i,ORInt val)
 {
    TRInt* ei = a._entries + i;
    if (ei->_mgc != [a._trail magic]) {
-      trailIntFun(a._trail, & ei->_val);
+      trailIntFun((ORTrailI*)a._trail, & ei->_val);
       ei->_mgc = [a._trail magic];
    }
    return ei->_val = val;
@@ -309,7 +312,15 @@ void trailIntFun(ORTrailI* t,int* ptr)
    s->intVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);
 }
-
+void trailFloatFun(ORTrailI* t,ORFloat* ptr)
+{
+   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
+   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   s->ptr = ptr;
+   s->code = TAGDouble;
+   s->intVal = *ptr;
+   ++(t->_seg[t->_cSeg]->top);
+}
 void trailUIntFun(ORTrailI* t,unsigned* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
@@ -335,7 +346,7 @@ void assignTRInt(TRInt* v,int val,ORTrailI* trail)
    ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailIntFun(trail, &v->_val);
+      inline_trailIntFun(trail, &v->_val);
    }
    v->_val = val;
 }
@@ -345,7 +356,7 @@ void  assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
    ORInt cmgc = trail->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailUIntFun(trail, &v->_val);
+      inline_trailUIntFun(trail, &v->_val);
    }
    v->_val = val;
 }
@@ -374,7 +385,7 @@ void  assignTRId(TRId* v,id val,ORTrailI* trail)
 }
 void  assignTRIdNC(TRIdNC* v,id val,ORTrailI* trail)
 {
-   trailIdNCFun(trail, &v->_val);
+   inline_trailIdNCFun(trail, &v->_val);
    v->_val = val;
 }
 ORInt getTRIntArray(TRIntArray a,int i)
@@ -405,11 +416,104 @@ ORInt trailMagic(ORTrailI* trail)
 }
 @end
 
+@implementation ORMemoryTrailI
+-(id)init
+{
+   self = [super init];
+   _mxs = 128;
+   _csz = 0;
+   _tab = malloc(sizeof(id)*_mxs);
+   return self;
+}
+-(id)initWith:(ORMemoryTrailI*)mt
+{
+   self = [super init];
+   _mxs = mt->_mxs;
+   _csz = mt->_csz;
+   _tab = malloc(sizeof(id)*_mxs);
+   for(ORInt i=0;i<_csz;i++)
+      _tab[i] = [mt->_tab[i] retain];
+   return self;
+}
+-(void)dealloc
+{
+   while (_csz)
+      [_tab[--_csz] release];
+   free(_tab);
+   [super dealloc];
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORMemoryTrailI alloc] initWith:self];
+}
+-(void)resize
+{
+   _tab = realloc(_tab, _mxs * 2);
+   _mxs = _mxs * 2;
+}
+-(id)track:(id)obj
+{
+   if (_csz >= _mxs)
+      [self resize];
+   _tab[_csz++] = [obj retain];
+   return obj;
+}
+-(void)pop
+{
+   [_tab[--_csz] release];
+}
+-(ORInt) trailSize
+{
+   return _csz;
+}
+-(void)backtrack:(ORInt)to
+{
+   while (_csz > to)
+      [_tab[--_csz] release];
+}
+-(void)clear
+{
+   while (_csz)
+      [_tab[--_csz] release];
+}
+-(void)comply:(ORMemoryTrailI*)mt upTo:(ORInt)mh
+{
+//   while (_csz > mt->_csz)
+//      [_tab[--_csz] release];
+   assert(_csz <= mt->_csz);
+   ORInt k = _csz;
+   while (_csz < mh)
+      _tab[_csz++] = [mt->_tab[k++] retain];
+}
+-(void)reload:(ORMemoryTrailI*)t
+{
+   const ORInt h = min(t->_csz,_csz);
+   ORInt i;
+   for(i = 0;i < h && _tab[i] == t->_tab[i];i++);
+   while(_csz != i)
+      [_tab[--_csz] release];
+   while(_csz < t->_csz)
+      _tab[_csz++] = [t->_tab[i++] retain];
+}
+
+
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+   [buf appendFormat:@"ORMemoryTrail(%d / %d)[",_csz,_mxs];
+   for(ORInt i =0;i<_csz-1;i++)
+      [buf appendFormat:@"%p,",_tab[i]];
+   [buf appendFormat:@"%p]",_tab[_csz-1]];
+   return buf;
+}
+@end
+
 @implementation ORTrailIStack
--(ORTrailIStack*) initTrailStack: (ORTrailI*)tr
+-(ORTrailIStack*) initTrailStack: (ORTrailI*)tr memory:(ORMemoryTrailI*)mt
 {
    self = [super init];
    _trail = [tr retain];
+   _mt    = [mt retain];
    _sz  = 0;
    _mxs = 1024;
    _tab = malloc(sizeof(struct TRNode)*_mxs);
@@ -420,6 +524,7 @@ ORInt trailMagic(ORTrailI* trail)
 {
    free(_tab);
    [_trail release];
+   [_mt    release];
    [super dealloc];
 }
 -(void)pushNode:(ORInt)x
@@ -428,30 +533,31 @@ ORInt trailMagic(ORTrailI* trail)
       _tab = realloc(_tab,sizeof(struct TRNode)*_mxs*2);
       _mxs <<= 1;
    }
-   _tab[_sz++] = (struct TRNode){x,[_trail trailSize]};
+   _tab[_sz++] = (struct TRNode){x,[_trail trailSize],[_mt trailSize]};
 }
--(ORInt)popOffset:(ORInt)x
+-(void)popNode:(ORInt) x
 {
    do {
       --_sz;
    } while(_sz>0 && (_tab[_sz]._x != x));
-   return _tab[_sz]._ofs;
-}
--(void)popNode:(ORInt) x
-{
-   [_trail backtrack:[self popOffset:x]];
+   const ORInt ofs  = _tab[_sz]._ofs;
+   const ORInt mOfs = _tab[_sz]._mOfs;
+   [_trail backtrack:ofs];
+   [_mt    backtrack:mOfs];
 }
 -(void)popNode
 {
    assert(_sz > 0);
-   [_trail backtrack: _tab[--_sz]._ofs];
+   const ORInt mto = _tab[--_sz]._mOfs;
+   const ORInt to  = _tab[_sz]._ofs;
+   [_trail backtrack: to];
+   [_mt    backtrack: mto];
 }
-
 -(void)reset
 {
    _sz = 0;
 }
--(bool)empty
+-(ORBool)empty
 {
    return _sz == 0;
 }
@@ -492,17 +598,30 @@ void freeTRIntArray(TRIntArray a)
 {
    return _trint._val;
 }
--(void)  setValue: (ORInt) value
+-(ORInt) setValue: (ORInt) value
 {
    assignTRInt(&_trint,value,_trail);
+   return value;
 }
--(void)  incr
+-(ORInt)  incr
 {
    assignTRInt(&_trint,_trint._val+1,_trail);
+   return _trint._val;
 }
--(void)  decr
+-(ORInt)  decr
 {
    assignTRInt(&_trint,_trint._val-1,_trail);
+   return _trint._val;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:32] autorelease];
+   [buf appendFormat:@"TR<int>(%d)",_trint._val];
+   return buf;
+}
+-(void)visit:(id<ORVisitor>)visitor
+{
+   [visitor visitTrailableInt:self];
 }
 @end
 
@@ -512,11 +631,10 @@ void freeTRIntArray(TRIntArray a)
 
 
 @implementation ORTRIntArrayI
--(ORTRIntArrayI*) initORTRIntArray: (id<ORSolver>) solver range: (id<ORIntRange>) R
+-(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) engine range: (id<ORIntRange>) R
 {
    self = [super init];
-   _solver = solver;
-   _trail = [[solver engine] trail];
+   _trail = (ORTrailI*)[engine trail];
    _low = [R low];
    _up = [R up];
    _nb = (_up - _low + 1);
@@ -571,17 +689,8 @@ void freeTRIntArray(TRIntArray a)
    [rv appendString:@"]"];
    return rv;
 }
--(id<ORSolver>) solver
-{
-   return _solver;
-}
--(id<OREngine>) engine
-{
-   return [_solver engine];
-}
 - (void) encodeWithCoder: (NSCoder *)aCoder
 {
-   [aCoder encodeObject:_solver];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -593,7 +702,6 @@ void freeTRIntArray(TRIntArray a)
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
    self = [super init];
-   _solver = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
@@ -613,11 +721,10 @@ void freeTRIntArray(TRIntArray a)
 
 @implementation ORTRIntMatrixI
 
--(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
+-(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSearchEngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    self = [super init];
-   _solver = cp;
-   _trail = [[cp engine] trail];
+   _trail = (ORTrailI*)[engine trail];
    _arity = 3;
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
@@ -642,11 +749,10 @@ void freeTRIntArray(TRIntArray a)
    return self;
 }
 
--(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSolver>) solver range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
+-(ORTRIntMatrixI*) initORTRIntMatrix:(id<ORSearchEngine>) engine range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1
 {
    self = [super init];
-   _solver = solver;
-   _trail = [[solver engine] trail];
+   _trail = (ORTrailI*)[engine trail];
    _arity = 2;
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
@@ -682,7 +788,7 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    for(ORInt k = 0; k < m->_arity; k++)
       if (i[k] < m->_low[k] || i[k] > m->_up[k])
          @throw [[ORExecutionError alloc] initORExecutionError: "Wrong index in ORTRIntMatrix"];
-   int idx = i[0] - m->_low[0];
+   ORInt idx = i[0] - m->_low[0];
    for(ORInt k = 1; k < m->_arity; k++)
       idx = idx * m->_size[k] + (i[k] - m->_low[k]);
    return idx;
@@ -767,17 +873,8 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
    [self descriptionAux: i depth:0 string: rv];
    return rv;
 }
--(id<ORSolver>) solver
-{
-   return _solver;
-}
--(id<OREngine>) engine
-{
-   return [_solver engine];
-}
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
-   [aCoder encodeObject:_solver];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
    for(ORInt i = 0; i < _arity; i++) {
       [aCoder encodeObject:_range[i]];
@@ -792,7 +889,6 @@ static inline ORInt indexMatrix(ORTRIntMatrixI* m,ORInt* i)
 - (id)initWithCoder:(NSCoder *)aDecoder
 {
    self = [super init];
-   _solver = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
    _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);

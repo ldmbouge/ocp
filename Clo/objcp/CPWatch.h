@@ -9,9 +9,10 @@
 
  ***********************************************************************/
 
-#import "objcp/CPFactory.h"
+#import <objcp/CPFactory.h>
 
 @class CPIntVarI;
+@protocol CPProgram;
 
 enum CPDomValue {
    Required = 0,
@@ -29,10 +30,11 @@ enum CPDomValue {
 @end
 
 @interface CPFactory (Visualize)
-+(id<ORConstraint>)watchVariable:(id<ORIntVar>)x 
-                     onValueLost:(ORInt2Void)lost 
-                     onValueBind:(ORInt2Void)bind 
-                  onValueRecover:(ORInt2Void)rec 
-                   onValueUnbind:(ORInt2Void)unb;
++(id<ORConstraint>)solver:(id<CPProgram>)cp
+            watchVariable:(id<ORIntVar>)x
+              onValueLost:(ORInt2Void)lost
+              onValueBind:(ORInt2Void)bind
+           onValueRecover:(ORInt2Void)rec
+            onValueUnbind:(ORInt2Void)unb;
 @end
 

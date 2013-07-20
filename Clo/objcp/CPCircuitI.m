@@ -17,7 +17,7 @@
 #import "CPError.h"
 
 @implementation CPCircuitI {
-   id<ORIntVarArray>  _x;
+   id<CPIntVarArray>  _x;
    CPIntVarI**      _var;
    ORInt            _varSize;
    ORInt            _low;
@@ -36,19 +36,19 @@
     _posted = false;
 }
 
--(CPCircuitI*) initCPSubtourEliminationI: (id<ORIntVarArray>) x
+-(CPCircuitI*) initCPSubtourEliminationI: (id<CPIntVarArray>) x
 {
-    self = [super initCPActiveConstraint: [[x solver] engine]];
+   self = [super initCPCoreConstraint: [[x at:[x low]] engine]];
     _x = x;
     [self initInstanceVariables];
     return self;
 }
--(CPCircuitI*) initCPNoCycleI: (id<ORIntVarArray>) x
+-(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x
 {
     _noCycle = true;
     return [self initCPSubtourEliminationI: x];
 }
--(CPCircuitI*) initCPCircuitI: (id<ORIntVarArray>) x
+-(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x
 {
     _noCycle = false;
     return [self initCPSubtourEliminationI: x];
@@ -68,7 +68,7 @@
 {
     [super encodeWithCoder:aCoder];
     [aCoder encodeObject:_x];
-    [aCoder encodeValueOfObjCType:@encode(bool) at:&_noCycle];
+    [aCoder encodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
 }
 
 -(id) initWithCoder:(NSCoder*) aDecoder
@@ -76,7 +76,7 @@
     self = [super initWithCoder:aDecoder];
     [self initInstanceVariables];
     _x = [aDecoder decodeObject];
-    [aDecoder decodeValueOfObjCType:@encode(bool) at:&_noCycle];
+    [aDecoder decodeValueOfObjCType:@encode(ORBool) at:&_noCycle];
     return self;
 }
 
@@ -108,10 +108,10 @@ ORStatus assign(CPCircuitI* cstr,int i)
         _var[i] = (CPIntVarI*) [_x at: _low + i];
     _var -= _low;
     
-    id<ORIntRange> R = RANGE([_x solver],_low,_up);
-    _pred = [CPFactory TRIntArray: [_x solver] range: R];
-    _succ = [CPFactory TRIntArray: [_x solver] range: R];
-    _length = [CPFactory TRIntArray: [_x solver] range: R];
+    id<ORIntRange> R = RANGE([_x tracker],_low,_up);
+    _pred = [CPFactory TRIntArray: [_x tracker] range: R];
+    _succ = [CPFactory TRIntArray: [_x tracker] range: R];
+    _length = [CPFactory TRIntArray: [_x tracker] range: R];
     for(int i = _low; i <= _up; i++) {
         [_pred set: i at: i];
         [_succ set: i at: i];

@@ -12,15 +12,16 @@
 #import <Foundation/Foundation.h>
 #import "CPConstraintI.h"
 #import "CPBitDom.h"
+#import <objcp/CPVar.h>
 
 @class CPIntVarI;
 @class CPEngine;
 
-@interface CPLexConstraint : CPActiveConstraint<NSCoding> {
-   id<ORIntVarArray>  _x;
-   id<ORIntVarArray>  _y;
+@interface CPLexConstraint : CPCoreConstraint<NSCoding> {
+   id<CPIntVarArray>  _x;
+   id<CPIntVarArray>  _y;
 }
--(id) initCPLexConstraint:(id<ORIntVarArray>)x and:(id<ORIntVarArray>)y;
+-(id) initCPLexConstraint:(id<CPIntVarArray>)x and:(id<CPIntVarArray>)y;
 -(void) dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

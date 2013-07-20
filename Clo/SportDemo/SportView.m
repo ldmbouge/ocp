@@ -26,13 +26,19 @@
 {
    _delegate = delegate;
 }
-
+-(void)refresh
+{
+   [self setNeedsDisplay:YES];
+}
 - (void)drawRect:(NSRect)theRect
 {
    //NSLog(@"drawRect: ");
    [[NSColor grayColor] setFill];
    NSRectFill(theRect);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wobjc-method-access"
    [_delegate drawRect:theRect inView:self];
+#pragma clang pop
 }
 
 @end

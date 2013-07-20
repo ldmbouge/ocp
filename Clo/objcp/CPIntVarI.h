@@ -10,15 +10,15 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORExprI.h>
 #import <ORFoundation/ORSetI.h>
+#import <CPUKernel/CPTrigger.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPData.h>
 #import <objcp/CPDom.h>
-#import <objcp/CPTrigger.h>
 #import <objcp/CPConstraint.h>
 #import <objcp/CPBitDom.h>
-#import <objcp/CPConstraintI.h>
-#import "objcp/CPSolverI.h"
+
 
 @protocol CPIntVarSubscriber <NSObject>
 
@@ -53,17 +53,17 @@
 
 // Triggers
 // create a trigger which executes todo when value val is removed.
--(CPTrigger*) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // create a trigger which executes todo when the variable is bound.
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 // assign a trigger which is executed when value val is removed.
--(void) watch:(ORInt) val with: (CPTrigger*) t;
+-(void) watch:(ORInt) val with: (id<CPTrigger>) t;
 
 @end
 
 // Interface for CP extensions
 
-@protocol CPIntVarExtendedItf <ORIntVar,CPIntVarSubscriber>
+@protocol CPIntVarExtendedItf <CPIntVarSubscriber>
 -(ORStatus) updateMin: (ORInt) newMin;
 -(ORStatus) updateMax: (ORInt) newMax;
 -(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
@@ -81,68 +81,54 @@ typedef struct  {
 } CPEventNetwork;
 
 @class CPIntVarI;
-@class CPTriggerMap;
 @class CPLiterals;
+@class CPMultiCast;
 // This is really an implementation protocol
-
-enum CPVarClass {
-   CPVCBare = 0,
-   CPVCShift = 1,
-   CPVCAffine = 2,
-   CPVCEQLiteral = 3,
-   CPVCLiterals = 4
-};
-
 // PVH: Not sure that it brings anything to have a CPIntVarNotifier Interface
 // PVH: my recommendation is to have an interface and this becomes the implementation class
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
+
 -(ORInt)getId;
+-(NSMutableSet*)constraints;
 -(void)setDelegate:(id<CPIntVarNotifier>)delegate;
--(void) addVar:(CPIntVarI*)var;
+-(void) addVar:(id<CPIntVarNotifier>)var;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)findLiterals:(CPIntVarI*)ref;
 -(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
 -(CPLiterals*)literals;
 -(void) setTracksLoseEvt;
--(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt) dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt) dsz sender:(id<CPDom>)sender;
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
 @end
 
-
-
-@interface CPIntVarI : ORExprI<ORIntVar,CPIntVarNotifier,CPIntVarSubscriber,CPIntVarExtendedItf,NSCoding> {
+@interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier,CPIntVarExtendedItf> {
 @package
-   enum CPVarClass                   _vc:16;
-   ORUInt                        _isBool:16;
-   ORUInt                             _name;
-   id<CPSolver>                         _cp;
+   enum CPVarClass                      _vc;
+   BOOL                             _isBool;
    CPEngineI*                          _fdm;
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
-   CPTriggerMap*                  _triggers;
-   id<CPIntVarNotifier,NSCoding>      _recv;
+   id<CPTriggerMap>               _triggers;
+   CPMultiCast*                 _recv;
 }
--(CPIntVarI*) initCPIntVarCore:(CPSolverI*) cp low:(ORInt)low up:(ORInt)up;
--(CPIntVarI*) initCPIntVarView: (CPSolverI*) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
+-(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
+-(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
--(void) setId:(ORUInt)name;
--(ORUInt)getId;
--(BOOL) isBool;
+-(ORBool) isBool;
 -(NSString*) description;
 -(CPEngineI*) engine;
--(id<CPSolver>) solver;
 -(id<ORTracker>) tracker;
--(NSSet*)constraints;
+-(NSMutableSet*)constraints;
 -(CPBitDom*)flatDomain;
 -(CPLiterals*)literals;
 
 // needed for speeding the code when not using AC5
--(bool) tracksLoseEvt:(id<CPDom>)sender;
+-(ORBool) tracksLoseEvt:(id<CPDom>)sender;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -158,9 +144,9 @@ enum CPVarClass {
 
 // triggers
 
--(CPTrigger*) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(CPTrigger*) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
--(void) watch: (ORInt) val with: (CPTrigger*) t;
+-(id<CPTrigger>) setLoseTrigger: (ORInt) val do: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(id<CPTrigger>) setBindTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
+-(void) watch: (ORInt) val with: (id<CPTrigger>) t;
 -(void) createTriggers;
 
 // notification
@@ -177,21 +163,23 @@ enum CPVarClass {
 
 // access
 
--(bool) bound;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORInt) value;
+-(ORInt) intValue;
+-(ORFloat) floatMin;
+-(ORFloat) floatMax;
+-(ORFloat) floatValue;
 -(ORBounds)bounds;
 -(ORInt) domsize;
--(bool) member:(ORInt)v;
+-(ORBool) member:(ORInt)v;
 -(ORRange) around:(ORInt)v;
 -(id<CPDom>) domain;
 -(ORInt) shift;
 -(ORInt) scale;
 -(id<ORIntVar>)base;
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
--(void)restoreDomain:(id<CPDom>)toRestore;
--(void)restoreValue:(ORInt)toRestore;
 
 // update
 -(ORStatus)     updateMin: (ORInt) newMin;
@@ -200,18 +188,16 @@ enum CPVarClass {
 -(ORStatus)     bind:(ORInt) val;
 -(ORStatus)     remove:(ORInt) val;
 -(ORStatus)     inside:(ORIntSetI*) S;
--(id)           snapshot;
-// Class methods
-+(CPIntVarI*)    initCPIntVar: (CPSolverI*) fdm bounds:(id<ORIntRange>)b;
-+(CPIntVarI*)    initCPIntVar: (CPSolverI*) fdm low:(ORInt)low up:(ORInt)up;
-+(CPIntVarI*)    initCPBoolVar:(CPSolverI*) fdm;
-+(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withShift:(ORInt)b;
-+(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(ORInt)a;
-+(CPIntVarI*)    initCPIntView: (CPIntVarI*)x withScale:(ORInt)a andShift:(ORInt)b;
-+(CPIntVarI*)    initCPNegateBoolView:(CPIntVarI*)x;
-+(CPTrigger*)    createTrigger: (ConstraintCallback) todo onBehalf:(CPCoreConstraint*)c;
 
--(id<ORIntVar>) dereference;
+// Class methods
++(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
++(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm low:(ORInt)low up:(ORInt)up;
++(CPIntVarI*)    initCPBoolVar:(id<CPEngine>) fdm;
++(CPIntVarI*)    initCPFlipView:(id<CPIntVar>)x;
++(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withShift:(ORInt)b;
++(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a;
++(CPIntVarI*)    initCPIntView: (id<CPIntVar>)x withScale:(ORInt)a andShift:(ORInt)b;
++(CPIntVarI*)    initCPNegateBoolView:(id<CPIntVar>)x;
 @end
 
 // ---------------------------------------------------------------------
@@ -219,15 +205,18 @@ enum CPVarClass {
 
 @interface CPIntShiftView : CPIntVarI {
    @package
-   ORInt _b;
+   ORInt       _b;
+   CPIntVarI*  _x;
 }
 -(CPIntShiftView*)initIVarShiftView:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
+-(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -237,21 +226,23 @@ enum CPVarClass {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
 @end
 
 @interface CPIntView : CPIntVarI { // Affine View
    @package
     ORInt _a;
     ORInt _b;
+   CPIntVarI*  _x;
 }
 -(CPIntView*)initIVarAViewFor: (ORInt) a  x:(CPIntVarI*)x b:(ORInt)b;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(ORBool)member:(ORInt)v;
+-(ORInt) domsize;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -261,7 +252,30 @@ enum CPVarClass {
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
--(id)           snapshot;
+@end
+
+@interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
+   @package
+   CPIntVarI*  _x;
+}
+-(CPIntFlipView*)initFlipViewFor:(CPIntVarI*)x;
+-(void)dealloc;
+-(CPBitDom*)flatDomain;
+-(ORBool) bound;
+-(ORInt) min;
+-(ORInt) max;
+-(ORBounds)bounds;
+-(ORBool)member:(ORInt)v;
+-(ORInt) domsize;
+-(ORRange)around:(ORInt)v;
+-(ORInt) shift;
+-(ORInt) scale;
+-(ORStatus)updateMin:(ORInt)newMin;
+-(ORStatus)updateMax:(ORInt)newMax;
+-(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(ORStatus)bind:(ORInt)val;
+-(ORStatus)remove:(ORInt)val;
+-(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
 @interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
@@ -272,10 +286,12 @@ enum CPVarClass {
 -(CPEQLitView*)initEQLitViewFor:(CPIntVarI*)x equal:(ORInt)v;
 -(void)dealloc;
 -(CPBitDom*)flatDomain;
+-(ORBool) bound;
 -(ORInt) min;
 -(ORInt) max;
 -(ORBounds)bounds;
--(bool)member:(ORInt)v;
+-(ORInt) domsize;
+-(ORBool)member:(ORInt)v;
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
@@ -284,27 +300,25 @@ enum CPVarClass {
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
 -(ORStatus)bind:(ORInt)val;
 -(ORStatus)remove:(ORInt)val;
--(id) snapshot;
 @end
 
 static inline BOOL bound(CPIntVarI* x)
 {
-   return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
+   switch(x->_vc) {
+      case CPVCBare: return ((CPBoundsDom*)x->_dom)->_sz._val == 1;
+      case CPVCShift:  return bound(((CPIntShiftView*)x)->_x);
+      case CPVCAffine: return bound(((CPIntView*)x)->_x);
+      case CPVCFlip: return bound(((CPIntFlipView*)x)->_x);
+      default: return [x bound];
+   }   
 }
 
 static inline ORInt minDom(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_min._val;
-      case CPVCShift: return ((CPBoundsDom*)x->_dom)->_min._val + ((CPIntShiftView*)x)->_b;
-      case CPVCAffine: {
-         if (((CPIntView*)x)->_a > 0)
-            return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
-         else 
-            return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
-      }
-      case CPVCEQLiteral: return [x min];
-      default:assert(NO);return 0;
+      case CPVCShift: return minDom(((CPIntShiftView*)x)->_x) + ((CPIntShiftView*)x)->_b;
+      default: return [x min];
    }
 }
 
@@ -312,15 +326,8 @@ static inline ORInt maxDom(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return ((CPBoundsDom*)x->_dom)->_max._val;
-      case CPVCShift: return ((CPBoundsDom*)x->_dom)->_max._val + ((CPIntShiftView*)x)->_b;
-      case CPVCAffine: {
-         if (((CPIntView*)x)->_a > 0)
-            return ((CPBoundsDom*)x->_dom)->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;            
-         else 
-            return ((CPBoundsDom*)x->_dom)->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;                  
-      }
-      case CPVCEQLiteral: return [x max];
-      default:assert(NO);return 0;
+      case CPVCShift: return maxDom(((CPIntShiftView*)x)->_x) + ((CPIntShiftView*)x)->_b;
+      default: return [x max];
    }
 }
 
@@ -329,18 +336,22 @@ static inline ORBounds bounds(CPIntVarI* x)
 {
    switch (x->_vc) {
       case CPVCBare:  return (ORBounds){DOMX->_min._val,DOMX->_max._val};
-      case CPVCShift: return (ORBounds){DOMX->_min._val + ((CPIntShiftView*)x)->_b,
-                                        DOMX->_max._val + ((CPIntShiftView*)x)->_b};
+      case CPVCShift: {
+         ORBounds b = bounds(((CPIntShiftView*)x)->_x);
+         ORInt    c =((CPIntShiftView*)x)->_b;
+         return (ORBounds){b.min + c,b.max + c};
+      }
+         /*
       case CPVCAffine: {
-         ORInt fmin = DOMX->_min._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
-         ORInt fmax = DOMX->_max._val * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         ORBounds b = bounds(((CPIntView*)x)->_x);
+         ORInt fmin = b.min * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
+         ORInt fmax = b.max * ((CPIntView*)x)->_a + ((CPIntView*)x)->_b;
          if (((CPIntView*)x)->_a > 0)
             return (ORBounds){fmin,fmax};
          else
             return (ORBounds){fmax,fmin};
-      }
-      case CPVCEQLiteral: return [x bounds];
-      default:assert(NO);return (ORBounds){0,0};
+      }*/
+      default: return [x bounds];
    }
 }
 #undef DOMX
@@ -351,131 +362,87 @@ static inline ORBounds negBounds(CPIntVarI* x)
    return (ORBounds){- b.max, -b.min};
 }
 
-
 static inline ORInt memberDom(CPIntVarI* x,ORInt value)
 {
-   ORInt target;
    switch (x->_vc) {
-      case CPVCBare: target = value;
+      case CPVCBare:
+         return domMember((CPBoundsDom*)x->_dom, value);
          break;
-      case CPVCShift:
-         target = value - ((CPIntShiftView*)x)->_b;
-         break;
-      case CPVCAffine: {
-         const ORInt a = ((CPIntView*)x)->_a;
-         const ORInt b = ((CPIntView*)x)->_b;
-         if (a == 1) 
-            target = value - b;
-         else if (a== -1)
-            target = b - value;
-         else {
-            const ORInt r = (value - b) % a;
-            if (r != 0) return NO;
-            target = (value - b) / a;
-         }
+      case CPVCShift: {
+         const ORInt b = ((CPIntShiftView*)x)->_b;
+         return memberDom(((CPIntShiftView*)x)->_x, value - b);
       }break;
-      case CPVCEQLiteral: return [x member:value];
-      default:assert(NO);
+      default:
+         return [x member:value];
    }
-   return domMember((CPBoundsDom*)x->_dom, target);
 }
 
 static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
 {
-   ORInt target;
    switch (x->_vc) {
-      case CPVCBare: target = value;
+      case CPVCBare:
+         return getCPDom((CPBitDom*)x->_dom, value);
          break;
-      case CPVCShift:
-         target = value - ((CPIntShiftView*)x)->_b;
+      case CPVCShift: {
+         const ORInt b = ((CPIntShiftView*)x)->_b;
+         return memberBitDom(((CPIntShiftView*)x)->_x, value - b);
+      }
+      default:
+         return [x member:value];
          break;
-      case CPVCAffine: {
-         const ORInt a = ((CPIntView*)x)->_a;
-         const ORInt b = ((CPIntView*)x)->_b;
-         if (a == 1) 
-            target = value - b;
-         else if (a== -1)
-            target = b - value;
-         else {
-            const ORInt r = (value - b) % a;
-            if (r != 0) return NO;
-            target = (value - b) / a;
-         }
-      }break;
-      case CPVCEQLiteral: return [x member:value];
-      default:assert(NO);
    }
-   return memberCPDom((CPBitDom*)x->_dom, target);
 }
 
 static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
 {
-   ORInt target;
    switch (x->_vc) {
-      case CPVCBare:  target = v;break;
-      case CPVCShift: target = v - ((CPIntShiftView*)x)->_b;break;
-      case CPVCAffine: {
-         ORInt a = ((CPIntView*)x)->_a;
-         ORInt b = ((CPIntView*)x)->_b;
-         if (a == -1)
-            target = b - v;
-         else if (a== 1)
-            target = v - b;
-         else {
-            ORInt r = (v - b) % a;
-            if (r != 0) return ORSuspend;
-            target = (v - b) / a; 
-         }
+      case CPVCBare:
+         return [x->_dom remove:v for:x];
+      case CPVCShift: {
+         const ORInt b = ((CPIntShiftView*)x)->_b;
+         return removeDom(((CPIntShiftView*)x)->_x, v - b);
       }
-      case CPVCEQLiteral: return [x remove:v];
-      default:assert(NO);
+      default:
+         return [x remove:v];
    }
-   return [x->_dom remove:target for:x->_recv];
 }
 
 static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 {
-   ORInt target;
    switch(x->_vc) {
-      case CPVCBare: target = v;break;
-      case CPVCShift: target = v - ((CPIntShiftView*)x)->_b;break;
-      case CPVCAffine: {
-         ORInt a = ((CPIntView*)x)->_a;
-         ORInt b = ((CPIntView*)x)->_b;
-         ORInt r = (v - b) % a;
-         if (r != 0)
-            failNow();
-         target = (v - b) / a;
-      }
-      case CPVCEQLiteral: return [x bind:v];
-      default:assert(NO);
+      case CPVCBare:
+         return [x->_dom bind:v for:x];
+      default:
+         return [x bind:v];
    }
-   return [x->_dom bind:target for:x->_recv];
 }
 
 /*****************************************************************************************/
 /*                        MultiCast Notifier                                             */
 /*****************************************************************************************/
 
-@interface CPIntVarMultiCast : NSObject<CPIntVarNotifier,NSCoding> {
+@interface CPMultiCast : NSObject<CPIntVarNotifier> {
    id<CPIntVarNotifier>* _tab;
    BOOL        _tracksLoseEvt;
    ORInt                  _nb;
    ORInt                  _mx;
    UBType*        _loseValIMP;
+   UBType*            _minIMP;
+   UBType*            _maxIMP;
 }
--(id)initVarMC:(ORInt)n;
+-(id)initVarMC:(ORInt)n root:(CPIntVarI*)root;
 -(void) dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
--(void) addVar:(CPIntVarI*) v;
+-(void) addVar:(id<CPIntVarNotifier>) v;
+-(NSMutableSet*)constraints;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
-@interface CPLiterals : NSObject<CPIntVarNotifier,NSCoding> {
+@interface CPLiterals : NSObject<CPIntVarNotifier> {
    CPIntVarI*  _ref;
    CPIntVarI** _pos;
    ORInt        _nb;
@@ -486,8 +453,9 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(void)dealloc;
 -(enum CPVarClass)varClass;
 -(CPLiterals*)literals;
--(void)addPositive:(id<ORIntVar>)x forValue:(ORInt)value;
--(id<ORIntVar>)positiveForValue:(ORInt)value;
+-(NSMutableSet*)constraints;
+-(void)addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
+-(id<CPIntVar>)positiveForValue:(ORInt)value;
 -(ORStatus) bindEvt:(id<CPDom>)sender;
 -(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
 -(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;

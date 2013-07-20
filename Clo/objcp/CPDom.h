@@ -18,6 +18,7 @@
 -(void)dealloc;
 -(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x;
 -(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
+-(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x;
 -(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 -(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x;
 
@@ -25,15 +26,37 @@
 -(ORInt) max;
 -(ORInt) imin;
 -(ORInt) imax;
--(bool) bound;
+-(ORBool) bound;
 -(ORBounds) bounds;
 -(ORInt) domsize;
 -(ORInt) countFrom:(ORInt)from to:(ORInt)to;
--(bool) get:(ORInt)b;
--(bool) member:(ORInt)v;
+-(ORBool) get:(ORInt)b;
+-(ORBool) member:(ORInt)v;
 -(ORInt)findMin:(ORInt)from;
 -(ORInt) findMax:(ORInt)from;
 -(id) copy;
 -(void) restoreDomain:(id<CPDom>)toRestore;
--(void) restoreValue:(ORInt)toRestore;
+-(void) restoreValue:(ORInt)toRestore for:(id<CPIntVarNotifier>)x;
+-(void) enumerateWithBlock:(void(^)(ORInt))block;
+-(void) enumerateBackwardWithBlock:(void(^)(ORInt))block;
+@end
+
+@protocol CPFloatVarNotifier;
+@protocol CPFDom
+-(ORStatus) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
+-(ORStatus) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
+-(ORStatus) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(ORStatus) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
+-(ORFloat) min;
+-(ORFloat) max;
+-(ORFloat) imin;
+-(ORFloat) imax;
+-(ORBool) bound;
+-(ORInterval) bounds;
+-(ORFloat) domwidth;
+-(ORBool) member:(ORFloat)v;
+-(NSString*)description;
+-(id) copy;
+-(void) restoreDomain:(id<CPFDom>)toRestore;
+-(void) restoreValue:(ORFloat)toRestore for:(id<CPFloatVarNotifier>)x;
 @end

@@ -9,12 +9,10 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <ORProgram/ORProgramFactory.h>
 
 NSString* indent(int t)
 {
@@ -25,61 +23,35 @@ NSString* indent(int t)
 }
 int main (int argc, const char * argv[])
 {
-   int n = 8;
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> R = RANGE(cp,0,n-1);
-   id<ORInteger> nbSolutions = [CPFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-
-   //id<CPHeuristic> h = [CPFactory createIBS:cp];
-   for(ORUInt i =0;i < n; i++) {
-      for(ORUInt j=i+1;j< n;j++) {
-         id<ORIntVar> xi = [x at: i];
-         id<ORIntVar> xj = [x at: j];
-         [cp add: [CPFactory notEqual:xi  to:xj plus:0]];
-         [cp add: [CPFactory notEqual:xi  to:xj plus:i-j]];
-         [cp add: [CPFactory notEqual:xi  to:xj plus:j-i]];
+   @autoreleasepool {
+      int n = 8;
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIntRange> R = RANGE(model,0,n-1);
+      id<ORMutableInteger> nbSol = INTEGER(model,0);
+      id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
+      for(ORUInt i =0;i < n; i++) {
+         for(ORUInt j=i+1;j< n;j++) {
+            [model add: [x[i] neq: x[j]]];
+            [model add: [x[i] neq: [x[j] plus: @(i-j)]]];
+            [model add: [x[i] neq: [x[j] plus: @(j-i)]]];
+         }
       }
-   }
-   [cp solveAll:
-    ^() {
-       //[CPLabel array: x ];// orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
-      //[CPLabel heuristic:h];
-       NSLog(@"LEVEL START: %d",[[cp tracer] level]);
-       for(ORInt i=0;i<n;i++) {
-          while (![x[i] bound]) {
-             ORInt min = [x[i] min];
-             [cp try:^{
-                NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,min,[[cp tracer] level]);
-                [cp label:x[i] with:min];
-             } or:^{
-                NSLog(@"%@x[%d]!=%d -- | %d |",indent(i),i,min,[[cp tracer] level]);
-                [cp diff:x[i] with:min];
-                //[cp add:[x[i] neqi: min]];
-             }];
+      id<CPProgram> cp = [ORFactory createCPProgram: model];      
+      [cp solveAll:
+       ^() {
+          [cp labelArray: x ];
+          @autoreleasepool {
+             NSMutableString* buf = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+             for(int i = 0; i < n; i++)
+                [buf appendFormat:@"%d ",[cp intValue:x[i]]];
+             NSLog(@"sol [%d]: %@\n",[nbSol intValue:cp],buf);
           }
+          [nbSol incr:cp];
        }
-/*       [cp forall:R suchThat:^bool(ORInt i ) { return ![x[i] bound];}
-          orderedBy:^ORInt(ORInt i) { return i;}
-                 do:^(ORInt i) {
-                    [cp tryall:R suchThat:^bool(ORInt v) { return [x[i] member:v];}
-                            in:^(ORInt v) {
-             NSLog(@"%@x[%d]==%d -- | %d |",indent(i),i,v,[[cp tracer] level]);
-             [cp label:x[i] with:v];
-          }];*/
-       NSLog(@"%@sol [%d]: %@ THREAD: %p || %d ||\n",indent(n),[nbSolutions value],x,[NSThread currentThread],[[cp tracer] level]);
-      [nbSolutions incr];
-    }
-    ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
-   
-   
-   NSLog(@"Solver status: %@\n",cp);
-   NSLog(@"Quitting");
-   //[h release];
-   [cp release];   
-   [CPFactory shutdown];
-   return 0;
+       ];
+      printf("GOT %d solutions\n",[nbSol intValue:cp]);
+      [cp release];
+      [ORFactory shutdown];
+      return 0;
+   }
 }
-

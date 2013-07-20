@@ -27,12 +27,12 @@
    self = [super init];
    _trail = tr;
    _bitLength = len;
-   _freebits = makeTRInt(tr, len);
+   _freebits = makeTRUInt(tr, len);
    _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
    _low = malloc(sizeof(TRUInt)*_wordLength);
    _up = malloc(sizeof(TRUInt)*_wordLength);
-   _min = malloc(sizeof(TRInt)*_wordLength);
-   _max = malloc(sizeof(TRInt)*_wordLength);
+   _min = malloc(sizeof(TRUInt)*_wordLength);
+   _max = malloc(sizeof(TRUInt)*_wordLength);
    
    for(int i=0;i<_wordLength;i++){
       _low[i] = makeTRUInt(tr, 0);
@@ -51,8 +51,8 @@
     _wordLength = (_bitLength / BITSPERWORD) + ((_bitLength % BITSPERWORD != 0) ? 1: 0);
     _low = malloc(sizeof(TRUInt)*_wordLength);
     _up = malloc(sizeof(TRUInt)*_wordLength);
-    _min = malloc(sizeof(TRInt)*_wordLength);
-    _max = malloc(sizeof(TRInt)*_wordLength);
+    _min = malloc(sizeof(TRUInt)*_wordLength);
+    _max = malloc(sizeof(TRUInt)*_wordLength);
     
     for(int i=0;i<_wordLength;i++){
         _low[i] = makeTRUInt(tr, low[i]);
@@ -66,16 +66,19 @@
         boundBits = (_low[i]._val ^ _up[i]._val);
         freeBits += __builtin_popcount(boundBits);
     }
-    _freebits = makeTRInt(tr, freeBits);
+   
+   //Shouldn't
+    _freebits = makeTRUInt(tr, freeBits);
     return self;
 }
 
 -(NSString*)    description
 {
-   NSMutableString* string = [[NSMutableString alloc] init];
+   NSMutableString* string = [[[NSMutableString alloc] init] autorelease];
    for(int i=0; i< _wordLength;i++){
-      unsigned int boundLow = ~ _up[i]._val;
-      unsigned int boundUp = _low[i]._val;
+      unsigned int boundLow = (~ _up[i]._val) & (~_low[i]._val);
+      unsigned int boundUp = _up[i]._val & _low[i]._val;
+      unsigned int err = ~_up[i]._val & _low[i]._val;
       unsigned int mask = CP_DESC_MASK;
       if (i<_wordLength-1)
          for (int j=0; j<32; j++){
@@ -83,6 +86,8 @@
                [string appendString: @"0"];
             else if ((mask & boundUp) != 0)
                [string appendString: @"1"];
+            else if ((mask & err) != 0)
+               [string appendString: @"X"];
             else
                [string appendString: @"?"];
             mask >>= 1;
@@ -94,6 +99,8 @@
                [string appendString: @"0"];
             else if ((mask & boundUp) !=0)
                [string appendString: @"1"];
+            else if ((mask & err) != 0)
+               [string appendString: @"X"];
             else
                [string appendString: @"?"];
             mask >>= 1;
@@ -102,12 +109,16 @@
    }
    return string;
 }
--(int) domsize
+-(ORInt) domsize
 {
-    return pow(2.0, _freebits._val);
+   [self updateFreeBitCount];
+   return _freebits._val;
+   //return pow(2.0, _freebits._val);
+   //return 1 << _freebits._val;
 }
--(bool) bound
+-(ORBool) bound
 {
+   [self updateFreeBitCount];
     return _freebits._val==0;
 }
 
@@ -130,6 +141,24 @@
         min[i] = _min[i]._val;
     return min;     
 }
+
+
+-(unsigned int*) lowArray
+{
+   unsigned int* low = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      low[i] = _low[i]._val;
+   return low;
+}
+-(unsigned int*) upArray
+{
+   unsigned int* up = malloc(sizeof(unsigned int)*_wordLength);
+   for(int i=0;i<_wordLength;i++)
+      up[i] = _up[i]._val;
+   return up;
+}
+
+
 
 -(uint64)   max
 {
@@ -161,14 +190,14 @@
     return _wordLength;
 }
 
--(bool) getBit:(unsigned int) idx
+-(ORBool) getBit:(unsigned int) idx
 {
    if (BITFREE(idx)) 
       @throw [[ORExecutionError alloc] initORExecutionError: "Trying to 'get' unbound bit in CPBitArrayDom"];
    return _low[WORDIDX(idx)]._val  & ONEAT(idx);
 }
 
--(ORStatus) setBit:(unsigned int) idx to:(bool) val
+-(ORStatus) setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x
 {
    if (BITFREE(idx)) {
       if (val)
@@ -179,11 +208,55 @@
       if (theBit ^ val)
          failNow();
    }
+   [self updateFreeBitCount];
+   [x bitFixedEvt:_freebits._val sender:self];
    return ORSuspend;
 }
--(bool) isFree:(unsigned int)idx
+-(ORBool) isFree:(unsigned int)idx
 {
    return BITFREE(idx);
+}
+-(unsigned int) lsFreeBit
+{
+   int j;
+   [self updateFreeBitCount];
+   //Assumes length is a multiple of 32 bits
+   //Should work otherwise if extraneous bits are
+   //all the same value in up and low (e.g. 0)
+   
+   for(int i=_wordLength-1; i>=0; i--){
+//      NSLog(@"%d is first free bit in %x\n",i*32+__builtin_ffs((_low[i]._val^_up[i]._val))-1, (_low[i]._val^_up[i]._val));
+      if ((j=__builtin_ffs(_low[i]._val^_up[i]._val))!=0) {
+         return (i*32)+j-1;
+      }
+   }
+   return -1;
+}
+
+-(unsigned int) randomFreeBit
+{
+   [self updateFreeBitCount];
+   int r = random() % _freebits._val;
+   unsigned int foundFreeBits =0;
+   unsigned int boundBits;
+   unsigned int bitMask;
+   
+   for(int i=_wordLength; i>=0;i--)
+   {
+      boundBits = (_low[i]._val ^ _up[i]._val);
+      bitMask = 1;
+      for(int j=31;j>=0;j--)
+      {
+         if (boundBits & bitMask)
+         {
+            foundFreeBits++;
+            if (foundFreeBits >= r)
+               return (i*32+(31-j));
+         }
+         bitMask <<= 1;
+      }
+   }
+   return -1;
 }
 
 -(void) updateFreeBitCount
@@ -193,9 +266,11 @@
       unsigned int boundBits = (_low[i]._val ^ _up[i]._val);
       freeBits += __builtin_popcount(boundBits);
    }
-   assignTRInt(&(_freebits), freeBits, _trail);
+//   NSLog(@"Bit pattern:%@",[self description]);
+//   NSLog(@"%d free bits\n", freeBits);
+   assignTRUInt(&(_freebits), freeBits, _trail);
 }
--(bool) member:(unsigned int*) val
+-(ORBool) member:(unsigned int*) val
 {
    for(int i=0; i<_wordLength;i++){
       if ((val[i] & ~_up[i]._val)!=0)
@@ -377,13 +452,13 @@
             curMin = curMin | (0x1 << msbIndex);
             assignTRUInt(_low+0,curMin>>BITSPERWORD,_trail);
             assignTRUInt(_low+1,curMin & CP_BITMASK,_trail);
-            assignTRInt(&_freebits,_freebits._val - 1,_trail);
+            assignTRUInt(&_freebits,_freebits._val - 1,_trail);
             [x bitFixedEvt:oldDS sender:self];
          } else if (curMin + (0x1 << msbIndex) > curMax) {
             curMax = curMax & ~(0x1 << msbIndex);
             assignTRUInt(_up+0,curMax>>BITSPERWORD,_trail);
             assignTRUInt(_up+1,curMax & CP_BITMASK,_trail);
-            assignTRInt(&_freebits,_freebits._val - 1,_trail);
+            assignTRUInt(&_freebits,_freebits._val - 1,_trail);
             [x bitFixedEvt:oldDS sender:self];
          } else break;
       }
@@ -475,7 +550,7 @@
     int bith = 0;
     while(inc) {
         if (inc & 0x1) 
-            [self  setBit:bith to: false];          // Indicate that this specific bit was reset to 0.
+            [self  setBit:bith to: false for:x];          // Indicate that this specific bit was reset to 0.
         inc >>= 1;
         ++bith;
     }
@@ -494,10 +569,10 @@
         const bool isFreeBit = [self isFree:bit];
         if (isFreeBit) {
             if (atLeast + mask > newMax64) { 	
-                [self setBit:bit to:false];
+               [self setBit:bit to:false for:x];
             } else {
                 if (atLeast + mask <= min) {
-                    [self setBit:bit to:true];
+                   [self setBit:bit to:true for:x];
                     atLeast += mask;
                 } else break;
             }
@@ -545,8 +620,9 @@
     assignTRUInt(&_max[0], val>>32, _trail);
     assignTRUInt(&_min[1], val & CP_BITMASK, _trail);
     assignTRUInt(&_max[1], val & CP_BITMASK, _trail);
-    assignTRInt(&_freebits, 0, _trail);
-   [x bindEvt:self];
+    assignTRUInt(&_freebits, 0, _trail);
+   [self updateFreeBitCount];
+    [x bindEvt];
     return ORSuspend;   
 }
 
@@ -566,8 +642,9 @@
    assignTRUInt(&_max[0], pat[0], _trail);
    assignTRUInt(&_min[1], pat[1], _trail);
    assignTRUInt(&_max[1], pat[1], _trail);
-   assignTRInt(&_freebits, 0, _trail);
-   [x bindEvt:self];
+   assignTRUInt(&_freebits, 0, _trail);
+   [x bindEvt];
+   [self updateFreeBitCount];
    return ORSuspend;   
 }
 
@@ -589,29 +666,53 @@
     return _up;
 }
 
+-(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow
+{
+   *currUp = _up;
+   *currLow = _low;
+}
+
+
 -(void) setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x
 {
-    bool lmod = _low[0]._val != newLow[0];
-    lmod |= _low[1]._val != newLow[1];
-    assignTRUInt(&_low[0], newLow[0], _trail);
-    if(_wordLength>1)
-        assignTRUInt(&_low[1], newLow[1], _trail);
+   bool lmod =  false;
+   for(int i=0;i<_wordLength;i++){
+    lmod |= _low[i]._val != newLow[i];
+    assignTRUInt(&_low[i], newLow[i], _trail);
+   }
     [self updateFreeBitCount];
     if (lmod)
-        [x bitFixedEvt:_freebits._val sender:self];
+       [x bitFixedEvt:_freebits._val sender:self];
 }
 
 -(void) setUp: (unsigned int*) newUp  for:(id<CPBitVarNotifier>)x
 {
-    bool umod = _up[0]._val != newUp[0];
-    umod |= _up[1]._val != newUp[1];
+    bool umod = false;
 
-    assignTRUInt(&_up[0], newUp[0], _trail);
-    if(_wordLength>1)
-        assignTRUInt(&_up[1], newUp[1], _trail);
+   for(int i=0;i<_wordLength;i++){
+    umod |= _up[i]._val != newUp[i];
+    assignTRUInt(&_up[i], newUp[i], _trail);
+   }
     [self updateFreeBitCount];
     if (umod)
-    [x bitFixedEvt:_freebits._val sender:self];
+       [x bitFixedEvt:_freebits._val sender:self];
+}
+-(void) setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x
+{
+   bool umod = false;
+   bool lmod = false;
+   
+   for(int i=0;i<_wordLength;i++){
+      umod |= _up[i]._val != newUp[i];
+      assignTRUInt(&_up[i], newUp[i], _trail);
+      lmod |= _low[i]._val != newLow[i];
+      assignTRUInt(&_low[i], newLow[i], _trail);
+
+   }
+   [self updateFreeBitCount];
+   if (umod || lmod)
+      [x bitFixedEvt:_freebits._val sender:self];
+   
 }
 
 -(void)enumerateWith:(void(^)(unsigned int*,ORInt))body
@@ -634,6 +735,20 @@
       }
       body(bits,rank);
    }
+}
+
+
+-(void)restoreDomain:(CPBitArrayDom*)toRestore
+{
+//   [self setLow:[toRestore lowArray]];
+//   [self setUp:[toRestore upArray]];
+   //update min/max????
+}
+-(void)restoreValue:(ORInt)toRestore
+{
+//   _min._val = toRestore;
+//   _max._val = toRestore;
+//   _sz._val  = 1;
 }
 
 @end

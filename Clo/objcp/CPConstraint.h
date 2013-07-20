@@ -10,69 +10,90 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPSolver.h>
 #import <objcp/CPFactory.h>
 
 @interface CPFactory (Constraint)
 
-+(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) alldifferent: (id<CPSolver>) solver over: (id<ORIntVarArray>) x consistency: (CPConsistency) c;
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) alldifferent: (id<ORIntVarArray>) x consistency: (CPConsistency) c;
++(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x;
++(id<CPConstraint>) alldifferent: (id<CPEngine>) solver over: (id<CPIntVarArray>) x annotation: (ORAnnotation) c;
++(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x;
++(id<CPConstraint>) alldifferent: (id<CPIntVarArray>) x annotation: (ORAnnotation) c;
 
-+(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
-+(id<ORConstraint>) cardinality: (id<ORIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up consistency: (CPConsistency) c;
++(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up;
++(id<CPConstraint>) cardinality: (id<CPIntVarArray>) x low: (id<ORIntArray>) low up: (id<ORIntArray>) up annotation: (ORAnnotation) c;
 
-+(id<ORConstraint>) minimize: (id<ORIntVar>) x;
-+(id<ORConstraint>) maximize: (id<ORIntVar>) x;
++(id<CPConstraint>) minimize: (id<CPIntVar>) x;
++(id<CPConstraint>) maximize: (id<CPIntVar>) x;
 
-+(id<ORIntVar>) reifyView: (id<ORIntVar>) x eqi:(ORInt)c;
++(id<CPIntVar>) reifyView: (id<CPIntVar>) x eqi:(ORInt)c;
 
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eq: (id<ORIntVar>) y consistency:(CPConsistency)c;
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x eqi: (ORInt) i;
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x neq: (ORInt) i;
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x leq: (ORInt) i;
-+(id<ORConstraint>) reify: (id<ORIntVar>) b with: (id<ORIntVar>) x geq: (ORInt) i;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eq: (id<CPIntVar>) y annotation:(ORAnnotation)c;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neq: (id<CPIntVar>) y annotation:(ORAnnotation)c;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leq:(id<CPIntVar>)y annotation:(ORAnnotation)c;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x eqi: (ORInt) i;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x neqi: (ORInt) i;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x leqi: (ORInt) i;
++(id<CPConstraint>) reify: (id<CPIntVar>) b with: (id<CPIntVar>) x geqi: (ORInt) i;
 
-+(id<ORConstraint>) sumbool: (id<ORIntVarArray>) x geq: (ORInt) c;
-+(id<ORConstraint>) sumbool: (id<ORIntVarArray>) x eq: (ORInt) c;
-+(id<ORConstraint>) sum: (id<ORIntVarArray>) x eq: (ORInt) c consistency: (CPConsistency)cons;
-+(id<ORConstraint>) sum: (id<ORIntVarArray>) x eq: (ORInt) c;
-+(id<ORConstraint>) sum: (id<ORIntVarArray>) x leq: (ORInt) c;
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x geq: (ORInt) c;
++(id<CPConstraint>) sumbool: (id<CPIntVarArray>) x eq: (ORInt) c;
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c annotation: (ORAnnotation)cons;
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x eq: (ORInt) c;
++(id<CPConstraint>) sum: (id<CPIntVarArray>) x leq: (ORInt) c;
 
-+(id<ORConstraint>) boolean:(id<ORIntVar>)x or:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
-+(id<ORConstraint>) boolean:(id<ORIntVar>)x and:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
-+(id<ORConstraint>) boolean:(id<ORIntVar>)x imply:(id<ORIntVar>)y equal:(id<ORIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x or:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
++(id<CPConstraint>) boolean:(id<CPIntVar>)x imply:(id<CPIntVar>)y equal:(id<CPIntVar>)b;
 
-+(id<ORConstraint>) circuit: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) nocycle: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize binSize: (id<ORIntArray>) binSize;
-+(id<ORConstraint>) packing: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize load: (id<ORIntVarArray>) load;
-+(id<ORConstraint>) packOne: (id<ORIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<ORIntVar>) binSize;
-+(id<ORConstraint>) knapsack: (id<ORIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<ORIntVar>)c;
++(id<CPConstraint>) circuit: (id<CPIntVarArray>) x;
++(id<CPConstraint>) nocycle: (id<CPIntVarArray>) x;
++(id<CPConstraint>) packOne: (id<CPIntVarArray>) item itemSize: (id<ORIntArray>) itemSize bin: (ORInt) b binSize: (id<CPIntVar>) binSize;
++(id<CPConstraint>) knapsack: (id<CPIntVarArray>) x weight:(id<ORIntArray>) w capacity:(id<CPIntVar>)c;
++(id<CPConstraint>) affine:(id<CPIntVar>)y equal:(ORInt)a times:(id<CPIntVar>)x plus:(ORInt)b annotation:(ORAnnotation)n;
++(id<CPConstraint>) equal3: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(id<CPIntVar>) z annotation: (ORAnnotation)cons;
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus:(ORInt) c annotation: (ORAnnotation)cons;
++(id<CPConstraint>) equal: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (ORInt) c;
++(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
++(id<CPConstraint>) notEqual: (id<CPIntVar>) x to: (id<CPIntVar>) y plus: (ORInt) c;
++(id<CPConstraint>) notEqual: (id<CPIntVar>) x to: (id<CPIntVar>) y;
++(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;
 
-+(id<ORConstraint>) equal3: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(id<ORIntVar>) z consistency: (CPConsistency)cons;
-+(id<ORConstraint>) equal: (id<ORIntVar>) x to: (id<ORIntVar>) y plus:(ORInt) c consistency: (CPConsistency)cons;
-+(id<ORConstraint>) equal: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
-+(id<ORConstraint>) equalc: (id<ORIntVar>) x to:(ORInt) c;
-+(id<ORConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y plus: (ORInt) c;
-+(id<ORConstraint>) notEqual: (id<ORIntVar>) x to: (id<ORIntVar>) y;
-+(id<ORConstraint>) notEqualc:(id<ORIntVar>)x to:(ORInt)c;
-+(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y;
-+(id<ORConstraint>) lEqual: (id<ORIntVar>)x to: (id<ORIntVar>) y plus:(ORInt)c;
-+(id<ORConstraint>) lEqualc: (id<ORIntVar>)x to: (ORInt) c;
-+(id<ORConstraint>) less: (id<ORIntVar>)x to: (id<ORIntVar>) y;
-+(id<ORConstraint>) mult: (id<ORIntVar>)x by:(id<ORIntVar>)y equal:(id<ORIntVar>)z;
-+(id<ORConstraint>) abs: (id<ORIntVar>)x equal:(id<ORIntVar>)y consistency:(CPConsistency)c;
-+(id<ORConstraint>) element:(id<ORIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<ORIntVar>)y;
-+(id<ORConstraint>) element:(id<ORIntVar>)x idxVarArray:(id<ORIntVarArray>)c equal:(id<ORIntVar>)y;
-+(id<ORConstraint>) table: (id<ORTable>) table on: (id<ORIntVarArray>) x;
-+(id<ORConstraint>) table: (id<ORTable>) table on: (id<ORIntVar>) x : (id<ORIntVar>) y : (id<ORIntVar>) z;
-+(id<ORConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e consistency: (CPConsistency) c;
-+(id<ORConstraint>) relation2Constraint: (id<CPSolver>) solver expr: (id<ORExpr>) e;
++(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y;
++(id<CPConstraint>) lEqual: (id<CPIntVar>)x to: (id<CPIntVar>) y plus:(ORInt)c;
++(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;
++(id<CPConstraint>) gEqualc: (id<CPIntVar>)x to: (ORInt) c;
++(id<CPConstraint>) less: (id<CPIntVar>)x to: (id<CPIntVar>) y;
++(id<CPConstraint>) mult: (id<CPIntVar>)x by:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
++(id<CPConstraint>) square: (id<CPIntVar>)x equal:(id<CPIntVar>)z annotation:(ORAnnotation)c;
++(id<CPConstraint>) mod: (id<CPIntVar>)x modi:(ORInt)c equal:(id<CPIntVar>)y annotation:(ORAnnotation)note;
++(id<CPConstraint>) mod: (id<CPIntVar>)x mod:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
++(id<CPConstraint>) min: (id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
++(id<CPConstraint>) max: (id<CPIntVar>)x and:(id<CPIntVar>)y equal:(id<CPIntVar>)z;
++(id<CPConstraint>) abs: (id<CPIntVar>)x equal:(id<CPIntVar>)y annotation:(ORAnnotation)c;
++(id<CPConstraint>) element:(id<CPIntVar>)x idxCstArray:(id<ORIntArray>)c equal:(id<CPIntVar>)y annotation:(ORAnnotation)n;
++(id<CPConstraint>) element:(id<CPIntVar>)x idxVarArray:(id<CPIntVarArray>)c equal:(id<CPIntVar>)y annotation:(ORAnnotation)n;
++(id<CPConstraint>) table: (id<ORTable>) table on: (id<CPIntVarArray>) x;
++(id<CPConstraint>) table: (id<ORTable>) table on: (id<CPIntVar>) x : (id<CPIntVar>) y : (id<CPIntVar>) z;
++(id<CPConstraint>) assignment: (id<CPEngine>) engine array: (id<CPIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<CPIntVar>) cost;
++(id<CPConstraint>) lex:(id<CPIntVarArray>)x leq:(id<CPIntVarArray>)y;
++(id<CPConstraint>) restrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
 
-+(id<ORConstraint>) assignment: (id<ORIntVarArray>) x matrix: (id<ORIntMatrix>) matrix cost: (id<ORIntVar>) cost;
-+(id<ORConstraint>) lex:(id<ORIntVarArray>)x leq:(id<ORIntVarArray>)y;
++(id<CPConstraint>) relaxation: (NSArray*) mv var: (NSArray*) cv relaxation: (id<ORRelaxation>) relaxation;
 @end
 
+@interface CPFactory (ORFloat)
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
++(id<CPConstraint>) floatSum:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
++(id<CPConstraint>) floatSquare: (id<CPFloatVar>)x equal:(id<CPFloatVar>)z annotation:(ORAnnotation)c;
++(id<CPConstraint>) floatEqualc: (id<CPIntVar>) x to:(ORFloat) c;
++(id<CPConstraint>) floatElement:(id<CPIntVar>)x idxCstArray:(id<ORFloatArray>)c equal:(id<CPFloatVar>)y annotation:(ORAnnotation)n;
++(id<CPConstraint>) floatMinimize: (id<CPFloatVar>) x;
++(id<CPConstraint>) floatMaximize: (id<CPFloatVar>) x;
+@end
+
+@interface CPSearchFactory : NSObject
++(id<CPConstraint>) equalc: (id<CPIntVar>) x to:(ORInt) c;
++(id<CPConstraint>) notEqualc:(id<CPIntVar>)x to:(ORInt)c;
++(id<CPConstraint>) lEqualc: (id<CPIntVar>)x to: (ORInt) c;
+@end
 

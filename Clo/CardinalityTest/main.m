@@ -12,11 +12,10 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
+#import <objcp/CPConstraint.h"
+#import <objcp/CPSolver.h>
+#import <objcp/CPFactory.h>
+#import <objcp/CPHeuristic.h>
 
 //20632 choices
 //20579 fail
@@ -25,7 +24,7 @@
 int main(int argc, const char * argv[])
 {
    ORInt n = 14;
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPProgram> cp = [CPFactory createSolver];
    id<ORIntRange> Periods = RANGE(cp,1,n/2);
    id<ORIntRange> Teams = RANGE(cp,1,n);
    id<ORIntRange> Weeks = RANGE(cp,1,n-1);
@@ -56,7 +55,7 @@ int main(int argc, const char * argv[])
                                                          with: ^id<ORIntVar>(ORInt w,ORInt h) { return [team at: p : w : h ]; }]
                                   low: c
                                    up: c
-                          consistency:DomainConsistency]];
+                          annotation:DomainConsistency]];
 
    [cp solve:
     ^() {

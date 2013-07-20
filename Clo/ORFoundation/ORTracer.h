@@ -13,11 +13,13 @@
 
 
 @protocol ORCommand;
-@protocol OREngine;
+@protocol ORSearchEngine;
 @protocol ORProblem;
 @protocol ORCheckpoint;
+@protocol ORTrail;
 @class ORCommandList;
 @class ORTrailI;
+@class ORMemoryTrailI;
 @class SemTracer;
 @class ORCmdStack;
 
@@ -31,27 +33,29 @@
 -(ORInt)      level;
 @optional -(void) addCommand: (id<ORCommand>) com;
 @optional -(id<ORCheckpoint>) captureCheckpoint;
-@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<OREngine>) engine;
-@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<OREngine>) engine;
+@optional -(ORStatus) restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver:(id<ORSearchEngine>) engine;
+@optional -(ORStatus) restoreProblem:(id<ORProblem>)p inSolver:(id<ORSearchEngine>) engine;
 @optional -(id<ORProblem>) captureProblem;
 @end
 
 @protocol ORProblem <NSObject>
 -(void) addCommand: (id<ORCommand>) c;
--(NSData*) packFromSolver: (id<OREngine>) engine;
--(bool) apply: (bool(^)(id<ORCommand>))clo;
+-(NSData*) packFromSolver: (id<ORSearchEngine>) engine;
+-(ORBool) apply: (bool(^)(id<ORCommand>))clo;
 -(ORCommandList*) theList;
+-(ORInt)sizeEstimate;
 @end
 
 @protocol ORCheckpoint <NSObject>
--(void)pushCommandList:(ORCommandList*)aList;
+-(void)letgo;
+-(id)grab;
 -(void)setNode:(ORInt)nid;
 -(ORInt)nodeId;
--(NSData*)packFromSolver: (id<OREngine>) engine;
+-(ORInt)sizeEstimate;
 @end
 
 @interface DFSTracer : NSObject<ORTracer> 
--(DFSTracer*) initDFSTracer: (id<ORTrail>) trail;
+-(DFSTracer*) initDFSTracer: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
@@ -63,7 +67,7 @@
 @end
 
 @interface SemTracer : NSObject<ORTracer>
--(SemTracer*) initSemTracer: (id<ORTrail>) trail;
+-(SemTracer*) initSemTracer: (id<ORTrail>) trail memory:(id<ORMemoryTrail>)mt;
 -(void)       dealloc;
 -(ORInt)      pushNode;
 -(id)         popNode;
@@ -72,14 +76,17 @@
 -(id<ORTrail>)   trail;
 -(void)       addCommand:(id<ORCommand>)com;
 -(id<ORCheckpoint>)captureCheckpoint;
--(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<OREngine>) engine;
--(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<OREngine>) engine;
+-(ORStatus)   restoreCheckpoint:(id<ORCheckpoint>)acp  inSolver: (id<ORSearchEngine>) engine;
+-(ORStatus)   restoreProblem:(id<ORProblem>)p  inSolver: (id<ORSearchEngine>) engine;
 -(id<ORProblem>)  captureProblem;
 -(void)       trust;
 -(ORInt)      level;
 @end
 
 @interface SemTracer (Packing)
-+(id<ORProblem>)      unpackProblem:(NSData*)msg fOREngine:(id<ORSolver>) solver;
-+(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fOREngine:(id<ORSolver>) solver;
++(id<ORProblem>)      unpackProblem:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
++(id<ORCheckpoint>)unpackCheckpoint:(NSData*)msg fORSearchEngine:(id<ORSearchEngine>) engine;
 @end
+
+
+void logCheckpoint();

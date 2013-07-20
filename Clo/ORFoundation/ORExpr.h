@@ -12,49 +12,14 @@
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
 #import "ORFoundation/ORTracker.h"
+#import "ORFoundation/ORConstraint.h"
 
 @protocol ORRelation;
 @protocol ORExpr;
-@protocol ORSolverConcretizer;
 @protocol ORIntArray;
 @protocol ORIntVarArray;
 
-id<ORExpr> __attribute__((overloadable)) mult(ORInt l,id<ORExpr> r);
-id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
-
-
-@protocol ORConstraint <ORObject>
-@end
-
-@protocol ORExpr <ORConstraint,NSObject,NSCoding>
--(id<ORTracker>) tracker;
--(ORInt) min;
--(ORInt) max;
--(BOOL) isConstant;
--(BOOL) isVariable;
--(id<ORExpr>) plus: (id<ORExpr>) e;
--(id<ORExpr>) sub: (id<ORExpr>) e;
--(id<ORExpr>) mul: (id<ORExpr>) e;
--(id<ORExpr>) muli: (ORInt) e;
--(id<ORRelation>) eq: (id<ORExpr>) e;
--(id<ORRelation>) eqi: (ORInt) e;
--(id<ORRelation>) neq: (id<ORExpr>) e;
--(id<ORRelation>) neqi: (ORInt) e;
--(id<ORRelation>) leq: (id<ORExpr>) e;
--(id<ORRelation>) leqi: (ORInt) e;
--(id<ORRelation>) geq: (id<ORExpr>) e;
--(id<ORRelation>) geqi: (ORInt) e;
--(id<ORRelation>) lt: (id<ORExpr>) e;
--(id<ORRelation>) lti: (ORInt) e;
--(id<ORRelation>) gt: (id<ORExpr>) e;
--(id<ORRelation>) gti: (ORInt) e;
-
--(id<ORRelation>) and: (id<ORExpr>) e;
--(id<ORRelation>) or: (id<ORExpr>) e;
--(id<ORRelation>) imply:(id<ORExpr>)e;
-@end
-
-enum ORRelationType {
+typedef NS_ENUM(NSUInteger,ORRelationType) {
    ORRBad = 0,
    ORREq  = 1,
    ORRNEq = 2,
@@ -64,29 +29,96 @@ enum ORRelationType {
    ORRImply = 6
 };
 
+typedef NS_ENUM(NSUInteger,ORVType) {
+   ORTInt = 0,
+   ORTFloat = 1,
+   ORTBit  = 2,
+   ORTSet  = 3,
+   ORTNA = 4
+};
+
+static inline ORVType lubVType(ORVType t1,ORVType t2)
+{
+   if (t1 == t2)
+      return t1;
+   else if (t1+t2 <= 1)
+      return ORTFloat;
+   else
+      return ORTNA;
+}
+
+id<ORExpr> __attribute__((overloadable)) mult(NSNumber* l,id<ORExpr> r);
+id<ORExpr> __attribute__((overloadable)) mult(id<ORExpr> l,id<ORExpr> r);
+
+@protocol ORExpr <ORConstraint,NSObject,NSCoding>
+-(id<ORTracker>) tracker;
+-(ORInt) min;
+-(ORInt) max;
+-(ORFloat) floatValue;
+-(ORInt) intValue;
+-(ORBool) isConstant;
+-(ORBool) isVariable;
+-(id<ORExpr>) abs;
+-(id<ORExpr>) square;
+-(id<ORExpr>) plus: (id) e;
+-(id<ORExpr>) sub: (id) e;
+-(id<ORExpr>) mul: (id) e;
+-(id<ORExpr>) div: (id) e;
+-(id<ORExpr>) mod: (id) e;
+-(id<ORExpr>) min: (id) e;
+-(id<ORExpr>) max: (id) e;
+-(id<ORRelation>) eq: (id) e;
+-(id<ORRelation>) neq: (id) e;
+-(id<ORRelation>) leq: (id) e;
+-(id<ORRelation>) geq: (id) e;
+-(id<ORRelation>) lt: (id) e;
+-(id<ORRelation>) gt: (id) e;
+-(id<ORRelation>) neg;
+-(id<ORRelation>) and: (id<ORExpr>) e;
+-(id<ORRelation>) or: (id<ORExpr>) e;
+-(id<ORRelation>) imply:(id<ORExpr>)e;
+
+-(id<ORExpr>) absTrack:(id<ORTracker>)t;
+-(id<ORExpr>) plus: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) sub: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) mul: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) div: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) mod: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) min: (id) e  track:(id<ORTracker>)t;
+-(id<ORExpr>) max: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) eq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) neq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) leq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) geq: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) lt: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) gt: (id) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) negTrack:(id<ORTracker>)t;
+-(id<ORRelation>) and: (id<ORExpr>) e  track:(id<ORTracker>)t;
+-(id<ORRelation>) or: (id<ORExpr>) e track:(id<ORTracker>)t;
+-(id<ORRelation>) imply:(id<ORExpr>)e  track:(id<ORTracker>)t;
+-(ORRelationType) type;
+-(ORVType)vtype;
+@end
+
 @protocol ORRelation <ORExpr>
--(enum ORRelationType) type;
+-(ORRelationType) type;
 -(id<ORRelation>) and: (id<ORRelation>) e;
 -(id<ORRelation>) or: (id<ORRelation>) e;
 -(id<ORRelation>) imply: (id<ORRelation>) e;
 @end
 
-@protocol ORExprVisitor
--(void) visitIntegerI: (id<ORInteger>) e;
--(void) visitExprPlusI: (id<ORExpr>) e;
--(void) visitExprMinusI: (id<ORExpr>) e;
--(void) visitExprMulI: (id<ORExpr>) e;
--(void) visitExprEqualI: (id<ORExpr>) e;
--(void) visitExprNEqualI: (id<ORExpr>) e;
--(void) visitExprLEqualI: (id<ORExpr>) e;
--(void) visitExprSumI: (id<ORExpr>) e;
--(void) visitExprAbsI:(id<ORExpr>) e;
--(void) visitExprCstSubI: (id<ORExpr>) e;
--(void) visitExprDisjunctI:(id<ORExpr>) e;
--(void) visitExprConjunctI: (id<ORExpr>) e;
--(void) visitExprImplyI: (id<ORExpr>) e;
--(void) visitExprAggOrI: (id<ORExpr>) e;
--(void) visitIntVarI: (id<ORExpr>) var;
--(void) visitFloatVarI: (id<ORExpr>) var;
--(void) visitExprVarSubI: (id<ORExpr>) e;
+@interface NSNumber (Expressions)
+-(id<ORExpr>)asExpression:(id<ORTracker>)tracker;
+-(id<ORExpr>) plus: (id<ORExpr>) e;
+-(id<ORExpr>) sub: (id<ORExpr>) e;
+-(id<ORExpr>) mul: (id<ORExpr>) e;
+-(id<ORExpr>) div: (id<ORExpr>) e;
+-(id<ORExpr>) mod: (id<ORExpr>) e;
+-(id<ORRelation>) eq: (id<ORExpr>) e;
+-(id<ORRelation>) neq: (id<ORExpr>) e;
+-(id<ORRelation>) leq: (id<ORExpr>) e;
+-(id<ORRelation>) geq: (id<ORExpr>) e;
+-(id<ORRelation>) lt: (id<ORExpr>) e;
+-(id<ORRelation>) gt: (id<ORExpr>) e;
 @end
+

@@ -13,9 +13,6 @@
 
 
 @implementation ORExecutionError
-{
-	const char* _message;
-}
 -(ORExecutionError*) initORExecutionError: (const char*) msg
 {
 	self = [super init];
@@ -26,7 +23,11 @@
 {
 	return _message;
 }
-@end  
+-(NSString *)description
+{
+   return [NSString stringWithCString:_message encoding:NSASCIIStringEncoding];
+}
+@end
 
 @implementation ORSearchError
 -(ORSearchError*) initORSearchError: (const char*) msg

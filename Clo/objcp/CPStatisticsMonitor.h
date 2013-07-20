@@ -10,21 +10,22 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPConstraintI.h>
 
 @class CPVarInfo;
+@protocol CPEngine;
 
 // PVH: Need another name for this baby
 
 @interface CPStatisticsMonitor : CPCoreConstraint {
    CPVarInfo**          _varInfo;
    ORLong                  _nbVI;
-   id<CPSolver>              _cp;
+   id<CPEngine>          _engine;
    CPVarInfo**        _curActive;
    ORUInt              _nbActive;
    id<ORVarArray>        _monVar;
 }
--(id)initCPMonitor:(id<CPSolver>)cp vars:(id<ORVarArray>)allVars;
+-(id)initCPMonitor:(id<CPEngine>)engine vars:(id<ORVarArray>)allVars;
 -(ORStatus) post;
 -(NSString*) description;
 -(double) reduction;

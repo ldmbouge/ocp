@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
+#import <ORUtilities/ORTypes.h>
 
 @interface CPBitArray : NSObject<NSCopying> {
 @private
@@ -48,15 +49,15 @@
 -(void)    flip;
 -(void)    set;
 -(void)    clear;
-//-(bool)    getBit:(unsigned int) idx;
+//-(ORBool)    getBit:(unsigned int) idx;
 
 -(int)             getData;
 -(unsigned int)    getUSData;
 -(int*)            getPtr;
 -(unsigned int*)   getUSPtr;
 -(unsigned int)    getLength;
--(bool)            isSigned;
--(bool)            getOverflow;
+-(ORBool)            isSigned;
+-(ORBool)            getOverflow;
 
 -(NSString*) description;
 -(NSString*) intToBinString:(int) integer;

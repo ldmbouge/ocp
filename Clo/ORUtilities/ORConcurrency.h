@@ -12,6 +12,12 @@
 #import <Foundation/Foundation.h>
 #import "ORUtilities/ORTypes.h"
 
+@protocol ORSolution;
+@protocol ORConstraint;
+@protocol ORIntArray;
+@protocol ORFloatArray;
+@protocol ORConstraintSet;
+
 @protocol ORInformer<NSObject>
 -(void) whenNotifiedDo: (id) closure;
 -(void) wheneverNotifiedDo: (id) closure;
@@ -30,6 +36,30 @@
 -(void) notifyWith:(id)a0 andInt:(ORInt)v;
 @end
 
+@protocol ORIdInformer<ORInformer>
+-(void) notifyWithObject: (id)obj;
+@end
+
+@protocol ORSolutionInformer<ORInformer>
+-(void) notifyWithSolution: (id<ORSolution>)s;
+@end
+
+@protocol ORConstraintInformer<ORInformer>
+-(void) notifyWithConstraint: (id<ORConstraint>)c;
+@end
+
+@protocol ORIntArrayInformer <ORInformer>
+-(void) notifyWithIntArray: (id<ORIntArray>)arr;
+@end
+
+@protocol ORFloatArrayInformer <ORInformer>
+-(void) notifyWithFloatArray: (id<ORFloatArray>)arr;
+@end
+
+@protocol ORConstraintSetInformer <ORInformer>
+-(void) notifyWithConstraintSet: (id<ORConstraintSet>)s;
+@end
+
 @protocol ORBarrier<NSObject> 
 -(void) join;
 -(void) wait;
@@ -42,8 +72,14 @@
 @interface ORConcurrency : NSObject 
 +(void) parall: (ORRange) R do: (ORInt2Void) closure;
 +(id<ORIntInformer>) intInformer;
++(id<ORIdInformer>) idInformer;
 +(id<ORVoidInformer>) voidInformer;
 +(id<ORIdxIntInformer>) idxIntInformer;
 +(id<ORBarrier>)  barrier: (ORInt) nb;
 +(void) pumpEvents;
+@end
+
+@interface NSThread (ORData)
++(void) setThreadID:(ORInt)tid;
++(ORInt) threadID;
 @end

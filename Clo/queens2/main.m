@@ -10,58 +10,49 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORFoundation/ORFoundation.h>
-#import <objcp/CPConstraint.h>
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-#import "objcp/CPHeuristic.h"
-#import "objcp/CPWDeg.h"
-
-ORInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,ORInt from,ORInt to)
-{
-   id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
-   [m solveAll: ^() {
-      [CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
-      [nbSolutions incr];
-   }
-    ];
-   printf("NbSolutions: %d \n",[nbSolutions value]);   
-   return [nbSolutions value];
-}
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import "ORFoundation/ORFoundation.h"
+#import "ORFoundation/ORSemBDSController.h"
+#import "ORFoundation/ORSemDFSController.h"
+#import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])
 {
    int n = 8;
-   id<CPSolver> cp = [CPFactory createSolver];
-   id<ORIntRange> R = RANGE(cp,1,n);
- 
-   id<ORInteger> nbSolutions = [ORFactory integer: cp value:0];
-   [CPFactory intArray:cp range: R with: ^ORInt(ORInt i) { return i; }]; 
-   id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
-   id<ORIntVarArray> xp = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: x[i] shift:i]; }];
-   id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(ORInt i) { return [CPFactory intVar: x[i] shift:-i]; }];
-   id<CPHeuristic> h = [CPFactory createFF:cp];
-   [cp add: [CPFactory alldifferent: cp over: x consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: cp over: xp consistency:ValueConsistency]];
-   [cp add: [CPFactory alldifferent: cp over: xn consistency:ValueConsistency]];
-   [cp solveAll:
-   ^() {
-       //[CPLabel array: x orderedBy: ^ORInt(ORInt i) { return [[x at:i] domsize];}];
-       [CPLabel heuristic:h];
-       printf("sol [%d]: %s THREAD: %p\n",[nbSolutions value],[[x description] cStringUsingEncoding:NSASCIIStringEncoding],[NSThread currentThread]);
-       [nbSolutions incr];
-    }
-    ];
-   printf("GOT %d solutions\n",[nbSolutions value]);
-   
-   
-   NSLog(@"Solver status: %@\n",cp);
-   NSLog(@"Quitting");
-   //[h release];
-   [cp release];   
-   [CPFactory shutdown];
+   @autoreleasepool {
+     id<ORModel> model = [ORFactory createModel];
+     
+     id<ORIntRange> R = RANGE(model,0,n-1);
+     
+     id<ORMutableInteger> nbSolutions = [ORFactory mutable: model value:0];
+     id<ORIntVarArray> x = [ORFactory intVarArray:model range:R domain: R];
+     id<ORIntVarArray> xp = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:i]; }];
+     id<ORIntVarArray> xn = [ORFactory intVarArray:model range: R with: ^id<ORIntVar>(ORInt i) { return [ORFactory intVar:model var:x[i] shift:-i]; }];
+     [model add: [ORFactory alldifferent: x annotation:ValueConsistency]];
+     [model add: [ORFactory alldifferent: xp annotation:ValueConsistency]];
+     [model add: [ORFactory alldifferent: xn annotation:ValueConsistency]];
+
+     id<CPProgram> cp = [ORFactory createCPProgram: model];
+     //id<CPHeuristic> h = [cp createFF];
+     [cp solveAll:
+       ^() {
+          [cp labelArray: x orderedBy: ^ORFloat(ORInt i) { return [cp domsize:x[i]];}];
+          printf("S[%d] = [",[nbSolutions intValue:cp]);
+          for(ORInt k=0;k < n;k++) {
+             printf("%d%c",[cp intValue:x[k]],k<n-1 ? ',' : ']');
+          }
+          printf("\n");
+          //[cp labelHeuristic:h];
+          [nbSolutions incr:cp];
+       }];
+     printf("GOT %d solutions\n",[nbSolutions intValue:cp]);
+     
+     NSLog(@"Solver status: %@\n",cp);
+     NSLog(@"Quitting");
+     [cp release];
+     [ORFactory shutdown];
+  }
    return 0;
 }
 

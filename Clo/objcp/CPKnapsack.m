@@ -90,11 +90,11 @@ static inline void pullNode(KSColumn* col,KSNode* node)
 
 #define SUPP(r,c) ((r)*2 + (c))
 
--(id) initCPKnapsackDC:(id<ORIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
+-(id) initCPKnapsackDC:(id<CPIntVarArray>)x weights:(id<ORIntArray>)w capacity:(CPIntVarI*)cap
 {
-   self = [super initCPActiveConstraint:[[x solver] engine]];
+   self = [super initCPCoreConstraint:[cap engine]];
    _priority = HIGHEST_PRIO - 2;
-   _fdm = (CPEngineI*) [[x solver] engine];
+   _fdm = [cap engine];
    _x = x;
    _w = w;
    _c = cap;
@@ -117,7 +117,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    _up  = [_x up];
    _xb  = malloc(sizeof(CPIntVarI*)*_nb);
    for(ORInt k=_low;k<= _up;k++)
-      _xb[k - _low] = (CPIntVarI*)_x[k];
+      _xb[k - _low] = (CPIntVarI*)[_x at:k];
    _support = malloc(sizeof(TRInt)*_nb*2);
    for(ORInt k=0;k<_nb*2;k++)
       _support[k] = makeTRInt(_trail, 0);
@@ -182,17 +182,17 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
 -(BOOL**)denseMatrices
 {
    ORInt L = [_c min],U = [_c max];
-   BOOL** f = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
-   BOOL** g = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
+   __block BOOL** f = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
+   __block BOOL** g = malloc(sizeof(BOOL*)*(_nb+1)); // allocate an extra column "in front" (reframing below)
    for(ORInt k=0;k<_nb+1;k++) {
-      f[k] = malloc(sizeof(BOOL)*(U+1));
-      g[k] = malloc(sizeof(BOOL)*(U+1));
-      memset(f[k],0,sizeof(BOOL)*(U+1));
-      memset(g[k],0,sizeof(BOOL)*(U+1));
+      f[k] = malloc(sizeof(ORBool)*(U+1));
+      g[k] = malloc(sizeof(ORBool)*(U+1));
+      memset(f[k],0,sizeof(ORBool)*(U+1));
+      memset(g[k],0,sizeof(ORBool)*(U+1));
    }
    f += 1;  // make sure that column -1 exist (seed column) via reframing.
    g += 1;  // make sure that column -1 exist (seed column) via reframing.
-   @try {
+   tryfail(^ORStatus{
       f[-1][0] = YES;
       for(ORInt i=0;i< _nb;i++) {
          for(ORInt c=0;c<=U;c++) {
@@ -241,8 +241,8 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       free(g);
       // F[i][j] is true if it sits on a path from f[-1][0] to one of the F[up][L .. U]
       // with D(_c) = {L..U}
-      return f;
-   } @catch(ORFailException* x) {
+      return ORSuspend;
+   }, ^ORStatus{
       f -= 1;
       g -= 1;
       for(ORInt k=0;k<_nb+1;k++) {
@@ -251,8 +251,10 @@ static inline void backwardPropagateLoss(CPKnapsack* ks,KSNode* n)
       }
       free(f);
       free(g);
-      @throw;
-   }
+      failNow();
+      return ORSuspend;
+   });
+   return f;
 }
 -(void)makeSparse:(BOOL**)f
 {

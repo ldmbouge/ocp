@@ -11,12 +11,11 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORFoundation.h>
-#import "objcp/CPConstraint.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPlabel.h"
+#import <objcp/CPConstraint.h>
+#import <objcp/CPSolver.h>
+#import <objcp/CPFactory.h>
 
-id<ORIntSet> knightMoves(id<CPSolver> cp,int i) 
+id<ORIntSet> knightMoves(id<CPProgram> cp,int i) 
 {
     id<ORIntSet> S = [CPFactory intSet: cp];
     if (i % 8 == 1) {
@@ -49,7 +48,7 @@ void printCircuit(id<ORIntVarArray> jump)
 
 int main (int argc, const char * argv[])
 {
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPProgram> cp = [CPFactory createSolver];
    id<ORIntRange> R = [ORFactory intRange: cp low: 0 up: 2];
    id<ORIntRange> D = [ORFactory intRange: cp low: 0 up: 30];
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range: R domain: D];

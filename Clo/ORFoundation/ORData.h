@@ -10,34 +10,114 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORUtilities/ORCrFactory.h"
+#import <ORUtilities/ORCrFactory.h>
+
+
+typedef enum {
+   DomainConsistency,
+   RangeConsistency,
+   ValueConsistency,
+   Hard,
+   Soft,
+   Default
+} ORAnnotation;
+
 
 @protocol ORExpr;
 @protocol ORIntRange;
-@protocol ORSolverConcretizer;
+@protocol ORVisitor;
+@protocol ORASolver;
+@protocol ORIntSet;
 
 @protocol ORObject <NSObject>
--(id) dereference;
--(void) concretize: (id<ORSolverConcretizer>) concretizer;
+-(ORInt) getId;
+-(void)setId:(ORUInt)name;
+-(void) visit: (id<ORVisitor>) visitor;
 @end;
 
+@protocol ORTau <NSObject,NSCopying>
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copy;
+@end
+
+@protocol ORLambda <NSObject,NSCopying>
+-(void) set: (id) value forKey: (id) key;
+-(id) get: (id) key;
+-(id) copy;
+@end
+
+@protocol ORModelMappings;
+
+@protocol ORGamma <NSObject>
+-(void) setGamma: (id*) gamma;
+-(id*)gamma;
+-(id<ORObject>) concretize: (id<ORObject>) o;
+-(id<ORModelMappings>) modelMappings;
+@end
+
+@protocol ORModelMappings <NSObject>
+-(id<ORTau>) tau;
+-(id<ORLambda>) lambda;
+-(id) copy;
+@end
+
+@interface ORGamma : NSObject<ORGamma>
+{
+@protected
+   id* _gamma;
+   id<ORModelMappings> _mappings;
+}
+-(ORGamma*) initORGamma;
+-(void) dealloc;
+-(id*) gamma;
+-(id) concretize: (id) o;
+-(void) setModelMappings: (id<ORModelMappings>) mappings;
+-(id<ORModelMappings>) modelMappings;
+@end
+
+
 @interface NSObject (Concretization)
--(id) dereference;
--(void) concretize: (id<ORSolverConcretizer>) concretizer;
+-(void) visit: (id<ORVisitor>) visitor;
 @end;
 
 @protocol ORInteger <ORObject,ORExpr>
--(ORInt)  value;
--(void) setValue: (ORInt) value;
--(void) incr;
--(void) decr;
+-(ORInt) value;
+@end
+
+@protocol ORMutableId <ORObject>
+-(id) idValue:(id<ORGamma>)solver;
+-(void) setId:(id)v in:(id<ORGamma>)solver;
+@end
+
+@protocol ORMutableInteger <ORObject,ORExpr>
+-(ORInt) initialValue;
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver;
+-(ORInt) incr: (id<ORGamma>) solver;
+-(ORInt) decr: (id<ORGamma>) solver;
+-(ORInt) value: (id<ORGamma>) solver;
+-(ORInt) intValue: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+@end
+
+@protocol ORFloatNumber <ORObject,ORExpr>
+-(ORFloat) floatValue;
+-(ORFloat) value;
+-(ORInt) intValue;
+@end
+
+@protocol ORMutableFloat <ORObject,ORExpr>
+-(ORFloat) initialValue;
+-(ORFloat) value: (id<ORGamma>) solver;
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
 @end
 
 @protocol ORTrailableInt <ORObject>
 -(ORInt) value;
--(void)  setValue: (ORInt) value;
--(void)  incr;
--(void)  decr;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  incr;  // post-incr returned
+-(ORInt)  decr;  // post-decr returned
 @end
 
 @interface ORRuntimeMonitor : NSObject
@@ -67,42 +147,35 @@
 @end;
 
 @interface ORCrFactory (OR)
-+(id<ORInteger>) integer:(ORInt) value;
-+(id<ORRandomStream>) randomStream;
-+(id<ORZeroOneStream>) zeroOneStream;
-+(id<ORUniformDistribution>) uniformDistribution: (id<ORIntRange>) r;
++(id<ORMutableInteger>) integer:(ORInt) value;
 @end
 
-@protocol ORTable <NSObject>
+@protocol ORTable <ORObject>
 -(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
 -(void) addEmptyTuple;
 -(void) fill: (ORInt) j with: (ORInt) val;
+-(void)insertTuple:(ORInt*)t;
 -(void) print;
 -(void) close;
 @end
 
-@protocol ORSolver;
+typedef ORInt ORTransition[3];
 
-@interface ORTableI : NSObject<ORTable,NSCoding> {
-   @public
-   id<ORSolver>  _solver;
-   ORInt   _arity;
-   ORInt   _nb;
-   ORInt   _size;
-   ORInt** _column;
-   bool    _closed;
-   ORInt*  _min;          // _min[j] is the minimum value in column[j]
-   ORInt*  _max;          // _max[j] is the maximun value in column[j]
-   ORInt** _nextSupport;  // _nextSupport[j][i] is the next support of element j in tuple i
-   ORInt** _support;      // _support[j][v] is the support (a row index) of value v in column j
-}
--(ORTableI*) initORTableI: (id<ORSolver>) solver arity: (ORInt) arity;
--(void) dealloc;
--(void) insert: (ORInt) i : (ORInt) j : (ORInt) k;
--(void) addEmptyTuple;
--(void) fill: (ORInt) j with: (ORInt) val;
--(void) close;
--(void) encodeWithCoder: (NSCoder*) aCoder;
--(id) initWithCoder: (NSCoder*) aDecoder;
--(void) print;
+#define SIZETF(t) (sizeof((t)) / sizeof(ORTransition))
+
+@protocol ORAutomaton <ORObject>
+-(id<ORTable>)transition;
+-(ORInt) initial;
+-(id<ORIntSet>)final;
+-(id<ORIntRange>)alphabet;
+-(id<ORIntRange>)states;
 @end
+
+@protocol ORBindingArray <NSObject>
+-(id) at: (ORInt) value;
+-(void) set: (id) x at: (ORInt) value;
+-(id) objectAtIndexedSubscript:(NSUInteger)key;
+-(void) setObject:(id)newValue atIndexedSubscript:(NSUInteger)idx;
+-(ORInt) nb;
+@end
+

@@ -9,14 +9,13 @@
 
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPVar.h>
 
-@interface CPCardinalityDC : CPActiveConstraint<CPConstraint,NSCoding> 
--(CPCardinalityDC*) initCPCardinalityDC: (id<ORIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
+@interface CPCardinalityDC : CPCoreConstraint<CPConstraint,NSCoding> 
+-(CPCardinalityDC*) initCPCardinalityDC: (id<CPIntVarArray>) x low: (id<ORIntArray>) lb up: (id<ORIntArray>) ub;
 -(void) dealloc;
-
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*) allVars;

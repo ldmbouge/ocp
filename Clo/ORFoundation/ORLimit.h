@@ -20,7 +20,6 @@
 -(id)   initORLimitSolutions: (ORInt) maxSolutions;
 -(void) dealloc;
 -(ORInt) addChoice:(NSCont*)k;
--(void) fail;
 -(void) succeeds;
 @end
 
@@ -33,7 +32,6 @@
 -(id)        initORLimitDiscrepancies: (ORInt) maxDiscrepancies withTrail: (id<ORTrail>) trail;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
--(void)      fail;
 -(void)      startTryRight;
 @end
 
@@ -45,7 +43,6 @@
 -(id)        initORLimitFailures: (ORInt) maxFailures;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
--(void)      fail;
 -(void)      startTryLeft;
 -(void)      startTryRight;
 @end
@@ -58,7 +55,6 @@
 -(id)        initORLimitTime: (ORLong) maxTime;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
--(void)      fail;
 -(void)      startTryLeft;
 -(void)      startTryRight;
 @end
@@ -70,7 +66,6 @@
 -(id)        initORLimitCondition: (ORVoid2Bool) condition;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
--(void)      fail;
 -(void)      startTryLeft;
 -(void)      startTryRight;
 @end
@@ -82,8 +77,21 @@
 -(id)        initOROptimizationController: (Void2ORStatus) canImprove;
 -(void)      dealloc;
 -(ORInt)     addChoice:(NSCont*) k;
--(void)      fail;
 -(void)      startTryRight;
 -(void)      startTryallOnFailure;
 - (id)copyWithZone:(NSZone *)zone;
 @end
+
+@interface ORLimitMonitor : ORDefaultController <NSCopying,ORSearchController>
+-(id)        initORLimitMonitor;
+-(void)      dealloc;
+-(void)      fail: (ORBool) pruned;
+-(ORBool)    isPruned;
+@end
+
+@interface ORSwitchOnDepth : ORDefaultController <NSCopying,ORSearchController>
+-(id)    initORSwitchOnDepth: (ORInt) limit next: (NSCont*) next withTrail: (id<ORTrail>) trail;
+-(void)  dealloc;
+-(void)  startTry;
+@end
+

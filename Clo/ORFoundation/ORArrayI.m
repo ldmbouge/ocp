@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORTypes.h"
+#import <ORUtilities/ORTypes.h>
 #import "ORArrayI.h"
 #import "ORError.h"
 #import "ORExprI.h"
@@ -121,9 +121,13 @@
       @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORIntArrayElement"];
    _array[idx] = value;
 }
+-(void) enumerateWith: (void(^)(ORInt obj,int idx)) block
+{
+   for(ORInt i=_low;i<=_up;i++)
+      block(_array[i],i);
+}
 -(id<ORExpr>)elt:(id<ORExpr>)idx
 {
-//   return [[ORExprCstSubI alloc] initORExprCstSubI:self index:idx];
    return [ORFactory elt: _tracker intArray: self index: idx];
 }
 -(ORInt) low
@@ -133,6 +137,18 @@
 -(ORInt) up
 {
    return _up;
+}
+-(ORInt) max {
+    ORInt v = _array[0];
+    for(int i = 1; i < _nb; i++)
+        if(_array[i] > v) v = _array[i];
+    return v;
+}
+-(ORInt) min {
+    ORInt v = _array[0];
+    for(int i = 1; i < _nb; i++)
+        if(_array[i] < v) v = _array[i];
+    return v;
 }
 -(NSUInteger)count
 {
@@ -154,11 +170,6 @@
 {
    return _tracker;
 }
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
-}
-
 - (void)encodeWithCoder:(NSCoder *)aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -181,18 +192,207 @@
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:_array+i];
    return self;
 }
+-(void)visit:(id<ORVisitor>)v
+{
+   [v visitIntArray:self];
+}
 @end
+
+/**********************************************************************************************/
+/*                          ORFloatArray                                                      */
+/**********************************************************************************************/
+
+@implementation ORFloatArrayI
+{
+    id<ORTracker> _tracker;
+    ORFloat*        _array;
+    ORInt             _low;
+    ORInt              _up;
+    ORInt              _nb;
+    id<ORIntRange>  _range;
+}
+
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb value: (ORFloat) value
+{
+    self = [super init];
+    _tracker = tracker;
+    _array = malloc(nb * sizeof(ORFloat));
+    _low = 0;
+    _up = nb-1;
+    _nb = nb;
+    _range = [ORFactory intRange: tracker low: _low up: _up];
+    for (ORInt i=0 ; i < _nb; i++)
+        _array[i] = value;
+    return self;
+}
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker size: (ORInt) nb with:(ORFloat(^)(ORInt)) clo
+{
+    self = [super init];
+    _tracker = tracker;
+    _array = malloc(nb * sizeof(ORFloat));
+    _low = 0;
+    _up = nb-1;
+    _nb = nb;
+    _range = [ORFactory intRange: tracker low: _low up: _up];
+    for (ORInt i=0 ; i < _nb; i++)
+        _array[i] = clo(i);
+    return self;
+}
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range value: (ORFloat) value
+{
+    self = [super init];
+    _tracker = tracker;
+    _low = range.low;
+    _up = range.up;
+    _nb = _up - _low + 1;
+    _range = range;
+    _array = malloc(_nb * sizeof(ORFloat));
+    _array -= _low;
+    for (ORInt i=_low ; i <= _up; i++)
+        _array[i] = value;
+    return self;
+}
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range with:(ORFloat(^)(ORInt)) clo
+{
+    self = [super init];
+    _tracker = tracker;
+    _low = range.low;
+    _up = range.up;
+    _nb = _up - _low + 1;
+    _range = range;
+    _array = malloc(_nb * sizeof(ORFloat));
+    _array -= _low;
+    for (ORInt i=_low ; i <= _up; i++)
+        _array[i] = clo(i);
+    return self;
+}
+-(ORFloatArrayI*) initORFloatArray: (id<ORTracker>) tracker range: (id<ORIntRange>) r1 range: (id<ORIntRange>) r2 with:(ORFloat(^)(ORInt,ORInt)) clo
+{
+    self = [super init];
+    _tracker = tracker;
+    _nb = (r1.up - r1.low + 1) * (r2.up - r2.low + 1);
+    _low = 0;
+    _up = _nb-1;
+    _range = [ORFactory intRange: tracker low: _low up: _up];
+    _array = malloc(_nb * sizeof(ORFloat));
+    int k = 0;
+    for (ORInt i=r1.low ; i <= r1.up; i++)
+        for (ORInt j=r2.low ; j <= r2.up; j++)
+            _array[k++] = clo(i,j);
+    return self;
+}
+-(id<ORIntRange>) range
+{
+    return _range;
+}
+-(void) dealloc
+{
+    _array += _low;
+    free(_array);
+    [super dealloc];
+}
+
+-(ORFloat) at: (ORInt) value
+{
+    if (value < _low || value > _up)
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
+    return _array[value];
+}
+-(void) set: (ORFloat) value at:(ORInt)idx
+{
+    if (idx < _low || idx > _up)
+        @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORFloatArrayElement"];
+    _array[idx] = value;
+}
+-(void) enumerateWith: (void(^)(ORFloat obj,int idx)) block
+{
+    for(ORInt i=_low;i<=_up;i++)
+        block(_array[i],i);
+}
+-(ORInt) low
+{
+    return _low;
+}
+-(ORInt) up
+{
+    return _up;
+}
+-(id<ORExpr>)elt:(id<ORExpr>)idx
+{
+   return [ORFactory elt: _tracker floatArray: self index: idx];
+}
+-(ORFloat) max {
+    ORFloat v = _array[0];
+    for(int i = 1; i < _nb; i++)
+        if(_array[i] > v) v = _array[i];
+    return v;
+}
+-(ORFloat) min {
+    ORFloat v = _array[0];
+    for(int i = 1; i < _nb; i++)
+        if(_array[i] < v) v = _array[i];
+    return v;
+}
+-(NSUInteger)count
+{
+    return _nb;
+}
+-(NSString*)description
+{
+    NSMutableString* rv = [[[NSMutableString alloc] initWithCapacity:64] autorelease];
+    [rv appendString:@"["];
+    for(ORInt i=_low;i<=_up;i++) {
+        [rv appendFormat:@"%d:%f",i,_array[i]];
+        if (i < _up)
+            [rv appendString:@","];
+    }
+    [rv appendString:@"]"];
+    return rv;
+}
+-(id<ORTracker>) tracker
+{
+    return _tracker;
+}
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+    [aCoder encodeObject:_tracker];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_low];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_up];
+    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
+    for(ORInt i=_low;i<=_up;i++)
+        [aCoder encodeValueOfObjCType:@encode(ORFloat) at:_array+i];
+}
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+    _tracker = [[aDecoder decodeObject] retain];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_low];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_up];
+    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nb];
+    _array =  malloc(sizeof(ORFloat)*_nb);
+    _array -= _low;
+    for(ORInt i=_low;i<=_up;i++)
+        [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
+    return self;
+}
+-(void) visit: (id<ORVisitor>) v
+{
+   [v visitFloatArray: self];
+}
+
+@end
+
 
 // ------------------------------------------------------------------------------------------
 
 @implementation ORIdArrayI
 {
+   id<ORTracker>  _tracker;
    id*              _array;
    ORInt              _low;
    ORInt               _up;
    ORInt               _nb;
    id<ORIntRange>   _range;
-   id<ORIdArray>     _impl;
 }
 
 -(ORIdArrayI*) initORIdArray: (id<ORTracker>) tracker range: (id<ORIntRange>) range
@@ -206,9 +406,38 @@
    _array = malloc(_nb * sizeof(id));
    memset(_array,0,sizeof(id)*_nb);
    _array -= _low;
-   _impl = nil;
    return self;
 }
+-(id)copyWithZone:(NSZone *)zone
+{
+   ORIdArrayI* rv =  [[ORIdArrayI allocWithZone:zone] initORIdArray:_tracker range:_range];
+   for(ORInt i=_low;i<=_up;i++)
+       [rv set:[self at:i] at:i];
+   return rv;
+}
+-(BOOL)isEqual:(id)object
+{
+   if ([object isKindOfClass:[ORIdArrayI class]]) {
+      ORIdArrayI* o = object;
+      if (_low == o->_low && _up == o->_up) {
+         for(ORInt i=_low;i<=_up;i++) {
+            BOOL ok = [[self at:i] getId] == [[o at:i] getId];
+            if (!ok)
+               return NO;
+         }
+         return YES;
+      } else return NO;
+   } else return NO;
+}
+- (NSUInteger)hash
+{
+   ORInt sz =  _up - _low + 1;
+   NSUInteger h = 0;
+   for(ORInt k=_low;k <= _up;k++)
+      h = h * 7 + [_array[k] getId];
+   return (h << (int)(log(sz)/log(2))) + sz;
+}
+
 -(void) dealloc
 {
    _array += _low;
@@ -258,7 +487,7 @@
    [rv appendString:@"]"];
    return rv;      
 }
--(void)enumerateWith:(void(^)(id obj,int idx))block
+-(void) enumerateWith: (void(^)(id obj,int idx)) block
 {
    for(ORInt i=_low;i<=_up;i++)
       block(_array[i],i);
@@ -267,10 +496,6 @@
 -(id<ORTracker>) tracker
 {
    return _tracker;
-}
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
 }
 -(id) objectAtIndexedSubscript: (NSUInteger)key
 {
@@ -307,25 +532,17 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
--(void) concretize: (id<ORSolverConcretizer>) concretizer
+-(void)visit:(id<ORVisitor>)v
 {
-   if (_impl == nil)
-      _impl = [concretizer idArray: self];
+   [v visitIdArray:self];
 }
--(id<ORIdArray>) dereference
-{
-   if (_impl != nil)
-      return [_impl dereference];
-   else
-      return self;
-}
+
 @end
 
 // Matrix ------------------------------------------------------------------
 
 
-@implementation ORIdMatrixI
-{
+@implementation ORIdMatrixI {
    id*              _flat;
    ORInt           _arity;
    id<ORIntRange>* _range;
@@ -335,7 +552,6 @@
    ORInt*              _i;
    ORInt              _nb;
 }
-
 -(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker arity: (ORInt) ar ranges: (id<ORIntRange>*) rs;
 {
    self = [super init];
@@ -345,7 +561,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _nb = 1;
    for(ORInt k=0;k < _arity;k++) {
       _range[k] = rs[k];
@@ -357,6 +573,29 @@
    _flat = malloc(sizeof(id)*_nb);
    return self;
 }
+-(ORIdMatrixI*) initORIdMatrix: (id<ORTracker>) tracker with: (ORIdMatrixI*) matrix
+{
+   self = [super init];
+   _tracker = tracker;
+   _arity = matrix->_arity;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
+   for(ORInt k = 0; k < _arity; k++) {
+      _range[k] = matrix->_range[k];
+      _low[k] = matrix->_low[k];
+      _up[k] = matrix->_up[k];
+      _size[k] = matrix->_size[k];
+   }
+   _nb = matrix->_nb;
+   _flat = malloc(sizeof(id) * _nb);
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = matrix->_flat[i];
+   return self;
+}
+
 -(ORIdMatrixI*) initORIdMatrix:(id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2
 {
    return self = [self initORIdMatrix: tracker arity:3 ranges:(id<ORIntRange>[]){r0,r1,r2}];
@@ -402,6 +641,10 @@
 {
    return _flat[i];
 }
+-(void) setFlat:(id) x at:(ORInt)i
+{
+   _flat[i] = x;
+}
 -(id) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2
 {
    if (_arity != 3)
@@ -437,6 +680,29 @@
    _flat[[self index]] = x;
 }
 
+-(id<ORExpr>) elt: (id<ORExpr>) idx i1:(ORInt)i1
+{
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[idx tracker] range:_range[0] with:^id(ORInt i) {
+      ORInt flatOfs = ((i - _low[0]) * _size[1]) + i1 -  _low[1];
+      return _flat[flatOfs];
+   }];
+   id<ORExpr> fe = [slice elt:idx];
+   return fe;
+}
+-(id<ORExpr>) at: (ORInt) i0       elt:(id<ORExpr>)e1
+{
+   id<ORIntVarArray> slice = (id)[ORFactory idArray:[e1 tracker] range:_range[1] with:^id(ORInt j) {
+      ORInt flatOfs = ((i0 - _low[0]) * _size[1]) + j -  _low[1];
+      return _flat[flatOfs];
+   }];
+   id<ORExpr> fe = [slice elt:e1];
+   return fe;
+}
+-(id<ORExpr>) elt: (id<ORExpr>)e0  elt:(id<ORExpr>)e1
+{
+   return [ORFactory elt:[e0 tracker] intVarMatrix:(id)self elt:e0 elt:e1];
+}
+
 -(NSUInteger) count
 {
    return _nb;
@@ -467,10 +733,6 @@
 {
    return _tracker;
 }
--(id<ORSolver>) solver
-{
-   return [_tracker solver];
-}
 - (void) encodeWithCoder: (NSCoder *) aCoder
 {
    [aCoder encodeObject:_tracker];
@@ -488,11 +750,11 @@
    self = [super init];
    _tracker = [[aDecoder decodeObject] retain];
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_arity];
-   _range = malloc(sizeof(ORRange) * _arity);
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _nb = 1;
    for(ORInt i = 0; i < _arity; i++) {
       _range[i] = [[aDecoder decodeObject] retain];
@@ -506,6 +768,11 @@
       _flat[i] = [aDecoder decodeObject];
    return self;
 }
+-(void) visit:(id<ORVisitor>)v
+{
+   [v visitIdMatrix:self];
+}
+
 @end
 
 
@@ -534,7 +801,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _range[0] = r0;
    _range[1] = r1;
    _range[2] = r2;
@@ -563,7 +830,7 @@
    _low = malloc(sizeof(ORInt) * _arity);
    _up = malloc(sizeof(ORInt) * _arity);
    _size = malloc(sizeof(ORInt) * _arity);
-   _i = malloc(sizeof(ORRange) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
    _range[0] = r0;
    _range[1] = r1;
    _low[0] = [r0 low];
@@ -578,7 +845,37 @@
       _flat[i] = 0;
    return self;
 }
-
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 using: (ORIntxInt2Int)block {
+   self = [self initORIntMatrix: tracker range: r0 : r1];
+   for(ORInt i = _low[0]; i <= _up[0]; i++) {
+      for(ORInt j = _low[1]; j <= _up[1]; j++) {
+         [self set: block(i, j) at: i : j];
+      }
+   }
+   return self;
+}
+-(ORIntMatrixI*) initORIntMatrix: (id<ORTracker>) tracker with: (ORIntMatrixI*) matrix
+{
+   self = [super init];
+   _tracker = tracker;
+   _arity = matrix->_arity;
+   _range = malloc(sizeof(id<ORIntRange>) * _arity);
+   _low = malloc(sizeof(ORInt) * _arity);
+   _up = malloc(sizeof(ORInt) * _arity);
+   _size = malloc(sizeof(ORInt) * _arity);
+   _i = malloc(sizeof(ORInt) * _arity);
+   for(ORInt k = 0; k < _arity; k++) {
+      _range[k] = matrix->_range[k];
+      _low[k] = matrix->_low[k];
+      _up[k] = matrix->_up[k];
+      _size[k] = matrix->_size[k];
+   }
+   _nb = matrix->_nb;
+   _flat = malloc(sizeof(ORInt) * _nb);
+   for (ORInt i=0 ; i < _nb; i++)
+      _flat[i] = matrix->_flat[i];
+   return self;
+}
 -(void) dealloc
 {
    //   NSLog(@"CPIntVarMatrix dealloc called...\n");
@@ -672,9 +969,9 @@
 {
    return _tracker;
 }
--(id<ORSolver>) solver
+-(void) visit:(id<ORVisitor>)visitor
 {
-   return [_tracker solver];
+   [visitor visitIntMatrix:self];
 }
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
@@ -712,4 +1009,5 @@
 }
 
 @end
+
 

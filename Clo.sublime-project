@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"path": "Clo"	,
+			"folder_exclude_patterns" : ["*.lproj"],
+			"file_exclude_patterns" : ["*.pch","*.1"]		
+		}
+	],
+	"build_systems" : [
+	{
+		"name" : "Xcode",
+		"working_dir" : "${project_path:${folder}}/Clo",
+		"cmd" : [
+			"xcodebuild", "-workspace" , "ObjecticeCP.xcworkspace",
+			"-configuration", "Release",
+			"-scheme" , "Clo"
+		]
+	}
+	]
+}

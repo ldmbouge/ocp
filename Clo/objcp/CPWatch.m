@@ -14,29 +14,28 @@
 #import "CPConstraintI.h"
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
-#import "CPSolverI.h"
+#import <ORProgram/CPProgram.h>
 
-
-@interface CPWatch : CPActiveConstraint {
+@interface CPWatch : CPCoreConstraint {
    CPIntVarI* _theVar;
    ORInt2Void _lost;
    ORInt2Void _bind;
    ORInt2Void _rec;
    ORInt2Void _unb;
 }
--(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost onValueBind:(ORInt2Void)bind onValueRecover:(ORInt2Void)rec onValueUnbind:(ORInt2Void)unb;
 -(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
 
 @implementation CPWatch
--(CPWatch*)initCPWatch:(id<ORIntVar>)x onValueLost:(ORInt2Void)lost 
+-(CPWatch*)initCPWatch:(id<CPIntVar>)x onValueLost:(ORInt2Void)lost
            onValueBind:(ORInt2Void)bind 
         onValueRecover:(ORInt2Void)rec 
          onValueUnbind:(ORInt2Void)unb
 {
-   self = [super initCPActiveConstraint:(id<CPEngine>)[(CPIntVarI*)x solver]];
+   self = [super initCPCoreConstraint:[(CPIntVarI*)x engine]];
    _theVar = (CPIntVarI*)x;
    _lost = [lost copy];
    _bind = [bind copy];
@@ -55,7 +54,7 @@
 }
 -(NSSet*)allVars
 {
-   return [[NSSet alloc] initWithObjects:_theVar,nil];
+   return [[[NSSet alloc] initWithObjects:_theVar,nil] autorelease];
 }
 -(ORUInt)nbUVars
 {
@@ -86,20 +85,21 @@
 @end
 
 @implementation CPFactory(Visualize)
-+(id<ORConstraint>)watchVariable:(id<ORIntVar>)x 
-                     onValueLost:(ORInt2Void)lost 
-                     onValueBind:(ORInt2Void)bind 
-                  onValueRecover:(ORInt2Void)rec 
-                   onValueUnbind:(ORInt2Void)unb
++(id<ORConstraint>)solver:(id<CPProgram>)cp
+            watchVariable:(id<ORIntVar>)x
+              onValueLost:(ORInt2Void)lost
+              onValueBind:(ORInt2Void)bind
+           onValueRecover:(ORInt2Void)rec
+            onValueUnbind:(ORInt2Void)unb
 {
    id<ORConstraint> c = nil;
-   c = [[CPWatch alloc] initCPWatch:x 
+   id<CPIntVar> theVar = [cp gamma][x.getId];
+   c = [[CPWatch alloc] initCPWatch:theVar
                         onValueLost:lost 
                         onValueBind:bind
                      onValueRecover:rec
                       onValueUnbind:unb];
-   CPIntVarI* theVar = (CPIntVarI*)x;
-   [[theVar solver] trackObject:c];
+   [[theVar engine] trackMutable:c];
    return c;
 }
 @end

@@ -9,8 +9,8 @@
 
  ***********************************************************************/
 
-#import "CPBitArray.h"
 #import "CPBitMacros.h"
+#import "CPBitArray.h"
 
 #define CP_SPACING 4
 #define UMASK 0xFFFFFFFF
@@ -423,8 +423,8 @@ unsigned int getLengthInWords(CPBitArray* array)
 -(unsigned int)    getLength { return _length;}
 -(unsigned int*)   getUSPtr  { return _data.usPtr;}
 -(int*)            getPtr    { return _data.ptr;}
--(bool)            isSigned  { return _signed;}
--(bool)          getOverflow { return _overflow;}
+-(ORBool)            isSigned  { return _signed;}
+-(ORBool)          getOverflow { return _overflow;}
 
 -(NSString*) description
 {

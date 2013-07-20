@@ -13,14 +13,9 @@
 #import <ORFoundation/cont.h>
 #import <ORFoundation/ORController.h>
 
-@protocol ORControllerFactory<NSObject>
--(id<ORSearchController>)makeRootController;
--(id<ORSearchController>)makeNestedController;
-@end
-
 @interface ORCoreExplorerI : NSObject
 
--(ORCoreExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
+-(ORCoreExplorerI*) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 
 -(void)                dealloc;
 -(id<ORControllerFactory>) controllerFactory;
@@ -32,15 +27,16 @@
 -(void)                   setController: (id<ORSearchController>) controller;
 -(void)                   push: (id<ORSearchController>) controller;
 
--(void)      optimizeModel: (id<ORSolver>) solver using: (ORClosure) search; 
--(void)         solveModel: (id<ORSolver>) solver using: (ORClosure) search;
--(void)      solveAllModel: (id<ORSolver>) solver using: (ORClosure) search;
+-(void)      optimizeModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)         solveModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
+-(void)      solveAllModel: (id<ORASolver>) solver using: (ORClosure) search onSolution:(ORClosure)onSol onExit:(ORClosure)onExit;
 
 -(void)                try: (ORClosure) left or: (ORClosure) right;
--(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
--(void)             tryall: (id<ORIntIterator>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body;
+-(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f in: (ORInt2Void) body onFailure: (ORInt2Void) onFailure;
+-(void)             tryall: (id<ORIntIterable>) range suchThat: (ORInt2Bool) f orderedBy: (ORInt2Float)o1 in: (ORInt2Void) body
+                 onFailure: (ORInt2Void) onFailure;
 -(void)               fail;
--(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 
 // combinators
 -(void)               once: (ORClosure) cl;
@@ -50,27 +46,30 @@
 -(void)      limitFailures: (ORInt) maxFailures in: (ORClosure) cl;
 -(void)          limitTime: (ORLong) maxTime in: (ORClosure) cl;
 -(void)    applyController: (id<ORSearchController>) controller in: (ORClosure) cl;
--(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRepeat until: (ORVoid2Bool) isDone;
 
 -(void)             search: (ORClosure) body;
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
--(void)     nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
+-(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit control:(id<ORSearchController>)sc;
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)             search: (ORClosure) block;
+-(void)             repeat: (ORClosure) body onRepeat: (ORClosure) onRestart until: (ORVoid2Bool) isDone;
+-(void)            perform: (ORClosure) body onLimit: (ORClosure) action;
+-(void)          portfolio: (ORClosure) s1 then: (ORClosure) s2;
+-(void)      switchOnDepth: (ORClosure) s1 to: (ORClosure) s2 limit: (ORInt) depth;
 @end
 
 @interface ORExplorerI : ORCoreExplorerI<ORExplorer>
--(ORCoreExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
+-(ORCoreExplorerI*) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
+
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)     nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 @end
 
 @interface ORSemExplorerI : ORCoreExplorerI<ORExplorer>
--(ORCoreExplorerI*) initORExplorer: (id<OREngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
+-(ORCoreExplorerI*) initORExplorer: (id<ORSearchEngine>) engine withTracer: (id<ORTracer>) tracer ctrlFactory:(id<ORControllerFactory>)cFact;
 -(void)        nestedSolve: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 -(void)     nestedSolveAll: (ORClosure) body onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
--(void)     nestedOptimize: (id<ORSolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
+-(void)     nestedOptimize: (id<ORASolver>) solver using: (ORClosure) search onSolution: (ORClosure) onSolution onExit: (ORClosure) onExit;
 @end

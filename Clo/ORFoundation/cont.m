@@ -25,7 +25,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 }
 
 @implementation NSCont
--init {
+-init 
+{
    self = [super init];
    _used   = 0;
    _start  = 0;
@@ -33,7 +34,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
    return self;
 }
 
--(void)saveStack:(size_t)len startAt:(void*)s {
+-(void)saveStack:(size_t)len startAt:(void*)s 
+{
    if (_length!=len) {
       if (_length!=0) free(_data);
       _data = malloc(len);
@@ -45,7 +47,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 
 -(ORInt) nbCalls { return _used;}
 
--(void)call {
+-(void)call 
+{
 #if defined(__x86_64__)
    register struct Ctx64* ctx = &_target;
    ctx->rax = (long)self;
@@ -56,7 +59,8 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #endif
 }
 
-+(NSCont*)takeContinuation {
++(NSCont*)takeContinuation 
+{
    NSCont* k = [NSCont new];
 #if defined(__x86_64__)
    struct Ctx64* ctx = &k->_target;
@@ -77,39 +81,31 @@ static inline void fastmemcpy(register ORUInt* dest,register ORUInt* src,registe
 #endif
 }
 
-static pthread_key_t pkey;
-static void init_pthreads() 
+inline static ContPool* instancePool()
 {
-   pthread_key_create(&pkey,NULL);   
-}
-
-+(ContPool*)instancePool
-{
-   if ([NSThread isMainThread]) {
-      static ContPool myPool = {0,0,0,0,0};
-      return &myPool;
-   } else {
-      static pthread_once_t block = PTHREAD_ONCE_INIT;
-      pthread_once(&block,init_pthreads);
-      ContPool* pool = pthread_getspecific(pkey);
-      if (!pool) {
-         pool = malloc(sizeof(ContPool));
-         pthread_setspecific(pkey,pool);
-         pool->low = pool->high = pool->nbCont = 0;
-         pool->poolClass = nil;
-      }
-      return pool;
-      
+   static __thread ContPool* pool = 0;
+   if (!pool) {
+      pool = malloc(sizeof(ContPool));
+      pool->low = pool->high = pool->nbCont = 0;
+      pool->poolClass = nil;
    }
+   return pool;
 }
 
 +(void)shutdown
 {
-   ContPool* pool = [self instancePool];
+   ContPool* pool = instancePool();
    if (pool) {
       ORInt nb=0;
       for(ORInt k=pool->low;k != pool->high;) {
+#if defined(__APPLE__) || !defined(__x86_64__)
          [pool->pool[k] release];
+#else
+	 NSCont* ptr = pool->pool[k];
+	 free(ptr->_data);
+	 char* adr = ((char*)ptr) - 16;
+	 free(adr);
+#endif
          k = (k+1) % pool->sz;
          nb++;
       }
@@ -118,8 +114,9 @@ static void init_pthreads()
    }
 }
 
-+(id)new {
-   ContPool* pool = [self instancePool];
++(id)new 
+{
+   ContPool* pool = instancePool();
    if (!pool->poolClass) {
       pool->poolClass = self;
       pool->sz = 1000;
@@ -132,7 +129,18 @@ static void init_pthreads()
    NSCont* rv = nil;
    if (pool->low == pool->high) {
       pool->nbCont += 1;
+#if defined(__APPLE__) || !defined(__x86_64__)
       rv = NSAllocateObject(self, 0, NULL);
+#else
+      // THis is the allocation for Linux 64 where alignments are not
+      // respected by GNUstep.
+      void* ptr = NULL;
+      size_t sz = class_getInstanceSize(self) + 16; // add 16 bytes
+      int err = posix_memalign(&ptr,16,sz);
+      memset(ptr,0,sz);
+      rv = (id)(((char*)ptr)+16);
+      object_setClass(rv,self);
+#endif
    } else {
       rv = pool->pool[pool->low];
       pool->low = (pool->low+1) % pool->sz;
@@ -159,12 +167,18 @@ static void init_pthreads()
 {
    assert(_cnt > 0);
    if (--_cnt == 0) {
-      ContPool* pool = [isa instancePool];
+      ContPool* pool = instancePool();
       ORUInt next = (pool->high + 1) % pool->sz;
       if (next == pool->low) {
          free(_data);
          pool->nbCont -= 1;
+#if defined(__APPLE__) || !defined(__x86_64__)
          NSDeallocateObject(self);
+#else
+	 char* ptr = self;
+	 ptr = ptr - 16;
+	 free(ptr);
+#endif
          return;
       }
       pool->pool[pool->high] = self;

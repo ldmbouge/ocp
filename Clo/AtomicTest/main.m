@@ -11,14 +11,13 @@
 
 #import <Foundation/Foundation.h>
 #import <Foundation/Foundation.h>
-#import "objcp/CPSolver.h"
-#import "objcp/CPEquationBC.h"
-#import "objcp/CPBasicConstraint.h"
-#import "objcp/CPValueConstraint.h"
-#import "objcp/CPCardinality.h"
-#import "objcp/CPConcurrency.h"
-#import "objcp/CPError.h"
-#import "objcp/CPCrFactory.h"
+#import <objcp/CPEquationBC.h>
+#import <objcp/CPBasicConstraint.h>
+#import <objcp/CPValueConstraint.h>
+#import <objcp/CPCardinality.h>
+#import <objcp/CPConcurrency.>
+#import <objcp/CPError.h>
+#import <objcp/CPCrFactory.h>
 
 /*
 
@@ -106,9 +105,6 @@
 */
 
 /*
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-
 typedef int (^Void2Int)(void);
 Void2Int makeC1(int i);
 Void2Int makeAdd(int i);
@@ -145,7 +141,7 @@ void foo() {
 
 int main (int argc, const char * argv[])
 {
-    id<CPSolver> cp = [CPFactory createSolver];
+    id<CPProgram> cp = [CPFactory createSolver];
     id<ORVoidInformer> informer = [ORConcurrency voidInformer];
     NSMutableArray* array = [[NSMutableArray alloc] init];
     for(ORInt i = 1; i <= 10; i++)
@@ -202,31 +198,3 @@ int main (int argc, const char * argv[])
     return 0;
 }
 */
-    
-//   foo();   
-   
-    /*
-    id<CPSolver> cp = [CPFactory createSolver];
-    ORRange R = (ORRange){1,10};
-    id<ORIntVar> x = [CPFactory intVar: cp domain: R];
-    id<CPIntSet> S = [CPFactory intSet: cp];
-    for(ORInt i = 2; i <= 10; i += 2)
-        [S insert: i];
-    [cp restrict: x to: S];
-    [CPFactory print: x];
-    id<IntEnumerator> it = [S enumerator];
-    while ([it more]) {
-        int v = [it next];
-        printf("%d ",v);
-    }
-    printf("\n");
-    NSData* archive = [NSArchiver archivedDataWithRootObject:S];
-    id<CPIntSet> S1 = [[NSUnarchiver unarchiveObjectWithData: archive] retain];
-    [CPFactory print: S1];
-    return 0;
-     */
-    
-    
-
-
-

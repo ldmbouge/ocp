@@ -11,7 +11,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
+#import <CPUKernel/CPTypes.h>
 
 @interface CPObjectQueue : NSObject {
    @package
@@ -25,26 +25,31 @@
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)obj;
--(bool)empty;
+-(ORBool)empty;
 -(void)reset;
 @end
 
 // Producer-Consumer queue
 @interface PCObjectQueue  : NSObject {
    ORInt           _mxs;
-   id*                 _tab;
+   id*             _tab;
    ORInt         _enter;
    ORInt          _exit;
    ORInt          _mask;  
    ORInt        _nbUsed;
    ORInt     _nbWorkers;
    ORInt    _nbWWaiting;
-   NSCondition*      _avail;
+   NSCondition*  _avail;
+#if defined(__APPLE__)
+   OSSpinLock    _slock;
+#endif
+   BOOL _pretend;
 }
 -(id)initPCQueue:(ORInt)sz nbWorkers:(ORInt)nbw;
 -(void)dealloc;
 -(id)deQueue;
 -(void)enQueue:(id)obj;
--(bool)empty;
+-(ORBool)empty;
 -(void)reset;
+-(ORInt)size;
 @end

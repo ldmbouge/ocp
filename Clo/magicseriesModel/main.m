@@ -9,36 +9,42 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
-#import "objcp/CPFactory.h"
-#import "CPValueConstraint.h"
-#import "CPEquationBC.h"
-#import "CPLabel.h"
+#import <ORFoundation/ORFactory.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORModeling/ORModeling.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
 
+#import <ORProgram/ORProgramFactory.h>
 
 int main (int argc, const char * argv[])
 {
-   const ORInt n = 64;  // 128 -> 494 fails
-   id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
-   id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
-   for(ORInt i=0;i<n;i++)
-      [model add: [Sum(model,j,R,[x[j] eqi: i]) eq: x[i] ]];
-   [model add: [Sum(model,i,R,[x[i] muli: i]) eqi: n ]];
-   
-   id<CPSolver> cp = [CPFactory createSolver];
-   [cp addModel: model];
-   [cp solveAll: ^{
-      [CPLabel array: x];
-      printf("Succeeds \n");
-      for(ORInt i = 0; i < n; i++)
-         printf("%d ",[x[i] value]);
-      printf("\n");
+   @autoreleasepool {
+      const ORInt n = argc>= 2 ? atoi(argv[1]) : 5;  // 128 -> 494 fails
+      id<ORModel> model = [ORFactory createModel];
+      id<ORIntRange> R = [ORFactory intRange: model low: 0 up: n-1];
+      id<ORIntVarArray> x = [ORFactory intVarArray: model range: R domain: R];
+      for(ORInt i=0;i<n;i++)
+         [model add: [Sum(model,j,R,[x[j] eq: @(i)]) eq: x[i] ]];
+      [model add: [Sum(model,i,R,[x[i] mul: @(i)]) eq: @(n) ]];
+      
+      id<CPProgram> cp = [ORFactory createCPProgram: model];
+      
+      [cp solveAll: ^{
+         //NSLog(@"BASIC: %@",[[cp engine] model]);
+
+         [cp  labelArray: x];
+         printf("Succeeds \n");
+         for(ORInt i = 0; i < n; i++)
+            printf("%d ",[cp intValue:x[i]]);
+         printf("\n");
+      }
+       ];
+      NSLog(@"Solver status: %@\n",cp);
+      [cp release];
+      [ORFactory shutdown];
    }
-    ];
-   NSLog(@"Solver status: %@\n",cp);
-   [cp release];
-   [CPFactory shutdown];
    return 0;
 }
 

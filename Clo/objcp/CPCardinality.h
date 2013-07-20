@@ -10,11 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPConstraintI.h>
 
 // cardinality(int[] low,var<CP>{int}[] x,int[] up)
-@interface CPCardinalityCst : CPActiveConstraint<NSCoding> {  
+@interface CPCardinalityCst : CPCoreConstraint<NSCoding> {  
     CPEngineI*        _fdm;
     ORRange       _values;
     CPIntVarI**         _x;  // CPIntVar[_lx .. _ux] 
@@ -30,7 +30,7 @@
     TRInt*      _possible; //_possible[v]= how many variables have value v in their domain
 }
 -(id) initCardinalityCst:(CPEngineI*) m values:(ORRange)r low:(ORInt*)low array:(id)ax up:(ORInt*)up;
--(id) initCardinalityCst:(id<ORIntVarArray>) ax low: (id<ORIntArray>)low up: (id<ORIntArray>) up;
+-(id) initCardinalityCst:(id<CPIntVarArray>) ax low: (id<ORIntArray>)low up: (id<ORIntArray>) up;
 -(void)dealloc;
 -(ORStatus)post;
 -(NSSet*)allVars;

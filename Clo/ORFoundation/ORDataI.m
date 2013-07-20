@@ -12,15 +12,33 @@
 #import "ORDataI.h"
 #import "ORSet.h"
 #import <sys/time.h>
+#import <sys/types.h>
+#import <sys/resource.h>
+#import <unistd.h>
+#import <ORUtilities/ORConcurrency.h>
 
 @implementation NSObject (Concretization)
--(void) concretize: (id<ORSolverConcretizer>) concretizer
+-(void) setImpl: (id) impl
 {
-   
+   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl is totally obsolete"];
+   NSLog(@"%@",self); 
+   @throw [[ORExecutionError alloc] initORExecutionError: "setImpl: No implementation in this object"];
 }
--(id) dereference
+-(void) makeImpl
 {
+   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl is totally obsolete"];
+   NSLog(@"%@",self);
+   @throw [[ORExecutionError alloc] initORExecutionError: "makeImpl: This object is already an implementation"];
+}
+-(id) impl
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
    return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   NSLog(@"%@",self);
+   @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
 }
 @end;
 
@@ -37,21 +55,27 @@
    _tracker = tracker;
    return self;
 }
--(ORInt) value 
+-(id)copyWithZone:(NSZone *)zone
+{
+   return [[ORIntegerI allocWithZone:zone] initORIntegerI:_tracker value:_value];
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]])
+      return _value == [(ORIntegerI*)anObject value] && _tracker == [anObject tracker];
+   else return NO;
+}
+- (NSUInteger)hash
 {
    return _value;
 }
--(void) setValue: (ORInt) value
+-(ORFloat) floatValue
 {
-   _value = value;
+   return _value;
 }
--(void) incr
+-(ORInt) value
 {
-   _value++;
-}
--(void) decr;
-{
-   _value--;
+   return _value;
 }
 -(ORInt) min
 {
@@ -61,13 +85,17 @@
 {
    return _value;
 }
--(BOOL) isConstant
+-(ORBool) isConstant
 {
    return YES;
 }
--(BOOL) isVariable
+-(ORBool) isVariable
 {
    return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
 }
 -(id<ORTracker>) tracker
 {
@@ -87,12 +115,292 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
--(void) visit: (id<ORExprVisitor>) visitor
+-(void) visit: (id<ORVisitor>) visitor
 {
    [visitor visitIntegerI: self];
 }
 @end
 
+@implementation ORMutableIntegerI
+{
+	ORInt           _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableIntegerI*) initORMutableIntegerI:(id<ORTracker>)tracker value:(ORInt) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORInt) initialValue
+{
+   return _value;
+}
+-(ORInt) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORInt) incr
+{
+   return ++_value;
+}
+-(ORInt) decr
+{
+   return --_value;
+}
+-(ORInt) setValue: (ORInt) value 
+{
+   return _value = value;
+}
+-(ORFloat) floatValue: (id<ORGamma>) solver
+{
+   return _value;
+}
+-(ORInt) intValue: (id<ORGamma>) solver
+{
+   return [(id)[solver concretize:self] intValue];
+}
+-(ORInt) value: (id<ORGamma>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] initialValue];
+}
+-(ORInt) setValue: (ORInt) value in: (id<ORGamma>) solver
+{
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORInt) incr: (id<ORGamma>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] incr];
+}
+-(ORInt) decr: (id<ORASolver>) solver
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] decr];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTInt;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*) description
+{
+   return [NSString stringWithFormat:@"%d",_value];
+}
+- (void) encodeWithCoder:(NSCoder *)aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *)aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitMutableIntegerI: self];
+}
+@end
+
+@implementation ORMutableId
+-(id) initWith:(id)v
+{
+   self = [super init];
+   _value = v;
+   return self;
+}
+-(void)dealloc
+{
+   //NSLog(@"ORMutableId dealloc'd : %p",self);
+   [super dealloc];
+}
+-(id) idValue
+{
+   return _value;
+}
+-(id) idValue:(id<ORGamma>)solver
+{
+   return [(ORMutableId*)[solver concretize:self] idValue];
+}
+-(void) setId:(id)v in:(id<ORGamma>)solver
+{
+   [(ORMutableId*)[solver concretize:self] setId:v];
+}
+-(void)setId:(id)v
+{
+   _value = v;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"<MutableId>(%@)",_value];
+}
+@end
+
+@implementation ORFloatI
+{
+	ORFloat       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORFloatI*) initORFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORInt) min
+{
+   return (ORInt)floor(_value);
+}
+-(ORInt) max
+{
+   return (ORInt)ceil(_value);
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORInt) intValue
+{
+   return (ORInt) _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%f",_value];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitFloatI: self];
+}
+@end
+
+@implementation ORMutableFloatI
+{
+	ORFloat       _value;
+   id<ORTracker> _tracker;
+}
+
+-(ORMutableFloatI*) initORMutableFloatI: (id<ORTracker>) tracker value: (ORFloat) value
+{
+   self = [super init];
+   _value = value;
+   _tracker = tracker;
+   return self;
+}
+-(ORFloat) initialValue
+{
+   return _value;
+}
+-(ORFloat) value
+{
+   return _value;
+}
+-(ORFloat) floatValue
+{
+   return _value;
+}
+-(ORFloat) setValue: (ORFloat) value
+{
+   return _value = value;
+}
+-(ORFloat) value: (id<ORGamma>) solver;
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+}
+-(ORFloat) floatValue: (id<ORGamma>) solver;
+{
+   return [(ORMutableIntegerI*)[solver concretize: self] floatValue];
+}
+-(ORFloat) setValue: (ORFloat) value in: (id<ORGamma>) solver;
+{
+   return [((ORMutableIntegerI*)[solver concretize: self]) setValue: value];
+}
+-(ORBool) isConstant
+{
+   return YES;
+}
+-(ORBool) isVariable
+{
+   return NO;
+}
+-(enum ORVType) vtype
+{
+   return ORTFloat;
+}
+-(id<ORTracker>) tracker
+{
+   return _tracker;
+}
+-(NSString*)description
+{
+   return [NSString stringWithFormat:@"%f",_value];
+}
+- (void) encodeWithCoder:(NSCoder *) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORFloat) at:&_value];
+}
+- (id) initWithCoder:(NSCoder *) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
+   return self;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitMutableFloatI: self];
+}
+@end
 
 static ORInt _nbStreams;
 static ORInt _deterministic;
@@ -150,6 +458,11 @@ static ORInt _deterministic;
 {
    return nrand48(_seed);
 }
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitRandomStream:self];
+}
+
 @end;
 
 @implementation ORZeroOneStreamI
@@ -170,10 +483,15 @@ static ORInt _deterministic;
 {
    return erand48(_seed);
 }
-@end;
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitZeroOneStream:self];
+}
+@end
 
 @implementation ORUniformDistributionI
 {
+   ORUInt           _name;
    id<ORIntRange>   _range;
    ORRandomStreamI* _stream;
    ORInt            _size;
@@ -195,7 +513,15 @@ static ORInt _deterministic;
 {
    return _range.low + [_stream next] % _size;
 }
-@end;
+-(void)setId:(ORUInt)name
+{
+   _name = name;
+}
+-(void) visit: (id<ORVisitor>) visitor
+{
+   [visitor visitUniformDistribution:self];
+}
+@end
 
 @implementation ORRuntimeMonitor
 +(ORLong) cputime
@@ -230,10 +556,9 @@ static ORInt _deterministic;
 
 @implementation ORTableI
 
--(ORTableI*) initORTableI: (id<ORSolver>) solver arity: (ORInt) arity
+-(ORTableI*) initORTableI:(ORInt) arity
 {
    self = [super init];
-   _solver = solver;
    _arity = arity;
    _nb = 0;
    _size = 2;
@@ -244,9 +569,51 @@ static ORInt _deterministic;
    return self;
 }
 
+-(ORTableI*) initORTableWithTableI: (ORTableI*) table
+{
+   self = [super init];
+   _arity = table->_arity;
+   _nb = table->_nb;
+   _size = table->_size;
+   _column = malloc(sizeof(ORInt*)*_arity);
+   for(ORInt i = 0; i < _arity; i++)
+      _column[i] = malloc(sizeof(ORInt)*_size);
+   for(ORInt j = 0; j < _arity; j++) {
+      for(ORInt i = 0; i < _nb; i++)
+         _column[j][i] = table->_column[j][i];
+   }
+   assert(table->_closed == false);
+   _closed = false;
+   return self;
+}
+-(id)copyWithZone:(NSZone *)zone
+{
+   ORTableI* t = [[ORTableI allocWithZone:zone] initORTableWithTableI:self];
+   return t;
+}
+- (BOOL)isEqual:(id)anObject
+{
+   if ([anObject isKindOfClass:[self class]]) {
+      ORTableI* o = anObject;
+      if (_arity == o->_arity && _nb == o->_nb) {
+         for(ORInt j = 0; j < _arity; j++) {
+            for(ORInt i = 0; i < _nb; i++) {
+               BOOL eq = _column[j][i] == o->_column[j][i];
+               if (!eq)
+                  return NO;
+            }
+         }
+         return YES;
+      } else return NO;
+   } else return NO;
+}
+-(NSUInteger)hash
+{
+   return _arity * _nb;
+}
 -(void) dealloc
 {
-   NSLog(@"ORTableI dealloc called ...");
+   //NSLog(@"ORTableI dealloc called ...");
    for(ORInt i = 0; i < _arity; i++)
       free(_column[i]);
    free(_column);
@@ -308,6 +675,17 @@ static ORInt _deterministic;
    _nb++;
 }
 
+-(void)insertTuple:(ORInt*)t
+{
+   if (_closed)
+      @throw [[ORExecutionError alloc] initORExecutionError: "The table is already closed"];
+   if (_nb == _size)
+      [self resize];
+   for (ORInt k=0; k<_arity; k++)
+      _column[k][_nb] = t[k];
+   _nb++;
+}
+
 -(void) index: (ORInt) j
 {
    ORInt m = MAXINT;
@@ -364,10 +742,13 @@ static ORInt _deterministic;
       for(ORInt i = 0; i < _nb; i++)
          printf("_nextSupport[%d,%d]=%d\n",j,i,_nextSupport[j][i]);
 }
+-(void) visit:(id<ORVisitor>)visitor
+{
+   [visitor visitTable:self];
+}
 
 -(void) encodeWithCoder: (NSCoder*) aCoder
 {
-   [aCoder encodeObject:_solver];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_arity];
    [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nb];
    for(ORInt i = 0; i < _nb; i++)
@@ -377,10 +758,10 @@ static ORInt _deterministic;
 
 -(id) initWithCoder: (NSCoder*) aDecoder
 {
-   id<ORSolver> solver = [[aDecoder decodeObject] retain];
+   self = [super init];
    ORInt arity;
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&arity];
-   [self initORTableI: solver arity: arity];
+   [self initORTableI: arity];
    ORInt size;
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&size];
    for(ORInt i = 0; i < size; i++) {
@@ -392,5 +773,191 @@ static ORInt _deterministic;
 }
 @end
 
+@implementation ORAutomatonI
+-(id) init: (id<ORIntRange>)alphabet states:(id<ORIntRange>)states transition:(ORTransition*)tf size:(ORInt)stf
+   initial: (ORInt) is
+     final: (id<ORIntSet>)fs table:(ORTableI*)table
+{
+   self = [super init];
+   _alpha = alphabet;
+   _states = states;
+   _nbt   = stf;
+   _initial = is;
+   _final = fs;
+   _transition = table;
+   for(ORInt i = 0;i<_nbt;i++)
+      [_transition insertTuple:tf[i]];
+   return self;
+}
+-(void)dealloc
+{
+   [super dealloc];
+}
+-(ORInt) initial
+{
+   return _initial;
+}
+-(id<ORIntSet>)final
+{
+   return _final;
+}
+-(id<ORIntRange>)alphabet
+{
+   return _alpha;
+}
+-(id<ORIntRange>)states
+{
+   return _states;
+}
+-(ORInt)nbTransitions
+{
+   return _nbt;
+}
+-(ORTableI*)transition
+{
+   return _transition;
+}
+-(void) encodeWithCoder: (NSCoder*) aCoder
+{
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_nbt];
+   [aCoder encodeObject:_alpha];
+   [aCoder encodeObject:_states];
+   [aCoder encodeValueOfObjCType:@encode(ORInt) at:&_initial];
+   [aCoder encodeObject:_final];
+   [aCoder encodeObject:_transition];
+}
+-(id) initWithCoder: (NSCoder*) aDecoder
+{
+   self = [super init];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_nbt];
+   _alpha  = [aDecoder decodeObject];
+   _states = [aDecoder decodeObject];
+   [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_initial];
+   _final  = [aDecoder decodeObject];
+   _transition = [aDecoder decodeObject];
+   return self;
+}
+@end
+
+// ------------------------------------------------------------------------------------------
+
+@implementation ORBindingArrayI
+{
+   id*              _array;
+   ORInt            _nb;
+}
+-(ORBindingArrayI*) initORBindingArray: (ORInt) nb
+{
+   self = [super init];
+   _nb = nb;
+   _array = malloc(_nb * sizeof(id));
+   memset(_array,0,sizeof(id)*_nb);
+   return self;
+}
+-(void) dealloc
+{
+   free(_array);
+   [super dealloc];
+}
+-(id) at: (ORInt) value
+{
+   if (value < 0|| value >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORBindingArray"];
+   return _array[value];
+}
+-(void) set: (id) x at: (ORInt) value
+{
+   if (value < 0 || value >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
+   _array[value] = x;
+}
+-(ORInt) nb
+{
+   return _nb;
+}
+-(id) objectAtIndexedSubscript: (NSUInteger) key
+{
+   if (key >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORBindingArray"];
+   return _array[key];
+}
+-(void) setObject: (id) newValue atIndexedSubscript: (NSUInteger) key
+{
+   if (key >= _nb)
+      @throw [[ORExecutionError alloc] initORExecutionError: "Index out of range in ORVarArrayElement"];
+   _array[key] = newValue;
+}
+-(void) setImpl: (id) impl
+{
+   ORInt k = [NSThread threadID];
+   if (_array[k] == NULL)
+      _array[k] = impl;
+   else
+      [_array[k] setImpl: impl];
+}
+-(id) impl
+{
+   return self;
+}
+-(NSString*)description
+{
+   NSMutableString* buf = [[NSMutableString alloc] initWithCapacity:64];
+   [buf appendFormat:@"binding["];
+   for(ORInt i=0;i<_nb;i++) {
+      [buf appendFormat:@"%@%c",[_array[i] description], i < _nb-1 ? ',' : ' '];
+   }
+   [buf appendFormat:@"]"];
+   return buf;
+}
+
+@end
+
+@implementation ORGamma
+-(ORGamma*) initORGamma
+{
+   self = [super init];
+   _gamma = NULL;
+   _mappings = NULL;
+   return self;
+}
+-(void) dealloc
+{
+   free(_gamma);
+   [super dealloc];
+}
+-(void) setGamma: (id*) gamma
+{
+   _gamma = gamma;
+}
+-(void) setModelMappings: (id<ORModelMappings>) mappings
+{
+   _mappings = mappings;
+}
+-(id<ORModelMappings>) modelMappings
+{
+   return _mappings;
+}
+-(id*) gamma
+{
+   return _gamma;
+}
+-(id) concretize: (id<ORObject>) o
+{
+   ORInt i = o.getId;
+   id<ORObject> ob =  _gamma[i];
+   if (ob)
+      return ob;
+   else {
+      id<ORTau> tau = _mappings.tau;
+      ob = o;
+      id<ORObject> nob = [tau get: ob];
+      while (nob) {
+         ob = nob;
+         nob = [tau get: ob];
+      }
+      return _gamma[ob.getId];
+   }
+}
+@end
 
 

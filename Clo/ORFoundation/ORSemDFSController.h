@@ -23,9 +23,9 @@
    id<ORCheckpoint>* _cpTab;
    SemTracer*       _tracer;
    id<ORCheckpoint> _atRoot;
-   id<OREngine>     _engine;
+   id<ORSearchEngine>     _engine;
 }
--(id)  initTheController: (id<ORSolver>) solver;
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine;
 -(void) dealloc;
 -(void) setup;
 -(void) cleanup;

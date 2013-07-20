@@ -18,9 +18,13 @@
 -(char*) msg;
 @end
 
-@interface ORExecutionError : NSObject <ORError> 
+@interface ORExecutionError : NSObject <ORError>
+{
+	const char* _message;
+}
 -(ORExecutionError*) initORExecutionError: (const char*) msg;
 -(const char*) msg;
+-(NSString *)description;
 @end 
 
 @interface ORSearchError : NSObject <ORError>

@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'testMIP' target in the 'testMIP' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

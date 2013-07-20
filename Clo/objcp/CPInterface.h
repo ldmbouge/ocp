@@ -60,7 +60,7 @@ typedef CPStatus (^ConstraintIntCallBack)(int);
 
 
 @protocol CPIntVar <NSObject>
--(bool) bound;
+-(BOOL) bound;
 -(int)  min;
 -(int)  max;
 -(void) bounds: (CPBounds*) bnd;

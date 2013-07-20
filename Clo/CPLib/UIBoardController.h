@@ -11,8 +11,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "objcp/CPFactory.h"
-#import "objcp/CPWatch.h"
+#import <ORProgram/ORProgram.h>
+#import <objcp/CPWatch.h>
 
 @interface UIBoardController : NSObject {
    UIView* _drawOn;
@@ -23,11 +23,11 @@
 }
 -(UIBoardController*)initBoardController:(UIView*)theView;
 -(void)dealloc;
--(id)makeGrid:(ORRange) rows by:(ORRange)cols;
+-(id)makeGrid:(id<ORIntRange>) rows by:(id<ORIntRange>)cols;
 -(void)pause;
 -(void)resume;
 -(void)neverStop;
 -(void)toggleGrid:(id)grid row:(NSInteger)r col:(NSInteger)c to:(enum CPDomValue)dv;
 -(void)drawRect:(CGRect)dirtyRect inView:(id)view;
--(void)watchSearch:(id<CPSolver>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
+-(void)watchSearch:(id<CPProgram>)cp onChoose:(ORClosure)onc onFail:(ORClosure)onf;
 @end

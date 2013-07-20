@@ -12,20 +12,19 @@
 
 #import <Foundation/Foundation.h>
 #import <ORFoundation/ORData.h>
-#import "CPTypes.h"
+#import <ORFoundation/ORDataI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPConstraintI.h>
 #import "CPIntVarI.h"
-#import "CPConstraintI.h"
 
-
-
-@interface CPTableCstrI : CPActiveConstraint<CPConstraint,NSCoding> {
+@interface CPTableCstrI : CPCoreConstraint<CPConstraint,NSCoding> {
     CPIntVarI**     _var;
     ORInt           _arity;  
     ORTableI*       _table;
     TRIntArray*     _currentSupport;
     bool            _posted;
 }
--(CPTableCstrI*) initCPTableCstrI: (id<ORIntVarArray>) x table: (ORTableI*) table;
+-(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (ORTableI*) table;
 -(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z;
 -(void) dealloc;
 -(ORStatus) post;

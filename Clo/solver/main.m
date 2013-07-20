@@ -10,9 +10,6 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "objcp/CPSolver.h"
-#import "CPEngine.h"
-#import "CPFactory.h"
 
 
 static int nbSol = 0;
@@ -22,7 +19,7 @@ static int nbSol = 0;
 #define bound(a) ^bool(int i) { return ![[a objectAtIndex:i] bound];}
 #define minDomain(a) ^int(int i) { return [[x objectAtIndex:i] domsize];}
 
-void labelFF(id<CPSolver> m,NSArray* x,int from,int to)
+void labelFF(id<CPProgram> m,NSArray* x,int from,int to)
 {
    CPIntegerI* nbSolutions = [[CPIntegerI alloc] initCPIntegerI: 0];
    [m solve: ^() {

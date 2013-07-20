@@ -26,7 +26,7 @@
 -(void)pushCont:(NSCont*)k cp:(id<ORCheckpoint>)cp discrepancies:(ORInt)d;
 -(struct BDSNode)pop;
 -(ORInt)size;
--(bool)empty;
+-(ORBool)empty;
 -(NSString*)description;
 @end
 
@@ -65,7 +65,7 @@
 {
    return _sz;
 }
--(bool)empty
+-(ORBool)empty
 {
    return _sz == 0;
 }
@@ -82,18 +82,7 @@
 
 @implementation ORSemBDSController
 
-- (id) initTheController:(id<ORSolver>)solver
-{
-   self = [super initORDefaultController];
-   _tracer = [[solver tracer] retain];
-   _solver = [solver engine];
-   _tab  = [[BDSStack alloc] initBDSStack:32];
-   _next = [[BDSStack alloc] initBDSStack:32];
-   _nbDisc = _maxDisc = 0;   
-   return self;
-}
-
-- (id) initSemController:(id<ORTracer>)tracer engine:(id<OREngine>)engine
+- (id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
 {
    self = [super initORDefaultController];
    _tracer = [tracer retain];
@@ -130,7 +119,7 @@
       [nd._cp release];
    }
    [_tracer restoreCheckpoint:_atRoot inSolver:_solver];
-   [_atRoot release];
+   [_atRoot letgo];
 }
 
 -(ORInt) addChoice: (NSCont*)k 
@@ -164,7 +153,7 @@
          _nbDisc = node._disc;
          //NSLog(@"********** RESTORING: %@",node._cp);
          ORStatus status = [_tracer restoreCheckpoint:node._cp inSolver:_solver];
-         [node._cp release];
+         [node._cp letgo];
          //NSLog(@"BDS restoreCheckpoint status is: %d for thread %p",status,[NSThread currentThread]);
          if (status != ORFailure)
             [node._cont call];
@@ -180,7 +169,7 @@
 }
 - (id)copyWithZone:(NSZone *)zone
 {
-   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initSemController:_tracer engine:_solver];
+   ORSemBDSController* ctrl = [[[self class] allocWithZone:zone] initTheController:_tracer engine:_solver];
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
@@ -196,7 +185,7 @@
    } else return nil;
 }
 
--(BOOL)willingToShare
+-(ORBool)willingToShare
 {
    return [_next size] >= 1;
 }

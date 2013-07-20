@@ -15,6 +15,8 @@
 #import "ORFoundation/ORTrail.h"
 #import "ORFoundation/ORSet.h"
 
+@protocol ORSearchEngine;
+
 #define NBSLOT 8192
 
 #define TAGShort        0x1
@@ -61,7 +63,7 @@
 -(ORTrailI*) init;
 -(void) dealloc;
 -(ORUInt) magic;
--(ORUInt) trailSize;
+-(ORInt) trailSize;
 -(void) resize;
 -(void) incMagic;
 -(void) trailInt:(ORInt*) ptr;
@@ -79,33 +81,59 @@
 -(void) backtrack:(ORInt) to;
 @end
 
-@interface ORTrailIStack : NSObject {
-   ORTrailI*  _trail;
-   struct TRNode {
-      ORInt   _x;
-      ORInt _ofs;
-   };
-   struct TRNode*  _tab;
-   ORInt        _sz;
-   ORInt       _mxs;
+@interface ORMemoryTrailI : NSObject<ORMemoryTrail,NSCopying> {
+   id*   _tab;
+   ORInt _mxs;
+   ORInt _csz;
 }
--(ORTrailIStack*) initTrailStack: (ORTrailI*) tr;
+-(id)init;
+-(id)copyWithZone:(NSZone *)zone;
+-(void)dealloc;
+-(id)track:(id)obj;
+-(void)pop;
+-(ORInt)trailSize;
+-(void)clear;
+-(void)comply:(id<ORMemoryTrail>)mt upTo:(ORInt)mh;
+-(void)reload:(id<ORMemoryTrail>)t;
+@end
+
+@interface ORTrailIStack : NSObject {
+   @package
+   ORTrailI*        _trail;
+   ORMemoryTrailI*     _mt;
+   struct TRNode {
+      ORInt    _x;
+      ORInt  _ofs;
+      ORInt _mOfs;
+   };
+   struct TRNode*     _tab;
+   ORInt               _sz;
+   ORInt              _mxs;
+}
+-(ORTrailIStack*) initTrailStack: (ORTrailI*) tr memory:(ORMemoryTrailI*)mt;
 -(void) dealloc;
 -(void) pushNode:(ORInt) x;
 -(void) popNode:(ORInt) x;
 -(void) popNode;
 -(void) reset;
--(bool) empty;
+-(ORBool) empty;
 -(ORInt)size;
 @end
 
+inline static void trailPop(ORTrailIStack* s)
+{
+   const ORInt ofs = s->_tab[--s->_sz]._ofs;
+   const ORInt mof = s->_tab[s->_sz]._mOfs;
+   [s->_trail backtrack: ofs];
+   [s->_mt backtrack:mof];
+}
 
-@interface ORTrailableIntI : NSObject<ORTrailableInt>
--(ORTrailableIntI*) initORTrailableIntI: (ORTrailI*) trail value:(ORInt) value;
+@interface ORTrailableIntI : ORObject<ORTrailableInt>
+-(ORTrailableIntI*) initORTrailableIntI: (id<ORTrail>) trail value:(ORInt) value;
 -(ORInt) value;
--(void)  setValue: (ORInt) value;
--(void)  incr;
--(void)  decr;
+-(ORInt) setValue: (ORInt) value;
+-(ORInt)  incr;
+-(ORInt)  decr;
 @end
 
 @implementation ORTrailI (InlineTrailFunction)
@@ -148,13 +176,36 @@ static inline ORInt inline_assignTRIntArray(TRIntArray a,int i,ORInt val)
    return ei->_val = val;
 }
 
+static inline ORFloat inline_assignTRFloatArray(TRFloatArray a,int i,ORFloat val)
+{
+   TRDouble* ei = a._entries + i;
+   if (ei->_mgc != [a._trail magic]) {
+      trailFloatFun(a._trail, & ei->_val);
+      ei->_mgc = [a._trail magic];
+   }
+   return ei->_val = val;
+}
+
 static inline void inline_trailIntFun(ORTrailI* t,int* ptr)
+{
+   struct Segment* seg = t->_seg[t->_cSeg];
+   if (seg->top >= NBSLOT-1) {
+      [t resize];
+      seg = t->_seg[t->_cSeg];
+   }
+   struct Slot* s = seg->tab + seg->top++;
+   s->ptr = ptr;
+   s->code = TAGInt;
+   s->intVal = *ptr;
+}
+
+static inline void inline_trailLongFun(ORTrailI* t,long long* ptr)
 {
    if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
    struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
    s->ptr = ptr;
-   s->code = TAGInt;
-   s->intVal = *ptr;
+   s->code = TAGLong;
+   s->longVal = *ptr;
    ++(t->_seg[t->_cSeg]->top);
 }
 
@@ -179,41 +230,42 @@ static inline void inline_trailUIntFun(ORTrailI* t,unsigned* ptr)
 }
 static inline void inline_trailIdNCFun(ORTrailI* t,id* ptr)
 {
-   id obj = *ptr;
-   if (t->_seg[t->_cSeg]->top >= NBSLOT-1) [t resize];
-   struct Slot* s = t->_seg[t->_cSeg]->tab + t->_seg[t->_cSeg]->top;
+   struct Segment* seg = t->_seg[t->_cSeg];
+   if (seg->top >= NBSLOT-1) {
+      [t resize];
+      seg = t->_seg[t->_cSeg];
+   }
+   struct Slot* s = seg->tab + seg->top++;
    s->ptr = ptr;
    s->code = TAGIdNC;
-   s->idVal = obj;
-   ++(t->_seg[t->_cSeg]->top);
+   s->idVal = *ptr;
 }
-
-
-static inline void inline_assignTRInt(TRInt* v,int val,ORTrailI* trail)
+static inline void inline_assignTRInt(TRInt* v,int val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailIntFun(trail, &v->_val);
+      inline_trailIntFun((ORTrailI*)trail, &v->_val);
    }
    v->_val = val;
 }
 
-static inline void  inline_assignTRUInt(TRUInt* v,unsigned val,ORTrailI* trail)
+static inline void  inline_assignTRUInt(TRUInt* v,unsigned val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      trailUIntFun(trail, &v->_val);
+      inline_trailUIntFun((ORTrailI*)trail, &v->_val);
    }
    v->_val = val;
 }
-static inline void  inline_assignTRLong(TRLong* v,long long val,ORTrailI* trail)
+static inline void  inline_assignTRLong(TRLong* v,long long val,id<ORTrail> trail)
 {
-   ORInt cmgc = trail->_magic;
+   ORInt cmgc = ((ORTrailI*)trail)->_magic;
    if (v->_mgc != cmgc) {
       v->_mgc = cmgc;
-      [trail trailLong:&v->_val];
+      inline_trailLongFun((ORTrailI*)trail,&v->_val);
+      //[trail trailLong:&v->_val];
    }
    v->_val = val;
 }
@@ -269,16 +321,16 @@ typedef struct { \
    V*      _val; \
    ORUInt _mgc; \
 } T; \
-static inline T inline_make##T(ORTrailI* trail,V* val) \
+static inline T inline_make##T(id<ORTrail> trail,V* val) \
 { \
    return (T) { val, [trail magic]-1}; \
 } \
-static inline void inline_assign##T(T* v,V* val,ORTrailI* trail) \
+static inline void inline_assign##T(T* v,V* val,id<ORTrail> trail) \
 { \
-   ORInt cmgc = trail->_magic; \
+   ORInt cmgc = ((ORTrailI*)trail)->_magic; \
    if (v->_mgc != cmgc) { \
       v->_mgc = cmgc; \
-      inline_trailPointerFun(trail, (void**)&v->_val); \
+      inline_trailPointerFun((ORTrailI*)trail, (void**)&v->_val); \
    } \
    v->_val = val; \
 } \
@@ -289,14 +341,13 @@ static inline V* get##T(T* v) { return v->_val;}
 
 @interface ORTRIntArrayI : NSObject<ORTRIntArray,NSCoding> {
    @package
-   id<ORSolver> _solver;
    ORTrailI*    _trail;
    TRInt*       _array;
    ORInt        _low;
    ORInt        _up;
    ORInt        _nb;
 }
--(ORTRIntArrayI*) initORTRIntArray: (id<ORSolver>) cp range: (id<ORIntRange>) R;
+-(ORTRIntArrayI*) initORTRIntArray: (id<ORSearchEngine>) cp range: (id<ORIntRange>) R;
 -(void) dealloc;
 -(ORInt) at: (ORInt) value;
 -(void) set: (ORInt) value at: (ORInt) idx;
@@ -304,7 +355,6 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) up;
 -(NSUInteger) count;
 -(NSString*) description;
--(id<ORSolver>) solver;
 - (void) encodeWithCoder:(NSCoder *) aCoder;
 - (id) initWithCoder:(NSCoder *) aDecoder;
 @end
@@ -313,7 +363,6 @@ static inline V* get##T(T* v) { return v->_val;}
 
 @interface ORTRIntMatrixI : NSObject<ORTRIntMatrix,NSCoding> {
 @private
-   id<ORSolver>    _solver;
    ORTrailI*       _trail;
    TRInt*          _flat;
    ORInt           _arity;
@@ -324,8 +373,8 @@ static inline V* get##T(T* v) { return v->_val;}
    ORInt*          _i;
    ORInt           _nb;
 }
--(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
--(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSolver>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1;
+-(ORTRIntMatrixI*) initORTRIntMatrix: (id<ORSearchEngine>) cp range: (id<ORIntRange>) r0 : (id<ORIntRange>) r1 : (id<ORIntRange>) r2;
 -(void) dealloc;
 -(ORInt) at: (ORInt) i0 : (ORInt) i1;
 -(ORInt) at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
@@ -335,8 +384,6 @@ static inline V* get##T(T* v) { return v->_val;}
 -(ORInt) add:(ORInt) delta at: (ORInt) i0 : (ORInt) i1 : (ORInt) i2;
 -(id<ORIntRange>) range: (ORInt) i;
 -(NSUInteger) count;
--(id<ORSolver>) solver;
--(id<OREngine>) engine;
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 @end

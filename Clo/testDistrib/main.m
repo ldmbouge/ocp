@@ -10,10 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
 #import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORSemBDSController.h>
 
@@ -21,7 +20,7 @@
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> m = [CPFactory createSolver];
+      id<CPProgram> m = [CPFactory createSolver];
       id<ORIntRange> R = RANGE(m,0,19);
       int* key = (int[]){10,10,8,8,5,5,5,10,5,5,5,5,5,5,5,5,5,5,5,5};
       id<ORSelect> select = [ORFactory select: m

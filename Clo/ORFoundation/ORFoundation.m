@@ -11,3 +11,42 @@
 
 #import "ORFoundation.h"
 
+static __thread jmp_buf* ptr = 0;
+
+static inline void failTo(jmp_buf* jb)
+{
+   ptr = jb;
+}
+
+static inline void restoreFail(jmp_buf* old)
+{
+   ptr = old;
+}
+
+ORStatus tryfail(ORStatus(^block)(),ORStatus(^handle)())
+{
+   jmp_buf buf;
+   jmp_buf* old = ptr;
+   int st = _setjmp(buf);
+   if (st==0) {
+      failTo(&buf);
+      ORStatus rv = block();
+      restoreFail(old);
+      return rv;
+   } else {
+      restoreFail(old);
+      return handle();
+   }
+}
+
+void failNow()
+{
+   /*
+    static ORFailException* fex = nil;
+    if (fex==nil) fex = [ORFailException new];
+    @throw  CFRetain(fex);
+    */
+   _longjmp(*ptr, 1);
+}
+
+

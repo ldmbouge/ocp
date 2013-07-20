@@ -10,34 +10,54 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORSet.h"
-#import "ORFoundation/ORAVLTree.h"
+#import <ORUtilities/ORTypes.h>
+#import "ORObject.h"
+#import "ORData.h"
+#import "ORSet.h"
+#import "ORAVLTree.h"
+@protocol ORVisitor;
 
-
-@interface ORIntSetI : NSObject<ORIntSet>
+@interface ORIntSetI : ORObject<ORIntSet>
 
 -(id<ORIntSet>) initORIntSetI;
 -(void) dealloc;
--(bool) member: (ORInt) v;
+-(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) low;
+-(ORInt) min;
+-(ORInt) max;
 -(ORInt) size;
--(void) iterate: (ORInt2Void) f;
+-(void) copyInto: (id<ORIntSet>) S;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(NSString*) description;
 -(id<IntEnumerator>) enumerator;
+-(void)visit:(id<ORVisitor>)v;
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
 @end
 
-@interface ORIntRangeI : NSObject<ORIntRange> 
+@interface ORIntRangeI : ORObject<ORIntRange,NSCopying>
 -(id<ORIntRange>) initORIntRangeI: (ORInt) low up: (ORInt) up;
 -(ORInt) low;
 -(ORInt) up;
+-(ORBool) isDefined;
+-(ORBool) inRange: (ORInt)e;
 -(ORInt) size;
--(void) iterate: (ORInt2Void) f;
 -(NSString*) description;
+-(void)visit:(id<ORVisitor>)v;
 -(id<IntEnumerator>) enumerator;
-//-(id<IntEnumerator>) tailableEnumerator;
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(void)encodeWithCoder:(NSCoder *)aCoder;
 -(id)initWithCoder:(NSCoder *)aDecoder;
+@end
+
+@interface ORFloatRangeI : ORObject<ORFloatRange,NSCopying>
+-(id<ORFloatRange>)initORFloatRangeI:(ORFloat) low up:(ORFloat)up;
+-(ORFloat)low;
+-(ORFloat)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
 @end

@@ -17,13 +17,13 @@
 {
    self = [super init];
    _cont = [c grab];
-   _theCP = [cp retain];
+   _theCP = [cp grab];
    return self;
 }
 -(void)dealloc
 {
    [_cont letgo];
-   [_theCP release];
+   [_theCP letgo];
    [super dealloc];
 }
 -(NSCont*)cont
@@ -34,11 +34,14 @@
 {
    return _theCP;
 }
+-(ORInt)sizeEstimate
+{
+   return [_theCP sizeEstimate];
+}
 @end
 
-
-
 @implementation ORDefaultController
+
 - (id) initORDefaultController
 {
    self = [super init];
@@ -99,12 +102,18 @@
    else
       @throw [[ORExecutionError alloc] initORExecutionError: "Call to Default Search Controller for method fail"];
 }
-
+-(void) fail: (ORBool) pruned
+{
+   if (_controller)
+      [_controller fail: pruned];
+   else
+      @throw [[ORExecutionError alloc] initORExecutionError: "Call to Default Search Controller for method fail/1"];
+}
 -(void) succeeds
 {
    [_controller succeeds]; // failAll is meant to be handled by the first controller in the chain. (The actual policy)
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return [_controller isFinitelyFailed];
 }
@@ -187,6 +196,11 @@
    [_controller fail];      // if we ever come back, the controller nodes supply is exhausted -> finitelyFailed.
    [self finitelyFailed];
 }
+-(void) fail: (ORBool) pruned
+{
+   [_controller fail: pruned];      // if we ever come back, the controller nodes supply is exhausted -> finitelyFailed.
+   [self finitelyFailed];
+}
 
 -(void) succeeds
 {
@@ -200,18 +214,24 @@
    [_controller cleanup];
    [_parent fail];
 }
--(BOOL) isFinitelyFailed
+-(ORBool) isFinitelyFailed
 {
    return _isFF;
 }
 @end
 
 @implementation ORDFSController
-
-- (id) initTheController:(id<ORSolver>)solver
+{
+   NSCont**          _tab;
+   ORInt              _sz;
+   ORInt              _mx;
+   id<ORTracer>   _tracer;
+   ORInt          _atRoot;
+}
+-(id) initTheController:(id<ORTracer>)tracer engine:(id<ORSearchEngine>)engine
 {
    self = [super initORDefaultController];
-   _tracer = [[solver tracer] retain];
+   _tracer = [tracer retain];
    _mx  = 100;
    _tab = malloc(sizeof(NSCont*)* _mx);
    _sz  = 0;
@@ -269,7 +289,10 @@
 {
    [_tracer trust];
 }
-
+-(void) fail: (ORBool) pruned
+{
+   [self fail];
+}
 -(void) fail
 {
    ORInt ofs = _sz-1;

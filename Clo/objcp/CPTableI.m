@@ -27,36 +27,36 @@
     _posted = false;
 }
 
--(CPTableCstrI*) initCPTableCstrI: (id<ORIntVarArray>) x table: (ORTableI*) table
+-(CPTableCstrI*) initCPTableCstrI: (id<CPIntVarArray>) x table: (ORTableI*) table
 {
-    [table close];
-    
-    self = [super initCPActiveConstraint: [[x solver] engine]];
-    [self initInstanceVariables];
-    _table = table;
-    
-    ORInt low = [x low];
-    ORInt up = [x up];
-    _arity = (up - low + 1);
-    _var = malloc(_arity * sizeof(CPIntVarI*));
-    for(ORInt i = 0; i < _arity; i++)
-        _var[i] = (CPIntVarI*) [x at: low + i];
-    return self;    
+   [table close];
+   
+   self = [super initCPCoreConstraint: [[x at:[x low]]  engine]];
+   [self initInstanceVariables];
+   _table = table;
+   assert(_table);
+   ORInt low = [x low];
+   ORInt up = [x up];
+   _arity = (up - low + 1);
+   _var = malloc(_arity * sizeof(CPIntVarI*));
+   for(ORInt i = 0; i < _arity; i++)
+      _var[i] = (CPIntVarI*) [x at: low + i];
+   return self;
 }
 -(CPTableCstrI*) initCPTableCstrI: (ORTableI*) table on: (CPIntVarI*) x : (CPIntVarI*) y : (CPIntVarI*) z
 {
-    [table close];
-    
-    self = [super initCPActiveConstraint: [[x solver] engine]];
-    [self initInstanceVariables];    
-    _table = table;
-
-    _arity = 3;
-    _var = malloc(_arity * sizeof(CPIntVarI*));
-    _var[0] = x;
-    _var[1] = y;
-    _var[2] = z;
-    return self;        
+   [table close];
+   
+   self = [super initCPCoreConstraint: [x engine]];
+   [self initInstanceVariables];
+   _table = table;
+   assert(_table);
+   _arity = 3;
+   _var = malloc(_arity * sizeof(CPIntVarI*));
+   _var[0] = x;
+   _var[1] = y;
+   _var[2] = z;
+   return self;
 }
 -(void) dealloc
 {

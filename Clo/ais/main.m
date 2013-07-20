@@ -9,57 +9,60 @@
 
  ***********************************************************************/
 
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
+#import <ORModeling/ORModeling.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <objcp/CPError.h>
+#include <malloc/malloc.h>
 
-#import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
-
-void labelFF(id<CPSolver> cp,id<ORIntVarArray> x)
-{
-   id<ORIntRange> R = RANGE(cp,[x low],[x up]);
-   [ORControl forall: R
-            suchThat: ^bool(int i) { return ![[x at:i] bound];}
-           orderedBy: ^int(int i)  { return [[x at:i] domsize];}
-                  do: ^(int i)     { [CPLabel var: [x at:i]]; }
-    ];
-}
+#import "ORCmdLineArgs.h"
 
 int main(int argc, const char * argv[])
 {
    @autoreleasepool {
-      id<CPSolver> cp = [CPFactory createSolver];  
-      int n = 8;
-      id<ORIntRange> R = RANGE(cp,1,n);
-      id<ORIntRange> D = RANGE(cp,0,n-1);
-      id<ORIntRange> SD = RANGE(cp,1,n-1);
-      
-      id<ORInteger> nbSolutions = [CPFactory integer: cp value:0];
-      id<ORIntVarArray> sx = [CPFactory intVarArray: cp range:R domain: D];         
-      id<ORIntVarArray> dx = [CPFactory intVarArray: cp range:SD domain: SD];         
-      //id<CPHeuristic> h = [CPFactory createWDeg:cp restricted:sx];
-      //id<CPHeuristic> h = [CPFactory createIBS:cp restricted:sx];
-      id<CPHeuristic> h = [CPFactory createFF:cp restricted:sx];
-      [cp add:[CPFactory alldifferent:sx consistency:DomainConsistency]];
-      for(ORUInt i=SD.low;i<=SD.up;i++) {
-         [cp add:[[dx at:i] eq:[CPFactory exprAbs:[[sx at:i+1] sub:[sx at:i]]]] consistency: DomainConsistency];
-      }
-      [cp add:[CPFactory alldifferent:dx consistency:DomainConsistency]];
-      [cp add:[CPFactory less:[sx at:1] to:[sx at:2]]];
-      [cp add:[CPFactory less:[dx at:n-1] to:[dx at:1]]];
-      [cp solveAll: ^{
-         [CPLabel heuristic:h];
-         [CPLabel array:sx orderedBy:^ORInt(ORInt i) {
-            return [[sx at:i] domsize];
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult() {
+         id<ORModel> mdl = [ORFactory createModel];
+         int n = [args size];
+         id<ORIntRange> R = RANGE(mdl,1,n);
+         id<ORIntRange> D = RANGE(mdl,0,n-1);
+         id<ORIntRange> SD = RANGE(mdl,1,n-1);
+
+         id<ORMutableInteger> nbSolutions = [ORFactory mutable: mdl value:0];
+         id<ORIntVarArray> sx = [ORFactory intVarArray: mdl range:R domain: D];
+         id<ORIntVarArray> dx = [ORFactory intVarArray: mdl range:SD domain: SD];
+
+         [mdl add:[ORFactory alldifferent:sx annotation:DomainConsistency]];
+         for(ORUInt i=SD.low;i<=SD.up;i++) {
+            [mdl add:[dx[i] eq:[[sx[i+1] sub:sx[i]] abs]] annotation: DomainConsistency];
+         }
+         [mdl add:[ORFactory alldifferent:dx annotation:DomainConsistency]];
+         [mdl add:[sx[1]   leq:sx[2]]];
+         [mdl add:[dx[n-1] leq:dx[1]]];
+
+         id<CPProgram> cp =  [args makeProgram:mdl];
+         id<CPHeuristic> h = [args makeHeuristic:cp restricted:sx];
+
+         [cp solve: ^{
+            [cp labelHeuristic:h];
+            [cp labelArray:sx orderedBy:^ORFloat(ORInt i) {
+               return [cp domsize:sx[i]];
+            }];
+            [nbSolutions incr:cp];
+            id<ORIntArray> a = [ORFactory intArray:cp range: R  with:^ORInt(ORInt i) {
+               return [cp intValue:sx[i]];
+            }];
+            NSLog(@"Solution: %@",a);
          }];
-         [nbSolutions incr];
-         NSLog(@"Solution: %@",sx);
+         NSLog(@"#solutions: %@",nbSolutions);
+         NSLog(@"Solver: %@",cp);
+         struct ORResult res = REPORT(1, [[cp explorer] nbFailures], [[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         [ORFactory shutdown];
+         return res;
       }];
-      NSLog(@"#solutions: %@",nbSolutions);
-      NSLog(@"Solver: %@",cp);
-      [cp release];
-      [CPFactory shutdown];
    }
    return 0;
 }

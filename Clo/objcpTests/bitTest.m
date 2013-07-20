@@ -10,17 +10,16 @@
  ***********************************************************************/
 
 #import "bitTest.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPController.h"
-#import "objcp/ORTracer.h"
-#import "objcp/CPObjectQueue.h"
-#import "objcp/CPLabel.h"
-#import "ORFoundation/ORAVLTree.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORSemDFSController.h>
+#import <ORModeling/ORModeling.h>
+#import <ORModeling/ORModelTransformation.h>
+#import <ORProgram/ORProgramFactory.h>
+#import <objcp/CPFactory.h>
 
-#import "objcp/CPBitArray.h"
-#import "objcp/CPBitArrayDom.h"
+#import <objcp/CPBitArray.h>
+#import <objcp/CPBitArrayDom.h>
 
 
 @implementation bitTest

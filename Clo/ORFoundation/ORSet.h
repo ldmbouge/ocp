@@ -11,22 +11,39 @@
 
 #import <Foundation/Foundation.h>
 #import "ORFoundation/ORAVLTree.h"
+#import "ORObject.h"
 
-@protocol ORIntIterator <NSObject>
--(void) iterate: (ORInt2Void) f;
+@protocol ORIntIterable <ORObject>
+-(void)enumerateWithBlock:(ORInt2Void)block;
 -(ORInt) size;
+-(ORInt) low;
 -(id<IntEnumerator>) enumerator;
 @end
 
-@protocol ORIntSet <ORIntIterator>
--(bool) member: (ORInt) v;
+@protocol ORIntSet <ORIntIterable>
+-(ORBool) member: (ORInt) v;
 -(void) insert: (ORInt) v;
 -(void) delete: (ORInt) v;
+-(ORInt) min;
+-(ORInt) max;
 -(NSString*) description;
+-(void) copyInto: (id<ORIntSet>) S;
+-(id<ORIntSet>)inter:(id<ORIntSet>)s2;
 @end
 
-@protocol ORIntRange <ORIntIterator>
+@protocol ORIntRange <ORIntIterable>
 -(ORInt) low;
 -(ORInt) up;
+-(ORBool) isDefined;
+-(ORBool) inRange: (ORInt)e;
 -(NSString*) description;
+-(void)enumerateWithBlock:(ORInt2Void)block;
+@end
+
+@protocol ORFloatRange
+-(ORFloat)low;
+-(ORFloat)up;
+-(ORBool)isDefined;
+-(ORBool)inRange:(ORFloat)e;
+-(NSString*)description;
 @end

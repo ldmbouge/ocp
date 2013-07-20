@@ -13,8 +13,7 @@
 #import "cont.h"
 #import "pthread.h"
 
-static char* baseStack = 0;
-static pthread_key_t pkeyBase;
+static __thread char* baseStack = 0;
 
 #if defined(__x86_64__)
 
@@ -25,14 +24,7 @@ __attribute__((noinline)) NSCont* saveCtx(struct Ctx64* ctx,NSCont* k)
    asm volatile("movq %%rsp , %%rax;" // load rax with SP
                 :"=a"(sp)
                 );
-   size_t len;
-   if ([NSThread isMainThread])
-      len = baseStack - sp;   
-   else {
-      char* base = pthread_getspecific(pkeyBase);
-      len = base - sp;
-   }
-   //objc_clear_stack(OBJC_CLEAR_RESIDENT_STACK);
+   size_t len = baseStack - sp;
    [k saveStack:len startAt:sp];
    asm volatile("movq %%rbx,8(%%rax);\n\t"
                 "movq %%rcx,16(%%rax);\n\t"
@@ -105,17 +97,7 @@ __attribute__((noinline)) NSCont* restoreCtx(struct Ctx64* ctx,char* start,char*
 
 char* getContBase()
 {
-   if ([NSThread isMainThread])
-      return baseStack;   
-   else {
-      char* base = pthread_getspecific(pkeyBase);
-      return base;
-   }
-}
-
-static void init_pthreads() 
-{
-   pthread_key_create(&pkeyBase,NULL);   
+   return baseStack;
 }
 
 void initContinuationLibrary(int *base)
@@ -123,13 +105,7 @@ void initContinuationLibrary(int *base)
    int x;
    while ((long)base & 0x7)
       ++base;  // widen & align
-   if ([NSThread isMainThread])   
-      baseStack = (char*)base;
-   else {
-      static pthread_once_t block = PTHREAD_ONCE_INIT;
-      pthread_once(&block,init_pthreads);
-      pthread_setspecific(pkeyBase,(char*)base);
-   }
+   baseStack = (char*)base;
    NSLog(@"local adr is: %p\n" ,&x);
    NSLog(@"base  adr is: %p\n",(void*)base);
    NSLog(@"distance    : %ld\n", (long)(((char*)base) - ((char*)&x)));

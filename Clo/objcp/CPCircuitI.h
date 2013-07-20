@@ -11,12 +11,13 @@
 
 
 #import <Foundation/Foundation.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPConstraintI.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPVar.h>
 
-@interface CPCircuitI : CPActiveConstraint<CPConstraint,NSCoding>
--(CPCircuitI*) initCPCircuitI: (id<ORIntVarArray>) x;
--(CPCircuitI*) initCPNoCycleI: (id<ORIntVarArray>) x;
+@interface CPCircuitI : CPCoreConstraint<CPConstraint,NSCoding>
+-(CPCircuitI*) initCPCircuitI: (id<CPIntVarArray>) x;
+-(CPCircuitI*) initCPNoCycleI: (id<CPIntVarArray>) x;
 -(void) dealloc;
 -(ORStatus) post;
 -(void) encodeWithCoder: (NSCoder*) aCoder;

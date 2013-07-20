@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'nfraction' target in the 'nfraction' project
+//
+
+#ifdef __OBJC__
+   #import <Foundation/Foundation.h>
+#endif

@@ -23,18 +23,14 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitSolution dealloc called...\n");
+   //NSLog(@"ORLimitSolution dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
 {
    if (_nbSolutions >= _maxSolutions)
-      [_controller fail];
+      [_controller fail: true];
    return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) succeeds
 {
@@ -60,7 +56,7 @@
 }
 -(void) dealloc
 {
-   NSLog(@"ORLimitSolution dealloc called...\n");
+   //NSLog(@"ORLimitSolution dealloc called...\n");
    [super dealloc];
 }
 -(ORInt) addChoice: (NSCont*) k
@@ -69,10 +65,6 @@
       return [_controller addChoice: k];
    else
       return -1;
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryRight
 {
@@ -105,14 +97,10 @@
 {
    return [_controller addChoice: k];
 }
--(void) fail
-{
-   [_controller fail];
-}
 -(void) startTryLeft
 {
    if (_nbFailures >= _maxFailures)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryLeft];
 }
@@ -120,7 +108,7 @@
 {
    _nbFailures++;
    if (_nbFailures >= _maxFailures)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryRight];
 }
@@ -128,7 +116,7 @@
 {
    _nbFailures++;
    if (_nbFailures >= _maxFailures)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryallOnFailure];
 }
@@ -163,20 +151,16 @@
    // forever).
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime) {
-      [_controller fail];
+      [_controller fail: true];
       return 0;
    } else
       return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryLeft
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryLeft];
 }
@@ -184,7 +168,7 @@
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryRight];
 }
@@ -192,7 +176,7 @@
 {
    ORLong currentTime = [ORRuntimeMonitor cputime];
    if (currentTime > _maxTime)
-      [_controller fail];
+      [_controller fail: true];
    else
       [_controller startTryallOnFailure];
 }
@@ -202,10 +186,6 @@
    [ctrl setController:[_controller copyWithZone:zone]];
    return ctrl;
 }
-@end
-
-@interface NSThread (ORData)
-+(ORInt)threadID;
 @end
 
 @implementation OROptimizationController
@@ -227,10 +207,6 @@
    if (_canImprove() == ORFailure)
       [_controller fail];
    return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryLeft
 {
@@ -285,12 +261,8 @@
 -(ORInt) addChoice:(NSCont*) k
 {
    if (_condition())
-      [_controller fail];
+      [_controller fail: true];
    return [_controller addChoice: k];
-}
--(void) fail
-{
-   [_controller fail];
 }
 -(void) startTryLeft
 {
@@ -308,6 +280,63 @@
 }
 @end
 
+@implementation ORLimitMonitor
+{
+   ORBool _pruned;
+}
+-(id) initORLimitMonitor
+{
+   self = [super initORDefaultController];
+   _pruned = false;
+   return self;
+}
+-(void) dealloc
+{
+   NSLog(@"ORLimitMonitor dealloc called...\n");
+   [super dealloc];
+}
+-(void) fail: (ORBool) pruned
+{
+   if (pruned)
+      _pruned = pruned;
+   [self fail];
+}
+-(ORBool) isPruned
+{
+   return _pruned;
+}
+@end
 
+@implementation ORSwitchOnDepth
+{
+   id<ORTrail>  _trail;
+   ORInt        _limit;
+   NSCont*      _next;
+   TRInt        _depth;
+
+}
+-(id) initORSwitchOnDepth: (ORInt) limit next: (NSCont*) next withTrail: (id<ORTrail>) trail;
+{
+   self = [super initORDefaultController];
+   _trail = trail;
+   _limit = limit;
+   _next  = [next retain];
+   _depth = makeTRInt(_trail,0);
+   return self;
+}
+-(void) dealloc
+{
+   [_next letgo];
+   [super dealloc];
+}
+-(void) startTry
+{
+   assignTRInt(&_depth,_depth._val + 1,_trail);
+   if (_depth._val > _limit)
+      [_next call];
+   else
+      [_controller startTry];
+}
+@end
 
 

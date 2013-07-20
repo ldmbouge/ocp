@@ -16,27 +16,20 @@
 
 @implementation CPEquationBC
 
--(CPEquationBC*) initCPEquationBC: (id) x equal: (ORInt) c
+-(CPEquationBC*) initCPEquationBC: (ORIdArrayI*) x equal: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
+   self = [super initCPCoreConstraint:engine];
    _idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
-   if ([x isKindOfClass:[NSArray class]]) {
-      [super initCPCoreConstraint];
-      _nb = [x count];
-      _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(ORInt k=0;k<_nb;k++)
-         _x[k] = [x objectAtIndex:k];
-   } 
-   else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<ORIntVarArray> xa = x;
-      [super initCPCoreConstraint];
+   if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
-   }
+   } else assert(FALSE);
    _c = c;
    _allTerms = NULL;
    _inUse    = NULL;
@@ -46,7 +39,6 @@
 -(void) dealloc
 {
    free(_x);
-   free(_updateBounds);
    free(_allTerms);
    free(_inUse);
    [super dealloc];
@@ -54,7 +46,7 @@
 
 -(NSSet*)allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
+   NSSet* theSet = [[[NSSet alloc] initWithObjects:_x count:_nb] autorelease];
    return theSet;
 }
 -(ORUInt)nbUVars
@@ -98,16 +90,12 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(ORStatus) post
 {
-   _trail = [[[_x[0] solver] engine] trail];
-   _updateBounds = malloc(sizeof(UBType)*_nb);
-   for(ORInt k=0;k<_nb;k++)
-      _updateBounds[k] = (UBType)[_x[k] methodForSelector:@selector(updateMin:andMax:)];
-   
    _allTerms = malloc(sizeof(CPEQTerm)*_nb);
    _inUse    = malloc(sizeof(TRCPEQTerm)*_nb);
    for(ORInt i=0;i<_nb;i++) {
       ORBounds b = bounds(_x[i]);
-      _allTerms[i] = (CPEQTerm){_updateBounds[i],_x[i],b.min,b.max,NO};
+      UBType mth = (UBType)[_x[i] methodForSelector:@selector(updateMin:andMax:)];
+      _allTerms[i] = (CPEQTerm){mth,_x[i],b.min,b.max,NO};
       _inUse[i] = inline_makeTRCPEQTerm(_trail, _allTerms+i);
    }
    ORInt lastUsed = (ORInt)_nb-1;
@@ -156,7 +144,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    }
    assignTRInt(&_used, lastUsed+1, _trail);
    assignTRLong(&_ec, ec, _trail);
-   ORInt toSet = _used._val;
    bool changed;
    bool feasible = true;
    do {
@@ -181,6 +168,16 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          cur->updated |= updateNow;
          cur->low = maxOf(cur->low,nLowi);
          cur->up  = minOf(cur->up,nSupi);
+         if (updateNow) {
+            // [ldm] We must update now. A view such as y = a * x with y appearing here
+            // might force a stronger tightening of the bounds of y. e.g.,
+            // D(x) = {0,1}  and D(y)={0..100} with y = 100 * x.
+            // If (low,up) = (10,100) then, x={1} and therefore D(y)={100} rather than {10..100}
+            cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
+            ORBounds b = bounds(cur->var);
+            cur->low = b.min;
+            cur->up  = b.max;
+         }
          feasible = cur->low <= cur->up;
          if (cur->low == cur->up) {
             assignTRLong(&_ec, _ec._val + cur->low, _trail);
@@ -193,49 +190,6 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
    } while(changed && feasible);
    if (!feasible)
       failNow();
-   for(ORUInt i=0;i < toSet;i++) {
-      CPEQTerm* cur = _inUse[i]._val;
-      if (cur->updated)
-         cur->update(cur->var,@selector(updateMin:andMax:),(ORInt)cur->low,(ORInt)cur->up);
-   }
-/*
-    struct CPEQTerm* terms = alloca(sizeof(struct CPEQTerm)*_nb);
-    for(ORInt k=0;k<_nb;k++) {
-       ORBounds b = bounds(_x[k]);
-       terms[k] = (struct CPEQTerm){_updateBounds[k],_x[k],b.min,b.max,NO};
-    }
-    struct Bounds b;
-    b._bndLow = b._bndUp = - _c;
-    b._nb = _nb;
-    bool changed;
-    bool feasible = true;
-    do {        
-        sumBounds(terms, b._nb, &b);
-        if (b._sumLow > 0 || b._sumUp < 0) 
-           failNow();        
-        changed=false;
-        for (int i=0; i < b._nb && feasible; i++) {            
-            long long supi  = b._sumUp - terms[i].up;
-            long long slowi = b._sumLow - terms[i].low;
-            long long nLowi = - supi;
-            long long nSupi = - slowi;
-            bool updateNow = nLowi > terms[i].low || nSupi < terms[i].up;
-            changed |= updateNow;
-            terms[i].updated |= updateNow;
-            terms[i].low = maxOf(terms[i].low,nLowi);
-            terms[i].up  = minOf(terms[i].up,nSupi);
-            feasible = terms[i].low <= terms[i].up;            
-        }        
-    } while (changed && feasible);
-    if (!feasible)
-       failNow();    
-    for(ORUInt i=0;i<_nb;i++) {
-       if (terms[i].updated)
-          terms[i].update(terms[i].var,@selector(updateMin:andMax:),
-                          (ORInt)terms[i].low,
-                          (ORInt)terms[i].up);
-    }
- */
 }
 -(NSString*) description
 {
@@ -268,27 +222,22 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 @end
 
 @implementation CPINEquationBC 
--(CPINEquationBC*) initCPINEquationBC: (id) x lequal: (ORInt) c
+-(CPINEquationBC*) initCPINEquationBC: (ORIdArrayI*) x lequal: (ORInt) c
 {
-   self = [super initCPCoreConstraint];
+   id<ORSearchEngine> engine = (id<ORSearchEngine>) [[x at:[x low]] engine];
+   self = [super initCPCoreConstraint:engine];
    _idempotent = YES;
    _priority = HIGHEST_PRIO - 1;
-   if ([x isKindOfClass:[NSArray class]]) {
-      [super initCPCoreConstraint];
-      _nb = [x count];
-      _x = malloc(sizeof(CPIntVarI*)*_nb);
-      for(ORInt k=0;k<_nb;k++)
-         _x[k] = [x objectAtIndex:k];
-   } 
-   else if ([x isKindOfClass:[ORIdArrayI class]]) {
-      id<ORIntVarArray> xa = x;
-      [super initCPCoreConstraint];
+   if ([x isKindOfClass:[ORIdArrayI class]]) {
+      id<CPIntVarArray> xa = (id<CPIntVarArray>)x;
       _nb = [x count];
       _x  = malloc(sizeof(CPIntVarI*)*_nb);
       int i =0;
       for(ORInt k=[xa low];k <= [xa up];k++)
          _x[i++] = (CPIntVarI*) [xa at:k];
    }
+   else
+      assert(FALSE);
    _c = c;
    return self;
 }
@@ -301,7 +250,7 @@ static void sumBounds(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
 
 -(NSSet*)allVars
 {
-   NSSet* theSet = [[NSSet alloc] initWithObjects:_x count:_nb];
+   NSSet* theSet = [[[NSSet alloc] initWithObjects:_x count:_nb] autorelease];
    return theSet;
 }
 -(ORUInt)nbUVars
@@ -368,8 +317,14 @@ static void sumLowerBound(struct CPEQTerm* terms,ORLong nb,struct Bounds* bnd)
          changed |= updateNow;
          terms[i].updated |= updateNow;
          terms[i].up  = minOf(terms[i].up,nSupi);
-         feasible = terms[i].low <= terms[i].up;         
-      }      
+         if (updateNow) {
+            // [ldm] this is necessary to make sure that the view can apply its narrowing
+            // so that the constraint behaves in an idempotent way.
+            terms[i].update(terms[i].var,@selector(updateMax:),(ORInt)terms[i].up);
+            terms[i].up = maxDom(terms[i].var);
+         }
+         feasible = terms[i].low <= terms[i].up;
+      }
    } while (changed && feasible);
    
    if (!feasible)

@@ -10,10 +10,11 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <CPUKernel/CPTypes.h>
+#import <CPUKernel/CPEngine.h>
+#import <CPUKernel/CPTrigger.h>
 #import <objcp/CPBitVar.h>
-#import <objcp/CPTypes.h>
-#import <objcp/CPEngine.h>
-#import <objcp/CPTrigger.h>
+#import <objcp/CPDom.h>
 
 @class CPBitArrayDom;
 @class CPBitArrayIterator;
@@ -28,25 +29,27 @@ typedef struct  {
 } CPBitEventNetwork;
 
 
-@interface CPBitVarI : NSObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
+@interface CPBitVarI : ORObject<CPBitVar, CPBitVarNotifier,CPBitVarSubscriber, NSCoding> {
 @private
 @protected
-    ORUInt                         _name;
-    CPEngineI*                          _fdm;
+    CPEngineI*                       _engine;
     CPBitArrayDom*                      _dom;
     CPBitEventNetwork                   _net;
     CPTriggerMap*                  _triggers;
     id<CPBitVarNotifier>               _recv;
 }
--(void) initCPBitVarCore:(id<CPEngine>)fdm low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
-//-(CPBitVarI*) initCPBitVarView: (id<CPEngine>) fdm low: (int) low up: (int) up for: (CPBitVarI*) x;
+-(void) initCPBitVarCore:(id<CPEngine>)cp low:(unsigned int*)low up:(unsigned int*)up length:(int) len;
 -(void) dealloc;
--(void) setId:(ORUInt)name;
 -(NSString*) description;
 -(id<CPEngine>) engine;
+-(void)restoreDomain:(id<CPDom>)toRestore;
+-(void)restoreValue:(ORInt)toRestore;
+
+// AC3 Constraint Event
+-(void) whenChangePropagate:  (CPCoreConstraint*) c;
 
 // need for speeding the code when not using AC5
--(bool) tracksLoseEvt;
+-(ORBool) tracksLoseEvt;
 -(void) setTracksLoseEvt;
 
 // subscription
@@ -58,35 +61,40 @@ typedef struct  {
 // notification
 
 //-(void) bindEvt;
--(void) changeMinEvt:(int)dsz;
--(void) changeMaxEvt:(int)dsz;
--(void) bitFixedEvt:(int)dsz;
+-(void) changeMinEvt:(int)dsz sender:(CPBitArrayDom*)sender;
+-(void) changeMaxEvt:(int)dsz sender:(CPBitArrayDom*)sender;
+-(void) bitFixedEvt:(int)dsz  sender:(CPBitArrayDom*)sender;
 // access
--(bool) bound;
+-(ORBool) bound;
 -(uint64) min;
 -(uint64) max;
+-(CPBitArrayDom*) domain;
 -(unsigned int*) minArray;
 -(unsigned int*) maxArray;
 -(unsigned int) getWordLength;
 -(ORBounds) bounds;
--(unsigned int) domsize;
--(bool) member:(unsigned int*)v;
+-(ORULong) domsize;
+-(unsigned int) lsFreeBit;
+-(unsigned int) randomFreeBit;
+-(ORBool) member:(unsigned int*)v;
+
 // update
 -(ORStatus)     updateMin: (uint64) newMin;
 -(ORStatus)     updateMax: (uint64) newMax;
 -(void)         setLow: (unsigned int*) newLow;
 -(void)         setUp: (unsigned int*) newUp;
+-(void)         setUp:(unsigned int*) newUp andLow:(unsigned int*)newLow;
 -(TRUInt*)    getLow;
 -(TRUInt*)    getUp;
+-(void)        getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(ORStatus)     bind:(unsigned int*) val;
 -(ORStatus)     bindUInt64:(uint64) val;
 //-(ORStatus)     remove:(int) val;
 -(CPBitVarI*)    initCPExplicitBitVar: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 -(CPBitVarI*)    initCPExplicitBitVarPat: (id<CPEngine>)fdm withLow: (unsigned int*) low andUp: (unsigned int*) up andLen:(unsigned int) len;
 // Class methods
-+(CPBitVarI*)   initCPBitVar: (id<CPEngine>)fdm low:(int)low up:(int)up len:(unsigned int)len;
-+(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)fdm withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
-+(CPTrigger*)   createTrigger: (ConstraintCallback) todo;
++(CPBitVarI*)   initCPBitVar: (id<CPEngine>)cp low:(int)low up:(int)up len:(unsigned int)len;
++(CPBitVarI*)   initCPBitVarWithPat:(id<CPEngine>)cp withLow:(unsigned int *)low andUp:(unsigned int *)up andLen:(unsigned int)len;
 @end
 
 
@@ -104,6 +112,6 @@ typedef struct  {
 -(void) dealloc;
 -(void) addVar:(CPBitVarI*) v;
 -(void) bindEvt;
--(void) bitFixedEvt:(ORUInt) dsz;
+-(void) bitFixedEvt:(ORUInt) dsz sender:(CPBitArrayDom*)sender;
 @end
 

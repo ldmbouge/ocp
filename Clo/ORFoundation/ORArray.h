@@ -22,11 +22,29 @@
 -(void) set: (ORInt) value at: (ORInt) idx;
 -(ORInt) low;
 -(ORInt) up;
+-(ORInt) max;
+-(ORInt) min;
 -(id<ORIntRange>) range;
 -(NSUInteger) count;
 -(NSString*) description;
 -(id<ORTracker>) tracker;
 -(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(void)enumerateWith:(void(^)(ORInt obj,int idx))block;
+@end
+
+@protocol ORFloatArray <ORObject>
+-(ORFloat) at: (ORInt) value;
+-(void) set: (ORFloat) value at: (ORInt) idx;
+-(ORInt) low;
+-(ORInt) up;
+-(ORFloat) max;
+-(ORFloat) min;
+-(id<ORIntRange>) range;
+-(NSUInteger) count;
+-(NSString*) description;
+-(id<ORTracker>) tracker;
+-(id<ORExpr>) elt: (id<ORExpr>) idx;
+-(void)enumerateWith:(void(^)(ORFloat obj,int idx))block;
 @end
 
 @protocol ORIntSetArray <ORObject>
@@ -56,10 +74,13 @@
 -(void)enumerateWith:(void(^)(id obj,int idx))block;
 @end
 
+
+
 @protocol ORIdMatrix <ORObject>
 -(id) flat:(ORInt)i;
 -(id) at: (ORInt) i1 : (ORInt) i2;
 -(id) at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
+-(void) setFlat:(id) x at:(ORInt)i;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2;
 -(void) set: (id) x at: (ORInt) i1 : (ORInt) i2 : (ORInt) i3;
 -(ORInt) arity;

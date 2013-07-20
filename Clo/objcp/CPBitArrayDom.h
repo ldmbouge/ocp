@@ -11,7 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <objcp/CPBitArrayDom.h>
-#import <objcp/CPTypes.h>
+#import <CPUKernel/CPTypes.h>
 #import <objcp/CPData.h>
 
 
@@ -25,7 +25,7 @@
     TRUInt*         _up;
     unsigned int    _wordLength;
     unsigned int    _bitLength;
-    TRInt            _freebits;
+    TRUInt            _freebits;
     TRUInt*         _min;
     TRUInt*         _max;
 }
@@ -34,18 +34,22 @@
 
 -(unsigned int)         getLength;
 -(unsigned int)         getWordLength;
--(ORUInt)           getSize;
--(int)                  domsize;
+-(ORUInt)               getSize;
+-(ORInt)                domsize;
 -(void)                 updateFreeBitCount;
--(bool)                 bound;
+-(ORBool)                 bound;
 -(uint64)               min;
 -(uint64)               max;
 -(unsigned int*)        minArray;
 -(unsigned int*)        maxArray;
--(bool)                 getBit:(unsigned int) idx;
--(ORStatus)             setBit:(unsigned int) idx to:(bool) val;
--(bool)                 isFree:(unsigned int) idx;
--(bool)                 member:(unsigned int*) val;
+-(unsigned int*)        lowArray;
+-(unsigned int*)        upArray;
+-(ORBool)                 getBit:(unsigned int) idx;
+-(ORStatus)             setBit:(unsigned int) idx to:(ORBool) val for:(id<CPBitVarNotifier>)x;
+-(ORBool)                 isFree:(unsigned int) idx;
+-(unsigned int)         lsFreeBit;
+-(unsigned int)         randomFreeBit;
+-(ORBool)                 member:(unsigned int*) val;
 -(unsigned long long)   getRank:(unsigned int*) val;
 -(unsigned int*)        atRank:(unsigned long long) rnk;
 -(unsigned int)         getMaxRank;
@@ -56,8 +60,13 @@
 -(ORStatus)             bindToPat: (unsigned int*) pat for:(id<CPBitVarNotifier>)x;
 -(TRUInt*)              getLow;
 -(TRUInt*)              getUp;
+-(void)                 getUp:(TRUInt**)currUp andLow:(TRUInt**)currLow;
 -(void)                 setLow: (unsigned int*) newLow for:(id<CPBitVarNotifier>)x;
 -(void)                 setUp: (unsigned int*) newUp for:(id<CPBitVarNotifier>)x;
+-(void)                 setUp: (unsigned int*) newUp andLow:(unsigned int*)newLow for:(id<CPBitVarNotifier>)x;
 -(NSString*)            description;
 -(void)                 enumerateWith:(void(^)(unsigned int*,ORInt))body;
+-(void)                 restoreDomain:(CPBitArrayDom*)toRestore;
+-(void)                 restoreValue:(ORInt)toRestore;
+
 @end

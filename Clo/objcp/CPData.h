@@ -14,20 +14,8 @@
 @protocol CP;
 @protocol CPExprVisitor;
 
-typedef ORStatus(*UBType)(id,SEL,...);
-typedef void (^ConstraintCallback)(void);
-typedef void (^ConstraintIntCallBack)(ORInt);
-
-@protocol CPConstraint <ORConstraint>
+@protocol CPZeroOneStream <ORZeroOneStream>
 @end
 
-//@protocol CPRandomStream <ORRandomStream>
-//@end;
-
-@protocol CPZeroOneStream <ORZeroOneStream>
-@end;
-
 @protocol CPUniformDistribution <ORUniformDistribution>
-@end;
-
-
+@end

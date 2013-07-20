@@ -11,12 +11,8 @@
 
 
 #import "OCPViewController.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/DFSController.h"
-#import "objcp/CPEngine.h"
-#import "objcp/CPSolver.h"
-#import "objcp/CPFactory.h"
-#import "objcp/CPLabel.h"
+#import <ORFoundation/ORFoundation.h>
+#import <ORProgram/ORProgram.h>
 
 @interface OCPViewController ()
 
@@ -38,7 +34,7 @@
     // Release any retained subviews of the main view.
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (ORBool)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
        return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
@@ -55,7 +51,7 @@
 {
    int n = 8;
    ORRange R = (ORRange){1,n};
-   id<CPSolver> cp = [CPFactory createSolver];
+   id<CPProgram> cp = [CPFactory createSolver];
    id<CPInteger> nbSolutions = [CPFactory integer:cp value:0];
    [CPFactory intArray:cp range: R with: ^int(int i) { return i; }]; 
    id<ORIntVarArray> x = [CPFactory intVarArray:cp range:R domain: R];
@@ -63,9 +59,9 @@
    id<ORIntVarArray> xn = [CPFactory intVarArray:cp range: R with: ^id<ORIntVar>(int i) { return [CPFactory intVar: [x at: i] shift:-i]; }]; 
    [cp solveAll: 
     ^() {
-       [cp add: [CPFactory alldifferent: x consistency:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xp consistency:ValueConsistency]];
-       [cp add: [CPFactory alldifferent: xn consistency:ValueConsistency]];
+       [cp add: [CPFactory alldifferent: x annotation:ValueConsistency]];
+       [cp add: [CPFactory alldifferent: xp annotation:ValueConsistency]];
+       [cp add: [CPFactory alldifferent: xn annotation:ValueConsistency]];
     }   
           using: 
     ^() {
@@ -78,7 +74,7 @@
    
    [log insertText: [NSString stringWithFormat:@"Solver status: %@\n",cp]];
    [cp release];
-   [CPFactory shutdown];
+   [ORFactory shutdown];
 }
 
 - (IBAction)clear:(id)sender {

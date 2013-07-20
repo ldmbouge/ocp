@@ -10,24 +10,29 @@
  ***********************************************************************/
 
 #import "ORFoundation.h"
+#import "ORDataI.h"
 #import "ORSelectorI.h"
+#import <math.h>
+#if defined(__linux__)
+#import <values.h>
+#endif
 
 @implementation OROPTSelect
 {
    id<ORRandomStream> _stream;
-   id<ORIntIterator>   _range;
+   id<ORIntIterable>   _range;
    ORInt2Bool         _filter;
    ORInt2Float         _order;
    ORFloat         _direction;
    BOOL           _randomized;
 }
--(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (BOOL) randomized
+-(OROPTSelect*) initOROPTSelectWithRange: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
 {
    self = [super init];
    _range = range;
    _filter = [filter copy];
    _order = [order copy];
-   _stream = [ORCrFactory randomStream];
+   _stream = [[ORRandomStreamI alloc] init];
    _direction = 1;
    _randomized = randomized;
    return self;
@@ -58,38 +63,35 @@
 }
 -(ORInt) choose
 {
-   float bestFound = MAXFLOAT;
-   float bestRand = MAXFLOAT;
-   ORInt indexFound = MAXINT;
-   id<IntEnumerator> ite = [_range enumerator];
-   while ([ite more]) {
-      ORInt i = [ite next];
+   __block float bestFound = MAXFLOAT;
+   __block ORLong bestRand = 0x7fffffffffffffff;
+   __block ORInt indexFound = MAXINT;
+   [_range enumerateWithBlock:^(ORInt i) {
       if (_filter(i)) {
-         float val = _direction * (_order ? _order(i) : 0.0);
+         ORFloat val = _direction * (_order ? _order(i) : 0.0);
          if (val < bestFound) {
             bestFound = val;
             indexFound = i;
             bestRand = [_stream next];
          }
          else if (_randomized && val == bestFound) {
-            float r = [_stream next];
+            ORLong r = [_stream next];
             if (r < bestRand) {
                indexFound = i;
                bestRand = r;
             }
          }
       }
-   }
+   }];
    return indexFound;
 }
-
 @end
 
 @implementation ORSelectI
 {
    OROPTSelect* _select;
 }
--(id<ORSelect>) initORSelectI: (id<ORIntIterator>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (BOOL) randomized
+-(id<ORSelect>) initORSelectI: (id<ORIntIterable>) range suchThat: (ORInt2Bool) filter orderedBy: (ORInt2Float) order randomized: (ORBool) randomized
 {
    self = [super init];
    _select = [[OROPTSelect alloc] initOROPTSelectWithRange:range suchThat: filter orderedBy:order randomized: randomized];
@@ -97,6 +99,7 @@
 }
 -(void) dealloc
 {
+   //NSLog(@"Deallocating ORSelectI");
    [_select release];
    [super dealloc];
 }
@@ -114,6 +117,3 @@
    return [_select any];
 }
 @end
-
-
-
