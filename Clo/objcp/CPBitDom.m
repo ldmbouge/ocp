@@ -700,10 +700,13 @@ static inline ORInt findMax(CPBitDom* dom,ORInt from)
    assignTRInt(&_max, val, _trail);
    assignTRInt(&_sz, 1, _trail);
    
-   if (val > oldMin)
-      [x changeMinEvt:1 sender:self];
-   if (val < oldMax)
-      [x changeMaxEvt:1 sender:self];
+   // These extra events caused a performance regression.
+   // Unclear as to which benchmark is served by that. 
+//   if (val > oldMin)
+//      [x changeMinEvt:1 sender:self];
+//   if (val < oldMax)
+//      [x changeMaxEvt:1 sender:self];
+
    if ([x tracksLoseEvt:self]) {
       ORStatus ok = ORSuspend;
       for(ORInt k=oldMin;k<=oldMax && ok;k++)

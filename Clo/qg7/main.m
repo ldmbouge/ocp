@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
 {
    @autoreleasepool {
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
-      [args `:^struct ORResult(){
+      [args measure:^struct ORResult(){
          id<ORModel> model = [ORFactory createModel];
          ORInt n = [args size];
          id<ORIntRange> D = RANGE(model,0,n-1);
