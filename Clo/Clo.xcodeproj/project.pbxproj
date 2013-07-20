@@ -855,6 +855,7 @@
 		5BE5A7EF158A8390006703CB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE5A7EE158A8390006703CB /* main.m */; };
 		5BE5A7F3158A8390006703CB /* fdmul2.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5BE5A7F2158A8390006703CB /* fdmul2.1 */; };
 		5BE5A7F9158A83A2006703CB /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
+		5BE617F2179AD17E009DD473 /* ORCmdLineArgs.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */; };
 		5BE642FE139D49320056F448 /* CPBasicConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = 5BE642EC139D49320056F448 /* CPBasicConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5BE642FF139D49320056F448 /* CPBasicConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5BE642ED139D49320056F448 /* CPBasicConstraint.m */; };
 		5BE777421594C9E500ADE34E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -10979,6 +10980,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5BE617F2179AD17E009DD473 /* ORCmdLineArgs.m in Sources */,
 				5B3895ED1795BE07004CCE93 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -16862,6 +16864,7 @@
 				5B3895F31795BE07004CCE93 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5B5096EC1619B6CC00171F9D /* Build configuration list for PBXNativeTarget "testDistrib" */ = {
 			isa = XCConfigurationList;
