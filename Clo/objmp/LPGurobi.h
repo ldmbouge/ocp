@@ -21,7 +21,7 @@
 @private
    struct _GRBenv*                _env;
    struct _GRBmodel*              _model;
-   LPOutcome                      _status;
+   OROutcome                      _status;
    LPObjectiveType                _objectiveType;
 }
 
@@ -35,9 +35,9 @@
 -(void) addObjective: (LPObjectiveI*) obj;
 -(void) addColumn: (LPColumnI*) col;
 -(void) close;
--(LPOutcome) solve;
+-(OROutcome) solve;
 
--(LPOutcome) status;
+-(OROutcome) status;
 -(ORFloat) value: (LPVariableI*) var;
 -(ORFloat) lowerBound: (LPVariableI*) var;
 -(ORFloat) upperBound: (LPVariableI*) var;

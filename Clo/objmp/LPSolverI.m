@@ -1217,7 +1217,7 @@
 {
    return _isClosed;
 }
--(LPOutcome) solve
+-(OROutcome) solve
 {
    if (!_isClosed)
       [self close];
@@ -1225,7 +1225,7 @@
    return [_lp solve];
 }
 
--(LPOutcome) status;
+-(OROutcome) status;
 {
    return [_lp status];
 }

@@ -16,6 +16,5 @@
 @class LPVariableI;
 @class LPLinearTermI;
 
-typedef enum { LPinfeasible, LPoptimal, LPsuboptimal, LPunbounded, LPerror} LPOutcome;
 typedef enum { LPgeq, LPleq, LPeq } LPConstraintType;
 typedef enum { LPminimize, LPmaximize } LPObjectiveType;
