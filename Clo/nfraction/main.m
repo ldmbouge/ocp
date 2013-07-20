@@ -59,7 +59,9 @@ int main(int argc, const char * argv[])
                }];
             }];
             @autoreleasepool {
-               NSLog(@"Got a solution: %@",ad);
+               [ad enumerateWith:^(id<ORIntVar> adi, int i) {
+                  NSLog(@"Got a solution: ad[%d] = %d",i,[cp intValue:adi]);
+               }];
                nbSol++;
             }
          }];

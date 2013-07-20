@@ -91,7 +91,9 @@ ab = [('queensAC',12,0),('ais',20,0),('fdmul',0,0),('costas',6,0),('golomb',8,0)
 	  ('knapsackOpt',3,0),('langford',8,2),('latinSquare',7,0),('magicserie',500,0),
 	  ('magicsquareModel',9,0),('perfect',0,0),('sport',0,0),('slab',0,0),('paq',6,0),
 	  ('qg7',9,0),('warehouse',0,0),('fwarehouse',0,0),('bacp',0,0),('nonogram',0,0),
-	  ('minesweeper',0,0),('circle',0,0)]
+	  ('minesweeper',0,0),('circle',0,0),('grocery',0,0),('marriage',0,0),('nfraction',0,0),
+	  ('slow_convergence',100,0),('market2s',0,0),('partition',20,0),('order',1000,0)]
+	  
 for (b,qa,na) in ab:
 	p = Runner(b)
 	p.run(qa,na)

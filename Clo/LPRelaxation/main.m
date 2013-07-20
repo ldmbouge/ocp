@@ -10,14 +10,13 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
-#import <ORFoundation/ORSemBDSController.h>
-#import <ORFoundation/ORSemDFSController.h>
 #import <ORFoundation/ORControl.h>
 #import <ORProgram/ORProgram.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/LPProgram.h>
 #import <ORProgram/CPProgram.h>
 
+#import "ORCmdLineArgs.h"
 
 static int nbRows = 7;
 static int nbColumns = 12;
@@ -70,52 +69,59 @@ int main_lp(int argc, const char * argv[])
 
 int main_hybrid(int argc, const char * argv[])
 {
-   ORLong startTime = [ORRuntimeMonitor cputime];
-   id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
-   id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
-   id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
-   
-//   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
-   for(ORInt i = 0; i < nbRows; i++)
-      [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
-   [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
-   
-   id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
-//   OROutcome b = [lp solve];
-//   printf("outcome: %d \n",b);
-   printf("Objective: %f \n",[lp objective]);
-   for(ORInt i = 0; i < nbColumns-1; i++)
-      printf("x[%d] = %10.5f in [%10.5f,%10.5f] \n",i,[lp value: x[i]],[lp lowerBound: x[i]],[lp upperBound: x[i]]);
-
-   id<CPProgram> cp = [ORFactory createCPProgram: model withRelaxation: lp];
-   
-   [cp solve:
-    ^() {
-       for(ORInt i = 0; i < nbColumns; i++) {
-          NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
-       }
-       for(ORInt i = 0; i < nbColumns; i++) {
-//          NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
-          while (![cp bound: x[i]]) {
-             ORInt m = ([cp max: x[i]] + [cp min: x[i]]) / 2;
-//             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
-             [cp try:
-               ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
-                  or:
-              ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
-             
-              ];
+   @autoreleasepool {
+      ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
+      [args measure:^struct ORResult() {
+         ORLong startTime = [ORRuntimeMonitor cputime];
+         id<ORModel> model = [ORFactory createModel];
+         id<ORIntRange> Columns = [ORFactory intRange: model low: 0 up: nbColumns-1];
+         id<ORIntRange> Domain = [ORFactory intRange: model low: 0 up: 10000];
+         id<ORIntVarArray> x = [ORFactory intVarArray: model range: Columns domain: Domain];
+         
+         //   id<ORIdArray> ca = [ORFactory idArray:model range:RANGE(model,0,nbRows-1)];
+         for(ORInt i = 0; i < nbRows; i++)
+            [model add: [Sum(model,j,Columns,[@(coef[i][j]) mul: x[j]]) leq: @(b[i])]];
+         [model maximize: Sum(model,j,Columns,[@(c[j]) mul: x[j]])];
+         
+         id<ORRelaxation> lp = [ORFactory createLinearRelaxation: model];
+         //   OROutcome b = [lp solve];
+         //   printf("outcome: %d \n",b);
+         printf("Objective: %f \n",[lp objective]);
+         for(ORInt i = 0; i < nbColumns-1; i++)
+            printf("x[%d] = %10.5f in [%10.5f,%10.5f] \n",i,[lp value: x[i]],[lp lowerBound: x[i]],[lp upperBound: x[i]]);
+         
+         id<CPProgram> cp = [ORFactory createCPProgram: model withRelaxation: lp];
+         [cp solve:
+          ^() {
+             for(ORInt i = 0; i < nbColumns; i++) {
+                NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
+             }
+             for(ORInt i = 0; i < nbColumns; i++) {
+                //          NSLog(@"Variable x[%d]=[%d,%d]",i,[cp min: x[i]],[cp max: x[i]]);
+                while (![cp bound: x[i]]) {
+                   ORInt m = ([cp max: x[i]] + [cp min: x[i]]) / 2;
+                   //             NSLog(@"Mid value: %d for [%d,%d]",m,[cp min: x[i]],[cp max: x[i]]);
+                   [cp try:
+                    ^()  { [cp gthen: x[i] with: m]; /* NSLog(@"After gthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
+                        or:
+                    ^()  { [cp lthen: x[i] with: m+1]; /* NSLog(@"After lthen %d: [%d,%d]",i,[cp min: x[i]],[cp max: x[i]]); */}
+                    
+                    ];
+                }
+             }
+             //      for(ORInt i = 0; i < nbColumns; i++)
+             //         NSLog(@"Value of x[%d] = %d",i,[cp intValue: x[i]]);
           }
-       }
-//      for(ORInt i = 0; i < nbColumns; i++)
-//         NSLog(@"Value of x[%d] = %d",i,[cp intValue: x[i]]);
-    }
-    ];
-   ORLong endTime = [ORRuntimeMonitor cputime];
-   printf("Execution Time: %lld \n",endTime - startTime);
-   NSLog(@"we are done \n\n");
-   [cp release];
+          ];
+         ORLong endTime = [ORRuntimeMonitor cputime];
+         printf("Execution Time: %lld \n",endTime - startTime);
+         NSLog(@"we are done \n\n");
+         ORInt valueSol = [(id<ORObjectiveValueInt>)[[[cp solutionPool] best] objectiveValue] value];
+         struct ORResult r = REPORT(valueSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         [cp release];
+         return r;
+      }];
+   }
    return 0;
 }
 

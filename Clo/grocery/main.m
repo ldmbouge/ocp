@@ -43,7 +43,9 @@ int main(int argc, const char * argv[])
          [cp solveAll:^{
             splitUpFF(cp, x);
             @autoreleasepool {
-               NSLog(@"Sol: %@",x);
+               [x enumerateWith:^(id<ORIntVar> xi, int i) {
+                  NSLog(@"Sol: x[%d] = %d",i,[cp intValue:xi]);
+               }];
                nbSol++;
             }
          }];
