@@ -53,6 +53,7 @@ int main(int argc, const char * argv[])
 
          id<CPProgram> cp  = [args makeProgram:model];
          id<CPHeuristic> h = [args makeHeuristic:cp restricted:xy];
+         __block ORInt nbSol = 0;
          [cp solve:^{
             //NSLog(@"Concrete model;%@",[[cp engine] model]);
             [cp labelHeuristic:h];
@@ -60,10 +61,11 @@ int main(int argc, const char * argv[])
             id<ORIntArray> solX = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:x[i]];}];
             id<ORIntArray> solY = [ORFactory intArray:model range:[x range] with:^ORInt(ORInt i) { return [cp intValue:y[i]];}];
             NSLog(@"Sol: %@ -- %@",solX,solY);
+            nbSol++;
          }];         
          NSLog(@"Solver status: %@\n",cp);
          NSLog(@"Quitting");
-         struct ORResult r = REPORT(1, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
+         struct ORResult r = REPORT(nbSol, [[cp explorer] nbFailures],[[cp explorer] nbChoices], [[cp engine] nbPropagation]);
          [cp release];
          [ORFactory shutdown];
          return r;
