@@ -7,7 +7,13 @@
 //
 
 #import "ORInterval.h"
+#include <string.h>
 #include <float.h>
+#include <stdio.h>
+#include <math.h>
+#include <fenv.h>
+#include <limits>
+#include <assert.h>
 
 @interface ORILib : NSObject
 +(void)load;
@@ -33,8 +39,22 @@ ORInterval INF;
 ORInterval FLIP;
 ORInterval EPSILON;
 ORInterval ZERO;
+ORInterval OR_PI,OR_PI2,OR_PI4,OR_3PI2,OR_2PI,OR_5PI2,OR_7PI2,OR_9PI2;
+
 double pinf = 0;
 double ninf = 0;
+static double T_EPSL,T_EPSU;
+static double sc0,sc1,sc2,sc3,sc4,sc5;
+static double cc0,cc1,cc2,cc3,cc4,cc5,cc6;
+static double P1,P2,P3;
+
+#define PACKDBL(x,a,b,c,d) do { \
+   unsigned short* ptr = (unsigned short*)&x; \
+   ptr[0] = bigendian ? a : d; \
+   ptr[1] = bigendian ? b : c; \
+   ptr[2] = bigendian ? c : b; \
+   ptr[3] = bigendian ? d : a; \
+} while(0)
 
 void ORIInit()
 {
@@ -59,14 +79,346 @@ void ORIInit()
    unsigned char *mzPtr = (unsigned char*)&MZ;
    mzPtr[bigendian ? 0 : 7] = 0x80;
    mzPtr[bigendian ? 1 : 6] = 0x0;
+   // These are the constants for trigonometric functions
+   double N_PIL,N_PIU;
+   double N_PI2L,N_PI2U;
+   double N_PI4L,N_PI4U;
+   PACKDBL(T_EPSL,0x3fef,0xffff,0xffff,0xfffe);
+   PACKDBL(T_EPSU,0x3ff0,0x0000,0x0000,0x0001);
+   PACKDBL(N_PIL,0x4009,0x21fb,0x5444,0x2d17);
+   PACKDBL(N_PIU,0x4009,0x21fb,0x5444,0x2d19);
+   PACKDBL(N_PI2L,0x3ff9,0x21fb,0x5444,0x2d17);
+   PACKDBL(N_PI2U,0x3ff9,0x21fb,0x5444,0x2d19);
+   PACKDBL(N_PI4L,0x3fe9,0x21fb,0x5444,0x2d17);
+   PACKDBL(N_PI4U,0x3fe9,0x21fb,0x5444,0x2d19);
+   PACKDBL(sc5,0x3de5,0xd8fd,0x1fd1,0x9ccd);
+   PACKDBL(sc4,0xbe5a,0xe5e5,0xa929,0x1f5d);
+   PACKDBL(sc3,0x3ec7,0x1de3,0x567d,0x48a1);
+   PACKDBL(sc2,0xbf2a,0x01a0,0x19bf,0xdf03);
+   PACKDBL(sc1,0x3f81,0x1111,0x1110,0xf7d0);
+   PACKDBL(sc0,0xbfc5,0x5555,0x5555,0x5548);
+   PACKDBL(cc6,0x3da8,0xff83,0x1ad7,0xc64c);
+   PACKDBL(cc5,0xbe21,0xeea7,0xc1e5,0x1159);
+   PACKDBL(cc4,0x3e92,0x7e4f,0x8e06,0xd9a0);
+   PACKDBL(cc3,0xbefa,0x01a0,0x19dd,0xbcd9);
+   PACKDBL(cc2,0x3f56,0xc16c,0x16c1,0x5d47);
+   PACKDBL(cc1,0xbfa5,0x5555,0x5555,0x5551);
+   PACKDBL(cc0,0x3fe0,0x0000,0x0000,0x0000);
+   PACKDBL(P1,0x3fe9,0x21fb,0x4000,0x0000);
+   PACKDBL(P2,0x3e64,0x442d,0x0000,0x0000);
+   PACKDBL(P3,0x3ce8,0x4698,0x98cc,0x5170);
    // NOW DEFINE THE STATIC INTERVALS.
+   _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
    FLIP = _mm_set_pd(0.0, MZ);
    EPSILON = _mm_set1_pd(-DBL_MIN);
    ZERO    = _mm_set_pd(0.0,MZ);
    INF     = _mm_set_pd(ninf,ninf);
-   _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
+   OR_PI   = createORI2(N_PIL,N_PIU);
+   OR_PI2  = createORI2(N_PI2L,N_PI2U);
+   OR_PI4  = createORI2(N_PI4L,N_PI4U);
+   OR_3PI2 = ORIAdd(OR_PI,OR_PI2);
+   OR_2PI  = ORIAdd(OR_PI,OR_PI);
+   OR_5PI2 = ORIAdd(OR_2PI,OR_PI2);
+   OR_7PI2 = ORIAdd(OR_2PI,OR_3PI2);
+   OR_9PI2 = ORIAdd(OR_2PI,OR_5PI2);
+
+   printf("sc0 : %f\n",sc0);
+   printf("sc1 : %f\n",sc1);
+   printf("sc2 : %f\n",sc2);
+   printf("sc3 : %f\n",sc3);
+   printf("sc4 : %f\n",sc4);
+   printf("sc5 : %f\n",sc5);
+}
+// ===========================================================================================
+// TRIGO
+// ===========================================================================================
+
+typedef enum {OR_BEFPI2,OR_ATPI2,OR_BETPI2_3PI2,
+   OR_AT3PI2,OR_BET3PI2_5PI2,
+   OR_AT5PI2,OR_BET5PI2_7PI2,
+   OR_AT7PI2,OR_BET7PI2_9PI2,
+   OR_AT9PI2,
+   OR_NUTS
+   } ORSinePhase;
+
+static ORSinePhase detectSinePhase(double a)
+{
+   ORInterval i0 = createORI2(- ORILow(OR_PI2), ORILow(OR_PI2));
+   ORInterval i1 = OR_PI2;
+   ORInterval i2 = createORI2(ORIUp(OR_PI2),ORILow(OR_3PI2));
+   ORInterval i3 = OR_3PI2;
+   ORInterval i4 = createORI2(ORIUp(OR_3PI2),ORILow(OR_5PI2));
+   ORInterval i5 = OR_5PI2;
+   ORInterval i6 = createORI2(ORIUp(OR_5PI2),ORILow(OR_7PI2));
+   ORInterval i7 = OR_7PI2;
+   ORInterval i8 = createORI2(ORIUp(OR_7PI2),ORILow(OR_9PI2));
+   ORInterval i9 = OR_9PI2;
+   if (ORIContains(i0,a))
+      return OR_BEFPI2;
+   else if (ORIContains(i1,a))
+      return OR_ATPI2;
+   else if (ORIContains(i2,a))
+      return OR_BETPI2_3PI2;
+   else if (ORIContains(i3,a))
+      return OR_AT3PI2;
+   else if (ORIContains(i4,a))
+      return OR_BET3PI2_5PI2;
+   else if (ORIContains(i5,a))
+      return OR_AT5PI2;
+   else if (ORIContains(i6,a))
+      return OR_BET5PI2_7PI2;
+   else if (ORIContains(i7,a))
+      return OR_AT7PI2;
+   else if (ORIContains(i8,a))
+      return OR_BET7PI2_9PI2;
+   else if (ORIContains(i9,a))
+      return OR_AT9PI2;
+   else return OR_NUTS;
 }
 
+static ORInterval translate(ORInterval a,BOOL* expand)
+{
+   *expand = FALSE;
+   ORInterval ap = _mm_shuffle_pd(a,a,_MM_SHUFFLE2(1,1)); // (a.low,a.low)
+   ap = _mm_xor_pd(ap,FLIP);                              // (-a.low,a.low)
+   ORInterval aOver2pi = ORIMul(ap,ORInverse(OR_2PI));
+   if (ORIWidth(aOver2pi) >= 1.0) {
+      *expand = TRUE;
+      return aOver2pi;
+   } else {
+      ORInterval i = ORIFloor(aOver2pi);
+      i = _mm_xor_pd(_mm_shuffle_pd(i,i,_MM_SHUFFLE2(1,1)),FLIP);
+      ORInterval rv = ORISub(a,ORIMul(i,OR_2PI));
+      return rv;
+   }
+}
+
+#define SC(x) ( (((((sc5*x + sc4)*x + sc3)*x + sc2)*x + sc1)*x + sc0) )
+#define CC(x) (((((((cc6*x + cc5)*x + cc4)*x + cc3)*x + cc2)*x + cc1)*x + cc0)) 
+
+static double NsinApp(double x,double y)
+{
+   long  pos = 1;
+   double z = ldexp(y,-4);
+   z = floor(z);
+   z = y - ldexp(z,4);
+   long j = z;
+   if ( j & 1) {
+      j += 1;
+      y += 1.0;
+   }
+   j = j & 07;
+   if (j > 3) {
+      pos = 0;
+      j -= 4;
+   }
+   z = ((x - y * P1) - y * P2) - y * P3;
+   double zz = z * z;
+   if ( ( j == 2 ) || ( j == 1 ) )
+      y = 1.0 - zz * CC(zz);
+   else
+      y = z + z * (zz * SC(zz));
+   return pos ? y : -y; 
+}
+
+static double TappLow(double a)
+{
+   ORInterval p = _mm_mul_pd(createORI2(T_EPSL,T_EPSU),_mm_set1_pd(a));
+   if (a>0)
+      return ORILow(p);
+   else if (a < 0)
+      return ORIUp(p);
+   else {
+      //assert(FALSE);
+      return -1e-16;
+      ORInterval rv = ORISubPointwise(createORI1(a),createORI1(1e-16));
+      return ORILow(rv);
+   }
+}
+static double TappUp(double a)
+{
+   ORInterval p = _mm_mul_pd(createORI2(T_EPSL,T_EPSU),_mm_set1_pd(a));
+   if (a>0)   
+      return ORIUp(p);
+   else if (a<0)
+      return ORILow(p);
+   else {
+      //assert(FALSE);
+      return +1e-16;
+      ORInterval rv = ORIAdd(createORI1(a),createORI1(1e-16));
+      return ORIUp(rv);
+   }
+}
+static ORInterval NsinLow(double x)
+{
+   if (x==0)
+      return createORI1(0.0);
+   else {
+      int pos = x < 0 ? 0 : 1;
+      x = x < 0 ? -x : x;
+      ORInterval xi = createORI1(x);               // x is guaranteed positive
+      ORInterval den = _mm_xor_pd(OR_PI4,FLIP);    // den <- (pi+/4,pi-/4)
+      den = _mm_shuffle_pd(den,den,1);             // den <- (pi-/4,pi+/4)
+      ORInterval y = ORIFloor(_mm_xor_pd(_mm_div_pd(xi,den),FLIP)); // FL (-xi,xi)/(pi-/4,pi+/4)
+      while (ORIBoundsNEQ(y)) {
+         //xi = _mm_xor_pd(_mm_sub_pd(_mm_xor_pd(xi,FLIP),_mm_set1_pd(1e-16)),FLIP);
+         ORInterval fxi = _mm_xor_pd(xi,FLIP);
+         ORInterval eps = _mm_set1_pd(1e-16);
+         ORInterval sub = _mm_sub_pd(fxi,eps);
+         ORInterval fs  = _mm_xor_pd(sub,FLIP);
+         xi = fs;
+         y = ORIFloor(_mm_xor_pd(_mm_div_pd(xi,den),FLIP));
+      }
+      double u = NsinApp(ORILow(xi),ORILow(y));
+      u = pos ? u : -u;
+      return createORI2(TappLow(u),TappUp(u));
+   }
+}
+static ORInterval NsinUp(double x)
+{
+   if (x==0)
+      return createORI1(0.0);
+   else {
+      int pos = x < 0 ? 0 : 1;
+      x = x < 0 ? -x : x;
+      ORInterval xi = createORI1(x);
+      ORInterval den = _mm_xor_pd(OR_PI4,FLIP);    // den <- (pi+/4,pi-/4)
+      den = _mm_shuffle_pd(den,den,1);             // den <- (pi-/4,pi+/4)
+      ORInterval y = ORIFloor(_mm_xor_pd(_mm_div_pd(xi,den),FLIP)); // flip sign to go back positive
+      while (ORIBoundsNEQ(y)) {
+         xi = _mm_xor_pd(_mm_add_pd(xi,createORI1(1e-16)),FLIP);
+         xi = _mm_shuffle_pd(xi,xi,3);
+         xi = _mm_xor_pd(xi,FLIP);
+         y = ORIFloor(_mm_xor_pd(_mm_div_pd(xi,den),FLIP));
+      }
+      double u = NsinApp(ORILow(xi),ORILow(y));
+      u = pos ? u : -u;
+      return createORI2(TappLow(u),TappUp(u));      
+   }
+}
+static ORSinePhase sineLow(double a,ORInterval* out)
+{
+   ORSinePhase phase = detectSinePhase(a);
+   switch(phase) {
+      case OR_BEFPI2:case OR_BET3PI2_5PI2:case OR_BET7PI2_9PI2:
+      case OR_BETPI2_3PI2: case OR_BET5PI2_7PI2:
+         *out = NsinLow(a);
+         break;
+      case OR_ATPI2:case OR_AT5PI2:case OR_AT9PI2: {
+         ORInterval rv = NsinLow(a);
+         *out = ORIUnion(rv,createORI1(1.0));
+      }break;
+      case OR_AT3PI2:case OR_AT7PI2: {
+         ORInterval rv = NsinLow(a);
+         *out = ORIUnion(rv,createORI1(-1.0));
+      }break;
+      default: abort();
+   }
+   return phase;
+}
+static ORSinePhase sineUp(double a,ORInterval* out)
+{
+   ORSinePhase phase = detectSinePhase(a);
+   switch(phase) {
+      case OR_BEFPI2:case OR_BET3PI2_5PI2:case OR_BET7PI2_9PI2:
+      case OR_BETPI2_3PI2: case OR_BET5PI2_7PI2:
+         *out = NsinUp(a);
+         break;
+      case OR_ATPI2:case OR_AT5PI2:case OR_AT9PI2: {
+         ORInterval rv = NsinUp(a);
+         *out = ORIUnion(rv,createORI1(1.0));
+      }break;
+      case OR_AT3PI2:case OR_AT7PI2: {
+         ORInterval rv = NsinUp(a);
+         *out = ORIUnion(rv,createORI1(-1.0));
+      }break;
+      default: abort();      
+   }
+   return phase;
+}
+ORInterval ORISine(ORInterval a)
+{
+   ORIReady();
+   if (ORIWider(a,ORIUnion(OR_2PI,ZERO))) 
+      return createORI2(-1.0,1.0);    
+   BOOL expand = FALSE;
+   ORInterval ta = translate(a,&expand);
+   if (expand || ORIWider(ta,ORIUnion(OR_2PI,ZERO))) 
+      return createORI2(-1.0,1.0);
+   ORInterval lta,uta;
+   ORSinePhase p1 = sineLow(ORILow(ta),&lta);
+   ORSinePhase p2 = sineUp(ORIUp(ta),&uta);
+   if (p1 == p2 || p2 == p1 + 1) 
+      return ORIUnion(lta,uta);
+   assert(p2 > p1);
+   switch(p1) {
+      case OR_BEFPI2: {
+         if (p2 == 2 || p2 == 3) 
+            return ORIUnion(ORIUnion(lta,uta),createORI1(1.0));
+         else return createORI2(-1.0,1.0);
+      }break;
+      case OR_BET3PI2_5PI2: {
+         if (p2 == 6 || p2 == 7)
+            return ORIUnion(ORIUnion(lta,uta),createORI1(1.0));
+         else return createORI2(-1.0,1.0);
+      }break;
+      case OR_ATPI2: case OR_AT3PI2: case OR_AT5PI2: case OR_AT7PI2: {
+         return createORI2(-1.0,1.0);
+      }break;
+      case OR_BETPI2_3PI2: {
+         if (p2 == 4 || p2 == 5)
+            return ORIUnion(createORI1(-1.0),ORIUnion(lta,uta));
+         else return createORI2(-1.0,1.0);
+      }break;
+      case OR_BET5PI2_7PI2: {
+         assert(p2 == 8 || p2 == 9);
+         return ORIUnion(createORI1(-1.0),ORIUnion(lta,uta));
+      }break;
+      default: abort();
+   }
+}
+ORInterval ORICosine(ORInterval a)
+{
+   ORIReady();
+   if (ORIWider(a,ORIUnion(OR_2PI,ZERO))) 
+      return createORI2(-1.0,1.0);    
+   BOOL expand = FALSE;
+   ORInterval ta = translate(a,&expand);
+   if (expand || ORIWider(ta,ORIUnion(OR_2PI,ZERO))) 
+      return createORI2(-1.0,1.0);
+   a = ORIAdd(a,OR_PI2);
+   ORInterval lta,uta;
+   ORSinePhase p1 = sineLow(ORILow(ta),&lta);
+   ORSinePhase p2 = sineUp(ORIUp(ta),&uta);
+   if (p1 == p2 || p2 == p1 + 1) 
+      return ORIUnion(lta,uta);
+   assert(p2 > p1);
+   switch(p1) {
+      case OR_BEFPI2: {
+         if (p2 == 2 || p2 == 3) 
+            return ORIUnion(ORIUnion(lta,uta),createORI1(1.0));
+         else return createORI2(-1.0,1.0);
+      }break;
+      case OR_BET3PI2_5PI2: {
+         if (p2 == 6 || p2 == 7)
+            return ORIUnion(ORIUnion(lta,uta),createORI1(1.0));
+         else return createORI2(-1.0,1.0);
+      }break;
+      case OR_ATPI2: case OR_AT3PI2: case OR_AT5PI2: case OR_AT7PI2: {
+         return createORI2(-1.0,1.0);
+      }break;
+      case OR_BETPI2_3PI2: {
+         if (p2 == 4 || p2 == 5)
+            return ORIUnion(createORI1(-1.0),ORIUnion(lta,uta));
+         else return createORI2(-1.0,1.0);
+      }break;
+      case OR_BET5PI2_7PI2: {
+         assert(p2 == 8 || p2 == 9);
+         return ORIUnion(createORI1(-1.0),ORIUnion(lta,uta));
+      }break;
+      default: abort();
+   }
+}
 // ===========================================================================================
 // Printing ORIntervals faithfully.
 // ===========================================================================================
@@ -526,7 +878,6 @@ doexp:
 
 
 static void reorder(unsigned short* p)
-
 {
    unsigned short x;
    x = p[0];
@@ -538,14 +889,12 @@ static void reorder(unsigned short* p)
 }
 
 static void mtherr(const char* name,int t)
-
 {
    NSLog(@"Function: [%s] reported error: %d",name,t);
    exit(t);
 }
 
 SECFloat::SECFloat(void)
-
 {
    clear();
 }
