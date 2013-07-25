@@ -312,4 +312,5 @@ static inline ORInterval ORICotan(ORInterval a)
 {
    return ORInverse(ORITan(a));
 }
+ORInterval ORIExp(ORInterval a);
 
