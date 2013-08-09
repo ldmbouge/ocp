@@ -1,10 +1,14 @@
-//
-//  ORInterval.m
-//  Clo
-//
-//  Created by Laurent Michel on 7/5/13.
-//
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
 
 #import "ORInterval.h"
 #include <string.h>
@@ -51,6 +55,11 @@ static double sc0,sc1,sc2,sc3,sc4,sc5;
 static double cc0,cc1,cc2,cc3,cc4,cc5,cc6;
 static double P1,P2,P3;
 
+static double LOG_p0,LOG_p1,LOG_p2,LOG_p3,LOG_p4,LOG_p5,LOG_p6;
+static double LOG_q0,LOG_q1,LOG_q2,LOG_q3,LOG_q4,LOG_q5,LOG_q6;
+static double LOG_r0,LOG_r1,LOG_r2;
+static double LOG_s0,LOG_s1,LOG_s2;
+
 #define   EXP_p2  1.26183092834458542160e-4
 #define   EXP_p1  3.029968876584301292e-2
 #define   EXP_p0  1.0
@@ -58,6 +67,8 @@ static double P1,P2,P3;
 #define   EXP_q2  2.52453653553222894311e-3
 #define   EXP_q1  2.27266044198352679519e-1
 #define   EXP_q0  2.00000000000000000005
+#define   SQRTH 0.70710678118654752440
+
 
 static double ErangeLow, ErangeUp;
 static double N_MAXEXP_V;  /* largest exp result */
@@ -378,6 +389,9 @@ ORInterval ORICosine(ORInterval a)
    }
 }
 
+// ===========================================================================================
+// Transcendental Exponential
+// ===========================================================================================
 
 static inline double N_ExpApp(double x)
 {
@@ -485,6 +499,160 @@ ORInterval ORIExp(ORInterval a)
 }
 
 // ===========================================================================================
+// Transcendental Logarithm
+// ===========================================================================================
+
+#define LOG_P(x) ( ((((((LOG_p6*x+LOG_p5)*x+LOG_p4)*x+LOG_p3)*x+LOG_p2)*x+LOG_p1)*x+LOG_p0) )
+#define LOG_Q(x) ( ((((((LOG_q6*x+LOG_q5)*x+LOG_q4)*x+LOG_q3)*x+LOG_q2)*x+LOG_q1)*x+LOG_q0) )
+#define LOG_R(x) ( ((((  LOG_r2)*x+LOG_r1)*x)+LOG_r0) )
+#define LOG_S(x) ( ((((x+LOG_s2)*x+LOG_s1)*x)+LOG_s0) )
+
+// faster version of standard frexp (extract exponent and mantissa)
+static inline double ffrexp(double value, int* exponent) 
+{ 
+    long& ivalue = (long&) value; 
+    *exponent = (int) ((ivalue & 0x7FF0000000000000L)>> 52) - 1022; 
+    ivalue &= 0x800FFFFFFFFFFFFFL; 
+    ivalue |= 0x3FE0000000000000L; 
+    return value; 
+}
+
+static double NlogApp(double x, int &e)
+{
+   double y, z;
+   if ( (e>2) || (e<-2) ) {
+      if ( x < SQRTH ) {
+         e -= 1;
+         z = x - 0.5;
+         y = 0.5 * z + 0.5;
+      } else {
+         z = x - 0.5;
+         z -= 0.5;
+         y = 0.5 * x + 0.5;
+      }
+      x = z / y;
+      z = x*x;
+      z = x + x * (z * LOG_R(z)/LOG_S(z));
+   } else {
+      if ( x < SQRTH ) {
+         e -= 1;
+         x = fldexp(x,1) - 1.0;
+      } else {
+         x = x - 1.0;
+      }
+      z = x*x;
+      y = x * ( z * LOG_P(x)/LOG_Q(x));
+      y = y - fldexp(z,-1);
+      z = x + y;
+   }
+   return z;
+}
+
+// [ldm] Oddly, the vector code below is not any faster. 
+// static double NlogApp(double x, int &e)
+// {
+//    double y, z;
+//    //_MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
+//    if ( (e>2) || (e<-2) ) {
+//       if ( x < SQRTH ) {
+//          e -= 1;
+//          z = x - 0.5;
+//          y = 0.5 * z + 0.5;
+//       } else {
+//          z = x - 0.5;
+//          z -= 0.5;
+//          y = 0.5 * x + 0.5;
+//       }
+//       x = z / y;
+//       z = x*x;
+//       ORInterval zi = _mm_set1_pd(z);
+//       ORInterval s0 = _mm_set_pd(0.0,z);
+//       ORInterval s1 = _mm_add_pd(s0,_mm_set_pd(LOG_r2,LOG_s2));
+//       ORInterval s2 = _mm_mul_pd(s1,zi);
+//       ORInterval s3 = _mm_add_pd(s2,_mm_set_pd(LOG_r1,LOG_s1));
+//       ORInterval s4 = _mm_mul_pd(s3,zi);
+//       ORInterval s5 = _mm_add_pd(s4,_mm_set_pd(LOG_r0,LOG_s0));
+//       double b[2];
+//       _mm_store_pd(b,s5);
+//       z = x + x * (z * b[1]/b[0]);
+//    } else {
+//       if ( x < SQRTH ) {
+//          e -= 1;
+//          x = fldexp(x,1) - 1.0;
+//       } else {
+//          x = x - 1.0;
+//       }
+//       z = x*x;
+//       ORInterval xi = _mm_set1_pd(x);
+//       ORInterval s0 = _mm_mul_pd(xi,_mm_set_pd(LOG_p6,LOG_q6));
+//       ORInterval s1 = _mm_add_pd(s0,_mm_set_pd(LOG_p5,LOG_q5));
+//       ORInterval s2 = _mm_mul_pd(s1,xi);
+//       ORInterval s3 = _mm_add_pd(s2,_mm_set_pd(LOG_p4,LOG_q4));
+//       ORInterval s4 = _mm_mul_pd(s3,xi);
+//       ORInterval s5 = _mm_add_pd(s4,_mm_set_pd(LOG_p3,LOG_q3));
+//       ORInterval s6 = _mm_mul_pd(s5,xi);
+//       ORInterval s7 = _mm_add_pd(s6,_mm_set_pd(LOG_p2,LOG_q2));
+//       ORInterval s8 = _mm_mul_pd(s7,xi);
+//       ORInterval s9 = _mm_add_pd(s8,_mm_set_pd(LOG_p1,LOG_q1));
+//       ORInterval s10= _mm_mul_pd(s9,xi);
+//       ORInterval s11= _mm_add_pd(s10,_mm_set_pd(LOG_p0,LOG_q0));
+//       double b[2];
+//       _mm_store_pd(b,s11);
+//       y = x * (z * b[1]/b[0]);
+//       y = y - fldexp(z,-1);
+//       z = x + y;
+//    }
+//    //_MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
+//    return z;
+// }
+
+ORInterval ORILogn(ORInterval a)
+{
+   ORIReady();
+   if (ORINegative(a))
+      return INF;
+   else {
+      double lm,rm;
+      int le,re;
+      lm = ffrexp(ORILow(a),&le);
+      rm = ffrexp(ORIUp(a),&re);
+
+      double la = NlogApp(lm,le);
+      double ra = NlogApp(rm,re);
+
+      ORInterval pl = _mm_mul_pd(createORI2(T_EPSL,T_EPSU),_mm_set1_pd(la));
+      if (la < 0)
+         pl = ORISwap(pl);
+      else if (la==0)
+         pl = createORI2(-1e-16,1e-16);
+
+      ORInterval pr = _mm_mul_pd(createORI2(T_EPSL,T_EPSU),_mm_set1_pd(ra));
+      if (ra < 0)
+         pr = ORISwap(pr);
+      else if (ra == 0)
+         pr = createORI2(-1e-16,1e-16);
+      ORInterval delta = _mm_shuffle_pd(pr,pl,_MM_SHUFFLE2(1,0));
+      ORInterval low = pl,up = pr;
+      if (le) {
+         ORInterval se  = _mm_mul_pd(createORI1((double)le),_mm_set1_pd(2.121944400546905827679e-4));
+         se = _mm_xor_pd(se,FLIP);                      // remove sign bit. 
+         se = _mm_shuffle_pd(se,se,_MM_SHUFFLE2(0,1));  // swap up/low
+         low = _mm_sub_pd(delta,se);         // low <- delta.low - se.up  (se.up now in se.low)
+         ORInterval se2 = _mm_mul_pd(createORI1((double)le),_mm_set1_pd(0.693359375));
+         low = _mm_add_pd(low,se2);
+      }
+      if (re) {
+         ORInterval se  = _mm_mul_pd(createORI1((double)re),_mm_set1_pd(2.121944400546905827679e-4));
+         up = ORISub(delta,se);
+         ORInterval se2 = _mm_mul_pd(createORI1((double)le),_mm_set1_pd(0.693359375));
+         up = _mm_add_pd(up,se2);         
+      }
+      ORInterval res = _mm_shuffle_pd(up,low,_MM_SHUFFLE2(1,0));
+      return res;
+   }
+}
+
+// ===========================================================================================
 
 void ORIInit()
 {
@@ -557,6 +725,28 @@ void ORIInit()
    PACKDBL(N_EC2U,0x3f2b,0xd010,0x5c61,0x1b12);
    PACKDBL(N_MAXLOG,0x4086,0x2e42,0xfefa,0x39ee);
    PACKDBL(ErangeUp,0x3fd6,0x2e42,0xfefa,0x39f0);
+
+   PACKDBL(LOG_p6,0x3f08,0x09a7,0x6a5f,0x974f);
+   PACKDBL(LOG_p5,0x3fdf,0xe7ee,0xd979,0x5a1a);
+   PACKDBL(LOG_p4,0x401a,0x40a2,0xc66c,0x74c9);
+   PACKDBL(LOG_p3,0x403d,0xc9a9,0x7e3d,0x411d);
+   PACKDBL(LOG_p2,0x404e,0x4e6d,0x64eb,0xdcdc);
+   PACKDBL(LOG_p1,0x404c,0x5e12,0x2519,0xd312);
+   PACKDBL(LOG_p0,0x4033,0xe3a5,0x89b1,0x3130);
+   PACKDBL(LOG_q5,0x402e,0x1016,0x0dfb,0xd0a2);
+   PACKDBL(LOG_q4,0x4054,0xaf6d,0x47ae,0x79c7);
+   PACKDBL(LOG_q3,0x406b,0x9542,0xa44b,0x455a);
+   PACKDBL(LOG_q2,0x4073,0x3411,0x2983,0x10d7);
+   PACKDBL(LOG_q1,0x406a,0xde94,0x2a8d,0x3423);
+   PACKDBL(LOG_q0,0x404d,0xd578,0x4e89,0xc9c8);
+   LOG_q6 = 1.0;
+   PACKDBL(LOG_r2,0xbfe9,0x443d,0xdc6c,0x0e84);
+   PACKDBL(LOG_r1,0x4030,0x62fc,0x7302,0x7b6b);
+   PACKDBL(LOG_r0,0xc050,0x0906,0x1122,0x2a20);
+   PACKDBL(LOG_s2,0xc041,0xd60d,0x43ec,0x6d0a);
+   PACKDBL(LOG_s1,0x4073,0x8180,0x112a,0xe40e);
+   PACKDBL(LOG_s0,0xc088,0x0d89,0x19b3,0x3f3b);
+
    ErangeLow = - ErangeUp;
 
    // NOW DEFINE THE STATIC INTERVALS.
