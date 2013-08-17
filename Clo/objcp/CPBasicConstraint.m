@@ -2703,8 +2703,8 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
       for(NSUInteger i = 0; i < nb; i++) {
          CPIntVarI* x = (CPIntVarI*) _cv[i];
          // NSLog(@"x: %@",x);
-         [x whenChangeMinPropagate: self];
-         [x whenChangeMaxPropagate: self];
+         [x whenChangeBoundsPropagate: self];
+        // [x whenChangeMaxPropagate: self];
       }
    }
    [self propagate];
