@@ -12,7 +12,7 @@
 #import <Foundation/Foundation.h>
 #import <ORModeling/ORModelTransformation.h>
 
-@interface ORMIPFlatten : ORNOopVisit<ORModelTransformation,ORVisitor>
+@interface ORMIPFlatten : ORNOopVisit<ORModelTransformation>
 -(id) initORMIPFlatten: (id<ORAddToModel>) target;
 -(void) apply:(id<ORModel>) m;
 -(id<ORAddToModel>) target;

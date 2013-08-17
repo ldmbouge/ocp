@@ -25,14 +25,14 @@ typedef enum {
 
 @protocol ORExpr;
 @protocol ORIntRange;
-@protocol ORVisitor;
 @protocol ORASolver;
 @protocol ORIntSet;
+@class ORVisitor;
 
 @protocol ORObject <NSObject>
 -(ORInt) getId;
 -(void)setId:(ORUInt)name;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end;
 
 @protocol ORTau <NSObject,NSCopying>
@@ -78,7 +78,7 @@ typedef enum {
 
 
 @interface NSObject (Concretization)
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end;
 
 @protocol ORInteger <ORObject,ORExpr>

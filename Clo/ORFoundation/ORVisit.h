@@ -9,15 +9,13 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORFoundation/ORData.h>
 #import <ORFoundation/ORVar.h>
 
 @protocol ORTrailableInt;
 @protocol ORFloatVar;
 
-@protocol ORVisitor <NSObject>
-@optional
+@interface ORVisitor : NSObject<NSObject>
 -(void) visitRandomStream:(id) v;
 -(void) visitZeroOneStream:(id) v;
 -(void) visitUniformDistribution:(id) v;
@@ -151,9 +149,6 @@
 -(void) visitBitRotateL:(id<ORBitRotateL>)c;
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
-@end
-
-@interface ORVisitor : NSObject<ORVisitor>
 @end
 
 @interface ORNOopVisit : ORVisitor

@@ -55,7 +55,7 @@
 +(id<CPProgram>)concretizeCP:(id<ORModel>)m
 {
    id<CPProgram> mp = [CPSolverFactory solver];
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: mp];
+   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: mp];
    [m visit: concretizer];
    [concretizer release];
    [mp setSource:m];
@@ -69,7 +69,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [m mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [m constraints])
@@ -92,7 +92,7 @@
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
 
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
    for(id<ORObject> c in [fm mutables])
       [c visit: concretizer];
    for(id<ORObject> c in [fm constraints])
@@ -223,7 +223,7 @@
    [lpprogram setGamma: gamma];
    [lpprogram setModelMappings: flatModel.modelMappings];
  
-   id<ORVisitor> concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
+   ORVisitor* concretizer = [[ORLPConcretizer alloc] initORLPConcretizer: lpprogram];
 
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
@@ -252,7 +252,7 @@
    [lpprogram setGamma: gamma];
    [lpprogram setModelMappings: flatModel.modelMappings];
    
-   id<ORVisitor> concretizer = [[ORLPRelaxationConcretizer alloc] initORLPRelaxationConcretizer: lpprogram];
+   ORVisitor* concretizer = [[ORLPRelaxationConcretizer alloc] initORLPRelaxationConcretizer: lpprogram];
    
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
@@ -281,7 +281,7 @@
    [mipprogram setModelMappings: flatModel.modelMappings];
   
    
-   id<ORVisitor> concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
+   ORVisitor* concretizer = [[ORMIPConcretizer alloc] initORMIPConcretizer: mipprogram];
   
    for(id<ORObject> c in [flatModel mutables])
       [c visit: concretizer];
@@ -312,7 +312,7 @@
    for(ORInt i = 0; i < nbEntries; i++)
       gamma[i] = NULL;
    [cpprogram setGamma: gamma];
-   id<ORVisitor> concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
+   ORVisitor* concretizer = [[ORCPConcretizer alloc] initORCPConcretizer: cpprogram];
 
    for(id<ORObject> c in [lfm mutables])
       [c visit: concretizer];

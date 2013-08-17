@@ -61,7 +61,7 @@
 
 -(void) encodeWithCoder:(NSCoder*) aCoder;
 -(id) initWithCoder:(NSCoder*) aDecoder;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 -(ORRelationType) type;
 -(ORVType) vtype;
 -(NSSet*)allVars;
@@ -91,7 +91,7 @@
 -(NSString *)description;
 -(ORExprI*) operand;
 -(ORBool) isConstant;
--(void) visit:(id<ORVisitor>)v;
+-(void) visit:(ORVisitor*)v;
 @end
 
 @interface ORExprSquareI : ORExprI<ORExpr,NSCoding> {
@@ -104,7 +104,7 @@
 -(NSString*) description;
 -(ORExprI*)operand;
 -(ORBool)isConstant;
--(void)visit:(id<ORVisitor>)v;
+-(void)visit:(ORVisitor*)v;
 @end
 
 @interface ORExprCstSubI : ORExprI<ORExpr,NSCoding> {
@@ -119,7 +119,7 @@
 -(ORExprI*) index;
 -(id<ORIntArray>)array;
 -(ORBool) isConstant;
--(void) visit:(id<ORVisitor>) v;
+-(void) visit:(ORVisitor*) v;
 @end
 
 @interface ORExprMatrixVarSubI : ORExprI<ORExpr,NSCoding> {
@@ -136,7 +136,7 @@
 -(ORExprI*) index1;
 -(id<ORIntVarMatrix>)matrix;
 -(ORBool) isConstant;
--(void) visit:(id<ORVisitor>) v;
+-(void) visit:(ORVisitor*) v;
 @end
 
 @interface ORExprCstFloatSubI : ORExprI<ORExpr,NSCoding> {
@@ -151,7 +151,7 @@
 -(ORExprI*) index;
 -(id<ORFloatArray>)array;
 -(ORBool) isConstant;
--(void) visit:(id<ORVisitor>) v;
+-(void) visit:(ORVisitor*) v;
 @end
 
 
@@ -160,7 +160,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit:(id<ORVisitor>)v;
+-(void) visit:(ORVisitor*)v;
 @end
 
 @interface ORExprMulI : ORExprBinaryI<ORExpr,NSCoding> 
@@ -168,7 +168,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprDivI : ORExprBinaryI<ORExpr,NSCoding>
@@ -176,7 +176,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprModI: ORExprBinaryI<ORExpr,NSCoding>
@@ -184,7 +184,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprMinI: ORExprBinaryI<ORExpr,NSCoding>
@@ -192,7 +192,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprMaxI: ORExprBinaryI<ORExpr,NSCoding>
@@ -200,7 +200,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprMinusI : ORExprBinaryI<ORExpr,NSCoding> 
@@ -208,7 +208,7 @@
 -(ORInt) min;
 -(ORInt) max;
 -(NSString *)description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprEqualI : ORExprBinaryI<ORRelation,NSCoding> 
@@ -217,7 +217,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORRelationType)type;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprNotEqualI : ORExprBinaryI<ORRelation,NSCoding>
@@ -226,7 +226,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORRelationType)type;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprLEqualI : ORExprBinaryI<ORRelation,NSCoding>
@@ -235,7 +235,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORRelationType)type;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprSumI : ORExprI<ORExpr,NSCoding> {
@@ -251,7 +251,7 @@
 -(ORExprI*) expr;
 -(ORBool) isConstant;
 -(NSString *) description;
--(void) visit:(id<ORVisitor>)v;
+-(void) visit:(ORVisitor*)v;
 @end
 
 @interface ORExprAggMinI : ORExprI<ORExpr,NSCoding> {
@@ -266,7 +266,7 @@
 -(ORExprI*) expr;
 -(ORBool) isConstant;
 -(NSString *) description;
--(void) visit:(id<ORVisitor>)v;
+-(void) visit:(ORVisitor*)v;
 @end
 
 @interface ORExprAggMaxI : ORExprI<ORExpr,NSCoding> {
@@ -281,7 +281,7 @@
 -(ORExprI*) expr;
 -(ORBool) isConstant;
 -(NSString *) description;
--(void) visit:(id<ORVisitor>)v;
+-(void) visit:(ORVisitor*)v;
 @end
 
 @interface ORExprProdI : ORExprI<ORExpr,NSCoding> {
@@ -296,7 +296,7 @@
 -(ORExprI*) expr;
 -(ORBool) isConstant;
 -(NSString *) description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprAggOrI : ORExprI<ORRelation,NSCoding> {
@@ -311,7 +311,7 @@
 -(ORExprI*) expr;
 -(ORBool) isConstant;
 -(NSString *) description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprAggAndI : ORExprI<ORRelation,NSCoding> {
@@ -326,7 +326,7 @@
 -(ORExprI*) expr;
 -(ORBool) isConstant;
 -(NSString *) description;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORDisjunctI : ORExprBinaryI<ORRelation,NSCoding>
@@ -335,7 +335,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORRelationType)type;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORConjunctI : ORExprBinaryI<ORRelation,NSCoding>
@@ -344,7 +344,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORRelationType)type;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORImplyI : ORExprBinaryI<ORRelation,NSCoding>
@@ -353,7 +353,7 @@
 -(ORInt) max;
 -(NSString *)description;
 -(ORRelationType)type;
--(void) visit: (id<ORVisitor>)v;
+-(void) visit: (ORVisitor*)v;
 @end
 
 @interface ORExprNegateI : ORExprI<ORRelation,NSCoding> {
@@ -364,7 +364,7 @@
 -(ORInt)max;
 -(ORExprI*) operand;
 -(NSString*)description;
--(void)visit:(id<ORVisitor>)v;
+-(void)visit:(ORVisitor*)v;
 @end
 
 
@@ -380,7 +380,7 @@
 -(ORExprI*) index;
 -(id<ORIntVarArray>)array;
 -(ORBool) isConstant;
--(void) visit:(id<ORVisitor>) v;
+-(void) visit:(ORVisitor*) v;
 @end
 
 

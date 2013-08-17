@@ -70,7 +70,7 @@
    return _group;
 }
 
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitConstraint:self];
 }

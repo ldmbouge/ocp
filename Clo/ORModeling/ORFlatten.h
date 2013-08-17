@@ -14,7 +14,7 @@
 
 
 
-@interface ORFlatten : ORNOopVisit<ORModelTransformation,ORVisitor> {
+@interface ORFlatten : ORNOopVisit<ORModelTransformation> {
    id<ORAddToModel>   _into;
    id               _result;
 }
@@ -25,6 +25,6 @@
 +(id<ORConstraint>) flattenExpression:(id<ORExpr>)e into:(id<ORAddToModel>)m annotation:(ORAnnotation)note;
 @end
 
-@interface ORReplace : ORNOopVisit<ORModelTransformation,ORVisitor>
+@interface ORReplace : ORNOopVisit<ORModelTransformation>
 +(id<ORExpr>)subst:(id<ORExpr>)e with:(id(^)(id))f;
 @end

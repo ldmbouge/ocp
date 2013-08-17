@@ -89,7 +89,7 @@
 {
    return [ORInternalFactory AVLTreeKeyIntEnumerator: _avl];
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit: (ORVisitor*) v
 {
    [v visitIntSet:self];
 }
@@ -208,7 +208,7 @@
    for(ORInt i = _low; i <= _up; i++)
       block(i);
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIntRange:self];
 }
@@ -283,7 +283,7 @@
    [rv appendFormat:@"[%lf,%lf]",_low,_up];
    return rv;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitFloatRange:self];
 }

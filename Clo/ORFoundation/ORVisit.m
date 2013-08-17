@@ -190,6 +190,10 @@
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "Equalc: visit method not defined"]; 
 }
+-(void) visitFloatEqualc: (id<ORFloatEqualc>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatEqualc: visit method not defined"];    
+}
 -(void) visitNEqualc: (id<ORNEqualc>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "NEqualc: visit method not defined"]; 
@@ -273,6 +277,10 @@
 -(void) visitElementVar: (id<ORElementVar>)c
 {
    @throw [[ORExecutionError alloc] initORExecutionError: "ElementVar: visit method not defined"]; 
+}
+-(void) visitElementMatrixVar:(id<ORElementMatrixVar>)c
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ElementMatrixVar: visit method not defined"];   
 }
 -(void) visitFloatElementCst: (id<ORFloatElementCst>) cstr
 {
@@ -360,151 +368,155 @@
 }
 -(void) visitBitOr:(id<ORBitOr>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitOr: visit method not defined"]; 
 }
 -(void) visitBitAnd:(id<ORBitAnd>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitAnd: visit method not defined"]; 
 }
 -(void) visitBitNot:(id<ORBitNot>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitNot: visit method not defined"]; 
 }
 -(void) visitBitXor:(id<ORBitXor>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitXor: visit method not defined"]; 
 }
 -(void) visitBitShiftL:(id<ORBitShiftL>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitShiftL: visit method not defined"]; 
 }
 -(void) visitBitRotateL:(id<ORBitRotateL>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitRotateL: visit method not defined"]; 
 }
 -(void) visitBitSum:(id<ORBitSum>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitSum: visit method not defined"]; 
 }
 -(void) visitBitIf:(id<ORBitIf>)c
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "BitIf: visit method not defined"]; 
 }
 -(void) visitIntegerI: (id<ORInteger>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "IntegerI: visit method not defined"]; 
 }
 -(void) visitMutableIntegerI: (id<ORMutableInteger>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "MutableIntegerI: visit method not defined"]; 
 }
 -(void) visitMutableFloatI: (id<ORMutableFloat>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "MutableFloatI: visit method not defined"]; 
 }
 -(void) visitFloatI: (id<ORFloatNumber>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "FloatI: visit method not defined"]; 
 }
 -(void) visitExprPlusI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprPlusI: visit method not defined"]; 
 }
 -(void) visitExprMinusI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinusI: visit method not defined"]; 
 }
 -(void) visitExprMulI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMulI: visit method not defined"]; 
 }
 -(void) visitExprDivI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprDivI: visit method not defined"]; 
 }
 -(void) visitExprEqualI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprEqualI: visit method not defined"]; 
 }
 -(void) visitExprNEqualI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprNEqualI: visit method not defined"]; 
 }
 -(void) visitExprLEqualI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprLEqualI: visit method not defined"]; 
 }
 -(void) visitExprSumI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprSumI: visit method not defined"]; 
 }
 -(void) visitExprProdI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprProdI: visit method not defined"]; 
 }
 -(void) visitExprAbsI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAbsI: visit method not defined"]; 
 }
 -(void) visitExprSquareI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprSquareI: visit method not defined"]; 
 }
 -(void) visitExprModI:(id<ORExpr>)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprModI: visit method not defined"]; 
 }
 -(void) visitExprMinI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMinI: visit method not defined"]; 
 }
 -(void) visitExprMaxI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMaxI: visit method not defined"]; 
 }
 -(void) visitExprNegateI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprNegateI: visit method not defined"]; 
 }
 -(void) visitExprCstSubI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstSubI: visit method not defined"]; 
 }
 -(void) visitExprCstFloatSubI:(id<ORExpr>)e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprCstFloatSubI: visit method not defined"]; 
 }
 -(void) visitExprDisjunctI:(id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprDisjunctI: visit method not defined"]; 
 }
 -(void) visitExprConjunctI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprConjunctI: visit method not defined"]; 
 }
 -(void) visitExprImplyI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprImplyI: visit method not defined"]; 
 }
 -(void) visitExprAggOrI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggOrI: visit method not defined"]; 
 }
 -(void) visitExprAggAndI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggAndI: visit method not defined"]; 
 }
 -(void) visitExprAggMinI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMinI: visit method not defined"]; 
 }
 -(void) visitExprAggMaxI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprAggMaxI: visit method not defined"]; 
 }
 -(void) visitExprVarSubI: (id<ORExpr>) e
 {
-   @throw [[ORExecutionError alloc] initORExecutionError: ": visit method not defined"]; 
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprVarSubI: visit method not defined"]; 
+}
+-(void) visitExprMatrixVarSubI:(id<ORExpr>)e
+{
+   @throw [[ORExecutionError alloc] initORExecutionError: "ExprMatrixVarSubI: visit method not defined"];    
 }
 @end
 
