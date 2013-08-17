@@ -186,7 +186,7 @@
 }
 @end
 
-@interface ORCPTakeSnapshot  : ORNOopVisit<ORVisitor>
+@interface ORCPTakeSnapshot  : ORNOopVisit<NSObject>
 -(ORCPTakeSnapshot*) initORCPTakeSnapshot: (id<CPCommonProgram>) solver;
 -(void) dealloc;
 @end
@@ -1289,7 +1289,7 @@
 @implementation ORRTModel
 {
    CPSolver* _solver;
-   id<ORVisitor> _concretizer;
+   ORVisitor* _concretizer;
 }
 -(ORRTModel*)init:(CPSolver*)solver
 {

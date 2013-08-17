@@ -485,7 +485,7 @@
       doCons(c);
    doObjective(_objective);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    for(id<ORObject> c in _mStore)
       [c visit: visitor];

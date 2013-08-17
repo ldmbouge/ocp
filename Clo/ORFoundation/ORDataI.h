@@ -105,7 +105,7 @@
 -(void) encodeWithCoder: (NSCoder*) aCoder;
 -(id) initWithCoder: (NSCoder*) aDecoder;
 -(void) print;
--(void) visit:(id<ORVisitor>)visitor;
+-(void) visit:(ORVisitor*)visitor;
 @end
 
 @interface ORAutomatonI : ORObject<ORAutomaton,NSCoding> {

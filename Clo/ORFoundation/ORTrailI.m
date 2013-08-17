@@ -619,7 +619,7 @@ void freeTRIntArray(TRIntArray a)
    [buf appendFormat:@"TR<int>(%d)",_trint._val];
    return buf;
 }
--(void)visit:(id<ORVisitor>)visitor
+-(void)visit:(ORVisitor*)visitor
 {
    [visitor visitTrailableInt:self];
 }

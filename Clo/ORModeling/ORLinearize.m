@@ -10,7 +10,7 @@
 #import <ORFoundation/ORSetI.h>
 #import "ORModelI.h"
 
-@interface ORLinearizeConstraint : NSObject<ORVisitor>
+@interface ORLinearizeConstraint : ORVisitor<NSObject>
 -(id)init:(id<ORAddToModel>)m;
 
 -(id<ORIntVarArray>) binarizationForVar: (id<ORIntVar>)var;
@@ -18,7 +18,7 @@
 -(id<ORExpr>) linearizeExpr: (id<ORExpr>)expr;
 @end
 
-@interface ORLinearizeObjective : NSObject<ORVisitor>
+@interface ORLinearizeObjective : ORVisitor<NSObject>
 -(id)init:(id<ORAddToModel>)m;
 
 @end

@@ -35,7 +35,7 @@
    @throw [[ORExecutionError alloc] initORExecutionError: "impl is totally obsolete"];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    NSLog(@"%@",self);
    @throw [[ORExecutionError alloc] initORExecutionError: "visit: No implementation in this object"];
@@ -115,7 +115,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitIntegerI: self];
 }
@@ -216,7 +216,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORInt) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitMutableIntegerI: self];
 }
@@ -319,7 +319,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitFloatI: self];
 }
@@ -396,7 +396,7 @@
    [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:&_value];
    return self;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitMutableFloatI: self];
 }
@@ -458,7 +458,7 @@ static ORInt _deterministic;
 {
    return nrand48(_seed);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitRandomStream:self];
 }
@@ -483,7 +483,7 @@ static ORInt _deterministic;
 {
    return erand48(_seed);
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitZeroOneStream:self];
 }
@@ -517,7 +517,7 @@ static ORInt _deterministic;
 {
    _name = name;
 }
--(void) visit: (id<ORVisitor>) visitor
+-(void) visit: (ORVisitor*) visitor
 {
    [visitor visitUniformDistribution:self];
 }
@@ -742,7 +742,7 @@ static ORInt _deterministic;
       for(ORInt i = 0; i < _nb; i++)
          printf("_nextSupport[%d,%d]=%d\n",j,i,_nextSupport[j][i]);
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitTable:self];
 }

@@ -14,12 +14,12 @@
 #import <CPUKernel/CPConstraintI.h>
 #import "ORFloatLinear.h"
 
-@interface ORFloatLinearizer : NSObject<ORVisitor>
+@interface ORFloatLinearizer : ORVisitor<NSObject>
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model annotation: (ORAnnotation) n;
 -(id) init: (id<ORFloatLinear>) t model: (id<ORAddToModel>) model equalTo:(id<ORFloatVar>)x annotation: (ORAnnotation) n;
 @end
 
-@interface ORFloatSubst   : NSObject<ORVisitor> {
+@interface ORFloatSubst   : ORVisitor<NSObject> {
    id<ORFloatVar>      _rv;
    id<ORAddToModel> _model;
    ORAnnotation         _c;

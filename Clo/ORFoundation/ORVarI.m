@@ -117,7 +117,7 @@
 {
    return self;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitIntVar: self];
 }
@@ -174,7 +174,7 @@
 {
    return _x;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitAffineVar: self];
 }
@@ -212,7 +212,7 @@
 {
    return _x;
 }
--(void) visit: (id<ORVisitor>)v
+-(void) visit: (ORVisitor*)v
 {
    [v visitIntVarLitEQView:self];
 }
@@ -290,7 +290,7 @@
 {
    return _tracker;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatVar: self];
 }
@@ -350,7 +350,7 @@
 {
    return ORTBit;
 }
--(void) visit: (id<ORVisitor>)v
+-(void) visit: (ORVisitor*)v
 {
    [v visitBitVar:self];
 }

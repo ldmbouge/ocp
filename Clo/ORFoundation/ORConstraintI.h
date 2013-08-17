@@ -468,7 +468,7 @@
 -(ORObjectiveFunctionVarI*) initORObjectiveFunctionVarI: (id<ORVar>) x;
 -(id<ORVar>) var;
 -(id<ORObjectiveValue>) value;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end
 
 @interface ORObjectiveFunctionLinearI : ORObjectiveFunctionI<ORObjectiveFunctionLinear>
@@ -479,7 +479,7 @@
 -(ORObjectiveFunctionLinearI*) initORObjectiveFunctionLinearI: (id<ORVarArray>) array coef: (id<ORFloatArray>) coef;
 -(id<ORVarArray>) array;
 -(id<ORFloatArray>) coef;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end
 
 @interface ORObjectiveFunctionExprI : ORObjectiveFunctionI<ORObjectiveFunctionExpr>
@@ -488,7 +488,7 @@
 }
 -(ORObjectiveFunctionExprI*) initORObjectiveFunctionExprI: (id<ORExpr>) expr;
 -(id<ORExpr>) expr;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 @end
 
 @interface ORMinimizeVarI : ORObjectiveFunctionVarI<ORObjectiveFunctionVar>
