@@ -10,21 +10,15 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORProgram/CPSolver.h>
+#import <CPUKernel/CPUKernel.h>
+#import <CPUKernel/CPConstraintI.h>
+#import <objcp/CPVar.h>
 
-@interface ORCPConcretizer  : ORVisitor<NSObject>
-{
-   id<CPCommonProgram> _solver;
-   id<CPEngine>        _engine;
-   id*                 _gamma;
-}
--(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver;
+
+@interface CPDisjunctive : CPCoreConstraint<NSCoding>
+-(id) initCPDisjunctive: (id<CPIntVar>) x duration: (ORInt) dx start: (id<CPIntVar>) y duration: (ORInt) dy;
 -(void) dealloc;
+-(ORStatus) post;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
 @end
-
-@interface ORCPMultiStartConcretizer  : ORVisitor<NSObject>
--(ORCPMultiStartConcretizer*) initORCPMultiStartConcretizer: (id<ORTracker>) tracker solver: (id<CPCommonProgram>) solver;
--(void) dealloc;
-@end
-
