@@ -152,3 +152,10 @@
 -(void) visitBitSum:(id<ORBitSum>)cstr;
 -(void) visitBitIf:(id<ORBitIf>)cstr;
 @end
+
+@interface ORVisitor : NSObject<ORVisitor>
+@end
+
+@interface ORNOopVisit : ORVisitor
+@end
+
