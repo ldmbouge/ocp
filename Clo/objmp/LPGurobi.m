@@ -104,7 +104,7 @@
 {
    
 }
--(LPOutcome) solve
+-(OROutcome) solve
 {
    //int error = GRBsetintparam(GRBgetenv(_model), "PRESOLVE", 0);
 //   for(ORInt i = 0; i < 12; i++) {
@@ -121,24 +121,24 @@
    GRBgetintattr(_model,"Status",&status);
    switch (status) {
       case GRB_OPTIMAL:
-         _status = LPoptimal;
+         _status = ORoptimal;
          break;
       case GRB_INFEASIBLE:
-         _status = LPinfeasible;
+         _status = ORinfeasible;
          break;
       case GRB_SUBOPTIMAL:
-         _status = LPsuboptimal;
+         _status = ORsuboptimal;
          break;
       case GRB_UNBOUNDED:
-         _status = LPunbounded;
+         _status = ORunbounded;
          break;
       default:
-         _status = LPerror;
+         _status = ORerror;
    }
    return _status;
 }
 
--(LPOutcome) status
+-(OROutcome) status
 {
    return _status;
 }

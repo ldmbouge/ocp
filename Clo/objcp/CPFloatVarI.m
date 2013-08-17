@@ -420,7 +420,7 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 
 -(ORStatus) bind:(ORFloat) val
 {
-   return [_theVar bind:(ORInt)val];
+   return [_theVar updateMin:(ORInt)ceil(val) andMax:(ORInt)floor(val)];
 }
 -(ORStatus) updateMin: (ORFloat) newMin
 {
@@ -459,7 +459,10 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 }
 -(ORBool) member:(ORFloat)v
 {
-   return [_theVar member:(ORInt)v];
+   ORFloat tv = trunc(v);
+   if (tv == v)
+      return [_theVar member:(ORInt)tv];
+   else return NO;
 }
 -(ORBool) bound
 {
