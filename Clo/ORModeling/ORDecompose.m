@@ -15,7 +15,7 @@
 //-- temp
 #import "ORFloatDecompose.h"
 
-@interface ORIntNormalizer : ORNOopVisit<ORVisitor> {
+@interface ORIntNormalizer : ORNOopVisit<NSObject> {
    id<ORIntLinear>     _terms;
    id<ORAddToModel>   _model;
    ORAnnotation         _n;
@@ -24,7 +24,7 @@
 -(id<ORIntLinear>)terms;
 @end
 
-@interface ORFloatNormalizer : ORNOopVisit<ORVisitor> {
+@interface ORFloatNormalizer : ORNOopVisit<NSObject> {
    id<ORFloatLinear>  _terms;
    id<ORAddToModel>   _model;
    ORAnnotation           _n;
@@ -33,7 +33,7 @@
 -(id<ORFloatLinear>)terms;
 @end
 
-@interface ORIntLinearizer : NSObject<ORVisitor> {
+@interface ORIntLinearizer : ORVisitor<NSObject> {
    id<ORIntLinear>   _terms;
    id<ORAddToModel>    _model;
    ORAnnotation       _n;
@@ -43,7 +43,7 @@
 -(id)init:(id<ORIntLinear>)t model:(id<ORAddToModel>)model annotation:(ORAnnotation)n;
 @end
 
-@interface ORIntSubst   : NSObject<ORVisitor> {
+@interface ORIntSubst   : ORVisitor<NSObject> {
    id<ORIntVar>        _rv;
    id<ORAddToModel> _model;
    ORAnnotation         _c;

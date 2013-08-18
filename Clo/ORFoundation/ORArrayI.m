@@ -192,7 +192,7 @@
       [aDecoder decodeValueOfObjCType:@encode(ORInt) at:_array+i];
    return self;
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIntArray:self];
 }
@@ -375,7 +375,7 @@
         [aDecoder decodeValueOfObjCType:@encode(ORFloat) at:_array+i];
     return self;
 }
--(void) visit: (id<ORVisitor>) v
+-(void) visit: (ORVisitor*) v
 {
    [v visitFloatArray: self];
 }
@@ -532,7 +532,7 @@
       _array[i] = [aDecoder decodeObject];
    return self;   
 }
--(void)visit:(id<ORVisitor>)v
+-(void)visit:(ORVisitor*)v
 {
    [v visitIdArray:self];
 }
@@ -768,7 +768,7 @@
       _flat[i] = [aDecoder decodeObject];
    return self;
 }
--(void) visit:(id<ORVisitor>)v
+-(void) visit:(ORVisitor*)v
 {
    [v visitIdMatrix:self];
 }
@@ -969,7 +969,7 @@
 {
    return _tracker;
 }
--(void) visit:(id<ORVisitor>)visitor
+-(void) visit:(ORVisitor*)visitor
 {
    [visitor visitIntMatrix:self];
 }

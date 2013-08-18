@@ -19,5 +19,3 @@
 -(void)apply:(id<ORModel>)m;
 @end
 
-@interface ORNOopVisit : NSObject<ORVisitor>
-@end

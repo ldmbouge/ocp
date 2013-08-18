@@ -17,11 +17,7 @@
 #import <objcp/CPBitConstraint.h>
 
 @implementation ORCPConcretizer
-{
-   id<CPCommonProgram> _solver;
-   id<CPEngine>        _engine;
-   id*                 _gamma;
-}
+
 -(ORCPConcretizer*) initORCPConcretizer: (id<CPCommonProgram>) solver
 {
    self = [super init];

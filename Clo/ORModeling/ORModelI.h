@@ -51,7 +51,7 @@
 -(NSArray*) variables;
 -(NSArray*) constraints;
 -(NSArray*) mutables;
--(void) visit: (id<ORVisitor>) visitor;
+-(void) visit: (ORVisitor*) visitor;
 -(id) copyWithZone:(NSZone*)zone;
 -(id<ORVar>) addVariable:(id<ORVar>) var;
 -(id) addMutable:(id) object;

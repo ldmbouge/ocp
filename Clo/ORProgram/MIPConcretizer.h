@@ -14,7 +14,7 @@
 #import <ORProgram/CPSolver.h>
 
 
-@interface ORMIPConcretizer  : NSObject<ORVisitor>
+@interface ORMIPConcretizer  : ORVisitor<NSObject>
 -(ORMIPConcretizer*) initORMIPConcretizer: (id<MIPProgram>) solver;
 -(void) dealloc;
 @end

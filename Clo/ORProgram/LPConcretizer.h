@@ -14,12 +14,12 @@
 #import <ORProgram/CPSolver.h>
 
 
-@interface ORLPConcretizer  : NSObject<ORVisitor>
+@interface ORLPConcretizer  : ORVisitor<NSObject>
 -(ORLPConcretizer*) initORLPConcretizer: (id<LPProgram>) solver;
 -(void) dealloc;
 @end
 
-@interface ORLPRelaxationConcretizer  : NSObject<ORVisitor>
+@interface ORLPRelaxationConcretizer  : ORVisitor<NSObject>
 -(ORLPRelaxationConcretizer*) initORLPRelaxationConcretizer: (id<LPRelaxation>) solver;
 -(void) dealloc;
 @end
