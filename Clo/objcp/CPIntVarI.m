@@ -457,10 +457,13 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
     }
 }
 
--(ORStatus) bindEvt:(id<CPDom>)sender
+// PVH: Failure to remove?
+-(ORStatus) bindEvt:(id<CPDom>) sender
 {
-   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt:sender];
-   if (s==ORFailure) return s;
+   ORStatus s = _recv==nil ? ORSuspend : [_recv bindEvt: sender];
+   if (s==ORFailure)
+      return s;
+
    id<CPEventNode> mList[6];
    ORUInt k = 0;
    mList[k] = _net._boundsEvt._val;
@@ -476,9 +479,10 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
    mList[k] = NULL;
    scheduleAC3(_fdm,mList);
    if (_triggers)
-      [_triggers bindEvt:_fdm];
+      [_triggers bindEvt: _fdm];
    return ORSuspend;
 }
+// PVH: Failure to remove?
 -(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMinEvt:dsz sender:sender];
@@ -499,6 +503,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
         [_triggers bindEvt:_fdm];
    return ORSuspend;
 }
+// PVH: Failure to remove?
 -(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender
 {
    ORStatus s = _recv==nil ? ORSuspend : [_recv changeMaxEvt:dsz sender:sender];
@@ -519,6 +524,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       [_triggers bindEvt:_fdm];
    return ORSuspend;
 }
+// PVH: Failure to remove?
 -(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
    ORStatus s = ORSuspend;
@@ -934,6 +940,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
       return [_x updateMin:op / _a + ms * mv];
    }
 }
+// PVH: Failure to remove?
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    ORStatus s = [self updateMin:newMin];
@@ -1073,6 +1080,7 @@ static NSMutableSet* collectConstraints(CPEventNetwork* net,NSMutableSet* rv)
 {
    return [_x updateMin:-newMax];
 }
+// PVH: Failure to remove?
 -(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax
 {
    ORStatus s = [_x updateMax:-newMin];

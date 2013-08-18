@@ -39,21 +39,20 @@ typedef struct  {
 // PVH: my recommendation is to have an interface and this becomes the implementation class
 @protocol CPIntVarNotifier <NSObject>
 // [pvh] What is this?
-
--(ORInt)getId;
--(NSMutableSet*)constraints;
--(void)setDelegate:(id<CPIntVarNotifier>)delegate;
--(void) addVar:(id<CPIntVarNotifier>)var;
--(enum CPVarClass)varClass;
--(CPLiterals*)findLiterals:(CPIntVarI*)ref;
--(CPIntVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
--(CPLiterals*)literals;
--(void) setTracksLoseEvt;
--(ORBool) tracksLoseEvt:(id<CPDom>)sender;
--(ORStatus) bindEvt:(id<CPDom>)sender;
--(ORStatus) changeMinEvt:(ORInt) dsz sender:(id<CPDom>)sender;
--(ORStatus) changeMaxEvt:(ORInt) dsz sender:(id<CPDom>)sender;
--(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender;
+-(ORInt)           getId;
+-(NSMutableSet*)   constraints;
+-(void)            setDelegate: (id<CPIntVarNotifier>) delegate;
+-(void)            addVar: (id<CPIntVarNotifier>) var;
+-(enum CPVarClass) varClass;
+-(CPLiterals*)     findLiterals:(CPIntVarI*)ref;
+-(CPIntVarI*)      findAffine:(ORInt)scale shift:(ORInt)shift;
+-(CPLiterals*)     literals;
+-(void)            setTracksLoseEvt;
+-(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
+-(ORStatus)        bindEvt: (id<CPDom>) sender;
+-(ORStatus)        changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
+-(ORStatus)        changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender;
+-(ORStatus)        loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
 @end
 
 @interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier> {

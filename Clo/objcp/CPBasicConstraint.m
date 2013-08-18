@@ -22,7 +22,9 @@
    _r = r;
    return self;
 }
--(ORStatus)post
+
+// PVH: Failure to remove?
+-(ORStatus) post
 {
    ORStatus s = [_x inside:_r];
    if (s==ORFailure)
@@ -2561,7 +2563,9 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    return [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: [_x value] minimize:YES];
 }
--(ORStatus) check 
+
+
+-(ORStatus) check
 {
    return tryfail(^ORStatus{
       [_x updateMax: _primalBound - 1];
