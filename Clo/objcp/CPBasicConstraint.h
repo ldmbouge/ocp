@@ -27,7 +27,7 @@
    ORIntSetI* _r;
 }
 -(id) initRestrict:(id<CPIntVar>)x to:(id<ORIntSet>)r;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -39,7 +39,7 @@
    ORInt  _c;
 }
 -(id) initCPEqualc:(id)x and:(ORInt)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -50,7 +50,7 @@
    ORInt      _c;
 }
 -(id) initCPDiffc:(id)x and:(ORInt)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -198,8 +198,8 @@ typedef int (^intgetter) (void) ;
 }
 -(id) initCPMultBC:(id)x times:(id)y equal:(id)z;
 -(ORStatus) post;
--(NSSet*)allVars;
--(ORUInt)nbUVars;
+-(NSSet*) allVars;
+-(ORUInt) nbUVars;
 @end
 
 @interface CPSquareBC : CPCoreConstraint { // z = x^2
@@ -294,7 +294,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPOrDC:(id)b equal:(id)x or:(id)y;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -305,7 +305,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPAndDC:(id)b equal:(id)x and:(id)y;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -316,7 +316,7 @@ typedef int (^intgetter) (void) ;
    CPIntVarI* _y;
 }
 -(id)initCPImplyDC:(id)b equal:(id)x imply:(id)y;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

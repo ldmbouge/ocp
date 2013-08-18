@@ -142,7 +142,7 @@ static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
 -(ORStatus) post
 {
     if (_posted)
-        return ORSuspend;
+        return ORSkip;
     _posted = true;
     for(ORInt i = 0; i < _arity; i++) {
        [_var[i] updateMin: _table->_min[i]];
@@ -155,7 +155,7 @@ static ORStatus removeValue(CPTableCstrI* cstr,ORInt i,ORInt v)
     for(ORInt i = 0; i < _arity; i++) 
         if (![_var[i] bound])
             [_var[i] whenLoseValue: self do: ^(ORInt v) { removeValue(self,i,v); }];
-    return ORSuspend;        
+   return ORSuspend;
 }
 
 -(void) encodeWithCoder: (NSCoder*) aCoder

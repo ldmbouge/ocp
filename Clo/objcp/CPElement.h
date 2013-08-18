@@ -68,7 +68,7 @@
    ORInt  _minCI,_maxCI,_nbCI;  // bounds & size of interesection array
 }
 -(id)initCPElementAC: (id) x indexVarArray:(id<CPIntVarArray>)y equal:(id)z;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

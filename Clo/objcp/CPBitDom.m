@@ -877,30 +877,25 @@ CPBitDom* newDomain(CPBitDom* bd,ORInt a,ORInt b)
    [_theDom release];
    [super dealloc];
 }
--(ORStatus) updateMin:(ORInt)newMin for:(id<CPIntVarNotifier>)x
+-(void) updateMin:(ORInt) newMin for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
-   return ORSuspend;
 }
--(ORStatus) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
-   return ORSuspend;
 }
--(ORStatus) updateMin:(ORInt)newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
-   return ORSuspend;
 }
--(ORStatus) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x
+-(void) bind:(ORInt)val  for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
-   return ORSuspend;
 }
--(ORStatus) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x
+-(void) remove:(ORInt)val  for:(id<CPIntVarNotifier>)x
 {
    assert(FALSE);
-   return ORSuspend;
 }
 
 -(ORInt) min

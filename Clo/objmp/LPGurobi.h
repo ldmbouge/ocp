@@ -56,7 +56,7 @@
 -(void) setFloatParameter: (const char*) name val: (ORFloat) val;
 -(void) setStringParameter: (const char*) name val: (char*) val;
 
--(void) postConstraint: (LPConstraintI*) cstr;
+-(ORStatus) postConstraint: (LPConstraintI*) cstr;
 
 -(void) printModelToFile: (char*) fileName;
 -(void) print;

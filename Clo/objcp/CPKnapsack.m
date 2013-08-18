@@ -110,7 +110,7 @@ static inline void pullNode(KSColumn* col,KSNode* node)
    free(_xb);
    [super dealloc];
 }
--(ORStatus)post
+-(ORStatus) post
 {
    _nb  = [_x count];
    _low = [_x low];

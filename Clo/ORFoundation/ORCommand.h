@@ -19,7 +19,7 @@
  */
 
 @protocol ORCommand <NSObject,NSCoding>
--(ORStatus) doIt;
+-(void) doIt;
 @end
 
 @interface ORCommandList : NSObject<NSCoding,NSCopying> {

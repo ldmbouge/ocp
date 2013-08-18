@@ -348,9 +348,11 @@ static inline void removeDom(CPIntVarI* x,ORInt v)
    switch (x->_vc) {
       case CPVCBare:
          [x->_dom remove:v for:x];
+         break;
       case CPVCShift: {
          const ORInt b = ((CPIntShiftView*)x)->_b;
          removeDom(((CPIntShiftView*)x)->_x, v - b);
+         break;
       }
       default:
          [x remove:v];

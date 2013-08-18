@@ -231,7 +231,7 @@
    GRBsetstrparam(_env,name,val);
 }
 
--(void) postConstraint: (LPConstraintI*) cstr
+-(ORStatus) postConstraint: (LPConstraintI*) cstr
 {
    switch ([cstr type]) {
       case LPleq:
@@ -246,6 +246,7 @@
       default:
          break;
    }
+   return ORSuspend;
 }
 
 -(void) print

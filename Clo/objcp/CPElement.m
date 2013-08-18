@@ -90,6 +90,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
          [_x whenChangePropagate:self];
       }
    }
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -123,7 +124,7 @@ int compareCPEltRecords(const CPEltRecord* r1,const CPEltRecord* r2)
       while (k >= 0 && _tab[k]._val > yb.max)
          removeDom(_x,_tab[k--]._idx);
       assignTRInt(&_to,k,_trail);
-   }   
+   }
 }
 -(NSSet*)allVars
 {
@@ -431,7 +432,7 @@ int compareInt32(const ORInt* i1,const ORInt* i2) { return *i1 - *i2;}
    [_iva release];
    [super dealloc];
 }
--(ORStatus)post
+-(ORStatus) post
 {
    ORBounds xb = bounds(_x);
    ORInt la = max([_array low],xb.min);

@@ -146,7 +146,7 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
 -(ORStatus) post
 {
    if (_posted)
-      return ORSuspend;
+      return ORSkip;
    _posted = true;
    
    [self allocate];
@@ -163,7 +163,6 @@ static ORStatus removeOnBind(CPAllDifferentDC* ad,ORInt k)
          [_var[k] whenBindDo: ^{ removeOnBind(self,k);} onBehalf:self];
          [_var[k] whenChangePropagate: self];
       }
-   
    return ORSuspend;
 }
 

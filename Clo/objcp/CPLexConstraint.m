@@ -161,7 +161,7 @@ STATE4:
 }
 
 
--(ORStatus)post
+-(ORStatus) post
 {
    _q = makeTRInt(_trail, 0);
    _r = makeTRInt(_trail, 0);

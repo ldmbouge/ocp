@@ -25,7 +25,7 @@
    CPFloatVarI* _z;
 }
 -(id)initCPFloatSquareBC:(id)z equalSquare:(id)x;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -36,7 +36,7 @@
    ORFloat             _c;
 }
 -(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs eqi:(ORFloat)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -47,7 +47,7 @@
    ORFloat             _c;
 }
 -(id)init:(id<CPFloatVarArray>)x coef:(id<ORFloatArray>)coefs leqi:(ORFloat)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end
@@ -57,7 +57,7 @@
    ORFloat      _c;
 }
 -(id) init:(id)x and:(ORFloat)c;
--(ORStatus)post;
+-(ORStatus) post;
 -(NSSet*)allVars;
 -(ORUInt)nbUVars;
 @end

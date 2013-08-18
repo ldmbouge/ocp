@@ -577,7 +577,6 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
       CPCoreConstraint* cstr = (CPCoreConstraint*) c;
       ORStatus status = [cstr post];
       ORStatus pstatus = internalPropagate(self,status);
-      _status = pstatus;
       if (pstatus != ORFailure && status != ORSkip) {
          [_cStore addObject:c]; // only add when no failure
          const NSUInteger ofs = [_cStore count] - 1;
@@ -626,24 +625,24 @@ static inline ORStatus internalPropagate(CPEngineI* fdm,ORStatus status)
    return _objective;
 }
 
--(ORStatus) enforce: (Void2ORStatus) cl
+-(ORStatus) enforce: (ORClosure) cl
 {
    _status = tryfail(^ORStatus{
-      ORStatus status = cl();
-      return internalPropagate(self,status);
+      cl();
+      return internalPropagate(self,ORSuspend);
    }, ^ORStatus{
       return ORFailure;
    });
    return _status;
 }
--(ORStatus) atomic: (Void2ORStatus) cl
+-(ORStatus) atomic: (ORClosure) cl
 {
    ORInt oldPropag = _propagating;
    _status = tryfail(^ORStatus{
       _propagating++;
-      ORStatus status = cl();
+      cl();
       _propagating--;
-      return internalPropagate(self,status);
+      return internalPropagate(self,ORSuspend);
    }, ^ORStatus{
       _propagating = oldPropag;
       return ORFailure;

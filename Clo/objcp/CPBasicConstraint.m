@@ -22,11 +22,10 @@
    _r = r;
    return self;
 }
-
-// PVH: Failure to remove?
 -(ORStatus) post
 {
    [_x inside:_r];
+   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -72,9 +71,10 @@
    [super dealloc];
 }
 
--(ORStatus)post
+-(ORStatus) post
 {
    [_x bind: _c];
+   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -122,9 +122,10 @@
    [super dealloc];
 }
 
--(ORStatus)post
+-(ORStatus) post
 {
    [_x remove:_c];
+   return ORSkip;
 }
 
 -(NSSet*)allVars
@@ -819,6 +820,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
        [_x whenBindPropagate: self]; 
        [_y whenBindPropagate: self];
    }
+   return ORSuspend;
 }
 
 -(void) propagate
@@ -882,6 +884,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
          [_x remove:minDom(_y)];
       } priority:HIGHEST_PRIO onBehalf:self];
    }
+   return ORSuspend;
 }
 -(NSSet*)allVars
 {
@@ -1147,7 +1150,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    _idempotent = YES;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [self propagate];
    if (!bound(_b)) [_b whenBindPropagate:self];
@@ -1222,7 +1225,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    _idempotent = YES;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [self propagate];
    if (!bound(_b)) [_b whenBindPropagate:self];
@@ -1298,7 +1301,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
    _idempotent = YES;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [self propagate];
    if (!bound(_b)) [_b whenBindPropagate:self];
@@ -1365,6 +1368,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 -(ORStatus) post
 {
    [_x updateMax:_c];
+   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -1405,6 +1409,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 -(ORStatus) post
 {
    [_x updateMin:_c];
+   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -1516,7 +1521,7 @@ static ORStatus propagateRXC(CPMultBC* mc,ORBounds r,CPIntVarI* x,ORInt c)
    int newMax = zb.max/c - (nz && zb.max <  0 && zb.max % c);
    [x updateMin:newMin andMax:newMax];
 }
--(ORStatus) postCX:(ORLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z 
+-(ORStatus) postCX:(ORLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z
 {
    if ([x bound])
       [z bind:bindDown(c * [x min])];
@@ -1538,8 +1543,8 @@ static ORStatus propagateRXC(CPMultBC* mc,ORBounds r,CPIntVarI* x,ORInt c)
          [z whenChangeBoundsPropagate:self];
          [x whenChangeBoundsPropagate:self];
       }
-      return ORSuspend;
    }
+   return ORSuspend;
 }
 static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
@@ -1558,8 +1563,8 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
          [z updateMin:bindDown(c * [x max]) andMax:bindDown(c * [x min])];
          [mc propagateCXZ:-c mult:x equal:negBounds(z)]; 
       }
-      return ORSuspend;
    }
+   return ORSuspend;
 }
 
 -(void) propagateXCR:(CPIntVarI*)x mult:(CPIntVarI*)y equal:(ORBounds)r
@@ -1938,7 +1943,7 @@ static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
    _c = c;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    if (_x.min >= 0)
       [_y updateMin:0];

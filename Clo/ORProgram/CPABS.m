@@ -639,7 +639,7 @@
             if (nbVS) { // we found someone
                id<CPIntVar> xi = (id<CPIntVar>)bvars[i];
                ORInt v = [self chooseValue:xi];
-               ORStatus s = [_solver enforce: ^ORStatus { return [xi bind:v];}];
+               ORStatus s = [_solver enforce: ^{ [xi bind:v];}];
                [ORConcurrency pumpEvents];
                __block int nbActive = 0;
                [_monitor scanActive:^(CPVarInfo * vInfo) {
@@ -678,7 +678,7 @@
          [_aggregator addProbe:probe];
          [probe release];
          for(ABSNogood* b in localKill) {
-            [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];            
+            [_solver enforce: ^{[[b variable] remove:[b value]];}];            
             //NSLog(@"Imposing local SAC %@",b);
          }
          [localKill removeAllObjects];
@@ -686,12 +686,11 @@
       carryOn = [self moreProbes];
    } while (carryOn && cntProbes < maxProbes);
    
-   [_solver atomic:^ORStatus {
+   [_solver atomic:^{
       NSLog(@"Imposing %ld SAC constraints",[killSet count]);
       for(ABSNogood* b in killSet) {
-         [_solver enforce: ^ORStatus { return [[b variable] remove:[b value]];}];
+         [_solver enforce: ^{ [[b variable] remove:[b value]];}];
       }
-      return ORSuspend;
    }];
    
    NSLog(@"Done probing (%d / %d)...",cntProbes,maxProbes);

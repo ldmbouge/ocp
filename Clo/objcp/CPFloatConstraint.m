@@ -81,7 +81,7 @@
    _c = - c;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [self propagate];
    [_x enumerateWith:^(CPFloatVarI* obj, int k) {
@@ -147,7 +147,7 @@
    _c = - c;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [self propagate];
    [_x enumerateWith:^(CPFloatVarI* obj, int k) {
@@ -222,9 +222,10 @@
    return self;
    
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [_x bind:_c];
+   return ORSkip;
 }
 -(NSSet*)allVars
 {
@@ -318,6 +319,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
          [_x whenChangePropagate:self];
       }
    }
+   return ORSuspend;
 }
 -(void) propagate
 {

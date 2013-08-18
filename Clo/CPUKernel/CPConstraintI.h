@@ -25,7 +25,7 @@
    id<CPGroup>      _group;
 }
 -(CPCoreConstraint*) initCPCoreConstraint:(id<ORSearchEngine>)m;
--(ORStatus) doIt;
+-(void) doIt;
 -(ORStatus) post;
 -(void) propagate;
 -(NSSet*) allVars;

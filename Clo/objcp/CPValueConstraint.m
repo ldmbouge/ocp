@@ -45,7 +45,8 @@
       } onBehalf:self];
       [_x setLoseTrigger: _c do: ^(void) { [_b bind:true]; } onBehalf:self];
       [_x whenBindDo: ^(void) { [_b bind:[_x min] != _c];} onBehalf:self];
-   } 
+   }
+   return ORSuspend;
 }
 -(NSSet*)allVars
 {
@@ -112,7 +113,8 @@
         [_x setBindTrigger: ^ {
            [_b bind:[_x min] == _c];
         } onBehalf:self];
-    }   
+    }
+   return ORSuspend;
 } 
 -(NSSet*)allVars
 {
@@ -716,6 +718,7 @@
       [_b whenBindPropagate:self];
       [_x whenChangeBoundsPropagate:self];
    }
+   return ORSuspend;
 }
 -(void) propagate
 {
@@ -791,6 +794,7 @@
       [_b whenBindPropagate:self];
       [_x whenChangeBoundsPropagate:self];
    }
+   return ORSuspend;
 }
 -(void) propagate
 {

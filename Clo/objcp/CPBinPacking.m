@@ -123,7 +123,6 @@
       if (![_var[i] bound])
          [_var[i] whenChangePropagate: self];
    [_load whenChangeBoundsPropagate: self];
-
    return ORSuspend;
 }
 
