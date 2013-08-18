@@ -7580,16 +7580,16 @@
 				5B65615C15AD58F6002F344B /* CPKnapsack.h */,
 				5B65615D15AD58F6002F344B /* CPKnapsack.m */,
 				5BEAD77D15ABBAFC00A012FE /* CPLexConstraint.h */,
-				5B94406D1631AEB9006528DE /* CPVar.h */,
 				5BEAD77E15ABBAFC00A012FE /* CPLexConstraint.m */,
-				5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */,
-				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
 				5B40C20F14F80A7D0041D162 /* CPObjectQueue.h */,
 				5B40C21014F80A7D0041D162 /* CPObjectQueue.m */,
+				5B63C2D2156DB05E00C65B2A /* CPStatisticsMonitor.h */,
+				5B63C2D3156DB05E00C65B2A /* CPStatisticsMonitor.m */,
 				B17715B31557D9D200BA14BF /* CPTableI.h */,
 				B17715B41557D9D200BA14BF /* CPTableI.m */,
 				5B92975513A01F45002AA188 /* CPValueConstraint.h */,
 				5B92975613A01F45002AA188 /* CPValueConstraint.m */,
+				5B94406D1631AEB9006528DE /* CPVar.h */,
 				5B729C3F153F79A4001BE95A /* CPWatch.h */,
 				5B729C40153F79A4001BE95A /* CPWatch.m */,
 				5B73E55B151F45F60043192D /* NSBoardController.h */,
@@ -17815,6 +17815,7 @@
 				B103B1AE17BF5414008755BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B103B1EB17BF6545008755BB /* Build configuration list for PBXNativeTarget "ORScheduler" */ = {
 			isa = XCConfigurationList;
@@ -17823,6 +17824,7 @@
 				B103B1ED17BF6545008755BB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		B111FC0813CF3D10003C5119 /* Build configuration list for PBXNativeTarget "testLPWrapper" */ = {
 			isa = XCConfigurationList;
