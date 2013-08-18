@@ -96,13 +96,13 @@ enum CPVarClass {
 -(ORInt) shift;
 -(id<ORIntVar>) base;
 -(ORBool) bound;
--(ORInt)countFrom:(ORInt)from to:(ORInt)to;
--(ORStatus) bind:(ORInt) val;
--(ORStatus) remove:(ORInt) val;
--(ORStatus) inside:(id<ORIntSet>) S;
--(ORStatus) updateMin: (ORInt) newMin;
--(ORStatus) updateMax: (ORInt) newMax;
--(ORStatus) updateMin: (ORInt) newMin andMax:(ORInt)newMax;
+-(ORInt) countFrom: (ORInt) from to: (ORInt) to;
+-(void) bind:(ORInt) val;
+-(void) remove: (ORInt) val;
+-(void) inside: (id<ORIntSet>) S;
+-(void) updateMin: (ORInt) newMin;
+-(void) updateMax: (ORInt) newMax;
+-(void) updateMin: (ORInt) newMin andMax: (ORInt) newMax;
 @end
 
 @protocol CPVarArray <ORVarArray>
@@ -142,10 +142,10 @@ enum CPVarClass {
 -(ORBool) member:(ORFloat)v;
 -(ORBool) bound;
 -(ORFloat) domwidth;
--(ORStatus) bind:(ORFloat) val;
+-(void) bind:(ORFloat) val;
 -(ORStatus) updateMin:(ORFloat) newMin;
 -(ORStatus) updateMax:(ORFloat) newMax;
--(ORStatus) updateInterval:(ORInterval)v;
+-(ORStatus) updateInterval: (ORInterval) v;
 @end
 
 @protocol CPFloatVarArray <CPVarArray>

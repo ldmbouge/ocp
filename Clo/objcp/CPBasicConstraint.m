@@ -26,10 +26,7 @@
 // PVH: Failure to remove?
 -(ORStatus) post
 {
-   ORStatus s = [_x inside:_r];
-   if (s==ORFailure)
-      return s;
-   return ORSkip;
+   [_x inside:_r];
 }
 -(NSSet*)allVars
 {
@@ -77,7 +74,7 @@
 
 -(ORStatus)post
 {
-   return [_x bind: _c];
+   [_x bind: _c];
 }
 -(NSSet*)allVars
 {
@@ -127,7 +124,7 @@
 
 -(ORStatus)post
 {
-   return [_x remove:_c];
+   [_x remove:_c];
 }
 
 -(NSSet*)allVars
@@ -815,14 +812,13 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 -(ORStatus) post // x != y + c
 {
    if ([_x bound])
-      return [_y remove:minDom(_x) - _c];
+      [_y remove:minDom(_x) - _c];
    else if ([_y bound])
-      return [_x remove:minDom(_y) + _c];
+      [_x remove:minDom(_y) + _c];
    else {
        [_x whenBindPropagate: self]; 
        [_y whenBindPropagate: self];
    }
-   return ORSuspend;
 }
 
 -(void) propagate
@@ -871,9 +867,9 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 -(ORStatus) post
 {
    if ([_x bound])
-      return [_y remove:[_x min]];
+      [_y remove:[_x min]];
    else if ([_y bound])
-      return [_x remove:[_y min]];
+      [_x remove:[_y min]];
    else {
       [_x whenBindDo:^void{
          if (!_active._val) return;
@@ -885,7 +881,6 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
          assignTRInt(&_active, NO, _trail);
          [_x remove:minDom(_y)];
       } priority:HIGHEST_PRIO onBehalf:self];
-      return ORSuspend;
    }
 }
 -(NSSet*)allVars
@@ -993,7 +988,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 -(ORStatus) post
 {
    if (bound(_x)) {
-      return [_y bind:abs(minDom(_x))];
+      [_y bind:abs(minDom(_x))];
    }
    ORBounds xb = bounds(_x);
    int mxy = max( - xb.min,xb.max);
@@ -1369,7 +1364,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(ORStatus) post
 {
-   return [_x updateMax:_c];
+   [_x updateMax:_c];
 }
 -(NSSet*)allVars
 {
@@ -1409,7 +1404,7 @@ static ORStatus scanASubConstB(CPBitDom* ad,ORInt b,CPBitDom* cd,CPIntVarI* c,TR
 }
 -(ORStatus) post
 {
-   return [_x updateMin:_c];
+   [_x updateMin:_c];
 }
 -(NSSet*)allVars
 {
@@ -1524,7 +1519,7 @@ static ORStatus propagateRXC(CPMultBC* mc,ORBounds r,CPIntVarI* x,ORInt c)
 -(ORStatus) postCX:(ORLong)c mult:(CPIntVarI*)x equal:(CPIntVarI*)z 
 {
    if ([x bound])
-      return [z bind:bindDown(c * [x min])];
+      [z bind:bindDown(c * [x min])];
    else {
       if (c > 0) {
          ORInt newMax  = bindUp(c * [x max]);
@@ -1549,8 +1544,9 @@ static ORStatus propagateRXC(CPMultBC* mc,ORBounds r,CPIntVarI* x,ORInt c)
 static ORStatus propagateCX(CPMultBC* mc,ORLong c,CPIntVarI* x,CPIntVarI* z)
 {
    if ([x bound]) {
-      return [z bind:bindDown(c * [x min])];
-   } else {
+      [z bind:bindDown(c * [x min])];
+   }
+   else {
       if (c > 0) {
          ORInt newMax  = bindUp(c * [x max]);
          ORInt newMin  = bindDown(c * [x min]);

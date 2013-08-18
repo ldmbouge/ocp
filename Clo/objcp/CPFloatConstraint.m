@@ -24,7 +24,7 @@
    _z = z;
    return self;
 }
--(ORStatus)post
+-(ORStatus) post
 {
    [self propagate];
    if (![_x bound])
@@ -33,7 +33,7 @@
       [_z whenChangeBoundsPropagate:self];
    return ORSuspend;
 }
--(void)propagate
+-(void) propagate
 {
    ORIReady();
    ORStatus xs = ORNoop,zs = ORNoop;
@@ -224,7 +224,7 @@
 }
 -(ORStatus)post
 {
-   return [_x bind:_c];
+   [_x bind:_c];
 }
 -(NSSet*)allVars
 {
@@ -280,17 +280,17 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(ORStatus) post
 {
    if (bound(_x)) {
-      return [_y bind:[_c at:[_x min]]];
-   } else if ([_y bound]) {
+      [_y bind:[_c at:[_x min]]];
+   }
+   else if ([_y bound]) {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       ORBounds xb = bounds(_x);
-      ORStatus ok = ORSuspend;
-      for(ORInt k=xb.min;k <= xb.max && ok;k++)
+      for(ORInt k=xb.min;k <= xb.max;k++)
          if (k < cLow || k > cUp || ![_y member:[_c at:k]])
-            ok = removeDom(_x, k);
-      return ok;
-   } else {
+            removeDom(_x, k);
+   }
+   else {
       ORInt cLow = [_c low];
       ORInt cUp  = [_c up];
       _sz = cUp - cLow + 1;
@@ -300,27 +300,23 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
       qsort(_tab, _sz,sizeof(CPFloatEltRecord),(int(*)(const void*,const void*)) &compareCPFloatEltRecords);
       ORFloat ybmin = [_y min];
       ORFloat ybmax = [_y max];
-      ORStatus ok = ORSuspend;
       _from = makeTRInt(_trail, -1);
       _to   = makeTRInt(_trail, -1);
-      for(ORInt k=0;k < _sz && ok;k++) {
+      for(ORInt k=0;k < _sz;k++) {
          if (_tab[k]._val < ybmin || _tab[k]._val > ybmax)
-            ok = removeDom(_x, _tab[k]._idx);
+            removeDom(_x, _tab[k]._idx);
          else {
             if (_from._val == -1)
                assignTRInt(&_from, k, _trail);
             assignTRInt(&_to, k, _trail);
          }
       }
-      if (ok) {
-         if (bound(_x))
-            return [_y bind:[_x min]];
-         else {
-            [_y whenChangeBoundsPropagate:self];
-            [_x whenChangePropagate:self];
-         }
+      if (bound(_x))
+         [_y bind:[_x min]];
+      else {
+         [_y whenChangeBoundsPropagate:self];
+         [_x whenChangePropagate:self];
       }
-      return ok;
    }
 }
 -(void) propagate

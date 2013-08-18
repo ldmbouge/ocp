@@ -49,10 +49,10 @@ typedef struct  {
 -(CPLiterals*)     literals;
 -(void)            setTracksLoseEvt;
 -(ORBool)          tracksLoseEvt: (id<CPDom>) sender;
--(ORStatus)        bindEvt: (id<CPDom>) sender;
--(ORStatus)        changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
--(ORStatus)        changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender;
--(ORStatus)        loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
+-(void)            bindEvt: (id<CPDom>) sender;
+-(void)            changeMinEvt:(ORInt) dsz sender: (id<CPDom>)sender;
+-(void)            changeMaxEvt:(ORInt) dsz sender: (id<CPDom>)sender;
+-(void)            loseValEvt: (ORInt) val sender: (id<CPDom>)sender;
 @end
 
 @interface CPIntVarI : ORObject<CPIntVar,CPIntVarNotifier> {
@@ -63,7 +63,7 @@ typedef struct  {
    id<CPDom>                           _dom;
    CPEventNetwork                      _net;
    id<CPTriggerMap>               _triggers;
-   CPMultiCast*                 _recv;
+   CPMultiCast*                       _recv;
 }
 -(CPIntVarI*) initCPIntVarCore:(id<CPEngine>) cp low:(ORInt)low up:(ORInt)up;
 -(CPIntVarI*) initCPIntVarView: (id<CPEngine>) cp low: (ORInt) low up: (ORInt) up for: (CPIntVarI*) x;
@@ -101,10 +101,10 @@ typedef struct  {
 
 // notification
 
--(ORStatus) bindEvt:(id<CPDom>)sender;
--(ORStatus) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender;
--(ORStatus) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender;
--(ORStatus) loseValEvt: (ORInt)val sender:(id<CPDom>)sender;
+-(void) bindEvt:(id<CPDom>)sender;
+-(void) changeMinEvt: (ORInt) dsz sender:(id<CPDom>)sender;
+-(void) changeMaxEvt: (ORInt) dsz sender:(id<CPDom>)sender;
+-(void) loseValEvt: (ORInt)val sender:(id<CPDom>)sender;
 
 // delegation
 
@@ -132,12 +132,12 @@ typedef struct  {
 -(ORInt)countFrom:(ORInt)from to:(ORInt)to;
 
 // update
--(ORStatus)     updateMin: (ORInt) newMin;
--(ORStatus)     updateMax: (ORInt) newMax;
--(ORStatus)     updateMin: (ORInt) newMin andMax:(ORInt)newMax;
--(ORStatus)     bind:(ORInt) val;
--(ORStatus)     remove:(ORInt) val;
--(ORStatus)     inside:(ORIntSetI*) S;
+-(void)     updateMin: (ORInt) newMin;
+-(void)     updateMax: (ORInt) newMax;
+-(void)     updateMin: (ORInt) newMin andMax:(ORInt)newMax;
+-(void)     bind:(ORInt) val;
+-(void)     remove:(ORInt) val;
+-(void)     inside:(ORIntSetI*) S;
 
 // Class methods
 +(CPIntVarI*)    initCPIntVar: (id<CPEngine>) fdm bounds:(id<ORIntRange>)b;
@@ -170,12 +170,12 @@ typedef struct  {
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
--(ORStatus)updateMin:(ORInt)newMin;
--(ORStatus)updateMax:(ORInt)newMax;
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
--(ORStatus)bind:(ORInt)val;
--(ORStatus)remove:(ORInt)val;
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(void)updateMin:(ORInt)newMin;
+-(void)updateMax:(ORInt)newMax;
+-(void)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(void)bind:(ORInt)val;
+-(void)remove:(ORInt)val;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
 @interface CPIntView : CPIntVarI { // Affine View
@@ -196,12 +196,12 @@ typedef struct  {
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
--(ORStatus)updateMin:(ORInt)newMin;
--(ORStatus)updateMax:(ORInt)newMax;
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
--(ORStatus)bind:(ORInt)val;
--(ORStatus)remove:(ORInt)val;
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(void) updateMin:(ORInt)newMin;
+-(void) updateMax:(ORInt)newMax;
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(void) bind:(ORInt)val;
+-(void) remove:(ORInt)val;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
 @interface CPIntFlipView : CPIntVarI { // Flip View (y == -x)
@@ -220,12 +220,12 @@ typedef struct  {
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
--(ORStatus)updateMin:(ORInt)newMin;
--(ORStatus)updateMax:(ORInt)newMax;
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
--(ORStatus)bind:(ORInt)val;
--(ORStatus)remove:(ORInt)val;
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(void) updateMin:(ORInt)newMin;
+-(void) updateMax:(ORInt)newMax;
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(void) bind:(ORInt)val;
+-(void) remove:(ORInt)val;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
 @interface CPEQLitView : CPIntVarI { // Literal view b <=> x == v
@@ -245,11 +245,11 @@ typedef struct  {
 -(ORRange)around:(ORInt)v;
 -(ORInt) shift;
 -(ORInt) scale;
--(ORStatus)updateMin:(ORInt)newMin;
--(ORStatus)updateMax:(ORInt)newMax;
--(ORStatus)updateMin:(ORInt) newMin andMax:(ORInt)newMax;
--(ORStatus)bind:(ORInt)val;
--(ORStatus)remove:(ORInt)val;
+-(void) updateMin:(ORInt)newMin;
+-(void) updateMax:(ORInt)newMax;
+-(void) updateMin:(ORInt) newMin andMax:(ORInt)newMax;
+-(void) bind:(ORInt)val;
+-(void) remove:(ORInt)val;
 @end
 
 static inline BOOL bound(CPIntVarI* x)
@@ -343,27 +343,27 @@ static inline ORInt memberBitDom(CPIntVarI* x,ORInt value)
    }
 }
 
-static inline ORStatus removeDom(CPIntVarI* x,ORInt v)
+static inline void removeDom(CPIntVarI* x,ORInt v)
 {
    switch (x->_vc) {
       case CPVCBare:
-         return [x->_dom remove:v for:x];
+         [x->_dom remove:v for:x];
       case CPVCShift: {
          const ORInt b = ((CPIntShiftView*)x)->_b;
-         return removeDom(((CPIntShiftView*)x)->_x, v - b);
+         removeDom(((CPIntShiftView*)x)->_x, v - b);
       }
       default:
-         return [x remove:v];
+         [x remove:v];
    }
 }
 
-static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
+static inline void bindDom(CPIntVarI* x,ORInt v)
 {
    switch(x->_vc) {
       case CPVCBare:
-         return [x->_dom bind:v for:x];
+         [x->_dom bind:v for:x];
       default:
-         return [x bind:v];
+         [x bind:v];
    }
 }
 
@@ -386,10 +386,10 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(CPLiterals*)literals;
 -(void) addVar:(id<CPIntVarNotifier>) v;
 -(NSMutableSet*)constraints;
--(ORStatus) bindEvt:(id<CPDom>)sender;
--(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(void) bindEvt:(id<CPDom>)sender;
+-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 
 @interface CPLiterals : NSObject<CPIntVarNotifier> {
@@ -406,9 +406,9 @@ static inline ORStatus bindDom(CPIntVarI* x,ORInt v)
 -(NSMutableSet*)constraints;
 -(void)addPositive:(id<CPIntVar>)x forValue:(ORInt)value;
 -(id<CPIntVar>)positiveForValue:(ORInt)value;
--(ORStatus) bindEvt:(id<CPDom>)sender;
--(ORStatus) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(ORStatus) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
--(ORStatus) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
+-(void) bindEvt:(id<CPDom>)sender;
+-(void) changeMinEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) changeMaxEvt:(ORInt)dsz sender:(id<CPDom>)sender;
+-(void) loseValEvt:(ORInt)val sender:(id<CPDom>)sender;
 @end
 

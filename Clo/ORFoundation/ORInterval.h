@@ -252,5 +252,6 @@ static inline enum ORNarrowing ORINarrow(ORInterval src,ORInterval by)
       return ORUp;
    else if (f[1])
       return ORLow;
-   else return ORNone;
+   else
+      return ORNone;
 }

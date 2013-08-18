@@ -186,9 +186,9 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    return ORSuspend;
 }
 
--(ORStatus) bind:(ORFloat) val
+-(void) bind:(ORFloat) val
 {
-   return [_dom bind:val for:self];
+   [_dom bind:val for:self];
 }
 -(ORStatus) updateMin: (ORFloat) newMin
 {
@@ -371,12 +371,12 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
 {
    return NO;
 }
--(ORStatus) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
+-(void) loseValEvt: (ORInt) val sender:(id<CPDom>)sender
 {
-   return ORSuspend;
+
 }
 
--(ORStatus) bindEvt:(id<CPFDom>)sender
+-(void) bindEvt:(id<CPFDom>)sender
 {
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -389,9 +389,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = _net._bindEvt._val;
    k += mList[k] != NULL;
    scheduleAC3(_engine,mList);
-   return ORSuspend;
 }
--(ORStatus) changeMinEvt:(ORInt) dsz sender:(id<CPFDom>)sender
+-(void) changeMinEvt:(ORInt) dsz sender:(id<CPFDom>)sender
 {
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -402,9 +401,8 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = (dsz==1) ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
    scheduleAC3(_engine,mList);
-   return ORSuspend;
 }
--(ORStatus) changeMaxEvt:(ORInt) dsz sender:(id<CPFDom>)sender
+-(void) changeMaxEvt:(ORInt) dsz sender:(id<CPFDom>)sender
 {
    id<CPEventNode> mList[6];
    ORUInt k = 0;
@@ -415,26 +413,28 @@ static NSMutableSet* collectConstraints(CPFloatEventNetwork* net,NSMutableSet* r
    mList[k] = (dsz==1) ? _net._bindEvt._val : NULL;
    k += mList[k] != NULL;
    scheduleAC3(_engine,mList);
-   return ORSuspend;
 }
 
--(ORStatus) bind:(ORFloat) val
+-(void) bind:(ORFloat) val
 {
-   return [_theVar updateMin:(ORInt)ceil(val) andMax:(ORInt)floor(val)];
+   [_theVar updateMin:(ORInt)ceil(val) andMax:(ORInt)floor(val)];
 }
+// PVH: This is buggy: the Noop is really annoying in the float and is not in the Integer Variables
 -(ORStatus) updateMin: (ORFloat) newMin
 {
-   return [_theVar updateMin:(ORInt)ceil(newMin)];
+   [_theVar updateMin:(ORInt)ceil(newMin)];
 }
+// PVH: This is buggy: the Noop is really annoying in the float and is not in the Integer Variables
 -(ORStatus) updateMax: (ORFloat) newMax
 {
-   return [_theVar updateMax:(ORInt)floor(newMax)];
+   [_theVar updateMax:(ORInt)floor(newMax)];
 }
+// PVH: This is buggy: the Noop is really annoying in the float and is not in the Integer Variables
 -(ORStatus) updateInterval: (ORInterval)nb
 {
    double a,b;
    ORIBounds(nb, &a, &b);
-   return [_theVar updateMin:(ORInt)ceil(a) andMax:(ORInt)floor(b)];
+   [_theVar updateMin:(ORInt)ceil(a) andMax:(ORInt)floor(b)];
 }
 -(ORFloat) min
 {
