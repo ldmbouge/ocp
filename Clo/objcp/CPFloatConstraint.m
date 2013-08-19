@@ -79,8 +79,10 @@
    _x = x;
    _coefs = coefs;
    _c = - c;
+   _idempotent = TRUE;
    return self;
 }
+
 -(ORStatus) post
 {
    [self propagate];
@@ -90,12 +92,12 @@
    }];
    return ORSuspend;
 }
--(void)propagate
+
+-(void) propagate
 {
    ORIReady();
    BOOL changed = NO;
    do {
-      _todo = CPChecked;
       __block ORInterval S = createORI1(_c);
       [_x enumerateWith:^(CPFloatVarI* xk,int k) {
          S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
@@ -112,9 +114,10 @@
          BOOL update = ORINarrow(xii, NEW) >= ORLow;
          changed |= update;
          if (update)
-            [xi updateInterval:NEW];
+            [xi updateInterval: NEW];
       }
-   } while (changed || _todo == CPTocheck);
+   }
+   while (changed);
 }
 -(NSSet*)allVars
 {
