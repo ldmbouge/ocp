@@ -1,14 +1,20 @@
-//
-//  ORInterval.h
-//  Clo
-//
-//  Created by Laurent Michel on 7/5/13.
-//
-//
+/************************************************************************
+ Mozilla Public License
+ 
+ Copyright (c) 2012 NICTA, Laurent Michel and Pascal Van Hentenryck
+ 
+ This Source Code Form is subject to the terms of the Mozilla Public
+ License, v. 2.0. If a copy of the MPL was not distributed with this
+ file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ 
+ ***********************************************************************/
+
 
 #import <Foundation/Foundation.h>
 
 #include "emmintrin.h"
+#include "smmintrin.h"
+#include <float.h>
 
 #pragma clang diagnostic push 
 #pragma clang diagnostic ignored "-Wunused-variable"
@@ -18,6 +24,9 @@ extern ORInterval INF;
 extern ORInterval FLIP;
 extern ORInterval EPSILON;
 extern ORInterval ZERO;
+
+extern ORInterval OR_PI,OR_PI2,OR_PI4,OR_3PI2,OR_2PI,OR_5PI2,OR_7PI2,OR_9PI2;
+
 extern double pinf;
 extern double ninf;
 
@@ -49,6 +58,10 @@ static inline bool ORISurePositive(ORInterval x)
 {
    return _mm_comigt_sd(_mm_shuffle_pd(x, x, 1),_mm_setzero_pd());
 }
+static inline bool ORIBoundsNEQ(ORInterval x)
+{
+   return _mm_comineq_sd(x,_mm_shuffle_pd(x,x,1));
+}
 static inline bool ORIContainsZero(ORInterval x)
 {
    __m128d result = _mm_cmple_pd(x,_mm_setzero_pd());
@@ -61,6 +74,19 @@ static inline bool ORIEmpty(ORInterval x)
    ORInterval n = _mm_xor_pd(x,FLIP);
    ORInterval s = _mm_shuffle_pd(n,n,1);
    return _mm_comilt_sd(n,s);
+}
+static inline bool ORIContains(ORInterval a,double v)
+{
+   // a = [x,y]   (-y , x)
+   // v = [z,z]   (-z , z)
+   // x <= z && z <= y
+   // -y <= -z --> y >= z
+   // x <= z               ==?  x <= z && z <= y
+   ORInterval vi = _mm_xor_pd(_mm_set1_pd(v),FLIP);
+   __m128d result = _mm_cmple_pd(a,vi);
+   double b[2];
+   _mm_storeu_pd(b,result);
+   return b[0]!=0 && b[1]!=0;
 }
 static inline bool ORIBound(ORInterval a,double epsilon)
 {
@@ -77,12 +103,27 @@ static inline double ORIWidth(ORInterval a)
    _mm_storeu_pd(b, _mm_xor_pd(d,FLIP));    // fetch the bounds
    return b[0];                             // return up
 }
+static inline ORInterval ORIFloor(ORInterval a)
+{
+   return _mm_floor_pd(a);
+}
 static inline bool ORIEqual(ORInterval a,ORInterval b)
 {
    ORInterval c = _mm_cmpeq_pd(a, b);
    double s[2];
    _mm_storeu_pd(s, c);
    return s[0]!=0 && s[1]!=0;
+}
+static inline bool ORIWider(ORInterval a,ORInterval b)
+{
+   ORInterval s0  = _mm_shuffle_pd(a, a, 1); // [l,u](-u,l) -> (l,-u)
+   ORInterval d0  = _mm_add_pd(a,s0);        // (-u,l)+(l,-u) -> (-u+l,l-u)[l-u,u-l]
+   ORInterval s1  = _mm_shuffle_pd(b, b, 1); 
+   ORInterval d1  = _mm_add_pd(b,s1);        
+   ORInterval c   = _mm_cmple_pd(d0,d1);
+   double r[2];
+   _mm_storeu_pd(r, c);
+   return r[0]!=0;
 }
 static inline ORInterval createORI1(double v)
 {
@@ -165,6 +206,7 @@ static inline ORInterval ORIUnion(ORInterval a,ORInterval b)
 }
 static inline ORInterval ORISwap(ORInterval a)
 {
+   // [a,b](-b,a)  ~>  (a,-b) ~> (-a,b)[b,a]
    return _mm_xor_pd(_mm_shuffle_pd(a, a, 1),_mm_set_pd(-1.0 * 0.0,-1.0 * 0.0));
 }
 static inline ORInterval ORISquare(ORInterval a)
@@ -227,6 +269,7 @@ static inline ORInterval ORIPSqrt(ORInterval a)
       return rv;
    }
 }
+
 static inline BOOL ORIReady()
 {
    BOOL ready =  _MM_GET_ROUNDING_MODE() == _MM_ROUND_DOWN;
@@ -255,3 +298,25 @@ static inline enum ORNarrowing ORINarrow(ORInterval src,ORInterval by)
    else
       return ORNone;
 }
+
+ORInterval ORISine(ORInterval a);
+ORInterval ORICosine(ORInterval a);
+static inline ORInterval ORITan(ORInterval a)
+{
+   return ORIMul(ORISine(a),ORInverse(ORICosine(a)));
+}
+static inline ORInterval ORICosec(ORInterval a)
+{
+   return ORInverse(ORISine(a));
+}
+static inline ORInterval ORISec(ORInterval a)
+{
+   return ORInverse(ORICosine(a));
+}
+static inline ORInterval ORICotan(ORInterval a)
+{
+   return ORInverse(ORITan(a));
+}
+ORInterval ORIExp(ORInterval a);
+ORInterval ORILogn(ORInterval a);
+
