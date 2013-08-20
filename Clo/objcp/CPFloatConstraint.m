@@ -39,7 +39,6 @@
    ORIReady();
    ORNarrowing xs = ORNone, zs = ORNone;
    do {
-      _todo = CPChecked;
       if ([_x bound]) {
          zs = [_z updateInterval:ORISquare([_x bounds])];
          break;
@@ -173,7 +172,6 @@
    ORIReady();
    BOOL changed = NO;
    do {
-      _todo = CPChecked;
       __block ORInterval S = createORI1(_c);
       [_x enumerateWith:^(CPFloatVarI* xk,int k) {
          S = ORIAdd(S,ORIMul([xk bounds],createORI1([_coefs at:k])));
@@ -196,7 +194,8 @@
                [xi updateMin:ORILow(NEW)];
          }
       }
-   } while (changed || _todo == CPTocheck);
+   }
+   while (changed);
 }
 -(NSSet*)allVars
 {
