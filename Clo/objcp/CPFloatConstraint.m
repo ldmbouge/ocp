@@ -167,7 +167,7 @@
    }];
    return ORSuspend;
 }
--(void)propagate
+-(void) propagate
 {
    ORIReady();
    BOOL changed = NO;
