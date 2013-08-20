@@ -6,6 +6,7 @@
 //
 //
 
+#import <ORUtilities/ORTypes.h>
 #import <Foundation/Foundation.h>
 
 #include "emmintrin.h"
@@ -234,13 +235,8 @@ static inline BOOL ORIReady()
       _MM_SET_ROUNDING_MODE(_MM_ROUND_DOWN);
    return ready;
 }
-enum ORNarrowing {
-   ORNone = 0,
-   ORLow = 1,
-   ORUp  = 2,
-   ORBoth = 3
-};
-static inline enum ORNarrowing ORINarrow(ORInterval src,ORInterval by)
+
+static inline ORNarrowing ORINarrow(ORInterval src,ORInterval by)
 {
    ORInterval i = ORIInter(src, by);
    ORInterval t = _mm_cmpneq_pd(src,i);

@@ -22,6 +22,7 @@
    self = [super initCPCoreConstraint:[x engine]];
    _x = x;
    _z = z;
+   _idempotent = TRUE;
    return self;
 }
 -(ORStatus) post
@@ -36,7 +37,7 @@
 -(void) propagate
 {
    ORIReady();
-   ORStatus xs = ORNoop,zs = ORNoop;
+   ORNarrowing xs = ORNone, zs = ORNone;
    do {
       _todo = CPChecked;
       if ([_x bound]) {
@@ -56,7 +57,8 @@
          else
             xs = [_x updateInterval:ORISqrt(zb)];
       }
-   } while (zs != ORNoop || xs != ORNoop || _todo == CPTocheck);
+   }
+   while (zs != ORNone || xs != ORNone);
 }
 -(NSSet*)allVars
 {
@@ -148,6 +150,7 @@
    _x = x;
    _coefs = coefs;
    _c = - c;
+   _idempotent = TRUE;
    return self;
 }
 -(ORStatus) post
@@ -189,7 +192,8 @@
          if (update) {
             if (ci > 0)
                [xi updateMax:ORIUp(NEW)];
-            else [xi updateMin:ORILow(NEW)];
+            else
+               [xi updateMin:ORILow(NEW)];
          }
       }
    } while (changed || _todo == CPTocheck);
@@ -261,6 +265,7 @@ typedef struct CPlFoatEltRecordTag {
 -(id) init: (CPIntVarI*) x indexCstArray:(id<ORFloatArray>) c equal:(CPFloatVarI*)y
 {
    self = [super initCPCoreConstraint: [x engine]];
+   _idempotent = TRUE;
    _x = x;
    _y = y;
    _c = c;
@@ -383,6 +388,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(id) init: (CPFloatVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
+   _idempotent = TRUE;
    _x = x;
    _primalBound = MAXINT;
    return self;
@@ -468,6 +474,7 @@ int compareCPFloatEltRecords(const CPFloatEltRecord* r1,const CPFloatEltRecord* 
 -(id) init: (CPFloatVarI*) x
 {
    self = [super initCPCoreConstraint:[x engine]];
+   _idempotent = TRUE;
    _x = x;
    _primalBound = -MAXINT;
    return self;
