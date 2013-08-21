@@ -11,6 +11,7 @@
 
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORUtilities.h>
+#import <ORFoundation/ORObject.h>
 #import <ORFoundation/ORFactory.h>
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORData.h>

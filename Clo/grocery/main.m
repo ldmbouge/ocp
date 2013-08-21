@@ -10,11 +10,9 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORFactory.h"
-#import "objcp/CPConstraint.h"
-#import "objcp/CPFactory.h"
-#import <ORFoundation/ORSemDFSController.h>
-#import <ORFoundation/ORSemBDSController.h>
+#import <ORFoundation/ORFactory.h>
+#import <objcp/CPConstraint.h>
+#import <objcp/CPFactory.h>
 #import <ORModeling/ORModeling.h>
 #import <ORModeling/ORModelTransformation.h>
 #import <ORProgram/ORProgram.h>

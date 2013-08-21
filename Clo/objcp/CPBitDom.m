@@ -10,6 +10,7 @@
  ***********************************************************************/
 
 #import <ORFoundation/ORFoundation.h>
+#import <ORFoundation/ORTrailI.h>
 #import "CPBitDom.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"

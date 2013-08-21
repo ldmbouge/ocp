@@ -10,19 +10,14 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORObject.h"
+#import <ORUtilities/ORTypes.h>
+#import <ORFoundation/ORObject.h>
+#import <ORFoundation/ORConstraint.h>
 #import "ORArray.h"
 #import "ORSet.h"
-#import "ORConstraint.h"
 #import "ORVar.h"
 #import "ORExprI.h"
 #import "ORVisit.h"
-#import <ORUtilities/ORTypes.h>
-
-@interface ORConstraintI : ORObject<ORConstraint>
--(ORConstraintI*) initORConstraintI;
--(NSString*) description;
-@end
 
 @interface ORGroupI : ORObject<ORGroup>
 -(ORGroupI*)initORGroupI:(id<ORTracker>)model type:(enum ORGroupType)gt;

@@ -13,10 +13,13 @@
 			buildPhases = (
 			);
 			dependencies = (
-				5B1CDB8013C36A5D0061631E /* PBXTargetDependency */,
-				5B1CDB8213C36A5D0061631E /* PBXTargetDependency */,
-				5B1CDB8413C36A5D0061631E /* PBXTargetDependency */,
-				5B33370B13A2B87B001DFC38 /* PBXTargetDependency */,
+				5BE2221E17C5373C00259DEB /* PBXTargetDependency */,
+				5BE2222017C5374000259DEB /* PBXTargetDependency */,
+				5BE2222217C5374200259DEB /* PBXTargetDependency */,
+				5BE2222417C5374300259DEB /* PBXTargetDependency */,
+				5BE2222617C5374500259DEB /* PBXTargetDependency */,
+				5BE2222817C5374700259DEB /* PBXTargetDependency */,
+				5BE2222A17C5374900259DEB /* PBXTargetDependency */,
 			);
 			name = allProgs;
 			productName = allProgs;
@@ -947,37 +950,6 @@
 		B103614E16D9AAA500E95A39 /* ORFloatDecompose.m in Sources */ = {isa = PBXBuildFile; fileRef = B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */; };
 		B103615116D9AB9A00E95A39 /* ORIntLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B103614F16D9AB9A00E95A39 /* ORIntLinear.h */; };
 		B103615216D9AB9A00E95A39 /* ORIntLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B103615016D9AB9A00E95A39 /* ORIntLinear.m */; };
-		B103B1A117BF5414008755BB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
-		B103B1A717BF5414008755BB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B103B1A517BF5414008755BB /* InfoPlist.strings */; };
-		B103B1B717BF545B008755BB /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
-		B103B1B817BF5460008755BB /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		B103B1B917BF5469008755BB /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B103B1BA17BF546E008755BB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		B103B1C117BF56BE008755BB /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B103B1A017BF5414008755BB /* CPScheduler.framework */; };
-		B103B1C217BF57A6008755BB /* CPScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1A917BF5414008755BB /* CPScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B103B1C517BF5803008755BB /* CPConcretizer.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1C317BF5803008755BB /* CPConcretizer.h */; };
-		B103B1C617BF5803008755BB /* CPConcretizer.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1C417BF5803008755BB /* CPConcretizer.m */; };
-		B103B1C917BF58BB008755BB /* CPConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1C717BF58BB008755BB /* CPConstraint.h */; };
-		B103B1CA17BF58BB008755BB /* CPConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1C817BF58BB008755BB /* CPConstraint.m */; };
-		B103B1CD17BF58D7008755BB /* CPFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1CB17BF58D7008755BB /* CPFactory.h */; };
-		B103B1CE17BF58D7008755BB /* CPFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1CC17BF58D7008755BB /* CPFactory.m */; };
-		B103B1D117BF59D1008755BB /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		B103B1E017BF6545008755BB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
-		B103B1E617BF6545008755BB /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = B103B1E417BF6545008755BB /* InfoPlist.strings */; };
-		B103B1F017BF6589008755BB /* ORConstraint.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1EE17BF6589008755BB /* ORConstraint.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B103B1F417BF659B008755BB /* ORConstraintI.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1F217BF659B008755BB /* ORConstraintI.h */; };
-		B103B1F517BF659B008755BB /* ORConstraintI.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1F317BF659B008755BB /* ORConstraintI.m */; };
-		B103B1F817BF65AD008755BB /* ORFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1F617BF65AD008755BB /* ORFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		B103B1F917BF65AD008755BB /* ORFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1F717BF65AD008755BB /* ORFactory.m */; };
-		B103B1FC17BF65C0008755BB /* ORVisit.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1FA17BF65C0008755BB /* ORVisit.h */; };
-		B103B1FD17BF65C0008755BB /* ORVisit.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1FB17BF65C0008755BB /* ORVisit.m */; };
-		B103B20017BF65D3008755BB /* ORFlatten.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1FE17BF65D3008755BB /* ORFlatten.h */; };
-		B103B20117BF65D3008755BB /* ORFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B103B1FF17BF65D3008755BB /* ORFlatten.m */; };
-		B103B20217BF672E008755BB /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B103B1DF17BF6545008755BB /* ORScheduler.framework */; };
-		B103B20B17BF67F2008755BB /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
-		B103B20C17BF67F7008755BB /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
-		B103B20E17BF681E008755BB /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
-		B103B20F17BF685C008755BB /* ORScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = B103B1E817BF6545008755BB /* ORScheduler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B111FC0413CF3D10003C5119 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B111FC0313CF3D10003C5119 /* main.m */; };
 		B11D862315CD8AE20019729B /* ORExplorerI.h in Headers */ = {isa = PBXBuildFile; fileRef = B11D862115CD8AE20019729B /* ORExplorerI.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1098,7 +1070,6 @@
 		B189515015E0FA7C00B77813 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B189515115E0FA8100B77813 /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B189515215E0FA8500B77813 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
-		B18C3277161CF72C00A65B6D /* objlp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B1F3804415F035C0007C6A4A /* objlp.framework */; };
 		B18DF14B17810C68004E1880 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B18DF14E17810C68004E1880 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B18DF14D17810C68004E1880 /* main.m */; };
 		B18DF15217810C68004E1880 /* LPRelaxation.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B18DF15117810C68004E1880 /* LPRelaxation.1 */; };
@@ -1129,7 +1100,7 @@
 		B1A0124D15CCAE73001ED0D4 /* ORTracer.m in Sources */ = {isa = PBXBuildFile; fileRef = B1A0124B15CCAE72001ED0D4 /* ORTracer.m */; };
 		B1A0A5F715CDAB42005992E7 /* CPData.h in Headers */ = {isa = PBXBuildFile; fileRef = B1A0A5F615CDAB42005992E7 /* CPData.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1AAA30B16495E9700CE9AED /* CPMultiStartSolver.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA30916495E9700CE9AED /* CPMultiStartSolver.m */; };
-		B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AAA338164AADAD00CE9AED /* ORObject.h */; };
+		B1AAA33A164AADAD00CE9AED /* ORObject.h in Headers */ = {isa = PBXBuildFile; fileRef = B1AAA338164AADAD00CE9AED /* ORObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1AAA33B164AADAD00CE9AED /* ORObject.m in Sources */ = {isa = PBXBuildFile; fileRef = B1AAA339164AADAD00CE9AED /* ORObject.m */; };
 		B1B68C6E159FBF31008BC463 /* CPAssignmentI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1B68C6C159FBF31008BC463 /* CPAssignmentI.h */; };
 		B1B68C6F159FBF31008BC463 /* CPAssignmentI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B68C6D159FBF31008BC463 /* CPAssignmentI.m */; };
@@ -1171,13 +1142,11 @@
 		B1CFB7EC17C436CD00FB062A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		B1CFB7EF17C436CD00FB062A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CFB7EE17C436CD00FB062A /* main.m */; };
 		B1CFB7F317C436CD00FB062A /* testF.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1CFB7F217C436CD00FB062A /* testF.1 */; };
-		B1CFB7F717C4375000FB062A /* CPScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B103B1A017BF5414008755BB /* CPScheduler.framework */; };
 		B1CFB7F817C4375400FB062A /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		B1CFB7F917C4375800FB062A /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1CFB7FA17C4375C00FB062A /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1CFB7FB17C4375F00FB062A /* ORModeling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BAD114F161E5E420014EBCB /* ORModeling.framework */; };
 		B1CFB7FC17C4376300FB062A /* ORProgram.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B681180161F98FB00F4480F /* ORProgram.framework */; };
-		B1CFB7FD17C4376600FB062A /* ORScheduler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B103B1DF17BF6545008755BB /* ORScheduler.framework */; };
 		B1CFB7FE17C4376900FB062A /* ORUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B60E5D615AE907E002FF2B3 /* ORUtilities.framework */; };
 		B1E1C78C17036D27006AACFC /* MIPSolverI.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C78A17036D27006AACFC /* MIPSolverI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B1E1C78D17036D27006AACFC /* MIPSolverI.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C78B17036D27006AACFC /* MIPSolverI.m */; };
@@ -1193,7 +1162,6 @@
 		B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A5170375AF006AACFC /* ORMIPFlatten.m */; };
 		B1E1C7AA17038784006AACFC /* ORFloatLinear.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E1C7A817038783006AACFC /* ORFloatLinear.h */; };
 		B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */ = {isa = PBXBuildFile; fileRef = B1E1C7A917038784006AACFC /* ORFloatLinear.m */; };
-		B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCF01391329D000997E5 /* Cocoa.framework */; };
 		B1F531D215AED1DB00E89F98 /* CPBinPacking.h in Headers */ = {isa = PBXBuildFile; fileRef = B1F531D015AED1DB00E89F98 /* CPBinPacking.h */; };
 		B1F531D315AED1DB00E89F98 /* CPBinPacking.m in Sources */ = {isa = PBXBuildFile; fileRef = B1F531D115AED1DB00E89F98 /* CPBinPacking.m */; };
 		B1F531DA15AED4B100E89F98 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
@@ -1727,27 +1695,6 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		5B1CDB7F13C36A5D0061631E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BB3836213B3C0E1005B7D52;
-			remoteInfo = magicserie;
-		};
-		5B1CDB8113C36A5D0061631E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B103533E13BBD7AC00627058;
-			remoteInfo = queensAC;
-		};
-		5B1CDB8313C36A5D0061631E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B1595B3D13C11F2A001FCB61;
-			remoteInfo = Sudoku;
-		};
 		5B2000E2156D585E00D80105 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -1887,13 +1834,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
 			remoteInfo = objmp;
-		};
-		5B33370A13A2B87B001DFC38 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BEEF60F13970B6F002ADBD4;
-			remoteInfo = queens2;
 		};
 		5B3848CA16E6E5C000498DCF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -3246,6 +3186,55 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
+		5BE2221D17C5373C00259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
+			remoteInfo = ORFoundation;
+		};
+		5BE2221F17C5374000259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
+			remoteInfo = ORUtilities;
+		};
+		5BE2222117C5374200259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
+			remoteInfo = ORModeling;
+		};
+		5BE2222317C5374300259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
+			remoteInfo = ORProgram;
+		};
+		5BE2222517C5374500259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9348691655451C00757F89;
+			remoteInfo = CPUKernel;
+		};
+		5BE2222717C5374700259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
+			remoteInfo = objcp;
+		};
+		5BE2222917C5374900259DEB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B154427F16D19D8E001BD7B3;
+			remoteInfo = objmp;
+		};
 		5BE5A7F7158A839A006703CB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -3547,76 +3536,6 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		B103B1AF17BF543C008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
-			remoteInfo = ORFoundation;
-		};
-		B103B1B117BF5442008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
-			remoteInfo = ORUtilities;
-		};
-		B103B1B317BF5446008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B9348691655451C00757F89;
-			remoteInfo = CPUKernel;
-		};
-		B103B1B517BF5454008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
-			remoteInfo = objcp;
-		};
-		B103B1BF17BF56B5008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B103B19F17BF5414008755BB;
-			remoteInfo = CPScheduler;
-		};
-		B103B1CF17BF59C8008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B68117F161F98FB00F4480F;
-			remoteInfo = ORProgram;
-		};
-		B103B20317BF6732008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B103B1DE17BF6545008755BB;
-			remoteInfo = ORScheduler;
-		};
-		B103B20517BF67D7008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BFD594215A3ACA500825BC3;
-			remoteInfo = ORFoundation;
-		};
-		B103B20717BF67DC008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5B60E5D515AE907E002FF2B3;
-			remoteInfo = ORUtilities;
-		};
-		B103B20917BF67E8008755BB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5BAD114E161E5E420014EBCB;
-			remoteInfo = ORModeling;
-		};
 		B12ED8CD159E0CA500713C8E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -3862,13 +3781,6 @@
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
 		};
-		B18C3275161CF71C00A65B6D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B1F3804315F035C0007C6A4A;
-			remoteInfo = objlp;
-		};
 		B18DF15617810C87004E1880 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
@@ -4057,20 +3969,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5B9ABCEE1391329D000997E5;
 			remoteInfo = objcp;
-		};
-		B1CFB80B17C437D700FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B103B1DE17BF6545008755BB;
-			remoteInfo = ORScheduler;
-		};
-		B1CFB80D17C437DC00FB062A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5B6E89171379D3E9005DB4CA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = B103B19F17BF5414008755BB;
-			remoteInfo = CPScheduler;
 		};
 		B1F531E515AED4F100E89F98 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -5324,31 +5222,6 @@
 		B103614C16D9AAA500E95A39 /* ORFloatDecompose.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFloatDecompose.m; sourceTree = "<group>"; };
 		B103614F16D9AB9A00E95A39 /* ORIntLinear.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORIntLinear.h; sourceTree = "<group>"; };
 		B103615016D9AB9A00E95A39 /* ORIntLinear.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORIntLinear.m; sourceTree = "<group>"; };
-		B103B1A017BF5414008755BB /* CPScheduler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CPScheduler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B103B1A417BF5414008755BB /* CPScheduler-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CPScheduler-Info.plist"; sourceTree = "<group>"; };
-		B103B1A617BF5414008755BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B103B1A817BF5414008755BB /* CPScheduler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CPScheduler-Prefix.pch"; sourceTree = "<group>"; };
-		B103B1A917BF5414008755BB /* CPScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CPScheduler.h; sourceTree = "<group>"; };
-		B103B1C317BF5803008755BB /* CPConcretizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConcretizer.h; sourceTree = "<group>"; };
-		B103B1C417BF5803008755BB /* CPConcretizer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConcretizer.m; sourceTree = "<group>"; };
-		B103B1C717BF58BB008755BB /* CPConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPConstraint.h; sourceTree = "<group>"; };
-		B103B1C817BF58BB008755BB /* CPConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPConstraint.m; sourceTree = "<group>"; };
-		B103B1CB17BF58D7008755BB /* CPFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CPFactory.h; sourceTree = "<group>"; };
-		B103B1CC17BF58D7008755BB /* CPFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CPFactory.m; sourceTree = "<group>"; };
-		B103B1DF17BF6545008755BB /* ORScheduler.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ORScheduler.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		B103B1E317BF6545008755BB /* ORScheduler-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ORScheduler-Info.plist"; sourceTree = "<group>"; };
-		B103B1E517BF6545008755BB /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		B103B1E717BF6545008755BB /* ORScheduler-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ORScheduler-Prefix.pch"; sourceTree = "<group>"; };
-		B103B1E817BF6545008755BB /* ORScheduler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ORScheduler.h; sourceTree = "<group>"; };
-		B103B1EE17BF6589008755BB /* ORConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConstraint.h; sourceTree = "<group>"; };
-		B103B1F217BF659B008755BB /* ORConstraintI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORConstraintI.h; sourceTree = "<group>"; };
-		B103B1F317BF659B008755BB /* ORConstraintI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORConstraintI.m; sourceTree = "<group>"; };
-		B103B1F617BF65AD008755BB /* ORFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFactory.h; sourceTree = "<group>"; };
-		B103B1F717BF65AD008755BB /* ORFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFactory.m; sourceTree = "<group>"; };
-		B103B1FA17BF65C0008755BB /* ORVisit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORVisit.h; sourceTree = "<group>"; };
-		B103B1FB17BF65C0008755BB /* ORVisit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORVisit.m; sourceTree = "<group>"; };
-		B103B1FE17BF65D3008755BB /* ORFlatten.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFlatten.h; sourceTree = "<group>"; };
-		B103B1FF17BF65D3008755BB /* ORFlatten.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFlatten.m; sourceTree = "<group>"; };
 		B10ECF0E150C34DE00B82836 /* ORFactoryI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORFactoryI.h; sourceTree = "<group>"; };
 		B10ECF0F150C34DE00B82836 /* ORFactoryI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ORFactoryI.m; sourceTree = "<group>"; };
 		B10ECF12150C382000B82836 /* ORSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ORSet.h; sourceTree = "<group>"; };
@@ -5552,7 +5425,6 @@
 		B1EADBCE15CDBE140032A6C7 /* CPEngineI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPEngineI.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1EADBD015CDBE2B0032A6C7 /* CPEngineI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPEngineI.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1EADBD215CDC0590032A6C7 /* OREngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OREngine.h; sourceTree = "<group>"; };
-		B1F3804415F035C0007C6A4A /* objlp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = objlp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B1F531D015AED1DB00E89F98 /* CPBinPacking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPBinPacking.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B1F531D115AED1DB00E89F98 /* CPBinPacking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CPBinPacking.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		B1F531D815AED4B100E89F98 /* testPacking */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testPacking; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -6355,35 +6227,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B103B19C17BF5414008755BB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B1D117BF59D1008755BB /* ORProgram.framework in Frameworks */,
-				B103B1BA17BF546E008755BB /* ORUtilities.framework in Frameworks */,
-				B103B1B917BF5469008755BB /* ORFoundation.framework in Frameworks */,
-				B103B1B817BF5460008755BB /* objcp.framework in Frameworks */,
-				B103B1B717BF545B008755BB /* CPUKernel.framework in Frameworks */,
-				B103B1A117BF5414008755BB /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B103B1DB17BF6545008755BB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B20E17BF681E008755BB /* ORModeling.framework in Frameworks */,
-				B103B20C17BF67F7008755BB /* ORFoundation.framework in Frameworks */,
-				B103B20B17BF67F2008755BB /* ORUtilities.framework in Frameworks */,
-				B103B1E017BF6545008755BB /* Cocoa.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B111FBFC13CF3D10003C5119 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B18C3277161CF72C00A65B6D /* objlp.framework in Frameworks */,
 				B111FC0113CF3D10003C5119 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6614,8 +6461,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B103B20217BF672E008755BB /* ORScheduler.framework in Frameworks */,
-				B103B1C117BF56BE008755BB /* CPScheduler.framework in Frameworks */,
 				B1C4F44A161FA0770010A5C8 /* ORProgram.framework in Frameworks */,
 				B1C4F413161F87550010A5C8 /* ORFoundation.framework in Frameworks */,
 				B1C4F412161F87500010A5C8 /* ORUtilities.framework in Frameworks */,
@@ -6655,22 +6500,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1CFB7FE17C4376900FB062A /* ORUtilities.framework in Frameworks */,
-				B1CFB7FD17C4376600FB062A /* ORScheduler.framework in Frameworks */,
 				B1CFB7FC17C4376300FB062A /* ORProgram.framework in Frameworks */,
 				B1CFB7FB17C4375F00FB062A /* ORModeling.framework in Frameworks */,
 				B1CFB7FA17C4375C00FB062A /* ORFoundation.framework in Frameworks */,
 				B1CFB7F917C4375800FB062A /* objcp.framework in Frameworks */,
 				B1CFB7F817C4375400FB062A /* CPUKernel.framework in Frameworks */,
-				B1CFB7F717C4375000FB062A /* CPScheduler.framework in Frameworks */,
 				B1CFB7EC17C436CD00FB062A /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B1F3804015F035C0007C6A4A /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B1F3804515F035C0007C6A4A /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7169,8 +7004,6 @@
 				5BDBBAAB1718D96C00322163 /* stressLimit */,
 				5B115521171B1CF5005371AA /* slabLNSModel */,
 				5BE12176173C75A3000C9AA9 /* bug */,
-				B103B1E117BF6545008755BB /* ORScheduler */,
-				B103B1A217BF5414008755BB /* CPScheduler */,
 				5B6E89231379D3E9005DB4CA /* Frameworks */,
 				5B6E89211379D3E9005DB4CA /* Products */,
 				5B778BA2154F1CAD0078EB07 /* BitArrayTest */,
@@ -7222,7 +7055,6 @@
 				B181E11615D7465300AB44DA /* sportModel */,
 				B189512615DE52D100B77813 /* magicseriesModel */,
 				B189513D15E0FA5E00B77813 /* slabModel */,
-				B1F3804415F035C0007C6A4A /* objlp.framework */,
 				5B7B476A15F0E4AD005FF875 /* coloringModel */,
 				5B80561016076DFE00659ECC /* magicsquareModel */,
 				5B5096E01619B6CB00171F9D /* testDistrib */,
@@ -7264,8 +7096,6 @@
 				B18DF14A17810C67004E1880 /* LPRelaxation */,
 				5B6B0EFE178B557F00104246 /* circle */,
 				5B3895E91795BE07004CCE93 /* fwarehouse */,
-				B103B1A017BF5414008755BB /* CPScheduler.framework */,
-				B103B1DF17BF6545008755BB /* ORScheduler.framework */,
 				B1CFB7EB17C436CD00FB062A /* testF */,
 			);
 			name = Products;
@@ -8287,59 +8117,6 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		B103B1A217BF5414008755BB /* CPScheduler */ = {
-			isa = PBXGroup;
-			children = (
-				B103B1A917BF5414008755BB /* CPScheduler.h */,
-				B103B1A317BF5414008755BB /* Supporting Files */,
-				B103B1C317BF5803008755BB /* CPConcretizer.h */,
-				B103B1C417BF5803008755BB /* CPConcretizer.m */,
-				B103B1C717BF58BB008755BB /* CPConstraint.h */,
-				B103B1C817BF58BB008755BB /* CPConstraint.m */,
-				B103B1CB17BF58D7008755BB /* CPFactory.h */,
-				B103B1CC17BF58D7008755BB /* CPFactory.m */,
-			);
-			path = CPScheduler;
-			sourceTree = "<group>";
-		};
-		B103B1A317BF5414008755BB /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				B103B1A417BF5414008755BB /* CPScheduler-Info.plist */,
-				B103B1A517BF5414008755BB /* InfoPlist.strings */,
-				B103B1A817BF5414008755BB /* CPScheduler-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		B103B1E117BF6545008755BB /* ORScheduler */ = {
-			isa = PBXGroup;
-			children = (
-				B103B1E817BF6545008755BB /* ORScheduler.h */,
-				B103B1E217BF6545008755BB /* Supporting Files */,
-				B103B1EE17BF6589008755BB /* ORConstraint.h */,
-				B103B1F217BF659B008755BB /* ORConstraintI.h */,
-				B103B1F317BF659B008755BB /* ORConstraintI.m */,
-				B103B1F617BF65AD008755BB /* ORFactory.h */,
-				B103B1F717BF65AD008755BB /* ORFactory.m */,
-				B103B1FA17BF65C0008755BB /* ORVisit.h */,
-				B103B1FB17BF65C0008755BB /* ORVisit.m */,
-				B103B1FE17BF65D3008755BB /* ORFlatten.h */,
-				B103B1FF17BF65D3008755BB /* ORFlatten.m */,
-			);
-			path = ORScheduler;
-			sourceTree = "<group>";
-		};
-		B103B1E217BF6545008755BB /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				B103B1E317BF6545008755BB /* ORScheduler-Info.plist */,
-				B103B1E417BF6545008755BB /* InfoPlist.strings */,
-				B103B1E717BF6545008755BB /* ORScheduler-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		B111FC0213CF3D10003C5119 /* testLPWrapper */ = {
 			isa = PBXGroup;
 			children = (
@@ -9071,30 +8848,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B103B19D17BF5414008755BB /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B1C217BF57A6008755BB /* CPScheduler.h in Headers */,
-				B103B1C517BF5803008755BB /* CPConcretizer.h in Headers */,
-				B103B1C917BF58BB008755BB /* CPConstraint.h in Headers */,
-				B103B1CD17BF58D7008755BB /* CPFactory.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B103B1DC17BF6545008755BB /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B20F17BF685C008755BB /* ORScheduler.h in Headers */,
-				B103B1F817BF65AD008755BB /* ORFactory.h in Headers */,
-				B103B1F017BF6589008755BB /* ORConstraint.h in Headers */,
-				B103B1F417BF659B008755BB /* ORConstraintI.h in Headers */,
-				B103B1FC17BF65C0008755BB /* ORVisit.h in Headers */,
-				B103B20017BF65D3008755BB /* ORFlatten.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B154427D16D19D8E001BD7B3 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -9105,13 +8858,6 @@
 				B154429716D19E92001BD7B3 /* LPSolverI.h in Headers */,
 				B1E1C79417036D7B006AACFC /* MIPType.h in Headers */,
 				B154429516D19E4D001BD7B3 /* LPGurobi.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B1F3804115F035C0007C6A4A /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10441,50 +10187,6 @@
 			productReference = B103533F13BBD7AC00627058 /* queensAC */;
 			productType = "com.apple.product-type.tool";
 		};
-		B103B19F17BF5414008755BB /* CPScheduler */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B103B1AC17BF5414008755BB /* Build configuration list for PBXNativeTarget "CPScheduler" */;
-			buildPhases = (
-				B103B19B17BF5414008755BB /* Sources */,
-				B103B19C17BF5414008755BB /* Frameworks */,
-				B103B19D17BF5414008755BB /* Headers */,
-				B103B19E17BF5414008755BB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B103B1D017BF59C8008755BB /* PBXTargetDependency */,
-				B103B1B617BF5454008755BB /* PBXTargetDependency */,
-				B103B1B417BF5446008755BB /* PBXTargetDependency */,
-				B103B1B217BF5442008755BB /* PBXTargetDependency */,
-				B103B1B017BF543C008755BB /* PBXTargetDependency */,
-			);
-			name = CPScheduler;
-			productName = CPScheduler;
-			productReference = B103B1A017BF5414008755BB /* CPScheduler.framework */;
-			productType = "com.apple.product-type.framework";
-		};
-		B103B1DE17BF6545008755BB /* ORScheduler */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B103B1EB17BF6545008755BB /* Build configuration list for PBXNativeTarget "ORScheduler" */;
-			buildPhases = (
-				B103B1DA17BF6545008755BB /* Sources */,
-				B103B1DB17BF6545008755BB /* Frameworks */,
-				B103B1DC17BF6545008755BB /* Headers */,
-				B103B1DD17BF6545008755BB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				B103B20A17BF67E8008755BB /* PBXTargetDependency */,
-				B103B20817BF67DC008755BB /* PBXTargetDependency */,
-				B103B20617BF67D7008755BB /* PBXTargetDependency */,
-			);
-			name = ORScheduler;
-			productName = ORScheduler;
-			productReference = B103B1DF17BF6545008755BB /* ORScheduler.framework */;
-			productType = "com.apple.product-type.framework";
-		};
 		B111FBFE13CF3D10003C5119 /* testLPWrapper */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = B111FC0813CF3D10003C5119 /* Build configuration list for PBXNativeTarget "testLPWrapper" */;
@@ -10496,7 +10198,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B18C3276161CF71C00A65B6D /* PBXTargetDependency */,
 			);
 			name = testLPWrapper;
 			productName = testLPWrapper;
@@ -10895,8 +10596,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B103B20417BF6732008755BB /* PBXTargetDependency */,
-				B103B1C017BF56B5008755BB /* PBXTargetDependency */,
 				B1C4F449161FA0700010A5C8 /* PBXTargetDependency */,
 				B1C4F40F161F873C0010A5C8 /* PBXTargetDependency */,
 				B1C4F40D161F872A0010A5C8 /* PBXTargetDependency */,
@@ -10962,8 +10661,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				B1CFB80E17C437DC00FB062A /* PBXTargetDependency */,
-				B1CFB80C17C437D700FB062A /* PBXTargetDependency */,
 				B1CFB80A17C437D200FB062A /* PBXTargetDependency */,
 				B1CFB80817C437CF00FB062A /* PBXTargetDependency */,
 				B1CFB80617C437CB00FB062A /* PBXTargetDependency */,
@@ -10975,24 +10672,6 @@
 			productName = testF;
 			productReference = B1CFB7EB17C436CD00FB062A /* testF */;
 			productType = "com.apple.product-type.tool";
-		};
-		B1F3804315F035C0007C6A4A /* objlp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = B1F3805215F035C0007C6A4A /* Build configuration list for PBXNativeTarget "objlp" */;
-			buildPhases = (
-				B1F3803F15F035C0007C6A4A /* Sources */,
-				B1F3804015F035C0007C6A4A /* Frameworks */,
-				B1F3804115F035C0007C6A4A /* Headers */,
-				B1F3804215F035C0007C6A4A /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = objlp;
-			productName = objlp;
-			productReference = B1F3804415F035C0007C6A4A /* objlp.framework */;
-			productType = "com.apple.product-type.framework";
 		};
 		B1F531D715AED4B100E89F98 /* testPacking */ = {
 			isa = PBXNativeTarget;
@@ -11066,10 +10745,7 @@
 				5B68117F161F98FB00F4480F /* ORProgram */,
 				5B9348691655451C00757F89 /* CPUKernel */,
 				5B9ABCEE1391329D000997E5 /* objcp */,
-				B103B1DE17BF6545008755BB /* ORScheduler */,
-				B103B19F17BF5414008755BB /* CPScheduler */,
 				B154427F16D19D8E001BD7B3 /* objmp */,
-				B1F3804315F035C0007C6A4A /* objlp */,
 				5B9EE52715175CF900619B47 /* CPLib */,
 				5B9ABD011391329D000997E5 /* objcpTests */,
 				5B33370313A2B866001DFC38 /* allProgs */,
@@ -11260,22 +10936,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B103B19E17BF5414008755BB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B1A717BF5414008755BB /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B103B1DD17BF6545008755BB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B1E617BF6545008755BB /* InfoPlist.strings in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B154427E16D19D8E001BD7B3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -11291,13 +10951,6 @@
 				B1C9DF1B15A8045C00EE924C /* InfoPlist.strings in Resources */,
 				B1C9DF2115A8045C00EE924C /* Credits.rtf in Resources */,
 				B1C9DF2715A8045C00EE924C /* MainMenu.xib in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B1F3804215F035C0007C6A4A /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12056,27 +11709,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B103B19B17BF5414008755BB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B1C617BF5803008755BB /* CPConcretizer.m in Sources */,
-				B103B1CA17BF58BB008755BB /* CPConstraint.m in Sources */,
-				B103B1CE17BF58D7008755BB /* CPFactory.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B103B1DA17BF6545008755BB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				B103B1F517BF659B008755BB /* ORConstraintI.m in Sources */,
-				B103B1F917BF65AD008755BB /* ORFactory.m in Sources */,
-				B103B1FD17BF65C0008755BB /* ORVisit.m in Sources */,
-				B103B20117BF65D3008755BB /* ORFlatten.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		B111FBFB13CF3D10003C5119 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -12282,13 +11914,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1CFB7EF17C436CD00FB062A /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		B1F3803F15F035C0007C6A4A /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -12680,21 +12305,6 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5B196C7716446F4400C9CED2 /* PBXContainerItemProxy */;
 		};
-		5B1CDB8013C36A5D0061631E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BB3836213B3C0E1005B7D52 /* magicserie */;
-			targetProxy = 5B1CDB7F13C36A5D0061631E /* PBXContainerItemProxy */;
-		};
-		5B1CDB8213C36A5D0061631E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B103533E13BBD7AC00627058 /* queensAC */;
-			targetProxy = 5B1CDB8113C36A5D0061631E /* PBXContainerItemProxy */;
-		};
-		5B1CDB8413C36A5D0061631E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B1595B3D13C11F2A001FCB61 /* Sudoku */;
-			targetProxy = 5B1CDB8313C36A5D0061631E /* PBXContainerItemProxy */;
-		};
 		5B2000E1156D585E00D80105 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -12794,11 +12404,6 @@
 			isa = PBXTargetDependency;
 			target = B154427F16D19D8E001BD7B3 /* objmp */;
 			targetProxy = 5B2D92E217036DBE007F330B /* PBXContainerItemProxy */;
-		};
-		5B33370B13A2B87B001DFC38 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BEEF60F13970B6F002ADBD4 /* queens2 */;
-			targetProxy = 5B33370A13A2B87B001DFC38 /* PBXContainerItemProxy */;
 		};
 		5B3848CB16E6E5C000498DCF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -13765,6 +13370,41 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = 5BE1218A173C75B4000C9AA9 /* PBXContainerItemProxy */;
 		};
+		5BE2221E17C5373C00259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
+			targetProxy = 5BE2221D17C5373C00259DEB /* PBXContainerItemProxy */;
+		};
+		5BE2222017C5374000259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
+			targetProxy = 5BE2221F17C5374000259DEB /* PBXContainerItemProxy */;
+		};
+		5BE2222217C5374200259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
+			targetProxy = 5BE2222117C5374200259DEB /* PBXContainerItemProxy */;
+		};
+		5BE2222417C5374300259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B68117F161F98FB00F4480F /* ORProgram */;
+			targetProxy = 5BE2222317C5374300259DEB /* PBXContainerItemProxy */;
+		};
+		5BE2222617C5374500259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9348691655451C00757F89 /* CPUKernel */;
+			targetProxy = 5BE2222517C5374500259DEB /* PBXContainerItemProxy */;
+		};
+		5BE2222817C5374700259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5B9ABCEE1391329D000997E5 /* objcp */;
+			targetProxy = 5BE2222717C5374700259DEB /* PBXContainerItemProxy */;
+		};
+		5BE2222A17C5374900259DEB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B154427F16D19D8E001BD7B3 /* objmp */;
+			targetProxy = 5BE2222917C5374900259DEB /* PBXContainerItemProxy */;
+		};
 		5BE5A7F8158A839A006703CB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -13980,56 +13620,6 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B103534C13BBD81900627058 /* PBXContainerItemProxy */;
 		};
-		B103B1B017BF543C008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
-			targetProxy = B103B1AF17BF543C008755BB /* PBXContainerItemProxy */;
-		};
-		B103B1B217BF5442008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
-			targetProxy = B103B1B117BF5442008755BB /* PBXContainerItemProxy */;
-		};
-		B103B1B417BF5446008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B9348691655451C00757F89 /* CPUKernel */;
-			targetProxy = B103B1B317BF5446008755BB /* PBXContainerItemProxy */;
-		};
-		B103B1B617BF5454008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B9ABCEE1391329D000997E5 /* objcp */;
-			targetProxy = B103B1B517BF5454008755BB /* PBXContainerItemProxy */;
-		};
-		B103B1C017BF56B5008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B103B19F17BF5414008755BB /* CPScheduler */;
-			targetProxy = B103B1BF17BF56B5008755BB /* PBXContainerItemProxy */;
-		};
-		B103B1D017BF59C8008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B68117F161F98FB00F4480F /* ORProgram */;
-			targetProxy = B103B1CF17BF59C8008755BB /* PBXContainerItemProxy */;
-		};
-		B103B20417BF6732008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B103B1DE17BF6545008755BB /* ORScheduler */;
-			targetProxy = B103B20317BF6732008755BB /* PBXContainerItemProxy */;
-		};
-		B103B20617BF67D7008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
-			targetProxy = B103B20517BF67D7008755BB /* PBXContainerItemProxy */;
-		};
-		B103B20817BF67DC008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5B60E5D515AE907E002FF2B3 /* ORUtilities */;
-			targetProxy = B103B20717BF67DC008755BB /* PBXContainerItemProxy */;
-		};
-		B103B20A17BF67E8008755BB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5BAD114E161E5E420014EBCB /* ORModeling */;
-			targetProxy = B103B20917BF67E8008755BB /* PBXContainerItemProxy */;
-		};
 		B12ED8CE159E0CA500713C8E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
@@ -14205,11 +13795,6 @@
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B189514E15E0FA7300B77813 /* PBXContainerItemProxy */;
 		};
-		B18C3276161CF71C00A65B6D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B1F3804315F035C0007C6A4A /* objlp */;
-			targetProxy = B18C3275161CF71C00A65B6D /* PBXContainerItemProxy */;
-		};
 		B18DF15717810C87004E1880 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5BFD594215A3ACA500825BC3 /* ORFoundation */;
@@ -14344,16 +13929,6 @@
 			isa = PBXTargetDependency;
 			target = 5B9ABCEE1391329D000997E5 /* objcp */;
 			targetProxy = B1CFB80917C437D200FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80C17C437D700FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B103B1DE17BF6545008755BB /* ORScheduler */;
-			targetProxy = B1CFB80B17C437D700FB062A /* PBXContainerItemProxy */;
-		};
-		B1CFB80E17C437DC00FB062A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = B103B19F17BF5414008755BB /* CPScheduler */;
-			targetProxy = B1CFB80D17C437DC00FB062A /* PBXContainerItemProxy */;
 		};
 		B1F531E615AED4F100E89F98 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -14527,22 +14102,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				5BFD594915A3ACA500825BC3 /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		B103B1A517BF5414008755BB /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B103B1A617BF5414008755BB /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		B103B1E417BF6545008755BB /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				B103B1E517BF6545008755BB /* en */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
@@ -15390,10 +14949,6 @@
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clo/Clo-Prefix.pch";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib\"",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -15406,10 +14961,6 @@
 				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Clo/Clo-Prefix.pch";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(LOCAL_LIBRARY_DIR)/gurobi461/mac64/lib\"",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -16581,110 +16132,6 @@
 			};
 			name = Release;
 		};
-		B103B1AD17BF5414008755BB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CPScheduler/CPScheduler-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "CPScheduler/CPScheduler-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Debug;
-		};
-		B103B1AE17BF5414008755BB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "CPScheduler/CPScheduler-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "CPScheduler/CPScheduler-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Release;
-		};
-		B103B1EC17BF6545008755BB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = NO;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ORScheduler/ORScheduler-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "ORScheduler/ORScheduler-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Debug;
-		};
-		B103B1ED17BF6545008755BB /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN_EMPTY_BODY = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				COPY_PHASE_STRIP = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ORScheduler/ORScheduler-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "ORScheduler/ORScheduler-Info.plist";
-				MACOSX_DEPLOYMENT_TARGET = 10.8;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Release;
-		};
 		B111FC0913CF3D10003C5119 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -17376,52 +16823,6 @@
 			};
 			name = Release;
 		};
-		B1F3805015F035C0007C6A4A /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "objlp/objlp-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "objlp/objlp-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Debug;
-		};
-		B1F3805115F035C0007C6A4A /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_VERSION = A;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "objlp/objlp-Prefix.pch";
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				INFOPLIST_FILE = "objlp/objlp-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				WRAPPER_EXTENSION = framework;
-			};
-			name = Release;
-		};
 		B1F531E315AED4B100E89F98 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -18043,24 +17444,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B103B1AC17BF5414008755BB /* Build configuration list for PBXNativeTarget "CPScheduler" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B103B1AD17BF5414008755BB /* Debug */,
-				B103B1AE17BF5414008755BB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		B103B1EB17BF6545008755BB /* Build configuration list for PBXNativeTarget "ORScheduler" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B103B1EC17BF6545008755BB /* Debug */,
-				B103B1ED17BF6545008755BB /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		B111FC0813CF3D10003C5119 /* Build configuration list for PBXNativeTarget "testLPWrapper" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -18264,14 +17647,6 @@
 			buildConfigurations = (
 				B1CFB7F517C436CD00FB062A /* Debug */,
 				B1CFB7F617C436CD00FB062A /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-		};
-		B1F3805215F035C0007C6A4A /* Build configuration list for PBXNativeTarget "objlp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				B1F3805015F035C0007C6A4A /* Debug */,
-				B1F3805115F035C0007C6A4A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

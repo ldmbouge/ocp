@@ -13,7 +13,6 @@
 #import <ORFoundation/cont.h>
 #import <ORFoundation/ORController.h>
 #import <ORFoundation/ORTracer.h>
-#import "ORTrailI.h"
 
 @interface ORSemDFSController : ORDefaultController <NSCopying,ORSearchController,ORStealing> {
 @protected

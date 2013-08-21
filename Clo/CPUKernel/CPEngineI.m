@@ -12,7 +12,7 @@
 #import "CPEngineI.h"
 #import "CPTypes.h"
 #import "CPAC3Event.h"
-#import "ORFoundation/ORSetI.h"
+#import <ORFoundation/ORSetI.h>
 
 @implementation CPAC3Queue
 -(id) initAC3Queue: (ORInt) sz

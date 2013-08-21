@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORSet.h"
+#import <ORFoundation/ORSet.h>
 
 
 @protocol ORForall <NSObject>

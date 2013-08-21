@@ -16,6 +16,7 @@
 #import "ORModelI.h"
 #import "ORError.h"
 #import "ORConcurrencyI.h"
+#import "ORConstraintI.h"
 #import "ORFlatten.h"
 #import "ORLPFlatten.h"
 #import "ORMIPFlatten.h"

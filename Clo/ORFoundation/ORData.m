@@ -9,9 +9,9 @@
  
  ***********************************************************************/
 
-#import "ORFoundation/ORData.h"
+#import <ORFoundation/ORData.h>
 #import "ORDataI.h"
-#import "ORUtilities/ORUtilities.h"
+#import <ORUtilities/ORUtilities.h>
 
 @implementation ORCrFactory (OR)
 +(id<ORMutableInteger>) integer:(ORInt) value

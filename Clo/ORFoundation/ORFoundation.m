@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 
 static __thread jmp_buf* ptr = 0;
 

@@ -18,6 +18,7 @@
 
 @protocol ORModel;
 @protocol ORAddToModel;
+@class ORExprI;
 
 @interface ORNormalizer : NSObject
 +(id<ORLinear>)normalize:(id<ORExpr>)expr into: (id<ORAddToModel>)model annotation:(ORAnnotation)n;

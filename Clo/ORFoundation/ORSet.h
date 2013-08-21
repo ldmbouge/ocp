@@ -10,8 +10,8 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORAVLTree.h"
-#import "ORObject.h"
+#import <ORFoundation/ORAVLTree.h>
+#import <ORFoundation/ORData.h>
 
 @protocol ORIntIterable <ORObject>
 -(void)enumerateWithBlock:(ORInt2Void)block;

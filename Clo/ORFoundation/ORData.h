@@ -12,7 +12,6 @@
 #import <Foundation/Foundation.h>
 #import <ORUtilities/ORCrFactory.h>
 
-
 typedef enum {
    DomainConsistency,
    RangeConsistency,

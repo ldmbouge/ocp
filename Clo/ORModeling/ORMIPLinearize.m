@@ -10,11 +10,12 @@
  ***********************************************************************/
 
 #import "ORMIPLinearize.h"
+#import <ORFoundation/ORArrayI.h>
+#import "ORConstraintI.h"
 #import "ORModelI.h"
 #import "ORDecompose.h"
 #import "ORVarI.h"
 #import "ORSetI.h"
-#import <ORFoundation/ORArrayI.h>
 
 @implementation ORMIPLinearize
 {

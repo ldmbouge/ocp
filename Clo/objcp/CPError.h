@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORError.h"
+#import <ORFoundation/ORError.h>
 
 @interface CPRemoveOnDenseDomainError : ORExecutionError <ORError>
 {

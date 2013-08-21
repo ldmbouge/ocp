@@ -9,11 +9,11 @@
  
  ***********************************************************************/
 
-#import <Foundation/Foundation.h>
 #import <ORUtilities/ORUtilities.h>
-#import "ORFoundation/ORData.h"
-#import "ORFoundation/ORTrail.h"
-#import "ORFoundation/ORSet.h"
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORSet.h>
+#import "ORObject.h"
 
 @protocol ORSearchEngine;
 

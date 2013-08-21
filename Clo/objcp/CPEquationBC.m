@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 #import "CPEquationBC.h"
-#import "ORFoundation/ORArrayI.h"
+#import <ORFoundation/ORArrayI.h>
 #import "CPIntVarI.h"
 #import "CPEngineI.h"
 

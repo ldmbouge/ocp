@@ -12,6 +12,8 @@
 #import <ORFoundation/ORTracker.h>
 #import <ORFoundation/ORArray.h>
 #import <ORFoundation/ORVar.h>
+#import <ORFoundation/ORObject.h>
+
 
 @protocol ORIntVarArray;
 @protocol ORVarArray;
@@ -501,3 +503,11 @@ enum ORGroupType {
 -(id<ORBitVar>) equals;
 -(id<ORBitVar>) zeroIfXEquals;
 @end
+
+// Root implementation class (needed so that sub-frameworks can write constraints)
+
+@interface ORConstraintI : ORObject<ORConstraint>
+-(ORConstraintI*) initORConstraintI;
+-(NSString*) description;
+@end
+

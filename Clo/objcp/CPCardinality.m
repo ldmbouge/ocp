@@ -9,7 +9,7 @@
 
  ***********************************************************************/
 
-#import "ORFoundation/ORArrayI.h"
+#import <ORFoundation/ORArrayI.h>
 #import "CPTypes.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"

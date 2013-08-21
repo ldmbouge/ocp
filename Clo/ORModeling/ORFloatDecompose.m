@@ -13,6 +13,7 @@
 #import "ORDecompose.h"
 #import "ORFloatDecompose.h"
 #import "ORFloatLinear.h"
+#import "ORExprI.h"
 
 @implementation ORFloatLinearizer
 {

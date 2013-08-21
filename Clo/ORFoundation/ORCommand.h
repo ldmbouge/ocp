@@ -9,7 +9,7 @@
  
  ***********************************************************************/
 
-#import "ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 
 /**
  * This is a simple Command protocol to record "decisions" that must be redone

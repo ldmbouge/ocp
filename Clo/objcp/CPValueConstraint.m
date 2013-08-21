@@ -10,7 +10,7 @@
  ***********************************************************************/
 
 
-#import "ORFoundation/ORFoundation.h"
+#import <ORFoundation/ORFoundation.h>
 #import "CPValueConstraint.h"
 #import "CPEngineI.h"
 #import "CPIntVarI.h"

@@ -10,11 +10,12 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import "ORFoundation/ORData.h"
-#import "ORFoundation/ORArray.h"
-#import "ORFoundation/ORSet.h"
-#import "ORConstraintI.h"
-#import "ORTrail.h"
+#import <ORFoundation/ORData.h>
+#import <ORFoundation/ORArray.h>
+#import <ORFoundation/ORSet.h>
+#import <ORFoundation/ORTrail.h>
+#import <ORFoundation/ORConstraint.h>
+//#import "ORConstraintI.h"
 
 @protocol ORSearchEngine;
 @protocol ORSearchController;

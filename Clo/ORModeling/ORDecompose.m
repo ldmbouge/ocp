@@ -9,8 +9,9 @@
  
  ***********************************************************************/
 #import "ORDecompose.h"
-#import "ORModeling/ORModeling.h"
+#import <ORModeling/ORModeling.h>
 #import <ORModeling/ORLinear.h>
+#import "ORExprI.h"
 #import "ORFloatLinear.h"
 //-- temp
 #import "ORFloatDecompose.h"
