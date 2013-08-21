@@ -80,6 +80,13 @@ typedef enum  {
    ORNoop
 } ORStatus;
 
+typedef enum  {
+   ORNone = 0,
+   ORLow = 1,
+   ORUp  = 2,
+   ORBoth = 3
+} ORNarrowing;
+
 typedef void (^ORClosure)(void);
 typedef bool (^ORInt2Bool)(ORInt);
 typedef bool (^ORVoid2Bool)(void);

@@ -39,14 +39,15 @@
    ORIReady();
    return ORIFormat(createORI2(_min._val, _max._val));
 }
--(ORStatus) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
+-(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x
 {
    ORIReady();
    ORInterval me = createORI2(_min._val, _max._val);
    BOOL isb = ORIBound(me, TOLERANCE);
    if (isb)
-      return ORSuspend;
-   if (newMin <= _min._val) return ORSuspend;
+      return;
+   if (newMin <= _min._val)
+      return;
    if (ORIEmpty(ORIInter(me, createORI1(newMin))))
       failNow();
    assignTRDouble(&_min, newMin, _trail);
@@ -55,16 +56,16 @@
    [x changeMinEvt: isBound sender:self];
    if (isBound)
       [x bindEvt:self];
-   return ORSuspend;
 }
--(ORStatus) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
+-(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x
 {
    ORIReady();
    ORInterval me = createORI2(_min._val, _max._val);
    BOOL isb = ORIBound(me, TOLERANCE);
    if (isb)
-      return ORSuspend;
-   if (newMax >= _max._val) return ORSuspend;
+      return;
+   if (newMax >= _max._val)
+      return;
    if (ORIEmpty(ORIInter(me, createORI1(newMax))))
       failNow();
    assignTRDouble(&_max, newMax, _trail);
@@ -73,17 +74,17 @@
    [x changeMaxEvt:isBound sender:self];
    if (isBound)
       [x bindEvt:self];
-   return ORSuspend;
 }
--(ORStatus) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x
+-(ORStatus) updateInterval: (ORInterval) v for: (id<CPFloatVarNotifier>) x
 {
    ORIReady();
    ORInterval src= createORI2(_min._val, _max._val);
    ORInterval is = ORIInter(src, v);
    if (ORIEmpty(is))
       failNow();
-   switch(ORINarrow(src, is)) {
-      case ORBoth: {
+   switch (ORINarrow(src, is)) {
+      case ORBoth:
+      {
          ORFloat nl,nu;
          ORIBounds(is, &nl, &nu);
          assignTRDouble(&_min, nl, _trail);
@@ -91,42 +92,52 @@
          ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
          [x changeMinEvt:isBound sender:self];
          [x changeMaxEvt:isBound sender:self];
-         if (isBound) [x bindEvt:self];
+         if (isBound)
+            [x bindEvt:self];
          return ORSuspend;
-      }break;
-      case ORLow: {
+      }
+         break;
+      case ORLow:
+      {
          ORFloat nl = ORILow(is);
          assignTRDouble(&_min, nl, _trail);
          ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
          [x changeMinEvt:isBound sender:self];
-         if (isBound) [x bindEvt:self];
+         if (isBound)
+            [x bindEvt:self];
          return ORSuspend;
-      }break;
-      case ORUp: {
+      }
+         break;
+      case ORUp:
+      {
          ORFloat nu = ORIUp(is);
          assignTRDouble(&_max, nu, _trail);
          ORBool isBound = ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON);
          [x changeMaxEvt:isBound sender:self];
-         if (isBound) [x bindEvt:self];
+         if (isBound)
+            [x bindEvt:self];
          return ORSuspend;
-      }break;
+      }
+         break;
       case ORNone:
          return ORNoop;
    }
 }
--(ORStatus) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
+
+-(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x
 {
    ORIReady();
    if (_min._val <= val && val <= _max._val) {
       if (ORIBound(createORI2(_min._val, _max._val), BIND_EPSILON))
-         return ORSuccess;
+         return;
       [x changeMinEvt:YES sender:self];
       [x changeMaxEvt:YES sender:self];
       [x bindEvt:self];
       assignTRDouble(&_min, val, _trail);
       assignTRDouble(&_max, val, _trail);
-   } else failNow();
-   return ORSuspend;
+   }
+   else
+      failNow();
 }
 -(ORFloat) min
 {

@@ -143,9 +143,9 @@ enum CPVarClass {
 -(ORBool) bound;
 -(ORFloat) domwidth;
 -(void) bind:(ORFloat) val;
--(ORStatus) updateMin:(ORFloat) newMin;
--(ORStatus) updateMax:(ORFloat) newMax;
--(ORStatus) updateInterval: (ORInterval) v;
+-(void) updateMin:(ORFloat) newMin;
+-(void) updateMax:(ORFloat) newMax;
+-(ORNarrowing) updateInterval: (ORInterval) v;
 @end
 
 @protocol CPFloatVarArray <CPVarArray>

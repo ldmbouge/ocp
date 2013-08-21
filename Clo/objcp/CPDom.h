@@ -43,10 +43,10 @@
 
 @protocol CPFloatVarNotifier;
 @protocol CPFDom
--(ORStatus) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
--(ORStatus) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
--(ORStatus) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
--(ORStatus) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
+-(void) updateMin:(ORFloat)newMin for:(id<CPFloatVarNotifier>)x;
+-(void) updateMax:(ORFloat)newMax for:(id<CPFloatVarNotifier>)x;
+-(ORNarrowing) updateInterval:(ORInterval)v for:(id<CPFloatVarNotifier>)x;
+-(void) bind:(ORFloat)val  for:(id<CPFloatVarNotifier>)x;
 -(ORFloat) min;
 -(ORFloat) max;
 -(ORFloat) imin;

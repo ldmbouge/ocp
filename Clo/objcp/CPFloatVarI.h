@@ -49,10 +49,10 @@
 // Interface for CP extensions
 
 @protocol CPFloatVarExtendedItf <CPFloatVarSubscriber>
--(ORStatus) updateMin: (ORFloat) newMin;
--(ORStatus) updateMax: (ORFloat) newMax;
+-(void) updateMin: (ORFloat) newMin;
+-(void) updateMax: (ORFloat) newMax;
 -(ORStatus) updateInterval: (ORInterval)nb;
--(ORStatus) bind: (ORFloat) val;
+-(void) bind: (ORFloat) val;
 @end
 
 typedef struct  {
@@ -71,9 +71,9 @@ typedef struct  {
 -(void) addVar:(CPFloatVarI*)var;
 -(enum CPVarClass)varClass;
 -(CPFloatVarI*)findAffine:(ORInt)scale shift:(ORInt)shift;
--(ORStatus) bindEvt:(id<CPFDom>)sender;
--(ORStatus) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender;
--(ORStatus) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender;
+-(void) bindEvt:(id<CPFDom>)sender;
+-(void) changeMinEvt:(ORBool) bound sender:(id<CPFDom>)sender;
+-(void) changeMaxEvt:(ORBool) bound sender:(id<CPFDom>)sender;
 @end
 
 @interface CPFloatVarI : ORObject<CPFloatVar,CPFloatVarNotifier,CPFloatVarExtendedItf> {
