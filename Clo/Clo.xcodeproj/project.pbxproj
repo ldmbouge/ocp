@@ -1140,8 +1140,6 @@
 		B1CC833415D3BEF8008DE335 /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1CC833515D3BEFC008DE335 /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
 		B1CFB7EC17C436CD00FB062A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
-		B1CFB7EF17C436CD00FB062A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B1CFB7EE17C436CD00FB062A /* main.m */; };
-		B1CFB7F317C436CD00FB062A /* testF.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = B1CFB7F217C436CD00FB062A /* testF.1 */; };
 		B1CFB7F817C4375400FB062A /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
 		B1CFB7F917C4375800FB062A /* objcp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B9ABCEF1391329D000997E5 /* objcp.framework */; };
 		B1CFB7FA17C4375C00FB062A /* ORFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5BFD594315A3ACA500825BC3 /* ORFoundation.framework */; };
@@ -4726,7 +4724,6 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				B1CFB7F317C436CD00FB062A /* testF.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -5405,9 +5402,6 @@
 		B1CC832715D3BEC4008DE335 /* model-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "model-Prefix.pch"; sourceTree = "<group>"; };
 		B1CC832815D3BEC4008DE335 /* model.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = model.1; sourceTree = "<group>"; };
 		B1CFB7EB17C436CD00FB062A /* testF */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testF; sourceTree = BUILT_PRODUCTS_DIR; };
-		B1CFB7EE17C436CD00FB062A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		B1CFB7F117C436CD00FB062A /* testF-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "testF-Prefix.pch"; sourceTree = "<group>"; };
-		B1CFB7F217C436CD00FB062A /* testF.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testF.1; sourceTree = "<group>"; };
 		B1E1C78A17036D27006AACFC /* MIPSolverI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPSolverI.h; sourceTree = "<group>"; };
 		B1E1C78B17036D27006AACFC /* MIPSolverI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MIPSolverI.m; sourceTree = "<group>"; };
 		B1E1C78E17036D4C006AACFC /* MIPGurobi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MIPGurobi.h; sourceTree = "<group>"; };
@@ -7211,7 +7205,6 @@
 				B1C4F3FE161F87070010A5C8 /* queensModel */,
 				5B6CFD8916D9390A00BCB95F /* ORCmdLineArgs.h */,
 				5B6CFD8A16D9390B00BCB95F /* ORCmdLineArgs.m */,
-				B1CFB7ED17C436CD00FB062A /* testF */,
 				B15442C716D1AAD0001BD7B3 /* testLPConcretization */,
 				B18DF14C17810C68004E1880 /* LPRelaxation */,
 			);
@@ -8547,24 +8540,6 @@
 			isa = PBXGroup;
 			children = (
 				B1CC832715D3BEC4008DE335 /* model-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		B1CFB7ED17C436CD00FB062A /* testF */ = {
-			isa = PBXGroup;
-			children = (
-				B1CFB7EE17C436CD00FB062A /* main.m */,
-				B1CFB7F217C436CD00FB062A /* testF.1 */,
-				B1CFB7F017C436CD00FB062A /* Supporting Files */,
-			);
-			path = testF;
-			sourceTree = "<group>";
-		};
-		B1CFB7F017C436CD00FB062A /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				B1CFB7F117C436CD00FB062A /* testF-Prefix.pch */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -11913,7 +11888,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1CFB7EF17C436CD00FB062A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,17 +14,12 @@
 			<key>orderHint</key>
 			<integer>61</integer>
 		</dict>
-		<key>CPScheduler.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>76</integer>
-		</dict>
 		<key>CPUKernel.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>35</integer>
 		</dict>
-		<key>CardinalityTest.xcscheme</key>
+		<key>CardinalityTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>70</integer>
@@ -64,7 +59,7 @@
 			<key>orderHint</key>
 			<integer>49</integer>
 		</dict>
-		<key>MD5.xcscheme</key>
+		<key>MD5.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>72</integer>
@@ -83,11 +78,6 @@
 		<dict>
 			<key>orderHint</key>
 			<integer>46</integer>
-		</dict>
-		<key>ORScheduler.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>75</integer>
 		</dict>
 		<key>ORUtilities.xcscheme_^#shared#^_</key>
 		<dict>
@@ -114,12 +104,12 @@
 			<key>orderHint</key>
 			<integer>16</integer>
 		</dict>
-		<key>TableTest.xcscheme</key>
+		<key>TableTest.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>69</integer>
 		</dict>
-		<key>TestAssignment.xcscheme</key>
+		<key>TestAssignment.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>71</integer>
@@ -134,7 +124,7 @@
 			<key>orderHint</key>
 			<integer>21</integer>
 		</dict>
-		<key>allProgs.xcscheme</key>
+		<key>allProgs.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>78</integer>
@@ -349,11 +339,6 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>objcpTests copy.xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>85</integer>
-		</dict>
 		<key>objcpTests.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
@@ -509,7 +494,7 @@
 			<key>orderHint</key>
 			<integer>52</integer>
 		</dict>
-		<key>testLPWrapper.xcscheme</key>
+		<key>testLPWrapper.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>65</integer>
