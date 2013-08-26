@@ -58,7 +58,7 @@
     _t0 = [[NSThread alloc] initWithTarget: _r0 selector: @selector(start) object: nil];
     _t1 = [[NSThread alloc] initWithTarget: _r1 selector: @selector(start) object: nil];
     [_t1 start];
-    [NSThread sleepForTimeInterval:0.5]; //so MIP doesn't receive bounds before it starts
+    //[NSThread sleepForTimeInterval:0.5]; //so MIP doesn't receive bounds before it starts
     [_t0 start];
 
     
@@ -74,6 +74,7 @@
 -(id<ORRunnable>) secondaryRunnable { return _r1; }
 
 -(void) receiveSolution:(id<ORSolution>)sol {
+    NSLog(@"Sol: %@", [sol description]);
     [_solutionPool addSolution: sol];
 }
 

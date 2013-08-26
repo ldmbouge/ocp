@@ -21,16 +21,12 @@
 -(void) receiveLowerBound: (ORInt)bound;
 @end
 
-@protocol ORBoundStreamProducer<ORRunnable>
--(void) addBoundStreamConsumer: (id<ORBoundStreamConsumer>)c;
+@protocol ORUpperBoundStreamProducer<ORRunnable>
+-(void) addUpperBoundStreamConsumer: (id<ORUpperBoundStreamConsumer>)c;
 @end
 
-@protocol ORUpperBoundStreamProducer<ORBoundStreamProducer>
--(void) notifyUpperBound: (ORInt)bound;
-@end
-
-@protocol ORLowerBoundStreamProducer<ORBoundStreamProducer>
--(void) notifyLowerBound: (ORInt)bound;
+@protocol ORLowerBoundStreamProducer<ORRunnable>
+-(void) addLowerBoundStreamConsumer: (id<ORLowerBoundStreamConsumer>)c;
 @end
 
 @protocol ORSolutionStreamConsumer<ORRunnable>

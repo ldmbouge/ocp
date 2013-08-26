@@ -22,7 +22,6 @@ typedef id<ORFloatArray> (^Void2FloatArray)();
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
--(void) onExit: (ORClosure)block;
 @end
 
 @interface ORColumnGenerator : ORPipedRunnable
@@ -30,7 +29,6 @@ typedef id<ORFloatArray> (^Void2FloatArray)();
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
--(void) onExit: (ORClosure)block;
 -(void) addColumnConsumer: (id<ORSolutionStreamConsumer>)c;
 @end
 

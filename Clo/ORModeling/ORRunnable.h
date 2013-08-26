@@ -20,17 +20,19 @@
 -(void) run;
 -(void) setSiblings: (NSArray*)siblings;
 -(NSArray*) siblings;
--(void) connectPiping: (NSArray*)runnables;
 @end
 
 @interface ORAbstractRunnableI : NSObject<ORRunnable> {
 @protected
     id<ORModel> _model;
-    ORClosure _exitBlock;
     NSArray* _siblings;
+    ORClosure _exitBlock;
+    ORClosure _startBlock;
 }
 @property(readwrite, retain) NSArray* siblings;
 -(id) initWithModel: (id<ORModel>)m;
+-(void) performOnStart: (ORClosure)c;
+-(void) performOnExit: (ORClosure)c;
 @end
 
 @interface ORFactory(ORRunnable)

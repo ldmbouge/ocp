@@ -55,8 +55,6 @@
     }
 }
 
--(void) onExit: (ORClosure)block {}
-
 @end
 
 @implementation ORFactory(ORColumnGeneration)

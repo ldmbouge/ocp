@@ -7,6 +7,7 @@
 //
 
 #import "CPRunnable.h"
+#import "ORRunnablePiping.h"
 #import "ORProgramFactory.h"
 
 @implementation CPRunnableI {
@@ -39,37 +40,23 @@
 
 -(id<CPProgram>) solver { return _program; }
 
--(void) connectPiping:(NSArray *)runnables {
-    [self useUpperBoundStreamInformer];
-    [self useLowerBoundStreamInformer];
-    [self useSolutionStreamInformer];
-
-    // Connect inputs
-    for(id<ORRunnable> r in runnables) {
-        if([[r signature] providesUpperBoundStream]) {
-            id<ORUpperBoundStreamProducer> producer = (id<ORUpperBoundStreamProducer>)r;
-            [producer addUpperBoundStreamConsumer: self];
-        }
-        if([[r signature] providesLowerBoundStream]) {
-            id<ORLowerBoundStreamProducer> producer = (id<ORLowerBoundStreamProducer>)r;
-            [producer addLowerBoundStreamConsumer: self];
-        }
-    }
-}
-
--(void) receivedUpperBound:(ORInt)bound
+-(void) receiveUpperBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
     [[_program objective] tightenPrimalBound:
         [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: bound minimize: YES]];
 }
 
--(void) receivedLowerBound:(ORInt)bound
+-(void) receiveLowerBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved lower bound: %i", self, bound);
     [[_program objective] tightenPrimalBound:
      [[ORObjectiveValueIntI alloc] initObjectiveValueIntI: bound minimize: NO]];
     NSLog(@"obj: %@", [[[self model] objective] description]);
+}
+
+-(void) receiveSolution:(id<ORSolution>)sol {
+    NSLog(@"Got Sol!");
 }
 
 -(void) run

@@ -39,9 +39,7 @@
 		37095B4716DBF214001BCEEC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37095B4616DBF214001BCEEC /* main.m */; };
 		37095B4816DBF290001BCEEC /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 37095B4616DBF214001BCEEC /* main.m */; };
 		372D318D1726100D007E1B91 /* LPRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 372D318B1726100C007E1B91 /* LPRunnable.h */; };
-		372D318E1726100D007E1B91 /* LPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D318C1726100C007E1B91 /* LPRunnable.m */; };
 		372D3191172610D1007E1B91 /* MIPRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 372D318F172610D1007E1B91 /* MIPRunnable.h */; };
-		372D3192172610D1007E1B91 /* MIPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D3190172610D1007E1B91 /* MIPRunnable.m */; };
 		3783F1301620C6E30085E8C2 /* ORLinearize.h in Headers */ = {isa = PBXBuildFile; fileRef = 3783F12E1620C6E30085E8C2 /* ORLinearize.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		3783F1311620C6E30085E8C2 /* ORLinearize.m in Sources */ = {isa = PBXBuildFile; fileRef = 3783F12F1620C6E30085E8C2 /* ORLinearize.m */; };
 		3795ADF216FABEAB00308567 /* ORLogicBenders.h in Headers */ = {isa = PBXBuildFile; fileRef = 3795ADF016FABEAB00308567 /* ORLogicBenders.h */; };
@@ -62,14 +60,16 @@
 		37AD9F3F16F2C04400B0F6F9 /* ORColumnGeneration.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AD9F3D16F2C04400B0F6F9 /* ORColumnGeneration.m */; };
 		37D7299D1724C15C004966DA /* ORCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D7299B1724C15C004966DA /* ORCombinator.h */; };
 		37D729A11724CF6E004966DA /* ORParallelCombinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D7299F1724CF6E004966DA /* ORParallelCombinator.h */; };
-		37D729A21724CF6E004966DA /* ORParallelCombinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A01724CF6E004966DA /* ORParallelCombinator.m */; };
 		37D729A51724D4CC004966DA /* ORRunnablePiping.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D729A31724D4CC004966DA /* ORRunnablePiping.h */; };
-		37D729A61724D4CC004966DA /* ORRunnablePiping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A41724D4CC004966DA /* ORRunnablePiping.m */; };
 		37D729A91724E348004966DA /* ORSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D729A71724E348004966DA /* ORSignature.h */; };
-		37D729AA1724E348004966DA /* ORSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A81724E348004966DA /* ORSignature.m */; };
 		37D729AD1724E4A3004966DA /* CPRunnable.h in Headers */ = {isa = PBXBuildFile; fileRef = 37D729AB1724E4A3004966DA /* CPRunnable.h */; };
-		37D729AE1724E4A3004966DA /* CPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729AC1724E4A3004966DA /* CPRunnable.m */; };
 		37EB3C6316F17EA2003ABD4B /* objmp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B154428016D19D8E001BD7B3 /* objmp.framework */; };
+		37ED832F1781FB7700452AC2 /* CPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729AC1724E4A3004966DA /* CPRunnable.m */; };
+		37ED83301781FB8100452AC2 /* ORRunnablePiping.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A41724D4CC004966DA /* ORRunnablePiping.m */; };
+		37ED83311781FB8100452AC2 /* ORSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A81724E348004966DA /* ORSignature.m */; };
+		37ED83321781FB8100452AC2 /* LPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D318C1726100C007E1B91 /* LPRunnable.m */; };
+		37ED83331781FB8100452AC2 /* MIPRunnable.m in Sources */ = {isa = PBXBuildFile; fileRef = 372D3190172610D1007E1B91 /* MIPRunnable.m */; };
+		37ED83341781FB8C00452AC2 /* ORParallelCombinator.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D729A01724CF6E004966DA /* ORParallelCombinator.m */; };
 		5B115520171B1CF5005371AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B6E89261379D3E9005DB4CA /* Foundation.framework */; };
 		5B115523171B1CF5005371AA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B115522171B1CF5005371AA /* main.m */; };
 		5B115537171B1D0F005371AA /* CPUKernel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5B93486A1655451C00757F89 /* CPUKernel.framework */; };
@@ -10875,6 +10875,12 @@
 				B1E1C7A7170375AF006AACFC /* ORMIPFlatten.m in Sources */,
 				B1E1C7AB17038784006AACFC /* ORFloatLinear.m in Sources */,
 				B182C60D173C3DC9002954F6 /* ORMIPLinearize.m in Sources */,
+				37ED832F1781FB7700452AC2 /* CPRunnable.m in Sources */,
+				37ED83301781FB8100452AC2 /* ORRunnablePiping.m in Sources */,
+				37ED83311781FB8100452AC2 /* ORSignature.m in Sources */,
+				37ED83321781FB8100452AC2 /* LPRunnable.m in Sources */,
+				37ED83331781FB8100452AC2 /* MIPRunnable.m in Sources */,
+				37ED83341781FB8C00452AC2 /* ORParallelCombinator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16382,6 +16388,7 @@
 				5BC0C75C177A191400B12173 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5BC116AC1595067900E0F5C8 /* Build configuration list for PBXNativeTarget "ais" */ = {
 			isa = XCConfigurationList;

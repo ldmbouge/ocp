@@ -45,6 +45,10 @@
 -(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
 
+@protocol OROrderedConstraintSet <ORConstraintSet>
+-(id<ORConstraint>) at:(ORInt)index;
+@end
+
 enum ORGroupType {
    DefaultGroup = 0,
    BergeGroup = 1

@@ -32,7 +32,6 @@ typedef id<ORConstraintSet> (^Void2ConstraintSet)();
 -(id<ORSignature>) signature;
 -(id<ORModel>) model;
 -(void) run;
--(void) onExit: (ORClosure)block;
 
 @property(readwrite) NSTimeInterval timeInMaster;
 @property(readwrite) NSTimeInterval timeInSlave;

@@ -22,6 +22,7 @@
 {
     self = [super init];
     _model = m;
+    _startBlock = nil;
     _exitBlock = nil;
     _siblings = nil;
     return self;
@@ -43,21 +44,24 @@
 }
 -(void) start
 {
-    [self connectPiping: self.siblings];
+    if(_startBlock) _startBlock();
     [self run];
+    if(_exitBlock) _exitBlock();
 }
 
 -(void) run
 {
-    if(_exitBlock) _exitBlock();
 }
 
--(void) onExit: (ORClosure)block
+-(void) performOnStart: (ORClosure)c
 {
-    _exitBlock = [block copy];
+    _startBlock = [c copy];
 }
 
--(void) connectPiping: (NSArray*)runnables {}
+-(void) performOnExit: (ORClosure)c
+{
+    _exitBlock = [c copy];
+}
 
 @end
 

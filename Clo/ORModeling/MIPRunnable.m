@@ -45,19 +45,6 @@
 
 -(id<MIPProgram>) solver { return _program; }
 
--(void) connectPiping:(NSArray *)runnables {
-    [self useUpperBoundStreamInformer];
-    [self useSolutionStreamInformer];
-    
-    // Connect inputs
-    for(id<ORRunnable> r in runnables) {
-        if([[r signature] providesUpperBoundStream]) {
-            id<ORUpperBoundStreamProducer> producer = (id<ORUpperBoundStreamProducer>)r;
-            [producer addUpperBoundStreamConsumer: self];
-        }
-    }
-}
-
 -(void) injectColumn: (id<ORFloatArray>) col
 {
 }
@@ -69,17 +56,15 @@
     NSLog(@"Finishing MIP runnable(%p)...", _program);
 }
 
--(void) onExit: (ORClosure)block {}
-
 -(void) receivedUpperBound:(ORInt)bound
 {
     NSLog(@"(%p) recieved upper bound: %i", self, bound);
-    MIPSolverI* mipSolver = [[self solver] solver];
-    MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
-    MIPVariableI* varArr[] = {objVar};
-    ORFloat coefArr[] = {1.0};
-    MIPConstraintI* c = [mipSolver createLEQ: 1 var: varArr coef: coefArr rhs: bound];
-    [mipSolver postConstraint: c];
+    //MIPSolverI* mipSolver = [[self solver] solver];
+    //MIPVariableI* objVar = [[((ORObjectiveFunctionExprI*)[[self model] objective]) expr] dereference];
+    //MIPVariableI* varArr[] = {objVar};
+    //ORFloat coefArr[] = {1.0};
+    //MIPConstraintI* c = [mipSolver createLEQ: 1 var: varArr coef: coefArr rhs: bound];
+    //[mipSolver postConstraint: c];
 }
 
 @end

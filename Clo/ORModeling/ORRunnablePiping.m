@@ -16,10 +16,6 @@
     id<ORIntInformer> _upperBoundStreamInformer;
     id<ORIntInformer> _lowerBoundStreamInformer;
     id<ORSolutionInformer> _solutionStreamInformer;
-    NSMutableArray* _upperBoundStreamConsumers;
-    NSMutableArray* _lowerBoundStreamConsumers;
-    NSMutableArray* _solutionStreamConsumers;
-    
     id<ORFloatArray> _col;
 }
 
@@ -27,18 +23,9 @@
 {
     if((self = [super initWithModel: m]) != nil) {
         _sig = nil;
-        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI]; //_upperBoundStreamInformer = nil;
-        [_upperBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
-            [self receivedUpperBound: b];
-        }];
-        _lowerBoundStreamInformer = [[ORInformerI alloc] initORInformerI]; //_upperBoundStreamInformer = nil;
-        [_lowerBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
-            [self receivedLowerBound: b];
-        }];
-        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];//nil;
-        _upperBoundStreamConsumers = nil;
-        _lowerBoundStreamConsumers = nil;
-        _solutionStreamConsumers = nil;
+        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
+        _lowerBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
+        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
         _col = nil;
     }
     return self;
@@ -53,9 +40,6 @@
     [_upperBoundStreamInformer release];
     [_lowerBoundStreamInformer release];
     [_solutionStreamInformer release];
-    [_upperBoundStreamConsumers release];
-    [_lowerBoundStreamConsumers release];
-    [_solutionStreamConsumers release];
     [_sig release];
     [super dealloc];
 }
@@ -70,63 +54,27 @@
 
 -(void) run {}
 
--(void) addUpperBoundStreamConsumer:(id<ORBoundStreamConsumer>)c
+-(void) addUpperBoundStreamConsumer:(id<ORUpperBoundStreamConsumer>)c
 {
     NSLog(@"Adding upper bound consumer...");
-    if(_upperBoundStreamConsumers == nil)
-        _upperBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 4];
-    [_upperBoundStreamConsumers addObject: c];
+    [_upperBoundStreamInformer wheneverNotifiedDo: ^(ORInt b) { [c receiveUpperBound: b]; }];
 }
 
--(void) addLowerBoundStreamConsumer:(id<ORBoundStreamConsumer>)c
+-(void) addLowerBoundStreamConsumer:(id<ORLowerBoundStreamConsumer>)c
 {
     NSLog(@"Adding lower bound consumer...");
-    if(_lowerBoundStreamConsumers == nil)
-        _lowerBoundStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 4];
-    [_lowerBoundStreamConsumers addObject: c];
+    [_lowerBoundStreamInformer wheneverNotifiedDo: ^(ORInt b) { [c receiveLowerBound: b]; }];
 }
 
 -(void) addSolutionStreamConsumer: (id<ORSolutionStreamConsumer>)c
 {
     NSLog(@"Adding solution stream consumer...");
-    if(_solutionStreamConsumers == nil)
-        _solutionStreamConsumers = [[NSMutableArray alloc] initWithCapacity: 4];
-    [_solutionStreamConsumers addObject: c];
+    [_solutionStreamInformer wheneverNotifiedDo: ^(id<ORSolution> s) { [c receiveSolution: s]; }];
 }
 
 -(void) receivedUpperBound: (ORInt)bound {}
 -(void) receivedLowerBound: (ORInt)bound {}
 -(void) receivedSolution: (id<ORSolution>)sol {}
-
--(id<ORIntInformer>) useUpperBoundStreamInformer
-{
-    if(_upperBoundStreamInformer == nil) {
-        _upperBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
-        [_upperBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
-            [self receivedUpperBound: b];
-        }];
-    }
-}
-
--(id<ORIntInformer>) useLowerBoundStreamInformer
-{
-    if(_lowerBoundStreamInformer == nil) {
-        _lowerBoundStreamInformer = [[ORInformerI alloc] initORInformerI];
-        [_lowerBoundStreamInformer wheneverNotifiedDo: ^void(ORInt b) {
-            [self receivedLowerBound: b];
-        }];
-    }
-}
-
--(id<ORSolutionInformer>) useSolutionStreamInformer
-{
-    if(_solutionStreamInformer == nil) {
-        _solutionStreamInformer = [[ORInformerI alloc] initORInformerI];
-        [_solutionStreamInformer wheneverNotifiedDo: ^void(id<ORSolution> s) {
-            [self receivedSolution: s];
-        }];
-    }
-}
 
 -(void) produceColumn: (id<ORFloatArray>)col
 {
@@ -138,43 +86,16 @@
     return _col;
 }
 
--(id<ORIntInformer>) upperBoundStreamInformer
-{
-    return _upperBoundStreamInformer;
-}
-
--(id<ORIntInformer>) lowerBoundStreamInformer
-{
-    return _lowerBoundStreamInformer;
-}
-
--(id<ORSolutionInformer>) solutionStreamInformer
-{
-    return _solutionStreamInformer;
-}
-
 -(void) notifyUpperBound: (ORInt)bound {
-    if(_upperBoundStreamConsumers) {
-        for(id<ORBoundStreamConsumer> c in _upperBoundStreamConsumers) {
-            [[c upperBoundStreamInformer] notifyWith: bound];
-        }
-    }
+    [_upperBoundStreamInformer notifyWith: bound];
 }
 
 -(void) notifyLowerBound: (ORInt)bound {
-    if(_lowerBoundStreamConsumers) {
-        for(id<ORBoundStreamConsumer> c in _lowerBoundStreamConsumers) {
-            [[c lowerBoundStreamInformer] notifyWith: bound];
-        }
-    }
+    [_lowerBoundStreamInformer notifyWith: bound];
 }
 
 -(void) notifySolution: (id<ORSolution>)sol {
-    if(_solutionStreamConsumers) {
-        for(id<ORSolutionStreamConsumer> c in _solutionStreamConsumers) {
-            [[c solutionStreamInformer] notifyWithSolution: sol];
-        }
-    }
+    [_solutionStreamInformer notifyWithSolution: sol];
 }
 
 @end

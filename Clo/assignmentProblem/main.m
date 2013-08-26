@@ -17,6 +17,7 @@
 #import <ORProgram/ORProgramFactory.h>
 #import <objcp/CPFactory.h>
 #import "ORRunnable.h"
+#import "CPRunnable.h"
 #import "ORParallelCombinator.h"
 #import <ORModeling/ORLinearize.h>
 #import <ORModeling/ORFlatten.h>
@@ -29,14 +30,12 @@ int main (int argc, const char * argv[])
       ORCmdLineArgs* args = [ORCmdLineArgs newWith:argc argv:argv];
       [args measure:^struct ORResult() {
          id<ORModel> model = [ORFactory createModel];
-         ORInt n = 6;
+         ORInt n = 8;
          id<ORIntRange> R = RANGE(model,1,n);
          
          id<ORUniformDistribution> distr = [ORFactory uniformDistribution: model range: RANGE(model, 1, 20)];
          id<ORIntArray> cost =[ORFactory intArray: model range: R range: R with: ^ORInt (ORInt i, ORInt j) { return [distr next]; }];
-         
-         //id<ORMutableInteger> nbSolutions = [ORFactory integer: model value: 0];
-         
+                  
          id<ORIntVarArray> tasks  = [ORFactory intVarArray: model range: R domain: R];
          id<ORIntVar> assignCost = [ORFactory intVar: model domain: RANGE(model, n, n * 20)];
          
@@ -48,7 +47,7 @@ int main (int argc, const char * argv[])
          id<ORModel> lm = [ORFactory linearizeModel: model];
          id<ORRunnable> r0 = [ORFactory CPRunnable: model];
          id<ORRunnable> r1 = [ORFactory CPRunnable: lm];
-         id<ORRunnable> pr = [ORFactory parallelRunnable: r0 with: r1];
+         id<ORRunnable> pr = [ORFactory composeCompleteParallel: r0 with: r1];
          [pr run];
          
          for(id<ORIntVar> v in [lm variables])

@@ -7,6 +7,7 @@
 //
 
 #import "LPRunnable.h"
+#import "LPSolver.h"
 
 @implementation LPRunnableI {
     id<ORModel> _model;
@@ -19,7 +20,7 @@
     if((self = [super init]) != nil) {
         _model = [m retain];
         _sig = nil;
-        _program = [ORFactory createLPProgram: _model];
+        _program = [[LPSolver alloc] initLPSolver: _model];
     }
     return self;
 }
@@ -53,8 +54,6 @@
     [_program solve];
     NSLog(@"Finishing LP runnable(%p)...", _program);
 }
-
--(void) onExit: (ORClosure)block {}
 
 @end
 

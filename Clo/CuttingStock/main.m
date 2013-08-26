@@ -21,6 +21,7 @@
 #import "ORRunnable.h"
 #import "ORParallelRunnable.h"
 #import "ORColumnGeneration.h"
+#import "LPRunnable.h"
 
 int main (int argc, const char * argv[])
 {
@@ -40,22 +41,30 @@ int main (int argc, const char * argv[])
     id<ORFloatVarArray> cut = [ORFactory floatVarArray: master range: shelves low:0 up:[demand max]];
     id<ORFloatVar> masterObj = [ORFactory floatVar: master  low:0 up:shelfCount*[demand max]];
     [master add: [masterObj eq: Sum(master, i, shelves, cut[i])]];
+    id<OROrderedConstraintSet> c = [ORFactory orderedConstraintSet: master range: shelves with: ^id<ORConstraint>(ORInt i) {
+        return [Sum(master, j, shelves, [[cut at: j] mul: @([columns at: j * shelfCount + i])])
+                geq: @([demand at: i])];
+    }];
+
     for(ORInt i = [shelves low]; i <= [shelves up]; i++) {
-        [master add: [Sum(master, j, shelves, [[cut at: j] mul: @([columns at: j * shelfCount + i])])
-                geq: @([demand at: i])]];
+        [master add: [c at: i]];
     }
     [master minimize: masterObj];
 
     id<ORRunnable> lp = [ORFactory LPRunnable: master];
     id<ORRunnable> cg = [ORFactory columnGeneration: lp slave: ^id<ORFloatArray>() {
+        id<LPProgram> linearSolver = [((LPRunnableI*)lp) solver];
         id<ORModel> slave = [ORFactory createModel];
         id<ORIntVarArray> use = [ORFactory intVarArray: slave range: shelves domain: RANGE(slave, 0, boardWidth)];
-        id<ORFloatArray> cost = nil;//duals;
+        id<ORFloatArray> cost = [ORFactory floatArray: slave range: shelves with: ^ORFloat(ORInt i) {
+            return [linearSolver dual: [c at: i]];
+        }];
         id<ORIntVar> objective = [ORFactory intVar: slave domain: RANGE(slave, shelfCount * [cost min] * boardWidth, shelfCount * [cost max] * boardWidth)];
         [slave minimize: objective];
         [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([cost at: i])])  eq: objective]];
         [slave add: [Sum(slave, i, shelves, [[use at: i] mul: @([shelf at: i])]) leq: @(boardWidth)]];
         id<ORRunnable> slaveRunnable = [ORFactory CPRunnable: slave];
+        [slaveRunnable start];
         return [ORFactory floatArray: master intVarArray: use];
     }];
     [cg run];

@@ -118,3 +118,13 @@
 -(ORInt) size;
 -(void)enumerateWith:(void(^)(id<ORConstraint>))block;
 @end
+
+@interface OROrderedConstraintSetI : NSObject<OROrderedConstraintSet> {
+    NSMutableArray* _all;
+}
+-(id)init;
+-(id<ORConstraint>) addConstraint:(id<ORConstraint>)c;
+-(ORInt) size;
+-(id<ORConstraint>) at:(ORInt)index;
+-(void)enumerateWith:(void(^)(id<ORConstraint>))block;
+@end
