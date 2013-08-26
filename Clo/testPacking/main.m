@@ -20,12 +20,17 @@
 
 int main (int argc, const char * argv[])
 {
-   id<ORModel> model = [ORFactory createModel];
-   id<ORIntRange> R  = RANGE(model,0,4);
-   id<ORIntRange> D  = RANGE(model,0,1);
-   id<ORIntVarArray> item = [ORFactory intVarArray:model range: R domain: D];
-   id<ORIntArray> itemSize = [ORFactory intArray: model range: R value: 0];
-   id<ORIntVarArray> binSize = [ORFactory intVarArray:model range: RANGE(model,0,1) domain: RANGE(model,12,27)];
+   id<CPSolver> cp = [CPFactory createSolver];
+   id<ORIntRange> R = RANGE(cp,0,9);
+   id<ORIntRange> D = RANGE(cp,0,1);
+   id<ORIntVarArray> item = [CPFactory intVarArray:cp range: R domain: D];
+   id<ORIntArray> itemSize = [CPFactory intArray: cp range: R value: 0];
+   id<ORIntVarArray> binSize = [CPFactory intVarArray:cp range: RANGE(cp,0,1) domain: RANGE(cp,36,39)];
+   [itemSize set: 10 at: 9];
+   [itemSize set: 10 at: 8];
+   [itemSize set: 10 at: 7];
+   [itemSize set: 9 at: 6];
+   [itemSize set: 9 at: 5];
    [itemSize set: 9 at: 4];
    [itemSize set: 9 at: 3];
    [itemSize set: 5 at: 2];

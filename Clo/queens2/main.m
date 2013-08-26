@@ -10,12 +10,26 @@
  ***********************************************************************/
 
 #import <Foundation/Foundation.h>
-#import <ORModeling/ORModeling.h>
-#import <ORModeling/ORModelTransformation.h>
-#import "ORFoundation/ORFoundation.h"
-#import "ORFoundation/ORSemBDSController.h"
-#import "ORFoundation/ORSemDFSController.h"
-#import <ORProgram/ORProgramFactory.h>
+#import <ORFoundation/ORFoundation.h>
+#import <objcp/CPConstraint.h>
+#import "objcp/CPEngine.h"
+#import "objcp/CPSolver.h"
+#import "objcp/CPFactory.h"
+#import "objcp/CPLabel.h"
+#import "objcp/CPHeuristic.h"
+#import "objcp/CPWDeg.h"
+
+ORInt labelFF3(id<CPSolver> m,id<ORIntVarArray> x,ORInt from,ORInt to)
+{
+   id<ORInteger> nbSolutions = [ORFactory integer:m value:0];
+   [m solveAll: ^() {
+      [CPLabel array: x orderedBy: ^ORFloat(ORInt i) { return [[x at:i] domsize];}];
+      [nbSolutions incr];
+   }
+    ];
+   printf("NbSolutions: %d \n",[nbSolutions value]);   
+   return [nbSolutions value];
+}
 
 int main (int argc, const char * argv[])
 {
